@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySnowman.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySnowman.java
+@@ -92,7 +92,7 @@
+                 k = MathHelper.func_76128_c(this.field_70161_v + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
+                 BlockPos blockpos = new BlockPos(i, j, k);
+ 
+-                if (this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151579_a && this.field_70170_p.func_180494_b(new BlockPos(i, 0, k)).func_180626_a(blockpos) < 0.8F && Blocks.field_150431_aC.func_176196_c(this.field_70170_p, blockpos))
++                if (this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151579_a && this.field_70170_p.func_180494_b(new BlockPos(i, 0, k)).func_180626_a(blockpos) < 0.8F && Blocks.field_150431_aC.func_176196_c(this.field_70170_p, blockpos) && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(this, blockpos, Blocks.field_150431_aC.func_176223_P()))
+                 {
+                     this.field_70170_p.func_175656_a(blockpos, Blocks.field_150431_aC.func_176223_P());
+                 }
