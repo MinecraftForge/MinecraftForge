@@ -34,6 +34,7 @@ package net.minecraftforge.fml.common.versioning;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -79,24 +80,48 @@ public class ComparableVersion
 
     private ListItem items;
 
-    private interface Item
+    /**
+     * @noextend This class is not intended to be subclassed by clients.
+     */
+    public static abstract class Item
+        implements Comparable<Item>
     {
-        final int INTEGER_ITEM = 0;
-        final int STRING_ITEM = 1;
-        final int LIST_ITEM = 2;
+        public static final int INTEGER_ITEM = 0;
+        public static final int STRING_ITEM = 1;
+        public static final int LIST_ITEM = 2;
 
-        int compareTo( Item item );
+        protected Item()
+        {
+            checkSubclass();
+        }
 
-        int getType();
+        private final void checkSubclass()
+        {
+            Class<?> cls = getClass();
 
-        boolean isNull();
+            if ( cls == IntegerItem.class )
+                return;
+            if ( cls == StringItem.class )
+                return;
+            if ( cls == ListItem.class )
+                return;
+
+            throw new IllegalStateException( "invalid item class \"" + cls.getName() + "\"" );
+        }
+
+        @Override
+        public abstract int compareTo( Item item );
+
+        public abstract int getType();
+
+        public abstract boolean isNull();
     }
 
     /**
      * Represents a numeric item in the version item list.
      */
-    private static class IntegerItem
-        implements Item
+    public static final class IntegerItem
+        extends Item
     {
     	private static final BigInteger BigInteger_ZERO = new BigInteger( "0" );
 
@@ -136,16 +161,16 @@ public class ComparableVersion
 
             switch ( item.getType() )
             {
-                case INTEGER_ITEM:
+            case INTEGER_ITEM:
                     return value.compareTo( ( (IntegerItem) item ).value );
 
-                case STRING_ITEM:
-                    return 1; // 1.1 > 1-sp
+            case STRING_ITEM:
+                return 1; // 1.1 > 1-sp
 
-                case LIST_ITEM:
-                    return 1; // 1.1 > 1-1
+            case LIST_ITEM:
+                return 1; // 1.1 > 1-1
 
-                default:
+            default:
                     throw new RuntimeException( "invalid item: " + item.getClass() );
             }
         }
@@ -160,8 +185,8 @@ public class ComparableVersion
     /**
      * Represents a string in the version item list, usually a qualifier.
      */
-    private static class StringItem
-        implements Item
+    public static final class StringItem
+        extends Item
     {
         private static final String[] QUALIFIERS = { "alpha", "beta", "milestone", "rc", "snapshot", "", "sp" };
 
@@ -267,17 +292,151 @@ public class ComparableVersion
     }
 
     /**
-     * Represents a version list item. This class is used both for the global item list and for sub-lists (which start
-     * with '-(number)' in the version specification).
+     * Represents a version list item. This class is used both for the global item list and for sub-lists (which start with '-(number)' in the version specification).
      */
-    private static class ListItem
-        extends ArrayList<Item>
-        implements Item
+    public static final class ListItem
+        extends Item
+        implements List<Item>
     {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 1L;
+        private final List<Item> items = new ArrayList<Item>();
+
+        @Override
+        public int size()
+        {
+            return items.size();
+        }
+
+        @Override
+        public boolean isEmpty()
+        {
+            return items.isEmpty();
+        }
+
+        @Override
+        public boolean contains( Object o )
+        {
+            return items.contains( o );
+        }
+
+        @Override
+        public Iterator<Item> iterator()
+        {
+            return items.iterator();
+        }
+
+        @Override
+        public Object[] toArray()
+        {
+            return items.toArray();
+        }
+
+        @Override
+        public <T> T[] toArray( T[] a )
+        {
+            return items.toArray( a );
+        }
+
+        @Override
+        public boolean add( Item e )
+        {
+            return items.add( e );
+        }
+
+        @Override
+        public boolean remove( Object o )
+        {
+            return items.remove( o );
+        }
+
+        @Override
+        public boolean containsAll( Collection<?> c )
+        {
+            return items.containsAll( c );
+        }
+
+        @Override
+        public boolean addAll( Collection<? extends Item> c )
+        {
+            return items.addAll( c );
+        }
+
+        @Override
+        public boolean addAll( int index, Collection<? extends Item> c )
+        {
+            return items.addAll( index, c );
+        }
+
+        @Override
+        public boolean removeAll( Collection<?> c )
+        {
+            return items.removeAll( c );
+        }
+
+        @Override
+        public boolean retainAll( Collection<?> c )
+        {
+            return items.retainAll( c );
+        }
+
+        @Override
+        public void clear()
+        {
+            items.clear();
+        }
+
+        @Override
+        public Item get( int index )
+        {
+            return items.get( index );
+        }
+
+        @Override
+        public Item set( int index, Item element )
+        {
+            return items.set( index, element );
+        }
+
+        @Override
+        public void add( int index, Item element )
+        {
+            items.add( index, element );
+        }
+
+        @Override
+        public Item remove( int index )
+        {
+            return items.remove( index );
+        }
+
+        @Override
+        public int indexOf( Object o )
+        {
+            return items.indexOf( o );
+        }
+
+        @Override
+        public int lastIndexOf( Object o )
+        {
+            return items.lastIndexOf( o );
+        }
+
+        @Override
+        public ListIterator<Item> listIterator()
+        {
+            return items.listIterator();
+        }
+
+        @Override
+        public ListIterator<Item> listIterator( int index )
+        {
+            return items.listIterator( index );
+        }
+
+        @Override
+        public List<Item> subList( int fromIndex, int toIndex )
+        {
+            return items.subList( fromIndex, toIndex );
+        }
 
         @Override
         public int getType()
@@ -472,6 +631,16 @@ public class ComparableVersion
     private static Item parseItem( boolean isDigit, String buf )
     {
         return isDigit ? new IntegerItem( buf ) : new StringItem( buf, false );
+    }
+
+    public int size()
+    {
+        return items.size();
+    }
+
+    public Item get( int index )
+    {
+        return items.get( index );
     }
 
     @Override
