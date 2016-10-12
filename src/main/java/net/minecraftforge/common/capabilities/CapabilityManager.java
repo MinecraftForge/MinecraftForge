@@ -33,10 +33,10 @@ public enum CapabilityManager
      * @param storage A default implementation of the storage handler.
      * @param implementation A default implementation of the interface.
      */
-    public <T> void register(Class<T> type, Capability.IStorage<T> storage, final Class<? extends T> implementation)
+    public <T> Capability<T> register(Class<T> type, Capability.IStorage<T> storage, final Class<? extends T> implementation)
     {
         Preconditions.checkArgument(implementation != null, "Attempted to register a capability with no default implementation");
-        register(type, storage, new Callable<T>()
+        return register(type, storage, new Callable<T>()
         {
             @Override
             public T call() throws Exception
@@ -60,9 +60,9 @@ public enum CapabilityManager
      *
      * @param type The Interface to be registered
      * @param storage A default implementation of the storage handler.
-     * @param factor A Factory that will produce new instances of the default implementation.
+     * @param factory A Factory that will produce new instances of the default implementation.
      */
-    public <T> void register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory)
+    public <T> Capability<T> register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory)
     {
         Preconditions.checkArgument(type    != null, "Attempted to register a capability with invalid type");
         Preconditions.checkArgument(storage != null, "Attempted to register a capability with no storage implementation");
@@ -81,6 +81,7 @@ public enum CapabilityManager
                 func.apply(cap);
             }
         }
+        return cap;
     }
 
     // INTERNAL
@@ -96,6 +97,7 @@ public enum CapabilityManager
             if (type == null)
             {
                 FMLLog.log(Level.WARN, "Unable to inject capability at %s.%s (Invalid Annotation)", targetClass, targetName);
+                continue;
             }
             final String capabilityName = type.getInternalName().replace('/', '.').intern();
 
