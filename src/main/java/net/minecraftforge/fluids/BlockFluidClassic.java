@@ -24,7 +24,7 @@ public class BlockFluidClassic extends BlockFluidBase
     public BlockFluidClassic(Fluid fluid, Material material)
     {
         super(fluid, material);
-        stack = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
+        stack = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
     }
 
     public BlockFluidClassic setFluidStack(FluidStack stack)

@@ -30,6 +30,8 @@ import net.minecraft.item.EnumRarity;
  */
 public class Fluid
 {
+    public static final int BUCKET_VOLUME = 1000;
+
     /** The unique identification name for this fluid. */
     protected final String fluidName;
 

@@ -1,6 +1,7 @@
 package net.minecraftforge.fluids;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.capability.wrappers.FluidContainerItemWrapper;
 
 /**
  * Implement this interface on Item classes that support external manipulation of their internal
@@ -10,7 +11,10 @@ import net.minecraft.item.ItemStack;
  *
  * NOTE: Use of NBT data on the containing ItemStack is encouraged.
  *
+ * @deprecated See {@link net.minecraftforge.fluids.capability.ItemFluidContainer} for a CapabilityProvider implementing the Capability {@link net.minecraftforge.fluids.capability.IFluidHandler}
+ * @see FluidContainerItemWrapper
  */
+@Deprecated
 public interface IFluidContainerItem
 {
     /**
@@ -48,7 +52,7 @@ public interface IFluidContainerItem
      *            ItemStack which is the fluid container.
      * @param maxDrain
      *            Maximum amount of fluid to be removed from the container.
-     * @param doFill
+     * @param doDrain
      *            If false, the drain will only be simulated.
      * @return Amount of fluid that was (or would have been, if simulated) drained from the
      *         container.
