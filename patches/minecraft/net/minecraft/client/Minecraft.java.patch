@@ -198,7 +198,7 @@
  
                      ItemStack itemstack1 = this.field_71439_g.func_184586_b(enumhand);
 -
-+                    if (itemstack1 == null) net.minecraftforge.common.ForgeHooks.onEmptyClick(this.field_71439_g, enumhand);
++                    if (itemstack1 == null && (this.objectMouseOver == null || this.objectMouseOver.typeOfHit == RayTraceResult.Type.MISS)) net.minecraftforge.common.ForgeHooks.onEmptyClick(this.field_71439_g, enumhand);
                      if (itemstack1 != null && this.field_71442_b.func_187101_a(this.field_71439_g, this.field_71441_e, itemstack1, enumhand) == EnumActionResult.SUCCESS)
                      {
                          this.field_71460_t.field_78516_c.func_187460_a(enumhand);
