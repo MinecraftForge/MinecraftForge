@@ -284,15 +284,15 @@ public class FMLCommonHandler
         return Loader.instance().serverStarting(server);
     }
 
-    public void handleServerStarted()
+    public void handleServerStarted(MinecraftServer server)
     {
-        Loader.instance().serverStarted();
+        Loader.instance().serverStarted(server);
         sidedDelegate.allowLogins();
     }
 
-    public void handleServerStopping()
+    public void handleServerStopping(MinecraftServer server)
     {
-        Loader.instance().serverStopping();
+        Loader.instance().serverStopping(server);
     }
 
     public File getSavesDirectory() {
@@ -483,11 +483,10 @@ public class FMLCommonHandler
         System.exit(retVal);
     }
 
-    public void handleServerStopped()
+    public void handleServerStopped(MinecraftServer server)
     {
         sidedDelegate.serverStopped();
-        MinecraftServer server = getMinecraftServerInstance();
-        Loader.instance().serverStopped();
+        Loader.instance().serverStopped(server);
         // FORCE the internal server to stop: hello optifine workaround!
         if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316"+"_v", "u", "serverStopped");
 

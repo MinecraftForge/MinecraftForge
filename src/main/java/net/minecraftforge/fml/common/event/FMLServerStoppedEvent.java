@@ -14,6 +14,8 @@ package net.minecraftforge.fml.common.event;
 
 import net.minecraftforge.fml.common.LoaderState.ModState;
 
+import net.minecraft.server.MinecraftServer;
+
 /**
  * Called after {@link FMLServerStoppingEvent} when the server has completely shut down.
  * Called immediately before shutting down, on the dedicated server, and before returning
@@ -24,9 +26,12 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
  */
 public class FMLServerStoppedEvent extends FMLStateEvent {
 
+    private final MinecraftServer server;
+
     public FMLServerStoppedEvent(Object... data)
     {
         super(data);
+        this.server = (MinecraftServer) data[0];
     }
     @Override
     public ModState getModState()
@@ -34,4 +39,8 @@ public class FMLServerStoppedEvent extends FMLStateEvent {
         return ModState.AVAILABLE;
     }
 
+    public MinecraftServer getServer()
+    {
+        return server;
+    }
 }

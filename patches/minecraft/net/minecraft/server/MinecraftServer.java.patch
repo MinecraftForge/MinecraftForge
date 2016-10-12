@@ -114,7 +114,7 @@
          {
              if (this.func_71197_b())
              {
-+                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarted();
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarted(this);
                  this.field_175591_ab = func_130071_aq();
                  long i = 0L;
                  this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
@@ -122,7 +122,7 @@
                      Thread.sleep(Math.max(1L, 50L - i));
                      this.field_71296_Q = true;
                  }
-+                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopping();
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopping(this);
 +                net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
              }
              else
@@ -160,7 +160,7 @@
              }
              finally
              {
-+                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopped();
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopped(this);
 +                this.field_71316_v = true;
                  this.func_71240_o();
              }
