@@ -35,6 +35,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.Mod.Metadata;
 import net.minecraftforge.fml.common.asm.transformers.BlamingTransformer;
@@ -574,6 +576,7 @@ public class FMLModContainer implements ModContainer
             }
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide(), getLanguageAdapter());
             AutomaticEventSubscriber.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
+            ConfigManager.load(this.getModId(), Config.Type.INSTANCE);
 
             processFieldAnnotations(event.getASMHarvestedData());
         }
