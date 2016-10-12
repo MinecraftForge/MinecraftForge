@@ -184,12 +184,19 @@
                          {
                              this.field_71442_b.func_180511_b(blockpos, this.field_71476_x.field_178784_b);
                              break;
-@@ -1476,7 +1494,7 @@
+@@ -1447,6 +1465,7 @@
+                         }
+ 
+                         this.field_71439_g.func_184821_cY();
++                        net.minecraftforge.common.ForgeHooks.onEmptyLeftClick(this.field_71439_g, this.field_71439_g.func_184614_ca());
+                 }
+ 
+                 this.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
+@@ -1476,7 +1495,6 @@
                          switch (this.field_71476_x.field_72313_a)
                          {
                              case ENTITY:
 -
-+                                if(!net.minecraftforge.common.ForgeHooks.onInteractEntityAt(field_71439_g, field_71476_x.field_72308_g, field_71476_x, field_71439_g.func_184586_b(enumhand), enumhand))
                                  if (this.field_71442_b.func_187102_a(this.field_71439_g, this.field_71476_x.field_72308_g, this.field_71476_x, this.field_71439_g.func_184586_b(enumhand), enumhand) == EnumActionResult.SUCCESS)
                                  {
                                      return;
@@ -198,7 +205,7 @@
  
                      ItemStack itemstack1 = this.field_71439_g.func_184586_b(enumhand);
 -
-+                    if (itemstack1 == null) net.minecraftforge.common.ForgeHooks.onEmptyClick(this.field_71439_g, enumhand);
++                    if (itemstack1 == null && (this.field_71476_x == null || this.field_71476_x.field_72313_a == RayTraceResult.Type.MISS)) net.minecraftforge.common.ForgeHooks.onEmptyClick(this.field_71439_g, enumhand);
                      if (itemstack1 != null && this.field_71442_b.func_187101_a(this.field_71439_g, this.field_71441_e, itemstack1, enumhand) == EnumActionResult.SUCCESS)
                      {
                          this.field_71460_t.field_78516_c.func_187460_a(enumhand);
