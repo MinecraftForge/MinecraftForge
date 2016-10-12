@@ -1,8 +1,10 @@
 package net.minecraftforge.common;
 
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
@@ -76,5 +78,11 @@ public class ForgeInternalHandler
         ForgeChunkManager.unloadWorld(event.world);
         if (event.world instanceof WorldServer)
             FakePlayerFactory.unloadWorld((WorldServer)event.world);
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onKeyInput(InputEvent event)
+    {
+        ClientRegistry.onKeyInput(event);
     }
 }
