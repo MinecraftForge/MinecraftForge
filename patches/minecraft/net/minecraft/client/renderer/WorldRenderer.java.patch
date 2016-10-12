@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-@@ -578,6 +578,11 @@
+@@ -351,6 +351,7 @@
+     {
+         this.field_78939_q = true;
+     }
++    public boolean isNoColor() { return field_78939_q; }
+ 
+     public WorldRenderer func_181666_a(float p_181666_1_, float p_181666_2_, float p_181666_3_, float p_181666_4_)
+     {
+@@ -578,6 +579,11 @@
          }
      }
  
