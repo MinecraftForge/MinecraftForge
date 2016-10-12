@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-@@ -525,8 +525,10 @@
+@@ -456,6 +456,7 @@
+             this.field_147595_R = true;
+             Blocks.field_150362_t.func_150122_b(this.field_72777_q.field_71474_y.field_74347_j);
+             Blocks.field_150361_u.func_150122_b(this.field_72777_q.field_71474_y.field_74347_j);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderersLoadedEvent(this.field_72777_q));
+             this.field_72739_F = this.field_72777_q.field_71474_y.field_151451_c;
+             boolean flag = this.field_175005_X;
+             this.field_175005_X = OpenGlHelper.func_176075_f();
+@@ -525,8 +526,10 @@
  
      public void func_180446_a(Entity p_180446_1_, ICamera p_180446_2_, float p_180446_3_)
      {
@@ -11,7 +19,7 @@
              --this.field_72740_G;
          }
          else
-@@ -537,9 +539,12 @@
+@@ -537,9 +540,12 @@
              this.field_72769_h.field_72984_F.func_76320_a("prepare");
              TileEntityRendererDispatcher.field_147556_a.func_178470_a(this.field_72769_h, this.field_72777_q.func_110434_K(), this.field_72777_q.field_71466_p, this.field_72777_q.func_175606_aa(), p_180446_3_);
              this.field_175010_j.func_180597_a(this.field_72769_h, this.field_72777_q.field_71466_p, this.field_72777_q.func_175606_aa(), this.field_72777_q.field_147125_j, this.field_72777_q.field_71474_y, p_180446_3_);
@@ -24,7 +32,7 @@
              Entity entity = this.field_72777_q.func_175606_aa();
              double d3 = entity.field_70142_S + (entity.field_70165_t - entity.field_70142_S) * (double)p_180446_3_;
              double d4 = entity.field_70137_T + (entity.field_70163_u - entity.field_70137_T) * (double)p_180446_3_;
-@@ -551,11 +556,15 @@
+@@ -551,11 +557,15 @@
              this.field_72777_q.field_71460_t.func_180436_i();
              this.field_72769_h.field_72984_F.func_76318_c("global");
              List<Entity> list = this.field_72769_h.func_72910_y();
@@ -40,7 +48,7 @@
                  ++this.field_72749_I;
  
                  if (entity1.func_145770_h(d0, d1, d2))
-@@ -577,6 +586,7 @@
+@@ -577,6 +587,7 @@
                  for (int j = 0; j < list.size(); ++j)
                  {
                      Entity entity3 = (Entity)list.get(j);
@@ -48,7 +56,7 @@
                      boolean flag = this.field_72777_q.func_175606_aa() instanceof EntityLivingBase && ((EntityLivingBase)this.field_72777_q.func_175606_aa()).func_70608_bn();
                      boolean flag1 = entity3.func_145770_h(d0, d1, d2) && (entity3.field_70158_ak || p_180446_2_.func_78546_a(entity3.func_174813_aQ()) || entity3.field_70153_n == this.field_72777_q.field_71439_g) && entity3 instanceof EntityPlayer;
  
-@@ -626,6 +636,7 @@
+@@ -626,6 +637,7 @@
                              }
  
                              entity2 = (Entity)iterator.next();
@@ -56,7 +64,7 @@
                              flag2 = this.field_175010_j.func_178635_a(entity2, p_180446_2_, d0, d1, d2) || entity2.field_70153_n == this.field_72777_q.field_71439_g;
  
                              if (!flag2)
-@@ -662,6 +673,7 @@
+@@ -662,6 +674,7 @@
                  {
                      for (TileEntity tileentity2 : list1)
                      {
@@ -64,7 +72,7 @@
                          TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity2, p_180446_3_, -1);
                      }
                  }
-@@ -671,6 +683,7 @@
+@@ -671,6 +684,7 @@
              {
                  for (TileEntity tileentity : this.field_181024_n)
                  {
@@ -72,7 +80,7 @@
                      TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity, p_180446_3_, -1);
                  }
              }
-@@ -700,7 +713,7 @@
+@@ -700,7 +714,7 @@
  
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
  
@@ -81,7 +89,7 @@
                  {
                      TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity1, p_180446_3_, destroyblockprogress.func_73106_e());
                  }
-@@ -1161,6 +1174,12 @@
+@@ -1161,6 +1175,12 @@
  
      public void func_174976_a(float p_174976_1_, int p_174976_2_)
      {
@@ -94,7 +102,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_177502_q() == 1)
          {
              this.func_180448_r();
-@@ -1378,6 +1397,12 @@
+@@ -1378,6 +1398,12 @@
  
      public void func_180447_b(float p_180447_1_, int p_180447_2_)
      {
@@ -107,7 +115,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1793,8 +1818,11 @@
+@@ -1793,8 +1819,11 @@
                  double d4 = (double)blockpos.func_177956_o() - d1;
                  double d5 = (double)blockpos.func_177952_p() - d2;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -120,7 +128,7 @@
                  {
                      if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
                      {
-@@ -1949,13 +1977,16 @@
+@@ -1949,13 +1978,16 @@
          if (p_174961_1_ != null)
          {
              ItemRecord itemrecord = ItemRecord.func_150926_b(p_174961_1_);
