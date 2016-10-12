@@ -2,6 +2,7 @@ package net.minecraftforge.client.event.sound;
 
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
+import net.minecraft.util.SoundCategory;
 
 /***
  * Raised when the SoundManager tries to play a normal sound.
