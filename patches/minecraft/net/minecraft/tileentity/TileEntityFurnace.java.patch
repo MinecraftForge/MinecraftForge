@@ -58,24 +58,16 @@
              }
  
              if (this.field_145957_n[0].func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && this.field_145957_n[0].func_77960_j() == 1 && this.field_145957_n[1] != null && this.field_145957_n[1].func_77973_b() == Items.field_151133_ar)
-@@ -311,7 +314,15 @@
-                 }
-             }
- 
--            return item instanceof ItemTool && ((ItemTool)item).func_77861_e().equals("WOOD") ? 200 : (item instanceof ItemSword && ((ItemSword)item).func_150932_j().equals("WOOD") ? 200 : (item instanceof ItemHoe && ((ItemHoe)item).func_77842_f().equals("WOOD") ? 200 : (item == Items.field_151055_y ? 100 : (item == Items.field_151044_h ? 1600 : (item == Items.field_151129_at ? 20000 : (item == Item.func_150898_a(Blocks.field_150345_g) ? 100 : (item == Items.field_151072_bj ? 2400 : 0)))))));
-+            if (item instanceof ItemTool && ((ItemTool)item).func_77861_e().equals("WOOD")) return 200;
-+            if (item instanceof ItemSword && ((ItemSword)item).func_150932_j().equals("WOOD")) return 200;
-+            if (item instanceof ItemHoe && ((ItemHoe)item).func_77842_f().equals("WOOD")) return 200;
-+            if (item == Items.field_151055_y) return 100;
-+            if (item == Items.field_151044_h) return 1600;
-+            if (item == Items.field_151129_at) return 20000;
-+            if (item == Item.func_150898_a(Blocks.field_150345_g)) return 100;
-+            if (item == Items.field_151072_bj) return 2400;
-+            return net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
-         }
+@@ -282,6 +285,8 @@
      }
  
-@@ -432,4 +443,22 @@
+     public static int func_145952_a(ItemStack p_145952_0_)
++    {return net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);}
++    public static int getItemBurnTimeOld(ItemStack p_145952_0_)
+     {
+         if (p_145952_0_ == null)
+         {
+@@ -432,4 +437,22 @@
              this.field_145957_n[i] = null;
          }
      }

@@ -16,5 +16,19 @@ import net.minecraft.item.ItemStack;
 
 public interface IFuelHandler
 {
+    /**
+     * Returns the fuel value of the item stack if this is a fuel.
+     * Returns 0 if it is not your item.
+     * Returns a negative value if it cannot be used as a fuel.
+     * By default, you should return 0.
+     * <br>
+     * The later registered fuel handler has a higher priority.
+     * Vanilla handler {@link net.minecraft.tileentity.TileEntityFurnace
+     * #getItemBurnTimeOld(ItemStack)} has the lowest priority.
+     * <br>
+     *
+     * @param fuel The item stack
+     * @return The fuel value of the item stack, other cases see above
+     */
     int getBurnTime(ItemStack fuel);
 }
