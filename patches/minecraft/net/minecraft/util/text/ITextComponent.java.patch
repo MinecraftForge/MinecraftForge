@@ -8,3 +8,19 @@
      String func_150254_d();
  
      List<ITextComponent> func_150253_a();
+@@ -83,6 +82,7 @@
+                     JsonObject jsonobject = p_deserialize_1_.getAsJsonObject();
+                     ITextComponent itextcomponent;
+ 
++                    if ((itextcomponent = net.minecraftforge.common.ForgeHooks.onTextComponentDeserialize(jsonobject)) != null) {/*NOOP*/} else 
+                     if (jsonobject.has("text"))
+                     {
+                         itextcomponent = new TextComponentString(jsonobject.get("text").getAsString());
+@@ -241,6 +241,7 @@
+                 {
+                     if (!(p_serialize_1_ instanceof TextComponentSelector))
+                     {
++                        if (net.minecraftforge.common.ForgeHooks.onTextComponentSerialize(p_serialize_1_, jsonobject)) return jsonobject;
+                         throw new IllegalArgumentException("Don\'t know how to serialize " + p_serialize_1_ + " as a Component");
+                     }
+ 
