@@ -31,12 +31,14 @@ public class SlotItemHandler extends Slot
 {
     private static IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
     private final IItemHandler itemHandler;
+    private final IItemHandlerContainer itemHandlerContainer;
     private final int index;
 
     public SlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition)
     {
         super(emptyInventory, index, xPosition, yPosition);
         this.itemHandler = itemHandler;
+        this.itemHandlerContainer = (itemHandler instanceof IItemHandlerContainer) ? (IItemHandlerContainer)itemHandler : null;
         this.index = index;
     }
 
@@ -45,9 +47,9 @@ public class SlotItemHandler extends Slot
     {
         if (stack.func_190926_b())
             return false;
-        IItemHandler itemHandler = getItemHandler();
-        if (itemHandler instanceof IItemHandlerContainer)
-            return ((IItemHandlerContainer) itemHandler).isItemValidForSlot(slotNumber, stack);
+        IItemHandlerContainer ihc = getItemHandlerContainer();
+        if (ihc != null)
+            return ihc.isItemValidForSlot(slotNumber, stack);
 
         IItemHandler handler = this.getItemHandler();
         ItemStack remainder;
@@ -99,9 +101,10 @@ public class SlotItemHandler extends Slot
     @Override
     public int getItemStackLimit(@Nonnull ItemStack stack)
     {
-        IItemHandler itemHandler = getItemHandler();
-        if (itemHandler instanceof IItemHandlerContainer)
-            return ((IItemHandlerContainer) itemHandler).getInventoryStackLimit(slotNumber, stack);
+        IItemHandlerContainer ihc = getItemHandlerContainer();
+        if (ihc != null)
+            return ihc.getInventoryStackLimit(slotNumber, stack);
+
 
         ItemStack maxAdd = stack.copy();
         int maxInput = stack.getMaxStackSize();
@@ -146,6 +149,11 @@ public class SlotItemHandler extends Slot
     public IItemHandler getItemHandler()
     {
         return itemHandler;
+    }
+
+    public IItemHandlerContainer getItemHandlerContainer()
+    {
+        return itemHandlerContainer;
     }
 
     @Override
