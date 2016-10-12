@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fmp.multipart.IMultipart;
 
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
@@ -112,6 +113,23 @@ public class AttachCapabilitiesEvent extends Event
         public net.minecraft.item.ItemStack getItemStack()
         {
             return this.stack;
+        }
+    }
+
+    /**
+     * A version of the parent event which is only fired for IMultiparts.
+     */
+    public static class Multipart extends AttachCapabilitiesEvent
+    {
+        private final IMultipart part;
+        public Multipart(IMultipart part)
+        {
+            super(part);
+            this.part = part;
+        }
+        public IMultipart getPart()
+        {
+            return part;
         }
     }
 }

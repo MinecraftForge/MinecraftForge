@@ -1,9 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/util/math/RayTraceResult.java
 +++ ../src-work/minecraft/net/minecraft/util/math/RayTraceResult.java
-@@ -5,6 +5,12 @@
+@@ -5,17 +5,32 @@
  
  public class RayTraceResult
  {
++
 +    /** Used to determine what sub-segment is hit */
 +    public int subHit = -1;
 +
@@ -13,3 +14,49 @@
      private BlockPos field_178783_e;
      public RayTraceResult.Type field_72313_a;
      public EnumFacing field_178784_b;
+     public Vec3d field_72307_f;
+     public Entity field_72308_g;
++    public net.minecraftforge.fmp.multipart.IMultipart partHit;
++    public AxisAlignedBB boxHit;
+ 
+     public RayTraceResult(Vec3d p_i47094_1_, EnumFacing p_i47094_2_, BlockPos p_i47094_3_)
+     {
+         this(RayTraceResult.Type.BLOCK, p_i47094_1_, p_i47094_2_, p_i47094_3_);
+     }
+ 
++    public RayTraceResult(Vec3d hitVecIn, EnumFacing sideHitIn, BlockPos blockPosIn, AxisAlignedBB boxHit)
++    {
++        this(RayTraceResult.Type.BLOCK, hitVecIn, sideHitIn, blockPosIn);
++        this.boxHit = boxHit;
++    }
++
+     public RayTraceResult(Vec3d p_i47095_1_, EnumFacing p_i47095_2_)
+     {
+         this(RayTraceResult.Type.BLOCK, p_i47095_1_, p_i47095_2_, BlockPos.field_177992_a);
+@@ -36,9 +51,15 @@
+ 
+     public RayTraceResult(Entity p_i47097_1_, Vec3d p_i47097_2_)
+     {
++        this(p_i47097_1_, p_i47097_2_, p_i47097_1_.func_174813_aQ());
++    }
++
++    public RayTraceResult(Entity entityHitIn, Vec3d hitVecIn, AxisAlignedBB boxHit)
++    {
+         this.field_72313_a = RayTraceResult.Type.ENTITY;
+-        this.field_72308_g = p_i47097_1_;
+-        this.field_72307_f = p_i47097_2_;
++        this.field_72308_g = entityHitIn;
++        this.field_72307_f = hitVecIn;
++        this.boxHit = boxHit;
+     }
+ 
+     public BlockPos func_178782_a()
+@@ -48,7 +69,7 @@
+ 
+     public String toString()
+     {
+-        return "HitResult{type=" + this.field_72313_a + ", blockpos=" + this.field_178783_e + ", f=" + this.field_178784_b + ", pos=" + this.field_72307_f + ", entity=" + this.field_72308_g + '}';
++        return "HitResult{type=" + this.field_72313_a + ", blockpos=" + this.field_178783_e + ", f=" + this.field_178784_b + ", pos=" + this.field_72307_f + ", entity=" + this.field_72308_g + ", multipart=" + this.partHit + ", aabb=" + this.boxHit + '}';
+     }
+ 
+     public static enum Type

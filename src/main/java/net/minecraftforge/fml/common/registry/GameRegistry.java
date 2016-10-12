@@ -26,6 +26,7 @@ import java.util.Random;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -41,6 +42,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -48,6 +50,14 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fmp.multipart.IMultipart;
+import net.minecraftforge.fmp.multipart.IPartConverter;
+import net.minecraftforge.fmp.multipart.IPartFactory;
+import net.minecraftforge.fmp.multipart.IReversePartConverter;
+import net.minecraftforge.fmp.multipart.Multipart;
+import net.minecraftforge.fmp.multipart.MultipartRegistry;
+import net.minecraftforge.fmp.multipart.IPartFactory.IAdvancedPartFactory;
+import net.minecraftforge.fmp.multipart.MultipartRegistry.MultipartRegistryEntry;
 
 import org.apache.logging.log4j.Level;
 
@@ -288,11 +298,52 @@ public class GameRegistry
         }
         return fuelValue;
     }
+    
+    /**
+     * Links a set of parts to an {@link IPartFactory} that can produce them.
+     */
+    public static void registerPartFactory(IPartFactory factory, ResourceLocation... names)
+    {
+        MultipartRegistry.registerPartFactory(factory, names);
+    }
+    
+    /**
+     * Links a set of parts to an {@link IAdvancedPartFactory} that can produce them.
+     */
+    public static void registerPartFactory(IAdvancedPartFactory factory, ResourceLocation... names)
+    {
+        MultipartRegistry.registerPartFactory(factory, names);
+    }
+    
+    /**
+     * Registers a part along with an identifier. A default part factory is automatically created.
+     */
+    public static void registerPart(Class<? extends IMultipart> clazz, ResourceLocation name)
+    {
+        MultipartRegistry.registerPart(clazz, name);
+    }
+    
+    /**
+     * Registers an {@link IPartConverter}.
+     */
+    public static void registerPartConverter(IPartConverter converter)
+    {
+        MultipartRegistry.registerPartConverter(converter);
+    }
+    
+    /**
+     * Registers an {@link IReversePartConverter}.
+     */
+    public static void registerReversePartConverter(IReversePartConverter converter)
+    {
+        MultipartRegistry.registerReversePartConverter(converter);
+    }
 
     public enum Type
     {
         BLOCK,
-        ITEM;
+        ITEM,
+        MULTIPART;
     }
 
     /**
