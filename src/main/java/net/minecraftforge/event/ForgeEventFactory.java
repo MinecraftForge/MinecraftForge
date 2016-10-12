@@ -530,4 +530,12 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, world.rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, world.rand, x, z, hasVillageGenerated));
     }
 
+    public static ITextComponent serverSendChat(ITextComponent component)
+    {
+        ServerSendChatEvent event = new ServerSendChatEvent(component);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) return null;
+        return event.getComponent();
+    }
+
 }
