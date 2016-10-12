@@ -69,7 +69,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         VertexFormat format = parent.getVertexFormat();
         if(format.hasNormal()) return format;
         format = new VertexFormat(format);
-        format.func_181721_a(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.NORMAL, 4));
+        format.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.NORMAL, 4));
         return format;
     }
 
@@ -243,6 +243,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     public void updateBlockInfo()
     {
-        blockInfo.updateShift();
+        blockInfo.updateShift(true);
     }
 }

@@ -76,8 +76,8 @@
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.field_146292_n));
      }
  
-     public void func_73866_w_()
-@@ -496,7 +513,9 @@
+     public void func_183500_a(int p_183500_1_, int p_183500_2_)
+@@ -502,7 +519,9 @@
          {
              while (Mouse.next())
              {
@@ -87,7 +87,7 @@
              }
          }
  
-@@ -504,7 +523,9 @@
+@@ -510,7 +529,9 @@
          {
              while (Keyboard.next())
              {

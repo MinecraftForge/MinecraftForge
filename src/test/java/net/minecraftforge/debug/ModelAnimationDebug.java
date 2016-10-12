@@ -56,7 +56,7 @@ public class ModelAnimationDebug
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
     public static final PropertyBool STATIC = PropertyBool.create("static");;
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ModelAnimationDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ModelAnimationDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     public static class CommonProxy
@@ -142,6 +142,8 @@ public class ModelAnimationDebug
         public void init(FMLInitializationEvent event) {}
     }
 
+    public static class ServerProxy extends CommonProxy {}
+
     public static class ClientProxy extends CommonProxy
     {
         @Override
@@ -150,13 +152,13 @@ public class ModelAnimationDebug
             super.preInit(event);
             B3DLoader.instance.addDomain(MODID);
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, blockName)), 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + blockName, "inventory"));
+            ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, ChestRenderer.instance);
         }
 
         @Override
         public void init(FMLInitializationEvent event)
         {
             super.init(event);
-            ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, ChestRenderer.instance);
         }
     }
 
@@ -239,10 +241,11 @@ public class ModelAnimationDebug
         public static ChestRenderer instance = new ChestRenderer();
         private ChestRenderer() {}
 
-        private final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        private BlockRendererDispatcher blockRenderer;
 
         public void renderTileEntityAt(Chest te, double x, double y, double z, float partialTick, int breakStage)
         {
+            if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
             IBlockState state = te.getWorld().getBlockState(te.getPos());
             state = state.withProperty(STATIC, false);
             IBakedModel model = this.blockRenderer.getBlockModelShapes().getModelForState(state);
@@ -276,7 +279,7 @@ public class ModelAnimationDebug
                 GlStateManager.shadeModel(GL11.GL_FLAT);
             }
 
-            worldrenderer.func_181668_a(7, DefaultVertexFormats.BLOCK);
+            worldrenderer.begin(7, DefaultVertexFormats.BLOCK);
             worldrenderer.setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
 
             this.blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, te.getPos(), worldrenderer, false);

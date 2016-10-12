@@ -57,24 +57,24 @@
 -        func_151180_a(p_75924_0_, Blocks.field_180388_cO, Blocks.field_180389_cP);
 -        func_151180_a(p_75924_0_, Blocks.field_150349_c, Blocks.field_150346_d);
 -        func_151180_a(p_75924_0_, Blocks.field_150458_ak, Blocks.field_150346_d);
-+        func_151180_a(p_75924_0_, Blocks.field_150355_j, Blocks.field_150358_i, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150353_l, Blocks.field_150356_k, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150428_aP, Blocks.field_150423_aK, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150470_am, Blocks.field_150460_al, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150439_ay, Blocks.field_150450_ax, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150416_aS, Blocks.field_150413_aR, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150455_bV, Blocks.field_150441_bU, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150429_aA, Blocks.field_150437_az, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150374_bv, Blocks.field_150379_bu, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150334_T, Blocks.field_150333_U, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150373_bw, Blocks.field_150376_bx, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_180388_cO, Blocks.field_180389_cP, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150349_c, Blocks.field_150346_d, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.field_150458_ak, Blocks.field_150346_d, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150355_j, Blocks.field_150358_i, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150353_l, Blocks.field_150356_k, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150428_aP, Blocks.field_150423_aK, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150470_am, Blocks.field_150460_al, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150439_ay, Blocks.field_150450_ax, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150416_aS, Blocks.field_150413_aR, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150455_bV, Blocks.field_150441_bU, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150429_aA, Blocks.field_150437_az, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150374_bv, Blocks.field_150379_bu, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150334_T, Blocks.field_150333_U, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150373_bw, Blocks.field_150376_bx, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_180388_cO, Blocks.field_180389_cP, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150349_c, Blocks.field_150346_d, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150458_ak, Blocks.field_150346_d, useItemIds);
      }
  
 -    private static void func_151180_a(StatBase[] p_151180_0_, Block p_151180_1_, Block p_151180_2_)
-+    private static void func_151180_a(StatBase[] p_151180_0_, Block p_151180_1_, Block p_151180_2_, boolean useItemIds)
++    private static void mergeStatBases(StatBase[] p_151180_0_, Block p_151180_1_, Block p_151180_2_, boolean useItemIds)
      {
 -        int i = Block.func_149682_b(p_151180_1_);
 -        int j = Block.func_149682_b(p_151180_2_);

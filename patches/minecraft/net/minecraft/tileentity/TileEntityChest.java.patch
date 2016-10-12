@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityChest.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityChest.java
+@@ -468,4 +468,31 @@
+             this.field_145985_p[i] = null;
+         }
+     }
++
++
++    @Override
++    public int getSlots(net.minecraft.util.EnumFacing side)
++    {
++        return net.minecraftforge.items.VanillaInventoryCodeHooks.getSlots(((BlockChest) func_145838_q()).func_180676_d(field_145850_b, field_174879_c), side);
++    }
++
++    @Override
++    public net.minecraft.item.ItemStack extractItem(int slot, int amount, net.minecraft.util.EnumFacing side, boolean simulate)
++    {
++        return net.minecraftforge.items.VanillaInventoryCodeHooks
++                .extractItem(((BlockChest) func_145838_q()).func_180676_d(field_145850_b, field_174879_c), slot, amount, side, simulate);
++    }
++
++    @Override
++    public net.minecraft.item.ItemStack insertItem(int slot, net.minecraft.item.ItemStack stack, net.minecraft.util.EnumFacing side, boolean simulate)
++    {
++        return net.minecraftforge.items.VanillaInventoryCodeHooks
++                .insertItem(((BlockChest) func_145838_q()).func_180676_d(field_145850_b, field_174879_c), slot, stack, side, simulate);
++    }
++
++    @Override
++    public net.minecraft.item.ItemStack getStackInSlot(int slot, net.minecraft.util.EnumFacing side)
++    {
++        return net.minecraftforge.items.VanillaInventoryCodeHooks.getStackInSlot(((BlockChest) func_145838_q()).func_180676_d(field_145850_b, field_174879_c), slot, side);
++    }
+ }

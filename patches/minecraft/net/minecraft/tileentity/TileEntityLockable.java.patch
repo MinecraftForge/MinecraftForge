@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityLockable.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityLockable.java
+@@ -8,7 +8,7 @@
+ import net.minecraft.world.ILockableContainer;
+ import net.minecraft.world.LockCode;
+ 
+-public abstract class TileEntityLockable extends TileEntity implements IInteractionObject, ILockableContainer
++public abstract class TileEntityLockable extends TileEntity implements IInteractionObject, ILockableContainer, net.minecraftforge.items.IItemHandler
+ {
+     private LockCode field_174901_a = LockCode.field_180162_a;
+ 
+@@ -47,4 +47,28 @@
+     {
+         return (IChatComponent)(this.func_145818_k_() ? new ChatComponentText(this.func_70005_c_()) : new ChatComponentTranslation(this.func_70005_c_(), new Object[0]));
+     }
++
++    @Override
++    public int getSlots(net.minecraft.util.EnumFacing side)
++    {
++        return net.minecraftforge.items.VanillaInventoryCodeHooks.getSlots(this, side);
++    }
++
++    @Override
++    public net.minecraft.item.ItemStack extractItem(int slot, int amount, net.minecraft.util.EnumFacing side, boolean simulate)
++    {
++        return net.minecraftforge.items.VanillaInventoryCodeHooks.extractItem(this, slot, amount, side, simulate);
++    }
++
++    @Override
++    public net.minecraft.item.ItemStack insertItem(int slot, net.minecraft.item.ItemStack stack, net.minecraft.util.EnumFacing side, boolean simulate)
++    {
++        return net.minecraftforge.items.VanillaInventoryCodeHooks.insertItem(this, slot, stack, side, simulate);
++    }
++
++    @Override
++    public net.minecraft.item.ItemStack getStackInSlot(int slot, net.minecraft.util.EnumFacing side)
++    {
++        return net.minecraftforge.items.VanillaInventoryCodeHooks.getStackInSlot(this, slot, side);
++    }
+ }

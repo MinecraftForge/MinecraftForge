@@ -41,4 +41,4 @@ net/minecraft/item/ItemBlock.setTileEntityNBT(Lnet/minecraft/world/World;Lnet/mi
 net/minecraft/server/management/ServerConfigurationManager.initializeConnectionToPlayer(Lnet/minecraft/network/NetworkManager;Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/network/NetHandlerPlayServer;)V=|p_72355_1_,p_72355_2_,nethandlerplayserver
 net/minecraft/item/ItemMonsterPlacer.spawnCreature(Lnet/minecraft/world/World;Ljava/lang/String;DDD)Lnet/minecraft/entity/Entity;=|p_77840_0_,name,p_77840_2_,p_77840_4_,p_77840_6_
 
-net/minecraft/stats/StatList.func_151180_a([Lnet/minecraft/stats/StatBase;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Z)V=|p_151180_0_,p_151180_1_,p_151180_2_,useItemIds
+net/minecraft/stats/StatList.mergeStatBases([Lnet/minecraft/stats/StatBase;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Z)V=|p_151180_0_,p_151180_1_,p_151180_2_,useItemIds

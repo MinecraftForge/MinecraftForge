@@ -1,19 +1,18 @@
 package net.minecraftforge.fml.common.network.handshake;
 
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.util.List;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.handshake.FMLHandshakeMessage.ServerHello;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.relauncher.Side;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Packet handshake sequence manager- client side (responding to remote server)
@@ -106,11 +105,12 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
             PersistentRegistryManager.GameDataSnapshot.Entry entry = new PersistentRegistryManager.GameDataSnapshot.Entry();
             entry.ids.putAll(pkt.getIdMap());
             entry.substitutions.addAll(pkt.getSubstitutions());
+            entry.dummied.addAll(pkt.getDummied());
             snap.entries.put(pkt.getName(), entry);
 
             if (pkt.hasMore())
             {
-                FMLLog.fine("Received Mod Registry mapping for %s: %d IDs %d subs", pkt.getName(), entry.ids.size(), entry.substitutions.size());
+                FMLLog.fine("Received Mod Registry mapping for %s: %d IDs %d subs %d dummied", pkt.getName(), entry.ids.size(), entry.substitutions.size(), entry.dummied.size());
                 return WAITINGSERVERCOMPLETE;
             }
 

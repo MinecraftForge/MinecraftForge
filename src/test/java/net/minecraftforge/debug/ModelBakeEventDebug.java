@@ -66,7 +66,7 @@ public class ModelBakeEventDebug
         }
     }
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ModelBakeEventDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ModelBakeEventDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     @EventHandler
@@ -80,6 +80,8 @@ public class ModelBakeEventDebug
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
     }
+
+    public static class ServerProxy extends CommonProxy {}
 
     public static class ClientProxy extends CommonProxy
     {
@@ -293,7 +295,7 @@ public class ModelBakeEventDebug
         public boolean isBuiltInRenderer() { return false; }
 
         @Override
-        public TextureAtlasSprite getTexture() { return this.base; }
+        public TextureAtlasSprite getParticleTexture() { return this.base; }
 
         @Override
         public ItemCameraTransforms getItemCameraTransforms()

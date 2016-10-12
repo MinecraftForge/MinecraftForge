@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandBase.java
++++ ../src-work/minecraft/net/minecraft/command/CommandBase.java
+@@ -329,7 +329,7 @@
+                 ichatcomponent.func_150258_a(" ");
+             }
+ 
+-            IChatComponent ichatcomponent1 = new ChatComponentText(p_147176_1_[i]);
++            IChatComponent ichatcomponent1 = net.minecraftforge.common.ForgeHooks.newChatWithLinks(p_147176_1_[i]); // Forge: links for messages
+ 
+             if (p_147176_3_)
+             {

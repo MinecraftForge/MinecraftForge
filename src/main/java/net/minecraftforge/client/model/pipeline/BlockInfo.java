@@ -35,11 +35,15 @@ public class BlockInfo
 
     public void updateShift()
     {
-        shx = shy = shz = 0;
+        updateShift(false);
+    }
+
+    public void updateShift(boolean ignoreY)
+    {
         long rand = 0;
         if(block.getOffsetType() != EnumOffsetType.NONE)
         {
-            rand = MathHelper.getPositionRandom(blockPos);
+            rand = MathHelper.getCoordinateRandom(blockPos.getX(), ignoreY ? 0 : blockPos.getY(), blockPos.getZ());
             shx = ((float)((rand >> 16) & 0xF) / 0xF - .5f) * .5f;
             shz = ((float)((rand >> 24) & 0xF) / 0xF - .5f) * .5f;
             if(block.getOffsetType() == EnumOffsetType.XYZ)
@@ -68,6 +72,7 @@ public class BlockInfo
         this.blockPos = blockPos;
         cachedTint = -1;
         cachedMultiplier = -1;
+        shx = shy = shz = 0;
     }
 
     private float combine(int c, int s1, int s2, int s3)

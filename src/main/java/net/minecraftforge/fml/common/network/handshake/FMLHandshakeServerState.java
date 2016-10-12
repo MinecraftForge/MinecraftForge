@@ -1,5 +1,8 @@
 package net.minecraftforge.fml.common.network.handshake;
 
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,11 +13,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.relauncher.Side;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 
 enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
 {

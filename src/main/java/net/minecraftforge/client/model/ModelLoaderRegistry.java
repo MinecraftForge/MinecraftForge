@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
 import net.minecraftforge.client.model.b3d.B3DLoader;
@@ -64,57 +65,78 @@ public class ModelLoaderRegistry
         return new ResourceLocation(location.getResourceDomain(), "models/" + location.getResourcePath());
     }
 
+    /**
+     * Primary method to get IModel instances.
+     * ResourceLocation argument will be passed directly to the custom model loaders,
+     * ModelResourceLocation argument will be loaded through the blockstate system.
+     */
     public static IModel getModel(ResourceLocation location) throws IOException
     {
-        if(cache.containsKey(location)) return cache.get(location);
-        ResourceLocation actual = getActualLocation(location);
-        ICustomModelLoader accepted = null;
-        for(ICustomModelLoader loader : loaders)
-        {
-            try
-            {
-                if(loader.accepts(actual))
-                {
-                    if(accepted != null)
-                    {
-                        FMLLog.severe("2 loaders (%s and %s) want to load the same model %s", accepted, loader, location);
-                        throw new IllegalStateException("2 loaders want to load the same model");
-                    }
-                    accepted = loader;
-                }
-            }
-            catch(Exception e)
-            {
-                FMLLog.log(Level.ERROR, e, "Exception checking if model %s can be loaded with loader %s, skipping", location, loader);
-            }
-        }
-
-        // no custom loaders found, try vanilla one
-        if(accepted == null)
-        {
-            if(VanillaLoader.instance.accepts(actual)) accepted = VanillaLoader.instance;
-        }
-
         IModel model;
-        if(accepted == null)
+        if(location instanceof ModelResourceLocation)
         {
-            FMLLog.severe("no suitable loader found for the model %s, skipping", location);
-            model = getMissingModel();
+            ModelLoader loader = ModelLoader.VanillaLoader.instance.getLoader();
+            if(loader != null)
+            {
+                model = loader.getVariantModel((ModelResourceLocation)location);
+            }
+            else
+            {
+                FMLLog.log(Level.ERROR, "Loading model too early, skipping: %s", location);
+                model = getMissingModel();
+            }
         }
         else
         {
-            try
+            if(cache.containsKey(location)) return cache.get(location);
+            ResourceLocation actual = getActualLocation(location);
+            ICustomModelLoader accepted = null;
+            for(ICustomModelLoader loader : loaders)
             {
-                model = accepted.loadModel(actual);
+                try
+                {
+                    if(loader.accepts(actual))
+                    {
+                        if(accepted != null)
+                        {
+                            FMLLog.severe("2 loaders (%s and %s) want to load the same model %s", accepted, loader, location);
+                            throw new IllegalStateException("2 loaders want to load the same model");
+                        }
+                        accepted = loader;
+                    }
+                }
+                catch(Exception e)
+                {
+                    FMLLog.log(Level.ERROR, e, "Exception checking if model %s can be loaded with loader %s, skipping", location, loader);
+                }
             }
-            catch (IOException e)
+
+            // no custom loaders found, try vanilla one
+            if(accepted == null)
             {
-                throw e;
+                if(VanillaLoader.instance.accepts(actual)) accepted = VanillaLoader.instance;
             }
-            catch(Exception e)
+
+            if(accepted == null)
             {
-                FMLLog.log(Level.ERROR, e, "Exception loading model %s with loader %s, skipping", location, accepted);
+                FMLLog.severe("no suitable loader found for the model %s, skipping", location);
                 model = getMissingModel();
+            }
+            else
+            {
+                try
+                {
+                    model = accepted.loadModel(actual);
+                }
+                catch (IOException e)
+                {
+                    throw e;
+                }
+                catch(Exception e)
+                {
+                    FMLLog.log(Level.ERROR, e, "Exception loading model %s with loader %s, skipping", location, accepted);
+                    model = getMissingModel();
+                }
             }
         }
         cache.put(location, model);

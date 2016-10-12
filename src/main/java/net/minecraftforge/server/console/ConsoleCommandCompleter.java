@@ -42,7 +42,6 @@ public final class ConsoleCommandCompleter implements Completer
         }
 
         final String input = buffer;
-        @SuppressWarnings("unchecked")
         Future<List<String>> tabComplete = this.server.callFromMainThread(new Callable<List<String>>() {
 
             @Override

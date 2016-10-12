@@ -35,7 +35,7 @@
  
          if (i >= 0 && i < Potion.field_76425_a.length && Potion.field_76425_a[i] != null)
          {
-@@ -223,4 +228,62 @@
+@@ -223,4 +228,53 @@
      {
          return this.field_100013_f;
      }

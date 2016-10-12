@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +58,8 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.ProgressManager;
+import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
@@ -81,6 +84,9 @@ public class ModelLoader extends ModelBakery
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private IModel missingModel = null;
     private IModel itemModel = new ItemLayerModel(MODEL_GENERATED);
+
+    private ProgressBar blockBar;
+    private ProgressBar itemBar;
 
     private boolean isLoading = false;
     public boolean isLoading()
@@ -145,18 +151,28 @@ public class ModelLoader extends ModelBakery
         return bakedRegistry;
     }
 
+    private ArrayDeque<ModelResourceLocation> loadingBlockModels = new ArrayDeque<ModelResourceLocation>();
+
     private void loadBlocks()
     {
         Map<IBlockState, ModelResourceLocation> stateMap = blockModelShapes.getBlockStateMapper().putAllStateModelLocations();
         Collection<ModelResourceLocation> variants = Lists.newArrayList(stateMap.values());
         variants.add(new ModelResourceLocation("minecraft:item_frame", "normal")); //Vanilla special cases item_frames so must we
         variants.add(new ModelResourceLocation("minecraft:item_frame", "map"));
+        blockBar = ProgressManager.push("ModelLoader: blocks", variants.size());
+        loadingBlockModels.addAll(variants);
         loadVariants(variants);
+        ProgressManager.pop(blockBar);
     }
 
     @Override
     protected void registerVariant(ModelBlockDefinition definition, ModelResourceLocation location)
     {
+        if(!loadingBlockModels.isEmpty() && loadingBlockModels.peekFirst() == location)
+        {
+            blockBar.step(location.toString());
+            loadingBlockModels.removeFirst();
+        }
         Variants variants = null;
         try
         {
@@ -182,13 +198,21 @@ public class ModelLoader extends ModelBakery
     private void loadItems()
     {
         registerVariantNames();
-        for(Item item : GameData.getItemRegistry().typeSafeIterable())
+        int size = 0;
+        ImmutableList<Item> items = ImmutableList.copyOf(GameData.getItemRegistry().typeSafeIterable());
+        for(Item item : items)
+        {
+            size += getVariantNames(item).size();
+        }
+        itemBar = ProgressManager.push("ModelLoader: items", size);
+        for(Item item : items)
         {
             // default loading
             for(String s : (List<String>)getVariantNames(item))
             {
                 ResourceLocation file = getItemLocation(s);
                 ModelResourceLocation memory = getInventoryVariant(s);
+                itemBar.step(memory.toString());
                 IModel model = null;
                 try
                 {
@@ -203,12 +227,20 @@ public class ModelLoader extends ModelBakery
                     if (model == null || model == getMissingModel())
                     {
                         FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
-                        registerVariant(getModelBlockDefinition(memory), memory);
+                        try
+                        {
+                            registerVariant(getModelBlockDefinition(memory), memory);
+                        }
+                        catch (Exception exception)
+                        {
+                            FMLLog.getLogger().warn("Unable to load definition " + memory, exception);
+                        }
                     }
                     else stateModels.put(memory, model);
                 }
             }
         }
+        ProgressManager.pop(itemBar);
 
         // replace vanilla bucket models if desired. done afterwards for performance reasons
         if(ForgeModContainer.replaceVanillaBucketModel)
@@ -323,13 +355,21 @@ public class ModelLoader extends ModelBakery
         }
     }
 
+    IModel getVariantModel(ModelResourceLocation location)
+    {
+        loadVariants(ImmutableList.of(location));
+        IModel model = stateModels.get(location);
+        if(model == null) model = getMissingModel();
+        return model;
+    }
+
     private void resolveDependencies(IModel model) throws IOException
     {
         for (ResourceLocation dep : model.getDependencies())
         {
             if(dep instanceof ModelResourceLocation)
             {
-                loadVariants(ImmutableList.of((ModelResourceLocation)dep));
+                getVariantModel((ModelResourceLocation)dep);
             }
             else
             {
@@ -591,37 +631,6 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-    // Weighted models can contain multiple copies of 1 model with different rotations - this is to make it work with IModelState (different copies will be different objects).
-    private static class WeightedPartWrapper implements IModel
-    {
-        private final IModel model;
-
-        public WeightedPartWrapper(IModel model)
-        {
-            this.model = model;
-        }
-
-        public Collection<ResourceLocation> getDependencies()
-        {
-            return model.getDependencies();
-        }
-
-        public Collection<ResourceLocation> getTextures()
-        {
-            return model.getTextures();
-        }
-
-        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
-        {
-            return model.bake(state, format, bakedTextureGetter);
-        }
-
-        public IModelState getDefaultState()
-        {
-            return model.getDefaultState();
-        }
-    }
-
     private class WeightedRandomModel implements IModel
     {
         private final List<Variant> variants;
@@ -629,11 +638,10 @@ public class ModelLoader extends ModelBakery
         private final List<IModel> models = new ArrayList<IModel>();
         private final IModelState defaultState;
 
-        @Deprecated @SuppressWarnings("unused") public WeightedRandomModel(Variants variants){ this(null, variants); } // Remove 1.9
         public WeightedRandomModel(ModelResourceLocation parent, Variants variants)
         {
             this.variants = variants.getVariants();
-            ImmutableMap.Builder<MapModelState.Wrapper, IModelState> builder = ImmutableMap.builder();
+            ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
             for (Variant v : (List<Variant>)variants.getVariants())
             {
                 ResourceLocation loc = v.getModelLocation();
@@ -669,20 +677,18 @@ public class ModelLoader extends ModelBakery
                     textures.addAll(model.getTextures()); // Kick this, just in case.
                 }
 
-                model = new WeightedPartWrapper(model);
                 models.add(model);
-                builder.put(MapModelState.wrap(model), v.getState());
+                builder.add(Pair.of(model, v.getState()));
             }
 
             if (models.size() == 0) //If all variants are missing, add one with the missing model and default rotation.
             {
                 IModel missing = getMissingModel();
                 models.add(missing);
-                builder.put(MapModelState.wrap(missing), TRSRTransformation.identity());
+                builder.add(Pair.<IModel, IModelState>of(missing, TRSRTransformation.identity()));
             }
 
-            defaultState = new MapModelState(builder.build());
-
+            defaultState = new MultiModelState(builder.build());
         }
 
         public Collection<ResourceLocation> getDependencies()
@@ -701,15 +707,6 @@ public class ModelLoader extends ModelBakery
             return state;
         }
 
-        private IModelState getState(IModelState state, IModel model)
-        {
-            if(state instanceof MapModelState)
-            {
-                return ((MapModelState)state).getState(model);
-            }
-            return state;
-        }
-
         public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
@@ -720,14 +717,14 @@ public class ModelLoader extends ModelBakery
             {
                 Variant v = variants.get(0);
                 IModel model = models.get(0);
-                return model.bake(addUV(v.isUvLocked(), getState(state, model)), format, bakedTextureGetter);
+                return model.bake(addUV(v.isUvLocked(), MultiModelState.getPartState(state, model, 0)), format, bakedTextureGetter);
             }
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
             for(int i = 0; i < variants.size(); i++)
             {
                 IModel model = models.get(i);
                 Variant v =  variants.get(i);
-                builder.add(model.bake(addUV(v.isUvLocked(), getState(state, model)), format, bakedTextureGetter), variants.get(i).getWeight());
+                builder.add(model.bake(addUV(v.isUvLocked(), MultiModelState.getPartState(state, model, i)), format, bakedTextureGetter), variants.get(i).getWeight());
             }
             return new FlexibleWeightedBakedModel(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
         }
@@ -740,14 +737,11 @@ public class ModelLoader extends ModelBakery
 
     private static class FlexibleWeightedBakedModel extends WeightedBakedModel implements IFlexibleBakedModel
     {
-        @SuppressWarnings("unused")
-        private final WeightedBakedModel parent;
         private final VertexFormat format;
 
         public FlexibleWeightedBakedModel(WeightedBakedModel parent, VertexFormat format)
         {
             super(parent.models);
-            this.parent = parent;
             this.format = format;
         }
 
@@ -755,12 +749,6 @@ public class ModelLoader extends ModelBakery
         {
             return format;
         }
-    }
-
-    @SuppressWarnings("unused")
-    private boolean isBuiltinModel(ModelBlock model)
-    {
-        return model == MODEL_GENERATED || model == MODEL_COMPASS || model == MODEL_CLOCK || model == MODEL_ENTITY;
     }
 
     public IModel getMissingModel()

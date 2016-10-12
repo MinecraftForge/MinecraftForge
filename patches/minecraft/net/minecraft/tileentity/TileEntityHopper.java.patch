@@ -1,5 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
+@@ -259,7 +259,7 @@
+     }
+ 
+     private boolean func_145883_k()
+-    {
++    {   if (net.minecraftforge.items.VanillaInventoryCodeHooks.insertHook(this)) {return true; }
+         IInventory iinventory = this.func_145895_l();
+ 
+         if (iinventory == null)
+@@ -365,7 +365,7 @@
+     }
+ 
+     public static boolean func_145891_a(IHopper p_145891_0_)
+-    {
++    { if (net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(p_145891_0_)) {return true; }
+         IInventory iinventory = func_145884_b(p_145891_0_);
+ 
+         if (iinventory != null)
 @@ -515,17 +515,31 @@
  
              if (itemstack == null)
