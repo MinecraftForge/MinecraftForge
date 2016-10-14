@@ -5,25 +5,21 @@ import java.util.Map.Entry;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWall;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameData;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -31,32 +27,51 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
 @Mod(modid = ForgeBlockStatesLoaderDebug.MODID, name = "ForgeBlockStatesLoader", version = "1.0")
+@Mod.EventBusSubscriber
 public class ForgeBlockStatesLoaderDebug {
     public static final String MODID = "forgeblockstatesloader";
     public static final String ASSETS = "forgeblockstatesloader:";
 
-    //public static final Block blockCustom = new CustomMappedBlock();
-    public static final String nameCustomWall = "custom_wall";
-    public static final BlockWall blockCustomWall = new BlockWall(Blocks.COBBLESTONE);
-    public static final ItemMultiTexture itemCustomWall = (ItemMultiTexture)new ItemMultiTexture(blockCustomWall, blockCustomWall, new Function<ItemStack, String>()
+    @ObjectHolder(MODID)
+    public static class BLOCKS {
+        public static final BlockWall custom_wall = null;
+    }
+
+    @ObjectHolder(MODID)
+    public static class ITEMS {
+        public static final ItemMultiTexture custom_wall = null;
+    }
+
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        @Override
-        public String apply(ItemStack stack)
-        {
-            return BlockWall.EnumType.byMetadata(stack.getMetadata()).getUnlocalizedName();
-        }
-    }).setRegistryName(nameCustomWall);
+        event.getRegistry().registerAll(
+            new BlockWall(Blocks.COBBLESTONE).setUnlocalizedName(MODID + ".customWall").setRegistryName(MODID, "custom_wall")
+        );
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event)
+    {
+        event.getRegistry().registerAll(
+            new ItemMultiTexture(BLOCKS.custom_wall, BLOCKS.custom_wall, new Function<ItemStack, String>()
+            {
+                @Override
+                public String apply(ItemStack stack)
+                {
+                    return BlockWall.EnumType.byMetadata(stack.getMetadata()).getUnlocalizedName();
+                }
+            }).setRegistryName(BLOCKS.custom_wall.getRegistryName())
+        );
+    }
+
+    //public static final Block blockCustom = new CustomMappedBlock();
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         //blockCustom.setUnlocalizedName(MODID + ".customBlock").setRegistryName("customBlock");
         //GameRegistry.registerBlock(blockCustom);
-
-        blockCustomWall.setUnlocalizedName(MODID + ".customWall").setRegistryName(nameCustomWall);
-        GameRegistry.register(blockCustomWall);
-        GameRegistry.register(itemCustomWall);
-        GameData.getBlockItemMap().put(blockCustomWall, itemCustomWall);
 
         if (event.getSide() == Side.CLIENT)
             preInitClient(event);
@@ -67,7 +82,7 @@ public class ForgeBlockStatesLoaderDebug {
     {
         //ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
 
-        ModelLoader.setCustomStateMapper(blockCustomWall, new IStateMapper()
+        ModelLoader.setCustomStateMapper(BLOCKS.custom_wall, new IStateMapper()
         {
             StateMap stateMap = new StateMap.Builder().withName(BlockWall.VARIANT).withSuffix("_wall").build();
             @Override
@@ -85,9 +100,8 @@ public class ForgeBlockStatesLoaderDebug {
                 return newMap;
             }
         });
-        Item customWallItem = Item.getItemFromBlock(blockCustomWall);
-        ModelLoader.setCustomModelResourceLocation(customWallItem, 0, new ModelResourceLocation(ASSETS + "cobblestone_wall", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(customWallItem, 1, new ModelResourceLocation(ASSETS + "mossy_cobblestone_wall", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEMS.custom_wall, 0, new ModelResourceLocation(ASSETS + "cobblestone_wall", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEMS.custom_wall, 1, new ModelResourceLocation(ASSETS + "mossy_cobblestone_wall", "inventory"));
     }
 
     // this block is never actually used, it's only needed for the error message on load to see the variant it maps to
