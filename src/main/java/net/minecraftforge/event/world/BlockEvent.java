@@ -38,6 +38,8 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 import com.google.common.collect.ImmutableList;
 
+import javax.annotation.Nullable;
+
 public class BlockEvent extends Event
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
@@ -176,13 +178,13 @@ public class BlockEvent extends Event
         @Deprecated
         public PlaceEvent(BlockSnapshot blockSnapshot, IBlockState placedAgainst, EntityPlayer player)
         {
-            this(blockSnapshot, placedAgainst, player, EnumHand.MAIN_HAND);
+            this(blockSnapshot, placedAgainst, player, null);
         }
 
-        public PlaceEvent(BlockSnapshot blockSnapshot, IBlockState placedAgainst, EntityPlayer player, EnumHand hand) {
+        public PlaceEvent(BlockSnapshot blockSnapshot, IBlockState placedAgainst, EntityPlayer player, @Nullable EnumHand hand) {
             super(blockSnapshot.getWorld(), blockSnapshot.getPos(), blockSnapshot.getCurrentBlock());
             this.player = player;
-            this.itemInHand = player.getHeldItem(hand);
+            this.itemInHand = player.getHeldItem(hand != null ? hand : EnumHand.MAIN_HAND);
             this.blockSnapshot = blockSnapshot;
             this.placedBlock = blockSnapshot.getCurrentBlock();
             this.placedAgainst = placedAgainst;
@@ -194,10 +196,12 @@ public class BlockEvent extends Event
         }
 
         public EntityPlayer getPlayer() { return player; }
+        @Nullable
         public ItemStack getItemInHand() { return itemInHand; }
         public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
         public IBlockState getPlacedBlock() { return placedBlock; }
         public IBlockState getPlacedAgainst() { return placedAgainst; }
+        @Nullable
         public EnumHand getHand() { return hand; }
     }
 
@@ -216,10 +220,10 @@ public class BlockEvent extends Event
         @Deprecated
         public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, IBlockState placedAgainst, EntityPlayer player)
         {
-            this(blockSnapshots, placedAgainst, player, EnumHand.MAIN_HAND);
+            this(blockSnapshots, placedAgainst, player, null);
         }
 
-        public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, IBlockState placedAgainst, EntityPlayer player, EnumHand hand) {
+        public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, IBlockState placedAgainst, EntityPlayer player, @Nullable EnumHand hand) {
             super(blockSnapshots.get(0), placedAgainst, player, hand);
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG)
