@@ -108,6 +108,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean disableVersionCheck = false;
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
+    public static boolean forgeCloudsEnabled = true;
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
 
@@ -282,6 +283,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
         prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
         replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "forgeCloudsEnabled", true,
+                "Enable uploading cloud geometry to the GPU for faster rendering.");
+        prop.setLanguageKey("forge.configgui.forgeCloudsEnabled");
+        forgeCloudsEnabled = prop.getBoolean(true);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder,
