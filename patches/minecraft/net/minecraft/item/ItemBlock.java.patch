@@ -29,7 +29,7 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
-@@ -159,4 +151,32 @@
+@@ -159,4 +151,38 @@
      {
          return this.field_150939_a;
      }
@@ -60,5 +60,11 @@
 +    public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
 +    {
 +        field_150939_a.addInformation(stack, playerIn, tooltip, advanced);
++    }
++
++    @Override
++    public boolean func_77614_k()
++    {
++        return super.func_77614_k() || field_150939_a.getHasSubtypes();
 +    }
  }
