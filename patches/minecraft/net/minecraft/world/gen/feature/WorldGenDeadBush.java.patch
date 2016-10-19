@@ -1,20 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
-@@ -19,10 +19,15 @@
+@@ -11,7 +11,7 @@
+ {
+     public boolean func_180709_b(World p_180709_1_, Random p_180709_2_, BlockPos p_180709_3_)
      {
-         Block block;
- 
--        while (((block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_)).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && p_76484_4_ > 0)
-+        do
+-        for (IBlockState iblockstate = p_180709_1_.func_180495_p(p_180709_3_); (iblockstate.func_185904_a() == Material.field_151579_a || iblockstate.func_185904_a() == Material.field_151584_j) && p_180709_3_.func_177956_o() > 0; iblockstate = p_180709_1_.func_180495_p(p_180709_3_))
++        for (IBlockState iblockstate = p_180709_1_.func_180495_p(p_180709_3_); (iblockstate.func_177230_c().isAir(iblockstate, p_180709_1_, p_180709_3_) || iblockstate.func_177230_c().isLeaves(iblockstate, p_180709_1_, p_180709_3_)) && p_180709_3_.func_177956_o() > 0; iblockstate = p_180709_1_.func_180495_p(p_180709_3_))
          {
-+            block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_);
-+            if (!(block.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_) || block.isAir(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_)))
-+            {
-+                break;
-+            }
-             --p_76484_4_;
--        }
-+        } while (p_76484_4_ > 0);
- 
-         for (int l = 0; l < 4; ++l)
-         {
+             p_180709_3_ = p_180709_3_.func_177977_b();
+         }

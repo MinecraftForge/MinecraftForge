@@ -1,109 +1,107 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRailBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRailBase.java
-@@ -5,6 +5,7 @@
- import java.util.Random;
- import net.minecraft.block.material.Material;
- import net.minecraft.creativetab.CreativeTabs;
-+import net.minecraft.entity.item.EntityMinecart;
- import net.minecraft.init.Blocks;
- import net.minecraft.util.AxisAlignedBB;
- import net.minecraft.util.MovingObjectPosition;
-@@ -25,7 +26,7 @@
- 
-     public static final boolean func_150051_a(Block p_150051_0_)
+@@ -32,7 +32,7 @@
+     public static boolean func_176563_d(IBlockState p_176563_0_)
      {
--        return p_150051_0_ == Blocks.field_150448_aq || p_150051_0_ == Blocks.field_150318_D || p_150051_0_ == Blocks.field_150319_E || p_150051_0_ == Blocks.field_150408_cc;
-+        return p_150051_0_ instanceof BlockRailBase;
+         Block block = p_176563_0_.func_177230_c();
+-        return block == Blocks.field_150448_aq || block == Blocks.field_150318_D || block == Blocks.field_150319_E || block == Blocks.field_150408_cc;
++        return block instanceof BlockRailBase;
      }
  
      protected BlockRailBase(boolean p_i45389_1_)
-@@ -78,7 +79,7 @@
+@@ -66,7 +66,7 @@
  
-     public int func_149645_b()
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return 9;
-+        return renderType;
+-        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q();
++        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).isSideSolid(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP);
      }
  
-     public int func_149745_a(Random p_149745_1_)
-@@ -193,6 +194,111 @@
-         }
-     }
+     public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
+@@ -89,24 +89,24 @@
+             BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_189540_1_.func_177229_b(this.func_176560_l());
+             boolean flag = false;
+ 
+-            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).func_185896_q())
++            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).isSideSolid(p_189540_2_, p_189540_3_.func_177977_b(), EnumFacing.UP))
+             {
+                 flag = true;
+             }
+ 
+-            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_EAST && !p_189540_2_.func_180495_p(p_189540_3_.func_177974_f()).func_185896_q())
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_EAST && !p_189540_2_.func_180495_p(p_189540_3_.func_177974_f()).isSideSolid(p_189540_2_, p_189540_3_.func_177974_f(), EnumFacing.UP))
+             {
+                 flag = true;
+             }
+-            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_WEST && !p_189540_2_.func_180495_p(p_189540_3_.func_177976_e()).func_185896_q())
++            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_WEST && !p_189540_2_.func_180495_p(p_189540_3_.func_177976_e()).isSideSolid(p_189540_2_, p_189540_3_.func_177976_e(), EnumFacing.UP))
+             {
+                 flag = true;
+             }
+-            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_NORTH && !p_189540_2_.func_180495_p(p_189540_3_.func_177978_c()).func_185896_q())
++            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_NORTH && !p_189540_2_.func_180495_p(p_189540_3_.func_177978_c()).isSideSolid(p_189540_2_, p_189540_3_.func_177978_c(), EnumFacing.UP))
+             {
+                 flag = true;
+             }
+-            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_SOUTH && !p_189540_2_.func_180495_p(p_189540_3_.func_177968_d()).func_185896_q())
++            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_SOUTH && !p_189540_2_.func_180495_p(p_189540_3_.func_177968_d()).isSideSolid(p_189540_2_, p_189540_3_.func_177968_d(), EnumFacing.UP))
+             {
+                 flag = true;
+             }
+@@ -161,6 +161,98 @@
+ 
+     public abstract IProperty<BlockRailBase.EnumRailDirection> func_176560_l();
  
 +    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * Return true if the rail can make corners.
 +     * Used by placement logic.
 +     * @param world The world.
-+     * @param x The rail X coordinate.
-+     * @param y The rail Y coordinate.
-+     * @param z The rail Z coordinate.
++     * @param pos Block's position in world
 +     * @return True if the rail can make corners.
 +     */
-+    public boolean isFlexibleRail(IBlockAccess world, int y, int x, int z)
++    public boolean isFlexibleRail(IBlockAccess world, BlockPos pos)
 +    {
-+        return !func_150050_e();
++        return !this.field_150053_a;
 +    }
 +
 +    /**
 +     * Returns true if the rail can make up and down slopes.
 +     * Used by placement logic.
 +     * @param world The world.
-+     * @param x The rail X coordinate.
-+     * @param y The rail Y coordinate.
-+     * @param z The rail Z coordinate.
++     * @param pos Block's position in world
 +     * @return True if the rail can make slopes.
 +     */
-+    public boolean canMakeSlopes(IBlockAccess world, int x, int y, int z)
++    public boolean canMakeSlopes(IBlockAccess world, BlockPos pos)
 +    {
 +        return true;
 +    }
 +
 +    /**
-+     * Return the rail's metadata (without the power bit if the rail uses one).
-+     * Can be used to make the cart think the rail something other than it is,
++     * Return the rail's direction.
++     * Can be used to make the cart think the rail is a different shape,
 +     * for example when making diamond junctions or switches.
 +     * The cart parameter will often be null unless it it called from EntityMinecart.
-+     * 
-+     * Valid rail metadata is defined as follows:
-+     * 0x0: flat track going North-South
-+     * 0x1: flat track going West-East
-+     * 0x2: track ascending to the East
-+     * 0x3: track ascending to the West
-+     * 0x4: track ascending to the North
-+     * 0x5: track ascending to the South
-+     * 0x6: WestNorth corner (connecting East and South)
-+     * 0x7: EastNorth corner (connecting West and South)
-+     * 0x8: EastSouth corner (connecting West and North)
-+     * 0x9: WestSouth corner (connecting East and North)
-+     * 
++     *
 +     * @param world The world.
++     * @param pos Block's position in world
++     * @param state The BlockState
 +     * @param cart The cart asking for the metadata, null if it is not called by EntityMinecart.
-+     * @param y The rail X coordinate.
-+     * @param x The rail Y coordinate.
-+     * @param z The rail Z coordinate.
-+     * @return The metadata.
++     * @return The direction.
 +     */
-+    public int getBasicRailMetadata(IBlockAccess world, EntityMinecart cart, int x, int y, int z)
++    public EnumRailDirection getRailDirection(IBlockAccess world, BlockPos pos, IBlockState state, @javax.annotation.Nullable net.minecraft.entity.item.EntityMinecart cart)
 +    {
-+        int meta = world.func_72805_g(x, y, z);
-+        if(func_150050_e())
-+        {
-+            meta = meta & 7;
-+        }
-+        return meta;
++        return state.func_177229_b(func_176560_l());
 +    }
 +
 +    /**
 +     * Returns the max speed of the rail at the specified position.
 +     * @param world The world.
 +     * @param cart The cart on the rail, may be null.
-+     * @param x The rail X coordinate.
-+     * @param y The rail Y coordinate.
-+     * @param z The rail Z coordinate.
++     * @param pos Block's position in world
 +     * @return The max speed of the current rail.
 +     */
-+    public float getRailMaxSpeed(World world, EntityMinecart cart, int y, int x, int z)
++    public float getRailMaxSpeed(World world, net.minecraft.entity.item.EntityMinecart cart, BlockPos pos)
 +    {
 +        return 0.4f;
 +    }
@@ -113,96 +111,95 @@
 +     * It is called once per update tick that the minecart is on the rail.
 +     * @param world The world.
 +     * @param cart The cart on the rail.
-+     * @param y The rail X coordinate.
-+     * @param x The rail Y coordinate.
-+     * @param z The rail Z coordinate.
++     * @param pos Block's position in world
 +     */
-+    public void onMinecartPass(World world, EntityMinecart cart, int y, int x, int z)
++    public void onMinecartPass(World world, net.minecraft.entity.item.EntityMinecart cart, BlockPos pos)
 +    {
-+    }    
-+    
-+    /**
-+     * Forge: Moved render type to a field and a setter.
-+     * This allows for a mod to change the render type
-+     * for vanilla rails, and any mod rails that extend
-+     * this class.
-+     */
-+    private int renderType = 9;
-+    
-+    public void setRenderType(int value)
-+    {
-+        renderType = value;
 +    }
++
++    /**
++     * Rotate the block. For vanilla blocks this rotates around the axis passed in (generally, it should be the "face" that was hit).
++     * Note: for mod blocks, this is up to the block and modder to decide. It is not mandated that it be a rotation around the
++     * face, but could be a rotation to orient *to* that face, or a visiting of possible rotations.
++     * The method should return true if the rotation was successful though.
++     *
++     * @param world The world
++     * @param pos Block position in world
++     * @param axis The axis to rotate around
++     * @return True if the rotation was successful, False if the rotation failed, or is not possible
++     */
++    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
++    {
++        IBlockState state = world.func_180495_p(pos);
++        for (IProperty prop : state.func_177228_b().keySet())
++        {
++            if (prop.func_177701_a().equals("shape"))
++            {
++                world.func_175656_a(pos, state.func_177231_a(prop));
++                return true;
++            }
++        }
++        return false;
++    }
++
 +    /* ======================================== FORGE END =====================================*/
 +
-     public class Rail
+     public static enum EnumRailDirection implements IStringSerializable
      {
-         private World field_150660_b;
-@@ -202,6 +308,7 @@
+         NORTH_SOUTH(0, "north_south"),
+@@ -231,6 +323,7 @@
+         private IBlockState field_180366_e;
          private final boolean field_150656_f;
-         private List field_150657_g = new ArrayList();
-         private static final String __OBFID = "CL_00000196";
+         private final List<BlockPos> field_150657_g = Lists.<BlockPos>newArrayList();
 +        private final boolean canMakeSlopes;
  
-         public Rail(World p_i45388_2_, int p_i45388_3_, int p_i45388_4_, int p_i45388_5_)
+         public Rail(World p_i45739_2_, BlockPos p_i45739_3_, IBlockState p_i45739_4_)
          {
-@@ -209,19 +316,10 @@
-             this.field_150661_c = p_i45388_3_;
-             this.field_150658_d = p_i45388_4_;
-             this.field_150659_e = p_i45388_5_;
--            Block block = p_i45388_2_.func_147439_a(p_i45388_3_, p_i45388_4_, p_i45388_5_);
--            int l = p_i45388_2_.func_72805_g(p_i45388_3_, p_i45388_4_, p_i45388_5_);
--
--            if (((BlockRailBase)block).field_150053_a)
--            {
--                this.field_150656_f = true;
--                l &= -9;
--            }
--            else
--            {
--                this.field_150656_f = false;
--            }
--
-+            BlockRailBase block = (BlockRailBase)p_i45388_2_.func_147439_a(p_i45388_3_, p_i45388_4_, p_i45388_5_);
-+            int l = block.getBasicRailMetadata(p_i45388_2_, null, p_i45388_3_, p_i45388_4_, p_i45388_5_);
-+            this.field_150656_f = !block.isFlexibleRail(p_i45388_2_, p_i45388_3_, p_i45388_4_, p_i45388_5_);
-+            canMakeSlopes = block.canMakeSlopes(p_i45388_2_, p_i45388_3_, p_i45388_4_, p_i45388_5_);
-             this.func_150648_a(l);
+@@ -238,8 +331,9 @@
+             this.field_180367_c = p_i45739_3_;
+             this.field_180366_e = p_i45739_4_;
+             this.field_180365_d = (BlockRailBase)p_i45739_4_.func_177230_c();
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_i45739_4_.func_177229_b(this.field_180365_d.func_176560_l());
+-            this.field_150656_f = this.field_180365_d.field_150053_a;
++            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = field_180365_d.getRailDirection(p_i45739_2_, p_i45739_3_, p_i45739_4_, null);
++            this.field_150656_f = !this.field_180365_d.isFlexibleRail(p_i45739_2_, p_i45739_3_);
++            this.canMakeSlopes = this.field_180365_d.canMakeSlopes(p_i45739_2_, p_i45739_3_);
+             this.func_180360_a(blockrailbase$enumraildirection);
          }
  
-@@ -412,7 +510,7 @@
+@@ -431,7 +525,7 @@
                  }
              }
  
--            if (b0 == 0)
-+            if (b0 == 0 && canMakeSlopes)
+-            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH)
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH && canMakeSlopes)
              {
-                 if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c, this.field_150658_d + 1, this.field_150659_e - 1))
+                 if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -425,7 +523,7 @@
+@@ -444,7 +538,7 @@
                  }
              }
  
--            if (b0 == 1)
-+            if (b0 == 1 && canMakeSlopes)
+-            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST)
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST && canMakeSlopes)
              {
-                 if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c + 1, this.field_150658_d + 1, this.field_150659_e))
+                 if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {
-@@ -570,7 +668,7 @@
+@@ -587,7 +681,7 @@
                  }
              }
  
--            if (b0 == 0)
-+            if (b0 == 0 && canMakeSlopes)
+-            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH)
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH && canMakeSlopes)
              {
-                 if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c, this.field_150658_d + 1, this.field_150659_e - 1))
+                 if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -583,7 +681,7 @@
+@@ -600,7 +694,7 @@
                  }
              }
  
--            if (b0 == 1)
-+            if (b0 == 1 && canMakeSlopes)
+-            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST)
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST && canMakeSlopes)
              {
-                 if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c + 1, this.field_150658_d + 1, this.field_150659_e))
+                 if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {

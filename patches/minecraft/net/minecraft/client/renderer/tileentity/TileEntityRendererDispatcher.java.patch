@@ -1,0 +1,82 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
+@@ -113,11 +113,14 @@
+         if (p_180546_1_.func_145835_a(this.field_147560_j, this.field_147561_k, this.field_147558_l) < p_180546_1_.func_145833_n())
+         {
+             RenderHelper.func_74519_b();
++            if(!drawingBatch || !p_180546_1_.hasFastRenderer())
++            {
+             int i = this.field_147550_f.func_175626_b(p_180546_1_.func_174877_v(), 0);
+             int j = i % 65536;
+             int k = i / 65536;
+             OpenGlHelper.func_77475_a(OpenGlHelper.field_77476_b, (float)j, (float)k);
+             GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
++            }
+             BlockPos blockpos = p_180546_1_.func_174877_v();
+             this.func_178469_a(p_180546_1_, (double)blockpos.func_177958_n() - field_147554_b, (double)blockpos.func_177956_o() - field_147555_c, (double)blockpos.func_177952_p() - field_147552_d, p_180546_2_, p_180546_3_);
+         }
+@@ -136,6 +139,11 @@
+         {
+             try
+             {
++                if(drawingBatch && p_178469_1_.hasFastRenderer())
++                {
++                    tileentityspecialrenderer.renderTileEntityFast(p_178469_1_, p_178469_2_, p_178469_4_, p_178469_6_, p_178469_8_, p_178469_9_, batchBuffer.func_178180_c());
++                }
++                else
+                 tileentityspecialrenderer.func_180535_a(p_178469_1_, p_178469_2_, p_178469_4_, p_178469_6_, p_178469_8_, p_178469_9_);
+             }
+             catch (Throwable throwable)
+@@ -162,4 +170,52 @@
+     {
+         return this.field_147557_n;
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Buffer used for batched TESRs
++     */
++    private net.minecraft.client.renderer.Tessellator batchBuffer = new net.minecraft.client.renderer.Tessellator(0x200000);
++    private boolean drawingBatch = false;
++
++    /**
++     * Prepare for a batched TESR rendering.
++     * You probably shouldn't call this manually.
++     */
++    public void preDrawBatch()
++    {
++        batchBuffer.func_178180_c().func_181668_a(org.lwjgl.opengl.GL11.GL_QUADS, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176600_a);
++        drawingBatch = true;
++    }
++
++    /**
++     * Render all TESRs batched so far.
++     * You probably shouldn't call this manually.
++     */
++    public void drawBatch(int pass)
++    {
++        field_147553_e.func_110577_a(net.minecraft.client.renderer.texture.TextureMap.field_110575_b);
++        net.minecraft.client.renderer.RenderHelper.func_74518_a();
++        GlStateManager.func_179112_b(org.lwjgl.opengl.GL11.GL_SRC_ALPHA, org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA);
++        GlStateManager.func_179147_l();
++        GlStateManager.func_179129_p();
++
++        if (net.minecraft.client.Minecraft.func_71379_u())
++        {
++            GlStateManager.func_179103_j(org.lwjgl.opengl.GL11.GL_SMOOTH);
++        }
++        else
++        {
++            GlStateManager.func_179103_j(org.lwjgl.opengl.GL11.GL_FLAT);
++        }
++
++        if(pass > 0)
++        {
++            batchBuffer.func_178180_c().func_181674_a((float)field_147554_b, (float)field_147555_c, (float)field_147552_d);
++        }
++        batchBuffer.func_78381_a();
++
++        net.minecraft.client.renderer.RenderHelper.func_74519_b();
++        drawingBatch = false;
++    }
+ }

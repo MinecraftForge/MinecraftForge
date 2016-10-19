@@ -1,49 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCactus.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCactus.java
-@@ -11,9 +11,13 @@
- import net.minecraft.util.AxisAlignedBB;
- import net.minecraft.util.DamageSource;
- import net.minecraft.util.IIcon;
-+import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.EnumPlantType;
-+import net.minecraftforge.common.util.ForgeDirection;
-+import net.minecraftforge.common.IPlantable;
+@@ -18,7 +18,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class BlockCactus extends Block
-+public class BlockCactus extends Block implements IPlantable
++public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
  {
-     @SideOnly(Side.CLIENT)
-     private IIcon field_150041_a;
-@@ -125,7 +129,7 @@
-         else
-         {
-             Block block = p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_);
--            return block == Blocks.field_150434_aF || block == Blocks.field_150354_m;
-+            return block.canSustainPlant(p_149718_1_, p_149718_2_, p_149718_3_ - 1, p_149718_4_, ForgeDirection.UP, this);
+     public static final PropertyInteger field_176587_a = PropertyInteger.func_177719_a("age", 0, 15);
+     protected static final AxisAlignedBB field_185593_b = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 0.9375D, 0.9375D);
+@@ -110,8 +110,8 @@
+             }
          }
+ 
+-        Block block = p_176586_1_.func_180495_p(p_176586_2_.func_177977_b()).func_177230_c();
+-        return block == Blocks.field_150434_aF || block == Blocks.field_150354_m && !p_176586_1_.func_180495_p(p_176586_2_.func_177984_a()).func_185904_a().func_76224_d();
++        IBlockState state = p_176586_1_.func_180495_p(p_176586_2_.func_177977_b());
++        return state.func_177230_c().canSustainPlant(state, p_176586_1_, p_176586_2_.func_177977_b(), EnumFacing.UP, this) && !p_176586_1_.func_180495_p(p_176586_2_.func_177984_a()).func_185904_a().func_76224_d();
      }
  
-@@ -141,4 +145,22 @@
-         this.field_150041_a = p_149651_1_.func_94245_a(this.func_149641_N() + "_top");
-         this.field_150040_b = p_149651_1_.func_94245_a(this.func_149641_N() + "_bottom");
+     public void func_180634_a(World p_180634_1_, BlockPos p_180634_2_, IBlockState p_180634_3_, Entity p_180634_4_)
+@@ -135,6 +135,18 @@
+         return ((Integer)p_176201_1_.func_177229_b(field_176587_a)).intValue();
      }
-+
+ 
 +    @Override
-+    public EnumPlantType getPlantType(IBlockAccess world, int x, int y, int z)
++    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
 +    {
-+        return EnumPlantType.Desert;
++        return net.minecraftforge.common.EnumPlantType.Desert;
 +    }
 +
 +    @Override
-+    public Block getPlant(IBlockAccess world, int x, int y, int z)
++    public IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
 +    {
-+        return this;
++        return func_176223_P();
 +    }
 +
-+    @Override
-+    public int getPlantMetadata(IBlockAccess world, int x, int y, int z)
-+    {
-+        return -1;
-+    }
- }
+     protected BlockStateContainer func_180661_e()
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176587_a});

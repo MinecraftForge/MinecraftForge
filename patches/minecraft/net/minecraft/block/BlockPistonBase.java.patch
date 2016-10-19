@@ -1,65 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -11,6 +11,7 @@
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.init.Blocks;
- import net.minecraft.item.ItemStack;
-+import net.minecraft.server.management.PlayerManager;
- import net.minecraft.tileentity.TileEntity;
- import net.minecraft.tileentity.TileEntityPiston;
- import net.minecraft.util.AxisAlignedBB;
-@@ -360,7 +361,8 @@
-                 return false;
-             }
- 
--            return !(p_150080_0_ instanceof ITileEntityProvider);
-+            return !(p_150080_1_.func_147439_a(p_150080_2_, p_150080_3_, p_150080_4_).hasTileEntity(p_150080_1_.func_72805_g(p_150080_2_, p_150080_3_, p_150080_4_)));
-+            
-         }
-     }
- 
-@@ -375,14 +377,14 @@
-         {
-             if (l1 < 13)
-             {
--                if (j1 <= 0 || j1 >= 255)
-+                if (j1 <= 0 || j1 >= p_150077_0_.func_72800_K())
-                 {
-                     return false;
-                 }
- 
-                 Block block = p_150077_0_.func_147439_a(i1, j1, k1);
- 
--                if (block.func_149688_o() != Material.field_151579_a)
-+                if (!block.isAir(p_150077_0_, i1, j1, k1))
-                 {
-                     if (!func_150080_a(block, p_150077_0_, i1, j1, k1, true))
-                     {
-@@ -420,14 +422,14 @@
-         {
-             if (l1 < 13)
-             {
--                if (j1 <= 0 || j1 >= 255)
-+                if (j1 <= 0 || j1 >= p_150079_1_.func_72800_K())
-                 {
-                     return false;
-                 }
- 
-                 Block block = p_150079_1_.func_147439_a(i1, j1, k1);
- 
--                if (block.func_149688_o() != Material.field_151579_a)
-+                if (!block.isAir(p_150079_1_, i1, j1, k1))
-                 {
-                     if (!func_150080_a(block, p_150079_1_, i1, j1, k1, true))
-                     {
-@@ -448,7 +450,9 @@
-                         continue;
+@@ -236,7 +236,7 @@
                      }
- 
--                    block.func_149697_b(p_150079_1_, i1, j1, k1, p_150079_1_.func_72805_g(i1, j1, k1), 0);
-+                    //With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
-+                    float chance = block instanceof BlockSnow ? -1.0f : 1.0f;
-+                    block.func_149690_a(p_150079_1_, i1, j1, k1, p_150079_1_.func_72805_g(i1, j1, k1), chance, 0);
-                     p_150079_1_.func_147468_f(i1, j1, k1);
                  }
+ 
+-                if (!flag1 && iblockstate.func_185904_a() != Material.field_151579_a && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
++                if (!flag1 && !iblockstate.func_177230_c().isAir(iblockstate, p_189539_2_, p_189539_3_) && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
+                 {
+                     this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
+                 }
+@@ -322,7 +322,7 @@
+                     return false;
+                 }
+ 
+-                return !block.func_149716_u();
++                return !block.hasTileEntity(p_185646_0_);
              }
+             else
+             {
+@@ -368,7 +368,9 @@
+             {
+                 BlockPos blockpos1 = (BlockPos)list2.get(j);
+                 IBlockState iblockstate = p_176319_1_.func_180495_p(blockpos1);
+-                iblockstate.func_177230_c().func_176226_b(p_176319_1_, blockpos1, iblockstate, 0);
++                // Forge: With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
++                float chance = iblockstate.func_177230_c() instanceof BlockSnow ? -1.0f : 1.0f;
++                iblockstate.func_177230_c().func_180653_a(p_176319_1_, blockpos1, iblockstate, chance, 0);
+                 p_176319_1_.func_175698_g(blockpos1);
+                 --k;
+                 aiblockstate[k] = iblockstate;

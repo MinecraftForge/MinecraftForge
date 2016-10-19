@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client;
 
 import java.util.List;
@@ -9,20 +28,21 @@ import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
-import cpw.mods.fml.client.FMLClientHandler;
-import net.minecraft.util.EnumChatFormatting;
-import static net.minecraft.util.EnumChatFormatting.*;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
+import static net.minecraft.util.text.TextFormatting.*;
 
 /**
  * The class that handles client-side chat commands. You should register any
  * commands that you want handled on the client with this command handler.
- * 
+ *
  * If there is a command with the same name registered both on the server and
  * client, the client takes precedence!
- * 
+ *
  */
 public class ClientCommandHandler extends CommandHandler
 {
@@ -48,7 +68,7 @@ public class ClientCommandHandler extends CommandHandler
         String[] args = new String[temp.length - 1];
         String commandName = temp[0];
         System.arraycopy(temp, 1, args, 0, args.length);
-        ICommand icommand = (ICommand) getCommands().get(commandName);
+        ICommand icommand = getCommands().get(commandName);
 
         try
         {
@@ -57,19 +77,19 @@ public class ClientCommandHandler extends CommandHandler
                 return 0;
             }
 
-            if (icommand.canCommandSenderUseCommand(sender))
+            if (icommand.checkPermission(this.getServer(), sender))
             {
                 CommandEvent event = new CommandEvent(icommand, sender, args);
                 if (MinecraftForge.EVENT_BUS.post(event))
                 {
-                    if (event.exception != null)
+                    if (event.getException() != null)
                     {
-                        throw event.exception;
+                        throw event.getException();
                     }
                     return 0;
                 }
 
-                icommand.processCommand(sender, args);
+                this.tryExecute(sender, args, icommand, message);
                 return 1;
             }
             else
@@ -79,11 +99,11 @@ public class ClientCommandHandler extends CommandHandler
         }
         catch (WrongUsageException wue)
         {
-            sender.addChatMessage(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorOjbects())));
+            sender.addChatMessage(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorObjects())));
         }
         catch (CommandException ce)
         {
-            sender.addChatMessage(format(RED, ce.getMessage(), ce.getErrorOjbects()));
+            sender.addChatMessage(format(RED, ce.getMessage(), ce.getErrorObjects()));
         }
         catch (Throwable t)
         {
@@ -95,14 +115,14 @@ public class ClientCommandHandler extends CommandHandler
     }
 
     //Couple of helpers because the mcp names are stupid and long...
-    private ChatComponentTranslation format(EnumChatFormatting color, String str, Object... args)
+    private TextComponentTranslation format(TextFormatting color, String str, Object... args)
     {
-        ChatComponentTranslation ret = new ChatComponentTranslation(str, args);
-        ret.getChatStyle().setColor(color);
+        TextComponentTranslation ret = new TextComponentTranslation(str, args);
+        ret.getStyle().setColor(color);
         return ret;
     }
 
-    public void autoComplete(String leftOfCursor, String full)
+    public void autoComplete(String leftOfCursor)
     {
         latestAutoComplete = null;
 
@@ -113,8 +133,7 @@ public class ClientCommandHandler extends CommandHandler
             Minecraft mc = FMLClientHandler.instance().getClient();
             if (mc.currentScreen instanceof GuiChat)
             {
-                @SuppressWarnings("unchecked")
-                List<String> commands = getPossibleCommands(mc.thePlayer, leftOfCursor);
+                List<String> commands = getTabCompletionOptions(mc.thePlayer, leftOfCursor, mc.thePlayer.getPosition());
                 if (commands != null && !commands.isEmpty())
                 {
                     if (leftOfCursor.indexOf(' ') == -1)
@@ -136,5 +155,10 @@ public class ClientCommandHandler extends CommandHandler
                 }
             }
         }
+    }
+
+    @Override
+    protected MinecraftServer getServer() {
+        return Minecraft.getMinecraft().getIntegratedServer();
     }
 }

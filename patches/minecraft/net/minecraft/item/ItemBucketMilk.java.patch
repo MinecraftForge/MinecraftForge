@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucketMilk.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
-@@ -24,7 +24,7 @@
+@@ -29,7 +29,7 @@
  
          if (!p_77654_2_.field_72995_K)
          {
@@ -8,4 +8,14 @@
 +            p_77654_3_.curePotionEffects(p_77654_1_);
          }
  
-         return p_77654_1_.field_77994_a <= 0 ? new ItemStack(Items.field_151133_ar) : p_77654_1_;
+         if (p_77654_3_ instanceof EntityPlayer)
+@@ -55,4 +55,9 @@
+         p_77659_3_.func_184598_c(p_77659_4_);
+         return new ActionResult(EnumActionResult.SUCCESS, p_77659_1_);
+     }
++
++    @Override
++    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, net.minecraft.nbt.NBTTagCompound nbt) {
++        return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
++    }
+ }

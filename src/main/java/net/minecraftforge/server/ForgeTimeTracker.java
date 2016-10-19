@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.server;
 
 import java.lang.ref.WeakReference;
@@ -18,12 +37,14 @@ public class ForgeTimeTracker {
     public static long tileEntityTrackingTime;
     
     private Map<TileEntity,int[]> tileEntityTimings;
-    private Map<Entity,int[]> entityTimings;
+    private WeakReference<TileEntity> tile;
     
     private static final ForgeTimeTracker INSTANCE = new ForgeTimeTracker();
 
-    private WeakReference<TileEntity> tile;
+    /* not implemented
     private WeakReference<Entity> entity;
+    private Map<Entity,int[]> entityTimings;
+    */
     
     private long timing;
     
@@ -32,7 +53,7 @@ public class ForgeTimeTracker {
         MapMaker mm = new MapMaker();
         mm.weakKeys();
         tileEntityTimings = mm.makeMap();
-        entityTimings = mm.makeMap();
+        //entityTimings = mm.makeMap();
     }
     
 
@@ -79,7 +100,7 @@ public class ForgeTimeTracker {
     
     private ImmutableMap<TileEntity, int[]> buildImmutableTileEntityTimingMap()
     {
-        Builder<TileEntity, int[]> builder = ImmutableMap.<TileEntity,int[]>builder();
+        Builder<TileEntity, int[]> builder = ImmutableMap.builder();
         for (Entry<TileEntity, int[]> entry : tileEntityTimings.entrySet())
         {
             builder.put(entry.getKey(), Arrays.copyOfRange(entry.getValue(), 0, 100));

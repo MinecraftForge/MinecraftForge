@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/world/border/WorldBorder.java
++++ ../src-work/minecraft/net/minecraft/world/border/WorldBorder.java
+@@ -277,4 +277,9 @@
+             iborderlistener.func_177690_b(this, p_177747_1_);
+         }
+     }
++
++    public void removeListener(IBorderListener listener)
++    {
++        this.field_177758_a.remove(listener);
++    }
+ }

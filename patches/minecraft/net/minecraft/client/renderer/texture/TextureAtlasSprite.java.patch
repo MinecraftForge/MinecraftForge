@@ -1,37 +1,40 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
-@@ -8,12 +8,14 @@
- import java.util.Iterator;
- import java.util.List;
- import java.util.concurrent.Callable;
-+import net.minecraft.client.resources.IResourceManager;
- import net.minecraft.client.resources.data.AnimationFrame;
- import net.minecraft.client.resources.data.AnimationMetadataSection;
- import net.minecraft.crash.CrashReport;
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.util.IIcon;
- import net.minecraft.util.ReportedException;
-+import net.minecraft.util.ResourceLocation;
+@@ -50,12 +50,10 @@
+         this.field_110975_c = p_110971_3_;
+         this.field_110974_d = p_110971_4_;
+         this.field_130222_e = p_110971_5_;
+-        float f = (float)(0.009999999776482582D / (double)p_110971_1_);
+-        float f1 = (float)(0.009999999776482582D / (double)p_110971_2_);
+-        this.field_110979_l = (float)p_110971_3_ / (float)((double)p_110971_1_) + f;
+-        this.field_110980_m = (float)(p_110971_3_ + this.field_130223_c) / (float)((double)p_110971_1_) - f;
+-        this.field_110977_n = (float)p_110971_4_ / (float)p_110971_2_ + f1;
+-        this.field_110978_o = (float)(p_110971_4_ + this.field_130224_d) / (float)p_110971_2_ - f1;
++        this.field_110979_l = (float)p_110971_3_ / (float)p_110971_1_;
++        this.field_110980_m = (float)(p_110971_3_ + this.field_130223_c) / (float)p_110971_1_;
++        this.field_110977_n = (float)p_110971_4_ / (float)p_110971_2_;
++        this.field_110978_o = (float)(p_110971_4_ + this.field_130224_d) / (float)p_110971_2_;
+     }
  
- @SideOnly(Side.CLIENT)
- public class TextureAtlasSprite implements IIcon
-@@ -427,4 +429,28 @@
+     public void func_94217_a(TextureAtlasSprite p_94217_1_)
+@@ -398,4 +396,30 @@
      {
          return "TextureAtlasSprite{name=\'" + this.field_110984_i + '\'' + ", frameCount=" + this.field_110976_a.size() + ", rotated=" + this.field_130222_e + ", x=" + this.field_110975_c + ", y=" + this.field_110974_d + ", height=" + this.field_130224_d + ", width=" + this.field_130223_c + ", u0=" + this.field_110979_l + ", u1=" + this.field_110980_m + ", v0=" + this.field_110977_n + ", v1=" + this.field_110978_o + '}';
      }
 +
++    /*===================================== FORGE START =====================================*/
 +    /**
-+     * The result of this function determines is the below 'load' function is called, and the 
++     * The result of this function determines is the below 'load' function is called, and the
 +     * default vanilla loading code is bypassed completely.
 +     * @param manager
 +     * @param location
 +     * @return True to use your own custom load code and bypass vanilla loading.
 +     */
-+    public boolean hasCustomLoader(IResourceManager manager, ResourceLocation location)
++    public boolean hasCustomLoader(net.minecraft.client.resources.IResourceManager manager, net.minecraft.util.ResourceLocation location)
 +    {
 +        return false;
 +    }
-+    
++
 +    /**
 +     * Load the specified resource as this sprite's data.
 +     * Returning false from this function will prevent this icon from being stitched onto the master texture.
@@ -39,8 +42,9 @@
 +     * @param location File resource location
 +     * @return False to prevent this Icon from being stitched
 +     */
-+    public boolean load(IResourceManager manager, ResourceLocation location)
++    public boolean load(net.minecraft.client.resources.IResourceManager manager, net.minecraft.util.ResourceLocation location)
 +    {
 +        return true;
 +    }
++    /*===================================== FORGE END ======================================*/
  }

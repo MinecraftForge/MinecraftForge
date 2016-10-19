@@ -1,93 +1,98 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
-@@ -2,9 +2,11 @@
+@@ -61,7 +61,7 @@
+                             IBlockState iblockstate = p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1));
+                             Block block = iblockstate.func_177230_c();
  
- import java.util.Random;
- import net.minecraft.block.Block;
-+import net.minecraft.block.BlockSapling;
- import net.minecraft.block.material.Material;
- import net.minecraft.init.Blocks;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.util.ForgeDirection;
- 
- public class WorldGenSwamp extends WorldGenAbstractTree
- {
-@@ -53,7 +55,7 @@
-                         {
-                             Block block = p_76484_1_.func_147439_a(j1, i1, k1);
- 
--                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
-+                            if (!(block.isAir(p_76484_1_, j1, i1, k1) || block.isLeaves(p_76484_1_, j1, i1, k1)))
+-                            if (iblockstate.func_185904_a() != Material.field_151579_a && iblockstate.func_185904_a() != Material.field_151584_j)
++                            if (!iblockstate.func_177230_c().isAir(iblockstate, p_180709_1_, blockpos$mutableblockpos.func_181079_c(l, j, i1)) && !iblockstate.func_177230_c().isLeaves(iblockstate, p_180709_1_, blockpos$mutableblockpos.func_181079_c(l, j, i1)))
                              {
                                  if (block != Blocks.field_150355_j && block != Blocks.field_150358_i)
                                  {
-@@ -81,9 +83,10 @@
-             {
-                 Block block1 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ - 1, p_76484_5_);
- 
--                if ((block1 == Blocks.field_150349_c || block1 == Blocks.field_150346_d) && p_76484_4_ < 256 - l - 1)
-+                boolean isSoil = block1.canSustainPlant(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, ForgeDirection.UP, (BlockSapling)Blocks.field_150345_g);
-+                if (isSoil && p_76484_4_ < 256 - l - 1)
-                 {
--                    this.func_150515_a(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, Blocks.field_150346_d);
-+                    block1.onPlantGrow(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, p_76484_3_, p_76484_4_, p_76484_5_);
-                     int l1;
-                     int k2;
-                     int l2;
-@@ -101,7 +104,7 @@
-                             {
-                                 int j2 = i2 - p_76484_5_;
- 
--                                if ((Math.abs(l1) != k1 || Math.abs(j2) != k1 || p_76484_2_.nextInt(2) != 0 && j1 != 0) && !p_76484_1_.func_147439_a(l2, k2, i2).func_149730_j())
-+                                if ((Math.abs(l1) != k1 || Math.abs(j2) != k1 || p_76484_2_.nextInt(2) != 0 && j1 != 0) && p_76484_1_.func_147439_a(l2, k2, i2).canBeReplacedByLeaves(p_76484_1_, l2, k2, i2))
-                                 {
-                                     this.func_150515_a(p_76484_1_, l2, k2, i2, Blocks.field_150362_t);
-                                 }
-@@ -113,7 +116,7 @@
-                     {
-                         Block block2 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ + k2, p_76484_5_);
- 
--                        if (block2.func_149688_o() == Material.field_151579_a || block2.func_149688_o() == Material.field_151584_j || block2 == Blocks.field_150358_i || block2 == Blocks.field_150355_j)
-+                        if (block2.isAir(p_76484_1_, p_76484_3_, p_76484_4_ + k2, p_76484_5_) || block2.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_ + k2, p_76484_5_) || block2 == Blocks.field_150358_i || block2 == Blocks.field_150355_j)
-                         {
-                             this.func_150515_a(p_76484_1_, p_76484_3_, p_76484_4_ + k2, p_76484_5_, Blocks.field_150364_r);
-                         }
-@@ -128,24 +131,24 @@
-                         {
-                             for (l1 = p_76484_5_ - k1; l1 <= p_76484_5_ + k1; ++l1)
-                             {
--                                if (p_76484_1_.func_147439_a(l2, k2, l1).func_149688_o() == Material.field_151584_j)
-+                                if (p_76484_1_.func_147439_a(l2, k2, l1).isLeaves(p_76484_1_, l2, k2, l1))
-                                 {
--                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2 - 1, k2, l1).func_149688_o() == Material.field_151579_a)
-+                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2 - 1, k2, l1).isAir(p_76484_1_, l2 - 1, k2, l1))
-                                     {
-                                         this.func_76536_b(p_76484_1_, l2 - 1, k2, l1, 8);
-                                     }
- 
--                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2 + 1, k2, l1).func_149688_o() == Material.field_151579_a)
-+                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2 + 1, k2, l1).isAir(p_76484_1_, l2 + 1, k2, l1))
-                                     {
-                                         this.func_76536_b(p_76484_1_, l2 + 1, k2, l1, 2);
-                                     }
- 
--                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2, k2, l1 - 1).func_149688_o() == Material.field_151579_a)
-+                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2, k2, l1 - 1).isAir(p_76484_1_, l2, k2, l1 - 1))
-                                     {
-                                         this.func_76536_b(p_76484_1_, l2, k2, l1 - 1, 1);
-                                     }
- 
--                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2, k2, l1 + 1).func_149688_o() == Material.field_151579_a)
-+                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2, k2, l1 + 1).isAir(p_76484_1_, l2, k2, l1 + 1))
-                                     {
-                                         this.func_76536_b(p_76484_1_, l2, k2, l1 + 1, 4);
-                                     }
-@@ -177,7 +180,7 @@
-         {
-             --p_76536_3_;
- 
--            if (p_76536_1_.func_147439_a(p_76536_2_, p_76536_3_, p_76536_4_).func_149688_o() != Material.field_151579_a || i1 <= 0)
-+            if (!(p_76536_1_.func_147439_a(p_76536_2_, p_76536_3_, p_76536_4_).isAir(p_76536_1_, p_76536_2_, p_76536_3_, p_76536_4_)) || i1 <= 0)
-             {
-                 return;
+@@ -87,11 +87,13 @@
              }
+             else
+             {
+-                Block block1 = p_180709_1_.func_180495_p(p_180709_3_.func_177977_b()).func_177230_c();
++                BlockPos down = p_180709_3_.func_177977_b();
++                IBlockState state = p_180709_1_.func_180495_p(down);
++                boolean isSoil = state.func_177230_c().canSustainPlant(state, p_180709_1_, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g));
+ 
+-                if ((block1 == Blocks.field_150349_c || block1 == Blocks.field_150346_d) && p_180709_3_.func_177956_o() < 256 - i - 1)
++                if (isSoil && p_180709_3_.func_177956_o() < p_180709_1_.func_72800_K() - i - 1)
+                 {
+-                    this.func_175921_a(p_180709_1_, p_180709_3_.func_177977_b());
++                    state.func_177230_c().onPlantGrow(state, p_180709_1_, p_180709_3_.func_177977_b(),p_180709_3_);
+ 
+                     for (int k1 = p_180709_3_.func_177956_o() - 3 + i; k1 <= p_180709_3_.func_177956_o() + i; ++k1)
+                     {
+@@ -109,8 +111,9 @@
+                                 if (Math.abs(k3) != l2 || Math.abs(j1) != l2 || p_180709_2_.nextInt(2) != 0 && j2 != 0)
+                                 {
+                                     BlockPos blockpos = new BlockPos(j3, k1, i4);
++                                    state = p_180709_1_.func_180495_p(blockpos);
+ 
+-                                    if (!p_180709_1_.func_180495_p(blockpos).func_185913_b())
++                                    if (state.func_177230_c().canBeReplacedByLeaves(state, p_180709_1_, blockpos))
+                                     {
+                                         this.func_175903_a(p_180709_1_, blockpos, field_181649_b);
+                                     }
+@@ -121,10 +124,11 @@
+ 
+                     for (int l1 = 0; l1 < i; ++l1)
+                     {
+-                        IBlockState iblockstate1 = p_180709_1_.func_180495_p(p_180709_3_.func_177981_b(l1));
++                        BlockPos upN = p_180709_3_.func_177981_b(l1);
++                        IBlockState iblockstate1 = p_180709_1_.func_180495_p(upN);
+                         Block block2 = iblockstate1.func_177230_c();
+ 
+-                        if (iblockstate1.func_185904_a() == Material.field_151579_a || iblockstate1.func_185904_a() == Material.field_151584_j || block2 == Blocks.field_150358_i || block2 == Blocks.field_150355_j)
++                        if (block2.isAir(iblockstate1, p_180709_1_, upN) || block2.isLeaves(iblockstate1, p_180709_1_, upN) || block2 == Blocks.field_150358_i || block2 == Blocks.field_150355_j)
+                         {
+                             this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(l1), field_181648_a);
+                         }
+@@ -149,22 +153,22 @@
+                                     BlockPos blockpos1 = blockpos$mutableblockpos1.func_177978_c();
+                                     BlockPos blockpos2 = blockpos$mutableblockpos1.func_177968_d();
+ 
+-                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos3).func_185904_a() == Material.field_151579_a)
++                                    if (p_180709_2_.nextInt(4) == 0 && isAir(p_180709_1_, blockpos3))
+                                     {
+                                         this.func_181647_a(p_180709_1_, blockpos3, BlockVine.field_176278_M);
+                                     }
+ 
+-                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos4).func_185904_a() == Material.field_151579_a)
++                                    if (p_180709_2_.nextInt(4) == 0 && isAir(p_180709_1_, blockpos4))
+                                     {
+                                         this.func_181647_a(p_180709_1_, blockpos4, BlockVine.field_176280_O);
+                                     }
+ 
+-                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos1).func_185904_a() == Material.field_151579_a)
++                                    if (p_180709_2_.nextInt(4) == 0 && isAir(p_180709_1_, blockpos1))
+                                     {
+                                         this.func_181647_a(p_180709_1_, blockpos1, BlockVine.field_176279_N);
+                                     }
+ 
+-                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos2).func_185904_a() == Material.field_151579_a)
++                                    if (p_180709_2_.nextInt(4) == 0 && isAir(p_180709_1_, blockpos2))
+                                     {
+                                         this.func_181647_a(p_180709_1_, blockpos2, BlockVine.field_176273_b);
+                                     }
+@@ -193,10 +197,16 @@
+         this.func_175903_a(p_181647_1_, p_181647_2_, iblockstate);
+         int i = 4;
+ 
+-        for (p_181647_2_ = p_181647_2_.func_177977_b(); p_181647_1_.func_180495_p(p_181647_2_).func_185904_a() == Material.field_151579_a && i > 0; --i)
++        for (p_181647_2_ = p_181647_2_.func_177977_b(); isAir(p_181647_1_, p_181647_2_) && i > 0; --i)
+         {
+             this.func_175903_a(p_181647_1_, p_181647_2_, iblockstate);
+             p_181647_2_ = p_181647_2_.func_177977_b();
+         }
+     }
++
++    private boolean isAir(World world, BlockPos pos)
++    {
++        IBlockState state = world.func_180495_p(pos);
++        return state.func_177230_c().isAir(state, world, pos);
++    }
+ }

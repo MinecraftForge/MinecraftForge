@@ -1,45 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLog.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLog.java
-@@ -7,6 +7,7 @@
- import net.minecraft.creativetab.CreativeTabs;
- import net.minecraft.item.Item;
- import net.minecraft.util.IIcon;
-+import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
+@@ -34,9 +34,9 @@
+             {
+                 IBlockState iblockstate = p_180663_1_.func_180495_p(blockpos);
  
- public abstract class BlockLog extends BlockRotatedPillar
-@@ -53,14 +54,10 @@
+-                if (iblockstate.func_185904_a() == Material.field_151584_j && !((Boolean)iblockstate.func_177229_b(BlockLeaves.field_176236_b)).booleanValue())
++                if (iblockstate.func_177230_c().isLeaves(iblockstate, p_180663_1_, blockpos))
                  {
-                     for (int l1 = -b0; l1 <= b0; ++l1)
-                     {
--                        if (p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1).func_149688_o() == Material.field_151584_j)
-+                        Block block = p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
-+                        if (block.isLeaves(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1))
-                         {
--                            int i2 = p_149749_1_.func_72805_g(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
--
--                            if ((i2 & 8) == 0)
--                            {
--                                p_149749_1_.func_72921_c(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1, i2 | 8, 4);
--                            }
-+                            block.beginLeavesDecay(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
-                         }
-                     }
+-                    p_180663_1_.func_180501_a(blockpos, iblockstate.func_177226_a(BlockLeaves.field_176236_b, Boolean.valueOf(true)), 4);
++                    iblockstate.func_177230_c().beginLeavesDecay(iblockstate, p_180663_1_, blockpos);
                  }
-@@ -79,4 +76,16 @@
-     {
-         return this.field_150166_b[p_150161_1_ % this.field_150166_b.length];
+             }
+         }
+@@ -69,6 +69,9 @@
+         }
      }
+ 
++    @Override public boolean canSustainLeaves(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos){ return true; }
++    @Override public boolean isWood(net.minecraft.world.IBlockAccess world, BlockPos pos){ return true; }
 +
-+    @Override
-+    public boolean canSustainLeaves(IBlockAccess world, int x, int y, int z)
-+    {
-+        return true;
-+    }
-+
-+    @Override
-+    public boolean isWood(IBlockAccess world, int x, int y, int z)
-+    {
-+        return true;
-+    }
- }
+     public static enum EnumAxis implements IStringSerializable
+     {
+         X("x"),

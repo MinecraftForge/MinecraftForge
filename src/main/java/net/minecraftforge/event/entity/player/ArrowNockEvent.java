@@ -1,31 +1,67 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.player;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>
  * This event is fired whenever a player begins using a bow in
- * ItemBow#onItemRightClick(ItemStack, World, EntityPlayer).<br>
- * <br>
- * {@link #result} contains the resulting ItemStack due to the use of the bow. <br>
- * <br>
- * This event is {@link Cancelable}.<br>
- * If this event is canceled, the player does not begin using the bow.<br>
- * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * {@link ItemBow#onItemRightClick(ItemStack, World, EntityPlayer, EnumHand)}.<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
 public class ArrowNockEvent extends PlayerEvent
 {
-    public ItemStack result;
-    
-    public ArrowNockEvent(EntityPlayer player, ItemStack result)
+    private final ItemStack bow;
+    private final EnumHand hand;
+    private final World world;
+    private final boolean hasAmmo;
+    private ActionResult<ItemStack> action;
+
+    public ArrowNockEvent(EntityPlayer player, ItemStack item, EnumHand hand, World world, boolean hasAmmo)
     {
         super(player);
-        this.result = result;
+        this.bow = item;
+        this.hand = hand;
+        this.world = world;
+        this.hasAmmo = hasAmmo;
+    }
+
+    public ItemStack getBow() { return this.bow; }
+    public World getWorld() { return this.world; }
+    public EnumHand getHand() { return this.hand; }
+    public boolean hasAmmo() { return this.hasAmmo; }
+    public ActionResult<ItemStack> getAction()
+    {
+        return this.action;
+    }
+
+    public void setAction(ActionResult<ItemStack> action)
+    {
+        this.action = action;
     }
 }

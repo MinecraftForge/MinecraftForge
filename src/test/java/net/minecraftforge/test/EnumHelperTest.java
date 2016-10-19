@@ -1,10 +1,16 @@
 package net.minecraftforge.test;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import net.minecraft.init.Bootstrap;
 import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.EnumHelper;
@@ -12,50 +18,127 @@ import net.minecraftforge.common.util.EnumHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
-import cpw.mods.fml.relauncher.ReflectionHelper;
+import com.google.common.base.Joiner;
+import com.google.common.base.Throwables;
 
 public class EnumHelperTest
 {
-    private boolean failed = false;
+    private static final Joiner COMMA = Joiner.on(",");
 
-    @Test
-    public void test()
+    private static void setBootstrap()
     {
-        System.out.println("Testing EnumHelper:");
-        Object[][] types = (Object[][])ReflectionHelper.getPrivateValue(EnumHelper.class, null, "commonTypes");
-        for (Object[] o : types)
-            testType(o);
-
-        System.out.println("Testing EnumHelperClient:");
-        types = (Object[][])ReflectionHelper.getPrivateValue(EnumHelperClient.class, null, "clentTypes");
-        for (Object[] o : types)
-            testType(o);
-
-        if (failed)
-            throw new RuntimeException("Enum Helper test failed!");
-        Assert.assertEquals(BiomeDictionary.Type.BEACH, BiomeDictionary.Type.getType("BEACH"));
-        Assert.assertEquals(BiomeDictionary.Type.getType("NEWTYPE"), BiomeDictionary.Type.getType("NEWTYPE"));
-    }
-    private void testType(Object[] info)
-    {
-        Class<?> cls = (Class)info[0];
-        Class<?>[] parameterTypes = new Class[info.length + 2 - 1];
-        parameterTypes[0] = String.class;
-        parameterTypes[1] = int.class;
-        System.arraycopy(info, 1, parameterTypes, 2, info.length - 1);
         try
         {
-            cls.getDeclaredConstructor(parameterTypes);
-            System.out.println("  " + cls.getName() + ": Success");
+            for (Field f : Bootstrap.class.getDeclaredFields())
+            {
+                if (Modifier.isPrivate(f.getModifiers()) && Modifier.isStatic(f.getModifiers()) && f.getType() == boolean.class)
+                {
+                    f.setAccessible(true);
+                    f.set(null, true);
+                }
+            }
         }
         catch (Exception e)
         {
-            System.out.println("  " + cls.getName() + ": Failed");
-            for (Constructor<?> c : cls.getDeclaredConstructors())
+            Throwables.propagate(e);
+        }
+    }
+
+    @Test
+    public void testEnumHelperMethodsMatchEnumConstructors()
+    {
+        setBootstrap();
+
+        boolean failed = false;
+        Set<Constructor<?>> seenCtrs = new HashSet<Constructor<?>>();
+        Set<Constructor<?>> matchedCtrs = new HashSet<Constructor<?>>();
+
+        //Quick note to point out that Enum constructors start with (string name, int ordinal).
+        //  EnumHelper methods by convention start with (string name), and the ordinal is calculated.
+        List<Method> mtds = new ArrayList<Method>();
+        mtds.addAll(Arrays.asList(EnumHelper.class.getDeclaredMethods()));
+        mtds.addAll(Arrays.asList(EnumHelperClient.class.getDeclaredMethods()));
+
+        for (Method method : mtds)
+        {
+            String name = method.getName();
+            if (!name.equals("addEnum") && name.startsWith("add") && Modifier.isPublic(method.getModifiers()))
             {
-                System.out.println("      " + c.toString());
+                //System.out.println("  " + method);
+
+                Class<?> returnType = method.getReturnType();
+                Constructor<?>[] declaredConstructors = returnType.getDeclaredConstructors();
+                Class<?>[] actualParameters = method.getParameterTypes();
+
+                Assert.assertTrue(actualParameters.length >= 1);
+                Assert.assertEquals("First parameter of add method should be String (name)",
+                        String.class,
+                        actualParameters[0]);
+
+                actualParameters = Arrays.copyOfRange(actualParameters, 1, actualParameters.length); //Trim off name
+                String info =
+                        "  Method: " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "\n" +
+                        "  Class: " + returnType.getName() + "\n" +
+                        "  Actual:   " + COMMA.join(actualParameters);
+
+                boolean found = false; // There can sometimes be multiple constructors.
+
+                for (Constructor<?> declaredConstructor : declaredConstructors)
+                {
+                    seenCtrs.add(declaredConstructor);
+                    //System.out.println("    " + declaredConstructor.toString());
+
+                    Class<?>[] expectedParameters = declaredConstructor.getParameterTypes();
+
+                    Assert.assertTrue(expectedParameters.length >= 2);
+                    Assert.assertEquals("First parameter of enum constructor should be String (name)",
+                            String.class,
+                            expectedParameters[0]);
+                    Assert.assertEquals("Second parameter of enum should be int (ordinal)",
+                            int.class,
+                            expectedParameters[1]);
+
+                    expectedParameters = Arrays.copyOfRange(expectedParameters, 2, expectedParameters.length);
+
+                    info += "\n  Expected: " + COMMA.join(expectedParameters);
+
+                    if (Arrays.equals(actualParameters,  expectedParameters))
+                    {
+                        matchedCtrs.add(declaredConstructor);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    System.out.println("Pamaters did not Match:");
+                    System.out.println(info);
+                    failed = true;
+                }
+            }
+        }
+
+        seenCtrs.removeAll(matchedCtrs);
+        if (!seenCtrs.isEmpty())
+        {
+            for (Constructor<?> ctr : seenCtrs)
+            {
+                System.out.println("Missing accessor for Enum:");
+                System.out.println("  Class: " + ctr.getName());
+                System.out.println("  Params: " + COMMA.join(Arrays.copyOfRange(ctr.getParameterTypes(), 2, ctr.getParameterTypes().length)));
             }
             failed = true;
         }
+
+        Assert.assertFalse(failed);
+    }
+
+    @Test
+    public void testEnumHelperTypes()
+    {
+        setBootstrap();
+        Assert.assertEquals(BiomeDictionary.Type.BEACH, BiomeDictionary.Type.getType("BEACH"));
+        // This works, it's been tested, find a way to make this a unit test...
+        //Assert.assertEquals(BiomeDictionary.Type.getType("NEWTYPE"), BiomeDictionary.Type.getType("NEWTYPE"));
     }
 }

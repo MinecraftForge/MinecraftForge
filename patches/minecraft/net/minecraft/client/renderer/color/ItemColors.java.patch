@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/color/ItemColors.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/color/ItemColors.java
+@@ -26,7 +26,8 @@
+ @SideOnly(Side.CLIENT)
+ public class ItemColors
+ {
+-    private final ObjectIntIdentityMap<IItemColor> field_186732_a = new ObjectIntIdentityMap(32);
++    // FORGE: Use RegistryDelegates as non-Vanilla item ids are not constant
++    private final java.util.Map<net.minecraftforge.fml.common.registry.RegistryDelegate<Item>, IItemColor> itemColorMap = com.google.common.collect.Maps.newHashMap();
+ 
+     public static ItemColors func_186729_a(final BlockColors p_186729_0_)
+     {
+@@ -134,7 +135,7 @@
+ 
+     public int func_186728_a(ItemStack p_186728_1_, int p_186728_2_)
+     {
+-        IItemColor iitemcolor = (IItemColor)this.field_186732_a.func_148745_a(Item.field_150901_e.func_148757_b(p_186728_1_.func_77973_b()));
++        IItemColor iitemcolor = (IItemColor)this.itemColorMap.get(p_186728_1_.func_77973_b().delegate);
+         return iitemcolor == null ? -1 : iitemcolor.func_186726_a(p_186728_1_, p_186728_2_);
+     }
+ 
+@@ -142,7 +143,9 @@
+     {
+         for (Block block : p_186731_2_)
+         {
+-            this.field_186732_a.func_148746_a(p_186731_1_, Item.func_150891_b(Item.func_150898_a(block)));
++            if (block == null) throw new IllegalArgumentException("Block registered to item color handler cannot be null!");
++            if (block.getRegistryName() == null) throw new IllegalArgumentException("Block must be registered before assigning color handler.");
++            this.itemColorMap.put(Item.func_150898_a(block).delegate, p_186731_1_);
+         }
+     }
+ 
+@@ -150,7 +153,9 @@
+     {
+         for (Item item : p_186730_2_)
+         {
+-            this.field_186732_a.func_148746_a(p_186730_1_, Item.func_150891_b(item));
++            if (item == null) throw new IllegalArgumentException("Item registered to item color handler cannot be null!");
++            if (item.getRegistryName() == null) throw new IllegalArgumentException("Item must be registered before assigning color handler.");
++            this.itemColorMap.put(item.delegate, p_186730_1_);
+         }
+     }
+ }

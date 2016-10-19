@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/ChunkProviderClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/ChunkProviderClient.java
-@@ -56,6 +56,7 @@
+@@ -59,6 +59,7 @@
+     {
          Chunk chunk = new Chunk(this.field_73235_d, p_73158_1_, p_73158_2_);
-         this.field_73236_b.func_76163_a(ChunkCoordIntPair.func_77272_a(p_73158_1_, p_73158_2_), chunk);
-         this.field_73237_c.add(chunk);
+         this.field_73236_b.put(ChunkPos.func_77272_a(p_73158_1_, p_73158_2_), chunk);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
-         chunk.field_76636_d = true;
+         chunk.func_177417_c(true);
          return chunk;
      }

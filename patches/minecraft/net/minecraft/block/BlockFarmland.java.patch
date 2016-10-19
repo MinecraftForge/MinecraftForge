@@ -1,20 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
-@@ -12,6 +12,8 @@
- import net.minecraft.util.AxisAlignedBB;
- import net.minecraft.util.IIcon;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.IPlantable;
-+import net.minecraftforge.common.util.ForgeDirection;
+@@ -83,7 +83,7 @@
+     private boolean func_176529_d(World p_176529_1_, BlockPos p_176529_2_)
+     {
+         Block block = p_176529_1_.func_180495_p(p_176529_2_.func_177984_a()).func_177230_c();
+-        return block instanceof BlockCrops || block instanceof BlockStem;
++        return block instanceof net.minecraftforge.common.IPlantable && canSustainPlant(p_176529_1_.func_180495_p(p_176529_2_), p_176529_1_, p_176529_2_, net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)block);
+     }
  
- public class BlockFarmland extends Block
- {
-@@ -94,7 +96,7 @@
-             {
-                 Block block = p_149822_1_.func_147439_a(l, p_149822_3_ + 1, i1);
- 
--                if (block == Blocks.field_150464_aj || block == Blocks.field_150394_bc || block == Blocks.field_150393_bb || block == Blocks.field_150469_bN || block == Blocks.field_150459_bM)
-+                if (block instanceof IPlantable && canSustainPlant(p_149822_1_, p_149822_2_, p_149822_3_, p_149822_4_, ForgeDirection.UP, (IPlantable)block))
-                 {
-                     return true;
-                 }
+     private boolean func_176530_e(World p_176530_1_, BlockPos p_176530_2_)

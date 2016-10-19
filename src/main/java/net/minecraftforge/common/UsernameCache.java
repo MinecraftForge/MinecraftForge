@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -23,7 +42,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import cpw.mods.fml.relauncher.FMLInjectionData;
+import net.minecraftforge.fml.relauncher.FMLInjectionData;
 
 /**
  * Caches player's last known usernames
@@ -48,7 +67,7 @@ public final class UsernameCache {
 
     /**
      * Set a player's current username
-     * 
+     *
      * @param uuid
      *            the player's {@link java.util.UUID UUID}
      * @param username
@@ -67,7 +86,7 @@ public final class UsernameCache {
 
     /**
      * Remove a player's username from the cache
-     * 
+     *
      * @param uuid
      *            the player's {@link java.util.UUID UUID}
      * @return if the cache contained the user
@@ -81,7 +100,7 @@ public final class UsernameCache {
             save();
             return true;
         }
-        
+
         return false;
     }
 
@@ -89,7 +108,7 @@ public final class UsernameCache {
      * Get the player's last known username
      * <p>
      * <b>May be <code>null</code></b>
-     * 
+     *
      * @param uuid
      *            the player's {@link java.util.UUID UUID}
      * @return the player's last known username, or <code>null</code> if the
@@ -104,7 +123,7 @@ public final class UsernameCache {
 
     /**
      * Check if the cache contains the given player's username
-     * 
+     *
      * @param uuid
      *            the player's {@link java.util.UUID UUID}
      * @return if the cache contains a username for the given player
@@ -117,7 +136,7 @@ public final class UsernameCache {
 
     /**
      * Get an immutable copy of the cache's underlying map
-     * 
+     *
      * @return the map
      */
     public static Map<UUID, String> getMap()
@@ -144,7 +163,7 @@ public final class UsernameCache {
         {
 
             String json = Files.toString(saveFile, charset);
-            Type type = new TypeToken<Map<UUID, String>>() {}.getType();
+            Type type = new TypeToken<Map<UUID, String>>() { private static final long serialVersionUID = 1L; }.getType();
 
             map = gson.fromJson(json, type);
         }

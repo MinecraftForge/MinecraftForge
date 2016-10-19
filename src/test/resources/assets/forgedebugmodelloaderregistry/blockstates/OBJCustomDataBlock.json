@@ -1,0 +1,45 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "forgedebugmodelloaderregistry:fancy_fence.obj"
+        //"custom": {"show": ["post"]}
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+            /*"custom": {
+                "show": ["post"]
+            }*/
+        }],
+        "north": {
+            "true": {
+                "model": "forgedebugmodelloaderregistry:fancy_fence.obj"
+                //"custom": {"show": ["north"]}
+            },
+            "false": {}
+        },
+        "south": {
+            "true": {
+                "model": "forgedebugmodelloaderregistry:fancy_fence.obj"
+                //"custom": {"show": ["south"]}
+            },
+            "false": {}
+        },
+        "west": {
+            "true": {
+                "model": "forgedebugmodelloaderregistry:fancy_fence.obj"
+                //"custom": {"show": ["west"]}
+            },
+            "false": {}
+        },
+        "east": {
+            "true": {
+                "model": "forgedebugmodelloaderregistry:fancy_fence.obj"
+                //"custom": {"show": ["east"]}
+            },
+            "false": {}
+        }
+    }
+}

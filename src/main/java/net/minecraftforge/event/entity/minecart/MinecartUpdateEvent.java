@@ -1,15 +1,35 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.minecart;
 
 import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * MinecartUpdateEvent is fired when a minecart is updated.<br>
  * This event is fired whenever a minecart is updated in
- * EntityMinecart#onUpdate().<br>
+ * {@link EntityMinecart#onUpdate()}.<br>
  * <br>
- * {@link #x} contains the x-coordinate of the minecart Entity.<br>
- * {@link #y} contains the y-coordinate of the minecart Entity.<br>
- * {@link #z} contains the z-coordinate of the minecart Entity.<br>
+ * {@link #pos} contains the coordinate of the track the entity is on {if applicable}.<br>
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
@@ -19,15 +39,16 @@ import net.minecraft.entity.item.EntityMinecart;
  **/
 public class MinecartUpdateEvent extends MinecartEvent
 {
-    public final float x;
-    public final float y;
-    public final float z;
+    private final BlockPos pos;
 
-    public MinecartUpdateEvent(EntityMinecart minecart, float x, float y, float z)
+    public MinecartUpdateEvent(EntityMinecart minecart, BlockPos pos)
     {
         super(minecart);
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
+    }
+
+    public BlockPos getPos()
+    {
+        return pos;
     }
 }

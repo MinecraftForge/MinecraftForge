@@ -1,14 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src-work/minecraft/net/minecraft/entity/boss/EntityDragon.java
-@@ -477,9 +477,9 @@
-                 {
-                     Block block = this.field_70170_p.func_147439_a(k1, l1, i2);
+@@ -481,13 +481,13 @@
+                     IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
+                     Block block = iblockstate.func_177230_c();
  
--                    if (block.func_149688_o() != Material.field_151579_a)
-+                    if (!block.isAir(field_70170_p, k1, l1, i2))
+-                    if (iblockstate.func_185904_a() != Material.field_151579_a && iblockstate.func_185904_a() != Material.field_151581_o)
++                    if (!block.isAir(iblockstate, this.field_70170_p, blockpos) && iblockstate.func_185904_a() != Material.field_151581_o)
                      {
--                        if (block != Blocks.field_150343_Z && block != Blocks.field_150377_bs && block != Blocks.field_150357_h && this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
-+                        if (block.canEntityDestroy(field_70170_p, k1, l1, i2, this) && this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
+                         if (!this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
                          {
-                             flag1 = this.field_70170_p.func_147468_f(k1, l1, i2) || flag1;
+                             flag = true;
                          }
+-                        else if (block != Blocks.field_180401_cv && block != Blocks.field_150343_Z && block != Blocks.field_150377_bs && block != Blocks.field_150357_h && block != Blocks.field_150384_bq && block != Blocks.field_150378_br)
++                        else if (block.canEntityDestroy(iblockstate, this.field_70170_p, blockpos, this))
+                         {
+                             if (block != Blocks.field_150483_bI && block != Blocks.field_185776_dc && block != Blocks.field_185777_dd && block != Blocks.field_150411_aY && block != Blocks.field_185775_db)
+                             {

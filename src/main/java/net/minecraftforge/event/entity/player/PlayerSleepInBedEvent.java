@@ -1,13 +1,35 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.entity.player.EntityPlayer.SleepResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * PlayerSleepInBedEvent is fired when a player sleeps in a bed.
  * <br>
  * This event is fired whenever a player sleeps in a bed in
- * EntityPlayer#sleepInBedAt(int, int, int).<br>
+ * {@link EntityPlayer#trySleep(BlockPos)}.<br>
  * <br>
  * {@link #result} contains whether the player is able to sleep. <br>
  * <br>
@@ -19,17 +41,27 @@ import net.minecraft.entity.player.EntityPlayer.EnumStatus;
  **/
 public class PlayerSleepInBedEvent extends PlayerEvent
 {
-    public EnumStatus result = null;
-    public final int x;
-    public final int y;
-    public final int z;
+    private SleepResult result = null;
+    private final BlockPos pos;
 
-    public PlayerSleepInBedEvent(EntityPlayer player, int x, int y, int z)
+    public PlayerSleepInBedEvent(EntityPlayer player, BlockPos pos)
     {
         super(player);
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
     }
 
+    public SleepResult getResultStatus()
+    {
+        return result;
+    }
+
+    public void setResult(SleepResult result)
+    {
+        this.result = result;
+    }
+
+    public BlockPos getPos()
+    {
+        return pos;
+    }
 }

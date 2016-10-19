@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandTestForBlock.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandTestForBlock.java
+@@ -73,7 +73,7 @@
+                     NBTTagCompound nbttagcompound = new NBTTagCompound();
+                     boolean flag = false;
+ 
+-                    if (p_184881_3_.length >= 6 && block.func_149716_u())
++                    if (p_184881_3_.length >= 6 && block.hasTileEntity(block.func_176203_a(i)))
+                     {
+                         String s = func_147178_a(p_184881_2_, p_184881_3_, 5).func_150260_c();
+ 

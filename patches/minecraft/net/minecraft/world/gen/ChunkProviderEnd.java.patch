@@ -1,88 +1,72 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
-@@ -15,6 +15,10 @@
- import net.minecraft.world.chunk.Chunk;
- import net.minecraft.world.chunk.IChunkProvider;
+@@ -40,6 +40,9 @@
+     double[] field_185967_f;
+     double[] field_185968_g;
+     private final WorldGenEndIsland field_185975_r = new WorldGenEndIsland();
++    // temporary variables used during event handling
++    private int chunkX = 0;
++    private int chunkZ = 0;
  
-+import net.minecraftforge.common.*;
-+import cpw.mods.fml.common.eventhandler.Event.*;
-+import net.minecraftforge.event.terraingen.*;
+     public ChunkProviderEnd(World p_i46667_1_, boolean p_i46667_2_, long p_i46667_3_)
+     {
+@@ -52,6 +55,16 @@
+         this.field_73214_a = new NoiseGeneratorOctaves(this.field_73220_k, 10);
+         this.field_73212_b = new NoiseGeneratorOctaves(this.field_73220_k, 16);
+         this.field_185973_o = new NoiseGeneratorSimplex(this.field_73220_k);
 +
- public class ChunkProviderEnd implements IChunkProvider
- {
-     private Random field_73204_i;
-@@ -43,6 +47,14 @@
-         this.field_73199_l = new NoiseGeneratorOctaves(this.field_73204_i, 8);
-         this.field_73196_a = new NoiseGeneratorOctaves(this.field_73204_i, 10);
-         this.field_73194_b = new NoiseGeneratorOctaves(this.field_73204_i, 16);
-+
-+        NoiseGenerator[] noiseGens = {field_73201_j, field_73202_k, field_73199_l, field_73196_a, field_73194_b};
-+        noiseGens = TerrainGen.getModdedNoiseGenerators(p_i2007_1_, this.field_73204_i, noiseGens);
-+        this.field_73201_j = (NoiseGeneratorOctaves)noiseGens[0];
-+        this.field_73202_k = (NoiseGeneratorOctaves)noiseGens[1];
-+        this.field_73199_l = (NoiseGeneratorOctaves)noiseGens[2];
-+        this.field_73196_a = (NoiseGeneratorOctaves)noiseGens[3];
-+        this.field_73194_b = (NoiseGeneratorOctaves)noiseGens[4];
++        net.minecraftforge.event.terraingen.InitNoiseGensEvent.ContextEnd ctx =
++                new net.minecraftforge.event.terraingen.InitNoiseGensEvent.ContextEnd(field_185969_i, field_185970_j, field_185971_k, field_73214_a, field_73212_b, field_185973_o);
++        ctx = net.minecraftforge.event.terraingen.TerrainGen.getModdedNoiseGenerators(p_i46667_1_, this.field_73220_k, ctx);
++        this.field_185969_i = ctx.getLPerlin1();
++        this.field_185970_j = ctx.getLPerlin2();
++        this.field_185971_k = ctx.getPerlin();
++        this.field_73214_a = ctx.getDepth();
++        this.field_73212_b = ctx.getScale();
++        this.field_185973_o = ctx.getIsland();
      }
  
-     public void func_147420_a(int p_147420_1_, int p_147420_2_, Block[] p_147420_3_, BiomeGenBase[] p_147420_4_)
-@@ -113,8 +125,17 @@
-         }
-     }
+     public void func_180518_a(int p_180518_1_, int p_180518_2_, ChunkPrimer p_180518_3_)
+@@ -124,6 +137,7 @@
  
-+    @Deprecated // Supply metadata to the below function.
-     public void func_147421_b(int p_147421_1_, int p_147421_2_, Block[] p_147421_3_, BiomeGenBase[] p_147421_4_)
+     public void func_185962_a(ChunkPrimer p_185962_1_)
      {
-+        replaceBiomeBlocks(p_147421_1_, p_147421_2_, p_147421_3_, p_147421_4_, new byte[p_147421_3_.length]);
-+    }
-+    public void replaceBiomeBlocks(int p_147421_1_, int p_147421_2_, Block[] p_147421_3_, BiomeGenBase[] p_147421_4_, byte[] meta)
-+    {
-+        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147421_1_, p_147421_2_, p_147421_3_, meta, p_147421_4_, this.field_73200_m);
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if (event.getResult() == Result.DENY) return;
-+
-         for (int k = 0; k < 16; ++k)
++        if (!net.minecraftforge.event.ForgeEventFactory.onReplaceBiomeBlocks(this, this.chunkX, this.chunkZ, p_185962_1_, this.field_73230_p)) return;
+         for (int i = 0; i < 16; ++i)
          {
-             for (int l = 0; l < 16; ++l)
-@@ -177,10 +198,11 @@
-     {
-         this.field_73204_i.setSeed((long)p_73154_1_ * 341873128712L + (long)p_73154_2_ * 132897987541L);
-         Block[] ablock = new Block[32768];
-+        byte[] meta = new byte[ablock.length];
-         this.field_73198_o = this.field_73200_m.func_72959_q().func_76933_b(this.field_73198_o, p_73154_1_ * 16, p_73154_2_ * 16, 16, 16);
-         this.func_147420_a(p_73154_1_, p_73154_2_, ablock, this.field_73198_o);
--        this.func_147421_b(p_73154_1_, p_73154_2_, ablock, this.field_73198_o);
--        Chunk chunk = new Chunk(this.field_73200_m, ablock, p_73154_1_, p_73154_2_);
-+        this.replaceBiomeBlocks(p_73154_1_, p_73154_2_, ablock, this.field_73198_o, meta);
-+        Chunk chunk = new Chunk(this.field_73200_m, ablock, meta, p_73154_1_, p_73154_2_);
-         byte[] abyte = chunk.func_76605_m();
+             for (int j = 0; j < 16; ++j)
+@@ -169,6 +183,7 @@
  
-         for (int k = 0; k < abyte.length; ++k)
-@@ -194,6 +216,10 @@
- 
-     private double[] func_73187_a(double[] p_73187_1_, int p_73187_2_, int p_73187_3_, int p_73187_4_, int p_73187_5_, int p_73187_6_, int p_73187_7_)
+     public Chunk func_185932_a(int p_185932_1_, int p_185932_2_)
      {
-+        ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, p_73187_1_, p_73187_2_, p_73187_3_, p_73187_4_, p_73187_5_, p_73187_6_, p_73187_7_);
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if (event.getResult() == Result.DENY) return event.noisefield;
++        this.chunkX = p_185932_1_; this.chunkZ = p_185932_2_;
+         this.field_73220_k.setSeed((long)p_185932_1_ * 341873128712L + (long)p_185932_2_ * 132897987541L);
+         ChunkPrimer chunkprimer = new ChunkPrimer();
+         this.field_73231_z = this.field_73230_p.func_72959_q().func_76933_b(this.field_73231_z, p_185932_1_ * 16, p_185932_2_ * 16, 16, 16);
+@@ -250,6 +265,10 @@
+ 
+     private double[] func_185963_a(double[] p_185963_1_, int p_185963_2_, int p_185963_3_, int p_185963_4_, int p_185963_5_, int p_185963_6_, int p_185963_7_)
+     {
++        net.minecraftforge.event.terraingen.ChunkGeneratorEvent.InitNoiseField event = new net.minecraftforge.event.terraingen.ChunkGeneratorEvent.InitNoiseField(this, p_185963_1_, p_185963_2_, p_185963_3_, p_185963_4_, p_185963_5_, p_185963_6_, p_185963_7_);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return event.getNoisefield();
 +
-         if (p_73187_1_ == null)
+         if (p_185963_1_ == null)
          {
-             p_73187_1_ = new double[p_73187_5_ * p_73187_6_ * p_73187_7_];
-@@ -335,10 +361,16 @@
-     public void func_73153_a(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
+             p_185963_1_ = new double[p_185963_5_ * p_185963_6_ * p_185963_7_];
+@@ -322,6 +341,7 @@
+     public void func_185931_b(int p_185931_1_, int p_185931_2_)
      {
          BlockFalling.field_149832_M = true;
-+
-+        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(p_73153_1_, field_73200_m, field_73200_m.field_73012_v, p_73153_2_, p_73153_3_, false));
-+
-         int k = p_73153_2_ * 16;
-         int l = p_73153_3_ * 16;
-         BiomeGenBase biomegenbase = this.field_73200_m.func_72807_a(k + 16, l + 16);
-         biomegenbase.func_76728_a(this.field_73200_m, this.field_73200_m.field_73012_v, k, l);
-+
-+        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(p_73153_1_, field_73200_m, field_73200_m.field_73012_v, p_73153_2_, p_73153_3_, false));
-+
++        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.field_73230_p, this.field_73220_k, p_185931_1_, p_185931_2_, false);
+         BlockPos blockpos = new BlockPos(p_185931_1_ * 16, 0, p_185931_2_ * 16);
+ 
+         if (this.field_73229_q)
+@@ -369,6 +389,7 @@
+             }
+         }
+ 
++        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, this, this.field_73230_p, this.field_73220_k, p_185931_1_, p_185931_2_, false);
          BlockFalling.field_149832_M = false;
      }
  

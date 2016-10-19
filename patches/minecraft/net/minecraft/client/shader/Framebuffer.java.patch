@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/client/shader/Framebuffer.java
 +++ ../src-work/minecraft/net/minecraft/client/shader/Framebuffer.java
-@@ -117,8 +117,17 @@
+@@ -118,8 +118,17 @@
              if (this.field_147619_e)
              {
                  OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, this.field_147624_h);
-+                if (net.minecraftforge.client.MinecraftForgeClient.getStencilBits() == 0)
++                if (!this.stencilEnabled)
 +                {
                  OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, 33190, this.field_147622_a, this.field_147620_b);
                  OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, OpenGlHelper.field_153201_h, OpenGlHelper.field_153199_f, this.field_147624_h);
@@ -18,3 +18,40 @@
              }
  
              this.func_147614_f();
+@@ -279,4 +288,36 @@
+         GlStateManager.func_179086_m(i);
+         this.func_147609_e();
+     }
++
++    /*================================ FORGE START ================================================*/
++    private boolean stencilEnabled = false;
++    /**
++     * Attempts to enabled 8 bits of stencil buffer on this FrameBuffer.
++     * Modders must call this directly to set things up.
++     * This is to prevent the default cause where graphics cards do not support stencil bits.
++     * Modders should check the below 'isStencilEnabled' to check if another modder has already enabled them.
++     *
++     * Note:
++     *   As of now the only thing that is checked is if FBOs are supported entirely, in the future
++     *   we may expand to check for errors.
++     *
++     * @return True if the FBO was re-initialized with stencil bits.
++     */
++    public boolean enableStencil()
++    {
++        if (!OpenGlHelper.func_148822_b()) return false;
++        stencilEnabled = true;
++        this.func_147613_a(field_147621_c, field_147618_d);
++        return true; //TODO: Find a way to detect if this failed?
++    }
++
++    /**
++     * Returns wither or not this FBO has been successfully initialized with stencil bits.
++     * If not, and a modder wishes it to be, they must call enableStencil.
++     */
++    public boolean isStencilEnabled()
++    {
++        return this.stencilEnabled;
++    }
++    /*================================ FORGE END   ================================================*/
+ }

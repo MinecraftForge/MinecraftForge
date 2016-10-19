@@ -1,49 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSeedFood.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSeedFood.java
-@@ -2,9 +2,13 @@
- 
- import net.minecraft.block.Block;
- import net.minecraft.entity.player.EntityPlayer;
-+import net.minecraft.world.IBlockAccess;
+@@ -8,7 +8,7 @@
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
-+import net.minecraftforge.common.EnumPlantType;
-+import net.minecraftforge.common.IPlantable;
-+import net.minecraftforge.common.util.ForgeDirection;
  
 -public class ItemSeedFood extends ItemFood
-+public class ItemSeedFood extends ItemFood implements IPlantable
++public class ItemSeedFood extends ItemFood implements net.minecraftforge.common.IPlantable
  {
-     private Block field_150908_b;
-     private Block field_82809_c;
-@@ -25,7 +29,7 @@
-         }
-         else if (p_77648_2_.func_82247_a(p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_1_) && p_77648_2_.func_82247_a(p_77648_4_, p_77648_5_ + 1, p_77648_6_, p_77648_7_, p_77648_1_))
+     private final Block field_150908_b;
+     private final Block field_82809_c;
+@@ -22,7 +22,8 @@
+ 
+     public EnumActionResult func_180614_a(ItemStack p_180614_1_, EntityPlayer p_180614_2_, World p_180614_3_, BlockPos p_180614_4_, EnumHand p_180614_5_, EnumFacing p_180614_6_, float p_180614_7_, float p_180614_8_, float p_180614_9_)
+     {
+-        if (p_180614_6_ == EnumFacing.UP && p_180614_2_.func_175151_a(p_180614_4_.func_177972_a(p_180614_6_), p_180614_6_, p_180614_1_) && p_180614_3_.func_180495_p(p_180614_4_).func_177230_c() == this.field_82809_c && p_180614_3_.func_175623_d(p_180614_4_.func_177984_a()))
++        net.minecraft.block.state.IBlockState state = p_180614_3_.func_180495_p(p_180614_4_);
++        if (p_180614_6_ == EnumFacing.UP && p_180614_2_.func_175151_a(p_180614_4_.func_177972_a(p_180614_6_), p_180614_6_, p_180614_1_) && state.func_177230_c().canSustainPlant(state, p_180614_3_, p_180614_4_, EnumFacing.UP, this) && p_180614_3_.func_175623_d(p_180614_4_.func_177984_a()))
          {
--            if (p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_) == this.field_82809_c && p_77648_3_.func_147437_c(p_77648_4_, p_77648_5_ + 1, p_77648_6_))
-+            if (p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_).canSustainPlant(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, ForgeDirection.UP, this) && p_77648_3_.func_147437_c(p_77648_4_, p_77648_5_ + 1, p_77648_6_))
-             {
-                 p_77648_3_.func_147449_b(p_77648_4_, p_77648_5_ + 1, p_77648_6_, this.field_150908_b);
-                 --p_77648_1_.field_77994_a;
-@@ -41,4 +45,22 @@
-             return false;
+             p_180614_3_.func_180501_a(p_180614_4_.func_177984_a(), this.field_150908_b.func_176223_P(), 11);
+             --p_180614_1_.field_77994_a;
+@@ -33,4 +34,16 @@
+             return EnumActionResult.FAIL;
          }
      }
 +
 +    @Override
-+    public EnumPlantType getPlantType(IBlockAccess world, int x, int y, int z)
++    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
 +    {
-+        return EnumPlantType.Crop;
++        return net.minecraftforge.common.EnumPlantType.Crop;
 +    }
 +
 +    @Override
-+    public Block getPlant(IBlockAccess world, int x, int y, int z)
++    public net.minecraft.block.state.IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
 +    {
-+        return field_150908_b;
-+    }
-+
-+    @Override
-+    public int getPlantMetadata(IBlockAccess world, int x, int y, int z)
-+    {
-+        return 0;
++        return this.field_150908_b.func_176223_P();
 +    }
  }

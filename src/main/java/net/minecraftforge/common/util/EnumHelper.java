@@ -1,23 +1,45 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.util;
 
 import java.lang.reflect.*;
 import java.util.*;
 
-import cpw.mods.fml.common.FMLLog;
+import com.google.common.collect.Lists;
+
+import net.minecraftforge.fml.common.EnhancedRuntimeException;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.entity.Entity.EnumEntitySize;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityPainting.EnumArt;
-import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -32,32 +54,30 @@ public class EnumHelper
     private static boolean isSetup               = false;
 
     //Some enums are decompiled with extra arguments, so lets check for that
-    @SuppressWarnings("rawtypes")
-    private static Class[][] commonTypes =
+    private static Class<?>[][] commonTypes =
     {
         {EnumAction.class},
-        {ArmorMaterial.class, int.class, int[].class, int.class},
+        {ArmorMaterial.class, String.class, int.class, int[].class, int.class, SoundEvent.class, float.class},
         {EnumArt.class, String.class, int.class, int.class, int.class, int.class},
         {EnumCreatureAttribute.class},
         {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
         {Door.class},
         {EnumEnchantmentType.class},
-        {EnumEntitySize.class},
         {Sensitivity.class},
-        {MovingObjectType.class},
+        {RayTraceResult.Type.class},
         {EnumSkyBlock.class, int.class},
-        {EnumStatus.class},
+        {SleepResult.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
-        {EnumRarity.class, EnumChatFormatting.class, String.class}
+        {EnumRarity.class, TextFormatting.class, String.class}
     };
 
     public static EnumAction addAction(String name)
     {
         return addEnum(EnumAction.class, name);
     }
-    public static ArmorMaterial addArmorMaterial(String name, int durability, int[] reductionAmounts, int enchantability)
+    public static ArmorMaterial addArmorMaterial(String name, String textureName, int durability, int[] reductionAmounts, int enchantability, SoundEvent soundOnEquip, float toughness)
     {
-        return addEnum(ArmorMaterial.class, name, durability, reductionAmounts, enchantability);
+        return addEnum(ArmorMaterial.class, name, textureName, durability, reductionAmounts, enchantability, soundOnEquip, toughness);
     }
     public static EnumArt addArt(String name, String tile, int sizeX, int sizeY, int offsetX, int offsetY)
     {
@@ -67,8 +87,7 @@ public class EnumHelper
     {
         return addEnum(EnumCreatureAttribute.class, name);
     }
-    @SuppressWarnings("rawtypes")
-    public static EnumCreatureType addCreatureType(String name, Class typeClass, int maxNumber, Material material, boolean peaceful, boolean animal)
+    public static EnumCreatureType addCreatureType(String name, Class<?> typeClass, int maxNumber, Material material, boolean peaceful, boolean animal)
     {
         return addEnum(EnumCreatureType.class, name, typeClass, maxNumber, material, peaceful, animal);
     }
@@ -80,31 +99,27 @@ public class EnumHelper
     {
         return addEnum(EnumEnchantmentType.class, name);
     }
-    public static EnumEntitySize addEntitySize(String name)
-    {
-        return addEnum(EnumEntitySize.class, name);
-    }
     public static Sensitivity addSensitivity(String name)
     {
         return addEnum(Sensitivity.class, name);
     }
-    public static MovingObjectType addMovingObjectType(String name)
+    public static RayTraceResult.Type addMovingObjectType(String name)
     {
-        return addEnum(MovingObjectType.class, name);
+        return addEnum(RayTraceResult.Type.class, name);
     }
     public static EnumSkyBlock addSkyBlock(String name, int lightValue)
     {
         return addEnum(EnumSkyBlock.class, name, lightValue);
     }
-    public static EnumStatus addStatus(String name)
+    public static SleepResult addStatus(String name)
     {
-        return addEnum(EnumStatus.class, name);
+        return addEnum(SleepResult.class, name);
     }
     public static ToolMaterial addToolMaterial(String name, int harvestLevel, int maxUses, float efficiency, float damage, int enchantability)
     {
         return addEnum(ToolMaterial.class, name, harvestLevel, maxUses, efficiency, damage, enchantability);
     }
-    public static EnumRarity addRarity(String name, EnumChatFormatting color, String displayName)
+    public static EnumRarity addRarity(String name, TextFormatting color, String displayName)
     {
         return addEnum(EnumRarity.class, name, color, displayName);
     }
@@ -149,11 +164,11 @@ public class EnumHelper
 
     private static < T extends Enum<? >> T makeEnum(Class<T> enumClass, String value, int ordinal, Class<?>[] additionalTypes, Object[] additionalValues) throws Exception
     {
-        Object[] parms = new Object[additionalValues.length + 2];
-        parms[0] = value;
-        parms[1] = Integer.valueOf(ordinal);
-        System.arraycopy(additionalValues, 0, parms, 2, additionalValues.length);
-        return enumClass.cast(newInstance.invoke(getConstructorAccessor(enumClass, additionalTypes), new Object[] {parms}));
+        Object[] params = new Object[additionalValues.length + 2];
+        params[0] = value;
+        params[1] = ordinal;
+        System.arraycopy(additionalValues, 0, params, 2, additionalValues.length);
+        return enumClass.cast(newInstance.invoke(getConstructorAccessor(enumClass, additionalTypes), new Object[] {params}));
     }
 
     public static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception
@@ -185,16 +200,15 @@ public class EnumHelper
         blankField(enumClass, "enumConstants");
     }
 
-    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
+    private static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
     {
         setup();
         return addEnum(commonTypes, enumType, enumName, paramValues);
     }
 
-    @SuppressWarnings("rawtypes")
-    public static <T extends Enum<? >> T addEnum(Class[][] map, Class<T> enumType, String enumName, Object... paramValues)
+    protected static <T extends Enum<? >> T addEnum(Class<?>[][] map, Class<T> enumType, String enumName, Object... paramValues)
     {
-        for (Class[] lookup : map)
+        for (Class<?>[] lookup : map)
         {
             if (lookup[0] == enumType)
             {
@@ -209,8 +223,19 @@ public class EnumHelper
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object[] paramValues)
+    //Tests an enum is compatible with these args, throws an error if not.
+    public static void testEnum(Class<? extends Enum<?>> enumType, Class<?>[] paramTypes)
+    {
+        addEnum(true, enumType, null, paramTypes, (Object[])null);
+    }
+
+    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object... paramValues)
+    {
+        return addEnum(false, enumType, enumName, paramTypes, paramValues);
+    }
+
+    @SuppressWarnings({ "unchecked", "serial" })
+    private static <T extends Enum<? >> T addEnum(boolean test, final Class<T> enumType, String enumName, final Class<?>[] paramTypes, Object[] paramValues)
     {
         if (!isSetup)
         {
@@ -248,14 +273,74 @@ public class EnumHelper
 
         if (valuesField == null)
         {
-            FMLLog.severe("Could not find $VALUES field for enum: %s", enumType.getName());
-            FMLLog.severe("Runtime Deobf: %s", FMLForgePlugin.RUNTIME_DEOBF);
-            FMLLog.severe("Flags: %s", String.format("%16s", Integer.toBinaryString(flags)).replace(' ', '0'));
-            FMLLog.severe("Fields:");
+            final List<String> lines = Lists.newArrayList();
+            lines.add(String.format("Could not find $VALUES field for enum: %s", enumType.getName()));
+            lines.add(String.format("Runtime Deobf: %s", FMLForgePlugin.RUNTIME_DEOBF));
+            lines.add(String.format("Flags: %s", String.format("%16s", Integer.toBinaryString(flags)).replace(' ', '0')));
+            lines.add(              "Fields:");
             for (Field field : fields)
             {
                 String mods = String.format("%16s", Integer.toBinaryString(field.getModifiers())).replace(' ', '0');
-                FMLLog.severe("       %s %s: %s", mods, field.getName(), field.getType().getName());
+                lines.add(String.format("       %s %s: %s", mods, field.getName(), field.getType().getName()));
+            }
+
+            for (String line : lines)
+                FMLLog.severe(line);
+
+            if (test)
+            {
+                throw new EnhancedRuntimeException("Could not find $VALUES field for enum: " + enumType.getName())
+                {
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        for (String line : lines)
+                            stream.println(line);
+                    }
+                };
+            }
+            return null;
+        }
+
+        if (test)
+        {
+            Object ctr = null;
+            Exception ex = null;
+            try
+            {
+                ctr = getConstructorAccessor(enumType, paramTypes);
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
+            if (ctr == null || ex != null)
+            {
+                throw new EnhancedRuntimeException(String.format("Could not find constructor for Enum %s", enumType.getName()), ex)
+                {
+                    private String toString(Class<?>[] cls)
+                    {
+                        StringBuilder b = new StringBuilder();
+                        for (int x = 0; x < cls.length; x++)
+                        {
+                            b.append(cls[x].getName());
+                            if (x != cls.length - 1)
+                                b.append(", ");
+                        }
+                        return b.toString();
+                    }
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        stream.println("Target Arguments:");
+                        stream.println("    java.lang.String, int, " + toString(paramTypes));
+                        stream.println("Found Constructors:");
+                        for (Constructor<?> ctr : enumType.getDeclaredConstructors())
+                        {
+                            stream.println("    " + toString(ctr.getParameterTypes()));
+                        }
+                    }
+                };
             }
             return null;
         }
@@ -266,7 +351,7 @@ public class EnumHelper
         {
             T[] previousValues = (T[])valuesField.get(enumType);
             List<T> values = new ArrayList<T>(Arrays.asList(previousValues));
-            T newValue = (T)makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
+            T newValue = makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
             values.add(newValue);
             setFailsafeFieldValue(valuesField, null, values.toArray((T[]) Array.newInstance(enumType, 0)));
             cleanEnumCache(enumType);

@@ -1,32 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
-@@ -36,11 +36,16 @@
- 
-     public boolean func_77648_a(ItemStack p_77648_1_, EntityPlayer p_77648_2_, World p_77648_3_, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)
-     {
-+        if(p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_).isReplaceable(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_) && p_77648_7_ != 0)
-+        {
-+            p_77648_7_ = 1;
-+            p_77648_5_--;
-+        }
-         if (p_77648_7_ == 0)
-         {
-             return false;
+@@ -42,13 +42,18 @@
          }
--        else if (!p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_).func_149688_o().func_76220_a())
-+        else if (!p_77648_3_.isSideSolid(p_77648_4_, p_77648_5_, p_77648_6_, net.minecraftforge.common.util.ForgeDirection.getOrientation(p_77648_7_)))
+         else
          {
-             return false;
-         }
-@@ -71,8 +76,11 @@
-                 ++p_77648_4_;
-             }
++            if (p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().func_176200_f(p_180614_3_, p_180614_4_))
++            {
++                p_180614_6_ = EnumFacing.UP;
++                p_180614_4_ = p_180614_4_.func_177977_b();
++            }
+             IBlockState iblockstate = p_180614_3_.func_180495_p(p_180614_4_);
+             Block block = iblockstate.func_177230_c();
+             boolean flag = block.func_176200_f(p_180614_3_, p_180614_4_);
  
-+        }
-+        {
-             if (!p_77648_3_.field_72995_K)
+             if (!flag)
              {
-+                if (!Blocks.field_150465_bP.func_149707_d(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_)) return false;
-                 p_77648_3_.func_147465_d(p_77648_4_, p_77648_5_, p_77648_6_, Blocks.field_150465_bP, p_77648_7_, 2);
-                 int i1 = 0;
- 
+-                if (!p_180614_3_.func_180495_p(p_180614_4_).func_185904_a().func_76220_a())
++                if (!p_180614_3_.func_180495_p(p_180614_4_).func_185904_a().func_76220_a() && !p_180614_3_.isSideSolid(p_180614_4_, p_180614_6_, true))
+                 {
+                     return EnumActionResult.FAIL;
+                 }

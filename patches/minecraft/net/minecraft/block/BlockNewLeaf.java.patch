@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockNewLeaf.java
++++ ../src-work/minecraft/net/minecraft/block/BlockNewLeaf.java
+@@ -99,7 +99,7 @@
+ 
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, @Nullable ItemStack p_180657_6_)
+     {
+-        if (!p_180657_1_.field_72995_K && p_180657_6_ != null && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
++        if (false && !p_180657_1_.field_72995_K && p_180657_6_ != null && p_180657_6_.func_77973_b() == Items.field_151097_aZ) //Forge: Noop this
+         {
+             p_180657_2_.func_71029_a(StatList.func_188055_a(this));
+             func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Item.func_150898_a(this), 1, ((BlockPlanks.EnumType)p_180657_4_.func_177229_b(field_176240_P)).func_176839_a() - 4));
+@@ -109,4 +109,10 @@
+             super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
+         }
+     }
++
++    @Override
++    public List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
++    {
++        return java.util.Arrays.asList(new ItemStack(this, 1, world.func_180495_p(pos).func_177229_b(field_176240_P).func_176839_a() - 4));
++    }
+ }

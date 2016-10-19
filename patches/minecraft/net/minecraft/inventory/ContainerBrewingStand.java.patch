@@ -1,28 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
-@@ -5,6 +5,7 @@
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.entity.player.InventoryPlayer;
- import net.minecraft.init.Items;
-+import net.minecraft.item.ItemPotion;
- import net.minecraft.item.ItemStack;
- import net.minecraft.stats.AchievementList;
- import net.minecraft.tileentity.TileEntityBrewingStand;
-@@ -194,7 +195,7 @@
+@@ -198,7 +198,7 @@
  
-             public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
+             public boolean func_75214_a(@Nullable ItemStack p_75214_1_)
              {
--                if (p_82870_2_.func_77973_b() == Items.field_151068_bn && p_82870_2_.func_77960_j() > 0)
-+                if (p_82870_2_.func_77973_b() instanceof ItemPotion && p_82870_2_.func_77960_j() > 0)
+-                return p_75214_1_ != null && PotionHelper.func_185205_a(p_75214_1_);
++                return p_75214_1_ != null && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_75214_1_);
+             }
+ 
+             public int func_75219_a()
+@@ -231,6 +231,7 @@
+             {
+                 if (PotionUtils.func_185191_c(p_82870_2_) != PotionTypes.field_185230_b)
                  {
-                     this.field_75244_a.func_71064_a(AchievementList.field_76001_A, 1);
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(p_82870_1_, p_82870_2_);
+                     this.field_75244_a.func_71029_a(AchievementList.field_187970_B);
                  }
-@@ -204,7 +205,7 @@
  
-             public static boolean func_75243_a_(ItemStack p_75243_0_)
-             {
--                return p_75243_0_ != null && (p_75243_0_.func_77973_b() == Items.field_151068_bn || p_75243_0_.func_77973_b() == Items.field_151069_bo);
-+                return p_75243_0_ != null && (p_75243_0_.func_77973_b() instanceof ItemPotion || p_75243_0_.func_77973_b() == Items.field_151069_bo);
+@@ -245,8 +246,7 @@
+                 }
+                 else
+                 {
+-                    Item item = p_75243_0_.func_77973_b();
+-                    return item == Items.field_151068_bn || item == Items.field_151069_bo || item == Items.field_185155_bH || item == Items.field_185156_bI;
++                    return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_75243_0_);
+                 }
              }
          }
- }

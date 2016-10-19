@@ -1,89 +1,79 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/Chunk.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/Chunk.java
-@@ -29,6 +29,10 @@
- import net.minecraft.world.biome.BiomeGenBase;
- import net.minecraft.world.biome.WorldChunkManager;
- import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.EntityEvent;
-+import net.minecraftforge.event.world.ChunkEvent;
-+
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+@@ -178,7 +178,7 @@
+                 {
+                     IBlockState iblockstate = this.func_186032_a(j, l - 1, k);
  
-@@ -194,7 +198,7 @@
+-                    if (iblockstate.func_185891_c() != 0)
++                    if (iblockstate.getLightOpacity(this.field_76637_e, new BlockPos(j, l - 1, k)) != 0)
                      {
-                         Block block = this.func_150810_a(j, l - 1, k);
+                         this.field_76634_f[k << 4 | j] = l;
  
--                        if (block.func_149717_k() == 0)
-+                        if (func_150808_b(j, l - 1, k) == 0)
-                         {
-                             --l;
-                             continue;
-@@ -493,7 +497,9 @@
+@@ -451,12 +451,13 @@
  
-     public int func_150808_b(int p_150808_1_, int p_150808_2_, int p_150808_3_)
+     public int func_177437_b(BlockPos p_177437_1_)
      {
--        return this.func_150810_a(p_150808_1_, p_150808_2_, p_150808_3_).func_149717_k();
-+        int x = (field_76635_g << 4) + p_150808_1_;
-+        int z = (field_76647_h << 4) + p_150808_3_;
-+        return this.func_150810_a(p_150808_1_, p_150808_2_, p_150808_3_).getLightOpacity(field_76637_e, x, p_150808_2_, z);
+-        return this.func_177435_g(p_177437_1_).func_185891_c();
++        return this.func_177435_g(p_177437_1_).getLightOpacity(this.field_76637_e, p_177437_1_);
      }
  
-     public Block func_150810_a(final int p_150810_1_, final int p_150810_2_, final int p_150810_3_)
-@@ -579,20 +585,33 @@
-             int l1 = this.field_76635_g * 16 + p_150807_1_;
-             int i2 = this.field_76647_h * 16 + p_150807_3_;
+     private int func_150808_b(int p_150808_1_, int p_150808_2_, int p_150808_3_)
+     {
+-        return this.func_186032_a(p_150808_1_, p_150808_2_, p_150808_3_).func_185891_c();
++        IBlockState state = this.func_186032_a(p_150808_1_, p_150808_2_, p_150808_3_); //Forge: Can sometimes be called before we are added to the global world list. So use the less accurate one during that. It'll be recalculated later
++        return this.field_189550_d ? state.func_185891_c() : state.getLightOpacity(this.field_76637_e, new BlockPos(p_150808_1_, p_150808_2_, p_150808_3_));
+     }
  
-+            int k2 = block1.getLightOpacity(this.field_76637_e, l1, p_150807_2_, i2);
-+
-             if (!this.field_76637_e.field_72995_K)
+     public IBlockState func_177435_g(BlockPos p_177435_1_)
+@@ -538,6 +539,7 @@
+         {
+             Block block = p_177436_2_.func_177230_c();
+             Block block1 = iblockstate.func_177230_c();
++            int k1 = iblockstate.getLightOpacity(this.field_76637_e, p_177436_1_); // Relocate old light value lookup here, so that it is called before TE is removed.
+             ExtendedBlockStorage extendedblockstorage = this.field_76652_q[j >> 4];
+             boolean flag = false;
+ 
+@@ -555,14 +557,19 @@
+ 
+             extendedblockstorage.func_177484_a(i, j & 15, k, p_177436_2_);
+ 
+-            if (block1 != block)
++            //if (block1 != block)
              {
-                 block1.func_149725_f(this.field_76637_e, l1, p_150807_2_, i2, k1);
+                 if (!this.field_76637_e.field_72995_K)
+                 {
++                    if (block1 != block) //Only fire block breaks when the block changes.
+                     block1.func_180663_b(this.field_76637_e, p_177436_1_, iblockstate);
++                    TileEntity te = this.func_177424_a(p_177436_1_, Chunk.EnumCreateEntityType.CHECK);
++                    if (te != null && te.shouldRefresh(this.field_76637_e, p_177436_1_, iblockstate, p_177436_2_)) this.field_76637_e.func_175713_t(p_177436_1_);
+                 }
+-                else if (block1 instanceof ITileEntityProvider)
++                else if (block1.hasTileEntity(iblockstate))
+                 {
++                    TileEntity te = this.func_177424_a(p_177436_1_, Chunk.EnumCreateEntityType.CHECK);
++                    if (te != null && te.shouldRefresh(this.field_76637_e, p_177436_1_, iblockstate, p_177436_2_))
+                     this.field_76637_e.func_175713_t(p_177436_1_);
+                 }
              }
- 
-             extendedblockstorage.func_150818_a(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_4_);
-+            extendedblockstorage.func_76654_b(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_5_); // This line duplicates the one below, so breakBlock fires with valid worldstate
- 
-             if (!this.field_76637_e.field_72995_K)
-             {
-                 block1.func_149749_a(this.field_76637_e, l1, p_150807_2_, i2, block1, k1);
-+                // After breakBlock a phantom TE might have been created with incorrect meta. This attempts to kill that phantom TE so the normal one can be create properly later
-+                TileEntity te = this.getTileEntityUnsafe(p_150807_1_ & 0x0F, p_150807_2_, p_150807_3_ & 0x0F);
-+                if (te != null && te.shouldRefresh(block1, func_150810_a(p_150807_1_ & 0x0F, p_150807_2_, p_150807_3_ & 0x0F), k1, func_76628_c(p_150807_1_ & 0x0F, p_150807_2_, p_150807_3_ & 0x0F), field_76637_e, l1, p_150807_2_, i2))
-+                {
-+                    this.func_150805_f(p_150807_1_ & 0x0F, p_150807_2_, p_150807_3_ & 0x0F);
-+                }
-             }
--            else if (block1 instanceof ITileEntityProvider && block1 != p_150807_4_)
-+            else if (block1.hasTileEntity(k1))
-             {
--                this.field_76637_e.func_147475_p(l1, p_150807_2_, i2);
-+                TileEntity te = this.getTileEntityUnsafe(p_150807_1_ & 0x0F, p_150807_2_, p_150807_3_ & 0x0F);
-+                if (te != null && te.shouldRefresh(block1, p_150807_4_, k1, p_150807_5_, field_76637_e, l1, p_150807_2_, i2))
-+                {
-+                    this.field_76637_e.func_147475_p(l1, p_150807_2_, i2);
-+                }
-             }
- 
-             if (extendedblockstorage.func_150819_a(p_150807_1_, p_150807_2_ & 15, p_150807_3_) != p_150807_4_)
-@@ -609,8 +628,7 @@
+@@ -579,8 +586,7 @@
                  }
                  else
                  {
--                    int j2 = p_150807_4_.func_149717_k();
--                    int k2 = block1.func_149717_k();
-+                    int j2 = p_150807_4_.getLightOpacity(this.field_76637_e, l1, p_150807_2_, i2);
+-                    int j1 = p_177436_2_.func_185891_c();
+-                    int k1 = iblockstate.func_185891_c();
++                    int j1 = p_177436_2_.getLightOpacity(this.field_76637_e, p_177436_1_);
  
-                     if (j2 > 0)
+                     if (j1 > 0)
                      {
-@@ -632,34 +650,19 @@
- 
-                 TileEntity tileentity;
+@@ -600,28 +606,19 @@
+                     }
+                 }
  
 -                if (block1 instanceof ITileEntityProvider)
--                {
--                    tileentity = this.func_150806_e(p_150807_1_, p_150807_2_, p_150807_3_);
++                // If capturing blocks, only run block physics for TE's. Non-TE's are handled in ForgeHooks.onPlaceItemIntoWorld
++                if (!this.field_76637_e.field_72995_K && block1 != block && (!this.field_76637_e.captureBlockSnapshots || block.hasTileEntity(p_177436_2_)))
+                 {
+-                    TileEntity tileentity = this.func_177424_a(p_177436_1_, Chunk.EnumCreateEntityType.CHECK);
 -
 -                    if (tileentity != null)
 -                    {
@@ -91,232 +81,221 @@
 -                    }
 -                }
 -
-                 if (!this.field_76637_e.field_72995_K)
-                 {
-                     p_150807_4_.func_149726_b(this.field_76637_e, l1, p_150807_2_, i2);
+-                if (!this.field_76637_e.field_72995_K && block1 != block)
+-                {
+                     block.func_176213_c(this.field_76637_e, p_177436_1_, p_177436_2_);
                  }
  
--                if (p_150807_4_ instanceof ITileEntityProvider)
-+                if (p_150807_4_.hasTileEntity(p_150807_5_))
+-                if (block instanceof ITileEntityProvider)
++                if (block.hasTileEntity(p_177436_2_))
                  {
-                     tileentity = this.func_150806_e(p_150807_1_, p_150807_2_, p_150807_3_);
+                     TileEntity tileentity1 = this.func_177424_a(p_177436_1_, Chunk.EnumCreateEntityType.CHECK);
  
--                    if (tileentity == null)
--                    {
--                        tileentity = ((ITileEntityProvider)p_150807_4_).func_149915_a(this.field_76637_e, p_150807_5_);
--                        this.field_76637_e.func_147455_a(l1, p_150807_2_, i2, tileentity);
--                    }
--
-                     if (tileentity != null)
+                     if (tileentity1 == null)
                      {
-                         tileentity.func_145836_u();
-+                        tileentity.field_145847_g = p_150807_5_;
+-                        tileentity1 = ((ITileEntityProvider)block).func_149915_a(this.field_76637_e, block.func_176201_c(p_177436_2_));
++                        tileentity1 = block.createTileEntity(this.field_76637_e, p_177436_2_);
+                         this.field_76637_e.func_175690_a(p_177436_1_, tileentity1);
                      }
-                 }
  
-@@ -690,7 +693,7 @@
-                 this.field_76643_l = true;
-                 extendedblockstorage.func_76654_b(p_76589_1_, p_76589_2_ & 15, p_76589_3_, p_76589_4_);
- 
--                if (extendedblockstorage.func_150819_a(p_76589_1_, p_76589_2_ & 15, p_76589_3_) instanceof ITileEntityProvider)
-+                if (extendedblockstorage.func_150819_a(p_76589_1_, p_76589_2_ & 15, p_76589_3_).hasTileEntity(p_76589_4_))
-                 {
-                     TileEntity tileentity = this.func_150806_e(p_76589_1_, p_76589_2_, p_76589_3_);
- 
-@@ -790,6 +793,7 @@
+@@ -725,6 +722,7 @@
              k = this.field_76645_j.length - 1;
          }
  
-+        MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringChunk(p_76612_1_, this.field_76635_g, this.field_76647_h, p_76612_1_.field_70176_ah, p_76612_1_.field_70164_aj));
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EnteringChunk(p_76612_1_, this.field_76635_g, this.field_76647_h, p_76612_1_.field_70176_ah, p_76612_1_.field_70164_aj));
          p_76612_1_.field_70175_ag = true;
          p_76612_1_.field_70176_ah = this.field_76635_g;
          p_76612_1_.field_70162_ai = k;
-@@ -827,28 +831,27 @@
-         ChunkPosition chunkposition = new ChunkPosition(p_150806_1_, p_150806_2_, p_150806_3_);
-         TileEntity tileentity = (TileEntity)this.field_150816_i.get(chunkposition);
+@@ -765,7 +763,7 @@
+     {
+         IBlockState iblockstate = this.func_177435_g(p_177422_1_);
+         Block block = iblockstate.func_177230_c();
+-        return !block.func_149716_u() ? null : ((ITileEntityProvider)block).func_149915_a(this.field_76637_e, iblockstate.func_177230_c().func_176201_c(iblockstate));
++        return !block.hasTileEntity(iblockstate) ? null : block.createTileEntity(this.field_76637_e, iblockstate);
+     }
+ 
+     @Nullable
+@@ -773,6 +771,12 @@
+     {
+         TileEntity tileentity = (TileEntity)this.field_150816_i.get(p_177424_1_);
  
 +        if (tileentity != null && tileentity.func_145837_r())
 +        {
-+            field_150816_i.remove(chunkposition);
++            field_150816_i.remove(p_177424_1_);
 +            tileentity = null;
 +        }
 +
          if (tileentity == null)
          {
-             Block block = this.func_150810_a(p_150806_1_, p_150806_2_, p_150806_3_);
-+            int meta = this.func_76628_c(p_150806_1_, p_150806_2_, p_150806_3_);
- 
--            if (!block.func_149716_u())
-+            if (!block.hasTileEntity(meta))
-             {
-                 return null;
+             if (p_177424_2_ == Chunk.EnumCreateEntityType.IMMEDIATE)
+@@ -782,14 +786,9 @@
              }
- 
--            tileentity = ((ITileEntityProvider)block).func_149915_a(this.field_76637_e, this.func_76628_c(p_150806_1_, p_150806_2_, p_150806_3_));
-+            tileentity = block.createTileEntity(field_76637_e, meta);
-             this.field_76637_e.func_147455_a(this.field_76635_g * 16 + p_150806_1_, p_150806_2_, this.field_76647_h * 16 + p_150806_3_, tileentity);
+             else if (p_177424_2_ == Chunk.EnumCreateEntityType.QUEUED)
+             {
+-                this.field_177447_w.add(p_177424_1_);
++                this.field_177447_w.add(p_177424_1_.func_185334_h());
+             }
          }
- 
--        if (tileentity != null && tileentity.func_145837_r())
+-        else if (tileentity.func_145837_r())
 -        {
--            this.field_150816_i.remove(chunkposition);
+-            this.field_150816_i.remove(p_177424_1_);
 -            return null;
 -        }
--        else
--        {
--            return tileentity;
--        }
-+        return tileentity;
+ 
+         return tileentity;
      }
+@@ -806,10 +805,11 @@
  
-     public void func_150813_a(TileEntity p_150813_1_)
-@@ -860,7 +863,7 @@
+     public void func_177426_a(BlockPos p_177426_1_, TileEntity p_177426_2_)
+     {
++        if (p_177426_2_.func_145831_w() != this.field_76637_e) //Forge don't call unless it's changed, could screw up bad mods.
+         p_177426_2_.func_145834_a(this.field_76637_e);
+         p_177426_2_.func_174878_a(p_177426_1_);
  
-         if (this.field_76636_d)
+-        if (this.func_177435_g(p_177426_1_).func_177230_c() instanceof ITileEntityProvider)
++        if (this.func_177435_g(p_177426_1_).func_177230_c().hasTileEntity(this.func_177435_g(p_177426_1_)))
          {
--            this.field_76637_e.field_147482_g.add(p_150813_1_);
-+            this.field_76637_e.addTileEntity(p_150813_1_);
-         }
-     }
- 
-@@ -872,7 +875,8 @@
-         p_150812_4_.field_145848_d = p_150812_2_;
-         p_150812_4_.field_145849_e = this.field_76647_h * 16 + p_150812_3_;
- 
--        if (this.func_150810_a(p_150812_1_, p_150812_2_, p_150812_3_) instanceof ITileEntityProvider)
-+        int metadata = func_76628_c(p_150812_1_, p_150812_2_, p_150812_3_);
-+        if (this.func_150810_a(p_150812_1_, p_150812_2_, p_150812_3_).hasTileEntity(metadata))
-         {
-             if (this.field_150816_i.containsKey(chunkposition))
+             if (this.field_150816_i.containsKey(p_177426_1_))
              {
-@@ -916,6 +920,7 @@
+@@ -818,6 +818,7 @@
  
-             this.field_76637_e.func_72868_a(this.field_76645_j[i]);
+             p_177426_2_.func_145829_t();
+             this.field_150816_i.put(p_177426_1_, p_177426_2_);
++            p_177426_2_.onLoad();
          }
-+        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(this));
+     }
+ 
+@@ -841,8 +842,9 @@
+ 
+         for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.field_76645_j)
+         {
+-            this.field_76637_e.func_175650_b(classinheritancemultimap);
++            this.field_76637_e.func_175650_b(com.google.common.collect.ImmutableList.copyOf(classinheritancemultimap));
+         }
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(this));
      }
  
      public void func_76623_d()
-@@ -933,6 +938,7 @@
+@@ -858,6 +860,7 @@
          {
-             this.field_76637_e.func_72828_b(this.field_76645_j[i]);
+             this.field_76637_e.func_175681_c(classinheritancemultimap);
          }
-+        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(this));
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(this));
      }
  
      public void func_76630_e()
-@@ -942,8 +948,8 @@
+@@ -867,8 +870,8 @@
  
-     public void func_76588_a(Entity p_76588_1_, AxisAlignedBB p_76588_2_, List p_76588_3_, IEntitySelector p_76588_4_)
+     public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, Predicate <? super Entity > p_177414_4_)
      {
--        int i = MathHelper.func_76128_c((p_76588_2_.field_72338_b - 2.0D) / 16.0D);
--        int j = MathHelper.func_76128_c((p_76588_2_.field_72337_e + 2.0D) / 16.0D);
-+        int i = MathHelper.func_76128_c((p_76588_2_.field_72338_b - World.MAX_ENTITY_RADIUS) / 16.0D);
-+        int j = MathHelper.func_76128_c((p_76588_2_.field_72337_e + World.MAX_ENTITY_RADIUS) / 16.0D);
+-        int i = MathHelper.func_76128_c((p_177414_2_.field_72338_b - 2.0D) / 16.0D);
+-        int j = MathHelper.func_76128_c((p_177414_2_.field_72337_e + 2.0D) / 16.0D);
++        int i = MathHelper.func_76128_c((p_177414_2_.field_72338_b - World.MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.func_76128_c((p_177414_2_.field_72337_e + World.MAX_ENTITY_RADIUS) / 16.0D);
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -979,8 +985,8 @@
+@@ -905,8 +908,8 @@
  
-     public void func_76618_a(Class p_76618_1_, AxisAlignedBB p_76618_2_, List p_76618_3_, IEntitySelector p_76618_4_)
+     public <T extends Entity> void func_177430_a(Class <? extends T > p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, Predicate <? super T > p_177430_4_)
      {
--        int i = MathHelper.func_76128_c((p_76618_2_.field_72338_b - 2.0D) / 16.0D);
--        int j = MathHelper.func_76128_c((p_76618_2_.field_72337_e + 2.0D) / 16.0D);
-+        int i = MathHelper.func_76128_c((p_76618_2_.field_72338_b - World.MAX_ENTITY_RADIUS) / 16.0D);
-+        int j = MathHelper.func_76128_c((p_76618_2_.field_72337_e + World.MAX_ENTITY_RADIUS) / 16.0D);
+-        int i = MathHelper.func_76128_c((p_177430_2_.field_72338_b - 2.0D) / 16.0D);
+-        int j = MathHelper.func_76128_c((p_177430_2_.field_72337_e + 2.0D) / 16.0D);
++        int i = MathHelper.func_76128_c((p_177430_2_.field_72338_b - World.MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.func_76128_c((p_177430_2_.field_72337_e + World.MAX_ENTITY_RADIUS) / 16.0D);
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -1139,6 +1145,15 @@
+@@ -995,6 +998,7 @@
+         {
+             this.func_150809_p();
+             p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
++            net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.field_76635_g, this.field_76647_h, this.field_76637_e, p_186034_1_, this.field_76637_e.func_72863_F());
+             this.func_76630_e();
+         }
+     }
+@@ -1051,7 +1055,7 @@
+         {
+             BlockPos blockpos = (BlockPos)this.field_177447_w.poll();
+ 
+-            if (this.func_177424_a(blockpos, Chunk.EnumCreateEntityType.CHECK) == null && this.func_177435_g(blockpos).func_177230_c().func_149716_u())
++            if (this.func_177424_a(blockpos, Chunk.EnumCreateEntityType.CHECK) == null && this.func_177435_g(blockpos).func_177230_c().hasTileEntity(this.func_177435_g(blockpos)))
+             {
+                 TileEntity tileentity = this.func_177422_i(blockpos);
+                 this.field_76637_e.func_175690_a(blockpos, tileentity);
+@@ -1115,6 +1119,13 @@
      @SideOnly(Side.CLIENT)
-     public void func_76607_a(byte[] p_76607_1_, int p_76607_2_, int p_76607_3_, boolean p_76607_4_)
+     public void func_186033_a(PacketBuffer p_186033_1_, int p_186033_2_, boolean p_186033_3_)
      {
-+        Iterator iterator = field_150816_i.values().iterator();
-+        while(iterator.hasNext())
++        for(TileEntity tileEntity : field_150816_i.values())
 +        {
-+            TileEntity tileEntity = (TileEntity)iterator.next();
 +            tileEntity.func_145836_u();
 +            tileEntity.func_145832_p();
 +            tileEntity.func_145838_q();
 +        }
 +
-         int k = 0;
-         boolean flag1 = !this.field_76637_e.field_73011_w.field_76576_e;
-         int l;
-@@ -1241,13 +1256,27 @@
-         this.field_150814_l = true;
+         boolean flag = !this.field_76637_e.field_73011_w.func_177495_o();
+ 
+         for (int i = 0; i < this.field_76652_q.length; ++i)
+@@ -1163,10 +1174,16 @@
          this.field_76646_k = true;
          this.func_76590_a();
--        Iterator iterator = this.field_150816_i.values().iterator();
-+        List<TileEntity> invalidList = new ArrayList<TileEntity>();
-+        iterator = this.field_150816_i.values().iterator();
  
-         while (iterator.hasNext())
++        List<TileEntity> invalidList = new java.util.ArrayList<TileEntity>();
++
+         for (TileEntity tileentity : this.field_150816_i.values())
          {
-             TileEntity tileentity = (TileEntity)iterator.next();
-+            int x = tileentity.field_145851_c & 15;
-+            int y = tileentity.field_145848_d;
-+            int z = tileentity.field_145849_e & 15;
-+            Block block = tileentity.func_145838_q();
-+            if (block != func_150810_a(x, y, z) || tileentity.field_145847_g != this.func_76628_c(x, y, z))
-+            {
++            if (tileentity.shouldRefresh(this.field_76637_e, tileentity.func_174877_v(), tileentity.func_145838_q().func_176203_a(tileentity.func_145832_p()), func_177435_g(tileentity.func_174877_v())))
 +                invalidList.add(tileentity);
-+            }
              tileentity.func_145836_u();
          }
 +
-+        for (TileEntity te : invalidList)
-+        {
-+            te.func_145843_s();
-+        }
++        for (TileEntity te : invalidList) te.func_145843_s();
      }
  
-     public BiomeGenBase func_76591_a(int p_76591_1_, int p_76591_2_, WorldChunkManager p_76591_3_)
-@@ -1450,4 +1479,48 @@
+     public Biome func_177411_a(BlockPos p_177411_1_, BiomeProvider p_177411_2_)
+@@ -1231,13 +1248,13 @@
+                     BlockPos blockpos1 = blockpos.func_177982_a(k, (j << 4) + i1, l);
+                     boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
-         return true;
+-                    if (this.field_76652_q[j] == field_186036_a && flag || this.field_76652_q[j] != field_186036_a && this.field_76652_q[j].func_177485_a(k, i1, l).func_185904_a() == Material.field_151579_a)
++                    if (this.field_76652_q[j] == field_186036_a && flag || this.field_76652_q[j] != field_186036_a && this.field_76652_q[j].func_177485_a(k, i1, l).func_177230_c().isAir(this.field_76652_q[j].func_177485_a(k, i1, l), this.field_76637_e, blockpos1))
+                     {
+                         for (EnumFacing enumfacing : EnumFacing.values())
+                         {
+                             BlockPos blockpos2 = blockpos1.func_177972_a(enumfacing);
+ 
+-                            if (this.field_76637_e.func_180495_p(blockpos2).func_185906_d() > 0)
++                            if (this.field_76637_e.func_180495_p(blockpos2).getLightValue(this.field_76637_e, blockpos2) > 0)
+                             {
+                                 this.field_76637_e.func_175664_x(blockpos2);
+                             }
+@@ -1368,7 +1385,7 @@
+         {
+             blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
+ 
+-            if (this.func_177435_g(blockpos$mutableblockpos).func_185906_d() > 0)
++            if (this.func_177435_g(blockpos$mutableblockpos).getLightValue(this.field_76637_e, blockpos$mutableblockpos) > 0)
+             {
+                 this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
+             }
+@@ -1476,4 +1493,20 @@
+         QUEUED,
+         CHECK;
      }
-+
-+    /**
-+     * Retrieves the tile entity, WITHOUT creating it.
-+     * Good for checking if it exists.
-+     *
-+     * @param x
-+     * @param y
-+     * @param z
-+     * @return The tile entity at the specified location, if it exists and is valid.
-+     */
-+    public TileEntity getTileEntityUnsafe(int x, int y, int z)
-+    {
-+        ChunkPosition chunkposition = new ChunkPosition(x, y, z);
-+        TileEntity tileentity = (TileEntity)this.field_150816_i.get(chunkposition);
-+
-+        if (tileentity != null && tileentity.func_145837_r())
-+        {
-+            field_150816_i.remove(chunkposition);
-+            tileentity = null;
-+        }
-+
-+        return tileentity;
-+    }
 +
 +    /**
 +     * Removes the tile entity at the specified position, only if it's
 +     * marked as invalid.
-+     *
-+     * @param x
-+     * @param y
-+     * @param z
 +     */
-+    public void removeInvalidTileEntity(int x, int y, int z)
++    public void removeInvalidTileEntity(BlockPos pos)
 +    {
-+        ChunkPosition position = new ChunkPosition(x, y, z);
 +        if (field_76636_d)
 +        {
-+            TileEntity entity = (TileEntity)field_150816_i.get(position);
++            TileEntity entity = (TileEntity)field_150816_i.get(pos);
 +            if (entity != null && entity.func_145837_r())
 +            {
-+                field_150816_i.remove(position);
++                field_150816_i.remove(pos);
 +            }
 +        }
 +    }

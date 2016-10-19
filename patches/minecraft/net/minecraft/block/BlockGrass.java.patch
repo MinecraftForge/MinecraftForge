@@ -1,37 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
-@@ -43,7 +43,7 @@
+@@ -39,7 +39,7 @@
      {
-         if (!p_149674_1_.field_72995_K)
+         if (!p_180650_1_.field_72995_K)
          {
--            if (p_149674_1_.func_72957_l(p_149674_2_, p_149674_3_ + 1, p_149674_4_) < 4 && p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ + 1, p_149674_4_).func_149717_k() > 2)
-+            if (p_149674_1_.func_72957_l(p_149674_2_, p_149674_3_ + 1, p_149674_4_) < 4 && p_149674_1_.getBlockLightOpacity(p_149674_2_, p_149674_3_ + 1, p_149674_4_) > 2)
+-            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_185891_c() > 2)
++            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) > 2)
              {
-                 p_149674_1_.func_147449_b(p_149674_2_, p_149674_3_, p_149674_4_, Blocks.field_150346_d);
+                 p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P());
              }
-@@ -56,7 +56,7 @@
-                     int k1 = p_149674_4_ + p_149674_5_.nextInt(3) - 1;
-                     Block block = p_149674_1_.func_147439_a(i1, j1 + 1, k1);
+@@ -59,7 +59,7 @@
+                         IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos.func_177984_a());
+                         IBlockState iblockstate1 = p_180650_1_.func_180495_p(blockpos);
  
--                    if (p_149674_1_.func_147439_a(i1, j1, k1) == Blocks.field_150346_d && p_149674_1_.func_72805_g(i1, j1, k1) == 0 && p_149674_1_.func_72957_l(i1, j1 + 1, k1) >= 4 && block.func_149717_k() <= 2)
-+                    if (p_149674_1_.func_147439_a(i1, j1, k1) == Blocks.field_150346_d && p_149674_1_.func_72805_g(i1, j1, k1) == 0 && p_149674_1_.func_72957_l(i1, j1 + 1, k1) >= 4 && p_149674_1_.getBlockLightOpacity(i1, j1 + 1, k1) <= 2)
+-                        if (iblockstate1.func_177230_c() == Blocks.field_150346_d && iblockstate1.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && iblockstate.func_185891_c() <= 2)
++                        if (iblockstate1.func_177230_c() == Blocks.field_150346_d && iblockstate1.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && iblockstate.getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) <= 2)
+                         {
+                             p_180650_1_.func_175656_a(blockpos, Blocks.field_150349_c.func_176223_P());
+                         }
+@@ -98,18 +98,11 @@
+             {
+                 if (j >= i / 16)
+                 {
+-                    if (p_176474_1_.func_180495_p(blockpos1).func_177230_c().field_149764_J == Material.field_151579_a)
++                    if (p_176474_1_.func_175623_d(blockpos1))
                      {
-                         p_149674_1_.func_147449_b(i1, j1, k1, Blocks.field_150349_c);
-                     }
-@@ -184,15 +184,7 @@
-                     }
-                     else
-                     {
--                        String s = p_149853_1_.func_72807_a(i1, k1).func_150572_a(p_149853_2_, i1, j1, k1);
--                        field_149992_a.debug("Flower in " + p_149853_1_.func_72807_a(i1, k1).field_76791_y + ": " + s);
--                        BlockFlower blockflower = BlockFlower.func_149857_e(s);
+                         if (p_176474_2_.nextInt(8) == 0)
+                         {
+-                            BlockFlower.EnumFlowerType blockflower$enumflowertype = p_176474_1_.func_180494_b(blockpos1).func_180623_a(p_176474_2_, blockpos1);
+-                            BlockFlower blockflower = blockflower$enumflowertype.func_176964_a().func_180346_a();
+-                            IBlockState iblockstate = blockflower.func_176223_P().func_177226_a(blockflower.func_176494_l(), blockflower$enumflowertype);
 -
--                        if (blockflower != null && blockflower.func_149718_j(p_149853_1_, i1, j1, k1))
--                        {
--                            int i2 = BlockFlower.func_149856_f(s);
--                            p_149853_1_.func_147465_d(i1, j1, k1, blockflower, i2, 3);
--                        }
-+                        p_149853_1_.func_72807_a(i1, k1).plantFlower(p_149853_1_, p_149853_2_, i1, j1, k1);
-                     }
-                 }
- 
+-                            if (blockflower.func_180671_f(p_176474_1_, blockpos1, iblockstate))
+-                            {
+-                                p_176474_1_.func_180501_a(blockpos1, iblockstate, 3);
+-                            }
++                            p_176474_1_.func_180494_b(blockpos1).plantFlower(p_176474_1_, p_176474_2_, blockpos1);
+                         }
+                         else
+                         {

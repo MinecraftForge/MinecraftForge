@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
++++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
+@@ -66,7 +66,7 @@
+             if (entityplayermp == null)
+             {
+                 this.field_147328_g = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
+-                this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, this.field_181025_l);
++                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.func_184103_al(), this.field_147333_a, this.field_181025_l);
+                 this.field_181025_l = null;
+             }
+         }
+@@ -130,7 +130,7 @@
+             }
+             else
+             {
+-                this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, this.field_147327_f.func_184103_al().func_148545_a(this.field_147337_i));
++                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.func_184103_al(), this.field_147333_a, this.field_147327_f.func_184103_al().func_148545_a(this.field_147337_i));
+             }
+         }
+     }

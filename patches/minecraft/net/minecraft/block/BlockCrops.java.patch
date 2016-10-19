@@ -1,79 +1,61 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCrops.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCrops.java
-@@ -2,6 +2,7 @@
- 
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.util.ArrayList;
- import java.util.Random;
- import net.minecraft.client.renderer.texture.IIconRegister;
- import net.minecraft.creativetab.CreativeTabs;
-@@ -12,6 +13,7 @@
- import net.minecraft.util.IIcon;
- import net.minecraft.util.MathHelper;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.util.ForgeDirection;
- 
- public class BlockCrops extends BlockBush implements IGrowable
- {
-@@ -89,11 +91,11 @@
-             {
+@@ -117,11 +117,11 @@
                  float f1 = 0.0F;
+                 IBlockState iblockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
  
--                if (p_149864_1_.func_147439_a(l, p_149864_3_ - 1, i1) == Blocks.field_150458_ak)
-+                if (p_149864_1_.func_147439_a(l, p_149864_3_ - 1, i1).canSustainPlant(p_149864_1_, l, p_149864_3_ - 1, i1, ForgeDirection.UP, this))
+-                if (iblockstate.func_177230_c() == Blocks.field_150458_ak)
++                if (iblockstate.func_177230_c().canSustainPlant(iblockstate, p_180672_1_, blockpos.func_177982_a(i, 0, j), net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)p_180672_0_))
                  {
                      f1 = 1.0F;
  
--                    if (p_149864_1_.func_72805_g(l, p_149864_3_ - 1, i1) > 0)
-+                    if (p_149864_1_.func_147439_a(l, p_149864_3_ - 1, i1).isFertile(p_149864_1_, l, p_149864_3_ - 1, i1))
+-                    if (((Integer)iblockstate.func_177229_b(BlockFarmland.field_176531_a)).intValue() > 0)
++                    if (iblockstate.func_177230_c().isFertile(p_180672_1_, blockpos.func_177982_a(i, 0, j)))
                      {
                          f1 = 3.0F;
                      }
-@@ -145,22 +147,6 @@
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+@@ -162,7 +162,8 @@
+ 
+     public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
-         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, 0);
--
--        if (!p_149690_1_.field_72995_K)
--        {
--            if (p_149690_5_ >= 7)
--            {
--                int j1 = 3 + p_149690_7_;
--
--                for (int k1 = 0; k1 < j1; ++k1)
--                {
--                    if (p_149690_1_.field_73012_v.nextInt(15) <= p_149690_5_)
--                    {
--                        this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(this.func_149866_i(), 1, 0));
--                    }
--                }
--            }
--        }
+-        return (p_180671_1_.func_175699_k(p_180671_2_) >= 8 || p_180671_1_.func_175678_i(p_180671_2_)) && this.func_185514_i(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()));
++        IBlockState soil = p_180671_1_.func_180495_p(p_180671_2_.func_177977_b());
++        return (p_180671_1_.func_175699_k(p_180671_2_) >= 8 || p_180671_1_.func_175678_i(p_180671_2_)) && soil.func_177230_c().canSustainPlant(soil, p_180671_1_, p_180671_2_.func_177977_b(), net.minecraft.util.EnumFacing.UP, this);
      }
  
-     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
-@@ -204,4 +190,23 @@
-     {
-         this.func_149863_m(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_);
+     protected Item func_149866_i()
+@@ -175,11 +176,33 @@
+         return Items.field_151015_O;
      }
-+
+ 
 +    @Override
-+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
++    public java.util.List<ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        ArrayList<ItemStack> ret = super.getDrops(world, x, y, z, metadata, fortune);
++        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
++        int age = func_185527_x(state);
++        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
 +
-+        if (metadata >= 7)
++        if (age >= func_185526_g())
 +        {
++            int k = 3 + fortune;
++
 +            for (int i = 0; i < 3 + fortune; ++i)
 +            {
-+                if (world.field_73012_v.nextInt(15) <= metadata)
++                if (rand.nextInt(2 * func_185526_g()) <= age)
 +                {
 +                    ret.add(new ItemStack(this.func_149866_i(), 1, 0));
 +                }
 +            }
 +        }
-+
 +        return ret;
 +    }
- }
++
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
+     {
+         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, 0);
+ 
+-        if (!p_180653_1_.field_72995_K)
++        if (false && !p_180653_1_.field_72995_K) // Forge: NOP all this.
+         {
+             int i = this.func_185527_x(p_180653_3_);
+ 

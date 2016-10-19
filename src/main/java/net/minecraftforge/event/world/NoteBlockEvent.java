@@ -1,13 +1,30 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.world;
 
-import com.google.common.base.Preconditions;
-
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.world.BlockEvent;
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Base class for Noteblock Events
@@ -17,12 +34,12 @@ public class NoteBlockEvent extends BlockEvent
 {
     private int noteId;
 
-    NoteBlockEvent(World world, int x, int y, int z, int meta, int note)
+    protected NoteBlockEvent(World world, BlockPos pos, IBlockState state, int note)
     {
-        super(x, y, z, world, Blocks.noteblock, meta);
+        super(world, pos, state);
         this.noteId = note;
     }
-    
+
     /**
      * Get the Note the Noteblock is tuned to
      * @return the Note
@@ -33,7 +50,7 @@ public class NoteBlockEvent extends BlockEvent
     }
 
     /**
-     * Get the Octave of the note this Noteblock is tuned to 
+     * Get the Octave of the note this Noteblock is tuned to
      * @return the Octave
      */
     public Octave getOctave()
@@ -52,7 +69,7 @@ public class NoteBlockEvent extends BlockEvent
 
     /**
      * Set Note and Octave for this event.<br>
-     * If octave is Octave.HIGH, note may only be Note.F_SHARP 
+     * If octave is Octave.HIGH, note may only be Note.F_SHARP
      * @param note the Note
      * @param octave the Octave
      */
@@ -69,15 +86,25 @@ public class NoteBlockEvent extends BlockEvent
     @Cancelable
     public static class Play extends NoteBlockEvent
     {
-        public Instrument instrument;
+        private Instrument instrument;
 
-        public Play(World world, int x, int y, int z, int meta, int note, int instrument)
+        public Play(World world, BlockPos pos, IBlockState state, int note, int instrument)
         {
-            super(world, x, y, z, meta, note);
-            this.instrument = Instrument.fromId(instrument);
+            super(world, pos, state, note);
+            this.setInstrument(Instrument.fromId(instrument));
+        }
+
+        public Instrument getInstrument()
+        {
+            return instrument;
+        }
+
+        public void setInstrument(Instrument instrument)
+        {
+            this.instrument = instrument;
         }
     }
-    
+
     /**
      * Fired when a Noteblock is changed. You can adjust the note it will change to via {@link #setNote(Note, Octave)}.
      * Canceling this event will not change the note and also stop the Noteblock from playing it's note.
@@ -85,17 +112,27 @@ public class NoteBlockEvent extends BlockEvent
     @Cancelable
     public static class Change extends NoteBlockEvent
     {
-        public final Note oldNote;
-        public final Octave oldOctave;
-        
-        public Change(World world, int x, int y, int z, int meta, int oldNote, int newNote)
+        private final Note oldNote;
+        private final Octave oldOctave;
+
+        public Change(World world, BlockPos pos, IBlockState state, int oldNote, int newNote)
         {
-            super(world, x, y, z, meta, newNote);
+            super(world, pos, state, newNote);
             this.oldNote = Note.fromId(oldNote);
             this.oldOctave = Octave.fromId(oldNote);
-        }        
+        }
+
+        public Note getOldNote()
+        {
+            return oldNote;
+        }
+
+        public Octave getOldOctave()
+        {
+            return oldOctave;
+        }
     }
-    
+
     /**
      * Describes the types of musical Instruments that can be played by a Noteblock.
      * The Instrument being played can be overridden with {@link NoteBlockEvent.Play#setInstrument(Instrument)}
@@ -107,19 +144,19 @@ public class NoteBlockEvent extends BlockEvent
         SNARE,
         CLICKS,
         BASSGUITAR;
-        
+
         // cache to avoid creating a new array every time
         private static final Instrument[] values = values();
-        
+
         static Instrument fromId(int id)
         {
             return id < 0 || id > 4 ? PIANO : values[id];
         }
     }
-    
+
     /**
      * Information about the pitch of a Noteblock note.
-     * For altered notes such as G-Sharp / A-Flat the Sharp variant is used here. 
+     * For altered notes such as G-Sharp / A-Flat the Sharp variant is used here.
      *
      */
     public static enum Note
@@ -136,15 +173,15 @@ public class NoteBlockEvent extends BlockEvent
         D_SHARP,
         E,
         F;
-        
+
         private static final Note[] values = values();
-        
+
         static Note fromId(int id)
         {
             return values[id % 12];
-        }        
+        }
     }
-    
+
     /**
      * Describes the Octave of a Note being played by a Noteblock.
      * Together with {@link Note} it fully describes the note.
@@ -155,7 +192,7 @@ public class NoteBlockEvent extends BlockEvent
         LOW,
         MID,
         HIGH; // only valid for F_SHARP
-        
+
         static Octave fromId(int id)
         {
             return id < 12 ? LOW : id == 24 ? HIGH : MID;

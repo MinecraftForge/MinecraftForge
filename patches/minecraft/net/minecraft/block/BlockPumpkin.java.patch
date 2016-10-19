@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPumpkin.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPumpkin.java
-@@ -113,7 +113,7 @@
+@@ -124,7 +124,7 @@
  
-     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_).field_149764_J.func_76222_j() && World.func_147466_a(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_);
-+        return  p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_).isReplaceable(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && World.func_147466_a(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_);
+-        return p_176196_1_.func_180495_p(p_176196_2_).func_177230_c().field_149764_J.func_76222_j() && p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q();
++        return p_176196_1_.func_180495_p(p_176196_2_).func_177230_c().func_176200_f(p_176196_1_, p_176196_2_) && p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).isSideSolid(p_176196_1_, p_176196_2_, EnumFacing.UP);
      }
  
-     public void func_149689_a(World p_149689_1_, int p_149689_2_, int p_149689_3_, int p_149689_4_, EntityLivingBase p_149689_5_, ItemStack p_149689_6_)
+     public IBlockState func_185499_a(IBlockState p_185499_1_, Rotation p_185499_2_)

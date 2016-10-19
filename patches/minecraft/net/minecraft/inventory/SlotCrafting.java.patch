@@ -1,30 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/inventory/SlotCrafting.java
 +++ ../src-work/minecraft/net/minecraft/inventory/SlotCrafting.java
-@@ -10,6 +10,8 @@
- import net.minecraft.item.ItemStack;
- import net.minecraft.item.ItemSword;
- import net.minecraft.stats.AchievementList;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+@@ -108,8 +108,11 @@
  
- public class SlotCrafting extends Slot
- {
-@@ -115,10 +117,16 @@
-             {
-                 this.field_75239_a.func_70298_a(i, 1);
+     public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
+     {
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerCraftingEvent(p_82870_1_, p_82870_2_, field_75239_a);
+         this.func_75208_c(p_82870_2_);
++        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_82870_1_);
+         ItemStack[] aitemstack = CraftingManager.func_77594_a().func_180303_b(this.field_75239_a, p_82870_1_.field_70170_p);
++        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
  
--                if (itemstack1.func_77973_b().func_77634_r())
-+                if (itemstack1.func_77973_b().hasContainerItem(itemstack1))
-                 {
--                    ItemStack itemstack2 = new ItemStack(itemstack1.func_77973_b().func_77668_q());
-+                    ItemStack itemstack2 = itemstack1.func_77973_b().getContainerItem(itemstack1);
- 
-+                    if (itemstack2 != null && itemstack2.func_77984_f() && itemstack2.func_77960_j() > itemstack2.func_77958_k())
-+                    {
-+                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(field_75238_b, itemstack2));
-+                        continue;
-+                    }
-+
-                     if (!itemstack1.func_77973_b().func_77630_h(itemstack1) || !this.field_75238_b.field_71071_by.func_70441_a(itemstack2))
-                     {
-                         if (this.field_75239_a.func_70301_a(i) == null)
+         for (int i = 0; i < aitemstack.length; ++i)
+         {

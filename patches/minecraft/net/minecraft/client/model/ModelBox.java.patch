@@ -1,18 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/client/model/ModelBox.java
 +++ ../src-work/minecraft/net/minecraft/client/model/ModelBox.java
 @@ -4,7 +4,6 @@
- import cpw.mods.fml.relauncher.SideOnly;
- import net.minecraft.client.renderer.Tessellator;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
  
 -@SideOnly(Side.CLIENT)
  public class ModelBox
  {
-     private PositionTextureVertex[] field_78253_h;
-@@ -77,6 +76,7 @@
+     private final PositionTextureVertex[] field_78253_h;
+@@ -81,6 +80,7 @@
          }
      }
  
 +    @SideOnly(Side.CLIENT)
-     public void func_78245_a(Tessellator p_78245_1_, float p_78245_2_)
+     public void func_178780_a(VertexBuffer p_178780_1_, float p_178780_2_)
      {
-         for (int i = 0; i < this.field_78254_i.length; ++i)
+         for (TexturedQuad texturedquad : this.field_78254_i)

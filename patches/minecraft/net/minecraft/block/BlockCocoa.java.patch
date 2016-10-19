@@ -1,46 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCocoa.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCocoa.java
-@@ -2,6 +2,7 @@
+@@ -131,7 +131,14 @@
  
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.util.ArrayList;
- import java.util.Random;
- import net.minecraft.block.material.Material;
- import net.minecraft.client.renderer.texture.IIconRegister;
-@@ -160,6 +161,13 @@
- 
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-+        super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
+-        int i = ((Integer)p_180653_3_.func_177229_b(field_176501_a)).intValue();
++        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int p_149690_5_, int fortune)
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        ArrayList<ItemStack> dropped = super.getDrops(world, x, y, z, p_149690_5_, fortune);
-         int j1 = func_149987_c(p_149690_5_);
-         byte b0 = 1;
++        java.util.List<ItemStack> dropped = super.getDrops(world, pos, state, fortune);
++        int i = ((Integer)state.func_177229_b(field_176501_a)).intValue();
+         int j = 1;
  
-@@ -170,8 +178,9 @@
+         if (i >= 2)
+@@ -141,8 +148,9 @@
  
-         for (int k1 = 0; k1 < b0; ++k1)
+         for (int k = 0; k < j; ++k)
          {
--            this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(Items.field_151100_aR, 1, 3));
-+            dropped.add(new ItemStack(Items.field_151100_aR, 1, 3));
+-            func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(Items.field_151100_aR, 1, EnumDyeColor.BROWN.func_176767_b()));
++            dropped.add(new ItemStack(Items.field_151100_aR, 1, EnumDyeColor.BROWN.func_176767_b()));
          }
 +        return dropped;
      }
  
-     @SideOnly(Side.CLIENT)
-@@ -216,4 +225,10 @@
-         ++j1;
-         p_149853_1_.func_72921_c(p_149853_3_, p_149853_4_, p_149853_5_, j1 << 2 | i1, 2);
-     }
-+
-+    @Override
-+    public Item func_149650_a(int par1, Random par2Random, int par3)
-+    {
-+        return null;
-+    }
- }
+     public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)

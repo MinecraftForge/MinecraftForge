@@ -501,6 +501,7 @@ public class CodecIBXM implements ICodec
  * @param maxLength Maximum size this array may be.
  * @return New array.
  */
+    @SuppressWarnings("unused") //Forge
     private static byte[] trimArray( byte[] array, int maxLength )
     {
         byte[] trimmedArray = null;
@@ -545,6 +546,7 @@ public class CodecIBXM implements ICodec
  * @param two_bytes_data For stereo sounds.
  * @return byte array containing the converted data.
  */
+    @SuppressWarnings("unused") //Forge
     private static byte[] convertAudioBytes( byte[] audio_bytes,
                                              boolean two_bytes_data )
     {

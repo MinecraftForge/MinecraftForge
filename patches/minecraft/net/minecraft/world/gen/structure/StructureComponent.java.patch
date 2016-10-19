@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
-@@ -34,6 +34,10 @@
+@@ -40,6 +40,10 @@
  
-     public NBTTagCompound func_143010_b()
+     public final NBTTagCompound func_143010_b()
      {
-+        if (MapGenStructureIO.func_143036_a(this) == null) // Friendlier error then the Null Stirng error below.
++        if (MapGenStructureIO.func_143036_a(this) == null) // Friendlier error then the Null String error below.
 +        {
 +            throw new RuntimeException("StructureComponent \"" + this.getClass().getName() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +        }

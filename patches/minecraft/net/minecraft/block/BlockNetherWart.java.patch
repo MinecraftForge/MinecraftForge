@@ -1,58 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNetherWart.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNetherWart.java
-@@ -2,6 +2,7 @@
+@@ -43,7 +43,7 @@
  
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.util.ArrayList;
- import java.util.Random;
- import net.minecraft.client.renderer.texture.IIconRegister;
- import net.minecraft.creativetab.CreativeTabs;
-@@ -11,6 +12,7 @@
- import net.minecraft.item.ItemStack;
- import net.minecraft.util.IIcon;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.util.ForgeDirection;
- 
- public class BlockNetherWart extends BlockBush
- {
-@@ -33,7 +35,7 @@
- 
-     public boolean func_149718_j(World p_149718_1_, int p_149718_2_, int p_149718_3_, int p_149718_4_)
+     public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
--        return this.func_149854_a(p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_));
-+        return super.func_149718_j(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_);
+-        return this.func_185514_i(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()));
++        return super.func_180671_f(p_180671_1_, p_180671_2_, p_180671_3_);
      }
  
-     public void func_149674_a(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
-@@ -60,9 +62,12 @@
-         return 6;
+     public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
+@@ -59,9 +59,11 @@
+         super.func_180650_b(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_);
      }
  
 +    @SuppressWarnings("unused")
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
--        if (!p_149690_1_.field_72995_K)
-+        super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
-+        
-+        if (false && !p_149690_1_.field_72995_K)
+-        if (!p_180653_1_.field_72995_K)
++        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
++        if (false && !p_180653_1_.field_72995_K)
          {
-             int j1 = 1;
+             int i = 1;
  
-@@ -109,4 +114,23 @@
-             this.field_149883_a[i] = p_149651_1_.func_94245_a(this.func_149641_N() + "_stage_" + i);
-         }
+@@ -108,6 +110,26 @@
+         return ((Integer)p_176201_1_.func_177229_b(field_176486_a)).intValue();
      }
-+
+ 
 +    @Override
-+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
++    public java.util.List<ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
++        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
 +        int count = 1;
 +
-+        if (metadata >= 3)
++        if (((Integer)state.func_177229_b(field_176486_a)) >= 3)
 +        {
-+            count = 2 + world.field_73012_v.nextInt(3) + (fortune > 0 ? world.field_73012_v.nextInt(fortune + 1) : 0);
++            count = 2 + rand.nextInt(3) + (fortune > 0 ? rand.nextInt(fortune + 1) : 0);
 +        }
 +
 +        for (int i = 0; i < count; i++)
@@ -62,4 +45,7 @@
 +
 +        return ret;
 +    }
- }
++
+     protected BlockStateContainer func_180661_e()
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176486_a});

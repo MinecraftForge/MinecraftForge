@@ -1,8 +1,28 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 /**
@@ -21,12 +41,10 @@ public interface IShearable
      *
      * @param item The itemstack that is being used, Possible to be null
      * @param world The current world
-     * @param x The X Position
-     * @param y The Y Position
-     * @param z The Z Position
+     * @param pos Block's position in world.
      * @return If this is shearable, and onSheared should be called.
      */
-    public boolean isShearable(ItemStack item, IBlockAccess world, int x, int y, int z);
+    public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos);
 
     /**
      * Performs the shear function on this object.
@@ -42,11 +60,9 @@ public interface IShearable
      *
      * @param item The itemstack that is being used, Possible to be null
      * @param world The current world
-     * @param x The X Position
-     * @param y The Y Position
-     * @param z The Z Position
+     * @param pos If this is a block, the block's position in world.
      * @param fortune The fortune level of the shears being used
      * @return A ArrayList containing all items from this shearing. Possible to be null.
      */
-    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune);
+    public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune);
 }

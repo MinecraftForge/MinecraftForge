@@ -1,22 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/nbt/CompressedStreamTools.java
 +++ ../src-work/minecraft/net/minecraft/nbt/CompressedStreamTools.java
-@@ -1,7 +1,5 @@
- package net.minecraft.nbt;
+@@ -17,8 +17,6 @@
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.util.ReportedException;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
  
--import cpw.mods.fml.relauncher.Side;
--import cpw.mods.fml.relauncher.SideOnly;
- import java.io.BufferedInputStream;
- import java.io.BufferedOutputStream;
- import java.io.ByteArrayInputStream;
-@@ -91,7 +89,6 @@
-         return bytearrayoutputstream.toByteArray();
+ public class CompressedStreamTools
+ {
+@@ -53,7 +51,6 @@
+         }
      }
  
 -    @SideOnly(Side.CLIENT)
      public static void func_74793_a(NBTTagCompound p_74793_0_, File p_74793_1_) throws IOException
      {
-         File file2 = new File(p_74793_1_.getAbsolutePath() + "_tmp");
-@@ -182,7 +179,6 @@
+         File file1 = new File(p_74793_1_.getAbsolutePath() + "_tmp");
+@@ -118,6 +115,7 @@
+     private static NBTBase func_152455_a(DataInput p_152455_0_, int p_152455_1_, NBTSizeTracker p_152455_2_) throws IOException
+     {
+         byte b0 = p_152455_0_.readByte();
++        p_152455_2_.func_152450_a(8); // Forge: Count everything!
+ 
+         if (b0 == 0)
+         {
+@@ -125,7 +123,8 @@
+         }
+         else
+         {
+-            p_152455_0_.readUTF();
++            NBTSizeTracker.readUTF(p_152455_2_, p_152455_0_.readUTF()); //Forge: Count this string.
++            p_152455_2_.func_152450_a(32); //Forge: 4 extra bytes for the object allocation.
+             NBTBase nbtbase = NBTBase.func_150284_a(b0);
+ 
+             try
+@@ -144,7 +143,6 @@
          }
      }
  
@@ -24,17 +43,11 @@
      public static void func_74795_b(NBTTagCompound p_74795_0_, File p_74795_1_) throws IOException
      {
          DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(p_74795_1_));
-@@ -197,13 +193,11 @@
+@@ -159,7 +157,6 @@
          }
      }
  
 -    @SideOnly(Side.CLIENT)
      public static NBTTagCompound func_74797_a(File p_74797_0_) throws IOException
      {
-         return func_152458_a(p_74797_0_, NBTSizeTracker.field_152451_a);
-     }
- 
--    @SideOnly(Side.CLIENT)
-     public static NBTTagCompound func_152458_a(File p_152458_0_, NBTSizeTracker p_152458_1_) throws IOException
-     {
-         if (!p_152458_0_.exists())
+         if (!p_74797_0_.exists())

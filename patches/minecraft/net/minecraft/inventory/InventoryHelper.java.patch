@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/inventory/InventoryHelper.java
++++ ../src-work/minecraft/net/minecraft/inventory/InventoryHelper.java
+@@ -44,19 +44,8 @@
+         {
+             int i = field_180177_a.nextInt(21) + 10;
+ 
+-            if (i > p_180173_7_.field_77994_a)
+-            {
+-                i = p_180173_7_.field_77994_a;
+-            }
++            EntityItem entityitem = new EntityItem(p_180173_0_, p_180173_1_ + (double)f, p_180173_3_ + (double)f1, p_180173_5_ + (double)f2, p_180173_7_.func_77979_a(i));
+ 
+-            p_180173_7_.field_77994_a -= i;
+-            EntityItem entityitem = new EntityItem(p_180173_0_, p_180173_1_ + (double)f, p_180173_3_ + (double)f1, p_180173_5_ + (double)f2, new ItemStack(p_180173_7_.func_77973_b(), i, p_180173_7_.func_77960_j()));
+-
+-            if (p_180173_7_.func_77942_o())
+-            {
+-                entityitem.func_92059_d().func_77982_d(p_180173_7_.func_77978_p().func_74737_b());
+-            }
+-
+             float f3 = 0.05F;
+             entityitem.field_70159_w = field_180177_a.nextGaussian() * 0.05000000074505806D;
+             entityitem.field_70181_x = field_180177_a.nextGaussian() * 0.05000000074505806D + 0.20000000298023224D;

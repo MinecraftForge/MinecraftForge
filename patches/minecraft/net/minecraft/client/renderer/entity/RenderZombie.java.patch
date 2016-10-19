@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderZombie.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderZombie.java
+@@ -83,21 +83,7 @@
+     {
+         if (p_110775_1_.func_82231_m())
+         {
+-            switch (p_110775_1_.func_184736_de())
+-            {
+-                case 0:
+-                    return field_188330_l;
+-                case 1:
+-                    return field_188331_m;
+-                case 2:
+-                    return field_188332_n;
+-                case 3:
+-                    return field_188333_o;
+-                case 4:
+-                    return field_188329_p;
+-                default:
+-                    return field_110864_q;
+-            }
++            return p_110775_1_.getVillagerTypeForge().getZombieSkin();
+         }
+         else
+         {

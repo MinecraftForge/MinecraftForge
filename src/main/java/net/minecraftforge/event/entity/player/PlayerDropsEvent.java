@@ -1,8 +1,27 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.player;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
@@ -18,22 +37,27 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 @Cancelable
 public class PlayerDropsEvent extends LivingDropsEvent
 {
-    public final EntityPlayer entityPlayer;
+    private final EntityPlayer entityPlayer;
 
     /**
      * Creates a new event containing all the items that will drop into the
      * world when a player dies.
-     * @param entity The dying player. 
+     * @param entity The dying player.
      * @param source The source of the damage which is killing the player.
      * @param drops List of all drops entering the world.
      */
-    public PlayerDropsEvent(EntityPlayer entity, DamageSource source, ArrayList<EntityItem> drops, boolean recentlyHit)
+    public PlayerDropsEvent(EntityPlayer entity, DamageSource source, List<EntityItem> drops, boolean recentlyHit)
     {
-        super(entity, source, drops, 
-            (source.getEntity() instanceof EntityPlayer) ? 
+        super(entity, source, drops,
+            (source.getEntity() instanceof EntityPlayer) ?
                 EnchantmentHelper.getLootingModifier(((EntityPlayer)source.getEntity())) : 0,
-            recentlyHit, 0);
-        
+            recentlyHit);
+
         this.entityPlayer = entity;
+    }
+
+    public EntityPlayer getEntityPlayer()
+    {
+        return entityPlayer;
     }
 }

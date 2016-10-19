@@ -1,23 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
-@@ -14,10 +14,13 @@
- import net.minecraft.util.MathHelper;
- import net.minecraft.util.StatCollector;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.item.ItemExpireEvent;
-+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
--
- import cpw.mods.fml.common.FMLCommonHandler;
-+import cpw.mods.fml.common.eventhandler.Event.Result;
- 
- public class EntityItem extends Entity
- {
-@@ -30,6 +33,11 @@
+@@ -41,6 +41,11 @@
+     private String field_145802_g;
      public float field_70290_d;
-     private static final String __OBFID = "CL_00001669";
  
 +    /**
 +     * The maximum age of this EntityItem.  The item is expired once this is reached.
@@ -27,112 +12,114 @@
      public EntityItem(World p_i1709_1_, double p_i1709_2_, double p_i1709_4_, double p_i1709_6_)
      {
          super(p_i1709_1_);
-@@ -46,8 +54,9 @@
- 
-     public EntityItem(World p_i1710_1_, double p_i1710_2_, double p_i1710_4_, double p_i1710_6_, ItemStack p_i1710_8_)
+@@ -58,6 +63,7 @@
      {
--        this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);
-+        this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);        
+         this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);
          this.func_92058_a(p_i1710_8_);
 +        this.lifespan = (p_i1710_8_.func_77973_b() == null ? 6000 : p_i1710_8_.func_77973_b().getEntityLifespan(p_i1710_8_, p_i1710_1_));
      }
  
      protected boolean func_70041_e_()
-@@ -71,6 +80,15 @@
+@@ -81,6 +87,8 @@
  
      public void func_70071_h_()
      {
-+        ItemStack stack = this.func_70096_w().func_82710_f(10);
-+        if (stack != null && stack.func_77973_b() != null)
-+        {
-+            if (stack.func_77973_b().onEntityItemUpdate(this))
-+            {
-+                return;
-+            }
-+        }
-+
++        ItemStack stack = this.func_184212_Q().func_187225_a(field_184533_c).orNull();
++        if (stack != null && stack.func_77973_b() != null && stack.func_77973_b().onEntityItemUpdate(this)) return;
          if (this.func_92059_d() == null)
          {
              this.func_70106_y();
-@@ -126,8 +144,30 @@
+@@ -146,8 +154,16 @@
  
-             ++this.field_70292_b;
+             this.func_70072_I();
  
 -            if (!this.field_70170_p.field_72995_K && this.field_70292_b >= 6000)
-+            ItemStack item = func_70096_w().func_82710_f(10);
-+    
++            ItemStack item = this.func_184212_Q().func_187225_a(field_184533_c).orNull();
++
 +            if (!this.field_70170_p.field_72995_K && this.field_70292_b >= lifespan)
              {
-+                if (item != null)
-+                {   
-+                    ItemExpireEvent event = new ItemExpireEvent(this, (item.func_77973_b() == null ? 6000 : item.func_77973_b().getEntityLifespan(item, field_70170_p)));
-+                    if (MinecraftForge.EVENT_BUS.post(event))
-+                    {
-+                        lifespan += event.extraLife;
-+                    }
-+                    else
-+                    {
-+                        this.func_70106_y();
-+                    }
-+                }
-+                else
-+                {
-+                    this.func_70106_y();
-+                }
++                int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
++                if (hook < 0) this.func_70106_y();
++                else          this.lifespan += hook;
 +            }
-+    
 +            if (item != null && item.field_77994_a <= 0)
 +            {
                  this.func_70106_y();
              }
          }
-@@ -242,6 +282,7 @@
-     {
-         p_70014_1_.func_74777_a("Health", (short)((byte)this.field_70291_e));
+@@ -204,6 +220,10 @@
+                     {
+                         return false;
+                     }
++                    else if (!itemstack.areCapsCompatible(itemstack1))
++                    {
++                        return false;
++                    }
+                     else
+                     {
+                         itemstack1.field_77994_a += itemstack.field_77994_a;
+@@ -293,6 +313,7 @@
+         p_70014_1_.func_74777_a("Health", (short)this.field_70291_e);
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
+         p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
 +        p_70014_1_.func_74768_a("Lifespan", lifespan);
  
          if (this.func_145800_j() != null)
          {
-@@ -277,20 +318,39 @@
-         NBTTagCompound nbttagcompound1 = p_70037_1_.func_74775_l("Item");
-         this.func_92058_a(ItemStack.func_77949_a(nbttagcompound1));
+@@ -333,20 +354,23 @@
+         NBTTagCompound nbttagcompound = p_70037_1_.func_74775_l("Item");
+         this.func_92058_a(ItemStack.func_77949_a(nbttagcompound));
  
 -        if (this.func_92059_d() == null)
-+        ItemStack item = func_70096_w().func_82710_f(10);
-+
-+        if (item == null || item.field_77994_a <= 0)
-         {
-             this.func_70106_y();
-         }
-+
-+        if (p_70037_1_.func_74764_b("Lifespan"))
-+        {
-+            lifespan = p_70037_1_.func_74762_e("Lifespan");
-+        }
+-        {
+-            this.func_70106_y();
+-        }
++        ItemStack item = this.func_184212_Q().func_187225_a(field_184533_c).orNull();
++        if (item == null || item.field_77994_a <= 0) this.func_70106_y();
++        if (p_70037_1_.func_74764_b("Lifespan")) lifespan = p_70037_1_.func_74762_e("Lifespan");
      }
  
      public void func_70100_b_(EntityPlayer p_70100_1_)
      {
          if (!this.field_70170_p.field_72995_K)
          {
-+            if (this.field_145804_b > 0)
-+            {
-+                return;
-+            }
-+
-+            EntityItemPickupEvent event = new EntityItemPickupEvent(p_70100_1_, this);
-+
-+            if (MinecraftForge.EVENT_BUS.post(event))
-+            {
-+                return;
-+            }
-+
++            if (this.field_145804_b > 0) return;
              ItemStack itemstack = this.func_92059_d();
              int i = itemstack.field_77994_a;
  
 -            if (this.field_145804_b == 0 && (this.field_145802_g == null || 6000 - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && p_70100_1_.field_71071_by.func_70441_a(itemstack))
-+            if (this.field_145804_b <= 0 && (this.field_145802_g == null || lifespan - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && (event.getResult() == Result.ALLOW || i <= 0 || p_70100_1_.field_71071_by.func_70441_a(itemstack)))
++            int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_70100_1_, itemstack);
++            if (hook < 0) return;
++
++            if (this.field_145804_b <= 0 && (this.field_145802_g == null || lifespan - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && (hook == 1 || i <= 0 || p_70100_1_.field_71071_by.func_70441_a(itemstack)))
              {
                  if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150364_r))
                  {
+@@ -383,6 +407,7 @@
+                     }
+                 }
+ 
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerItemPickupEvent(p_70100_1_, this);
+                 if (!this.func_174814_R())
+                 {
+                     this.field_70170_p.func_184148_a((EntityPlayer)null, p_70100_1_.field_70165_t, p_70100_1_.field_70163_u, p_70100_1_.field_70161_v, SoundEvents.field_187638_cR, SoundCategory.PLAYERS, 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+@@ -429,11 +454,6 @@
+ 
+         if (itemstack == null)
+         {
+-            if (this.field_70170_p != null)
+-            {
+-                field_145803_d.error("Item entity {} has no item?!", new Object[] {Integer.valueOf(this.func_145782_y())});
+-            }
+-
+             return new ItemStack(Blocks.field_150348_b);
+         }
+         else
+@@ -507,6 +527,6 @@
+     public void func_174870_v()
+     {
+         this.func_174871_r();
+-        this.field_70292_b = 5999;
++        this.field_70292_b = func_92059_d().func_77973_b().getEntityLifespan(func_92059_d(), field_70170_p) - 1;
+     }
+ }

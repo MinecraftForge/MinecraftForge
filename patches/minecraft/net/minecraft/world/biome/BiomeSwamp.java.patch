@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeSwamp.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeSwamp.java
+@@ -79,6 +79,7 @@
+     {
+         super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
+ 
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FOSSIL))
+         if (p_180624_2_.nextInt(64) == 0)
+         {
+             (new WorldGenFossils()).func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_);
+@@ -97,4 +98,10 @@
+     {
+         return 6975545;
+     }
++
++    @Override
++    public void addDefaultFlowers()
++    {
++        addFlower(Blocks.field_150328_O.func_176223_P().func_177226_a(Blocks.field_150328_O.func_176494_l(), BlockFlower.EnumFlowerType.BLUE_ORCHID), 10);
++    }
+ }

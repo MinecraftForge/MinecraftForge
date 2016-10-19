@@ -1,38 +1,69 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.player;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
+/**
+ * This event is fired when a player attempts to use a Hoe on a block, it
+ * can be canceled to completely prevent any further processing.
+ *
+ * You can also set the result to ALLOW to mark the event as processed
+ * and damage the hoe.
+ *
+ * setResult(ALLOW) is the same as the old setHandled();
+ */
 @Cancelable
 @Event.HasResult
 public class UseHoeEvent extends PlayerEvent
 {
-    /**
-     * This event is fired when a player attempts to use a Hoe on a block, it 
-     * can be canceled to completely prevent any further processing.
-     * 
-     * You can also set the result to ALLOW to mark the event as processed 
-     * and damage the hoe.
-     * 
-     * setResult(ALLOW) is the same as the old setHandeled();
-     */
 
-    public final ItemStack current;
-    public final World world;
-    public final int x;
-    public final int y;
-    public final int z;
-    
-    public UseHoeEvent(EntityPlayer player, ItemStack current, World world, int x, int y, int z)
+    private final ItemStack current;
+    private final World world;
+    private final BlockPos pos;
+
+    public UseHoeEvent(EntityPlayer player, ItemStack current, World world, BlockPos pos)
     {
         super(player);
         this.current = current;
         this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
+    }
+
+    public ItemStack getCurrent()
+    {
+        return current;
+    }
+
+    public World getWorld()
+    {
+        return world;
+    }
+
+    public BlockPos getPos()
+    {
+        return pos;
     }
 }

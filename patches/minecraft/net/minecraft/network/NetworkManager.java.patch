@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
+@@ -90,6 +90,11 @@
+         this.field_179294_g = p_i46004_1_;
+     }
+ 
++    public EnumPacketDirection getDirection()
++    {
++        return this.field_179294_g;
++    }
++
+     public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
+     {
+         super.channelActive(p_channelActive_1_);
+@@ -206,7 +211,7 @@
+         final EnumConnectionState enumconnectionstate = EnumConnectionState.func_150752_a(p_150732_1_);
+         final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.field_150746_k.attr(field_150739_c).get();
+ 
+-        if (enumconnectionstate1 != enumconnectionstate)
++        if (enumconnectionstate1 != enumconnectionstate && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+         {
+             field_150735_g.debug("Disabled auto read");
+             this.field_150746_k.config().setAutoRead(false);
+@@ -214,7 +219,7 @@
+ 
+         if (this.field_150746_k.eventLoop().inEventLoop())
+         {
+-            if (enumconnectionstate != enumconnectionstate1)
++            if (enumconnectionstate != enumconnectionstate1 && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+             {
+                 this.func_150723_a(enumconnectionstate);
+             }
+@@ -234,7 +239,7 @@
+             {
+                 public void run()
+                 {
+-                    if (enumconnectionstate != enumconnectionstate1)
++                    if (enumconnectionstate != enumconnectionstate1  && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+                     {
+                         NetworkManager.this.func_150723_a(enumconnectionstate);
+                     }
+@@ -453,6 +458,11 @@
+         }
+     }
+ 
++    public Channel channel()
++    {
++        return field_150746_k;
++    }
++
+     static class InboundHandlerTuplePacketListener
+         {
+             private final Packet<?> field_150774_a;

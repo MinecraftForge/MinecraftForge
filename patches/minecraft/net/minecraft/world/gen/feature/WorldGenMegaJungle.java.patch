@@ -1,38 +1,50 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
-@@ -56,7 +56,7 @@
+@@ -55,7 +55,7 @@
              {
-                 Block block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ + l2, p_76484_5_);
+                 BlockPos blockpos = p_180709_3_.func_177981_b(i2);
  
--                if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
-+                if (block.isAir(p_76484_1_, p_76484_3_, p_76484_4_ + l2, p_76484_5_) || block.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_ + l2, p_76484_5_))
+-                if (this.func_150523_a(p_180709_1_.func_180495_p(blockpos).func_177230_c()))
++                if (this.isAirLeaves(p_180709_1_,blockpos))
                  {
-                     this.func_150516_a(p_76484_1_, p_76484_3_, p_76484_4_ + l2, p_76484_5_, Blocks.field_150364_r, this.field_76520_b);
+                     this.func_175903_a(p_180709_1_, blockpos, this.field_76520_b);
  
-@@ -78,7 +78,7 @@
+@@ -70,7 +70,7 @@
                  {
-                     block = p_76484_1_.func_147439_a(p_76484_3_ + 1, p_76484_4_ + l2, p_76484_5_);
+                     BlockPos blockpos1 = blockpos.func_177974_f();
  
--                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
-+                    if (block.isAir(p_76484_1_, p_76484_3_ + 1, p_76484_4_ + l2, p_76484_5_) || block.isLeaves(p_76484_1_, p_76484_3_ + 1, p_76484_4_ + l2, p_76484_5_))
+-                    if (this.func_150523_a(p_180709_1_.func_180495_p(blockpos1).func_177230_c()))
++                    if (this.isAirLeaves(p_180709_1_,blockpos1))
                      {
-                         this.func_150516_a(p_76484_1_, p_76484_3_ + 1, p_76484_4_ + l2, p_76484_5_, Blocks.field_150364_r, this.field_76520_b);
+                         this.func_175903_a(p_180709_1_, blockpos1, this.field_76520_b);
  
-@@ -98,7 +98,7 @@
+@@ -83,7 +83,7 @@
  
-                     block = p_76484_1_.func_147439_a(p_76484_3_ + 1, p_76484_4_ + l2, p_76484_5_ + 1);
+                     BlockPos blockpos2 = blockpos.func_177968_d().func_177974_f();
  
--                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
-+                    if (block.isAir(p_76484_1_, p_76484_3_ + 1, p_76484_4_ + l2, p_76484_5_ + 1) || block.isLeaves(p_76484_1_, p_76484_3_ + 1, p_76484_4_ + l2, p_76484_5_ + 1))
+-                    if (this.func_150523_a(p_180709_1_.func_180495_p(blockpos2).func_177230_c()))
++                    if (this.isAirLeaves(p_180709_1_,blockpos2))
                      {
-                         this.func_150516_a(p_76484_1_, p_76484_3_ + 1, p_76484_4_ + l2, p_76484_5_ + 1, Blocks.field_150364_r, this.field_76520_b);
+                         this.func_175903_a(p_180709_1_, blockpos2, this.field_76520_b);
  
-@@ -118,7 +118,7 @@
+@@ -96,7 +96,7 @@
  
-                     block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ + l2, p_76484_5_ + 1);
+                     BlockPos blockpos3 = blockpos.func_177968_d();
  
--                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
-+                    if (block.isAir(p_76484_1_, p_76484_3_, p_76484_4_ + l2, p_76484_5_ + 1) || block.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_ + l2, p_76484_5_ + 1))
+-                    if (this.func_150523_a(p_180709_1_.func_180495_p(blockpos3).func_177230_c()))
++                    if (this.isAirLeaves(p_180709_1_,blockpos3))
                      {
-                         this.func_150516_a(p_76484_1_, p_76484_3_, p_76484_4_ + l2, p_76484_5_ + 1, Blocks.field_150364_r, this.field_76520_b);
+                         this.func_175903_a(p_180709_1_, blockpos3, this.field_76520_b);
  
+@@ -130,4 +130,11 @@
+             this.func_175925_a(p_175930_1_, p_175930_2_.func_177981_b(j), p_175930_3_ + 1 - j);
+         }
+     }
++
++    //Helper macro
++    private boolean isAirLeaves(World world, BlockPos pos)
++    {
++        IBlockState state = world.func_180495_p(pos);
++        return state.func_177230_c().isAir(state, world, pos) || state.func_177230_c().isLeaves(state, world, pos);
++    }
+ }

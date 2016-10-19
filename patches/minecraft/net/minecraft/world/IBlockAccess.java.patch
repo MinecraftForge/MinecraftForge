@@ -1,35 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/world/IBlockAccess.java
 +++ ../src-work/minecraft/net/minecraft/world/IBlockAccess.java
-@@ -5,6 +5,7 @@
- import net.minecraft.block.Block;
- import net.minecraft.tileentity.TileEntity;
- import net.minecraft.world.biome.BiomeGenBase;
-+import net.minecraftforge.common.util.ForgeDirection;
- 
- public interface IBlockAccess
- {
-@@ -19,7 +20,6 @@
- 
-     int func_72879_k(int p_72879_1_, int p_72879_2_, int p_72879_3_, int p_72879_4_);
- 
--    @SideOnly(Side.CLIENT)
-     boolean func_147437_c(int p_147437_1_, int p_147437_2_, int p_147437_3_);
+@@ -28,4 +28,14 @@
  
      @SideOnly(Side.CLIENT)
-@@ -30,4 +30,16 @@
- 
-     @SideOnly(Side.CLIENT)
-     boolean func_72806_N();
+     WorldType func_175624_G();
 +
 +    /**
 +     * FORGE: isSideSolid, pulled up from {@link World}
 +     *
-+     * @param x X coord
-+     * @param y Y coord
-+     * @param z Z coord
++     * @param pos Position
 +     * @param side Side
 +     * @param _default default return value
 +     * @return if the block is solid on the side
 +     */
-+    boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default);
++    boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default);
  }

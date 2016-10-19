@@ -1,15 +1,34 @@
-package net.minecraftforge.common.util;
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
+package net.minecraftforge.common.util;
 
 import java.io.Serializable;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
  * Represents a captured snapshot of a block which will not change
@@ -18,93 +37,85 @@ import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
  * Unlike Block, which only one object can exist per coordinate, BlockSnapshot
  * can exist multiple times for any given Block.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "deprecation"})
 public class BlockSnapshot implements Serializable
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockSnapshot", "false"));
 
-    public final int x;
-    public final int y;
-    public final int z;
-    public final int dimId;
-    public transient Block replacedBlock;
-    public final int meta;
-    public int flag;
+    private final BlockPos pos;
+    private final int dimId;
+    private transient IBlockState replacedBlock;
+    private int flag;
     private final NBTTagCompound nbt;
-    public transient World world;
-    public final UniqueIdentifier blockIdentifier;
+    private transient World world;
+    private final ResourceLocation registryName;
+    private final int meta;
 
-    public BlockSnapshot(World world, int x, int y, int z, Block block, int meta)
+    public BlockSnapshot(World world, BlockPos pos, IBlockState state)
     {
-        this.world = world;
-        this.dimId = world.provider.dimensionId;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.replacedBlock = block;
-        this.blockIdentifier = GameRegistry.findUniqueIdentifierFor(block);
-        this.meta = meta;
-        this.flag = 3;
-        TileEntity te = world.getTileEntity(x, y, z);
+        this.setWorld(world);
+        this.dimId = world.provider.getDimension();
+        this.pos = pos;
+        this.setReplacedBlock(state);
+        this.registryName = state.getBlock().getRegistryName();
+        this.meta = state.getBlock().getMetaFromState(state);
+        this.setFlag(3);
+        TileEntity te = world.getTileEntity(pos);
         if (te != null)
         {
             nbt = new NBTTagCompound();
-            te.writeToNBT(nbt);
+            te.writeToNBT(getNbt());
         }
         else nbt = null;
         if (DEBUG)
         {
-            System.out.printf("Created BlockSnapshot - [World: %s ][Location: %d,%d,%d ][Block: %s ][Meta: %d ]", world.getWorldInfo().getWorldName(), x, y, z, block, meta);
+            System.out.printf("Created BlockSnapshot - [World: %s ][Location: %d,%d,%d ][Block: %s ][Meta: %d ]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), getRegistryName(), getMeta());
         }
     }
 
-    public BlockSnapshot(World world, int x, int y, int z, Block block, int meta, NBTTagCompound nbt)
+    public BlockSnapshot(World world, BlockPos pos, IBlockState state, NBTTagCompound nbt)
     {
-        this.world = world;
-        this.dimId = world.provider.dimensionId;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.replacedBlock = block;
-        this.blockIdentifier = GameRegistry.findUniqueIdentifierFor(block);
-        this.meta = meta;
-        this.flag = 3;
+        this.setWorld(world);
+        this.dimId = world.provider.getDimension();
+        this.pos = pos.toImmutable();
+        this.setReplacedBlock(state);
+        this.registryName = state.getBlock().getRegistryName();
+        this.meta = state.getBlock().getMetaFromState(state);
+        this.setFlag(3);
         this.nbt = nbt;
         if (DEBUG)
         {
-            System.out.printf("Created BlockSnapshot - [World: %s ][Location: %d,%d,%d ][Block: %s ][Meta: %d ]", world.getWorldInfo().getWorldName(), x, y, z, block, meta);
+            System.out.printf("Created BlockSnapshot - [World: %s ][Location: %d,%d,%d ][Block: %s ][Meta: %d ]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), getRegistryName(), getMeta());
         }
     }
 
-    public BlockSnapshot(World world, int x, int y, int z, Block block, int meta, int flag) 
+    public BlockSnapshot(World world, BlockPos pos, IBlockState state, int flag)
     {
-        this(world, x, y, z, block, meta);
-        this.flag = flag;
+        this(world, pos, state);
+        this.setFlag(flag);
     }
-    
+
     /**
      * Raw constructor designed for serialization usages.
      */
-    public BlockSnapshot(int dimension, int x, int y, int z, String modid, String blockName, int meta, int flag, NBTTagCompound nbt) 
+    public BlockSnapshot(int dimension, BlockPos pos, String modId, String blockName, int meta, int flag, NBTTagCompound nbt)
     {
         this.dimId = dimension;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos.toImmutable();
+        this.setFlag(flag);
+        this.registryName = new ResourceLocation(modId, blockName);
         this.meta = meta;
-        this.flag = flag;
-        this.blockIdentifier = new UniqueIdentifier(modid + ":" + blockName);
         this.nbt = nbt;
     }
 
-    public static BlockSnapshot getBlockSnapshot(World world, int x, int y, int z)
+    public static BlockSnapshot getBlockSnapshot(World world, BlockPos pos)
     {
-        return new BlockSnapshot(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y,z));
+        return new BlockSnapshot(world, pos, world.getBlockState(pos));
     }
 
-    public static BlockSnapshot getBlockSnapshot(World world, int x, int y, int z, int flag)
+    public static BlockSnapshot getBlockSnapshot(World world, BlockPos pos, int flag)
     {
-        return new BlockSnapshot(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y,z), flag);
+        return new BlockSnapshot(world, pos, world.getBlockState(pos), flag);
     }
 
     public static BlockSnapshot readFromNBT(NBTTagCompound tag)
@@ -113,9 +124,7 @@ public class BlockSnapshot implements Serializable
 
         return new BlockSnapshot(
                 tag.getInteger("dimension"),
-                tag.getInteger("posX"),
-                tag.getInteger("posY"),
-                tag.getInteger("posZ"),
+                new BlockPos(tag.getInteger("posX"), tag.getInteger("posY"), tag.getInteger("posZ")),
                 tag.getString("blockMod"),
                 tag.getString("blockName"),
                 tag.getInteger("metadata"),
@@ -123,133 +132,139 @@ public class BlockSnapshot implements Serializable
                 nbt);
     }
 
-    public Block getCurrentBlock() 
+    public IBlockState getCurrentBlock()
     {
-        return world.getBlock(x, y, z);
+        return getWorld().getBlockState(getPos());
     }
 
-    public World getWorld() 
+    public World getWorld()
     {
-        if (this.world == null) 
+        if (this.world == null)
         {
-            this.world = DimensionManager.getWorld(dimId);
+            this.world = DimensionManager.getWorld(getDimId());
         }
         return this.world;
     }
 
-    public Block getReplacedBlock() 
+    public IBlockState getReplacedBlock()
     {
-        if (this.replacedBlock == null) 
+        if (this.replacedBlock == null)
         {
-            this.replacedBlock = GameRegistry.findBlock(this.blockIdentifier.modId, this.blockIdentifier.name);
+            this.replacedBlock = GameRegistry.findBlock(this.getRegistryName().getResourceDomain(), this.getRegistryName().getResourcePath()).getStateFromMeta(getMeta());
         }
         return this.replacedBlock;
     }
 
     public TileEntity getTileEntity()
     {
-        if (nbt != null)
-            return TileEntity.createAndLoadEntity(nbt);
+        if (getNbt() != null)
+            return TileEntity.func_190200_a(getWorld(), getNbt());
         else return null;
     }
 
-    public boolean restore() 
+    public boolean restore()
     {
         return restore(false);
     }
 
-    public boolean restore(boolean force) 
+    public boolean restore(boolean force)
     {
         return restore(force, true);
     }
 
-    public boolean restore(boolean force, boolean applyPhysics) 
+    public boolean restore(boolean force, boolean applyPhysics)
     {
-        if (getCurrentBlock() != getReplacedBlock() || world.getBlockMetadata(x & 15, y, z & 15) != meta) 
+        IBlockState current = getCurrentBlock();
+        IBlockState replaced = getReplacedBlock();
+        if (current.getBlock() != replaced.getBlock() || current.getBlock().getMetaFromState(current) != replaced.getBlock().getMetaFromState(replaced))
         {
             if (force)
             {
-                world.setBlock(x, y, z, getReplacedBlock(), meta, applyPhysics ? 3 : 2);
+                getWorld().setBlockState(getPos(), replaced, applyPhysics ? 3 : 2);
             }
-            else 
-            {
-                return false;
-            }
-        }
-
-        world.setBlockMetadataWithNotify(x, y, z, meta, applyPhysics ? 3 : 2);
-        world.markBlockForUpdate(x, y, z);
-        TileEntity te = null;
-        if (nbt != null)
-        {
-            te = world.getTileEntity(x, y, z);
-            if (te != null)
-            {
-                te.readFromNBT(nbt);
-            }
-        }
-
-        if (DEBUG)
-        {
-            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][applyPhysics: %s]", world.getWorldInfo().getWorldName(), x, y, z, meta, getReplacedBlock(), te, force, applyPhysics);
-        }
-        return true;
-    }
-
-    public boolean restoreToLocation(World world, int x, int y, int z, boolean force, boolean applyPhysics)
-    {
-        if (getCurrentBlock() != getReplacedBlock() || world.getBlockMetadata(x & 15, y, z & 15) != meta)
-        {
-            if (force)
-            {
-                world.setBlock(x, y, z, getReplacedBlock(), meta, applyPhysics ? 3 : 2);
-            } 
             else
             {
                 return false;
             }
         }
 
-        world.setBlockMetadataWithNotify(x, y, z, meta, applyPhysics ? 3 : 2);
-        world.markBlockForUpdate(x, y, z);
+        getWorld().setBlockState(getPos(), replaced, applyPhysics ? 3 : 2);
+        getWorld().notifyBlockUpdate(getPos(), current, replaced, applyPhysics ? 3 : 2);
         TileEntity te = null;
-        if (nbt != null)
+        if (getNbt() != null)
         {
-            te = world.getTileEntity(x, y, z);
+            te = getWorld().getTileEntity(getPos());
             if (te != null)
             {
-                te.readFromNBT(nbt);
+                te.readFromNBT(getNbt());
+                te.markDirty();
             }
         }
 
         if (DEBUG)
         {
-            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][applyPhysics: %s]", world.getWorldInfo().getWorldName(), x, y, z, meta, getReplacedBlock(), te, force, applyPhysics);
+            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][applyPhysics: %s]", getWorld().getWorldInfo().getWorldName(), getPos().getX(), getPos().getY(), getPos().getZ(), replaced.getBlock().getMetaFromState(replaced), replaced.getBlock().delegate.name(), te, force, applyPhysics);
+        }
+        return true;
+    }
+
+    public boolean restoreToLocation(World world, BlockPos pos, boolean force, boolean applyPhysics)
+    {
+        IBlockState current = getCurrentBlock();
+        IBlockState replaced = getReplacedBlock();
+        if (current.getBlock() != replaced.getBlock() || current.getBlock().getMetaFromState(current) != replaced.getBlock().getMetaFromState(replaced))
+        {
+            if (force)
+            {
+                world.setBlockState(pos, replaced, applyPhysics ? 3 : 2);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        world.setBlockState(pos, replaced, applyPhysics ? 3 : 2);
+        world.notifyBlockUpdate(pos, current, replaced, applyPhysics ? 3 : 2);
+        TileEntity te = null;
+        if (getNbt() != null)
+        {
+            te = world.getTileEntity(pos);
+            if (te != null)
+            {
+                te.readFromNBT(getNbt());
+                te.markDirty();
+            }
+        }
+
+        if (DEBUG)
+        {
+            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][applyPhysics: %s]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), replaced.getBlock().getMetaFromState(replaced), replaced.getBlock().delegate.name(), te, force, applyPhysics);
         }
         return true;
     }
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        compound.setString("blockMod", blockIdentifier.modId);
-        compound.setString("blockName", blockIdentifier.name);
-        compound.setInteger("posX", x);
-        compound.setInteger("posY", y);
-        compound.setInteger("posZ", z);
-        compound.setInteger("flag", flag);
-        compound.setInteger("dimension", dimId);
-        compound.setInteger("metadata", meta);
+        compound.setString("blockMod", getRegistryName().getResourceDomain());
+        compound.setString("blockName", getRegistryName().getResourcePath());
+        compound.setInteger("posX", getPos().getX());
+        compound.setInteger("posY", getPos().getY());
+        compound.setInteger("posZ", getPos().getZ());
+        compound.setInteger("flag", getFlag());
+        compound.setInteger("dimension", getDimId());
+        compound.setInteger("metadata", getMeta());
 
-        compound.setBoolean("hasTE", nbt != null);
+        compound.setBoolean("hasTE", getNbt() != null);
 
-        if (nbt != null)
+        if (getNbt() != null)
         {
-            compound.setTag("tileEntity", nbt);
+            compound.setTag("tileEntity", getNbt());
         }
     }
 
     @Override
-    public boolean equals(Object obj) 
+    public boolean equals(Object obj)
     {
         if (obj == null)
         {
@@ -260,35 +275,27 @@ public class BlockSnapshot implements Serializable
             return false;
         }
         final BlockSnapshot other = (BlockSnapshot) obj;
-        if (this.x != other.x)
+        if (!this.getPos().equals(other.getPos()))
         {
             return false;
         }
-        if (this.y != other.y)
+        if (this.getMeta() != other.getMeta())
         {
             return false;
         }
-        if (this.z != other.z) 
+        if (this.getDimId() != other.getDimId())
         {
             return false;
         }
-        if (this.meta != other.meta)
+        if (this.getNbt() != other.getNbt() && (this.getNbt() == null || !this.getNbt().equals(other.getNbt())))
         {
             return false;
         }
-        if (this.dimId != other.dimId)
+        if (this.getWorld() != other.getWorld() && (this.getWorld() == null || !this.getWorld().equals(other.getWorld())))
         {
             return false;
         }
-        if (this.nbt != other.nbt && (this.nbt == null || !this.nbt.equals(other.nbt)))
-        {
-            return false;
-        }
-        if (this.world != other.world && (this.world == null || !this.world.equals(other.world)))
-        {
-            return false;
-        }
-        if (this.blockIdentifier != other.blockIdentifier && (this.blockIdentifier == null || !this.blockIdentifier.equals(other.blockIdentifier)))
+        if (this.getRegistryName() != other.getRegistryName() && (this.getRegistryName() == null || !this.getRegistryName().equals(other.getRegistryName())))
         {
             return false;
         }
@@ -299,14 +306,24 @@ public class BlockSnapshot implements Serializable
     public int hashCode()
     {
         int hash = 7;
-        hash = 73 * hash + this.x;
-        hash = 73 * hash + this.y;
-        hash = 73 * hash + this.z;
-        hash = 73 * hash + this.meta;
-        hash = 73 * hash + this.dimId;
-        hash = 73 * hash + (this.nbt != null ? this.nbt.hashCode() : 0);
-        hash = 73 * hash + (this.world != null ? this.world.hashCode() : 0);
-        hash = 73 * hash + (this.blockIdentifier != null ? this.blockIdentifier.hashCode() : 0);
+        hash = 73 * hash + this.getPos().getX();
+        hash = 73 * hash + this.getPos().getY();
+        hash = 73 * hash + this.getPos().getZ();
+        hash = 73 * hash + this.getMeta();
+        hash = 73 * hash + this.getDimId();
+        hash = 73 * hash + (this.getNbt() != null ? this.getNbt().hashCode() : 0);
+        hash = 73 * hash + (this.getWorld() != null ? this.getWorld().hashCode() : 0);
+        hash = 73 * hash + (this.getRegistryName() != null ? this.getRegistryName().hashCode() : 0);
         return hash;
     }
+
+    public BlockPos getPos() { return pos; }
+    public int getDimId() { return dimId; }
+    public void setReplacedBlock(IBlockState replacedBlock) { this.replacedBlock = replacedBlock; }
+    public int getFlag() { return flag; }
+    public void setFlag(int flag) { this.flag = flag; }
+    public NBTTagCompound getNbt() { return nbt; }
+    public void setWorld(World world) { this.world = world; }
+    public ResourceLocation getRegistryName() { return registryName; }
+    public int getMeta() { return meta; }
 }

@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 /**
  * This software is provided under the terms of the Minecraft Forge Public
  * License v1.0.
@@ -6,60 +25,42 @@
 package net.minecraftforge.client;
 
 import java.util.BitSet;
-import java.util.IdentityHashMap;
+import java.util.concurrent.TimeUnit;
 
-import com.google.common.collect.Maps;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.World;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 public class MinecraftForgeClient
 {
-    private static IdentityHashMap<Item, IItemRenderer> customItemRenderers = Maps.newIdentityHashMap();
-
-    /**
-     * Register a custom renderer for a specific item. This can be used to
-     * render the item in-world as an EntityItem, when the item is equipped, or
-     * when the item is in an inventory slot.
-     * @param itemID The item ID (shifted index) to handle rendering.
-     * @param renderer The IItemRenderer interface that handles rendering for
-     * this item.
-     */
-    public static void registerItemRenderer(Item item, IItemRenderer renderer)
-    {
-        customItemRenderers.put(item, renderer);
-    }
-
-    public static IItemRenderer getItemRenderer(ItemStack item, ItemRenderType type)
-    {
-        IItemRenderer renderer = customItemRenderers.get(item.getItem());
-        if (renderer != null && renderer.handleRenderType(item, type))
-        {
-            return renderer;
-        }
-        return null;
-    }
-
     public static int getRenderPass()
     {
         return ForgeHooksClient.renderPass;
     }
 
-    public static int getStencilBits()
+    public static BlockRenderLayer getRenderLayer()
     {
-        return ForgeHooksClient.stencilBits;
+        return ForgeHooksClient.renderLayer.get();
     }
 
-
-    private static BitSet stencilBits = new BitSet(getStencilBits());
+    private static BitSet stencilBits = new BitSet(8);
     static
     {
-        stencilBits.set(0,getStencilBits());
+        stencilBits.set(0,8);
     }
 
     /**
      * Reserve a stencil bit for use in rendering
+     *
+     * Note: you must check the Framebuffer you are working with to
+     * determine if stencil bits are enabled on it before use.
      *
      * @return A bit or -1 if no further stencil bits are available
      */
@@ -80,9 +81,34 @@ public class MinecraftForgeClient
      */
     public static void releaseStencilBit(int bit)
     {
-        if (bit >= 0 && bit < getStencilBits())
+        if (bit >= 0 && bit < stencilBits.length())
         {
             stencilBits.set(bit);
         }
+    }
+
+    private static final LoadingCache<Pair<World, BlockPos>, ChunkCache> regionCache = CacheBuilder.newBuilder()
+        .maximumSize(500)
+        .concurrencyLevel(5)
+        .expireAfterAccess(1, TimeUnit.SECONDS)
+        .build(new CacheLoader<Pair<World, BlockPos>, ChunkCache>()
+        {
+            public ChunkCache load(Pair<World, BlockPos> key) throws Exception
+            {
+                return new ChunkCache(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);
+            }
+        });
+
+    public static void onRebuildChunk(World world, BlockPos position, ChunkCache cache)
+    {
+        regionCache.put(Pair.of(world, position), cache);
+    }
+
+    public static ChunkCache getRegionRenderCache(World world, BlockPos pos)
+    {
+        int x = pos.getX() & ~0xF;
+        int y = pos.getY() & ~0xF;
+        int z = pos.getZ() & ~0xF;
+        return regionCache.getUnchecked(Pair.of(world, new BlockPos(x, y, z)));
     }
 }

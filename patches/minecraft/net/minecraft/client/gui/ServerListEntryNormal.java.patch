@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/ServerListEntryNormal.java
++++ ../src-work/minecraft/net/minecraft/client/gui/ServerListEntryNormal.java
+@@ -82,7 +82,7 @@
+         boolean flag1 = this.field_148301_e.field_82821_f < 210;
+         boolean flag2 = flag || flag1;
+         this.field_148300_d.field_71466_p.func_78276_b(this.field_148301_e.field_78847_a, p_180790_2_ + 32 + 3, p_180790_3_ + 1, 16777215);
+-        List<String> list = this.field_148300_d.field_71466_p.func_78271_c(this.field_148301_e.field_78843_d, p_180790_4_ - 32 - 2);
++        List<String> list = this.field_148300_d.field_71466_p.func_78271_c(net.minecraftforge.fml.client.FMLClientHandler.instance().fixDescription(this.field_148301_e.field_78843_d), p_180790_4_ - 48 - 2);
+ 
+         for (int i = 0; i < Math.min(list.size(), 2); ++i)
+         {
+@@ -176,6 +176,11 @@
+         int i1 = p_180790_6_ - p_180790_2_;
+         int j1 = p_180790_7_ - p_180790_3_;
+ 
++        String tooltip = net.minecraftforge.fml.client.FMLClientHandler.instance().enhanceServerListEntry(this, this.field_148301_e, p_180790_2_, p_180790_4_, p_180790_3_, i1, j1);
++        if (tooltip != null)
++        {
++            this.field_148303_c.func_146793_a(tooltip);
++        } else
+         if (i1 >= p_180790_4_ - 15 && i1 <= p_180790_4_ - 5 && j1 >= 0 && j1 <= 8)
+         {
+             this.field_148303_c.func_146793_a(s1);

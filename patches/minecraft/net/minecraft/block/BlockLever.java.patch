@@ -1,128 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLever.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLever.java
-@@ -10,6 +10,9 @@
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
+@@ -297,6 +297,12 @@
+         return new BlockStateContainer(this, new IProperty[] {field_176360_a, field_176359_b});
+     }
  
-+import net.minecraftforge.common.util.ForgeDirection;
-+import static net.minecraftforge.common.util.ForgeDirection.*;
 +
- public class BlockLever extends Block
- {
-     private static final String __OBFID = "CL_00000264";
-@@ -42,12 +45,23 @@
- 
-     public boolean func_149707_d(World p_149707_1_, int p_149707_2_, int p_149707_3_, int p_149707_4_, int p_149707_5_)
++    private boolean canAttach(World world, BlockPos pos, EnumFacing side)
++    {
++        return world.isSideSolid(pos, side);
++    }
++
+     public static enum EnumOrientation implements IStringSerializable
      {
--        return p_149707_5_ == 0 && p_149707_1_.func_147439_a(p_149707_2_, p_149707_3_ + 1, p_149707_4_).func_149721_r() ? true : (p_149707_5_ == 1 && World.func_147466_a(p_149707_1_, p_149707_2_, p_149707_3_ - 1, p_149707_4_) ? true : (p_149707_5_ == 2 && p_149707_1_.func_147439_a(p_149707_2_, p_149707_3_, p_149707_4_ + 1).func_149721_r() ? true : (p_149707_5_ == 3 && p_149707_1_.func_147439_a(p_149707_2_, p_149707_3_, p_149707_4_ - 1).func_149721_r() ? true : (p_149707_5_ == 4 && p_149707_1_.func_147439_a(p_149707_2_ + 1, p_149707_3_, p_149707_4_).func_149721_r() ? true : p_149707_5_ == 5 && p_149707_1_.func_147439_a(p_149707_2_ - 1, p_149707_3_, p_149707_4_).func_149721_r()))));
-+        ForgeDirection dir = ForgeDirection.getOrientation(p_149707_5_);
-+        return (dir == DOWN  && p_149707_1_.isSideSolid(p_149707_2_, p_149707_3_ + 1, p_149707_4_, DOWN )) ||
-+               (dir == UP    && p_149707_1_.isSideSolid(p_149707_2_, p_149707_3_ - 1, p_149707_4_, UP   )) ||
-+               (dir == NORTH && p_149707_1_.isSideSolid(p_149707_2_, p_149707_3_, p_149707_4_ + 1, NORTH)) ||
-+               (dir == SOUTH && p_149707_1_.isSideSolid(p_149707_2_, p_149707_3_, p_149707_4_ - 1, SOUTH)) ||
-+               (dir == WEST  && p_149707_1_.isSideSolid(p_149707_2_ + 1, p_149707_3_, p_149707_4_, WEST )) ||
-+               (dir == EAST  && p_149707_1_.isSideSolid(p_149707_2_ - 1, p_149707_3_, p_149707_4_, EAST ));
-     }
- 
-     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
-     {
--        return p_149742_1_.func_147439_a(p_149742_2_ - 1, p_149742_3_, p_149742_4_).func_149721_r() ? true : (p_149742_1_.func_147439_a(p_149742_2_ + 1, p_149742_3_, p_149742_4_).func_149721_r() ? true : (p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_ - 1).func_149721_r() ? true : (p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_ + 1).func_149721_r() ? true : (World.func_147466_a(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_) ? true : p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ + 1, p_149742_4_).func_149721_r()))));
-+        return p_149742_1_.isSideSolid(p_149742_2_ - 1, p_149742_3_, p_149742_4_, EAST ) ||
-+               p_149742_1_.isSideSolid(p_149742_2_ + 1, p_149742_3_, p_149742_4_, WEST ) ||
-+               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ - 1, SOUTH) ||
-+               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ + 1, NORTH) ||
-+               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_ - 1, p_149742_4_, UP   ) ||
-+               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_ + 1, p_149742_4_, DOWN );
-     }
- 
-     public int func_149660_a(World p_149660_1_, int p_149660_2_, int p_149660_3_, int p_149660_4_, int p_149660_5_, float p_149660_6_, float p_149660_7_, float p_149660_8_, int p_149660_9_)
-@@ -56,32 +70,32 @@
-         int j1 = p_149660_9_ & 7;
-         byte b0 = -1;
- 
--        if (p_149660_5_ == 0 && p_149660_1_.func_147439_a(p_149660_2_, p_149660_3_ + 1, p_149660_4_).func_149721_r())
-+        if (p_149660_5_ == 0 && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_ + 1, p_149660_4_, DOWN))
-         {
-             b0 = 0;
-         }
- 
--        if (p_149660_5_ == 1 && World.func_147466_a(p_149660_1_, p_149660_2_, p_149660_3_ - 1, p_149660_4_))
-+        if (p_149660_5_ == 1 && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_ - 1, p_149660_4_, UP))
-         {
-             b0 = 5;
-         }
- 
--        if (p_149660_5_ == 2 && p_149660_1_.func_147439_a(p_149660_2_, p_149660_3_, p_149660_4_ + 1).func_149721_r())
-+        if (p_149660_5_ == 2 && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ + 1, NORTH))
-         {
-             b0 = 4;
-         }
- 
--        if (p_149660_5_ == 3 && p_149660_1_.func_147439_a(p_149660_2_, p_149660_3_, p_149660_4_ - 1).func_149721_r())
-+        if (p_149660_5_ == 3 && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ - 1, SOUTH))
-         {
-             b0 = 3;
-         }
- 
--        if (p_149660_5_ == 4 && p_149660_1_.func_147439_a(p_149660_2_ + 1, p_149660_3_, p_149660_4_).func_149721_r())
-+        if (p_149660_5_ == 4 && p_149660_1_.isSideSolid(p_149660_2_ + 1, p_149660_3_, p_149660_4_, WEST))
-         {
-             b0 = 2;
-         }
- 
--        if (p_149660_5_ == 5 && p_149660_1_.func_147439_a(p_149660_2_ - 1, p_149660_3_, p_149660_4_).func_149721_r())
-+        if (p_149660_5_ == 5 && p_149660_1_.isSideSolid(p_149660_2_ - 1, p_149660_3_, p_149660_4_, EAST))
-         {
-             b0 = 1;
-         }
-@@ -147,42 +161,42 @@
-             int l = p_149695_1_.func_72805_g(p_149695_2_, p_149695_3_, p_149695_4_) & 7;
-             boolean flag = false;
- 
--            if (!p_149695_1_.func_147439_a(p_149695_2_ - 1, p_149695_3_, p_149695_4_).func_149721_r() && l == 1)
-+            if (!p_149695_1_.isSideSolid(p_149695_2_ - 1, p_149695_3_, p_149695_4_, EAST) && l == 1)
-             {
-                 flag = true;
-             }
- 
--            if (!p_149695_1_.func_147439_a(p_149695_2_ + 1, p_149695_3_, p_149695_4_).func_149721_r() && l == 2)
-+            if (!p_149695_1_.isSideSolid(p_149695_2_ + 1, p_149695_3_, p_149695_4_, WEST) && l == 2)
-             {
-                 flag = true;
-             }
- 
--            if (!p_149695_1_.func_147439_a(p_149695_2_, p_149695_3_, p_149695_4_ - 1).func_149721_r() && l == 3)
-+            if (!p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_, p_149695_4_ - 1, SOUTH) && l == 3)
-             {
-                 flag = true;
-             }
- 
--            if (!p_149695_1_.func_147439_a(p_149695_2_, p_149695_3_, p_149695_4_ + 1).func_149721_r() && l == 4)
-+            if (!p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_, p_149695_4_ + 1, NORTH) && l == 4)
-             {
-                 flag = true;
-             }
- 
--            if (!World.func_147466_a(p_149695_1_, p_149695_2_, p_149695_3_ - 1, p_149695_4_) && l == 5)
-+            if (!p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_ - 1, p_149695_4_, UP) && l == 5)
-             {
-                 flag = true;
-             }
- 
--            if (!World.func_147466_a(p_149695_1_, p_149695_2_, p_149695_3_ - 1, p_149695_4_) && l == 6)
-+            if (!p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_ - 1, p_149695_4_, UP) && l == 6)
-             {
-                 flag = true;
-             }
- 
--            if (!p_149695_1_.func_147439_a(p_149695_2_, p_149695_3_ + 1, p_149695_4_).func_149721_r() && l == 0)
-+            if (!p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_ + 1, p_149695_4_, DOWN) && l == 0)
-             {
-                 flag = true;
-             }
- 
--            if (!p_149695_1_.func_147439_a(p_149695_2_, p_149695_3_ + 1, p_149695_4_).func_149721_r() && l == 7)
-+            if (!p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_ + 1, p_149695_4_, DOWN) && l == 7)
-             {
-                 flag = true;
-             }
+         DOWN_X(0, "down_x", EnumFacing.DOWN),

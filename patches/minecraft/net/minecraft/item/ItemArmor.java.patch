@@ -1,32 +1,42 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -221,7 +221,7 @@
+@@ -222,6 +222,19 @@
+         return multimap;
+     }
  
-         if (itemstack1 == null)
-         {
--            p_77659_3_.func_70062_b(i, p_77659_1_.func_77946_l());
-+            p_77659_3_.func_70062_b(i + 1, p_77659_1_.func_77946_l());  //Forge: Vanilla bug fix associated with fixed setCurrentItemOrArmor indexs for players.
-             p_77659_1_.field_77994_a = 0;
-         }
- 
-@@ -259,6 +259,9 @@
- 
-         private static final String __OBFID = "CL_00001768";
- 
++    /**
++     * Determines if this armor will be rendered with the secondary 'overlay' texture.
++     * If this is true, the first texture will be rendered using a tint of the color
++     * specified by getColor(ItemStack)
++     *
++     * @param stack The stack
++     * @return true/false
++     */
++    public boolean hasOverlay(ItemStack stack)
++    {
++        return this.field_77878_bZ == ItemArmor.ArmorMaterial.LEATHER || func_82814_b(stack) != 0x00FFFFFF;
++    }
++
+     public static enum ArmorMaterial
+     {
+         LEATHER("leather", 5, new int[]{1, 2, 3, 1}, 15, SoundEvents.field_187728_s, 0.0F),
+@@ -236,6 +249,8 @@
+         private final int field_78055_h;
+         private final SoundEvent field_185020_j;
+         private final float field_189417_k;
 +        //Added by forge for custom Armor materials.
 +        public Item customCraftingMaterial = null;
-+
-         private ArmorMaterial(int p_i1827_3_, int[] p_i1827_4_, int p_i1827_5_)
+ 
+         private ArmorMaterial(String p_i47117_3_, int p_i47117_4_, int[] p_i47117_5_, int p_i47117_6_, SoundEvent p_i47117_7_, float p_i47117_8_)
          {
-             this.field_78048_f = p_i1827_3_;
-@@ -283,7 +286,15 @@
+@@ -269,7 +284,15 @@
  
          public Item func_151685_b()
          {
--            return this == CLOTH ? Items.field_151116_aA : (this == CHAIN ? Items.field_151042_j : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
+-            return this == LEATHER ? Items.field_151116_aA : (this == CHAIN ? Items.field_151042_j : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
 +            switch (this)
 +            {
-+                case CLOTH:   return Items.field_151116_aA;
++                case LEATHER: return Items.field_151116_aA;
 +                case CHAIN:   return Items.field_151042_j;
 +                case GOLD:    return Items.field_151043_k;
 +                case IRON:    return Items.field_151042_j;
@@ -34,5 +44,5 @@
 +                default:      return customCraftingMaterial;
 +            }
          }
-     }
- }
+ 
+         @SideOnly(Side.CLIENT)

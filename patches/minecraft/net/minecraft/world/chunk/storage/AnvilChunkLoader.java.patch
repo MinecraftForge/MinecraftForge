@@ -1,41 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -25,6 +25,8 @@
- import net.minecraft.world.chunk.NibbleArray;
- import net.minecraft.world.storage.IThreadedFileIO;
- import net.minecraft.world.storage.ThreadedFileIOBase;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.world.ChunkDataEvent;
- 
- import org.apache.logging.log4j.Level;
- import org.apache.logging.log4j.LogManager;
-@@ -46,8 +48,46 @@
-         this.field_75825_d = p_i2003_1_;
+@@ -49,9 +49,43 @@
+         this.field_186055_e = p_i46673_2_;
      }
  
-+    public boolean chunkExists(World world, int i, int j)
++    public boolean chunkExists(World world, int x, int z)
 +    {
-+        ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(i, j);
++        ChunkPos chunkcoordintpair = new ChunkPos(x, z);
 +
-+        synchronized (this.field_75827_c)
++        if (this.field_75826_b.contains(chunkcoordintpair))
 +        {
-+            if (this.field_75826_b.contains(chunkcoordintpair))
++            for(ChunkPos pendingChunkCoord : this.field_75828_a.keySet())
 +            {
-+                Iterator iter = this.field_75828_a.iterator();
-+                while (iter.hasNext())
++                if (pendingChunkCoord.equals(chunkcoordintpair))
 +                {
-+                    PendingChunk pendingChunk = (PendingChunk)iter.next();
-+                    if (pendingChunk.field_76548_a.equals(chunkcoordintpair))
-+                    {
-+                        return true;
-+                    }
++                    return true;
 +                }
 +            }
 +        }
 +
-+        return RegionFileCache.func_76550_a(this.field_75825_d, i, j).chunkExists(i & 31, j & 31);
++        return RegionFileCache.func_76550_a(this.field_75825_d, x, z).chunkExists(x & 31, z & 31);
 +    }
 +
++
+     @Nullable
      public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
      {
 +        Object[] data = this.loadChunk__Async(p_75815_1_, p_75815_2_, p_75815_3_);
@@ -53,28 +41,11 @@
 +
 +    public Object[] loadChunk__Async(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
 +    {
-         NBTTagCompound nbttagcompound = null;
-         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(p_75815_2_, p_75815_3_);
-         Object object = this.field_75827_c;
-@@ -56,11 +96,13 @@
-         {
-             if (this.field_75826_b.contains(chunkcoordintpair))
-             {
--                for (int k = 0; k < this.field_75828_a.size(); ++k)
-+                Iterator iter = this.field_75828_a.iterator();
-+                while (iter.hasNext())
-                 {
--                    if (((AnvilChunkLoader.PendingChunk)this.field_75828_a.get(k)).field_76548_a.equals(chunkcoordintpair))
-+                    PendingChunk pendingChunk = (PendingChunk)iter.next();
-+                    if (pendingChunk.field_76548_a.equals(chunkcoordintpair))
-                     {
--                        nbttagcompound = ((AnvilChunkLoader.PendingChunk)this.field_75828_a.get(k)).field_76547_b;
-+                        nbttagcompound = pendingChunk.field_76547_b;
-                         break;
-                     }
-                 }
-@@ -79,11 +121,24 @@
-             nbttagcompound = CompressedStreamTools.func_74794_a(datainputstream);
+         ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
+         NBTTagCompound nbttagcompound = (NBTTagCompound)this.field_75828_a.get(chunkpos);
+ 
+@@ -67,11 +101,17 @@
+             nbttagcompound = this.field_186055_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
          }
  
 -        return this.func_75822_a(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
@@ -84,62 +55,90 @@
      protected Chunk func_75822_a(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
      {
 +        Object[] data = this.checkedReadChunkFromNBT__Async(p_75822_1_, p_75822_2_, p_75822_3_, p_75822_4_);
-+
-+        if (data != null)
-+        {
-+            Chunk chunk = (Chunk) data[0];
-+            return chunk;
-+        }
-+
-+        return null;
++        return data != null ? (Chunk)data[0] : null;
 +    }
 +
 +    protected Object[] checkedReadChunkFromNBT__Async(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
 +    {
          if (!p_75822_4_.func_150297_b("Level", 10))
          {
-             field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is missing level data, skipping");
-@@ -103,10 +158,30 @@
-                 field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is in the wrong location; relocating. (Expected " + p_75822_2_ + ", " + p_75822_3_ + ", got " + chunk.field_76635_g + ", " + chunk.field_76647_h + ")");
-                 p_75822_4_.func_74768_a("xPos", p_75822_2_);
-                 p_75822_4_.func_74768_a("zPos", p_75822_3_);
-+                // Have to move tile entities since we don't load them at this stage
-+                NBTTagList tileEntities = p_75822_4_.func_74775_l("Level").func_150295_c("TileEntities", 10);
+             field_151505_a.error("Chunk file at {},{} is missing level data, skipping", new Object[] {Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_)});
+@@ -95,10 +135,29 @@
+                     field_151505_a.error("Chunk file at {},{} is in the wrong location; relocating. (Expected {}, {}, got {}, {})", new Object[] {Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(chunk.field_76635_g), Integer.valueOf(chunk.field_76647_h)});
+                     nbttagcompound.func_74768_a("xPos", p_75822_2_);
+                     nbttagcompound.func_74768_a("zPos", p_75822_3_);
 +
-+                if (tileEntities != null)
-+                {
-+                    for (int te = 0; te < tileEntities.func_74745_c(); te++)
++                    // Have to move tile entities since we don't load them at this stage
++                    NBTTagList _tileEntities = nbttagcompound.func_150295_c("TileEntities", 10);
++
++                    if (_tileEntities != null)
 +                    {
-+                        NBTTagCompound tileEntity = (NBTTagCompound) tileEntities.func_150305_b(te);
-+                        int x = tileEntity.func_74762_e("x") - chunk.field_76635_g * 16;
-+                        int z = tileEntity.func_74762_e("z") - chunk.field_76647_h * 16;
-+                        tileEntity.func_74768_a("x", p_75822_2_ * 16 + x);
-+                        tileEntity.func_74768_a("z", p_75822_3_ * 16 + z);
++                        for (int te = 0; te < _tileEntities.func_74745_c(); te++)
++                        {
++                            NBTTagCompound _nbt = (NBTTagCompound) _tileEntities.func_150305_b(te);
++                            _nbt.func_74768_a("x", p_75822_2_ * 16 + (_nbt.func_74762_e("x") - chunk.field_76635_g * 16));
++                            _nbt.func_74768_a("z", p_75822_3_ * 16 + (_nbt.func_74762_e("z") - chunk.field_76647_h * 16));
++                        }
 +                    }
-+                }
 +
-                 chunk = this.func_75823_a(p_75822_1_, p_75822_4_.func_74775_l("Level"));
-             }
+                     chunk = this.func_75823_a(p_75822_1_, nbttagcompound);
+                 }
  
--            return chunk;
-+            Object[] data = new Object[2];
-+            data[0] = chunk;
-+            data[1] = p_75822_4_;
-+            // event is fired in ChunkIOProvider.callStage2 since it must be fired after TE's load.
-+            // MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, par4NBTTagCompound));
-+            return data;
+-                return chunk;
++                Object[] data = new Object[2];
++                data[0] = chunk;
++                data[1] = p_75822_4_;
++                // event is fired in ChunkIOProvider.callStage2 since it must be fired after TE's load.
++                // MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, par4NBTTagCompound));
++                return data;
+             }
          }
      }
- 
-@@ -120,6 +195,7 @@
-             NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+@@ -114,6 +173,7 @@
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
+             nbttagcompound.func_74768_a("DataVersion", 512);
              this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
-+            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -373,6 +449,12 @@
+@@ -299,8 +359,17 @@
+ 
+                 if (entity.func_70039_c(nbttagcompound2))
+                 {
++                    try
++                    {
+                     p_75820_1_.func_177409_g(true);
+                     nbttaglist1.func_74742_a(nbttagcompound2);
++                    }
++                    catch (Exception e)
++                    {
++                        net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
++                                "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
++                                entity.getClass().getName());
++                    }
+                 }
+             }
+         }
+@@ -310,8 +379,17 @@
+ 
+         for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
+         {
++            try
++            {
+             NBTTagCompound nbttagcompound3 = tileentity.func_189515_b(new NBTTagCompound());
+             nbttaglist2.func_74742_a(nbttagcompound3);
++            }
++            catch (Exception e)
++            {
++                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
++                        "A TileEntity type %s has throw an exception trying to write state. It will not persist. Report this to the mod author",
++                        tileentity.getClass().getName());
++            }
+         }
+ 
+         p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
+@@ -380,6 +458,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -152,12 +151,12 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -434,7 +516,7 @@
+@@ -432,8 +516,6 @@
+                 }
              }
          }
- 
+-
 -        return chunk;
-+        // return chunk;
      }
  
-     static class PendingChunk
+     @Nullable

@@ -1,37 +1,66 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.player;
 
 import java.io.File;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
- * If a method utilizes this {@link Event} as its parameter, the method will 
+ * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 public class PlayerEvent extends LivingEvent
 {
-    public final EntityPlayer entityPlayer;
+    private final EntityPlayer entityPlayer;
     public PlayerEvent(EntityPlayer player)
     {
         super(player);
         entityPlayer = player;
     }
-    
+
+    public EntityPlayer getEntityPlayer()
+    {
+        return entityPlayer;
+    }
+
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
-     * EntityPlayer#canHarvestBlock(Block).<br>
+     * {@link EntityPlayer#canHarvestBlock(IBlockState)}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#doPlayerHarvestCheck(EntityPlayer, Block, boolean)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#doPlayerHarvestCheck(EntityPlayer, IBlockState, boolean)}.<br>
      * <br>
-     * {@link #block} contains the Block that is being checked for harvesting. <br>
+     * {@link #state} contains the {@link IBlockState} that is being checked for harvesting. <br>
      * {@link #success} contains the boolean value for whether the Block will be successfully harvested. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
@@ -42,31 +71,32 @@ public class PlayerEvent extends LivingEvent
      **/
     public static class HarvestCheck extends PlayerEvent
     {
-        public final Block block;
-        public boolean success;
+        private final IBlockState state;
+        private boolean success;
 
-        public HarvestCheck(EntityPlayer player, Block block, boolean success)
+        public HarvestCheck(EntityPlayer player, IBlockState state, boolean success)
         {
             super(player);
-            this.block = block;
+            this.state = state;
             this.success = success;
         }
+
+        public IBlockState getTargetBlock() { return this.state; }
+        public boolean canHarvest() { return this.success; }
+        public void setCanHarvest(boolean success){ this.success = success; }
     }
 
     /**
      * BreakSpeed is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
-     * EntityPlayer#canHarvestBlock(Block).<br>
+     * {@link EntityPlayer#canHarvestBlock(IBlockState)}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(EntityPlayer, Block, int, float, int, int, int)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(EntityPlayer, IBlockState, float, BlockPos)}.<br>
      * <br>
-     * {@link #block} contains the block being broken. <br>
-     * {@link #metadata} contains the metadata of the block being broken. <br>
+     * {@link #state} contains the block being broken. <br>
      * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>
      * {@link #newSpeed} contains the newSpeed at which the player will break the block. <br>
-     * {@link #x} contains the x-coordinate at which this event is occurring. <br>
-     * {@link #y} contains the y-coordinate at which this event is occurring. <br>
-     * {@link #z} contains the z-coordinate at which this event is occurring. <br>
+     * {@link #pos} contains the coordinates at which this event is occurring. Y value -1 means location is unknown.<br>
      * <br>
      * This event is {@link Cancelable}.<br>
      * If it is canceled, the player is unable to break the block.<br>
@@ -78,37 +108,31 @@ public class PlayerEvent extends LivingEvent
     @Cancelable
     public static class BreakSpeed extends PlayerEvent
     {
-        public final Block block;
-        public final int metadata;
-        public final float originalSpeed;
-        public float newSpeed = 0.0f;
-        public final int x;
-        public final int y; // -1 notes unknown location
-        public final int z;
+        private final IBlockState state;
+        private final float originalSpeed;
+        private float newSpeed = 0.0f;
+        private final BlockPos pos; // Y position of -1 notes unknown location
 
-        @Deprecated
-        public BreakSpeed(EntityPlayer player, Block block, int metadata, float original)
-        {
-            this(player, block, metadata, original, 0, -1, 0);
-        }
-
-        public BreakSpeed(EntityPlayer player, Block block, int metadata, float original, int x, int y, int z)
+        public BreakSpeed(EntityPlayer player, IBlockState state, float original, BlockPos pos)
         {
             super(player);
-            this.block = block;
-            this.metadata = metadata;
+            this.state = state;
             this.originalSpeed = original;
-            this.newSpeed = original;
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.setNewSpeed(original);
+            this.pos = pos;
         }
+
+        public IBlockState getState() { return state; }
+        public float getOriginalSpeed() { return originalSpeed; }
+        public float getNewSpeed() { return newSpeed; }
+        public void setNewSpeed(float newSpeed) { this.newSpeed = newSpeed; }
+        public BlockPos getPos() { return pos; }
     }
 
     /**
      * NameFormat is fired when a player's display name is retrieved.<br>
      * This event is fired whenever a player's name is retrieved in
-     * EntityPlayer#getDisplayName() or EntityPlayer#refreshDisplayName().<br>
+     * {@link EntityPlayer#getDisplayName()} or {@link EntityPlayer#refreshDisplayName()}.<br>
      * <br>
      * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(EntityPlayer, String)}.<br>
      * <br>
@@ -123,13 +147,28 @@ public class PlayerEvent extends LivingEvent
      **/
     public static class NameFormat extends PlayerEvent
     {
-        public final String username;
-        public String displayname;
+        private final String username;
+        private String displayname;
 
         public NameFormat(EntityPlayer player, String username) {
             super(player);
             this.username = username;
-            this.displayname = username;
+            this.setDisplayname(username);
+        }
+
+        public String getUsername()
+        {
+            return username;
+        }
+
+        public String getDisplayname()
+        {
+            return displayname;
+        }
+
+        public void setDisplayname(String displayname)
+        {
+            this.displayname = displayname;
         }
     }
 
@@ -139,15 +178,8 @@ public class PlayerEvent extends LivingEvent
      */
     public static class Clone extends PlayerEvent
     {
-        /**
-         * The old EntityPlayer that this new entity is a clone of.
-         */
-        public final EntityPlayer original;
-        /**
-         * True if this event was fired because the player died.
-         * False if it was fired because the entity switched dimensions.
-         */
-        public final boolean wasDeath;
+        private final EntityPlayer original;
+        private final boolean wasDeath;
 
         public Clone(EntityPlayer _new, EntityPlayer oldPlayer, boolean wasDeath)
         {
@@ -155,44 +187,69 @@ public class PlayerEvent extends LivingEvent
             this.original = oldPlayer;
             this.wasDeath = wasDeath;
         }
+
+        /**
+         * The old EntityPlayer that this new entity is a clone of.
+         */
+        public EntityPlayer getOriginal()
+        {
+            return original;
+        }
+
+        /**
+         * True if this event was fired because the player died.
+         * False if it was fired because the entity switched dimensions.
+         */
+        public boolean isWasDeath()
+        {
+            return wasDeath;
+        }
     }
-    
+
     /**
      * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
      *
      */
     public static class StartTracking extends PlayerEvent {
-        
-        /**
-         * The Entity now being tracked.
-         */
-        public final Entity target;
-        
+
+        private final Entity target;
+
         public StartTracking(EntityPlayer player, Entity target)
         {
             super(player);
             this.target = target;
         }
-        
+
+        /**
+         * The Entity now being tracked.
+         */
+        public Entity getTarget()
+        {
+            return target;
+        }
     }
-    
+
     /**
      * Fired when an Entity is stopped to be "tracked" by this player (the player no longer receives updates about this entity, e.g. motion).
      *
      */
     public static class StopTracking extends PlayerEvent {
-        
-        /**
-         * The Entity no longer being tracked.
-         */
-        public final Entity target;
-        
+
+        private final Entity target;
+
         public StopTracking(EntityPlayer player, Entity target)
         {
             super(player);
             this.target = target;
         }
 
+        /**
+         * The Entity no longer being tracked.
+         */
+        public Entity getTarget()
+        {
+            return target;
+        }
     }
 
     /**
@@ -202,16 +259,8 @@ public class PlayerEvent extends LivingEvent
      * containing additional mod related player data.
      */
     public static class LoadFromFile extends PlayerEvent {
-        /**
-         * The directory where player data is being stored. Use this
-         * to locate your mod additional file.
-         */
-        public final File playerDirectory;
-        /**
-         * The UUID is the standard for player related file storage.
-         * It is broken out here for convenience for quick file generation.
-         */
-        public final String playerUUID;
+        private final File playerDirectory;
+        private final String playerUUID;
 
         public LoadFromFile(EntityPlayer player, File originDirectory, String playerUUID)
         {
@@ -228,7 +277,25 @@ public class PlayerEvent extends LivingEvent
         public File getPlayerFile(String suffix)
         {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            return new File(this.playerDirectory, this.playerUUID+"."+suffix);
+            return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
+        }
+
+        /**
+         * The directory where player data is being stored. Use this
+         * to locate your mod additional file.
+         */
+        public File getPlayerDirectory()
+        {
+            return playerDirectory;
+        }
+
+        /**
+         * The UUID is the standard for player related file storage.
+         * It is broken out here for convenience for quick file generation.
+         */
+        public String getPlayerUUID()
+        {
+            return playerUUID;
         }
     }
     /**
@@ -245,16 +312,8 @@ public class PlayerEvent extends LivingEvent
      * corrupt the world state.
      */
     public static class SaveToFile extends PlayerEvent {
-        /**
-         * The directory where player data is being stored. Use this
-         * to locate your mod additional file.
-         */
-        public final File playerDirectory;
-        /**
-         * The UUID is the standard for player related file storage.
-         * It is broken out here for convenience for quick file generation.
-         */
-        public final String playerUUID;
+        private final File playerDirectory;
+        private final String playerUUID;
 
         public SaveToFile(EntityPlayer player, File originDirectory, String playerUUID)
         {
@@ -271,7 +330,25 @@ public class PlayerEvent extends LivingEvent
         public File getPlayerFile(String suffix)
         {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            return new File(this.playerDirectory, this.playerUUID+"."+suffix);
+            return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
+        }
+
+        /**
+         * The directory where player data is being stored. Use this
+         * to locate your mod additional file.
+         */
+        public File getPlayerDirectory()
+        {
+            return playerDirectory;
+        }
+
+        /**
+         * The UUID is the standard for player related file storage.
+         * It is broken out here for convenience for quick file generation.
+         */
+        public String getPlayerUUID()
+        {
+            return playerUUID;
         }
     }
 }

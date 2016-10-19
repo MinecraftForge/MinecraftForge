@@ -1,39 +1,76 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.world;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.util.IProgressUpdate;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldSettings;
+import net.minecraft.world.biome.Biome.SpawnListEntry;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * WorldEvent is fired when an event involving the world occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will 
+ * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * {@link #world} contains the World this event is occuring in.<br>
+ * {@link #world} contains the World this event is occurring in.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 public class WorldEvent extends Event
 {
-    public final World world;
+    private final World world;
 
     public WorldEvent(World world)
     {
         this.world = world;
     }
 
+    public World getWorld()
+    {
+        return world;
+    }
+
     /**
      * WorldEvent.Load is fired when Minecraft loads a world.<br>
      * This event is fired when a world is loaded in
-     * WorldClient#WorldClient(NetHandlerPlayClient, WorldSettings, int, EnumDifficulty, Profiler),
-     * MinecraftServer#loadAllWorlds(String, String, long, WorldType, String), 
-     * DimensionManager#initDimension(int), 
-     * and ForgeInternalHandler#onDimensionLoad(Load). <br>
+     * {@link WorldClient#WorldClient(NetHandlerPlayClient, WorldSettings, int, EnumDifficulty, Profiler)},
+     * {@link MinecraftServer#loadAllWorlds(String, String, long, WorldType, String)},
+     * {@link IntegratedServer#loadAllWorlds(String, String, long, WorldType, String)}
+     * {@link DimensionManager#initDimension(int)},
+     * and {@link ForgeInternalHandler#onDimensionLoad(Load)}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -49,11 +86,10 @@ public class WorldEvent extends Event
     /**
      * WorldEvent.Unload is fired when Minecraft unloads a world.<br>
      * This event is fired when a world is unloaded in
-     * Minecraft#loadWorld(WorldClient, String), 
-     * MinecraftServer#deleteWorldAndStopServer(), 
-     * MinecraftServer#stopServer(), 
-     * DimensionManager#unloadWorlds(Hashtable<Integer, long[]>), 
-     * ForgeInternalHandler#onDimensionUnload(Unload). <br>
+     * {@link Minecraft#loadWorld(WorldClient, String)},
+     * {@link MinecraftServer#stopServer()},
+     * {@link DimensionManager#unloadWorlds(Hashtable)},
+     * {@link ForgeInternalHandler#onDimensionUnload(Unload)}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -69,8 +105,8 @@ public class WorldEvent extends Event
     /**
      * WorldEvent.Save is fired when Minecraft saves a world.<br>
      * This event is fired when a world is saved in
-     * WorldServer#saveAllChunks(boolean, IProgressUpdate), 
-     * ForgeInternalHandler#onDimensionSave(Save). <br>
+     * {@link WorldServer#saveAllChunks(boolean, IProgressUpdate)},
+     * {@link ForgeInternalHandler#onDimensionSave(Save)}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -85,32 +121,67 @@ public class WorldEvent extends Event
 
     /**
      * Called by WorldServer to gather a list of all possible entities that can spawn at the specified location.
+     * If an entry is added to the list, it needs to be a globally unique instance.
+     * The event is called in {@link WorldServer#getSpawnListEntryForTypeAt(EnumCreatureType, BlockPos)} as well as
+     * {@link WorldServer#canCreatureTypeSpawnHere(EnumCreatureType, SpawnListEntry, BlockPos)}
+     * where the latter checks for identity, meaning both events must add the same instance.
      * Canceling the event will result in a empty list, meaning no entity will be spawned.
      */
     @Cancelable
     public static class PotentialSpawns extends WorldEvent
     {
-        public final EnumCreatureType type;
-        public final int x;
-        public final int y;
-        public final int z;
-        public final List<SpawnListEntry> list;
+        private final EnumCreatureType type;
+        private final BlockPos pos;
+        private final List<SpawnListEntry> list;
 
-        public PotentialSpawns(World world, EnumCreatureType type, int x, int y, int z, List<SpawnListEntry> oldList)
+        public PotentialSpawns(World world, EnumCreatureType type, BlockPos pos, List<SpawnListEntry> oldList)
         {
             super(world);
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.pos = pos;
             this.type = type;
             if (oldList != null)
             {
-                this.list = oldList;
+                this.list = new ArrayList<SpawnListEntry>(oldList);
             }
             else
             {
                 this.list = new ArrayList<SpawnListEntry>();
             }
+        }
+
+        public EnumCreatureType getType()
+        {
+            return type;
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
+        }
+
+        public List<SpawnListEntry> getList()
+        {
+            return list;
+        }
+    }
+
+    /**
+     * Called by WorldServer when it attempts to create a spawnpoint for a dimension.
+     * Canceling the event will prevent the vanilla code from running.
+     */
+    @Cancelable
+    public static class CreateSpawnPosition extends WorldEvent
+    {
+        private final WorldSettings settings;
+        public CreateSpawnPosition(World world, WorldSettings settings)
+        {
+            super(world);
+            this.settings = settings;
+        }
+
+        public WorldSettings getSettings()
+        {
+            return settings;
         }
     }
 }

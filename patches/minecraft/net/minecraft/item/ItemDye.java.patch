@@ -1,77 +1,56 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemDye.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemDye.java
-@@ -1,5 +1,6 @@
- package net.minecraft.item;
+@@ -50,7 +50,7 @@
  
-+import cpw.mods.fml.common.eventhandler.Event.Result;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
- import java.util.List;
-@@ -17,6 +18,10 @@
- import net.minecraft.util.IIcon;
- import net.minecraft.util.MathHelper;
- import net.minecraft.world.World;
-+import net.minecraft.world.WorldServer;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.common.util.FakePlayerFactory;
-+import net.minecraftforge.event.entity.player.BonemealEvent;
- 
- public class ItemDye extends Item
- {
-@@ -57,7 +62,7 @@
-         {
-             if (p_77648_1_.func_77960_j() == 15)
+             if (enumdyecolor == EnumDyeColor.WHITE)
              {
--                if (func_150919_a(p_77648_1_, p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_))
-+                if (applyBonemeal(p_77648_1_, p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_2_))
+-                if (func_179234_a(p_180614_1_, p_180614_3_, p_180614_4_))
++                if (applyBonemeal(p_180614_1_, p_180614_3_, p_180614_4_, p_180614_2_))
                  {
-                     if (!p_77648_3_.field_72995_K)
+                     if (!p_180614_3_.field_72995_K)
                      {
-@@ -125,8 +130,30 @@
+@@ -73,7 +73,7 @@
  
-     public static boolean func_150919_a(ItemStack p_150919_0_, World p_150919_1_, int p_150919_2_, int p_150919_3_, int p_150919_4_)
+                         if (p_180614_3_.func_175623_d(p_180614_4_))
+                         {
+-                            IBlockState iblockstate1 = Blocks.field_150375_by.func_180642_a(p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, 0, p_180614_2_);
++                            IBlockState iblockstate1 = Blocks.field_150375_by.getStateForPlacement(p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, 0, p_180614_2_, p_180614_1_);
+                             p_180614_3_.func_180501_a(p_180614_4_, iblockstate1, 10);
+ 
+                             if (!p_180614_2_.field_71075_bZ.field_75098_d)
+@@ -97,8 +97,18 @@
+ 
+     public static boolean func_179234_a(ItemStack p_179234_0_, World p_179234_1_, BlockPos p_179234_2_)
      {
-+        if (p_150919_1_ instanceof WorldServer)
-+            return applyBonemeal(p_150919_0_, p_150919_1_, p_150919_2_, p_150919_3_, p_150919_4_, FakePlayerFactory.getMinecraft((WorldServer)p_150919_1_));
++        if (p_179234_1_ instanceof net.minecraft.world.WorldServer)
++            return applyBonemeal(p_179234_0_, p_179234_1_, p_179234_2_, net.minecraftforge.common.util.FakePlayerFactory.getMinecraft((net.minecraft.world.WorldServer)p_179234_1_));
 +        return false;
 +    }
 +
-+    public static boolean applyBonemeal(ItemStack p_150919_0_, World p_150919_1_, int p_150919_2_, int p_150919_3_, int p_150919_4_, EntityPlayer player)
++    public static boolean applyBonemeal(ItemStack p_179234_0_, World p_179234_1_, BlockPos p_179234_2_, EntityPlayer player)
 +    {
-         Block block = p_150919_1_.func_147439_a(p_150919_2_, p_150919_3_, p_150919_4_);
+         IBlockState iblockstate = p_179234_1_.func_180495_p(p_179234_2_);
  
-+        BonemealEvent event = new BonemealEvent(player, p_150919_1_, block, p_150919_2_, p_150919_3_, p_150919_4_);
-+        if (MinecraftForge.EVENT_BUS.post(event))
-+        {
-+            return false;
-+        }
++        int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_179234_1_, p_179234_2_, iblockstate, p_179234_0_);
++        if (hook != 0) return hook > 0;
 +
-+        if (event.getResult() == Result.ALLOW)
-+        {
-+            if (!p_150919_1_.field_72995_K)
-+            {
-+                p_150919_0_.field_77994_a--;
-+            }
-+            return true;
-+        }
-+
-         if (block instanceof IGrowable)
+         if (iblockstate.func_177230_c() instanceof IGrowable)
          {
-             IGrowable igrowable = (IGrowable)block;
-@@ -172,6 +199,16 @@
-                 p_150918_0_.func_72869_a("happyVillager", (double)((float)p_150918_1_ + field_77697_d.nextFloat()), (double)p_150918_2_ + (double)field_77697_d.nextFloat() * block.func_149669_A(), (double)((float)p_150918_3_ + field_77697_d.nextFloat()), d0, d1, d2);
+             IGrowable igrowable = (IGrowable)iblockstate.func_177230_c();
+@@ -142,6 +152,16 @@
+                 p_180617_0_.func_175688_a(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)p_180617_1_.func_177958_n() + field_77697_d.nextFloat()), (double)p_180617_1_.func_177956_o() + (double)field_77697_d.nextFloat() * iblockstate.func_185900_c(p_180617_0_, p_180617_1_).field_72337_e, (double)((float)p_180617_1_.func_177952_p() + field_77697_d.nextFloat()), d0, d1, d2, new int[0]);
              }
          }
 +        else
 +        {
-+            for (int i1 = 0; i1 < p_150918_4_; ++i1)
++            for (int i1 = 0; i1 < p_180617_2_; ++i1)
 +            {
 +                double d0 = field_77697_d.nextGaussian() * 0.02D;
 +                double d1 = field_77697_d.nextGaussian() * 0.02D;
 +                double d2 = field_77697_d.nextGaussian() * 0.02D;
-+                p_150918_0_.func_72869_a("happyVillager", (double)((float)p_150918_1_ + field_77697_d.nextFloat()), (double)p_150918_2_ + (double)field_77697_d.nextFloat() * 1.0f, (double)((float)p_150918_3_ + field_77697_d.nextFloat()), d0, d1, d2);
++                p_180617_0_.func_175688_a(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)p_180617_1_.func_177958_n() + field_77697_d.nextFloat()), (double)p_180617_1_.func_177956_o() + (double)field_77697_d.nextFloat() * 1.0f, (double)((float)p_180617_1_.func_177952_p() + field_77697_d.nextFloat()), d0, d1, d2, new int[0]);
 +            }
 +        }
      }
  
-     public boolean func_111207_a(ItemStack p_111207_1_, EntityPlayer p_111207_2_, EntityLivingBase p_111207_3_)
+     public boolean func_111207_a(ItemStack p_111207_1_, EntityPlayer p_111207_2_, EntityLivingBase p_111207_3_, EnumHand p_111207_4_)

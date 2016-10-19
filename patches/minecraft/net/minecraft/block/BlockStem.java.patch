@@ -1,79 +1,49 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
-@@ -2,6 +2,7 @@
- 
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.util.ArrayList;
- import java.util.Random;
- import net.minecraft.block.material.Material;
- import net.minecraft.client.renderer.texture.IIconRegister;
-@@ -14,6 +15,7 @@
- import net.minecraft.util.MathHelper;
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
-+import static net.minecraftforge.common.util.ForgeDirection.*;
- 
- public class BlockStem extends BlockBush implements IGrowable
- {
-@@ -101,7 +103,7 @@
- 
-                     Block block = p_149674_1_.func_147439_a(j1, p_149674_3_ - 1, k1);
- 
--                    if (p_149674_1_.func_147439_a(j1, p_149674_3_, k1).field_149764_J == Material.field_151579_a && (block == Blocks.field_150458_ak || block == Blocks.field_150346_d || block == Blocks.field_150349_c))
-+                    if (p_149674_1_.func_147437_c(j1, p_149674_3_, k1) && (block.canSustainPlant(p_149674_1_, j1, p_149674_3_ - 1, k1, UP, this) || block == Blocks.field_150346_d || block == Blocks.field_150349_c))
-                     {
-                         p_149674_1_.func_147449_b(j1, p_149674_3_, k1, this.field_149877_a);
+@@ -90,9 +90,10 @@
                      }
-@@ -144,11 +146,11 @@
-                 Block block8 = p_149875_1_.func_147439_a(l, p_149875_3_ - 1, i1);
-                 float f1 = 0.0F;
  
--                if (block8 == Blocks.field_150458_ak)
-+                if (block8.canSustainPlant(p_149875_1_, l, p_149875_3_ - 1, i1, UP, this))
-                 {
-                     f1 = 1.0F;
+                     p_180650_2_ = p_180650_2_.func_177972_a(EnumFacing.Plane.HORIZONTAL.func_179518_a(p_180650_4_));
+-                    Block block = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b()).func_177230_c();
++                    IBlockState soil = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b());
++                    Block block = soil.func_177230_c();
  
--                    if (p_149875_1_.func_72805_g(l, p_149875_3_ - 1, i1) > 0)
-+                    if (block8.isFertile(p_149875_1_, l, p_149875_3_ - 1, i1))
+-                    if (p_180650_1_.func_180495_p(p_180650_2_).func_177230_c().field_149764_J == Material.field_151579_a && (block == Blocks.field_150458_ak || block == Blocks.field_150346_d || block == Blocks.field_150349_c))
++                    if (p_180650_1_.func_175623_d(p_180650_2_) && (block.canSustainPlant(soil, p_180650_1_, p_180650_2_.func_177977_b(), EnumFacing.UP, this) || block == Blocks.field_150346_d || block == Blocks.field_150349_c))
                      {
-                         f1 = 3.0F;
+                         p_180650_1_.func_175656_a(p_180650_2_, this.field_149877_a.func_176223_P());
                      }
-@@ -211,11 +213,12 @@
-         return l < 7 ? -1 : (p_149873_1_.func_147439_a(p_149873_2_ - 1, p_149873_3_, p_149873_4_) == this.field_149877_a ? 0 : (p_149873_1_.func_147439_a(p_149873_2_ + 1, p_149873_3_, p_149873_4_) == this.field_149877_a ? 1 : (p_149873_1_.func_147439_a(p_149873_2_, p_149873_3_, p_149873_4_ - 1) == this.field_149877_a ? 2 : (p_149873_1_.func_147439_a(p_149873_2_, p_149873_3_, p_149873_4_ + 1) == this.field_149877_a ? 3 : -1))));
-     }
- 
-+    @SuppressWarnings("unused")
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+@@ -110,24 +111,29 @@
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
- 
--        if (!p_149690_1_.field_72995_K)
-+        if (false && !p_149690_1_.field_72995_K)
-         {
-             Item item = null;
- 
-@@ -282,4 +285,23 @@
-     {
-         this.func_149874_m(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_);
-     }
-+
-+
-+    @Override
-+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int meta, int fortune)
-+    {
-+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+
-+        Item item = null;
-+        item = field_149877_a == Blocks.field_150423_aK ? Items.field_151080_bb : item;
-+        item = field_149877_a == Blocks.field_150440_ba ? Items.field_151081_bc : item;
-+
-+        for (int i = 0; item != null && i < 3; i++)
-+        {
-+            if (world.field_73012_v.nextInt(15) <= meta)
-+                ret.add(new ItemStack(item));
-+        }
-+
-+        return ret;
+         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
 +    }
- }
+ 
+-        if (!p_180653_1_.field_72995_K)
++    @Override
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
+         {
+             Item item = this.func_176481_j();
+ 
+             if (item != null)
+             {
+-                int i = ((Integer)p_180653_3_.func_177229_b(field_176484_a)).intValue();
++                int i = ((Integer)state.func_177229_b(field_176484_a)).intValue();
+ 
+                 for (int j = 0; j < 3; ++j)
+                 {
+-                    if (p_180653_1_.field_73012_v.nextInt(15) <= i)
++                    if (RANDOM.nextInt(15) <= i)
+                     {
+-                        func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(item));
++                        ret.add(new ItemStack(item));
+                     }
+                 }
+             }
+         }
++        return ret;
+     }
+ 
+     @Nullable

@@ -1,35 +1,25 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -34,6 +34,9 @@
- import net.minecraft.world.EnumDifficulty;
- import net.minecraft.world.World;
- import net.minecraft.world.WorldServer;
-+import net.minecraftforge.common.ForgeHooks;
-+import cpw.mods.fml.common.eventhandler.Event.Result;
-+import net.minecraftforge.event.ForgeEventFactory;
- 
- public abstract class EntityLiving extends EntityLivingBase
- {
-@@ -117,6 +120,7 @@
-     public void func_70624_b(EntityLivingBase p_70624_1_)
+@@ -170,6 +170,7 @@
+     public void func_70624_b(@Nullable EntityLivingBase p_70624_1_)
      {
          this.field_70696_bz = p_70624_1_;
-+        ForgeHooks.onLivingSetAttackTarget(this, p_70624_1_);
++        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_70624_1_);
      }
  
-     public boolean func_70686_a(Class p_70686_1_)
-@@ -476,10 +480,22 @@
+     public boolean func_70686_a(Class <? extends EntityLivingBase > p_70686_1_)
+@@ -712,10 +713,22 @@
  
      protected void func_70623_bb()
      {
-+        Result result = null;
++        net.minecraftforge.fml.common.eventhandler.Event.Result result = null;
          if (this.field_82179_bU)
          {
              this.field_70708_bq = 0;
          }
-+        else if ((this.field_70708_bq & 0x1F) == 0x1F && (result = ForgeEventFactory.canEntityDespawn(this)) != Result.DEFAULT)
++        else if ((this.field_70708_bq & 0x1F) == 0x1F && (result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this)) != net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT)
 +        {
-+            if (result == Result.DENY)
++            if (result == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
 +            {
 +                this.field_70708_bq = 0;
 +            }
@@ -40,9 +30,9 @@
 +        }
          else
          {
-             EntityPlayer entityplayer = this.field_70170_p.func_72890_a(this, -1.0D);
-@@ -642,7 +658,6 @@
-         return this.field_70170_p.func_72855_b(this.field_70121_D) && this.field_70170_p.func_72945_a(this, this.field_70121_D).isEmpty() && !this.field_70170_p.func_72953_d(this.field_70121_D);
+             Entity entity = this.field_70170_p.func_72890_a(this, -1.0D);
+@@ -849,7 +862,6 @@
+         return !this.field_70170_p.func_72953_d(this.func_174813_aQ()) && this.field_70170_p.func_184144_a(this, this.func_174813_aQ()).isEmpty() && this.field_70170_p.func_72917_a(this.func_174813_aQ(), this);
      }
  
 -    @SideOnly(Side.CLIENT)

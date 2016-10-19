@@ -1,5 +1,25 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.util;
 
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,7 +29,6 @@ import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 
 //To be expanded for generic Mod fake players?
 public class FakePlayerFactory
@@ -17,20 +36,22 @@ public class FakePlayerFactory
     private static GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
     // Map of all active fake player usernames to their entities
     private static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
-    private static FakePlayer MINECRAFT_PLAYER = null;
-    
+    private static WeakReference<FakePlayer> MINECRAFT_PLAYER = null;
+
     public static FakePlayer getMinecraft(WorldServer world)
     {
-        if (MINECRAFT_PLAYER == null)
+        FakePlayer ret = MINECRAFT_PLAYER != null ? MINECRAFT_PLAYER.get() : null;
+        if (ret == null)
         {
-            MINECRAFT_PLAYER = FakePlayerFactory.get(world,  MINECRAFT);
+            ret = FakePlayerFactory.get(world,  MINECRAFT);
+            MINECRAFT_PLAYER = new WeakReference<FakePlayer>(ret);
         }
-        return MINECRAFT_PLAYER;
+        return ret;
     }
-    
+
     /**
      * Get a fake player with a given username,
-     * Mods should either hold weak references to the return value, or listen for a 
+     * Mods should either hold weak references to the return value, or listen for a
      * WorldEvent.Unload and kill all references to prevent worlds staying in memory.
      */
     public static FakePlayer get(WorldServer world, GameProfile username)

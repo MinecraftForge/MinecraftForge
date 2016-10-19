@@ -1,39 +1,35 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -2,17 +2,25 @@
+@@ -53,26 +53,12 @@
  
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import net.minecraft.entity.Entity;
-+import net.minecraft.entity.player.EntityPlayer;
-+import net.minecraft.entity.player.EntityPlayerMP;
- import net.minecraft.init.Blocks;
- import net.minecraft.util.ChunkCoordinates;
- import net.minecraft.util.MathHelper;
- import net.minecraft.util.Vec3;
-+import net.minecraft.world.WorldSettings.GameType;
- import net.minecraft.world.biome.BiomeGenBase;
- import net.minecraft.world.biome.WorldChunkManager;
- import net.minecraft.world.biome.WorldChunkManagerHell;
-+import net.minecraft.world.chunk.Chunk;
- import net.minecraft.world.chunk.IChunkProvider;
- import net.minecraft.world.gen.ChunkProviderFlat;
- import net.minecraft.world.gen.ChunkProviderGenerate;
- import net.minecraft.world.gen.FlatGeneratorInfo;
-+import net.minecraft.world.storage.WorldInfo;
-+import net.minecraftforge.client.IRenderHandler;
-+import net.minecraftforge.common.DimensionManager;
- 
- public abstract class WorldProvider
- {
-@@ -149,13 +157,13 @@
- 
-     public static WorldProvider func_76570_a(int p_76570_0_)
+     protected void func_76572_b()
      {
--        return (WorldProvider)(p_76570_0_ == -1 ? new WorldProviderHell() : (p_76570_0_ == 0 ? new WorldProviderSurface() : (p_76570_0_ == 1 ? new WorldProviderEnd() : null)));
-+        return DimensionManager.createProviderFor(p_76570_0_);
+-        WorldType worldtype = this.field_76579_a.func_72912_H().func_76067_t();
+-
+-        if (worldtype == WorldType.field_77138_c)
+-        {
+-            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
+-            this.field_76578_c = new BiomeProviderSingle(Biome.func_180276_a(flatgeneratorinfo.func_82648_a(), Biomes.field_180279_ad));
+-        }
+-        else if (worldtype == WorldType.field_180272_g)
+-        {
+-            this.field_76578_c = new BiomeProviderSingle(Biomes.field_76772_c);
+-        }
+-        else
+-        {
+-            this.field_76578_c = new BiomeProvider(this.field_76579_a.func_72912_H());
+-        }
++        this.field_76578_c = field_76577_b.getBiomeProvider(field_76579_a);
      }
  
+     public IChunkGenerator func_186060_c()
+     {
+-        return (IChunkGenerator)(this.field_76577_b == WorldType.field_77138_c ? new ChunkProviderFlat(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : (this.field_76577_b == WorldType.field_180272_g ? new ChunkProviderDebug(this.field_76579_a) : (this.field_76577_b == WorldType.field_180271_f ? new ChunkProviderOverworld(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : new ChunkProviderOverworld(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c))));
++        return field_76577_b.getChunkGenerator(field_76579_a, field_82913_c);
+     }
+ 
+     public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
+@@ -158,7 +144,7 @@
      @SideOnly(Side.CLIENT)
      public float func_76571_f()
      {
@@ -42,25 +38,46 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -193,4 +201,320 @@
+@@ -174,13 +160,13 @@
+ 
+     public int func_76557_i()
+     {
+-        return this.field_76577_b == WorldType.field_77138_c ? 4 : this.field_76579_a.func_181545_F() + 1;
++        return this.field_76577_b.getMinimumSpawnHeight(this.field_76579_a);
      }
  
-     public abstract String func_80007_l();
-+
+     @SideOnly(Side.CLIENT)
+     public double func_76565_k()
+     {
+-        return this.field_76577_b == WorldType.field_77138_c ? 1.0D : 0.03125D;
++        return this.field_76577_b.voidFadeMagnitude();
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -214,6 +200,339 @@
+         return new WorldBorder();
+     }
+ 
 +    /*======================================= Forge Start =========================================*/
-+    private IRenderHandler skyRenderer = null;
-+    private IRenderHandler cloudRenderer = null;
-+    private IRenderHandler weatherRenderer = null;
-+    
++    private net.minecraftforge.client.IRenderHandler skyRenderer = null;
++    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
++    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
++    private int dimensionId;
++
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
 +     * Added to allow default providers to be registered for multiple dimensions.
-+     * 
++     * This is to denote the exact dimension ID opposed to the 'type' in WorldType
++     *
 +     * @param dim Dimension ID
 +     */
 +    public void setDimension(int dim)
 +    {
-+        this.field_76574_g = dim;
++        this.dimensionId = dim;
++    }
++    public int getDimension()
++    {
++        return this.dimensionId;
 +    }
 +
 +    /**
@@ -70,7 +87,7 @@
 +     */
 +    public String getSaveFolder()
 +    {
-+        return (field_76574_g == 0 ? null : "DIM" + field_76574_g);
++        return (dimensionId == 0 ? null : "DIM" + dimensionId);
 +    }
 +
 +    /**
@@ -105,7 +122,7 @@
 +        else if (this instanceof WorldProviderHell)
 +        {
 +            return "Leaving the Nether";
-+        } 
++        }
 +        return null;
 +    }
 +
@@ -125,109 +142,121 @@
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public IRenderHandler getSkyRenderer()
++    public net.minecraftforge.client.IRenderHandler getSkyRenderer()
 +    {
 +        return this.skyRenderer;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public void setSkyRenderer(IRenderHandler skyRenderer)
++    public void setSkyRenderer(net.minecraftforge.client.IRenderHandler skyRenderer)
 +    {
 +        this.skyRenderer = skyRenderer;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public IRenderHandler getCloudRenderer()
++    public net.minecraftforge.client.IRenderHandler getCloudRenderer()
 +    {
 +        return cloudRenderer;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public void setCloudRenderer(IRenderHandler renderer)
++    public void setCloudRenderer(net.minecraftforge.client.IRenderHandler renderer)
 +    {
 +        cloudRenderer = renderer;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public IRenderHandler getWeatherRenderer()
++    public net.minecraftforge.client.IRenderHandler getWeatherRenderer()
 +    {
 +        return weatherRenderer;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public void setWeatherRenderer(IRenderHandler renderer)
++    public void setWeatherRenderer(net.minecraftforge.client.IRenderHandler renderer)
 +    {
 +        weatherRenderer = renderer;
 +    }
 +
-+    public ChunkCoordinates getRandomizedSpawnPoint()
++    public BlockPos getRandomizedSpawnPoint()
 +    {
-+        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(this.field_76579_a.func_72861_E());
++        BlockPos ret = this.field_76579_a.func_175694_M();
 +
 +        boolean isAdventure = field_76579_a.func_72912_H().func_76077_q() == GameType.ADVENTURE;
-+        int spawnFuzz = field_76577_b.getSpawnFuzz();
-+        int spawnFuzzHalf = spawnFuzz / 2;
++        int spawnFuzz = this.field_76579_a instanceof WorldServer ? field_76577_b.getSpawnFuzz((WorldServer)this.field_76579_a, this.field_76579_a.func_73046_m()) : 1;
++        int border = MathHelper.func_76128_c(field_76579_a.func_175723_af().func_177729_b(ret.func_177958_n(), ret.func_177952_p()));
++        if (border < spawnFuzz) spawnFuzz = border;
 +
-+        if (!field_76576_e && !isAdventure)
++        if (!func_177495_o() && !isAdventure && spawnFuzz != 0)
 +        {
-+            chunkcoordinates.field_71574_a += this.field_76579_a.field_73012_v.nextInt(spawnFuzz) - spawnFuzzHalf;
-+            chunkcoordinates.field_71573_c += this.field_76579_a.field_73012_v.nextInt(spawnFuzz) - spawnFuzzHalf;
-+            chunkcoordinates.field_71572_b = this.field_76579_a.func_72825_h(chunkcoordinates.field_71574_a, chunkcoordinates.field_71573_c);
++            if (spawnFuzz < 2) spawnFuzz = 2;
++            int spawnFuzzHalf = spawnFuzz / 2;
++            ret = field_76579_a.func_175672_r(ret.func_177982_a(field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz, 0, field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz));
 +        }
 +
-+        return chunkcoordinates;
++        return ret;
 +    }
-+    
 +    /**
-+     * Determine if the cusor on the map should 'spin' when rendered, like it does for the player in the nether.
-+     * 
++     * Determine if the cursor on the map should 'spin' when rendered, like it does for the player in the nether.
++     *
 +     * @param entity The entity holding the map, playername, or frame-ENTITYID
 +     * @param x X Position
 +     * @param y Y Position
-+     * @param z Z Postion
++     * @param z Z Position
 +     * @return True to 'spin' the cursor
 +     */
 +    public boolean shouldMapSpin(String entity, double x, double y, double z)
 +    {
-+        return field_76574_g < 0;
++        return dimensionId < 0;
 +    }
 +
 +    /**
 +     * Determines the dimension the player will be respawned in, typically this brings them back to the overworld.
-+     * 
++     *
 +     * @param player The player that is respawning
 +     * @return The dimension to respawn the player in
 +     */
-+    public int getRespawnDimension(EntityPlayerMP player)
++    public int getRespawnDimension(net.minecraft.entity.player.EntityPlayerMP player)
 +    {
 +        return 0;
 +    }
 +
++    /**
++     * Called from {@link World#initCapabilities()}, to gather capabilities for this world.
++     * It's safe to access world here since this is called after world is registered.
++     * 
++     * On server, called directly after mapStorage and world data such as Scoreboard and VillageCollection are initialized.
++     * On client, called when world is constructed, just before world load event is called.
++     * Note that this method is always called before the world load event.
++     * @return initial holder for capabilities on the world
++     */
++    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities() {
++        return null;
++    }
 +    /*======================================= Start Moved From World =========================================*/
 +
-+    public BiomeGenBase getBiomeGenForCoords(int x, int z)
++    public Biome getBiomeForCoords(BlockPos pos)
 +    {
-+        return field_76579_a.getBiomeGenForCoordsBody(x, z);
++        return field_76579_a.getBiomeForCoordsBody(pos);
 +    }
 +
 +    public boolean isDaytime()
 +    {
-+        return field_76579_a.field_73008_k < 4;
++        return field_76579_a.func_175657_ab() < 4;
 +    }
-+    
++
 +    /**
 +     * The current sun brightness factor for this dimension.
 +     * 0.0f means no light at all, and 1.0f means maximum sunlight.
 +     * This will be used for the "calculateSkylightSubtracted"
 +     * which is for Sky light value calculation.
-+     * 
++     *
 +     * @return The current brightness factor
 +     * */
 +    public float getSunBrightnessFactor(float par1)
 +    {
 +        return field_76579_a.getSunBrightnessFactor(par1);
 +    }
-+    
++
 +    /**
 +     * Calculates the current moon phase factor.
 +     * This factor is effective for slimes.
@@ -239,15 +268,15 @@
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 getSkyColor(Entity cameraEntity, float partialTicks)
++    public Vec3d getSkyColor(net.minecraft.entity.Entity cameraEntity, float partialTicks)
 +    {
 +        return field_76579_a.getSkyColorBody(cameraEntity, partialTicks);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 drawClouds(float partialTicks)
++    public Vec3d getCloudColor(float partialTicks)
 +    {
-+        return field_76579_a.drawCloudsBody(partialTicks);
++        return field_76579_a.getCloudColorBody(partialTicks);
 +    }
 +
 +    /**
@@ -258,7 +287,7 @@
 +    {
 +        return field_76579_a.getSunBrightnessBody(par1);
 +    }
-+    
++
 +    /**
 +     * Gets the Star Brightness for rendering sky.
 +     * */
@@ -284,16 +313,15 @@
 +        field_76579_a.updateWeatherBody();
 +    }
 +
-+    public boolean canBlockFreeze(int x, int y, int z, boolean byWater)
++    public boolean canBlockFreeze(BlockPos pos, boolean byWater)
 +    {
-+        return field_76579_a.canBlockFreezeBody(x, y, z, byWater);
++        return field_76579_a.canBlockFreezeBody(pos, byWater);
 +    }
 +
-+    public boolean canSnowAt(int x, int y, int z, boolean checkLight)
++    public boolean canSnowAt(BlockPos pos, boolean checkLight)
 +    {
-+        return field_76579_a.canSnowAtBody(x, y, z, checkLight);
++        return field_76579_a.canSnowAtBody(pos, checkLight);
 +    }
-+
 +    public void setWorldTime(long time)
 +    {
 +        field_76579_a.field_72986_A.func_76068_b(time);
@@ -309,25 +337,25 @@
 +        return field_76579_a.field_72986_A.func_76073_f();
 +    }
 +
-+    public ChunkCoordinates getSpawnPoint()
++    public BlockPos getSpawnPoint()
 +    {
-+        WorldInfo info = field_76579_a.field_72986_A;
-+        return new ChunkCoordinates(info.func_76079_c(), info.func_76075_d(), info.func_76074_e());
++        net.minecraft.world.storage.WorldInfo info = field_76579_a.field_72986_A;
++        return new BlockPos(info.func_76079_c(), info.func_76075_d(), info.func_76074_e());
 +    }
 +
-+    public void setSpawnPoint(int x, int y, int z)
++    public void setSpawnPoint(BlockPos pos)
 +    {
-+        field_76579_a.field_72986_A.func_76081_a(x, y, z);
++        field_76579_a.field_72986_A.func_176143_a(pos);
 +    }
 +
-+    public boolean canMineBlock(EntityPlayer player, int x, int y, int z)
++    public boolean canMineBlock(net.minecraft.entity.player.EntityPlayer player, BlockPos pos)
 +    {
-+        return field_76579_a.canMineBlockBody(player, x, y, z);
++        return field_76579_a.canMineBlockBody(player, pos);
 +    }
 +
-+    public boolean isBlockHighHumidity(int x, int y, int z)
++    public boolean isBlockHighHumidity(BlockPos pos)
 +    {
-+        return field_76579_a.func_72807_a(x, z).func_76736_e();
++        return field_76579_a.func_180494_b(pos).func_76736_e();
 +    }
 +
 +    public int getHeight()
@@ -353,13 +381,16 @@
 +        field_76579_a.field_72986_A.func_76069_a(false);
 +    }
 +
-+    public boolean canDoLightning(Chunk chunk)
++    public boolean canDoLightning(net.minecraft.world.chunk.Chunk chunk)
 +    {
 +        return true;
 +    }
 +
-+    public boolean canDoRainSnowIce(Chunk chunk)
++    public boolean canDoRainSnowIce(net.minecraft.world.chunk.Chunk chunk)
 +    {
 +        return true;
 +    }
- }
++
+     public void func_186061_a(EntityPlayerMP p_186061_1_)
+     {
+     }

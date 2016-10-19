@@ -1,18 +1,83 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-@@ -25,6 +25,7 @@
- import net.minecraft.world.demo.DemoWorldServer;
- import net.minecraft.world.storage.ISaveFormat;
- import net.minecraft.world.storage.WorldInfo;
-+import net.minecraftforge.client.ForgeHooksClient;
- import org.apache.commons.io.Charsets;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
-@@ -507,6 +508,7 @@
-                 this.func_73731_b(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + i * (this.field_146289_q.field_78288_b + 1)), 16777215);
-             }
-         }
-+        ForgeHooksClient.renderMainMenu(this, field_146289_q, field_146294_l, field_146295_m);
-         String s1 = "Copyright Mojang AB. Do not distribute!";
-         this.func_73731_b(this.field_146289_q, s1, this.field_146294_l - this.field_146289_q.func_78256_a(s1) - 2, this.field_146295_m - 10, -1);
+@@ -67,6 +67,8 @@
+     private GuiButton field_175372_K;
+     private boolean field_183502_L;
+     private GuiScreen field_183503_M;
++    private GuiButton modButton;
++    private net.minecraftforge.client.gui.NotificationModUpdateScreen modUpdateNotification;
  
+     public GuiMainMenu()
+     {
+@@ -209,13 +211,15 @@
+             this.field_183503_M.func_183500_a(this.field_146294_l, this.field_146295_m);
+             this.field_183503_M.func_73866_w_();
+         }
++        modUpdateNotification = net.minecraftforge.client.gui.NotificationModUpdateScreen.init(this, modButton);
+     }
+ 
+     private void func_73969_a(int p_73969_1_, int p_73969_2_)
+     {
+         this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 100, p_73969_1_, I18n.func_135052_a("menu.singleplayer", new Object[0])));
+         this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.func_135052_a("menu.multiplayer", new Object[0])));
+-        this.field_175372_K = this.func_189646_b(new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online", new Object[0])));
++        this.field_175372_K = this.func_189646_b(new GuiButton(14, this.field_146294_l / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("menu.online", new Object[0]).replace("Minecraft", "").trim()));
++        this.field_146292_n.add(modButton = new GuiButton(6, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("fml.menu.mods")));
+     }
+ 
+     private void func_73972_b(int p_73972_1_, int p_73972_2_)
+@@ -263,6 +267,11 @@
+             this.field_146297_k.func_71400_g();
+         }
+ 
++        if (p_146284_1_.field_146127_k == 6)
++        {
++            this.field_146297_k.func_147108_a(new net.minecraftforge.fml.client.GuiModList(this));
++        }
++
+         if (p_146284_1_.field_146127_k == 11)
+         {
+             this.field_146297_k.func_71371_a("Demo_World", "Demo_World", DemoWorldServer.field_73071_a);
+@@ -490,6 +499,8 @@
+             this.func_73729_b(j + 155, 30, 0, 45, 155, 44);
+         }
+ 
++        this.field_73975_c = net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.field_146289_q, this.field_146294_l, this.field_146295_m, this.field_73975_c);
++
+         GlStateManager.func_179094_E();
+         GlStateManager.func_179109_b((float)(this.field_146294_l / 2 + 90), 70.0F, 0.0F);
+         GlStateManager.func_179114_b(-20.0F, 0.0F, 0.0F, 1.0F);
+@@ -509,7 +520,15 @@
+             s = s + ("release".equalsIgnoreCase(this.field_146297_k.func_184123_d()) ? "" : "/" + this.field_146297_k.func_184123_d());
+         }
+ 
+-        this.func_73731_b(this.field_146289_q, s, 2, this.field_146295_m - 10, -1);
++        java.util.List<String> brandings = com.google.common.collect.Lists.reverse(net.minecraftforge.fml.common.FMLCommonHandler.instance().getBrandings(true));
++        for (int brdline = 0; brdline < brandings.size(); brdline++)
++        {
++            String brd = brandings.get(brdline);
++            if (!com.google.common.base.Strings.isNullOrEmpty(brd))
++            {
++                this.func_73731_b(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + brdline * (this.field_146289_q.field_78288_b + 1)), 16777215);
++            }
++        }
+         String s1 = "Copyright Mojang AB. Do not distribute!";
+         this.func_73731_b(this.field_146289_q, "Copyright Mojang AB. Do not distribute!", this.field_146294_l - this.field_146289_q.func_78256_a("Copyright Mojang AB. Do not distribute!") - 2, this.field_146295_m - 10, -1);
+ 
+@@ -526,6 +545,7 @@
+         {
+             this.field_183503_M.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
+         }
++        modUpdateNotification.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
+     }
+ 
+     protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException
+@@ -546,6 +566,8 @@
+         {
+             this.field_183503_M.func_73864_a(p_73864_1_, p_73864_2_, p_73864_3_);
+         }
++
++        net.minecraftforge.client.ForgeHooksClient.mainMenuMouseClick(p_73864_1_, p_73864_2_, p_73864_3_, this.field_146289_q, this.field_146294_l);
+     }
+ 
+     public void func_146281_b()

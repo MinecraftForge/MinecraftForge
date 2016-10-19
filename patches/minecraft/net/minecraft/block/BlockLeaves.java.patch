@@ -1,151 +1,102 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
-@@ -2,6 +2,7 @@
+@@ -18,7 +18,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
  
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.util.ArrayList;
- import java.util.Random;
- import net.minecraft.block.material.Material;
- import net.minecraft.creativetab.CreativeTabs;
-@@ -15,8 +16,9 @@
- import net.minecraft.world.ColorizerFoliage;
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.IShearable;
- 
--public abstract class BlockLeaves extends BlockLeavesBase
-+public abstract class BlockLeaves extends BlockLeavesBase implements IShearable
+-public abstract class BlockLeaves extends Block
++public abstract class BlockLeaves extends Block implements net.minecraftforge.common.IShearable
  {
-     int[] field_150128_a;
-     @SideOnly(Side.CLIENT)
-@@ -82,10 +84,10 @@
-                 {
-                     for (int l1 = -b0; l1 <= b0; ++l1)
-                     {
--                        if (p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1).func_149688_o() == Material.field_151584_j)
-+                        Block block = p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
-+                        if (block.isLeaves(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1))
+     public static final PropertyBool field_176237_a = PropertyBool.func_177716_a("decayable");
+     public static final PropertyBool field_176236_b = PropertyBool.func_177716_a("check_decay");
+@@ -54,9 +54,9 @@
+                         BlockPos blockpos = p_180663_2_.func_177982_a(j1, k1, l1);
+                         IBlockState iblockstate = p_180663_1_.func_180495_p(blockpos);
+ 
+-                        if (iblockstate.func_185904_a() == Material.field_151584_j && !((Boolean)iblockstate.func_177229_b(field_176236_b)).booleanValue())
++                        if (iblockstate.func_177230_c().isLeaves(iblockstate, p_180663_1_, blockpos))
                          {
--                            int i2 = p_149749_1_.func_72805_g(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
--                            p_149749_1_.func_72921_c(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1, i2 | 8, 4);
-+                            block.beginLeavesDecay(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
+-                            p_180663_1_.func_180501_a(blockpos, iblockstate.func_177226_a(field_176236_b, Boolean.valueOf(true)), 4);
++                            iblockstate.func_177230_c().beginLeavesDecay(iblockstate, p_180663_1_, blockpos);
                          }
                      }
                  }
-@@ -127,9 +129,9 @@
-                             {
-                                 Block block = p_149674_1_.func_147439_a(p_149674_2_ + l1, p_149674_3_ + i2, p_149674_4_ + j2);
+@@ -97,9 +97,9 @@
+                                 IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2));
+                                 Block block = iblockstate.func_177230_c();
  
 -                                if (block != Blocks.field_150364_r && block != Blocks.field_150363_s)
-+                                if (!block.canSustainLeaves(p_149674_1_, p_149674_2_ + l1, p_149674_3_ + i2, p_149674_4_ + j2))
++                                if (!block.canSustainLeaves(iblockstate, p_180650_1_, blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)))
                                  {
--                                    if (block.func_149688_o() == Material.field_151584_j)
-+                                    if (block.isLeaves(p_149674_1_, p_149674_2_ + l1, p_149674_3_ + i2, p_149674_4_ + j2))
+-                                    if (iblockstate.func_185904_a() == Material.field_151584_j)
++                                    if (block.isLeaves(iblockstate, p_180650_1_, blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)))
                                      {
-                                         this.field_150128_a[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
+                                         this.field_150128_a[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = -2;
                                      }
-@@ -236,40 +238,7 @@
+@@ -207,40 +207,7 @@
  
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
--        if (!p_149690_1_.field_72995_K)
+-        if (!p_180653_1_.field_72995_K)
 -        {
--            int j1 = this.func_150123_b(p_149690_5_);
+-            int i = this.func_176232_d(p_180653_3_);
 -
--            if (p_149690_7_ > 0)
+-            if (p_180653_5_ > 0)
 -            {
--                j1 -= 2 << p_149690_7_;
+-                i -= 2 << p_180653_5_;
 -
--                if (j1 < 10)
+-                if (i < 10)
 -                {
--                    j1 = 10;
+-                    i = 10;
 -                }
 -            }
 -
--            if (p_149690_1_.field_73012_v.nextInt(j1) == 0)
+-            if (p_180653_1_.field_73012_v.nextInt(i) == 0)
 -            {
--                Item item = this.func_149650_a(p_149690_5_, p_149690_1_.field_73012_v, p_149690_7_);
--                this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(item, 1, this.func_149692_a(p_149690_5_)));
+-                Item item = this.func_180660_a(p_180653_3_, p_180653_1_.field_73012_v, p_180653_5_);
+-                func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(item, 1, this.func_180651_a(p_180653_3_)));
 -            }
 -
--            j1 = 200;
+-            i = 200;
 -
--            if (p_149690_7_ > 0)
+-            if (p_180653_5_ > 0)
 -            {
--                j1 -= 10 << p_149690_7_;
+-                i -= 10 << p_180653_5_;
 -
--                if (j1 < 40)
+-                if (i < 40)
 -                {
--                    j1 = 40;
+-                    i = 40;
 -                }
 -            }
 -
--            this.func_150124_c(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, j1);
+-            this.func_176234_a(p_180653_1_, p_180653_2_, p_180653_3_, i);
 -        }
-+        super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, 1.0f, p_149690_7_);
++        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
      }
  
-     protected void func_150124_c(World p_150124_1_, int p_150124_2_, int p_150124_3_, int p_150124_4_, int p_150124_5_, int p_150124_6_) {}
-@@ -281,13 +250,7 @@
+     protected void func_176234_a(World p_176234_1_, BlockPos p_176234_2_, IBlockState p_176234_3_, int p_176234_4_)
+@@ -276,6 +243,49 @@
  
-     public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
-     {
--        if (!p_149636_1_.field_72995_K && p_149636_2_.func_71045_bC() != null && p_149636_2_.func_71045_bC().func_77973_b() == Items.field_151097_aZ)
-         {
--            p_149636_2_.func_71064_a(StatList.field_75934_C[Block.func_149682_b(this)], 1);
--            this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Item.func_150898_a(this), 1, p_149636_6_ & 3));
--        }
--        else
--        {
-             super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
-         }
-     }
-@@ -318,4 +281,67 @@
-     }
+     public abstract BlockPlanks.EnumType func_176233_b(int p_176233_1_);
  
-     public abstract String[] func_150125_e();
-+
-+
-+    @Override
-+    public boolean isShearable(ItemStack item, IBlockAccess world, int x, int y, int z)
-+    {
-+        return true;
-+    }
++    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
++    @Override public boolean isLeaves(IBlockState state, IBlockAccess world, BlockPos pos){ return true; }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune)
++    public void beginLeavesDecay(IBlockState state, World world, BlockPos pos)
 +    {
-+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        ret.add(new ItemStack(this, 1, world.func_72805_g(x, y, z) & 3));
-+        return ret;
-+    }
-+
-+    @Override
-+    public void beginLeavesDecay(World world, int x, int y, int z)
-+    {
-+
-+        int i2 = world.func_72805_g(x, y, z);
-+
-+        if ((i2 & 8) == 0)
++        if (!(Boolean)state.func_177229_b(field_176236_b))
 +        {
-+            world.func_72921_c(x, y, z, i2 | 8, 4);
++            world.func_180501_a(pos, state.func_177226_a(field_176236_b, true), 4);
 +        }
-+        world.func_72921_c(x, y, z, world.func_72805_g(x, y, z) | 8, 4);
 +    }
 +
 +    @Override
-+    public boolean isLeaves(IBlockAccess world, int x, int y, int z)
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        return true;
-+    }
-+
-+
-+    @Override
-+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
-+    {
-+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        int chance = this.func_150123_b(metadata);
++        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
++        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
++        int chance = this.func_176232_d(state);
 +
 +        if (fortune > 0)
 +        {
@@ -153,8 +104,8 @@
 +            if (chance < 10) chance = 10;
 +        }
 +
-+        if (world.field_73012_v.nextInt(chance) == 0)
-+            ret.add(new ItemStack(this.func_149650_a(metadata, world.field_73012_v, fortune), 1, this.func_149692_a(metadata)));
++        if (rand.nextInt(chance) == 0)
++            ret.add(new ItemStack(func_180660_a(state, rand, fortune), 1, func_180651_a(state)));
 +
 +        chance = 200;
 +        if (fortune > 0)
@@ -164,8 +115,13 @@
 +        }
 +
 +        this.captureDrops(true);
-+        this.func_150124_c(world, x, y, z, metadata, chance); // Dammet mojang
++        if (world instanceof World)
++            this.func_176234_a((World)world, pos, state, chance); // Dammet mojang
 +        ret.addAll(this.captureDrops(false));
 +        return ret;
 +    }
- }
++
++
+     @SideOnly(Side.CLIENT)
+     public boolean func_176225_a(IBlockState p_176225_1_, IBlockAccess p_176225_2_, BlockPos p_176225_3_, EnumFacing p_176225_4_)
+     {

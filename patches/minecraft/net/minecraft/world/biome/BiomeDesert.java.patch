@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeDesert.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeDesert.java
+@@ -28,6 +28,7 @@
+     {
+         super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
+ 
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.DESERT_WELL))
+         if (p_180624_2_.nextInt(1000) == 0)
+         {
+             int i = p_180624_2_.nextInt(16) + 8;
+@@ -36,6 +37,7 @@
+             (new WorldGenDesertWells()).func_180709_b(p_180624_1_, p_180624_2_, blockpos);
+         }
+ 
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FOSSIL))
+         if (p_180624_2_.nextInt(64) == 0)
+         {
+             (new WorldGenFossils()).func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_);

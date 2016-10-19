@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSapling.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSapling.java
-@@ -71,6 +71,7 @@
+@@ -77,6 +77,7 @@
  
-     public void func_149878_d(World p_149878_1_, int p_149878_2_, int p_149878_3_, int p_149878_4_, Random p_149878_5_)
+     public void func_176476_e(World p_176476_1_, BlockPos p_176476_2_, IBlockState p_176476_3_, Random p_176476_4_)
      {
-+        if (!net.minecraftforge.event.terraingen.TerrainGen.saplingGrowTree(p_149878_1_, p_149878_5_, p_149878_2_, p_149878_3_, p_149878_4_)) return;
-         int l = p_149878_1_.func_72805_g(p_149878_2_, p_149878_3_, p_149878_4_) & 7;
-         Object object = p_149878_5_.nextInt(10) == 0 ? new WorldGenBigTree(true) : new WorldGenTrees(true);
-         int i1 = 0;
++        if (!net.minecraftforge.event.terraingen.TerrainGen.saplingGrowTree(p_176476_1_, p_176476_4_, p_176476_2_)) return;
+         WorldGenerator worldgenerator = (WorldGenerator)(p_176476_4_.nextInt(10) == 0 ? new WorldGenBigTree(true) : new WorldGenTrees(true));
+         int i = 0;
+         int j = 0;

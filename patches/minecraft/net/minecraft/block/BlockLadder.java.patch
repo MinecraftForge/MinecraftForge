@@ -1,93 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLadder.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLadder.java
-@@ -5,10 +5,14 @@
- import java.util.Random;
- import net.minecraft.block.material.Material;
- import net.minecraft.creativetab.CreativeTabs;
-+import net.minecraft.entity.EntityLivingBase;
- import net.minecraft.util.AxisAlignedBB;
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
+@@ -61,7 +61,10 @@
  
-+import net.minecraftforge.common.util.ForgeDirection;
-+import static net.minecraftforge.common.util.ForgeDirection.*;
-+
- public class BlockLadder extends Block
- {
-     private static final String __OBFID = "CL_00000262";
-@@ -79,29 +83,32 @@
- 
-     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return p_149742_1_.func_147439_a(p_149742_2_ - 1, p_149742_3_, p_149742_4_).func_149721_r() ? true : (p_149742_1_.func_147439_a(p_149742_2_ + 1, p_149742_3_, p_149742_4_).func_149721_r() ? true : (p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_ - 1).func_149721_r() ? true : p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_ + 1).func_149721_r()));
-+        return p_149742_1_.isSideSolid(p_149742_2_ - 1, p_149742_3_, p_149742_4_, EAST ) ||
-+               p_149742_1_.isSideSolid(p_149742_2_ + 1, p_149742_3_, p_149742_4_, WEST ) ||
-+               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ - 1, SOUTH) ||
-+               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ + 1, NORTH);
+-        return p_176196_1_.func_180495_p(p_176196_2_.func_177976_e()).func_185915_l() ? true : (p_176196_1_.func_180495_p(p_176196_2_.func_177974_f()).func_185915_l() ? true : (p_176196_1_.func_180495_p(p_176196_2_.func_177978_c()).func_185915_l() ? true : p_176196_1_.func_180495_p(p_176196_2_.func_177968_d()).func_185915_l()));
++        return p_176196_1_.func_180495_p(p_176196_2_.func_177976_e()).isSideSolid(p_176196_1_, p_176196_2_.func_177976_e(), EnumFacing.EAST) ||
++               p_176196_1_.func_180495_p(p_176196_2_.func_177974_f()).isSideSolid(p_176196_1_, p_176196_2_.func_177974_f(), EnumFacing.WEST) ||
++               p_176196_1_.func_180495_p(p_176196_2_.func_177978_c()).isSideSolid(p_176196_1_, p_176196_2_.func_177978_c(), EnumFacing.SOUTH) ||
++               p_176196_1_.func_180495_p(p_176196_2_.func_177968_d()).isSideSolid(p_176196_1_, p_176196_2_.func_177968_d(), EnumFacing.NORTH);
      }
  
-     public int func_149660_a(World p_149660_1_, int p_149660_2_, int p_149660_3_, int p_149660_4_, int p_149660_5_, float p_149660_6_, float p_149660_7_, float p_149660_8_, int p_149660_9_)
+     public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
+@@ -99,7 +102,7 @@
+ 
+     protected boolean func_176381_b(World p_176381_1_, BlockPos p_176381_2_, EnumFacing p_176381_3_)
      {
-         int j1 = p_149660_9_;
+-        return p_176381_1_.func_180495_p(p_176381_2_.func_177972_a(p_176381_3_.func_176734_d())).func_185915_l();
++        return p_176381_1_.func_180495_p(p_176381_2_.func_177972_a(p_176381_3_.func_176734_d())).isSideSolid(p_176381_1_, p_176381_2_.func_177972_a(p_176381_3_.func_176734_d()), p_176381_3_);
+     }
  
--        if ((p_149660_9_ == 0 || p_149660_5_ == 2) && p_149660_1_.func_147439_a(p_149660_2_, p_149660_3_, p_149660_4_ + 1).func_149721_r())
-+        if ((p_149660_9_ == 0 || p_149660_5_ == 2) && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ + 1, NORTH))
-         {
-             j1 = 2;
-         }
- 
--        if ((j1 == 0 || p_149660_5_ == 3) && p_149660_1_.func_147439_a(p_149660_2_, p_149660_3_, p_149660_4_ - 1).func_149721_r())
-+        if ((j1 == 0 || p_149660_5_ == 3) && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ - 1, SOUTH))
-         {
-             j1 = 3;
-         }
- 
--        if ((j1 == 0 || p_149660_5_ == 4) && p_149660_1_.func_147439_a(p_149660_2_ + 1, p_149660_3_, p_149660_4_).func_149721_r())
-+        if ((j1 == 0 || p_149660_5_ == 4) && p_149660_1_.isSideSolid(p_149660_2_ + 1, p_149660_3_, p_149660_4_, WEST))
-         {
-             j1 = 4;
-         }
- 
--        if ((j1 == 0 || p_149660_5_ == 5) && p_149660_1_.func_147439_a(p_149660_2_ - 1, p_149660_3_, p_149660_4_).func_149721_r())
-+        if ((j1 == 0 || p_149660_5_ == 5) && p_149660_1_.isSideSolid(p_149660_2_ - 1, p_149660_3_, p_149660_4_, EAST))
-         {
-             j1 = 5;
-         }
-@@ -114,22 +121,22 @@
-         int l = p_149695_1_.func_72805_g(p_149695_2_, p_149695_3_, p_149695_4_);
-         boolean flag = false;
- 
--        if (l == 2 && p_149695_1_.func_147439_a(p_149695_2_, p_149695_3_, p_149695_4_ + 1).func_149721_r())
-+        if (l == 2 && p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_, p_149695_4_ + 1, NORTH))
-         {
-             flag = true;
-         }
- 
--        if (l == 3 && p_149695_1_.func_147439_a(p_149695_2_, p_149695_3_, p_149695_4_ - 1).func_149721_r())
-+        if (l == 3 && p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_, p_149695_4_ - 1, SOUTH))
-         {
-             flag = true;
-         }
- 
--        if (l == 4 && p_149695_1_.func_147439_a(p_149695_2_ + 1, p_149695_3_, p_149695_4_).func_149721_r())
-+        if (l == 4 && p_149695_1_.isSideSolid(p_149695_2_ + 1, p_149695_3_, p_149695_4_, WEST))
-         {
-             flag = true;
-         }
- 
--        if (l == 5 && p_149695_1_.func_147439_a(p_149695_2_ - 1, p_149695_3_, p_149695_4_).func_149721_r())
-+        if (l == 5 && p_149695_1_.isSideSolid(p_149695_2_ - 1, p_149695_3_, p_149695_4_, EAST))
-         {
-             flag = true;
-         }
-@@ -147,4 +154,10 @@
+     public IBlockState func_176203_a(int p_176203_1_)
+@@ -139,4 +142,6 @@
      {
-         return 1;
+         return new BlockStateContainer(this, new IProperty[] {field_176382_a});
      }
 +
-+    @Override
-+    public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity)
-+    {
-+        return true;
-+    }
++    @Override public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) { return true; }
  }

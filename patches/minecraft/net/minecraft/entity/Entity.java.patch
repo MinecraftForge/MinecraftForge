@@ -1,203 +1,134 @@
 --- ../src-base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src-work/minecraft/net/minecraft/entity/Entity.java
-@@ -1,7 +1,10 @@
- package net.minecraft.entity;
+@@ -78,7 +78,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
-+import cpw.mods.fml.common.FMLLog;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.util.ArrayList;
-+import java.util.HashMap;
- import java.util.List;
- import java.util.Random;
- import java.util.UUID;
-@@ -13,9 +16,14 @@
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.enchantment.EnchantmentProtection;
- import net.minecraft.entity.effect.EntityLightningBolt;
-+import net.minecraft.entity.item.EntityBoat;
- import net.minecraft.entity.item.EntityItem;
-+import net.minecraft.entity.item.EntityItemFrame;
-+import net.minecraft.entity.item.EntityMinecart;
-+import net.minecraft.entity.item.EntityPainting;
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.init.Blocks;
-+import net.minecraft.init.Items;
- import net.minecraft.item.Item;
- import net.minecraft.item.ItemStack;
- import net.minecraft.nbt.NBTTagCompound;
-@@ -30,12 +38,17 @@
- import net.minecraft.util.Direction;
- import net.minecraft.util.IChatComponent;
- import net.minecraft.util.MathHelper;
-+import net.minecraft.util.MovingObjectPosition;
- import net.minecraft.util.ReportedException;
- import net.minecraft.util.StatCollector;
- import net.minecraft.util.Vec3;
- import net.minecraft.world.Explosion;
- import net.minecraft.world.World;
- import net.minecraft.world.WorldServer;
-+import net.minecraftforge.common.IExtendedEntityProperties;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.EntityEvent;
-+import net.minecraftforge.fluids.IFluidBlock;
- 
- public abstract class Entity
+-public abstract class Entity implements ICommandSender
++public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
-@@ -116,7 +129,14 @@
-     protected UUID field_96093_i;
-     public Entity.EnumEntitySize field_70168_am;
-     private static final String __OBFID = "CL_00001533";
+     private static final Logger field_184243_a = LogManager.getLogger();
+     private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+@@ -190,7 +190,7 @@
+ 
+         if (p_i1582_1_ != null)
+         {
+-            this.field_71093_bK = p_i1582_1_.field_73011_w.func_186058_p().func_186068_a();
++            this.field_71093_bK = p_i1582_1_.field_73011_w.getDimension();
+         }
+ 
+         this.field_70180_af = new EntityDataManager(this);
+@@ -201,8 +201,16 @@
+         this.field_70180_af.func_187214_a(field_184234_aB, Boolean.valueOf(false));
+         this.field_70180_af.func_187214_a(field_189655_aD, Boolean.valueOf(false));
+         this.func_70088_a();
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
++        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
+     }
+ 
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
 +    public boolean captureDrops = false;
-+    public ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
-+    private UUID persistentID;
- 
-+    protected HashMap<String, IExtendedEntityProperties> extendedProperties;
++    public java.util.ArrayList<EntityItem> capturedDrops = new java.util.ArrayList<EntityItem>();
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +
      public int func_145782_y()
      {
          return this.field_145783_c;
-@@ -153,6 +173,15 @@
-         this.field_70180_af.func_75682_a(0, Byte.valueOf((byte)0));
-         this.field_70180_af.func_75682_a(1, Short.valueOf((short)300));
-         this.func_70088_a();
-+
-+        extendedProperties = new HashMap<String, IExtendedEntityProperties>();
-+
-+        MinecraftForge.EVENT_BUS.post(new EntityEvent.EntityConstructing(this));
-+
-+        for (IExtendedEntityProperties props : this.extendedProperties.values())
-+        {
-+            props.init(this, p_i1582_1_);
-+        }
-     }
+@@ -944,7 +952,7 @@
  
-     protected abstract void func_70088_a();
-@@ -991,9 +1020,22 @@
+     protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
+     {
+-        SoundType soundtype = p_180429_2_.func_185467_w();
++        SoundType soundtype = p_180429_2_.getSoundType(field_70170_p.func_180495_p(p_180429_1_), field_70170_p, p_180429_1_, this);
  
-         if (block.func_149688_o() == p_70055_1_)
+         if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
          {
--            float f = BlockLiquid.func_149801_b(this.field_70170_p.func_72805_g(i, j, k)) - 0.11111111F;
--            float f1 = (float)(j + 1) - f;
--            return d0 < (double)f1;
-+            double filled = 1.0f; //If it's not a liquid assume it's a solid block
-+            if (block instanceof IFluidBlock)
-+            {
-+                filled = ((IFluidBlock)block).getFilledPercentage(field_70170_p, i, j, k);
-+            }
-+
-+            if (filled < 0)
-+            {
-+                filled *= -1;
-+                //filled -= 0.11111111F; //Why this is needed.. not sure...
-+                return d0 > (double)(j + (1 - filled));
-+            }
-+            else
-+            {
-+                return d0 < (double)(j + filled);
-+            }
-         }
-         else
-         {
-@@ -1278,8 +1320,27 @@
-             p_70109_1_.func_74768_a("PortalCooldown", this.field_71088_bW);
-             p_70109_1_.func_74772_a("UUIDMost", this.func_110124_au().getMostSignificantBits());
-             p_70109_1_.func_74772_a("UUIDLeast", this.func_110124_au().getLeastSignificantBits());
--            this.func_70014_b(p_70109_1_);
-+            if (customEntityData != null)
-+            {
-+                p_70109_1_.func_74782_a("ForgeData", customEntityData);
-+            }
+@@ -1151,12 +1159,12 @@
+             BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
+             IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
-+           for (String identifier : this.extendedProperties.keySet())
-+           {
-+                try
-+                {
-+                    IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.saveNBTData(p_70109_1_);
-+                }
-+                catch (Throwable t)
-+                {
-+                    FMLLog.severe("Failed to save extended properties for %s.  This is a mod issue.", identifier);
-+                    t.printStackTrace();
-+                }
-+            }
++            Boolean result = iblockstate.func_177230_c().isEntityInsideMaterial(this.field_70170_p, blockpos, iblockstate, this, d0, p_70055_1_, true);
++            if (result != null) return result;
 +
-+           this.func_70014_b(p_70109_1_);
-+
-             if (this.field_70154_o != null)
+             if (iblockstate.func_185904_a() == p_70055_1_)
              {
-                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-@@ -1345,6 +1406,30 @@
+-                float f = BlockLiquid.func_149801_b(iblockstate.func_177230_c().func_176201_c(iblockstate)) - 0.11111111F;
+-                float f1 = (float)(blockpos.func_177956_o() + 1) - f;
+-                boolean flag = d0 < (double)f1;
+-                return !flag && this instanceof EntityPlayer ? false : flag;
++                return net.minecraftforge.common.ForgeHooks.isInsideOfMaterial(p_70055_1_, this, blockpos);
+             }
+             else
+             {
+@@ -1568,6 +1576,9 @@
+                 p_189511_1_.func_74782_a("Tags", nbttaglist);
+             }
  
-             this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
-             this.func_70101_b(this.field_70177_z, this.field_70125_A);
-+            if (p_70020_1_.func_74764_b("ForgeData"))
-+            {
-+                customEntityData = p_70020_1_.func_74775_l("ForgeData");
-+            }
++            if (customEntityData != null) p_189511_1_.func_74782_a("ForgeData", customEntityData);
++            if (this.capabilities != null) p_189511_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
 +
-+            for (String identifier : this.extendedProperties.keySet())
-+            {
-+                try
-+                {
-+                    IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.loadNBTData(p_70020_1_);
-+                }
-+                catch (Throwable t)
-+                {
-+                    FMLLog.severe("Failed to load extended properties for %s.  This is a mod issue.", identifier);
-+                    t.printStackTrace();
-+                }
-+            }
-+
-+            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
-+            if (p_70020_1_.func_74764_b("PersistentIDMSB") && p_70020_1_.func_74764_b("PersistentIDLSB"))
-+            {
-+                this.field_96093_i = new UUID(p_70020_1_.func_74763_f("PersistentIDMSB"), p_70020_1_.func_74763_f("PersistentIDLSB"));
-+            }
-             this.func_70037_a(p_70020_1_);
+             this.func_70014_b(p_189511_1_);
  
-             if (this.func_142008_O())
-@@ -1423,7 +1508,14 @@
+             if (this.func_184207_aI())
+@@ -1675,6 +1686,9 @@
+             this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
+             this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
+ 
++            if (p_70020_1_.func_74764_b("ForgeData")) customEntityData = p_70020_1_.func_74775_l("ForgeData");
++            if (this.capabilities != null && p_70020_1_.func_74764_b("ForgeCaps")) this.capabilities.deserializeNBT(p_70020_1_.func_74775_l("ForgeCaps"));
++
+             if (p_70020_1_.func_150297_b("Tags", 9))
+             {
+                 this.field_184236_aF.clear();
+@@ -1757,7 +1771,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
-             entityitem.field_145804_b = 10;
+             entityitem.func_174869_p();
 -            this.field_70170_p.func_72838_d(entityitem);
 +            if (captureDrops)
-+            {
-+                capturedDrops.add(entityitem);
-+            }
++                this.capturedDrops.add(entityitem);
 +            else
-+            {
 +                this.field_70170_p.func_72838_d(entityitem);
-+            }
              return entityitem;
          }
          else
-@@ -1687,7 +1779,7 @@
+@@ -1867,6 +1884,7 @@
  
-     public boolean func_70115_ae()
+     public boolean func_184205_a(Entity p_184205_1_, boolean p_184205_2_)
      {
--        return this.field_70154_o != null;
-+        return this.field_70154_o != null && field_70154_o.shouldRiderSit();
++        if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_184205_1_, true)) return false;
+         if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this))
+         {
+             if (this.func_184218_aH())
+@@ -1902,6 +1920,7 @@
+         if (this.field_184239_as != null)
+         {
+             Entity entity = this.field_184239_as;
++            if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
+             this.field_184239_as = null;
+             entity.func_184225_p(this);
+         }
+@@ -2336,6 +2355,7 @@
+     {
+         if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
+         {
++            if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return null;
+             this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
+             MinecraftServer minecraftserver = this.func_184102_h();
+             int i = this.field_71093_bK;
+@@ -2429,7 +2449,7 @@
+ 
+     public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
+     {
+-        return p_180428_4_.func_177230_c().func_149638_a(this);
++        return p_180428_4_.func_177230_c().getExplosionResistance(p_180428_2_, p_180428_3_, this, p_180428_1_);
      }
  
-     public boolean func_70093_af()
-@@ -1988,7 +2080,7 @@
- 
-     public float func_145772_a(Explosion p_145772_1_, World p_145772_2_, int p_145772_3_, int p_145772_4_, int p_145772_5_, Block p_145772_6_)
-     {
--        return p_145772_6_.func_149638_a(this);
-+        return p_145772_6_.getExplosionResistance(this, p_145772_2_, p_145772_3_, p_145772_4_, p_145772_5_, field_70165_t, field_70163_u + func_70047_e(), field_70161_v);
+     public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
+@@ -2726,6 +2746,164 @@
+         EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
- 
-     public boolean func_145774_a(Explosion p_145774_1_, World p_145774_2_, int p_145774_3_, int p_145774_4_, int p_145774_5_, Block p_145774_6_, float p_145774_7_)
-@@ -2058,6 +2150,174 @@
- 
-     public void func_145781_i(int p_145781_1_) {}
  
 +    /* ================================== Forge Start =====================================*/
 +    /**
@@ -229,42 +160,52 @@
 +     * @param target The full target the player is looking at
 +     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
 +     */
-+    public ItemStack getPickedResult(MovingObjectPosition target)
++    public ItemStack getPickedResult(RayTraceResult target)
 +    {
-+        if (this instanceof EntityPainting)
++        if (this instanceof net.minecraft.entity.item.EntityPainting)
 +        {
-+            return new ItemStack(Items.field_151159_an);
++            return new ItemStack(net.minecraft.init.Items.field_151159_an);
 +        }
 +        else if (this instanceof EntityLeashKnot)
 +        {
-+            return new ItemStack(Items.field_151058_ca);
++            return new ItemStack(net.minecraft.init.Items.field_151058_ca);
 +        }
-+        else if (this instanceof EntityItemFrame)
++        else if (this instanceof net.minecraft.entity.item.EntityItemFrame)
 +        {
-+            ItemStack held = ((EntityItemFrame)this).func_82335_i();
++            ItemStack held = ((net.minecraft.entity.item.EntityItemFrame)this).func_82335_i();
 +            if (held == null)
 +            {
-+                return new ItemStack(Items.field_151160_bD);
++                return new ItemStack(net.minecraft.init.Items.field_151160_bD);
 +            }
 +            else
 +            {
 +                return held.func_77946_l();
 +            }
 +        }
-+        else if (this instanceof EntityMinecart)
++        else if (this instanceof net.minecraft.entity.item.EntityMinecart)
 +        {
-+            return ((EntityMinecart)this).getCartItem();
++            return ((net.minecraft.entity.item.EntityMinecart)this).getCartItem();
 +        }
-+        else if (this instanceof EntityBoat)
++        else if (this instanceof net.minecraft.entity.item.EntityBoat)
 +        {
-+            return new ItemStack(Items.field_151124_az);
++            return new ItemStack(((EntityBoat)this).func_184455_j());
++        }
++        else if (this instanceof net.minecraft.entity.item.EntityArmorStand)
++        {
++            return new ItemStack(net.minecraft.init.Items.field_179565_cj);
++        }
++        else if (this instanceof net.minecraft.entity.item.EntityEnderCrystal)
++        {
++            return new ItemStack(net.minecraft.init.Items.field_185158_cP);
 +        }
 +        else
 +        {
-+            int id = EntityList.func_75619_a(this);
-+            if (id > 0 && EntityList.field_75627_a.containsKey(id))
++            String name = EntityList.func_75621_b(this);
++            if (EntityList.field_75627_a.containsKey(name))
 +            {
-+                return new ItemStack(Items.field_151063_bx, 1, id);
++                ItemStack stack = new ItemStack(net.minecraft.init.Items.field_151063_bx);
++                net.minecraft.item.ItemMonsterPlacer.func_185078_a(stack, name);
++                return stack;
 +            }
 +        }
 +        return null;
@@ -296,52 +237,8 @@
 +     */
 +    public boolean isCreatureType(EnumCreatureType type, boolean forSpawnCount)
 +    {
++        if (forSpawnCount && (this instanceof EntityLiving) && ((EntityLiving)this).func_104002_bU()) return false;
 +        return type.func_75598_a().isAssignableFrom(this.getClass());
-+    }
-+
-+    /**
-+     * Register the instance of IExtendedProperties into the entity's collection.
-+     * @param identifier The identifier which you can use to retrieve these properties for the entity.
-+     * @param properties The instanceof IExtendedProperties to register
-+     * @return The identifier that was used to register the extended properties.  Empty String indicates an error.  If your requested key already existed, this will return a modified one that is unique.
-+     */
-+    public String registerExtendedProperties(String identifier, IExtendedEntityProperties properties)
-+    {
-+        if (identifier == null)
-+        {
-+            FMLLog.warning("Someone is attempting to register extended properties using a null identifier.  This is not allowed.  Aborting.  This may have caused instability.");
-+            return "";
-+        }
-+        if (properties == null)
-+        {
-+            FMLLog.warning("Someone is attempting to register null extended properties.  This is not allowed.  Aborting.  This may have caused instability.");
-+            return "";
-+        }
-+
-+        String baseIdentifier = identifier;
-+        int identifierModCount = 1;
-+        while (this.extendedProperties.containsKey(identifier))
-+        {
-+            identifier = String.format("%s%d", baseIdentifier, identifierModCount++);
-+        }
-+
-+        if (baseIdentifier != identifier)
-+        {
-+            FMLLog.info("An attempt was made to register exended properties using an existing key.  The duplicate identifier (%s) has been remapped to %s.", baseIdentifier, identifier);
-+        }
-+
-+        this.extendedProperties.put(identifier, properties);
-+        return identifier;
-+    }
-+
-+    /**
-+     * Gets the extended properties identified by the passed in key
-+     * @param identifier The key that identifies the extended properties.
-+     * @return The instance of IExtendedProperties that was found, or null.
-+     */
-+    public IExtendedEntityProperties getExtendedProperties(String identifier)
-+    {
-+        return this.extendedProperties.get(identifier);
 +    }
 +
 +    /**
@@ -365,8 +262,32 @@
 +    {
 +        return this instanceof EntityLivingBase;
 +    }
++
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (getCapability(capability, facing) != null)
++            return true;
++        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
++    }
++
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
++
++    public void deserializeNBT(NBTTagCompound nbt)
++    {
++        this.func_70020_e(nbt);
++    }
++
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound ret = new NBTTagCompound();
++        ret.func_74778_a("id", this.func_70022_Q());
++        return this.func_189511_e(ret);
++    }
 +    /* ================================== Forge End =====================================*/
 +
-     public static enum EnumEntitySize
+     public void func_184178_b(EntityPlayerMP p_184178_1_)
      {
-         SIZE_1,
+     }

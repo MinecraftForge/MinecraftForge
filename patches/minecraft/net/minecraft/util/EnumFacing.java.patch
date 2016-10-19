@@ -1,0 +1,67 @@
+--- ../src-base/minecraft/net/minecraft/util/EnumFacing.java
++++ ../src-work/minecraft/net/minecraft/util/EnumFacing.java
+@@ -9,8 +9,6 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.Vec3i;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+ public enum EnumFacing implements IStringSerializable
+ {
+@@ -63,7 +61,6 @@
+         return func_82600_a(this.field_176759_h);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public EnumFacing func_176732_a(EnumFacing.Axis p_176732_1_)
+     {
+         switch (p_176732_1_)
+@@ -114,7 +111,6 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     private EnumFacing func_176744_n()
+     {
+         switch (this)
+@@ -134,7 +130,6 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     private EnumFacing func_176738_p()
+     {
+         switch (this)
+@@ -196,7 +191,6 @@
+     }
+ 
+     @Nullable
+-    @SideOnly(Side.CLIENT)
+     public static EnumFacing func_176739_a(String p_176739_0_)
+     {
+         return p_176739_0_ == null ? null : (EnumFacing)field_176761_p.get(p_176739_0_.toLowerCase());
+@@ -227,7 +221,6 @@
+         return values()[p_176741_0_.nextInt(values().length)];
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public static EnumFacing func_176737_a(float p_176737_0_, float p_176737_1_, float p_176737_2_)
+     {
+         EnumFacing enumfacing = NORTH;
+@@ -270,7 +263,6 @@
+         throw new IllegalArgumentException("No such direction: " + p_181076_0_ + " " + p_181076_1_);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public Vec3i func_176730_m()
+     {
+         return this.field_176756_m;
+@@ -307,7 +299,6 @@
+         }
+ 
+         @Nullable
+-        @SideOnly(Side.CLIENT)
+         public static EnumFacing.Axis func_176717_a(String p_176717_0_)
+         {
+             return p_176717_0_ == null ? null : (EnumFacing.Axis)field_176725_d.get(p_176717_0_.toLowerCase());

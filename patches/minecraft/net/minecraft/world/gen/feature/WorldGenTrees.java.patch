@@ -1,94 +1,105 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
-@@ -2,10 +2,12 @@
+@@ -44,7 +44,7 @@
+         int i = p_180709_2_.nextInt(3) + this.field_76533_a;
+         boolean flag = true;
  
- import java.util.Random;
- import net.minecraft.block.Block;
-+import net.minecraft.block.BlockSapling;
- import net.minecraft.block.material.Material;
- import net.minecraft.init.Blocks;
- import net.minecraft.util.Direction;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.util.ForgeDirection;
- 
- public class WorldGenTrees extends WorldGenAbstractTree
- {
-@@ -62,7 +64,7 @@
+-        if (p_180709_3_.func_177956_o() >= 1 && p_180709_3_.func_177956_o() + i + 1 <= 256)
++        if (p_180709_3_.func_177956_o() >= 1 && p_180709_3_.func_177956_o() + i + 1 <= p_180709_1_.func_72800_K())
+         {
+             for (int j = p_180709_3_.func_177956_o(); j <= p_180709_3_.func_177956_o() + 1 + i; ++j)
+             {
+@@ -66,9 +66,9 @@
+                 {
+                     for (int i1 = p_180709_3_.func_177952_p() - k; i1 <= p_180709_3_.func_177952_p() + k && flag; ++i1)
+                     {
+-                        if (j >= 0 && j < 256)
++                        if (j >= 0 && j < p_180709_1_.func_72800_K())
                          {
-                             block = p_76484_1_.func_147439_a(j1, i1, k1);
- 
--                            if (!this.func_150523_a(block))
-+                            if (!this.isReplaceable(p_76484_1_, j1, i1, k1))
+-                            if (!this.func_150523_a(p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1)).func_177230_c()))
++                            if (!this.isReplaceable(p_180709_1_,blockpos$mutableblockpos.func_181079_c(l, j, i1)))
                              {
                                  flag = false;
                              }
-@@ -83,9 +85,10 @@
-             {
-                 Block block2 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ - 1, p_76484_5_);
- 
--                if ((block2 == Blocks.field_150349_c || block2 == Blocks.field_150346_d || block2 == Blocks.field_150458_ak) && p_76484_4_ < 256 - l - 1)
-+                boolean isSoil = block2.canSustainPlant(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, ForgeDirection.UP, (BlockSapling)Blocks.field_150345_g);
-+                if (isSoil && p_76484_4_ < 256 - l - 1)
-                 {
--                    this.func_150515_a(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, Blocks.field_150346_d);
-+                    block2.onPlantGrow(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, p_76484_3_, p_76484_4_, p_76484_5_);
-                     b0 = 3;
-                     byte b1 = 0;
-                     int l1;
-@@ -110,7 +113,7 @@
-                                 {
-                                     Block block1 = p_76484_1_.func_147439_a(i2, k1, k2);
- 
--                                    if (block1.func_149688_o() == Material.field_151579_a || block1.func_149688_o() == Material.field_151584_j)
-+                                    if (block1.isAir(p_76484_1_, i2, k1, k2) || block1.isLeaves(p_76484_1_, i2, k1, k2))
-                                     {
-                                         this.func_150516_a(p_76484_1_, i2, k1, k2, Blocks.field_150362_t, this.field_76530_d);
-                                     }
-@@ -123,7 +126,7 @@
-                     {
-                         block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ + k1, p_76484_5_);
- 
--                        if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
-+                        if (block.isAir(p_76484_1_, p_76484_3_, p_76484_4_ + k1, p_76484_5_) || block.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_ + k1, p_76484_5_))
-                         {
-                             this.func_150516_a(p_76484_1_, p_76484_3_, p_76484_4_ + k1, p_76484_5_, Blocks.field_150364_r, this.field_76532_c);
- 
-@@ -163,24 +166,24 @@
-                             {
-                                 for (j2 = p_76484_5_ - l1; j2 <= p_76484_5_ + l1; ++j2)
-                                 {
--                                    if (p_76484_1_.func_147439_a(i2, k1, j2).func_149688_o() == Material.field_151584_j)
-+                                    if (p_76484_1_.func_147439_a(i2, k1, j2).isLeaves(p_76484_1_, i2, k1, j2))
-                                     {
--                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2 - 1, k1, j2).func_149688_o() == Material.field_151579_a)
-+                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2 - 1, k1, j2).isAir(p_76484_1_, i2 - 1, k1, j2))
-                                         {
-                                             this.func_76529_b(p_76484_1_, i2 - 1, k1, j2, 8);
-                                         }
- 
--                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2 + 1, k1, j2).func_149688_o() == Material.field_151579_a)
-+                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2 + 1, k1, j2).isAir(p_76484_1_, i2 + 1, k1, j2))
-                                         {
-                                             this.func_76529_b(p_76484_1_, i2 + 1, k1, j2, 2);
-                                         }
- 
--                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2, k1, j2 - 1).func_149688_o() == Material.field_151579_a)
-+                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2, k1, j2 - 1).isAir(p_76484_1_, i2, k1, j2 - 1))
-                                         {
-                                             this.func_76529_b(p_76484_1_, i2, k1, j2 - 1, 1);
-                                         }
- 
--                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2, k1, j2 + 1).func_149688_o() == Material.field_151579_a)
-+                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2, k1, j2 + 1).isAir(p_76484_1_, i2, k1, j2 + 1))
-                                         {
-                                             this.func_76529_b(p_76484_1_, i2, k1, j2 + 1, 4);
-                                         }
-@@ -228,7 +231,7 @@
-         {
-             --p_76529_3_;
- 
--            if (p_76529_1_.func_147439_a(p_76529_2_, p_76529_3_, p_76529_4_).func_149688_o() != Material.field_151579_a || i1 <= 0)
-+            if (!p_76529_1_.func_147439_a(p_76529_2_, p_76529_3_, p_76529_4_).isAir(p_76529_1_, p_76529_2_, p_76529_3_, p_76529_4_) || i1 <= 0)
-             {
-                 return;
+@@ -87,9 +87,9 @@
              }
+             else
+             {
+-                Block block = p_180709_1_.func_180495_p(p_180709_3_.func_177977_b()).func_177230_c();
++                IBlockState state = p_180709_1_.func_180495_p(p_180709_3_.func_177977_b());
+ 
+-                if ((block == Blocks.field_150349_c || block == Blocks.field_150346_d || block == Blocks.field_150458_ak) && p_180709_3_.func_177956_o() < 256 - i - 1)
++                if (state.func_177230_c().canSustainPlant(state, p_180709_1_, p_180709_3_.func_177977_b(), net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_150345_g) && p_180709_3_.func_177956_o() < p_180709_1_.func_72800_K() - i - 1)
+                 {
+                     this.func_175921_a(p_180709_1_, p_180709_3_.func_177977_b());
+                     int k2 = 3;
+@@ -111,9 +111,9 @@
+                                 if (Math.abs(l1) != j1 || Math.abs(j2) != j1 || p_180709_2_.nextInt(2) != 0 && i4 != 0)
+                                 {
+                                     BlockPos blockpos = new BlockPos(k1, i3, i2);
+-                                    Material material = p_180709_1_.func_180495_p(blockpos).func_185904_a();
++                                    state = p_180709_1_.func_180495_p(blockpos);
+ 
+-                                    if (material == Material.field_151579_a || material == Material.field_151584_j || material == Material.field_151582_l)
++                                    if (state.func_177230_c().isAir(state, p_180709_1_, blockpos) || state.func_177230_c().isLeaves(state, p_180709_1_, blockpos) || state.func_185904_a() == Material.field_151582_l)
+                                     {
+                                         this.func_175903_a(p_180709_1_, blockpos, this.field_76530_d);
+                                     }
+@@ -124,9 +124,10 @@
+ 
+                     for (int j3 = 0; j3 < i; ++j3)
+                     {
+-                        Material material1 = p_180709_1_.func_180495_p(p_180709_3_.func_177981_b(j3)).func_185904_a();
++                        BlockPos upN = p_180709_3_.func_177981_b(j3);
++                        state = p_180709_1_.func_180495_p(upN);
+ 
+-                        if (material1 == Material.field_151579_a || material1 == Material.field_151584_j || material1 == Material.field_151582_l)
++                        if (state.func_177230_c().isAir(state, p_180709_1_, upN) || state.func_177230_c().isLeaves(state, p_180709_1_, upN) || state.func_185904_a() == Material.field_151582_l)
+                         {
+                             this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(j3), this.field_76532_c);
+ 
+@@ -169,29 +170,30 @@
+                                 {
+                                     blockpos$mutableblockpos1.func_181079_c(l4, k3, i5);
+ 
+-                                    if (p_180709_1_.func_180495_p(blockpos$mutableblockpos1).func_185904_a() == Material.field_151584_j)
++                                    state = p_180709_1_.func_180495_p(blockpos$mutableblockpos1);
++                                    if (state.func_177230_c().isLeaves(state, p_180709_1_, blockpos$mutableblockpos1))
+                                     {
+                                         BlockPos blockpos2 = blockpos$mutableblockpos1.func_177976_e();
+                                         BlockPos blockpos3 = blockpos$mutableblockpos1.func_177974_f();
+                                         BlockPos blockpos4 = blockpos$mutableblockpos1.func_177978_c();
+                                         BlockPos blockpos1 = blockpos$mutableblockpos1.func_177968_d();
+ 
+-                                        if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos2).func_185904_a() == Material.field_151579_a)
++                                        if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_175623_d(blockpos2))
+                                         {
+                                             this.func_181650_b(p_180709_1_, blockpos2, BlockVine.field_176278_M);
+                                         }
+ 
+-                                        if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos3).func_185904_a() == Material.field_151579_a)
++                                        if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_175623_d(blockpos3))
+                                         {
+                                             this.func_181650_b(p_180709_1_, blockpos3, BlockVine.field_176280_O);
+                                         }
+ 
+-                                        if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos4).func_185904_a() == Material.field_151579_a)
++                                        if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_175623_d(blockpos4))
+                                         {
+                                             this.func_181650_b(p_180709_1_, blockpos4, BlockVine.field_176279_N);
+                                         }
+ 
+-                                        if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos1).func_185904_a() == Material.field_151579_a)
++                                        if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_175623_d(blockpos1))
+                                         {
+                                             this.func_181650_b(p_180709_1_, blockpos1, BlockVine.field_176273_b);
+                                         }
+@@ -245,7 +247,7 @@
+         this.func_181651_a(p_181650_1_, p_181650_2_, p_181650_3_);
+         int i = 4;
+ 
+-        for (p_181650_2_ = p_181650_2_.func_177977_b(); p_181650_1_.func_180495_p(p_181650_2_).func_185904_a() == Material.field_151579_a && i > 0; --i)
++        for (p_181650_2_ = p_181650_2_.func_177977_b(); p_181650_1_.func_175623_d(p_181650_2_) && i > 0; --i)
+         {
+             this.func_181651_a(p_181650_1_, p_181650_2_, p_181650_3_);
+             p_181650_2_ = p_181650_2_.func_177977_b();

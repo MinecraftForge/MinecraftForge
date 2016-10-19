@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/RecipeRepairItem.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeRepairItem.java
+@@ -26,7 +26,7 @@
+                 {
+                     ItemStack itemstack1 = (ItemStack)list.get(0);
+ 
+-                    if (itemstack.func_77973_b() != itemstack1.func_77973_b() || itemstack1.field_77994_a != 1 || itemstack.field_77994_a != 1 || !itemstack1.func_77973_b().func_77645_m())
++                    if (itemstack.func_77973_b() != itemstack1.func_77973_b() || itemstack1.field_77994_a != 1 || itemstack.field_77994_a != 1 || !itemstack1.func_77973_b().isRepairable())
+                     {
+                         return false;
+                     }
+@@ -54,7 +54,7 @@
+                 {
+                     ItemStack itemstack1 = (ItemStack)list.get(0);
+ 
+-                    if (itemstack.func_77973_b() != itemstack1.func_77973_b() || itemstack1.field_77994_a != 1 || itemstack.field_77994_a != 1 || !itemstack1.func_77973_b().func_77645_m())
++                    if (itemstack.func_77973_b() != itemstack1.func_77973_b() || itemstack1.field_77994_a != 1 || itemstack.field_77994_a != 1 || !itemstack1.func_77973_b().isRepairable())
+                     {
+                         return null;
+                     }
+@@ -67,13 +67,13 @@
+             ItemStack itemstack2 = (ItemStack)list.get(0);
+             ItemStack itemstack3 = (ItemStack)list.get(1);
+ 
+-            if (itemstack2.func_77973_b() == itemstack3.func_77973_b() && itemstack2.field_77994_a == 1 && itemstack3.field_77994_a == 1 && itemstack2.func_77973_b().func_77645_m())
++            if (itemstack2.func_77973_b() == itemstack3.func_77973_b() && itemstack2.field_77994_a == 1 && itemstack3.field_77994_a == 1 && itemstack2.func_77973_b().isRepairable())
+             {
+-                Item item = itemstack2.func_77973_b();
+-                int j = item.func_77612_l() - itemstack2.func_77952_i();
+-                int k = item.func_77612_l() - itemstack3.func_77952_i();
+-                int l = j + k + item.func_77612_l() * 5 / 100;
+-                int i1 = item.func_77612_l() - l;
++                // FORGE: Make itemstack sensitive // Item item = itemstack2.getItem();
++                int j = itemstack2.func_77958_k() - itemstack2.func_77952_i();
++                int k = itemstack2.func_77958_k() - itemstack3.func_77952_i();
++                int l = j + k + itemstack2.func_77958_k() * 5 / 100;
++                int i1 = itemstack2.func_77958_k() - l;
+ 
+                 if (i1 < 0)
+                 {
+@@ -105,11 +105,7 @@
+         for (int i = 0; i < aitemstack.length; ++i)
+         {
+             ItemStack itemstack = p_179532_1_.func_70301_a(i);
+-
+-            if (itemstack != null && itemstack.func_77973_b().func_77634_r())
+-            {
+-                aitemstack[i] = new ItemStack(itemstack.func_77973_b().func_77668_q());
+-            }
++            aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+         }
+ 
+         return aitemstack;

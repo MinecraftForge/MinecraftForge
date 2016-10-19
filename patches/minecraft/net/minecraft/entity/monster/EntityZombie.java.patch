@@ -1,51 +1,120 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombie.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombie.java
-@@ -41,6 +41,10 @@
- import net.minecraft.util.MathHelper;
- import net.minecraft.world.EnumDifficulty;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.ForgeModContainer;
-+import cpw.mods.fml.common.eventhandler.Event.Result;
-+import net.minecraftforge.event.ForgeEventFactory;
-+import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
- 
- public class EntityZombie extends EntityMob
- {
-@@ -78,7 +82,7 @@
-         this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111128_a(40.0D);
+@@ -67,6 +67,7 @@
+     private static final DataParameter<Integer> field_184738_bw = EntityDataManager.<Integer>func_187226_a(EntityZombie.class, DataSerializers.field_187192_b);
+     private static final DataParameter<Boolean> field_184739_bx = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
+     private static final DataParameter<Boolean> field_184740_by = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
++    private static final DataParameter<String>  VILLAGER_TYPE_STR = EntityDataManager.<String>func_187226_a(EntityZombie.class, DataSerializers.field_187194_d);
+     private final EntityAIBreakDoor field_146075_bs = new EntityAIBreakDoor(this);
+     private int field_82234_d;
+     private boolean field_146076_bu;
+@@ -106,7 +107,7 @@
          this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23000000417232513D);
          this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
+         this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_111128_a(2.0D);
 -        this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.field_70146_Z.nextDouble() * 0.10000000149011612D);
-+        this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.field_70146_Z.nextDouble() * ForgeModContainer.zombieSummonBaseChance);
++        this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.field_70146_Z.nextDouble() * net.minecraftforge.common.ForgeModContainer.zombieSummonBaseChance);
      }
  
      protected void func_70088_a()
-@@ -233,12 +237,28 @@
+@@ -114,6 +115,7 @@
+         super.func_70088_a();
+         this.func_184212_Q().func_187214_a(field_184737_bv, Boolean.valueOf(false));
+         this.func_184212_Q().func_187214_a(field_184738_bw, Integer.valueOf(0));
++        this.func_184212_Q().func_187214_a(VILLAGER_TYPE_STR, "");
+         this.func_184212_Q().func_187214_a(field_184739_bx, Boolean.valueOf(false));
+         this.func_184212_Q().func_187214_a(field_184740_by, Boolean.valueOf(false));
+     }
+@@ -185,6 +187,8 @@
+         this.func_146071_k(p_82227_1_);
+     }
+ 
++    @Deprecated //Do not use, Replacement TBD
++    @Nullable
+     public ZombieType func_189777_di()
+     {
+         return ZombieType.func_190146_a(((Integer)this.func_184212_Q().func_187225_a(field_184738_bw)).intValue());
+@@ -192,32 +196,54 @@
+ 
+     public boolean func_82231_m()
+     {
+-        return this.func_189777_di().func_190154_b();
++        return getVillagerTypeForge() != null;
+     }
+ 
+-    public int func_184736_de()
++    private net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof;
++    @Nullable
++    public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getVillagerTypeForge()
+     {
+-        return this.func_189777_di().func_190148_c();
++        return this.prof;
+     }
+ 
++    @Deprecated //Use Forge version below
+     public void func_189778_a(ZombieType p_189778_1_)
+     {
+         this.func_184212_Q().func_187227_b(field_184738_bw, Integer.valueOf(p_189778_1_.func_190150_a()));
++        net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, p_189778_1_, p_189778_1_.func_190150_a());
+     }
+ 
++    public void setVillagerType(@Nullable net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession type)
++    {
++        this.prof = type;
++        this.func_184212_Q().func_187227_b(VILLAGER_TYPE_STR, type == null ? "" : type.getRegistryName().toString());
++        net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, type);
++    }
++
+     public void func_184206_a(DataParameter<?> p_184206_1_)
+     {
+         if (field_184737_bv.equals(p_184206_1_))
+         {
+             this.func_146071_k(this.func_70631_g_());
+         }
++        else if (field_184738_bw.equals(p_184206_1_))
++        {
++            net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, ZombieType.func_190146_a(this.func_184212_Q().func_187225_a(field_184738_bw)), this.func_184212_Q().func_187225_a(field_184738_bw));
++        }
++        else if (VILLAGER_TYPE_STR.equals(p_184206_1_))
++        {
++            String name = this.func_184212_Q().func_187225_a(VILLAGER_TYPE_STR);
++            net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p =
++                    "".equals(name) ? null : net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new ResourceLocation(name));
++            this.setVillagerType(p);
++        }
+ 
+         super.func_184206_a(p_184206_1_);
+     }
+ 
+     public void func_70636_d()
+     {
+-        if (this.field_70170_p.func_72935_r() && !this.field_70170_p.field_72995_K && !this.func_70631_g_() && this.func_189777_di().func_190155_e())
++        if (this.field_70170_p.func_72935_r() && !this.field_70170_p.field_72995_K && !this.func_70631_g_() && (this.func_189777_di() == null || this.func_189777_di().func_190155_e()))
+         {
+             float f = this.func_70013_c(1.0F);
+             BlockPos blockpos = this.func_184187_bx() instanceof EntityBoat ? (new BlockPos(this.field_70165_t, (double)Math.round(this.field_70163_u), this.field_70161_v)).func_177984_a() : new BlockPos(this.field_70165_t, (double)Math.round(this.field_70163_u), this.field_70161_v);
+@@ -264,12 +290,24 @@
                  entitylivingbase = (EntityLivingBase)p_70097_1_.func_76346_g();
              }
  
--            if (entitylivingbase != null && this.field_70170_p.field_73013_u == EnumDifficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(field_110186_bp).func_111126_e())
-+
+-            if (entitylivingbase != null && this.field_70170_p.func_175659_aa() == EnumDifficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(field_110186_bp).func_111126_e() && this.field_70170_p.func_82736_K().func_82766_b("doMobSpawning"))
 +            int i = MathHelper.func_76128_c(this.field_70165_t);
 +            int j = MathHelper.func_76128_c(this.field_70163_u);
 +            int k = MathHelper.func_76128_c(this.field_70161_v);
++            net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent summonAid = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, field_70170_p, i, j, k, entitylivingbase, this.func_110148_a(field_110186_bp).func_111126_e());
++            if (summonAid.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return true;
 +
-+            SummonAidEvent summonAid = ForgeEventFactory.fireZombieSummonAid(this, field_70170_p, i, j, k, entitylivingbase, this.func_110148_a(field_110186_bp).func_111126_e());
-+            
-+            if (summonAid.getResult() == Result.DENY)
++            if (summonAid.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW  ||
++                entitylivingbase != null && this.field_70170_p.func_175659_aa() == EnumDifficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(field_110186_bp).func_111126_e() && this.field_70170_p.func_82736_K().func_82766_b("doMobSpawning"))
              {
 -                int i = MathHelper.func_76128_c(this.field_70165_t);
 -                int j = MathHelper.func_76128_c(this.field_70163_u);
 -                int k = MathHelper.func_76128_c(this.field_70161_v);
 -                EntityZombie entityzombie = new EntityZombie(this.field_70170_p);
-+                return true;
-+            }
-+            else if (summonAid.getResult() == Result.ALLOW || entitylivingbase != null && this.field_70170_p.field_73013_u == EnumDifficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(field_110186_bp).func_111126_e())
-+            {
 +                EntityZombie entityzombie;
-+                if (summonAid.customSummonedAid != null && summonAid.getResult() == Result.ALLOW)
++                if (summonAid.getCustomSummonedAid() != null && summonAid.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
 +                {
-+                    entityzombie = summonAid.customSummonedAid;
++                    entityzombie = summonAid.getCustomSummonedAid();
 +                }
 +                else
 +                {
@@ -54,21 +123,144 @@
  
                  for (int l = 0; l < 50; ++l)
                  {
-@@ -253,7 +273,7 @@
-                         if (this.field_70170_p.func_72855_b(entityzombie.field_70121_D) && this.field_70170_p.func_72945_a(entityzombie, entityzombie.field_70121_D).isEmpty() && !this.field_70170_p.func_72953_d(entityzombie.field_70121_D))
+@@ -277,14 +315,14 @@
+                     int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
+                     int k1 = k + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
+ 
+-                    if (this.field_70170_p.func_180495_p(new BlockPos(i1, j1 - 1, k1)).func_185896_q() && this.field_70170_p.func_175671_l(new BlockPos(i1, j1, k1)) < 10)
++                    if (this.field_70170_p.func_180495_p(new BlockPos(i1, j1 - 1, k1)).isSideSolid(this.field_70170_p, new BlockPos(i1, j1 - 1, k1), net.minecraft.util.EnumFacing.UP) && this.field_70170_p.func_175671_l(new BlockPos(i1, j1, k1)) < 10)
+                     {
+                         entityzombie.func_70107_b((double)i1, (double)j1, (double)k1);
+ 
+                         if (!this.field_70170_p.func_175636_b((double)i1, (double)j1, (double)k1, 7.0D) && this.field_70170_p.func_72917_a(entityzombie.func_174813_aQ(), entityzombie) && this.field_70170_p.func_184144_a(entityzombie, entityzombie.func_174813_aQ()).isEmpty() && !this.field_70170_p.func_72953_d(entityzombie.func_174813_aQ()))
                          {
                              this.field_70170_p.func_72838_d(entityzombie);
 -                            entityzombie.func_70624_b(entitylivingbase);
 +                            if (entitylivingbase != null) entityzombie.func_70624_b(entitylivingbase);
-                             entityzombie.func_110161_a((IEntityLivingData)null);
+                             entityzombie.func_180482_a(this.field_70170_p.func_175649_E(new BlockPos(entityzombie)), (IEntityLivingData)null);
                              this.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
                              entityzombie.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
-@@ -439,7 +459,7 @@
+@@ -345,22 +383,25 @@
  
-         if (p_110161_1_1 == null)
-         {
--            p_110161_1_1 = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < 0.05F, this.field_70170_p.field_73012_v.nextFloat() < 0.05F, null);
-+            p_110161_1_1 = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < ForgeModContainer.zombieBabyChance, this.field_70170_p.field_73012_v.nextFloat() < 0.05F, null);
+     protected SoundEvent func_184639_G()
+     {
++        if (this.func_189777_di() == null) return SoundEvents.field_187940_hn;
+         return this.func_189777_di().func_190153_f();
+     }
+ 
+     protected SoundEvent func_184601_bQ()
+     {
++        if (this.func_189777_di() == null) return SoundEvents.field_187944_hr;
+         return this.func_189777_di().func_190152_g();
+     }
+ 
+     protected SoundEvent func_184615_bR()
+     {
++        if (this.func_189777_di() == null) return SoundEvents.field_187943_hq;
+         return this.func_189777_di().func_190151_h();
+     }
+ 
+     protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
+     {
+-        SoundEvent soundevent = this.func_189777_di().func_190149_i();
++        SoundEvent soundevent = this.func_189777_di() == null ? SoundEvents.field_187946_ht : this.func_189777_di().func_190149_i();
+         this.func_184185_a(soundevent, 0.15F, 1.0F);
+     }
+ 
+@@ -408,7 +449,8 @@
+             p_70014_1_.func_74757_a("IsBaby", true);
          }
  
-         if (p_110161_1_1 instanceof EntityZombie.GroupData)
+-        p_70014_1_.func_74768_a("ZombieType", this.func_189777_di().func_190150_a());
++        p_70014_1_.func_74768_a("ZombieType", this.func_184212_Q().func_187225_a(field_184738_bw));
++        p_70014_1_.func_74778_a("VillagerProfessionName", this.getVillagerTypeForge() == null ? "" : this.getVillagerTypeForge().getRegistryName().toString());
+         p_70014_1_.func_74768_a("ConversionTime", this.func_82230_o() ? this.field_82234_d : -1);
+         p_70014_1_.func_74757_a("CanBreakDoors", this.func_146072_bX());
+     }
+@@ -426,19 +468,33 @@
+         {
+             if (p_70037_1_.func_150297_b("VillagerProfession", 99))
+             {
+-                this.func_189778_a(ZombieType.func_190146_a(p_70037_1_.func_74762_e("VillagerProfession") + 1));
++                int id = p_70037_1_.func_74762_e("VillagerProfession") + 1;
++                this.func_184212_Q().func_187227_b(field_184738_bw, id);
++                net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, ZombieType.func_190146_a(id), id);
+             }
+             else
+             {
+-                this.func_189778_a(ZombieType.func_190146_a(this.field_70170_p.field_73012_v.nextInt(5) + 1));
++                net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.field_70170_p.field_73012_v);
+             }
+         }
+ 
+         if (p_70037_1_.func_74764_b("ZombieType"))
+         {
+-            this.func_189778_a(ZombieType.func_190146_a(p_70037_1_.func_74762_e("ZombieType")));
++            int id = p_70037_1_.func_74762_e("ZombieType");
++            this.func_184212_Q().func_187227_b(field_184738_bw, id);
++            net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, ZombieType.func_190146_a(id), id);
+         }
+ 
++        String name = p_70037_1_.func_74779_i("VillagerProfessionName");
++        if (!"".equals(name))
++        {
++            net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p =
++                net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new ResourceLocation(name));
++            if (p == null)
++                p = net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new ResourceLocation("minecraft:farmer"));
++            this.setVillagerType(p);
++        }
++
+         if (p_70037_1_.func_150297_b("ConversionTime", 99) && p_70037_1_.func_74762_e("ConversionTime") > -1)
+         {
+             this.func_82228_a(p_70037_1_.func_74762_e("ConversionTime"));
+@@ -463,7 +519,7 @@
+             entityzombie.func_82149_j(p_70074_1_);
+             this.field_70170_p.func_72900_e(p_70074_1_);
+             entityzombie.func_180482_a(this.field_70170_p.func_175649_E(new BlockPos(entityzombie)), new EntityZombie.GroupData(false, true));
+-            entityzombie.func_189778_a(ZombieType.func_190146_a(entityvillager.func_70946_n() + 1));
++            entityzombie.setVillagerType(entityvillager.getProfessionForge());
+             entityzombie.func_82227_f(p_70074_1_.func_70631_g_());
+             entityzombie.func_94061_f(entityvillager.func_175446_cd());
+ 
+@@ -504,7 +560,7 @@
+ 
+         if (p_180482_2_ == null)
+         {
+-            p_180482_2_ = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < 0.05F, this.field_70170_p.field_73012_v.nextFloat() < 0.05F);
++            p_180482_2_ = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < net.minecraftforge.common.ForgeModContainer.zombieBabyChance, this.field_70170_p.field_73012_v.nextFloat() < 0.05F);
+         }
+ 
+         if (p_180482_2_ instanceof EntityZombie.GroupData)
+@@ -521,7 +577,7 @@
+ 
+             if (!flag && entityzombie$groupdata.field_142046_b)
+             {
+-                this.func_189778_a(ZombieType.func_190146_a(this.field_70146_Z.nextInt(5) + 1));
++                net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.field_70146_Z);
+             }
+ 
+             if (entityzombie$groupdata.field_142048_a)
+@@ -655,7 +711,10 @@
+ 
+         this.field_70170_p.func_72900_e(this);
+         entityvillager.func_94061_f(this.func_175446_cd());
+-        entityvillager.func_70938_b(this.func_184736_de());
++        if (this.getVillagerTypeForge() != null)
++            entityvillager.setProfession(this.getVillagerTypeForge());
++        else
++            entityvillager.func_70938_b(0);
+ 
+         if (this.func_145818_k_())
+         {
+@@ -742,7 +801,9 @@
+ 
+     public String func_70005_c_()
+     {
+-        return this.func_145818_k_() ? this.func_95999_t() : this.func_189777_di().func_190145_d().func_150260_c();
++        if (this.func_145818_k_()) return this.func_95999_t();
++        if (this.getVillagerTypeForge() != null) return "entity.Zombie.name";
++        return this.func_189777_di().func_190145_d().func_150260_c();
+     }
+ 
+     class GroupData implements IEntityLivingData

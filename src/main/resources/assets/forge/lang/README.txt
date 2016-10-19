@@ -1,0 +1,1 @@
+If you want to contribute to the translation of forge, please go here : https://crowdin.com/project/minecraft-forge

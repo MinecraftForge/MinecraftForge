@@ -1,19 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
-@@ -212,11 +212,13 @@
-         if (p_147938_4_.func_70608_bn())
-         {
-             Block block = p_147938_1_.func_147439_a(MathHelper.func_76128_c(p_147938_4_.field_70165_t), MathHelper.func_76128_c(p_147938_4_.field_70163_u), MathHelper.func_76128_c(p_147938_4_.field_70161_v));
-+            int x = MathHelper.func_76128_c(p_147938_4_.field_70165_t);
-+            int y = MathHelper.func_76128_c(p_147938_4_.field_70163_u);
-+            int z = MathHelper.func_76128_c(p_147938_4_.field_70161_v);
+@@ -209,8 +209,13 @@
+         this.field_178637_m = new RenderPlayer(this);
+         this.field_178636_l.put("default", this.field_178637_m);
+         this.field_178636_l.put("slim", new RenderPlayer(this, true));
++        net.minecraftforge.fml.client.registry.RenderingRegistry.loadEntityRenderers(this, this.field_78729_o);
+     }
+ 
++    public Map<String, RenderPlayer> getSkinMap() {
++        return (Map<String, RenderPlayer>) java.util.Collections.unmodifiableMap(field_178636_l);
++    }
++
+     public void func_178628_a(double p_178628_1_, double p_178628_3_, double p_178628_5_)
+     {
+         this.field_78725_b = p_178628_1_;
+@@ -259,9 +264,9 @@
+             IBlockState iblockstate = p_180597_1_.func_180495_p(new BlockPos(p_180597_3_));
+             Block block = iblockstate.func_177230_c();
  
 -            if (block == Blocks.field_150324_C)
-+            if (block.isBed(p_147938_1_, x, y, z, p_147938_4_))
++            if (block.isBed(iblockstate, p_180597_1_, new BlockPos(p_180597_3_), (EntityLivingBase)p_180597_3_))
              {
--                int i = p_147938_1_.func_72805_g(MathHelper.func_76128_c(p_147938_4_.field_70165_t), MathHelper.func_76128_c(p_147938_4_.field_70163_u), MathHelper.func_76128_c(p_147938_4_.field_70161_v));
--                int j = i & 3;
-+                int j = block.getBedDirection(p_147938_1_, x, y, z);
-                 this.field_78735_i = (float)(j * 90 + 180);
+-                int i = ((EnumFacing)iblockstate.func_177229_b(BlockBed.field_185512_D)).func_176736_b();
++                int i = block.getBedDirection(iblockstate, p_180597_1_, new BlockPos(p_180597_3_)).func_176736_b();
+                 this.field_78735_i = (float)(i * 90 + 180);
                  this.field_78732_j = 0.0F;
              }

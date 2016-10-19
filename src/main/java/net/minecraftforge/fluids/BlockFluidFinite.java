@@ -1,21 +1,40 @@
 
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fluids;
 
 import java.util.Random;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.MathHelper;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
  * This is a cellular-automata based finite fluid block implementation.
- * 
+ *
  * It is highly recommended that you use/extend this class for finite fluid blocks.
- * 
- * @author OvermindDL1, KingLemming
- * 
+ *
  */
 public class BlockFluidFinite extends BlockFluidBase
 {
@@ -25,26 +44,25 @@ public class BlockFluidFinite extends BlockFluidBase
     }
 
     @Override
-    public int getQuantaValue(IBlockAccess world, int x, int y, int z)
+    public int getQuantaValue(IBlockAccess world, BlockPos pos)
     {
-        if (world.getBlock(x, y, z).isAir(world, x, y, z))
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock().isAir(state, world, pos))
         {
             return 0;
         }
 
-        if (world.getBlock(x, y, z) != this)
+        if (state.getBlock() != this)
         {
             return -1;
         }
-
-        int quantaRemaining = world.getBlockMetadata(x, y, z) + 1;
-        return quantaRemaining;
+        return state.getValue(LEVEL) + 1;
     }
 
     @Override
-    public boolean canCollideCheck(int meta, boolean fullHit)
+    public boolean canCollideCheck(IBlockState state, boolean fullHit)
     {
-        return fullHit && meta == quantaPerBlock - 1;
+        return fullHit && state.getValue(LEVEL) == quantaPerBlock - 1;
     }
 
     @Override
@@ -54,14 +72,14 @@ public class BlockFluidFinite extends BlockFluidBase
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random rand)
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
         boolean changed = false;
-        int quantaRemaining = world.getBlockMetadata(x, y, z) + 1;
+        int quantaRemaining = state.getValue(LEVEL) + 1;
 
         // Flow vertically if possible
         int prevRemaining = quantaRemaining;
-        quantaRemaining = tryToFlowVerticallyInto(world, x, y, z, quantaRemaining);
+        quantaRemaining = tryToFlowVerticallyInto(world, pos, quantaRemaining);
 
         if (quantaRemaining < 1)
         {
@@ -72,7 +90,7 @@ public class BlockFluidFinite extends BlockFluidBase
             changed = true;
             if (quantaRemaining == 1)
             {
-                world.setBlockMetadataWithNotify(x, y, z, quantaRemaining - 1, 2);
+                world.setBlockState(pos, state.withProperty(LEVEL, quantaRemaining - 1), 2);
                 return;
             }
         }
@@ -82,193 +100,111 @@ public class BlockFluidFinite extends BlockFluidBase
         }
 
         // Flow out if possible
-        int lowerthan = quantaRemaining - 1;
-        if (displaceIfPossible(world, x,     y, z - 1)) world.setBlock(x,     y, z - 1, Blocks.air);
-        if (displaceIfPossible(world, x,     y, z + 1)) world.setBlock(x,     y, z + 1, Blocks.air);
-        if (displaceIfPossible(world, x - 1, y, z    )) world.setBlock(x - 1, y, z,     Blocks.air);
-        if (displaceIfPossible(world, x + 1, y, z    )) world.setBlock(x + 1, y, z,     Blocks.air);
-        int north = getQuantaValueBelow(world, x,     y, z - 1, lowerthan);
-        int south = getQuantaValueBelow(world, x,     y, z + 1, lowerthan);
-        int west  = getQuantaValueBelow(world, x - 1, y, z,     lowerthan);
-        int east  = getQuantaValueBelow(world, x + 1, y, z,     lowerthan);
+        int lowerThan = quantaRemaining - 1;
         int total = quantaRemaining;
         int count = 1;
 
-        if (north >= 0)
+        for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
         {
-            count++;
-            total += north;
-        }
+            BlockPos off = pos.offset(side);
+            if (displaceIfPossible(world, off))
+                world.setBlockToAir(off);
 
-        if (south >= 0)
-        {
-            count++;
-            total += south;
-        }
-
-        if (west >= 0)
-        {
-            count++;
-            total += west;
-        }
-
-        if (east >= 0)
-        {
-            ++count;
-            total += east;
+            int quanta = getQuantaValueBelow(world, off, lowerThan);
+            if (quanta >= 0)
+            {
+                count++;
+                total += quanta;
+            }
         }
 
         if (count == 1)
         {
             if (changed)
             {
-                world.setBlockMetadataWithNotify(x, y, z, quantaRemaining - 1, 2);
+                world.setBlockState(pos, state.withProperty(LEVEL, quantaRemaining - 1), 2);
             }
             return;
         }
 
         int each = total / count;
         int rem = total % count;
-        if (north >= 0)
+
+        for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
         {
-            int newnorth = each;
-            if (rem == count || rem > 1 && rand.nextInt(count - rem) != 0)
+            BlockPos off = pos.offset(side);
+            int quanta = getQuantaValueBelow(world, off, lowerThan);
+            if (quanta >= 0)
             {
-                ++newnorth;
-                --rem;
-            }
+                int newQuanta = each;
+                if (rem == count || rem > 1 && rand.nextInt(count - rem) != 0)
+                {
+                    ++newQuanta;
+                    --rem;
+                }
 
-            if (newnorth != north)
-            {
-                if (newnorth == 0)
+                if (newQuanta != quanta)
                 {
-                    world.setBlock(x, y, z - 1, Blocks.air);
+                    if (newQuanta == 0)
+                    {
+                        world.setBlockToAir(off);
+                    }
+                    else
+                    {
+                        world.setBlockState(off, getDefaultState().withProperty(LEVEL, newQuanta - 1), 2);
+                    }
+                    world.scheduleUpdate(off, this, tickRate);
                 }
-                else
-                {
-                    world.setBlock(x, y, z - 1, this, newnorth - 1, 2);
-                }
-                world.scheduleBlockUpdate(x, y, z - 1, this, tickRate);
+                --count;
             }
-            --count;
-        }
-
-        if (south >= 0)
-        {
-            int newsouth = each;
-            if (rem == count || rem > 1 && rand.nextInt(count - rem) != 0)
-            {
-                ++newsouth;
-                --rem;
-            }
-
-            if (newsouth != south)
-            {
-                if (newsouth == 0)
-                {
-                    world.setBlock(x, y, z + 1, Blocks.air);
-                }
-                else
-                {
-                    world.setBlock(x, y, z + 1, this, newsouth - 1, 2);
-                }
-                world.scheduleBlockUpdate(x, y, z + 1, this, tickRate);
-            }
-            --count;
-        }
-
-        if (west >= 0)
-        {
-            int newwest = each;
-            if (rem == count || rem > 1 && rand.nextInt(count - rem) != 0)
-            {
-                ++newwest;
-                --rem;
-            }
-            if (newwest != west)
-            {
-                if (newwest == 0)
-                {
-                    world.setBlock(x - 1, y, z, Blocks.air);
-                }
-                else
-                {
-                    world.setBlock(x - 1, y, z, this, newwest - 1, 2);
-                }
-                world.scheduleBlockUpdate(x - 1, y, z, this, tickRate);
-            }
-            --count;
-        }
-
-        if (east >= 0)
-        {
-            int neweast = each;
-            if (rem == count || rem > 1 && rand.nextInt(count - rem) != 0)
-            {
-                ++neweast;
-                --rem;
-            }
-
-            if (neweast != east)
-            {
-                if (neweast == 0)
-                {
-                    world.setBlock(x + 1, y, z, Blocks.air);
-                }
-                else
-                {
-                    world.setBlock(x + 1, y, z, this, neweast - 1, 2);
-                }
-                world.scheduleBlockUpdate(x + 1, y, z, this, tickRate);
-            }
-            --count;
         }
 
         if (rem > 0)
         {
             ++each;
         }
-        world.setBlockMetadataWithNotify(x, y, z, each - 1, 2);
+        world.setBlockState(pos, state.withProperty(LEVEL, each - 1), 2);
     }
 
-    public int tryToFlowVerticallyInto(World world, int x, int y, int z, int amtToInput)
+    public int tryToFlowVerticallyInto(World world, BlockPos pos, int amtToInput)
     {
-        int otherY = y + densityDir;
-        if (otherY < 0 || otherY >= world.getHeight())
+        IBlockState myState = world.getBlockState(pos);
+        BlockPos other = pos.add(0, densityDir, 0);
+        if (other.getY() < 0 || other.getY() >= world.getHeight())
         {
-            world.setBlock(x, y, z, Blocks.air);
+            world.setBlockToAir(pos);
             return 0;
         }
 
-        int amt = getQuantaValueBelow(world, x, otherY, z, quantaPerBlock);
+        int amt = getQuantaValueBelow(world, other, quantaPerBlock);
         if (amt >= 0)
         {
             amt += amtToInput;
             if (amt > quantaPerBlock)
             {
-                world.setBlock(x, otherY, z, this, quantaPerBlock - 1, 3);
-                world.scheduleBlockUpdate(x, otherY, z, this, tickRate);
+                world.setBlockState(other, myState.withProperty(LEVEL, quantaPerBlock - 1), 3);
+                world.scheduleUpdate(other, this, tickRate);
                 return amt - quantaPerBlock;
             }
             else if (amt > 0)
             {
-                world.setBlock(x, otherY, z, this, amt - 1, 3);
-                world.scheduleBlockUpdate(x, otherY, z, this, tickRate);
-                world.setBlock(x, y, z, Blocks.air);
+                world.setBlockState(other, myState.withProperty(LEVEL, amt - 1), 3);
+                world.scheduleUpdate(other, this, tickRate);
+                world.setBlockToAir(pos);
                 return 0;
             }
             return amtToInput;
         }
         else
         {
-            int density_other = getDensity(world, x, otherY, z);
+            int density_other = getDensity(world, other);
             if (density_other == Integer.MAX_VALUE)
             {
-                if (displaceIfPossible(world, x, otherY, z))
+                if (displaceIfPossible(world, other))
                 {
-                    world.setBlock(x, otherY, z, this, amtToInput - 1, 3);
-                    world.scheduleBlockUpdate(x, otherY, z, this, tickRate);
-                    world.setBlock(x, y, z, Blocks.air);
+                    world.setBlockState(other, myState.withProperty(LEVEL, amtToInput - 1), 3);
+                    world.scheduleUpdate(other, this, tickRate);
+                    world.setBlockToAir(pos);
                     return 0;
                 }
                 else
@@ -281,12 +217,11 @@ public class BlockFluidFinite extends BlockFluidBase
             {
                 if (density_other < density) // then swap
                 {
-                    BlockFluidBase block = (BlockFluidBase)world.getBlock(x, otherY, z);
-                    int otherData = world.getBlockMetadata(x, otherY, z);
-                    world.setBlock(x, otherY, z, this,  amtToInput - 1, 3);
-                    world.setBlock(x, y,      z, block, otherData, 3);
-                    world.scheduleBlockUpdate(x, otherY, z, this,  tickRate);
-                    world.scheduleBlockUpdate(x, y,      z, block, block.tickRate(world));
+                    IBlockState state = world.getBlockState(other);
+                    world.setBlockState(other, myState.withProperty(LEVEL, amtToInput - 1), 3);
+                    world.setBlockState(pos,   state, 3);
+                    world.scheduleUpdate(other, this, tickRate);
+                    world.scheduleUpdate(pos,   state.getBlock(), state.getBlock().tickRate(world));
                     return 0;
                 }
             }
@@ -294,12 +229,11 @@ public class BlockFluidFinite extends BlockFluidBase
             {
                 if (density_other > density)
                 {
-                    BlockFluidBase block = (BlockFluidBase)world.getBlock(x, otherY, z);
-                    int otherData = world.getBlockMetadata(x, otherY, z);
-                    world.setBlock(x, otherY, z, this,  amtToInput - 1, 3);
-                    world.setBlock(x, y,      z, block, otherData, 3);
-                    world.scheduleBlockUpdate(x, otherY, z, this,  tickRate);
-                    world.scheduleBlockUpdate(x, y,      z, block, block.tickRate(world));
+                    IBlockState state = world.getBlockState(other);
+                    world.setBlockState(other, myState.withProperty(LEVEL, amtToInput - 1), 3);
+                    world.setBlockState(other, state, 3);
+                    world.scheduleUpdate(other, this,  tickRate);
+                    world.scheduleUpdate(other, state.getBlock(), state.getBlock().tickRate(world));
                     return 0;
                 }
             }
@@ -309,19 +243,20 @@ public class BlockFluidFinite extends BlockFluidBase
 
     /* IFluidBlock */
     @Override
-    public FluidStack drain(World world, int x, int y, int z, boolean doDrain)
+    public FluidStack drain(World world, BlockPos pos, boolean doDrain)
     {
+        final FluidStack fluidStack = new FluidStack(getFluid(), MathHelper.floor_float(getQuantaPercentage(world, pos) * Fluid.BUCKET_VOLUME));
+
         if (doDrain)
         {
-            world.setBlock(x, y, z, Blocks.air);
+            world.setBlockToAir(pos);
         }
-        
-        return new FluidStack(getFluid(),
-                MathHelper.floor_float(getQuantaPercentage(world, x, y, z) * FluidContainerRegistry.BUCKET_VOLUME));
+
+        return fluidStack;
     }
 
     @Override
-    public boolean canDrain(World world, int x, int y, int z)
+    public boolean canDrain(World world, BlockPos pos)
     {
         return true;
     }

@@ -1,20 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockMycelium.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockMycelium.java
-@@ -37,7 +37,7 @@
+@@ -40,7 +40,7 @@
      {
-         if (!p_149674_1_.field_72995_K)
+         if (!p_180650_1_.field_72995_K)
          {
--            if (p_149674_1_.func_72957_l(p_149674_2_, p_149674_3_ + 1, p_149674_4_) < 4 && p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ + 1, p_149674_4_).func_149717_k() > 2)
-+            if (p_149674_1_.func_72957_l(p_149674_2_, p_149674_3_ + 1, p_149674_4_) < 4 && p_149674_1_.getBlockLightOpacity(p_149674_2_, p_149674_3_ + 1, p_149674_4_) > 2)
+-            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_185891_c() > 2)
++            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) > 2)
              {
-                 p_149674_1_.func_147449_b(p_149674_2_, p_149674_3_, p_149674_4_, Blocks.field_150346_d);
+                 p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P().func_177226_a(BlockDirt.field_176386_a, BlockDirt.DirtType.DIRT));
              }
-@@ -50,7 +50,7 @@
-                     int k1 = p_149674_4_ + p_149674_5_.nextInt(3) - 1;
-                     Block block = p_149674_1_.func_147439_a(i1, j1 + 1, k1);
+@@ -54,7 +54,7 @@
+                         IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos);
+                         IBlockState iblockstate1 = p_180650_1_.func_180495_p(blockpos.func_177984_a());
  
--                    if (p_149674_1_.func_147439_a(i1, j1, k1) == Blocks.field_150346_d && p_149674_1_.func_72805_g(i1, j1, k1) == 0 && p_149674_1_.func_72957_l(i1, j1 + 1, k1) >= 4 && block.func_149717_k() <= 2)
-+                    if (p_149674_1_.func_147439_a(i1, j1, k1) == Blocks.field_150346_d && p_149674_1_.func_72805_g(i1, j1, k1) == 0 && p_149674_1_.func_72957_l(i1, j1 + 1, k1) >= 4 && p_149674_1_.getBlockLightOpacity(i1, j1 + 1, k1) <= 2)
-                     {
-                         p_149674_1_.func_147449_b(i1, j1, k1, this);
-                     }
+-                        if (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && iblockstate1.func_185891_c() <= 2)
++                        if (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && iblockstate1.getLightOpacity(p_180650_1_, blockpos.func_177984_a()) <= 2)
+                         {
+                             p_180650_1_.func_175656_a(blockpos, this.func_176223_P());
+                         }

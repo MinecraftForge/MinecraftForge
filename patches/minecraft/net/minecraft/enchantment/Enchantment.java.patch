@@ -1,17 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
-@@ -50,7 +50,7 @@
+@@ -13,9 +13,9 @@
+ import net.minecraft.util.registry.RegistryNamespaced;
+ import net.minecraft.util.text.translation.I18n;
  
-         if (field_77331_b[p_i1926_1_] != null)
-         {
--            throw new IllegalArgumentException("Duplicate enchantment id!");
-+            throw new IllegalArgumentException("Duplicate enchantment id! " + this.getClass() + " and " + field_77331_b[p_i1926_1_].getClass() + " Enchantment ID:" + p_i1926_1_);
-         }
-         else
-         {
-@@ -124,6 +124,45 @@
+-public abstract class Enchantment
++public abstract class Enchantment extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Enchantment>
+ {
+-    public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = new RegistryNamespaced();
++    public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = net.minecraftforge.fml.common.registry.GameData.getEnchantmentRegistry();
+     private final EntityEquipmentSlot[] field_185263_a;
+     private final Enchantment.Rarity field_77333_a;
+     public EnumEnchantmentType field_77351_y;
+@@ -122,7 +122,7 @@
  
-     public void func_151367_b(EntityLivingBase p_151367_1_, Entity p_151367_2_, int p_151367_3_) {}
+     public boolean func_92089_a(ItemStack p_92089_1_)
+     {
+-        return this.field_77351_y.func_77557_a(p_92089_1_.func_77973_b());
++        return canApplyAtEnchantingTable(p_92089_1_);
+     }
+ 
+     public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_)
+@@ -138,6 +138,26 @@
+         return false;
+     }
  
 +    /**
 +     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
@@ -21,26 +33,7 @@
 +     */
 +    public boolean canApplyAtEnchantingTable(ItemStack stack)
 +    {
-+        return func_92089_a(stack);
-+    }
-+
-+    private static final java.lang.reflect.Field bookSetter = Enchantment.class.getDeclaredFields()[1];
-+    /**
-+     * Add to the list of enchantments applicable by the anvil from a book
-+     *
-+     * @param enchantment
-+     */
-+    public static void addToBookList(Enchantment enchantment)
-+    {
-+        try
-+        {
-+            net.minecraftforge.common.util.EnumHelper.setFailsafeFieldValue(bookSetter, null,
-+                com.google.common.collect.ObjectArrays.concat(field_92090_c, enchantment));
-+        }
-+        catch (Exception e)
-+        {
-+            throw new RuntimeException(e); //Rethrow see what happens
-+        }
++        return this.field_77351_y.func_77557_a(stack.func_77973_b());
 +    }
 +
 +    /**
@@ -52,6 +45,6 @@
 +        return true;
 +    }
 +
-     static
+     public static void func_185257_f()
      {
-         ArrayList var0 = new ArrayList();
+         EntityEquipmentSlot[] aentityequipmentslot = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};

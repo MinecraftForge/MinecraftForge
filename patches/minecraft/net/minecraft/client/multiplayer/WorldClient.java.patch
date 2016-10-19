@@ -1,38 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
-@@ -34,6 +34,9 @@
- import net.minecraft.world.chunk.IChunkProvider;
- import net.minecraft.world.storage.SaveHandlerMP;
+@@ -60,17 +60,19 @@
  
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.world.WorldEvent;
-+
- @SideOnly(Side.CLIENT)
- public class WorldClient extends World
- {
-@@ -51,8 +54,11 @@
-         super(new SaveHandlerMP(), "MpServer", WorldProvider.func_76570_a(p_i45063_3_), p_i45063_2_, p_i45063_5_);
+     public WorldClient(NetHandlerPlayClient p_i45063_1_, WorldSettings p_i45063_2_, int p_i45063_3_, EnumDifficulty p_i45063_4_, Profiler p_i45063_5_)
+     {
+-        super(new SaveHandlerMP(), new WorldInfo(p_i45063_2_, "MpServer"), DimensionType.func_186069_a(p_i45063_3_).func_186070_d(), p_i45063_5_, true);
++        super(new SaveHandlerMP(), new WorldInfo(p_i45063_2_, "MpServer"), net.minecraftforge.common.DimensionManager.createProviderFor(p_i45063_3_), p_i45063_5_, true);
+         this.field_184158_M = this.field_73012_v.nextInt(12000);
+         this.field_184157_a = Sets.<ChunkPos>newHashSet();
          this.field_73035_a = p_i45063_1_;
-         this.field_73013_u = p_i45063_4_;
--        this.func_72950_A(8, 64, 8);
-         this.field_72988_C = p_i45063_1_.field_147305_a;
-+        this.field_72995_K = true;
-+        this.finishSetup();
-+        this.func_72950_A(8, 64, 8);
-+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
+         this.func_72912_H().func_176144_a(p_i45063_4_);
+-        this.func_175652_B(new BlockPos(8, 64, 8));
+         this.field_73011_w.func_76558_a(this);
++        this.func_175652_B(new BlockPos(8, 64, 8)); //Forge: Moved below registerWorld to prevent NPE in our redirect.
+         this.field_73020_y = this.func_72970_h();
+         this.field_72988_C = new SaveDataMemoryStorage();
+         this.func_72966_v();
+         this.func_72947_a();
++        this.initCapabilities();
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(this));
      }
  
      public void func_72835_b()
-@@ -261,6 +267,12 @@
- 
-     protected void func_72979_l()
-     {
-+        super.func_72979_l();
-+    }
-+
-+    @Override
-+    public void updateWeatherBody()
-+    {
-         if (!this.field_73011_w.field_76576_e)
-         {
-             ;

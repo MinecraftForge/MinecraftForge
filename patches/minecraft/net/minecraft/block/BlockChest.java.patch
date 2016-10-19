@@ -1,44 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockChest.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
-@@ -24,6 +24,8 @@
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
+@@ -514,7 +514,7 @@
  
-+import static net.minecraftforge.common.util.ForgeDirection.*;
-+
- public class BlockChest extends BlockContainer
- {
-     private final Random field_149955_b = new Random();
-@@ -408,7 +410,7 @@
-         {
-             return null;
-         }
--        else if (p_149951_1_.func_147439_a(p_149951_2_, p_149951_3_ + 1, p_149951_4_).func_149721_r())
-+        else if (p_149951_1_.isSideSolid(p_149951_2_, p_149951_3_ + 1, p_149951_4_, DOWN))
-         {
-             return null;
-         }
-@@ -416,19 +418,19 @@
-         {
-             return null;
-         }
--        else if (p_149951_1_.func_147439_a(p_149951_2_ - 1, p_149951_3_, p_149951_4_) == this && (p_149951_1_.func_147439_a(p_149951_2_ - 1, p_149951_3_ + 1, p_149951_4_).func_149721_r() || func_149953_o(p_149951_1_, p_149951_2_ - 1, p_149951_3_, p_149951_4_)))
-+        else if (p_149951_1_.func_147439_a(p_149951_2_ - 1, p_149951_3_, p_149951_4_) == this && (p_149951_1_.isSideSolid(p_149951_2_ - 1, p_149951_3_ + 1, p_149951_4_, DOWN) || func_149953_o(p_149951_1_, p_149951_2_ - 1, p_149951_3_, p_149951_4_)))
-         {
-             return null;
-         }
--        else if (p_149951_1_.func_147439_a(p_149951_2_ + 1, p_149951_3_, p_149951_4_) == this && (p_149951_1_.func_147439_a(p_149951_2_ + 1, p_149951_3_ + 1, p_149951_4_).func_149721_r() || func_149953_o(p_149951_1_, p_149951_2_ + 1, p_149951_3_, p_149951_4_)))
-+        else if (p_149951_1_.func_147439_a(p_149951_2_ + 1, p_149951_3_, p_149951_4_) == this && (p_149951_1_.isSideSolid(p_149951_2_ + 1, p_149951_3_ + 1, p_149951_4_, DOWN) || func_149953_o(p_149951_1_, p_149951_2_ + 1, p_149951_3_, p_149951_4_)))
-         {
-             return null;
-         }
--        else if (p_149951_1_.func_147439_a(p_149951_2_, p_149951_3_, p_149951_4_ - 1) == this && (p_149951_1_.func_147439_a(p_149951_2_, p_149951_3_ + 1, p_149951_4_ - 1).func_149721_r() || func_149953_o(p_149951_1_, p_149951_2_, p_149951_3_, p_149951_4_ - 1)))
-+        else if (p_149951_1_.func_147439_a(p_149951_2_, p_149951_3_, p_149951_4_ - 1) == this && (p_149951_1_.isSideSolid(p_149951_2_, p_149951_3_ + 1, p_149951_4_ - 1, DOWN) || func_149953_o(p_149951_1_, p_149951_2_, p_149951_3_, p_149951_4_ - 1)))
-         {
-             return null;
-         }
--        else if (p_149951_1_.func_147439_a(p_149951_2_, p_149951_3_, p_149951_4_ + 1) == this && (p_149951_1_.func_147439_a(p_149951_2_, p_149951_3_ + 1, p_149951_4_ + 1).func_149721_r() || func_149953_o(p_149951_1_, p_149951_2_, p_149951_3_, p_149951_4_ + 1)))
-+        else if (p_149951_1_.func_147439_a(p_149951_2_, p_149951_3_, p_149951_4_ + 1) == this && (p_149951_1_.isSideSolid(p_149951_2_, p_149951_3_ + 1, p_149951_4_ + 1, DOWN) || func_149953_o(p_149951_1_, p_149951_2_, p_149951_3_, p_149951_4_ + 1)))
-         {
-             return null;
-         }
+     private boolean func_176456_n(World p_176456_1_, BlockPos p_176456_2_)
+     {
+-        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).func_185915_l();
++        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).isSideSolid(p_176456_1_, p_176456_2_.func_177984_a(), EnumFacing.DOWN);
+     }
+ 
+     private boolean func_176453_o(World p_176453_1_, BlockPos p_176453_2_)

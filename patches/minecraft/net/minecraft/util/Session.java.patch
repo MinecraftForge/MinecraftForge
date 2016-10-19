@@ -1,6 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/util/Session.java
 +++ ../src-work/minecraft/net/minecraft/util/Session.java
-@@ -19,6 +19,19 @@
+@@ -16,9 +16,25 @@
+     private final String field_148257_b;
+     private final String field_148258_c;
+     private final Session.Type field_152429_d;
++    /** Forge: Cache of the local session's GameProfile properties. */
++    private com.mojang.authlib.properties.PropertyMap properties;
  
      public Session(String p_i1098_1_, String p_i1098_2_, String p_i1098_3_, String p_i1098_4_)
      {
@@ -8,24 +13,48 @@
 +        {
 +            p_i1098_1_ = "MissingName";
 +            p_i1098_2_ = p_i1098_3_ = "NotValid";
-+            System.out.println("=========================================================");
-+            System.out.println("Warning the username was not set for this session, typically");
-+            System.out.println("this means you installed Forge incorrectly. We have set your");
-+            System.out.println("name to \"MissingName\" and your session to nothing. Please");
-+            System.out.println("check your instllation and post a console log from the launcher");
-+            System.out.println("when asking for help!");
-+            System.out.println("=========================================================");
-+            
++            org.apache.logging.log4j.Logger logger = net.minecraftforge.fml.common.FMLLog.getLogger();
++            logger.log(org.apache.logging.log4j.Level.WARN, "=========================================================");
++            logger.log(org.apache.logging.log4j.Level.WARN, "WARNING!! the username was not set for this session, typically");
++            logger.log(org.apache.logging.log4j.Level.WARN, "this means you installed Forge incorrectly. We have set your");
++            logger.log(org.apache.logging.log4j.Level.WARN, "name to \"MissingName\" and your session to nothing. Please");
++            logger.log(org.apache.logging.log4j.Level.WARN, "check your installation and post a console log from the launcher");
++            logger.log(org.apache.logging.log4j.Level.WARN, "when asking for help!");
++            logger.log(org.apache.logging.log4j.Level.WARN, "=========================================================");
 +        }
++
          this.field_74286_b = p_i1098_1_;
          this.field_148257_b = p_i1098_2_;
          this.field_148258_c = p_i1098_3_;
-@@ -54,7 +67,7 @@
+@@ -50,14 +66,29 @@
+         try
+         {
+             UUID uuid = UUIDTypeAdapter.fromString(this.func_148255_b());
+-            return new GameProfile(uuid, this.func_111285_a());
++            GameProfile ret = new GameProfile(uuid, this.func_111285_a());    //Forge: Adds cached GameProfile properties to returned GameProfile.
++            if (properties != null) ret.getProperties().putAll(properties); // Helps to cut down on calls to the session service,
++            return ret;                                                     // which helps to fix MC-52974.
          }
-         catch (IllegalArgumentException illegalargumentexception)
+         catch (IllegalArgumentException var2)
          {
 -            return new GameProfile((UUID)null, this.func_111285_a());
 +            return new GameProfile(net.minecraft.entity.player.EntityPlayer.func_146094_a(new GameProfile((UUID)null, this.func_111285_a())), this.func_111285_a());
          }
      }
  
++    /* ======================================== FORGE START ===================================== */
++    //For internal use only. Modders should never need to use this.
++    public void setProperties(com.mojang.authlib.properties.PropertyMap properties)
++    {
++        if(this.properties == null) this.properties = properties;
++    }
++
++    public boolean hasCachedProperties()
++    {
++        return properties != null;
++    }
++    /* ========================================= FORGE END ====================================== */
++
+     @SideOnly(Side.CLIENT)
+     public static enum Type
+     {

@@ -1,38 +1,68 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.event.sound;
 
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
-import net.minecraft.client.audio.SoundPoolEntry;
-import net.minecraftforge.common.MinecraftForge;
 
 public class SoundEvent extends Event
 {
-    public final SoundManager manager;
+    private final SoundManager manager;
     public SoundEvent(SoundManager manager)
     {
         this.manager = manager;
     }
-    
-    @Deprecated
-    public static SoundPoolEntry getResult(SoundResultEvent event)
+
+    public SoundManager getManager()
     {
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.result;
+        return manager;
     }
 
     public static class SoundSourceEvent extends SoundEvent
     {
-        public final ISound sound;
-        public final String uuid;
-        public final String name;
+        private final ISound sound;
+        private final String uuid;
+        private final String name;
 
         public SoundSourceEvent(SoundManager manager, ISound sound, String uuid)
         {
             super(manager);
-            this.name = sound.getPositionedSoundLocation().getResourcePath();
+            this.name = sound.getSoundLocation().getResourcePath();
             this.sound = sound;
             this.uuid = uuid;
+        }
+
+        public ISound getSound()
+        {
+            return sound;
+        }
+
+        public String getUuid()
+        {
+            return uuid;
+        }
+
+        public String getName()
+        {
+            return name;
         }
     }
 }

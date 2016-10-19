@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common;
 
 import java.io.File;
@@ -17,71 +36,42 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multiset;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldManager;
+import net.minecraft.world.ServerWorldEventHandler;
 import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldProviderEnd;
-import net.minecraft.world.WorldProviderHell;
-import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
-import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLLog;
 
 public class DimensionManager
 {
-    private static Hashtable<Integer, Class<? extends WorldProvider>> providers = new Hashtable<Integer, Class<? extends WorldProvider>>();
-    private static Hashtable<Integer, Boolean> spawnSettings = new Hashtable<Integer, Boolean>();
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
-    private static Hashtable<Integer, Integer> dimensions = new Hashtable<Integer, Integer>();
+    private static Hashtable<Integer, DimensionType> dimensions = new Hashtable<Integer, DimensionType>();
     private static ArrayList<Integer> unloadQueue = new ArrayList<Integer>();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
     private static Multiset<Integer> leakedWorlds = HashMultiset.create();
 
-    public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
-    {
-        if (providers.containsKey(id))
-        {
-            return false;
-        }
-        providers.put(id, provider);
-        spawnSettings.put(id, keepLoaded);
-        return true;
-    }
-
     /**
-     * Unregisters a Provider type, and returns a array of all dimensions that are
-     * registered to this provider type.
-     * If the return size is greater then 0, it is required that the caller either
-     * change those dimensions's registered type, or replace this type before the
-     * world is attempted to load, else the loader will throw an exception.
-     *
-     * @param id The provider type ID to unreigster
-     * @return An array containing all dimension IDs still registered to this provider type.
+     * Returns a list of dimensions associated with this DimensionType.
      */
-    public static int[] unregisterProviderType(int id)
+    public static int[] getDimensions(DimensionType type)
     {
-        if (!providers.containsKey(id))
-        {
-            return new int[0];
-        }
-        providers.remove(id);
-        spawnSettings.remove(id);
-
         int[] ret = new int[dimensions.size()];
         int x = 0;
-        for (Map.Entry<Integer, Integer> ent : dimensions.entrySet())
+        for (Map.Entry<Integer, DimensionType> ent : dimensions.entrySet())
         {
-            if (ent.getValue() == id)
+            if (ent.getValue() == type)
             {
                 ret[x++] = ent.getKey();
             }
@@ -99,25 +89,19 @@ public class DimensionManager
 
         hasInit = true;
 
-        registerProviderType( 0, WorldProviderSurface.class, true);
-        registerProviderType(-1, WorldProviderHell.class,    true);
-        registerProviderType( 1, WorldProviderEnd.class,     false);
-        registerDimension( 0,  0);
-        registerDimension(-1, -1);
-        registerDimension( 1,  1);
+        registerDimension( 0, DimensionType.OVERWORLD);
+        registerDimension(-1, DimensionType.NETHER);
+        registerDimension( 1, DimensionType.THE_END);
     }
 
-    public static void registerDimension(int id, int providerType)
+    public static void registerDimension(int id, DimensionType type)
     {
-        if (!providers.containsKey(providerType))
-        {
-            throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, provider type %d does not exist", id, providerType));
-        }
+        DimensionType.getById(type.getId()); //Check if type is invalid {will throw an error} No clue how it would be invalid tho...
         if (dimensions.containsKey(id))
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        dimensions.put(id, providerType);
+        dimensions.put(id, type);
         if (id >= 0)
         {
             dimensionMap.set(id);
@@ -141,7 +125,7 @@ public class DimensionManager
         return dimensions.containsKey(dim);
     }
 
-    public static int getProviderType(int dim)
+    public static DimensionType getProviderType(int dim)
     {
         if (!dimensions.containsKey(dim))
         {
@@ -171,7 +155,7 @@ public class DimensionManager
                 int leakCount = leakedWorlds.count(System.identityHashCode(w));
                 if (leakCount == 5)
                 {
-                    FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences).\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
+                    FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurrences).\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
                 }
                 else if (leakCount % 5 == 0)
                 {
@@ -186,19 +170,19 @@ public class DimensionManager
         return worlds.keySet().toArray(new Integer[worlds.size()]); //Only loaded dims, since usually used to cycle through loaded worlds
     }
 
-    public static void setWorld(int id, WorldServer world)
+    public static void setWorld(int id, WorldServer world, MinecraftServer server)
     {
         if (world != null)
         {
             worlds.put(id, world);
             weakWorldMap.put(world, world);
-            MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
-            FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.func_73046_m());
+            server.worldTickTimes.put(id, new long[100]);
+            FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
         {
             worlds.remove(id);
-            MinecraftServer.getServer().worldTickTimes.remove(id);
+            server.worldTickTimes.remove(id);
             FMLLog.info("Unloading dimension %d", id);
         }
 
@@ -220,10 +204,11 @@ public class DimensionManager
             tmp.add(entry.getValue());
         }
 
-        MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
+        server.worldServers = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
-    public static void initDimension(int dim) {
+    public static void initDimension(int dim)
+    {
         WorldServer overworld = getWorld(0);
         if (overworld == null)
         {
@@ -238,19 +223,19 @@ public class DimensionManager
             System.err.println("Cannot Hotload Dim: " + e.getMessage());
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
-        MinecraftServer mcServer = overworld.func_73046_m();
+        MinecraftServer mcServer = overworld.getMinecraftServer();
         ISaveHandler savehandler = overworld.getSaveHandler();
-        WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
+        //WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
-        world.addWorldAccess(new WorldManager(mcServer, world));
+        WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, dim, overworld, mcServer.theProfiler).init()));
+        world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
         {
             world.getWorldInfo().setGameType(mcServer.getGameType());
         }
 
-        mcServer.func_147139_a(mcServer.func_147135_j());
+        mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
     }
 
     public static WorldServer getWorld(int id)
@@ -261,12 +246,6 @@ public class DimensionManager
     public static WorldServer[] getWorlds()
     {
         return worlds.values().toArray(new WorldServer[worlds.size()]);
-    }
-
-    public static boolean shouldLoadSpawn(int dim)
-    {
-        int id = getProviderType(dim);
-        return spawnSettings.containsKey(id) && spawnSettings.get(id);
     }
 
     static
@@ -288,9 +267,9 @@ public class DimensionManager
         {
             if (dimensions.containsKey(dim))
             {
-                WorldProvider provider = providers.get(getProviderType(dim)).newInstance();
-                provider.setDimension(dim);
-                return provider;
+                WorldProvider ret = getProviderType(dim).createDimension();
+                ret.setDimension(dim);
+                return ret;
             }
             else
             {
@@ -299,8 +278,8 @@ public class DimensionManager
         }
         catch (Exception e)
         {
-            FMLCommonHandler.instance().getFMLLogger().log(Level.ERROR, String.format("An error occured trying to create an instance of WorldProvider %d (%s)",
-                    dim, providers.get(getProviderType(dim)).getSimpleName()),e);
+            FMLCommonHandler.instance().getFMLLogger().log(Level.ERROR, String.format("An error occurred trying to create an instance of WorldProvider %d (%s)",
+                    dim, getProviderType(dim)),e);
             throw new RuntimeException(e);
         }
     }
@@ -333,7 +312,7 @@ public class DimensionManager
                 {
                     MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
                     w.flush();
-                    setWorld(id, null);
+                    setWorld(id, null, w.getMinecraftServer());
                 }
             }
         }
@@ -412,14 +391,14 @@ public class DimensionManager
     {
         if (DimensionManager.getWorld(0) != null)
         {
-            return ((SaveHandler)DimensionManager.getWorld(0).getSaveHandler()).getWorldDirectory();
-        }
+            return DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory();
+        }/*
         else if (MinecraftServer.getServer() != null)
         {
             MinecraftServer srv = MinecraftServer.getServer();
             SaveHandler saveHandler = (SaveHandler) srv.getActiveAnvilConverter().getSaveLoader(srv.getFolderName(), false);
             return saveHandler.getWorldDirectory();
-        }
+        }*/
         else
         {
             return null;

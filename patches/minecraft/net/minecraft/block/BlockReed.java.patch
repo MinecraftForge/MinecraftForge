@@ -1,47 +1,40 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockReed.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockReed.java
-@@ -11,7 +11,11 @@
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
+@@ -20,7 +20,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class BlockReed extends Block
-+import net.minecraftforge.common.EnumPlantType;
-+import net.minecraftforge.common.util.ForgeDirection;
-+import net.minecraftforge.common.IPlantable;
-+
-+public class BlockReed extends Block implements IPlantable
++public class BlockReed extends Block implements net.minecraftforge.common.IPlantable
  {
-     private static final String __OBFID = "CL_00000300";
+     public static final PropertyInteger field_176355_a = PropertyInteger.func_177719_a("age", 0, 15);
+     protected static final AxisAlignedBB field_185701_b = new AxisAlignedBB(0.125D, 0.0D, 0.125D, 0.875D, 1.0D, 0.875D);
+@@ -70,7 +70,9 @@
  
-@@ -57,7 +61,7 @@
-     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
-         Block block = p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_);
--        return block == this ? true : (block != Blocks.field_150349_c && block != Blocks.field_150346_d && block != Blocks.field_150354_m ? false : (p_149742_1_.func_147439_a(p_149742_2_ - 1, p_149742_3_ - 1, p_149742_4_).func_149688_o() == Material.field_151586_h ? true : (p_149742_1_.func_147439_a(p_149742_2_ + 1, p_149742_3_ - 1, p_149742_4_).func_149688_o() == Material.field_151586_h ? true : (p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_ - 1).func_149688_o() == Material.field_151586_h ? true : p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_ + 1).func_149688_o() == Material.field_151586_h))));
-+        return block.canSustainPlant(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_, ForgeDirection.UP, this);
+-        Block block = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c();
++        IBlockState state = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
++        Block block = state.func_177230_c();
++        if (block.canSustainPlant(state, p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP, this)) return true;
+ 
+         if (block == this)
+         {
+@@ -165,6 +167,17 @@
+         return ((Integer)p_176201_1_.func_177229_b(field_176355_a)).intValue();
      }
  
-     public void func_149695_a(World p_149695_1_, int p_149695_2_, int p_149695_3_, int p_149695_4_, Block p_149695_5_)
-@@ -120,4 +124,22 @@
++    @Override
++    public net.minecraftforge.common.EnumPlantType getPlantType(IBlockAccess world, BlockPos pos)
++    {
++        return net.minecraftforge.common.EnumPlantType.Beach;
++    }
++    @Override
++    public IBlockState getPlant(IBlockAccess world, BlockPos pos)
++    {
++        return this.func_176223_P();
++    }
++
+     protected BlockStateContainer func_180661_e()
      {
-         return p_149720_1_.func_72807_a(p_149720_2_, p_149720_4_).func_150558_b(p_149720_2_, p_149720_3_, p_149720_4_);
-     }
-+
-+    @Override
-+    public EnumPlantType getPlantType(IBlockAccess world, int x, int y, int z)
-+    {
-+        return EnumPlantType.Beach;
-+    }
-+
-+    @Override
-+    public Block getPlant(IBlockAccess world, int x, int y, int z)
-+    {
-+        return this;
-+    }
-+
-+    @Override
-+    public int getPlantMetadata(IBlockAccess world, int x, int y, int z)
-+    {
-+        return world.func_72805_g(x, y, z);
-+    }
- }
+         return new BlockStateContainer(this, new IProperty[] {field_176355_a});

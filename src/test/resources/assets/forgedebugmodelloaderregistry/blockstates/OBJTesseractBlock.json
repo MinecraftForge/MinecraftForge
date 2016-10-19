@@ -1,0 +1,15 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+//            "#lambert7SG": "forgedebugmodelloaderregistry:texture" //the identifier must be a name of a material defined by the "model" obj's .mtl file
+        },
+        "model": "forgedebugmodelloaderregistry:tesseract.obj"
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+        }]
+    }
+}

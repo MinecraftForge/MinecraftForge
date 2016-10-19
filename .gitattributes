@@ -4,6 +4,7 @@
 *.java text eol=lf
 *.gradle text eol=crlf
 *.png binary
+*.gif binary
 *.exe binary
 *.dll binary
 *.jar binary

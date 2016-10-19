@@ -1,52 +1,90 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoublePlant.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoublePlant.java
-@@ -2,6 +2,7 @@
- 
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.util.ArrayList;
- import java.util.List;
- import java.util.Random;
- import net.minecraft.block.material.Material;
-@@ -18,8 +19,9 @@
- import net.minecraft.util.MathHelper;
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.IShearable;
+@@ -26,7 +26,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class BlockDoublePlant extends BlockBush implements IGrowable
-+public class BlockDoublePlant extends BlockBush implements IGrowable, IShearable
++public class BlockDoublePlant extends BlockBush implements IGrowable, net.minecraftforge.common.IShearable
  {
-     public static final String[] field_149892_a = new String[] {"sunflower", "syringa", "grass", "fern", "rose", "paeonia"};
-     @SideOnly(Side.CLIENT)
-@@ -81,6 +83,7 @@
+     public static final PropertyEnum<BlockDoublePlant.EnumPlantType> field_176493_a = PropertyEnum.<BlockDoublePlant.EnumPlantType>func_177709_a("variant", BlockDoublePlant.EnumPlantType.class);
+     public static final PropertyEnum<BlockDoublePlant.EnumBlockHalf> field_176492_b = PropertyEnum.<BlockDoublePlant.EnumBlockHalf>func_177709_a("half", BlockDoublePlant.EnumBlockHalf.class);
+@@ -89,6 +89,8 @@
+             Block block = (Block)(flag ? this : p_176475_1_.func_180495_p(blockpos).func_177230_c());
+             Block block1 = (Block)(flag ? p_176475_1_.func_180495_p(blockpos1).func_177230_c() : this);
  
-     public boolean func_149718_j(World p_149718_1_, int p_149718_2_, int p_149718_3_, int p_149718_4_)
-     {
-+        if (p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_, p_149718_4_) != this) return super.func_149718_j(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
-         int l = p_149718_1_.func_72805_g(p_149718_2_, p_149718_3_, p_149718_4_);
-         return func_149887_c(l) ? p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_) == this : p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ + 1, p_149718_4_) == this && super.func_149718_j(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_);
-     }
-@@ -262,4 +265,22 @@
-         int l = this.func_149885_e(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_);
-         this.func_149642_a(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_, new ItemStack(this, 1, l));
-     }
++            if (!flag) this.func_176226_b(p_176475_1_, p_176475_2_, p_176475_3_, 0); //Forge move above the setting to air.
 +
+             if (block == this)
+             {
+                 p_176475_1_.func_180501_a(blockpos, Blocks.field_150350_a.func_176223_P(), 2);
+@@ -97,17 +99,13 @@
+             if (block1 == this)
+             {
+                 p_176475_1_.func_180501_a(blockpos1, Blocks.field_150350_a.func_176223_P(), 3);
+-
+-                if (!flag)
+-                {
+-                    this.func_176226_b(p_176475_1_, blockpos1, p_176475_3_, 0);
+-                }
+             }
+         }
+     }
+ 
+     public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
+     {
++        if (p_180671_3_.func_177230_c() != this) return super.func_180671_f(p_180671_1_, p_180671_2_, p_180671_3_); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
+         if (p_180671_3_.func_177229_b(field_176492_b) == BlockDoublePlant.EnumBlockHalf.UPPER)
+         {
+             return p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c() == this;
+@@ -151,7 +149,6 @@
+ 
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, @Nullable ItemStack p_180657_6_)
+     {
+-        if (p_180657_1_.field_72995_K || p_180657_6_ == null || p_180657_6_.func_77973_b() != Items.field_151097_aZ || p_180657_4_.func_177229_b(field_176492_b) != BlockDoublePlant.EnumBlockHalf.LOWER || !this.func_176489_b(p_180657_1_, p_180657_3_, p_180657_4_, p_180657_2_))
+         {
+             super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
+         }
+@@ -211,8 +208,6 @@
+         else
+         {
+             p_176489_4_.func_71029_a(StatList.func_188055_a(this));
+-            int i = (blockdoubleplant$enumplanttype == BlockDoublePlant.EnumPlantType.GRASS ? BlockTallGrass.EnumType.GRASS : BlockTallGrass.EnumType.FERN).func_177044_a();
+-            func_180635_a(p_176489_1_, p_176489_2_, new ItemStack(Blocks.field_150329_H, 2, i));
+             return true;
+         }
+     }
+@@ -283,6 +278,33 @@
+         return Block.EnumOffsetType.XZ;
+     }
+ 
 +    @Override
-+    public boolean isShearable(ItemStack item, IBlockAccess world, int x, int y, int z)
++    public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos)
 +    {
-+        int metadata = world.func_72805_g(x, y, z);
-+        int type = func_149890_d(metadata);
-+        return func_149887_c(metadata) && (type == 3 || type == 4);
++        IBlockState state = world.func_180495_p(pos);
++        EnumPlantType type = (EnumPlantType)state.func_177229_b(field_176493_a);
++        return state.func_177229_b(field_176492_b) == EnumBlockHalf.LOWER && (type == EnumPlantType.FERN || type == EnumPlantType.GRASS);
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune)
++    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        int type = func_149890_d(world.func_72805_g(x, y, z));
-+        if (type == 3 || type == 2)
-+            ret.add(new ItemStack(Blocks.field_150329_H, 2, type == 3 ? 2 : 1));
++        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
++        EnumPlantType type = (EnumPlantType)world.func_180495_p(pos).func_177229_b(field_176493_a);
++        if (type == EnumPlantType.FERN) ret.add(new ItemStack(Blocks.field_150329_H, 2, BlockTallGrass.EnumType.FERN.func_177044_a()));
++        if (type == EnumPlantType.GRASS) ret.add(new ItemStack(Blocks.field_150329_H, 2, BlockTallGrass.EnumType.GRASS.func_177044_a()));
 +        return ret;
 +    }
- }
++
++    @Override
++    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
++    {
++        //Forge: Break both parts on the client to prevent the top part flickering as default type for a few frames.
++        if (state.func_177230_c() ==  this && state.func_177229_b(field_176492_b) == EnumBlockHalf.LOWER && world.func_180495_p(pos.func_177984_a()).func_177230_c() == this)
++            world.func_175698_g(pos.func_177984_a());
++        return world.func_175698_g(pos);
++    }
++
+     public static enum EnumBlockHalf implements IStringSerializable
+     {
+         UPPER,

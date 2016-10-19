@@ -1,7 +1,31 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.living;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityMagmaCube;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 
 /**
@@ -13,17 +37,22 @@ import net.minecraftforge.event.entity.EntityEvent;
  **/
 public class LivingEvent extends EntityEvent
 {
-    public final EntityLivingBase entityLiving;
+    private final EntityLivingBase entityLiving;
     public LivingEvent(EntityLivingBase entity)
     {
         super(entity);
         entityLiving = entity;
     }
-    
+
+    public EntityLivingBase getEntityLiving()
+    {
+        return entityLiving;
+    }
+
     /**
      * LivingUpdateEvent is fired when an Entity is updated. <br>
      * This event is fired whenever an Entity is updated in 
-     * EntityLivingBase#onUpdate(). <br>
+     * {@link EntityLivingBase#onUpdate()}. <br>
      * <br>
      * This event is fired via the {@link ForgeHooks#onLivingUpdate(EntityLivingBase)}.<br>
      * <br>
@@ -43,8 +72,8 @@ public class LivingEvent extends EntityEvent
     /**
      * LivingJumpEvent is fired when an Entity jumps.<br>
      * This event is fired whenever an Entity jumps in 
-     * EntityLivingBase#jump(), EntityMagmaCube#jump(),
-     * and EntityHorse#jump().<br>
+     * {@link EntityLivingBase#jump()}, {@link EntityMagmaCube#jump()},
+     * and {@link EntityHorse#jump()}.<br>
      * <br>
      * This event is fired via the {@link ForgeHooks#onLivingJump(EntityLivingBase)}.<br>
      * <br>

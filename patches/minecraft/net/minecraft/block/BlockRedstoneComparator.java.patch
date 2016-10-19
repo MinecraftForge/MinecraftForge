@@ -1,22 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
-@@ -228,4 +228,19 @@
-     {
-         return new TileEntityComparator();
+@@ -312,6 +312,21 @@
+         return this.func_176223_P().func_177226_a(field_185512_D, p_180642_8_.func_174811_aO().func_176734_d()).func_177226_a(field_176464_a, Boolean.valueOf(false)).func_177226_a(field_176463_b, BlockRedstoneComparator.Mode.COMPARE);
      }
+ 
++    @Override
++    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
++    {
++        if (pos.func_177956_o() == neighbor.func_177956_o() && world instanceof World)
++        {
++            func_189540_a(world.func_180495_p(pos), (World)world, pos, world.func_180495_p(neighbor).func_177230_c());
++        }
++    }
 +
 +    @Override
-+    public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ)
-+    {
-+        if (y == tileY && world instanceof World)
-+        {
-+            func_149695_a((World)world, x, y, z, world.func_147439_a(tileX, tileY, tileZ));
-+        }   
-+    }
-+    
-+    @Override
-+    public boolean getWeakChanges(IBlockAccess world, int x, int y, int z)
++    public boolean getWeakChanges(IBlockAccess world, BlockPos pos)
 +    {
 +        return true;
 +    }
- }
++
+     public static enum Mode implements IStringSerializable
+     {
+         COMPARE("compare"),

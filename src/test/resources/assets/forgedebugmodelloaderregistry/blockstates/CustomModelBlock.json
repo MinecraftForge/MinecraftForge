@@ -1,0 +1,27 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            //"#texture": "forgedebugmodelloaderregistry:texture",
+            "#chest": "entity/chest/normal"
+        },
+        "model": "forgedebugmodelloaderregistry:chest.b3d",
+        "custom": {
+            "mesh": ["Base", "Lid"]
+        }
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+        }],
+        "facing": {
+            "down": {"x": 90},
+            "up": {"x": 270},
+            "north": {"y": 180},
+            "south": {},
+            "west": {"y": 90},
+            "east": {"y": 270}
+        }
+    }
+}

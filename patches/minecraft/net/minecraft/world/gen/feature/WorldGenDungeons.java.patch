@@ -1,35 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
-@@ -8,6 +8,9 @@
- import net.minecraft.tileentity.TileEntityMobSpawner;
- import net.minecraft.util.WeightedRandomChestContent;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.ChestGenHooks;
-+import net.minecraftforge.common.DungeonHooks;
-+import static net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST;;
- 
- public class WorldGenDungeons extends WorldGenerator
- {
-@@ -123,12 +126,11 @@
-                                 if (k2 == 1)
-                                 {
-                                     p_76484_1_.func_147465_d(i2, p_76484_4_, j2, Blocks.field_150486_ae, 0, 2);
--                                    WeightedRandomChestContent[] aweightedrandomchestcontent = WeightedRandomChestContent.func_92080_a(field_111189_a, new WeightedRandomChestContent[] {Items.field_151134_bR.func_92114_b(p_76484_2_)});
-                                     TileEntityChest tileentitychest = (TileEntityChest)p_76484_1_.func_147438_o(i2, p_76484_4_, j2);
- 
-                                     if (tileentitychest != null)
-                                     {
--                                        WeightedRandomChestContent.func_76293_a(p_76484_2_, aweightedrandomchestcontent, tileentitychest, 8);
-+                                        WeightedRandomChestContent.func_76293_a(p_76484_2_, ChestGenHooks.getItems(DUNGEON_CHEST, p_76484_2_), tileentitychest, ChestGenHooks.getCount(DUNGEON_CHEST, p_76484_2_));
-                                     }
- 
-                                     break label101;
-@@ -167,7 +169,6 @@
+@@ -154,6 +154,6 @@
  
      private String func_76543_b(Random p_76543_1_)
      {
--        int i = p_76543_1_.nextInt(4);
--        return i == 0 ? "Skeleton" : (i == 1 ? "Zombie" : (i == 2 ? "Zombie" : (i == 3 ? "Spider" : "")));
-+        return DungeonHooks.getRandomDungeonMob(p_76543_1_);
+-        return field_175916_b[p_76543_1_.nextInt(field_175916_b.length)];
++        return net.minecraftforge.common.DungeonHooks.getRandomDungeonMob(p_76543_1_);
      }
  }

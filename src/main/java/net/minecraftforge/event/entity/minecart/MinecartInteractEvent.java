@@ -1,16 +1,43 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.minecart;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import net.minecraft.entity.item.EntityMinecartContainer;
+import net.minecraft.entity.item.EntityMinecartEmpty;
+import net.minecraft.entity.item.EntityMinecartFurnace;
+import net.minecraft.entity.item.EntityMinecartHopper;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 
 /**
  * MinecartInteractEvent is fired when a player interacts with a minecart. <br>
  * This event is fired whenever a player interacts with a minecart in
- * EntityMinecartContainer#interactFirst(EntityPlayer), 
- * EntityMinecartEmpty#interactFirst(EntityPlayer)
- * EntityMinecartFurnace#interactFirst(EntityPlayer)
- * EntityMinecartHopper#interactFirst(EntityPlayer).<br>
+ * {@link EntityMinecartContainer#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
+ * {@link EntityMinecartEmpty#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
+ * {@link EntityMinecartFurnace#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
+ * {@link EntityMinecartHopper#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
+ * etc.<br>
  * <br>
  * {@link #player} contains the EntityPlayer that is involved with this minecart interaction.<br>
  * <br>
@@ -24,11 +51,19 @@ import net.minecraft.entity.player.EntityPlayer;
 @Cancelable
 public class MinecartInteractEvent extends MinecartEvent
 {
-    public final EntityPlayer player;
+    private final EntityPlayer player;
+    private final ItemStack item;
+    private final EnumHand hand;
 
-    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player)
+    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player, ItemStack item, EnumHand hand)
     {
         super(minecart);
         this.player = player;
+        this.item = item;
+        this.hand = hand;
     }
+
+    public EntityPlayer getPlayer() { return player; }
+    public ItemStack getItem() { return item; }
+    public EnumHand getHand() { return hand; }
 }

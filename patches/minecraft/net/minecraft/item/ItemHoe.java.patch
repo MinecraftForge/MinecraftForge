@@ -1,41 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemHoe.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemHoe.java
-@@ -1,5 +1,6 @@
- package net.minecraft.item;
- 
-+import cpw.mods.fml.common.eventhandler.Event.Result;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
- import net.minecraft.block.Block;
-@@ -8,6 +9,8 @@
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.init.Blocks;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.player.UseHoeEvent;
- 
- public class ItemHoe extends Item
- {
-@@ -30,9 +33,21 @@
+@@ -45,10 +45,13 @@
          }
          else
          {
-+            UseHoeEvent event = new UseHoeEvent(p_77648_2_, p_77648_1_, p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_);
-+            if (MinecraftForge.EVENT_BUS.post(event))
-+            {
-+                return false;
-+            }
++            int hook = net.minecraftforge.event.ForgeEventFactory.onHoeUse(p_180614_1_, p_180614_2_, p_180614_3_, p_180614_4_);
++            if (hook != 0) return hook > 0 ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
 +
-+            if (event.getResult() == Result.ALLOW)
-+            {
-+                p_77648_1_.func_77972_a(1, p_77648_2_);
-+                return true;
-+            }
-+
-             Block block = p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_);
+             IBlockState iblockstate = p_180614_3_.func_180495_p(p_180614_4_);
+             Block block = iblockstate.func_177230_c();
  
--            if (p_77648_7_ != 0 && p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_ + 1, p_77648_6_).func_149688_o() == Material.field_151579_a && (block == Blocks.field_150349_c || block == Blocks.field_150346_d))
-+            if (p_77648_7_ != 0 && p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_ + 1, p_77648_6_).isAir(p_77648_3_, p_77648_4_, p_77648_5_ + 1, p_77648_6_) && (block == Blocks.field_150349_c || block == Blocks.field_150346_d))
+-            if (p_180614_6_ != EnumFacing.DOWN && p_180614_3_.func_180495_p(p_180614_4_.func_177984_a()).func_185904_a() == Material.field_151579_a)
++            if (p_180614_6_ != EnumFacing.DOWN && p_180614_3_.func_175623_d(p_180614_4_.func_177984_a()))
              {
-                 Block block1 = Blocks.field_150458_ak;
-                 p_77648_3_.func_72908_a((double)((float)p_77648_4_ + 0.5F), (double)((float)p_77648_5_ + 0.5F), (double)((float)p_77648_6_ + 0.5F), block1.field_149762_H.func_150498_e(), (block1.field_149762_H.func_150497_c() + 1.0F) / 2.0F, block1.field_149762_H.func_150494_d() * 0.8F);
+                 if (block == Blocks.field_150349_c || block == Blocks.field_185774_da)
+                 {

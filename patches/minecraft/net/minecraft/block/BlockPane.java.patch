@@ -1,52 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPane.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
-@@ -15,6 +15,8 @@
- import net.minecraft.util.IIcon;
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.util.ForgeDirection;
-+import static net.minecraftforge.common.util.ForgeDirection.*;
+@@ -106,7 +106,10 @@
  
- public class BlockPane extends Block
- {
-@@ -62,10 +64,10 @@
- 
-     public void func_149743_a(World p_149743_1_, int p_149743_2_, int p_149743_3_, int p_149743_4_, AxisAlignedBB p_149743_5_, List p_149743_6_, Entity p_149743_7_)
+     public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
      {
--        boolean flag = this.func_150098_a(p_149743_1_.func_147439_a(p_149743_2_, p_149743_3_, p_149743_4_ - 1));
--        boolean flag1 = this.func_150098_a(p_149743_1_.func_147439_a(p_149743_2_, p_149743_3_, p_149743_4_ + 1));
--        boolean flag2 = this.func_150098_a(p_149743_1_.func_147439_a(p_149743_2_ - 1, p_149743_3_, p_149743_4_));
--        boolean flag3 = this.func_150098_a(p_149743_1_.func_147439_a(p_149743_2_ + 1, p_149743_3_, p_149743_4_));
-+        boolean flag  = this.canPaneConnectTo(p_149743_1_, p_149743_2_, p_149743_3_, p_149743_4_ - 1, NORTH);
-+        boolean flag1 = this.canPaneConnectTo(p_149743_1_, p_149743_2_, p_149743_3_, p_149743_4_ + 1, SOUTH);
-+        boolean flag2 = this.canPaneConnectTo(p_149743_1_, p_149743_2_ - 1, p_149743_3_, p_149743_4_, WEST );
-+        boolean flag3 = this.canPaneConnectTo(p_149743_1_, p_149743_2_ + 1, p_149743_3_, p_149743_4_, EAST );
+-        return p_176221_1_.func_177226_a(field_176241_b, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177978_c()).func_177230_c()))).func_177226_a(field_176243_N, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177968_d()).func_177230_c()))).func_177226_a(field_176244_O, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177976_e()).func_177230_c()))).func_177226_a(field_176242_M, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177974_f()).func_177230_c())));
++        return p_176221_1_.func_177226_a(field_176241_b, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH))
++                .func_177226_a(field_176243_N, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH))
++                .func_177226_a(field_176244_O, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST))
++                .func_177226_a(field_176242_M, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST));
+     }
  
-         if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
-         {
-@@ -117,10 +119,10 @@
-         float f1 = 0.5625F;
-         float f2 = 0.4375F;
-         float f3 = 0.5625F;
--        boolean flag = this.func_150098_a(p_149719_1_.func_147439_a(p_149719_2_, p_149719_3_, p_149719_4_ - 1));
--        boolean flag1 = this.func_150098_a(p_149719_1_.func_147439_a(p_149719_2_, p_149719_3_, p_149719_4_ + 1));
--        boolean flag2 = this.func_150098_a(p_149719_1_.func_147439_a(p_149719_2_ - 1, p_149719_3_, p_149719_4_));
--        boolean flag3 = this.func_150098_a(p_149719_1_.func_147439_a(p_149719_2_ + 1, p_149719_3_, p_149719_4_));
-+        boolean flag  = this.canPaneConnectTo(p_149719_1_, p_149719_2_, p_149719_3_, p_149719_4_ - 1, NORTH);
-+        boolean flag1 = this.canPaneConnectTo(p_149719_1_, p_149719_2_, p_149719_3_, p_149719_4_ + 1, SOUTH);
-+        boolean flag2 = this.canPaneConnectTo(p_149719_1_, p_149719_2_ - 1, p_149719_3_, p_149719_4_, WEST );
-+        boolean flag3 = this.canPaneConnectTo(p_149719_1_, p_149719_2_ + 1, p_149719_3_, p_149719_4_, EAST );
- 
-         if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
-         {
-@@ -186,4 +188,10 @@
-         this.field_149761_L = p_149651_1_.func_94245_a(this.field_150101_M);
-         this.field_150102_N = p_149651_1_.func_94245_a(this.field_150100_a);
+     @Nullable
+@@ -184,4 +187,11 @@
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176241_b, field_176242_M, field_176244_O, field_176243_N});
      }
 +
-+    public boolean canPaneConnectTo(IBlockAccess world, int x, int y, int z, ForgeDirection dir)
++    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)
 +    {
-+        return func_150098_a(world.func_147439_a(x, y, z)) || 
-+                world.isSideSolid(x, y, z, dir.getOpposite(), false);
++        BlockPos off = pos.func_177972_a(dir);
++        IBlockState state = world.func_180495_p(off);
++        return func_150098_a(state.func_177230_c()) || state.isSideSolid(world, off, dir.func_176734_d());
 +    }
  }

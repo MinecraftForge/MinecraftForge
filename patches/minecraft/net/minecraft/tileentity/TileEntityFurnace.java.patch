@@ -1,6 +1,32 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
-@@ -219,8 +219,7 @@
+@@ -122,9 +122,9 @@
+             }
+         }
+ 
+-        this.field_145956_a = p_145839_1_.func_74765_d("BurnTime");
+-        this.field_174906_k = p_145839_1_.func_74765_d("CookTime");
+-        this.field_174905_l = p_145839_1_.func_74765_d("CookTimeTotal");
++        this.field_145956_a = p_145839_1_.func_74762_e("BurnTime");
++        this.field_174906_k = p_145839_1_.func_74762_e("CookTime");
++        this.field_174905_l = p_145839_1_.func_74762_e("CookTimeTotal");
+         this.field_145963_i = func_145952_a(this.field_145957_n[1]);
+ 
+         if (p_145839_1_.func_150297_b("CustomName", 8))
+@@ -136,9 +136,9 @@
+     public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
+     {
+         super.func_189515_b(p_189515_1_);
+-        p_189515_1_.func_74777_a("BurnTime", (short)this.field_145956_a);
+-        p_189515_1_.func_74777_a("CookTime", (short)this.field_174906_k);
+-        p_189515_1_.func_74777_a("CookTimeTotal", (short)this.field_174905_l);
++        p_189515_1_.func_74768_a("BurnTime", this.field_145956_a);
++        p_189515_1_.func_74768_a("CookTime", this.field_174906_k);
++        p_189515_1_.func_74768_a("CookTimeTotal", this.field_174905_l);
+         NBTTagList nbttaglist = new NBTTagList();
+ 
+         for (int i = 0; i < this.field_145957_n.length; ++i)
+@@ -207,8 +207,7 @@
  
                              if (this.field_145957_n[1].field_77994_a == 0)
                              {
@@ -10,7 +36,7 @@
                              }
                          }
                      }
-@@ -265,7 +264,11 @@
+@@ -263,7 +262,11 @@
          else
          {
              ItemStack itemstack = FurnaceRecipes.func_77602_a().func_151395_a(this.field_145957_n[0]);
@@ -23,7 +49,7 @@
          }
      }
  
-@@ -281,7 +284,7 @@
+@@ -279,7 +282,7 @@
              }
              else if (this.field_145957_n[2].func_77973_b() == itemstack.func_77973_b())
              {
@@ -31,4 +57,44 @@
 +                this.field_145957_n[2].field_77994_a += itemstack.field_77994_a; // Forge BugFix: Results may have multiple items
              }
  
-             --this.field_145957_n[0].field_77994_a;
+             if (this.field_145957_n[0].func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && this.field_145957_n[0].func_77960_j() == 1 && this.field_145957_n[1] != null && this.field_145957_n[1].func_77973_b() == Items.field_151133_ar)
+@@ -326,7 +329,15 @@
+                 }
+             }
+ 
+-            return item instanceof ItemTool && "WOOD".equals(((ItemTool)item).func_77861_e()) ? 200 : (item instanceof ItemSword && "WOOD".equals(((ItemSword)item).func_150932_j()) ? 200 : (item instanceof ItemHoe && "WOOD".equals(((ItemHoe)item).func_77842_f()) ? 200 : (item == Items.field_151055_y ? 100 : (item == Items.field_151044_h ? 1600 : (item == Items.field_151129_at ? 20000 : (item == Item.func_150898_a(Blocks.field_150345_g) ? 100 : (item == Items.field_151072_bj ? 2400 : 0)))))));
++            if (item instanceof ItemTool && "WOOD".equals(((ItemTool)item).func_77861_e())) return 200;
++            if (item instanceof ItemSword && "WOOD".equals(((ItemSword)item).func_150932_j())) return 200;
++            if (item instanceof ItemHoe && "WOOD".equals(((ItemHoe)item).func_77842_f())) return 200;
++            if (item == Items.field_151055_y) return 100;
++            if (item == Items.field_151044_h) return 1600;
++            if (item == Items.field_151129_at) return 20000;
++            if (item == Item.func_150898_a(Blocks.field_150345_g)) return 100;
++            if (item == Items.field_151072_bj) return 2400;
++            return net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
+         }
+     }
+ 
+@@ -447,4 +458,22 @@
+             this.field_145957_n[i] = null;
+         }
+     }
++
++    net.minecraftforge.items.IItemHandler handlerTop = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
++    net.minecraftforge.items.IItemHandler handlerBottom = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
++    net.minecraftforge.items.IItemHandler handlerSide = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.WEST);
++
++    @SuppressWarnings("unchecked")
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++            if (facing == EnumFacing.DOWN)
++                return (T) handlerBottom;
++            else if (facing == EnumFacing.UP)
++                return (T) handlerTop;
++            else
++                return (T) handlerSide;
++        return super.getCapability(capability, facing);
++    }
+ }

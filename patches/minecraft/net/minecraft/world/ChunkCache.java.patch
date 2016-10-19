@@ -1,56 +1,56 @@
 --- ../src-base/minecraft/net/minecraft/world/ChunkCache.java
 +++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
-@@ -8,6 +8,7 @@
- import net.minecraft.tileentity.TileEntity;
- import net.minecraft.world.biome.BiomeGenBase;
- import net.minecraft.world.chunk.Chunk;
-+import net.minecraftforge.common.util.ForgeDirection;
- 
- public class ChunkCache implements IBlockAccess
- {
-@@ -91,6 +92,8 @@
+@@ -69,6 +69,8 @@
      {
-         int l = (p_147438_1_ >> 4) - this.field_72818_a;
-         int i1 = (p_147438_3_ >> 4) - this.field_72816_b;
-+        if (l < 0 || l >= field_72817_c.length || i1 < 0 || i1 >= field_72817_c[l].length) return null;
-+        if (field_72817_c[l][i1] == null) return null;
-         return this.field_72817_c[l][i1].func_150806_e(p_147438_1_ & 15, p_147438_2_, p_147438_3_ & 15);
+         int i = (p_190300_1_.func_177958_n() >> 4) - this.field_72818_a;
+         int j = (p_190300_1_.func_177952_p() >> 4) - this.field_72816_b;
++        if (i < 0 || i >= field_72817_c.length || j < 0 || j >= field_72817_c[i].length) return null;
++        if (field_72817_c[i][j] == null) return null;
+         return this.field_72817_c[i][j].func_177424_a(p_190300_1_, p_190300_2_);
      }
  
-@@ -122,6 +125,8 @@
-         {
-             int l = (p_72805_1_ >> 4) - this.field_72818_a;
-             int i1 = (p_72805_3_ >> 4) - this.field_72816_b;
-+            if (l < 0 || l >= field_72817_c.length || i1 < 0 || i1 >= field_72817_c[l].length) return 0;
-+            if (field_72817_c[l][i1] == null) return 0;
-             return this.field_72817_c[l][i1].func_76628_c(p_72805_1_ & 15, p_72805_2_, p_72805_3_ & 15);
+@@ -149,6 +151,8 @@
+             {
+                 int i = (p_175629_2_.func_177958_n() >> 4) - this.field_72818_a;
+                 int j = (p_175629_2_.func_177952_p() >> 4) - this.field_72816_b;
++                if (i < 0 || i >= field_72817_c.length || j < 0 || j >= field_72817_c[i].length) return p_175629_1_.field_77198_c;
++                if (field_72817_c[i][j] == null) return p_175629_1_.field_77198_c;
+                 return this.field_72817_c[i][j].func_177413_a(p_175629_1_, p_175629_2_);
+             }
          }
-     }
-@@ -137,10 +142,9 @@
-         return this.field_72815_e.func_72807_a(p_72807_1_, p_72807_2_);
-     }
+@@ -160,7 +164,8 @@
  
--    @SideOnly(Side.CLIENT)
-     public boolean func_147437_c(int p_147437_1_, int p_147437_2_, int p_147437_3_)
+     public boolean func_175623_d(BlockPos p_175623_1_)
      {
--        return this.func_147439_a(p_147437_1_, p_147437_2_, p_147437_3_).func_149688_o() == Material.field_151579_a;
-+        return this.func_147439_a(p_147437_1_, p_147437_2_, p_147437_3_).isAir(this, p_147437_1_, p_147437_2_, p_147437_3_);
+-        return this.func_180495_p(p_175623_1_).func_185904_a() == Material.field_151579_a;
++        IBlockState state = this.func_180495_p(p_175623_1_);
++        return state.func_177230_c().isAir(state, this, p_175623_1_);
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,4 +245,15 @@
+@@ -170,6 +175,7 @@
+         {
+             int i = (p_175628_2_.func_177958_n() >> 4) - this.field_72818_a;
+             int j = (p_175628_2_.func_177952_p() >> 4) - this.field_72816_b;
++            if (i < 0 || i >= field_72817_c.length || j < 0 || j >= field_72817_c[i].length) return p_175628_1_.field_77198_c;
+             return this.field_72817_c[i][j].func_177413_a(p_175628_1_, p_175628_2_);
+         }
+         else
+@@ -188,4 +194,17 @@
      {
-         return 256;
+         return this.field_72815_e.func_175624_G();
      }
 +
 +    @Override
-+    public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default)
++    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default)
 +    {
-+        if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000)
-+        {
-+            return _default;
-+        }
++        int x = (pos.func_177958_n() >> 4) - this.field_72818_a;
++        int z = (pos.func_177952_p() >> 4) - this.field_72816_b;
++        if (pos.func_177956_o() < 0 || pos.func_177956_o() >= 256) return _default;
++        if (x < 0 || x >= field_72817_c.length || z < 0 || z >= field_72817_c[x].length) return _default;
++        if (field_72817_c[x][z] == null) return _default;
 +
-+        return func_147439_a(x, y, z).isSideSolid(this, x, y, z, side);
++        IBlockState state = func_180495_p(pos);
++        return state.func_177230_c().isSideSolid(state, this, pos, side);
 +    }
  }

@@ -1,43 +1,32 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenShrub.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenShrub.java
-@@ -5,6 +5,8 @@
- import net.minecraft.block.material.Material;
- import net.minecraft.init.Blocks;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.IPlantable;
-+import net.minecraftforge.common.util.ForgeDirection;
+@@ -22,14 +22,14 @@
  
- public class WorldGenShrub extends WorldGenTrees
- {
-@@ -23,14 +25,19 @@
+     public boolean func_180709_b(World p_180709_1_, Random p_180709_2_, BlockPos p_180709_3_)
      {
-         Block block;
- 
--        while (((block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_)).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && p_76484_4_ > 0)
-+        do
+-        for (IBlockState iblockstate = p_180709_1_.func_180495_p(p_180709_3_); (iblockstate.func_185904_a() == Material.field_151579_a || iblockstate.func_185904_a() == Material.field_151584_j) && p_180709_3_.func_177956_o() > 0; iblockstate = p_180709_1_.func_180495_p(p_180709_3_))
++        for (IBlockState iblockstate = p_180709_1_.func_180495_p(p_180709_3_); (iblockstate.func_177230_c().isAir(iblockstate, p_180709_1_, p_180709_3_) || iblockstate.func_177230_c().isLeaves(iblockstate, p_180709_1_, p_180709_3_)) && p_180709_3_.func_177956_o() > 0; iblockstate = p_180709_1_.func_180495_p(p_180709_3_))
          {
-+            block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_);
-+            if (!(block.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_) || block.isAir(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_)))
-+            {
-+                break;
-+            }
-             --p_76484_4_;
--        }
-+        } while (p_76484_4_ > 0);
+             p_180709_3_ = p_180709_3_.func_177977_b();
+         }
  
-         Block block1 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_);
+-        Block block = p_180709_1_.func_180495_p(p_180709_3_).func_177230_c();
++        IBlockState state = p_180709_1_.func_180495_p(p_180709_3_);
  
--        if (block1 == Blocks.field_150346_d || block1 == Blocks.field_150349_c)
-+        if (block1.canSustainPlant(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_, ForgeDirection.UP, (IPlantable)Blocks.field_150345_g))
+-        if (block == Blocks.field_150346_d || block == Blocks.field_150349_c)
++        if (state.func_177230_c().canSustainPlant(state, p_180709_1_, p_180709_3_, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g)))
          {
-             ++p_76484_4_;
-             this.func_150516_a(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_, Blocks.field_150364_r, this.field_150527_b);
-@@ -48,7 +55,7 @@
-                     {
-                         int j2 = i2 - p_76484_5_;
- 
--                        if ((Math.abs(l1) != j1 || Math.abs(j2) != j1 || p_76484_2_.nextInt(2) != 0) && !p_76484_1_.func_147439_a(k1, l, i2).func_149730_j())
-+                        if ((Math.abs(l1) != j1 || Math.abs(j2) != j1 || p_76484_2_.nextInt(2) != 0) && p_76484_1_.func_147439_a(k1, l, i2).canBeReplacedByLeaves(p_76484_1_, k1, l, i2))
+             p_180709_3_ = p_180709_3_.func_177984_a();
+             this.func_175903_a(p_180709_1_, p_180709_3_, this.field_150527_b);
+@@ -50,9 +50,9 @@
+                         if (Math.abs(i1) != k || Math.abs(k1) != k || p_180709_2_.nextInt(2) != 0)
                          {
-                             this.func_150516_a(p_76484_1_, k1, l, i2, Blocks.field_150362_t, this.field_150528_a);
-                         }
+                             BlockPos blockpos = new BlockPos(l, i, j1);
+-                            Material material = p_180709_1_.func_180495_p(blockpos).func_185904_a();
++                            state = p_180709_1_.func_180495_p(blockpos);
+ 
+-                            if (material == Material.field_151579_a || material == Material.field_151584_j)
++                            if (state.func_177230_c().canBeReplacedByLeaves(state, p_180709_1_, blockpos))
+                             {
+                                 this.func_175903_a(p_180709_1_, blockpos, this.field_150528_a);
+                             }

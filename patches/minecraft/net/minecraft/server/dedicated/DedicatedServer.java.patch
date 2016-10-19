@@ -1,0 +1,71 @@
+--- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
++++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -58,6 +58,7 @@
+     private boolean field_71338_p;
+     private GameType field_71337_q;
+     private boolean field_71335_s;
++    public static boolean allowPlayerLogins = false;
+ 
+     public DedicatedServer(File p_i47086_1_, DataFixer p_i47086_2_, YggdrasilAuthenticationService p_i47086_3_, MinecraftSessionService p_i47086_4_, GameProfileRepository p_i47086_5_, PlayerProfileCache p_i47086_6_)
+     {
+@@ -91,6 +92,7 @@
+         {
+             public void run()
+             {
++                if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
+                 BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in));
+                 String s4;
+ 
+@@ -116,6 +118,8 @@
+             field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStart(this);
++
+         field_155771_h.info("Loading properties");
+         this.field_71340_o = new PropertyManager(new File("server.properties"));
+         this.field_154332_n = new ServerEula(new File("eula.txt"));
+@@ -207,6 +211,7 @@
+             }
+             else
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
+                 this.func_184105_a(new DedicatedPlayerList(this));
+                 long j = System.nanoTime();
+ 
+@@ -256,6 +261,7 @@
+                 TileEntitySkull.func_184293_a(this.func_152358_ax());
+                 TileEntitySkull.func_184294_a(this.func_147130_as());
+                 PlayerProfileCache.func_187320_a(this.func_71266_T());
++                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
+                 field_155771_h.info("Preparing level \"{}\"", new Object[] {this.func_71270_I()});
+                 this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
+                 long i1 = System.nanoTime() - j;
+@@ -284,7 +290,7 @@
+                     thread1.start();
+                 }
+ 
+-                return true;
++                return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
+             }
+         }
+     }
+@@ -507,7 +513,7 @@
+ 
+     public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_)
+     {
+-        if (p_175579_1_.field_73011_w.func_186058_p().func_186068_a() != 0)
++        if (p_175579_1_.field_73011_w.getDimension() != 0)
+         {
+             return false;
+         }
+@@ -581,6 +587,9 @@
+         return this.field_71340_o.func_73669_a("network-compression-threshold", super.func_175577_aI());
+     }
+ 
++    //Forge: Enable formated text for colors in console.
++    @Override public void func_145747_a(net.minecraft.util.text.ITextComponent message) { field_155771_h.info(message.func_150254_d()); }
++
+     protected boolean func_152368_aE() throws IOException
+     {
+         boolean flag = false;

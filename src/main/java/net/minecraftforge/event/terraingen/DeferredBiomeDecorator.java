@@ -1,10 +1,29 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
-
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 
 public class DeferredBiomeDecorator extends BiomeDecorator {
@@ -16,13 +35,13 @@ public class DeferredBiomeDecorator extends BiomeDecorator {
     }
 
     @Override
-    public void decorateChunk(World par1World, Random par2Random, BiomeGenBase biome, int par3, int par4)
+    public void decorate(World par1World, Random par2Random, Biome biome, BlockPos pos)
     {
         fireCreateEventAndReplace(biome);
         // On first call to decorate, we fire and substitute ourselves, if we haven't already done so
-        biome.theBiomeDecorator.decorateChunk(par1World, par2Random, biome, par3, par4);
+        biome.theBiomeDecorator.decorate(par1World, par2Random, biome, pos);
     }
-    public void fireCreateEventAndReplace(BiomeGenBase biome)
+    public void fireCreateEventAndReplace(Biome biome)
     {
         // Copy any configuration from us to the real instance.
         wrapped.bigMushroomsPerChunk = bigMushroomsPerChunk;
@@ -38,9 +57,9 @@ public class DeferredBiomeDecorator extends BiomeDecorator {
         wrapped.sandPerChunk2 = sandPerChunk2;
         wrapped.treesPerChunk = treesPerChunk;
         wrapped.waterlilyPerChunk = waterlilyPerChunk;
-        
+
         BiomeEvent.CreateDecorator event = new BiomeEvent.CreateDecorator(biome, wrapped);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
-        biome.theBiomeDecorator = event.newBiomeDecorator;
+        biome.theBiomeDecorator = event.getNewBiomeDecorator();
     }
 }

@@ -1,29 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
-@@ -56,7 +56,7 @@
+@@ -62,9 +62,9 @@
+                     {
+                         if (j >= 0 && j < 256)
                          {
-                             Block block = p_76484_1_.func_147439_a(k1, j1, l1);
+-                            Material material = p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1)).func_185904_a();
++                            IBlockState state = p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1));
  
--                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
-+                            if (!block.isAir(p_76484_1_, k1, j1, l1) && !block.isLeaves(p_76484_1_, k1, j1, l1))
+-                            if (material != Material.field_151579_a && material != Material.field_151584_j)
++                            if (!state.func_177230_c().isAir(state, p_180709_1_, blockpos$mutableblockpos) && !state.func_177230_c().isLeaves(state, p_180709_1_, blockpos$mutableblockpos))
                              {
                                  flag = false;
                              }
-@@ -183,7 +183,7 @@
-                                     j2 = 0;
-                                 }
- 
--                                if ((j2 != 0 || p_76484_4_ >= p_76484_4_ + i1 - 1) && !p_76484_1_.func_147439_a(l2, k1, i2).func_149730_j())
-+                                if ((j2 != 0 || p_76484_4_ >= p_76484_4_ + i1 - 1) && p_76484_1_.func_147439_a(l2, k1, i2).canBeReplacedByLeaves(p_76484_1_, l2, k1, i2))
+@@ -199,8 +199,9 @@
+                                 if (p_180709_3_.func_177956_o() >= p_180709_3_.func_177956_o() + i - 1 || blockhugemushroom$enumtype != BlockHugeMushroom.EnumType.ALL_INSIDE)
                                  {
-                                     this.func_150516_a(p_76484_1_, l2, k1, i2, Block.func_149729_e(Block.func_149682_b(Blocks.field_150420_aW) + l), j2);
-                                 }
-@@ -195,7 +195,7 @@
-                     {
-                         Block block2 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ + k1, p_76484_5_);
+                                     BlockPos blockpos = new BlockPos(l1, l2, i2);
++                                    IBlockState state = p_180709_1_.func_180495_p(blockpos);
  
--                        if (!block2.func_149730_j())
-+                        if (block2.canBeReplacedByLeaves(p_76484_1_, p_76484_3_, p_76484_4_ + k1, p_76484_5_))
+-                                    if (!p_180709_1_.func_180495_p(blockpos).func_185913_b())
++                                    if (state.func_177230_c().canBeReplacedByLeaves(state, p_180709_1_, blockpos))
+                                     {
+                                         this.func_175903_a(p_180709_1_, blockpos, block.func_176223_P().func_177226_a(BlockHugeMushroom.field_176380_a, blockhugemushroom$enumtype));
+                                     }
+@@ -213,7 +214,7 @@
+                     {
+                         IBlockState iblockstate = p_180709_1_.func_180495_p(p_180709_3_.func_177981_b(i3));
+ 
+-                        if (!iblockstate.func_185913_b())
++                        if (iblockstate.func_177230_c().canBeReplacedByLeaves(iblockstate, p_180709_1_, p_180709_3_.func_177981_b(i3)))
                          {
-                             this.func_150516_a(p_76484_1_, p_76484_3_, p_76484_4_ + k1, p_76484_5_, Block.func_149729_e(Block.func_149682_b(Blocks.field_150420_aW) + l), 10);
+                             this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(i3), block.func_176223_P().func_177226_a(BlockHugeMushroom.field_176380_a, BlockHugeMushroom.EnumType.STEM));
                          }

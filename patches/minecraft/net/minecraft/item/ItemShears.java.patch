@@ -1,65 +1,40 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemShears.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemShears.java
-@@ -1,11 +1,20 @@
- package net.minecraft.item;
+@@ -22,7 +22,7 @@
+     {
+         p_179218_1_.func_77972_a(1, p_179218_5_);
+         Block block = p_179218_3_.func_177230_c();
+-        return p_179218_3_.func_185904_a() != Material.field_151584_j && block != Blocks.field_150321_G && block != Blocks.field_150329_H && block != Blocks.field_150395_bd && block != Blocks.field_150473_bD && block != Blocks.field_150325_L ? super.func_179218_a(p_179218_1_, p_179218_2_, p_179218_3_, p_179218_4_, p_179218_5_) : true;
++        return p_179218_3_.func_185904_a() != Material.field_151584_j && block != Blocks.field_150321_G && block != Blocks.field_150329_H && block != Blocks.field_150395_bd && block != Blocks.field_150473_bD && block != Blocks.field_150325_L && !(p_179218_3_ instanceof net.minecraftforge.common.IShearable) ? super.func_179218_a(p_179218_1_, p_179218_2_, p_179218_3_, p_179218_4_, p_179218_5_) : true;
+     }
  
-+import java.util.ArrayList;
-+import java.util.Random;
+     public boolean func_150897_b(IBlockState p_150897_1_)
+@@ -36,4 +36,71 @@
+         Block block = p_150893_2_.func_177230_c();
+         return block != Blocks.field_150321_G && p_150893_2_.func_185904_a() != Material.field_151584_j ? (block == Blocks.field_150325_L ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_)) : 15.0F;
+     }
 +
- import net.minecraft.block.Block;
- import net.minecraft.block.material.Material;
- import net.minecraft.creativetab.CreativeTabs;
-+import net.minecraft.enchantment.Enchantment;
-+import net.minecraft.enchantment.EnchantmentHelper;
- import net.minecraft.entity.EntityLivingBase;
-+import net.minecraft.entity.item.EntityItem;
-+import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.init.Blocks;
-+import net.minecraft.stats.StatList;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.IShearable;
- 
- public class ItemShears extends Item
- {
-@@ -20,13 +29,12 @@
- 
-     public boolean func_150894_a(ItemStack p_150894_1_, World p_150894_2_, Block p_150894_3_, int p_150894_4_, int p_150894_5_, int p_150894_6_, EntityLivingBase p_150894_7_)
-     {
--        if (p_150894_3_.func_149688_o() != Material.field_151584_j && p_150894_3_ != Blocks.field_150321_G && p_150894_3_ != Blocks.field_150329_H && p_150894_3_ != Blocks.field_150395_bd && p_150894_3_ != Blocks.field_150473_bD)
-+        if (p_150894_3_.func_149688_o() != Material.field_151584_j && p_150894_3_ != Blocks.field_150321_G && p_150894_3_ != Blocks.field_150329_H && p_150894_3_ != Blocks.field_150395_bd && p_150894_3_ != Blocks.field_150473_bD && !(p_150894_3_ instanceof IShearable))
-         {
-             return super.func_150894_a(p_150894_1_, p_150894_2_, p_150894_3_, p_150894_4_, p_150894_5_, p_150894_6_, p_150894_7_);
-         }
-         else
-         {
--            p_150894_1_.func_77972_a(1, p_150894_7_);
-             return true;
-         }
-     }
-@@ -40,4 +48,69 @@
-     {
-         return p_150893_2_ != Blocks.field_150321_G && p_150893_2_.func_149688_o() != Material.field_151584_j ? (p_150893_2_ == Blocks.field_150325_L ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_)) : 15.0F;
-     }
 +
 +    @Override
-+    public boolean func_111207_a(ItemStack itemstack, EntityPlayer player, EntityLivingBase entity)
++    public boolean func_111207_a(ItemStack itemstack, net.minecraft.entity.player.EntityPlayer player, EntityLivingBase entity, net.minecraft.util.EnumHand hand)
 +    {
 +        if (entity.field_70170_p.field_72995_K)
 +        {
 +            return false;
 +        }
-+        if (entity instanceof IShearable)
++        if (entity instanceof net.minecraftforge.common.IShearable)
 +        {
-+            IShearable target = (IShearable)entity;
-+            if (target.isShearable(itemstack, entity.field_70170_p, (int)entity.field_70165_t, (int)entity.field_70163_u, (int)entity.field_70161_v))
++            net.minecraftforge.common.IShearable target = (net.minecraftforge.common.IShearable)entity;
++            BlockPos pos = new BlockPos(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v);
++            if (target.isShearable(itemstack, entity.field_70170_p, pos))
 +            {
-+                ArrayList<ItemStack> drops = target.onSheared(itemstack, entity.field_70170_p, (int)entity.field_70165_t, (int)entity.field_70163_u, (int)entity.field_70161_v,
-+                        EnchantmentHelper.func_77506_a(Enchantment.field_77346_s.field_77352_x, itemstack));
++                java.util.List<ItemStack> drops = target.onSheared(itemstack, entity.field_70170_p, pos,
++                        net.minecraft.enchantment.EnchantmentHelper.func_77506_a(net.minecraft.init.Enchantments.field_185308_t, itemstack));
 +
-+                Random rand = new Random();
++                java.util.Random rand = new java.util.Random();
 +                for(ItemStack stack : drops)
 +                {
-+                    EntityItem ent = entity.func_70099_a(stack, 1.0F);
++                    net.minecraft.entity.item.EntityItem ent = entity.func_70099_a(stack, 1.0F);
 +                    ent.field_70181_x += rand.nextFloat() * 0.05F;
 +                    ent.field_70159_w += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
 +                    ent.field_70179_y += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
@@ -72,21 +47,21 @@
 +    }
 +
 +    @Override
-+    public boolean onBlockStartBreak(ItemStack itemstack, int x, int y, int z, EntityPlayer player)
++    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, net.minecraft.entity.player.EntityPlayer player)
 +    {
-+        if (player.field_70170_p.field_72995_K)
++        if (player.field_70170_p.field_72995_K || player.field_71075_bZ.field_75098_d)
 +        {
 +            return false;
 +        }
-+        Block block = player.field_70170_p.func_147439_a(x, y, z);
-+        if (block instanceof IShearable)
++        Block block = player.field_70170_p.func_180495_p(pos).func_177230_c();
++        if (block instanceof net.minecraftforge.common.IShearable)
 +        {
-+            IShearable target = (IShearable)block;
-+            if (target.isShearable(itemstack, player.field_70170_p, x, y, z))
++            net.minecraftforge.common.IShearable target = (net.minecraftforge.common.IShearable)block;
++            if (target.isShearable(itemstack, player.field_70170_p, pos))
 +            {
-+                ArrayList<ItemStack> drops = target.onSheared(itemstack, player.field_70170_p, x, y, z,
-+                        EnchantmentHelper.func_77506_a(Enchantment.field_77346_s.field_77352_x, itemstack));
-+                Random rand = new Random();
++                java.util.List<ItemStack> drops = target.onSheared(itemstack, player.field_70170_p, pos,
++                        net.minecraft.enchantment.EnchantmentHelper.func_77506_a(net.minecraft.init.Enchantments.field_185308_t, itemstack));
++                java.util.Random rand = new java.util.Random();
 +
 +                for(ItemStack stack : drops)
 +                {
@@ -94,13 +69,13 @@
 +                    double d  = (double)(rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 +                    double d1 = (double)(rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 +                    double d2 = (double)(rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    EntityItem entityitem = new EntityItem(player.field_70170_p, (double)x + d, (double)y + d1, (double)z + d2, stack);
-+                    entityitem.field_145804_b = 10;
++                    net.minecraft.entity.item.EntityItem entityitem = new net.minecraft.entity.item.EntityItem(player.field_70170_p, (double)pos.func_177958_n() + d, (double)pos.func_177956_o() + d1, (double)pos.func_177952_p() + d2, stack);
++                    entityitem.func_174869_p();
 +                    player.field_70170_p.func_72838_d(entityitem);
 +                }
 +
 +                itemstack.func_77972_a(1, player);
-+                player.func_71064_a(StatList.field_75934_C[Block.func_149682_b(block)], 1);
++                player.func_71029_a(net.minecraft.stats.StatList.func_188055_a(block));
 +            }
 +        }
 +        return false;

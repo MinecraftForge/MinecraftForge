@@ -1,10 +1,34 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.living;
 
-import cpw.mods.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * ZombieEvent is fired whenever a zombie is spawned for aid.
@@ -22,15 +46,15 @@ public class ZombieEvent extends EntityEvent {
 
     public EntityZombie getSummoner()
     {
-        return (EntityZombie) entity;
+        return (EntityZombie) getEntity();
     }
     
     /**
      * SummonAidEvent is fired when a Zombie Entity is summoned.
      * This event is fired whenever a Zombie Entity is summoned in 
-     * EntityZombie#attackEntityFrom(DamageSource, float).
+     * {@link EntityZombie#attackEntityFrom(DamageSource, float)}.
      * 
-     * This event is fired via the {@link ForgeHooks#fireZombieSummonAid(EntityZombie, World, int, int, int, EntityLivingBase, double)}.
+     * This event is fired via the {@link ForgeEventFactory#fireZombieSummonAid(EntityZombie, World, int, int, int, EntityLivingBase, double)}.
      * 
      * {@link #customSummonedAid} remains null, but can be populated with a custom EntityZombie which will be spawned.
      * {@link #world} contains the world that this summoning is occurring in.
@@ -50,17 +74,14 @@ public class ZombieEvent extends EntityEvent {
      **/
     @HasResult
     public static class SummonAidEvent extends ZombieEvent {
-        /**
-         * Populate this field to have a custom zombie instead of a normal zombie summoned
-         */
-        public EntityZombie customSummonedAid;
+        private EntityZombie customSummonedAid;
         
-        public final World world;
-        public final int x;
-        public final int y;
-        public final int z;
-        public final EntityLivingBase attacker;
-        public final double summonChance;
+        private final World world;
+        private final int x;
+        private final int y;
+        private final int z;
+        private final EntityLivingBase attacker;
+        private final double summonChance;
         
         public SummonAidEvent(EntityZombie entity, World world, int x, int y, int z, EntityLivingBase attacker, double summonChance)
         {
@@ -72,6 +93,17 @@ public class ZombieEvent extends EntityEvent {
             this.attacker = attacker;
             this.summonChance = summonChance;
         }
-        
+
+        /**
+         * Populate this field to have a custom zombie instead of a normal zombie summoned
+         */
+        public EntityZombie getCustomSummonedAid() { return customSummonedAid; }
+        public void setCustomSummonedAid(EntityZombie customSummonedAid) { this.customSummonedAid = customSummonedAid; }
+        public World getWorld() { return world; }
+        public int getX() { return x; }
+        public int getY() { return y; }
+        public int getZ() { return z; }
+        public EntityLivingBase getAttacker() { return attacker; }
+        public double getSummonChance() { return summonChance; }
     }
 }

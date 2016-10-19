@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -249,7 +249,7 @@
+@@ -108,7 +108,7 @@
      {
          if (this.field_149764_J == Material.field_151573_f)
          {
@@ -9,12 +9,21 @@
          }
          else
          {
-@@ -367,7 +367,7 @@
+@@ -176,7 +176,7 @@
+                 flag1 = true;
+             }
  
-     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+-            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).func_185896_q())
++            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).isSideSolid(p_189540_2_,  p_189540_3_.func_177977_b(), EnumFacing.UP))
+             {
+                 p_189540_2_.func_175698_g(p_189540_3_);
+                 flag1 = true;
+@@ -221,7 +221,7 @@
+ 
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return p_149742_3_ >= 255 ? false : World.func_147466_a(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_) && super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_ + 1, p_149742_4_);
-+        return p_149742_3_ >= p_149742_1_.func_72800_K() - 1 ? false : World.func_147466_a(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_) && super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_ + 1, p_149742_4_);
+-        return p_176196_2_.func_177956_o() >= 255 ? false : p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
++        return p_176196_2_.func_177956_o() >= p_176196_1_.func_72800_K() - 1 ? false : p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).isSideSolid(p_176196_1_,  p_176196_2_.func_177977_b(), EnumFacing.UP) && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
      }
  
-     public int func_149656_h()
+     public EnumPushReaction func_149656_h(IBlockState p_149656_1_)

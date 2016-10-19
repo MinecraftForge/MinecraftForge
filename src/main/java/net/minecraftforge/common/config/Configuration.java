@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 /**
  * This software is provided under the terms of the Minecraft Forge Public
  * License v1.0.
@@ -36,10 +55,13 @@ import java.util.regex.Pattern;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
-import cpw.mods.fml.client.config.GuiConfigEntries.IConfigEntry;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.relauncher.FMLInjectionData;
+import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.GuiConfigEntries;
+import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
+import net.minecraftforge.fml.client.config.IConfigElement;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.relauncher.FMLInjectionData;
 
 /**
  * This class offers advanced configurations capabilities, allowing to provide
@@ -48,6 +70,7 @@ import cpw.mods.fml.relauncher.FMLInjectionData;
 public class Configuration
 {
     public static final String CATEGORY_GENERAL = "general";
+    public static final String CATEGORY_CLIENT = "client";
     public static final String ALLOWED_CHARS = "._-";
     public static final String DEFAULT_ENCODING = "UTF-8";
     public static final String CATEGORY_SPLITTER = ".";
@@ -86,11 +109,11 @@ public class Configuration
     {
         this(file, null);
     }
-    
+
     /**
      * Create a configuration file for the file given in parameter with the provided config version number.
      */
-    public Configuration(File file, String configVersion)
+    private void runConfiguration(File file, String configVersion)
     {
         this.file = file;
         this.definedConfigVersion = configVersion;
@@ -110,29 +133,34 @@ public class Configuration
             }
             catch (Throwable e)
             {
-                File fileBak = new File(file.getAbsolutePath() + "_" + 
+                File fileBak = new File(file.getAbsolutePath() + "_" +
                         new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".errored");
                 FMLLog.severe("An exception occurred while loading config file %s. This file will be renamed to %s " +
-                		"and a new config file will be generated.", file.getName(), fileBak.getName());
+                        "and a new config file will be generated.", file.getName(), fileBak.getName());
                 e.printStackTrace();
-                
+
                 file.renameTo(fileBak);
                 load();
             }
         }
     }
 
+    public Configuration(File file, String configVersion)
+    {
+        runConfiguration(file, configVersion);
+    }
+
     public Configuration(File file, String configVersion, boolean caseSensitiveCustomCategories)
     {
-        this(file, configVersion);
         this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
+        runConfiguration(file, configVersion);
     }
 
     public Configuration(File file, boolean caseSensitiveCustomCategories)
     {
         this(file, null, caseSensitiveCustomCategories);
     }
-    
+
     @Override
     public String toString()
     {
@@ -148,16 +176,16 @@ public class Configuration
     {
         return this.loadedConfigVersion;
     }
-    
+
     /******************************************************************************************************************
-     * 
+     *
      * BOOLEAN gets
-     * 
+     *
      *****************************************************************************************************************/
-    
+
     /**
      * Gets a boolean Property object without a comment using the default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -165,12 +193,12 @@ public class Configuration
      */
     public Property get(String category, String key, boolean defaultValue)
     {
-        return get(category, key, defaultValue, (String) null);
+        return get(category, key, defaultValue, null);
     }
 
     /**
      * Gets a boolean Property object with a comment using the default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -181,18 +209,18 @@ public class Configuration
     {
         Property prop = get(category, key, Boolean.toString(defaultValue), comment, BOOLEAN);
         prop.setDefaultValue(Boolean.toString(defaultValue));
-        
+
         if (!prop.isBooleanValue())
         {
             prop.setValue(defaultValue);
         }
         return prop;
-        
+
     }
 
     /**
      * Gets a boolean array Property without a comment using the default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -200,12 +228,12 @@ public class Configuration
      */
     public Property get(String category, String key, boolean[] defaultValues)
     {
-        return get(category, key, defaultValues, (String) null);
+        return get(category, key, defaultValues, null);
     }
 
     /**
      * Gets a boolean array Property with a comment using the default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -216,10 +244,10 @@ public class Configuration
     {
         return get(category, key, defaultValues, comment, false, -1);
     }
-    
+
     /**
      * Gets a boolean array Property with all settings defined.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -237,29 +265,29 @@ public class Configuration
         {
             values[i] = Boolean.toString(defaultValues[i]);
         }
-        
+
         Property prop = get(category, key, values, comment, BOOLEAN);
         prop.setDefaultValues(values);
         prop.setIsListLengthFixed(isListLengthFixed);
         prop.setMaxListLength(maxListLength);
-        
+
         if (!prop.isBooleanList())
         {
             prop.setValues(values);
         }
-        
+
         return prop;
     }
 
     /* ****************************************************************************************************************
-     * 
+     *
      * INTEGER gets
-     * 
+     *
      *****************************************************************************************************************/
-    
+
     /**
      * Gets an integer Property object without a comment using default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -267,12 +295,12 @@ public class Configuration
      */
     public Property get(String category, String key, int defaultValue)
     {
-        return get(category, key, defaultValue, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return get(category, key, defaultValue, null, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     /**
      * Gets an integer Property object with a comment using default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -286,7 +314,7 @@ public class Configuration
 
     /**
      * Gets an integer Property object with the defined comment, minimum and maximum bounds.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -301,7 +329,7 @@ public class Configuration
         prop.setDefaultValue(Integer.toString(defaultValue));
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
-        
+
         if (!prop.isIntValue())
         {
             prop.setValue(defaultValue);
@@ -311,7 +339,7 @@ public class Configuration
 
     /**
      * Gets an integer array Property object without a comment using default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -320,12 +348,12 @@ public class Configuration
      */
     public Property get(String category, String key, int[] defaultValues)
     {
-        return get(category, key, defaultValues, (String) null);
+        return get(category, key, defaultValues, null);
     }
 
     /**
      * Gets an integer array Property object with a comment using default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -340,7 +368,7 @@ public class Configuration
 
     /**
      * Gets an integer array Property object with the defined comment, minimum and maximum bounds.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -354,10 +382,10 @@ public class Configuration
     {
         return get(category, key, defaultValues, comment, minValue, maxValue, false, -1);
     }
-    
+
     /**
      * Gets an integer array Property object with all settings defined.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -384,7 +412,7 @@ public class Configuration
         prop.setMaxValue(maxValue);
         prop.setIsListLengthFixed(isListLengthFixed);
         prop.setMaxListLength(maxListLength);
-        
+
         if (!prop.isIntList())
         {
             prop.setValues(values);
@@ -394,14 +422,14 @@ public class Configuration
     }
 
     /* ****************************************************************************************************************
-     * 
+     *
      * DOUBLE gets
-     * 
+     *
      *****************************************************************************************************************/
-    
+
     /**
      * Gets a double Property object without a comment using default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -409,12 +437,12 @@ public class Configuration
      */
     public Property get(String category, String key, double defaultValue)
     {
-        return get(category, key, defaultValue, (String) null);
+        return get(category, key, defaultValue, null);
     }
 
     /**
      * Gets a double Property object with a comment using default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -425,10 +453,10 @@ public class Configuration
     {
         return get(category, key, defaultValue, comment, -Double.MAX_VALUE, Double.MAX_VALUE);
     }
-    
+
     /**
      * Gets a double Property object with the defined comment, minimum and maximum bounds
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -443,7 +471,7 @@ public class Configuration
         prop.setDefaultValue(Double.toString(defaultValue));
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
-        
+
         if (!prop.isDoubleValue())
         {
             prop.setValue(defaultValue);
@@ -453,7 +481,7 @@ public class Configuration
 
     /**
      * Gets a double array Property object without a comment using default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -467,7 +495,7 @@ public class Configuration
 
     /**
      * Gets a double array Property object without a comment using default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -479,10 +507,10 @@ public class Configuration
     {
         return get(category, key, defaultValues, comment, -Double.MAX_VALUE, Double.MAX_VALUE, false, -1);
     }
-    
+
     /**
      * Gets a double array Property object with the defined comment, minimum and maximum bounds.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -496,10 +524,10 @@ public class Configuration
     {
         return get(category, key, defaultValues, comment, minValue, maxValue, false, -1);
     }
-    
+
     /**
      * Gets a double array Property object with all settings defined.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -520,14 +548,14 @@ public class Configuration
             values[i] = Double.toString(defaultValues[i]);
         }
 
-        
+
         Property prop = get(category, key, values, comment, DOUBLE);
         prop.setDefaultValues(values);
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
         prop.setIsListLengthFixed(isListLengthFixed);
         prop.setMaxListLength(maxListLength);
-        
+
         if (!prop.isDoubleList())
         {
             prop.setValues(values);
@@ -537,14 +565,14 @@ public class Configuration
     }
 
     /* ****************************************************************************************************************
-     * 
+     *
      * STRING gets
-     * 
+     *
      *****************************************************************************************************************/
-    
+
     /**
      * Gets a string Property without a comment using the default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -552,12 +580,12 @@ public class Configuration
      */
     public Property get(String category, String key, String defaultValue)
     {
-        return get(category, key, defaultValue, (String) null);
+        return get(category, key, defaultValue, null);
     }
-    
+
     /**
      * Gets a string Property with a comment using the default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -568,10 +596,10 @@ public class Configuration
     {
         return get(category, key, defaultValue, comment, STRING);
     }
-    
+
     /**
      * Gets a string Property with a comment using the defined validationPattern and otherwise default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -585,10 +613,10 @@ public class Configuration
         prop.setValidationPattern(validationPattern);
         return prop;
     }
-    
+
     /**
      * Gets a string Property with a comment using the defined validValues array and otherwise default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -603,10 +631,10 @@ public class Configuration
         prop.setValidValues(validValues);
         return prop;
     }
-    
+
     /**
      * Gets a string array Property without a comment using the default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -614,12 +642,12 @@ public class Configuration
      */
     public Property get(String category, String key, String[] defaultValues)
     {
-        return get(category, key, defaultValues, (String) null, false, -1, (Pattern) null);
+        return get(category, key, defaultValues, null, false, -1, null);
     }
-    
+
     /**
      * Gets a string array Property with a comment using the default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -628,12 +656,12 @@ public class Configuration
      */
     public Property get(String category, String key, String[] defaultValues, String comment)
     {
-        return get(category, key, defaultValues, comment, false, -1, (Pattern) null);
+        return get(category, key, defaultValues, comment, false, -1, null);
     }
-    
+
     /**
      * Gets a string array Property with a comment using the defined validationPattern and otherwise default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -645,10 +673,10 @@ public class Configuration
     {
         return get(category, key, defaultValues, comment, false, -1, validationPattern);
     }
-    
+
     /**
      * Gets a string array Property with a comment with all settings defined.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -668,16 +696,16 @@ public class Configuration
         prop.setValidationPattern(validationPattern);
         return prop;
     }
-    
+
     /* ****************************************************************************************************************
-     * 
+     *
      * GENERIC gets
-     * 
+     *
      *****************************************************************************************************************/
-    
+
     /**
      * Gets a Property object of the specified type using default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValue the default value
@@ -687,11 +715,6 @@ public class Configuration
      */
     public Property get(String category, String key, String defaultValue, String comment, Property.Type type)
     {
-        if (!caseSensitiveCustomCategories)
-        {
-            category = category.toLowerCase(Locale.ENGLISH);
-        }
-
         ConfigCategory cat = getCategory(category);
 
         if (cat.containsKey(key))
@@ -705,16 +728,16 @@ public class Configuration
             }
 
             prop.setDefaultValue(defaultValue);
-            prop.comment = comment;
+            prop.setComment(comment);
             return prop;
         }
         else if (defaultValue != null)
         {
             Property prop = new Property(key, defaultValue, type);
-            prop.setValue(defaultValue); //Set and mark as dirty to signify it should save 
+            prop.setValue(defaultValue); //Set and mark as dirty to signify it should save
             cat.put(key, prop);
             prop.setDefaultValue(defaultValue);
-            prop.comment = comment;
+            prop.setComment(comment);
             return prop;
         }
         else
@@ -725,7 +748,7 @@ public class Configuration
 
     /**
      * Gets a list (array) Property object of the specified type using default settings.
-     * 
+     *
      * @param category the config category
      * @param key the Property key value
      * @param defaultValues an array containing the default values
@@ -735,11 +758,6 @@ public class Configuration
      */
     public Property get(String category, String key, String[] defaultValues, String comment, Property.Type type)
     {
-        if (!caseSensitiveCustomCategories)
-        {
-            category = category.toLowerCase(Locale.ENGLISH);
-        }
-
         ConfigCategory cat = getCategory(category);
 
         if (cat.containsKey(key))
@@ -753,7 +771,7 @@ public class Configuration
             }
 
             prop.setDefaultValues(defaultValues);
-            prop.comment = comment;
+            prop.setComment(comment);
 
             return prop;
         }
@@ -761,7 +779,7 @@ public class Configuration
         {
             Property prop = new Property(key, defaultValues, type);
             prop.setDefaultValues(defaultValues);
-            prop.comment = comment;
+            prop.setComment(comment);
             cat.put(key, prop);
             return prop;
         }
@@ -772,18 +790,22 @@ public class Configuration
     }
 
     /* ****************************************************************************************************************
-     * 
+     *
      * Other methods
-     * 
+     *
      *************************************************************************************************************** */
-    
+
     public boolean hasCategory(String category)
     {
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
         return categories.get(category) != null;
     }
 
     public boolean hasKey(String category, String key)
     {
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
         ConfigCategory cat = categories.get(category);
         return cat != null && cat.containsKey(key);
     }
@@ -876,7 +898,7 @@ public class Configuration
                         }
                         else if (Character.isWhitespace(line.charAt(i)))
                         {
-                            // ignore space charaters
+                            // ignore space characters
                         }
                         else
                         {
@@ -905,6 +927,8 @@ public class Configuration
                                     if (tmpList != null) // allow special characters as part of string lists
                                         break;
                                     name = line.substring(nameStart, nameEnd + 1);
+                                    if (!caseSensitiveCustomCategories)
+                                        name = name.toLowerCase(Locale.ENGLISH);
                                     String qualifiedName = ConfigCategory.getQualifiedName(name, currentCat);
 
                                     ConfigCategory cat = categories.get(qualifiedName);
@@ -926,7 +950,7 @@ public class Configuration
                                         break;
                                     if (currentCat == null)
                                     {
-                                        throw new RuntimeException(String.format("Config file corrupt, attepted to close to many categories '%s:%d'", fileName, lineNum));
+                                        throw new RuntimeException(String.format("Config file corrupt, attempted to close to many categories '%s:%d'", fileName, lineNum));
                                     }
                                     currentCat = currentCat.parent;
                                     break;
@@ -963,17 +987,17 @@ public class Configuration
                                     else if (i + 1 == line.length())
                                     {
                                         name = line.substring(nameStart, nameEnd + 1);
-                                        
+
                                         if (currentCat == null)
                                         {
                                             throw new RuntimeException(String.format("'%s' has no scope in '%s:%d'", name, fileName, lineNum));
                                         }
-                                        
+
                                         tmpList = new ArrayList<String>();
-                                        
+
                                         skip = true;
                                     }
-                                    
+
                                     break;
 
                                 case '>':
@@ -994,17 +1018,17 @@ public class Configuration
                                 case '~':
                                     if (tmpList != null) // allow special characters as part of string lists
                                         break;
-                                    
+
                                     if (line.startsWith(CONFIG_VERSION_MARKER))
                                     {
                                         int colon = line.indexOf(':');
                                         if (colon != -1)
                                             loadedConfigVersion = line.substring(colon + 1).trim();
-                                        
+
                                         skip = true;
                                     }
                                     break;
-                                
+
                                 default:
                                     if (tmpList != null) // allow special characters as part of string lists
                                         break;
@@ -1079,7 +1103,7 @@ public class Configuration
 
                 if (this.definedConfigVersion != null)
                     buffer.write(CONFIG_VERSION_MARKER + ": " + this.definedConfigVersion + NEW_LINE + NEW_LINE);
-                
+
                 if (children.isEmpty())
                 {
                     save(buffer);
@@ -1105,7 +1129,7 @@ public class Configuration
     }
 
     private void save(BufferedWriter out) throws IOException
-    {        
+    {
         for (ConfigCategory cat : categories.values())
         {
             if (!cat.isChild())
@@ -1118,6 +1142,9 @@ public class Configuration
 
     public ConfigCategory getCategory(String category)
     {
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
+
         ConfigCategory ret = categories.get(category);
 
         if (ret == null)
@@ -1181,14 +1208,12 @@ public class Configuration
 
     /**
      * Adds a comment to the specified ConfigCategory object
-     * 
+     *
      * @param category the config category
      * @param comment a String comment
      */
     public Configuration setCategoryComment(String category, String comment)
     {
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setComment(comment);
         return this;
     }
@@ -1197,49 +1222,48 @@ public class Configuration
     {
         this.setCategoryComment(category, comment);
     }
-    
+
     /**
      * Adds a language key to the specified ConfigCategory object
-     * 
+     *
      * @param category the config category
      * @param langKey a language key string such as configcategory.general
      */
     public Configuration setCategoryLanguageKey(String category, String langKey)
     {
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setLanguageKey(langKey);
         return this;
     }
-    
+
     /**
      * Sets the custom IConfigEntry class that should be used in place of the standard entry class (which is just a button that
-     * navigates into the category). This class MUST provide a constructor with the following parameter types: {@code GuiConfig} (the parent
-     * GuiConfig screen will be provided), {@code GuiPropertyList} (the parent GuiPropertyList will be provided), {@code IConfigElement}
+     * navigates into the category). This class MUST provide a constructor with the following parameter types: {@link GuiConfig} (the parent
+     * GuiConfig screen will be provided), {@link GuiConfigEntries} (the parent GuiConfigEntries will be provided), {@link IConfigElement}
      * (the IConfigElement for this Property will be provided).
+     *
+     * @see GuiConfigEntries.ListEntryBase
+     * @see GuiConfigEntries.StringEntry
+     * @see GuiConfigEntries.BooleanEntry
+     * @see GuiConfigEntries.DoubleEntry
+     * @see GuiConfigEntries.IntegerEntry
      */
     public Configuration setCategoryConfigEntryClass(String category, Class<? extends IConfigEntry> clazz)
     {
-        
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setConfigEntryClass(clazz);
         return this;
     }
-    
+
     /**
      * Sets the flag for whether or not this category can be edited while a world is running. Care should be taken to ensure
-     * that only properties that are truly dynamic can be changed from the in-game options menu. Only set this flag to 
+     * that only properties that are truly dynamic can be changed from the in-game options menu. Only set this flag to
      * true if all child properties/categories are unable to be modified while a world is running.
      */
     public Configuration setCategoryRequiresWorldRestart(String category, boolean requiresWorldRestart)
     {
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setRequiresWorldRestart(requiresWorldRestart);
         return this;
     }
-    
+
     /**
      * Sets whether or not this ConfigCategory requires Minecraft to be restarted when changed.
      * Defaults to false. Only set this flag to true if ALL child properties/categories require
@@ -1248,24 +1272,20 @@ public class Configuration
      */
     public Configuration setCategoryRequiresMcRestart(String category, boolean requiresMcRestart)
     {
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setRequiresMcRestart(requiresMcRestart);
         return this;
     }
-    
+
     /**
      * Sets the order that direct child properties of this config category will be written to the config file and will be displayed in
      * config GUIs.
      */
     public Configuration setCategoryPropertyOrder(String category, List<String> propOrder)
     {
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setPropertyOrder(propOrder);
         return this;
     }
-    
+
     private void setChild(String name, Configuration child)
     {
         if (!children.containsKey(name))
@@ -1291,6 +1311,7 @@ public class Configuration
     public static class UnicodeInputStreamReader extends Reader
     {
         private final InputStreamReader input;
+        @SuppressWarnings("unused")
         private final String defaultEnc;
 
         public UnicodeInputStreamReader(InputStream source, String encoding) throws IOException
@@ -1328,7 +1349,7 @@ public class Configuration
                 size = 4;
             }
             else if (bom32 == 0xFFFE0000) //This will never happen as it'll be caught by UTF-16LE,
-            {                             //but if anyone ever runs across a 32LE file, i'd like to disect it.
+            {                             //but if anyone ever runs across a 32LE file, i'd like to dissect it.
                 enc = "UTF-32LE";
                 size = 4;
             }
@@ -1362,7 +1383,7 @@ public class Configuration
     public boolean hasChanged()
     {
         if (changed) return true;
-        
+
         for (ConfigCategory cat : categories.values())
         {
             if (cat.hasChanged()) return true;
@@ -1394,10 +1415,10 @@ public class Configuration
     {
         return ImmutableSet.copyOf(categories.keySet());
     }
-    
+
     /**
      * Renames a property in a given category.
-     * 
+     *
      * @param category the category in which the property resides
      * @param oldPropName the existing property name
      * @param newPropName the new property name
@@ -1416,10 +1437,10 @@ public class Configuration
         }
         return false;
     }
-    
+
     /**
      * Moves a property from one category to another.
-     * 
+     *
      * @param oldCategory the category the property currently resides in
      * @param propName the name of the property to move
      * @param newCategory the category the property should be moved to
@@ -1436,7 +1457,7 @@ public class Configuration
                 }
         return false;
     }
-    
+
     /**
      * Copies property objects from another Configuration object to this one using the list of category names. Properties that only exist in the
      * "from" object are ignored. Pass null for the ctgys array to include all categories.
@@ -1445,7 +1466,7 @@ public class Configuration
     {
         if (ctgys == null)
             ctgys = this.getCategoryNames().toArray(new String[this.getCategoryNames().size()]);
-        
+
         for (String ctgy : ctgys)
             if (fromConfig.hasCategory(ctgy) && this.hasCategory(ctgy))
             {
@@ -1456,10 +1477,10 @@ public class Configuration
                         thiscc.put(entry.getKey(), fromcc.get(entry.getKey()));
             }
     }
-    
+
     /**
      * Creates a string property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1470,10 +1491,10 @@ public class Configuration
     {
         return getString(name, category, defaultValue, comment, name, null);
     }
-    
+
     /**
      * Creates a string property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1485,10 +1506,10 @@ public class Configuration
     {
         return getString(name, category, defaultValue, comment, langKey, null);
     }
-    
+
     /**
      * Creates a string property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1499,10 +1520,10 @@ public class Configuration
     {
         return getString(name, category, defaultValue, comment, name, pattern);
     }
-    
+
     /**
      * Creates a string property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1515,13 +1536,13 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.setValidationPattern(pattern);
-        prop.comment = comment + " [default: " + defaultValue + "]";
+        prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getString();
     }
-    
+
     /**
      * Creates a string property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1533,10 +1554,10 @@ public class Configuration
     {
         return getString(name, category, defaultValue, comment, validValues, name);
     }
-    
+
     /**
      * Creates a string property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1550,27 +1571,27 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setValidValues(validValues);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [default: " + defaultValue + "]";
+        prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getString();
     }
-    
+
     /**
      * Creates a string list property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
-     * @param defaultValue Default value of the property.
+     * @param defaultValues Default values of the property.
      * @param comment A brief description what the property does.
      * @return The value of the new string property.
      */
     public String[] getStringList(String name, String category, String[] defaultValues, String comment)
     {
-        return getStringList(name, category, defaultValues, comment, (String[]) null, name);
+        return getStringList(name, category, defaultValues, comment, null, name);
     }
-    
+
     /**
      * Creates a string list property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1581,10 +1602,10 @@ public class Configuration
     {
         return getStringList(name, category, defaultValue, comment, validValues, name);
     }
-    
+
     /**
      * Creates a string list property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1596,13 +1617,13 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.setValidValues(validValues);
-        prop.comment = comment + " [default: " + prop.getDefault() + "]";
+        prop.setComment(comment + " [default: " + prop.getDefault() + "]");
         return prop.getStringList();
     }
-    
+
     /**
      * Creates a boolean property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1613,10 +1634,10 @@ public class Configuration
     {
         return getBoolean(name, category, defaultValue, comment, name);
     }
-    
+
     /**
      * Creates a boolean property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1628,13 +1649,13 @@ public class Configuration
     {
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [default: " + defaultValue + "]";
+        prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getBoolean(defaultValue);
     }
-    
+
     /**
      * Creates a integer property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1647,10 +1668,10 @@ public class Configuration
     {
         return getInt(name, category, defaultValue, minValue, maxValue, comment, name);
     }
-    
+
     /**
      * Creates a integer property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1664,15 +1685,15 @@ public class Configuration
     {
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
+        prop.setComment(comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]");
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
         return prop.getInt(defaultValue) < minValue ? minValue : (prop.getInt(defaultValue) > maxValue ? maxValue : prop.getInt(defaultValue));
     }
-    
+
     /**
      * Creates a float property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1685,10 +1706,10 @@ public class Configuration
     {
         return getFloat(name, category, defaultValue, minValue, maxValue, comment, name);
     }
-    
+
     /**
      * Creates a float property.
-     * 
+     *
      * @param name Name of the property.
      * @param category Category of the property.
      * @param defaultValue Default value of the property.
@@ -1702,7 +1723,7 @@ public class Configuration
     {
         Property prop = this.get(category, name, Float.toString(defaultValue), name);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
+        prop.setComment(comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]");
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
         try
@@ -1715,7 +1736,7 @@ public class Configuration
         }
         return defaultValue;
     }
-    
+
     public File getConfigFile()
     {
         return file;

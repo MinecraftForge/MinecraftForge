@@ -1,0 +1,24 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "inventory": {
+            "model": "forge:item-layer",
+            "transform": "forge:default-tool",
+            /*"transform": {
+                "thirdperson": {
+                    "translation": [ 0, 0.078125, -0.21875 ],
+                    "rotation": [ {"y": -90}, {"z": -35} ],
+                    "scale": 0.85
+                },
+                "firstperson": {
+                    "translation": [ 0, 0.25, 0.125 ],
+                    "rotation": [ {"y": 135}, {"z": 25} ],
+                    "scale": 1.7
+                }
+            },*/
+            "textures": {
+                "layer0": "items/diamond_pickaxe"
+            }
+        }
+    }
+}

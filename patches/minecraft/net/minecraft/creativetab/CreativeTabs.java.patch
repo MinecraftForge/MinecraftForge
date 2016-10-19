@@ -1,12 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/creativetab/CreativeTabs.java
 +++ ../src-work/minecraft/net/minecraft/creativetab/CreativeTabs.java
-@@ -138,8 +138,22 @@
+@@ -125,8 +125,22 @@
+     @SideOnly(Side.CLIENT)
      private ItemStack field_151245_t;
-     private static final String __OBFID = "CL_00000005";
  
-+    public CreativeTabs(String lable)
++    public CreativeTabs(String label)
 +    {
-+        this(getNextID(), lable);
++        this(getNextID(), label);
 +    }
 +
      public CreativeTabs(int p_i1853_1_, String p_i1853_2_)
@@ -23,7 +23,7 @@
          this.field_78033_n = p_i1853_1_;
          this.field_78034_o = p_i1853_2_;
          field_78032_a[p_i1853_1_] = this;
-@@ -222,12 +236,20 @@
+@@ -209,12 +223,20 @@
      @SideOnly(Side.CLIENT)
      public int func_78020_k()
      {
@@ -44,17 +44,16 @@
          return this.field_78033_n < 6;
      }
  
-@@ -278,10 +300,18 @@
+@@ -256,10 +278,17 @@
+     {
+         for (Item item : Item.field_150901_e)
          {
-             Item item = (Item)iterator.next();
- 
 -            if (item != null && item.func_77640_w() == this)
 +            if (item == null)
              {
 -                item.func_150895_a(item, this, p_78018_1_);
 +                continue;
              }
-+
 +            for (CreativeTabs tab : item.getCreativeTabs())
 +            {
 +                if (tab == this)
@@ -65,7 +64,7 @@
          }
  
          if (this.func_111225_m() != null)
-@@ -319,4 +349,39 @@
+@@ -292,4 +321,39 @@
              }
          }
      }

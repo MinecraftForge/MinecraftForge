@@ -1,58 +1,50 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOre.java
-@@ -7,6 +7,7 @@
- import net.minecraft.init.Items;
- import net.minecraft.item.Item;
- import net.minecraft.util.MathHelper;
-+import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
- 
- public class BlockOre extends Block
-@@ -51,34 +52,40 @@
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+@@ -61,34 +61,39 @@
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
+         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
+-
+-        if (this.func_180660_a(p_180653_3_, p_180653_1_.field_73012_v, p_180653_5_) != Item.func_150898_a(this))
 +    }
- 
--        if (this.func_149650_a(p_149690_5_, p_149690_1_.field_73012_v, p_149690_7_) != Item.func_150898_a(this))
-+    private Random rand = new Random();
 +    @Override
-+    public int getExpDrop(IBlockAccess p_149690_1_, int p_149690_5_, int p_149690_7_)
++    public int getExpDrop(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        if (this.func_149650_a(p_149690_5_, rand, p_149690_7_) != Item.func_150898_a(this))
++        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
++        if (this.func_180660_a(state, rand, fortune) != Item.func_150898_a(this))
          {
-             int j1 = 0;
+             int i = 0;
  
              if (this == Blocks.field_150365_q)
              {
--                j1 = MathHelper.func_76136_a(p_149690_1_.field_73012_v, 0, 2);
-+                j1 = MathHelper.func_76136_a(rand, 0, 2);
+-                i = MathHelper.func_76136_a(p_180653_1_.field_73012_v, 0, 2);
++                i = MathHelper.func_76136_a(rand, 0, 2);
              }
              else if (this == Blocks.field_150482_ag)
              {
--                j1 = MathHelper.func_76136_a(p_149690_1_.field_73012_v, 3, 7);
-+                j1 = MathHelper.func_76136_a(rand, 3, 7);
+-                i = MathHelper.func_76136_a(p_180653_1_.field_73012_v, 3, 7);
++                i = MathHelper.func_76136_a(rand, 3, 7);
              }
              else if (this == Blocks.field_150412_bA)
              {
--                j1 = MathHelper.func_76136_a(p_149690_1_.field_73012_v, 3, 7);
-+                j1 = MathHelper.func_76136_a(rand, 3, 7);
+-                i = MathHelper.func_76136_a(p_180653_1_.field_73012_v, 3, 7);
++                i = MathHelper.func_76136_a(rand, 3, 7);
              }
              else if (this == Blocks.field_150369_x)
              {
--                j1 = MathHelper.func_76136_a(p_149690_1_.field_73012_v, 2, 5);
-+                j1 = MathHelper.func_76136_a(rand, 2, 5);
+-                i = MathHelper.func_76136_a(p_180653_1_.field_73012_v, 2, 5);
++                i = MathHelper.func_76136_a(rand, 2, 5);
              }
              else if (this == Blocks.field_150449_bY)
              {
--                j1 = MathHelper.func_76136_a(p_149690_1_.field_73012_v, 2, 5);
-+                j1 = MathHelper.func_76136_a(rand, 2, 5);
+-                i = MathHelper.func_76136_a(p_180653_1_.field_73012_v, 2, 5);
++                i = MathHelper.func_76136_a(rand, 2, 5);
              }
  
--            this.func_149657_c(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, j1);
-+            return j1;
+-            this.func_180637_b(p_180653_1_, p_180653_2_, i);
++            return i;
          }
 +        return 0;
      }
  
-     public int func_149692_a(int p_149692_1_)
+     public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)

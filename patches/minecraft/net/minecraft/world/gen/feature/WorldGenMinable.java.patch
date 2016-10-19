@@ -1,35 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
-@@ -12,6 +12,7 @@
-     private int field_76541_b;
-     private Block field_150518_c;
-     private static final String __OBFID = "CL_00000426";
-+    private int mineableBlockMeta;
- 
-     public WorldGenMinable(Block p_i45459_1_, int p_i45459_2_)
-     {
-@@ -25,6 +26,12 @@
-         this.field_150518_c = p_i45460_3_;
-     }
- 
-+    public WorldGenMinable(Block block, int meta, int number, Block target)
-+    {
-+        this(block, number, target);
-+        this.mineableBlockMeta = meta;
-+    }
-+
-     public boolean func_76484_a(World p_76484_1_, Random p_76484_2_, int p_76484_3_, int p_76484_4_, int p_76484_5_)
-     {
-         float f = p_76484_2_.nextFloat() * (float)Math.PI;
-@@ -66,9 +73,9 @@
-                             {
-                                 double d14 = ((double)i3 + 0.5D - d8) / (d10 / 2.0D);
- 
--                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && p_76484_1_.func_147439_a(k2, l2, i3) == this.field_150518_c)
-+                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && p_76484_1_.func_147439_a(k2, l2, i3).isReplaceableOreGen(p_76484_1_, k2, l2, i3, field_150518_c))
+@@ -73,7 +73,8 @@
                                  {
--                                    p_76484_1_.func_147465_d(k2, l2, i3, this.field_150519_a, 0, 2);
-+                                    p_76484_1_.func_147465_d(k2, l2, i3, this.field_150519_a, mineableBlockMeta, 2);
-                                 }
-                             }
-                         }
+                                     BlockPos blockpos = new BlockPos(l1, i2, j2);
+ 
+-                                    if (this.field_175919_c.apply(p_180709_1_.func_180495_p(blockpos)))
++                                    IBlockState state = p_180709_1_.func_180495_p(blockpos);
++                                    if (state.func_177230_c().isReplaceableOreGen(state, p_180709_1_, blockpos, this.field_175919_c))
+                                     {
+                                         p_180709_1_.func_180501_a(blockpos, this.field_175920_a, 2);
+                                     }

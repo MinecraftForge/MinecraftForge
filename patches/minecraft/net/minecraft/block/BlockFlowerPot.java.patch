@@ -1,53 +1,48 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFlowerPot.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFlowerPot.java
-@@ -2,6 +2,7 @@
+@@ -151,13 +151,6 @@
  
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.util.ArrayList;
- import java.util.Random;
- import net.minecraft.block.material.Material;
- import net.minecraft.entity.player.EntityPlayer;
-@@ -138,13 +139,6 @@
- 
-     public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
+     public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
--        TileEntityFlowerPot tileentityflowerpot = this.func_149929_e(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_);
+-        TileEntityFlowerPot tileentityflowerpot = this.func_176442_d(p_180663_1_, p_180663_2_);
 -
 -        if (tileentityflowerpot != null && tileentityflowerpot.func_145965_a() != null)
 -        {
--            this.func_149642_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, new ItemStack(tileentityflowerpot.func_145965_a(), 1, tileentityflowerpot.func_145966_b()));
+-            func_180635_a(p_180663_1_, p_180663_2_, new ItemStack(tileentityflowerpot.func_145965_a(), 1, tileentityflowerpot.func_145966_b()));
 -        }
 -
-         super.func_149749_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
+         super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
      }
  
-@@ -231,4 +225,28 @@
- 
-         return new TileEntityFlowerPot(Item.func_150898_a((Block)object), b0);
+@@ -379,6 +372,31 @@
+         return BlockRenderLayer.CUTOUT;
      }
+ 
 +
 +    /*============================FORGE START=====================================*/
 +    @Override
-+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        ArrayList<ItemStack> ret = super.getDrops(world, x, y, z, metadata, fortune);
-+        TileEntityFlowerPot te = this.func_149929_e(world, x, y, z);
++        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
++        TileEntityFlowerPot te = world.func_175625_s(pos) instanceof TileEntityFlowerPot ? (TileEntityFlowerPot)world.func_175625_s(pos) : null;
 +        if (te != null && te.func_145965_a() != null)
 +            ret.add(new ItemStack(te.func_145965_a(), 1, te.func_145966_b()));
 +        return ret;
 +    }
 +    @Override
-+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
++    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
 +    {
 +        if (willHarvest) return true; //If it will harvest, delay deletion of the block until after getDrops
-+        return super.removedByPlayer(world, player, x, y, z, willHarvest);
++        return super.removedByPlayer(state, world, pos, player, willHarvest);
 +    }
 +    @Override
-+    public void func_149636_a(World world, EntityPlayer player, int x, int y, int z, int meta)
++    public void func_180657_a(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack tool)
 +    {
-+        super.func_149636_a(world, player, x, y, z, meta);
-+        world.func_147468_f(x, y, z);
++        super.func_180657_a(world, player, pos, state, te, tool);
++        world.func_175698_g(pos);
 +    }
 +    /*===========================FORGE END==========================================*/
- }
++
+     public static enum EnumFlowerType implements IStringSerializable
+     {
+         EMPTY("empty"),

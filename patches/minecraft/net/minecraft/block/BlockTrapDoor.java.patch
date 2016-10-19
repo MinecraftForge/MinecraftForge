@@ -1,49 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
-@@ -11,9 +11,12 @@
- import net.minecraft.util.Vec3;
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.util.ForgeDirection;
- 
- public class BlockTrapDoor extends Block
- {
-+    /** Set this to allow trapdoors to remain free-floating */
-+    public static boolean disableValidation = false;
-     private static final String __OBFID = "CL_00000327";
- 
-     protected BlockTrapDoor(Material p_i45434_1_)
-@@ -163,7 +166,7 @@
-                 --i1;
-             }
- 
--            if (!func_150119_a(p_149695_1_.func_147439_a(i1, p_149695_3_, j1)))
-+            if (!(func_150119_a(p_149695_1_.func_147439_a(i1, p_149695_3_, j1)) || p_149695_1_.isSideSolid(i1, p_149695_3_, j1, ForgeDirection.getOrientation((l & 3) + 2))))
-             {
-                 p_149695_1_.func_147468_f(p_149695_2_, p_149695_3_, p_149695_4_);
-                 this.func_149697_b(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, l, 0);
-@@ -218,6 +221,7 @@
- 
-     public boolean func_149707_d(World p_149707_1_, int p_149707_2_, int p_149707_3_, int p_149707_4_, int p_149707_5_)
-     {
-+        if (disableValidation) return true;
-         if (p_149707_5_ == 0)
-         {
-             return false;
-@@ -248,7 +252,7 @@
-                 --p_149707_2_;
-             }
- 
--            return func_150119_a(p_149707_1_.func_147439_a(p_149707_2_, p_149707_3_, p_149707_4_));
-+            return func_150119_a(p_149707_1_.func_147439_a(p_149707_2_, p_149707_3_, p_149707_4_)) || p_149707_1_.isSideSolid(p_149707_2_, p_149707_3_, p_149707_4_, ForgeDirection.UP);
-         }
+@@ -240,6 +240,18 @@
+         return new BlockStateContainer(this, new IProperty[] {field_176284_a, field_176283_b, field_176285_M});
      }
  
-@@ -259,6 +263,7 @@
- 
-     private static boolean func_150119_a(Block p_150119_0_)
++    @Override
++    public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity)
++    {
++        if (state.func_177229_b(field_176283_b))
++        {
++            IBlockState down = world.func_180495_p(pos.func_177977_b());
++            if (down.func_177230_c() == net.minecraft.init.Blocks.field_150468_ap)
++                return down.func_177229_b(BlockLadder.field_176382_a) == state.func_177229_b(field_176284_a);
++        }
++        return false;
++    }
++
+     public static enum DoorHalf implements IStringSerializable
      {
-+        if (disableValidation) return true;
-         return p_150119_0_.field_149764_J.func_76218_k() && p_150119_0_.func_149686_d() || p_150119_0_ == Blocks.field_150426_aN || p_150119_0_ instanceof BlockSlab || p_150119_0_ instanceof BlockStairs;
-     }
- }
+         TOP("top"),

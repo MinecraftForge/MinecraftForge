@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        mavenLocal()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -12,66 +11,241 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
-
-configurations {
-    deployJars
-}
-
-import static net.minecraftforge.gradle.dev.ForgeDevPlugin.*
-
-apply plugin: 'maven'
-apply plugin: 'forgedev'
 
 repositories {
-    mavenLocal()
-    flatDir {
-        name "fileRepo"
-        dirs "repo"
-    }
+        maven {
+            name = "local"
+            url = "file:///home/cpw/projects/repo"
+        }
 }
 
+apply plugin: "maven"
+apply plugin: "net.minecraftforge.gradle.patcher"
+apply plugin: "net.minecraftforge.gradle.launch4j"
+
+minecraft.version = "1.10.2"
+
 minecraft {
-    version = '1.7.10'
-    mcpVersion = '9.05'
-    fmlDir = projectDir.getAbsolutePath() + "/fml";
-    mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
-    tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
+    mappings = 'snapshot_nodoc_20160518'
+    workspaceDir = "projects"
+    versionJson = "jsons/${minecraft.version}-dev.json"
+    buildUserdev = true
+    buildInstaller = true
     installerVersion = "1.4"
+
+    def common = {
+        patchPrefixOriginal "../src-base/minecraft"
+        patchPrefixChanged "../src-work/minecraft"
+        mainClassClient "net.minecraft.launchwrapper.Launch"
+        tweakClassClient "net.minecraftforge.fml.common.launcher.FMLTweaker"
+        mainClassServer "net.minecraft.launchwrapper.Launch"
+        tweakClassServer "net.minecraftforge.fml.common.launcher.FMLServerTweaker"
+    }
+
+    projects {
+        forge {
+            rootDir "."
+            patchDir "patches/minecraft"
+            patchAfter "clean"
+            genPatchesFrom "clean"
+            genMcpPatches = false
+            applyMcpPatches = false
+            s2sKeepImports = true
+            with common
+        }
+    }
 }
 
 group = 'net.minecraftforge'
-version = getVersionFromJava(getProject(), 'src/main/java/net/minecraftforge/common/ForgeVersion.java')
+version = getVersionFromJava(file("src/main/java/net/minecraftforge/common/ForgeVersion.java"))
 
-jenkins {
-    job = 'minecraftforge'
+extractForgeSources { exclude "**/SideOnly.java", "**/Side.java" }
+extractForgeResources { exclude "**/log4j2.xml" }
+
+genGradleProjects { addTestCompileDep "junit:junit:4.12" }
+
+processJson {
+    releaseJson = "jsons/${minecraft.version}-rel.json"
+    addReplacements([
+        "@minecraft_version@": project.minecraft.version,
+        "@version@": project.version,
+        "@project@": "forge",
+        "@artifact@": "net.minecraftforge:forge:${project.version}",
+        "@universal_jar@": { outputJar.archiveName },
+        "@timestamp@": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+    ])
 }
 
-// crowdin stuff
-if (project.hasProperty("crowdinKey"))
-    tasks.getLocalizations.apiKey = project.crowdinKey
+task changelog(type: JenkinsChangelog) {
 
+    // skip if there is no forge jenkins pass
+    onlyIf {
+        project.hasProperty('forgeJenkinsPass')
+        // Not sure what abrar was trying to do here...
+        //project.file("build/distributions/${project.name}-${project.version}-changelog.txt").text = ""
+    }
+
+    outputs.upToDateWhen { false } // never up to date
+    serverRoot = "http://ci.jenkins.minecraftforge.net/"
+    jobName = "minecraftforge"
+    targetBuild = System.env['BUILD_NUMBER'] ?: project.ext.properties.buildNumber ?:0;
+    authName = "console_script"
+    authPassword = project.hasProperty('forgeJenkinsPass') ? project.getProperty('forgeJenkinsPass') : "";
+    output = "build/distributions/${project.name}-${project.version}-changelog.txt"
+}
+
+task crowdin(type: CrowdinDownload) {
+    output = "build/crowdin.zip"
+    projectId = 'minecraft-forge'
+    extract = false // we wanna keep it as a zip. not extract it to a folder named "crowdin.zip"
+    
+    // task auomatically skips if this is null
+    if (project.hasProperty('crowdinKey'))
+        apiKey = project.crowdinKey
+}
+
+def extraTxts = [
+    changelog, // yeah we can do thi, because gradle and groovy are awesome
+    "CREDITS-fml.txt",
+    "LICENSE-new.txt",
+    "MinecraftForge-Credits.txt",
+    "Paulscode SoundSystem CodecIBXM License.txt",
+    "Paulscode IBXM Library License.txt"
+]
+
+outputJar {
+    classifier = 'universal'
+    from extraTxts
+
+    // add crowdin locales
+    from { crowdin.getDidWork() ? zipTree(crowdin.output) : null}
+    dependsOn 'crowdin'
+
+    manifest.attributes([
+        "Main-Class": "net.minecraftforge.fml.relauncher.ServerLaunchWrapper",
+        "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
+        "Class-Path": getServerClasspath(file("jsons/${minecraft.version}-rel.json"))
+    ])
+}
+
+installer {
+    classifier = 'installer'
+    from extraTxts
+    from "src/main/resources/forge_logo.png"
+    rename "forge_logo\\.png", "big_logo.png"
+}
+
+task signUniversal(type: SignJar, dependsOn: 'outputJar') {
+    onlyIf {
+        project.hasProperty('jarsigner')
+    }
+
+    def jarsigner = [:];
+
+    if (project.hasProperty('jarsigner'))
+        jarsigner = project.jarsigner;
+
+    alias = 'forge'
+    exclude "paulscode/**"
+    storePass = jarsigner.storepass
+    keyPass = jarsigner.keypass
+    keyStore = jarsigner.keystore
+    inputFile = outputJar.archivePath
+    outputFile = outputJar.archivePath
+}
+uploadArchives.dependsOn signUniversal
+build.dependsOn signUniversal
+installer.dependsOn signUniversal
+
+// MDK package
+
+import org.apache.tools.ant.filters.ReplaceTokens
+task makeMdk(type: Zip) {
+    baseName = project.name
+    classifier = "mdk"
+    version = project.version
+    destinationDir = file('build/distributions')
+
+    from 'gradlew'
+    from 'gradlew.bat'
+    into ('gradle') {
+        from 'gradle'
+    }
+    into ('eclipse') {
+        from 'mdk/eclipse'
+    }
+    from changelog.output
+    from ('mdk') {
+        filter(ReplaceTokens, tokens: [
+        VERSION: project.version,
+        MAPPINGS: minecraft.mappings.replace('nodoc_', '')
+        ])
+        exclude 'eclipse'
+        rename 'gitignore\\.txt', '.gitignore'
+        from 'MinecraftForge-Credits.txt'
+        from 'LICENSE-new.txt'
+        from 'Paulscode IBXM Library License.txt'
+        from 'Paulscode SoundSystem CodecIBXM License.txt'
+        from 'CREDITS-fml.txt'
+    }
+}
+tasks.build.dependsOn makeMdk
+
+// launch4j
 
 launch4j {
+    jar = installer.archivePath.canonicalPath
+    outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
+    icon = file('icon.ico').canonicalPath
+    manifest = file('l4jManifest.xml').canonicalPath
     jreMinVersion = '1.6.0'
+    initialHeapPercent = 5;
+    maxHeapPercent = 100;
+}
+tasks.generateXmlConfig.dependsOn installer
+tasks.build.dependsOn 'launch4j'
+
+// MAVEN
+
+artifacts {
+    archives changelog.output
+    archives file("build/distributions/${project.name}-${project.version}-installer-win.exe")
+    archives makeMdk
+}
+
+task ciWriteBuildNumber << {
+    def file = file("src/main/java/net/minecraftforge/common/ForgeVersion.java");
+    def bn = System.getenv("BUILD_NUMBER")?:project.ext.properties.buildNumber?:0;
+    def outfile = "";
+    def ln = "\n"; //Linux line endings because we're on git!
+
+    file.eachLine{ String s ->
+        if (s.matches("^    public static final int buildVersion    = [\\d]+;\$"))
+            s = "    public static final int buildVersion    = ${bn};";
+        if (s.matches('^    public static final String mcVersion = "[^\\"]+";'))
+            s = "    public static final String mcVersion = \"${minecraft.version}\";";
+        outfile += (s+ln);
+    }
+    file.write(outfile);
 }
 
 uploadArchives {
-    repositories {
-        add getProject().repositories.mavenLocal()
-    }
     repositories.mavenDeployer {
-        configuration = configurations.deployJars
 
-        if (project.hasProperty("filesmaven")) {
-            logger.info('Publishing to files server')
-            repository(url: project.filesmaven.url) {
-                authentication(userName: project.filesmaven.username, privateKey: project.filesmaven.key)
+        dependsOn 'build'
+
+        if (project.hasProperty('forgeMavenPass'))
+        {
+            repository(url: "http://files.minecraftforge.net/maven/manage/upload") {
+                authentication(userName: "forge", password: project.getProperty('forgeMavenPass')) // the elvis operator. look it up.
             }
-        } else {
-            logger.info('Publishing to repo folder')
+        }
+        else
+        {
+            // local repo folder. Might wanna juset use  gradle install   if you wanans end it to maven-local
             repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
         }
 
@@ -79,49 +253,143 @@ uploadArchives {
             groupId = project.group
             version = project.version
             artifactId = project.archivesBaseName
-        }
-        pom.project {
-            name project.archivesBaseName
-            packaging 'jar'
-            description 'Minecraft Forge API'
-            url 'https://github.com/MinecraftForge/MinecraftForge'
-
-            scm {
+            project {
+                name project.archivesBaseName
+                packaging 'jar'
+                description 'Minecraft Forge API'
                 url 'https://github.com/MinecraftForge/MinecraftForge'
-                connection 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
-                developerConnection 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
-            }
 
-            issueManagement {
-                system 'github'
-                url 'https://github.com/MinecraftForge/MinecraftForge/issues'
-            }
+                scm {
+                    url 'https://github.com/MinecraftForge/MinecraftForge'
+                    connection 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
+                    developerConnection 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
+                }
 
-            licenses {
-                license {
-                    name 'Forge Public License'
-                    url 'https://raw.github.com/MinecraftForge/MinecraftForge/master/MinecraftForge-License.txt'
-                    distribution 'repo'
+                issueManagement {
+                    system 'github'
+                    url 'https://github.com/MinecraftForge/MinecraftForge/issues'
                 }
-            }
 
-            developers {
-                developer {
-                    id 'cpw'
-                    name 'cpw'
-                    roles { role 'developer' }
+                licenses {
+                    license {
+                        name 'Forge Public License'
+                        url 'https://raw.github.com/MinecraftForge/MinecraftForge/master/MinecraftForge-License.txt'
+                        distribution 'repo'
+                    }
                 }
-                developer {
-                    id 'LexManos'
-                    name 'Lex Manos'
-                    roles { role 'developer' }
-                }
-                developer {
-                    id 'AbrarSyed'
-                    name 'Abrar Syed'
-                    roles { role 'contributor' }
+
+                developers {
+                    developer {
+                        id 'cpw'
+                        name 'cpw'
+                        roles { role 'developer' }
+                    }
+                    developer {
+                        id 'LexManos'
+                        name 'Lex Manos'
+                        roles { role 'developer' }
+                    }
+                    developer {
+                        id 'AbrarSyed'
+                        name 'Abrar Syed'
+                        roles { role 'contributor' }
+                    }
                 }
             }
         }
     }
 }
+
+// HELPER METHODS
+
+import groovy.json.JsonSlurper;
+
+String getServerClasspath(File file)
+{
+    def node = new JsonSlurper().parse(file);
+    def out = new StringBuilder()
+    node.versionInfo.libraries.each { lib ->
+        if (lib.serverreq)
+        {
+            // group : artifact : version
+            def split = lib.name.split(':')
+            def group = split[0].replace('.', '/')
+            def artifact = split[1]
+            def version = split[2]
+            out += "libraries/$group/$artifact/$version/$artifact-${version}.jar "
+        }
+    }
+    out += "minecraft_server.${minecraft.version}.jar"
+
+    return out.toString();
+}
+
+String getVersionFromJava(File file)
+{
+    String major = "0";
+    String minor = "0";
+    String revision = "0";
+    String build = "0";
+
+    String prefix = "public static final int";
+    file.eachLine{ String s ->
+        s = s.trim();
+        if (s.startsWith(prefix))
+        {
+            s = s.substring(prefix.length(), s.length() - 1);
+            s = s.replace('=', ' ').replace("Version", "").replaceAll(" +", " ").trim();
+            String[] pts = s.split(" ");
+
+            if (pts[0].equals("major")) major = pts[pts.length - 1];
+            else if (pts[0] == "minor") minor = pts[pts.length - 1];
+            else if (pts[0] == "revision") revision = pts[pts.length - 1];
+        }
+    }
+
+    build = System.getenv("BUILD_NUMBER") ?: project.ext.properties.buildNumber ?: 0
+
+
+    String branch = null;
+    if (!System.getenv().containsKey("GIT_BRANCH"))
+    {
+        // TODO: use grgit - Tried to switch 07/07/16 - jgit broken on windows?
+        branch = "git rev-parse --abbrev-ref HEAD".execute().text.trim()
+    }
+    else
+    {
+        branch = System.getenv("GIT_BRANCH");
+        branch = branch.substring(branch.lastIndexOf('/') + 1);
+    }
+
+    def out = "${minecraft.version.replace('-', '_')}-$major.$minor.$revision.$build"
+
+    if (branch && branch != 'master' && branch != 'HEAD' && branch != minecraft.version && branch != minecraft.version + '.0')
+    {
+        if (!(branch.endsWith('.x') && minecraft.version.startsWith(branch.substring(0, branch.length() -1))))
+            out += "-$branch"
+    }
+
+    return out;
+}
+
+task resetBuildNumber << {
+    project.ext.properties.buildNumber = 0;
+    ciWriteBuildNumber.execute()
+}
+// re-add old tasks for jenkins compat
+// should be remvoed, and the jenkisn fixed when no longer building with FG 1.2
+task setupForge { dependsOn 'setup', 'ciWriteBuildNumber' }
+task buildPackages { dependsOn 'build' }
+
+//Temporary hack to fix compile errors caused by mappings shading in Bootstrap
+/*
+task fixParams << {
+    logger.lifecycle('Fixing param names!')
+    def params = new File(extractMcpMappings.destinationDir, 'params.csv')
+    def text = params.text
+    text = text.replaceAll('p_180276_1_,biome,', 'p_180276_1_,biomeIn,')
+    params.write(text)
+}
+fixParams.dependsOn('extractMcpMappings')
+extractMcpMappings.finalizedBy('fixParams')
+*/

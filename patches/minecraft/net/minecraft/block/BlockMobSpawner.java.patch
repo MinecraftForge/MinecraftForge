@@ -1,28 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockMobSpawner.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockMobSpawner.java
-@@ -7,6 +7,7 @@
- import net.minecraft.item.Item;
- import net.minecraft.tileentity.TileEntity;
- import net.minecraft.tileentity.TileEntityMobSpawner;
-+import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
- 
- public class BlockMobSpawner extends BlockContainer
-@@ -36,10 +37,15 @@
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+@@ -41,10 +41,14 @@
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
--        int j1 = 15 + p_149690_1_.field_73012_v.nextInt(15) + p_149690_1_.field_73012_v.nextInt(15);
--        this.func_149657_c(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, j1);
+         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
+-        int i = 15 + p_180653_1_.field_73012_v.nextInt(15) + p_180653_1_.field_73012_v.nextInt(15);
+-        this.func_180637_b(p_180653_1_, p_180653_2_, i);
      }
  
-+    private Random rand = new Random();
 +    @Override
-+    public int getExpDrop(IBlockAccess world, int metadata, int fortune)
++    public int getExpDrop(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        return 15 + rand.nextInt(15) + rand.nextInt(15);
++        return 15 + RANDOM.nextInt(15) + RANDOM.nextInt(15);
 +    }
 +
-     public boolean func_149662_c()
+     public boolean func_149662_c(IBlockState p_149662_1_)
      {
          return false;

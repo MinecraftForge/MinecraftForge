@@ -1,58 +1,92 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -12,6 +12,8 @@
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.nbt.NBTTagList;
- import net.minecraft.potion.PotionHelper;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.brewing.PotionBrewedEvent;
+@@ -144,7 +144,7 @@
  
- public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
- {
-@@ -104,7 +106,7 @@
+     private boolean func_145934_k()
+     {
+-        if (this.field_145945_j[3] != null && this.field_145945_j[3].field_77994_a > 0)
++        if (this.field_145945_j[3] != null && this.field_145945_j[3].field_77994_a > 0 && false) // Code moved to net.minecraftforge.common.brewing.VanillaBrewingRecipe
+         {
+             ItemStack itemstack = this.field_145945_j[3];
  
-                 for (int i = 0; i < 3; ++i)
-                 {
--                    if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() == Items.field_151068_bn)
-+                    if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() instanceof ItemPotion)
-                     {
-                         int j = this.field_145945_j[i].func_77960_j();
-                         int k = this.func_145936_c(j, itemstack);
-@@ -143,7 +145,7 @@
- 
-             for (int i = 0; i < 3; ++i)
-             {
--                if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() == Items.field_151068_bn)
-+                if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() instanceof ItemPotion)
-                 {
-                     int j = this.field_145945_j[i].func_77960_j();
-                     int k = this.func_145936_c(j, itemstack);
-@@ -164,9 +166,9 @@
-                 }
-             }
- 
--            if (itemstack.func_77973_b().func_77634_r())
-+            if (itemstack.func_77973_b().hasContainerItem(itemstack))
-             {
--                this.field_145945_j[3] = new ItemStack(itemstack.func_77973_b().func_77668_q());
-+                this.field_145945_j[3] = itemstack.func_77973_b().getContainerItem(itemstack);
-             }
-             else
-             {
-@@ -177,6 +179,7 @@
-                     this.field_145945_j[3] = null;
-                 }
-             }
-+            MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(field_145945_j));
+@@ -169,25 +169,23 @@
+         }
+         else
+         {
+-            return false;
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145945_j, field_145945_j[3], field_145947_i);
          }
      }
  
-@@ -292,7 +295,7 @@
- 
-     public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
+     private void func_145940_l()
      {
--        return p_94041_1_ == 3 ? p_94041_2_.func_77973_b().func_150892_m(p_94041_2_) : p_94041_2_.func_77973_b() == Items.field_151068_bn || p_94041_2_.func_77973_b() == Items.field_151069_bo;
-+        return p_94041_1_ == 3 ? p_94041_2_.func_77973_b().func_150892_m(p_94041_2_) : p_94041_2_.func_77973_b() instanceof ItemPotion || p_94041_2_.func_77973_b() == Items.field_151069_bo;
++        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(field_145945_j)) return;
+         ItemStack itemstack = this.field_145945_j[3];
+ 
+-        for (int i = 0; i < 3; ++i)
+-        {
+-            this.field_145945_j[i] = PotionHelper.func_185212_d(itemstack, this.field_145945_j[i]);
+-        }
++        net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, field_145945_j[3], field_145947_i);
+ 
+         --itemstack.field_77994_a;
+         BlockPos blockpos = this.func_174877_v();
+ 
+-        if (itemstack.func_77973_b().func_77634_r())
++        if (itemstack.func_77973_b().hasContainerItem(itemstack))
+         {
+-            ItemStack itemstack1 = new ItemStack(itemstack.func_77973_b().func_77668_q());
++            ItemStack itemstack1 = itemstack.func_77973_b().getContainerItem(itemstack);
+ 
+             if (itemstack.field_77994_a <= 0)
+             {
+@@ -206,6 +204,7 @@
+ 
+         this.field_145945_j[3] = itemstack;
+         this.field_145850_b.func_175718_b(1035, blockpos, 0);
++        net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
      }
  
-     @SideOnly(Side.CLIENT)
+     public static void func_189675_a(DataFixer p_189675_0_)
+@@ -316,12 +315,12 @@
+     {
+         if (p_94041_1_ == 3)
+         {
+-            return PotionHelper.func_185205_a(p_94041_2_);
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_94041_2_);
+         }
+         else
+         {
+             Item item = p_94041_2_.func_77973_b();
+-            return p_94041_1_ == 4 ? item == Items.field_151065_br : item == Items.field_151068_bn || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.field_151069_bo;
++            return p_94041_1_ == 4 ? item == Items.field_151065_br : net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_94041_2_);
+         }
+     }
+ 
+@@ -375,6 +374,26 @@
+         }
+     }
+ 
++    net.minecraftforge.items.IItemHandler handlerInput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
++    net.minecraftforge.items.IItemHandler handlerOutput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
++    net.minecraftforge.items.IItemHandler handlerSides = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.NORTH);
++
++    @SuppressWarnings("unchecked")
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
++            if (facing == EnumFacing.UP)
++                return (T) handlerInput;
++            else if (facing == EnumFacing.DOWN)
++                return (T) handlerOutput;
++            else
++                return (T) handlerSides;
++        }
++        return super.getCapability(capability, facing);
++    }
++
+     public int func_174890_g()
+     {
+         return 2;

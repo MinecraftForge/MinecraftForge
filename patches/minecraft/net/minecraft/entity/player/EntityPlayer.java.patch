@@ -1,133 +1,52 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -8,9 +8,12 @@
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
- import java.util.Collection;
-+import java.util.HashMap;
- import java.util.Iterator;
- import java.util.List;
- import java.util.UUID;
-+import java.util.Map.Entry;
-+
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockBed;
- import net.minecraft.block.material.Material;
-@@ -77,8 +80,24 @@
- import net.minecraft.world.WorldSettings;
- import net.minecraft.world.chunk.IChunkProvider;
- 
-+import net.minecraftforge.common.ForgeHooks;
-+import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.ForgeEventFactory;
-+import net.minecraftforge.event.entity.living.LivingHurtEvent;
-+import net.minecraftforge.event.entity.player.AttackEntityEvent;
-+import net.minecraftforge.event.entity.player.EntityInteractEvent;
-+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
-+import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
-+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-+
- public abstract class EntityPlayer extends EntityLivingBase implements ICommandSender
+@@ -99,6 +99,11 @@
+ @SuppressWarnings("incomplete-switch")
+ public abstract class EntityPlayer extends EntityLivingBase
  {
 +    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
-+    private HashMap<Integer, ChunkCoordinates> spawnChunkMap = new HashMap<Integer, ChunkCoordinates>();
-+    private HashMap<Integer, Boolean> spawnForcedMap = new HashMap<Integer, Boolean>();
++    private java.util.HashMap<Integer, BlockPos> spawnChunkMap = new java.util.HashMap<Integer, BlockPos>();
++    private java.util.HashMap<Integer, Boolean> spawnForcedMap = new java.util.HashMap<Integer, Boolean>();
++    public float eyeHeight = this.getDefaultEyeHeight();
 +
-     public InventoryPlayer field_71071_by = new InventoryPlayer(this);
-     private InventoryEnderChest field_71078_a = new InventoryEnderChest();
-     public Container field_71069_bz;
-@@ -129,6 +148,7 @@
-         this.func_70012_b((double)chunkcoordinates.field_71574_a + 0.5D, (double)(chunkcoordinates.field_71572_b + 1), (double)chunkcoordinates.field_71573_c + 0.5D, 0.0F, 0.0F);
-         this.field_70741_aB = 180.0F;
-         this.field_70174_ab = 20;
-+        this.eyeHeight = this.getDefaultEyeHeight();
+     private static final DataParameter<Float> field_184829_a = EntityDataManager.<Float>func_187226_a(EntityPlayer.class, DataSerializers.field_187193_c);
+     private static final DataParameter<Integer> field_184830_b = EntityDataManager.<Integer>func_187226_a(EntityPlayer.class, DataSerializers.field_187192_b);
+     protected static final DataParameter<Byte> field_184827_bp = EntityDataManager.<Byte>func_187226_a(EntityPlayer.class, DataSerializers.field_187191_a);
+@@ -181,6 +186,7 @@
+ 
+     public void func_70071_h_()
+     {
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPreTick(this);
+         this.field_70145_X = this.func_175149_v();
+ 
+         if (this.func_175149_v())
+@@ -373,6 +379,7 @@
+                 this.func_70105_a(f, f1);
+             }
+         }
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPostTick(this);
      }
  
-     protected void func_110147_ax()
-@@ -172,7 +192,8 @@
-     {
-         if (this.field_71074_e != null)
-         {
--            this.field_71074_e.func_77974_b(this.field_70170_p, this, this.field_71072_f);
-+            if (!ForgeEventFactory.onUseItemStop(this, field_71074_e, field_71072_f))
-+                this.field_71074_e.func_77974_b(this.field_70170_p, this, this.field_71072_f);
-         }
- 
-         this.func_71041_bz();
-@@ -203,14 +224,23 @@
- 
-             if (itemstack == this.field_71074_e)
-             {
--                if (this.field_71072_f <= 25 && this.field_71072_f % 4 == 0)
-+                field_71072_f = ForgeEventFactory.onItemUseTick(this, field_71074_e, field_71072_f);
-+                if (field_71072_f <= 0)
-                 {
--                    this.func_71010_c(itemstack, 5);
-+                    this.func_71036_o();
-                 }
--
--                if (--this.field_71072_f == 0 && !this.field_70170_p.field_72995_K)
-+                else
-                 {
--                    this.func_71036_o();
-+                    field_71074_e.func_77973_b().onUsingTick(field_71074_e, this, field_71072_f);
-+                    if (this.field_71072_f <= 25 && this.field_71072_f % 4 == 0)
-+                    {
-+                        this.func_71010_c(itemstack, 5);
-+                    }
-+    
-+                    if (--this.field_71072_f == 0 && !this.field_70170_p.field_72995_K)
-+                    {
-+                        this.func_71036_o();
-+                    }
-                 }
-             }
-             else
-@@ -257,7 +287,7 @@
- 
-         super.func_70071_h_();
- 
--        if (!this.field_70170_p.field_72995_K && this.field_71070_bA != null && !this.field_71070_bA.func_75145_c(this))
-+        if (!this.field_70170_p.field_72995_K && this.field_71070_bA != null && !ForgeHooks.canInteractWith(this, this.field_71070_bA))
-         {
-             this.func_71053_j();
-             this.field_71070_bA = this.field_71069_bz;
-@@ -388,11 +418,13 @@
-             int i = this.field_71074_e.field_77994_a;
-             ItemStack itemstack = this.field_71074_e.func_77950_b(this.field_70170_p, this);
- 
-+            itemstack = ForgeEventFactory.onItemUseFinish(this, field_71074_e, field_71072_f, itemstack);
-+
-             if (itemstack != this.field_71074_e || itemstack != null && itemstack.field_77994_a != i)
-             {
-                 this.field_71071_by.field_70462_a[this.field_71071_by.field_70461_c] = itemstack;
- 
--                if (itemstack.field_77994_a == 0)
-+                if (itemstack != null && itemstack.field_77994_a == 0)
-                 {
-                     this.field_71071_by.field_70462_a[this.field_71071_by.field_70461_c] = null;
-                 }
-@@ -466,11 +498,11 @@
+     public int func_82145_z()
+@@ -455,11 +462,11 @@
              this.field_71109_bG = 0.0F;
              this.func_71015_k(this.field_70165_t - d0, this.field_70163_u - d1, this.field_70161_v - d2);
  
--            if (this.field_70154_o instanceof EntityPig)
-+            if (this.field_70154_o instanceof EntityLivingBase && ((EntityLivingBase)field_70154_o).shouldRiderFaceForward(this))
+-            if (this.func_184187_bx() instanceof EntityPig)
++            if (this.func_184187_bx() instanceof EntityLivingBase && ((EntityLivingBase)this.func_184187_bx()).shouldRiderFaceForward(this))
              {
                  this.field_70125_A = f1;
                  this.field_70177_z = f;
--                this.field_70761_aq = ((EntityPig)this.field_70154_o).field_70761_aq;
-+                this.field_70761_aq = ((EntityLivingBase)this.field_70154_o).field_70761_aq;
+-                this.field_70761_aq = ((EntityPig)this.func_184187_bx()).field_70761_aq;
++                this.field_70761_aq = ((EntityLivingBase)this.func_184187_bx()).field_70761_aq;
              }
          }
      }
-@@ -595,11 +627,15 @@
+@@ -589,11 +596,15 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
-+        if (ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this,  p_70645_1_)) return;
          super.func_70645_a(p_70645_1_);
          this.func_70105_a(0.2F, 0.2F);
          this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
@@ -136,32 +55,25 @@
 +        captureDrops = true;
 +        capturedDrops.clear();
 +
-         if (this.func_70005_c_().equals("Notch"))
+         if ("Notch".equals(this.func_70005_c_()))
          {
              this.func_146097_a(new ItemStack(Items.field_151034_e, 1), true, false);
-@@ -610,6 +646,20 @@
+@@ -601,9 +612,13 @@
+ 
+         if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory") && !this.func_175149_v())
+         {
++            this.func_71053_j(); //Force the screen closed before droping inventory, this will cause the held item to drop and 'bag' items to finalize.
              this.field_71071_by.func_70436_m();
          }
  
 +        captureDrops = false;
-+
-+        if (!field_70170_p.field_72995_K)
-+        {
-+            PlayerDropsEvent event = new PlayerDropsEvent(this, p_70645_1_, capturedDrops, field_70718_bc > 0);
-+            if (!MinecraftForge.EVENT_BUS.post(event))
-+            {
-+                for (EntityItem item : capturedDrops)
-+                {
-+                    func_71012_a(item);
-+                }
-+            }
-+        }
++        if (!field_70170_p.field_72995_K) net.minecraftforge.event.ForgeEventFactory.onPlayerDrops(this, p_70645_1_, capturedDrops, field_70718_bc > 0);
 +
          if (p_70645_1_ != null)
          {
-             this.field_70159_w = (double)(-MathHelper.func_76134_b((this.field_70739_aP + this.field_70177_z) * (float)Math.PI / 180.0F) * 0.1F);
-@@ -661,12 +711,25 @@
- 
+             this.field_70159_w = (double)(-MathHelper.func_76134_b((this.field_70739_aP + this.field_70177_z) * 0.017453292F) * 0.1F);
+@@ -692,13 +707,26 @@
+     @Nullable
      public EntityItem func_71040_bB(boolean p_71040_1_)
      {
 -        return this.func_146097_a(this.field_71071_by.func_70298_a(this.field_71071_by.field_70461_c, p_71040_1_ && this.field_71071_by.func_70448_g() != null ? this.field_71071_by.func_70448_g().field_77994_a : 1), false, true);
@@ -175,80 +87,61 @@
 +        if (stack.func_77973_b().onDroppedByPlayer(stack, this))
 +        {
 +            int count = p_71040_1_ && this.field_71071_by.func_70448_g() != null ? this.field_71071_by.func_70448_g().field_77994_a : 1;
-+            return ForgeHooks.onPlayerTossEvent(this, field_71071_by.func_70298_a(field_71071_by.field_70461_c, count), true);
++            return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, field_71071_by.func_70298_a(field_71071_by.field_70461_c, count), true);
 +        }
 +
 +        return null;
      }
  
-     public EntityItem func_71019_a(ItemStack p_71019_1_, boolean p_71019_2_)
+     @Nullable
+     public EntityItem func_71019_a(@Nullable ItemStack p_71019_1_, boolean p_71019_2_)
      {
 -        return this.func_146097_a(p_71019_1_, false, false);
-+        return ForgeHooks.onPlayerTossEvent(this, p_71019_1_, false);
++        return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, p_71019_1_, false);
      }
  
-     public EntityItem func_146097_a(ItemStack p_146097_1_, boolean p_146097_2_, boolean p_146097_3_)
-@@ -722,13 +785,31 @@
- 
-     public void func_71012_a(EntityItem p_71012_1_)
+     @Nullable
+@@ -763,14 +791,22 @@
+     @Nullable
+     public ItemStack func_184816_a(EntityItem p_184816_1_)
      {
-+        if (captureDrops)
-+        {
-+            capturedDrops.add(p_71012_1_);
-+            return;
-+        }
-         this.field_70170_p.func_72838_d(p_71012_1_);
++        if (captureDrops) capturedDrops.add(p_184816_1_);
++        else // Forge: Don't indent to keep patch smaller.
+         this.field_70170_p.func_72838_d(p_184816_1_);
+         return p_184816_1_.func_92059_d();
      }
  
-+    @Deprecated //Metadata sensitive version, named getBreakSpeed
-     public float func_146096_a(Block p_146096_1_, boolean p_146096_2_)
++    @Deprecated //Use location sensitive version below
+     public float func_184813_a(IBlockState p_184813_1_)
      {
--        float f = this.field_71071_by.func_146023_a(p_146096_1_);
-+        return getBreakSpeed(p_146096_1_, p_146096_2_, 0, 0, -1, 0);
+-        float f = this.field_71071_by.func_184438_a(p_184813_1_);
++        return getDigSpeed(p_184813_1_, null);
 +    }
  
-+    @Deprecated //Location Specifc, one below, remove in 1.8
-+    public float getBreakSpeed(Block p_146096_1_, boolean p_146096_2_, int meta)
++    public float getDigSpeed(IBlockState state, BlockPos pos)
 +    {
-+        return getBreakSpeed(p_146096_1_, p_146096_2_, meta, 0, -1, 0);
-+    }
-+
-+    public float getBreakSpeed(Block p_146096_1_, boolean p_146096_2_, int meta, int x, int y, int z)
-+    {
-+        ItemStack stack = field_71071_by.func_70448_g();
-+        float f = (stack == null ? 1.0F : stack.func_77973_b().getDigSpeed(stack, p_146096_1_, meta));
++        float f = this.field_71071_by.func_184438_a(state);
 +
          if (f > 1.0F)
          {
-             int i = EnchantmentHelper.func_77509_b(this);
-@@ -738,7 +819,9 @@
-             {
-                 float f1 = (float)(i * i + 1);
- 
--                if (!itemstack.func_150998_b(p_146096_1_) && f <= 1.0F)
-+                boolean canHarvest = ForgeHooks.canToolHarvestBlock(p_146096_1_, meta, itemstack);
-+
-+                if (!canHarvest && f <= 1.0F)
-                 {
-                     f += f1 * 0.08F;
-                 }
-@@ -769,12 +852,13 @@
+             int i = EnchantmentHelper.func_185293_e(this);
+@@ -820,12 +856,13 @@
              f /= 5.0F;
          }
  
 -        return f;
-+        f = ForgeEventFactory.getBreakSpeed(this, p_146096_1_, meta, f, x, y, z);
++        f = net.minecraftforge.event.ForgeEventFactory.getBreakSpeed(this, state, f, pos);
 +        return (f < 0 ? 0 : f);
      }
  
-     public boolean func_146099_a(Block p_146099_1_)
+     public boolean func_184823_b(IBlockState p_184823_1_)
      {
--        return this.field_71071_by.func_146025_b(p_146099_1_);
-+        return ForgeEventFactory.doPlayerHarvestCheck(this, p_146099_1_, this.field_71071_by.func_146025_b(p_146099_1_));
+-        return this.field_71071_by.func_184432_b(p_184823_1_);
++        return net.minecraftforge.event.ForgeEventFactory.doPlayerHarvestCheck(this, p_184823_1_, this.field_71071_by.func_184432_b(p_184823_1_));
      }
  
-     public void func_70037_a(NBTTagCompound p_70037_1_)
-@@ -803,6 +887,16 @@
+     public static void func_189806_a(DataFixer p_189806_0_)
+@@ -874,6 +911,16 @@
              this.field_82248_d = p_70037_1_.func_74767_n("SpawnForced");
          }
  
@@ -258,29 +151,29 @@
 +        {
 +            NBTTagCompound spawndata = (NBTTagCompound)spawnlist.func_150305_b(i);
 +            int spawndim = spawndata.func_74762_e("Dim");
-+            this.spawnChunkMap.put(spawndim, new ChunkCoordinates(spawndata.func_74762_e("SpawnX"), spawndata.func_74762_e("SpawnY"), spawndata.func_74762_e("SpawnZ")));
++            this.spawnChunkMap.put(spawndim, new BlockPos(spawndata.func_74762_e("SpawnX"), spawndata.func_74762_e("SpawnY"), spawndata.func_74762_e("SpawnZ")));
 +            this.spawnForcedMap.put(spawndim, spawndata.func_74767_n("SpawnForced"));
 +        }
 +
          this.field_71100_bB.func_75112_a(p_70037_1_);
          this.field_71075_bZ.func_75095_b(p_70037_1_);
  
-@@ -833,6 +927,23 @@
+@@ -906,6 +953,23 @@
              p_70014_1_.func_74757_a("SpawnForced", this.field_82248_d);
          }
  
 +        NBTTagList spawnlist = new NBTTagList();
-+        for (Entry<Integer, ChunkCoordinates> entry : this.spawnChunkMap.entrySet())
++        for (java.util.Map.Entry<Integer, BlockPos> entry : this.spawnChunkMap.entrySet())
 +        {
-+            ChunkCoordinates spawn = entry.getValue();
++            BlockPos spawn = entry.getValue();
 +            if (spawn == null) continue;
 +            Boolean forced = spawnForcedMap.get(entry.getKey());
 +            if (forced == null) forced = false;
 +            NBTTagCompound spawndata = new NBTTagCompound();
 +            spawndata.func_74768_a("Dim", entry.getKey());
-+            spawndata.func_74768_a("SpawnX", spawn.field_71574_a);
-+            spawndata.func_74768_a("SpawnY", spawn.field_71572_b);
-+            spawndata.func_74768_a("SpawnZ", spawn.field_71573_c);
++            spawndata.func_74768_a("SpawnX", spawn.func_177958_n());
++            spawndata.func_74768_a("SpawnY", spawn.func_177956_o());
++            spawndata.func_74768_a("SpawnZ", spawn.func_177952_p());
 +            spawndata.func_74757_a("SpawnForced", forced);
 +            spawnlist.func_74742_a(spawndata);
 +        }
@@ -289,235 +182,209 @@
          this.field_71100_bB.func_75117_b(p_70014_1_);
          this.field_71075_bZ.func_75091_a(p_70014_1_);
          p_70014_1_.func_74782_a("EnderItems", this.field_71078_a.func_70487_g());
-@@ -854,7 +965,7 @@
- 
-     public float func_70047_e()
-     {
--        return 0.12F;
-+        return eyeHeight;
-     }
- 
-     protected void func_71061_d_()
-@@ -864,6 +975,7 @@
+@@ -913,6 +977,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
-+        if (ForgeHooks.onLivingAttack(this, p_70097_1_, p_70097_2_)) return false;
-         if (this.func_85032_ar())
++        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, p_70097_1_, p_70097_2_)) return false;
+         if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -965,12 +1077,15 @@
-     {
-         if (!this.func_85032_ar())
-         {
-+            p_70665_2_ = ForgeHooks.onLivingHurt(this, p_70665_1_, p_70665_2_);
-+            if (p_70665_2_ <= 0) return;
-             if (!p_70665_1_.func_76363_c() && this.func_70632_aY() && p_70665_2_ > 0.0F)
+@@ -981,6 +1046,7 @@
+             if (this.field_184627_bm.field_77994_a <= 0)
              {
-                 p_70665_2_ = (1.0F + p_70665_2_) * 0.5F;
-             }
+                 EnumHand enumhand = this.func_184600_cs();
++                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, this.field_184627_bm, enumhand);
  
+                 if (enumhand == EnumHand.MAIN_HAND)
+                 {
+@@ -1016,7 +1082,10 @@
+     {
+         if (!this.func_180431_b(p_70665_1_))
+         {
 -            p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
-+            p_70665_2_ = ArmorProperties.ApplyArmor(this, field_71071_by.field_70460_b, p_70665_1_, p_70665_2_);
++            p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_70665_1_, p_70665_2_);
++            if (p_70665_2_ <= 0) return;
++            p_70665_2_ = net.minecraftforge.common.ISpecialArmor.ArmorProperties.applyArmor(this, field_71071_by.field_70460_b, p_70665_1_, p_70665_2_);
 +            if (p_70665_2_ <= 0) return;
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
-             float f1 = p_70665_2_;
+             float f = p_70665_2_;
              p_70665_2_ = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
-@@ -1004,6 +1119,7 @@
+@@ -1086,6 +1155,7 @@
+         }
+         else
+         {
++            if (net.minecraftforge.common.ForgeHooks.onInteractEntity(this, p_184822_1_, p_184822_2_, p_184822_3_)) return EnumActionResult.PASS;
+             ItemStack itemstack = p_184822_2_ != null ? p_184822_2_.func_77946_l() : null;
  
-     public boolean func_70998_m(Entity p_70998_1_)
-     {
-+        if (MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(this, p_70998_1_))) return false;
-         ItemStack itemstack = this.func_71045_bC();
-         ItemStack itemstack1 = itemstack != null ? itemstack.func_77946_l() : null;
+             if (!p_184822_1_.func_184230_a(this, p_184822_2_, p_184822_3_))
+@@ -1101,6 +1171,7 @@
+                     {
+                         if (p_184822_2_.field_77994_a <= 0 && !this.field_71075_bZ.field_75098_d)
+                         {
++                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, p_184822_2_, p_184822_3_);
+                             this.func_184611_a(p_184822_3_, (ItemStack)null);
+                         }
  
-@@ -1054,7 +1170,9 @@
- 
-     public void func_71028_bD()
-     {
-+        ItemStack orig = func_71045_bC();
-         this.field_71071_by.func_70299_a(this.field_71071_by.field_70461_c, (ItemStack)null);
-+        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(this, orig));
-     }
- 
-     public double func_70033_W()
-@@ -1064,6 +1182,15 @@
+@@ -1116,6 +1187,7 @@
+                 {
+                     if (p_184822_2_.field_77994_a <= 0 && !this.field_71075_bZ.field_75098_d)
+                     {
++                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, p_184822_2_, p_184822_3_);
+                         this.func_184611_a(p_184822_3_, (ItemStack)null);
+                     }
+                     else if (p_184822_2_.field_77994_a < itemstack.field_77994_a && this.field_71075_bZ.field_75098_d)
+@@ -1142,6 +1214,7 @@
  
      public void func_71059_n(Entity p_71059_1_)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(this, p_71059_1_)))
-+        {
-+            return;
-+        }
-+        ItemStack stack = func_71045_bC();
-+        if (stack != null && stack.func_77973_b().onLeftClickEntity(stack, this, p_71059_1_))
-+        {
-+            return;
-+        }
++        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(this, p_71059_1_)) return;
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
-@@ -1211,6 +1338,12 @@
+@@ -1340,6 +1413,7 @@
+                             if (itemstack1.field_77994_a <= 0)
+                             {
+                                 this.func_184611_a(EnumHand.MAIN_HAND, (ItemStack)null);
++                                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, itemstack1, EnumHand.MAIN_HAND);
+                             }
+                         }
  
-     public EntityPlayer.EnumStatus func_71018_a(int p_71018_1_, int p_71018_2_, int p_71018_3_)
+@@ -1428,6 +1502,8 @@
+ 
+     public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
      {
-+        PlayerSleepInBedEvent event = new PlayerSleepInBedEvent(this, p_71018_1_, p_71018_2_, p_71018_3_);
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if (event.result != null)
-+        {
-+            return event.result;
-+        }
++        EntityPlayer.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, p_180469_1_);
++        if (ret != null) return ret;
          if (!this.field_70170_p.field_72995_K)
          {
              if (this.func_70608_bn() || !this.func_70089_S())
-@@ -1253,8 +1386,7 @@
+@@ -1467,9 +1543,10 @@
  
-         if (this.field_70170_p.func_72899_e(p_71018_1_, p_71018_2_, p_71018_3_))
-         {
--            int i1 = this.field_70170_p.func_72805_g(p_71018_1_, p_71018_2_, p_71018_3_);
--            int l = BlockBed.func_149895_l(i1);
-+            int l = field_70170_p.func_147439_a(p_71018_1_, p_71018_2_, p_71018_3_).getBedDirection(field_70170_p, p_71018_1_, p_71018_2_, p_71018_3_);
-             float f1 = 0.5F;
+         this.func_70105_a(0.2F, 0.2F);
+ 
+-        if (this.field_70170_p.func_175667_e(p_180469_1_))
+-        {
+-            EnumFacing enumfacing = (EnumFacing)this.field_70170_p.func_180495_p(p_180469_1_).func_177229_b(BlockHorizontal.field_185512_D);
++        IBlockState state = null;
++        if (this.field_70170_p.func_175667_e(p_180469_1_)) state = this.field_70170_p.func_180495_p(p_180469_1_);
++        if (state != null && state.func_177230_c().isBed(state, this.field_70170_p, p_180469_1_, this)) {
++            EnumFacing enumfacing = state.func_177230_c().getBedDirection(state, this.field_70170_p, p_180469_1_);
              float f = 0.5F;
+             float f1 = 0.5F;
  
-@@ -1317,15 +1449,17 @@
+@@ -1534,13 +1611,14 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
-+        MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerWakeUpEvent(this));
++        net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_70999_1_, p_70999_2_, p_70999_3_);
          this.func_70105_a(0.6F, 1.8F);
-         this.func_71061_d_();
-         ChunkCoordinates chunkcoordinates = this.field_71081_bT;
-         ChunkCoordinates chunkcoordinates1 = this.field_71081_bT;
-+        Block block = (chunkcoordinates == null ? null : field_70170_p.func_147439_a(chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c));
+         IBlockState iblockstate = this.field_70170_p.func_180495_p(this.field_71081_bT);
  
--        if (chunkcoordinates != null && this.field_70170_p.func_147439_a(chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c) == Blocks.field_150324_C)
-+        if (chunkcoordinates != null && block.isBed(field_70170_p, chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c, this))
+-        if (this.field_71081_bT != null && iblockstate.func_177230_c() == Blocks.field_150324_C)
++        if (this.field_71081_bT != null && iblockstate.func_177230_c().isBed(iblockstate, field_70170_p, field_71081_bT, this))
          {
--            BlockBed.func_149979_a(this.field_70170_p, chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c, false);
--            chunkcoordinates1 = BlockBed.func_149977_a(this.field_70170_p, chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c, 0);
-+            block.setBedOccupied(this.field_70170_p, chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c, this, false);
-+            chunkcoordinates1 = block.getBedSpawnPosition(this.field_70170_p, chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c, this);
+-            this.field_70170_p.func_180501_a(this.field_71081_bT, iblockstate.func_177226_a(BlockBed.field_176471_b, Boolean.valueOf(false)), 4);
+-            BlockPos blockpos = BlockBed.func_176468_a(this.field_70170_p, this.field_71081_bT, 0);
++            iblockstate.func_177230_c().setBedOccupied(field_70170_p, field_71081_bT, this, false);
++            BlockPos blockpos = iblockstate.func_177230_c().getBedSpawnPosition(iblockstate, field_70170_p, field_71081_bT, this);
  
-             if (chunkcoordinates1 == null)
+             if (blockpos == null)
              {
-@@ -1359,7 +1493,7 @@
+@@ -1549,6 +1627,10 @@
  
-     private boolean func_71065_l()
+             this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
+         }
++        else
++        {
++            p_70999_3_ = false;
++        }
+ 
+         this.field_71083_bS = false;
+ 
+@@ -1567,15 +1649,16 @@
+ 
+     private boolean func_175143_p()
      {
--        return this.field_70170_p.func_147439_a(this.field_71081_bT.field_71574_a, this.field_71081_bT.field_71572_b, this.field_71081_bT.field_71573_c) == Blocks.field_150324_C;
-+        return this.field_70170_p.func_147439_a(this.field_71081_bT.field_71574_a, this.field_71081_bT.field_71572_b, this.field_71081_bT.field_71573_c).isBed(field_70170_p, field_71081_bT.field_71574_a, field_71081_bT.field_71572_b, field_71081_bT.field_71573_c, this);
+-        return this.field_70170_p.func_180495_p(this.field_71081_bT).func_177230_c() == Blocks.field_150324_C;
++        return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, this.field_71081_bT);
      }
  
-     public static ChunkCoordinates func_71056_a(World p_71056_0_, ChunkCoordinates p_71056_1_, boolean p_71056_2_)
-@@ -1370,9 +1504,9 @@
-         ichunkprovider.func_73158_c(p_71056_1_.field_71574_a - 3 >> 4, p_71056_1_.field_71573_c + 3 >> 4);
-         ichunkprovider.func_73158_c(p_71056_1_.field_71574_a + 3 >> 4, p_71056_1_.field_71573_c + 3 >> 4);
+     @Nullable
+     public static BlockPos func_180467_a(World p_180467_0_, BlockPos p_180467_1_, boolean p_180467_2_)
+     {
+-        Block block = p_180467_0_.func_180495_p(p_180467_1_).func_177230_c();
++        IBlockState state = p_180467_0_.func_180495_p(p_180467_1_);
++        Block block = state.func_177230_c();
  
--        if (p_71056_0_.func_147439_a(p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c) == Blocks.field_150324_C)
-+        if (p_71056_0_.func_147439_a(p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c).isBed(p_71056_0_, p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c, null))
+-        if (block != Blocks.field_150324_C)
++        if (!block.isBed(state, p_180467_0_, p_180467_1_, null))
          {
--            ChunkCoordinates chunkcoordinates1 = BlockBed.func_149977_a(p_71056_0_, p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c, 0);
-+            ChunkCoordinates chunkcoordinates1 = p_71056_0_.func_147439_a(p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c).getBedSpawnPosition(p_71056_0_, p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c, null);
-             return chunkcoordinates1;
+             if (!p_180467_2_)
+             {
+@@ -1590,16 +1673,17 @@
          }
          else
-@@ -1390,8 +1524,10 @@
-     {
-         if (this.field_71081_bT != null)
          {
--            int i = this.field_70170_p.func_72805_g(this.field_71081_bT.field_71574_a, this.field_71081_bT.field_71572_b, this.field_71081_bT.field_71573_c);
--            int j = BlockBed.func_149895_l(i);
-+            int x = field_71081_bT.field_71574_a;
-+            int y = field_71081_bT.field_71572_b;
-+            int z = field_71081_bT.field_71573_c;
-+            int j = field_70170_p.func_147439_a(x, y, z).getBedDirection(field_70170_p, x, y, z);
+-            return BlockBed.func_176468_a(p_180467_0_, p_180467_1_, 0);
++            return block.getBedSpawnPosition(state, p_180467_0_, p_180467_1_, null);
+         }
+     }
  
-             switch (j)
+     @SideOnly(Side.CLIENT)
+     public float func_71051_bG()
+     {
+-        if (this.field_71081_bT != null)
++        IBlockState state = this.field_71081_bT == null ? null : this.field_70170_p.func_180495_p(field_71081_bT);
++        if (state != null && state.func_177230_c().isBed(state, field_70170_p, field_71081_bT, this))
+         {
+-            EnumFacing enumfacing = (EnumFacing)this.field_70170_p.func_180495_p(this.field_71081_bT).func_177229_b(BlockHorizontal.field_185512_D);
++            EnumFacing enumfacing = state.func_177230_c().getBedDirection(state, field_70170_p, field_71081_bT);
+ 
+             switch (enumfacing)
              {
-@@ -1447,18 +1583,25 @@
+@@ -1639,16 +1723,24 @@
  
-     public void func_146105_b(IChatComponent p_146105_1_) {}
- 
-+    @Deprecated
-     public ChunkCoordinates func_70997_bJ()
+     public BlockPos func_180470_cg()
      {
 -        return this.field_71077_c;
 +        return getBedLocation(this.field_71093_bK);
      }
  
-+    @Deprecated
++    @Deprecated // Use dimension-sensitive version.
      public boolean func_82245_bX()
      {
 -        return this.field_82248_d;
 +        return isSpawnForced(this.field_71093_bK);
      }
  
-     public void func_71063_a(ChunkCoordinates p_71063_1_, boolean p_71063_2_)
+     public void func_180473_a(BlockPos p_180473_1_, boolean p_180473_2_)
      {
++        if(net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_180473_1_, p_180473_2_)) return;
 +        if (this.field_71093_bK != 0)
 +        {
-+            setSpawnChunk(p_71063_1_, p_71063_2_, this.field_71093_bK);
++            setSpawnChunk(p_180473_1_, p_180473_2_, this.field_71093_bK);
 +            return;
 +        }
-         if (p_71063_1_ != null)
++
+         if (p_180473_1_ != null)
          {
-             this.field_71077_c = new ChunkCoordinates(p_71063_1_);
-@@ -1632,6 +1775,10 @@
+             this.field_71077_c = p_180473_1_;
+@@ -1843,6 +1935,10 @@
  
-             super.func_70069_a(p_70069_1_);
+             super.func_180430_e(p_180430_1_, p_180430_2_);
          }
 +        else
 +        {
-+            MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(this, p_70069_1_));
++            net.minecraftforge.event.ForgeEventFactory.onPlayerFall(this, p_180430_1_, p_180430_2_);
 +        }
      }
  
-     protected String func_146067_o(int p_146067_1_)
-@@ -1674,11 +1821,6 @@
-         }
-         else
-         {
--            if (p_70620_1_.func_77973_b().func_77623_v())
--            {
--                return p_70620_1_.func_77973_b().func_77618_c(p_70620_1_.func_77960_j(), p_70620_2_);
--            }
--
-             if (this.field_71074_e != null && p_70620_1_.func_77973_b() == Items.field_151031_f)
-             {
-                 int j = p_70620_1_.func_77988_m() - this.field_71072_f;
-@@ -1698,6 +1840,7 @@
-                     return Items.field_151031_f.func_94599_c(0);
-                 }
-             }
-+            iicon = p_70620_1_.func_77973_b().getIcon(p_70620_1_, p_70620_2_, this, field_71074_e, field_71072_f);
-         }
- 
-         return iicon;
-@@ -1781,6 +1924,8 @@
-     {
-         if (p_71008_1_ != this.field_71074_e)
-         {
-+            p_71008_2_ = ForgeEventFactory.onItemUseStart(this, p_71008_1_, p_71008_2_);
-+            if (p_71008_2_ <= 0) return;
-             this.field_71074_e = p_71008_1_;
-             this.field_71072_f = p_71008_2_;
- 
-@@ -1864,6 +2009,10 @@
-             this.field_71106_cc = p_71049_1_.field_71106_cc;
-             this.func_85040_s(p_71049_1_.func_71037_bA());
-             this.field_82152_aq = p_71049_1_.field_82152_aq;
-+            //Copy and re-init ExtendedProperties when switching dimensions.
-+            this.extendedProperties = p_71049_1_.extendedProperties;
-+            for (net.minecraftforge.common.IExtendedEntityProperties p : this.extendedProperties.values())
-+                p.init(this, this.field_70170_p);
-         }
-         else if (this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
-         {
-@@ -1875,6 +2024,18 @@
-         }
- 
+     protected void func_71061_d_()
+@@ -2043,6 +2139,18 @@
+         this.field_175152_f = p_71049_1_.field_175152_f;
          this.field_71078_a = p_71049_1_.field_71078_a;
+         this.func_184212_Q().func_187227_b(field_184827_bp, p_71049_1_.func_184212_Q().func_187225_a(field_184827_bp));
 +
 +        this.spawnChunkMap = p_71049_1_.spawnChunkMap;
 +        this.spawnForcedMap = p_71049_1_.spawnForcedMap;
@@ -529,63 +396,59 @@
 +        {
 +            getEntityData().func_74782_a(PERSISTED_NBT_TAG, old.func_74775_l(PERSISTED_NBT_TAG));
 +        }
-+        MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerEvent.Clone(this, p_71049_1_, !p_71049_2_));
++        net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_71049_1_, !p_71049_2_);
      }
  
      protected boolean func_70041_e_()
-@@ -1913,7 +2074,14 @@
+@@ -2142,7 +2250,10 @@
  
-     public void func_70062_b(int p_70062_1_, ItemStack p_70062_2_)
+     public ITextComponent func_145748_c_()
      {
--        this.field_71071_by.field_70460_b[p_70062_1_] = p_70062_2_;
-+        if (p_70062_1_ == 0)
-+        {
-+            this.field_71071_by.field_70462_a[this.field_71071_by.field_70461_c] = p_70062_2_;
-+        }
-+        else
-+        {
-+            this.field_71071_by.field_70460_b[p_70062_1_ - 1] = p_70062_2_;
-+        }
-     }
+-        ITextComponent itextcomponent = new TextComponentString(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.func_70005_c_()));
++        ITextComponent itextcomponent = new TextComponentString("");
++        if (!prefixes.isEmpty()) for (ITextComponent prefix : prefixes) itextcomponent.func_150257_a(prefix);
++        itextcomponent.func_150257_a(new TextComponentString(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.getDisplayNameString())));
++        if (!suffixes.isEmpty()) for (ITextComponent suffix : suffixes) itextcomponent.func_150257_a(suffix);
+         itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
+         itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
+         itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
+@@ -2151,7 +2262,7 @@
  
-     @SideOnly(Side.CLIENT)
-@@ -1958,7 +2126,7 @@
- 
-     public IChatComponent func_145748_c_()
+     public float func_70047_e()
      {
--        ChatComponentText chatcomponenttext = new ChatComponentText(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.func_70005_c_()));
-+        ChatComponentText chatcomponenttext = new ChatComponentText(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.getDisplayName()));
-         chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
-         return chatcomponenttext;
-     }
-@@ -2041,6 +2209,118 @@
-         FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
+-        float f = 1.62F;
++        float f = eyeHeight;
+ 
+         if (this.func_70608_bn())
+         {
+@@ -2367,6 +2478,161 @@
+         return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }
  
-+    /* ======================================== FORGE START =====================================*/
-+    @SideOnly(Side.CLIENT)
-+    @Override
-+    public Vec3 func_70666_h(float par1)
++    /**
++     * Opens a GUI with this player, uses FML's IGuiHandler system.
++     * Allows for extension by modders.
++     *
++     * @param mod The mod trying to open a GUI
++     * @param modGuiId GUI ID
++     * @param world Current World
++     * @param x Passed directly to IGuiHandler, data meaningless Typically world X position
++     * @param y Passed directly to IGuiHandler, data meaningless Typically world Y position
++     * @param z Passed directly to IGuiHandler, data meaningless Typically world Z position
++     */
++    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
 +    {
-+        if (par1 == 1.0F)
-+        {
-+            return Vec3.func_72443_a(this.field_70165_t, this.field_70163_u + (this.func_70047_e() - this.getDefaultEyeHeight()), this.field_70161_v);
-+        }
-+        else
-+        {
-+            double d0 = this.field_70169_q + (this.field_70165_t - this.field_70169_q) * (double)par1;
-+            double d1 = this.field_70167_r + (this.field_70163_u - this.field_70167_r) * (double)par1 + (this.func_70047_e() - this.getDefaultEyeHeight());
-+            double d2 = this.field_70166_s + (this.field_70161_v - this.field_70166_s) * (double)par1;
-+            return Vec3.func_72443_a(d0, d1, d2);
-+        }
++        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
 +    }
 +
++
++    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * A dimension aware version of getBedLocation.
 +     * @param dimension The dimension to get the bed spawn for
 +     * @return The player specific spawn location for the dimension.  May be null.
 +     */
-+    public ChunkCoordinates getBedLocation(int dimension)
++    public BlockPos getBedLocation(int dimension)
 +    {
 +        return dimension == 0 ? field_71077_c : spawnChunkMap.get(dimension);
 +    }
@@ -607,17 +470,17 @@
 +    /**
 +     * A dimension aware version of setSpawnChunk.
 +     * This functions identically, but allows you to specify which dimension to affect, rather than affecting the player's current dimension.
-+     * @param chunkCoordinates The spawn point to set as the player-specific spawn point for the dimension
++     * @param pos The spawn point to set as the player-specific spawn point for the dimension
 +     * @param forced Whether or not the respawn code should check for a bed at this location (true means it won't check for a bed)
 +     * @param dimension Which dimension to apply the player-specific respawn point to
 +     */
-+    public void setSpawnChunk(ChunkCoordinates chunkCoordinates, boolean forced, int dimension)
++    public void setSpawnChunk(BlockPos pos, boolean forced, int dimension)
 +    {
 +        if (dimension == 0)
 +        {
-+            if (chunkCoordinates != null)
++            if (pos != null)
 +            {
-+                field_71077_c = new ChunkCoordinates(chunkCoordinates);
++                field_71077_c = pos;
 +                field_82248_d = forced;
 +            }
 +            else
@@ -628,9 +491,9 @@
 +            return;
 +        }
 +
-+        if (chunkCoordinates != null)
++        if (pos != null)
 +        {
-+            spawnChunkMap.put(dimension, new ChunkCoordinates(chunkCoordinates));
++            spawnChunkMap.put(dimension, pos);
 +            spawnForcedMap.put(dimension, forced);
 +        }
 +        else
@@ -640,27 +503,26 @@
 +        }
 +    }
 +
-+    public float eyeHeight;
 +    private String displayname;
-+    
++
 +    /**
 +     * Returns the default eye height of the player
 +     * @return player default eye height
 +     */
 +    public float getDefaultEyeHeight()
 +    {
-+        return 0.12F;
++        return 1.62F;
 +    }
 +
 +    /**
 +     * Get the currently computed display name, cached for efficiency.
 +     * @return the current display name
 +     */
-+    public String getDisplayName()
++    public String getDisplayNameString()
 +    {
 +        if(this.displayname == null)
 +        {
-+            this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.func_70005_c_());
++            this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_70005_c_());
 +        }
 +        return this.displayname;
 +    }
@@ -670,10 +532,54 @@
 +     */
 +    public void refreshDisplayName()
 +    {
-+        this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.func_70005_c_());
++        this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_70005_c_());
 +    }
++
++    private final java.util.Collection<ITextComponent> prefixes = new java.util.LinkedList<ITextComponent>();
++    private final java.util.Collection<ITextComponent> suffixes = new java.util.LinkedList<ITextComponent>();
++
++    /**
++     * Add a prefix to the player's username in chat
++     * @param prefix The prefix
++     */
++    public void addPrefix(ITextComponent prefix) { prefixes.add(prefix); }
++
++    /**
++     * Add a suffix to the player's username in chat
++     * @param suffix The suffix
++     */
++    public void addSuffix(ITextComponent suffix) { suffixes.add(suffix); }
++
++    public java.util.Collection<ITextComponent> getPrefixes() { return this.prefixes; }
++    public java.util.Collection<ITextComponent> getSuffixes() { return this.suffixes; }
++
++    private final net.minecraftforge.items.IItemHandler playerMainHandler = new net.minecraftforge.items.wrapper.PlayerMainInvWrapper(field_71071_by);
++    private final net.minecraftforge.items.IItemHandler playerEquipmentHandler = new net.minecraftforge.items.wrapper.CombinedInvWrapper(
++                    new net.minecraftforge.items.wrapper.PlayerArmorInvWrapper(field_71071_by),
++                    new net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper(field_71071_by));
++    private final net.minecraftforge.items.IItemHandler playerJoinedHandler = new net.minecraftforge.items.wrapper.PlayerInvWrapper(field_71071_by);
++
++    @SuppressWarnings("unchecked")
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
++            if (facing == null) return (T) playerJoinedHandler;
++            else if (facing.func_176740_k().func_176720_b()) return (T) playerMainHandler;
++            else if (facing.func_176740_k().func_176722_c()) return (T) playerEquipmentHandler;
++        }
++        return super.getCapability(capability, facing);
++    }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
++    }
++
 +    /* ======================================== FORGE END  =====================================*/
 +
-     public static enum EnumStatus
+     public static enum EnumChatVisibility
      {
-         OK,
+         FULL(0, "options.chat.visibility.full"),

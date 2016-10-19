@@ -86,7 +86,7 @@ public class IBXM {
 	}
 
     public void seek( int sample_position ) {
-		int idx;
+		//int idx; Forge, Unused
 		set_sequence_index( 0, 0 );
 		next_tick();
 		while( sample_position > tick_length_samples ) {

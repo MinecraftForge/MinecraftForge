@@ -1,0 +1,69 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
+@@ -161,7 +161,7 @@
+                     lvt_9_1_.func_178606_a(blockpos$mutableblockpos);
+                 }
+ 
+-                if (block.func_149716_u())
++                if (block.hasTileEntity(iblockstate))
+                 {
+                     TileEntity tileentity = this.field_189564_r.func_190300_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
+ 
+@@ -181,7 +181,9 @@
+                     }
+                 }
+ 
+-                BlockRenderLayer blockrenderlayer1 = block.func_180664_k();
++                for(BlockRenderLayer blockrenderlayer1 : BlockRenderLayer.values()) {
++                     if(!block.canRenderInLayer(iblockstate, blockrenderlayer1)) continue;
++                     net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
+                 int j = blockrenderlayer1.ordinal();
+ 
+                 if (block.func_176223_P().func_185901_i() != EnumBlockRenderType.INVISIBLE)
+@@ -196,6 +198,8 @@
+ 
+                     aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, this.field_189564_r, vertexbuffer);
+                 }
++                }
++                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+             }
+ 
+             for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
+@@ -277,7 +281,9 @@
+     private void func_189563_q()
+     {
+         int i = 1;
+-        this.field_189564_r = new ChunkCache(this.field_178588_d, this.field_178586_f.func_177982_a(-1, -1, -1), this.field_178586_f.func_177982_a(16, 16, 16), 1);
++        ChunkCache cache = createRegionRenderCache(this.field_178588_d, this.field_178586_f.func_177982_a(-1, -1, -1), this.field_178586_f.func_177982_a(16, 16, 16), 1);
++        net.minecraftforge.client.MinecraftForgeClient.onRebuildChunk(this.field_178588_d, this.field_178586_f, cache);
++        this.field_189564_r = cache;
+     }
+ 
+     @Nullable
+@@ -426,6 +432,26 @@
+         return this.field_178593_n && this.field_188284_q;
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Creates a new RegionRenderCache instance.<br>
++     * Extending classes can change the behavior of the cache, allowing to visually change
++     * blocks (schematics etc).
++     *
++     * @see RegionRenderCache
++     * @param world The world to cache.
++     * @param from The starting position of the chunk minus one on each axis.
++     * @param to The ending position of the chunk plus one on each axis.
++     * @param subtract Padding used internally by the RegionRenderCache constructor to make
++     *                 the cache a 20x20x20 cube, for a total of 8000 states in the cache.
++     * @return new RegionRenderCache instance
++     */
++    protected ChunkCache createRegionRenderCache(World world, BlockPos from, BlockPos to, int subtract)
++    {
++        return new ChunkCache(world, from, to, subtract);
++    }
++    /* ========================================= FORGE END ======================================*/
++
+     public BlockPos func_181701_a(EnumFacing p_181701_1_)
+     {
+         return this.field_181702_p[p_181701_1_.ordinal()];
