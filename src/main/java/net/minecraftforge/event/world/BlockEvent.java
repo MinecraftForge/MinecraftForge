@@ -281,9 +281,8 @@ public class BlockEvent extends Event
         }
 
         /**
-         * Fired when any of the "growing age" blocks (BlockCrops, BlockChorusFlower,
-         * BlockCocoa, BlockNetherWart, BlockReed, BlockStem) attempt to advance to
-         * the next growth age state during a random tick.<br>
+         * Fired when any "growing age" blocks (for example cacti, chorus plants, or crops
+         * in vanilla) attempt to advance to the next growth age state during a random tick.<br>
          * <br>
          * {@link Result#DEFAULT} will pass on to the vanilla growth mechanics.<br>
          * {@link Result#ALLOW} will force the plant to advance a growth stage.<br>
@@ -300,9 +299,9 @@ public class BlockEvent extends Event
         }
 
         /**
-         * Fired when any of the "growing age" blocks (BlockCrops, BlockChorusFlower,
-         * BlockCocoa, BlockNetherWart, BlockReed, BlockStem) has successfully grown.
-         * The block's original state is available, in addition to its new state.<br>
+         * Fired when "growing age" blocks (for example cacti, chorus plants, or crops
+         * in vanilla) have successfully grown. The block's original state is available,
+         * in addition to its new state.<br>
          * <br>
          * This event is not {@link Cancelable}.<br>
          * <br>
