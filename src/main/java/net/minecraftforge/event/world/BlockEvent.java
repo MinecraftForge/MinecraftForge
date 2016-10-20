@@ -285,10 +285,10 @@ public class BlockEvent extends Event
          * BlockCocoa, BlockNetherWart, BlockReed, BlockStem) attempt to advance to
          * the next growth age state during a random tick.<br>
          * <br>
-	     * {@link Result#DEFAULT} will pass on to the vanilla growth mechanics.<br>
-	     * {@link Result#ALLOW} will force the plant to advance a growth stage.<br>
-	     * {@link Result#DENY} will prevent the plant from advancing a growth stage.<br>
-	     * <br>
+         * {@link Result#DEFAULT} will pass on to the vanilla growth mechanics.<br>
+         * {@link Result#ALLOW} will force the plant to advance a growth stage.<br>
+         * {@link Result#DENY} will prevent the plant from advancing a growth stage.<br>
+         * <br>
          * This event is not {@link Cancelable}.<br>
          * <br>
          */
