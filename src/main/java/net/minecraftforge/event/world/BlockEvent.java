@@ -292,6 +292,7 @@ public class BlockEvent extends Event
          * This event is not {@link Cancelable}.<br>
          * <br>
          */
+        @HasResult
         public static class Pre extends CropGrowEvent {
             public Pre(World world, BlockPos pos, IBlockState state) {
                 super(world, pos, state);

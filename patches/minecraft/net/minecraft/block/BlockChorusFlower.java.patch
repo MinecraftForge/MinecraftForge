@@ -1,16 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockChorusFlower.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockChorusFlower.java
-@@ -17,6 +17,9 @@
- import net.minecraft.util.EnumFacing;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.world.BlockEvent;
-+import net.minecraftforge.fml.common.eventhandler.Event;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- 
-@@ -51,96 +54,103 @@
+@@ -51,9 +51,13 @@
              if (p_180650_1_.func_175623_d(blockpos) && blockpos.func_177956_o() < 256)
              {
                  int i = ((Integer)p_180650_3_.func_177229_b(field_185607_a)).intValue();
@@ -19,166 +9,19 @@
 +                
 +                if (i < 5)
                  {
--                    boolean flag = false;
--                    boolean flag1 = false;
--                    IBlockState iblockstate = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b());
--                    Block block = iblockstate.func_177230_c();
- 
--                    if (block == Blocks.field_150377_bs)
-+                    BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(p_180650_1_,p_180650_2_,p_180650_3_);
-+                    MinecraftForge.EVENT_BUS.post(ev);
-+                    if(ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && p_180650_4_.nextInt(1) == 0))
++                net.minecraftforge.event.world.BlockEvent ev = new net.minecraftforge.event.world.BlockEvent.CropGrowEvent.Pre(p_180650_1_,p_180650_2_,p_180650_3_);
++                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(ev);
++                if(ev.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT && p_180650_4_.nextInt(1) == 0))
++                {
+                     boolean flag = false;
+                     boolean flag1 = false;
+                     IBlockState iblockstate = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b());
+@@ -141,6 +145,8 @@
                      {
--                        flag = true;
--                    }
--                    else if (block == Blocks.field_185765_cR)
--                    {
--                        int j = 1;
--
--                        for (int k = 0; k < 4; ++k)
-+                        boolean flag = false;
-+                        boolean flag1 = false;
-+                        IBlockState iblockstate = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b());
-+                        Block block = iblockstate.func_177230_c();
-+    
-+                        if (block == Blocks.field_150377_bs)
-                         {
--                            Block block1 = p_180650_1_.func_180495_p(p_180650_2_.func_177979_c(j + 1)).func_177230_c();
--
--                            if (block1 != Blocks.field_185765_cR)
-+                            flag = true;
-+                        }
-+                        else if (block == Blocks.field_185765_cR)
-+                        {
-+                            int j = 1;
-+    
-+                            for (int k = 0; k < 4; ++k)
-                             {
--                                if (block1 == Blocks.field_150377_bs)
-+                                Block block1 = p_180650_1_.func_180495_p(p_180650_2_.func_177979_c(j + 1)).func_177230_c();
-+    
-+                                if (block1 != Blocks.field_185765_cR)
-                                 {
--                                    flag1 = true;
-+                                    if (block1 == Blocks.field_150377_bs)
-+                                    {
-+                                        flag1 = true;
-+                                    }
-+    
-+                                    break;
-                                 }
--
--                                break;
-+    
-+                                ++j;
-                             }
--
--                            ++j;
-+    
-+                            int i1 = 4;
-+    
-+                            if (flag1)
-+                            {
-+                                ++i1;
-+                            }
-+    
-+                            if (j < 2 || p_180650_4_.nextInt(i1) >= j)
-+                            {
-+                                flag = true;
-+                            }
-                         }
--
--                        int i1 = 4;
--
--                        if (flag1)
-+                        else if (iblockstate.func_185904_a() == Material.field_151579_a)
-                         {
--                            ++i1;
--                        }
--
--                        if (j < 2 || p_180650_4_.nextInt(i1) >= j)
--                        {
-                             flag = true;
-                         }
--                    }
--                    else if (iblockstate.func_185904_a() == Material.field_151579_a)
--                    {
--                        flag = true;
--                    }
--
--                    if (flag && func_185604_a(p_180650_1_, blockpos, (EnumFacing)null) && p_180650_1_.func_175623_d(p_180650_2_.func_177981_b(2)))
--                    {
--                        p_180650_1_.func_180501_a(p_180650_2_, Blocks.field_185765_cR.func_176223_P(), 2);
--                        this.func_185602_a(p_180650_1_, blockpos, i);
--                    }
--                    else if (i < 4)
--                    {
--                        int l = p_180650_4_.nextInt(4);
--                        boolean flag2 = false;
--
--                        if (flag1)
-+    
-+                        if (flag && func_185604_a(p_180650_1_, blockpos, (EnumFacing)null) && p_180650_1_.func_175623_d(p_180650_2_.func_177981_b(2)))
-                         {
--                            ++l;
-+                            p_180650_1_.func_180501_a(p_180650_2_, Blocks.field_185765_cR.func_176223_P(), 2);
-+                            this.func_185602_a(p_180650_1_, blockpos, i);
-                         }
--
--                        for (int j1 = 0; j1 < l; ++j1)
-+                        else if (i < 4)
-                         {
--                            EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.func_179518_a(p_180650_4_);
--                            BlockPos blockpos1 = p_180650_2_.func_177972_a(enumfacing);
--
--                            if (p_180650_1_.func_175623_d(blockpos1) && p_180650_1_.func_175623_d(blockpos1.func_177977_b()) && func_185604_a(p_180650_1_, blockpos1, enumfacing.func_176734_d()))
-+                            int l = p_180650_4_.nextInt(4);
-+                            boolean flag2 = false;
-+    
-+                            if (flag1)
-                             {
--                                this.func_185602_a(p_180650_1_, blockpos1, i + 1);
--                                flag2 = true;
-+                                ++l;
-                             }
-+    
-+                            for (int j1 = 0; j1 < l; ++j1)
-+                            {
-+                                EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.func_179518_a(p_180650_4_);
-+                                BlockPos blockpos1 = p_180650_2_.func_177972_a(enumfacing);
-+    
-+                                if (p_180650_1_.func_175623_d(blockpos1) && p_180650_1_.func_175623_d(blockpos1.func_177977_b()) && func_185604_a(p_180650_1_, blockpos1, enumfacing.func_176734_d()))
-+                                {
-+                                    this.func_185602_a(p_180650_1_, blockpos1, i + 1);
-+                                    flag2 = true;
-+                                }
-+                            }
-+    
-+                            if (flag2)
-+                            {
-+                                p_180650_1_.func_180501_a(p_180650_2_, Blocks.field_185765_cR.func_176223_P(), 2);
-+                            }
-+                            else
-+                            {
-+                                this.func_185605_c(p_180650_1_, p_180650_2_);
-+                            }
-                         }
--
--                        if (flag2)
-+                        else if (i == 4)
-                         {
--                            p_180650_1_.func_180501_a(p_180650_2_, Blocks.field_185765_cR.func_176223_P(), 2);
--                        }
--                        else
--                        {
-                             this.func_185605_c(p_180650_1_, p_180650_2_);
-                         }
-+                        MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_)));
+                         this.func_185605_c(p_180650_1_, p_180650_2_);
                      }
--                    else if (i == 4)
--                    {
--                        this.func_185605_c(p_180650_1_, p_180650_2_);
--                    }
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.BlockEvent.CropGrowEvent.Post(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_)));
++                    }
                  }
              }
          }
