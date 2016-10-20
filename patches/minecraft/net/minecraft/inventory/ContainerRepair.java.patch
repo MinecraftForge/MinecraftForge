@@ -26,14 +26,14 @@
                  {
                      int i1 = p_i1800_2_.func_72805_g(p_i1800_3_, p_i1800_4_, p_i1800_5_);
                      int k = i1 & 3;
-@@ -170,6 +173,7 @@
+@@ -168,6 +171,7 @@
+             Iterator iterator1;
+             Enchantment enchantment;
  
++            if (!ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, k2)) return;
              if (itemstack2 != null)
              {
-+                if (!ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, k2)) return;
                  flag = itemstack2.func_77973_b() == Items.field_151134_bR && Items.field_151134_bR.func_92110_g(itemstack2).func_74745_c() > 0;
- 
-                 if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
 @@ -258,7 +262,8 @@
                          {
                              int j2 = ((Integer)iterator.next()).intValue();
