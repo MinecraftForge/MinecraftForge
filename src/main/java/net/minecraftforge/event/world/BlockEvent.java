@@ -34,6 +34,8 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import com.google.common.collect.ImmutableList;
 
@@ -267,5 +269,54 @@ public class BlockEvent extends Event
             super(world, pos, state);
         }
     }
+    
+    /**
+     * Fired when a crop block grows.  See subevents.
+     *
+     */
+    public static class CropGrowEvent extends BlockEvent {
+        public CropGrowEvent(World world, BlockPos pos, IBlockState state)
+        {
+            super(world, pos, state);
+        }
 
+        /**
+         * Fired when any of the "growing age" blocks (BlockCrops, BlockChorusFlower,
+         * BlockCocoa, BlockNetherWart, BlockReed, BlockStem) attempt to advance to
+         * the next growth age state during a random tick.<br>
+         * <br>
+	     * {@link Result#DEFAULT} will pass on to the vanilla growth mechanics.<br>
+	     * {@link Result#ALLOW} will force the plant to advance a growth stage.<br>
+	     * {@link Result#DENY} will prevent the plant from advancing a growth stage.<br>
+	     * <br>
+         * This event is not {@link Cancelable}.<br>
+         * <br>
+         */
+        public static class Pre extends CropGrowEvent {
+            public Pre(World world, BlockPos pos, IBlockState state) {
+                super(world, pos, state);
+            }
+        }
+
+        /**
+         * Fired when any of the "growing age" blocks (BlockCrops, BlockChorusFlower,
+         * BlockCocoa, BlockNetherWart, BlockReed, BlockStem) has successfully grown.
+         * The block's original state is available, in addition to its new state.<br>
+         * <br>
+         * This event is not {@link Cancelable}.<br>
+         * <br>
+         * This event does not have a result. {@link HasResult}<br>
+         */
+        public static class Post extends CropGrowEvent {
+            private final IBlockState originalState;
+            public Post(World world, BlockPos pos, IBlockState original, IBlockState state) {
+                super(world, pos, state);
+                originalState = original;
+            }
+
+            public IBlockState getOriginalState() {
+                return originalState;
+            }
+        }
+    }
 }

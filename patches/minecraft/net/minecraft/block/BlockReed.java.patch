@@ -1,6 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockReed.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockReed.java
-@@ -20,7 +20,7 @@
+@@ -17,10 +17,13 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.BlockEvent;
++import net.minecraftforge.fml.common.eventhandler.Event;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,7 +15,37 @@
  {
      public static final PropertyInteger field_176355_a = PropertyInteger.func_177719_a("age", 0, 15);
      protected static final AxisAlignedBB field_185701_b = new AxisAlignedBB(0.125D, 0.0D, 0.125D, 0.875D, 1.0D, 0.875D);
-@@ -70,7 +70,9 @@
+@@ -53,16 +56,20 @@
+                 if (i < 3)
+                 {
+                     int j = ((Integer)p_180650_3_.func_177229_b(field_176355_a)).intValue();
+-
+-                    if (j == 15)
+-                    {
+-                        p_180650_1_.func_175656_a(p_180650_2_.func_177984_a(), this.func_176223_P());
+-                        p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176355_a, Integer.valueOf(0)), 4);
++                    BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(p_180650_1_,p_180650_2_,p_180650_3_);
++                    MinecraftForge.EVENT_BUS.post(ev);
++                    if(ev.getResult() != Event.Result.DENY) {
++                        if (j == 15)
++                        {
++                            p_180650_1_.func_175656_a(p_180650_2_.func_177984_a(), this.func_176223_P());
++                            p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176355_a, Integer.valueOf(0)), 4);
++                        }
++                        else
++                        {
++                            p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176355_a, Integer.valueOf(j + 1)), 4);
++                        }
++                        MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_)));
+                     }
+-                    else
+-                    {
+-                        p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176355_a, Integer.valueOf(j + 1)), 4);
+-                    }
+                 }
+             }
+         }
+@@ -70,7 +77,9 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -20,7 +56,7 @@
  
          if (block == this)
          {
-@@ -165,6 +167,17 @@
+@@ -165,6 +174,17 @@
          return ((Integer)p_176201_1_.func_177229_b(field_176355_a)).intValue();
      }
  

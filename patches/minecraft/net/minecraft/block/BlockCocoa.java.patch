@@ -1,6 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCocoa.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCocoa.java
-@@ -131,7 +131,14 @@
+@@ -19,6 +19,9 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.BlockEvent;
++import net.minecraftforge.fml.common.eventhandler.Event;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -43,13 +46,20 @@
+         {
+             this.func_176500_f(p_180650_1_, p_180650_2_, p_180650_3_);
+         }
+-        else if (p_180650_1_.field_73012_v.nextInt(5) == 0)
++        else
+         {
+-            int i = ((Integer)p_180650_3_.func_177229_b(field_176501_a)).intValue();
++            BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(p_180650_1_,p_180650_2_,p_180650_3_);
++            MinecraftForge.EVENT_BUS.post(ev);
+ 
+-            if (i < 2)
++            if (ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && p_180650_1_.field_73012_v.nextInt(5) == 0))
+             {
+-                p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176501_a, Integer.valueOf(i + 1)), 2);
++                int i = ((Integer)p_180650_3_.func_177229_b(field_176501_a)).intValue();
++
++                if (i < 2)
++                {
++                    p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176501_a, Integer.valueOf(i + 1)), 2);
++                    MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_)));
++                }
+             }
+         }
+     }
+@@ -131,7 +141,14 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -16,7 +51,7 @@
          int j = 1;
  
          if (i >= 2)
-@@ -141,8 +148,9 @@
+@@ -141,8 +158,9 @@
  
          for (int k = 0; k < j; ++k)
          {

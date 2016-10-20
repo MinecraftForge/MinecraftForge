@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNetherWart.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNetherWart.java
-@@ -43,7 +43,7 @@
+@@ -17,6 +17,9 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.BlockEvent;
++import net.minecraftforge.fml.common.eventhandler.Event;
+ 
+ public class BlockNetherWart extends BlockBush
+ {
+@@ -43,25 +46,34 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
@@ -9,7 +19,25 @@
      }
  
      public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
-@@ -59,9 +59,11 @@
+     {
+         int i = ((Integer)p_180650_3_.func_177229_b(field_176486_a)).intValue();
+ 
+-        if (i < 3 && p_180650_4_.nextInt(10) == 0)
++        if (i < 3)
+         {
+-            p_180650_3_ = p_180650_3_.func_177226_a(field_176486_a, Integer.valueOf(i + 1));
+-            p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_, 2);
++            BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(p_180650_1_,p_180650_2_,p_180650_3_);
++            MinecraftForge.EVENT_BUS.post(ev);
++
++            if(ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && p_180650_4_.nextInt(10) == 0))
++            {
++                p_180650_3_ = p_180650_3_.func_177226_a(field_176486_a, Integer.valueOf(i + 1));
++                p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_, 2);
++                MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_)));
++            }
+         }
+ 
          super.func_180650_b(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_);
      }
  
@@ -22,7 +50,7 @@
          {
              int i = 1;
  
-@@ -108,6 +110,26 @@
+@@ -108,6 +120,26 @@
          return ((Integer)p_176201_1_.func_177229_b(field_176486_a)).intValue();
      }
  
