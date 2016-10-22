@@ -562,7 +562,7 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
     }
-    
+
     public static EntityItem onPlayerTossEvent(EntityPlayer player, ItemStack item, boolean includeName)
     {
         player.captureDrops = true;
