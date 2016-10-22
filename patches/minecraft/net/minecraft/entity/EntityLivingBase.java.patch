@@ -199,7 +199,7 @@
                  {
                      ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
 -
-+                    net.minecraftforge.common.ForgeHooks.onLivingEquipmentChange(this, entityequipmentslot, itemstack, itemstack1);
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, entityequipmentslot, itemstack, itemstack1);
                      if (itemstack != null)
                      {
                          this.func_110140_aT().func_111148_a(itemstack.func_111283_C(entityequipmentslot));
