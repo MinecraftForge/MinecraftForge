@@ -4,9 +4,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.tileentity.TileEntityDropper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -123,7 +126,23 @@ public class TestCapabilityMod
     public void attachTileEntity(AttachCapabilitiesEvent<TileEntity> event)
     {
         if (!(event.getObject() instanceof TileEntity))
-            throw new IllegalArgumentException("Generic event handler failed! Exprected Tile Entity got " + event.getObject());
+            throw new IllegalArgumentException("Generic event handler failed! Expected Tile Entity got " + event.getObject());
+    }
+
+    // Dispensers are only wanted.
+    @SubscribeEvent
+    public void attachTileEntityDispenser(AttachCapabilitiesEvent<TileEntityDispenser> event)
+    {
+        if (!(event.getObject() instanceof TileEntityDispenser) || event.getObject() instanceof TileEntityDropper)
+            throw new IllegalArgumentException("Generic event handler failed! Expected TileEntityDispenser got " + event.getObject());
+    }
+
+    // Lower bounds.
+    @SubscribeEvent
+    public void attachITickable(AttachCapabilitiesEvent<? extends ITickable> event)
+    {
+        if (!(event.getObject() instanceof ITickable))
+            throw new IllegalArgumentException("Generic event handler failed! Expected ? extends ITickable got " + event.getObject());
     }
 
     // Capabilities SHOULD be interfaces, NOT concrete classes, this allows for

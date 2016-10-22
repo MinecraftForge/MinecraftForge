@@ -19,6 +19,9 @@
 package net.minecraftforge.fml.common.eventhandler;
 
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
+
+import org.apache.commons.lang3.reflect.TypeUtils;
 
 public class GenericEvent<T> extends Event implements IGenericEvent<T>
 {
@@ -32,5 +35,11 @@ public class GenericEvent<T> extends Event implements IGenericEvent<T>
     public Type getGenericType()
     {
         return type;
+    }
+
+    @Override
+    public boolean matchParameterizedTypeArgument(Type targetType)
+    {
+        return targetType == type || targetType instanceof WildcardType && TypeUtils.isAssignable(type, targetType);
     }
 }

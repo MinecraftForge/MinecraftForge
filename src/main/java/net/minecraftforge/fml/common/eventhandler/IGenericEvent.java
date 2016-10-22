@@ -23,4 +23,12 @@ import java.lang.reflect.Type;
 public interface IGenericEvent<T>
 {
     Type getGenericType();
+
+    /**
+     * Checks if the event is compatible with the target type as the generic
+     * type of a parameter of the event handler method.
+     *
+     * @return {@code true} if it is compatible.
+     */
+    boolean matchParameterizedTypeArgument(Type targetType);
 }

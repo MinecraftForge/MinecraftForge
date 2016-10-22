@@ -85,7 +85,7 @@ public class ASMEventHandler implements IEventListener
         {
             if (!event.isCancelable() || !event.isCanceled() || subInfo.receiveCanceled())
             {
-                if (filter == null || filter == ((IGenericEvent)event).getGenericType())
+                if (filter == null || ((IGenericEvent)event).matchParameterizedTypeArgument(filter))
                 {
                     handler.invoke(event);
                 }
