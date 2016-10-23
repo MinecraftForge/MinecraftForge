@@ -1,27 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockChorusFlower.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockChorusFlower.java
-@@ -51,9 +51,13 @@
-             if (p_180650_1_.func_175623_d(blockpos) && blockpos.func_177956_o() < 256)
+@@ -52,7 +52,7 @@
              {
                  int i = ((Integer)p_180650_3_.func_177229_b(field_185607_a)).intValue();
--
+ 
 -                if (i < 5 && p_180650_4_.nextInt(1) == 0)
-+                
-+                if (i < 5)
++                if (i < 5 &&  net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_180650_1_, blockpos, p_180650_3_, p_180650_4_.nextInt(1) == 0))
                  {
-+                net.minecraftforge.event.world.BlockEvent ev = new net.minecraftforge.event.world.BlockEvent.CropGrowEvent.Pre(p_180650_1_,p_180650_2_,p_180650_3_);
-+                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(ev);
-+                if(ev.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT && p_180650_4_.nextInt(1) == 0))
-+                {
                      boolean flag = false;
                      boolean flag1 = false;
-                     IBlockState iblockstate = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b());
-@@ -141,6 +145,8 @@
+@@ -141,6 +141,7 @@
                      {
                          this.func_185605_c(p_180650_1_, p_180650_2_);
                      }
 +                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.BlockEvent.CropGrowEvent.Post(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_)));
-+                    }
                  }
              }
          }

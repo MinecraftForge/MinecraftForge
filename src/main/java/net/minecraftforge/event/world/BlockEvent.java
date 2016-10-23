@@ -274,7 +274,8 @@ public class BlockEvent extends Event
      * Fired when a crop block grows.  See subevents.
      *
      */
-    public static class CropGrowEvent extends BlockEvent {
+    public static class CropGrowEvent extends BlockEvent
+    {
         public CropGrowEvent(World world, BlockPos pos, IBlockState state)
         {
             super(world, pos, state);
@@ -292,8 +293,10 @@ public class BlockEvent extends Event
          * <br>
          */
         @HasResult
-        public static class Pre extends CropGrowEvent {
-            public Pre(World world, BlockPos pos, IBlockState state) {
+        public static class Pre extends CropGrowEvent
+        {
+            public Pre(World world, BlockPos pos, IBlockState state)
+            {
                 super(world, pos, state);
             }
         }
@@ -307,14 +310,17 @@ public class BlockEvent extends Event
          * <br>
          * This event does not have a result. {@link HasResult}<br>
          */
-        public static class Post extends CropGrowEvent {
+        public static class Post extends CropGrowEvent
+        {
             private final IBlockState originalState;
-            public Post(World world, BlockPos pos, IBlockState original, IBlockState state) {
+            public Post(World world, BlockPos pos, IBlockState original, IBlockState state)
+            {
                 super(world, pos, state);
                 originalState = original;
             }
 
-            public IBlockState getOriginalState() {
+            public IBlockState getOriginalState()
+            {
                 return originalState;
             }
         }
