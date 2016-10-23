@@ -280,7 +280,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             if (displacements.get(block))
             {
-                block.dropBlockAsItem(world, pos, state, 0);
+                if (state.getBlock() != Blocks.SNOW_LAYER) //Forge: Vanilla has a 'bug' where snowballs don't drop like every other block. So special case because ewww...
+                    block.dropBlockAsItem(world, pos, state, 0);
                 return true;
             }
             return false;
