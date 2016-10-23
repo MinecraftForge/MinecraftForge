@@ -42,8 +42,12 @@
              EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
-@@ -458,11 +461,13 @@
-                 if (iblockstate1.func_177230_c().func_176214_u())
+@@ -455,14 +458,16 @@
+                 BlockPos blockpos = new BlockPos(d0, d1 + (double)entityplayer.func_70047_e(), d2);
+                 IBlockState iblockstate1 = this.field_78455_a.field_71441_e.func_180495_p(blockpos);
+ 
+-                if (iblockstate1.func_177230_c().func_176214_u())
++                if (iblockstate1.func_177230_c().isVisuallyOpaque(iblockstate1))
                  {
                      iblockstate = iblockstate1;
 +                    overlayPos = blockpos;
