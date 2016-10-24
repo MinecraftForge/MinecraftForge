@@ -29,12 +29,14 @@ public class SlotItemHandler extends Slot
 {
     private static IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
     private final IItemHandler itemHandler;
+    private final IItemHandlerContainer itemHandlerContainer;
     private final int index;
 
     public SlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition)
     {
         super(emptyInventory, index, xPosition, yPosition);
         this.itemHandler = itemHandler;
+        this.itemHandlerContainer = (itemHandler instanceof IItemHandlerContainer) ? (IItemHandlerContainer)itemHandler : null;
         this.index = index;
     }
 
@@ -43,7 +45,10 @@ public class SlotItemHandler extends Slot
     {
         if (stack == null)
             return false;
-        ItemStack remainder = this.getItemHandler().insertItem(index, stack, true);
+        IItemHandlerContainer ihc = getItemHandlerContainer();
+        if (ihc != null)
+            return ihc.isItemValidForSlot(slotNumber, stack);
+        ItemStack remainder = itemHandler.insertItem(index, stack, true);
         return remainder == null || remainder.stackSize < stack.stackSize;
     }
 
@@ -68,12 +73,27 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
+    public int getSlotStackLimit()
+    {
+        IItemHandlerContainer ihc = getItemHandlerContainer();
+        if (ihc != null)
+            return ihc.getInventoryStackLimit(slotNumber, null);
+        return 64;
+    }
+
+    @Override
     public int getItemStackLimit(ItemStack stack)
     {
+        IItemHandlerContainer ihc = getItemHandlerContainer();
+        if (ihc != null)
+            return ihc.getInventoryStackLimit(slotNumber, stack);
+
         ItemStack maxAdd = stack.copy();
         maxAdd.stackSize = maxAdd.getMaxStackSize();
-        ItemStack currentStack = this.getItemHandler().getStackInSlot(index);
-        ItemStack remainder = this.getItemHandler().insertItem(index, maxAdd, true);
+
+        IItemHandler itemHandler = this.getItemHandler();
+        ItemStack currentStack = itemHandler.getStackInSlot(index);
+        ItemStack remainder = itemHandler.insertItem(index, maxAdd, true);
 
         int current = currentStack == null ? 0 : currentStack.stackSize;
         int added = maxAdd.stackSize - (remainder != null ? remainder.stackSize : 0);
@@ -95,6 +115,11 @@ public class SlotItemHandler extends Slot
     public IItemHandler getItemHandler()
     {
         return itemHandler;
+    }
+
+    public IItemHandlerContainer getItemHandlerContainer()
+    {
+        return itemHandlerContainer;
     }
 
     @Override
