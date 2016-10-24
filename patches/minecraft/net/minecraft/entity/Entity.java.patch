@@ -100,7 +100,7 @@
 -
 -                    if (this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos).func_177230_c().func_176214_u())
 +                    IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
-+                    if (iblockstate.func_177230_c().isVisuallyOpaque(iblockstate))
++                    if (iblockstate.func_177230_c().causesSuffocation(iblockstate))
                      {
                          blockpos$pooledmutableblockpos.func_185344_t();
                          return true;

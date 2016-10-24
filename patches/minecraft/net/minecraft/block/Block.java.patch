@@ -220,7 +220,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -893,6 +916,1197 @@
+@@ -893,6 +916,1201 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -274,12 +274,16 @@
 +    }
 +
 +    /**
-+     * State-sensitive version of isVisuallyOpaque.
++     * State-sensitive version of func_176214_u.
++     * <p>
++     * This method is used for:
++     * <br> Checking if an entity should be suffocating
++     * <br> Checking if the suffocation overlay should be rendered in 1st person
 +     *
 +     * @param state The current state
-+     * @return True if the block is visually opaque
++     * @return True if the block can suffocate entities that are inside it.
 +     */
-+    public boolean isVisuallyOpaque(IBlockState state)
++    public boolean causesSuffocation(IBlockState state)
 +    {
 +        return state.func_185904_a().func_76230_c() && state.func_185917_h();
 +    }
@@ -1418,7 +1422,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1169,11 +2383,7 @@
+@@ -1169,11 +2387,7 @@
              }
              else
              {

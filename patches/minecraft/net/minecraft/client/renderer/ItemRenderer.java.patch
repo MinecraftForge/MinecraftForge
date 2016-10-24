@@ -47,7 +47,7 @@
                  IBlockState iblockstate1 = this.field_78455_a.field_71441_e.func_180495_p(blockpos);
  
 -                if (iblockstate1.func_177230_c().func_176214_u())
-+                if (iblockstate1.func_177230_c().isVisuallyOpaque(iblockstate1))
++                if (iblockstate1.func_177230_c().causesSuffocation(iblockstate1))
                  {
                      iblockstate = iblockstate1;
 +                    overlayPos = blockpos;
