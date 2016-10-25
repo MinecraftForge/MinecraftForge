@@ -30,7 +30,7 @@
              if (flag3 ^ flag4)
              {
 -                flag = flag3;
-+                flag = !flag3; //Forge: Fix stitcher not expanding entire height before growing width
++                flag = !flag3 && flag1; //Forge: Fix stitcher not expanding entire height before growing width, and {potentially} growing larger then the max size.
              }
              else
              {
