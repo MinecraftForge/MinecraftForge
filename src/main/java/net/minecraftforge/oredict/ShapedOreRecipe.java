@@ -32,6 +32,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class ShapedOreRecipe implements IRecipe
 {
@@ -123,6 +126,10 @@ public class ShapedOreRecipe implements IRecipe
             else if (in instanceof String)
             {
                 itemMap.put(chr, OreDictionary.getOres((String)in));
+            }
+            else if (in instanceof FluidStack)
+            {
+                itemMap.put(chr, ((FluidStack) in).copy());
             }
             else
             {
@@ -242,6 +249,25 @@ public class ShapedOreRecipe implements IRecipe
                     while (itr.hasNext() && !matched)
                     {
                         matched = OreDictionary.itemMatches(itr.next(), slot, false);
+                    }
+
+                    if (!matched)
+                    {
+                        return false;
+                    }
+                }
+                else if (target instanceof FluidStack)
+                {
+                    boolean matched = false;
+
+                    IFluidHandler fluidHandler = FluidUtil.getFluidHandler(slot);
+                    if (fluidHandler != null)
+                    {
+                        FluidStack drained = fluidHandler.drain((FluidStack) target, false);
+                        if (drained != null)
+                        {
+                            matched = drained.containsFluid((FluidStack) target);
+                        }
                     }
 
                     if (!matched)
