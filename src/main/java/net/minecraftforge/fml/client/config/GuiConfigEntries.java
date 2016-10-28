@@ -1507,9 +1507,9 @@ public class GuiConfigEntries extends GuiListExtended
             comment = I18n.format(configElement.getLanguageKey() + ".tooltip").replace("\\n", "\n");
 
             if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
-                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + comment).split("\n"));
+                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + removeTag(comment, "[default:", "]")).split("\n"));
             else if (configElement.getComment() != null && !configElement.getComment().trim().isEmpty())
-                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + configElement.getComment()).split("\n"));
+                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + removeTag(configElement.getComment(), "[default:", "]")).split("\n"));
             else
                 Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.RED + "No tooltip defined.").split("\n"));
 
@@ -1665,6 +1665,23 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public void onGuiClosed()
         {}
+
+        /**
+         * Get string surrounding tagged area.
+         */
+        private String removeTag(String target, String tagStart, String tagEnd)
+        {
+            int tagStartPosition = tagStartPosition = target.indexOf(tagStart);
+            int tagEndPosition = tagEndPosition = target.indexOf(tagEnd, tagStartPosition + tagStart.length());
+
+            if (-1 == tagStartPosition || -1 == tagEndPosition) 
+                return target;
+
+            String taglessResult = target.substring(0, tagStartPosition);
+            taglessResult += target.substring(tagEndPosition + 1, target.length());
+
+            return taglessResult;
+        }
     }
 
     /**
