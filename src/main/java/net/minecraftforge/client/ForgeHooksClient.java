@@ -60,7 +60,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
@@ -104,7 +103,6 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderItemLayerEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
@@ -754,8 +752,6 @@ public class ForgeHooksClient
         return event;
     }
     
-    public static TransformType currentTransformType;
-    
     public static List<List<BakedQuad>> sortQuadsByIndex(IBakedModel model)
     {
         List<List<BakedQuad>> layers = new ArrayList();
@@ -778,16 +774,26 @@ public class ForgeHooksClient
         return layers;
     }
     
+    public static boolean isItemInGui;
+    
     public static void renderItemLayerPre(ItemStack stack, int index)
     {
-        MinecraftForge.EVENT_BUS.post(new RenderItemLayerEvent.Pre(stack, index == -1 ? index : 0, currentTransformType));
+        if (!isItemInGui && stack.getItem().shouldRenderFullbright(stack, index == -1 ? 0 : index))
+        {
+            Minecraft.getMinecraft().entityRenderer.disableLightmap();
+            GlStateManager.disableLighting();
+        }
         Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
     }
     
     public static void renderItemLayerPost(ItemStack stack, int index)
     {
         Tessellator.getInstance().draw();
-        MinecraftForge.EVENT_BUS.post(new RenderItemLayerEvent.Post(stack, index == -1 ? index : 0, currentTransformType));
+        if (!isItemInGui && stack.getItem().shouldRenderFullbright(stack, index == -1 ? 0 : index))
+        {
+            GlStateManager.enableLighting();
+            Minecraft.getMinecraft().entityRenderer.enableLightmap();
+        }
     }
 
 }
