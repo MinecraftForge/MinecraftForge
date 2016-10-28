@@ -1,18 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
-@@ -69,8 +69,9 @@
+@@ -69,8 +69,7 @@
          if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) >= 9)
          {
              float f = BlockCrops.func_180672_a(this, p_180650_1_, p_180650_2_);
 -
 -            if (p_180650_4_.nextInt((int)(25.0F / f) + 1) == 0)
-+            net.minecraftforge.event.world.BlockEvent ev = new net.minecraftforge.event.world.BlockEvent.CropGrowEvent.Pre(p_180650_1_,p_180650_2_,p_180650_3_);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(ev);
-+            if(ev.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT && p_180650_4_.nextInt((int)(25.0F / f) + 1) == 0))
++            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_.nextInt((int)(25.0F / f) + 1) == 0))
              {
                  int i = ((Integer)p_180650_3_.func_177229_b(field_176484_a)).intValue();
  
-@@ -90,13 +91,15 @@
+@@ -90,13 +89,15 @@
                      }
  
                      p_180650_2_ = p_180650_2_.func_177972_a(EnumFacing.Plane.HORIZONTAL.func_179518_a(p_180650_4_));
@@ -26,11 +24,11 @@
                          p_180650_1_.func_175656_a(p_180650_2_, this.field_149877_a.func_176223_P());
                      }
                  }
-+                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.BlockEvent.CropGrowEvent.Post(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_)));
++                net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_));
              }
          }
      }
-@@ -110,24 +113,29 @@
+@@ -110,24 +111,29 @@
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
          super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);

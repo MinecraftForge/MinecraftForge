@@ -1,31 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCocoa.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCocoa.java
-@@ -43,13 +43,19 @@
+@@ -43,14 +43,18 @@
          {
              this.func_176500_f(p_180650_1_, p_180650_2_, p_180650_3_);
          }
 -        else if (p_180650_1_.field_73012_v.nextInt(5) == 0)
 +        else
          {
--            int i = ((Integer)p_180650_3_.func_177229_b(field_176501_a)).intValue();
--
--            if (i < 2)
-+            net.minecraftforge.event.world.BlockEvent ev = new net.minecraftforge.event.world.BlockEvent.CropGrowEvent.Pre(p_180650_1_,p_180650_2_,p_180650_3_);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(ev);
-+            if(ev.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT && p_180650_1_.field_73012_v.nextInt(5) == 0))
++            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_.nextInt(5) == 0))
++            {
+             int i = ((Integer)p_180650_3_.func_177229_b(field_176501_a)).intValue();
+ 
+             if (i < 2)
              {
--                p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176501_a, Integer.valueOf(i + 1)), 2);
-+                int i = ((Integer)p_180650_3_.func_177229_b(field_176501_a)).intValue();
-+
-+                if (i < 2)
-+                {
-+                    p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176501_a, Integer.valueOf(i + 1)), 2);
-+                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.BlockEvent.CropGrowEvent.Post(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_)));
-+                }
+                 p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176501_a, Integer.valueOf(i + 1)), 2);
++                net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_));
              }
++            }
          }
      }
-@@ -131,7 +137,14 @@
+ 
+@@ -131,7 +135,14 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -41,7 +36,7 @@
          int j = 1;
  
          if (i >= 2)
-@@ -141,8 +154,9 @@
+@@ -141,8 +152,9 @@
  
          for (int k = 0; k < j; ++k)
          {
