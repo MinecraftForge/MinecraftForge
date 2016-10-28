@@ -29,7 +29,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -52,6 +54,7 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
@@ -66,6 +69,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
@@ -124,6 +128,7 @@ import net.minecraftforge.fml.common.ModContainer;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -745,6 +750,50 @@ public class ForgeHooksClient
         ScreenshotEvent event = new ScreenshotEvent(image, screenshotFile);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+    
+    public static List<List<BakedQuad>> sortQuadsByIndex(IBakedModel model)
+    {
+        List<List<BakedQuad>> layers = new ArrayList();
+        List<BakedQuad> quads = new ArrayList();
+        
+        for (EnumFacing dir : EnumFacing.values())
+        {
+            quads.addAll(model.getQuads(null, dir, 0));
+        }
+        quads.addAll(model.getQuads(null, null, 0));
+        
+        for (BakedQuad quad : quads)
+        {
+            int index = quad.hasTintIndex() ? quad.getTintIndex() : 0;
+            if (index >= layers.size())
+                layers.add(index, new ArrayList());
+            
+            layers.get(index).add(quad);
+        }
+        return layers;
+    }
+    
+    public static boolean isItemInGui;
+    
+    public static void renderItemLayerPre(ItemStack stack, int index)
+    {
+        if (!isItemInGui && stack.getItem().shouldRenderFullbright(stack, index == -1 ? 0 : index))
+        {
+            Minecraft.getMinecraft().entityRenderer.disableLightmap();
+            GlStateManager.disableLighting();
+        }
+        Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+    }
+    
+    public static void renderItemLayerPost(ItemStack stack, int index)
+    {
+        Tessellator.getInstance().draw();
+        if (!isItemInGui && stack.getItem().shouldRenderFullbright(stack, index == -1 ? 0 : index))
+        {
+            GlStateManager.enableLighting();
+            Minecraft.getMinecraft().entityRenderer.enableLightmap();
+        }
     }
 
 }
