@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNetherWart.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNetherWart.java
-@@ -43,25 +43,31 @@
+@@ -43,25 +43,28 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
@@ -13,14 +13,11 @@
          int i = ((Integer)p_180650_3_.func_177229_b(field_176486_a)).intValue();
  
 -        if (i < 3 && p_180650_4_.nextInt(10) == 0)
-+        if (i < 3)
++        if (i < 3 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_.nextInt(10) == 0))
          {
-+            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_.nextInt(10) == 0))
-+            {
              p_180650_3_ = p_180650_3_.func_177226_a(field_176486_a, Integer.valueOf(i + 1));
              p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_, 2);
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_));
-+            }
          }
  
          super.func_180650_b(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_);
@@ -35,7 +32,7 @@
          {
              int i = 1;
  
-@@ -108,6 +114,26 @@
+@@ -108,6 +111,26 @@
          return ((Integer)p_176201_1_.func_177229_b(field_176486_a)).intValue();
      }
  
