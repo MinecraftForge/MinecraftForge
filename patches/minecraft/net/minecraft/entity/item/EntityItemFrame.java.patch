@@ -14,6 +14,6 @@
      public int func_174866_q()
      {
 -        return this.func_82335_i() == null ? 0 : this.func_82333_j() % 8 + 1;
-+        return this.func_82335_i() == null ? 0 :(func_82335_i().func_77973_b().hasItemFrameOutput(field_70170_p,new BlockPos(field_70165_t,field_70163_u,field_70161_v),func_82335_i())?func_82335_i().func_77973_b().getItemFrameOutput(field_70170_p,new BlockPos(field_70165_t,field_70163_u,field_70161_v),func_82335_i(),func_82333_j()%8+1):this.func_82333_j() % 8 + 1);
++        return this.func_82335_i() == null ? 0 :func_82335_i().func_77973_b().getItemFrameOutput(field_70170_p,new BlockPos(field_70165_t,field_70163_u,field_70161_v),func_82335_i(),func_82333_j()%8+1);
      }
  }
