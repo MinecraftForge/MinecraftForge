@@ -754,8 +754,8 @@ public class ForgeHooksClient
     
     public static List<List<BakedQuad>> sortQuadsByIndex(IBakedModel model)
     {
-        List<List<BakedQuad>> layers = new ArrayList();
-        List<BakedQuad> quads = new ArrayList();
+        List<List<BakedQuad>> layers = new ArrayList<List<BakedQuad>>();
+        List<BakedQuad> quads = new ArrayList<BakedQuad>();
         
         for (EnumFacing dir : EnumFacing.values())
         {
