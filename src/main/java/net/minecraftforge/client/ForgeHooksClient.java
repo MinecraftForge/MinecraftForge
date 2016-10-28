@@ -130,6 +130,7 @@ import net.minecraftforge.fml.common.ModContainer;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -769,7 +770,8 @@ public class ForgeHooksClient
         for (BakedQuad quad : quads)
         {
             int index = quad.hasTintIndex() ? quad.getTintIndex() : 0;
-            try { layers.get(index); } catch (IndexOutOfBoundsException e) { layers.add(index, new ArrayList()); }
+            if (index >= layers.size())
+                layers.add(index, new ArrayList());
             
             layers.get(index).add(quad);
         }
@@ -778,14 +780,14 @@ public class ForgeHooksClient
     
     public static void renderItemLayerPre(ItemStack stack, int index)
     {
-        MinecraftForge.EVENT_BUS.post(new RenderItemLayerEvent.Pre(stack, index, currentTransformType));
-        Tessellator.getInstance().getBuffer().begin(7, DefaultVertexFormats.ITEM);
+        MinecraftForge.EVENT_BUS.post(new RenderItemLayerEvent.Pre(stack, index == -1 ? index : 0, currentTransformType));
+        Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
     }
     
     public static void renderItemLayerPost(ItemStack stack, int index)
     {
         Tessellator.getInstance().draw();
-        MinecraftForge.EVENT_BUS.post(new RenderItemLayerEvent.Post(stack, index, currentTransformType));
+        MinecraftForge.EVENT_BUS.post(new RenderItemLayerEvent.Post(stack, index == -1 ? index : 0, currentTransformType));
     }
 
 }
