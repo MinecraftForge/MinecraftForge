@@ -14,10 +14,10 @@
              else
              {
 -                this.func_175036_a(p_180454_2_, p_180454_1_);
-+                for (List<BakedQuad> quads : net.minecraftforge.client.ForgeHooksClient.sortQuadsByIndex(p_180454_2_)) {
-+                    net.minecraftforge.client.ForgeHooksClient.renderItemLayerPre(p_180454_1_, quads.get(0).func_178211_c());
-+                    this.func_175032_a(Tessellator.func_178181_a().func_178180_c(), quads, -1, p_180454_1_);
-+                    net.minecraftforge.client.ForgeHooksClient.renderItemLayerPost(p_180454_1_, quads.get(0).func_178211_c());
++                for (java.util.Map.Entry<Integer, List<BakedQuad>> entry : net.minecraftforge.client.ForgeHooksClient.sortQuadsByIndex(p_180454_2_).entrySet()) {
++                    net.minecraftforge.client.ForgeHooksClient.renderItemLayerPre(p_180454_1_, entry.getKey());
++                    this.func_175032_a(Tessellator.func_178181_a().func_178180_c(), entry.getValue(), -1, p_180454_1_);
++                    net.minecraftforge.client.ForgeHooksClient.renderItemLayerPost(p_180454_1_, entry.getKey());
 +                }
  
                  if (p_180454_1_.func_77962_s())

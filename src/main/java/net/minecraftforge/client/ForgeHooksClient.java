@@ -31,6 +31,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -752,9 +753,9 @@ public class ForgeHooksClient
         return event;
     }
     
-    public static List<List<BakedQuad>> sortQuadsByIndex(IBakedModel model)
+    public static Map<Integer, List<BakedQuad>> sortQuadsByIndex(IBakedModel model)
     {
-        List<List<BakedQuad>> layers = new ArrayList<List<BakedQuad>>();
+        Map<Integer, List<BakedQuad>> layers = new HashMap<Integer, List<BakedQuad>>();
         List<BakedQuad> quads = new ArrayList<BakedQuad>();
         
         for (EnumFacing dir : EnumFacing.values())
@@ -765,11 +766,9 @@ public class ForgeHooksClient
         
         for (BakedQuad quad : quads)
         {
-            int index = quad.hasTintIndex() ? quad.getTintIndex() : 0;
-            if (index >= layers.size())
-                layers.add(index, new ArrayList());
-            
-            layers.get(index).add(quad);
+            if (!layers.containsKey(quad.getTintIndex()))
+                layers.put(quad.getTintIndex(), new ArrayList<BakedQuad>());
+            layers.get(quad.getTintIndex()).add(quad);
         }
         return layers;
     }
@@ -778,7 +777,7 @@ public class ForgeHooksClient
     
     public static void renderItemLayerPre(ItemStack stack, int index)
     {
-        if (!isItemInGui && stack.getItem().shouldRenderFullbright(stack, index == -1 ? 0 : index))
+        if (!isItemInGui && stack.getItem().shouldRenderFullbright(stack, index))
         {
             Minecraft.getMinecraft().entityRenderer.disableLightmap();
             GlStateManager.disableLighting();
@@ -789,7 +788,7 @@ public class ForgeHooksClient
     public static void renderItemLayerPost(ItemStack stack, int index)
     {
         Tessellator.getInstance().draw();
-        if (!isItemInGui && stack.getItem().shouldRenderFullbright(stack, index == -1 ? 0 : index))
+        if (!isItemInGui && stack.getItem().shouldRenderFullbright(stack, index))
         {
             GlStateManager.enableLighting();
             Minecraft.getMinecraft().entityRenderer.enableLightmap();
