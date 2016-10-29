@@ -18,3 +18,13 @@
                  p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                  --p_180614_1_.field_77994_a;
                  return EnumActionResult.SUCCESS;
+@@ -66,4 +66,9 @@
+             return EnumActionResult.FAIL;
+         }
+     }
++
++    public Block getBlock()
++    {
++        return this.field_150935_a;
++    }
+ }
