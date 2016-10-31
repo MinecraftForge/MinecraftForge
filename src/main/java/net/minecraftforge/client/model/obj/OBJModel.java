@@ -577,7 +577,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     //Tr r g b OR Tr spectral map file OR Tr xyz r g b (CIEXYZ colorspace)
                     String[] splitData = WHITE_SPACE.split(data);
                     float alpha = Float.parseFloat(splitData[splitData.length - 1]);
-                    material.getColor().w = alpha;
+                    material.getColor().setW(alpha);
                 }
                 else
                 {
