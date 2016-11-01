@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiInventory.java
++++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiInventory.java
+@@ -123,5 +123,7 @@
+         {
+             this.field_146297_k.func_147108_a(new GuiStats(this, this.field_146297_k.field_71439_g.func_146107_m()));
+         }
++        
++        else super.func_146284_a(p_146284_1_);
+     }
+ }
