@@ -76,15 +76,20 @@
          if (!this.field_70729_aU)
          {
              Entity entity = p_70645_1_.func_76346_g();
-@@ -1069,12 +1075,26 @@
-                 {
-                     i = EnchantmentHelper.func_185283_h((EntityLivingBase)entity);
-                 }
-+                i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, p_70645_1_, i);
+@@ -1063,18 +1069,26 @@
  
+             if (!this.field_70170_p.field_72995_K)
+             {
+-                int i = 0;
++                int i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, p_70645_1_);
+ 
+-                if (entity instanceof EntityPlayer)
+-                {
+-                    i = EnchantmentHelper.func_185283_h((EntityLivingBase)entity);
+-                }
 +                captureDrops = true;
 +                capturedDrops.clear();
-+
+ 
                  if (this.func_146066_aG() && this.field_70170_p.func_82736_K().func_82766_b("doMobLoot"))
                  {
                      boolean flag = this.field_70718_bc > 0;
