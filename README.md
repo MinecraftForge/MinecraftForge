@@ -35,8 +35,11 @@ Here is a short video from @cpw showing how to install and setup the MDK
 If you wish to actually inspect Forge, submit PRs or otherwise work
  with Forge itself, you're in the right place! Clone this (either
  directly, or make a Fork first if you want to make a PR) and run
- ```gradlew.bat setup``` or ```gradlew setup```. This will download and 
+ ```gradlew.bat setupForge``` or ```gradlew setupForge```. This will download and 
  setup all the bits you need to have a functional Forge workspace.
+
+After that, open a workspace in your favorite IDE and import existing projects
+ the projects folder. 
  
 Here is a short video from @cpw showing how to install and setup Forge
  in Intellij.

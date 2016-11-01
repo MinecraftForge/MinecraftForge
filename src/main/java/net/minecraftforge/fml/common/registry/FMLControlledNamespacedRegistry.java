@@ -181,7 +181,6 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         this.persistentSubstitutions.clear();
         this.persistentSubstitutions.putAll(otherRegistry.getPersistentSubstitutions());
         this.activeSubstitutions.clear();
-        this.substitutionOriginals.clear();
         this.dummiedLocations.clear();
         this.dummiedLocations.addAll(otherRegistry.dummiedLocations);
 
@@ -190,16 +189,14 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 
         for (I thing : otherRegistry.typeSafeIterable())
         {
-            ResourceLocation name = otherRegistry.getNameForObject(thing);
-            if (otherRegistry.activeSubstitutions.containsKey(name)) // If this is subed, use the orig, the loop below will reinstate the sub.
-                addObjectRaw(otherRegistry.getId(thing), name, otherRegistry.substitutionOriginals.get(name));
-            else
-                addObjectRaw(otherRegistry.getId(thing), name, thing);
+            addObjectRaw(otherRegistry.getId(thing), otherRegistry.getNameForObject(thing), thing);
         }
         for (ResourceLocation resloc : otherRegistry.activeSubstitutions.keySet())
         {
             activateSubstitution(resloc);
         }
+        this.substitutionOriginals.clear();
+        this.substitutionOriginals.putAll(otherRegistry.substitutionOriginals);
     }
 
     // public api
@@ -412,6 +409,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     }
 
     public void serializeDummied(Set<ResourceLocation> set) { set.addAll(this.dummiedLocations); }
+    public boolean isDummied(ResourceLocation key){ return this.dummiedLocations.contains(key); }
 
 
     /**
