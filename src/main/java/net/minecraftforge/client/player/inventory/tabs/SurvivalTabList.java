@@ -74,7 +74,7 @@ public class SurvivalTabList
 
     public void drawTabHoveringText(GuiContainer screen, int mouseX, int mouseY, int guiLeft, int guiTop, int xSize, int ySize, FontRenderer fontRendererObj)
     {
-        if (tabs.size() == 1 && container.getClass().equals(GuiInventory.class)) // don't traw the base tab if it's the only one
+        if (tabs.size() == 1 && container.getClass().equals(GuiInventory.class)) // don't draw the base tab if it's the only one
             return;
         int start = page * 12;
         int end = Math.min(tabs.size(), (page + 1) * 12);

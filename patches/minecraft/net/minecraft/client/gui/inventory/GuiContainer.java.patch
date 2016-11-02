@@ -5,13 +5,13 @@
      private boolean field_146993_M;
      private ItemStack field_146994_N;
 -
-+    private net.minecraft.client.player.inventory.tabs.SurvivalTabList survivalTabs;
++    private net.minecraftforge.client.player.inventory.tabs.SurvivalTabList survivalTabs;
 +    
      public GuiContainer(Container p_i1072_1_)
      {
          this.field_147002_h = p_i1072_1_;
          this.field_146995_H = true;
-+        this.survivalTabs = new net.minecraft.client.player.inventory.tabs.SurvivalTabList(this);
++        this.survivalTabs = new net.minecraftforge.client.player.inventory.tabs.SurvivalTabList(this);
      }
  
      public void func_73866_w_()
