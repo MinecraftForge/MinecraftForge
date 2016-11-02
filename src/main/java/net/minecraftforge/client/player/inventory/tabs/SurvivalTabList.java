@@ -1,7 +1,26 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package net.minecraftforge.client.player.inventory.tabs;
 
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -10,11 +29,10 @@ import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.config.GuiUtils;
 
 /**
- * @author Subaraki
- * 
- *         Enclosing class to keep GuiContainer clean. This handles all the survival tab drawing, and the addition of two buttons.
+ * Enclosing class to keep GuiContainer clean. This handles all the survival tab drawing, and the addition of two buttons.
  */
 public class SurvivalTabList
 {
@@ -94,7 +112,7 @@ public class SurvivalTabList
 
     private boolean renderSurvivalInventoryHoveringText(SurvivalTabs tab, GuiContainer screen, int mouseX, int mouseY, FontRenderer fontRendererObj)
     {
-        net.minecraftforge.fml.client.config.GuiUtils.drawHoveringText(Arrays.<String> asList(new String[] { I18n.format(tab.getLocalizedName()) }), mouseX,
+        GuiUtils.drawHoveringText(Arrays.<String> asList(new String[] { I18n.format(tab.getLocalizedName()) }), mouseX,
                 mouseY, screen.width, screen.height, -1, fontRendererObj);
         return true;
     }
