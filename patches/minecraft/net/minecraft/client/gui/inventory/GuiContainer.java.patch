@@ -4,7 +4,7 @@
      private int field_146992_L;
      private boolean field_146993_M;
      private ItemStack field_146994_N;
-+    private net.minecraftforge.client.player.inventory.tabs.SurvivalTabList survivalTabs = new net.minecraftforge.client.player.inventory.tabs.SurvivalTabList(this);
++    protected net.minecraftforge.client.player.inventory.tabs.GuiTabList guiTabs = new net.minecraftforge.client.player.inventory.tabs.GuiTabList(this);
  
      public GuiContainer(Container p_i1072_1_)
      {
@@ -12,7 +12,7 @@
          this.field_146297_k.field_71439_g.field_71070_bA = this.field_147002_h;
          this.field_147003_i = (this.field_146294_l - this.field_146999_f) / 2;
          this.field_147009_r = (this.field_146295_m - this.field_147000_g) / 2;
-+        this.survivalTabs.addButtons(field_146292_n, field_147003_i, field_147009_r, field_146999_f, field_147000_g);
++        this.guiTabs.addButtons(field_146292_n, field_147003_i, field_147009_r, field_146999_f, field_147000_g);
      }
  
      public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
@@ -20,15 +20,15 @@
          this.func_146276_q_();
          int i = this.field_147003_i;
          int j = this.field_147009_r;
-+        this.survivalTabs.drawTabs(false, p_73863_1_, p_73863_2_, p_73863_3_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146296_j, field_146289_q);
++        this.guiTabs.drawTabs(false, p_73863_1_, p_73863_2_, p_73863_3_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146296_j, field_146289_q);
          this.func_146976_a(p_73863_3_, p_73863_1_, p_73863_2_);
-+        this.survivalTabs.drawTabs(true, p_73863_1_, p_73863_2_, p_73863_3_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146296_j, field_146289_q);
++        this.guiTabs.drawTabs(true, p_73863_1_, p_73863_2_, p_73863_3_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146296_j, field_146289_q);
          GlStateManager.func_179101_C();
          RenderHelper.func_74518_a();
          GlStateManager.func_179140_f();
          GlStateManager.func_179097_i();
          super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
-+        this.survivalTabs.drawTabHoveringText(this, p_73863_1_, p_73863_2_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146289_q);
++        this.guiTabs.drawTabHoveringText(this, p_73863_1_, p_73863_2_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146289_q);
          RenderHelper.func_74520_c();
          GlStateManager.func_179094_E();
          GlStateManager.func_179109_b((float)i, (float)j, 0.0F);
@@ -102,7 +102,7 @@
      protected void func_146286_b(int p_146286_1_, int p_146286_2_, int p_146286_3_)
      {
 +        super.func_146286_b(p_146286_1_, p_146286_2_, p_146286_3_); //Forge, Call parent to release buttons
-+        this.survivalTabs.onMouseRelease(field_147003_i, field_147009_r, field_146999_f, field_147000_g, p_146286_3_, p_146286_1_, p_146286_2_);
++        this.guiTabs.onMouseRelease(field_147003_i, field_147009_r, field_146999_f, field_147000_g, p_146286_3_, p_146286_1_, p_146286_2_);
          Slot slot = this.func_146975_c(p_146286_1_, p_146286_2_);
          int i = this.field_147003_i;
          int j = this.field_147009_r;
@@ -161,16 +161,19 @@
                  {
                      this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                      return true;
-@@ -686,4 +697,21 @@
+@@ -686,4 +697,24 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }
 +    
 +    @Override
 +    protected void func_146284_a(net.minecraft.client.gui.GuiButton button) throws IOException {
-+    	this.survivalTabs.actionPerformed(button);
++    	this.guiTabs.actionPerformed(button);
 +    }
 +
++    public java.util.List<net.minecraftforge.client.player.inventory.tabs.GuiTab> getTabs(){
++    	return this.guiTabs.getTabs();
++    }
 +    /* ======================================== FORGE START =====================================*/
 +
 +    /**

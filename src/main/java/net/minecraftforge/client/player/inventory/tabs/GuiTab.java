@@ -23,7 +23,6 @@
 package net.minecraftforge.client.player.inventory.tabs;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -43,18 +42,16 @@ import net.minecraft.util.ResourceLocation;
 /**
  * class named after CreativeTabs, but for Survival
  */
-public abstract class SurvivalTabs
+public abstract class GuiTab
 {
-
-	private static ListMultimap<Class<? extends GuiContainer>, SurvivalTabs> tabRegistry = ArrayListMultimap.create();
-	private static HashMap<Class<? extends GuiContainer>, Integer> tabIndexForContainer = new HashMap<Class<? extends GuiContainer>, Integer>();
+	private static ListMultimap<Class<? extends GuiContainer>, GuiTab> tabRegistry = ArrayListMultimap.create();
 
 	private ItemStack iconStack = null;
 	private ResourceLocation iconResLoc = null;
-	private int tabIndex = 0;
 	private String name = null;
+	private Class<? extends GuiContainer> parentContainer;
 
-	public static final SurvivalTabs VANILLA_INVENTORY_TAB = new SurvivalTabs("inventory", new ItemStack(Blocks.CHEST), GuiInventory.class) {
+	public static final GuiTab VANILLA_INVENTORY_TAB = new GuiTab("inventory", new ItemStack(Blocks.CHEST), GuiInventory.class) {
 		@Override
 		public void onTabClicked(EntityPlayerSP player)
 		{
@@ -62,26 +59,23 @@ public abstract class SurvivalTabs
 		}
 
 		@Override
-		public Class<? extends GuiContainer> getTabContainer()
+		public Class<? extends GuiContainer> getTargetGui()
 		{
 			return GuiInventory.class;
 		}
 	};
 
-	public SurvivalTabs(String name, ItemStack icon, Class<? extends GuiContainer> parentContainer)
+	public GuiTab(String name, ItemStack icon, Class<? extends GuiContainer> parentContainer)
 	{
-
 		this.name = name;
-		this.tabIndex = getNextID(parentContainer);
 		this.iconStack = icon;
+		this.parentContainer = parentContainer;
 		tabRegistry.put(parentContainer, this);
 	}
 
-	public SurvivalTabs(String name, ResourceLocation icon, Class<? extends GuiContainer> parentContainer)
+	public GuiTab(String name, ResourceLocation icon, Class<? extends GuiContainer> parentContainer)
 	{
-
 		this.name = name;
-		this.tabIndex = getNextID(parentContainer);
 		this.iconResLoc = icon;
 		tabRegistry.put(parentContainer, this);
 	}
@@ -134,23 +128,10 @@ public abstract class SurvivalTabs
 		GlStateManager.disableLighting();
 	}
 
-	private int getNextID(Class<? extends GuiContainer> guiContainer)
-	{
-		if (tabIndexForContainer.containsKey(guiContainer))
-		{
-			int newIndex = (tabIndexForContainer.get(guiContainer) + 1);
-			tabIndexForContainer.put(guiContainer, newIndex);
-			return newIndex;
-		}
-
-		tabIndexForContainer.put(guiContainer, 0);
-		return 0;
-	}
-
-	/** returns the index relative to the gui */
+	/** returns the index relative to the gui this tab was registered too */
 	public int getTabIndex()
 	{
-		return tabIndex;
+		return tabRegistry.get(parentContainer).indexOf(this);
 	}
 
 	/** wether this tab is on the top row or not */
@@ -170,7 +151,7 @@ public abstract class SurvivalTabs
 	 */
 	public boolean isActiveTab(Class<? extends GuiContainer> guiContainer)
 	{
-		return guiContainer != null && guiContainer.equals(getTabContainer());
+		return guiContainer != null && guiContainer.equals(getTargetGui());
 	}
 
 	/**
@@ -178,7 +159,7 @@ public abstract class SurvivalTabs
 	 */
 	public int getTabPage()
 	{
-		return tabIndex / 12;
+		return getTabIndex() / 12;
 	}
 
 	/**
@@ -202,9 +183,9 @@ public abstract class SurvivalTabs
 	/**
 	 * @return a list of the appended tabs for the given guicontainer
 	 */
-	public static List<SurvivalTabs> getTabsForContainer(Class<? extends GuiContainer> guiContainer)
+	public static List<GuiTab> getTabsForGui(Class<? extends GuiContainer> guiContainer)
 	{
-		return tabRegistry.containsKey(guiContainer) ? tabRegistry.get(guiContainer) : new ArrayList<SurvivalTabs>();
+		return tabRegistry.containsKey(guiContainer) ? tabRegistry.get(guiContainer) : new ArrayList<GuiTab>();
 	}
 
 	/**
@@ -220,7 +201,7 @@ public abstract class SurvivalTabs
 
 		if (tabRegistry.containsKey(original))
 		{
-			for (SurvivalTabs tab : tabRegistry.get(original))
+			for (GuiTab tab : tabRegistry.get(original))
 				tabRegistry.put(guiContainer, tab);
 		}
 	}
@@ -234,5 +215,5 @@ public abstract class SurvivalTabs
 	 * returns the GuiContainer this tab should be linked too. not affiliated with opening the gui. can be null if no gui should lead to this tab. mostly used to know when a tab is
 	 * on an affiliated gui, and draw the tab texture in of the others.
 	 */
-	public abstract Class<? extends GuiContainer> getTabContainer();
+	public abstract Class<? extends GuiContainer> getTargetGui();
 }
