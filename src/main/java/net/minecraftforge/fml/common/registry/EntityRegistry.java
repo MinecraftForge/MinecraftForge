@@ -332,7 +332,7 @@ public class EntityRegistry
                 return er;
             }
             localClazz = localClazz.getSuperclass();
-            keepLooking = (!Object.class.equals(localClazz));
+            keepLooking &= (!Object.class.equals(localClazz));
         }
         while (keepLooking);
 
