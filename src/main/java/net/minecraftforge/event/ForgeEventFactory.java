@@ -109,22 +109,42 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
+import javax.annotation.Nullable;
+
 public class ForgeEventFactory
 {
 
+    /**
+     * @deprecated Use {@link #onPlayerMultiBlockPlace(EntityPlayer, List, EnumFacing, EnumHand)} instead.
+     */
+    @Deprecated
     public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction)
+    {
+        return onPlayerMultiBlockPlace(player, blockSnapshots, direction, null);
+    }
+
+    public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction, @Nullable EnumHand hand)
     {
         BlockSnapshot snap = blockSnapshots.get(0);
         IBlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().offset(direction.getOpposite()));
-        MultiPlaceEvent event = new MultiPlaceEvent(blockSnapshots, placedAgainst, player);
+        MultiPlaceEvent event = new MultiPlaceEvent(blockSnapshots, placedAgainst, player, hand);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
 
+    /**
+     * @deprecated Use {@link #onPlayerBlockPlace(EntityPlayer, BlockSnapshot, EnumFacing, EnumHand)} instead.
+     */
+    @Deprecated
     public static PlaceEvent onPlayerBlockPlace(EntityPlayer player, BlockSnapshot blockSnapshot, EnumFacing direction)
     {
+        return onPlayerBlockPlace(player, blockSnapshot, direction, null);
+    }
+
+    public static PlaceEvent onPlayerBlockPlace(EntityPlayer player, BlockSnapshot blockSnapshot, EnumFacing direction, @Nullable EnumHand hand)
+    {
         IBlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().offset(direction.getOpposite()));
-        PlaceEvent event = new PlaceEvent(blockSnapshot, placedAgainst, player);
+        PlaceEvent event = new PlaceEvent(blockSnapshot, placedAgainst, player, hand);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
