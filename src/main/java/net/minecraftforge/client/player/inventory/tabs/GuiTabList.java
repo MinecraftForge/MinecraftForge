@@ -40,20 +40,27 @@ import net.minecraftforge.fml.client.config.GuiUtils;
  */
 public class GuiTabList
 {
+	/**dictates how many tabs per page are drawn*/
+	private int maxTabsPerPage = 12;
 	private int page;
+	/**returns how many pages, a.k.a max button clicks to the right, can be done.*/
 	private int maxPages;
 	private GuiContainer container;
+	/**cache used for comparison*/
+	private Class<? extends GuiContainer> containerClass;
 	private List<GuiTab> tabs;
 	private static final ResourceLocation TEXTURE_TABS = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
 
 	public GuiTabList(GuiContainer container)
 	{
 		this.container = container;
-		tabs = new ArrayList<GuiTab>(GuiTab.getTabsForGui(container.getClass())); //get a copy of the stored list so it can be modified without consequence
-		maxPages = ((getTabs().size() - 12) / 12) + 1;
+		this.containerClass = container.getClass();
+
+		tabs = new ArrayList<GuiTab>(GuiTab.getTabsForGui(this.containerClass)); //get a copy of the stored list so it can be modified without consequence
+		maxPages = ((getTabs().size() - maxTabsPerPage) / maxTabsPerPage) + 1;
 
 		for (GuiTab tab : getTabs())//set the first page
-			if (container.getClass().equals(tab.getTargetGui()))
+			if (this.containerClass.equals(tab.getTargetGui()))
 			{
 				page = tab.getTabPage();
 				break;
@@ -67,48 +74,36 @@ public class GuiTabList
 			FontRenderer fontRendererObj)
 	{
 
-		if (getTabs().size() == 1 && container.getClass().equals(GuiInventory.class)) // don't draw the base tab if it's the only one
+		if (getTabs().size() == 1 && this.containerClass.equals(GuiInventory.class)) // don't draw the base tab if it's the only one
 			return;
 
-		int start = page * 12;
-		int end = Math.min(getTabs().size(), (page + 1) * 12);
+		int start = page * maxTabsPerPage;
+		int end = Math.min(getTabs().size(), (page + 1) * maxTabsPerPage);
 
 		for (GuiTab tab : getTabs())
 		{
-			if (tab.getTabIndex() >= start && tab.getTabIndex() < end)
+			boolean active = tab.isActiveTab(this.containerClass);
+			if (tab.getTabIndex() >= start && tab.getTabIndex() < end && (active || !isFront))
 			{
-
-				if (!tab.isActiveTab(container.getClass()) && !isFront)
-				{
-					Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE_TABS);
-					tab.draw(container, isFront, guiLeft, guiTop, xSize, ySize, itemRender, fontRendererObj);
-				}
-
-				if (tab.isActiveTab(container.getClass()) && isFront)
-				{
-					Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE_TABS);
-					tab.draw(container, isFront, guiLeft, guiTop, xSize, ySize, itemRender, fontRendererObj);
-				}
+				Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE_TABS);
+				tab.draw(container, isFront, guiLeft, guiTop, xSize, ySize, itemRender, fontRendererObj);
 			}
 		}
 	}
 
 	public void drawTabHoveringText(GuiContainer screen, int mouseX, int mouseY, int guiLeft, int guiTop, int xSize, int ySize, FontRenderer fontRendererObj)
 	{
-		if (getTabs().size() == 1 && container.getClass().equals(GuiInventory.class)) // don't draw the base tab if it's the only one
+		if (getTabs().size() == 1 && this.containerClass.equals(GuiInventory.class)) // don't draw the base tab if it's the only one
 			return;
-		int start = page * 12;
-		int end = Math.min(getTabs().size(), (page + 1) * 12);
+		int start = page * maxTabsPerPage;
+		int end = Math.min(getTabs().size(), (page + 1) * maxTabsPerPage);
 
 		for (GuiTab tab : getTabs())
 		{
-			if (tab.getTabIndex() >= start && tab.getTabIndex() < end)
+			if (tab.getTabIndex() >= start && tab.getTabIndex() < end && this.isMouseOverTab(tab, mouseX - guiLeft, mouseY - guiTop, xSize, ySize))
 			{
-				if (tab != null && this.isMouseOverTab(tab, mouseX - guiLeft, mouseY - guiTop, xSize, ySize))
-				{
-					renderSurvivalInventoryHoveringText(tab, screen, mouseX, mouseY, fontRendererObj);
-					break;
-				}
+				renderSurvivalInventoryHoveringText(tab, screen, mouseX, mouseY, fontRendererObj);
+				break;
 			}
 		}
 	}
@@ -141,26 +136,23 @@ public class GuiTabList
 
 	public void onMouseRelease(int guiLeft, int guiTop, int xSize, int ySize, int state, int mouseX, int mouseY)
 	{
-		if (getTabs().size() == 1 && container.getClass().equals(GuiInventory.class)) // don't draw the base tab if it's the only one
+		if (getTabs().size() == 1 && this.containerClass.equals(GuiInventory.class)) // don't draw the base tab if it's the only one
 			return;
 		if (state == 0)
 		{
 			int x = mouseX - guiLeft;
 			int y = mouseY - guiTop;
 
-			int start = page * 12;
-			int end = Math.min(getTabs().size(), (page + 1) * 12);
+			int start = page * maxTabsPerPage;
+			int end = Math.min(getTabs().size(), (page + 1) * maxTabsPerPage);
 
 			for (GuiTab tab : getTabs())
 			{
 				int index = tab.getTabIndex();
-				if (index >= start && index < end)
+				if (index >= start && index < end && this.isMouseOverTab(tab, x, y, xSize, ySize))
 				{
-					if (tab != null && this.isMouseOverTab(tab, x, y, xSize, ySize))
-					{
-						tab.onTabClicked(Minecraft.getMinecraft().thePlayer);
-						return;
-					}
+					tab.onTabClicked(Minecraft.getMinecraft().thePlayer);
+					return;
 				}
 			}
 		}
@@ -168,7 +160,7 @@ public class GuiTabList
 
 	public void addButtons(List<GuiButton> buttonList, int guiLeft, int guiTop, int xSize, int ySize)
 	{
-		if (getTabs().size() > 12)
+		if (getTabs().size() > maxTabsPerPage)
 		{
 			buttonList.add(new GuiButton(101, guiLeft - 24, guiTop - 22, 20, 20, "<"));
 			buttonList.add(new GuiButton(102, guiLeft + xSize + 4, guiTop - 22, 20, 20, ">"));

@@ -24,6 +24,8 @@ package net.minecraftforge.client.player.inventory.tabs;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import net.minecraft.client.Minecraft;
@@ -31,8 +33,10 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.init.Blocks;
@@ -50,7 +54,8 @@ public abstract class GuiTab
 	private ResourceLocation iconResLoc = null;
 	private String name = null;
 	private Class<? extends GuiContainer> parentContainer;
-
+	private final Logger LOGGER = LogManager.getLogger("GUITABS");
+	
 	public static final GuiTab VANILLA_INVENTORY_TAB = new GuiTab("inventory", new ItemStack(Blocks.CHEST), GuiInventory.class) {
 		@Override
 		public void onTabClicked(EntityPlayerSP player)
@@ -67,6 +72,14 @@ public abstract class GuiTab
 
 	public GuiTab(String name, ItemStack icon, Class<? extends GuiContainer> parentContainer)
 	{
+		if(parentContainer.equals(GuiContainerCreative.class)){
+			LOGGER.warn("Cannot add tabs to creative inventory. Use CreativeTabs instead");
+			return;
+		}
+		else if(parentContainer.equals(InventoryEffectRenderer.class)){
+			LOGGER.warn(name + " tab has a parent that is ambigious with the creative inventory. cannot proceed with registry.");
+			return;
+		}
 		this.name = name;
 		this.iconStack = icon;
 		this.parentContainer = parentContainer;
@@ -75,8 +88,18 @@ public abstract class GuiTab
 
 	public GuiTab(String name, ResourceLocation icon, Class<? extends GuiContainer> parentContainer)
 	{
+		if(parentContainer.equals(GuiContainerCreative.class)){
+			LOGGER.warn("Cannot add tabs to creative inventory. Use CreativeTabs instead");
+			return;
+		}
+		else if(parentContainer.equals(InventoryEffectRenderer.class)){
+			LOGGER.warn(name + " tab has a parent that is ambigious with the creative inventory. cannot proceed with registry.");
+			return;
+		}
+
 		this.name = name;
 		this.iconResLoc = icon;
+		this.parentContainer = parentContainer;
 		tabRegistry.put(parentContainer, this);
 	}
 
@@ -121,7 +144,7 @@ public abstract class GuiTab
 			itemRender.renderItemAndEffectIntoGUI(itemstack, x, y);
 			itemRender.renderItemOverlays(fontRendererObj, itemstack, x, y);
 		}
-		if(getIconResLoc() != null){
+		else if(getIconResLoc() != null){
 			Minecraft.getMinecraft().getTextureManager().bindTexture(getIconResLoc());
 			Gui.drawModalRectWithCustomSizedTexture(x, y, 0f, 0f, 16, 16, 16f, 16f);
 		}
