@@ -5,7 +5,20 @@
          IBlockState iblockstate = p_176253_1_.func_180495_p(p_176253_2_);
          Block block = iblockstate.func_177230_c();
 -        return block == Blocks.field_180401_cv ? false : (block != this && !(block instanceof BlockFenceGate) ? (block.field_149764_J.func_76218_k() && iblockstate.func_185917_h() ? block.field_149764_J != Material.field_151572_C : false) : true);
-+        return block == Blocks.field_180401_cv ? false : (!(block instanceof BlockWall) && !(block instanceof BlockFenceGate) ? (block.field_149764_J.func_76218_k() && iblockstate.func_185917_h() ? block.field_149764_J != Material.field_151572_C : false) : true);
++        return block == Blocks.field_180401_cv ? false : (!block.isWall(p_176253_1_, iblockstate, p_176253_2_) && !(block instanceof BlockFenceGate) ? (block.field_149764_J.func_76218_k() && iblockstate.func_185917_h() ? block.field_149764_J != Material.field_151572_C : false) : true);
      }
  
      @SideOnly(Side.CLIENT)
+@@ -155,6 +155,12 @@
+         return new BlockStateContainer(this, new IProperty[] {field_176256_a, field_176254_b, field_176257_M, field_176259_O, field_176258_N, field_176255_P});
+     }
+ 
++    @Override
++    public boolean isWall(IBlockAccess world, IBlockState state, BlockPos pos)
++    {
++        return true;
++    }
++
+     public static enum EnumType implements IStringSerializable
+     {
+         NORMAL(0, "cobblestone", "normal"),
