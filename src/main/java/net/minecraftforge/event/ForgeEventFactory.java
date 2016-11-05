@@ -225,8 +225,9 @@ public class ForgeEventFactory
         return event.getDisplayname();
     }
 
-    public static List<Predicate<Entity>> gatherEntitySelectors(Map<String, String> map, String mainSelector, ICommandSender sender, Vec3d position){
-        EntitySelectorEvent event=new EntitySelectorEvent(map,mainSelector,sender,position);
+    public static List<Predicate<Entity>> gatherEntitySelectors(Map<String, String> map, String mainSelector, ICommandSender sender, Vec3d position)
+    {
+        EntitySelectorEvent event=new EntitySelectorEvent(map, mainSelector, sender, position);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getSelectors();
     }

@@ -1,10 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/EntitySelector.java
 +++ ../src-work/minecraft/net/minecraft/command/EntitySelector.java
-@@ -34,12 +34,13 @@
- import net.minecraft.util.text.TextFormatting;
- import net.minecraft.world.GameType;
- import net.minecraft.world.World;
-+import net.minecraftforge.event.ForgeEventFactory;
+@@ -37,9 +37,9 @@
  
  public class EntitySelector
  {
@@ -16,11 +12,11 @@
      private static final Set<String> field_179666_d = Sets.newHashSet(new String[] {"x", "y", "z", "dx", "dy", "dz", "rm", "r"});
  
      @Nullable
-@@ -111,6 +112,7 @@
+@@ -111,6 +111,7 @@
                          list2.addAll(func_184951_f(map));
                          list2.addAll(func_180698_a(map, vec3d));
                          list2.addAll(func_179662_g(map));
-+                        list2.addAll(ForgeEventFactory.gatherEntitySelectors(map,s,p_179656_0_,vec3d));
++                        list2.addAll(net.minecraftforge.event.ForgeEventFactory.gatherEntitySelectors(map, s, p_179656_0_, vec3d));
                          list1.addAll(func_179660_a(map, p_179656_2_, list2, s, world, blockpos));
                      }
                  }

@@ -22,7 +22,8 @@ import java.util.Map;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}
  */
-public class EntitySelectorEvent extends Event {
+public class EntitySelectorEvent extends Event
+{
 
     private final Map<String, String> map;
     private final String mainSelector;
@@ -30,7 +31,8 @@ public class EntitySelectorEvent extends Event {
     private final Vec3d position;
     private final List<Predicate<Entity>> selectors;
 
-    public EntitySelectorEvent(Map<String, String> map, String mainSelector, ICommandSender sender, Vec3d position) {
+    public EntitySelectorEvent(Map<String, String> map, String mainSelector, ICommandSender sender, Vec3d position)
+    {
         this.map = map;
         this.mainSelector = mainSelector;
         this.sender = sender;
@@ -44,8 +46,10 @@ public class EntitySelectorEvent extends Event {
      *
      * @param selector Your custom predicate
      */
-    public void addPredicate(Predicate<Entity> selector) {
-        if (selector == null) {
+    public void addPredicate(Predicate<Entity> selector)
+    {
+        if (selector == null)
+        {
             throw new NullPointerException("Attempted to add null predicate as entity selector");
         }
         selectors.add(selector);
@@ -54,7 +58,8 @@ public class EntitySelectorEvent extends Event {
     /**
      * @return The main selector used (e.g. 'a' for all players or 'e' for all entities)
      */
-    public String getMainSelector() {
+    public String getMainSelector()
+    {
         return mainSelector;
     }
 
@@ -63,7 +68,8 @@ public class EntitySelectorEvent extends Event {
      *
      * @return The argument map. Maps all given argument names with its value.
      */
-    public Map<String, String> getMap() {
+    public Map<String, String> getMap()
+    {
         return map;
     }
 
@@ -72,23 +78,25 @@ public class EntitySelectorEvent extends Event {
      *
      * @return A position either specified in the selector arguments or by the players position.
      */
-    public Vec3d getPosition() {
+    public Vec3d getPosition()
+    {
         return position;
     }
 
     /**
      * @return The sender of the command.
      */
-    public ICommandSender getSender() {
+    public ICommandSender getSender()
+    {
         return sender;
     }
 
     /**
      * @return The list of added custom selectors
      */
-    List<Predicate<Entity>> getSelectors() {
+    List<Predicate<Entity>> getSelectors()
+    {
         return selectors;
     }
-
 
 }
