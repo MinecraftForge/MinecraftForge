@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
+@@ -74,7 +74,7 @@
+     {
+         if (!p_180658_1_.field_72995_K && p_180658_1_.field_73012_v.nextFloat() < p_180658_4_ - 0.5F && p_180658_3_ instanceof EntityLivingBase && (p_180658_3_ instanceof EntityPlayer || p_180658_1_.func_82736_K().func_82766_b("mobGriefing")) && p_180658_3_.field_70130_N * p_180658_3_.field_70130_N * p_180658_3_.field_70131_O > 0.512F)
+         {
+-            p_180658_1_.func_175656_a(p_180658_2_, Blocks.field_150346_d.func_176223_P());
++            net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_180658_1_, p_180658_2_, Blocks.field_150346_d.func_176223_P(), (EntityLivingBase)p_180658_3_);
+         }
+ 
+         super.func_180658_a(p_180658_1_, p_180658_2_, p_180658_3_, p_180658_4_);
 @@ -83,7 +83,7 @@
      private boolean func_176529_d(World p_176529_1_, BlockPos p_176529_2_)
      {

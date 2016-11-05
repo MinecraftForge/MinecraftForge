@@ -117,6 +117,7 @@ import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockTrampleEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLLog;
@@ -1162,5 +1163,17 @@ public class ForgeHooks
     public static boolean onThrowableImpact(EntityThrowable throwable, RayTraceResult ray)
     {
         return MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, ray));
+    }
+
+    public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState target, EntityLivingBase entity)
+    {
+        BlockTrampleEvent event = new BlockTrampleEvent(world, pos, world.getBlockState(pos), target, entity);        
+        if (!MinecraftForge.EVENT_BUS.post(event))
+        {
+            world.setBlockState(pos, event.getTargetState());
+            return true;
+        }
+
+        return false;
     }
 }
