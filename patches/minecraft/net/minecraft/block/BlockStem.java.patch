@@ -1,16 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
-@@ -69,8 +69,7 @@
-         if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) >= 9)
+@@ -70,7 +70,7 @@
          {
              float f = BlockCrops.func_180672_a(this, p_180650_1_, p_180650_2_);
--
+ 
 -            if (p_180650_4_.nextInt((int)(25.0F / f) + 1) == 0)
 +            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_.nextInt((int)(25.0F / f) + 1) == 0))
              {
                  int i = ((Integer)p_180650_3_.func_177229_b(field_176484_a)).intValue();
  
-@@ -90,13 +89,15 @@
+@@ -90,13 +90,15 @@
                      }
  
                      p_180650_2_ = p_180650_2_.func_177972_a(EnumFacing.Plane.HORIZONTAL.func_179518_a(p_180650_4_));
@@ -28,7 +27,7 @@
              }
          }
      }
-@@ -110,24 +111,29 @@
+@@ -110,24 +112,29 @@
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
          super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
