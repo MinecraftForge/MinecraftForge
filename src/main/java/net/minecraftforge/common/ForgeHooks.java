@@ -1163,4 +1163,16 @@ public class ForgeHooks
     {
         return MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, ray));
     }
+    
+    public static boolean onCropsGrowPre(World worldIn, BlockPos pos, IBlockState state, boolean def)
+    {
+        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(worldIn,pos,state);
+        MinecraftForge.EVENT_BUS.post(ev);
+        return (ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && def));
+    }
+
+	public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state, IBlockState blockState)
+	{
+		MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+	}
 }
