@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -426,11 +433,605 @@
+@@ -426,11 +433,592 @@
          return false;
      }
  
@@ -648,25 +648,12 @@
 +        return builder.build();
 +    }
 +    
-+    /**
-+     * Whether the item should render as full-bright based on tint index.
-+     * 
-+     * @param stack The ItemStack
-+     * @param tintIndex The current tint index.
-+     * @return Whether the tint index should render as full-bright.
-+     */
-+    @SideOnly(Side.CLIENT)
-+    public boolean shouldRenderFullbright(ItemStack stack, int tintIndex)
-+    {
-+        return false;
-+    }
-+    
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -962,6 +1563,10 @@
+@@ -962,6 +1550,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -677,7 +664,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -996,9 +1601,36 @@
+@@ -996,9 +1588,36 @@
              return this.field_78008_j;
          }
  
