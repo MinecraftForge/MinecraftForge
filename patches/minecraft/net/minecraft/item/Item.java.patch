@@ -69,7 +69,7 @@
      {
          return HashMultimap.<String, AttributeModifier>create();
      }
- 
+     
 +    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * ItemStack sensitive version of getItemAttributeModifiers
