@@ -69,7 +69,7 @@
      {
          return HashMultimap.<String, AttributeModifier>create();
      }
-     
+
 +    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * ItemStack sensitive version of getItemAttributeModifiers
@@ -647,7 +647,7 @@
 +        }
 +        return builder.build();
 +    }
-+    
++
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
