@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -18,6 +18,7 @@
- import net.minecraft.entity.item.EntityItem;
- import net.minecraft.entity.item.EntityXPOrb;
- import net.minecraft.entity.player.EntityPlayer;
-+import net.minecraft.init.Blocks;
- import net.minecraft.init.Enchantments;
- import net.minecraft.item.Item;
- import net.minecraft.item.ItemBlock;
-@@ -44,11 +45,12 @@
+@@ -44,11 +44,12 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -24,7 +16,7 @@
      public static final AxisAlignedBB field_185505_j = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
      public static final AxisAlignedBB field_185506_k = null;
      private CreativeTabs field_149772_a;
-@@ -84,7 +86,8 @@
+@@ -84,7 +85,8 @@
  
      public static Block func_149729_e(int p_149729_0_)
      {
@@ -34,7 +26,7 @@
      }
  
      public static IBlockState func_176220_d(int p_176220_0_)
-@@ -292,7 +295,7 @@
+@@ -292,7 +294,7 @@
  
      public boolean func_176200_f(IBlockAccess p_176200_1_, BlockPos p_176200_2_)
      {
@@ -43,7 +35,7 @@
      }
  
      public Block func_149711_c(float p_149711_1_)
-@@ -330,9 +333,10 @@
+@@ -330,9 +332,10 @@
          return this.field_149789_z;
      }
  
@@ -55,7 +47,7 @@
      }
  
      @Deprecated
-@@ -376,13 +380,13 @@
+@@ -376,13 +379,13 @@
      @SideOnly(Side.CLIENT)
      public int func_185484_c(IBlockState p_185484_1_, IBlockAccess p_185484_2_, BlockPos p_185484_3_)
      {
@@ -71,7 +63,7 @@
          }
          else
          {
-@@ -446,7 +450,7 @@
+@@ -446,7 +449,7 @@
                  }
          }
  
@@ -80,7 +72,7 @@
      }
  
      @Deprecated
-@@ -506,6 +510,10 @@
+@@ -506,6 +509,10 @@
  
      public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
@@ -91,7 +83,7 @@
      }
  
      public int func_149745_a(Random p_149745_1_)
-@@ -522,8 +530,7 @@
+@@ -522,8 +529,7 @@
      @Deprecated
      public float func_180647_a(IBlockState p_180647_1_, EntityPlayer p_180647_2_, World p_180647_3_, BlockPos p_180647_4_)
      {
@@ -101,7 +93,7 @@
      }
  
      public final void func_176226_b(World p_176226_1_, BlockPos p_176226_2_, IBlockState p_176226_3_, int p_176226_4_)
-@@ -533,20 +540,16 @@
+@@ -533,20 +539,16 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -127,7 +119,7 @@
                  }
              }
          }
-@@ -554,8 +557,13 @@
+@@ -554,8 +556,13 @@
  
      public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_)
      {
@@ -142,7 +134,7 @@
              float f = 0.5F;
              double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -627,7 +635,7 @@
+@@ -627,7 +634,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -151,7 +143,7 @@
      }
  
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, @Nullable ItemStack p_180639_6_, EnumFacing p_180639_7_, float p_180639_8_, float p_180639_9_, float p_180639_10_)
-@@ -639,6 +647,8 @@
+@@ -639,6 +646,8 @@
      {
      }
  
@@ -160,7 +152,7 @@
      public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
      {
          return this.func_176203_a(p_180642_7_);
-@@ -680,25 +690,35 @@
+@@ -680,25 +689,35 @@
          p_180657_2_.func_71029_a(StatList.func_188055_a(this));
          p_180657_2_.func_71020_j(0.025F);
  
@@ -199,7 +191,7 @@
      }
  
      @Nullable
-@@ -794,9 +814,11 @@
+@@ -794,9 +813,11 @@
      }
  
      @Nullable
@@ -212,7 +204,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -883,6 +905,7 @@
+@@ -883,6 +904,7 @@
          return Block.EnumOffsetType.NONE;
      }
  
@@ -220,7 +212,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -893,6 +916,1222 @@
+@@ -893,6 +915,1222 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1403,7 +1395,7 @@
 +    }
 +
 +    /**
-+     * Determines if a block can connect to another
++     * Determines if two blocks can connect to one another
 +     *
 +     * @param world The current world
 +     * @param pos The position of this block
@@ -1419,20 +1411,20 @@
 +        {
 +            if(this != net.minecraft.init.Blocks.field_150386_bk && block != net.minecraft.init.Blocks.field_150386_bk)
 +            {
-+                return block != Blocks.field_180401_cv && (!((!(block instanceof BlockFence) || block.field_149764_J != this.field_149764_J) && !(block instanceof BlockFenceGate)) || ((block.field_149764_J.func_76218_k() && state.func_185917_h()) && block.field_149764_J != Material.field_151572_C));
++                return block != net.minecraft.init.Blocks.field_180401_cv && (!((!(block instanceof BlockFence) || block.field_149764_J != this.field_149764_J) && !(block instanceof BlockFenceGate)) || ((block.field_149764_J.func_76218_k() && state.func_185917_h()) && block.field_149764_J != Material.field_151572_C));
 +            }
 +            else
 +            {
-+                return block != Blocks.field_180401_cv && (!((!(block instanceof BlockFence) || block.field_149764_J != this.field_149764_J) && !(block instanceof BlockFenceGate)) || ((block.field_149764_J.func_76218_k() && state.func_185917_h()) && block.field_149764_J != Material.field_151572_C));
++                return block != net.minecraft.init.Blocks.field_180401_cv && (!((!(block instanceof BlockFence) || block.field_149764_J != this.field_149764_J) && !(block instanceof BlockFenceGate)) || ((block.field_149764_J.func_76218_k() && state.func_185917_h()) && block.field_149764_J != Material.field_151572_C));
 +            }
 +        }
 +        else if(this instanceof BlockPane)
 +        {
-+            return (block.func_176223_P().func_185917_h() || block == this || block == Blocks.field_150359_w || block == Blocks.field_150399_cn || block == Blocks.field_150397_co || block instanceof BlockPane) || state.isSideSolid(world, pos, facing.func_176734_d());
++            return (block.func_176223_P().func_185917_h() || block == this || block == net.minecraft.init.Blocks.field_150359_w || block == net.minecraft.init.Blocks.field_150399_cn || block == net.minecraft.init.Blocks.field_150397_co || block instanceof BlockPane) || state.isSideSolid(world, pos, facing.func_176734_d());
 +        }
 +        else if(this instanceof BlockWall)
 +        {
-+            return block != Blocks.field_180401_cv && (!(!(block instanceof BlockWall) && !(block instanceof BlockFenceGate)) || ((block.field_149764_J.func_76218_k() && state.func_185917_h()) && block.field_149764_J != Material.field_151572_C));
++            return block != net.minecraft.init.Blocks.field_180401_cv && (!(!(block instanceof BlockWall) && !(block instanceof BlockFenceGate)) || ((block.field_149764_J.func_76218_k() && state.func_185917_h()) && block.field_149764_J != Material.field_151572_C));
 +        }
 +
 +        return false;
@@ -1443,7 +1435,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1169,11 +2408,7 @@
+@@ -1169,11 +2407,7 @@
              }
              else
              {
