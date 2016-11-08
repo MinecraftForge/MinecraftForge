@@ -1,11 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockWall.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockWall.java
-@@ -107,7 +107,7 @@
-     {
-         IBlockState iblockstate = p_176253_1_.func_180495_p(p_176253_2_);
-         Block block = iblockstate.func_177230_c();
--        return block == Blocks.field_180401_cv ? false : (block != this && !(block instanceof BlockFenceGate) ? (block.field_149764_J.func_76218_k() && iblockstate.func_185917_h() ? block.field_149764_J != Material.field_151572_C : false) : true);
-+        return block == Blocks.field_180401_cv ? false : (!block.canWallConnectTo(p_176253_1_, iblockstate, p_176253_2_) && !(block instanceof BlockFenceGate) ? (block.field_149764_J.func_76218_k() && iblockstate.func_185917_h() ? block.field_149764_J != Material.field_151572_C : false) : true);
-     }
+@@ -142,10 +142,10 @@
  
-     @SideOnly(Side.CLIENT)
+     public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
+     {
+-        boolean flag = this.func_176253_e(p_176221_2_, p_176221_3_.func_177978_c());
+-        boolean flag1 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177974_f());
+-        boolean flag2 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177968_d());
+-        boolean flag3 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177976_e());
++        boolean flag = canConnectToBlock(p_176221_2_, p_176221_3_, EnumFacing.NORTH);
++        boolean flag1 = canConnectToBlock(p_176221_2_, p_176221_3_, EnumFacing.EAST);
++        boolean flag2 = canConnectToBlock(p_176221_2_, p_176221_3_, EnumFacing.SOUTH);
++        boolean flag3 = canConnectToBlock(p_176221_2_, p_176221_3_, EnumFacing.WEST);
+         boolean flag4 = flag && !flag1 && flag2 && !flag3 || !flag && flag1 && !flag2 && flag3;
+         return p_176221_1_.func_177226_a(field_176256_a, Boolean.valueOf(!flag4 || !p_176221_2_.func_175623_d(p_176221_3_.func_177984_a()))).func_177226_a(field_176254_b, Boolean.valueOf(flag)).func_177226_a(field_176257_M, Boolean.valueOf(flag1)).func_177226_a(field_176258_N, Boolean.valueOf(flag2)).func_177226_a(field_176259_O, Boolean.valueOf(flag3));
+     }
