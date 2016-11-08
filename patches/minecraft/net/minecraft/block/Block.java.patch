@@ -212,7 +212,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -893,6 +915,1222 @@
+@@ -893,6 +915,1226 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1402,31 +1402,35 @@
 +     * @param facing The side the connecting block is on
 +     * @return True to allow this to connect to another block
 +     */
-+    public boolean canConnectToBlock(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
-+        IBlockState state = world.func_180495_p(pos.func_177972_a(facing));
-+        Block block = state.func_177230_c();
++        Block connectee = world.func_180495_p(pos).func_177230_c();
++        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
 +
-+        if(this instanceof BlockFence)
++        if(connectee instanceof BlockFence && connector instanceof BlockFence)
 +        {
-+            if(this != net.minecraft.init.Blocks.field_150386_bk && block != net.minecraft.init.Blocks.field_150386_bk)
++            if(connectee != net.minecraft.init.Blocks.field_150386_bk && connector == net.minecraft.init.Blocks.field_150386_bk)
 +            {
-+                return block != net.minecraft.init.Blocks.field_180401_cv && (!((!(block instanceof BlockFence) || block.field_149764_J != this.field_149764_J) && !(block instanceof BlockFenceGate)) || ((block.field_149764_J.func_76218_k() && state.func_185917_h()) && block.field_149764_J != Material.field_151572_C));
++                return false;
 +            }
-+            else
++            else if(connectee == net.minecraft.init.Blocks.field_150386_bk && connector != net.minecraft.init.Blocks.field_150386_bk)
 +            {
-+                return block != net.minecraft.init.Blocks.field_180401_cv && (!((!(block instanceof BlockFence) || block.field_149764_J != this.field_149764_J) && !(block instanceof BlockFenceGate)) || ((block.field_149764_J.func_76218_k() && state.func_185917_h()) && block.field_149764_J != Material.field_151572_C));
++                return false;
 +            }
++            return true;
 +        }
-+        else if(this instanceof BlockPane)
++        if(connectee instanceof BlockFenceGate && connector instanceof BlockWall)
 +        {
-+            return (block.func_176223_P().func_185917_h() || block == this || block == net.minecraft.init.Blocks.field_150359_w || block == net.minecraft.init.Blocks.field_150399_cn || block == net.minecraft.init.Blocks.field_150397_co || block instanceof BlockPane) || state.isSideSolid(world, pos, facing.func_176734_d());
++            return true;
 +        }
-+        else if(this instanceof BlockWall)
++        else if(connectee instanceof BlockPane && connector instanceof BlockPane)
 +        {
-+            return block != net.minecraft.init.Blocks.field_180401_cv && (!(!(block instanceof BlockWall) && !(block instanceof BlockFenceGate)) || ((block.field_149764_J.func_76218_k() && state.func_185917_h()) && block.field_149764_J != Material.field_151572_C));
++            return true;
 +        }
-+
++        else if(connectee instanceof BlockWall && connector instanceof BlockWall)
++        {
++            return true;
++        }
 +        return false;
 +    }
 +
@@ -1435,7 +1439,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1169,11 +2407,7 @@
+@@ -1169,11 +2411,7 @@
              }
              else
              {
