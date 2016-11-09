@@ -28,7 +28,7 @@
          GlStateManager.func_179140_f();
          GlStateManager.func_179097_i();
          super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
-+        this.guiTabs.drawTabHoveringText(this, p_73863_1_, p_73863_2_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146289_q);
++        this.guiTabs.drawTabHoveringText(p_73863_1_, p_73863_2_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146289_q);
          RenderHelper.func_74520_c();
          GlStateManager.func_179094_E();
          GlStateManager.func_179109_b((float)i, (float)j, 0.0F);

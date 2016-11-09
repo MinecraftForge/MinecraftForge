@@ -45,22 +45,22 @@ public class GuiTabList
 	private int page;
 	/**returns how many pages, a.k.a max button clicks to the right, can be done.*/
 	private int maxPages;
-	private GuiContainer container;
+	private GuiContainer guiContainer;
 	/**cache used for comparison*/
-	private Class<? extends GuiContainer> containerClass;
+	private Class<? extends GuiContainer> guiContainerClass;
 	private List<GuiTab> tabs;
-	private static final ResourceLocation TEXTURE_TABS = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
+	private static final ResourceLocation TEXTURE_TABS = new ResourceLocation("textures/gui/guiContainer/creative_inventory/tabs.png");
 
-	public GuiTabList(GuiContainer container)
+	public GuiTabList(GuiContainer guiContainer)
 	{
-		this.container = container;
-		this.containerClass = container.getClass();
+		this.guiContainer = guiContainer;
+		this.guiContainerClass = guiContainer.getClass();
 
-		tabs = new ArrayList<GuiTab>(GuiTab.getTabsForGui(this.containerClass)); //get a copy of the stored list so it can be modified without consequence
+		tabs = new ArrayList<GuiTab>(GuiTab.getTabsForGui(guiContainerClass)); //get a copy of the stored list so it can be modified without consequence
 		maxPages = ((getTabs().size() - maxTabsPerPage) / maxTabsPerPage) + 1;
 
 		for (GuiTab tab : getTabs())//set the first page
-			if (this.containerClass.equals(tab.getTargetGui()))
+			if (tab.isActiveTab(guiContainerClass))
 			{
 				page = tab.getTabPage();
 				break;
@@ -74,7 +74,7 @@ public class GuiTabList
 			FontRenderer fontRendererObj)
 	{
 
-		if (getTabs().size() == 1 && this.containerClass.equals(GuiInventory.class)) // don't draw the base tab if it's the only one
+		if (getTabs().size() == 1 && guiContainer instanceof GuiInventory) // don't draw the base tab if it's the only one
 			return;
 
 		int start = page * maxTabsPerPage;
@@ -82,18 +82,17 @@ public class GuiTabList
 
 		for (GuiTab tab : getTabs())
 		{
-			boolean active = tab.isActiveTab(this.containerClass);
-			if (tab.getTabIndex() >= start && tab.getTabIndex() < end && (active || !isFront))
+			if (tab.getTabIndex() >= start && tab.getTabIndex() < end && (tab.isActiveTab(guiContainerClass) || !isFront))
 			{
 				Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE_TABS);
-				tab.draw(container, isFront, guiLeft, guiTop, xSize, ySize, itemRender, fontRendererObj);
+				tab.draw(guiContainer, isFront, guiLeft, guiTop, xSize, ySize, itemRender, fontRendererObj);
 			}
 		}
 	}
 
-	public void drawTabHoveringText(GuiContainer screen, int mouseX, int mouseY, int guiLeft, int guiTop, int xSize, int ySize, FontRenderer fontRendererObj)
+	public void drawTabHoveringText(int mouseX, int mouseY, int guiLeft, int guiTop, int xSize, int ySize, FontRenderer fontRendererObj)
 	{
-		if (getTabs().size() == 1 && this.containerClass.equals(GuiInventory.class)) // don't draw the base tab if it's the only one
+		if (getTabs().size() == 1 && guiContainer instanceof GuiInventory) // don't draw the base tab if it's the only one
 			return;
 		int start = page * maxTabsPerPage;
 		int end = Math.min(getTabs().size(), (page + 1) * maxTabsPerPage);
@@ -102,16 +101,16 @@ public class GuiTabList
 		{
 			if (tab.getTabIndex() >= start && tab.getTabIndex() < end && this.isMouseOverTab(tab, mouseX - guiLeft, mouseY - guiTop, xSize, ySize))
 			{
-				renderSurvivalInventoryHoveringText(tab, screen, mouseX, mouseY, fontRendererObj);
+				renderSurvivalInventoryHoveringText(tab, mouseX, mouseY, fontRendererObj);
 				break;
 			}
 		}
 	}
 
-	private boolean renderSurvivalInventoryHoveringText(GuiTab tab, GuiContainer screen, int mouseX, int mouseY, FontRenderer fontRendererObj)
+	private boolean renderSurvivalInventoryHoveringText(GuiTab tab, int mouseX, int mouseY, FontRenderer fontRendererObj)
 	{
 		GuiUtils.drawHoveringText(Arrays.<String> asList(new String[] { I18n.format(tab.getLocalizedName()) }), mouseX,
-				mouseY, screen.width, screen.height, -1, fontRendererObj);
+				mouseY, guiContainer.width, guiContainer.height, -1, fontRendererObj);
 		return true;
 	}
 
@@ -136,7 +135,7 @@ public class GuiTabList
 
 	public void onMouseRelease(int guiLeft, int guiTop, int xSize, int ySize, int state, int mouseX, int mouseY)
 	{
-		if (getTabs().size() == 1 && this.containerClass.equals(GuiInventory.class)) // don't draw the base tab if it's the only one
+		if (getTabs().size() == 1 && guiContainer instanceof GuiInventory) // don't draw the base tab if it's the only one
 			return;
 		if (state == 0)
 		{

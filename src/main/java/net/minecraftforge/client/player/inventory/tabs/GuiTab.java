@@ -46,7 +46,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * class named after CreativeTabs, but for Survival
  */
-public abstract class GuiTab
+public class GuiTab
 {
 	private static ListMultimap<Class<? extends GuiContainer>, GuiTab> tabRegistry = ArrayListMultimap.create();
 
@@ -56,7 +56,8 @@ public abstract class GuiTab
 	private Class<? extends GuiContainer> parentContainer;
 	private final Logger LOGGER = LogManager.getLogger("GUITABS");
 	
-	public static final GuiTab VANILLA_INVENTORY_TAB = new GuiTab("inventory", new ItemStack(Blocks.CHEST), GuiInventory.class) {
+	public static final GuiTab VANILLA_INVENTORY_TAB = new GuiTab("inventory", new ItemStack(Blocks.CHEST))
+	{
 		@Override
 		public void onTabClicked(EntityPlayerSP player)
 		{
@@ -68,39 +69,18 @@ public abstract class GuiTab
 		{
 			return GuiInventory.class;
 		}
-	};
+	}.addTo(GuiInventory.class);
 
-	public GuiTab(String name, ItemStack icon, Class<? extends GuiContainer> parentContainer)
+	public GuiTab(String name, ItemStack icon)
 	{
-		if(parentContainer.equals(GuiContainerCreative.class)){
-			LOGGER.warn("Cannot add tabs to creative inventory. Use CreativeTabs instead");
-			return;
-		}
-		else if(parentContainer.equals(InventoryEffectRenderer.class)){
-			LOGGER.warn(name + " tab has a parent that is ambigious with the creative inventory. cannot proceed with registry.");
-			return;
-		}
 		this.name = name;
 		this.iconStack = icon;
-		this.parentContainer = parentContainer;
-		tabRegistry.put(parentContainer, this);
 	}
 
-	public GuiTab(String name, ResourceLocation icon, Class<? extends GuiContainer> parentContainer)
+	public GuiTab(String name, ResourceLocation icon)
 	{
-		if(parentContainer.equals(GuiContainerCreative.class)){
-			LOGGER.warn("Cannot add tabs to creative inventory. Use CreativeTabs instead");
-			return;
-		}
-		else if(parentContainer.equals(InventoryEffectRenderer.class)){
-			LOGGER.warn(name + " tab has a parent that is ambigious with the creative inventory. cannot proceed with registry.");
-			return;
-		}
-
 		this.name = name;
 		this.iconResLoc = icon;
-		this.parentContainer = parentContainer;
-		tabRegistry.put(parentContainer, this);
 	}
 
 	public void draw(GuiContainer guiContainer, boolean isSelectedtab, int guiLeft, int guiTop, int xSize, int ySize, RenderItem itemRender,
@@ -228,15 +208,30 @@ public abstract class GuiTab
 				tabRegistry.put(guiContainer, tab);
 		}
 	}
+	
+	public GuiTab addTo(Class<? extends GuiContainer> parentContainer){
+		if(parentContainer.equals(GuiContainerCreative.class)){
+			LOGGER.warn("Cannot add tabs to creative inventory. Use CreativeTabs instead");
+			return this;
+		}
+		else if(parentContainer.equals(InventoryEffectRenderer.class)){
+			LOGGER.warn(name + " tab has a parent that is ambigious with the creative inventory. cannot proceed with registry.");
+			return this;
+		}
+		
+		this.parentContainer = parentContainer;
+		tabRegistry.put(parentContainer, this);
+		return this;
+	}
 
 	/**
 	 * process interaction when the tab is clicked. should be used to send a packet to the server and open a gui
 	 */
-	public abstract void onTabClicked(EntityPlayerSP player);
+	public void onTabClicked(EntityPlayerSP player){}
 
 	/**
 	 * returns the GuiContainer this tab should be linked too. not affiliated with opening the gui. can be null if no gui should lead to this tab. mostly used to know when a tab is
 	 * on an affiliated gui, and draw the tab texture in of the others.
 	 */
-	public abstract Class<? extends GuiContainer> getTargetGui();
+	public Class<? extends GuiContainer> getTargetGui(){return null;}
 }
