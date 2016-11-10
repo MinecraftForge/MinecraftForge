@@ -56,7 +56,7 @@ public class GuiTabList
 		this.guiContainer = guiContainer;
 		this.guiContainerClass = guiContainer.getClass();
 
-		tabs = new ArrayList<GuiTab>(GuiTab.getTabsForGui(guiContainerClass)); //get a copy of the stored list so it can be modified without consequence
+		tabs = new ArrayList<GuiTab>(GuiTab.getTabsForGui(this.guiContainer.getTabsKey())); //get a copy of the stored list so it can be modified without consequence
 		maxPages = ((getTabs().size() - maxTabsPerPage) / maxTabsPerPage) + 1;
 
 		for (GuiTab tab : getTabs())//set the first page

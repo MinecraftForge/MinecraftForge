@@ -54,6 +54,7 @@ public class GuiTab
 	private ResourceLocation iconResLoc = null;
 	private String name = null;
 	private Class<? extends GuiContainer> parentContainer;
+	private Class<? extends GuiContainer> targetGui;
 	private final Logger LOGGER = LogManager.getLogger("GUITABS");
 	
 	public static final GuiTab VANILLA_INVENTORY_TAB = new GuiTab("inventory", new ItemStack(Blocks.CHEST))
@@ -64,12 +65,7 @@ public class GuiTab
 			Minecraft.getMinecraft().displayGuiScreen(new GuiInventory(player));
 		}
 
-		@Override
-		public Class<? extends GuiContainer> getTargetGui()
-		{
-			return GuiInventory.class;
-		}
-	}.addTo(GuiInventory.class);
+	}.setTargetGui(GuiInventory.class).addTo(GuiInventory.class);
 
 	public GuiTab(String name, ItemStack icon)
 	{
@@ -191,24 +187,6 @@ public class GuiTab
 		return tabRegistry.containsKey(guiContainer) ? tabRegistry.get(guiContainer) : new ArrayList<GuiTab>();
 	}
 
-	/**
-	 * Appends a list of tabs from a parent gui to another gui to create the illusion of continuity
-	 * 
-	 * @param original
-	 *            : the tabs to copy from, if any registered
-	 * @param guiContainer
-	 *            : the GuiContainer the list will be added too.
-	 */
-	public static void createContinuity(Class<? extends GuiContainer> original, Class<? extends GuiContainer> guiContainer)
-	{
-
-		if (tabRegistry.containsKey(original))
-		{
-			for (GuiTab tab : tabRegistry.get(original))
-				tabRegistry.put(guiContainer, tab);
-		}
-	}
-	
 	public GuiTab addTo(Class<? extends GuiContainer> parentContainer){
 		if(parentContainer.equals(GuiContainerCreative.class)){
 			LOGGER.warn("Cannot add tabs to creative inventory. Use CreativeTabs instead");
@@ -225,6 +203,14 @@ public class GuiTab
 	}
 
 	/**
+	 * sets the GuiContainer this tab should show on as the main tab.
+	 */
+	public GuiTab setTargetGui(Class<? extends GuiContainer> targetGui){
+		this.targetGui = targetGui;
+		return this;
+	}
+
+	/**
 	 * process interaction when the tab is clicked. should be used to send a packet to the server and open a gui
 	 */
 	public void onTabClicked(EntityPlayerSP player){}
@@ -233,5 +219,7 @@ public class GuiTab
 	 * returns the GuiContainer this tab should be linked too. not affiliated with opening the gui. can be null if no gui should lead to this tab. mostly used to know when a tab is
 	 * on an affiliated gui, and draw the tab texture in of the others.
 	 */
-	public Class<? extends GuiContainer> getTargetGui(){return null;}
+	public Class<? extends GuiContainer> getTargetGui(){
+		return this.targetGui;
+	}
 }

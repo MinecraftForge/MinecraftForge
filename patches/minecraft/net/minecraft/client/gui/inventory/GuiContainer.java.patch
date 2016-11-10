@@ -161,19 +161,17 @@
                  {
                      this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                      return true;
-@@ -686,4 +697,24 @@
+@@ -686,4 +697,38 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }
-+    
++
 +    @Override
-+    protected void func_146284_a(net.minecraft.client.gui.GuiButton button) throws IOException {
++    protected void func_146284_a(net.minecraft.client.gui.GuiButton button) throws IOException
++    {
 +    	this.guiTabs.actionPerformed(button);
 +    }
 +
-+    public java.util.List<net.minecraftforge.client.player.inventory.tabs.GuiTab> getTabs(){
-+    	return this.guiTabs.getTabs();
-+    }
 +    /* ======================================== FORGE START =====================================*/
 +
 +    /**
@@ -182,6 +180,22 @@
 +    public Slot getSlotUnderMouse()
 +    {
 +        return this.field_147006_u;
++    }
++
++    /**
++     * Returns a list of tabs that are registered to the class returned by {@link #getTabsKey() getTabsKey}.
++     */
++    public java.util.List<net.minecraftforge.client.player.inventory.tabs.GuiTab> getTabs()
++    {
++    	return this.guiTabs.getTabs();
++    }
++
++    /**
++     * Returns the class the guitabs list should be loaded from
++     */
++    public Class<? extends GuiContainer> getTabsKey()
++    {
++    	return this.getClass();
 +    }
 +
 +    /* ======================================== FORGE END   =====================================*/
