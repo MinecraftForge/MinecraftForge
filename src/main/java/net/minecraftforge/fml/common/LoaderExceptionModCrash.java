@@ -19,29 +19,21 @@
 
 package net.minecraftforge.fml.common;
 
-public class LoaderException extends EnhancedRuntimeException
+/**
+ * Prevent LoaderException from adding its own stack trace to the wrapped throwable's stack trace.
+ */
+public class LoaderExceptionModCrash extends LoaderException
 {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -5675297950958861378L;
+    private static final long serialVersionUID = 1L;
 
-    public LoaderException(Throwable wrapped)
-    {
-        super(wrapped);
-    }
-
-    public LoaderException()
-    {
-    }
-    public LoaderException(String message)
-    {
-        super(message);
-    }
-    public LoaderException(String message, Throwable cause)
+    public LoaderExceptionModCrash(String message, Throwable cause)
     {
         super(message, cause);
     }
 
-    @Override protected void printStackTrace(WrappedPrintStream stream){}
+    @Override
+    public synchronized Throwable fillInStackTrace()
+    {
+        return this;
+    }
 }

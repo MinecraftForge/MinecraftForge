@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraftforge.fml.common.LoaderState.ModState;
@@ -62,6 +63,7 @@ public class LoadController
     private LoaderState state;
     private Multimap<String, ModState> modStates = ArrayListMultimap.create();
     private Multimap<String, Throwable> errors = ArrayListMultimap.create();
+    private Map<String, String> modNames = Maps.newHashMap();
     private List<ModContainer> activeModList = Lists.newArrayList();
     private ModContainer activeContainer;
     private BiMap<ModContainer, Object> modObjectList;
@@ -130,6 +132,7 @@ public class LoadController
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 modStates.put(mod.getModId(), ModState.DISABLED);
             }
+            modNames.put(mod.getModId(), mod.getName());
         }
 
         eventChannels = eventBus.build();
@@ -149,7 +152,7 @@ public class LoadController
         state = state.transition(!errors.isEmpty());
         if (state != desiredState && !forceState)
         {
-            Throwable toThrow = null;
+            Entry<String, Throwable> toThrow = null;
             FMLLog.severe("Fatal errors were detected during the transition from %s to %s. Loading cannot continue", oldState, desiredState);
             StringBuilder sb = new StringBuilder();
             printModStates(sb);
@@ -159,14 +162,16 @@ public class LoadController
                 FMLLog.severe("The following problems were captured during this phase");
                 for (Entry<String, Throwable> error : errors.entries())
                 {
-                    FMLLog.log(Level.ERROR, error.getValue(), "Caught exception from %s", error.getKey());
+                    String modId = error.getKey();
+                    String modName = modNames.get(modId);
+                    FMLLog.log(Level.ERROR, error.getValue(), "Caught exception from %s (%s)", modName, modId);
                     if (error.getValue() instanceof IFMLHandledException)
                     {
-                        toThrow = error.getValue();
+                        toThrow = error;
                     }
                     else if (toThrow == null)
                     {
-                        toThrow = error.getValue();
+                        toThrow = error;
                     }
                 }
             }
@@ -177,13 +182,12 @@ public class LoadController
                         "ForgeModLoader, especially Optifine, to see if there are fixes available.");
                 throw new RuntimeException("The ForgeModLoader state engine is invalid");
             }
-            if (toThrow != null && toThrow instanceof RuntimeException)
+            if (toThrow != null)
             {
-                throw (RuntimeException)toThrow;
-            }
-            else
-            {
-                throw new LoaderException(toThrow);
+                String modId = toThrow.getKey();
+                String modName = modNames.get(modId);
+                String errMsg = String.format("Caught exception from %s (%s)", modName, modId);
+                throw new LoaderExceptionModCrash(errMsg, toThrow.getValue());
             }
         }
         else if (state != desiredState && forceState)
