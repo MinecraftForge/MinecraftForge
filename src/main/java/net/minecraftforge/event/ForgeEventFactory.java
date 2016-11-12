@@ -574,8 +574,8 @@ public class ForgeEventFactory
         Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
         {
-            IBlockState state = player.worldObj.getBlockState(player.playerLocation);
-            return state.getBlock().isBed(state, player.worldObj, player.playerLocation, player);
+            IBlockState state = player.worldObj.getBlockState(player.bedLocation);
+            return state.getBlock().isBed(state, player.worldObj, player.bedLocation, player);
         }
         else
             return canContinueSleep == Result.ALLOW;
