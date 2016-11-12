@@ -55,3 +55,7 @@ net/minecraft/world/storage/loot/LootEntry.<init>(II[Lnet/minecraft/world/storag
 net/minecraft/world/storage/loot/LootEntryItem.<init>(Lnet/minecraft/item/Item;II[Lnet/minecraft/world/storage/loot/functions/LootFunction;[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46644_1_,p_i46644_2_,p_i46644_3_,p_i46644_4_,p_i46644_5_,entryName
 net/minecraft/world/storage/loot/LootEntryTable.<init>(Lnet/minecraft/util/ResourceLocation;II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46639_1_,p_i46639_2_,p_i46639_3_,p_i46639_4_,entryName
 net/minecraft/world/storage/loot/LootEntryEmpty.<init>(II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46645_1_,p_i46645_2_,p_i46645_3_,entryName
+
+net/minecraft/command/EntitySelector.matchEntitiesDefault(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;Ljava/lang/Class;)Ljava/util/List;=|p_179656_0_,p_179656_1_,p_179656_2_
+net/minecraft/command/EntitySelector.matchesMultiplePlayersDefault(Ljava/lang/String;)Z=|p_82377_0_
+net/minecraft/command/EntitySelector.hasArgumentsDefault(Ljava/lang/String;)Z=|p_82378_0_
