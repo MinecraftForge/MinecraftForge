@@ -98,7 +98,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
     {
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
         {
@@ -139,8 +139,9 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemstack, World world, EntityPlayer player, EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
     {
+        ItemStack itemstack = player.getHeldItem(hand);
         FluidStack fluidStack = getFluid(itemstack);
         // empty bucket shouldn't exist, do nothing since it should be handled by the bucket event
         if (fluidStack == null)
@@ -173,11 +174,11 @@ public class UniversalBucket extends Item implements IFluidContainerItem
                     // success!
                     player.addStat(StatList.getObjectUseStats(this));
 
-                    itemstack.stackSize--;
+                    itemstack.func_190918_g(1);
                     ItemStack emptyStack = getEmpty() != null ? getEmpty().copy() : new ItemStack(this);
 
                     // check whether we replace the item or add the empty one to the inventory
-                    if (itemstack.stackSize <= 0)
+                    if (itemstack.func_190926_b())
                     {
                         return ActionResult.newResult(EnumActionResult.SUCCESS, emptyStack);
                     }
@@ -244,7 +245,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         BlockPos pos = target.getBlockPos();
 
         ItemStack singleBucket = emptyBucket.copy();
-        singleBucket.stackSize = 1;
+        singleBucket.func_190920_e(1);
 
         ItemStack filledBucket = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, target.sideHit);
         if (filledBucket != null)
@@ -285,7 +286,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     public int fill(ItemStack container, FluidStack resource, boolean doFill)
     {
         // has to be exactly 1, must be handled from the caller
-        if (container.stackSize != 1)
+        if (container.func_190916_E() != 1)
         {
             return 0;
         }
@@ -342,7 +343,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain)
     {
         // has to be exactly 1, must be handled from the caller
-        if (container.stackSize != 1)
+        if (container.func_190916_E() != 1)
         {
             return null;
         }
@@ -361,7 +362,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
                 container.deserializeNBT(getEmpty().serializeNBT());
             }
             else {
-                container.stackSize = 0;
+                container.func_190920_e(0);
             }
         }
 

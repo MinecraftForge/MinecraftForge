@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeSnow.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeSnow.java
-@@ -39,7 +39,7 @@
+@@ -56,7 +56,7 @@
  
      public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
      {

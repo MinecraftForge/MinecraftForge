@@ -3,7 +3,6 @@ package net.minecraftforge.test;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.SkeletonType;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.init.Items;
 import net.minecraft.tileentity.TileEntity;
@@ -136,8 +135,8 @@ public class PlayerInteractEventTest
                 && evt.getTarget() instanceof EntitySkeleton
                 && evt.getLocalPos().yCoord > evt.getTarget().height / 2.0)
         {
-            // If we right click the upper half of a skeleton it becomes wither skeleton. Otherwise nothing happens.
-            ((EntitySkeleton) evt.getTarget()).setSkeletonType(SkeletonType.WITHER);
+            // If we right click the upper half of a skeleton it dies.
+            ((EntitySkeleton) evt.getTarget()).setDead();
             evt.setCanceled(true);
         }
     }

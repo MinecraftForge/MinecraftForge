@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static org.junit.Assert.assertEquals;
@@ -32,10 +33,10 @@ public class ItemBlockSubstitutionRemoveRestoreTest
     private static class ItemMyDirt extends ItemMultiTexture
     {
         public ItemMyDirt() {
-            super(Blocks.DIRT, Blocks.DIRT, new Function<ItemStack, String>()
+            super(Blocks.DIRT, Blocks.DIRT, new Mapper()
             {
                 @Nullable
-                public String apply(@Nullable ItemStack p_apply_1_)
+                public String apply(@Nonnull ItemStack p_apply_1_)
                 {
                     return BlockDirt.DirtType.byMetadata(p_apply_1_.getMetadata()).getUnlocalizedName();
                 }

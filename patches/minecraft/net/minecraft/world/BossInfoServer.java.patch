@@ -25,11 +25,3 @@
      public void func_186746_a(BossInfo.Overlay p_186746_1_)
      {
          if (p_186746_1_ != this.field_186752_d)
-@@ -87,7 +83,6 @@
-         return this;
-     }
- 
--    @SideOnly(Side.CLIENT)
-     public void func_186739_a(ITextComponent p_186739_1_)
-     {
-         if (!Objects.equal(p_186739_1_, this.field_186749_a))

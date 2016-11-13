@@ -30,6 +30,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 public class VanillaInventoryCodeHooks
 {
     //Return: Null if we did nothing {no IItemHandler}, True if we moved an item, False if we moved no items
@@ -50,14 +52,14 @@ public class VanillaInventoryCodeHooks
                 for (int j = 0; j < dest.getSizeInventory(); j++)
                 {
                     ItemStack destStack = dest.getStackInSlot(j);
-                    if (destStack == null || destStack.stackSize < destStack.getMaxStackSize() && destStack.stackSize < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack))
+                    if (destStack == null || destStack.func_190916_E() < destStack.getMaxStackSize() && destStack.func_190916_E() < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack))
                     {
                         extractItem = handler.extractItem(i, 1, false);
                         if (destStack == null)
                             dest.setInventorySlotContents(j, extractItem);
                         else
                         {
-                            destStack.stackSize++;
+                            destStack.func_190917_f(1);
                             dest.setInventorySlotContents(j, destStack);
                         }
                         dest.markDirty();
@@ -70,7 +72,7 @@ public class VanillaInventoryCodeHooks
         return false;
     }
 
-    public static boolean dropperInsertHook(World world, BlockPos pos, TileEntityDispenser dropper, int slot, ItemStack stack)
+    public static boolean dropperInsertHook(World world, BlockPos pos, TileEntityDispenser dropper, int slot, @Nonnull ItemStack stack)
     {
         EnumFacing enumfacing = world.getBlockState(pos).getValue(BlockDropper.FACING);
         BlockPos offsetPos = pos.offset(enumfacing);
@@ -84,14 +86,10 @@ public class VanillaInventoryCodeHooks
 
         ItemStack result = ItemHandlerHelper.insertItem(capability, ItemHandlerHelper.copyStackWithSize(stack, 1), false);
 
-        if (result == null)
+        if (result.func_190926_b())
         {
             result = stack.copy();
-
-            if (--result.stackSize == 0)
-            {
-                result = null;
-            }
+            result.func_190918_g(1);
         }
         else
         {
@@ -125,9 +123,9 @@ public class VanillaInventoryCodeHooks
             if (stackInSlot != null)
             {
                 ItemStack insert = stackInSlot.copy();
-                insert.stackSize = 1;
+                insert.func_190920_e(1);
                 ItemStack newStack = ItemHandlerHelper.insertItem(handler, insert, true);
-                if (newStack == null || newStack.stackSize == 0)
+                if (newStack.func_190926_b())
                 {
                     ItemHandlerHelper.insertItem(handler, hopper.decrStackSize(i, 1), false);
                     hopper.markDirty();

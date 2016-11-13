@@ -54,7 +54,7 @@ public class ForgeBlockStatesLoaderDebug {
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().registerAll(
-            new ItemMultiTexture(BLOCKS.custom_wall, BLOCKS.custom_wall, new Function<ItemStack, String>()
+            new ItemMultiTexture(BLOCKS.custom_wall, BLOCKS.custom_wall, new ItemMultiTexture.Mapper()
             {
                 @Override
                 public String apply(ItemStack stack)

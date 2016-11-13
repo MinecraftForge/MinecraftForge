@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandBase.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandBase.java
-@@ -369,7 +369,7 @@
+@@ -384,7 +384,7 @@
                  itextcomponent.func_150258_a(" ");
              }
  

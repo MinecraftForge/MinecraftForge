@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
-@@ -39,7 +39,7 @@
+@@ -38,7 +38,7 @@
      {
          if (!p_180650_1_.field_72995_K)
          {
@@ -9,7 +9,7 @@
              {
                  p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P());
              }
-@@ -59,7 +59,7 @@
+@@ -58,7 +58,7 @@
                          IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos.func_177984_a());
                          IBlockState iblockstate1 = p_180650_1_.func_180495_p(blockpos);
  
@@ -18,7 +18,7 @@
                          {
                              p_180650_1_.func_175656_a(blockpos, Blocks.field_150349_c.func_176223_P());
                          }
-@@ -98,18 +98,11 @@
+@@ -96,18 +96,11 @@
              {
                  if (j >= i / 16)
                  {

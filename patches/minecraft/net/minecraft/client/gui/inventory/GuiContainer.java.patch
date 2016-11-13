@@ -1,21 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
-@@ -176,8 +176,11 @@
+@@ -180,8 +180,10 @@
          GlStateManager.func_179109_b(0.0F, 0.0F, 32.0F);
          this.field_73735_i = 200.0F;
          this.field_146296_j.field_77023_b = 200.0F;
-+        net.minecraft.client.gui.FontRenderer font = null;
-+        if (p_146982_1_ != null) font = p_146982_1_.func_77973_b().getFontRenderer(p_146982_1_);
++        net.minecraft.client.gui.FontRenderer font = p_146982_1_.func_77973_b().getFontRenderer(p_146982_1_);
 +        if (font == null) font = field_146289_q;
          this.field_146296_j.func_180450_b(p_146982_1_, p_146982_2_, p_146982_3_);
--        this.field_146296_j.func_180453_a(this.field_146289_q, p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x == null ? 0 : 8), p_146982_4_);
-+        this.field_146296_j.func_180453_a(font, p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x == null ? 0 : 8), p_146982_4_);
+-        this.field_146296_j.func_180453_a(this.field_146289_q, p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x.func_190926_b() ? 0 : 8), p_146982_4_);
++        this.field_146296_j.func_180453_a(font, p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x.func_190926_b() ? 0 : 8), p_146982_4_);
          this.field_73735_i = 0.0F;
          this.field_146296_j.field_77023_b = 0.0F;
      }
-@@ -240,13 +243,12 @@
+@@ -239,13 +241,12 @@
  
-         if (itemstack == null && p_146977_1_.func_111238_b())
+         if (itemstack.func_190926_b() && p_146977_1_.func_111238_b())
          {
 -            String s1 = p_146977_1_.func_178171_c();
 +            TextureAtlasSprite textureatlassprite = p_146977_1_.getBackgroundSprite();
@@ -30,7 +29,7 @@
                  this.func_175175_a(i, j, textureatlassprite, 16, 16);
                  GlStateManager.func_179145_e();
                  flag1 = true;
-@@ -316,7 +318,7 @@
+@@ -319,7 +320,7 @@
      protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException
      {
          super.func_73864_a(p_73864_1_, p_73864_2_, p_73864_3_);
@@ -39,7 +38,7 @@
          Slot slot = this.func_146975_c(p_73864_1_, p_73864_2_);
          long i = Minecraft.func_71386_F();
          this.field_146993_M = this.field_146998_K == slot && i - this.field_146997_J < 250L && this.field_146992_L == p_73864_3_;
-@@ -327,6 +329,7 @@
+@@ -330,6 +331,7 @@
              int j = this.field_147003_i;
              int k = this.field_147009_r;
              boolean flag1 = p_73864_1_ < j || p_73864_2_ < k || p_73864_1_ >= j + this.field_146999_f || p_73864_2_ >= k + this.field_147000_g;
@@ -47,16 +46,16 @@
              int l = -1;
  
              if (slot != null)
-@@ -364,7 +367,7 @@
+@@ -367,7 +369,7 @@
                  {
-                     if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o() == null)
+                     if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o().func_190926_b())
                      {
 -                        if (p_73864_3_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i() + 100)
 +                        if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73864_3_ - 100))
                          {
                              this.func_184098_a(slot, l, p_73864_3_, ClickType.CLONE);
                          }
-@@ -402,7 +405,7 @@
+@@ -405,7 +407,7 @@
                          {
                              this.field_146987_F = 1;
                          }
@@ -65,7 +64,7 @@
                          {
                              this.field_146987_F = 2;
                          }
-@@ -464,10 +467,12 @@
+@@ -467,10 +469,12 @@
  
      protected void func_146286_b(int p_146286_1_, int p_146286_2_, int p_146286_3_)
      {
@@ -78,7 +77,7 @@
          int k = -1;
  
          if (slot != null)
-@@ -488,7 +493,7 @@
+@@ -491,7 +495,7 @@
                  {
                      for (Slot slot2 : this.field_147002_h.field_75151_b)
                      {
@@ -87,16 +86,16 @@
                          {
                              this.func_184098_a(slot2, slot2.field_75222_d, p_146286_3_, ClickType.QUICK_MOVE);
                          }
-@@ -575,7 +580,7 @@
+@@ -578,7 +582,7 @@
              }
-             else if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o() != null)
+             else if (!this.field_146297_k.field_71439_g.field_71071_by.func_70445_o().func_190926_b())
              {
 -                if (p_146286_3_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i() + 100)
 +                if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_146286_3_ - 100))
                  {
                      this.func_184098_a(slot, k, p_146286_3_, ClickType.CLONE);
                  }
-@@ -627,7 +632,7 @@
+@@ -630,7 +634,7 @@
  
      protected void func_73869_a(char p_73869_1_, int p_73869_2_) throws IOException
      {
@@ -105,7 +104,7 @@
          {
              this.field_146297_k.field_71439_g.func_71053_j();
          }
-@@ -636,11 +641,11 @@
+@@ -639,11 +643,11 @@
  
          if (this.field_147006_u != null && this.field_147006_u.func_75216_d())
          {
@@ -119,7 +118,7 @@
              {
                  this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, func_146271_m() ? 1 : 0, ClickType.THROW);
              }
-@@ -653,7 +658,7 @@
+@@ -656,7 +660,7 @@
          {
              for (int i = 0; i < 9; ++i)
              {
@@ -128,7 +127,7 @@
                  {
                      this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                      return true;
-@@ -686,4 +691,16 @@
+@@ -689,4 +693,16 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }

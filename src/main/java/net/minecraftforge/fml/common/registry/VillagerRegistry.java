@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.Random;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.entity.monster.EntityZombieVillager;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.monster.ZombieType;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityVillager.ITradeList;
 import net.minecraft.util.EnumFacing;
@@ -315,10 +315,9 @@ public class VillagerRegistry
         List<VillagerProfession> entries = INSTANCE.professions.getValues();
         entity.setProfession(entries.get(rand.nextInt(entries.size())));
     }
-    public static void setRandomProfession(EntityZombie entity, Random rand)
+    public static void setRandomProfession(EntityZombieVillager entity, Random rand)
     {
         List<VillagerProfession> entries = INSTANCE.professions.getValues();
-        entity.setVillagerType(entries.get(rand.nextInt(entries.size())));
     }
 
 
@@ -352,50 +351,21 @@ public class VillagerRegistry
     }
 
     @SuppressWarnings("deprecation")
-    public static void onSetProfession(EntityZombie entity, VillagerProfession prof)
+    public static void onSetProfession(EntityZombieVillager entity, VillagerProfession prof)
     {
-        if (prof == null)
-        {
-            if (entity.getZombieType() != ZombieType.NORMAL && entity.getZombieType() != ZombieType.HUSK)
-                entity.setZombieType(ZombieType.NORMAL);
-            return;
-        }
-
-        int network = INSTANCE.professions.getId(prof);
-        if (network == -1 || prof != INSTANCE.professions.getObjectById(network))
-        {
-            throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
-        }
-
-        if (network >= 0 && network < 5) // Vanilla
-        {
-            if (entity.getZombieType() == null || entity.getZombieType().getId() != network + 1)
-            {
-                entity.setZombieType(ZombieType.getVillagerByOrdinal(network));
-            }
-        }
-        else if (entity.getZombieType() != null)
-            entity.setZombieType(ZombieType.NORMAL);
     }
-    public static void onSetProfession(EntityZombie entity, ZombieType type, int network)
+
+    public static void onSetProfession(EntityZombieVillager entity, int network)
     {
-        if (type == ZombieType.NORMAL || type == ZombieType.HUSK)
-        {
-            if (entity.getVillagerTypeForge() != null)
-                entity.setVillagerType(null);
-            return;
-        }
         int realID = network - 1;
-        if (type == null) //Forge type?
-            realID = network * -1; // Forge encoded as -ID
         VillagerProfession prof = INSTANCE.professions.getObjectById(realID);
         if (prof == null && network != 0 || INSTANCE.professions.getId(prof) != realID)
         {
             throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + realID + " " + prof);
         }
 
-        if (prof != entity.getVillagerTypeForge())
-            entity.setVillagerType(prof);
+        if (prof != entity.getForgeProfession())
+            entity.setForgeProfession(prof);
     }
 
     @Deprecated public static VillagerProfession getById(int network){ return INSTANCE.professions.getObjectById(network); }

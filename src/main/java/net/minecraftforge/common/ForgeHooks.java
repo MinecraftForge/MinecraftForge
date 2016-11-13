@@ -78,6 +78,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.JsonUtils;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -146,7 +147,7 @@ public class ForgeHooks
         SeedEntry entry = WeightedRandom.getRandomItem(rand, seedList);
         if (entry == null || entry.seed == null)
         {
-            return null;
+            return ItemStack.field_190927_a;
         }
         return entry.getStack(rand, fortune);
     }
@@ -264,14 +265,14 @@ public class ForgeHooks
     public static int getTotalArmorValue(EntityPlayer player)
     {
         int ret = 0;
-        for (int x = 0; x < player.inventory.armorInventory.length; x++)
+        for (int x = 0; x < player.inventory.armorInventory.size(); x++)
         {
-            ItemStack stack = player.inventory.armorInventory[x];
-            if (stack != null && stack.getItem() instanceof ISpecialArmor)
+            ItemStack stack = player.inventory.armorInventory.get(x);
+            if (stack.getItem() instanceof ISpecialArmor)
             {
                 ret += ((ISpecialArmor)stack.getItem()).getArmorDisplay(player, stack, x);
             }
-            else if (stack != null && stack.getItem() instanceof ItemArmor)
+            else if (stack.getItem() instanceof ItemArmor)
             {
                 ret += ((ItemArmor)stack.getItem()).damageReduceAmount;
             }
@@ -297,6 +298,7 @@ public class ForgeHooks
     public static boolean onPickBlock(RayTraceResult target, EntityPlayer player, World world)
     {
         /*
+            boolean flag = this.thePlayer.capabilities.isCreativeMode;
             TileEntity tileentity = null;
             ItemStack itemstack;
 
@@ -306,14 +308,14 @@ public class ForgeHooks
                 IBlockState iblockstate = this.theWorld.getBlockState(blockpos);
                 Block block = iblockstate.getBlock();
 
-                if (iblockstate.getMaterial() == Material.air)
+                if (iblockstate.getMaterial() == Material.AIR)
                 {
                     return;
                 }
 
-                itemstack = block.func_185473_a(this.theWorld, blockpos, iblockstate);
+                itemstack = block.getItem(this.theWorld, blockpos, iblockstate);
 
-                if (itemstack == null)
+                if (itemstack.func_190926_b())
                 {
                     return;
                 }
@@ -332,24 +334,24 @@ public class ForgeHooks
 
                 if (this.objectMouseOver.entityHit instanceof EntityPainting)
                 {
-                    itemstack = new ItemStack(Items.painting);
+                    itemstack = new ItemStack(Items.PAINTING);
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityLeashKnot)
                 {
-                    itemstack = new ItemStack(Items.lead);
+                    itemstack = new ItemStack(Items.LEAD);
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
                 {
                     EntityItemFrame entityitemframe = (EntityItemFrame)this.objectMouseOver.entityHit;
                     ItemStack itemstack1 = entityitemframe.getDisplayedItem();
 
-                    if (itemstack1 == null)
+                    if (itemstack1.func_190926_b())
                     {
-                        itemstack = new ItemStack(Items.item_frame);
+                        itemstack = new ItemStack(Items.ITEM_FRAME);
                     }
                     else
                     {
-                        itemstack = ItemStack.copyItemStack(itemstack1);
+                        itemstack = itemstack1.copy();
                     }
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
@@ -357,52 +359,96 @@ public class ForgeHooks
                     EntityMinecart entityminecart = (EntityMinecart)this.objectMouseOver.entityHit;
                     Item item;
 
-                    switch (entityminecart.func_184264_v())
+                    switch (entityminecart.getType())
                     {
                         case FURNACE:
-                            item = Items.furnace_minecart;
+                            item = Items.FURNACE_MINECART;
                             break;
                         case CHEST:
-                            item = Items.chest_minecart;
+                            item = Items.CHEST_MINECART;
                             break;
                         case TNT:
-                            item = Items.tnt_minecart;
+                            item = Items.TNT_MINECART;
                             break;
                         case HOPPER:
-                            item = Items.hopper_minecart;
+                            item = Items.HOPPER_MINECART;
                             break;
                         case COMMAND_BLOCK:
-                            item = Items.command_block_minecart;
+                            item = Items.COMMAND_BLOCK_MINECART;
                             break;
                         default:
-                            item = Items.minecart;
+                            item = Items.MINECART;
                     }
 
                     itemstack = new ItemStack(item);
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityBoat)
                 {
-                    itemstack = new ItemStack(((EntityBoat)this.objectMouseOver.entityHit).func_184455_j());
+                    itemstack = new ItemStack(((EntityBoat)this.objectMouseOver.entityHit).getItemBoat());
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityArmorStand)
                 {
-                    itemstack = new ItemStack(Items.armor_stand);
+                    itemstack = new ItemStack(Items.ARMOR_STAND);
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityEnderCrystal)
                 {
-                    itemstack = new ItemStack(Items.field_185158_cP);
+                    itemstack = new ItemStack(Items.END_CRYSTAL);
                 }
                 else
                 {
-                    String s = EntityList.getEntityString(this.objectMouseOver.entityHit);
+                    ResourceLocation resourcelocation = EntityList.func_191301_a(this.objectMouseOver.entityHit);
 
-                    if (!EntityList.entityEggs.containsKey(s))
+                    if (resourcelocation == null || !EntityList.ENTITY_EGGS.containsKey(resourcelocation))
                     {
                         return;
                     }
 
-                    itemstack = new ItemStack(Items.spawn_egg);
-                    ItemMonsterPlacer.func_185078_a(itemstack, s);
+                    itemstack = new ItemStack(Items.SPAWN_EGG);
+                    ItemMonsterPlacer.applyEntityIdToItemStack(itemstack, resourcelocation);
+                }
+            }
+
+            if (itemstack.func_190926_b())
+            {
+                String s = "";
+
+                if (this.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)
+                {
+                    s = ((ResourceLocation)Block.REGISTRY.getNameForObject(this.theWorld.getBlockState(this.objectMouseOver.getBlockPos()).getBlock())).toString();
+                }
+                else if (this.objectMouseOver.typeOfHit == RayTraceResult.Type.ENTITY)
+                {
+                    s = EntityList.func_191301_a(this.objectMouseOver.entityHit).toString();
+                }
+
+                LOGGER.warn("Picking on: [{}] {} gave null item", new Object[] {this.objectMouseOver.typeOfHit, s});
+            }
+            else
+            {
+                InventoryPlayer inventoryplayer = this.thePlayer.inventory;
+
+                if (tileentity != null)
+                {
+                    this.storeTEInStack(itemstack, tileentity);
+                }
+
+                int i = inventoryplayer.getSlotFor(itemstack);
+
+                if (flag)
+                {
+                    inventoryplayer.setPickedItemStack(itemstack);
+                    this.playerController.sendSlotPacket(this.thePlayer.getHeldItem(EnumHand.MAIN_HAND), 36 + inventoryplayer.currentItem);
+                }
+                else if (i != -1)
+                {
+                    if (InventoryPlayer.isHotbar(i))
+                    {
+                        inventoryplayer.currentItem = i;
+                    }
+                    else
+                    {
+                        this.playerController.pickItem(i);
+                    }
                 }
             }
          */
@@ -756,7 +802,7 @@ public class ForgeHooks
     {
         // handle all placement events here
         int meta = itemstack.getItemDamage();
-        int size = itemstack.stackSize;
+        int size = itemstack.func_190916_E();
         NBTTagCompound nbt = null;
         if (itemstack.getTagCompound() != null)
         {
@@ -768,14 +814,14 @@ public class ForgeHooks
             world.captureBlockSnapshots = true;
         }
 
-        EnumActionResult ret = itemstack.getItem().onItemUse(itemstack, player, world, pos, hand, side, hitX, hitY, hitZ);
+        EnumActionResult ret = itemstack.getItem().onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
         world.captureBlockSnapshots = false;
 
         if (ret == EnumActionResult.SUCCESS)
         {
             // save new item data
             int newMeta = itemstack.getItemDamage();
-            int newSize = itemstack.stackSize;
+            int newSize = itemstack.func_190916_E();
             NBTTagCompound newNBT = null;
             if (itemstack.getTagCompound() != null)
             {
@@ -788,7 +834,7 @@ public class ForgeHooks
 
             // make sure to set pre-placement item data for event
             itemstack.setItemDamage(meta);
-            itemstack.stackSize = size;
+            itemstack.func_190920_e(size);
             if (nbt != null)
             {
                 itemstack.setTagCompound(nbt);
@@ -817,7 +863,7 @@ public class ForgeHooks
             {
                 // Change the stack to its new content
                 itemstack.setItemDamage(newMeta);
-                itemstack.stackSize = newSize;
+                itemstack.func_190920_e(newSize);
                 if (nbt != null)
                 {
                     itemstack.setTagCompound(newNBT);
@@ -883,12 +929,12 @@ public class ForgeHooks
      * @param inv Crafting inventory
      * @return Crafting inventory contents after the recipe.
      */
-    public static ItemStack[] defaultRecipeGetRemainingItems(InventoryCrafting inv)
+    public static NonNullList<ItemStack> defaultRecipeGetRemainingItems(InventoryCrafting inv)
     {
-        ItemStack[] ret = new ItemStack[inv.getSizeInventory()];
-        for (int i = 0; i < ret.length; i++)
+        NonNullList<ItemStack> ret = NonNullList.func_191197_a(inv.getSizeInventory(), ItemStack.field_190927_a);
+        for (int i = 0; i < ret.size(); i++)
         {
-            ret[i] = getContainerItem(inv.getStackInSlot(i));
+            ret.set(i, getContainerItem(inv.getStackInSlot(i)));
         }
         return ret;
     }
@@ -983,25 +1029,25 @@ public class ForgeHooks
         return git == null ? null : git.hitVec;
     }
 
-    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, ItemStack stack, EnumHand hand)
+    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, EnumHand hand)
     {
         Vec3d vec3d = new Vec3d(ray.hitVec.xCoord - entity.posX, ray.hitVec.yCoord - entity.posY, ray.hitVec.zCoord - entity.posZ);
-        return onInteractEntityAt(player, entity, vec3d, stack, hand);
+        return onInteractEntityAt(player, entity, vec3d, hand);
     }
 
-    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, Vec3d vec3d, ItemStack stack, EnumHand hand)
+    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, Vec3d vec3d, EnumHand hand)
     {
-        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteractSpecific(player, hand, stack, entity, vec3d));
+        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteractSpecific(player, hand, entity, vec3d));
     }
 
-    public static boolean onInteractEntity(EntityPlayer player, Entity entity, ItemStack item, EnumHand hand)
+    public static boolean onInteractEntity(EntityPlayer player, Entity entity, EnumHand hand)
     {
-        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteract(player, hand, item, entity));
+        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteract(player, hand, entity));
     }
 
-    public static boolean onItemRightClick(EntityPlayer player, EnumHand hand, ItemStack stack)
+    public static boolean onItemRightClick(EntityPlayer player, EnumHand hand)
     {
-        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickItem(player, hand, stack));
+        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickItem(player, hand));
     }
 
     public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(EntityPlayer player, BlockPos pos, EnumFacing face, Vec3d hitVec)
@@ -1011,9 +1057,9 @@ public class ForgeHooks
         return evt;
     }
 
-    public static PlayerInteractEvent.RightClickBlock onRightClickBlock(EntityPlayer player, EnumHand hand, ItemStack stack, BlockPos pos, EnumFacing face, Vec3d hitVec)
+    public static PlayerInteractEvent.RightClickBlock onRightClickBlock(EntityPlayer player, EnumHand hand, BlockPos pos, EnumFacing face, Vec3d hitVec)
     {
-        PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, stack, pos, face, hitVec);
+        PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, pos, face, hitVec);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }

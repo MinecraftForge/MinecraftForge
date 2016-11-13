@@ -29,6 +29,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import javax.annotation.Nonnull;
+
 /**
  * Fills or drains a fluid container item using a Dispenser.
  */
@@ -60,7 +62,8 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
     /**
      * Picks up fluid in front of a Dispenser and fills a container with it.
      */
-    private ItemStack fillContainer(IBlockSource source, ItemStack stack)
+    @Nonnull
+    private ItemStack fillContainer(IBlockSource source, @Nonnull ItemStack stack)
     {
         World world = source.getWorld();
         EnumFacing dispenserFacing = source.getBlockState().getValue(BlockDispenser.FACING);
@@ -72,7 +75,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
             return super.dispenseStack(source, stack);
         }
 
-        if (--stack.stackSize == 0)
+        if (stack.func_190916_E() == 1)
         {
             stack.deserializeNBT(result.serializeNBT());
         }
@@ -81,6 +84,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
             this.dispenseBehavior.dispense(source, result);
         }
 
+        stack.func_190918_g(1);
         return stack;
     }
 
@@ -90,7 +94,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
     private ItemStack dumpContainer(IBlockSource source, ItemStack stack)
     {
         ItemStack dispensedStack = stack.copy();
-        dispensedStack.stackSize = 1;
+        dispensedStack.func_190920_e(1);
         IFluidHandler fluidHandler = FluidUtil.getFluidHandler(dispensedStack);
         if (fluidHandler == null)
         {
@@ -105,7 +109,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
         {
             fluidHandler.drain(Fluid.BUCKET_VOLUME, true);
 
-            if (--stack.stackSize == 0)
+            if (stack.func_190916_E() == 1)
             {
                 stack.deserializeNBT(dispensedStack.serializeNBT());
             }

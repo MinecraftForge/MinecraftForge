@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderVillager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderVillager.java
-@@ -31,21 +31,7 @@
+@@ -31,22 +31,7 @@
  
      protected ResourceLocation func_110775_a(EntityVillager p_110775_1_)
      {
@@ -16,6 +16,7 @@
 -                return field_110905_l;
 -            case 4:
 -                return field_110906_m;
+-            case 5:
 -            default:
 -                return field_110903_f;
 -        }

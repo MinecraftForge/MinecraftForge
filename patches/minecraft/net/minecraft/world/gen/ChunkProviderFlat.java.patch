@@ -14,7 +14,7 @@
  
 +        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.field_73163_a, this.field_73161_b, p_185931_1_, p_185931_2_, flag);
 +
-         for (MapGenStructure mapgenstructure : this.field_82696_f)
+         for (MapGenStructure mapgenstructure : this.field_82696_f.values())
          {
              boolean flag1 = mapgenstructure.func_175794_a(this.field_73163_a, this.field_73161_b, chunkpos);
 @@ -211,6 +214,9 @@

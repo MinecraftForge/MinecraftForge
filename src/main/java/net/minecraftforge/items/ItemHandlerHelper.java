@@ -28,19 +28,22 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
+import javax.annotation.Nonnull;
+
 public class ItemHandlerHelper
 {
-    public static ItemStack insertItem(IItemHandler dest, ItemStack stack, boolean simulate)
+    @Nonnull
+    public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (dest == null || stack == null)
-            return stack;
+        if (dest == null || stack.func_190926_b())
+            return ItemStack.field_190927_a;
 
         for (int i = 0; i < dest.getSlots(); i++)
         {
             stack = dest.insertItem(i, stack, simulate);
-            if (stack == null || stack.stackSize <= 0)
+            if (stack.func_190926_b())
             {
-                return null;
+                return ItemStack.field_190927_a;
             }
         }
 
@@ -80,13 +83,13 @@ public class ItemHandlerHelper
         return (aTag != null || bTag == null) && (aTag == null || aTag.equals(bTag));
     }
 
+    @Nonnull
     public static ItemStack copyStackWithSize(ItemStack itemStack, int size)
     {
         if (size == 0)
-            return null;
-        ItemStack copy = ItemStack.copyItemStack(itemStack);
-        if (copy != null)
-            copy.stackSize = size;
+            return ItemStack.field_190927_a;
+        ItemStack copy = itemStack.copy();
+        copy.func_190920_e(size);
         return copy;
     }
 
@@ -174,7 +177,7 @@ public class ItemHandlerHelper
         }
 
         // play sound if something got picked up
-        if (remainder == null || remainder.stackSize != stack.stackSize)
+        if (remainder == null || remainder.func_190916_E() != stack.func_190916_E())
         {
             world.playSound(player, player.posX, player.posY, player.posZ,
                     SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);

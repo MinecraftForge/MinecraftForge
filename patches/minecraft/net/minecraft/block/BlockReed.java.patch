@@ -38,7 +38,7 @@
  
          if (block == this)
          {
-@@ -165,6 +171,17 @@
+@@ -164,6 +170,17 @@
          return ((Integer)p_176201_1_.func_177229_b(field_176355_a)).intValue();
      }
  

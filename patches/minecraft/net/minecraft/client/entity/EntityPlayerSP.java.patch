@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src-work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -415,6 +415,15 @@
-         this.field_71159_c.field_71456_v.func_146158_b().func_146227_a(p_146105_1_);
+@@ -428,6 +428,15 @@
+         }
      }
  
 +    private boolean isHeadspaceFree(BlockPos pos, int height)
@@ -16,7 +16,7 @@
      protected boolean func_145771_j(double p_145771_1_, double p_145771_3_, double p_145771_5_)
      {
          if (this.field_70145_X)
-@@ -427,30 +436,34 @@
+@@ -440,30 +449,34 @@
              double d0 = p_145771_1_ - (double)blockpos.func_177958_n();
              double d1 = p_145771_5_ - (double)blockpos.func_177952_p();
  
@@ -56,7 +56,7 @@
                  {
                      d2 = 1.0D - d1;
                      i = 5;
-@@ -485,7 +498,7 @@
+@@ -498,7 +511,7 @@
  
      private boolean func_175162_d(BlockPos p_175162_1_)
      {
@@ -65,7 +65,7 @@
      }
  
      public void func_70031_b(boolean p_70031_1_)
-@@ -530,7 +543,13 @@
+@@ -543,7 +556,13 @@
  
      public void func_184185_a(SoundEvent p_184185_1_, float p_184185_2_, float p_184185_3_)
      {

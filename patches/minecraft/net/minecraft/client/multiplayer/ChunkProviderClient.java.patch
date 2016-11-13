@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/ChunkProviderClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/ChunkProviderClient.java
-@@ -59,6 +59,7 @@
+@@ -60,6 +60,7 @@
      {
          Chunk chunk = new Chunk(this.field_73235_d, p_73158_1_, p_73158_2_);
          this.field_73236_b.put(ChunkPos.func_77272_a(p_73158_1_, p_73158_2_), chunk);

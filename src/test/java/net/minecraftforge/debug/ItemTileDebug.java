@@ -136,7 +136,7 @@ public class ItemTileDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque() { return false; }
+        public boolean isVisuallyOpaque(IBlockState state) { return false; }
 
         @Override
         public TileEntity createNewTileEntity(World world, int meta)

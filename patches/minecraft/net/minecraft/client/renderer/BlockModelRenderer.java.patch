@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
-@@ -141,7 +141,14 @@
+@@ -128,7 +128,14 @@
              p_187492_8_.func_187491_a(p_187492_1_, p_187492_2_, p_187492_3_, bakedquad.func_178210_d(), p_187492_6_, p_187492_7_);
              p_187492_4_.func_178981_a(bakedquad.func_178209_a());
              p_187492_4_.func_178962_a(p_187492_8_.field_178207_c[0], p_187492_8_.field_178207_c[1], p_187492_8_.field_178207_c[2], p_187492_8_.field_178207_c[3]);
@@ -16,10 +16,10 @@
              if (bakedquad.func_178212_b())
              {
                  int k = this.field_187499_a.func_186724_a(p_187492_2_, p_187492_1_, p_187492_3_, bakedquad.func_178211_c());
-@@ -291,11 +298,26 @@
-                 float f = (float)(j1 >> 16 & 255) / 255.0F;
-                 float f1 = (float)(j1 >> 8 & 255) / 255.0F;
-                 float f2 = (float)(j1 & 255) / 255.0F;
+@@ -262,11 +269,26 @@
+                 float f = (float)(k >> 16 & 255) / 255.0F;
+                 float f1 = (float)(k >> 8 & 255) / 255.0F;
+                 float f2 = (float)(k & 255) / 255.0F;
 +                if(bakedquad.shouldApplyDiffuseLighting())
 +                {
 +                    float diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(bakedquad.func_178210_d());

@@ -52,18 +52,16 @@ import net.minecraft.util.EnumHand;
 public class MinecartInteractEvent extends MinecartEvent
 {
     private final EntityPlayer player;
-    private final ItemStack item;
     private final EnumHand hand;
 
-    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player, ItemStack item, EnumHand hand)
+    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player, EnumHand hand)
     {
         super(minecart);
         this.player = player;
-        this.item = item;
         this.hand = hand;
     }
 
     public EntityPlayer getPlayer() { return player; }
-    public ItemStack getItem() { return item; }
+    public ItemStack getItem() { return player.getHeldItem(hand); }
     public EnumHand getHand() { return hand; }
 }

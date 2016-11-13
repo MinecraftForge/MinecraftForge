@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -74,7 +75,7 @@ public class FluidHandlerTest
 
 	private static String stackString(ItemStack stack)
 	{
-		if (stack == null || stack.stackSize <= 0)
+		if (stack.func_190926_b())
 		{
 			return "no item";
 		}
@@ -89,13 +90,13 @@ public class FluidHandlerTest
 			{
 				resourceDomain = stack.getItem().getRegistryName().getResourceDomain();
 			}
-			return stack.stackSize + " " + stack.getDisplayName() + " (" + resourceDomain + ")";
+			return stack.func_190916_E() + " " + stack.getDisplayName() + " (" + resourceDomain + ")";
 		}
 	}
 
 	private static List<ItemStack> getAllItems()
 	{
-		List<ItemStack> list = new ArrayList<ItemStack>();
+		NonNullList<ItemStack> list = NonNullList.func_191196_a();
 		for (Item item : ForgeRegistries.ITEMS.getValues())
 		{
 			for (CreativeTabs tab : item.getCreativeTabs())

@@ -1,35 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -53,26 +53,12 @@
- 
-     protected void func_76572_b()
-     {
--        WorldType worldtype = this.field_76579_a.func_72912_H().func_76067_t();
--
--        if (worldtype == WorldType.field_77138_c)
--        {
--            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
--            this.field_76578_c = new BiomeProviderSingle(Biome.func_180276_a(flatgeneratorinfo.func_82648_a(), Biomes.field_180279_ad));
--        }
--        else if (worldtype == WorldType.field_180272_g)
--        {
--            this.field_76578_c = new BiomeProviderSingle(Biomes.field_76772_c);
--        }
--        else
--        {
--            this.field_76578_c = new BiomeProvider(this.field_76579_a.func_72912_H());
--        }
-+        this.field_76578_c = field_76577_b.getBiomeProvider(field_76579_a);
-     }
- 
-     public IChunkGenerator func_186060_c()
-     {
--        return (IChunkGenerator)(this.field_76577_b == WorldType.field_77138_c ? new ChunkProviderFlat(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : (this.field_76577_b == WorldType.field_180272_g ? new ChunkProviderDebug(this.field_76579_a) : (this.field_76577_b == WorldType.field_180271_f ? new ChunkProviderOverworld(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : new ChunkProviderOverworld(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c))));
-+        return field_76577_b.getChunkGenerator(field_76579_a, field_82913_c);
-     }
- 
-     public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
-@@ -158,7 +144,7 @@
+@@ -160,7 +160,7 @@
      @SideOnly(Side.CLIENT)
      public float func_76571_f()
      {
@@ -38,7 +9,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -174,13 +160,13 @@
+@@ -177,13 +177,13 @@
  
      public int func_76557_i()
      {
@@ -54,7 +25,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -214,6 +200,339 @@
+@@ -222,6 +222,339 @@
          return new WorldBorder();
      }
  

@@ -55,7 +55,7 @@ public class FluidContainerItemWrapper implements IFluidHandler, ICapabilityProv
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (container.stackSize != 1)
+        if (container.func_190916_E() != 1)
         {
             return 0;
         }
@@ -65,7 +65,7 @@ public class FluidContainerItemWrapper implements IFluidHandler, ICapabilityProv
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain)
     {
-        if (container.stackSize != 1 || resource == null)
+        if (container.func_190916_E() != 1 || resource == null)
         {
             return null;
         }
@@ -84,7 +84,7 @@ public class FluidContainerItemWrapper implements IFluidHandler, ICapabilityProv
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (container.stackSize != 1)
+        if (container.func_190916_E() != 1)
         {
             return null;
         }

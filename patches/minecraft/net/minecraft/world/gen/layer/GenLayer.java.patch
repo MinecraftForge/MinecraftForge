@@ -1,22 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayer.java
-@@ -48,12 +48,12 @@
+@@ -47,12 +47,12 @@
              i = 6;
          }
  
 +        i = getModdedBiomeSize(p_180781_2_, i);
 +
-         GenLayer lvt_8_1_ = GenLayerZoom.func_75915_a(1000L, genlayer4, 0);
-         GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, lvt_8_1_);
--        GenLayerBiome lvt_9_1_ = new GenLayerBiome(200L, genlayer4, p_180781_2_, p_180781_3_);
--        GenLayer genlayer6 = GenLayerZoom.func_75915_a(1000L, lvt_9_1_, 2);
+         GenLayer lvt_7_1_ = GenLayerZoom.func_75915_a(1000L, genlayer4, 0);
+         GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, lvt_7_1_);
+-        GenLayerBiome lvt_8_1_ = new GenLayerBiome(200L, genlayer4, p_180781_2_, p_180781_3_);
+-        GenLayer genlayer6 = GenLayerZoom.func_75915_a(1000L, lvt_8_1_, 2);
 -        GenLayerBiomeEdge genlayerbiomeedge = new GenLayerBiomeEdge(1000L, genlayer6);
-         GenLayer lvt_10_1_ = GenLayerZoom.func_75915_a(1000L, genlayerriverinit, 2);
+         GenLayer lvt_9_1_ = GenLayerZoom.func_75915_a(1000L, genlayerriverinit, 2);
 +        GenLayer genlayerbiomeedge = p_180781_2_.getBiomeLayer(p_180781_0_, genlayer4, p_180781_3_);
-         GenLayer genlayerhills = new GenLayerHills(1000L, genlayerbiomeedge, lvt_10_1_);
+         GenLayer genlayerhills = new GenLayerHills(1000L, genlayerbiomeedge, lvt_9_1_);
          GenLayer genlayer5 = GenLayerZoom.func_75915_a(1000L, genlayerriverinit, 2);
          genlayer5 = GenLayerZoom.func_75915_a(1000L, genlayer5, j);
-@@ -157,8 +157,7 @@
+@@ -156,8 +156,7 @@
  
      protected static boolean func_151618_b(int p_151618_0_)
      {
@@ -26,7 +26,7 @@
      }
  
      protected int func_151619_a(int... p_151619_1_)
-@@ -170,4 +169,27 @@
+@@ -169,4 +168,27 @@
      {
          return p_151617_2_ == p_151617_3_ && p_151617_3_ == p_151617_4_ ? p_151617_2_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_3_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_3_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_2_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_4_ && p_151617_2_ != p_151617_3_ ? p_151617_1_ : (p_151617_2_ == p_151617_3_ && p_151617_1_ != p_151617_4_ ? p_151617_2_ : (p_151617_2_ == p_151617_4_ && p_151617_1_ != p_151617_3_ ? p_151617_2_ : (p_151617_3_ == p_151617_4_ && p_151617_1_ != p_151617_2_ ? p_151617_3_ : this.func_151619_a(new int[] {p_151617_1_, p_151617_2_, p_151617_3_, p_151617_4_}))))))))));
      }

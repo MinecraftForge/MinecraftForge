@@ -46,6 +46,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -152,9 +153,9 @@ public class ForgeEventFactory
         return event;
     }
 
-    public static NeighborNotifyEvent onNeighborNotify(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides)
+    public static NeighborNotifyEvent onNeighborNotify(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides, boolean forceRedstoneUpdate)
     {
-        NeighborNotifyEvent event = new NeighborNotifyEvent(world, pos, state, notifiedSides);
+        NeighborNotifyEvent event = new NeighborNotifyEvent(world, pos, state, notifiedSides, forceRedstoneUpdate);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
@@ -354,7 +355,7 @@ public class ForgeEventFactory
         if (event.getResult() == Result.ALLOW)
         {
             if (!world.isRemote)
-                stack.stackSize--;
+                stack.func_190918_g(1);
             return 1;
         }
         return 0;
@@ -370,7 +371,8 @@ public class ForgeEventFactory
             if (player.capabilities.isCreativeMode)
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 
-            if (--stack.stackSize <= 0)
+            stack.func_190918_g(1);
+            if (stack.func_190926_b())
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, event.getFilledBucket());
 
             if (!player.inventory.addItemStackToInventory(event.getFilledBucket()))
@@ -398,7 +400,7 @@ public class ForgeEventFactory
     public static int onItemExpire(EntityItem entity, ItemStack item)
     {
         if (item == null) return -1;
-        ItemExpireEvent event = new ItemExpireEvent(entity, (item.getItem() == null ? 6000 : item.getItem().getEntityLifespan(item, entity.worldObj)));
+        ItemExpireEvent event = new ItemExpireEvent(entity, (item.func_190926_b() ? 6000 : item.getItem().getEntityLifespan(item, entity.worldObj)));
         if (!MinecraftForge.EVENT_BUS.post(event)) return -1;
         return event.getExtraLife();
     }
@@ -493,20 +495,20 @@ public class ForgeEventFactory
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
     }
 
-    public static boolean onPotionAttemptBrew(ItemStack[] stacks)
+    public static boolean onPotionAttemptBrew(NonNullList<ItemStack> stacks)
     {
-        ItemStack[] tmp = new ItemStack[stacks.length];
-        for (int x = 0; x < tmp.length; x++)
-            tmp[x] = ItemStack.copyItemStack(stacks[x]);
+        NonNullList<ItemStack> tmp = NonNullList.func_191197_a(stacks.size(), ItemStack.field_190927_a);
+        for (int x = 0; x < tmp.size(); x++)
+            tmp.set(x, stacks.get(x).copy());
 
         PotionBrewEvent.Pre event = new PotionBrewEvent.Pre(tmp);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             boolean changed = false;
-            for (int x = 0; x < stacks.length; x++)
+            for (int x = 0; x < stacks.size(); x++)
             {
-                changed |= ItemStack.areItemStacksEqual(tmp[x], stacks[x]);
-                stacks[x] = event.getItem(x);
+                changed |= ItemStack.areItemStacksEqual(tmp.get(x), stacks.get(x));
+                stacks.set(x, event.getItem(x));
             }
             if (changed)
                 onPotionBrewed(stacks);
@@ -515,7 +517,7 @@ public class ForgeEventFactory
         return false;
     }
 
-    public static void onPotionBrewed(ItemStack[] brewingItemStacks)
+    public static void onPotionBrewed(NonNullList<ItemStack> brewingItemStacks)
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
     }

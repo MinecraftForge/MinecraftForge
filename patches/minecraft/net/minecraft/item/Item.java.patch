@@ -14,7 +14,7 @@
      private static final IItemPropertyGetter field_185046_b = new IItemPropertyGetter()
      {
          @SideOnly(Side.CLIENT)
-@@ -196,6 +196,7 @@
+@@ -202,6 +202,7 @@
          return p_77654_1_;
      }
  
@@ -22,7 +22,7 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -217,6 +218,7 @@
+@@ -223,6 +224,7 @@
          return this;
      }
  
@@ -30,7 +30,7 @@
      public int func_77612_l()
      {
          return this.field_77699_b;
-@@ -316,6 +318,7 @@
+@@ -322,6 +324,7 @@
          return this.field_77700_c;
      }
  
@@ -38,7 +38,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -371,7 +374,7 @@
+@@ -377,7 +380,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -47,7 +47,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -389,7 +392,11 @@
+@@ -395,7 +398,11 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -426,11 +433,592 @@
+@@ -433,11 +440,604 @@
          return false;
      }
  
@@ -116,7 +116,7 @@
 +     * @param hand Which hand the item is being held in.
 +     * @return Return PASS to allow vanilla handling, any other to skip normal code.
 +     */
-+    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
++    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
 +    {
 +        return EnumActionResult.PASS;
 +    }
@@ -204,7 +204,7 @@
 +    {
 +        if (!hasContainerItem(itemStack))
 +        {
-+            return null;
++            return ItemStack.field_190927_a;
 +        }
 +        return new ItemStack(func_77668_q());
 +    }
@@ -367,6 +367,7 @@
 +     * @return A instance of FontRenderer or null to use default
 +     */
 +    @SideOnly(Side.CLIENT)
++    @Nullable
 +    public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack)
 +    {
 +        return null;
@@ -456,6 +457,17 @@
 +        return (double)stack.func_77952_i() / (double)stack.func_77958_k();
 +    }
 +
++    /**
++     * Returns the packed int RGB value used to render the durability bar in the GUI.
++     * Defaults to a value based on the hue scaled as the damage decreases, but can be overriden.
++     *
++     * @param stack Stack to get durability from
++     * @return A packed RGB value for the durability colour (0x00RRGGBB)
++     */
++    public int getRGBDurabilityForDisplay(ItemStack stack)
++    {
++        return MathHelper.func_181758_c(Math.max(0.0F, (stack.func_77958_k() - stack.func_77952_i()) / stack.func_77958_k()) / 3.0F, 1.0F, 1.0F);
++    }
 +    /**
 +     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item,
 +     * but can be overridden here for other sources such as NBT.
@@ -652,8 +664,8 @@
 +
      public static void func_150900_l()
      {
-         func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -962,6 +1550,10 @@
+         func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
+@@ -972,6 +1572,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -664,7 +676,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -996,9 +1588,36 @@
+@@ -1006,9 +1610,36 @@
              return this.field_78008_j;
          }
  

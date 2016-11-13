@@ -32,6 +32,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 /**
  * This interface is to be implemented by ItemArmor classes. It will allow to
@@ -110,7 +111,7 @@ public interface ISpecialArmor
          * @param damage The total damage being done
          * @return The left over damage that has not been absorbed by the armor
          */
-        public static float applyArmor(EntityLivingBase entity, ItemStack[] inventory, DamageSource source, double damage)
+        public static float applyArmor(EntityLivingBase entity, NonNullList<ItemStack> inventory, DamageSource source, double damage)
         {
             if (DEBUG)
             {
@@ -118,10 +119,10 @@ public interface ISpecialArmor
             }
             damage *= 25;
             ArrayList<ArmorProperties> dmgVals = new ArrayList<ArmorProperties>();
-            for (int x = 0; x < inventory.length; x++)
+            for (int x = 0; x < inventory.size(); x++)
             {
-                ItemStack stack = inventory[x];
-                if (stack == null)
+                ItemStack stack = inventory.get(x);
+                if (stack.func_190926_b())
                 {
                     continue;
                 }
@@ -161,7 +162,7 @@ public interface ISpecialArmor
                     double absorb = damage * prop.AbsorbRatio;
                     if (absorb > 0)
                     {
-                        ItemStack stack = inventory[prop.Slot];
+                        ItemStack stack = inventory.get(prop.Slot);
                         int itemDamage = (int)(absorb / 25D < 1 ? 1 : absorb / 25D);
                         if (stack.getItem() instanceof ISpecialArmor)
                         {
@@ -175,13 +176,13 @@ public interface ISpecialArmor
                             }
                             stack.damageItem(itemDamage, entity);
                         }
-                        if (stack.stackSize <= 0)
+                        if (stack.func_190926_b())
                         {
                             /*if (entity instanceof EntityPlayer)
                             {
                                 stack.onItemDestroyedByUse((EntityPlayer)entity);
                             }*/
-                            inventory[prop.Slot] = null;
+                            inventory.set(prop.Slot, ItemStack.field_190927_a);
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/state/BlockStateContainer.java
 +++ ../src-work/minecraft/net/minecraft/block/state/BlockStateContainer.java
-@@ -57,12 +57,22 @@
+@@ -59,12 +59,22 @@
  
      public BlockStateContainer(Block p_i45663_1_, IProperty<?>... p_i45663_2_)
      {
@@ -26,7 +26,7 @@
              map.put(iproperty.func_177701_a(), iproperty);
          }
  
-@@ -73,7 +83,7 @@
+@@ -75,7 +85,7 @@
          for (List < Comparable<? >> list : Cartesian.func_179321_a(this.func_177620_e()))
          {
              Map < IProperty<?>, Comparable<? >> map1 = MapPopulator. < IProperty<?>, Comparable<? >> func_179400_b(this.field_177624_d.values(), list);
@@ -35,7 +35,7 @@
              map2.put(map1, blockstatecontainer$stateimplementation);
              list1.add(blockstatecontainer$stateimplementation);
          }
-@@ -165,6 +175,13 @@
+@@ -170,6 +180,13 @@
                  this.field_177237_b = p_i45660_2_;
              }
  
@@ -49,9 +49,9 @@
              public Collection < IProperty<? >> func_177227_a()
              {
                  return Collections. < IProperty<? >> unmodifiableCollection(this.field_177237_b.keySet());
-@@ -445,5 +462,86 @@
+@@ -468,5 +485,86 @@
              {
-                 this.field_177239_a.func_189540_a(this, p_189546_1_, p_189546_2_, p_189546_3_);
+                 return this.field_177239_a.func_176214_u(this);
              }
 +
 +            //Forge Start

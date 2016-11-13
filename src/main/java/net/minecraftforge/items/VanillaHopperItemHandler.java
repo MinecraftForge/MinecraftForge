@@ -23,6 +23,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
+import javax.annotation.Nonnull;
+
 public class VanillaHopperItemHandler extends InvWrapper
 {
     private final TileEntityHopper hopper;
@@ -34,19 +36,20 @@ public class VanillaHopperItemHandler extends InvWrapper
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
+    @Nonnull
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
     {
         if (stack == null)
             return null;
-        if (simulate || !hopper.mayTransfer())
-            return super.insertItem(slot, stack, simulate);
+//        if (simulate || !hopper.mayTransfer())
+//            return super.insertItem(slot, stack, simulate);
 
-        int curStackSize = stack.stackSize;
+        int curStackSize = stack.func_190916_E();
         ItemStack itemStack = super.insertItem(slot, stack, false);
-        if (itemStack == null || curStackSize != itemStack.stackSize)
-        {
-            hopper.setTransferCooldown(8);
-        }
+//        if (itemStack == null || curStackSize != itemStack.func_190916_E())
+//        {
+//            hopper.setTransferCooldown(8);
+//        }
         return itemStack;
     }
 }

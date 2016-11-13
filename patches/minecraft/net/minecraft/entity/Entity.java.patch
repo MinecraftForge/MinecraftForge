@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src-work/minecraft/net/minecraft/entity/Entity.java
-@@ -78,7 +78,7 @@
+@@ -83,7 +83,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -8,8 +8,8 @@
 +public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
      private static final Logger field_184243_a = LogManager.getLogger();
-     private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
-@@ -190,7 +190,7 @@
+     private static final List<ItemStack> field_190535_b = Collections.<ItemStack>emptyList();
+@@ -193,7 +193,7 @@
  
          if (p_i1582_1_ != null)
          {
@@ -18,7 +18,7 @@
          }
  
          this.field_70180_af = new EntityDataManager(this);
-@@ -201,8 +201,16 @@
+@@ -204,8 +204,16 @@
          this.field_70180_af.func_187214_a(field_184234_aB, Boolean.valueOf(false));
          this.field_70180_af.func_187214_a(field_189655_aD, Boolean.valueOf(false));
          this.func_70088_a();
@@ -35,7 +35,7 @@
      public int func_145782_y()
      {
          return this.field_145783_c;
-@@ -944,7 +952,7 @@
+@@ -976,7 +984,7 @@
  
      protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
      {
@@ -44,7 +44,7 @@
  
          if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
          {
-@@ -1151,12 +1159,12 @@
+@@ -1183,12 +1191,12 @@
              BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -61,7 +61,7 @@
              }
              else
              {
-@@ -1568,6 +1576,9 @@
+@@ -1620,6 +1628,9 @@
                  p_189511_1_.func_74782_a("Tags", nbttaglist);
              }
  
@@ -71,7 +71,7 @@
              this.func_70014_b(p_189511_1_);
  
              if (this.func_184207_aI())
-@@ -1675,6 +1686,9 @@
+@@ -1727,6 +1738,9 @@
              this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
              this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
  
@@ -81,7 +81,7 @@
              if (p_70020_1_.func_150297_b("Tags", 9))
              {
                  this.field_184236_aF.clear();
-@@ -1757,7 +1771,10 @@
+@@ -1818,7 +1832,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -92,16 +92,16 @@
 +                this.field_70170_p.func_72838_d(entityitem);
              return entityitem;
          }
-         else
-@@ -1867,6 +1884,7 @@
+     }
+@@ -1932,6 +1949,7 @@
+             }
+         }
  
-     public boolean func_184205_a(Entity p_184205_1_, boolean p_184205_2_)
-     {
 +        if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_184205_1_, true)) return false;
          if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this))
          {
              if (this.func_184218_aH())
-@@ -1902,6 +1920,7 @@
+@@ -1967,6 +1985,7 @@
          if (this.field_184239_as != null)
          {
              Entity entity = this.field_184239_as;
@@ -109,7 +109,7 @@
              this.field_184239_as = null;
              entity.func_184225_p(this);
          }
-@@ -2336,6 +2355,7 @@
+@@ -2412,6 +2431,7 @@
      {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
          {
@@ -117,7 +117,7 @@
              this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
              MinecraftServer minecraftserver = this.func_184102_h();
              int i = this.field_71093_bK;
-@@ -2429,7 +2449,7 @@
+@@ -2505,7 +2525,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -126,7 +126,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2726,6 +2746,164 @@
+@@ -2802,6 +2822,164 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -200,7 +200,7 @@
 +        }
 +        else
 +        {
-+            String name = EntityList.func_75621_b(this);
++            ResourceLocation name = EntityList.func_191301_a(this);
 +            if (EntityList.field_75627_a.containsKey(name))
 +            {
 +                ItemStack stack = new ItemStack(net.minecraft.init.Items.field_151063_bx);

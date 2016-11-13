@@ -255,11 +255,13 @@ public class BlockEvent extends Event
     public static class NeighborNotifyEvent extends BlockEvent
     {
         private final EnumSet<EnumFacing> notifiedSides;
+        private final boolean forceRedstoneUpdate;
 
-        public NeighborNotifyEvent(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides)
+        public NeighborNotifyEvent(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides, boolean forceRedstoneUpdate)
         {
             super(world, pos, state);
             this.notifiedSides = notifiedSides;
+            this.forceRedstoneUpdate = forceRedstoneUpdate;
         }
 
         /**
@@ -270,6 +272,15 @@ public class BlockEvent extends Event
         public EnumSet<EnumFacing> getNotifiedSides()
         {
             return notifiedSides;
+        }
+
+        /**
+         * Get if redstone update was forced during setBlock call (0x16 to flags)
+         * @return if the flag was set
+         */
+        public boolean getForceRedstoneUpdate()
+        {
+            return forceRedstoneUpdate;
         }
     }
 

@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/RecipesBanners.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/RecipesBanners.java
-@@ -91,9 +91,10 @@
+@@ -93,9 +93,10 @@
                      {
                          ItemStack itemstack2 = p_77572_1_.func_70301_a(j);
  
--                        if (itemstack2 != null && itemstack2.func_77973_b() == Items.field_151100_aR)
+-                        if (itemstack2.func_77973_b() == Items.field_151100_aR)
 +                        int color = getColor(itemstack2);
 +                        if (color != -1)
                          {
@@ -13,38 +13,38 @@
                              break;
                          }
                      }
-@@ -138,11 +139,7 @@
-                 for (int i = 0; i < aitemstack.length; ++i)
+@@ -139,11 +140,7 @@
+                 for (int i = 0; i < nonnulllist.size(); ++i)
                  {
                      ItemStack itemstack = p_179532_1_.func_70301_a(i);
 -
--                    if (itemstack != null && itemstack.func_77973_b().func_77634_r())
+-                    if (itemstack.func_77973_b().func_77634_r())
 -                    {
--                        aitemstack[i] = new ItemStack(itemstack.func_77973_b().func_77668_q());
+-                        nonnulllist.set(i, new ItemStack(itemstack.func_77973_b().func_77668_q()));
 -                    }
-+                    aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
++                    nonnulllist.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
                  }
  
-                 return aitemstack;
-@@ -168,7 +165,7 @@
+                 return nonnulllist;
+@@ -169,7 +166,7 @@
  
-                                 if (itemstack != null && itemstack.func_77973_b() != Items.field_179564_cE)
+                                 if (!itemstack.func_190926_b() && itemstack.func_77973_b() != Items.field_179564_cE)
                                  {
 -                                    if (itemstack.func_77973_b() == Items.field_151100_aR)
 +                                    if (isDye(itemstack))
                                      {
                                          if (flag2)
                                          {
-@@ -208,7 +205,7 @@
+@@ -209,7 +206,7 @@
  
-                                 if (itemstack1 != null && itemstack1.func_77973_b() != Items.field_179564_cE)
+                                 if (!itemstack1.func_190926_b() && itemstack1.func_77973_b() != Items.field_179564_cE)
                                  {
 -                                    if (itemstack1.func_77973_b() != Items.field_151100_aR)
 +                                    if (!isDye(itemstack1))
                                      {
                                          flag = false;
                                          break;
-@@ -249,6 +246,38 @@
+@@ -250,6 +247,38 @@
  
                  return null;
              }
@@ -83,15 +83,15 @@
          }
  
      public static class RecipeDuplicatePattern implements IRecipe
-@@ -362,9 +391,9 @@
+@@ -361,9 +390,9 @@
  
-                     if (itemstack != null)
+                     if (!itemstack.func_190926_b())
                      {
 -                        if (itemstack.func_77973_b().func_77634_r())
 +                        if (itemstack.func_77973_b().hasContainerItem(itemstack))
                          {
--                            aitemstack[i] = new ItemStack(itemstack.func_77973_b().func_77668_q());
-+                            aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+-                            nonnulllist.set(i, new ItemStack(itemstack.func_77973_b().func_77668_q()));
++                            nonnulllist.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
                          }
                          else if (itemstack.func_77942_o() && TileEntityBanner.func_175113_c(itemstack) > 0)
                          {

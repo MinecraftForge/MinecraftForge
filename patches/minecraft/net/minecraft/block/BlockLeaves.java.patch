@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
-@@ -18,7 +18,7 @@
+@@ -17,7 +17,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,7 +9,7 @@
  {
      public static final PropertyBool field_176237_a = PropertyBool.func_177716_a("decayable");
      public static final PropertyBool field_176236_b = PropertyBool.func_177716_a("check_decay");
-@@ -54,9 +54,9 @@
+@@ -53,9 +53,9 @@
                          BlockPos blockpos = p_180663_2_.func_177982_a(j1, k1, l1);
                          IBlockState iblockstate = p_180663_1_.func_180495_p(blockpos);
  
@@ -21,7 +21,7 @@
                          }
                      }
                  }
-@@ -97,9 +97,9 @@
+@@ -96,9 +96,9 @@
                                  IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2));
                                  Block block = iblockstate.func_177230_c();
  
@@ -33,7 +33,7 @@
                                      {
                                          this.field_150128_a[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = -2;
                                      }
-@@ -207,40 +207,7 @@
+@@ -205,40 +205,7 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -75,7 +75,7 @@
      }
  
      protected void func_176234_a(World p_176234_1_, BlockPos p_176234_2_, IBlockState p_176234_3_, int p_176234_4_)
-@@ -276,6 +243,49 @@
+@@ -274,6 +241,49 @@
  
      public abstract BlockPlanks.EnumType func_176233_b(int p_176233_1_);
  

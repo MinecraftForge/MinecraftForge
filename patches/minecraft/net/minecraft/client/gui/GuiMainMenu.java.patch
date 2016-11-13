@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-@@ -67,6 +67,8 @@
+@@ -65,6 +65,8 @@
      private GuiButton field_175372_K;
      private boolean field_183502_L;
      private GuiScreen field_183503_M;
@@ -9,7 +9,7 @@
  
      public GuiMainMenu()
      {
-@@ -209,13 +211,15 @@
+@@ -216,13 +218,15 @@
              this.field_183503_M.func_183500_a(this.field_146294_l, this.field_146295_m);
              this.field_183503_M.func_73866_w_();
          }
@@ -26,7 +26,7 @@
      }
  
      private void func_73972_b(int p_73972_1_, int p_73972_2_)
-@@ -263,6 +267,11 @@
+@@ -270,6 +274,11 @@
              this.field_146297_k.func_71400_g();
          }
  
@@ -38,7 +38,7 @@
          if (p_146284_1_.field_146127_k == 11)
          {
              this.field_146297_k.func_71371_a("Demo_World", "Demo_World", DemoWorldServer.field_73071_a);
-@@ -490,6 +499,8 @@
+@@ -501,6 +510,8 @@
              this.func_73729_b(j + 155, 30, 0, 45, 155, 44);
          }
  
@@ -47,7 +47,7 @@
          GlStateManager.func_179094_E();
          GlStateManager.func_179109_b((float)(this.field_146294_l / 2 + 90), 70.0F, 0.0F);
          GlStateManager.func_179114_b(-20.0F, 0.0F, 0.0F, 1.0F);
-@@ -509,7 +520,15 @@
+@@ -520,7 +531,15 @@
              s = s + ("release".equalsIgnoreCase(this.field_146297_k.func_184123_d()) ? "" : "/" + this.field_146297_k.func_184123_d());
          }
  
@@ -64,7 +64,7 @@
          String s1 = "Copyright Mojang AB. Do not distribute!";
          this.func_73731_b(this.field_146289_q, "Copyright Mojang AB. Do not distribute!", this.field_146294_l - this.field_146289_q.func_78256_a("Copyright Mojang AB. Do not distribute!") - 2, this.field_146295_m - 10, -1);
  
-@@ -526,6 +545,7 @@
+@@ -537,6 +556,7 @@
          {
              this.field_183503_M.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
          }
@@ -72,7 +72,7 @@
      }
  
      protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException
-@@ -546,6 +566,8 @@
+@@ -557,6 +577,8 @@
          {
              this.field_183503_M.func_73864_a(p_73864_1_, p_73864_2_, p_73864_3_);
          }

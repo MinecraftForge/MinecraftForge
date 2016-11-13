@@ -9,15 +9,7 @@
  
  public abstract class BossInfo
  {
-@@ -35,7 +33,6 @@
-         return this.field_186749_a;
-     }
- 
--    @SideOnly(Side.CLIENT)
-     public void func_186739_a(ITextComponent p_186739_1_)
-     {
-         this.field_186749_a = p_186739_1_;
-@@ -56,7 +53,6 @@
+@@ -55,7 +53,6 @@
          return this.field_186751_c;
      }
  
@@ -25,7 +17,7 @@
      public void func_186745_a(BossInfo.Color p_186745_1_)
      {
          this.field_186751_c = p_186745_1_;
-@@ -67,7 +63,6 @@
+@@ -66,7 +63,6 @@
          return this.field_186752_d;
      }
  

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -222,6 +222,19 @@
+@@ -221,6 +221,19 @@
          return multimap;
      }
  
@@ -20,7 +20,7 @@
      public static enum ArmorMaterial
      {
          LEATHER("leather", 5, new int[]{1, 2, 3, 1}, 15, SoundEvents.field_187728_s, 0.0F),
-@@ -236,6 +249,8 @@
+@@ -235,6 +248,8 @@
          private final int field_78055_h;
          private final SoundEvent field_185020_j;
          private final float field_189417_k;
@@ -29,7 +29,7 @@
  
          private ArmorMaterial(String p_i47117_3_, int p_i47117_4_, int[] p_i47117_5_, int p_i47117_6_, SoundEvent p_i47117_7_, float p_i47117_8_)
          {
-@@ -269,7 +284,15 @@
+@@ -268,7 +283,15 @@
  
          public Item func_151685_b()
          {

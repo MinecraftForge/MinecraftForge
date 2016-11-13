@@ -1,29 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
-@@ -198,7 +198,7 @@
+@@ -197,7 +197,7 @@
  
-             public boolean func_75214_a(@Nullable ItemStack p_75214_1_)
+             public boolean func_75214_a(ItemStack p_75214_1_)
              {
--                return p_75214_1_ != null && PotionHelper.func_185205_a(p_75214_1_);
-+                return p_75214_1_ != null && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_75214_1_);
+-                return PotionHelper.func_185205_a(p_75214_1_);
++                return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_75214_1_);
              }
  
              public int func_75219_a()
-@@ -231,6 +231,7 @@
-             {
-                 if (PotionUtils.func_185191_c(p_82870_2_) != PotionTypes.field_185230_b)
+@@ -232,6 +232,7 @@
+ 
+                 if (potiontype != PotionTypes.field_185230_b && potiontype != PotionTypes.field_185229_a)
                  {
-+                    net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(p_82870_1_, p_82870_2_);
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(p_190901_1_, p_190901_2_);
                      this.field_75244_a.func_71029_a(AchievementList.field_187970_B);
                  }
  
-@@ -245,8 +246,7 @@
-                 }
-                 else
-                 {
--                    Item item = p_75243_0_.func_77973_b();
--                    return item == Items.field_151068_bn || item == Items.field_151069_bo || item == Items.field_185155_bH || item == Items.field_185156_bI;
-+                    return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_75243_0_);
-                 }
+@@ -241,8 +242,7 @@
+ 
+             public static boolean func_75243_a_(ItemStack p_75243_0_)
+             {
+-                Item item = p_75243_0_.func_77973_b();
+-                return item == Items.field_151068_bn || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.field_151069_bo;
++                return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_75243_0_);
              }
          }
+ }

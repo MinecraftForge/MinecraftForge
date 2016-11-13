@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIMate.java
 +++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIMate.java
-@@ -86,6 +86,18 @@
+@@ -93,6 +93,18 @@
      {
          EntityAgeable entityageable = this.field_75390_d.func_90011_a(this.field_75391_e);
  

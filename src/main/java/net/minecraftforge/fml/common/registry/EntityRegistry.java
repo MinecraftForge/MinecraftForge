@@ -172,29 +172,6 @@ public class EntityRegistry
     private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
-        EntityRegistration er = new EntityRegistration(mc, entityClass, entityName, id, trackingRange, updateFrequency, sendsVelocityUpdates);
-        try
-        {
-            entityClassRegistrations.put(entityClass, er);
-            entityNames.put(entityName, mc);
-            if (!EntityList.CLASS_TO_NAME.containsKey(entityClass))
-            {
-                String entityModName = String.format("%s.%s", mc.getModId(), entityName);
-                EntityList.CLASS_TO_NAME.put(entityClass, entityModName);
-                EntityList.NAME_TO_CLASS.put(entityModName, entityClass);
-                FMLLog.finer("Automatically registered mod %s entity %s as %s", mc.getModId(), entityName, entityModName);
-            }
-            else
-            {
-                FMLLog.fine("Skipping automatic mod %s entity registration for already registered class %s", mc.getModId(), entityClass.getName());
-            }
-        }
-        catch (IllegalArgumentException e)
-        {
-            FMLLog.log(Level.WARN, e, "The mod %s tried to register the entity (name,class) (%s,%s) one or both of which are already registered", mc.getModId(), entityName, entityClass.getName());
-            return;
-        }
-        entityRegistrations.put(mc, er);
     }
 
     /**
@@ -214,16 +191,6 @@ public class EntityRegistry
 
     public static void registerEgg(Class<? extends Entity> entityClass, int primary, int secondary)
     {
-        if (EntityList.CLASS_TO_NAME.containsKey(entityClass))
-        {
-            String name = EntityList.CLASS_TO_NAME.get(entityClass);
-            EntityList.ENTITY_EGGS.put(name, new EntityList.EntityEggInfo(name, primary, secondary));
-            FMLLog.fine("Registering entity egg '%s' for %s", name, entityClass);
-        }
-        else
-        {
-            FMLLog.fine("Failed registering entity egg %s (No entity found)", entityClass.getName());
-        }
     }
 
     /**
@@ -272,7 +239,7 @@ public class EntityRegistry
     @SuppressWarnings("unchecked")
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Biome... biomes)
     {
-        Class <? extends Entity > entityClazz = EntityList.NAME_TO_CLASS.get(entityName);
+        Class <? extends Entity > entityClazz = null;
 
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
@@ -312,7 +279,7 @@ public class EntityRegistry
     @SuppressWarnings("unchecked")
     public static void removeSpawn(String entityName, EnumCreatureType typeOfCreature, Biome... biomes)
     {
-        Class <? extends Entity > entityClazz = EntityList.NAME_TO_CLASS.get(entityName);
+        Class <? extends Entity > entityClazz = null;
 
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {

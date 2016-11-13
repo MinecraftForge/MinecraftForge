@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldEntitySpawner.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldEntitySpawner.java
-@@ -78,15 +78,17 @@
+@@ -79,15 +79,17 @@
              {
                  if ((!enumcreaturetype.func_75599_d() || p_77192_3_) && (enumcreaturetype.func_75599_d() || p_77192_2_) && (!enumcreaturetype.func_82705_e() || p_77192_4_))
                  {
@@ -20,7 +20,7 @@
                          {
                              BlockPos blockpos = func_180621_a(p_77192_1_, chunkpos1.field_77276_a, chunkpos1.field_77275_b);
                              int k1 = blockpos.func_177958_n();
-@@ -145,8 +147,10 @@
+@@ -146,8 +148,10 @@
  
                                                  entityliving.func_70012_b((double)f, (double)i3, (double)f1, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
  
@@ -32,7 +32,7 @@
                                                      ientitylivingdata = entityliving.func_180482_a(p_77192_1_.func_175649_E(new BlockPos(entityliving)), ientitylivingdata);
  
                                                      if (entityliving.func_70058_J())
-@@ -159,7 +163,7 @@
+@@ -160,7 +164,7 @@
                                                          entityliving.func_70106_y();
                                                      }
  
@@ -41,7 +41,7 @@
                                                      {
                                                          continue label411;
                                                      }
-@@ -212,8 +216,9 @@
+@@ -213,8 +217,9 @@
              else
              {
                  BlockPos blockpos = p_180267_2_.func_177977_b();

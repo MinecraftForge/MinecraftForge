@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityItemFrame.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityItemFrame.java
-@@ -141,7 +141,7 @@
+@@ -140,7 +140,7 @@
      {
-         if (p_110131_1_ != null)
+         if (!p_110131_1_.func_190926_b())
          {
 -            if (p_110131_1_.func_77973_b() == Items.field_151098_aY)
 +            if (p_110131_1_.func_77973_b() instanceof net.minecraft.item.ItemMap)

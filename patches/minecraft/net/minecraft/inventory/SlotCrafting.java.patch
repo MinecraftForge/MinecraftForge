@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/inventory/SlotCrafting.java
 +++ ../src-work/minecraft/net/minecraft/inventory/SlotCrafting.java
-@@ -108,8 +108,11 @@
+@@ -113,8 +113,11 @@
  
-     public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
+     public ItemStack func_190901_a(EntityPlayer p_190901_1_, ItemStack p_190901_2_)
      {
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerCraftingEvent(p_82870_1_, p_82870_2_, field_75239_a);
-         this.func_75208_c(p_82870_2_);
-+        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_82870_1_);
-         ItemStack[] aitemstack = CraftingManager.func_77594_a().func_180303_b(this.field_75239_a, p_82870_1_.field_70170_p);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerCraftingEvent(p_190901_1_, p_190901_2_, field_75239_a);
+         this.func_75208_c(p_190901_2_);
++        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_190901_1_);
+         NonNullList<ItemStack> nonnulllist = CraftingManager.func_77594_a().func_180303_b(this.field_75239_a, p_190901_1_.field_70170_p);
 +        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
  
-         for (int i = 0; i < aitemstack.length; ++i)
+         for (int i = 0; i < nonnulllist.size(); ++i)
          {

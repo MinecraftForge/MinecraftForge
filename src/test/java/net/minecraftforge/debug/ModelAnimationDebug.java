@@ -100,7 +100,7 @@ public class ModelAnimationDebug
                 @Override
                 public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
                 {
-                    return this.getDefaultState().withProperty(FACING, BlockPistonBase.getFacingFromEntity(pos, placer));
+                    return this.getDefaultState().withProperty(FACING, EnumFacing.func_190914_a(pos, placer));
                 }
 
                 @Override
@@ -139,7 +139,7 @@ public class ModelAnimationDebug
                 }*/
 
                 @Override
-                public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+                public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
                 {
                     if(world.isRemote)
                     {

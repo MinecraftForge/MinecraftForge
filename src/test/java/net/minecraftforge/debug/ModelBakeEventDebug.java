@@ -148,7 +148,7 @@ public class ModelBakeEventDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque() { return false; }
+        public boolean isVisuallyOpaque(IBlockState state) { return false; }
 
         @Override
         public TileEntity createNewTileEntity(World world, int meta)
@@ -157,7 +157,7 @@ public class ModelBakeEventDebug
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             TileEntity te = world.getTileEntity(pos);
             if(te instanceof CustomTileEntity)

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
-@@ -106,7 +106,10 @@
+@@ -108,7 +108,10 @@
      {
          this.field_175091_e = p_147390_1_.func_179730_a();
          this.field_147393_d.func_150723_a(EnumConnectionState.PLAY);

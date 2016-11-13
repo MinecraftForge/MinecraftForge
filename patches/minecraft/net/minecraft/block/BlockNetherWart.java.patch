@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNetherWart.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNetherWart.java
-@@ -43,25 +43,28 @@
+@@ -42,25 +42,28 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
@@ -32,7 +32,7 @@
          {
              int i = 1;
  
-@@ -108,6 +111,26 @@
+@@ -106,6 +109,26 @@
          return ((Integer)p_176201_1_.func_177229_b(field_176486_a)).intValue();
      }
  

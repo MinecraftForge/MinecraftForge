@@ -88,7 +88,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (container.stackSize != 1 || resource == null || resource.amount <= 0 || !canFillFluidType(resource))
+        if (container.func_190916_E() != 1 || resource == null || resource.amount <= 0 || !canFillFluidType(resource))
         {
             return 0;
         }
@@ -114,7 +114,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain)
     {
-        if (container.stackSize != 1 || resource == null || resource.amount <= 0 || !resource.isFluidEqual(getFluid()))
+        if (container.func_190916_E() != 1 || resource == null || resource.amount <= 0 || !resource.isFluidEqual(getFluid()))
         {
             return null;
         }
@@ -124,7 +124,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (container.stackSize != 1 || maxDrain <= 0)
+        if (container.func_190916_E() != 1 || maxDrain <= 0)
         {
             return null;
         }
@@ -196,7 +196,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
         protected void setContainerToEmpty()
         {
             super.setContainerToEmpty();
-            container.stackSize--;
+            container.func_190918_g(1);
         }
     }
 

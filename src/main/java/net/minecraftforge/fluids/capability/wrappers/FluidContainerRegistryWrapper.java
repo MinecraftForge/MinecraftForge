@@ -58,7 +58,7 @@ public class FluidContainerRegistryWrapper implements IFluidHandler, ICapability
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (container.stackSize != 1 || resource == null)
+        if (container.func_190916_E() != 1 || resource == null)
         {
             return 0;
         }
@@ -87,7 +87,7 @@ public class FluidContainerRegistryWrapper implements IFluidHandler, ICapability
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain)
     {
-        if (container.stackSize != 1 || resource == null)
+        if (container.func_190916_E() != 1 || resource == null)
         {
             return null;
         }
@@ -105,7 +105,7 @@ public class FluidContainerRegistryWrapper implements IFluidHandler, ICapability
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (container.stackSize != 1)
+        if (container.func_190916_E() != 1)
         {
             return null;
         }
@@ -122,7 +122,7 @@ public class FluidContainerRegistryWrapper implements IFluidHandler, ICapability
                     {
                         if (FluidContainerRegistry.hasNullEmptyContainer(container))
                         {
-                            emptyContainer.stackSize = 0;
+                            emptyContainer.func_190920_e(0);
                         }
                         container.deserializeNBT(emptyContainer.serializeNBT());
                     }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
 +++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
-@@ -66,7 +66,7 @@
+@@ -70,7 +70,7 @@
              if (entityplayermp == null)
              {
                  this.field_147328_g = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
@@ -9,7 +9,7 @@
                  this.field_181025_l = null;
              }
          }
-@@ -130,7 +130,7 @@
+@@ -134,7 +134,7 @@
              }
              else
              {

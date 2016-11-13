@@ -46,4 +46,4 @@
 +                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlaySoundSourceEvent(this, p_148611_1_, s));
                              }
  
-                             field_148621_b.debug(field_148623_a, "Playing sound {} for event {} as channel {}", new Object[] {sound.func_188719_a(), resourcelocation1, s});
+                             field_148621_b.debug(field_148623_a, "Playing sound {} for event {} as channel {}", new Object[] {sound.func_188719_a(), resourcelocation, s});

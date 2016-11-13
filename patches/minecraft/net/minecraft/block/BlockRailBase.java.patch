@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRailBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRailBase.java
-@@ -32,7 +32,7 @@
+@@ -33,7 +33,7 @@
      public static boolean func_176563_d(IBlockState p_176563_0_)
      {
          Block block = p_176563_0_.func_177230_c();
@@ -9,7 +9,7 @@
      }
  
      protected BlockRailBase(boolean p_i45389_1_)
-@@ -66,7 +66,7 @@
+@@ -67,7 +67,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -18,7 +18,7 @@
      }
  
      public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
-@@ -89,24 +89,24 @@
+@@ -90,24 +90,24 @@
              BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_189540_1_.func_177229_b(this.func_176560_l());
              boolean flag = false;
  
@@ -48,7 +48,7 @@
              {
                  flag = true;
              }
-@@ -161,6 +161,98 @@
+@@ -162,6 +162,98 @@
  
      public abstract IProperty<BlockRailBase.EnumRailDirection> func_176560_l();
  
@@ -147,7 +147,7 @@
      public static enum EnumRailDirection implements IStringSerializable
      {
          NORTH_SOUTH(0, "north_south"),
-@@ -231,6 +323,7 @@
+@@ -232,6 +324,7 @@
          private IBlockState field_180366_e;
          private final boolean field_150656_f;
          private final List<BlockPos> field_150657_g = Lists.<BlockPos>newArrayList();
@@ -155,7 +155,7 @@
  
          public Rail(World p_i45739_2_, BlockPos p_i45739_3_, IBlockState p_i45739_4_)
          {
-@@ -238,8 +331,9 @@
+@@ -239,8 +332,9 @@
              this.field_180367_c = p_i45739_3_;
              this.field_180366_e = p_i45739_4_;
              this.field_180365_d = (BlockRailBase)p_i45739_4_.func_177230_c();
@@ -167,7 +167,7 @@
              this.func_180360_a(blockrailbase$enumraildirection);
          }
  
-@@ -431,7 +525,7 @@
+@@ -432,7 +526,7 @@
                  }
              }
  
@@ -176,7 +176,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -444,7 +538,7 @@
+@@ -445,7 +539,7 @@
                  }
              }
  
@@ -185,7 +185,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {
-@@ -587,7 +681,7 @@
+@@ -588,7 +682,7 @@
                  }
              }
  
@@ -194,7 +194,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -600,7 +694,7 @@
+@@ -601,7 +695,7 @@
                  }
              }
  

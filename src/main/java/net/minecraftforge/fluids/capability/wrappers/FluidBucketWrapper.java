@@ -119,7 +119,7 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (container.stackSize != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME || container.getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
+        if (container.func_190916_E() != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME || container.getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
         {
             return 0;
         }
@@ -136,7 +136,7 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain)
     {
-        if (container.stackSize != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME)
+        if (container.func_190916_E() != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME)
         {
             return null;
         }
@@ -158,7 +158,7 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (container.stackSize != 1 || maxDrain < Fluid.BUCKET_VOLUME)
+        if (container.func_190916_E() != 1 || maxDrain < Fluid.BUCKET_VOLUME)
         {
             return null;
         }

@@ -1,28 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityList.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
-@@ -93,6 +93,7 @@
- 
-     public static void func_75618_a(Class <? extends Entity > p_75618_0_, String p_75618_1_, int p_75618_2_)
-     {
-+        if (p_75618_2_ < 0 || p_75618_2_ > 255) throw new IllegalArgumentException("Attempted to register a entity with invalid ID: " + p_75618_2_ + " Name: " + p_75618_1_ + " Class: " + p_75618_0_);
-         if (field_75625_b.containsKey(p_75618_1_))
-         {
-             throw new IllegalArgumentException("ID is already registered: " + p_75618_1_);
-@@ -152,9 +153,10 @@
-     {
-         Entity entity = null;
- 
-+        Class <? extends Entity > oclass = null;
-         try
-         {
--            Class <? extends Entity > oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
-+            oclass = field_75625_b.get(p_75615_0_.func_74779_i("id"));
- 
-             if (oclass != null)
-             {
-@@ -168,7 +170,17 @@
- 
-         if (entity != null)
+@@ -189,7 +189,17 @@
+         }
+         else
          {
 +            try
 +            {
@@ -32,19 +12,9 @@
 +            {
 +                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
 +                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                        p_75615_0_.func_74779_i("id"), oclass.getName());
++                        p_75615_0_.func_74779_i("id"), entity.func_70005_c_());
 +                entity = null;
 +            }
          }
-         else
-         {
-@@ -208,7 +220,8 @@
-     @Nullable
-     public static Entity func_188429_b(String p_188429_0_, World p_188429_1_)
-     {
--        return func_75616_a(func_180122_a(p_188429_0_), p_188429_1_);
-+        Entity e = func_75620_a(p_188429_0_, p_188429_1_); // Forge: Support entities without global ID
-+        return e == null ? func_75620_a("Pig", p_188429_1_) : e;
-     }
  
-     public static int func_75619_a(Entity p_75619_0_)
+         return entity;

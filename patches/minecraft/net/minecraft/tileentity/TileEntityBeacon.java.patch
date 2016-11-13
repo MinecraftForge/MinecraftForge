@@ -34,7 +34,7 @@
                          {
                              flag1 = false;
                              break;
-@@ -382,7 +388,7 @@
+@@ -383,7 +389,7 @@
  
      public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
      {

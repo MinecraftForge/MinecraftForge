@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockChest.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
-@@ -514,7 +514,7 @@
+@@ -522,7 +522,7 @@
  
      private boolean func_176456_n(World p_176456_1_, BlockPos p_176456_2_)
      {

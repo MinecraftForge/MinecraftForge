@@ -4,7 +4,7 @@
  
      public LanguageMap()
      {
-+        InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
++        InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
 +        inject(this, inputstream);
 +    }
 +
@@ -25,7 +25,7 @@
 +        Map<String, String> table = Maps.newHashMap();
          try
          {
--            InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
+-            InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
 +            inputstream = net.minecraftforge.fml.common.FMLCommonHandler.instance().loadLanguage(table, inputstream);
 +            if (inputstream == null) return table;
  

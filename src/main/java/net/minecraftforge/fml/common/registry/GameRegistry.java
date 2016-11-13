@@ -257,7 +257,7 @@ public class GameRegistry
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
-        TileEntity.addMapping(tileEntityClass, id);
+//        TileEntity.addMapping(tileEntityClass, id);
     }
 
     /**
@@ -270,7 +270,7 @@ public class GameRegistry
      */
     public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
     {
-        TileEntity.addMapping(tileEntityClass, id);
+//        TileEntity.addMapping(tileEntityClass, id);
         Map<String, Class<?>> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "145855_i", "nameToClassMap");
         for (String s : alternatives)
         {

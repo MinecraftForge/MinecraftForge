@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -236,7 +236,7 @@
+@@ -240,7 +240,7 @@
                      }
                  }
  
@@ -9,7 +9,7 @@
                  {
                      this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
                  }
-@@ -322,7 +322,7 @@
+@@ -306,7 +306,7 @@
                      return false;
                  }
  
@@ -18,7 +18,7 @@
              }
              else
              {
-@@ -368,7 +368,9 @@
+@@ -352,7 +352,9 @@
              {
                  BlockPos blockpos1 = (BlockPos)list2.get(j);
                  IBlockState iblockstate = p_176319_1_.func_180495_p(blockpos1);

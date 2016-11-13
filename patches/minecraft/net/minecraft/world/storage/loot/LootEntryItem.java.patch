@@ -14,10 +14,10 @@
      }
 @@ -39,7 +39,7 @@
  
-         if (itemstack.field_77994_a > 0)
+         if (!itemstack.func_190926_b())
          {
--            if (itemstack.field_77994_a < this.field_186368_a.func_77639_j())
-+            if (itemstack.field_77994_a < this.field_186368_a.getItemStackLimit(itemstack))
+-            if (itemstack.func_190916_E() < this.field_186368_a.func_77639_j())
++            if (itemstack.func_190916_E() < this.field_186368_a.getItemStackLimit(itemstack))
              {
                  p_186363_1_.add(itemstack);
              }

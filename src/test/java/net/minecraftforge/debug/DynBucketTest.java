@@ -21,6 +21,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.EnumFacing;
@@ -187,8 +188,9 @@ public class DynBucketTest
 
     public static class TestItem extends Item {
         @Override
-        public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+        public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand)
         {
+            ItemStack itemStackIn = playerIn.getHeldItem(hand);
             if(worldIn.isRemote)
                 return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStackIn);
 
@@ -235,7 +237,7 @@ public class DynBucketTest
         }
 
         @Override
-        public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+        public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -276,8 +278,9 @@ public class DynBucketTest
         }
 
         @Override
-        public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
+            ItemStack heldItem = playerIn.getHeldItem(hand);
             TileEntity te = worldIn.getTileEntity(pos);
             if (!(te instanceof IFluidHandler))
             {
@@ -286,7 +289,7 @@ public class DynBucketTest
             IFluidHandler tank = (IFluidHandler) te;
             side = side.getOpposite();
 
-            if (heldItem == null)
+            if (null == null)
             {
                 sendText(playerIn, tank, side);
                 return false;

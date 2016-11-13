@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeSavanna.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeSavanna.java
-@@ -30,6 +30,7 @@
+@@ -39,6 +39,7 @@
      {
          field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.GRASS);
  

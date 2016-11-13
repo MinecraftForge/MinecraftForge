@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiIngame.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngame.java
-@@ -360,7 +360,8 @@
+@@ -359,7 +359,8 @@
  
                  BlockPos blockpos = raytraceresult.func_178782_a();
  
@@ -10,7 +10,7 @@
                  {
                      return;
                  }
-@@ -418,7 +419,10 @@
+@@ -417,7 +418,10 @@
              {
                  Potion potion = potioneffect.func_188419_a();
  
@@ -22,7 +22,7 @@
                  {
                      int k = p_184048_1_.func_78326_a();
                      int l = 1;
-@@ -455,7 +459,10 @@
+@@ -460,7 +464,10 @@
                      }
  
                      GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, f);

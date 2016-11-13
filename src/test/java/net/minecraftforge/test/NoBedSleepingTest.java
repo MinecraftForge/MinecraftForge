@@ -161,8 +161,9 @@ public class NoBedSleepingTest
         }
 
         @Override
-        public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand)
+        public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
         {
+            ItemStack stack = player.getHeldItem(hand);
             if (!world.isRemote)
             {
                 final SleepResult result = player.trySleep(player.getPosition());

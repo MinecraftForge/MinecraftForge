@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Slot.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Slot.java
-@@ -92,7 +92,7 @@
+@@ -90,7 +90,7 @@
      @SideOnly(Side.CLIENT)
      public String func_178171_c()
      {
@@ -9,7 +9,7 @@
      }
  
      public ItemStack func_75209_a(int p_75209_1_)
-@@ -115,4 +115,73 @@
+@@ -113,4 +113,73 @@
      {
          return true;
      }

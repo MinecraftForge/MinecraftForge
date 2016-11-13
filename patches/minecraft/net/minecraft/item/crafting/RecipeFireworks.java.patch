@@ -22,16 +22,15 @@
                  return true;
              }
              else if (j == 1 && i == 0 && l == 0 && k > 0 && j1 <= 1)
-@@ -252,11 +252,7 @@
-         for (int i = 0; i < aitemstack.length; ++i)
+@@ -251,10 +251,7 @@
          {
              ItemStack itemstack = p_179532_1_.func_70301_a(i);
--
--            if (itemstack != null && itemstack.func_77973_b().func_77634_r())
+ 
+-            if (itemstack.func_77973_b().func_77634_r())
 -            {
--                aitemstack[i] = new ItemStack(itemstack.func_77973_b().func_77668_q());
+-                nonnulllist.set(i, new ItemStack(itemstack.func_77973_b().func_77668_q()));
 -            }
-+            aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
++            nonnulllist.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
          }
  
-         return aitemstack;
+         return nonnulllist;

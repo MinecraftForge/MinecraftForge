@@ -234,7 +234,7 @@
 +            tileEntity.func_145838_q();
 +        }
 +
-         boolean flag = !this.field_76637_e.field_73011_w.func_177495_o();
+         boolean flag = this.field_76637_e.field_73011_w.func_191066_m();
  
          for (int i = 0; i < this.field_76652_q.length; ++i)
 @@ -1163,10 +1174,16 @@
