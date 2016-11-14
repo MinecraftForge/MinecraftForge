@@ -17,31 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common;
+package net.minecraftforge.server.permission.context;
 
-public class LoaderException extends EnhancedRuntimeException
+import com.google.common.base.Preconditions;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
+
+public class WorldContext extends Context
 {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -5675297950958861378L;
+    private final World world;
 
-    public LoaderException(Throwable wrapped)
+    public WorldContext(World w)
     {
-        super(wrapped);
+        world = Preconditions.checkNotNull(w, "World can't be null in WorldContext!");
     }
 
-    public LoaderException()
+    @Override
+    public World getWorld()
     {
-    }
-    public LoaderException(String message)
-    {
-        super(message);
-    }
-    public LoaderException(String message, Throwable cause)
-    {
-        super(message, cause);
+        return world;
     }
 
-    @Override protected void printStackTrace(WrappedPrintStream stream){}
+    @Override
+    @Nullable
+    public EntityPlayer getPlayer()
+    {
+        return null;
+    }
 }

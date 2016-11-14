@@ -7,7 +7,7 @@
 +                    // special case for handling block placement with water lilies
 +                    net.minecraftforge.common.util.BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(p_77659_2_, blockpos1);
 +                    p_77659_2_.func_175656_a(blockpos1, Blocks.field_150392_bi.func_176223_P());
-+                    if (net.minecraftforge.event.ForgeEventFactory.onPlayerBlockPlace(p_77659_3_, blocksnapshot, net.minecraft.util.EnumFacing.UP).isCanceled())
++                    if (net.minecraftforge.event.ForgeEventFactory.onPlayerBlockPlace(p_77659_3_, blocksnapshot, net.minecraft.util.EnumFacing.UP, p_77659_4_).isCanceled())
 +                    {
 +                        blocksnapshot.restore(true, false);
 +                        return new ActionResult<ItemStack>(EnumActionResult.FAIL, p_77659_1_);

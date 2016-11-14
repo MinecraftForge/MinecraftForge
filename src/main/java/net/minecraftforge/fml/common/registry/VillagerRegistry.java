@@ -356,8 +356,8 @@ public class VillagerRegistry
     {
         if (prof == null)
         {
-            if (entity.func_189777_di() != ZombieType.NORMAL && entity.func_189777_di() != ZombieType.HUSK)
-                entity.func_189778_a(ZombieType.NORMAL);
+            if (entity.getZombieType() != ZombieType.NORMAL && entity.getZombieType() != ZombieType.HUSK)
+                entity.setZombieType(ZombieType.NORMAL);
             return;
         }
 
@@ -369,13 +369,13 @@ public class VillagerRegistry
 
         if (network >= 0 && network < 5) // Vanilla
         {
-            if (entity.func_189777_di() == null || entity.func_189777_di().func_190150_a() != network + 1)
+            if (entity.getZombieType() == null || entity.getZombieType().getId() != network + 1)
             {
-                entity.func_189778_a(ZombieType.func_190144_b(network));
+                entity.setZombieType(ZombieType.getVillagerByOrdinal(network));
             }
         }
-        else if (entity.func_189777_di() != null)
-            entity.func_189778_a(ZombieType.NORMAL);
+        else if (entity.getZombieType() != null)
+            entity.setZombieType(ZombieType.NORMAL);
     }
     public static void onSetProfession(EntityZombie entity, ZombieType type, int network)
     {

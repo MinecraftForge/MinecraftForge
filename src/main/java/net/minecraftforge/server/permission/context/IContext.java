@@ -17,31 +17,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common;
+package net.minecraftforge.server.permission.context;
 
-public class LoaderException extends EnhancedRuntimeException
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
+
+/**
+ * Use {@link BlockPosContext} or {@link PlayerContext} when possible
+ */
+public interface IContext
 {
     /**
-     *
+     * World from where permission is requested. Can be null
      */
-    private static final long serialVersionUID = -5675297950958861378L;
+    @Nullable
+    World getWorld();
 
-    public LoaderException(Throwable wrapped)
-    {
-        super(wrapped);
-    }
+    /**
+     * @return Player requesting permission. Can be null
+     */
+    @Nullable
+    EntityPlayer getPlayer();
 
-    public LoaderException()
-    {
-    }
-    public LoaderException(String message)
-    {
-        super(message);
-    }
-    public LoaderException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
+    /**
+     * @param key Context key
+     * @return Context object
+     */
+    @Nullable
+    <T> T get(ContextKey<T> key);
 
-    @Override protected void printStackTrace(WrappedPrintStream stream){}
+    /**
+     * @param key Context key
+     * @return true if context contains this key
+     */
+    boolean has(ContextKey<?> key);
 }

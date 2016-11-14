@@ -137,7 +137,7 @@ public class PlayerInteractEventTest
                 && evt.getLocalPos().yCoord > evt.getTarget().height / 2.0)
         {
             // If we right click the upper half of a skeleton it becomes wither skeleton. Otherwise nothing happens.
-            ((EntitySkeleton) evt.getTarget()).func_189768_a(SkeletonType.WITHER);
+            ((EntitySkeleton) evt.getTarget()).setSkeletonType(SkeletonType.WITHER);
             evt.setCanceled(true);
         }
     }

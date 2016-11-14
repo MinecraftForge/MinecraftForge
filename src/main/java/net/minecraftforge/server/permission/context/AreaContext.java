@@ -17,31 +17,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common;
+package net.minecraftforge.server.permission.context;
 
-public class LoaderException extends EnhancedRuntimeException
+import com.google.common.base.Preconditions;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.AxisAlignedBB;
+
+import javax.annotation.Nullable;
+
+public class AreaContext extends PlayerContext
 {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -5675297950958861378L;
+    private final AxisAlignedBB area;
 
-    public LoaderException(Throwable wrapped)
+    public AreaContext(EntityPlayer ep, AxisAlignedBB aabb)
     {
-        super(wrapped);
+        super(ep);
+        area = Preconditions.checkNotNull(aabb, "AxisAlignedBB can't be null in AreaContext!");
     }
 
-    public LoaderException()
+    @Override
+    @Nullable
+    public <T> T get(ContextKey<T> key)
     {
-    }
-    public LoaderException(String message)
-    {
-        super(message);
-    }
-    public LoaderException(String message, Throwable cause)
-    {
-        super(message, cause);
+        return key.equals(ContextKeys.AREA) ? (T) area : super.get(key);
     }
 
-    @Override protected void printStackTrace(WrappedPrintStream stream){}
+    @Override
+    protected boolean covers(ContextKey<?> key)
+    {
+        return key.equals(ContextKeys.AREA);
+    }
 }

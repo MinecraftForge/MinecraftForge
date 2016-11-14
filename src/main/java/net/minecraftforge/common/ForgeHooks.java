@@ -43,6 +43,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -518,7 +519,22 @@ public class ForgeHooks
         return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
     }
 
-    public static int getLootingLevel(EntityLivingBase target, DamageSource cause, int level) {
+    public static int getLootingLevel(Entity target, Entity killer, DamageSource cause)
+    {
+        int looting = 0;
+        if (killer instanceof EntityLivingBase)
+        {
+            looting = EnchantmentHelper.getLootingModifier((EntityLivingBase)killer);
+        }
+        if (target instanceof EntityLivingBase)
+        {
+            looting = getLootingLevel((EntityLivingBase)target, cause, looting);
+        }
+        return looting;
+    }
+
+    public static int getLootingLevel(EntityLivingBase target, DamageSource cause, int level)
+    {
         LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getLootingLevel();
@@ -779,11 +795,11 @@ public class ForgeHooks
             }
             if (blockSnapshots.size() > 1)
             {
-                placeEvent = ForgeEventFactory.onPlayerMultiBlockPlace(player, blockSnapshots, side);
+                placeEvent = ForgeEventFactory.onPlayerMultiBlockPlace(player, blockSnapshots, side, hand);
             }
             else if (blockSnapshots.size() == 1)
             {
-                placeEvent = ForgeEventFactory.onPlayerBlockPlace(player, blockSnapshots.get(0), side);
+                placeEvent = ForgeEventFactory.onPlayerBlockPlace(player, blockSnapshots.get(0), side, hand);
             }
 
             if (placeEvent != null && (placeEvent.isCanceled()))
@@ -1147,4 +1163,16 @@ public class ForgeHooks
     {
         return MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, ray));
     }
+    
+    public static boolean onCropsGrowPre(World worldIn, BlockPos pos, IBlockState state, boolean def)
+    {
+        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(worldIn,pos,state);
+        MinecraftForge.EVENT_BUS.post(ev);
+        return (ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && def));
+    }
+
+	public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state, IBlockState blockState)
+	{
+		MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+	}
 }

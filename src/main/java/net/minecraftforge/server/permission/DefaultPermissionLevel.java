@@ -17,31 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common;
+package net.minecraftforge.server.permission;
 
-public class LoaderException extends EnhancedRuntimeException
+/**
+ * <table><thead><tr><th>Level</th><th>Player</th><th>OP</th></tr>
+ * </thead><tbody>
+ * <tr><td>ALL</td><td>true</td><td>true</td></tr>
+ * <tr><td>OP</td><td>false</td><td>true</td></tr>
+ * <tr><td>NONE</td><td>false</td><td>false</td></tr>
+ * </tbody></table>
+ */
+public enum DefaultPermissionLevel
 {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -5675297950958861378L;
-
-    public LoaderException(Throwable wrapped)
-    {
-        super(wrapped);
-    }
-
-    public LoaderException()
-    {
-    }
-    public LoaderException(String message)
-    {
-        super(message);
-    }
-    public LoaderException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
-
-    @Override protected void printStackTrace(WrappedPrintStream stream){}
+    ALL,
+    OP,
+    NONE
 }
