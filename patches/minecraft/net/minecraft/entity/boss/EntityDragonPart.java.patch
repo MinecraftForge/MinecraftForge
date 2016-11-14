@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/entity/boss/EntityDragonPart.java
++++ ../src-work/minecraft/net/minecraft/entity/boss/EntityDragonPart.java
+@@ -5,7 +5,7 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.util.DamageSource;
+ 
+-public class EntityDragonPart extends Entity
++public class EntityDragonPart extends Entity implements net.minecraftforge.common.IMultipartEntityPart
+ {
+     public final IEntityMultiPart field_70259_a;
+     public final String field_146032_b;
+@@ -44,4 +44,10 @@
+     {
+         return this == p_70028_1_ || this.field_70259_a == p_70028_1_;
+     }
++
++    @Override
++    public IEntityMultiPart getMainEntity()
++    {
++        return field_70259_a;
++    }
+ }
