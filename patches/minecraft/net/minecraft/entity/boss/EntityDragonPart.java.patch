@@ -15,8 +15,8 @@
      }
 +
 +    @Override
-+    public IEntityMultiPart getMainEntity()
++    public net.minecraft.entity.EntityLivingBase getMainEntity()
 +    {
-+        return field_70259_a;
++        return (net.minecraft.entity.EntityLivingBase) field_70259_a;
 +    }
  }

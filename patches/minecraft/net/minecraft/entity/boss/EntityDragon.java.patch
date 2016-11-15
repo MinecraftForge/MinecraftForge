@@ -16,14 +16,3 @@
                          {
                              if (block != Blocks.field_150483_bI && block != Blocks.field_185776_dc && block != Blocks.field_185777_dd && block != Blocks.field_150411_aY && block != Blocks.field_185775_db)
                              {
-@@ -1060,4 +1060,10 @@
-     {
-         return false;
-     }
-+
-+    @Override
-+    public net.minecraftforge.common.IMultipartEntityPart[] getAllParts()
-+    {
-+        return this.field_70977_g;
-+    }
- }

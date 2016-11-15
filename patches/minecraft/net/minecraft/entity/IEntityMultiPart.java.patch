@@ -1,9 +1,0 @@
---- ../src-base/minecraft/net/minecraft/entity/IEntityMultiPart.java
-+++ ../src-work/minecraft/net/minecraft/entity/IEntityMultiPart.java
-@@ -9,4 +9,6 @@
-     World func_82194_d();
- 
-     boolean func_70965_a(EntityDragonPart p_70965_1_, DamageSource p_70965_2_, float p_70965_3_);
-+    
-+    net.minecraftforge.common.IMultipartEntityPart[] getAllParts();
- }

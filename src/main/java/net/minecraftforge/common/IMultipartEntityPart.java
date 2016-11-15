@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.entity.IEntityMultiPart;
+import net.minecraft.entity.EntityLivingBase;
 
 public interface IMultipartEntityPart
 {
@@ -27,6 +27,6 @@ public interface IMultipartEntityPart
     /**
      * @return The entity this part belongs to.
      */
-    public IEntityMultiPart getMainEntity();
+    public EntityLivingBase getMainEntity();
     
 }
