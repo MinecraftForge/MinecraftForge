@@ -15,8 +15,8 @@
      }
 +
 +    @Override
-+    public net.minecraft.entity.EntityLivingBase getMainEntity()
++    public net.minecraft.entity.Entity getMainEntity()
 +    {
-+        return (net.minecraft.entity.EntityLivingBase) field_70259_a;
++        return (net.minecraft.entity.Entity) field_70259_a;
 +    }
  }
