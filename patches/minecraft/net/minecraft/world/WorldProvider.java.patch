@@ -1,6 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -160,7 +160,7 @@
+@@ -55,21 +55,7 @@
+     protected void func_76572_b()
+     {
+         this.field_191067_f = true;
+-        WorldType worldtype = this.field_76579_a.func_72912_H().func_76067_t();
+-
+-        if (worldtype == WorldType.field_77138_c)
+-        {
+-            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
+-            this.field_76578_c = new BiomeProviderSingle(Biome.func_180276_a(flatgeneratorinfo.func_82648_a(), Biomes.field_180279_ad));
+-        }
+-        else if (worldtype == WorldType.field_180272_g)
+-        {
+-            this.field_76578_c = new BiomeProviderSingle(Biomes.field_76772_c);
+-        }
+-        else
+-        {
+-            this.field_76578_c = new BiomeProvider(this.field_76579_a.func_72912_H());
+-        }
++        this.field_76578_c = field_76577_b.getBiomeProvider(field_76579_a);
+     }
+ 
+     public IChunkGenerator func_186060_c()
+@@ -160,7 +146,7 @@
      @SideOnly(Side.CLIENT)
      public float func_76571_f()
      {
@@ -9,7 +32,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -177,13 +177,13 @@
+@@ -177,13 +163,13 @@
  
      public int func_76557_i()
      {
@@ -25,7 +48,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -222,6 +222,339 @@
+@@ -222,6 +208,339 @@
          return new WorldBorder();
      }
  
@@ -194,7 +217,7 @@
 +    /**
 +     * Called from {@link World#initCapabilities()}, to gather capabilities for this world.
 +     * It's safe to access world here since this is called after world is registered.
-+     * 
++     *
 +     * On server, called directly after mapStorage and world data such as Scoreboard and VillageCollection are initialized.
 +     * On client, called when world is constructed, just before world load event is called.
 +     * Note that this method is always called before the world load event.
