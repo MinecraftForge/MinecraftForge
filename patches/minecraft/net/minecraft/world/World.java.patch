@@ -692,7 +692,16 @@
      }
  
      public boolean func_175640_z(BlockPos p_175640_1_)
-@@ -3240,7 +3427,7 @@
+@@ -3179,6 +3366,8 @@
+                     d2 *= ((Double)Objects.firstNonNull(p_184150_11_.apply(entityplayer1), Double.valueOf(1.0D))).doubleValue();
+                 }
+ 
++                d2 = net.minecraftforge.common.ForgeHooks.getPlayerVisibilityDistance(entityplayer1, d2, p_184150_9_);
++
+                 if ((p_184150_9_ < 0.0D || Math.abs(entityplayer1.field_70163_u - p_184150_3_) < p_184150_9_ * p_184150_9_) && (p_184150_7_ < 0.0D || d1 < d2 * d2) && (d0 == -1.0D || d1 < d0))
+                 {
+                     d0 = d1;
+@@ -3240,7 +3429,7 @@
  
      public long func_72905_C()
      {
@@ -701,7 +710,7 @@
      }
  
      public long func_82737_E()
-@@ -3250,17 +3437,17 @@
+@@ -3250,17 +3439,17 @@
  
      public long func_72820_D()
      {
@@ -722,7 +731,7 @@
  
          if (!this.func_175723_af().func_177746_a(blockpos))
          {
-@@ -3272,7 +3459,7 @@
+@@ -3272,7 +3461,7 @@
  
      public void func_175652_B(BlockPos p_175652_1_)
      {
@@ -731,7 +740,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3292,12 +3479,18 @@
+@@ -3292,12 +3481,18 @@
  
          if (!this.field_72996_f.contains(p_72897_1_))
          {
@@ -750,7 +759,7 @@
          return true;
      }
  
-@@ -3391,8 +3584,7 @@
+@@ -3391,8 +3586,7 @@
  
      public boolean func_180502_D(BlockPos p_180502_1_)
      {
@@ -760,7 +769,7 @@
      }
  
      @Nullable
-@@ -3453,12 +3645,12 @@
+@@ -3453,12 +3647,12 @@
  
      public int func_72800_K()
      {
@@ -775,7 +784,7 @@
      }
  
      public Random func_72843_D(int p_72843_1_, int p_72843_2_, int p_72843_3_)
-@@ -3502,7 +3694,7 @@
+@@ -3502,7 +3696,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
@@ -784,7 +793,7 @@
      }
  
      public void func_175715_c(int p_175715_1_, BlockPos p_175715_2_, int p_175715_3_)
-@@ -3536,7 +3728,7 @@
+@@ -3536,7 +3730,7 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
@@ -793,7 +802,7 @@
          {
              BlockPos blockpos = p_175666_1_.func_177972_a(enumfacing);
  
-@@ -3621,6 +3813,112 @@
+@@ -3621,6 +3815,112 @@
          return i >= -128 && i <= 128 && j >= -128 && j <= 128;
      }
  
