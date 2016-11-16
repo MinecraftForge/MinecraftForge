@@ -24,7 +24,7 @@ import net.minecraftforge.server.permission.context.ContextKey;
 @Mod(modid = PermissionTest.MOD_ID, name = "PermissionTest", version = "1.0.0")
 public class PermissionTest
 {
-    public static final String MOD_ID = "PermissionTest";
+    public static final String MOD_ID = "permission_test";
 
     @Mod.Instance(PermissionTest.MOD_ID)
     public static PermissionTest inst;

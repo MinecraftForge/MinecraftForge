@@ -125,7 +125,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
-        meta.modId       = "Forge";
+        meta.modId       = "forge";
         meta.name        = "Minecraft Forge";
         meta.version     = ForgeVersion.getVersion();
         meta.credits     = "Made possible with help from many people";

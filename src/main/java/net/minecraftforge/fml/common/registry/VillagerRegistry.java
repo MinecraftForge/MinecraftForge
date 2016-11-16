@@ -184,6 +184,13 @@ public class VillagerRegistry
             (new VillagerCareer(prof, "butcher")).init(VanillaTrades.trades[4][0]);
             (new VillagerCareer(prof, "leather")).init(VanillaTrades.trades[4][1]);
         }
+        prof = new VillagerProfession("minecraft:nitwit",
+                "minecraft:textures/entity/villager/nitwit.png",
+                "minecraft:textures/entity/zombie_villager/zombie_nitwit.png");
+        {
+            register(prof, 5);
+            (new VillagerCareer(prof, "nitwit")).init(VanillaTrades.trades[5][0]);
+        }
     }
 
     public static class VillagerProfession extends IForgeRegistryEntry.Impl<VillagerProfession>
@@ -357,7 +364,7 @@ public class VillagerRegistry
 
     public static void onSetProfession(EntityZombieVillager entity, int network)
     {
-        int realID = network - 1;
+        int realID = network;
         VillagerProfession prof = INSTANCE.professions.getObjectById(realID);
         if (prof == null && network != 0 || INSTANCE.professions.getId(prof) != realID)
         {

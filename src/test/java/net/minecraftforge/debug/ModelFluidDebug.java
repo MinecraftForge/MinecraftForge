@@ -162,7 +162,7 @@ public class ModelFluidDebug
     public static final class TestFluidBlock extends BlockFluidClassic
     {
         public static final TestFluidBlock instance = new TestFluidBlock();
-        public static final String name = "TestFluidBlock";
+        public static final String name = "test_fluid_block";
 
         private TestFluidBlock()
         {
@@ -176,7 +176,7 @@ public class ModelFluidDebug
     public static final class MilkFluidBlock extends BlockFluidClassic
     {
         public static final MilkFluidBlock instance = new MilkFluidBlock();
-        public static final String name = "MilkFluidBlock";
+        public static final String name = "milk_fluid_block";
 
         private MilkFluidBlock()
         {
@@ -190,7 +190,7 @@ public class ModelFluidDebug
     public static final class TestGasBlock extends BlockFluidClassic
     {
         public static final TestGasBlock instance = new TestGasBlock();
-        public static final String name = "TestGasBlock";
+        public static final String name = "test_gas_block";
 
         private TestGasBlock()
         {

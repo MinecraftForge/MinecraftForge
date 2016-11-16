@@ -8,18 +8,6 @@
      }
  
      public boolean func_70686_a(Class <? extends EntityLivingBase > p_70686_1_)
-@@ -347,9 +348,9 @@
-         }
-     }
- 
--    public static void func_189752_a(DataFixer p_189752_0_, Class<?> p_189752_1_)
-+    public static void func_189752_a(DataFixer p_189752_1_, Class<?> p_189752_2_)
-     {
--        p_189752_0_.func_188258_a(FixTypes.ENTITY, new ItemStackDataLists(p_189752_1_, new String[] {"ArmorItems", "HandItems"}));
-+        p_189752_1_.func_188258_a(FixTypes.ENTITY, new ItemStackDataLists(p_189752_2_, new String[] {"ArmorItems", "HandItems"}));
-     }
- 
-     public void func_70014_b(NBTTagCompound p_70014_1_)
 @@ -708,10 +709,22 @@
  
      protected void func_70623_bb()

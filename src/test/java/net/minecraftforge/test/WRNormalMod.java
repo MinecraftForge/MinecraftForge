@@ -29,7 +29,7 @@ public class WRNormalMod
     @EventHandler
     public void init(FMLPreInitializationEvent event)
     {
-        EntityRegistry.registerModEntity(EntityScaleTest.class, "ScaleTest", 0, instance, 60, 3, true);
+        EntityRegistry.registerModEntity(EntityScaleTest.class, "scale_test", 0, instance, 60, 3, true);
         proxy.registerRenders();
     }
 

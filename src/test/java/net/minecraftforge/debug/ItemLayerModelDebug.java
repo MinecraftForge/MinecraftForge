@@ -58,7 +58,7 @@ public class ItemLayerModelDebug
     public static final class TestItem extends Item
     {
         public static final TestItem instance = new TestItem();
-        public static final String name = "TestItem";
+        public static final String name = "test_item";
 
         private TestItem()
         {

@@ -205,15 +205,6 @@
              double d15 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
              if (d15 > 0.01D)
-@@ -790,7 +816,7 @@
-         return this.func_94100_s() ? axisalignedbb.func_186662_g((double)Math.abs(this.func_94099_q()) / 16.0D) : axisalignedbb;
-     }
- 
--    public static void func_189669_a(DataFixer p_189669_0_, Class<?> p_189669_1_)
-+    public static void func_189669_a(DataFixer p_189669_1_, Class<?> p_189669_2_)
-     {
-     }
- 
 @@ -830,6 +856,12 @@
  
      public void func_70108_f(Entity p_70108_1_)

@@ -109,7 +109,7 @@ public class TestCapabilityMod
         }
 
         //Attach it! The resource location MUST be unique it's recomneded that you tag it with your modid and what the cap is.
-        event.addCapability(new ResourceLocation("TestCapabilityMod:DummyCap"), new Provider(event.getTileEntity()));
+        event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider(event.getTileEntity()));
     }
 
     @SuppressWarnings("rawtypes")

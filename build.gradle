@@ -26,7 +26,7 @@ apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
 apply plugin: "net.minecraftforge.gradle.launch4j"
 
-minecraft.version = "1.11-pre1"
+minecraft.version = "1.11"
 
 minecraft {
     mappings = 'snapshot_nodoc_20161111'
@@ -34,7 +34,7 @@ minecraft {
     versionJson = "jsons/${minecraft.version}-dev.json"
     buildUserdev = true
     buildInstaller = true
-    installerVersion = "1.4"
+    installerVersion = "1.5"
 
     def common = {
         patchPrefixOriginal "../src-base/minecraft"

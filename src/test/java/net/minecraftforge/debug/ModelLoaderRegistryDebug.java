@@ -120,7 +120,7 @@ public class ModelLoaderRegistryDebug
     {
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
         public static final CustomModelBlock instance = new CustomModelBlock();
-        public static final String name = "CustomModelBlock";
+        public static final String name = "custom_model_block";
         private int counter = 1;
 
         private CustomModelBlock()
@@ -221,7 +221,7 @@ public class ModelLoaderRegistryDebug
     public static class OBJTesseractBlock extends Block implements ITileEntityProvider
     {
         public static final OBJTesseractBlock instance = new OBJTesseractBlock();
-        public static final String name = "OBJTesseractBlock";
+        public static final String name = "obj_tesseract_block";
 
         private OBJTesseractBlock()
         {
@@ -364,7 +364,7 @@ public class ModelLoaderRegistryDebug
     public static class OBJVertexColoring1 extends Block
     {
         public static final OBJVertexColoring1 instance = new OBJVertexColoring1();
-        public static final String name = "OBJVertexColoring1";
+        public static final String name = "obj_vertex_coloring1";
 
         private OBJVertexColoring1()
         {
@@ -396,7 +396,7 @@ public class ModelLoaderRegistryDebug
     {
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
         public static final OBJDirectionEye instance = new OBJDirectionEye();
-        public static final String name = "OBJDirectionEye";
+        public static final String name = "obj_direction_eye";
 
         private OBJDirectionEye()
         {
@@ -471,7 +471,7 @@ public class ModelLoaderRegistryDebug
     public static class OBJVertexColoring2 extends Block implements ITileEntityProvider
     {
         public static final OBJVertexColoring2 instance = new OBJVertexColoring2();
-        public static final String name = "OBJVertexColoring2";
+        public static final String name = "obj_vertex_coloring2";
 
         private OBJVertexColoring2()
         {
@@ -573,7 +573,7 @@ public class ModelLoaderRegistryDebug
     {
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
         public static final OBJDirectionBlock instance = new OBJDirectionBlock();
-        public static final String name = "OBJDirectionBlock";
+        public static final String name = "obj_direction_block";
 
         private OBJDirectionBlock()
         {
@@ -651,7 +651,7 @@ public class ModelLoaderRegistryDebug
         public static final PropertyBool WEST = PropertyBool.create("west");
         public static final PropertyBool EAST = PropertyBool.create("east");
         public static final OBJCustomDataBlock instance = new OBJCustomDataBlock();
-        public static final String name = "OBJCustomDataBlock";
+        public static final String name = "obj_custom_data_block";
 
         private OBJCustomDataBlock()
         {
@@ -708,7 +708,7 @@ public class ModelLoaderRegistryDebug
     public static class OBJDynamicEye extends Block implements ITileEntityProvider
     {
         public static final OBJDynamicEye instance = new OBJDynamicEye();
-        public static final String name = "OBJDynamicEye";
+        public static final String name = "obj_dynamic_eye";
         private OBJDynamicEye()
         {
             super(Material.IRON);
