@@ -81,7 +81,7 @@ public class ItemStackTransformer implements IClassTransformer {
 
         for (MethodNode m: classNode.methods)
         {
-            if (m.name.equals("func_190923_F") || m.name.equals("func_190926_b")) continue;
+            if (m.name.equals("forgeInit") || m.name.equals("func_190926_b")) continue;
             for (ListIterator<AbstractInsnNode> it = m.instructions.iterator(); it.hasNext(); )
             {
                 AbstractInsnNode insnNode = it.next();

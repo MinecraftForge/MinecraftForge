@@ -36,7 +36,7 @@
          }
  
          this.func_190923_F();
-+        this.forgeInit(p_i1881_1_);
++        this.forgeInit();
      }
  
      private void func_190923_F()
@@ -52,7 +52,7 @@
          }
  
          this.func_190923_F();
-+        this.forgeInit(this.field_151002_e);
++        this.forgeInit();
      }
  
      public boolean func_190926_b()
@@ -254,24 +254,21 @@
      @SideOnly(Side.CLIENT)
      public int func_190921_D()
      {
-@@ -1013,4 +1082,21 @@
+@@ -1013,4 +1082,18 @@
      {
          this.func_190917_f(-p_190918_1_);
      }
 +
 +    /**
 +     * Set up forge's ItemStack additions.
-+     *
-+     * Do NOT call this.item before the delegate is set,
-+     * it calls this.getItem() which triggers the static initializer for Block too early.
 +     */
-+    private void forgeInit(@Nullable Item item)
++    private void forgeInit()
 +    {
-+        if (item != null)
++        if (this.field_151002_e != null)
 +        {
-+            this.delegate = item.delegate;
-+            net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
-+            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(item, this, provider);
++            this.delegate = this.field_151002_e.delegate;
++            net.minecraftforge.common.capabilities.ICapabilityProvider provider = this.field_151002_e.initCapabilities(this, this.capNBT);
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this.field_151002_e, this, provider);
 +            if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
 +        }
 +    }
