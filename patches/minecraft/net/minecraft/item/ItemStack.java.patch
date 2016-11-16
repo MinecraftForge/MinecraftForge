@@ -209,12 +209,12 @@
  
 +    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
 +    {
-+        return this.capabilities == null ? false : this.capabilities.hasCapability(capability, facing);
++        return this.field_190928_g  || this.capabilities == null ? false : this.capabilities.hasCapability(capability, facing);
 +    }
 +
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
 +    {
-+        return this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
++        return this.field_190928_g  || this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
 +    }
 +
 +    public void deserializeNBT(NBTTagCompound nbt)
