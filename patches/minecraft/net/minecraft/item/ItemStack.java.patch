@@ -26,18 +26,21 @@
  
 -    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_)
 +    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_){ this(p_i1881_1_, p_i1881_2_, p_i1881_3_, null); }
-+    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_, NBTTagCompound capNBT)
++    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_, @Nullable NBTTagCompound capNBT)
      {
 +        this.capNBT = capNBT;
          this.field_151002_e = p_i1881_1_;
          this.field_77991_e = p_i1881_3_;
          this.field_77994_a = p_i1881_2_;
-@@ -105,10 +111,12 @@
-     private void func_190923_F()
-     {
-         this.field_190928_g = this.func_190926_b();
-+        this.delegate = this.field_151002_e != null ? this.field_151002_e.delegate : null;
+@@ -100,6 +106,7 @@
+         }
+ 
+         this.func_190923_F();
++        this.forgeInit(p_i1881_1_);
      }
+ 
+     private void func_190923_F()
+@@ -109,6 +116,7 @@
  
      public ItemStack(NBTTagCompound p_i47263_1_)
      {
@@ -45,7 +48,15 @@
          this.field_151002_e = Item.func_111206_d(p_i47263_1_.func_74779_i("id"));
          this.field_77994_a = p_i47263_1_.func_74771_c("Count");
          this.field_77991_e = Math.max(0, p_i47263_1_.func_74765_d("Damage"));
-@@ -148,11 +156,12 @@
+@@ -124,6 +132,7 @@
+         }
+ 
+         this.func_190923_F();
++        this.forgeInit(this.field_151002_e);
+     }
+ 
+     public boolean func_190926_b()
+@@ -148,11 +157,12 @@
  
      public Item func_77973_b()
      {
@@ -59,7 +70,7 @@
          EnumActionResult enumactionresult = this.func_77973_b().func_180614_a(p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_, p_179546_8_);
  
          if (enumactionresult == EnumActionResult.SUCCESS)
-@@ -163,6 +172,19 @@
+@@ -163,6 +173,19 @@
          return enumactionresult;
      }
  
@@ -79,7 +90,7 @@
      public float func_150997_a(IBlockState p_150997_1_)
      {
          return this.func_77973_b().func_150893_a(this, p_150997_1_);
-@@ -190,12 +212,18 @@
+@@ -190,12 +213,18 @@
              p_77955_1_.func_74782_a("tag", this.field_77990_d);
          }
  
@@ -99,7 +110,7 @@
      }
  
      public boolean func_77985_e()
-@@ -205,7 +233,7 @@
+@@ -205,7 +234,7 @@
  
      public boolean func_77984_f()
      {
@@ -108,7 +119,7 @@
      }
  
      public boolean func_77981_g()
-@@ -215,32 +243,27 @@
+@@ -215,32 +244,27 @@
  
      public boolean func_77951_h()
      {
@@ -146,7 +157,7 @@
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -272,8 +295,8 @@
+@@ -272,8 +296,8 @@
                  }
              }
  
@@ -157,7 +168,7 @@
          }
      }
  
-@@ -322,7 +345,7 @@
+@@ -322,7 +346,7 @@
  
      public boolean func_150998_b(IBlockState p_150998_1_)
      {
@@ -166,7 +177,7 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_)
-@@ -332,7 +355,7 @@
+@@ -332,7 +356,7 @@
  
      public ItemStack func_77946_l()
      {
@@ -175,7 +186,7 @@
  
          if (this.field_77990_d != null)
          {
-@@ -758,6 +781,7 @@
+@@ -758,6 +782,7 @@
              }
          }
  
@@ -183,7 +194,7 @@
          return list;
      }
  
-@@ -869,7 +893,7 @@
+@@ -869,7 +894,7 @@
          }
          else
          {
@@ -192,7 +203,7 @@
          }
  
          return multimap;
-@@ -982,6 +1006,50 @@
+@@ -982,6 +1007,50 @@
          }
      }
  
@@ -243,3 +254,25 @@
      @SideOnly(Side.CLIENT)
      public int func_190921_D()
      {
+@@ -1013,4 +1082,21 @@
+     {
+         this.func_190917_f(-p_190918_1_);
+     }
++
++    /**
++     * Set up forge's ItemStack additions.
++     *
++     * Do NOT call this.item before the delegate is set,
++     * it calls this.getItem() which triggers the static initializer for Block too early.
++     */
++    private void forgeInit(@Nullable Item item)
++    {
++        if (item != null)
++        {
++            this.delegate = item.delegate;
++            net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(item, this, provider);
++            if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
++        }
++    }
+ }
