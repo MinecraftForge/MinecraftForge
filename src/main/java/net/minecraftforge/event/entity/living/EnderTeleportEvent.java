@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.EntityLivingBase;
 
 /**
- * Event for when an Enderman teleports or an ender pearl is used.  Can be used to either modify the target position, or cancel the teleport outright.
+ * Event for when an Enderman/Shulker teleports or an ender pearl is used.  Can be used to either modify the target position, or cancel the teleport outright.
  * @author Mithion
  *
  */
