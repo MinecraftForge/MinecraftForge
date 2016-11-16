@@ -22,6 +22,7 @@ package net.minecraftforge.common.util;
 import java.lang.reflect.*;
 import java.util.*;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
@@ -35,6 +36,7 @@ import net.minecraft.entity.item.EntityPainting.EnumArt;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.util.SoundEvent;
@@ -62,7 +64,7 @@ public class EnumHelper
         {EnumCreatureAttribute.class},
         {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
         {Door.class},
-        {EnumEnchantmentType.class},
+        {EnumEnchantmentType.class, Predicate.class},
         {Sensitivity.class},
         {RayTraceResult.Type.class},
         {EnumSkyBlock.class, int.class},
@@ -95,9 +97,9 @@ public class EnumHelper
     {
         return addEnum(Door.class, name);
     }
-    public static EnumEnchantmentType addEnchantmentType(String name)
+    public static EnumEnchantmentType addEnchantmentType(String name, Predicate<Item> delegate)
     {
-        return addEnum(EnumEnchantmentType.class, name);
+        return addEnum(EnumEnchantmentType.class, name, delegate);
     }
     public static Sensitivity addSensitivity(String name)
     {
