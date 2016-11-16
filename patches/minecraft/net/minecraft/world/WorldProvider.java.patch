@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -55,21 +55,7 @@
+@@ -55,26 +55,12 @@
      protected void func_76572_b()
      {
          this.field_191067_f = true;
@@ -23,6 +23,12 @@
      }
  
      public IChunkGenerator func_186060_c()
+     {
+-        return (IChunkGenerator)(this.field_76577_b == WorldType.field_77138_c ? new ChunkProviderFlat(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : (this.field_76577_b == WorldType.field_180272_g ? new ChunkProviderDebug(this.field_76579_a) : (this.field_76577_b == WorldType.field_180271_f ? new ChunkProviderOverworld(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : new ChunkProviderOverworld(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c))));
++        return field_76577_b.getChunkGenerator(field_76579_a, field_82913_c);
+     }
+ 
+     public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
 @@ -160,7 +146,7 @@
      @SideOnly(Side.CLIENT)
      public float func_76571_f()
