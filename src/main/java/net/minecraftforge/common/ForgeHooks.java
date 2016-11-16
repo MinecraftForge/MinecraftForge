@@ -115,6 +115,7 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
@@ -538,6 +539,14 @@ public class ForgeHooks
         LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getLootingLevel();
+    }
+
+    public static double getPlayerVisibilityDistance(EntityPlayer player, double xzDistance, double maxXZDistance)
+    {
+        PlayerEvent.Visibility event = new PlayerEvent.Visibility(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        double value = event.getVisibilityModifier() * xzDistance;
+        return value >= maxXZDistance ? maxXZDistance : value;
     }
 
     public static boolean isLivingOnLadder(IBlockState state, World world, BlockPos pos, EntityLivingBase entity)
@@ -1163,7 +1172,7 @@ public class ForgeHooks
     {
         return MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, ray));
     }
-    
+
     public static boolean onCropsGrowPre(World worldIn, BlockPos pos, IBlockState state, boolean def)
     {
         BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(worldIn,pos,state);

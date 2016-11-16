@@ -706,6 +706,15 @@
      }
  
      public boolean func_175640_z(BlockPos p_175640_1_)
+@@ -3185,7 +3376,7 @@
+                 {
+                     d2 *= ((Double)Objects.firstNonNull(p_184150_11_.apply(entityplayer1), Double.valueOf(1.0D))).doubleValue();
+                 }
+-
++                d2 = net.minecraftforge.common.ForgeHooks.getPlayerVisibilityDistance(entityplayer1, d2, p_184150_7_);
+                 if ((p_184150_9_ < 0.0D || Math.abs(entityplayer1.field_70163_u - p_184150_3_) < p_184150_9_ * p_184150_9_) && (p_184150_7_ < 0.0D || d1 < d2 * d2) && (d0 == -1.0D || d1 < d0))
+                 {
+                     d0 = d1;
 @@ -3247,7 +3438,7 @@
  
      public long func_72905_C()
