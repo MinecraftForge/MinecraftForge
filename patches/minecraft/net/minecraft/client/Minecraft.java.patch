@@ -13,7 +13,7 @@
          this.field_135017_as = new LanguageManager(this.field_110452_an, this.field_71474_y.field_74363_ab);
          this.field_110451_am.func_110542_a(this.field_135017_as);
 -        this.func_110436_a();
-+        net.minecraftforge.fml.client.FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao, this.field_110451_am);
++        net.minecraftforge.fml.client.FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao, this.field_110451_am, this.field_110452_an);
          this.field_71446_o = new TextureManager(this.field_110451_am);
          this.field_110451_am.func_110542_a(this.field_71446_o);
 -        this.func_180510_a(this.field_71446_o);

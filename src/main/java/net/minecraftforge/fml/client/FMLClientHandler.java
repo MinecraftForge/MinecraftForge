@@ -52,7 +52,10 @@ import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.client.resources.LegacyV2Adapter;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
+import net.minecraft.client.resources.data.MetadataSerializer;
+import net.minecraft.client.resources.data.PackMetadataSection;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
@@ -181,6 +184,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private List<IResourcePack> resourcePackList;
 
+    private MetadataSerializer metaSerializer;
+
     private Map<String, IResourcePack> resourcePackMap;
 
     private BiMap<ModContainer, IModGuiFactory> guiFactories;
@@ -198,12 +203,13 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param resourceManager The resource manager
      */
     @SuppressWarnings("unchecked")
-    public void beginMinecraftLoading(Minecraft minecraft, List<IResourcePack> resourcePackList, IReloadableResourceManager resourceManager)
+    public void beginMinecraftLoading(Minecraft minecraft, List<IResourcePack> resourcePackList, IReloadableResourceManager resourceManager, MetadataSerializer metaSerializer)
     {
         detectOptifine();
         SplashProgress.start();
         client = minecraft;
         this.resourcePackList = resourcePackList;
+        this.metaSerializer = metaSerializer;
         this.resourcePackMap = Maps.newHashMap();
         if (minecraft.isDemo())
         {
@@ -623,6 +629,14 @@ public class FMLClientHandler implements IFMLSidedHandler
             try
             {
                 IResourcePack pack = (IResourcePack) resourcePackType.getConstructor(ModContainer.class).newInstance(container);
+
+                PackMetadataSection meta = (PackMetadataSection)pack.getPackMetadata(this.metaSerializer, "pack");
+
+                if (meta != null && meta.getPackFormat() == 2)
+                {
+                    pack =  new LegacyV2Adapter(pack);
+                }
+
                 resourcePackList.add(pack);
                 resourcePackMap.put(container.getModId(), pack);
             }
