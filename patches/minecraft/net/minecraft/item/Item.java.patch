@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,604 @@
+@@ -433,11 +440,605 @@
          return false;
      }
  
@@ -638,7 +638,8 @@
 +     * @param nbt NBT of this item serialized, or null.
 +     * @return A holder instance associated with this ItemStack where you can hold capabilities for the life of this item.
 +     */
-+    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
++    @Nullable
++    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
 +    {
 +        return null;
 +    }
@@ -665,7 +666,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1572,10 @@
+@@ -972,6 +1573,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -676,7 +677,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -1006,9 +1610,36 @@
+@@ -1006,9 +1611,36 @@
              return this.field_78008_j;
          }
  
