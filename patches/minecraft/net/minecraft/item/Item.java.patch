@@ -466,7 +466,7 @@
 +     */
 +    public int getRGBDurabilityForDisplay(ItemStack stack)
 +    {
-+        return MathHelper.func_181758_c(Math.max(0.0F, (stack.func_77958_k() - stack.func_77952_i()) / stack.func_77958_k()) / 3.0F, 1.0F, 1.0F);
++        return MathHelper.func_181758_c(Math.max(0.0F, (float)(stack.func_77958_k() - stack.func_77952_i()) / stack.func_77958_k()) / 3.0F, 1.0F, 1.0F);
 +    }
 +    /**
 +     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item,
