@@ -31,6 +31,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -87,6 +88,8 @@ public class GameData
             FMLLog.log(Level.FATAL, e, "Cannot access the 'block' field from ItemBlock, this is fatal!");
             throw Throwables.propagate(e);
         }
+
+        iTileEntityRegistry = new LegacyNamespacedRegistry<Class<? extends TileEntity>>();
     }
     // internal registry objects
     private final FMLControlledNamespacedRegistry<Block> iBlockRegistry;
@@ -96,6 +99,11 @@ public class GameData
     private final FMLControlledNamespacedRegistry<SoundEvent> iSoundEventRegistry;
     private final FMLControlledNamespacedRegistry<PotionType> iPotionTypeRegistry;
     private final FMLControlledNamespacedRegistry<Enchantment> iEnchantmentRegistry;
+
+    //TODO: ? These are never used by ID, so they don't need to be full registries/persisted.
+    //Need cpw to decide how we want to go about this as they are generic registries that
+    //don't follow the same patterns as the other ones.
+    private final LegacyNamespacedRegistry<Class<? extends TileEntity>> iTileEntityRegistry;
 
     /** INTERNAL ONLY */
     @Deprecated
@@ -132,6 +140,10 @@ public class GameData
     /** INTERNAL ONLY */
     @Deprecated
     public static FMLControlledNamespacedRegistry<Enchantment> getEnchantmentRegistry() { return getMain().iEnchantmentRegistry; }
+
+    /** INTERNAL ONLY */
+    @Deprecated
+    public static LegacyNamespacedRegistry<Class<? extends TileEntity>> getTileEntityRegistry() { return getMain().iTileEntityRegistry; }
 
     @Deprecated
     static Item findItem(String modId, String name)

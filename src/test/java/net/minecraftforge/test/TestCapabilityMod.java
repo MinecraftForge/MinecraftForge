@@ -20,6 +20,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 @Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0")
 public class TestCapabilityMod
 {
@@ -92,12 +95,13 @@ public class TestCapabilityMod
                 this.te = te;
             }
             @Override
-            public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+            public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
             {
                 return TEST_CAP != null && capability == TEST_CAP;
             }
             @Override
-            public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+            @Nullable
+            public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
             {
                 if (TEST_CAP != null && capability == TEST_CAP) return TEST_CAP.cast(this);
                 return null;

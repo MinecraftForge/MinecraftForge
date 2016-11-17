@@ -35,9 +35,12 @@ import javax.annotation.Nonnull;
 @Cancelable
 public class AnvilUpdateEvent extends Event
 {
+    @Nonnull
     private final ItemStack left;  // The left side of the input
+    @Nonnull
     private final ItemStack right; // The right side of the input
     private final String name;     // The name to set the item, if the user specified one.
+    @Nonnull
     private ItemStack output;      // Set this to set the output stack
     private int cost;              // The base cost, set this to change it if output != null
     private int materialCost; // The number of items from the right slot to be consumed during the repair. Leave as 0 to consume the entire stack.
@@ -46,6 +49,7 @@ public class AnvilUpdateEvent extends Event
     {
         this.left = left;
         this.right = right;
+        this.output = ItemStack.field_190927_a;
         this.name = name;
         this.setCost(cost);
         this.setMaterialCost(0);

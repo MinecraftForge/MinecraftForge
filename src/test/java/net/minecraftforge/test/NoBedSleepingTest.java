@@ -32,6 +32,9 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 @Mod(modid = NoBedSleepingTest.MODID, name = "ForgeDebugNoBedSleeping", version = NoBedSleepingTest.VERSION)
 public class NoBedSleepingTest
 {
@@ -83,12 +86,13 @@ public class NoBedSleepingTest
             {
                 IExtraSleeping inst = SLEEP_CAP.getDefaultInstance();
                 @Override
-                public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+                public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
                     return capability == SLEEP_CAP;
                 }
 
                 @Override
-                public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+                @Nullable
+                public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
                     return capability == SLEEP_CAP ? SLEEP_CAP.<T>cast(inst) : null;
                 }
 

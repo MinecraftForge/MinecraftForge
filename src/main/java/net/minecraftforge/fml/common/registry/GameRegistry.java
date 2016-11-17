@@ -259,7 +259,7 @@ public class GameRegistry
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
-//        TileEntity.addMapping(tileEntityClass, id);
+        GameData.getTileEntityRegistry().putObject(new ResourceLocation(id), tileEntityClass);
     }
 
     /**
@@ -272,14 +272,10 @@ public class GameRegistry
      */
     public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
     {
-//        TileEntity.addMapping(tileEntityClass, id);
-        Map<String, Class<?>> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "145855_i", "nameToClassMap");
+        GameRegistry.registerTileEntity(tileEntityClass, id);
         for (String s : alternatives)
         {
-            if (!teMappings.containsKey(s))
-            {
-                teMappings.put(s, tileEntityClass);
-            }
+            GameData.getTileEntityRegistry().addLegacyName(new ResourceLocation(s), new ResourceLocation(id));
         }
     }
 

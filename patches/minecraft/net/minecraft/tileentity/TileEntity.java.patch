@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -21,7 +21,7 @@
+@@ -21,10 +21,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -8,7 +8,11 @@
 +public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
      private static final Logger field_145852_a = LogManager.getLogger();
-     private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = new RegistryNamespaced();
+-    private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = new RegistryNamespaced();
++    private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = net.minecraftforge.fml.common.registry.GameData.getTileEntityRegistry();
+     protected World field_145850_b;
+     protected BlockPos field_174879_c = BlockPos.field_177992_a;
+     protected boolean field_145846_f;
 @@ -60,6 +60,8 @@
      public void func_145839_a(NBTTagCompound p_145839_1_)
      {
@@ -68,7 +72,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -303,6 +313,202 @@
+@@ -303,6 +313,205 @@
      {
      }
  
@@ -246,12 +250,15 @@
 +        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
 +    }
 +
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }

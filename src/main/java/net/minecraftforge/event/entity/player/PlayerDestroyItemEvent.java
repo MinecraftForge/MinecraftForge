@@ -39,6 +39,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * PlayerDestroyItemEvent is fired when a player destroys an item.<br>
@@ -63,9 +64,11 @@ import javax.annotation.Nonnull;
  **/
 public class PlayerDestroyItemEvent extends PlayerEvent
 {
+    @Nonnull
     private final ItemStack original;
+    @Nullable
     private final EnumHand hand; // May be null if this player destroys the item by any use besides holding it.
-    public PlayerDestroyItemEvent(EntityPlayer player, @Nonnull ItemStack original, EnumHand hand)
+    public PlayerDestroyItemEvent(EntityPlayer player, @Nonnull ItemStack original, @Nullable EnumHand hand)
     {
         super(player);
         this.original = original;
@@ -74,6 +77,7 @@ public class PlayerDestroyItemEvent extends PlayerEvent
 
     @Nonnull
     public ItemStack getOriginal() { return this.original; }
+    @Nullable
     public EnumHand getHand() { return this.hand; }
 
 }
