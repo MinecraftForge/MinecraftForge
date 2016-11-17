@@ -60,7 +60,7 @@ public class OreDictionary
     private static List<String>          idToName = new ArrayList<String>();
     private static Map<String, Integer>  nameToId = new HashMap<String, Integer>(128);
     private static List<NonNullList<ItemStack>> idToStack = Lists.newArrayList();
-    private static List<List<ItemStack>> idToStackUn = Lists.newArrayList();
+    private static List<NonNullList<ItemStack>> idToStackUn = Lists.newArrayList();
     private static Map<Integer, List<Integer>> stackToId = Maps.newHashMapWithExpectedSize((int)(128 * 0.75));
     public static final NonNullList<ItemStack> EMPTY_LIST = NonNullList.func_191196_a();
 
@@ -409,7 +409,7 @@ public class OreDictionary
             nameToId.put(name, val);
             NonNullList<ItemStack> back = NonNullList.func_191196_a();
             idToStack.add(back);
-            idToStackUn.add(Collections.unmodifiableList(back));
+            idToStackUn.add(back);
         }
         return val;
     }
@@ -474,7 +474,7 @@ public class OreDictionary
      * @param name The ore name, directly calls getOreID
      * @return An arrayList containing ItemStacks registered for this ore
      */
-    public static List<ItemStack> getOres(String name)
+    public static NonNullList<ItemStack> getOres(String name)
     {
         return getOres(getOreID(name));
     }
@@ -494,7 +494,7 @@ public class OreDictionary
      * @param alwaysCreateEntry Flag - should a new entry be created if empty
      * @return An arraylist containing ItemStacks registered for this ore
      */
-    public static List<ItemStack> getOres(String name, boolean alwaysCreateEntry)
+    public static NonNullList<ItemStack> getOres(String name, boolean alwaysCreateEntry)
     {
         if (alwaysCreateEntry) {
             return getOres(getOreID(name));
@@ -534,7 +534,7 @@ public class OreDictionary
      * @param id The ore ID, see getOreID
      * @return An List containing ItemStacks registered for this ore
      */
-    private static List<ItemStack> getOres(int id)
+    private static NonNullList<ItemStack> getOres(int id)
     {
         return idToStackUn.size() > id ? idToStackUn.get(id) : EMPTY_LIST;
     }
