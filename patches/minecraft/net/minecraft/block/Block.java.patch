@@ -1382,10 +1382,10 @@
 +     * @param hitZ The Z coordinate of the hit vector
 +     * @param meta The metadata of {@link ItemStack} as processed by {@link Item#getMetadata(int)}
 +     * @param placer The entity placing the block
-+     * @param stack The stack being used to place this block
++     * @param hand The player hand used to place this block
 +     * @return The state to be placed in the world
 +     */
-+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
++    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand)
 +    {
 +        return func_180642_a(world, pos, facing, hitX, hitY, hitZ, meta, placer);
 +    }
