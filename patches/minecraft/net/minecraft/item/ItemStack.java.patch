@@ -203,16 +203,19 @@
          }
  
          return multimap;
-@@ -982,6 +1007,50 @@
+@@ -982,6 +1007,53 @@
          }
      }
  
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return this.field_190928_g  || this.capabilities == null ? false : this.capabilities.hasCapability(capability, facing);
 +    }
 +
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return this.field_190928_g  || this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
 +    }
@@ -254,7 +257,7 @@
      @SideOnly(Side.CLIENT)
      public int func_190921_D()
      {
-@@ -1013,4 +1082,18 @@
+@@ -1013,4 +1085,18 @@
      {
          this.func_190917_f(-p_190918_1_);
      }

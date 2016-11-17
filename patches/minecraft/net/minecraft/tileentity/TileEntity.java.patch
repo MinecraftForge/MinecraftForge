@@ -72,7 +72,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -303,6 +313,202 @@
+@@ -303,6 +313,205 @@
      {
      }
  
@@ -250,12 +250,15 @@
 +        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
 +    }
 +
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }

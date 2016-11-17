@@ -802,7 +802,7 @@
          {
              BlockPos blockpos = p_175666_1_.func_177972_a(enumfacing);
  
-@@ -3621,6 +3815,112 @@
+@@ -3621,6 +3815,115 @@
          return i >= -128 && i <= 128 && j >= -128 && j <= 128;
      }
  
@@ -897,11 +897,14 @@
 +            capabilityData.setCapabilities(field_73011_w, capabilities);
 +        }
 +    }
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, EnumFacing facing)
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable EnumFacing facing)
 +    {
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, EnumFacing facing)
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }

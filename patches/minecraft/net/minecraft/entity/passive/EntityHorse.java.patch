@@ -8,7 +8,7 @@
      }
  
      public void func_110235_q(int p_110235_1_)
-@@ -401,4 +402,21 @@
+@@ -401,4 +402,22 @@
                  this.field_190885_a = p_i47337_1_;
              }
          }
@@ -18,14 +18,15 @@
 +
 +    @SuppressWarnings("unchecked")
 +    @Override
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T) itemHandler;
 +        return super.getCapability(capability, facing);
 +    }
 +
 +    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 +    }
