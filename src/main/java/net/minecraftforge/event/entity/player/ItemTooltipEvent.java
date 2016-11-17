@@ -23,16 +23,19 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public class ItemTooltipEvent extends PlayerEvent
 {
     private final boolean showAdvancedItemTooltips;
+    @Nonnull
     private final ItemStack itemStack;
     private final List<String> toolTip;
 
     /**
      * This event is fired in {@link ItemStack#getTooltip(EntityPlayer, boolean)}, which in turn is called from it's respective GUIContainer.
      */
-    public ItemTooltipEvent(ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, boolean showAdvancedItemTooltips)
+    public ItemTooltipEvent(@Nonnull ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, boolean showAdvancedItemTooltips)
     {
         super(entityPlayer);
         this.itemStack = itemStack;
@@ -51,6 +54,7 @@ public class ItemTooltipEvent extends PlayerEvent
     /**
      * The {@link ItemStack} with the tooltip.
      */
+    @Nonnull
     public ItemStack getItemStack()
     {
         return itemStack;

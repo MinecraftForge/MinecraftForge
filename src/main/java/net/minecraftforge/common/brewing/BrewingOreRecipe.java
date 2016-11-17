@@ -23,20 +23,22 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nonnull;
+
 public class BrewingOreRecipe extends AbstractBrewingRecipe<List<ItemStack>> {
 
-    public BrewingOreRecipe(ItemStack input, String ingredient, ItemStack output)
+    public BrewingOreRecipe(@Nonnull ItemStack input, @Nonnull String ingredient, @Nonnull ItemStack output)
     {
         super(input, OreDictionary.getOres(ingredient), output);
     }
 
-    public BrewingOreRecipe(ItemStack input, List<ItemStack> ingredient, ItemStack output)
+    public BrewingOreRecipe(@Nonnull ItemStack input, @Nonnull List<ItemStack> ingredient, @Nonnull ItemStack output)
     {
         super(input, ingredient, output);
     }
 
     @Override
-    public boolean isIngredient(ItemStack stack)
+    public boolean isIngredient(@Nonnull ItemStack stack)
     {
         for (ItemStack target : this.getIngredient())
         {

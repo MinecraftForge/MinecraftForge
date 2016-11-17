@@ -145,6 +145,7 @@ public class ForgeHooks
     }
     static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
 
+    @Nonnull
     public static ItemStack getGrassSeed(Random rand, int fortune)
     {
         SeedEntry entry = WeightedRandom.getRandomItem(rand, seedList);
@@ -210,7 +211,7 @@ public class ForgeHooks
         }
     }
 
-    public static boolean isToolEffective(IBlockAccess world, BlockPos pos, ItemStack stack)
+    public static boolean isToolEffective(IBlockAccess world, BlockPos pos, @Nonnull ItemStack stack)
     {
         IBlockState state = world.getBlockState(pos);
         state = state.getBlock().getActualState(state, world, pos);
@@ -455,7 +456,7 @@ public class ForgeHooks
                 }
             }
          */
-        ItemStack result = null;
+        ItemStack result;
         boolean isCreative = player.capabilities.isCreativeMode;
         TileEntity te = null;
 
@@ -483,7 +484,7 @@ public class ForgeHooks
             result = target.entityHit.getPickedResult(target);
         }
 
-        if (result == null)
+        if (result.func_190926_b())
         {
             return false;
         }
@@ -809,7 +810,7 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    public static EnumActionResult onPlaceItemIntoWorld(ItemStack itemstack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
+    public static EnumActionResult onPlaceItemIntoWorld(@Nonnull  ItemStack itemstack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
     {
         // handle all placement events here
         int meta = itemstack.getItemDamage();
@@ -900,11 +901,11 @@ public class ForgeHooks
         return ret;
     }
 
-    public static boolean onAnvilChange(ContainerRepair container, ItemStack left, ItemStack right, IInventory outputSlot, String name, int baseCost)
+    public static boolean onAnvilChange(ContainerRepair container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
     {
         AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
         if (MinecraftForge.EVENT_BUS.post(e)) return false;
-        if (e.getOutput() == null) return true;
+        if (e.getOutput().func_190926_b()) return true;
 
         outputSlot.setInventorySlotContents(0, e.getOutput());
         container.maximumCost = e.getCost();
@@ -1079,7 +1080,7 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
     }
 
-    public static void onEmptyLeftClick(EntityPlayer player, ItemStack stack)
+    public static void onEmptyLeftClick(EntityPlayer player, @Nonnull ItemStack stack)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player, stack));
     }

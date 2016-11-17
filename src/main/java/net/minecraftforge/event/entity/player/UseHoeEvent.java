@@ -26,6 +26,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+import javax.annotation.Nonnull;
+
 /**
  * This event is fired when a player attempts to use a Hoe on a block, it
  * can be canceled to completely prevent any further processing.
@@ -44,7 +46,7 @@ public class UseHoeEvent extends PlayerEvent
     private final World world;
     private final BlockPos pos;
 
-    public UseHoeEvent(EntityPlayer player, ItemStack current, World world, BlockPos pos)
+    public UseHoeEvent(EntityPlayer player, @Nonnull ItemStack current, World world, BlockPos pos)
     {
         super(player);
         this.current = current;
@@ -52,6 +54,7 @@ public class UseHoeEvent extends PlayerEvent
         this.pos = pos;
     }
 
+    @Nonnull
     public ItemStack getCurrent()
     {
         return current;

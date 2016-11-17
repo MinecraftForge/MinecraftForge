@@ -23,6 +23,8 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 /**
  * 
  * AnvilUpdateEvent is fired when a player places items in both the left and right slots of a anvil.
@@ -40,7 +42,7 @@ public class AnvilUpdateEvent extends Event
     private int cost;              // The base cost, set this to change it if output != null
     private int materialCost; // The number of items from the right slot to be consumed during the repair. Leave as 0 to consume the entire stack.
 
-    public AnvilUpdateEvent(ItemStack left, ItemStack right, String name, int cost)
+    public AnvilUpdateEvent(@Nonnull ItemStack left, @Nonnull ItemStack right, String name, int cost)
     {
         this.left = left;
         this.right = right;
@@ -49,11 +51,14 @@ public class AnvilUpdateEvent extends Event
         this.setMaterialCost(0);
     }
 
+    @Nonnull
     public ItemStack getLeft() { return left; }
+    @Nonnull
     public ItemStack getRight() { return right; }
     public String getName() { return name; }
+    @Nonnull
     public ItemStack getOutput() { return output; }
-    public void setOutput(ItemStack output) { this.output = output; }
+    public void setOutput(@Nonnull ItemStack output) { this.output = output; }
     public int getCost() { return cost; }
     public void setCost(int cost) { this.cost = cost; }
     public int getMaterialCost() { return materialCost; }

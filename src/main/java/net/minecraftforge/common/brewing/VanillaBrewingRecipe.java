@@ -24,6 +24,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionHelper;
 
+import javax.annotation.Nonnull;
+
 /**
  * Used in BrewingRecipeRegistry to maintain the vanilla behaviour.
  *
@@ -35,7 +37,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * Code adapted from TileEntityBrewingStand.isItemValidForSlot(int index, ItemStack stack)
      */
     @Override
-    public boolean isInput(ItemStack stack)
+    public boolean isInput(@Nonnull ItemStack stack)
     {
         Item item = stack.getItem();
         return item == Items.POTIONITEM || item == Items.SPLASH_POTION || item == Items.LINGERING_POTION || item == Items.GLASS_BOTTLE;
@@ -45,7 +47,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * Code adapted from TileEntityBrewingStand.isItemValidForSlot(int index, ItemStack stack)
      */
     @Override
-    public boolean isIngredient(ItemStack stack)
+    public boolean isIngredient(@Nonnull ItemStack stack)
     {
         return PotionHelper.isReagent(stack);
     }
@@ -56,9 +58,9 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * or if the new potion is a splash potion when the old one wasn't.
      */
     @Override
-    public ItemStack getOutput(ItemStack input, ItemStack ingredient)
+    public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
     {
-        if (ingredient != null && input != null && isIngredient(ingredient))
+        if (isIngredient(ingredient))
         {
             ItemStack result = PotionHelper.doReaction(ingredient, input);
             if (result != input)

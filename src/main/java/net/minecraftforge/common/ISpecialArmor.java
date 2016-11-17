@@ -34,6 +34,8 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
+import javax.annotation.Nonnull;
+
 /**
  * This interface is to be implemented by ItemArmor classes. It will allow to
  * modify computation of damage and health loss. Computation will be called
@@ -60,7 +62,7 @@ public interface ISpecialArmor
      * @param slot The armor slot the item is in.
      * @return A ArmorProperties instance holding information about how the armor effects damage.
      */
-    public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot);
+    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, int slot);
 
     /**
      * Get the displayed effective armor.
@@ -70,7 +72,7 @@ public interface ISpecialArmor
      * @param slot The armor slot the item is in.
      * @return The number of armor points for display, 2 per shield.
      */
-    public abstract int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot);
+    public abstract int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot);
 
     /**
      * Applies damage to the ItemStack. The mod is responsible for reducing the
@@ -84,7 +86,7 @@ public interface ISpecialArmor
      * @param damage The amount of damage being applied to the armor
      * @param slot The armor slot the item is in.
      */
-    public abstract void damageArmor(EntityLivingBase entity, ItemStack stack, DamageSource source, int damage, int slot);
+    public abstract void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot);
 
     public static class ArmorProperties implements Comparable<ArmorProperties>
     {

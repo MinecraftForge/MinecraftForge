@@ -50,7 +50,7 @@ public class BrewingRecipeRegistry {
      *            done.
      * @return true if the recipe was added.
      */
-    public static boolean addRecipe(ItemStack input, ItemStack ingredient, ItemStack output)
+    public static boolean addRecipe(@Nonnull ItemStack input, @Nonnull ItemStack ingredient, @Nonnull ItemStack output)
     {
         return addRecipe(new BrewingRecipe(input, ingredient, output));
     }
@@ -69,7 +69,7 @@ public class BrewingRecipeRegistry {
      *            done.
      * @return true if the recipe was added.
      */
-    public static boolean addRecipe(ItemStack input, String ingredient, ItemStack output)
+    public static boolean addRecipe(@Nonnull ItemStack input, @Nonnull String ingredient, @Nonnull ItemStack output)
     {
         return addRecipe(new BrewingOreRecipe(input, ingredient, output));
     }
@@ -85,7 +85,7 @@ public class BrewingRecipeRegistry {
 
     /**
      * Returns the output ItemStack obtained by brewing the passed input and
-     * ingredient. Null if no matches are found.
+     * ingredient.
      */
     @Nonnull
     public static ItemStack getOutput(@Nonnull ItemStack input, ItemStack ingredient)

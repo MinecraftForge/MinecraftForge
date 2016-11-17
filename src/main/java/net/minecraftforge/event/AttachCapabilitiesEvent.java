@@ -28,6 +28,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 
+import javax.annotation.Nonnull;
+
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
  * is created. Allowing for the attachment of arbitrary capability providers.
@@ -126,10 +128,10 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
      */
     public static class Item extends AttachCapabilitiesEvent<net.minecraft.item.Item>
     {
-        @Deprecated
         private final net.minecraft.item.ItemStack stack;
+        @Deprecated
         private final net.minecraft.item.Item item;
-        public Item(net.minecraft.item.Item item, net.minecraft.item.ItemStack stack)
+        public Item(net.minecraft.item.Item item, @Nonnull  net.minecraft.item.ItemStack stack)
         {
             super(net.minecraft.item.Item.class, item);
             this.item = item;
@@ -140,6 +142,7 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
         {
             return this.item;
         }
+        @Nonnull
         public net.minecraft.item.ItemStack getItemStack()
         {
             return this.stack;
