@@ -36,7 +36,7 @@ import net.minecraftforge.common.ForgeHooks;
 
 public class ShapelessOreRecipe implements IRecipe
 {
-    protected ItemStack output = null;
+    protected ItemStack output = ItemStack.field_190927_a;
     protected ArrayList<Object> input = new ArrayList<Object>();
 
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -114,7 +114,7 @@ public class ShapelessOreRecipe implements IRecipe
         {
             ItemStack slot = var1.getStackInSlot(x);
 
-            if (slot != null)
+            if (!slot.func_190926_b())
             {
                 boolean inRecipe = false;
                 Iterator<Object> req = required.iterator();

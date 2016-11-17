@@ -337,8 +337,8 @@ public class OreDictionary
             new ItemStack(Blocks.WOODEN_SLAB),
             new ItemStack(Blocks.GLASS_PANE),
             new ItemStack(Blocks.BONE_BLOCK), // Bone Block, to prevent conversion of dyes into bone meal.
-            new ItemStack(Items.BOAT), 
-            null //So the above can have a comma and we don't have to keep editing extra lines.
+            new ItemStack(Items.BOAT),
+            ItemStack.field_190927_a //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
         List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
@@ -352,7 +352,7 @@ public class OreDictionary
             {
                 ShapedRecipes recipe = (ShapedRecipes)obj;
                 ItemStack output = recipe.getRecipeOutput();
-                if (output != null && containsMatch(false, exclusions, output))
+                if (!output.func_190926_b() && containsMatch(false, exclusions, output))
                 {
                     continue;
                 }
@@ -367,7 +367,7 @@ public class OreDictionary
             {
                 ShapelessRecipes recipe = (ShapelessRecipes)obj;
                 ItemStack output = recipe.getRecipeOutput();
-                if (output != null && containsMatch(false, exclusions, output))
+                if (!output.func_190926_b() && containsMatch(false, exclusions, output))
                 {
                     continue;
                 }
@@ -431,7 +431,7 @@ public class OreDictionary
      */
     public static int[] getOreIDs(ItemStack stack)
     {
-        if (stack == null || stack.getItem() == null) throw new IllegalArgumentException("Stack can not be null!");
+        if (stack.func_190926_b()) throw new IllegalArgumentException("Stack can not be invalid!");
 
         Set<Integer> set = new HashSet<Integer>();
 
@@ -568,7 +568,7 @@ public class OreDictionary
 
     public static boolean itemMatches(ItemStack target, ItemStack input, boolean strict)
     {
-        if (input == null && target != null || input != null && target == null)
+        if (input.func_190926_b() && !target.func_190926_b() || !input.func_190926_b() && target.func_190926_b())
         {
             return false;
         }
@@ -590,7 +590,7 @@ public class OreDictionary
     private static void registerOreImpl(String name, ItemStack ore)
     {
         if ("Unknown".equals(name)) return; //prevent bad IDs.
-        if (ore == null || ore.getItem() == null)
+        if (ore.func_190926_b())
         {
             FMLLog.bigWarning("Invalid registration attempt for an Ore Dictionary item with name %s has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", name);
             return; //prevent bad ItemStacks.

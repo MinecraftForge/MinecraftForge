@@ -157,7 +157,7 @@ public class ShapedOreRecipe implements IRecipe
         {
             ItemStack ingredient = recipe.recipeItems[i];
 
-            if(ingredient == null) continue;
+            if(ingredient.func_190926_b()) continue;
 
             input[i] = recipe.recipeItems[i];
 
@@ -250,7 +250,7 @@ public class ShapedOreRecipe implements IRecipe
                         return false;
                     }
                 }
-                else if (target == null && slot != null)
+                else if (target == null && !slot.func_190926_b())
                 {
                     return false;
                 }
