@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombie.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombie.java
-@@ -60,6 +60,7 @@
-     private static final DataParameter<Boolean> field_184737_bv = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
-     private static final DataParameter<Integer> field_184738_bw = EntityDataManager.<Integer>func_187226_a(EntityZombie.class, DataSerializers.field_187192_b);
-     private static final DataParameter<Boolean> field_184740_by = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
-+    private static final DataParameter<String>  VILLAGER_TYPE_STR = EntityDataManager.<String>func_187226_a(EntityZombie.class, DataSerializers.field_187194_d);
-     private final EntityAIBreakDoor field_146075_bs = new EntityAIBreakDoor(this);
-     private boolean field_146076_bu;
-     private float field_146074_bv = -1.0F;
-@@ -98,7 +99,7 @@
+@@ -98,7 +98,7 @@
          this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23000000417232513D);
          this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
          this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_111128_a(2.0D);
@@ -17,15 +9,7 @@
      }
  
      protected void func_70088_a()
-@@ -106,6 +107,7 @@
-         super.func_70088_a();
-         this.func_184212_Q().func_187214_a(field_184737_bv, Boolean.valueOf(false));
-         this.func_184212_Q().func_187214_a(field_184738_bw, Integer.valueOf(0));
-+        this.func_184212_Q().func_187214_a(VILLAGER_TYPE_STR, "");
-         this.func_184212_Q().func_187214_a(field_184740_by, Boolean.valueOf(false));
-     }
- 
-@@ -239,12 +241,24 @@
+@@ -239,12 +239,24 @@
                  entitylivingbase = (EntityLivingBase)p_70097_1_.func_76346_g();
              }
  
@@ -55,7 +39,7 @@
  
                  for (int l = 0; l < 50; ++l)
                  {
-@@ -252,14 +266,14 @@
+@@ -252,14 +264,14 @@
                      int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
                      int k1 = k + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
  

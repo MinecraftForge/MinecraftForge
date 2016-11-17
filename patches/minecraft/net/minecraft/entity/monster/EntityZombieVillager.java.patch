@@ -16,7 +16,7 @@
 +    public void setForgeProfession(net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof)
 +    {
 +        this.prof = prof;
-+        net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, prof);
++        this.func_190733_a(net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof));
 +    }
 +
 +    public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getForgeProfession()
