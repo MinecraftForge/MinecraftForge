@@ -93,6 +93,17 @@
              return entityitem;
          }
          else
+@@ -1790,8 +1807,8 @@
+                 if (blockpos$pooledmutableblockpos.func_177958_n() != k || blockpos$pooledmutableblockpos.func_177956_o() != j || blockpos$pooledmutableblockpos.func_177952_p() != l)
+                 {
+                     blockpos$pooledmutableblockpos.func_181079_c(k, j, l);
+-
+-                    if (this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos).func_177230_c().func_176214_u())
++                    IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
++                    if (iblockstate.func_177230_c().causesSuffocation(iblockstate))
+                     {
+                         blockpos$pooledmutableblockpos.func_185344_t();
+                         return true;
 @@ -1867,6 +1884,7 @@
  
      public boolean func_184205_a(Entity p_184205_1_, boolean p_184205_2_)
