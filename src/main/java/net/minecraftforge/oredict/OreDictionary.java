@@ -653,6 +653,7 @@ public class OreDictionary
             return Name;
         }
 
+        @Nonnull
         public ItemStack getOre()
         {
             return Ore;

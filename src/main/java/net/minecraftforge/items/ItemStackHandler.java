@@ -154,7 +154,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         }
     }
 
-    protected int getStackLimit(int slot, ItemStack stack)
+    protected int getStackLimit(int slot, @Nonnull ItemStack stack)
     {
         return stack.getMaxStackSize();
     }
