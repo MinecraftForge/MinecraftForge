@@ -103,7 +103,7 @@
 +    }
 +
 +    // Split off from original setBlockState(BlockPos, IBlockState, int) method in order to directly send client and physic updates
-+    public void markAndNotifyBlock(BlockPos p_180501_1_, Chunk chunk, IBlockState iblockstate, IBlockState p_180501_2_, int p_180501_3_)
++    public void markAndNotifyBlock(BlockPos p_180501_1_, @Nullable Chunk chunk, IBlockState iblockstate, IBlockState p_180501_2_, int p_180501_3_)
 +    {
 +        Block block = p_180501_2_.func_177230_c();
 +        {

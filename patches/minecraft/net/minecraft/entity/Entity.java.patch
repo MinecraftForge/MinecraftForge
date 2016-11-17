@@ -158,7 +158,7 @@
 +     * Called when a user uses the creative pick block button on this entity.
 +     *
 +     * @param target The full target the player is looking at
-+     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
++     * @return A ItemStack to add to the player's inventory, empty ItemStack if nothing should be added.
 +     */
 +    public ItemStack getPickedResult(RayTraceResult target)
 +    {
@@ -173,7 +173,7 @@
 +        else if (this instanceof net.minecraft.entity.item.EntityItemFrame)
 +        {
 +            ItemStack held = ((net.minecraft.entity.item.EntityItemFrame)this).func_82335_i();
-+            if (held == null)
++            if (held.func_190926_b())
 +            {
 +                return new ItemStack(net.minecraft.init.Items.field_151160_bD);
 +            }
@@ -201,14 +201,14 @@
 +        else
 +        {
 +            ResourceLocation name = EntityList.func_191301_a(this);
-+            if (EntityList.field_75627_a.containsKey(name))
++            if (name != null && EntityList.field_75627_a.containsKey(name))
 +            {
 +                ItemStack stack = new ItemStack(net.minecraft.init.Items.field_151063_bx);
 +                net.minecraft.item.ItemMonsterPlacer.func_185078_a(stack, name);
 +                return stack;
 +            }
 +        }
-+        return null;
++        return ItemStack.field_190927_a;
 +    }
 +
 +    public UUID getPersistentID()
