@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.block.BlockPrismarine;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 
@@ -56,10 +57,10 @@ public class OreDictionary
     private static boolean hasInit = false;
     private static List<String>          idToName = new ArrayList<String>();
     private static Map<String, Integer>  nameToId = new HashMap<String, Integer>(128);
-    private static List<List<ItemStack>> idToStack = Lists.newArrayList();
-    private static List<List<ItemStack>> idToStackUn = Lists.newArrayList();
+    private static List<NonNullList<ItemStack>> idToStack = Lists.newArrayList();
+    private static List<NonNullList<ItemStack>> idToStackUn = Lists.newArrayList();
     private static Map<Integer, List<Integer>> stackToId = Maps.newHashMapWithExpectedSize((int)(128 * 0.75));
-    public static final ImmutableList<ItemStack> EMPTY_LIST = ImmutableList.of();
+    public static final NonNullList<ItemStack> EMPTY_LIST = NonNullList.func_191196_a();
 
     /**
      * Minecraft changed from -1 to Short.MAX_VALUE in 1.5 release for the "block wildcard". Use this in case it
@@ -404,9 +405,9 @@ public class OreDictionary
             idToName.add(name);
             val = idToName.size() - 1; //0 indexed
             nameToId.put(name, val);
-            List<ItemStack> back = Lists.newArrayList();
+            NonNullList<ItemStack> back = NonNullList.func_191196_a();
             idToStack.add(back);
-            idToStackUn.add(Collections.unmodifiableList(back));
+            idToStackUn.add(NonNullList.<ItemStack>func_191196_a());
         }
         return val;
     }
@@ -471,7 +472,7 @@ public class OreDictionary
      * @param name The ore name, directly calls getOreID
      * @return An arrayList containing ItemStacks registered for this ore
      */
-    public static List<ItemStack> getOres(String name)
+    public static NonNullList<ItemStack> getOres(String name)
     {
         return getOres(getOreID(name));
     }
@@ -491,7 +492,7 @@ public class OreDictionary
      * @param alwaysCreateEntry Flag - should a new entry be created if empty
      * @return An arraylist containing ItemStacks registered for this ore
      */
-    public static List<ItemStack> getOres(String name, boolean alwaysCreateEntry)
+    public static NonNullList<ItemStack> getOres(String name, boolean alwaysCreateEntry)
     {
         if (alwaysCreateEntry) {
             return getOres(getOreID(name));
@@ -531,7 +532,7 @@ public class OreDictionary
      * @param id The ore ID, see getOreID
      * @return An List containing ItemStacks registered for this ore
      */
-    private static List<ItemStack> getOres(int id)
+    private static NonNullList<ItemStack> getOres(int id)
     {
         return idToStackUn.size() > id ? idToStackUn.get(id) : EMPTY_LIST;
     }
@@ -551,7 +552,7 @@ public class OreDictionary
         return false;
     }
 
-    public static boolean containsMatch(boolean strict, List<ItemStack> inputs, ItemStack... targets)
+    public static boolean containsMatch(boolean strict, NonNullList<ItemStack> inputs, ItemStack... targets)
     {
         for (ItemStack input : inputs)
         {
@@ -662,7 +663,7 @@ public class OreDictionary
         stackToId.clear();
         for (int id = 0; id < idToStack.size(); id++)
         {
-            List<ItemStack> ores = idToStack.get(id);
+            NonNullList<ItemStack> ores = idToStack.get(id);
             if (ores == null) continue;
             for (ItemStack ore : ores)
             {

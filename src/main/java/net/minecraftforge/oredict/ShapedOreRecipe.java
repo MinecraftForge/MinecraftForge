@@ -40,7 +40,7 @@ public class ShapedOreRecipe implements IRecipe
     public static final int MAX_CRAFT_GRID_WIDTH = 3;
     public static final int MAX_CRAFT_GRID_HEIGHT = 3;
 
-    protected ItemStack output = null;
+    protected ItemStack output = ItemStack.field_190927_a;
     protected Object[] input = null;
     protected int width = 0;
     protected int height = 0;
@@ -239,7 +239,7 @@ public class ShapedOreRecipe implements IRecipe
                 {
                     boolean matched = false;
 
-                    Iterator<ItemStack> itr = ((List<ItemStack>)target).iterator();
+                    Iterator<ItemStack> itr = ((NonNullList<ItemStack>)target).iterator();
                     while (itr.hasNext() && !matched)
                     {
                         matched = OreDictionary.itemMatches(itr.next(), slot, false);

@@ -37,7 +37,7 @@ import net.minecraftforge.common.ForgeHooks;
 public class ShapelessOreRecipe implements IRecipe
 {
     protected ItemStack output = ItemStack.field_190927_a;
-    protected ArrayList<Object> input = new ArrayList<Object>();
+    protected NonNullList<Object> input = NonNullList.func_191196_a();
 
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapelessOreRecipe(Item  result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -108,7 +108,8 @@ public class ShapelessOreRecipe implements IRecipe
     @Override
     public boolean matches(InventoryCrafting var1, World world)
     {
-        ArrayList<Object> required = new ArrayList<Object>(input);
+        NonNullList<Object> required = NonNullList.func_191196_a();
+        required.addAll(input);
 
         for (int x = 0; x < var1.getSizeInventory(); x++)
         {
@@ -161,7 +162,7 @@ public class ShapelessOreRecipe implements IRecipe
      * manipulate the values in this array as it will effect the recipe itself.
      * @return The recipes input vales.
      */
-    public ArrayList<Object> getInput()
+    public NonNullList<Object> getInput()
     {
         return this.input;
     }
