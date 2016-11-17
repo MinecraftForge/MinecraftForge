@@ -125,6 +125,8 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+import javax.annotation.Nonnull;
+
 public class ForgeHooks
 {
     //TODO: Loot tables?
@@ -957,21 +959,20 @@ public class ForgeHooks
     {
         return craftingPlayer.get();
     }
-    public static ItemStack getContainerItem(ItemStack stack)
+    @Nonnull
+    public static ItemStack getContainerItem(@Nonnull ItemStack stack)
     {
-        if (stack == null) return null;
-
         if (stack.getItem().hasContainerItem(stack))
         {
             stack = stack.getItem().getContainerItem(stack);
-            if (stack != null && stack.isItemStackDamageable() && stack.getMetadata() > stack.getMaxDamage())
+            if (!stack.func_190926_b() && stack.isItemStackDamageable() && stack.getMetadata() > stack.getMaxDamage())
             {
                 ForgeEventFactory.onPlayerDestroyItem(craftingPlayer.get(), stack, null);
-                return null;
+                return ItemStack.field_190927_a;
             }
             return stack;
         }
-        return null;
+        return ItemStack.field_190927_a;
     }
 
     public static boolean isInsideOfMaterial(Material material, Entity entity, BlockPos pos)
