@@ -52,6 +52,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.registry.GameData;
 
+import javax.annotation.Nonnull;
+
 public class OreDictionary
 {
     private static boolean hasInit = false;
@@ -338,7 +340,7 @@ public class OreDictionary
             new ItemStack(Blocks.WOODEN_SLAB),
             new ItemStack(Blocks.GLASS_PANE),
             new ItemStack(Blocks.BONE_BLOCK), // Bone Block, to prevent conversion of dyes into bone meal.
-            new ItemStack(Items.BOAT), 
+            new ItemStack(Items.BOAT),
             ItemStack.field_190927_a //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
@@ -430,7 +432,7 @@ public class OreDictionary
      * @param stack The item stack of the ore.
      * @return An array of ids that this ore is registered as.
      */
-    public static int[] getOreIDs(ItemStack stack)
+    public static int[] getOreIDs(@Nonnull ItemStack stack)
     {
         if (stack.func_190926_b()) throw new IllegalArgumentException("Stack can not be invalid!");
 
@@ -537,7 +539,7 @@ public class OreDictionary
         return idToStackUn.size() > id ? idToStackUn.get(id) : EMPTY_LIST;
     }
 
-    private static boolean containsMatch(boolean strict, ItemStack[] inputs, ItemStack... targets)
+    private static boolean containsMatch(boolean strict, ItemStack[] inputs, @Nonnull ItemStack... targets)
     {
         for (ItemStack input : inputs)
         {
@@ -552,7 +554,7 @@ public class OreDictionary
         return false;
     }
 
-    public static boolean containsMatch(boolean strict, NonNullList<ItemStack> inputs, ItemStack... targets)
+    public static boolean containsMatch(boolean strict, NonNullList<ItemStack> inputs, @Nonnull ItemStack... targets)
     {
         for (ItemStack input : inputs)
         {
@@ -567,7 +569,7 @@ public class OreDictionary
         return false;
     }
 
-    public static boolean itemMatches(ItemStack target, ItemStack input, boolean strict)
+    public static boolean itemMatches(@Nonnull ItemStack target, @Nonnull ItemStack input, boolean strict)
     {
         if (input.func_190926_b() && !target.func_190926_b() || !input.func_190926_b() && target.func_190926_b())
         {
@@ -579,7 +581,7 @@ public class OreDictionary
     //Convenience functions that make for cleaner code mod side. They all drill down to registerOre(String, int, ItemStack)
     public static void registerOre(String name, Item      ore){ registerOre(name, new ItemStack(ore));  }
     public static void registerOre(String name, Block     ore){ registerOre(name, new ItemStack(ore));  }
-    public static void registerOre(String name, ItemStack ore){ registerOreImpl(name, ore);             }
+    public static void registerOre(String name, @Nonnull ItemStack ore){ registerOreImpl(name, ore);             }
 
     /**
      * Registers a ore item into the dictionary.
@@ -588,7 +590,7 @@ public class OreDictionary
      * @param name The name of the ore
      * @param ore The ore's ItemStack
      */
-    private static void registerOreImpl(String name, ItemStack ore)
+    private static void registerOreImpl(String name, @Nonnull ItemStack ore)
     {
         if ("Unknown".equals(name)) return; //prevent bad IDs.
         if (ore.func_190926_b())
@@ -640,7 +642,7 @@ public class OreDictionary
         private final String Name;
         private final ItemStack Ore;
 
-        public OreRegisterEvent(String name, ItemStack ore)
+        public OreRegisterEvent(String name, @Nonnull ItemStack ore)
         {
             this.Name = name;
             this.Ore = ore;

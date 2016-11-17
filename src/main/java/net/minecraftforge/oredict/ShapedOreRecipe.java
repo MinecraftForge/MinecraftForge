@@ -34,6 +34,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
+import javax.annotation.Nonnull;
+
 public class ShapedOreRecipe implements IRecipe
 {
     //Added in for future ease of change, but hard coded for now.
@@ -48,7 +50,7 @@ public class ShapedOreRecipe implements IRecipe
 
     public ShapedOreRecipe(Block     result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapedOreRecipe(Item      result, Object... recipe){ this(new ItemStack(result), recipe); }
-    public ShapedOreRecipe(ItemStack result, Object... recipe)
+    public ShapedOreRecipe(@Nonnull ItemStack result, Object... recipe)
     {
         output = result.copy();
 

@@ -34,6 +34,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
+import javax.annotation.Nonnull;
+
 public class ShapelessOreRecipe implements IRecipe
 {
     protected ItemStack output = ItemStack.field_190927_a;
@@ -42,7 +44,7 @@ public class ShapelessOreRecipe implements IRecipe
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapelessOreRecipe(Item  result, Object... recipe){ this(new ItemStack(result), recipe); }
 
-    public ShapelessOreRecipe(ItemStack result, Object... recipe)
+    public ShapelessOreRecipe(@Nonnull ItemStack result, Object... recipe)
     {
         output = result.copy();
         for (Object in : recipe)
