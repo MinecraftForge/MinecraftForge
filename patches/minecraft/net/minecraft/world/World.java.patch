@@ -206,6 +206,15 @@
              this.func_72964_e(i, j).func_76612_a(p_72838_1_);
              this.field_72996_f.add(p_72838_1_);
              this.func_72923_a(p_72838_1_);
+@@ -1221,7 +1284,7 @@
+                 }
+             }
+         }
+-
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.GetCollisionBoxesEvent(this, p_184144_1_, p_184144_2_, list));
+         return list;
+     }
+ 
 @@ -1296,7 +1359,6 @@
          return list;
      }
