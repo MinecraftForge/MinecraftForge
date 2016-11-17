@@ -60,6 +60,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 @Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
 public class DynBucketTest
 {
@@ -335,13 +338,14 @@ public class DynBucketTest
         }
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
         {
             return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
             if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
             {

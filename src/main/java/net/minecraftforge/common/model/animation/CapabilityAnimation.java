@@ -28,6 +28,9 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class CapabilityAnimation
 {
     @CapabilityInject(IAnimationStateMachine.class)
@@ -61,12 +64,15 @@ public class CapabilityAnimation
             this.asm = asm;
         }
 
-        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        @Override
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
         {
             return capability == ANIMATION_CAPABILITY;
         }
 
-        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        @Override
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
             if(capability == ANIMATION_CAPABILITY)
             {

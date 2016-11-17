@@ -57,6 +57,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.collect.ImmutableMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 @Mod(modid = ModelAnimationDebug.MODID, name = "ForgeDebugModelAnimation", version = ModelAnimationDebug.VERSION)
 public class ModelAnimationDebug
 {
@@ -241,12 +244,15 @@ public class ModelAnimationDebug
             "cycle_length", cycleLength
         ));
 
-        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        @Override
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
         {
             return capability == CapabilityAnimation.ANIMATION_CAPABILITY;
         }
 
-        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        @Override
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -330,7 +336,7 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing side)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -340,7 +346,8 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing side)
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -387,7 +394,7 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing side)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -397,7 +404,8 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing side)
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
