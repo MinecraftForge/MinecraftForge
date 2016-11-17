@@ -1222,7 +1222,7 @@
 +     * Queries the class of tool required to harvest this block, if null is returned
 +     * we assume that anything can harvest this block.
 +     */
-+    public String getHarvestTool(IBlockState state)
++    @Nullable public String getHarvestTool(IBlockState state)
 +    {
 +        return harvestTool[func_176201_c(state)];
 +    }
