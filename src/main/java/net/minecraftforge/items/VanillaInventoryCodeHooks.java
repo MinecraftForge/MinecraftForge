@@ -47,15 +47,15 @@ public class VanillaInventoryCodeHooks
         for (int i = 0; i < handler.getSlots(); i++)
         {
             ItemStack extractItem = handler.extractItem(i, 1, true);
-            if (extractItem != null)
+            if (!extractItem.func_190926_b())
             {
                 for (int j = 0; j < dest.getSizeInventory(); j++)
                 {
                     ItemStack destStack = dest.getStackInSlot(j);
-                    if (destStack == null || destStack.func_190916_E() < destStack.getMaxStackSize() && destStack.func_190916_E() < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack))
+                    if (destStack.func_190926_b() || destStack.func_190916_E() < destStack.getMaxStackSize() && destStack.func_190916_E() < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack))
                     {
                         extractItem = handler.extractItem(i, 1, false);
-                        if (destStack == null)
+                        if (destStack.func_190926_b())
                             dest.setInventorySlotContents(j, extractItem);
                         else
                         {
@@ -120,7 +120,7 @@ public class VanillaInventoryCodeHooks
         for (int i = 0; i < hopper.getSizeInventory(); i++)
         {
             ItemStack stackInSlot = hopper.getStackInSlot(i);
-            if (stackInSlot != null)
+            if (stackInSlot.func_190926_b())
             {
                 ItemStack insert = stackInSlot.copy();
                 insert.func_190920_e(1);

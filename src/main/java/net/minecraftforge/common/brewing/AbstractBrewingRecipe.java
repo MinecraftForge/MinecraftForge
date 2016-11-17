@@ -49,9 +49,10 @@ public abstract class AbstractBrewingRecipe<T> implements IBrewingRecipe {
     }
 
     @Override
+    @Nonnull
     public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
     {
-        return isInput(input) && isIngredient(ingredient) ? getOutput().copy() : null;
+        return isInput(input) && isIngredient(ingredient) ? getOutput().copy() : ItemStack.field_190927_a;
     }
 
     @Nonnull

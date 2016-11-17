@@ -398,9 +398,9 @@ public class ForgeEventFactory
         return event;
     }
 
-    public static int onItemExpire(EntityItem entity, ItemStack item)
+    public static int onItemExpire(EntityItem entity, @Nonnull ItemStack item)
     {
-        if (item == null) return -1;
+        if (item.func_190926_b()) return -1;
         ItemExpireEvent event = new ItemExpireEvent(entity, (item.func_190926_b() ? 6000 : item.getItem().getEntityLifespan(item, entity.worldObj)));
         if (!MinecraftForge.EVENT_BUS.post(event)) return -1;
         return event.getExtraLife();

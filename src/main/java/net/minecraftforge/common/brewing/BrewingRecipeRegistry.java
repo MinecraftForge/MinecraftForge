@@ -88,7 +88,7 @@ public class BrewingRecipeRegistry {
      * ingredient.
      */
     @Nonnull
-    public static ItemStack getOutput(@Nonnull ItemStack input, ItemStack ingredient)
+    public static ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
     {
         if (input.func_190926_b() || input.getMaxStackSize() != 1 || input.func_190916_E() != 1) return ItemStack.field_190927_a;
         if (ingredient.func_190926_b()) return ItemStack.field_190927_a;
@@ -107,7 +107,7 @@ public class BrewingRecipeRegistry {
     /**
      * Returns true if the passed input and ingredient have an output
      */
-    public static boolean hasOutput(ItemStack input, ItemStack ingredient)
+    public static boolean hasOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
     {
         return !getOutput(input, ingredient).func_190926_b();
     }
