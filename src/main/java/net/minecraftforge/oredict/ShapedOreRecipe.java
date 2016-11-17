@@ -241,7 +241,7 @@ public class ShapedOreRecipe implements IRecipe
                 {
                     boolean matched = false;
 
-                    Iterator<ItemStack> itr = ((NonNullList<ItemStack>)target).iterator();
+                    Iterator<ItemStack> itr = ((List<ItemStack>)target).iterator();
                     while (itr.hasNext() && !matched)
                     {
                         matched = OreDictionary.itemMatches(itr.next(), slot, false);
