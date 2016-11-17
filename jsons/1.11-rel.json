@@ -8,7 +8,8 @@
   "welcome":"Welcome to the simple @project@ installer.",
   "minecraft":"@minecraft_version@",
   "mirrorList" : "http://files.minecraftforge.net/mirror-brand.list",
-  "logo":"/big_logo.png"
+  "logo":"/big_logo.png",
+  "modList":"none"
 },
 "versionInfo": {
   "id": "@minecraft_version@-@project@@version@",
