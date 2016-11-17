@@ -39,7 +39,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
     public ItemStackHandler(int size)
     {
-        stacks = NonNullList.func_191196_a();
+        stacks = NonNullList.func_191197_a(size, ItemStack.field_190927_a);
     }
 
     public ItemStackHandler(NonNullList<ItemStack> stacks)
