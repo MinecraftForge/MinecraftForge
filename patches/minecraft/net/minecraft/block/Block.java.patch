@@ -208,7 +208,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +934,1186 @@
+@@ -908,6 +934,1187 @@
      {
      }
  
@@ -1022,7 +1022,8 @@
 +                   this != net.minecraft.init.Blocks.field_150411_aY &&
 +                   this != net.minecraft.init.Blocks.field_185775_db;
 +        }
-+        else if (entity instanceof net.minecraft.entity.boss.EntityWither)
++        else if ((entity instanceof net.minecraft.entity.boss.EntityWither) ||
++                 (entity instanceof net.minecraft.entity.projectile.EntityWitherSkull))
 +        {
 +            return net.minecraft.entity.boss.EntityWither.func_181033_a(this);
 +        }
@@ -1395,7 +1396,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2407,7 @@
+@@ -1201,14 +2408,7 @@
              }
              else
              {
