@@ -159,6 +159,7 @@ public class VillagerRegistry
         {
             register(prof, 1);
             (new VillagerCareer(prof, "librarian")).init(VanillaTrades.trades[1][0]);
+            (new VillagerCareer(prof, "cartographer")).init(VanillaTrades.trades[1][1]);
         }
         prof = new VillagerProfession("minecraft:priest",
                 "minecraft:textures/entity/villager/priest.png",
@@ -185,8 +186,8 @@ public class VillagerRegistry
             (new VillagerCareer(prof, "leather")).init(VanillaTrades.trades[4][1]);
         }
         prof = new VillagerProfession("minecraft:nitwit",
-                "minecraft:textures/entity/villager/nitwit.png",
-                "minecraft:textures/entity/zombie_villager/zombie_nitwit.png");
+                "minecraft:textures/entity/villager/villager.png",
+                "minecraft:textures/entity/zombie_villager/zombie_villager.png");
         {
             register(prof, 5);
             (new VillagerCareer(prof, "nitwit")).init(VanillaTrades.trades[5][0]);
