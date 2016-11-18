@@ -93,7 +93,7 @@ public class InvWrapper implements IItemHandlerModifiable
                 if (!simulate)
                 {
                     ItemStack copy = stack.copy();
-                    copy.func_190918_g(stackInSlot.func_190916_E());
+                    copy.func_190917_f(stackInSlot.func_190916_E());
                     getInv().setInventorySlotContents(slot, copy);
                     getInv().markDirty();
                 }

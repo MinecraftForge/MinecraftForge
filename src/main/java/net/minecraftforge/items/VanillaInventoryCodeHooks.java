@@ -120,7 +120,7 @@ public class VanillaInventoryCodeHooks
         for (int i = 0; i < hopper.getSizeInventory(); i++)
         {
             ItemStack stackInSlot = hopper.getStackInSlot(i);
-            if (stackInSlot.func_190926_b())
+            if (!stackInSlot.func_190926_b())
             {
                 ItemStack insert = stackInSlot.copy();
                 insert.func_190920_e(1);
