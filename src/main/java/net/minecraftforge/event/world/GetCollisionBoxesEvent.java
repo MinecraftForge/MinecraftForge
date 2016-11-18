@@ -33,8 +33,8 @@ import java.util.List;
  * and before returning the list in {@link World#getCollisionBoxes(Entity, AxisAlignedBB)}<br>
  * <br>
  * {@link #entity} contains the entity passed in the {@link World#getCollisionBoxes(Entity, AxisAlignedBB)}. <b>Can be null.</b> Calls from {@link World#collidesWithAnyBlock(AxisAlignedBB)} will be null.<br>
- * {@link #aabb} contains the AxisAlignedBB passed in the method. <b>Do not modify this AABB</b><br>
- * {@link #collisionBoxesList} contains the list of detected collision boxes intersecting with {@link #aabb}.<br>
+ * {@link #aabb} contains the AxisAlignedBB passed in the method.<br>
+ * {@link #collisionBoxesList} contains the list of detected collision boxes intersecting with {@link #aabb}. The list can be modified.<br>
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
