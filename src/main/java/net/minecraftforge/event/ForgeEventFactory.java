@@ -113,6 +113,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ForgeEventFactory
@@ -173,7 +174,7 @@ public class ForgeEventFactory
         return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.getNewSpeed());
     }
 
-    public static void onPlayerDestroyItem(EntityPlayer player, ItemStack stack, EnumHand hand)
+    public static void onPlayerDestroyItem(EntityPlayer player, @Nonnull ItemStack stack, @Nullable EnumHand hand)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
