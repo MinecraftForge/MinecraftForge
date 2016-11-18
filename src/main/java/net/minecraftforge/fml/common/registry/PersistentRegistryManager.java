@@ -189,6 +189,7 @@ public class PersistentRegistryManager
     public static final ResourceLocation SOUNDEVENTS = new ResourceLocation("minecraft:soundevents");
     public static final ResourceLocation POTIONTYPES = new ResourceLocation("minecraft:potiontypes");
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
+    public static final ResourceLocation ENTITIES = new ResourceLocation("minecraft:entities");
     static final ResourceLocation SUBSTITUTION_ORIGINALS = new ResourceLocation("fml:suboriginals");
 
     @Deprecated //Use RegistryBuilder TODO: Remove in 1.11

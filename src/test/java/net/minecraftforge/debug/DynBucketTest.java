@@ -1,7 +1,5 @@
 package net.minecraftforge.debug;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -29,8 +27,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
@@ -98,6 +94,7 @@ public class DynBucketTest
 
     public static class ClientProxy extends CommonProxy
     {
+        @SuppressWarnings("unused")
         @Override
         void setupModels()
         {
