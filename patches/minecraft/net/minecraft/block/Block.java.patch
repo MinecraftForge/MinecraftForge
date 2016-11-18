@@ -1337,17 +1337,6 @@
 +    }
 +
 +    /**
-+     * Add information to the blocks tooltip, called from the default implementation of {@link ItemBlock#addInformation(ItemStack, EntityPlayer, List, boolean)}
-+     * @param stack The stack the tooltip is being retrieved for
-+     * @param player The player retrieving the tooltip
-+     * @param tooltip The lines to be displayed on the tooltip
-+     * @param advanced If the client has advanced debug tooltips enabled
-+     */
-+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
-+    {
-+    }
-+
-+    /**
 +     * Sensitive version of getSoundType
 +     * @param state The state
 +     * @param world The world
