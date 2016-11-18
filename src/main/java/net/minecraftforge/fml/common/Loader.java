@@ -348,6 +348,7 @@ public class Loader
     {
         injectedContainers.addAll(additionalContainers);
         FMLLog.fine("Building injected Mod Containers %s", injectedContainers);
+        mods.add(minecraft);
         // Add in the MCP mod container
         mods.add(new InjectedModContainer(mcp,new File("minecraft.jar")));
         for (String cont : injectedContainers)
