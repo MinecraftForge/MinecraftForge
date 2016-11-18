@@ -39,24 +39,22 @@
      }
  
      public EntityLivingBase func_110144_aD()
-@@ -648,9 +650,21 @@
-         }
+@@ -649,8 +651,20 @@
          else
          {
--            Collection<PotionEffect> collection = this.field_70713_bf.values();
+             Collection<PotionEffect> collection = this.field_70713_bf.values();
 -            this.field_70180_af.func_187227_b(field_184634_g, Boolean.valueOf(func_184593_a(collection)));
 -            this.field_70180_af.func_187227_b(field_184633_f, Integer.valueOf(PotionUtils.func_185181_a(collection)));
-+        	Collection<PotionEffect> collection = this.field_70713_bf.values();
 +            boolean hideParticles = Boolean.valueOf(func_184593_a(collection));
 +            int potionColor = Integer.valueOf(PotionUtils.func_185181_a(collection));
 +            if (this.func_70613_aW())
 +            {
-+            	net.minecraftforge.event.entity.living.PotionColorCalculationEvent event = new net.minecraftforge.event.entity.living.PotionColorCalculationEvent(this, potionColor, hideParticles, collection);
++                net.minecraftforge.event.entity.living.PotionColorCalculationEvent event = new net.minecraftforge.event.entity.living.PotionColorCalculationEvent(this, potionColor, hideParticles, collection);
 +                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +                if (event.isDirty())
 +                {
-+                	hideParticles = event.isHideParticle();
-+                	potionColor = event.getColor();
++                    hideParticles = event.isHideParticle();
++                    potionColor = event.getColor();
 +                }
 +            }
 +            this.field_70180_af.func_187227_b(field_184634_g, hideParticles);

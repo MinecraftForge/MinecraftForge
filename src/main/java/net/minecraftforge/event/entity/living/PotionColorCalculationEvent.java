@@ -20,7 +20,7 @@
 package net.minecraftforge.event.entity.living;
 
 import java.util.Collection;
-
+import java.util.Collections;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 
@@ -65,7 +65,7 @@ public class PotionColorCalculationEvent extends LivingEvent {
 	}
 
 	public Collection<PotionEffect> getEffectList() {
-		return effectList;
+		return Collections.unmodifiableCollection(effectList);
 	}
 
 	public boolean isDirty() {
