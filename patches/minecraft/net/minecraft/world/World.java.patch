@@ -204,6 +204,15 @@
              this.func_72964_e(i, j).func_76612_a(p_72838_1_);
              this.field_72996_f.add(p_72838_1_);
              this.func_72923_a(p_72838_1_);
+@@ -1290,7 +1353,7 @@
+                 }
+             }
+         }
+-
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.GetCollisionBoxesEvent(this, p_184144_1_, p_184144_2_, list));
+         return list;
+     }
+ 
 @@ -1319,7 +1382,6 @@
          return p_175673_2_.field_70165_t > d0 && p_175673_2_.field_70165_t < d2 && p_175673_2_.field_70161_v > d1 && p_175673_2_.field_70161_v < d3;
      }
@@ -212,6 +221,15 @@
      public void func_72848_b(IWorldEventListener p_72848_1_)
      {
          this.field_73021_x.remove(p_72848_1_);
+@@ -1360,7 +1422,7 @@
+ 
+                                 IBlockState iblockstate = this.func_180495_p(blockpos$pooledmutableblockpos);
+                                 iblockstate.func_185908_a(this, blockpos$pooledmutableblockpos, p_184143_1_, list, (Entity)null);
+-
++                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.GetCollisionBoxesEvent(this, null, p_184143_1_, list));
+                                 if (!list.isEmpty())
+                                 {
+                                     boolean flag = true;
 @@ -1382,19 +1444,38 @@
  
      public int func_72967_a(float p_72967_1_)
