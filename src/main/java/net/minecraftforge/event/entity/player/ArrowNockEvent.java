@@ -27,6 +27,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
+import javax.annotation.Nonnull;
+
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>
  * This event is fired whenever a player begins using a bow in
@@ -42,7 +44,7 @@ public class ArrowNockEvent extends PlayerEvent
     private final boolean hasAmmo;
     private ActionResult<ItemStack> action;
 
-    public ArrowNockEvent(EntityPlayer player, ItemStack item, EnumHand hand, World world, boolean hasAmmo)
+    public ArrowNockEvent(EntityPlayer player, @Nonnull ItemStack item, EnumHand hand, World world, boolean hasAmmo)
     {
         super(player);
         this.bow = item;
@@ -51,6 +53,7 @@ public class ArrowNockEvent extends PlayerEvent
         this.hasAmmo = hasAmmo;
     }
 
+    @Nonnull
     public ItemStack getBow() { return this.bow; }
     public World getWorld() { return this.world; }
     public EnumHand getHand() { return this.hand; }

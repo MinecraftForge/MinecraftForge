@@ -27,6 +27,8 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
+import javax.annotation.Nonnull;
+
 
 public class PotionBrewEvent extends Event
 {
@@ -37,13 +39,14 @@ public class PotionBrewEvent extends Event
         this.stacks = stacks;
     }
 
+    @Nonnull
     public ItemStack getItem(int index)
     {
-        if (index >= stacks.size()) return null;
+        if (index >= stacks.size()) return ItemStack.field_190927_a;
         return stacks.get(index);
     }
 
-    public void setItem(int index, ItemStack stack)
+    public void setItem(int index, @Nonnull ItemStack stack)
     {
         if (index < stacks.size())
         {

@@ -22,15 +22,17 @@ package net.minecraftforge.common.brewing;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nonnull;
+
 public class BrewingRecipe extends AbstractBrewingRecipe<ItemStack> {
 
-    public BrewingRecipe(ItemStack input, ItemStack ingredient, ItemStack output)
+    public BrewingRecipe(@Nonnull ItemStack input, @Nonnull ItemStack ingredient, @Nonnull ItemStack output)
     {
         super(input, ingredient, output);
     }
 
     @Override
-    public boolean isIngredient(ItemStack stack)
+    public boolean isIngredient(@Nonnull ItemStack stack)
     {
         return OreDictionary.itemMatches(this.getIngredient(), stack, false);
     }

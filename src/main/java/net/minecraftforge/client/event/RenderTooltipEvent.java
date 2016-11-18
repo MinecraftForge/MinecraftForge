@@ -32,7 +32,7 @@ public abstract class RenderTooltipEvent extends Event
     protected int y;
     protected FontRenderer fr;
 
-    public RenderTooltipEvent(@Nullable ItemStack stack, @Nonnull List<String> lines, int x, int y, @Nonnull FontRenderer fr)
+    public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<String> lines, int x, int y, @Nonnull FontRenderer fr)
     {
         this.stack = stack;
         this.lines = Collections.unmodifiableList(lines); // Leave editing to ItemTooltipEvent
@@ -44,7 +44,7 @@ public abstract class RenderTooltipEvent extends Event
     /**
      * @return The stack which the tooltip is being rendered for. As tooltips can be drawn without itemstacks, this return is {@link Nullable}. 
      */
-    @Nullable
+    @Nonnull
     public ItemStack getStack()
     {
         return stack;

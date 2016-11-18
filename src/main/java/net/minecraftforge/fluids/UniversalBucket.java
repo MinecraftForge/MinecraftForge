@@ -84,13 +84,14 @@ public class UniversalBucket extends Item
     }
 
     @Override
-    public boolean hasContainerItem(ItemStack stack)
+    public boolean hasContainerItem(@Nonnull ItemStack stack)
     {
         return !getEmpty().func_190926_b();
     }
 
+    @Nonnull
     @Override
-    public ItemStack getContainerItem(ItemStack itemStack)
+    public ItemStack getContainerItem(@Nonnull ItemStack itemStack)
     {
         if (!getEmpty().func_190926_b())
         {
@@ -122,7 +123,7 @@ public class UniversalBucket extends Item
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack)
+    public String getItemStackDisplayName(@Nonnull ItemStack stack)
     {
         FluidStack fluidStack = getFluid(stack);
         if (fluidStack == null)
@@ -272,7 +273,7 @@ public class UniversalBucket extends Item
         return bucket;
     }
 
-    public FluidStack getFluid(ItemStack container)
+    public FluidStack getFluid(@Nonnull ItemStack container)
     {
         return FluidStack.loadFluidStackFromNBT(container.getTagCompound());
     }

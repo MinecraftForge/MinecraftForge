@@ -39,7 +39,7 @@ public class VanillaHopperItemHandler extends InvWrapper
     @Nonnull
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (stack == null)
+        if (stack.func_190926_b())
             return null;
 //        if (simulate || !hopper.mayTransfer())
 //            return super.insertItem(slot, stack, simulate);

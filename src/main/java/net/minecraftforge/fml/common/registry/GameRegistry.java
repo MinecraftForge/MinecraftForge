@@ -67,6 +67,8 @@ import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
+import javax.annotation.Nonnull;
+
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class GameRegistry
 {
@@ -220,17 +222,17 @@ public class GameRegistry
         GameData.getMain().registerSubstitutionAlias(nameToSubstitute, type, object);
     }
 
-    public static void addRecipe(ItemStack output, Object... params)
+    public static void addRecipe(@Nonnull ItemStack output, Object... params)
     {
         addShapedRecipe(output, params);
     }
 
-    public static IRecipe addShapedRecipe(ItemStack output, Object... params)
+    public static IRecipe addShapedRecipe(@Nonnull ItemStack output, Object... params)
     {
         return CraftingManager.getInstance().addRecipe(output, params);
     }
 
-    public static void addShapelessRecipe(ItemStack output, Object... params)
+    public static void addShapelessRecipe(@Nonnull ItemStack output, Object... params)
     {
         CraftingManager.getInstance().addShapelessRecipe(output, params);
     }
@@ -240,17 +242,17 @@ public class GameRegistry
         CraftingManager.getInstance().getRecipeList().add(recipe);
     }
 
-    public static void addSmelting(Block input, ItemStack output, float xp)
+    public static void addSmelting(Block input, @Nonnull ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmeltingRecipeForBlock(input, output, xp);
     }
 
-    public static void addSmelting(Item input, ItemStack output, float xp)
+    public static void addSmelting(Item input, @Nonnull ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmelting(input, output, xp);
     }
 
-    public static void addSmelting(ItemStack input, ItemStack output, float xp)
+    public static void addSmelting(@Nonnull ItemStack input, @Nonnull ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmeltingRecipe(input, output, xp);
     }
@@ -282,7 +284,7 @@ public class GameRegistry
         fuelHandlers.add(handler);
     }
 
-    public static int getFuelValue(ItemStack itemStack)
+    public static int getFuelValue(@Nonnull ItemStack itemStack)
     {
         int fuelValue = 0;
         for (IFuelHandler handler : fuelHandlers)
@@ -362,6 +364,7 @@ public class GameRegistry
      * @param nbtString an nbt stack as a string, will be processed by {@link JsonToNBT}
      * @return a new itemstack
      */
+    @Nonnull
     public static ItemStack makeItemStack(String itemName, int meta, int stackSize, String nbtString)
     {
         if (itemName == null)
@@ -372,7 +375,7 @@ public class GameRegistry
         if (item == null)
         {
             FMLLog.getLogger().log(Level.TRACE, "Unable to find item with name {}", itemName);
-            return null;
+            return ItemStack.field_190927_a;
         }
         ItemStack is = new ItemStack(item, stackSize, meta);
         if (!Strings.isNullOrEmpty(nbtString))

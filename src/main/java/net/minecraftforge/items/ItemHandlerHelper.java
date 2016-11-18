@@ -50,9 +50,9 @@ public class ItemHandlerHelper
         return stack;
     }
 
-    public static boolean canItemStacksStack(ItemStack a, ItemStack b)
+    public static boolean canItemStacksStack(@Nonnull ItemStack a, @Nonnull ItemStack b)
     {
-        if (a == null || !a.isItemEqual(b))
+        if (a.func_190926_b() || !a.isItemEqual(b))
             return false;
 
         final NBTTagCompound aTag = a.getTagCompound();
@@ -64,9 +64,9 @@ public class ItemHandlerHelper
      * A relaxed version of canItemStacksStack that stacks itemstacks with different metadata if they don't have subtypes.
      * This usually only applies when players pick up items.
      */
-    public static boolean canItemStacksStackRelaxed(ItemStack a, ItemStack b)
+    public static boolean canItemStacksStackRelaxed(@Nonnull ItemStack a, @Nonnull ItemStack b)
     {
-        if (a == null || b == null || a.getItem() != b.getItem())
+        if (a.func_190926_b() || b.func_190926_b() || a.getItem() != b.getItem())
             return false;
 
         if (!a.isStackable())
@@ -84,7 +84,7 @@ public class ItemHandlerHelper
     }
 
     @Nonnull
-    public static ItemStack copyStackWithSize(ItemStack itemStack, int size)
+    public static ItemStack copyStackWithSize(@Nonnull ItemStack itemStack, int size)
     {
         if (size == 0)
             return ItemStack.field_190927_a;
@@ -148,7 +148,7 @@ public class ItemHandlerHelper
     }
 
     /** giveItemToPlayer without preferred slot */
-    public static void giveItemToPlayer(EntityPlayer player, ItemStack stack) {
+    public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack) {
         giveItemToPlayer(player, stack, -1);
     }
 
@@ -159,7 +159,7 @@ public class ItemHandlerHelper
      * @param player The player to give the item to
      * @param stack  The itemstack to insert
      */
-    public static void giveItemToPlayer(EntityPlayer player, ItemStack stack, int preferredSlot)
+    public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack, int preferredSlot)
     {
         IItemHandler inventory = new PlayerMainInvWrapper(player.inventory);
         World world = player.worldObj;
@@ -172,20 +172,20 @@ public class ItemHandlerHelper
             remainder = inventory.insertItem(preferredSlot, stack, false);
         }
         // then into the inventory in general
-        if(remainder != null)
+        if(!remainder.func_190926_b())
         {
             remainder = insertItemStacked(inventory, remainder, false);
         }
 
         // play sound if something got picked up
-        if (remainder == null || remainder.func_190916_E() != stack.func_190916_E())
+        if (remainder.func_190926_b() || remainder.func_190916_E() != stack.func_190916_E())
         {
             world.playSound(player, player.posX, player.posY, player.posZ,
                     SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
 
         // drop remaining itemstack into the world
-        if (remainder != null && !world.isRemote)
+        if (!remainder.func_190926_b() && !world.isRemote)
         {
             EntityItem entityitem = new EntityItem(world, player.posX, player.posY + 0.5, player.posZ, stack);
             entityitem.setPickupDelay(40);
