@@ -19,6 +19,6 @@ public class BreedingTest
 
   @SubscribeEvent
   public void onBabyBorn(BabyEntitySpawnEvent event) {
-    event.setChild(new EntityCow(event.getChild().worldObj));
+    event.setChild(new EntityCow(event.getParentA().worldObj));
   }
 }

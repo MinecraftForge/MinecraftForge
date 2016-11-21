@@ -22,7 +22,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
@@ -48,6 +47,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @Mod(modid = ModelBakeEventDebug.MODID, name = "ForgeDebugModelBakeEvent", version = ModelBakeEventDebug.VERSION)
 public class ModelBakeEventDebug
@@ -253,7 +255,7 @@ public class ModelBakeEventDebug
         }
 
         @Override
-        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
             if(side != null) return ImmutableList.of();
             IExtendedBlockState exState = (IExtendedBlockState)state;
@@ -310,7 +312,7 @@ public class ModelBakeEventDebug
             case WEST:  return new Vec3d(-vec.yCoord,  vec.xCoord,  vec.zCoord);
             case EAST:  return new Vec3d( vec.yCoord, -vec.xCoord,  vec.zCoord);
         }
-        return null;
+        throw new IllegalArgumentException("Unknown Side " + side);
     }
 
     private static Vec3d revRotate(Vec3d vec, EnumFacing side)
@@ -324,6 +326,6 @@ public class ModelBakeEventDebug
             case WEST:  return new Vec3d( vec.yCoord, -vec.xCoord,  vec.zCoord);
             case EAST:  return new Vec3d(-vec.yCoord,  vec.xCoord,  vec.zCoord);
         }
-        return null;
+        throw new IllegalArgumentException("Unknown Side " + side);
     }
 }
