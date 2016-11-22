@@ -25,12 +25,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * Fired when the enchantment level is set for a slot in the enchanting table. The {@link #level} is set to the vanilla value 
- * and can be modified by this event handler.
+ * Fired when the enchantment level is set for each of the three potential enchantments in the enchanting table.
+ * The {@link #level} is set to the vanilla value and can be modified by this event handler.
  *
- * The {@link #slot} is used to determine which slot's enchantment level is being set. The {@link power} is a number from 0-15
- * and indicates how many bookshelves surround the enchanting table. The {@link itemStack} representing the item being enchanted
- * is also available.
+ * The {@link #enchantNum} is used to determine which enchantment level is being set, 1, 2, or 3. The {@link power} is a number
+ * from 0-15 and indicates how many bookshelves surround the enchanting table. The {@link itemStack} representing the item being
+ * enchanted is also available.
  */
 public class EnchantmentLevelSetEvent extends Event
 {
@@ -124,9 +124,9 @@ public class EnchantmentLevelSetEvent extends Event
     }
 
     /**
-     * Set the new level of the enchantment for this slot (0-30)
+     * Set the new level of the enchantment (0-30)
      * 
-     * @param the new level of the enchantment for this slot (0-30)
+     * @param the new level of the enchantment (0-30)
      */
     public void setLevel(int level)
     {
