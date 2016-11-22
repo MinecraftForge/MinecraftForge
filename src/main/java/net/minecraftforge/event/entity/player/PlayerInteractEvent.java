@@ -25,6 +25,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -145,6 +146,7 @@ public class PlayerInteractEvent extends PlayerEvent
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
         private final Vec3d hitVec;
+        private EnumActionResult result = EnumActionResult.PASS;
 
         public RightClickBlock(EntityPlayer player, EnumHand hand, BlockPos pos, EnumFacing face, Vec3d hitVec) {
             super(player, hand, pos, face);
@@ -205,6 +207,24 @@ public class PlayerInteractEvent extends PlayerEvent
                 useItem = DENY;
             }
         }
+
+        /**
+         * If the event is cancelled, determines if the interaction was
+         * successful and whether the event should be passed to the other hands.
+         */
+        public void setInteractionResult(EnumActionResult result)
+        {
+            this.result = result;
+        }
+        
+        /**
+         * Gets the result of this event being cancelled.
+         * Behaves the same way as if it were returned by the item itself.
+         */
+        public EnumActionResult getInteractionResult()
+        {
+            return result;
+        }
     }
 
     /**
@@ -216,9 +236,29 @@ public class PlayerInteractEvent extends PlayerEvent
     @Cancelable
     public static class RightClickItem extends PlayerInteractEvent
     {
+        private EnumActionResult result = EnumActionResult.PASS;
+        
         public RightClickItem(EntityPlayer player, EnumHand hand)
         {
             super(player, hand, new BlockPos(player), null);
+        }
+
+        /**
+         * If the event is cancelled, determines if the interaction was
+         * successful and whether the event should be passed to the other hands.
+         */
+        public void setInteractionResult(EnumActionResult result)
+        {
+            this.result = result;
+        }
+        
+        /**
+         * Gets the result of this event being cancelled.
+         * Behaves the same way as if it were returned by the item itself.
+         */
+        public EnumActionResult getInteractionResult()
+        {
+            return result;
         }
     }
 
