@@ -638,7 +638,7 @@ public class ForgeEventFactory
 
     public static int onEnchantmentLevelSet(World world, BlockPos pos, int slot, int power, ItemStack itemStack, int level)
     {
-        net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent e = new net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent(world, pos, slot, (int)power, itemStack, level);
+        net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent e = new net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent(world, pos, slot, power, itemStack, level);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e);
         return e.getLevel();
     }
