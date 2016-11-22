@@ -143,7 +143,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
         return new CPacketCustomPayload(channel, payload);
     }
 
-    static final int PART_SIZE = 0x1000000 - 0x50; // Make it a constant so that it gets inlined below.
+    static final int PART_SIZE = 0x100000 - 0x50; // Make it a constant so that it gets inlined below.
     // FIXME int overflow
     public static final int MAX_LENGTH = PART_SIZE * 255;
     public List<Packet<INetHandlerPlayClient>> toS3FPackets() throws IOException

@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 
-@Mod(modid = PotionRegistryDebug.MODID, name = "ForgePotionRegistry", version = "1.0")
+@Mod(modid = PotionRegistryDebug.MODID, name = "ForgePotionRegistry", version = "1.0", acceptableRemoteVersions = "*")
 public class PotionRegistryDebug {
   public static final String MODID = "forgepotionregistry";
 

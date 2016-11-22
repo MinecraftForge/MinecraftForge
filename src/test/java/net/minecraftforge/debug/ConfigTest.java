@@ -6,7 +6,7 @@ import net.minecraftforge.common.config.Config.*;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = ConfigTest.MODID, name = "ConfigTest", version = "1.0")
+@Mod(modid = ConfigTest.MODID, name = "ConfigTest", version = "1.0", acceptableRemoteVersions = "*")
 public class ConfigTest
 {
     public static final String MODID = "config_test";

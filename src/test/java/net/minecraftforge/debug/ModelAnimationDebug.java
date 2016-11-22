@@ -60,7 +60,7 @@ import com.google.common.collect.ImmutableMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Mod(modid = ModelAnimationDebug.MODID, name = "ForgeDebugModelAnimation", version = ModelAnimationDebug.VERSION)
+@Mod(modid = ModelAnimationDebug.MODID, name = "ForgeDebugModelAnimation", version = ModelAnimationDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelAnimationDebug
 {
     public static final String MODID = "forgedebugmodelanimation";

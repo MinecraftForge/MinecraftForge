@@ -59,7 +59,7 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
+@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID, acceptableRemoteVersions = "*")
 public class DynBucketTest
 {
     public static final String MODID = "dynbuckettest";
