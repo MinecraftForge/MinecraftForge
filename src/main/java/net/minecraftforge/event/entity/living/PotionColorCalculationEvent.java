@@ -34,12 +34,9 @@ import net.minecraft.potion.PotionEffect;
 public class PotionColorCalculationEvent extends LivingEvent {
 	private int color;
 	private boolean hideParticle;
-	private Collection<PotionEffect> effectList;
+	private final Collection<PotionEffect> effectList;
 
-	private boolean isDirty = false;
-
-	public PotionColorCalculationEvent(EntityLivingBase entity, int color, boolean hideParticle,
-			Collection<PotionEffect> effectList) {
+	public PotionColorCalculationEvent(EntityLivingBase entity, int color, boolean hideParticle, Collection<PotionEffect> effectList) {
 		super(entity);
 		this.color = color;
 		this.effectList = effectList;
@@ -52,24 +49,17 @@ public class PotionColorCalculationEvent extends LivingEvent {
 
 	public void setColor(int color) {
 		this.color = color;
-		isDirty = true;
 	}
 
 	public boolean isHideParticle() {
 		return hideParticle;
 	}
 
-	public void setHideParticle(boolean hideParticle) {
+	public void shouldHideParticles(boolean hideParticle) {
 		this.hideParticle = hideParticle;
-		isDirty = true;
 	}
 
 	public Collection<PotionEffect> getEffectList() {
 		return Collections.unmodifiableCollection(effectList);
 	}
-
-	public boolean isDirty() {
-		return isDirty;
-	}
-
 }
