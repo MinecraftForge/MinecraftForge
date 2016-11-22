@@ -12,7 +12,7 @@
      }
  
      @Nullable
-@@ -184,4 +187,22 @@
+@@ -184,4 +187,21 @@
      {
          return new BlockStateContainer(this, new IProperty[] {field_176241_b, field_176242_M, field_176244_O, field_176243_N});
      }
@@ -22,9 +22,8 @@
 +    @Override
 +    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
-+        Block connectee = world.func_180495_p(pos).func_177230_c();
 +        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
-+        return connectee instanceof BlockPane && connector instanceof BlockPane;
++        return connector instanceof BlockPane;
 +    }
 +
 +    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)

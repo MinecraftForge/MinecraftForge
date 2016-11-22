@@ -15,7 +15,7 @@
          boolean flag4 = flag && !flag1 && flag2 && !flag3 || !flag && flag1 && !flag2 && flag3;
          return p_176221_1_.func_177226_a(field_176256_a, Boolean.valueOf(!flag4 || !p_176221_2_.func_175623_d(p_176221_3_.func_177984_a()))).func_177226_a(field_176254_b, Boolean.valueOf(flag)).func_177226_a(field_176257_M, Boolean.valueOf(flag1)).func_177226_a(field_176258_N, Boolean.valueOf(flag2)).func_177226_a(field_176259_O, Boolean.valueOf(flag3));
      }
-@@ -155,6 +155,24 @@
+@@ -155,6 +155,23 @@
          return new BlockStateContainer(this, new IProperty[] {field_176256_a, field_176254_b, field_176257_M, field_176259_O, field_176258_N, field_176255_P});
      }
  
@@ -24,9 +24,8 @@
 +    @Override
 +    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
-+        Block connectee = world.func_180495_p(pos).func_177230_c();
 +        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
-+        return connectee instanceof BlockWall && (connector instanceof BlockWall || connector instanceof BlockFenceGate);
++        return connector instanceof BlockWall || connector instanceof BlockFenceGate;
 +    }
 +
 +    public boolean canWallConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)

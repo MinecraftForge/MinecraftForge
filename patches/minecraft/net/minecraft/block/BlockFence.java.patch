@@ -9,7 +9,7 @@
      }
  
      public IBlockState func_185499_a(IBlockState p_185499_1_, Rotation p_185499_2_)
-@@ -179,4 +179,35 @@
+@@ -179,4 +179,34 @@
      {
          return new BlockStateContainer(this, new IProperty[] {field_176526_a, field_176525_b, field_176528_N, field_176527_M});
      }
@@ -19,16 +19,15 @@
 +    @Override
 +    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
-+        Block connectee = world.func_180495_p(pos).func_177230_c();
 +        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
 +
-+        if(connectee instanceof BlockFence && connector instanceof BlockFence)
++        if(connector instanceof BlockFence)
 +        {
-+            if(connectee != net.minecraft.init.Blocks.field_150386_bk && connector == net.minecraft.init.Blocks.field_150386_bk)
++            if(this != net.minecraft.init.Blocks.field_150386_bk && connector == net.minecraft.init.Blocks.field_150386_bk)
 +            {
 +                return false;
 +            }
-+            else if(connectee == net.minecraft.init.Blocks.field_150386_bk && connector != net.minecraft.init.Blocks.field_150386_bk)
++            else if(this == net.minecraft.init.Blocks.field_150386_bk && connector != net.minecraft.init.Blocks.field_150386_bk)
 +            {
 +                return false;
 +            }

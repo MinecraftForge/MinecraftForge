@@ -9,7 +9,7 @@
          {
              p_176221_1_ = p_176221_1_.func_177226_a(field_176467_M, Boolean.valueOf(true));
          }
-@@ -183,4 +183,22 @@
+@@ -183,4 +183,21 @@
      {
          return new BlockStateContainer(this, new IProperty[] {field_185512_D, field_176466_a, field_176465_b, field_176467_M});
      }
@@ -19,9 +19,8 @@
 +    @Override
 +    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
-+        Block connectee = world.func_180495_p(pos).func_177230_c();
 +        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
-+        return connectee instanceof BlockFenceGate && (connector instanceof BlockFence || connector instanceof BlockWall);
++        return connector instanceof BlockFence || connector instanceof BlockWall;
 +    }
 +
 +    public boolean canFenceGateConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
