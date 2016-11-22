@@ -40,11 +40,18 @@
      }
  
      private void func_110569_e()
-@@ -89,12 +102,26 @@
+@@ -74,6 +87,7 @@
+     public void func_174943_a(IResourceManager p_174943_1_, ITextureMapPopulator p_174943_2_)
+     {
+         this.field_110574_e.clear();
++        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
+         p_174943_2_.func_177059_a(this);
+         this.func_110569_e();
+         this.func_147631_c();
+@@ -89,12 +103,25 @@
          int j = Integer.MAX_VALUE;
          int k = 1 << this.field_147636_j;
  
-+        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
 +        net.minecraftforge.fml.common.FMLLog.info("Max texture size: %d", i);
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", skipFirst ? 0 : this.field_110574_e.size());
 +

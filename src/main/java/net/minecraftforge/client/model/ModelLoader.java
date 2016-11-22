@@ -918,7 +918,7 @@ public final class ModelLoader extends ModelBakery
 
         public void register(TextureMap map)
         {
-            map.setTextureEntry(White.LOCATION.toString(), White.INSTANCE);
+            map.setTextureEntry(White.INSTANCE);
         }
     }
 
