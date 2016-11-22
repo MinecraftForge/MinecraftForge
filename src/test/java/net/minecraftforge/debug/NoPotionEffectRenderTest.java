@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 
-@Mod( modid = NoPotionEffectRenderTest.modID, name = "No Potion Effect Render Test", version = "0.0.0" )
+@Mod( modid = NoPotionEffectRenderTest.modID, name = "No Potion Effect Render Test", version = "0.0.0", acceptableRemoteVersions = "*" )
 public class NoPotionEffectRenderTest {
   public static final String modID = "nopotioneffect";
 

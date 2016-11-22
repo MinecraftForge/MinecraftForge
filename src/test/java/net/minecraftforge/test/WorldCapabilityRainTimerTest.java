@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /** Simple mod to test world capability, by adding timer logic and check for raining time. */
-@Mod(modid=WorldCapabilityRainTimerTest.MODID, name="World Periodic Rain Check Test", version="0.0.0")
+@Mod(modid=WorldCapabilityRainTimerTest.MODID, name="World Periodic Rain Check Test", version="0.0.0", acceptableRemoteVersions = "*")
 public class WorldCapabilityRainTimerTest {
     public static final String MODID = "worldperiodicrainchecktest";
 

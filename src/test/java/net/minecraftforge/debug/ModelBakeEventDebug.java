@@ -49,7 +49,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 
-@Mod(modid = ModelBakeEventDebug.MODID, name = "ForgeDebugModelBakeEvent", version = ModelBakeEventDebug.VERSION)
+@Mod(modid = ModelBakeEventDebug.MODID, name = "ForgeDebugModelBakeEvent", version = ModelBakeEventDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelBakeEventDebug
 {
     public static final String MODID = "forgedebugmodelbakeevent";

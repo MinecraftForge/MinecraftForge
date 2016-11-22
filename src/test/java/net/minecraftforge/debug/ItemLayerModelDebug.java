@@ -22,7 +22,7 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
-@Mod(modid = ItemLayerModelDebug.MODID, name = "ForgeDebugItemLayerModel", version = ItemLayerModelDebug.VERSION)
+@Mod(modid = ItemLayerModelDebug.MODID, name = "ForgeDebugItemLayerModel", version = ItemLayerModelDebug.VERSION, acceptableRemoteVersions = "*")
 public class ItemLayerModelDebug
 {
     public static final String MODID = "forgedebugitemlayermodel";

@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0")
+@Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0", acceptableRemoteVersions = "*")
 public class TestCapabilityMod
 {
     // A Holder/Marker for if this capability is installed.
