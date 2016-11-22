@@ -75,7 +75,7 @@
      }
  
      protected void func_176234_a(World p_176234_1_, BlockPos p_176234_2_, IBlockState p_176234_3_, int p_176234_4_)
-@@ -274,6 +241,49 @@
+@@ -274,6 +241,53 @@
  
      public abstract BlockPlanks.EnumType func_176233_b(int p_176233_1_);
  
@@ -105,7 +105,11 @@
 +        }
 +
 +        if (rand.nextInt(chance) == 0)
-+            ret.add(new ItemStack(func_180660_a(state, rand, fortune), 1, func_180651_a(state)));
++        {
++            ItemStack drop = new ItemStack(func_180660_a(state, rand, fortune), 1, func_180651_a(state));
++            if (!drop.func_190926_b())
++                ret.add(drop);
++        }
 +
 +        chance = 200;
 +        if (fortune > 0)

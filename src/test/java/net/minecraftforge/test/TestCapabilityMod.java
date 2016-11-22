@@ -47,7 +47,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent.LeftClickBlock event)
     {
-        if (event.getItemStack() == null) return;
+        if (event.getItemStack().func_190926_b()) return;
         if (event.getItemStack().getItem() != Items.STICK) return;
 
         // This is just a example of how to interact with the TE, note the strong type binding that getCapability has
