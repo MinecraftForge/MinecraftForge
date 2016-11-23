@@ -19,27 +19,29 @@
 
 package net.minecraftforge.items;
 
-import com.google.common.base.Predicate;
 import javafx.util.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDropper;
 import net.minecraft.block.BlockHopper;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.tileentity.IHopper;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class VanillaInventoryCodeHooks
 {
-    //Return: Null if we did nothing {no IItemHandler}, True if we moved an item, False if we moved no items
+    /**
+     * Copied from TileEntityHopper#captureDroppedItems and added capability support
+     * @return Null if we did nothing {no IItemHandler}, True if we moved an item, False if we moved no items
+     */
     public static Boolean extractHook(IHopper dest)
     {
         Pair<IItemHandler, Object> itemHandlerResult = getItemHandler(dest, EnumFacing.UP);
@@ -76,6 +78,9 @@ public class VanillaInventoryCodeHooks
         return false;
     }
 
+    /**
+     * Copied from BlockDropper#dispense and added capability support
+     */
     public static boolean dropperInsertHook(World world, BlockPos pos, TileEntityDispenser dropper, int slot, @Nonnull ItemStack stack)
     {
         EnumFacing enumfacing = world.getBlockState(pos).getValue(BlockDropper.FACING);
@@ -107,6 +112,9 @@ public class VanillaInventoryCodeHooks
         }
     }
 
+    /**
+     * Copied from TileEntityHopper#transferItemsOut and added capability support
+     */
     public static boolean insertHook(TileEntityHopper hopper)
     {
         EnumFacing hopperFacing = BlockHopper.getFacing(hopper.getBlockMetadata());
@@ -156,6 +164,9 @@ public class VanillaInventoryCodeHooks
         return stack;
     }
 
+    /**
+     * Copied from TileEntityHopper#insertStack and added capability support
+     */
     private static ItemStack insertStack(TileEntity source, Object destination, IItemHandler destInventory, ItemStack stack, int slot)
     {
         ItemStack itemstack = destInventory.getStackInSlot(slot);
@@ -261,25 +272,6 @@ public class VanillaInventoryCodeHooks
                     IItemHandler capability = tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
                     destination = new Pair<IItemHandler, Object>(capability, tileentity);
                 }
-            }
-        }
-
-        if (destination == null)
-        {
-            Predicate<Entity> hasItemCapability = new Predicate<Entity>()
-            {
-                @Override
-                public boolean apply(@Nullable Entity entity)
-                {
-                    return entity != null && entity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side) && entity.isEntityAlive();
-                }
-            };
-            List<Entity> list = worldIn.getEntitiesInAABBexcluding(null, new AxisAlignedBB(x - 0.5D, y - 0.5D, z - 0.5D, x + 0.5D, y + 0.5D, z + 0.5D), hasItemCapability);
-
-            if (!list.isEmpty())
-            {
-                Entity entity = list.get(worldIn.rand.nextInt(list.size()));
-                destination = new Pair<IItemHandler, Object>(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side), entity);
             }
         }
 
