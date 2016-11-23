@@ -19,7 +19,6 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @Mod(modid="fluidhandlertest", name="FluidHandlerTest", version="0.0.0", acceptableRemoteVersions = "*")
 public class FluidHandlerTest
@@ -84,7 +83,7 @@ public class FluidHandlerTest
         }
     }
 
-    private static String fluidString(@Nullable FluidStack stack)
+    private static String fluidString(FluidStack stack)
     {
         if (stack == null)
         {

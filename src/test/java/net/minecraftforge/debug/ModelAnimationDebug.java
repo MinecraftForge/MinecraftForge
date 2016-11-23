@@ -158,7 +158,7 @@ public class ModelAnimationDebug
             GameRegistry.register(new ItemBlock(Block.REGISTRY.getObject(blockId))
             {
                 @Override
-                public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
+                public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
                 {
                     return new ItemAnimationHolder();
                 }
@@ -166,13 +166,11 @@ public class ModelAnimationDebug
             GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
         }
 
-        @Nullable
         public abstract IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters);
     }
 
     public static class ServerProxy extends CommonProxy
     {
-        @Nullable
         public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
         {
             return null;
@@ -269,7 +267,6 @@ public class ModelAnimationDebug
 
     public static class Chest extends TileEntity
     {
-        @Nullable
         private final IAnimationStateMachine asm;
         private final VariableValue cycleLength = new VariableValue(4);
         private final VariableValue clickTime = new VariableValue(Float.NEGATIVE_INFINITY);

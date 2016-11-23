@@ -39,9 +39,6 @@ import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 
 import com.google.common.base.Function;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public final class AnimationItemOverrideList extends ItemOverrideList
 {
     private final IModel model;
@@ -63,15 +60,14 @@ public final class AnimationItemOverrideList extends ItemOverrideList
         this.bakedTextureGetter = bakedTextureGetter;
     }
 
-    @Nonnull
     @Override
-    public IBakedModel handleItemState(@Nonnull IBakedModel originalModel, @Nonnull ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+    public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity)
     {
         if(stack.hasCapability(net.minecraftforge.common.model.animation.CapabilityAnimation.ANIMATION_CAPABILITY, null))
         {
             // TODO: caching?
             IAnimationStateMachine asm = stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
-            if(world == null && entity != null)
+            if(world == null)
             {
                 world = entity.worldObj;
             }

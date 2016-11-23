@@ -29,8 +29,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
-import javax.annotation.Nonnull;
-
 /**
  * This is a fluid block implementation which emulates vanilla Minecraft fluid behavior.
  *
@@ -80,7 +78,7 @@ public class BlockFluidClassic extends BlockFluidBase
     }
 
     @Override
-    public boolean canCollideCheck(@Nonnull IBlockState state, boolean fullHit)
+    public boolean canCollideCheck(IBlockState state, boolean fullHit)
     {
         return fullHit && state.getValue(LEVEL) == 0;
     }
@@ -92,7 +90,7 @@ public class BlockFluidClassic extends BlockFluidBase
     }
 
     @Override
-    public int getLightValue(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         if (maxScaledLight == 0)
         {
@@ -103,7 +101,7 @@ public class BlockFluidClassic extends BlockFluidBase
     }
 
     @Override
-    public void updateTick(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand)
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
         if (!isSourceBlock(world, pos) && ForgeEventFactory.canCreateFluidSource(world, pos, state, false))
         {

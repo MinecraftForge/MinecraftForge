@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
 import net.minecraft.block.state.IBlockState;
@@ -74,8 +72,7 @@ public final class MultiModel implements IModel
         private final ItemOverrideList overrides = new ItemOverrideList(Lists.<ItemOverride>newArrayList())
         {
             @Override
-            @Nonnull
-            public IBakedModel handleItemState(@Nonnull IBakedModel originalModel, @Nonnull ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+            public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity)
             {
                 if(originalModel != Baked.this)
                 {

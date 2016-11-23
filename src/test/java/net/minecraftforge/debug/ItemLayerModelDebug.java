@@ -20,7 +20,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.Random;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Mod(modid = ItemLayerModelDebug.MODID, name = "ForgeDebugItemLayerModel", version = ItemLayerModelDebug.VERSION, acceptableRemoteVersions = "*")
@@ -96,7 +95,7 @@ public class ItemLayerModelDebug
         @Override
         public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
             // This tool is a super pickaxe if the player is wearing a helment
-            if("pickaxe".equals(toolClass) && player != null && !player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).func_190926_b()) {
+            if("pickaxe".equals(toolClass) && player != null && player.getItemStackFromSlot(EntityEquipmentSlot.HEAD) != null) {
                 return 5;
             }
             return super.getHarvestLevel(stack, toolClass, player, blockState);

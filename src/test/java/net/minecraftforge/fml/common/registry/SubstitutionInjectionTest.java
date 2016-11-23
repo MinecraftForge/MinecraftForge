@@ -15,8 +15,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nonnull;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
@@ -30,7 +28,6 @@ public class SubstitutionInjectionTest
     private ResourceLocation myDirt = new ResourceLocation("minecraft:dirt");
     private BlockDirt toSub = new BlockDirt() {
         @Override
-        @Nonnull
         public String toString()
         {
             return "SUB" + super.toString() + "SUB";

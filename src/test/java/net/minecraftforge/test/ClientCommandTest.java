@@ -1,7 +1,6 @@
 package net.minecraftforge.test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -15,8 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameData;
-
-import javax.annotation.Nullable;
 
 @Mod(modid="clientcommandtest", name="Client Command Test", version="0.0.0", clientSideOnly = true)
 public class ClientCommandTest {
@@ -46,14 +43,14 @@ public class ClientCommandTest {
         }
 
         @Override
-        public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+        public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos)
         {
             if (args.length > 0)
             {
                 return getListOfStringsMatchingLastWord(args, GameData.getBlockRegistry().getKeys());
             }
 
-            return Collections.emptyList();
+            return null;
         }
 
         @Override

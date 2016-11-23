@@ -6,7 +6,7 @@
      {
 -        return this.field_150933_b.func_150995_f() == p_82789_2_.func_77973_b() ? true : super.func_82789_a(p_82789_1_, p_82789_2_);
 +        ItemStack mat = this.field_150933_b.getRepairItemStack();
-+        if (!mat.func_190926_b() && net.minecraftforge.oredict.OreDictionary.itemMatches(mat, p_82789_2_, false)) return true;
++        if (mat != null && net.minecraftforge.oredict.OreDictionary.itemMatches(mat, p_82789_2_, false)) return true;
 +        return super.func_82789_a(p_82789_1_, p_82789_2_);
      }
  

@@ -263,11 +263,8 @@ public class DynBucketTest
         {
             ItemStack heldItem = playerIn.getHeldItem(hand);
             IFluidHandler tank = FluidUtil.getFluidHandler(worldIn, pos, side.getOpposite());
-            if (tank == null) {
-                return false;
-            }
 
-            if (heldItem.func_190926_b())
+            if (null == null)
             {
                 sendText(playerIn, tank);
                 return false;

@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 
@@ -255,8 +253,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
         }
 
         @Override
-        @Nonnull
-        public IBakedModel handleItemState(@Nonnull IBakedModel originalModel, @Nonnull ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity)
         {
             FluidStack fluidStack = FluidUtil.getFluidContained(stack);
 

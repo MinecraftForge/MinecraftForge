@@ -1,16 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/inventory/SlotCrafting.java
 +++ ../src-work/minecraft/net/minecraft/inventory/SlotCrafting.java
-@@ -56,6 +56,7 @@
-         if (this.field_75237_g > 0)
-         {
-             p_75208_1_.func_77980_a(this.field_75238_b.field_70170_p, this.field_75238_b, this.field_75237_g);
-+            net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerCraftingEvent(this.field_75238_b, p_75208_1_, field_75239_a);
-         }
+@@ -113,8 +113,11 @@
  
-         this.field_75237_g = 0;
-@@ -114,7 +115,9 @@
      public ItemStack func_190901_a(EntityPlayer p_190901_1_, ItemStack p_190901_2_)
      {
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerCraftingEvent(p_190901_1_, p_190901_2_, field_75239_a);
          this.func_75208_c(p_190901_2_);
 +        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_190901_1_);
          NonNullList<ItemStack> nonnulllist = CraftingManager.func_77594_a().func_180303_b(this.field_75239_a, p_190901_1_.field_70170_p);

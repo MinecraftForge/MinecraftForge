@@ -165,8 +165,7 @@ public class NoBedSleepingTest
         }
 
         @Override
-        @Nonnull
-        public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand)
+        public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
         {
             ItemStack stack = player.getHeldItem(hand);
             if (!world.isRemote)

@@ -8,14 +8,15 @@
      public ResourceLocation func_188021_a(ItemStack p_188021_1_, @Nullable World p_188021_2_, @Nullable EntityLivingBase p_188021_3_)
      {
          if (!this.field_188023_b.isEmpty())
-@@ -44,4 +45,22 @@
+@@ -44,4 +45,23 @@
  
          return null;
      }
 +
-+    public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
++    public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity)
 +    {
-+        if (!stack.func_190926_b() && stack.func_77973_b().func_185040_i())
++        net.minecraft.item.Item item = stack.func_77973_b();
++        if (item != null && item.func_185040_i())
 +        {
 +            ResourceLocation location = func_188021_a(stack, world, entity);
 +            if (location != null)

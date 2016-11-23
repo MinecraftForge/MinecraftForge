@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,600 @@
+@@ -433,11 +440,605 @@
          return false;
      }
  
@@ -148,7 +148,6 @@
 +     * @param stack The stack to send the NBT tag for
 +     * @return The NBT tag
 +     */
-+    @Nullable
 +    public NBTTagCompound getNBTShareTag(ItemStack stack)
 +    {
 +        return stack.func_77978_p();
@@ -256,7 +255,6 @@
 +     * @param itemstack The current item stack
 +     * @return A new Entity object to spawn or null
 +     */
-+    @Nullable
 +    public Entity createEntity(World world, Entity location, ItemStack itemstack)
 +    {
 +        return null;
@@ -356,7 +354,6 @@
 +     * @param type The subtype, can be null or "overlay"
 +     * @return Path of texture to bind, or null to use default
 +     */
-+    @Nullable
 +    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type)
 +    {
 +        return null;
@@ -386,7 +383,6 @@
 +     * @return  A ModelBiped to render instead of the default
 +     */
 +    @SideOnly(Side.CLIENT)
-+    @Nullable
 +    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default)
 +    {
 +        return null;
@@ -558,6 +554,16 @@
 +    }
 +
 +    /**
++     * Deprecated, Use the position aware variant instead
++     */
++    @Deprecated
++    public int getHarvestLevel(ItemStack stack, String toolClass)
++    {
++        Integer ret = toolClasses.get(toolClass);
++        return ret == null ? -1 : ret;
++    }
++
++    /**
 +     * Queries the harvest level of this item stack for the specified tool class,
 +     * Returns -1 if this tool is not of the specified type
 +     *
@@ -569,8 +575,7 @@
 +     */
 +    public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState)
 +    {
-+        Integer ret = toolClasses.get(toolClass);
-+        return ret == null ? -1 : ret;
++        return getHarvestLevel(stack, toolClass);
 +    }
 +
 +    /**
@@ -661,18 +666,18 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1568,10 @@
+@@ -972,6 +1573,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
 +        //Added by forge for custom Tool materials.
-+        @Nullable
++        @Deprecated public Item customCraftingMaterial = null; // Remote in 1.8.1
 +        private ItemStack repairMaterial = null;
 +
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -1006,9 +1606,34 @@
+@@ -1006,9 +1611,36 @@
              return this.field_78008_j;
          }
  
@@ -687,15 +692,16 @@
 +                case GOLD:    return Items.field_151043_k;
 +                case IRON:    return Items.field_151042_j;
 +                case DIAMOND: return Items.field_151045_i;
-+                default:      return Items.field_190931_a;
++                default:      return customCraftingMaterial;
 +            }
          }
 +
 +        public ToolMaterial setRepairItem(ItemStack stack)
 +        {
-+            if (this.repairMaterial != null) throw new RuntimeException("Repair material has already been set");
++            if (this.repairMaterial != null || customCraftingMaterial != null) throw new RuntimeException("Can not change already set repair material");
 +            if (this == WOOD || this == STONE || this == GOLD || this == IRON || this == DIAMOND) throw new RuntimeException("Can not change vanilla tool repair materials");
 +            this.repairMaterial = stack;
++            this.customCraftingMaterial = stack.func_77973_b();
 +            return this;
 +        }
 +
@@ -703,6 +709,7 @@
 +        {
 +            if (repairMaterial != null) return repairMaterial;
 +            Item ret = this.func_150995_f();
++            if (ret == null) return null;
 +            repairMaterial = new ItemStack(ret, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
 +            return repairMaterial;
 +        }
