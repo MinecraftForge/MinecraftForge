@@ -283,4 +283,14 @@ public class ShapedOreRecipe implements IRecipe
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
+
+    public int getWidth()
+    {
+        return width;
+    }
+
+    public int getHeight()
+    {
+        return height;
+    }
 }
