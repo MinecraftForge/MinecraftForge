@@ -109,6 +109,15 @@
              this.field_184239_as = null;
              entity.func_184225_p(this);
          }
+@@ -2182,7 +2201,7 @@
+         double d1 = p_145771_3_ - (double)blockpos.func_177956_o();
+         double d2 = p_145771_5_ - (double)blockpos.func_177952_p();
+         List<AxisAlignedBB> list = this.field_70170_p.func_147461_a(this.func_174813_aQ());
+-
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.GetCollisionBoxesEvent(this.field_70170_p, this, this.func_174813_aQ(), list));
+         if (list.isEmpty())
+         {
+             return false;
 @@ -2336,6 +2355,7 @@
      {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)

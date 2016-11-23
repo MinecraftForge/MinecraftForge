@@ -43,7 +43,24 @@ public class SlotItemHandler extends Slot
     {
         if (stack == null)
             return false;
-        ItemStack remainder = this.getItemHandler().insertItem(index, stack, true);
+
+        IItemHandler handler = this.getItemHandler();
+        ItemStack remainder;
+        if (handler instanceof IItemHandlerModifiable)
+        {
+            IItemHandlerModifiable handlerModifiable = (IItemHandlerModifiable) handler;
+            ItemStack currentStack = handlerModifiable.getStackInSlot(index);
+
+            handlerModifiable.setStackInSlot(index, null);
+
+            remainder = handlerModifiable.insertItem(index, stack, true);
+
+            handlerModifiable.setStackInSlot(index, currentStack);
+        }
+        else
+        {
+            remainder = handler.insertItem(index, stack, true);
+        }
         return remainder == null || remainder.stackSize < stack.stackSize;
     }
 
@@ -71,13 +88,30 @@ public class SlotItemHandler extends Slot
     public int getItemStackLimit(ItemStack stack)
     {
         ItemStack maxAdd = stack.copy();
-        maxAdd.stackSize = maxAdd.getMaxStackSize();
-        ItemStack currentStack = this.getItemHandler().getStackInSlot(index);
-        ItemStack remainder = this.getItemHandler().insertItem(index, maxAdd, true);
+        int maxInput = stack.getMaxStackSize();
+        maxAdd.stackSize = maxInput;
 
-        int current = currentStack == null ? 0 : currentStack.stackSize;
-        int added = maxAdd.stackSize - (remainder != null ? remainder.stackSize : 0);
-        return current + added;
+        IItemHandler handler = this.getItemHandler();
+        ItemStack currentStack = handler.getStackInSlot(index);
+        if (handler instanceof IItemHandlerModifiable) {
+            IItemHandlerModifiable handlerModifiable = (IItemHandlerModifiable) handler;
+
+            handlerModifiable.setStackInSlot(index, null);
+
+            ItemStack remainder = handlerModifiable.insertItem(index, maxAdd, true);
+
+            handlerModifiable.setStackInSlot(index, currentStack);
+
+            return maxInput - (remainder != null ? remainder.stackSize : 0);
+        }
+        else
+        {
+            ItemStack remainder = handler.insertItem(index, maxAdd, true);
+
+            int current = currentStack == null ? 0 : currentStack.stackSize;
+            int added = maxInput - (remainder != null ? remainder.stackSize : 0);
+            return current + added;
+        }
     }
 
     @Override

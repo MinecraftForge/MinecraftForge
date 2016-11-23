@@ -38,6 +38,10 @@ public class LoaderException extends EnhancedRuntimeException
     {
         super(message);
     }
+    public LoaderException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
 
     @Override protected void printStackTrace(WrappedPrintStream stream){}
 }

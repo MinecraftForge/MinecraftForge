@@ -9,7 +9,25 @@
  {
      public static final PropertyInteger field_176355_a = PropertyInteger.func_177719_a("age", 0, 15);
      protected static final AxisAlignedBB field_185701_b = new AxisAlignedBB(0.125D, 0.0D, 0.125D, 0.875D, 1.0D, 0.875D);
-@@ -70,7 +70,9 @@
+@@ -54,6 +54,8 @@
+                 {
+                     int j = ((Integer)p_180650_3_.func_177229_b(field_176355_a)).intValue();
+ 
++                    if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_180650_1_, p_180650_2_, p_180650_3_, true))
++                    {
+                     if (j == 15)
+                     {
+                         p_180650_1_.func_175656_a(p_180650_2_.func_177984_a(), this.func_176223_P());
+@@ -63,6 +65,8 @@
+                     {
+                         p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176355_a, Integer.valueOf(j + 1)), 4);
+                     }
++                    net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_));
++                    }
+                 }
+             }
+         }
+@@ -70,7 +74,9 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -20,7 +38,7 @@
  
          if (block == this)
          {
-@@ -165,6 +167,17 @@
+@@ -165,6 +171,17 @@
          return ((Integer)p_176201_1_.func_177229_b(field_176355_a)).intValue();
      }
  
