@@ -50,6 +50,7 @@ public class VanillaInventoryCodeHooks
                 for (int j = 0; j < dest.getSizeInventory(); j++)
                 {
                     ItemStack destStack = dest.getStackInSlot(j);
+                    if (dest.isItemValidForSlot(j, extractItem) && (destStack == null || destStack.stackSize < destStack.getMaxStackSize() && destStack.stackSize < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack)))
                     {
                         extractItem = handler.extractItem(i, 1, false);
                         if (destStack == null)
