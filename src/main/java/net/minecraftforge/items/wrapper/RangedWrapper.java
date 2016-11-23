@@ -94,6 +94,17 @@ public class RangedWrapper implements IItemHandlerModifiable {
         }
     }
 
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        if (checkSlot(slot))
+        {
+            return compose.getSlotLimit(slot + minSlot);
+        }
+
+        return 0;
+    }
+
     private boolean checkSlot(int localSlot)
     {
         return localSlot + minSlot < maxSlot;

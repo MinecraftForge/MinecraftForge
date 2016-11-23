@@ -61,4 +61,10 @@ public class EmptyHandler implements IItemHandlerModifiable
     {
         // nothing to do here
     }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        return 0;
+    }
 }
