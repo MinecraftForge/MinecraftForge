@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * Fired when the enchantment level is set for each of the three potential enchantments in the enchanting table.
  * The {@link #level} is set to the vanilla value and can be modified by this event handler.
  *
- * The {@link #enchantNum} is used to determine which enchantment level is being set, 1, 2, or 3. The {@link power} is a number
+ * The {@link #enchantRow} is used to determine which enchantment level is being set, 1, 2, or 3. The {@link power} is a number
  * from 0-15 and indicates how many bookshelves surround the enchanting table. The {@link itemStack} representing the item being
  * enchanted is also available.
  */
@@ -36,17 +36,17 @@ public class EnchantmentLevelSetEvent extends Event
 {
     private final World world;
     private final BlockPos pos;
-    private final int enchantNum;
+    private final int enchantRow;
     private final int power;
     private final ItemStack itemStack;
     private final int originalLevel;
     private int level;
 
-    public EnchantmentLevelSetEvent(World world, BlockPos pos, int enchantNum, int power, ItemStack itemStack, int level)
+    public EnchantmentLevelSetEvent(World world, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int level)
     {
         this.world = world;
         this.pos = pos;
-        this.enchantNum = enchantNum;
+        this.enchantRow = enchantRow;
         this.power = power;
         this.itemStack = itemStack;
         this.originalLevel = level;
@@ -74,13 +74,13 @@ public class EnchantmentLevelSetEvent extends Event
     }
 
     /**
-     * Get the enchantNum for which the enchantment level is being set
+     * Get the row for which the enchantment level is being set
      * 
-     * @return the enchantNum for which the enchantment level is being set
+     * @return the row for which the enchantment level is being set
      */
-    public int getEnchantNum()
+    public int getEnchantRow()
     {
-        return enchantNum;
+        return enchantRow;
     }
 
     /**
@@ -104,9 +104,9 @@ public class EnchantmentLevelSetEvent extends Event
     }
 
     /**
-     * Get the original level of the enchantment for this enchantNum (0-30)
+     * Get the original level of the enchantment for this row (0-30)
      * 
-     * @return the original level of the enchantment for this enchantNum (0-30)
+     * @return the original level of the enchantment for this row (0-30)
      */
     public int getOriginalLevel()
     {
@@ -114,9 +114,9 @@ public class EnchantmentLevelSetEvent extends Event
     }
 
     /**
-     * Get the level of the enchantment for this enchantNum (0-30)
+     * Get the level of the enchantment for this row (0-30)
      * 
-     * @return the level of the enchantment for this enchantNum (0-30)
+     * @return the level of the enchantment for this row (0-30)
      */
     public int getLevel()
     {
