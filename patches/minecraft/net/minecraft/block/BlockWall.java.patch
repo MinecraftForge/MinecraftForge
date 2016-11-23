@@ -1,0 +1,98 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockWall.java
++++ ../src-work/minecraft/net/minecraft/block/BlockWall.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.block;
+ 
++import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.IProperty;
+@@ -13,11 +14,11 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.IStringSerializable;
+-import net.minecraft.util.NonNullList;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.text.translation.I18n;
+ import net.minecraft.world.IBlockAccess;
++import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -39,7 +40,7 @@
+         this.func_149711_c(p_i45435_1_.field_149782_v);
+         this.func_149752_b(p_i45435_1_.field_149781_w / 3.0F);
+         this.func_149672_a(p_i45435_1_.field_149762_H);
+-        this.func_149647_a(CreativeTabs.field_78031_c);
++        this.func_149647_a(CreativeTabs.field_78030_b);
+     }
+ 
+     public AxisAlignedBB func_185496_a(IBlockState p_185496_1_, IBlockAccess p_185496_2_, BlockPos p_185496_3_)
+@@ -49,10 +50,10 @@
+     }
+ 
+     @Nullable
+-    public AxisAlignedBB func_180646_a(IBlockState p_180646_1_, IBlockAccess p_180646_2_, BlockPos p_180646_3_)
++    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+     {
+-        p_180646_1_ = this.func_176221_a(p_180646_1_, p_180646_2_, p_180646_3_);
+-        return field_185750_B[func_185749_i(p_180646_1_)];
++        blockState = this.func_176221_a(blockState, worldIn, pos);
++        return field_185750_B[func_185749_i(blockState)];
+     }
+ 
+     private static int func_185749_i(IBlockState p_185749_0_)
+@@ -110,11 +111,11 @@
+     }
+ 
+     @SideOnly(Side.CLIENT)
+-    public void func_149666_a(Item p_149666_1_, CreativeTabs p_149666_2_, NonNullList<ItemStack> p_149666_3_)
++    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+     {
+         for (BlockWall.EnumType blockwall$enumtype : BlockWall.EnumType.values())
+         {
+-            p_149666_3_.add(new ItemStack(p_149666_1_, 1, blockwall$enumtype.func_176657_a()));
++            list.add(new ItemStack(itemIn, 1, blockwall$enumtype.func_176657_a()));
+         }
+     }
+ 
+@@ -141,10 +142,10 @@
+ 
+     public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
+     {
+-        boolean flag = this.func_176253_e(p_176221_2_, p_176221_3_.func_177978_c());
+-        boolean flag1 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177974_f());
+-        boolean flag2 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177968_d());
+-        boolean flag3 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177976_e());
++        boolean flag = canWallConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH);
++        boolean flag1 = canWallConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST);
++        boolean flag2 = canWallConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH);
++        boolean flag3 = canWallConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST);
+         boolean flag4 = flag && !flag1 && flag2 && !flag3 || !flag && flag1 && !flag2 && flag3;
+         return p_176221_1_.func_177226_a(field_176256_a, Boolean.valueOf(!flag4 || !p_176221_2_.func_175623_d(p_176221_3_.func_177984_a()))).func_177226_a(field_176254_b, Boolean.valueOf(flag)).func_177226_a(field_176257_M, Boolean.valueOf(flag1)).func_177226_a(field_176258_N, Boolean.valueOf(flag2)).func_177226_a(field_176259_O, Boolean.valueOf(flag3));
+     }
+@@ -154,6 +155,23 @@
+         return new BlockStateContainer(this, new IProperty[] {field_176256_a, field_176254_b, field_176257_M, field_176259_O, field_176258_N, field_176255_P});
+     }
+ 
++    /* ======================================== FORGE START ======================================== */
++
++    @Override
++    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    {
++        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
++        return connector instanceof BlockWall || connector instanceof BlockFenceGate;
++    }
++
++    public boolean canWallConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    {
++        Block block = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
++        return block.canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d()) || func_176253_e(world, pos.func_177972_a(facing));
++    }
++
++    /* ======================================== FORGE END ======================================== */
++
+     public static enum EnumType implements IStringSerializable
+     {
+         NORMAL(0, "cobblestone", "normal"),

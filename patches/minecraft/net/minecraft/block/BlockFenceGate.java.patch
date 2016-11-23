@@ -1,0 +1,129 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFenceGate.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFenceGate.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
++import net.minecraft.item.ItemStack;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.Mirror;
+@@ -50,7 +51,7 @@
+     {
+         EnumFacing.Axis enumfacing$axis = ((EnumFacing)p_176221_1_.func_177229_b(field_185512_D)).func_176740_k();
+ 
+-        if (enumfacing$axis == EnumFacing.Axis.Z && (p_176221_2_.func_180495_p(p_176221_3_.func_177976_e()).func_177230_c() == Blocks.field_150463_bK || p_176221_2_.func_180495_p(p_176221_3_.func_177974_f()).func_177230_c() == Blocks.field_150463_bK) || enumfacing$axis == EnumFacing.Axis.X && (p_176221_2_.func_180495_p(p_176221_3_.func_177978_c()).func_177230_c() == Blocks.field_150463_bK || p_176221_2_.func_180495_p(p_176221_3_.func_177968_d()).func_177230_c() == Blocks.field_150463_bK))
++        if (enumfacing$axis == EnumFacing.Axis.Z && (canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST) || canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST)) || enumfacing$axis == EnumFacing.Axis.X && (canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH) || canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH)))
+         {
+             p_176221_1_ = p_176221_1_.func_177226_a(field_176467_M, Boolean.valueOf(true));
+         }
+@@ -74,9 +75,9 @@
+     }
+ 
+     @Nullable
+-    public AxisAlignedBB func_180646_a(IBlockState p_180646_1_, IBlockAccess p_180646_2_, BlockPos p_180646_3_)
++    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+     {
+-        return ((Boolean)p_180646_1_.func_177229_b(field_176466_a)).booleanValue() ? field_185506_k : (((EnumFacing)p_180646_1_.func_177229_b(field_185512_D)).func_176740_k() == EnumFacing.Axis.Z ? field_185539_B : field_185540_C);
++        return ((Boolean)blockState.func_177229_b(field_176466_a)).booleanValue() ? field_185506_k : (((EnumFacing)blockState.func_177229_b(field_185512_D)).func_176740_k() == EnumFacing.Axis.Z ? field_185539_B : field_185540_C);
+     }
+ 
+     public boolean func_149662_c(IBlockState p_149662_1_)
+@@ -96,48 +97,55 @@
+ 
+     public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
+     {
+-        boolean flag = p_180642_1_.func_175640_z(p_180642_2_);
+-        return this.func_176223_P().func_177226_a(field_185512_D, p_180642_8_.func_174811_aO()).func_177226_a(field_176466_a, Boolean.valueOf(flag)).func_177226_a(field_176465_b, Boolean.valueOf(flag)).func_177226_a(field_176467_M, Boolean.valueOf(false));
++        return this.func_176223_P().func_177226_a(field_185512_D, p_180642_8_.func_174811_aO()).func_177226_a(field_176466_a, Boolean.valueOf(false)).func_177226_a(field_176465_b, Boolean.valueOf(false)).func_177226_a(field_176467_M, Boolean.valueOf(false));
+     }
+ 
+-    public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)
++    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+     {
+-        if (((Boolean)p_180639_3_.func_177229_b(field_176466_a)).booleanValue())
++        if (((Boolean)state.func_177229_b(field_176466_a)).booleanValue())
+         {
+-            p_180639_3_ = p_180639_3_.func_177226_a(field_176466_a, Boolean.valueOf(false));
+-            p_180639_1_.func_180501_a(p_180639_2_, p_180639_3_, 10);
++            state = state.func_177226_a(field_176466_a, Boolean.valueOf(false));
++            worldIn.func_180501_a(pos, state, 10);
+         }
+         else
+         {
+-            EnumFacing enumfacing = EnumFacing.func_176733_a((double)p_180639_4_.field_70177_z);
++            EnumFacing enumfacing = EnumFacing.func_176733_a((double)playerIn.field_70177_z);
+ 
+-            if (p_180639_3_.func_177229_b(field_185512_D) == enumfacing.func_176734_d())
++            if (state.func_177229_b(field_185512_D) == enumfacing.func_176734_d())
+             {
+-                p_180639_3_ = p_180639_3_.func_177226_a(field_185512_D, enumfacing);
++                state = state.func_177226_a(field_185512_D, enumfacing);
+             }
+ 
+-            p_180639_3_ = p_180639_3_.func_177226_a(field_176466_a, Boolean.valueOf(true));
+-            p_180639_1_.func_180501_a(p_180639_2_, p_180639_3_, 10);
++            state = state.func_177226_a(field_176466_a, Boolean.valueOf(true));
++            worldIn.func_180501_a(pos, state, 10);
+         }
+ 
+-        p_180639_1_.func_180498_a(p_180639_4_, ((Boolean)p_180639_3_.func_177229_b(field_176466_a)).booleanValue() ? 1008 : 1014, p_180639_2_, 0);
++        worldIn.func_180498_a(playerIn, ((Boolean)state.func_177229_b(field_176466_a)).booleanValue() ? 1008 : 1014, pos, 0);
+         return true;
+     }
+ 
+-    public void func_189540_a(IBlockState p_189540_1_, World p_189540_2_, BlockPos p_189540_3_, Block p_189540_4_, BlockPos p_189540_5_)
++    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn)
+     {
+-        if (!p_189540_2_.field_72995_K)
++        if (!worldIn.field_72995_K)
+         {
+-            boolean flag = p_189540_2_.func_175640_z(p_189540_3_);
++            boolean flag = worldIn.func_175640_z(pos);
+ 
+-            if (((Boolean)p_189540_1_.func_177229_b(field_176465_b)).booleanValue() != flag)
++            if (flag || blockIn.func_176223_P().func_185897_m())
+             {
+-                p_189540_2_.func_180501_a(p_189540_3_, p_189540_1_.func_177226_a(field_176465_b, Boolean.valueOf(flag)).func_177226_a(field_176466_a, Boolean.valueOf(flag)), 2);
+-
+-                if (((Boolean)p_189540_1_.func_177229_b(field_176466_a)).booleanValue() != flag)
++                if (flag && !((Boolean)state.func_177229_b(field_176466_a)).booleanValue() && !((Boolean)state.func_177229_b(field_176465_b)).booleanValue())
+                 {
+-                    p_189540_2_.func_180498_a((EntityPlayer)null, flag ? 1008 : 1014, p_189540_3_, 0);
++                    worldIn.func_180501_a(pos, state.func_177226_a(field_176466_a, Boolean.valueOf(true)).func_177226_a(field_176465_b, Boolean.valueOf(true)), 2);
++                    worldIn.func_180498_a((EntityPlayer)null, 1008, pos, 0);
+                 }
++                else if (!flag && ((Boolean)state.func_177229_b(field_176466_a)).booleanValue() && ((Boolean)state.func_177229_b(field_176465_b)).booleanValue())
++                {
++                    worldIn.func_180501_a(pos, state.func_177226_a(field_176466_a, Boolean.valueOf(false)).func_177226_a(field_176465_b, Boolean.valueOf(false)), 2);
++                    worldIn.func_180498_a((EntityPlayer)null, 1014, pos, 0);
++                }
++                else if (flag != ((Boolean)state.func_177229_b(field_176465_b)).booleanValue())
++                {
++                    worldIn.func_180501_a(pos, state.func_177226_a(field_176465_b, Boolean.valueOf(flag)), 2);
++                }
+             }
+         }
+     }
+@@ -175,4 +183,21 @@
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_185512_D, field_176466_a, field_176465_b, field_176467_M});
+     }
++
++    /* ======================================== FORGE START ======================================== */
++
++    @Override
++    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    {
++        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
++        return connector instanceof BlockFence || connector instanceof BlockWall;
++    }
++
++    public boolean canFenceGateConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    {
++        Block block = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
++        return block.canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d());
++    }
++
++    /* ======================================== FORGE END ======================================== */
+ }

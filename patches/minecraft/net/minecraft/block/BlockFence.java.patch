@@ -1,0 +1,74 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFence.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFence.java
+@@ -12,7 +12,6 @@
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+-import net.minecraft.init.Items;
+ import net.minecraft.item.ItemLead;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.EnumFacing;
+@@ -133,17 +132,9 @@
+         return true;
+     }
+ 
+-    public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)
++    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+     {
+-        if (!p_180639_1_.field_72995_K)
+-        {
+-            return ItemLead.func_180618_a(p_180639_4_, p_180639_1_, p_180639_2_);
+-        }
+-        else
+-        {
+-            ItemStack itemstack = p_180639_4_.func_184586_b(p_180639_5_);
+-            return itemstack.func_77973_b() == Items.field_151058_ca || itemstack.func_190926_b();
+-        }
++        return worldIn.field_72995_K ? true : ItemLead.func_180618_a(playerIn, worldIn, pos);
+     }
+ 
+     public int func_176201_c(IBlockState p_176201_1_)
+@@ -153,7 +144,7 @@
+ 
+     public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
+     {
+-        return p_176221_1_.func_177226_a(field_176526_a, Boolean.valueOf(this.func_176524_e(p_176221_2_, p_176221_3_.func_177978_c()))).func_177226_a(field_176525_b, Boolean.valueOf(this.func_176524_e(p_176221_2_, p_176221_3_.func_177974_f()))).func_177226_a(field_176527_M, Boolean.valueOf(this.func_176524_e(p_176221_2_, p_176221_3_.func_177968_d()))).func_177226_a(field_176528_N, Boolean.valueOf(this.func_176524_e(p_176221_2_, p_176221_3_.func_177976_e())));
++        return p_176221_1_.func_177226_a(field_176526_a, Boolean.valueOf(canFenceConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH))).func_177226_a(field_176525_b, Boolean.valueOf(canFenceConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST))).func_177226_a(field_176527_M, Boolean.valueOf(canFenceConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH))).func_177226_a(field_176528_N, Boolean.valueOf(canFenceConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST)));
+     }
+ 
+     public IBlockState func_185499_a(IBlockState p_185499_1_, Rotation p_185499_2_)
+@@ -188,4 +179,34 @@
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176526_a, field_176525_b, field_176528_N, field_176527_M});
+     }
++
++    /* ======================================== FORGE START ======================================== */
++
++    @Override
++    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    {
++        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
++
++        if(connector instanceof BlockFence)
++        {
++            if(this != net.minecraft.init.Blocks.field_150386_bk && connector == net.minecraft.init.Blocks.field_150386_bk)
++            {
++                return false;
++            }
++            else if(this == net.minecraft.init.Blocks.field_150386_bk && connector != net.minecraft.init.Blocks.field_150386_bk)
++            {
++                return false;
++            }
++            return true;
++        }
++        return false;
++    }
++
++    public boolean canFenceConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    {
++        Block block = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
++        return block.canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d()) || func_176524_e(world, pos.func_177972_a(facing));
++    }
++
++    /* ======================================== FORGE END ======================================== */
+ }

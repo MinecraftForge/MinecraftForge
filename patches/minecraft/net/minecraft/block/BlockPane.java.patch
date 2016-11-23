@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPane.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
-@@ -107,7 +107,10 @@
+@@ -11,7 +11,6 @@
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.init.Blocks;
+-import net.minecraft.init.Items;
+ import net.minecraft.item.Item;
+ import net.minecraft.util.BlockRenderLayer;
+ import net.minecraft.util.EnumFacing;
+@@ -107,12 +106,16 @@
  
      public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
      {
@@ -11,16 +19,33 @@
 +                .func_177226_a(field_176242_M, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST));
      }
  
++    @Nullable
      public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
-@@ -184,4 +187,11 @@
+     {
+-        return !this.field_150099_b ? Items.field_190931_a : super.func_180660_a(p_180660_1_, p_180660_2_, p_180660_3_);
++        return !this.field_150099_b ? null : super.func_180660_a(p_180660_1_, p_180660_2_, p_180660_3_);
+     }
+ 
+     public boolean func_149662_c(IBlockState p_149662_1_)
+@@ -184,4 +187,21 @@
      {
          return new BlockStateContainer(this, new IProperty[] {field_176241_b, field_176242_M, field_176244_O, field_176243_N});
      }
 +
-+    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)
++    /* ======================================== FORGE START ======================================== */
++
++    @Override
++    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
-+        BlockPos off = pos.func_177972_a(dir);
-+        IBlockState state = world.func_180495_p(off);
-+        return func_150098_a(state.func_177230_c()) || state.isSideSolid(world, off, dir.func_176734_d());
++        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
++        return connector instanceof BlockPane;
 +    }
++
++    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    {
++        IBlockState state = world.func_180495_p(pos.func_177972_a(facing));
++        return state.func_177230_c().canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d()) || func_150098_a(state.func_177230_c()) || state.isSideSolid(world, pos.func_177972_a(facing), facing.func_176734_d());
++    }
++
++    /* ======================================== FORGE END ======================================== */
  }
