@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiScreen.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreen.java
-@@ -147,7 +147,10 @@
+@@ -63,6 +63,7 @@
+     private long field_146288_g;
+     private int field_146298_h;
+     private URI field_175286_t;
++    protected boolean keyHandled, mouseHandled; // Forge: allow canceling key and mouse Post events from handleMouseInput and handleKeyboardInput
+ 
+     public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+     {
+@@ -147,7 +148,10 @@
              }
          }
  
@@ -12,7 +20,7 @@
      }
  
      protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
-@@ -157,7 +160,13 @@
+@@ -157,7 +161,13 @@
  
      protected void func_146283_a(List<String> p_146283_1_, int p_146283_2_, int p_146283_3_)
      {
@@ -27,7 +35,7 @@
          {
              GlStateManager.func_179101_C();
              RenderHelper.func_74518_a();
-@@ -418,6 +427,7 @@
+@@ -418,6 +428,7 @@
          {
              this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_175281_1_);
          }
@@ -35,7 +43,7 @@
  
          this.field_146297_k.field_71439_g.func_71165_d(p_175281_1_);
      }
-@@ -432,9 +442,15 @@
+@@ -432,9 +443,15 @@
  
                  if (guibutton.func_146116_c(this.field_146297_k, p_73864_1_, p_73864_2_))
                  {
@@ -51,7 +59,7 @@
                  }
              }
          }
-@@ -464,8 +480,12 @@
+@@ -464,8 +481,12 @@
          this.field_146289_q = p_146280_1_.field_71466_p;
          this.field_146294_l = p_146280_2_;
          this.field_146295_m = p_146280_3_;
@@ -64,27 +72,29 @@
      }
  
      public void func_183500_a(int p_183500_1_, int p_183500_2_)
-@@ -484,7 +504,9 @@
+@@ -484,7 +505,10 @@
          {
              while (Mouse.next())
              {
++                this.mouseHandled = false;
 +                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Pre(this))) continue;
                  this.func_146274_d();
-+                if (this.equals(this.field_146297_k.field_71462_r)) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Post(this));
++                if (this.equals(this.field_146297_k.field_71462_r) && !this.mouseHandled) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Post(this));
              }
          }
  
-@@ -492,7 +514,9 @@
+@@ -492,7 +516,10 @@
          {
              while (Keyboard.next())
              {
++                this.keyHandled = false;
 +                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Pre(this))) continue;
                  this.func_146282_l();
-+                if (this.equals(this.field_146297_k.field_71462_r)) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Post(this));
++                if (this.equals(this.field_146297_k.field_71462_r) && !this.keyHandled) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Post(this));
              }
          }
      }
-@@ -554,6 +578,7 @@
+@@ -554,6 +581,7 @@
      public void func_146276_q_()
      {
          this.func_146270_b(0);
