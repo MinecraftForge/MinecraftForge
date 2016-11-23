@@ -19,30 +19,34 @@
 
 package net.minecraftforge.items;
 
+import com.google.common.base.Predicate;
+import javafx.util.Pair;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockDropper;
 import net.minecraft.block.BlockHopper;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.IHopper;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.tileentity.TileEntityHopper;
+import net.minecraft.tileentity.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class VanillaInventoryCodeHooks
 {
     //Return: Null if we did nothing {no IItemHandler}, True if we moved an item, False if we moved no items
     public static Boolean extractHook(IHopper dest)
     {
-        TileEntity tileEntity = dest.getWorld().getTileEntity(new BlockPos(dest.getXPos(), dest.getYPos() + 1, dest.getZPos()));
-
-        if (tileEntity == null || !tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
+        Pair<IItemHandler, Object> itemHandlerResult = getItemHandler(dest, EnumFacing.UP);
+        if (itemHandlerResult == null)
             return null;
 
-        IItemHandler handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+        IItemHandler handler = itemHandlerResult.getKey();
 
         for (int i = 0; i < handler.getSlots(); i++)
         {
@@ -75,65 +79,210 @@ public class VanillaInventoryCodeHooks
     public static boolean dropperInsertHook(World world, BlockPos pos, TileEntityDispenser dropper, int slot, @Nonnull ItemStack stack)
     {
         EnumFacing enumfacing = world.getBlockState(pos).getValue(BlockDropper.FACING);
-        BlockPos offsetPos = pos.offset(enumfacing);
-        TileEntity tileEntity = world.getTileEntity(offsetPos);
-        if (tileEntity == null)
-            return true;
-        if (!tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, enumfacing.getOpposite()))
-            return true;
-
-        IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, enumfacing.getOpposite());
-
-        ItemStack result = ItemHandlerHelper.insertItem(capability, ItemHandlerHelper.copyStackWithSize(stack, 1), false);
-
-        if (result.func_190926_b())
+        BlockPos blockpos = pos.offset(enumfacing);
+        Pair<IItemHandler, Object> destinationResult = getItemHandler(world, (double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), enumfacing.getOpposite());
+        if (destinationResult == null)
         {
-            result = stack.copy();
-            result.func_190918_g(1);
+            return true;
         }
         else
         {
-            result = stack.copy();
+            IItemHandler itemHandler = destinationResult.getKey();
+            Object destination = destinationResult.getValue();
+            ItemStack dispensedStack = stack.copy().splitStack(1);
+            ItemStack remainder = putStackInInventoryAllSlots(dropper, destination, itemHandler, dispensedStack);
+
+            if (remainder.func_190926_b())
+            {
+                remainder = stack.copy();
+                remainder.func_190918_g(1);
+            }
+            else
+            {
+                remainder = stack.copy();
+            }
+
+            dropper.setInventorySlotContents(slot, remainder);
+            return false;
         }
-        dropper.setInventorySlotContents(slot, result);
-        dropper.markDirty();
-        return false;
     }
 
     public static boolean insertHook(TileEntityHopper hopper)
     {
-        return insertHook(hopper, BlockHopper.getFacing(hopper.getBlockMetadata()));
+        EnumFacing hopperFacing = BlockHopper.getFacing(hopper.getBlockMetadata());
+        Pair<IItemHandler, Object> destinationResult = getItemHandler(hopper, hopperFacing);
+        if (destinationResult == null)
+        {
+            return false;
+        }
+        else
+        {
+            IItemHandler itemHandler = destinationResult.getKey();
+            Object destination = destinationResult.getValue();
+            if (isFull(itemHandler))
+            {
+                return false;
+            }
+            else
+            {
+                for (int i = 0; i < hopper.getSizeInventory(); ++i)
+                {
+                    if (!hopper.getStackInSlot(i).func_190926_b())
+                    {
+                        ItemStack originalSlotContents = hopper.getStackInSlot(i).copy();
+                        ItemStack insertStack = hopper.decrStackSize(i, 1);
+                        ItemStack remainder = putStackInInventoryAllSlots(hopper, destination, itemHandler, insertStack);
+
+                        if (remainder.func_190926_b())
+                        {
+                            return true;
+                        }
+
+                        hopper.setInventorySlotContents(i, originalSlotContents);
+                    }
+                }
+
+                return false;
+            }
+        }
     }
 
-    public static boolean insertHook(IHopper hopper, EnumFacing facing)
+    private static ItemStack putStackInInventoryAllSlots(TileEntity source, Object destination, IItemHandler destInventory, ItemStack stack)
     {
-        TileEntity tileEntity = hopper.getWorld().getTileEntity(
-                new BlockPos(hopper.getXPos(), hopper.getYPos(), hopper.getZPos()).offset(facing));
-
-        if (tileEntity == null)
-            return false;
-        if (!tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite()))
-            return false;
-
-        IItemHandler handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
-
-        for (int i = 0; i < hopper.getSizeInventory(); i++)
+        for (int slot = 0; slot < destInventory.getSlots() && !stack.func_190926_b(); slot++)
         {
-            ItemStack stackInSlot = hopper.getStackInSlot(i);
-            if (!stackInSlot.func_190926_b())
+            stack = insertStack(source, destination, destInventory, stack, slot);
+        }
+        return stack;
+    }
+
+    private static ItemStack insertStack(TileEntity source, Object destination, IItemHandler destInventory, ItemStack stack, int slot)
+    {
+        ItemStack itemstack = destInventory.getStackInSlot(slot);
+
+        if (destInventory.insertItem(slot, stack, true).func_190926_b())
+        {
+            boolean insertedItem = false;
+            boolean inventoryWasEmpty = isEmpty(destInventory);
+
+            if (itemstack.func_190926_b())
             {
-                ItemStack insert = stackInSlot.copy();
-                insert.func_190920_e(1);
-                ItemStack newStack = ItemHandlerHelper.insertItem(handler, insert, true);
-                if (newStack.func_190926_b())
+                destInventory.insertItem(slot, stack, false);
+                stack = ItemStack.field_190927_a;
+                insertedItem = true;
+            }
+            else if (ItemHandlerHelper.canItemStacksStack(itemstack, stack))
+            {
+                int originalSize = stack.func_190916_E();
+                stack = destInventory.insertItem(slot, stack, false);
+                insertedItem = originalSize < stack.func_190916_E();
+            }
+
+            if (insertedItem)
+            {
+                if (inventoryWasEmpty && destination instanceof TileEntityHopper)
                 {
-                    ItemHandlerHelper.insertItem(handler, hopper.decrStackSize(i, 1), false);
-                    hopper.markDirty();
-                    return true;
+                    TileEntityHopper destinationHopper = (TileEntityHopper)destination;
+
+                    if (!destinationHopper.mayTransfer())
+                    {
+                        int k = 0;
+
+                        if (source instanceof TileEntityHopper)
+                        {
+                            if (destinationHopper.getLastUpdateTime() >= ((TileEntityHopper) source).getLastUpdateTime())
+                            {
+                                k = 1;
+                            }
+                        }
+
+                        destinationHopper.setTransferCooldown(8 - k);
+                    }
                 }
             }
         }
 
+        return stack;
+    }
+
+    @Nullable
+    private static Pair<IItemHandler, Object> getItemHandler(IHopper hopper, EnumFacing hopperFacing)
+    {
+        double x = hopper.getXPos() + (double) hopperFacing.getFrontOffsetX();
+        double y = hopper.getYPos() + (double) hopperFacing.getFrontOffsetY();
+        double z = hopper.getZPos() + (double) hopperFacing.getFrontOffsetZ();
+        return getItemHandler(hopper.getWorld(), x, y, z, hopperFacing.getOpposite());
+    }
+
+    private static boolean isFull(IItemHandler itemHandler)
+    {
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+        {
+            ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
+            if (stackInSlot.func_190926_b() || stackInSlot.func_190916_E() != stackInSlot.getMaxStackSize())
+            {
+                return false;
+            }
+        }
         return true;
+    }
+
+    private static boolean isEmpty(IItemHandler itemHandler)
+    {
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+        {
+            ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
+            if (stackInSlot.func_190916_E() > 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Nullable
+    public static Pair<IItemHandler, Object> getItemHandler(World worldIn, double x, double y, double z, final EnumFacing side)
+    {
+        Pair<IItemHandler, Object> destination = null;
+        int i = MathHelper.floor_double(x);
+        int j = MathHelper.floor_double(y);
+        int k = MathHelper.floor_double(z);
+        BlockPos blockpos = new BlockPos(i, j, k);
+        net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
+        Block block = state.getBlock();
+
+        if (block.hasTileEntity(state))
+        {
+            TileEntity tileentity = worldIn.getTileEntity(blockpos);
+            if (tileentity != null)
+            {
+                if (tileentity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side))
+                {
+                    IItemHandler capability = tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+                    destination = new Pair<IItemHandler, Object>(capability, tileentity);
+                }
+            }
+        }
+
+        if (destination == null)
+        {
+            Predicate<Entity> hasItemCapability = new Predicate<Entity>()
+            {
+                @Override
+                public boolean apply(@Nullable Entity entity)
+                {
+                    return entity != null && entity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side) && entity.isEntityAlive();
+                }
+            };
+            List<Entity> list = worldIn.getEntitiesInAABBexcluding(null, new AxisAlignedBB(x - 0.5D, y - 0.5D, z - 0.5D, x + 0.5D, y + 0.5D, z + 0.5D), hasItemCapability);
+
+            if (!list.isEmpty())
+            {
+                Entity entity = list.get(worldIn.rand.nextInt(list.size()));
+                destination = new Pair<IItemHandler, Object>(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side), entity);
+            }
+        }
+
+        return destination;
     }
 }
