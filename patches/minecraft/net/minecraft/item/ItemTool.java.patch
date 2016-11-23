@@ -37,23 +37,24 @@
      {
 -        return this.field_77862_b.func_150995_f() == p_82789_2_.func_77973_b() ? true : super.func_82789_a(p_82789_1_, p_82789_2_);
 +        ItemStack mat = this.field_77862_b.getRepairItemStack();
-+        if (mat != null && net.minecraftforge.oredict.OreDictionary.itemMatches(mat, p_82789_2_, false)) return true;
++        if (!mat.func_190926_b() && net.minecraftforge.oredict.OreDictionary.itemMatches(mat, p_82789_2_, false)) return true;
 +        return super.func_82789_a(p_82789_1_, p_82789_2_);
      }
  
      public Multimap<String, AttributeModifier> func_111205_h(EntityEquipmentSlot p_111205_1_)
-@@ -99,4 +118,27 @@
+@@ -99,4 +118,28 @@
  
          return multimap;
      }
 +
 +    /*===================================== FORGE START =================================*/
++    @javax.annotation.Nullable
 +    private String toolClass;
 +    @Override
-+    public int getHarvestLevel(ItemStack stack, String toolClass)
++    public int getHarvestLevel(ItemStack stack, String toolClass, @javax.annotation.Nullable net.minecraft.entity.player.EntityPlayer player, @javax.annotation.Nullable IBlockState blockState)
 +    {
-+        int level = super.getHarvestLevel(stack, toolClass);
-+        if (level == -1 && toolClass != null && toolClass.equals(this.toolClass))
++        int level = super.getHarvestLevel(stack, toolClass,  player, blockState);
++        if (level == -1 && toolClass.equals(this.toolClass))
 +        {
 +            return this.field_77862_b.func_77996_d();
 +        }
