@@ -23,7 +23,7 @@ public class EnchantmentLevelSetTest
     public static void onEnchantmentLevelSet(EnchantmentLevelSetEvent event)
     {
         // invert enchantment level, just for fun
-        FMLLog.info("Enchantment number: " + event.getEnchantNum() + ", level: " + event.getLevel());
+        FMLLog.info("Enchantment row: " + event.getEnchantRow() + ", level: " + event.getLevel());
         event.setLevel(30 - event.getLevel());
     }
 }
