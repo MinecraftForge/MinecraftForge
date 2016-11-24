@@ -381,11 +381,17 @@ public class ForgeEventFactory
         return null;
     }
 
-    public static boolean canEntityUpdate(Entity entity)
+    public static boolean allowEntityUpdate(Entity entity)
     {
-        EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(entity);
+        EntityEvent.AllowUpdate event = new EntityEvent.AllowUpdate(entity);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getCanUpdate();
+    }
+    
+    public static boolean cancelEntityUpdate(Entity entity){
+    	EntityEvent.CancelUpdate event = new EntityEvent.CancelUpdate(entity);
+    	MinecraftForge.EVENT_BUS.post(event);
+    	return event.getCanUpdate();
     }
 
     public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch)
