@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.IntBuffer;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
@@ -42,6 +43,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -100,6 +103,8 @@ public class SplashProgress
 
     private static boolean enabled;
     private static boolean rotate;
+    private static boolean showMemoryWarning;
+    private static int memWarnPercent;
     private static int logoOffset;
     private static int backgroundColor;
     private static int fontColor;
@@ -169,6 +174,7 @@ public class SplashProgress
         barBorderColor =     getHex("barBorder",     0xC0C0C0);
         barColor =           getHex("bar",           0xCB3D35);
         barBackgroundColor = getHex("barBackground", 0xFFFFFF);
+        memWarnPercent     = getInt("memoryWarningPercent", 85);
 
         final ResourceLocation fontLoc = new ResourceLocation(getString("fontTexture", "textures/font/ascii.png"));
         final ResourceLocation logoLoc = new ResourceLocation(getString("logoTexture", "textures/gui/title/mojang.png"));
@@ -291,6 +297,10 @@ public class SplashProgress
                     glVertex2f(320 + 256, 240 - 256);
                     glEnd();
                     glDisable(GL_TEXTURE_2D);
+
+                    // memory usage warning
+                    setColor(fontColor);
+                    drawMemoryWarning();
 
                     // bars
                     if(first != null)
@@ -830,5 +840,49 @@ public class SplashProgress
             return fmlPack.getInputStream(loc);
         }
         return mcPack.getInputStream(loc);
+    }
+
+    private static void drawMemoryWarning()
+    {
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        long totalMemory = Runtime.getRuntime().totalMemory();
+        long freeMemory = Runtime.getRuntime().freeMemory();
+        long usedMemory = totalMemory - freeMemory;
+        long usedMemoryPercent = usedMemory * 100L / maxMemory;
+        if (usedMemoryPercent >= memWarnPercent)
+        {
+            showMemoryWarning = true;
+        }
+
+        if (showMemoryWarning)
+        {
+            glPushMatrix();
+            glScalef(2, 2, 1);
+
+            List<String> list = Lists.newArrayList(
+                    "Warning: low memory!",
+                    String.format("Memory: % 2d%% %03d/%03dMB", usedMemoryPercent, bytesToMb(usedMemory), bytesToMb(maxMemory)),
+                    String.format("Allocated: % 2d%% %03dMB", totalMemory * 100L / maxMemory, bytesToMb(totalMemory))
+            );
+            for (int i = 0; i < list.size(); ++i)
+            {
+                String s = list.get(i);
+
+                if (!Strings.isNullOrEmpty(s))
+                {
+                    int y = 2 + fontRenderer.FONT_HEIGHT * i;
+                    glEnable(GL_TEXTURE_2D);
+                    fontRenderer.drawString(s, 0, y, 0xff0000);
+                    glDisable(GL_TEXTURE_2D);
+                }
+            }
+
+            glPopMatrix();
+        }
+    }
+
+    private static long bytesToMb(long bytes)
+    {
+        return bytes / 1024L / 1024L;
     }
 }
