@@ -1,25 +1,34 @@
 package net.minecraftforge.common.smelting;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+/**
+ * A smelting recipe akin to ShapedOreRecipe and ShapelessOreRecipe. The input is checked against an OreDictionary entry.
+ */
 public class OreSmeltingRecipe extends AbstractSmeltingRecipe
 {
 
     protected final ItemStack output;
     protected final List<ItemStack> inputs;
 
-    public OreSmeltingRecipe(String input, ItemStack output, float xp, int duration)
+    public OreSmeltingRecipe(String input, ItemStack output, int duration)
     {
-        super(xp, duration);
-        this.inputs = OreDictionary.getOres(input);
-        this.output = output;
+        super(duration);
+        this.inputs = OreDictionary.getOres(checkNotNull(input));
+        this.output = checkNotNull(output);
     }
 
     @Override
-    public boolean matches(ItemStack input)
+    public boolean matches(@Nonnull ItemStack input)
     {
         for (ItemStack candidate : inputs)
         {
@@ -31,9 +40,16 @@ public class OreSmeltingRecipe extends AbstractSmeltingRecipe
         return false;
     }
 
+    @Nonnull
     @Override
-    protected ItemStack getOutput0(ItemStack input)
+    public ItemStack getOutput(@Nonnull ItemStack input)
     {
-        return output;
+        return output.copy();
+    }
+
+    @Override
+    public Collection<Item> getPossibleOutputs()
+    {
+        return Collections.singleton(output.getItem());
     }
 }

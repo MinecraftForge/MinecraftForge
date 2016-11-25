@@ -1,5 +1,10 @@
 package net.minecraftforge.common.smelting;
 
+import java.util.Collection;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -16,31 +21,29 @@ public interface SmeltingRecipe
      * @param input the input stack
      * @return true if the recipe matches
      */
-    boolean matches(ItemStack input);
+    boolean matches(@Nonnull ItemStack input);
 
     /**
-     * Get the output for the recipe or null if the recipe does not match the input.
+     * Get the output for the recipe.
      *
      * @param input the input stack
      * @return the output stack
      */
-    ItemStack getOutput(ItemStack input);
+    @Nonnull
+    ItemStack getOutput(@Nonnull ItemStack input);
 
     /**
-     * The time in ticks it takes for this recipe to apply in a furnace or -1
-     * if the recipe does not match the input.
+     * The time in ticks it takes for this recipe to apply in a furnace.
      *
      * @param input the input stack
      * @return the cooking time in ticks
      */
-    int getDuration(ItemStack input);
+    int getDuration(@Nonnull ItemStack input);
 
     /**
-     * The experience provided by this recipe.
-     *
-     * @param input the input stack
-     * @return the amount of experience
+     * Provide a list of Items that are possible as a result of {@code getOutput}. This is needed for e.g. crafting stats.
+     * @return a list of outputs
      */
-    float getExperience(ItemStack input);
+    Collection<Item> getPossibleOutputs();
 
 }

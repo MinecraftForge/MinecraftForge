@@ -1,48 +1,25 @@
 package net.minecraftforge.common.smelting;
 
+import javax.annotation.Nonnull;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import net.minecraft.item.ItemStack;
 
 /**
- * Base class for {@code SmeltingRecipe} implementations.
+ * Base class for {@code SmeltingRecipe} implementations with a set duration value.
  */
 public abstract class AbstractSmeltingRecipe implements SmeltingRecipe
 {
-
-    protected final float xp;
     protected final int duration;
 
-    protected AbstractSmeltingRecipe(float xp, int duration)
+    protected AbstractSmeltingRecipe(int duration)
     {
         checkArgument(duration > 0);
-        checkArgument(xp >= 0);
         this.duration = duration;
-        this.xp = xp;
     }
 
     @Override
-    public final ItemStack getOutput(ItemStack input)
-    {
-        return matches(input) ? ItemStack.copyItemStack(getOutput0(input)) : null;
-    }
-
-    /**
-     * Get the raw output for this recipe based on the given input. The resulting stack should not be
-     * a defensive copy. This method is only called, if {@code matches} returns true.
-     *
-     * @param input the input stack
-     * @return the raw output stack
-     */
-    protected abstract ItemStack getOutput0(ItemStack input);
-
-    @Override
-    public float getExperience(ItemStack input)
-    {
-        return xp;
-    }
-
-    @Override
-    public int getDuration(ItemStack input)
+    public int getDuration(@Nonnull ItemStack input)
     {
         return duration;
     }

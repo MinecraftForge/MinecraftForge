@@ -242,7 +242,6 @@ public class GameRegistry
         CraftingManager.getInstance().getRecipeList().add(recipe);
     }
 
-    public static void addSmelting(Block input, @Nonnull ItemStack output, float xp)
     @Deprecated // Use FurnaceRecipeRegistry
     public static void addSmelting(Block input, ItemStack output, float xp)
     {
