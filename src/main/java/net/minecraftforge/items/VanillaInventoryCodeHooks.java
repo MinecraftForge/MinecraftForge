@@ -19,7 +19,6 @@
 
 package net.minecraftforge.items;
 
-import javafx.util.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDropper;
 import net.minecraft.block.BlockHopper;
@@ -32,6 +31,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -270,7 +271,7 @@ public class VanillaInventoryCodeHooks
                 if (tileentity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side))
                 {
                     IItemHandler capability = tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
-                    destination = new Pair<IItemHandler, Object>(capability, tileentity);
+                    destination = ImmutablePair.<IItemHandler, Object>of(capability, tileentity);
                 }
             }
         }
