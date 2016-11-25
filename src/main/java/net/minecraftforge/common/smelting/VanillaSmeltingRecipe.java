@@ -10,32 +10,33 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-/**
- * A smelting recipe that checks against a single input.
- */
-public class SimpleSmeltingRecipe extends AbstractSmeltingRecipe
+final class VanillaSmeltingRecipe implements SmeltingRecipe
 {
 
-    protected final ItemStack input, output;
+    private final ItemStack input, output;
 
-    public SimpleSmeltingRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output, int duration)
+    VanillaSmeltingRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output)
     {
-        super(duration);
         this.input = checkNotNull(input);
         this.output = checkNotNull(output);
     }
 
-    @Override
-    public boolean matches(@Nonnull ItemStack input)
+    public final boolean matches(@Nonnull ItemStack input)
     {
         return OreDictionary.itemMatches(this.input, input, false);
     }
 
     @Nonnull
     @Override
-    public ItemStack getOutput(@Nonnull ItemStack input)
+    public final ItemStack getOutput(@Nonnull ItemStack input)
     {
-        return output.copy();
+        return matches(input) ? output.copy() : ItemStack.field_190927_a;
+    }
+
+    @Override
+    public int getDuration(@Nonnull ItemStack input)
+    {
+        return SmeltingRecipeRegistry.DEFAULT_COOK_TIME;
     }
 
     @Override
