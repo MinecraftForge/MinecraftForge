@@ -55,7 +55,7 @@ public interface SmeltingRecipe
      * The time in ticks it takes for this recipe to apply in a furnace.
      *
      * @param input the input stack
-     * @return the cooking time in ticks
+     * @return the smelting time in ticks
      */
     int getDuration(@Nonnull ItemStack input);
 
