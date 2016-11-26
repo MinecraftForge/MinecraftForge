@@ -68,35 +68,6 @@ public class SmeltingRecipeRegistry
     }
 
     /**
-     * Get an unmodifiable list of all smelting recipes. The list will update in-place as new recipes are added.
-     *
-     * @return the list of recipes
-     */
-    public static List<SmeltingRecipe> getRecipes()
-    {
-        return recipesUn;
-    }
-
-    /**
-     * Get the first recipe matching the given input stack or null if no recipe matches.
-     *
-     * @param input the input stack
-     * @return a matching recipe
-     */
-    @Nullable
-    public static SmeltingRecipe getMatchingRecipe(@Nonnull ItemStack input)
-    {
-        for (SmeltingRecipe recipe : recipes)
-        {
-            if (recipe.matches(input))
-            {
-                return recipe;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Add the given recipe.
      * This method does not register any kind of experience.
      *
@@ -205,6 +176,35 @@ public class SmeltingRecipeRegistry
     public static void addOreRecipe(@Nonnull String input, @Nonnull ItemStack output, float xp, int duration)
     {
         addRecipe(new OreSmeltingRecipe(input, output, duration), xp);
+    }
+
+    /**
+     * Get an unmodifiable list of all smelting recipes. The list will update in-place as new recipes are added.
+     *
+     * @return the list of recipes
+     */
+    public static List<SmeltingRecipe> getRecipes()
+    {
+        return recipesUn;
+    }
+
+    /**
+     * Get the first recipe matching the given input stack or null if no recipe matches.
+     *
+     * @param input the input stack
+     * @return a matching recipe
+     */
+    @Nullable
+    public static SmeltingRecipe getMatchingRecipe(@Nonnull ItemStack input)
+    {
+        for (SmeltingRecipe recipe : recipes)
+        {
+            if (recipe.matches(input))
+            {
+                return recipe;
+            }
+        }
+        return null;
     }
 
     /**
