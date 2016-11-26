@@ -247,7 +247,7 @@ public class GameRegistry
      * @deprecated Use {@link SmeltingRecipeRegistry} instead.
      */
     @Deprecated
-    public static void addSmelting(Block input, ItemStack output, float xp)
+    public static void addSmelting(Block input, @Nonnull ItemStack output, float xp)
     {
         SmeltingRecipeRegistry.addSimpleRecipe(new ItemStack(input), output, xp);
     }
