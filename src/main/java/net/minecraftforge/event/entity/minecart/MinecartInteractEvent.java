@@ -30,6 +30,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 
+import javax.annotation.Nonnull;
+
 /**
  * MinecartInteractEvent is fired when a player interacts with a minecart. <br>
  * This event is fired whenever a player interacts with a minecart in
@@ -62,6 +64,7 @@ public class MinecartInteractEvent extends MinecartEvent
     }
 
     public EntityPlayer getPlayer() { return player; }
+    @Nonnull
     public ItemStack getItem() { return player.getHeldItem(hand); }
     public EnumHand getHand() { return hand; }
 }

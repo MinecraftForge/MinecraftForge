@@ -1,31 +1,32 @@
---- ../src-base/minecraft/net/minecraft/entity/passive/EntityHorse.java
-+++ ../src-work/minecraft/net/minecraft/entity/passive/EntityHorse.java
-@@ -85,6 +85,7 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/AbstractHorse.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/AbstractHorse.java
+@@ -981,6 +981,7 @@
          }
  
          this.func_110232_cE();
 +        this.itemHandler = new net.minecraftforge.items.wrapper.InvWrapper(this.field_110296_bG);
      }
  
-     public void func_110235_q(int p_110235_1_)
-@@ -401,4 +402,21 @@
-                 this.field_190885_a = p_i47337_1_;
-             }
-         }
+     public boolean func_70878_b(EntityAnimal p_70878_1_)
+@@ -1219,4 +1220,22 @@
+ 
+         return p_180482_2_;
+     }
 +
 +    // FORGE
 +    private net.minecraftforge.items.IItemHandler itemHandler = null; // Initialized by initHorseChest above.
 +
 +    @SuppressWarnings("unchecked")
 +    @Override
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T) itemHandler;
 +        return super.getCapability(capability, facing);
 +    }
 +
 +    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 +    }

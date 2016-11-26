@@ -5,6 +5,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -23,7 +24,7 @@ public class RenderSpecificHandEvent extends Event
     private final float equipProgress;
     private final ItemStack stack;
 
-    public RenderSpecificHandEvent(EnumHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack)
+    public RenderSpecificHandEvent(EnumHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @Nonnull ItemStack stack)
     {
         this.hand = hand;
         this.partialTicks = partialTicks;
@@ -70,7 +71,7 @@ public class RenderSpecificHandEvent extends Event
     /**
      * @return The ItemStack to be rendered, or null.
      */
-    @Nullable
+    @Nonnull
     public ItemStack getItemStack()
     {
         return stack;

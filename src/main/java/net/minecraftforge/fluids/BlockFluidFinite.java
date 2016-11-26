@@ -30,6 +30,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is a cellular-automata based finite fluid block implementation.
  *
@@ -60,7 +62,7 @@ public class BlockFluidFinite extends BlockFluidBase
     }
 
     @Override
-    public boolean canCollideCheck(IBlockState state, boolean fullHit)
+    public boolean canCollideCheck(@Nonnull IBlockState state, boolean fullHit)
     {
         return fullHit && state.getValue(LEVEL) == quantaPerBlock - 1;
     }
@@ -72,7 +74,7 @@ public class BlockFluidFinite extends BlockFluidBase
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
+    public void updateTick(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand)
     {
         boolean changed = false;
         int quantaRemaining = state.getValue(LEVEL) + 1;

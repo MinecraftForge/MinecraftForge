@@ -57,7 +57,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.collect.ImmutableMap;
 
-@Mod(modid = ModelAnimationDebug.MODID, name = "ForgeDebugModelAnimation", version = ModelAnimationDebug.VERSION)
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@Mod(modid = ModelAnimationDebug.MODID, name = "ForgeDebugModelAnimation", version = ModelAnimationDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelAnimationDebug
 {
     public static final String MODID = "forgedebugmodelanimation";
@@ -155,7 +158,7 @@ public class ModelAnimationDebug
             GameRegistry.register(new ItemBlock(Block.REGISTRY.getObject(blockId))
             {
                 @Override
-                public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
+                public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
                 {
                     return new ItemAnimationHolder();
                 }
@@ -163,11 +166,13 @@ public class ModelAnimationDebug
             GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
         }
 
+        @Nullable
         public abstract IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters);
     }
 
     public static class ServerProxy extends CommonProxy
     {
+        @Nullable
         public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
         {
             return null;
@@ -192,7 +197,7 @@ public class ModelAnimationDebug
             });
             String entityName = MODID + ":entity_chest";
             //EntityRegistry.registerGlobalEntityID(EntityChest.class, entityName, EntityRegistry.findGlobalUniqueEntityId());
-            EntityRegistry.registerModEntity(EntityChest.class, entityName, 0, ModelAnimationDebug.instance, 64, 20, true, 0xFFAAAA00, 0xFFDDDD00);
+            EntityRegistry.registerModEntity(new ResourceLocation(entityName), EntityChest.class, entityName, 0, ModelAnimationDebug.instance, 64, 20, true, 0xFFAAAA00, 0xFFDDDD00);
             RenderingRegistry.registerEntityRenderingHandler(EntityChest.class, new IRenderFactory<EntityChest>()
             {
                 @SuppressWarnings("deprecation")
@@ -241,12 +246,15 @@ public class ModelAnimationDebug
             "cycle_length", cycleLength
         ));
 
-        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        @Override
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
         {
             return capability == CapabilityAnimation.ANIMATION_CAPABILITY;
         }
 
-        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        @Override
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -261,6 +269,7 @@ public class ModelAnimationDebug
 
     public static class Chest extends TileEntity
     {
+        @Nullable
         private final IAnimationStateMachine asm;
         private final VariableValue cycleLength = new VariableValue(4);
         private final VariableValue clickTime = new VariableValue(Float.NEGATIVE_INFINITY);
@@ -330,7 +339,7 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing side)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -340,7 +349,8 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing side)
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -387,7 +397,7 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing side)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -397,7 +407,8 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing side)
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {

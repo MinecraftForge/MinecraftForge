@@ -19,33 +19,28 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
-
-import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.primitives.UnsignedBytes;
 
 public class EntityRegistry
 {
@@ -53,6 +48,7 @@ public class EntityRegistry
     {
         private Class<? extends Entity> entityClass;
         private ModContainer container;
+        private ResourceLocation regName;
         private String entityName;
         private int modId;
         private int trackingRange;
@@ -60,15 +56,20 @@ public class EntityRegistry
         private boolean sendsVelocityUpdates;
         private Function<EntitySpawnMessage, Entity> customSpawnCallback;
         private boolean usesVanillaSpawning;
-        public EntityRegistration(ModContainer mc, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
+        public EntityRegistration(ModContainer mc, ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
         {
             this.container = mc;
+            this.regName = registryName;
             this.entityClass = entityClass;
             this.entityName = entityName;
             this.modId = id;
             this.trackingRange = trackingRange;
             this.updateFrequency = updateFrequency;
             this.sendsVelocityUpdates = sendsVelocityUpdates;
+        }
+        public ResourceLocation getRegistryName()
+        {
+            return regName;
         }
         public Class<? extends Entity> getEntityClass()
         {
@@ -121,7 +122,6 @@ public class EntityRegistry
     private static final EntityRegistry INSTANCE = new EntityRegistry();
 
     private ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
-    private Map<String,ModContainer> entityNames = Maps.newHashMap();
     private BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
 
     public static EntityRegistry instance()
@@ -144,9 +144,9 @@ public class EntityRegistry
      * @param updateFrequency The frequency of tracking updates
      * @param sendsVelocityUpdates Whether to send velocity information packets as well
      */
-    public static void registerModEntity(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
+    public static void registerModEntity(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
-        instance().doModEntityRegistration(entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
+        instance().doModEntityRegistration(registryName, entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
     }
 
     /**
@@ -163,15 +163,36 @@ public class EntityRegistry
      * @param eggPrimary Primary egg color
      * @param eggSecondary Secondary egg color
      */
-    public static void registerModEntity(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, int eggPrimary, int eggSecondary)
+    public static void registerModEntity(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, int eggPrimary, int eggSecondary)
     {
-        instance().doModEntityRegistration(entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
-        EntityRegistry.registerEgg(entityClass, eggPrimary, eggSecondary);
+        instance().doModEntityRegistration(registryName, entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
+        EntityRegistry.registerEgg(registryName, eggPrimary, eggSecondary);
     }
 
-    private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
+    private void doModEntityRegistration(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
+        EntityRegistration er = new EntityRegistration(mc, registryName, entityClass, entityName, id, trackingRange, updateFrequency, sendsVelocityUpdates);
+        try
+        {
+            entityClassRegistrations.put(entityClass, er);
+            if (!ForgeRegistries.ENTITIES.containsKey(registryName))
+            {
+                EntityEntry entry = new EntityEntry(entityClass, entityName).setRegistryName(registryName);
+                ForgeRegistries.ENTITIES.register(entry);
+                FMLLog.finer("Automatically registered mod %s entity %s as %s", mc.getModId(), entityName, entry.getRegistryName());
+            }
+            else
+            {
+                FMLLog.fine("Skipping automatic mod %s entity registration for already registered entry %s class %s", mc.getModId(), registryName, entityClass.getName());
+            }
+        }
+        catch (IllegalArgumentException e)
+        {
+            FMLLog.log(Level.WARN, e, "The mod %s tried to register the entity (registry,name,class) (%s,%s,%s) one or both of which are already registered", mc.getModId(), registryName, entityName, entityClass.getName());
+            return;
+        }
+        entityRegistrations.put(mc, er);
     }
 
     /**
@@ -189,8 +210,15 @@ public class EntityRegistry
      *
      */
 
-    public static void registerEgg(Class<? extends Entity> entityClass, int primary, int secondary)
+    public static void registerEgg(ResourceLocation name, int primary, int secondary)
     {
+        EntityEntry entry = ForgeRegistries.ENTITIES.getValue(name);
+        if (entry == null)
+        {
+            FMLLog.bigWarning("Attempted to registry a entity egg for entity (%s) that is not in the Entity Registry", name);
+            return;
+        }
+        entry.setEgg(new EntityEggInfo(name, primary, secondary));
     }
 
     /**
@@ -328,5 +356,17 @@ public class EntityRegistry
             return true;
         }
         return false;
+    }
+
+    //Helper function
+    public static EntityEntry getEntry(Class<? extends Entity> entry)
+    {
+        //TODO: Slave map for faster lookup?
+        for (EntityEntry e : ForgeRegistries.ENTITIES)
+        {
+            if (e.getEntityClass() == entry)
+                return e;
+        }
+        return null;
     }
 }

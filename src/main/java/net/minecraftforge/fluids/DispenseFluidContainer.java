@@ -95,7 +95,8 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
     /**
      * Drains a filled container and places the fluid in front of the Dispenser.
      */
-    private ItemStack dumpContainer(IBlockSource source, ItemStack stack)
+    @Nonnull
+    private ItemStack dumpContainer(IBlockSource source, @Nonnull ItemStack stack)
     {
         ItemStack singleStack = stack.copy();
         singleStack.func_190920_e(1);

@@ -27,6 +27,7 @@ import com.google.common.collect.HashBiMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
@@ -60,6 +61,8 @@ public class GameData
     private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE >> 5; // Int (SPacketEffect)
     private static final int MIN_ENCHANTMENT_ID = 0; // Int
     private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
+    private static final int MIN_ENTITY_ID = 0;
+    private static final int MAX_ENTITY_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSpawnMob)
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
@@ -78,6 +81,7 @@ public class GameData
         ResourceLocation WATER = new ResourceLocation("water");
         iPotionTypeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONTYPES, PotionType.class, WATER, MIN_POTIONTYPE_ID, MAX_POTIONTYPE_ID, false, null, null, null, null);
         iEnchantmentRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ENCHANTMENTS, Enchantment.class, null, MIN_ENCHANTMENT_ID, MAX_ENCHANTMENT_ID, false, null, null, null, null);
+        iEntityRegistry = (FMLControlledNamespacedRegistry<EntityEntry>)new RegistryBuilder<EntityEntry>().setName(PersistentRegistryManager.ENTITIES).setType(EntityEntry.class).setIDRange(MIN_ENTITY_ID, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
 
         try
         {
@@ -99,6 +103,7 @@ public class GameData
     private final FMLControlledNamespacedRegistry<SoundEvent> iSoundEventRegistry;
     private final FMLControlledNamespacedRegistry<PotionType> iPotionTypeRegistry;
     private final FMLControlledNamespacedRegistry<Enchantment> iEnchantmentRegistry;
+    private final FMLControlledNamespacedRegistry<EntityEntry> iEntityRegistry;
 
     //TODO: ? These are never used by ID, so they don't need to be full registries/persisted.
     //Need cpw to decide how we want to go about this as they are generic registries that
@@ -145,6 +150,10 @@ public class GameData
     @Deprecated
     public static LegacyNamespacedRegistry<Class<? extends TileEntity>> getTileEntityRegistry() { return getMain().iTileEntityRegistry; }
 
+    /** INTERNAL ONLY */
+    @Deprecated
+    public static FMLControlledNamespacedRegistry<EntityEntry> getEntityRegistry() { return getMain().iEntityRegistry; }
+
     @Deprecated
     static Item findItem(String modId, String name)
     {
@@ -160,56 +169,6 @@ public class GameData
     protected static GameData getMain()
     {
         return mainData;
-    }
-
-    @Deprecated
-    int registerItem(Item item, String name) // from GameRegistry
-    {
-        return iItemRegistry.add(-1, addPrefix(name), item);
-    }
-
-    @Deprecated
-    int registerBlock(Block block, String name) // from GameRegistry
-    {
-        return iBlockRegistry.add(-1, addPrefix(name), block);
-    }
-
-    /**
-     * Prefix the supplied name with the current mod id.
-     * <p/>
-     * If no mod id can be determined, minecraft will be assumed.
-     * The prefix is separated with a colon.
-     * <p/>
-     * If there's already a prefix, it'll be prefixed again if the new prefix
-     * doesn't match the old prefix, as used by vanilla calls to addObject.
-     *
-     * @param name name to prefix.
-     * @return prefixed name.
-     */
-    private ResourceLocation addPrefix(String name)
-    {
-        int index = name.lastIndexOf(':');
-        String oldPrefix = index == -1 ? "" : name.substring(0, index);
-        name = index == -1 ? name : name.substring(index + 1);
-        String prefix;
-        ModContainer mc = Loader.instance().activeModContainer();
-
-        if (mc != null)
-        {
-            prefix = mc.getModId().toLowerCase();
-        }
-        else // no mod container, assume minecraft
-        {
-            prefix = "minecraft";
-        }
-
-        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
-        {
-            FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", prefix, name);
-            prefix = oldPrefix;
-        }
-
-        return new ResourceLocation(prefix, name);
     }
 
     void registerSubstitutionAlias(String name, GameRegistry.Type type, Object toReplace) throws ExistingSubstitutionException
@@ -466,6 +425,29 @@ public class GameData
 
         @Override
         public void onClear(IForgeRegistry<Biome> registry, Map<ResourceLocation, ?> slaveset)
+        {
+            // no op for the minute?
+        }
+
+        @Override
+        public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
+        {
+            // no op for the minute?
+        }
+    }
+    private static class EntityCallbacks implements IForgeRegistry.AddCallback<EntityEntry>,IForgeRegistry.ClearCallback<EntityEntry>,IForgeRegistry.CreateCallback<EntityEntry>
+    {
+        static final EntityCallbacks INSTANCE = new EntityCallbacks();
+
+        @Override
+        public void onAdd(EntityEntry entry, int id, Map<ResourceLocation, ?> slaves)
+        {
+            if (entry.getEgg() != null)
+                EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
+        }
+
+        @Override
+        public void onClear(IForgeRegistry<EntityEntry> registry, Map<ResourceLocation, ?> slaveset)
         {
             // no op for the minute?
         }

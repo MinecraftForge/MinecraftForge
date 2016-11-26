@@ -72,8 +72,8 @@ public class InvWrapper implements IItemHandlerModifiable
     @Nonnull
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (stack == null)
-            return null;
+        if (stack.func_190926_b())
+            return ItemStack.field_190927_a;
 
         if (!getInv().isItemValidForSlot(slot, stack))
             return stack;
@@ -93,12 +93,12 @@ public class InvWrapper implements IItemHandlerModifiable
                 if (!simulate)
                 {
                     ItemStack copy = stack.copy();
-                    copy.func_190918_g(stackInSlot.func_190916_E());
+                    copy.func_190917_f(stackInSlot.func_190916_E());
                     getInv().setInventorySlotContents(slot, copy);
                     getInv().markDirty();
                 }
 
-                return null;
+                return ItemStack.field_190927_a;
             }
             else
             {
@@ -145,7 +145,7 @@ public class InvWrapper implements IItemHandlerModifiable
                     getInv().setInventorySlotContents(slot, stack);
                     getInv().markDirty();
                 }
-                return null;
+                return ItemStack.field_190927_a;
             }
         }
 
@@ -156,12 +156,12 @@ public class InvWrapper implements IItemHandlerModifiable
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
         if (amount == 0)
-            return null;
+            return ItemStack.field_190927_a;
 
         ItemStack stackInSlot = getInv().getStackInSlot(slot);
 
-        if (stackInSlot == null)
-            return null;
+        if (stackInSlot.func_190926_b())
+            return ItemStack.field_190927_a;
 
         if (simulate)
         {
@@ -187,7 +187,7 @@ public class InvWrapper implements IItemHandlerModifiable
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack)
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
         getInv().setInventorySlotContents(slot, stack);
     }

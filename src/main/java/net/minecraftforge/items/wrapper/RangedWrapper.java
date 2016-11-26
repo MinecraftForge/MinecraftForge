@@ -58,7 +58,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
             return compose.getStackInSlot(slot + minSlot);
         }
 
-        return null;
+        return ItemStack.field_190927_a;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack)
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
         if (checkSlot(slot))
         {

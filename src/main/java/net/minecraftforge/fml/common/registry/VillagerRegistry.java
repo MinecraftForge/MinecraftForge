@@ -159,6 +159,7 @@ public class VillagerRegistry
         {
             register(prof, 1);
             (new VillagerCareer(prof, "librarian")).init(VanillaTrades.trades[1][0]);
+            (new VillagerCareer(prof, "cartographer")).init(VanillaTrades.trades[1][1]);
         }
         prof = new VillagerProfession("minecraft:priest",
                 "minecraft:textures/entity/villager/priest.png",
@@ -185,8 +186,8 @@ public class VillagerRegistry
             (new VillagerCareer(prof, "leather")).init(VanillaTrades.trades[4][1]);
         }
         prof = new VillagerProfession("minecraft:nitwit",
-                "minecraft:textures/entity/villager/nitwit.png",
-                "minecraft:textures/entity/zombie_villager/zombie_nitwit.png");
+                "minecraft:textures/entity/villager/villager.png",
+                "minecraft:textures/entity/zombie_villager/zombie_villager.png");
         {
             register(prof, 5);
             (new VillagerCareer(prof, "nitwit")).init(VanillaTrades.trades[5][0]);
@@ -322,10 +323,7 @@ public class VillagerRegistry
         List<VillagerProfession> entries = INSTANCE.professions.getValues();
         entity.setProfession(entries.get(rand.nextInt(entries.size())));
     }
-    public static void setRandomProfession(EntityZombieVillager entity, Random rand)
-    {
-        List<VillagerProfession> entries = INSTANCE.professions.getValues();
-    }
+
 
 
 
@@ -334,17 +332,6 @@ public class VillagerRegistry
 
 
     //Below this is INTERNAL USE ONLY DO NOT USE MODDERS
-    public static void onSetProfession(EntityVillager entity, VillagerProfession prof)
-    {
-        int network = INSTANCE.professions.getId(prof);
-        if (network == -1 || prof != INSTANCE.professions.getObjectById(network))
-        {
-            throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
-        }
-
-        if (network != entity.getProfession())
-            entity.setProfession(network);
-    }
     public static void onSetProfession(EntityVillager entity, int network)
     {
         VillagerProfession prof = INSTANCE.professions.getObjectById(network);
@@ -357,18 +344,12 @@ public class VillagerRegistry
             entity.setProfession(prof);
     }
 
-    @SuppressWarnings("deprecation")
-    public static void onSetProfession(EntityZombieVillager entity, VillagerProfession prof)
-    {
-    }
-
     public static void onSetProfession(EntityZombieVillager entity, int network)
     {
-        int realID = network;
-        VillagerProfession prof = INSTANCE.professions.getObjectById(realID);
-        if (prof == null && network != 0 || INSTANCE.professions.getId(prof) != realID)
+        VillagerProfession prof = INSTANCE.professions.getObjectById(network);
+        if (prof == null && network != -1 || INSTANCE.professions.getId(prof) != network)
         {
-            throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + realID + " " + prof);
+            throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
         }
 
         if (prof != entity.getForgeProfession())

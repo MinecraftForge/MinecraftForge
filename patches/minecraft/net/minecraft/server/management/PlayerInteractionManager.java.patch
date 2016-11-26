@@ -232,7 +232,7 @@
 +
 +            boolean bypass = true;
 +            for (ItemStack s : new ItemStack[]{p_187251_1_.func_184614_ca(), p_187251_1_.func_184592_cb()}) //TODO: Expand to more hands? player.inv.getHands()?
-+                bypass = bypass && (s == null || s.func_77973_b().doesSneakBypassUse(s, p_187251_2_, p_187251_5_, p_187251_1_));
++                bypass = bypass && (s.func_190926_b() || s.func_77973_b().doesSneakBypassUse(s, p_187251_2_, p_187251_5_, p_187251_1_));
 +            EnumActionResult result = EnumActionResult.PASS;
 +
 +            if (!p_187251_1_.func_70093_af() || bypass || event.getUseBlock() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)

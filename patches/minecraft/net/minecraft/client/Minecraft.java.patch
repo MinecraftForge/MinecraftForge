@@ -295,7 +295,7 @@
              if (this.field_71437_Z != null && this.field_71437_Z.func_175578_N())
              {
                  this.field_71437_Z.func_71263_m();
-+                if (field_71461_s != null)
++                if (field_71461_s != null && this.field_71425_J)
 +                {
 +                    this.field_71461_s.func_73719_c(I18n.func_135052_a("forge.client.shutdown.internal"));
 +                }

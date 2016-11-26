@@ -14,7 +14,7 @@
                      if (p_180614_2_.func_175623_d(p_180614_3_))
                      {
 -                        IBlockState iblockstate1 = Blocks.field_150375_by.func_180642_a(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, 0, p_180614_1_);
-+                        IBlockState iblockstate1 = Blocks.field_150375_by.getStateForPlacement(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, 0, p_180614_1_);
++                        IBlockState iblockstate1 = Blocks.field_150375_by.getStateForPlacement(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, 0, p_180614_1_, p_180614_4_);
                          p_180614_2_.func_180501_a(p_180614_3_, iblockstate1, 10);
  
                          if (!p_180614_1_.field_71075_bZ.field_75098_d)

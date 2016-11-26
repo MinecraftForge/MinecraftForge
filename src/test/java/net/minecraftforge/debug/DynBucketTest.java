@@ -1,7 +1,5 @@
 package net.minecraftforge.debug;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -29,8 +27,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
@@ -60,7 +56,10 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
-@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID, acceptableRemoteVersions = "*")
 public class DynBucketTest
 {
     public static final String MODID = "dynbuckettest";
@@ -95,6 +94,7 @@ public class DynBucketTest
 
     public static class ClientProxy extends CommonProxy
     {
+        @SuppressWarnings("unused")
         @Override
         void setupModels()
         {
@@ -263,8 +263,11 @@ public class DynBucketTest
         {
             ItemStack heldItem = playerIn.getHeldItem(hand);
             IFluidHandler tank = FluidUtil.getFluidHandler(worldIn, pos, side.getOpposite());
+            if (tank == null) {
+                return false;
+            }
 
-            if (null == null)
+            if (heldItem.func_190926_b())
             {
                 sendText(playerIn, tank);
                 return false;
@@ -335,13 +338,14 @@ public class DynBucketTest
         }
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
         {
             return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
             if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
             {

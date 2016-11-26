@@ -17,8 +17,11 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /** Simple mod to test world capability, by adding timer logic and check for raining time. */
-@Mod(modid=WorldCapabilityRainTimerTest.MODID, name="World Periodic Rain Check Test", version="0.0.0")
+@Mod(modid=WorldCapabilityRainTimerTest.MODID, name="World Periodic Rain Check Test", version="0.0.0", acceptableRemoteVersions = "*")
 public class WorldCapabilityRainTimerTest {
     public static final String MODID = "worldperiodicrainchecktest";
 
@@ -139,13 +142,14 @@ public class WorldCapabilityRainTimerTest {
         private IRainTimer timer = TIMER_CAP.getDefaultInstance();
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
         {
             return capability == TIMER_CAP;
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
             return capability == TIMER_CAP? TIMER_CAP.<T>cast(this.timer) : null;
         }

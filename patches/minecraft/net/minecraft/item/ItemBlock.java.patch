@@ -5,7 +5,7 @@
          {
              int i = this.func_77647_b(itemstack.func_77960_j());
 -            IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, i, p_180614_1_);
-+            IBlockState iblockstate1 = this.field_150939_a.getStateForPlacement(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, i, p_180614_1_);
++            IBlockState iblockstate1 = this.field_150939_a.getStateForPlacement(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, i, p_180614_1_, p_180614_4_);
  
 -            if (p_180614_2_.func_180501_a(p_180614_3_, iblockstate1, 11))
 +            if (placeBlockAt(itemstack, p_180614_1_, p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, iblockstate1))

@@ -45,6 +45,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<PotionType>   POTION_TYPES = GameRegistry.findRegistry(PotionType.class);
     public static final IForgeRegistry<Enchantment>  ENCHANTMENTS = GameRegistry.findRegistry(Enchantment.class);
     public static final IForgeRegistry<VillagerProfession> VILLAGER_PROFESSIONS = GameRegistry.findRegistry(VillagerProfession.class);
+    public static final IForgeRegistry<EntityEntry>  ENTITIES     = GameRegistry.findRegistry(EntityEntry.class);
 
 
     /**

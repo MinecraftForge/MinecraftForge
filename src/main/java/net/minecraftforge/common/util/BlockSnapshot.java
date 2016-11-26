@@ -28,7 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 /**
  * Represents a captured snapshot of a block which will not change
@@ -150,7 +150,7 @@ public class BlockSnapshot implements Serializable
     {
         if (this.replacedBlock == null)
         {
-            this.replacedBlock = GameRegistry.findBlock(this.getRegistryName().getResourceDomain(), this.getRegistryName().getResourcePath()).getStateFromMeta(getMeta());
+            this.replacedBlock = ForgeRegistries.BLOCKS.getValue(this.getRegistryName()).getStateFromMeta(getMeta());
         }
         return this.replacedBlock;
     }

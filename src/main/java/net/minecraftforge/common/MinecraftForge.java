@@ -41,6 +41,8 @@ import net.minecraftforge.common.ForgeHooks.SeedEntry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nonnull;
+
 public class MinecraftForge
 {
     /**
@@ -67,7 +69,7 @@ public class MinecraftForge
      *
      * Note: These functions may be going away soon, we're looking into loot tables....
      */
-    public static void addGrassSeed(ItemStack seed, int weight)
+    public static void addGrassSeed(@Nonnull ItemStack seed, int weight)
     {
         addGrassSeed(new SeedEntry(seed, weight));
     }

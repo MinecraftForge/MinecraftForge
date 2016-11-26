@@ -20,7 +20,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0")
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0", acceptableRemoteVersions = "*")
 public class TestCapabilityMod
 {
     // A Holder/Marker for if this capability is installed.
@@ -44,7 +47,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent.LeftClickBlock event)
     {
-        if (event.getItemStack() == null) return;
+        if (event.getItemStack().func_190926_b()) return;
         if (event.getItemStack().getItem() != Items.STICK) return;
 
         // This is just a example of how to interact with the TE, note the strong type binding that getCapability has
@@ -92,12 +95,13 @@ public class TestCapabilityMod
                 this.te = te;
             }
             @Override
-            public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+            public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
             {
                 return TEST_CAP != null && capability == TEST_CAP;
             }
             @Override
-            public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+            @Nullable
+            public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
             {
                 if (TEST_CAP != null && capability == TEST_CAP) return TEST_CAP.cast(this);
                 return null;

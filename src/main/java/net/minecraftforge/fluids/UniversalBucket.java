@@ -84,13 +84,14 @@ public class UniversalBucket extends Item
     }
 
     @Override
-    public boolean hasContainerItem(ItemStack stack)
+    public boolean hasContainerItem(@Nonnull ItemStack stack)
     {
         return !getEmpty().func_190926_b();
     }
 
+    @Nonnull
     @Override
-    public ItemStack getContainerItem(ItemStack itemStack)
+    public ItemStack getContainerItem(@Nonnull ItemStack itemStack)
     {
         if (!getEmpty().func_190926_b())
         {
@@ -102,7 +103,7 @@ public class UniversalBucket extends Item
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
+    public void getSubItems(@Nonnull Item itemIn, @Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
     {
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
         {
@@ -122,7 +123,8 @@ public class UniversalBucket extends Item
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack)
+    @Nonnull
+    public String getItemStackDisplayName(@Nonnull ItemStack stack)
     {
         FluidStack fluidStack = getFluid(stack);
         if (fluidStack == null)
@@ -145,7 +147,8 @@ public class UniversalBucket extends Item
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
+    @Nonnull
+    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand)
     {
         ItemStack itemstack = player.getHeldItem(hand);
         FluidStack fluidStack = getFluid(itemstack);
@@ -272,7 +275,7 @@ public class UniversalBucket extends Item
         return bucket;
     }
 
-    public FluidStack getFluid(ItemStack container)
+    public FluidStack getFluid(@Nonnull ItemStack container)
     {
         return FluidStack.loadFluidStackFromNBT(container.getTagCompound());
     }

@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = BreedingTest.MODID, name = "BreedingTest", version = "1.0")
+@Mod(modid = BreedingTest.MODID, name = "BreedingTest", version = "1.0", acceptableRemoteVersions = "*")
 public class BreedingTest
 {
   public static final String MODID = "breedingtest";
@@ -19,6 +19,6 @@ public class BreedingTest
 
   @SubscribeEvent
   public void onBabyBorn(BabyEntitySpawnEvent event) {
-    event.setChild(new EntityCow(event.getChild().worldObj));
+    event.setChild(new EntityCow(event.getParentA().worldObj));
   }
 }

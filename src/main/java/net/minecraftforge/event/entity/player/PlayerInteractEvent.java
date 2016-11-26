@@ -313,7 +313,7 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public static class LeftClickEmpty extends PlayerInteractEvent
     {
-        public LeftClickEmpty(EntityPlayer player, ItemStack stack)
+        public LeftClickEmpty(EntityPlayer player, @Nonnull ItemStack stack)
         {
             super(player, EnumHand.MAIN_HAND, new BlockPos(player), null);
         }

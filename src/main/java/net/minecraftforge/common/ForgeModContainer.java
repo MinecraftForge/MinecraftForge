@@ -420,7 +420,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             universalBucket = new UniversalBucket();
             universalBucket.setUnlocalizedName("forge.bucketFilled");
-            GameRegistry.registerItem(universalBucket, "bucketFilled");
+            GameRegistry.register(universalBucket.setRegistryName("forge", "bucketFilled"));
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
     }
