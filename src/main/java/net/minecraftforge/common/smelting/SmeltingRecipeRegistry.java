@@ -53,13 +53,6 @@ public class SmeltingRecipeRegistry
 
     private static final List<SmeltingRecipe> recipes = new ArrayList<SmeltingRecipe>();
     private static final List<SmeltingRecipe> recipesUn = Collections.unmodifiableList(recipes);
-    private static final TObjectFloatMap<ItemStack> experience = new TObjectFloatCustomHashMap<ItemStack>
-            (
-                    new ItemStackHasher(),
-                    Constants.DEFAULT_CAPACITY,
-                    Constants.DEFAULT_LOAD_FACTOR,
-                    -1
-            );
 
     static
     {
@@ -246,19 +239,7 @@ public class SmeltingRecipeRegistry
      */
     public static float getExperience(@Nonnull ItemStack output)
     {
-        if (output.func_190926_b())
-        {
-            return 0;
-        }
-
-        float xp = output.getItem().getSmeltingExperience(output);
-        if (xp != -1) return xp;
-
-        xp = experience.get(output);
-        if (xp != -1) return xp;
-
-        xp = experience.get(new ItemStack(output.getItem(), 1, OreDictionary.WILDCARD_VALUE));
-        return Math.max(0, xp);
+        return FurnaceRecipes.instance().getSmeltingExperience(output);
     }
 
     /**
@@ -270,9 +251,7 @@ public class SmeltingRecipeRegistry
      */
     public static void setExperience(@Nonnull ItemStack output, float xp)
     {
-        checkArgument(!output.func_190926_b());
-        checkArgument(xp > 0);
-        experience.put(new ItemStack(output.getItem(), 1, output.getMetadata()), xp);
+        FurnaceRecipes.instance().setSmeltingExperience(output, xp);
     }
 
     /**

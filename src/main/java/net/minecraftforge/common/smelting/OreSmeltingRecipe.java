@@ -26,23 +26,24 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * A smelting recipe akin to ShapedOreRecipe and ShapelessOreRecipe. The input is checked against an OreDictionary entry.
  */
-public class OreSmeltingRecipe extends AbstractSmeltingRecipe
+public class OreSmeltingRecipe extends AbstractSmeltingRecipe implements SimpleOutputSmeltingRecipe
 {
 
+    protected final String inputName;
     protected final ItemStack output;
     protected final List<ItemStack> inputs;
 
     public OreSmeltingRecipe(String input, ItemStack output, int duration)
     {
         super(duration);
-        this.inputs = OreDictionary.getOres(checkNotNull(input));
+        this.inputName = checkNotNull(input);
+        this.inputs = OreDictionary.getOres(input);
         this.output = checkNotNull(output);
     }
 
@@ -70,5 +71,35 @@ public class OreSmeltingRecipe extends AbstractSmeltingRecipe
     public Collection<ItemStack> getPossibleOutputs()
     {
         return Collections.singleton(output);
+    }
+
+    /**
+     * The ore name this recipe matches against.
+     *
+     * @return the ore name
+     */
+    @Nonnull
+    public final String getInputOreName()
+    {
+        return inputName;
+    }
+
+    /**
+     * The input stacks this recipe matches against, i.e. all stacks matching the ore name of this recipe.
+     * <b>The returned ItemStacks <i>must not</i> be modified!</b>
+     *
+     * @return the list of input stacks
+     */
+     @Nonnull
+    public final List<ItemStack> getInputStacks()
+    {
+        return Collections.unmodifiableList(inputs);
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getOutput()
+    {
+        return output.copy();
     }
 }

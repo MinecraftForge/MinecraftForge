@@ -25,14 +25,13 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * A smelting recipe that checks against a single input.
  */
-public class SimpleSmeltingRecipe extends AbstractSmeltingRecipe
+public class SimpleSmeltingRecipe extends AbstractSmeltingRecipe implements SimpleOutputSmeltingRecipe
 {
 
     protected final ItemStack input, output;
@@ -61,5 +60,22 @@ public class SimpleSmeltingRecipe extends AbstractSmeltingRecipe
     public Collection<ItemStack> getPossibleOutputs()
     {
         return Collections.singleton(output);
+    }
+
+    /**
+     * The ItemStack this recipe matches against.
+     * @return the input stack
+     */
+    @Nonnull
+    public ItemStack getInput()
+    {
+        return input.copy();
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getOutput()
+    {
+        return output.copy();
     }
 }
