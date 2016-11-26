@@ -26,12 +26,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import gnu.trove.impl.Constants;
-import gnu.trove.map.TObjectFloatMap;
-import gnu.trove.map.custom_hash.TObjectFloatCustomHashMap;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.oredict.OreDictionary;
@@ -51,8 +46,8 @@ public class SmeltingRecipeRegistry
      */
     public static final int DEFAULT_SMELTING_TIME = 200;
 
-    private static final List<SmeltingRecipe> recipes = new ArrayList<SmeltingRecipe>();
-    private static final List<SmeltingRecipe> recipesUn = Collections.unmodifiableList(recipes);
+    private static final List<ISmeltingRecipe> recipes = new ArrayList<ISmeltingRecipe>();
+    private static final List<ISmeltingRecipe> recipesUn = Collections.unmodifiableList(recipes);
 
     static
     {
@@ -66,7 +61,7 @@ public class SmeltingRecipeRegistry
      *
      * @param recipe the recipe
      */
-    public static void addRecipe(@Nonnull SmeltingRecipe recipe)
+    public static void addRecipe(@Nonnull ISmeltingRecipe recipe)
     {
         recipes.add(checkNotNull(recipe));
     }
@@ -77,7 +72,7 @@ public class SmeltingRecipeRegistry
      * @param recipe the recipe
      * @param xp     the amount of experience
      */
-    public static void addRecipe(@Nonnull SmeltingRecipe recipe, float xp)
+    public static void addRecipe(@Nonnull ISmeltingRecipe recipe, float xp)
     {
         addRecipe(recipe);
         if (xp > 0)
@@ -176,7 +171,7 @@ public class SmeltingRecipeRegistry
      *
      * @return the list of recipes
      */
-    public static List<SmeltingRecipe> getRecipes()
+    public static List<ISmeltingRecipe> getRecipes()
     {
         return recipesUn;
     }
@@ -188,9 +183,9 @@ public class SmeltingRecipeRegistry
      * @return a matching recipe
      */
     @Nullable
-    public static SmeltingRecipe getMatchingRecipe(@Nonnull ItemStack input)
+    public static ISmeltingRecipe getMatchingRecipe(@Nonnull ItemStack input)
     {
-        for (SmeltingRecipe recipe : recipes)
+        for (ISmeltingRecipe recipe : recipes)
         {
             if (recipe.matches(input))
             {
@@ -209,7 +204,7 @@ public class SmeltingRecipeRegistry
     @Nonnull
     public static ItemStack getOutput(ItemStack input)
     {
-        SmeltingRecipe recipe = getMatchingRecipe(input);
+        ISmeltingRecipe recipe = getMatchingRecipe(input);
         return recipe == null ? ItemStack.field_190927_a : recipe.getOutput(input);
     }
 
@@ -221,7 +216,7 @@ public class SmeltingRecipeRegistry
      */
     public static int getDuration(ItemStack input)
     {
-        for (SmeltingRecipe recipe : recipes)
+        for (ISmeltingRecipe recipe : recipes)
         {
             if (recipe.matches(input))
             {
@@ -264,7 +259,7 @@ public class SmeltingRecipeRegistry
     public static List<ItemStack> getAllPossibleOutputs()
     {
         ImmutableList.Builder<ItemStack> b = ImmutableList.builder();
-        for (SmeltingRecipe recipe : recipes)
+        for (ISmeltingRecipe recipe : recipes)
         {
             b.addAll(recipe.getPossibleOutputs());
         }

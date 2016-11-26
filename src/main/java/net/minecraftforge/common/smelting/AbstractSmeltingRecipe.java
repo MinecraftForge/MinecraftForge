@@ -27,7 +27,7 @@ import net.minecraft.item.ItemStack;
 /**
  * Base class for {@code SmeltingRecipe} implementations with a set duration value.
  */
-public abstract class AbstractSmeltingRecipe implements SmeltingRecipe
+public abstract class AbstractSmeltingRecipe implements ISmeltingRecipe
 {
     protected final int duration;
 

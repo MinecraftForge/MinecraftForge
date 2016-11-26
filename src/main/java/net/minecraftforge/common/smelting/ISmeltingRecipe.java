@@ -30,7 +30,7 @@ import net.minecraft.item.ItemStack;
  *
  * @see SmeltingRecipeRegistry
  */
-public interface SmeltingRecipe
+public interface ISmeltingRecipe
 {
 
     /**

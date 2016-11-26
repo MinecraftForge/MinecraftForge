@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 /**
  * A smelting recipe that always produces the same output stack regardless of input.
  */
-public interface SimpleOutputSmeltingRecipe extends SmeltingRecipe
+public interface ISimpleOutputSmeltingRecipe extends ISmeltingRecipe
 {
 
     /**

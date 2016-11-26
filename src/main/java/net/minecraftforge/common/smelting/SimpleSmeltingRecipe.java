@@ -31,7 +31,7 @@ import net.minecraftforge.oredict.OreDictionary;
 /**
  * A smelting recipe that checks against a single input.
  */
-public class SimpleSmeltingRecipe extends AbstractSmeltingRecipe implements SimpleOutputSmeltingRecipe
+public class SimpleSmeltingRecipe extends AbstractSmeltingRecipe implements ISimpleOutputSmeltingRecipe
 {
 
     protected final ItemStack input, output;

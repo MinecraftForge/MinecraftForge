@@ -32,7 +32,7 @@ import net.minecraftforge.oredict.OreDictionary;
 /**
  * A smelting recipe akin to ShapedOreRecipe and ShapelessOreRecipe. The input is checked against an OreDictionary entry.
  */
-public class OreSmeltingRecipe extends AbstractSmeltingRecipe implements SimpleOutputSmeltingRecipe
+public class OreSmeltingRecipe extends AbstractSmeltingRecipe implements ISimpleOutputSmeltingRecipe
 {
 
     protected final String inputName;
