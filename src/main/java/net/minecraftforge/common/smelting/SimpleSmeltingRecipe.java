@@ -64,6 +64,7 @@ public class SimpleSmeltingRecipe extends AbstractSmeltingRecipe implements ISim
 
     /**
      * The ItemStack this recipe matches against.
+     *
      * @return the input stack
      */
     @Nonnull

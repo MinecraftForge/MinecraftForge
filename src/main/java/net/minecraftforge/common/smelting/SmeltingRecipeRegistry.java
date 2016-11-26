@@ -143,9 +143,9 @@ public class SmeltingRecipeRegistry
      * Add a recipe that smelts stacks matching the given OreDictionary name into the output stack
      * in the given duration.
      *
-     * @param input    the OreDictionary name
-     * @param output   the output stack
-     * @param xp       the amount of experience to award for the output stack
+     * @param input  the OreDictionary name
+     * @param output the output stack
+     * @param xp     the amount of experience to award for the output stack
      */
     public static void addOreRecipe(@Nonnull String input, @Nonnull ItemStack output, float xp)
     {

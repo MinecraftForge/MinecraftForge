@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import net.minecraft.item.ItemStack;
 
 /**
- * Base class for {@code SmeltingRecipe} implementations with a set duration value.
+ * Base class for {@code ISmeltingRecipe} implementations with a set duration value.
  */
 public abstract class AbstractSmeltingRecipe implements ISmeltingRecipe
 {

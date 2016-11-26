@@ -90,7 +90,7 @@ public class OreSmeltingRecipe extends AbstractSmeltingRecipe implements ISimple
      *
      * @return the list of input stacks
      */
-     @Nonnull
+    @Nonnull
     public final List<ItemStack> getInputStacks()
     {
         return Collections.unmodifiableList(inputs);
