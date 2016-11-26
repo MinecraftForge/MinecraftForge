@@ -20,23 +20,28 @@
 package net.minecraftforge.common.smelting;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import gnu.trove.impl.Constants;
+import gnu.trove.map.TObjectFloatMap;
+import gnu.trove.map.custom_hash.TObjectFloatCustomHashMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.oredict.OreDictionary;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Reflection;
 
 /**
  * Registry for smelting recipes, should be used over the GameRegistry methods and vanilla's FurnaceRecipes class.
+ * Awarded experience is determined based on output stack, <i>not</i> by recipe. This is due to the design of vanilla's TileEntityFurnace.
  */
 public class SmeltingRecipeRegistry
 {
@@ -44,10 +49,17 @@ public class SmeltingRecipeRegistry
     /**
      * Default time a recipe takes to cook as defined in the vanilla TileEntityFurnace::getCookTime method.
      */
-    public static final int DEFAULT_COOK_TIME = 200;
+    public static final int DEFAULT_SMELTING_TIME = 200;
 
     private static final List<SmeltingRecipe> recipes = new ArrayList<SmeltingRecipe>();
     private static final List<SmeltingRecipe> recipesUn = Collections.unmodifiableList(recipes);
+    private static final TObjectFloatMap<ItemStack> experience = new TObjectFloatCustomHashMap<ItemStack>
+            (
+                    new ItemStackHasher(),
+                    Constants.DEFAULT_CAPACITY,
+                    Constants.DEFAULT_LOAD_FACTOR,
+                    -1
+            );
 
     static
     {
@@ -86,12 +98,31 @@ public class SmeltingRecipeRegistry
 
     /**
      * Add the given recipe.
+     * This method does not register any kind of experience.
      *
      * @param recipe the recipe
      */
     public static void addRecipe(@Nonnull SmeltingRecipe recipe)
     {
         recipes.add(checkNotNull(recipe));
+    }
+
+    /**
+     * Add the given recipe and set the given amount of experience for all it's outputs.
+     *
+     * @param recipe the recipe
+     * @param xp     the amount of experience
+     */
+    public static void addRecipe(@Nonnull SmeltingRecipe recipe, float xp)
+    {
+        addRecipe(recipe);
+        if (xp > 0)
+        {
+            for (ItemStack output : recipe.getPossibleOutputs())
+            {
+                setExperience(output, xp);
+            }
+        }
     }
 
     /**
@@ -104,7 +135,22 @@ public class SmeltingRecipeRegistry
      */
     public static void addSimpleRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output)
     {
-        addSimpleRecipe(input, output, DEFAULT_COOK_TIME);
+        addSimpleRecipe(input, output, 0, DEFAULT_SMELTING_TIME);
+    }
+
+    /**
+     * Add a simple recipe that smelts the stacks matching the given input stack into the output stack
+     * in the given duration.
+     * Stack matching is done according to {@link OreDictionary#itemMatches(ItemStack, ItemStack, boolean)}
+     * with {@code strict} set to false.
+     *
+     * @param input  the input stack
+     * @param output the output stack
+     * @param xp     the amount of experience to award for the output stack
+     */
+    public static void addSimpleRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output, float xp)
+    {
+        addSimpleRecipe(input, output, xp, DEFAULT_SMELTING_TIME);
     }
 
     /**
@@ -115,11 +161,12 @@ public class SmeltingRecipeRegistry
      *
      * @param input    the input stack
      * @param output   the output stack
+     * @param xp       the amount of experience to award for the output stack
      * @param duration the duration for this recipe in ticks
      */
-    public static void addSimpleRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output, int duration)
+    public static void addSimpleRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output, float xp, int duration)
     {
-        addRecipe(new SimpleSmeltingRecipe(input, output, duration));
+        addRecipe(new SimpleSmeltingRecipe(input, output, duration), xp);
     }
 
     /**
@@ -130,7 +177,7 @@ public class SmeltingRecipeRegistry
      */
     public static void addOreRecipe(@Nonnull String input, @Nonnull ItemStack output)
     {
-        addOreRecipe(input, output, DEFAULT_COOK_TIME);
+        addOreRecipe(input, output, 0, DEFAULT_SMELTING_TIME);
     }
 
     /**
@@ -139,11 +186,25 @@ public class SmeltingRecipeRegistry
      *
      * @param input    the OreDictionary name
      * @param output   the output stack
+     * @param xp       the amount of experience to award for the output stack
+     */
+    public static void addOreRecipe(@Nonnull String input, @Nonnull ItemStack output, float xp)
+    {
+        addOreRecipe(input, output, xp, DEFAULT_SMELTING_TIME);
+    }
+
+    /**
+     * Add a recipe that smelts stacks matching the given OreDictionary name into the output stack
+     * in the given duration.
+     *
+     * @param input    the OreDictionary name
+     * @param output   the output stack
+     * @param xp       the amount of experience to award for the output stack
      * @param duration the duration for this recipe in ticks
      */
-    public static void addOreRecipe(@Nonnull String input, @Nonnull ItemStack output, int duration)
+    public static void addOreRecipe(@Nonnull String input, @Nonnull ItemStack output, float xp, int duration)
     {
-        addRecipe(new OreSmeltingRecipe(input, output, duration));
+        addRecipe(new OreSmeltingRecipe(input, output, duration), xp);
     }
 
     /**
@@ -177,18 +238,57 @@ public class SmeltingRecipeRegistry
         return 0;
     }
 
-    @Deprecated // internal API, do not use!
-    public static void addVanillaRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output)
+    /**
+     * Get the amount of experience awarded for taking the given output stack from a furnace.
+     *
+     * @param output the output stack
+     * @return the amount of experience
+     */
+    public static float getExperience(@Nonnull ItemStack output)
     {
-        addRecipe(new VanillaSmeltingRecipe(input, output));
+        if (output.func_190926_b())
+        {
+            return 0;
+        }
+
+        float xp = output.getItem().getSmeltingExperience(output);
+        if (xp != -1) return xp;
+
+        xp = experience.get(output);
+        if (xp != -1) return xp;
+
+        xp = experience.get(new ItemStack(output.getItem(), 1, OreDictionary.WILDCARD_VALUE));
+        return Math.max(0, xp);
     }
 
-    @Deprecated // internal API
-    public static void getAllPossibleItems(Collection<Item> target)
+    /**
+     * Set the amount of experience awarded for taking the given output stack from a furnace.
+     * The {@link OreDictionary#WILDCARD_VALUE wildcard metadata value} is supported.
+     *
+     * @param output the output stack
+     * @param xp     the amount of experience
+     */
+    public static void setExperience(@Nonnull ItemStack output, float xp)
     {
+        checkArgument(!output.func_190926_b());
+        checkArgument(xp > 0);
+        experience.put(new ItemStack(output.getItem(), 1, output.getMetadata()), xp);
+    }
+
+    /**
+     * Get all possible output items. This can be useful for e.g. a statistics tracker.
+     * This is not necessarily an exhaustive list, ItemStacks with different NBT tags might be collapsed into one ItemStack
+     * without any NBT data.
+     *
+     * @return a list of all possible items
+     */
+    public static List<ItemStack> getAllPossibleOutputs()
+    {
+        ImmutableList.Builder<ItemStack> b = ImmutableList.builder();
         for (SmeltingRecipe recipe : recipes)
         {
-            target.addAll(recipe.getPossibleOutputs());
+            b.addAll(recipe.getPossibleOutputs());
         }
+        return b.build();
     }
 }

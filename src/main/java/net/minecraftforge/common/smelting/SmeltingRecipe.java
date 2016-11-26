@@ -23,7 +23,6 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -61,8 +60,14 @@ public interface SmeltingRecipe
 
     /**
      * Provide a list of Items that are possible as a result of {@code getOutput}. This is needed for e.g. crafting stats.
+     * This need not be an exhaustive list. Only Item and metadata are required information. As in: A recipe that produces ItemStacks
+     * of Items.STICK with metadata 0 but various different NBT tags only has to return an ItemStack of Items.STICK with metadata 0 here,
+     * there is no requirement to list all NBT combinations.
+     *
+     * <br><br><b>The resulting ItemStacks <i>must not</i> be modified!</b>
+     *
      * @return a list of outputs
      */
-    Collection<Item> getPossibleOutputs();
+    Collection<ItemStack> getPossibleOutputs();
 
 }

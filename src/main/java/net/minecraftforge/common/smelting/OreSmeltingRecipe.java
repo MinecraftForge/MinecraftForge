@@ -67,8 +67,8 @@ public class OreSmeltingRecipe extends AbstractSmeltingRecipe
     }
 
     @Override
-    public Collection<Item> getPossibleOutputs()
+    public Collection<ItemStack> getPossibleOutputs()
     {
-        return Collections.singleton(output.getItem());
+        return Collections.singleton(output);
     }
 }
