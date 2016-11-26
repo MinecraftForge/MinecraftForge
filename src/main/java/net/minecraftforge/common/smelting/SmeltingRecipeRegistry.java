@@ -36,13 +36,13 @@ import net.minecraftforge.oredict.OreDictionary;
 import com.google.common.reflect.Reflection;
 
 /**
- * Recipe for smelting recipes, should be used over the GameRegistry methods and vanilla's FurnaceRecipes class.
+ * Registry for smelting recipes, should be used over the GameRegistry methods and vanilla's FurnaceRecipes class.
  */
 public class SmeltingRecipeRegistry
 {
 
     /**
-     * Default time a recipe takes to cook.
+     * Default time a recipe takes to cook as defined in the vanilla TileEntityFurnace::getCookTime method.
      */
     public static final int DEFAULT_COOK_TIME = 200;
 
