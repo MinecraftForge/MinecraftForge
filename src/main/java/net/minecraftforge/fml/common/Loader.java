@@ -689,39 +689,30 @@ public class Loader
             return;
         }
 
-        boolean parseFailure = false;
-
-        dep: for (String dep : DEPENDENCYSPLITTER.split(dependencyString))
+        for (String dep : DEPENDENCYSPLITTER.split(dependencyString))
         {
             List<String> depparts = Lists.newArrayList(DEPENDENCYPARTSPLITTER.split(dep));
-            // Need two parts to the string
             if (depparts.size() != 2)
             {
-                parseFailure = true;
-                continue;
+                parseFailure(dep, "Dependecy string needs 2 parts");
             }
             String target = depparts.get(1);
             boolean targetIsAll = target.startsWith("*");
 
-            // Cannot have an "all" relationship with anything except pure *
             if (targetIsAll && target.length() > 1)
             {
-                parseFailure = true;
-                continue;
+                parseFailure(dep, "Cannot have an \"all\" relationship with anything except pure *");
             }
 
-            // You cannot have a versioned dependency on everything
             if (targetIsAll && target.indexOf('@') > -1)
             {
-                parseFailure = true;
-                continue;
+                parseFailure(dep, "You cannot have a versioned dependency on everything");
             }
 
             List<String> instructions = Lists.newArrayList(DEPENDENCYINSTRUCTIONSSPLITTER.split(depparts.get(0)));
             if (!DEPENDENCYINSTRUCTIONS.containsAll(instructions))
             {
-                parseFailure = true;
-                continue;
+                parseFailure(dep, String.format("Found invalid instructions. Only %s are allowed.", DEPENDENCYINSTRUCTIONS.toString().replace('[', ' ').replace(']', ' ').trim()));
             }
             boolean hasSide = false;
             boolean hasRequired = false;
@@ -732,11 +723,9 @@ public class Loader
                 {
                     break;
                 }
-                // Side or other instructions after Side have already been defined
                 else if (hasSide && ("client".equals(instruction) || "server".equals(instruction)))
                 {
-                    parseFailure = true;
-                    continue dep;
+                    parseFailure(dep, "Side or other instructions after Side have already been defined");
                 }
                 else
                 {
@@ -748,7 +737,6 @@ public class Loader
                     // If this is a required element, add it to the required list
                     if (!hasRequired && "required".equals(instruction))
                     {
-                        // You can't require everything
                         if (!targetIsAll)
                         {
                             requirements.add(VersionParser.parseVersionReference(target));
@@ -756,15 +744,12 @@ public class Loader
                         }
                         else
                         {
-                            parseFailure = true;
-                            continue dep;
+                            parseFailure(dep, "You can't require everything");
                         }
                     }
-                    // Required or other instructions after Required have already been defined
                     else if (hasRequired && "required".equals(instruction))
                     {
-                        parseFailure = true;
-                        continue dep;
+                        parseFailure(dep, "Required or other instructions after Required have already been defined");
                     }
                     else
                     {
@@ -788,22 +773,19 @@ public class Loader
                                 hasOrder = true;
                             }
                         }
-                        // Order instruction has already been defined
                         else
                         {
-                            parseFailure = true;
-                            continue dep;
+                            parseFailure(dep, "Order instruction has already been defined");
                         }
                     }
                 }
             }
         }
-
-        if (parseFailure)
-        {
-            FMLLog.log(Level.WARN, "Unable to parse dependency string %s", dependencyString);
-            throw new LoaderException(String.format("Unable to parse dependency string %s", dependencyString));
-        }
+    }
+    
+    private void parseFailure(String dependencyString, String cause){
+        FMLLog.log(Level.WARN, "Unable to parse dependency string \"%s\", cause - %s", dependencyString, cause);
+        throw new LoaderException(String.format("Unable to parse dependency string %s, cause - \"%s\"", dependencyString, cause));
     }
 
     public Map<String,ModContainer> getIndexedModList()
