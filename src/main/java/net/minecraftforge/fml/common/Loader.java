@@ -114,6 +114,7 @@ import com.google.gson.JsonParser;
 public class Loader
 {
     public static final String MC_VERSION = net.minecraftforge.common.ForgeVersion.mcVersion;
+    private static final ImmutableList<String> DEPENDENCYINSTRUCTIONS = ImmutableList.of("client", "server", "required", "before", "after");
     private static final Splitter DEPENDENCYINSTRUCTIONSSPLITTER = Splitter.on("-").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYPARTSPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYSPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
@@ -690,7 +691,7 @@ public class Loader
 
         boolean parseFailure = false;
 
-        for (String dep : DEPENDENCYSPLITTER.split(dependencyString))
+        dep: for (String dep : DEPENDENCYSPLITTER.split(dependencyString))
         {
             List<String> depparts = Lists.newArrayList(DEPENDENCYPARTSPLITTER.split(dep));
             // Need two parts to the string
@@ -716,37 +717,84 @@ public class Loader
                 continue;
             }
 
-            for(String instruction : DEPENDENCYINSTRUCTIONSSPLITTER.split(depparts.get(0)))
+            List<String> instructions = Lists.newArrayList(DEPENDENCYINSTRUCTIONSSPLITTER.split(depparts.get(0)));
+            if (!DEPENDENCYINSTRUCTIONS.containsAll(instructions))
             {
-                if(("client".equals(instruction) && FMLCommonHandler.instance().getSide() != Side.CLIENT) || ("server".equals(instruction) && FMLCommonHandler.instance().getSide() != Side.SERVER))
+                parseFailure = true;
+                continue;
+            }
+            boolean hasSide = false;
+            boolean hasRequired = false;
+            boolean hasOrder = false;
+            for (String instruction : instructions)
+            {
+                if (!hasSide && (("client".equals(instruction) && FMLCommonHandler.instance().getSide() != Side.CLIENT) || ("server".equals(instruction) && FMLCommonHandler.instance().getSide() != Side.SERVER)))
                 {
                     break;
                 }
-
-                // If this is a required element, add it to the required list
-                if ("required".equals(instruction))
+                // Side or other instructions after Side have already been defined
+                else if (hasSide && ("client".equals(instruction) || "server".equals(instruction)))
                 {
-                    // You can't require everything
-                    if (!targetIsAll)
+                    parseFailure = true;
+                    continue dep;
+                }
+                else
+                {
+                    hasSide = true;
+                }
+
+                if (hasSide)
+                {
+                    // If this is a required element, add it to the required list
+                    if (!hasRequired && "required".equals(instruction))
                     {
-                        requirements.add(VersionParser.parseVersionReference(target));
+                        // You can't require everything
+                        if (!targetIsAll)
+                        {
+                            requirements.add(VersionParser.parseVersionReference(target));
+                            hasRequired = true;
+                        }
+                        else
+                        {
+                            parseFailure = true;
+                            continue dep;
+                        }
+                    }
+                    // Required or other instructions after Required have already been defined
+                    else if (hasRequired && "required".equals(instruction))
+                    {
+                        parseFailure = true;
+                        continue dep;
                     }
                     else
                     {
-                        parseFailure = true;
-                        continue;
+                        hasRequired = true;
                     }
-                }
 
-                // before elements are things we are loaded before (so they are our dependants)
-                if ("before".equals(instruction))
-                {
-                    dependants.add(VersionParser.parseVersionReference(target));
-                }
-                // after elements are things that load before we do (so they are out dependencies)
-                else if ("after".equals(instruction))
-                {
-                    dependencies.add(VersionParser.parseVersionReference(target));
+                    if (hasRequired)
+                    {
+                        if (!hasOrder)
+                        {
+                            // before elements are things we are loaded before (so they are our dependants)
+                            if ("before".equals(instruction))
+                            {
+                                dependants.add(VersionParser.parseVersionReference(target));
+                                hasOrder = true;
+                            }
+                            // after elements are things that load before we do (so they are out dependencies)
+                            else if ("after".equals(instruction))
+                            {
+                                dependencies.add(VersionParser.parseVersionReference(target));
+                                hasOrder = true;
+                            }
+                        }
+                        // Order instruction has already been defined
+                        else
+                        {
+                            parseFailure = true;
+                            continue dep;
+                        }
+                    }
                 }
             }
         }
