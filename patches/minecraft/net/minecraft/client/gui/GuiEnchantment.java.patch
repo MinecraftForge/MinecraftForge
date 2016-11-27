@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiEnchantment.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiEnchantment.java
+@@ -171,7 +171,7 @@
+                 FontRenderer fontrenderer = this.field_146297_k.field_71464_q;
+                 int i2 = 6839882;
+ 
+-                if ((k < l + 1 || this.field_146297_k.field_71439_g.field_71068_ca < k1) && !this.field_146297_k.field_71439_g.field_71075_bZ.field_75098_d)
++                if (((k < l + 1 || this.field_146297_k.field_71439_g.field_71068_ca < k1) && !this.field_146297_k.field_71439_g.field_71075_bZ.field_75098_d) || this.field_147075_G.field_185001_h[l] == -1) // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
+                 {
+                     this.func_73729_b(i1, j + 14 + 19 * l, 0, 185, 108, 19);
+                     this.func_73729_b(i1 + 1, j + 15 + 19 * l, 16 * l, 239, 16, 16);
