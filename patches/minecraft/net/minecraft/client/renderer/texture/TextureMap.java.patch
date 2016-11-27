@@ -175,7 +175,7 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +363,52 @@
+@@ -318,4 +363,48 @@
      {
          return this.field_94249_f;
      }
@@ -190,32 +190,28 @@
 +     * @param name The name of the entry to find
 +     * @return The registered entry, null if nothing was registered.
 +     */
++    @Nullable
 +    public TextureAtlasSprite getTextureExtry(String name)
 +    {
-+        return (TextureAtlasSprite)field_110574_e.get(name);
++        return field_110574_e.get(name);
 +    }
 +
 +    /**
 +     * Adds a texture registry entry to this map for the specified name if one does not already exist.
 +     * Returns false if the map already contains a entry for the specified name.
 +     *
-+     * @param name Entry name
 +     * @param entry Entry instance
 +     * @return True if the entry was added to the map, false otherwise.
 +     */
-+    @Deprecated //Use non-String version
-+    public boolean setTextureEntry(String name, TextureAtlasSprite entry)
++    public boolean setTextureEntry(TextureAtlasSprite entry)
 +    {
++        String name = entry.func_94215_i();
 +        if (!field_110574_e.containsKey(name))
 +        {
 +            field_110574_e.put(name, entry);
 +            return true;
 +        }
 +        return false;
-+    }
-+    public boolean setTextureEntry(TextureAtlasSprite entry)
-+    {
-+        return setTextureEntry(entry.func_94215_i(), entry);
 +    }
 +
 +    public String getBasePath()
