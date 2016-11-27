@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -426,11 +433,592 @@
+@@ -426,11 +433,605 @@
          return false;
      }
  
@@ -578,6 +578,19 @@
 +    }
 +
 +    /**
++     * Checks whether an item can be enchanted with a certain enchantment. This applies specifically to enchanting an item in the enchanting table and is called when retrieving the list of possible enchantments for an item.
++     * Enchantments may additionally (or exclusively) be doing their own checks in {@link net.minecraft.enchantment.Enchantment#canApplyAtEnchantingTable(ItemStack)}; check the individual implementation for reference.
++     * By default this will check if the enchantment type is valid for this item type.
++     * @param stack the item stack to be enchanted
++     * @param enchantment the enchantment to be applied
++     * @return true if the enchantment can be applied to this item
++     */
++    public boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.enchantment.Enchantment enchantment)
++    {
++        return enchantment.field_77351_y.func_77557_a(stack.func_77973_b());
++    }
++
++    /**
 +     * Whether this Item can be used as a payment to activate the vanilla beacon.
 +     * @param stack the ItemStack
 +     * @return true if this Item can be used
@@ -653,7 +666,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -962,6 +1550,10 @@
+@@ -962,6 +1563,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -664,7 +677,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -996,9 +1588,36 @@
+@@ -996,9 +1601,36 @@
              return this.field_78008_j;
          }
  
