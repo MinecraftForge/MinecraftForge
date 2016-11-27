@@ -8,10 +8,12 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = "equipment_change_test", version = "1.0.0")
-public class EquipmentChangeTest {
+public class EquipmentChangeTest 
+{
 
     @Mod.EventHandler
-    public void onInit(FMLInitializationEvent event) {
+    public void onInit(FMLInitializationEvent event) 
+    {
         //register the eventhandler
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -21,11 +23,11 @@ public class EquipmentChangeTest {
      * Serverside only!
      */
     @SubscribeEvent
-    public void onEquipmentChange(LivingEquipmentChangeEvent event) {
+    public void onEquipmentChange(LivingEquipmentChangeEvent event) 
+    {
         //a debug console print
         FMLLog.info("[Equipment-Change] " + event.getEntity() + " changed his Equipment in "
                 + event.getSlot() + " from " + event.getFrom() + " to " + event.getTo());
     }
-
 
 }
