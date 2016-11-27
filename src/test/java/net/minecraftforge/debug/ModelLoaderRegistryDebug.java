@@ -57,7 +57,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.collect.Lists;
 
-@Mod(modid = ModelLoaderRegistryDebug.MODID, name = "ForgeDebugModelLoaderRegistry", version = ModelLoaderRegistryDebug.VERSION)
+@Mod(modid = ModelLoaderRegistryDebug.MODID, name = "ForgeDebugModelLoaderRegistry", version = ModelLoaderRegistryDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelLoaderRegistryDebug
 {
     public static final String MODID = "forgedebugmodelloaderregistry";

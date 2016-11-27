@@ -854,6 +854,12 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         return getNameForObject(value);
     }
 
+    @Override //Bouncer for OBF, as the super class's function is NotchCode and gets obfed. This plus the SRG lines prevents a AbstractMethodException
+    public Set<ResourceLocation> getKeys()
+    {
+        return super.getKeys();
+    }
+
     @Override
     public List<I> getValues()
     {

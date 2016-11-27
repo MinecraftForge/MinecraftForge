@@ -43,3 +43,10 @@
          {
              TileEntity tileentity = p_145893_0_.func_175625_s(blockpos);
  
+@@ -589,4 +599,6 @@
+     {
+         return this.field_145900_a;
+     }
++
++    public long getLastUpdateTime() { return field_190578_g; } // Forge
+ }

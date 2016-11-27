@@ -9,10 +9,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.server.command.CommandTreeBase;
 
-@Mod(modid = CommandTreeBaseTest.MOD_ID, name = "CommandTreeBaseTest", version = "1.0.0")
+@Mod(modid = CommandTreeBaseTest.MOD_ID, name = "CommandTreeBaseTest", version = "1.0.0", acceptableRemoteVersions = "*")
 public class CommandTreeBaseTest
 {
-    public static final String MOD_ID = "CommandTreeBaseTest";
+    public static final String MOD_ID = "command_tree_base_test";
 
     @Mod.Instance(CommandTreeBaseTest.MOD_ID)
     public static CommandTreeBaseTest inst;
