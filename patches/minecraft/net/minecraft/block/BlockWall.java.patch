@@ -32,13 +32,13 @@
 +        return connector instanceof BlockWall || connector instanceof BlockFenceGate;
 +    }
 +
-+    public boolean canWallConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    private boolean canWallConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
 +        Block block = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
 +        return block.canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d()) || func_176253_e(world, pos.func_177972_a(facing));
 +    }
 +
-+    public IBlockState getWallState(IBlockState state, IBlockAccess world, BlockPos pos, boolean north, boolean east, boolean south, boolean west, boolean up)
++    private IBlockState getWallState(IBlockState state, IBlockAccess world, BlockPos pos, boolean north, boolean east, boolean south, boolean west, boolean up)
 +    {
 +        return state.func_177226_a(field_176256_a, !up || !world.func_175623_d(pos.func_177984_a()))
 +                .func_177226_a(field_176254_b, north).func_177226_a(field_176257_M, east)

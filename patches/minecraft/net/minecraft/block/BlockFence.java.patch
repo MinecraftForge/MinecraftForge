@@ -36,13 +36,13 @@
 +        return false;
 +    }
 +
-+    public boolean canFenceConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    private boolean canFenceConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
 +        Block block = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
 +        return block.canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d()) || func_176524_e(world, pos.func_177972_a(facing));
 +    }
 +
-+    public IBlockState getFenceState(IBlockState state, IBlockAccess world, BlockPos pos)
++    private IBlockState getFenceState(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
 +        return state.func_177226_a(field_176526_a, canFenceConnectTo(world, pos, EnumFacing.NORTH))
 +                .func_177226_a(field_176525_b, canFenceConnectTo(world, pos, EnumFacing.EAST))

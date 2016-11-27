@@ -1,20 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFenceGate.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFenceGate.java
-@@ -48,11 +48,11 @@
- 
-     public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
+@@ -50,7 +50,7 @@
      {
--        EnumFacing.Axis enumfacing$axis = ((EnumFacing)p_176221_1_.func_177229_b(field_185512_D)).func_176740_k();
-+        EnumFacing.Axis axis = p_176221_1_.func_177229_b(field_185512_D).func_176740_k();
+         EnumFacing.Axis enumfacing$axis = ((EnumFacing)p_176221_1_.func_177229_b(field_185512_D)).func_176740_k();
  
 -        if (enumfacing$axis == EnumFacing.Axis.Z && (p_176221_2_.func_180495_p(p_176221_3_.func_177976_e()).func_177230_c() == Blocks.field_150463_bK || p_176221_2_.func_180495_p(p_176221_3_.func_177974_f()).func_177230_c() == Blocks.field_150463_bK) || enumfacing$axis == EnumFacing.Axis.X && (p_176221_2_.func_180495_p(p_176221_3_.func_177978_c()).func_177230_c() == Blocks.field_150463_bK || p_176221_2_.func_180495_p(p_176221_3_.func_177968_d()).func_177230_c() == Blocks.field_150463_bK))
-+        if (axis == EnumFacing.Axis.Z && (canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST) || canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST)) || axis == EnumFacing.Axis.X && (canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH) || canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH)))
++        if (enumfacing$axis == EnumFacing.Axis.Z && (canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST) || canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST)) || enumfacing$axis == EnumFacing.Axis.X && (canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH) || canFenceGateConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH)))
          {
--            p_176221_1_ = p_176221_1_.func_177226_a(field_176467_M, Boolean.valueOf(true));
-+            p_176221_1_ = p_176221_1_.func_177226_a(field_176467_M, true);
+             p_176221_1_ = p_176221_1_.func_177226_a(field_176467_M, Boolean.valueOf(true));
          }
- 
-         return p_176221_1_;
 @@ -175,4 +175,21 @@
      {
          return new BlockStateContainer(this, new IProperty[] {field_185512_D, field_176466_a, field_176465_b, field_176467_M});
@@ -29,7 +23,7 @@
 +        return connector instanceof BlockFence || connector instanceof BlockWall;
 +    }
 +
-+    public boolean canFenceGateConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    private boolean canFenceGateConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
 +        Block block = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
 +        return block.canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d());
