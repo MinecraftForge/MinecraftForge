@@ -682,7 +682,7 @@ public class Loader
         return modClassLoader;
     }
 
-    public void computeDependencies(String dependencyString, Set<ArtifactVersion> requirements, List<ArtifactVersion> dependencies, List<ArtifactVersion> dependants)
+    public static void computeDependencies(String dependencyString, Set<ArtifactVersion> requirements, List<ArtifactVersion> dependencies, List<ArtifactVersion> dependants)
     {
         if (dependencyString == null || dependencyString.length() == 0)
         {
@@ -783,7 +783,7 @@ public class Loader
         }
     }
     
-    private void parseFailure(String dependencyString, String cause){
+    private static void parseFailure(String dependencyString, String cause){
         FMLLog.log(Level.WARN, "Unable to parse dependency string \"%s\", cause - %s", dependencyString, cause);
         throw new LoaderException(String.format("Unable to parse dependency string %s, cause - \"%s\"", dependencyString, cause));
     }
