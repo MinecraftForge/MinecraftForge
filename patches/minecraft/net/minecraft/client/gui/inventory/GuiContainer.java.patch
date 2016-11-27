@@ -127,7 +127,7 @@
                  {
                      this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                      return true;
-@@ -689,4 +693,37 @@
+@@ -689,4 +693,18 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }
@@ -138,30 +138,11 @@
 +     * Returns the slot that is currently displayed under the mouse.
 +     */
 +    @javax.annotation.Nullable
-+    public Slot getSlotUnderMouse()
-+    {
-+        return this.field_147006_u;
-+    }
-+
-+    public int getGuiLeft()
-+    {
-+        return field_147003_i;
-+    }
-+
-+    public int getGuiTop()
-+    {
-+        return field_147009_r;
-+    }
-+
-+    public int getXSize()
-+    {
-+        return field_146999_f;
-+    }
-+
-+    public int getYSize()
-+    {
-+        return field_147000_g;
-+    }
++    public Slot getSlotUnderMouse() { return this.field_147006_u; }
++    public int getGuiLeft() { return field_147003_i; }
++    public int getGuiTop() { return field_147009_r; }
++    public int getXSize() { return field_146999_f; }
++    public int getYSize() { return field_147000_g; }
 +
 +    /* ======================================== FORGE END   =====================================*/
  }
