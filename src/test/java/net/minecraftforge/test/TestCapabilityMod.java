@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0")
+@Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0", acceptableRemoteVersions = "*")
 public class TestCapabilityMod
 {
     // A Holder/Marker for if this capability is installed.
@@ -47,7 +47,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent.LeftClickBlock event)
     {
-        if (event.getItemStack() == null) return;
+        if (event.getItemStack().func_190926_b()) return;
         if (event.getItemStack().getItem() != Items.STICK) return;
 
         // This is just a example of how to interact with the TE, note the strong type binding that getCapability has

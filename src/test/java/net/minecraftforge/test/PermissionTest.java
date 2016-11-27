@@ -21,7 +21,7 @@ import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.context.BlockPosContext;
 import net.minecraftforge.server.permission.context.ContextKey;
 
-@Mod(modid = PermissionTest.MOD_ID, name = "PermissionTest", version = "1.0.0")
+@Mod(modid = PermissionTest.MOD_ID, name = "PermissionTest", version = "1.0.0", acceptableRemoteVersions = "*")
 public class PermissionTest
 {
     public static final String MOD_ID = "permission_test";

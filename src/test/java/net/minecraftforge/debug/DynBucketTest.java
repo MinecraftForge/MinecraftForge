@@ -59,7 +59,7 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
+@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID, acceptableRemoteVersions = "*")
 public class DynBucketTest
 {
     public static final String MODID = "dynbuckettest";
@@ -263,8 +263,11 @@ public class DynBucketTest
         {
             ItemStack heldItem = playerIn.getHeldItem(hand);
             IFluidHandler tank = FluidUtil.getFluidHandler(worldIn, pos, side.getOpposite());
+            if (tank == null) {
+                return false;
+            }
 
-            if (null == null)
+            if (heldItem.func_190926_b())
             {
                 sendText(playerIn, tank);
                 return false;

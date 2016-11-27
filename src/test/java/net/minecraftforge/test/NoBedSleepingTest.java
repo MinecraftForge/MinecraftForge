@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Mod(modid = NoBedSleepingTest.MODID, name = "ForgeDebugNoBedSleeping", version = NoBedSleepingTest.VERSION)
+@Mod(modid = NoBedSleepingTest.MODID, name = "ForgeDebugNoBedSleeping", version = NoBedSleepingTest.VERSION, acceptableRemoteVersions = "*")
 public class NoBedSleepingTest
 {
     public static final String MODID = "forgedebugnobedsleeping";
@@ -165,7 +165,8 @@ public class NoBedSleepingTest
         }
 
         @Override
-        public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
+        @Nonnull
+        public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand)
         {
             ItemStack stack = player.getHeldItem(hand);
             if (!world.isRemote)

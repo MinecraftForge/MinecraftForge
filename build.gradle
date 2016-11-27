@@ -374,6 +374,12 @@ String getVersionFromJava(File file)
     return out;
 }
 
+reobfuscate {
+    extraSrg = [
+    'MD: net/minecraftforge/fml/common/registry/FMLControlledNamespacedRegistry/getKeys ()Ljava/util/Set; net/minecraftforge/fml/common/registry/FMLControlledNamespacedRegistry/getKeys ()Ljava/util/Set;'
+    ]
+}
+
 task resetBuildNumber << {
     project.ext.properties.buildNumber = 0;
     ciWriteBuildNumber.execute()

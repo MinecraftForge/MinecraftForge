@@ -156,7 +156,7 @@ public class ForgeHooks
     private static boolean toolInit = false;
     //static HashSet<List> toolEffectiveness = new HashSet<List>();
 
-    public static boolean canHarvestBlock(Block block, EntityPlayer player, IBlockAccess world, BlockPos pos)
+    public static boolean canHarvestBlock(@Nonnull Block block, @Nonnull EntityPlayer player, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
     {
         IBlockState state = world.getBlockState(pos);
         state = state.getBlock().getActualState(state, world, pos);
@@ -165,7 +165,7 @@ public class ForgeHooks
             return true;
         }
 
-        ItemStack stack = player.inventory.getCurrentItem();
+        ItemStack stack = player.getHeldItemMainhand();
         String tool = block.getHarvestTool(state);
         if (stack.func_190926_b() || tool == null)
         {
@@ -190,7 +190,7 @@ public class ForgeHooks
         return stack.getItem().getHarvestLevel(stack, tool, null, null) >= state.getBlock().getHarvestLevel(state);
     }
 
-    public static float blockStrength(IBlockState state, EntityPlayer player, World world, BlockPos pos)
+    public static float blockStrength(@Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos)
     {
         float hardness = state.getBlockHardness(world, pos);
         if (hardness < 0.0F)

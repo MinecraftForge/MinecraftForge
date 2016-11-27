@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
 
-@Mod(modid= ObjectHolderTest.MODID, name = "ObjectHolderTests", version = "1.0")
+@Mod(modid= ObjectHolderTest.MODID, name = "ObjectHolderTests", version = "1.0", acceptableRemoteVersions = "*")
 public class ObjectHolderTest
 {
     public static final String MODID = "objectholdertest";
