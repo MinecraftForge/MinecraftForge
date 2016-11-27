@@ -327,7 +327,7 @@ public class SplashProgress
                     {
                         glTranslatef(320 + w/2 - fw - logoOffset, 240 + h/2 - fh - logoOffset, 0);
                     }
-                    int f = (angle / 10) % forgeTexture.getFrames();
+                    int f = (angle / 5) % forgeTexture.getFrames();
                     glEnable(GL_TEXTURE_2D);
                     forgeTexture.bind();
                     glBegin(GL_QUADS);
@@ -658,16 +658,30 @@ public class SplashProgress
                 if(!readers.hasNext()) throw new IOException("No suitable reader found for image" + location);
                 ImageReader reader = readers.next();
                 reader.setInput(stream);
-                frames = reader.getNumImages(true);
+                int frames = reader.getNumImages(true);
                 BufferedImage[] images = new BufferedImage[frames];
                 for(int i = 0; i < frames; i++)
                 {
                     images[i] = reader.read(i);
                 }
                 reader.dispose();
-                int size = 1;
                 width = images[0].getWidth();
-                height = images[0].getHeight();
+                int height = images[0].getHeight();
+                // Animation strip
+                if (height > width && height % width == 0)
+                {
+                    frames = height / width;
+                    BufferedImage original = images[0];
+                    height = width;
+                    images = new BufferedImage[frames];
+                    for (int i = 0; i < frames; i++)
+                    {
+                        images[i] = original.getSubimage(0, i * height, width, height);
+                    }
+                }
+                this.frames = frames;
+                this.height = height;
+                int size = 1;
                 while((size / width) * (size / height) < frames) size *= 2;
                 this.size = size;
                 glEnable(GL_TEXTURE_2D);
