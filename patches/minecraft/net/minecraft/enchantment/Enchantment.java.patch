@@ -33,7 +33,7 @@
 +     */
 +    public boolean canApplyAtEnchantingTable(ItemStack stack)
 +    {
-+        return this.field_77351_y.func_77557_a(stack.func_77973_b());
++        return stack.func_77973_b().canApplyAtEnchantingTable(stack, this);
 +    }
 +
 +    /**
