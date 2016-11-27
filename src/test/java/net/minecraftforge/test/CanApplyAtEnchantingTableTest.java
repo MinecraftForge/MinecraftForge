@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 @Mod(modid="canapplyatenchantingtabletest", name="CanApplyAtEnchantingTableTest", version="0.0.0")
 public class CanApplyAtEnchantingTableTest
 {
-	public static final boolean ENABLE = false;
+	public static final boolean ENABLE = true;
 
 	public static final Item testItem = new Item()
 	{
@@ -38,7 +38,7 @@ public class CanApplyAtEnchantingTableTest
 	{
 		if(ENABLE)
 		{
-			GameRegistry.register(testItem.setRegistryName("test_item").setMaxStackSize(1));
+			GameRegistry.register(testItem.setRegistryName("test_item").setUnlocalizedName("FortuneEnchantableOnly").setMaxStackSize(1));
 		}
 	}
 }
