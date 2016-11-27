@@ -10,33 +10,26 @@ import java.util.Set;
 import org.junit.Test;
 
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
-public class BetterModeDependenciesTest
+public class BetterModDependenciesTest
 {
 
     @Test
     public void test()
     {
-        try {
-            Loader.computeDependencies(null, null, null, null);
-        } catch(Exception e){
-            fail();
-        }
-        try {
-            Loader.computeDependencies("", null, null, null);
-        } catch(Exception e){
-            fail();
-        }
-        
-        try {
+        Loader.computeDependencies(null, null, null, null);
+
+        Loader.computeDependencies("", null, null, null);
+
+        {
             Set<ArtifactVersion> requirements = new HashSet<ArtifactVersion>();
             Loader.computeDependencies("required:supermod3000[1.2,)", requirements, null, null);
             assertFalse(requirements.isEmpty());
-        } catch(Exception e){
-            fail();
         }
-        try {
+
+        {
             Set<ArtifactVersion> requirements = new HashSet<ArtifactVersion>();
             List<ArtifactVersion> dependencies = new ArrayList<ArtifactVersion>();
             List<ArtifactVersion> dependants = new ArrayList<ArtifactVersion>();
@@ -44,22 +37,19 @@ public class BetterModeDependenciesTest
             assertFalse(requirements.isEmpty());
             assertFalse(dependencies.isEmpty());
             assertFalse(dependants.isEmpty());
-        } catch(Exception e){
-            fail();
         }
-        
-        try {
-            Loader.computeDependencies("gibberishtext:amod", null, null, null);
-            fail();
-        } catch(Exception e){
-            
-        }
-        try {
-            Loader.computeDependencies("before-required-client:themod", null, null, null);
-            fail();
-        } catch(Exception e){
-            
-        }
+    }
+
+    @Test(expected = Exception.class)
+    public void testShouldFail()
+    {
+        Loader.computeDependencies("gibberishtext:amod", new HashSet<ArtifactVersion>(), new ArrayList<ArtifactVersion>(), new ArrayList<ArtifactVersion>());
+    }
+
+    @Test(expected = Exception.class)
+    public void testShouldFail2()
+    {
+        Loader.computeDependencies("before-required-client:themod", new HashSet<ArtifactVersion>(), new ArrayList<ArtifactVersion>(), new ArrayList<ArtifactVersion>());
     }
 
 }
