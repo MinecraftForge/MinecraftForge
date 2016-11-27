@@ -860,7 +860,6 @@ public class SplashProgress
             glScalef(2, 2, 1);
 
             List<String> list = Lists.newArrayList(
-                    "Warning: low memory!",
                     String.format("Memory: % 2d%% %03d/%03dMB", usedMemoryPercent, bytesToMb(usedMemory), bytesToMb(maxMemory)),
                     String.format("Allocated: % 2d%% %03dMB", totalMemory * 100L / maxMemory, bytesToMb(totalMemory))
             );
@@ -871,8 +870,9 @@ public class SplashProgress
                 if (!Strings.isNullOrEmpty(s))
                 {
                     int y = 2 + fontRenderer.FONT_HEIGHT * i;
+                    int x = 160 - (fontRenderer.getStringWidth(s) / 2);
                     glEnable(GL_TEXTURE_2D);
-                    fontRenderer.drawString(s, 0, y, 0xff0000);
+                    fontRenderer.drawString(s, x, y, 0x000000);
                     glDisable(GL_TEXTURE_2D);
                 }
             }
