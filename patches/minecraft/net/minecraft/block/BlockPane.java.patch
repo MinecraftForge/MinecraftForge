@@ -1,18 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPane.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
-@@ -107,7 +107,10 @@
+@@ -107,7 +107,7 @@
  
      public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
      {
 -        return p_176221_1_.func_177226_a(field_176241_b, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177978_c()).func_177230_c()))).func_177226_a(field_176243_N, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177968_d()).func_177230_c()))).func_177226_a(field_176244_O, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177976_e()).func_177230_c()))).func_177226_a(field_176242_M, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177974_f()).func_177230_c())));
-+        return p_176221_1_.func_177226_a(field_176241_b, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH))
-+                .func_177226_a(field_176243_N, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH))
-+                .func_177226_a(field_176244_O, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST))
-+                .func_177226_a(field_176242_M, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST));
++        return getPaneState(p_176221_1_, p_176221_2_, p_176221_3_);
      }
  
      public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
-@@ -184,4 +187,21 @@
+@@ -184,4 +184,29 @@
      {
          return new BlockStateContainer(this, new IProperty[] {field_176241_b, field_176242_M, field_176244_O, field_176243_N});
      }
@@ -30,6 +27,14 @@
 +    {
 +        IBlockState state = world.func_180495_p(pos.func_177972_a(facing));
 +        return state.func_177230_c().canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d()) || func_150098_a(state.func_177230_c()) || state.isSideSolid(world, pos.func_177972_a(facing), facing.func_176734_d());
++    }
++
++    public IBlockState getPaneState(IBlockState state, IBlockAccess world, BlockPos pos)
++    {
++        return state.func_177226_a(field_176241_b, canPaneConnectTo(world, pos, EnumFacing.NORTH))
++                .func_177226_a(field_176243_N, canPaneConnectTo(world, pos, EnumFacing.SOUTH))
++                .func_177226_a(field_176244_O, canPaneConnectTo(world, pos, EnumFacing.WEST))
++                .func_177226_a(field_176242_M, canPaneConnectTo(world, pos, EnumFacing.EAST));
 +    }
 +
 +    /* ======================================== FORGE END ======================================== */
