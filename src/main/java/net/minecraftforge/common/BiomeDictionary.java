@@ -137,7 +137,7 @@ public class BiomeDictionary
         }
     }
 
-    private static Map<ResourceLocation, BiomeInfo> biomeInfoMap = new HashMap<ResourceLocation, BiomeInfo>();
+    private static final Map<ResourceLocation, BiomeInfo> biomeInfoMap = new HashMap<ResourceLocation, BiomeInfo>();
 
     private static class BiomeInfo
     {
