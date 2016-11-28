@@ -268,7 +268,7 @@ public class BiomeDictionary
      */
     public static boolean isBiomeRegistered(Biome biome)
     {
-        return biomeInfoMap.containsKey(Biome.REGISTRY.getNameForObject(biome));
+        return biomeInfoMap.containsKey(ForgeRegistries.BIOMES.getKey(biome));
     }
 
     public static void registerAllBiomes()
@@ -412,7 +412,7 @@ public class BiomeDictionary
     //Internal implementation
     private static BiomeInfo getBiomeInfo(Biome biome)
     {
-        return biomeInfoMap.get(Biome.REGISTRY.getNameForObject(biome));
+        return biomeInfoMap.get(ForgeRegistries.BIOMES.getKey(biome));
     }
 
     private static void checkRegistration(Biome biome)
