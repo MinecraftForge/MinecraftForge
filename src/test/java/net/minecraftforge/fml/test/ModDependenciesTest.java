@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
-public class BetterModDependenciesTest
+public class ModDependenciesTest
 {
 
     @Test
