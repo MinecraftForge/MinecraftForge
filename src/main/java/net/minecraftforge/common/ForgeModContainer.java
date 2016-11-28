@@ -442,7 +442,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 decorator.fireCreateEventAndReplace(biome);
             }
 
-            BiomeDictionary.ensureRegistered(biome);
+            BiomeDictionary.ensureTagged(biome);
         }
     }
 

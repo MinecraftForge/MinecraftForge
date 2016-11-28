@@ -33,7 +33,6 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 
 public class BiomeDictionary
 {
@@ -143,14 +142,10 @@ public class BiomeDictionary
 
     private static class BiomeInfo
     {
-        private final Set<Type> types;
-        private final Set<Type> typesUn;
 
-        BiomeInfo(Collection<Type> types)
-        {
-            this.types = Sets.newHashSet(types);
-            typesUn = Collections.unmodifiableSet(this.types);
-        }
+        private final Set<Type> types = new HashSet<Type>();
+        private final Set<Type> typesUn = Collections.unmodifiableSet(this.types);
+
     }
 
     static
@@ -159,12 +154,12 @@ public class BiomeDictionary
     }
 
     /**
-     * Registers a biome with a specific biome type
+     * Tags a biome with the given types.
      *
-     * @param biome the biome to be registered
-     * @param types the types to register the biome as
+     * @param biome the biome to be tagged
+     * @param types the types to tag with
      */
-    public static void register(Biome biome, Type... types)
+    public static void addTypes(Biome biome, Type... types)
     {
         Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot register biome types for unregistered biome");
 
@@ -175,22 +170,14 @@ public class BiomeDictionary
             type.biomes.add(biome);
         }
 
-        if (!isRegistered(biome))
-        {
-            ResourceLocation location = ForgeRegistries.BIOMES.getKey(biome);
-            biomeInfoMap.put(location, new BiomeInfo(subTags));
-        }
-        else
-        {
-            getBiomeInfo(biome).types.addAll(subTags);
-        }
+        getBiomeInfo(biome).types.addAll(subTags);
     }
 
     /**
-     * Returns a list of biomes registered with a specific type
+     * Returns the set of biomes that have been tagged with the given type.
      *
      * @param type the Type to look for
-     * @return a list of biomes of the specified type
+     * @return the set of biomes
      */
     @Nonnull
     public static Set<Biome> getBiomes(Type type)
@@ -199,20 +186,20 @@ public class BiomeDictionary
     }
 
     /**
-     * Gets a list of Types that a specific biome is registered with
+     * Get the set of types that the given biome has been tagged with.
      *
-     * @param biome the biome to check
-     * @return the list of types
+     * @param biome the biome
+     * @return the set of types
      */
     @Nonnull
     public static Set<Type> getTypes(Biome biome)
     {
-        ensureRegistered(biome);
+        ensureTagged(biome);
         return getBiomeInfo(biome).typesUn;
     }
 
     /**
-     * Checks to see if two biomes are registered as having the same type
+     * Checks to see if the two given biomes have tags in common.
      *
      * @param biomeA the first biome
      * @param biomeB the second biome
@@ -220,12 +207,9 @@ public class BiomeDictionary
      */
     public static boolean areSimilar(Biome biomeA, Biome biomeB)
     {
-        ensureRegistered(biomeA);
-        ensureRegistered(biomeB);
-
         for (Type type : getTypes(biomeA))
         {
-            if (containsType(getBiomeInfo(biomeB), type))
+            if (containsType(getTypes(biomeB), type))
             {
                 return true;
             }
@@ -235,35 +219,34 @@ public class BiomeDictionary
     }
 
     /**
-     * Checks to see if the given biome is registered as being a specific type
+     * Checks to see if the given biome is has been tagged with the given type.
      *
-     * @param biome the biome to be considered
+     * @param biome the biome
      * @param type  the type to check for
-     * @return returns true if the biome is registered as being of type type, false otherwise
+     * @return true if the biome has been tagged with the type, false otherwise
      */
-    public static boolean isOfType(Biome biome, Type type)
+    public static boolean hasType(Biome biome, Type type)
     {
-        ensureRegistered(biome);
-        return containsType(getBiomeInfo(biome), type);
+        return getTypes(biome).contains(type);
     }
 
     /**
-     * Checks to see if the given biome has been registered as being of any type
+     * Checks to see if the given biome has been tagged with any type.
      *
      * @param biome the biome to consider
-     * @return returns true if the biome has been registered, false otherwise
+     * @return true if the biome has been tagged with any type
      */
-    public static boolean isRegistered(Biome biome)
+    public static boolean hasTypes(Biome biome)
     {
-        return biomeInfoMap.containsKey(ForgeRegistries.BIOMES.getKey(biome));
+        return !getBiomeInfo(biome).types.isEmpty();
     }
 
     /**
-     * Automatically looks for and registers a given biome with appropriate tags
-     * This method is called automatically if a biome has not been registered with any tags,
-     * And another method requests information about it
+     * Automatically tags a given biome with appropriate types based on certain heuristics.
+     * If a biome's types are requested and the biome has not yet been tagged with any types, the biome's tags will be
+     * determined using this method
      *
-     * @param biome the biome to be considered
+     * @param biome the biome to be tagged
      */
     public static void makeBestGuess(Biome biome)
     {
@@ -271,15 +254,15 @@ public class BiomeDictionary
         {
             if (biome.isHighHumidity() && biome.getTemperature() >= 0.9F)
             {
-                BiomeDictionary.register(biome, JUNGLE);
+                BiomeDictionary.addTypes(biome, JUNGLE);
             }
             else if (!biome.isHighHumidity())
             {
-                BiomeDictionary.register(biome, FOREST);
+                BiomeDictionary.addTypes(biome, FOREST);
 
                 if (biome.getTemperature() <= 0.2f)
                 {
-                    BiomeDictionary.register(biome, CONIFEROUS);
+                    BiomeDictionary.addTypes(biome, CONIFEROUS);
                 }
             }
         }
@@ -287,118 +270,124 @@ public class BiomeDictionary
         {
             if (!biome.isHighHumidity() || biome.getBaseHeight() >= 0.0F)
             {
-                BiomeDictionary.register(biome, PLAINS);
+                BiomeDictionary.addTypes(biome, PLAINS);
             }
         }
 
         if (biome.getRainfall() > 0.85f)
         {
-            BiomeDictionary.register(biome, WET);
+            BiomeDictionary.addTypes(biome, WET);
         }
 
         if (biome.getRainfall() < 0.15f)
         {
-            BiomeDictionary.register(biome, DRY);
+            BiomeDictionary.addTypes(biome, DRY);
         }
 
         if (biome.getTemperature() > 0.85f)
         {
-            BiomeDictionary.register(biome, HOT);
+            BiomeDictionary.addTypes(biome, HOT);
         }
 
         if (biome.getTemperature() < 0.15f)
         {
-            BiomeDictionary.register(biome, COLD);
+            BiomeDictionary.addTypes(biome, COLD);
         }
 
         if (biome.theBiomeDecorator.treesPerChunk > 0 && biome.theBiomeDecorator.treesPerChunk < 3)
         {
-            BiomeDictionary.register(biome, SPARSE);
+            BiomeDictionary.addTypes(biome, SPARSE);
         }
         else if (biome.theBiomeDecorator.treesPerChunk >= 10)
         {
-            BiomeDictionary.register(biome, DENSE);
+            BiomeDictionary.addTypes(biome, DENSE);
         }
 
         if (biome.isHighHumidity() && biome.getBaseHeight() < 0.0F && (biome.getHeightVariation() <= 0.3F && biome.getHeightVariation() >= 0.0F))
         {
-            BiomeDictionary.register(biome, SWAMP);
+            BiomeDictionary.addTypes(biome, SWAMP);
         }
 
         if (biome.getBaseHeight() <= -0.5F)
         {
             if (biome.getHeightVariation() == 0.0F)
             {
-                BiomeDictionary.register(biome, RIVER);
+                BiomeDictionary.addTypes(biome, RIVER);
             }
             else
             {
-                BiomeDictionary.register(biome, OCEAN);
+                BiomeDictionary.addTypes(biome, OCEAN);
             }
         }
 
         if (biome.getHeightVariation() >= 0.4F && biome.getHeightVariation() < 1.5F)
         {
-            BiomeDictionary.register(biome, HILLS);
+            BiomeDictionary.addTypes(biome, HILLS);
         }
 
         if (biome.getHeightVariation() >= 1.5F)
         {
-            BiomeDictionary.register(biome, MOUNTAIN);
+            BiomeDictionary.addTypes(biome, MOUNTAIN);
         }
 
         if (biome.getEnableSnow())
         {
-            BiomeDictionary.register(biome, SNOWY);
+            BiomeDictionary.addTypes(biome, SNOWY);
         }
 
         if (biome.topBlock != Blocks.SAND && biome.getTemperature() >= 1.0f && biome.getRainfall() < 0.2f)
         {
-            BiomeDictionary.register(biome, SAVANNA);
+            BiomeDictionary.addTypes(biome, SAVANNA);
         }
 
         if (biome.topBlock == Blocks.SAND)
         {
-            BiomeDictionary.register(biome, SANDY);
+            BiomeDictionary.addTypes(biome, SANDY);
         }
         else if (biome.topBlock == Blocks.MYCELIUM)
         {
-            BiomeDictionary.register(biome, MUSHROOM);
+            BiomeDictionary.addTypes(biome, MUSHROOM);
         }
         if (biome.fillerBlock == Blocks.HARDENED_CLAY)
         {
-            BiomeDictionary.register(biome, MESA);
+            BiomeDictionary.addTypes(biome, MESA);
         }
     }
 
     //Internal implementation
     private static BiomeInfo getBiomeInfo(Biome biome)
     {
-        return biomeInfoMap.get(ForgeRegistries.BIOMES.getKey(biome));
+        BiomeInfo info = biomeInfoMap.get(biome.getRegistryName());
+        if (info == null)
+        {
+            info = new BiomeInfo();
+            biomeInfoMap.put(biome.getRegistryName(), info);
+        }
+        return info;
     }
 
     /**
-     * Ensure that the given biome has been registered, if needed will make a guess.
+     * Ensure that the given biome has been tagged with at least one type
      * @param biome the biome
      */
-    static void ensureRegistered(Biome biome)
+    static void ensureTagged(Biome biome)
     {
-        if (!isRegistered(biome))
+        if (!hasTypes(biome))
         {
-            FMLLog.warning("No types registered for Biome %s, types will be assigned on a best-effort guess.");
+            FMLLog.warning("Biome %s has not been tagged with any types, types will be assigned on a best-effort guess.");
             makeBestGuess(biome);
         }
     }
 
-    private static boolean containsType(BiomeInfo info, Type type)
+    private static boolean containsType(Set<Type> types, Type type)
     {
         if (type.hasSubTags())
         {
-            return !Collections.disjoint(info.types, type.subTags);
+            return !Collections.disjoint(types, type.subTags);
         }
         else
         {
-            return info.types.contains(type);
+            return types.contains(type);
         }
     }
 
@@ -423,45 +412,45 @@ public class BiomeDictionary
 
     private static void registerVanillaBiomes()
     {
-        register(Biomes.OCEAN,                    OCEAN                                        );
-        register(Biomes.PLAINS,                   PLAINS                                       );
-        register(Biomes.DESERT,                   HOT,      DRY,        SANDY                  );
-        register(Biomes.EXTREME_HILLS,            MOUNTAIN, HILLS                              );
-        register(Biomes.FOREST,                   FOREST                                       );
-        register(Biomes.TAIGA,                    COLD,     CONIFEROUS, FOREST                 );
-        register(Biomes.TAIGA_HILLS,              COLD,     CONIFEROUS, FOREST,   HILLS        );
-        register(Biomes.SWAMPLAND,                WET,      SWAMP                              );
-        register(Biomes.RIVER,                    RIVER                                        );
-        register(Biomes.FROZEN_OCEAN,             COLD,     OCEAN,      SNOWY                  );
-        register(Biomes.FROZEN_RIVER,             COLD,     RIVER,      SNOWY                  );
-        register(Biomes.ICE_PLAINS,               COLD,     SNOWY,      WASTELAND              );
-        register(Biomes.ICE_MOUNTAINS,            COLD,     SNOWY,      MOUNTAIN               );
-        register(Biomes.BEACH,                    BEACH                                        );
-        register(Biomes.DESERT_HILLS,             HOT,      DRY,        SANDY,    HILLS        );
-        register(Biomes.JUNGLE,                   HOT,      WET,        DENSE,    JUNGLE       );
-        register(Biomes.JUNGLE_HILLS,             HOT,      WET,        DENSE,    JUNGLE, HILLS);
-        register(Biomes.FOREST_HILLS,             FOREST,   HILLS                              );
-        register(Biomes.SKY,                      COLD,     DRY,        END                    );
-        register(Biomes.HELL,                     HOT,      DRY,        NETHER                 );
-        register(Biomes.MUSHROOM_ISLAND,          MUSHROOM                                     );
-        register(Biomes.EXTREME_HILLS_EDGE,       MOUNTAIN                                     );
-        register(Biomes.MUSHROOM_ISLAND_SHORE,    MUSHROOM, BEACH                              );
-        register(Biomes.JUNGLE_EDGE,              HOT,      WET,        JUNGLE,   FOREST       );
-        register(Biomes.DEEP_OCEAN,               OCEAN                                        );
-        register(Biomes.STONE_BEACH,              BEACH                                        );
-        register(Biomes.COLD_BEACH,               COLD,     BEACH,      SNOWY                  );
-        register(Biomes.BIRCH_FOREST,             FOREST                                       );
-        register(Biomes.BIRCH_FOREST_HILLS,       FOREST,   HILLS                              );
-        register(Biomes.ROOFED_FOREST,            SPOOKY,   DENSE,      FOREST                 );
-        register(Biomes.COLD_TAIGA,               COLD,     CONIFEROUS, FOREST,   SNOWY        );
-        register(Biomes.COLD_TAIGA_HILLS,         COLD,     CONIFEROUS, FOREST,   SNOWY,  HILLS);
-        register(Biomes.REDWOOD_TAIGA,            COLD,     CONIFEROUS, FOREST                 );
-        register(Biomes.REDWOOD_TAIGA_HILLS,      COLD,     CONIFEROUS, FOREST,   HILLS        );
-        register(Biomes.EXTREME_HILLS_WITH_TREES, MOUNTAIN, FOREST,     SPARSE                 );
-        register(Biomes.SAVANNA,                  HOT,      SAVANNA,    PLAINS,   SPARSE       );
-        register(Biomes.SAVANNA_PLATEAU,          HOT,      SAVANNA,    PLAINS,   SPARSE       );
-        register(Biomes.MESA,                     MESA,     SANDY                              );
-        register(Biomes.MESA_ROCK,                MESA,     SPARSE,     SANDY                  );
-        register(Biomes.MESA_CLEAR_ROCK,          MESA,     SANDY                              );
+        addTypes(Biomes.OCEAN,                    OCEAN                                        );
+        addTypes(Biomes.PLAINS,                   PLAINS                                       );
+        addTypes(Biomes.DESERT,                   HOT,      DRY,        SANDY                  );
+        addTypes(Biomes.EXTREME_HILLS,            MOUNTAIN, HILLS                              );
+        addTypes(Biomes.FOREST,                   FOREST                                       );
+        addTypes(Biomes.TAIGA,                    COLD,     CONIFEROUS, FOREST                 );
+        addTypes(Biomes.TAIGA_HILLS,              COLD,     CONIFEROUS, FOREST,   HILLS        );
+        addTypes(Biomes.SWAMPLAND,                WET,      SWAMP                              );
+        addTypes(Biomes.RIVER,                    RIVER                                        );
+        addTypes(Biomes.FROZEN_OCEAN,             COLD,     OCEAN,      SNOWY                  );
+        addTypes(Biomes.FROZEN_RIVER,             COLD,     RIVER,      SNOWY                  );
+        addTypes(Biomes.ICE_PLAINS,               COLD,     SNOWY,      WASTELAND              );
+        addTypes(Biomes.ICE_MOUNTAINS,            COLD,     SNOWY,      MOUNTAIN               );
+        addTypes(Biomes.BEACH,                    BEACH                                        );
+        addTypes(Biomes.DESERT_HILLS,             HOT,      DRY,        SANDY,    HILLS        );
+        addTypes(Biomes.JUNGLE,                   HOT,      WET,        DENSE,    JUNGLE       );
+        addTypes(Biomes.JUNGLE_HILLS,             HOT,      WET,        DENSE,    JUNGLE, HILLS);
+        addTypes(Biomes.FOREST_HILLS,             FOREST,   HILLS                              );
+        addTypes(Biomes.SKY,                      COLD,     DRY,        END                    );
+        addTypes(Biomes.HELL,                     HOT,      DRY,        NETHER                 );
+        addTypes(Biomes.MUSHROOM_ISLAND,          MUSHROOM                                     );
+        addTypes(Biomes.EXTREME_HILLS_EDGE,       MOUNTAIN                                     );
+        addTypes(Biomes.MUSHROOM_ISLAND_SHORE,    MUSHROOM, BEACH                              );
+        addTypes(Biomes.JUNGLE_EDGE,              HOT,      WET,        JUNGLE,   FOREST       );
+        addTypes(Biomes.DEEP_OCEAN,               OCEAN                                        );
+        addTypes(Biomes.STONE_BEACH,              BEACH                                        );
+        addTypes(Biomes.COLD_BEACH,               COLD,     BEACH,      SNOWY                  );
+        addTypes(Biomes.BIRCH_FOREST,             FOREST                                       );
+        addTypes(Biomes.BIRCH_FOREST_HILLS,       FOREST,   HILLS                              );
+        addTypes(Biomes.ROOFED_FOREST,            SPOOKY,   DENSE,      FOREST                 );
+        addTypes(Biomes.COLD_TAIGA,               COLD,     CONIFEROUS, FOREST,   SNOWY        );
+        addTypes(Biomes.COLD_TAIGA_HILLS,         COLD,     CONIFEROUS, FOREST,   SNOWY,  HILLS);
+        addTypes(Biomes.REDWOOD_TAIGA,            COLD,     CONIFEROUS, FOREST                 );
+        addTypes(Biomes.REDWOOD_TAIGA_HILLS,      COLD,     CONIFEROUS, FOREST,   HILLS        );
+        addTypes(Biomes.EXTREME_HILLS_WITH_TREES, MOUNTAIN, FOREST,     SPARSE                 );
+        addTypes(Biomes.SAVANNA,                  HOT,      SAVANNA,    PLAINS,   SPARSE       );
+        addTypes(Biomes.SAVANNA_PLATEAU,          HOT,      SAVANNA,    PLAINS,   SPARSE       );
+        addTypes(Biomes.MESA,                     MESA,     SANDY                              );
+        addTypes(Biomes.MESA_ROCK,                MESA,     SPARSE,     SANDY                  );
+        addTypes(Biomes.MESA_CLEAR_ROCK,          MESA,     SANDY                              );
     }
 }
