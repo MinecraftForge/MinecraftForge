@@ -180,10 +180,7 @@ public class BiomeDictionary
         }
         else
         {
-            for (Type type : subTags)
-            {
-                getBiomeInfo(biome).types.add(type);
-            }
+            getBiomeInfo(biome).types.addAll(subTags);
         }
     }
 
