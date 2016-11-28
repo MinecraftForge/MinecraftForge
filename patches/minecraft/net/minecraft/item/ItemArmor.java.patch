@@ -1,6 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -221,6 +221,19 @@
+@@ -30,6 +30,8 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
++import javax.annotation.Nullable;
++
+ public class ItemArmor extends Item
+ {
+     private static final int[] field_77882_bY = new int[] {13, 15, 16, 11};
+@@ -187,7 +189,9 @@
+ 
+     public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
+     {
+-        return this.field_77878_bZ.func_151685_b() == p_82789_2_.func_77973_b() ? true : super.func_82789_a(p_82789_1_, p_82789_2_);
++        ItemStack mat = this.field_77878_bZ.getRepairItemStack();
++        if (!mat.func_190926_b() && net.minecraftforge.oredict.OreDictionary.itemMatches(mat,p_82789_2_,false)) return true;
++        return super.func_82789_a(p_82789_1_, p_82789_2_);
+     }
+ 
+     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, EntityPlayer p_77659_2_, EnumHand p_77659_3_)
+@@ -221,6 +225,19 @@
          return multimap;
      }
  
@@ -20,17 +40,22 @@
      public static enum ArmorMaterial
      {
          LEATHER("leather", 5, new int[]{1, 2, 3, 1}, 15, SoundEvents.field_187728_s, 0.0F),
-@@ -235,6 +248,8 @@
-         private final int field_78055_h;
+@@ -236,6 +253,10 @@
          private final SoundEvent field_185020_j;
          private final float field_189417_k;
-+        //Added by forge for custom Armor materials.
-+        public Item customCraftingMaterial = null;
  
++        //Added by forge for custom Armor materials.
++        @Nullable
++        public ItemStack repairMaterial = null;
++
          private ArmorMaterial(String p_i47117_3_, int p_i47117_4_, int[] p_i47117_5_, int p_i47117_6_, SoundEvent p_i47117_7_, float p_i47117_8_)
          {
-@@ -268,7 +283,15 @@
+             this.field_179243_f = p_i47117_3_;
+@@ -266,9 +287,18 @@
+             return this.field_185020_j;
+         }
  
++        @Deprecated // Use getRepairItemStack below
          public Item func_151685_b()
          {
 -            return this == LEATHER ? Items.field_151116_aA : (this == CHAIN ? Items.field_151042_j : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
@@ -41,8 +66,30 @@
 +                case GOLD:    return Items.field_151043_k;
 +                case IRON:    return Items.field_151042_j;
 +                case DIAMOND: return Items.field_151045_i;
-+                default:      return customCraftingMaterial;
++                default:      return Items.field_190931_a;
 +            }
          }
  
          @SideOnly(Side.CLIENT)
+@@ -281,5 +311,21 @@
+         {
+             return this.field_189417_k;
+         }
++
++        public ArmorMaterial setRepairItem(ItemStack stack)
++        {
++            if (this.repairMaterial != null) throw new RuntimeException("Repair material has already been set");
++            if (this == LEATHER || this == CHAIN || this == GOLD || this == IRON || this == DIAMOND) throw new RuntimeException("Can not change vanilla armor repair materials");
++            this.repairMaterial = stack;
++            return this;
++        }
++
++        public ItemStack getRepairItemStack()
++        {
++            if (repairMaterial != null) return repairMaterial;
++            Item ret = this.func_151685_b();
++            repairMaterial = new ItemStack(ret,1,net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
++            return repairMaterial;
++        }
+     }
+ }
