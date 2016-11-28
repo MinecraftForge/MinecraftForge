@@ -21,74 +21,91 @@ package net.minecraftforge.common;
 
 import java.util.*;
 
-import net.minecraftforge.fml.common.FMLLog;
-
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.*;
-import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 
 public class BiomeDictionary
 {
-    public enum Type
+    public static final class Type
     {
         /*Temperature-based tags. Specifying neither implies a biome is temperate*/
-        HOT,
-        COLD,
+        public static final Type HOT = new Type("HOT");
+        public static final Type COLD = new Type("COLD");
+
         /*Tags specifying the amount of vegetation a biome has. Specifying neither implies a biome to have moderate amounts*/
-        SPARSE,
-        DENSE,
+        public static final Type SPARSE = new Type("SPARSE");
+        public static final Type DENSE = new Type("DENSE");
+
         /*Tags specifying how moist a biome is. Specifying neither implies the biome as having moderate humidity*/
-        WET,
-        DRY,
+        public static final Type WET = new Type("WET");
+        public static final Type DRY = new Type("DRY");
+
         /*Tree-based tags, SAVANNA refers to dry, desert-like trees (Such as Acacia), CONIFEROUS refers to snowy trees (Such as Spruce) and JUNGLE refers to jungle trees.
          * Specifying no tag implies a biome has temperate trees (Such as Oak)*/
-        SAVANNA,
-        CONIFEROUS,
-        JUNGLE,
+        public static final Type SAVANNA = new Type("SAVANNA");
+        public static final Type CONIFEROUS = new Type("CONIFEROUS");
+        public static final Type JUNGLE = new Type("JUNGLE");
 
         /*Tags specifying the nature of a biome*/
-        SPOOKY,
-        DEAD,
-        LUSH,
-        NETHER,
-        END,
-        MUSHROOM,
-        MAGICAL,
+        public static final Type SPOOKY = new Type("SPOOKY");
+        public static final Type DEAD = new Type("DEAD");
+        public static final Type LUSH = new Type("LUSH");
+        public static final Type NETHER = new Type("NETHER");
+        public static final Type END = new Type("END");
+        public static final Type MUSHROOM = new Type("MUSHROOM");
+        public static final Type MAGICAL = new Type("MAGICAL");
 
-        OCEAN,
-        RIVER,
-        /**A general tag for all water-based biomes. Shown as present if OCEAN or RIVER are.**/
-        WATER(OCEAN, RIVER),
+        public static final Type OCEAN = new Type("OCEAN");
+        public static final Type RIVER = new Type("RIVER");
+        /**
+         * A general tag for all water-based biomes. Shown as present if OCEAN or RIVER are.
+         **/
+        public static final Type WATER = new Type("WATER", OCEAN, RIVER);
 
         /*Generic types which a biome can be*/
-        MESA,
-        FOREST,
-        PLAINS,
-        MOUNTAIN,
-        HILLS,
-        SWAMP,
-        SANDY,
-        SNOWY,
-        WASTELAND,
-        BEACH;
+        public static final Type MESA = new Type("MESA");
+        public static final Type FOREST = new Type("FOREST");
+        public static final Type PLAINS = new Type("PLAINS");
+        public static final Type MOUNTAIN = new Type("MOUNTAIN");
+        public static final Type HILLS = new Type("HILLS");
+        public static final Type SWAMP = new Type("SWAMP");
+        public static final Type SANDY = new Type("SANDY");
+        public static final Type SNOWY = new Type("SNOWY");
+        public static final Type WASTELAND = new Type("WASTELAND");
+        public static final Type BEACH = new Type("BEACH");
 
-        private List<Type> subTags;
+        private static final Map<String, Type> byName = new HashMap<String, Type>();
 
-        private Type(Type... subTags)
+        private final String name;
+        private final List<Type> subTags;
+        final Set<Biome> biomes = new HashSet<Biome>();
+        final Set<Biome> biomesUn = Collections.unmodifiableSet(biomes);
+
+        private Type(String name, Type... subTags)
         {
-            this.subTags = Arrays.asList(subTags);
+            this.name = name;
+            this.subTags = ImmutableList.copyOf(subTags);
+
+            byName.put(name, this);
         }
 
         private boolean hasSubTags()
         {
-            return subTags != null && !subTags.isEmpty();
+            return !subTags.isEmpty();
+        }
+
+        public String name()
+        {
+            return name;
         }
 
         /**
@@ -96,15 +113,14 @@ public class BiomeDictionary
          * if one does not exist already it creates one.
          * This can be used as intermediate measure for modders to
          * add their own category of Biome.
-         *
+         * <p>
          * There are NO naming conventions besides:
-         *   MUST be all upper case (enforced by name.toUpper())
-         *   NO Special characters. {Unenforced, just don't be a pain, if it becomes a issue I WILL
-         *                             make this RTE with no worry about backwards compatibility}
-         *
+         * MUST be all upper case (enforced by name.toUpper())
+         * NO Special characters. {Unenforced, just don't be a pain, if it becomes a issue I WILL
+         * make this RTE with no worry about backwards compatibility}
+         * <p>
          * Note: For performance sake, the return value of this function SHOULD be cached.
          * Two calls with the same name SHOULD return the same value.
-         *
          *
          * @param name The name of this Type
          * @return An instance of Type for this name.
@@ -112,44 +128,26 @@ public class BiomeDictionary
         public static Type getType(String name, Type... subTypes)
         {
             name = name.toUpperCase();
-            for (Type t : values())
+            Type t = byName.get(name);
+            if (t == null)
             {
-                if (t.name().equals(name))
-                    return t;
+                t = new Type(name, subTypes);
             }
-            Type ret = EnumHelper.addEnum(Type.class, name, new Class[]{Type[].class}, new Object[]{subTypes});
-            if (ret.ordinal() >= typeInfoList.length)
-            {
-                typeInfoList = Arrays.copyOf(typeInfoList, ret.ordinal()+1);
-            }
-            for(BiomeInfo bInfo:biomeInfoMap.values())
-            {
-                if(bInfo != null)
-                {
-                    EnumSet<Type> oldSet = bInfo.typeList;
-                    bInfo.typeList = EnumSet.noneOf(Type.class);
-                    bInfo.typeList.addAll(oldSet);
-                }
-            }
-            return ret;
+            return t;
         }
     }
 
-    private static HashMap<ResourceLocation, BiomeInfo> biomeInfoMap = new HashMap<ResourceLocation, BiomeInfo>();
-    @SuppressWarnings("unchecked")
-    private static ArrayList<Biome>[] typeInfoList = new ArrayList[Type.values().length];
+    private static Map<ResourceLocation, BiomeInfo> biomeInfoMap = new HashMap<ResourceLocation, BiomeInfo>();
 
     private static class BiomeInfo
     {
-        public EnumSet<Type> typeList;
+        final Set<Type> types;
+        final Set<Type> typesUn;
 
-        public BiomeInfo(Type[] types)
+        BiomeInfo(Collection<Type> types)
         {
-            typeList = EnumSet.noneOf(Type.class);
-            for(Type t : types)
-            {
-                typeList.add(t);
-            }
+            this.types = Sets.newHashSet(types);
+            typesUn = Collections.unmodifiableSet(this.types);
         }
     }
 
@@ -163,38 +161,30 @@ public class BiomeDictionary
      *
      * @param biome the biome to be registered
      * @param types the types to register the biome as
-     * @return returns true if the biome was registered successfully
      */
-    public static boolean registerBiomeType(Biome biome, Type ... types)
+    public static void registerBiomeType(Biome biome, Type... types)
     {
         Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot register biome types for unregistered biome");
 
-        types = listSubTags(types);
+        List<Type> subTags = listSubTags(types);
 
-        for (Type type : types)
+        for (Type type : subTags)
         {
-            if (typeInfoList[type.ordinal()] == null)
-            {
-                typeInfoList[type.ordinal()] = new ArrayList<Biome>();
-            }
-
-                typeInfoList[type.ordinal()].add(biome);
-            }
+            type.biomes.add(biome);
+        }
 
         if (!isBiomeRegistered(biome))
         {
             ResourceLocation location = ForgeRegistries.BIOMES.getKey(biome);
-            biomeInfoMap.put(location, new BiomeInfo(types));
+            biomeInfoMap.put(location, new BiomeInfo(subTags));
         }
         else
         {
-            for (Type type : types)
+            for (Type type : subTags)
             {
-                getBiomeInfo(biome).typeList.add(type);
+                getBiomeInfo(biome).types.add(type);
             }
         }
-
-        return true;
     }
 
     /**
@@ -203,14 +193,9 @@ public class BiomeDictionary
      * @param type the Type to look for
      * @return a list of biomes of the specified type, null if there are none
      */
-    public static Biome[] getBiomesForType(Type type)
+    public static Set<Biome> getBiomesForType(Type type)
     {
-        if(typeInfoList[type.ordinal()] != null)
-        {
-            return typeInfoList[type.ordinal()].toArray(new Biome[0]);
-        }
-
-        return new Biome[0];
+        return type.biomesUn;
     }
 
     /**
@@ -219,17 +204,17 @@ public class BiomeDictionary
      * @param biome the biome to check
      * @return the list of types, null if there are none
      */
-    public static Type[] getTypesForBiome(Biome biome)
+    public static Set<Type> getTypesForBiome(Biome biome)
     {
         checkRegistration(biome);
-        return getBiomeInfo(biome).typeList.toArray(new Type[0]);
+        return getBiomeInfo(biome).typesUn;
     }
 
     /**
      * Checks to see if two biomes are registered as having the same type
      *
-     * @param biomeA
-     * @param biomeB
+     * @param biomeA the first biome
+     * @param biomeB the second biome
      * @return returns true if a common type is found, false otherwise
      */
     public static boolean areBiomesEquivalent(Biome biomeA, Biome biomeB)
@@ -237,9 +222,9 @@ public class BiomeDictionary
         checkRegistration(biomeA);
         checkRegistration(biomeB);
 
-        for(Type type : getTypesForBiome(biomeA))
+        for (Type type : getTypesForBiome(biomeA))
         {
-            if(containsType(getBiomeInfo(biomeB), type))
+            if (containsType(getBiomeInfo(biomeB), type))
             {
                 return true;
             }
@@ -252,7 +237,7 @@ public class BiomeDictionary
      * Checks to see if the given biome is registered as being a specific type
      *
      * @param biome the biome to be considered
-     * @param type the type to check for
+     * @param type  the type to check for
      * @return returns true if the biome is registered as being of type type, false otherwise
      */
     public static boolean isBiomeOfType(Biome biome, Type type)
@@ -263,6 +248,7 @@ public class BiomeDictionary
 
     /**
      * Checks to see if the given biome has been registered as being of any type
+     *
      * @param biome the biome to consider
      * @return returns true if the biome has been registered, false otherwise
      */
@@ -271,15 +257,11 @@ public class BiomeDictionary
         return biomeInfoMap.containsKey(ForgeRegistries.BIOMES.getKey(biome));
     }
 
-    public static void registerAllBiomes()
-    {
-        FMLLog.warning("Redundant call to BiomeDictionary.registerAllBiomes ignored");
-    }
     /**
      * Loops through the biome list and automatically adds tags to any biome that does not have any
      * This is called by Forge at postinit time. It will additionally dispatch any deferred decorator
      * creation events.
-     *
+     * <p>
      * DO NOT call this during world generation
      */
     public static void registerAllBiomesAndGenerateEvents()
@@ -321,9 +303,9 @@ public class BiomeDictionary
                 }
             }
         }
-        else if(biome.getHeightVariation() <= 0.3F && biome.getHeightVariation() >= 0.0F)
+        else if (biome.getHeightVariation() <= 0.3F && biome.getHeightVariation() >= 0.0F)
         {
-            if(!biome.isHighHumidity() || biome.getBaseHeight() >= 0.0F)
+            if (!biome.isHighHumidity() || biome.getBaseHeight() >= 0.0F)
             {
                 BiomeDictionary.registerBiomeType(biome, PLAINS);
             }
@@ -417,7 +399,7 @@ public class BiomeDictionary
 
     private static void checkRegistration(Biome biome)
     {
-        if(!isBiomeRegistered(biome))
+        if (!isBiomeRegistered(biome))
         {
             makeBestGuess(biome);
         }
@@ -429,26 +411,35 @@ public class BiomeDictionary
         {
             for (Type remappedType : listSubTags(type))
             {
-                if (info.typeList.contains(remappedType)) return true;
+                if (info.types.contains(remappedType))
+                {
+                    return true;
+                }
             }
 
             return false;
         }
 
-        return info.typeList.contains(type);
+        return info.types.contains(type);
     }
 
-    private static Type[] listSubTags(Type... types)
+    private static List<Type> listSubTags(Type... types)
     {
         List<Type> subTags = new ArrayList<Type>();
 
         for (Type type : types)
         {
-            if (type.hasSubTags()) subTags.addAll(type.subTags);
-            else subTags.add(type);
+            if (type.hasSubTags())
+            {
+                subTags.addAll(type.subTags);
+            }
+            else
+            {
+                subTags.add(type);
+            }
         }
 
-        return subTags.toArray(new Type[subTags.size()]);
+        return subTags;
     }
 
     private static void registerVanillaBiomes()
