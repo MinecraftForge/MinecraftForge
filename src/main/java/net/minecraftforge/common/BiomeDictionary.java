@@ -21,6 +21,8 @@ package net.minecraftforge.common;
 
 import java.util.*;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
@@ -188,8 +190,9 @@ public class BiomeDictionary
      * Returns a list of biomes registered with a specific type
      *
      * @param type the Type to look for
-     * @return a list of biomes of the specified type, null if there are none
+     * @return a list of biomes of the specified type
      */
+    @Nonnull
     public static Set<Biome> getBiomesForType(Type type)
     {
         return type.biomesUn;
@@ -199,8 +202,9 @@ public class BiomeDictionary
      * Gets a list of Types that a specific biome is registered with
      *
      * @param biome the biome to check
-     * @return the list of types, null if there are none
+     * @return the list of types
      */
+    @Nonnull
     public static Set<Type> getTypesForBiome(Biome biome)
     {
         checkRegistration(biome);
