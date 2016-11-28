@@ -27,8 +27,8 @@ import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.*;
-import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import com.google.common.base.Preconditions;
@@ -89,8 +89,8 @@ public class BiomeDictionary
 
         private final String name;
         private final List<Type> subTags;
-        final Set<Biome> biomes = new HashSet<Biome>();
-        final Set<Biome> biomesUn = Collections.unmodifiableSet(biomes);
+        private final Set<Biome> biomes = new HashSet<Biome>();
+        private final Set<Biome> biomesUn = Collections.unmodifiableSet(biomes);
 
         private Type(String name, Type... subTags)
         {
@@ -143,8 +143,8 @@ public class BiomeDictionary
 
     private static class BiomeInfo
     {
-        final Set<Type> types;
-        final Set<Type> typesUn;
+        private final Set<Type> types;
+        private final Set<Type> typesUn;
 
         BiomeInfo(Collection<Type> types)
         {
@@ -207,7 +207,7 @@ public class BiomeDictionary
     @Nonnull
     public static Set<Type> getTypesForBiome(Biome biome)
     {
-        checkRegistration(biome);
+        ensureRegistered(biome);
         return getBiomeInfo(biome).typesUn;
     }
 
@@ -220,8 +220,8 @@ public class BiomeDictionary
      */
     public static boolean areBiomesEquivalent(Biome biomeA, Biome biomeB)
     {
-        checkRegistration(biomeA);
-        checkRegistration(biomeB);
+        ensureRegistered(biomeA);
+        ensureRegistered(biomeB);
 
         for (Type type : getTypesForBiome(biomeA))
         {
@@ -243,7 +243,7 @@ public class BiomeDictionary
      */
     public static boolean isBiomeOfType(Biome biome, Type type)
     {
-        checkRegistration(biome);
+        ensureRegistered(biome);
         return containsType(getBiomeInfo(biome), type);
     }
 
@@ -256,27 +256,6 @@ public class BiomeDictionary
     public static boolean isBiomeRegistered(Biome biome)
     {
         return biomeInfoMap.containsKey(ForgeRegistries.BIOMES.getKey(biome));
-    }
-
-    /**
-     * Loops through the biome list and automatically adds tags to any biome that does not have any
-     * This is called by Forge at postinit time. It will additionally dispatch any deferred decorator
-     * creation events.
-     * <p>
-     * DO NOT call this during world generation
-     */
-    public static void registerAllBiomesAndGenerateEvents()
-    {
-        for (Biome biome : ForgeRegistries.BIOMES.getValues())
-        {
-            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
-            {
-                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator)biome.theBiomeDecorator;
-                decorator.fireCreateEventAndReplace(biome);
-            }
-
-            checkRegistration(biome);
-        }
     }
 
     /**
@@ -398,10 +377,15 @@ public class BiomeDictionary
         return biomeInfoMap.get(ForgeRegistries.BIOMES.getKey(biome));
     }
 
-    private static void checkRegistration(Biome biome)
+    /**
+     * Ensure that the given biome has been registered, if needed will make a guess.
+     * @param biome the biome
+     */
+    static void ensureRegistered(Biome biome)
     {
         if (!isBiomeRegistered(biome))
         {
+            FMLLog.warning("No types registered for Biome %s, types will be assigned on a best-effort guess.");
             makeBestGuess(biome);
         }
     }
@@ -410,18 +394,12 @@ public class BiomeDictionary
     {
         if (type.hasSubTags())
         {
-            for (Type remappedType : listSubTags(type))
-            {
-                if (info.types.contains(remappedType))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return !Collections.disjoint(info.types, type.subTags);
         }
-
-        return info.types.contains(type);
+        else
+        {
+            return info.types.contains(type);
+        }
     }
 
     private static List<Type> listSubTags(Type... types)
