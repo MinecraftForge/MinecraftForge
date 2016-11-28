@@ -30,6 +30,9 @@ import net.minecraft.world.biome.*;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import com.google.common.base.Preconditions;
 
 public class BiomeDictionary
 {
@@ -164,37 +167,34 @@ public class BiomeDictionary
      */
     public static boolean registerBiomeType(Biome biome, Type ... types)
     {
+        Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot register biome types for unregistered biome");
+
         types = listSubTags(types);
 
-        if(Biome.REGISTRY.getNameForObject(biome) != null)
+        for (Type type : types)
         {
-            for(Type type : types)
+            if (typeInfoList[type.ordinal()] == null)
             {
-                if(typeInfoList[type.ordinal()] == null)
-                {
-                    typeInfoList[type.ordinal()] = new ArrayList<Biome>();
-                }
+                typeInfoList[type.ordinal()] = new ArrayList<Biome>();
+            }
 
                 typeInfoList[type.ordinal()].add(biome);
             }
 
-            if(!isBiomeRegistered(biome))
+        if (!isBiomeRegistered(biome))
+        {
+            ResourceLocation location = ForgeRegistries.BIOMES.getKey(biome);
+            biomeInfoMap.put(location, new BiomeInfo(types));
+        }
+        else
+        {
+            for (Type type : types)
             {
-                ResourceLocation location = Biome.REGISTRY.getNameForObject(biome);
-                biomeInfoMap.put(location, new BiomeInfo(types));
+                getBiomeInfo(biome).typeList.add(type);
             }
-            else
-            {
-                for(Type type : types)
-                {
-                    getBiomeInfo(biome).typeList.add(type);
-                }
-            }
-
-            return true;
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -284,13 +284,11 @@ public class BiomeDictionary
      */
     public static void registerAllBiomesAndGenerateEvents()
     {
-        for (ResourceLocation biomeResource : Biome.REGISTRY.getKeys())
+        for (Biome biome : ForgeRegistries.BIOMES.getValues())
         {
-            Biome biome = Biome.REGISTRY.getObject(biomeResource);
-
             if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
             {
-                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
+                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator)biome.theBiomeDecorator;
                 decorator.fireCreateEventAndReplace(biome);
             }
 
