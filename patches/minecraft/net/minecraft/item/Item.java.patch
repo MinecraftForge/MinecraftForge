@@ -661,18 +661,16 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1568,10 @@
+@@ -971,6 +1567,8 @@
+         private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
- 
 +        //Added by forge for custom Tool materials.
-+        @Nullable
-+        private ItemStack repairMaterial = null;
-+
++        private ItemStack repairMaterial = ItemStack.field_190927_a;
+ 
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-             this.field_78001_f = p_i1874_3_;
-@@ -1006,9 +1606,34 @@
+@@ -1006,9 +1604,34 @@
              return this.field_78008_j;
          }
  
@@ -693,7 +691,7 @@
 +
 +        public ToolMaterial setRepairItem(ItemStack stack)
 +        {
-+            if (this.repairMaterial != null) throw new RuntimeException("Repair material has already been set");
++            if (!this.repairMaterial.func_190926_b()) throw new RuntimeException("Repair material has already been set");
 +            if (this == WOOD || this == STONE || this == GOLD || this == IRON || this == DIAMOND) throw new RuntimeException("Can not change vanilla tool repair materials");
 +            this.repairMaterial = stack;
 +            return this;
@@ -701,7 +699,7 @@
 +
 +        public ItemStack getRepairItemStack()
 +        {
-+            if (repairMaterial != null) return repairMaterial;
++            if (!repairMaterial.func_190926_b()) return repairMaterial;
 +            Item ret = this.func_150995_f();
 +            repairMaterial = new ItemStack(ret, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
 +            return repairMaterial;
