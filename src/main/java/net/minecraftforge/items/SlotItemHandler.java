@@ -63,7 +63,7 @@ public class SlotItemHandler extends Slot
         {
             remainder = handler.insertItem(index, stack, true);
         }
-        return remainder == null || remainder.func_190916_E() < stack.func_190916_E();
+        return remainder.func_190926_b() || remainder.func_190916_E() < stack.func_190916_E();
     }
 
     @Override

@@ -126,7 +126,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2802,6 +2822,167 @@
+@@ -2802,6 +2822,184 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -288,6 +288,23 @@
 +        NBTTagCompound ret = new NBTTagCompound();
 +        ret.func_74778_a("id", this.func_70022_Q());
 +        return this.func_189511_e(ret);
++    }
++
++    /**
++     * Checks if this {@link Entity} can trample a {@link Block}.
++     *
++     * @param world The world in which the block will be trampled
++     * @param block The block being tested
++     * @param pos The block pos
++     * @param fallDistance The fall distance
++     * @return {@code true} if this entity can trample, {@code false} otherwise
++     */
++    public boolean canTrample(World world, Block block, BlockPos pos, float fallDistance)
++    {
++        return world.field_73012_v.nextFloat() < fallDistance - 0.5F
++            && this instanceof EntityLivingBase
++            && (this instanceof EntityPlayer || world.func_82736_K().func_82766_b("mobGriefing"))
++            && this.field_70130_N * this.field_70130_N * this.field_70131_O > 0.512F;
 +    }
 +    /* ================================== Forge End =====================================*/
 +

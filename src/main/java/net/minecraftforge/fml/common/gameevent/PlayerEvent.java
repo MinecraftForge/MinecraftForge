@@ -79,10 +79,24 @@ public class PlayerEvent extends Event {
     }
 
     public static class PlayerRespawnEvent extends PlayerEvent {
-        public PlayerRespawnEvent(EntityPlayer player)
+        private final boolean endConquered;
+
+        public PlayerRespawnEvent(EntityPlayer player, boolean endConquered)
         {
             super(player);
+            this.endConquered = endConquered;
         }
+
+        /**
+         * Did this respawn event come from the player conquering the end?
+         * @return if this respawn was because the player conquered the end
+         */
+        public boolean isEndConquered()
+        {
+            return this.endConquered;
+        }
+
+
     }
 
     public static class PlayerChangedDimensionEvent extends PlayerEvent {

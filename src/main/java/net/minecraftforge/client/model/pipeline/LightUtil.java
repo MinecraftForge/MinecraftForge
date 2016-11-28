@@ -102,14 +102,7 @@ public class LightUtil
 
     public static void putBakedQuad(IVertexConsumer consumer, BakedQuad quad)
     {
-        try
-        {
-            consumer.setTexture(quad.getSprite());
-        }
-        catch(AbstractMethodError e)
-        {
-            // catch missing method errors caused by change to IVertexConsumer
-        }
+        consumer.setTexture(quad.getSprite());
         consumer.setQuadOrientation(quad.getFace());
         if(quad.hasTintIndex())
         {

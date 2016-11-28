@@ -570,9 +570,9 @@ public class FMLCommonHandler
         bus().post(new PlayerEvent.PlayerLoggedOutEvent(player));
     }
 
-    public void firePlayerRespawnEvent(EntityPlayer player)
+    public void firePlayerRespawnEvent(EntityPlayer player, boolean endConquered)
     {
-        bus().post(new PlayerEvent.PlayerRespawnEvent(player));
+        bus().post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
     }
 
     public void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item)
