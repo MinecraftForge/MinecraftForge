@@ -87,38 +87,41 @@ public class BiomeDictionary
         private static final Map<String, Type> byName = new HashMap<String, Type>();
 
         private final String name;
-        private final List<Type> subTags;
+        private final List<Type> subTypes;
         private final Set<Biome> biomes = new HashSet<Biome>();
         private final Set<Biome> biomesUn = Collections.unmodifiableSet(biomes);
 
-        private Type(String name, Type... subTags)
+        private Type(String name, Type... subTypes)
         {
             this.name = name;
-            this.subTags = ImmutableList.copyOf(subTags);
+            this.subTypes = ImmutableList.copyOf(subTypes);
 
             byName.put(name, this);
         }
 
-        private boolean hasSubTags()
+        private boolean hasSubTypes()
         {
-            return !subTags.isEmpty();
+            return !subTypes.isEmpty();
         }
 
-        public String name()
+        /**
+         * Gets the name for this type.
+         */
+        public String getName()
         {
             return name;
         }
 
         /**
-         * Retrieves a Type value by name,
+         * Retrieves a Type instance by name,
          * if one does not exist already it creates one.
          * This can be used as intermediate measure for modders to
-         * add their own category of Biome.
+         * add their own Biome types.
          * <p>
-         * There are NO naming conventions besides:
-         * MUST be all upper case (enforced by name.toUpper())
-         * NO Special characters. {Unenforced, just don't be a pain, if it becomes a issue I WILL
-         * make this RTE with no worry about backwards compatibility}
+         * There are <i>no</i> naming conventions besides:
+         * <ul><li><b>Must</b> be all upper case (enforced by name.toUpper())</li>
+         * <li><b>No</b> Special characters. {Unenforced, just don't be a pain, if it becomes a issue I WILL
+         * make this RTE with no worry about backwards compatibility}</li></ul>
          * <p>
          * Note: For performance sake, the return value of this function SHOULD be cached.
          * Two calls with the same name SHOULD return the same value.
@@ -154,30 +157,26 @@ public class BiomeDictionary
     }
 
     /**
-     * Tags a biome with the given types.
+     * Adds the given types to the biome.
      *
-     * @param biome the biome to be tagged
-     * @param types the types to tag with
      */
     public static void addTypes(Biome biome, Type... types)
     {
-        Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot register biome types for unregistered biome");
+        Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot add types to unregistered biome %s", biome);
 
-        List<Type> subTags = listSubTags(types);
+        List<Type> subTypes = listSubTypes(types);
 
-        for (Type type : subTags)
+        for (Type type : subTypes)
         {
             type.biomes.add(biome);
         }
 
-        getBiomeInfo(biome).types.addAll(subTags);
+        getBiomeInfo(biome).types.addAll(subTypes);
     }
 
     /**
-     * Returns the set of biomes that have been tagged with the given type.
+     * Gets the set of biomes that have the given type.
      *
-     * @param type the Type to look for
-     * @return the set of biomes
      */
     @Nonnull
     public static Set<Biome> getBiomes(Type type)
@@ -186,23 +185,19 @@ public class BiomeDictionary
     }
 
     /**
-     * Get the set of types that the given biome has been tagged with.
+     * Gets the set of types that have been added to the given biome.
      *
-     * @param biome the biome
-     * @return the set of types
      */
     @Nonnull
     public static Set<Type> getTypes(Biome biome)
     {
-        ensureTagged(biome);
+        ensureHasTypes(biome);
         return getBiomeInfo(biome).typesUn;
     }
 
     /**
-     * Checks to see if the two given biomes have tags in common.
+     * Checks if the two given biomes have types in common.
      *
-     * @param biomeA the first biome
-     * @param biomeB the second biome
      * @return returns true if a common type is found, false otherwise
      */
     public static boolean areSimilar(Biome biomeA, Biome biomeB)
@@ -219,11 +214,8 @@ public class BiomeDictionary
     }
 
     /**
-     * Checks to see if the given biome is has been tagged with the given type.
+     * Checks if the given type has been added to the given biome.
      *
-     * @param biome the biome
-     * @param type  the type to check for
-     * @return true if the biome has been tagged with the type, false otherwise
      */
     public static boolean hasType(Biome biome, Type type)
     {
@@ -231,10 +223,8 @@ public class BiomeDictionary
     }
 
     /**
-     * Checks to see if the given biome has been tagged with any type.
+     * Checks if any types have been added to the given biome.
      *
-     * @param biome the biome to consider
-     * @return true if the biome has been tagged with any type
      */
     public static boolean hasTypes(Biome biome)
     {
@@ -242,11 +232,10 @@ public class BiomeDictionary
     }
 
     /**
-     * Automatically tags a given biome with appropriate types based on certain heuristics.
-     * If a biome's types are requested and the biome has not yet been tagged with any types, the biome's tags will be
-     * determined using this method
+     * Automatically adds appropriate types to a given biome based on certain heuristics.
+     * If a biome's types are requested and no types have been added to the biome so far, the biome's types
+     * will be determined and added using this method.
      *
-     * @param biome the biome to be tagged
      */
     public static void makeBestGuess(Biome biome)
     {
@@ -368,22 +357,21 @@ public class BiomeDictionary
 
     /**
      * Ensure that the given biome has been tagged with at least one type
-     * @param biome the biome
      */
-    static void ensureTagged(Biome biome)
+    static void ensureHasTypes(Biome biome)
     {
         if (!hasTypes(biome))
         {
-            FMLLog.warning("Biome %s has not been tagged with any types, types will be assigned on a best-effort guess.");
+            FMLLog.warning("No types have been added to Biome %s, types will be assigned on a best-effort guess.");
             makeBestGuess(biome);
         }
     }
 
     private static boolean containsType(Set<Type> types, Type type)
     {
-        if (type.hasSubTags())
+        if (type.hasSubTypes())
         {
-            return !Collections.disjoint(types, type.subTags);
+            return !Collections.disjoint(types, type.subTypes);
         }
         else
         {
@@ -391,15 +379,15 @@ public class BiomeDictionary
         }
     }
 
-    private static List<Type> listSubTags(Type... types)
+    private static List<Type> listSubTypes(Type... types)
     {
         List<Type> subTags = new ArrayList<Type>();
 
         for (Type type : types)
         {
-            if (type.hasSubTags())
+            if (type.hasSubTypes())
             {
-                subTags.addAll(type.subTags);
+                subTags.addAll(type.subTypes);
             }
             else
             {
