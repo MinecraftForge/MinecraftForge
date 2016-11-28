@@ -129,21 +129,19 @@
          p_72368_1_.field_71093_bK = p_72368_2_;
          PlayerInteractionManager playerinteractionmanager;
  
-@@ -483,7 +525,8 @@
+@@ -483,6 +525,7 @@
          EntityPlayerMP entityplayermp = new EntityPlayerMP(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), playerinteractionmanager);
          entityplayermp.field_71135_a = p_72368_1_.field_71135_a;
          entityplayermp.func_71049_a(p_72368_1_, p_72368_3_);
--        entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
 +        entityplayermp.field_71093_bK = p_72368_2_;
-+       entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
+         entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
          entityplayermp.func_174817_o(p_72368_1_);
          entityplayermp.func_184819_a(p_72368_1_.func_184591_cq());
- 
 @@ -530,6 +573,7 @@
          this.field_177454_f.put(entityplayermp.func_110124_au(), entityplayermp);
          entityplayermp.func_71116_b();
          entityplayermp.func_70606_j(entityplayermp.func_110143_aJ());
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerRespawnEvent(entityplayermp);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerRespawnEvent(entityplayermp, p_72368_3_);
          return entityplayermp;
      }
  

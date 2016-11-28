@@ -492,16 +492,17 @@ public class Loader
 
     /**
      * Used to setup a testharness with a single dummy mod instance for use with various testing hooks
-     * @param dummycontainer A dummy container that will be returned as "active" for all queries
+     * @param containers A list of dummy containers that will be returned as "active" for all queries
      */
-    public void setupTestHarness(ModContainer dummycontainer)
+    public void setupTestHarness(ModContainer... containers)
     {
         modController = new LoadController(this);
-        mods = Lists.newArrayList(dummycontainer);
+        mods = Lists.newArrayList(containers);
+        namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
         modController.transition(LoaderState.LOADING, false);
         modController.transition(LoaderState.CONSTRUCTING, false);
         ObjectHolderRegistry.INSTANCE.findObjectHolders(new ASMDataTable());
-        modController.forceActiveContainer(dummycontainer);
+        modController.forceActiveContainer(containers[0]);
     }
     /**
      * Called from the hook to start mod loading. We trigger the
