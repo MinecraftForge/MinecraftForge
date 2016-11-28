@@ -40,13 +40,13 @@ public class BetterModDependenciesTest
         }
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = LoaderException.class)
     public void testShouldFail()
     {
         Loader.computeDependencies("gibberishtext:amod", new HashSet<ArtifactVersion>(), new ArrayList<ArtifactVersion>(), new ArrayList<ArtifactVersion>());
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = LoaderException.class)
     public void testShouldFail2()
     {
         Loader.computeDependencies("before-required-client:themod", new HashSet<ArtifactVersion>(), new ArrayList<ArtifactVersion>(), new ArrayList<ArtifactVersion>());

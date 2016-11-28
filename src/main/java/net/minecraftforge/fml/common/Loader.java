@@ -784,7 +784,6 @@ public class Loader
     }
     
     private static void parseFailure(String dependencyString, String cause){
-        FMLLog.log(Level.WARN, "Unable to parse dependency string \"%s\", cause - %s", dependencyString, cause);
         throw new LoaderException(String.format("Unable to parse dependency string %s, cause - \"%s\"", dependencyString, cause));
     }
 
