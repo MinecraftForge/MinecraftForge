@@ -154,9 +154,15 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         }
     }
 
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        return 64;
+    }
+
     protected int getStackLimit(int slot, @Nonnull ItemStack stack)
     {
-        return stack.getMaxStackSize();
+        return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
     }
 
     @Override

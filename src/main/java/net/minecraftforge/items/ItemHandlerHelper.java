@@ -25,10 +25,12 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ItemHandlerHelper
 {
@@ -193,6 +195,39 @@ public class ItemHandlerHelper
             entityitem.motionZ = 0;
 
             world.spawnEntityInWorld(entityitem);
+        }
+    }
+
+    /**
+     * This method uses the standard vanilla algorithm to calculate a comparator output for how "full" the inventory is.
+     * This method is an adaptation of Container#calcRedstoneFromInventory(IInventory).
+     * @param inv The inventory handler to test.
+     * @return A redstone value in the range [0,15] representing how "full" this inventory is.
+     */
+    public static int calcRedstoneFromInventory(@Nullable IItemHandler inv)
+    {
+        if (inv == null)
+        {
+            return 0;
+        }
+        else
+        {
+            int itemsFound = 0;
+            float proportion = 0.0F;
+
+            for (int j = 0; j < inv.getSlots(); ++j)
+            {
+                ItemStack itemstack = inv.getStackInSlot(j);
+
+                if (!itemstack.func_190926_b())
+                {
+                    proportion += (float)itemstack.func_190916_E() / (float)Math.min(inv.getSlotLimit(j), itemstack.getMaxStackSize());
+                    ++itemsFound;
+                }
+            }
+
+            proportion = proportion / (float)inv.getSlots();
+            return MathHelper.floor_float(proportion * 14.0F) + (itemsFound > 0 ? 1 : 0);
         }
     }
 }

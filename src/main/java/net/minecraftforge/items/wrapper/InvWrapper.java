@@ -86,7 +86,7 @@ public class InvWrapper implements IItemHandlerModifiable
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
                 return stack;
 
-            m = Math.min(stack.getMaxStackSize(), getInv().getInventoryStackLimit()) - stackInSlot.func_190916_E();
+            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot)) - stackInSlot.func_190916_E();
 
             if (stack.func_190916_E() <= m)
             {
@@ -121,7 +121,7 @@ public class InvWrapper implements IItemHandlerModifiable
         }
         else
         {
-            m = Math.min(stack.getMaxStackSize(), getInv().getInventoryStackLimit());
+            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot));
             if (m < stack.func_190916_E())
             {
                 // copy the stack to not modify the original one
@@ -190,6 +190,12 @@ public class InvWrapper implements IItemHandlerModifiable
     public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
         getInv().setInventorySlotContents(slot, stack);
+    }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        return getInv().getInventoryStackLimit();
     }
 
     public IInventory getInv()
