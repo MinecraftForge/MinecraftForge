@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/util/datafix/DataFixesManager.java
++++ ../src-work/minecraft/net/minecraft/util/datafix/DataFixesManager.java
+@@ -158,6 +158,7 @@
+     public static DataFixer func_188279_a()
+     {
+         DataFixer datafixer = new DataFixer(819);
++        datafixer = new net.minecraftforge.common.util.CompoundDataFixer(datafixer);
+         WorldInfo.func_189967_a(datafixer);
+         EntityPlayer.func_189806_a(datafixer);
+         AnvilChunkLoader.func_189889_a(datafixer);

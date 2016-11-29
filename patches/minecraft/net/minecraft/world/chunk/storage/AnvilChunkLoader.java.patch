@@ -97,15 +97,17 @@
              }
          }
      }
-@@ -122,6 +181,7 @@
+@@ -121,7 +180,9 @@
+             NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
              nbttagcompound.func_74768_a("DataVersion", 819);
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(nbttagcompound);
              this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -307,8 +367,17 @@
+@@ -307,8 +368,17 @@
  
                  if (entity.func_70039_c(nbttagcompound2))
                  {
@@ -123,7 +125,7 @@
                  }
              }
          }
-@@ -318,8 +387,17 @@
+@@ -318,8 +388,17 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -141,7 +143,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -388,6 +466,12 @@
+@@ -388,6 +467,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -154,7 +156,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
-@@ -431,8 +515,6 @@
+@@ -431,8 +516,6 @@
                  p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
              }
          }

@@ -57,6 +57,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -750,5 +751,10 @@ public class FMLCommonHandler
     public void fireSidedRegistryEvents()
     {
         sidedDelegate.fireSidedRegistryEvents();
+    }
+
+    public CompoundDataFixer getDataFixer()
+    {
+        return (CompoundDataFixer)sidedDelegate.getDataFixer();
     }
 }

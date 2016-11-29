@@ -82,6 +82,7 @@ import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
@@ -1059,5 +1060,11 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void fireSidedRegistryEvents()
     {
         MinecraftForge.EVENT_BUS.post(new ModelRegistryEvent());
+    }
+
+    @Override
+    public CompoundDataFixer getDataFixer()
+    {
+        return (CompoundDataFixer)this.client.getDataFixer();
     }
 }

@@ -35,6 +35,7 @@ import net.minecraft.server.dedicated.PendingCommand;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.storage.SaveFormatOld;
+import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFMLSidedHandler;
@@ -338,5 +339,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void fireSidedRegistryEvents()
     {
         // NOOP
+    }
+    @Override
+    public CompoundDataFixer getDataFixer()
+    {
+        return (CompoundDataFixer)this.server.getDataFixer();
     }
 }
