@@ -223,10 +223,10 @@ public class BiomeDictionary
     }
 
     /**
-     * Checks if any types have been added to the given biome.
+     * Checks if any type has been added to the given biome.
      *
      */
-    public static boolean hasTypes(Biome biome)
+    public static boolean hasAnyType(Biome biome)
     {
         return !getBiomeInfo(biome).types.isEmpty();
     }
@@ -360,7 +360,7 @@ public class BiomeDictionary
      */
     static void ensureHasTypes(Biome biome)
     {
-        if (!hasTypes(biome))
+        if (!hasAnyType(biome))
         {
             FMLLog.warning("No types have been added to Biome %s, types will be assigned on a best-effort guess.");
             makeBestGuess(biome);
