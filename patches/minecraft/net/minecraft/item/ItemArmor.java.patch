@@ -75,10 +75,10 @@
 +
 +        public ItemStack getRepairItemStack()
 +        {
-+            if (!repairMaterial.func_190926_b()) return repairMaterial;
++            if (!repairMaterial.func_190926_b()) return repairMaterial.func_77946_l();
 +            Item ret = this.func_151685_b();
 +            repairMaterial = new ItemStack(ret,1,net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
-+            return repairMaterial.func_77946_l();
++            return repairMaterial;
 +        }
      }
  }
