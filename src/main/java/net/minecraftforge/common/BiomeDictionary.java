@@ -38,6 +38,9 @@ public class BiomeDictionary
 {
     public static final class Type
     {
+
+        private static final Map<String, Type> byName = new HashMap<String, Type>();
+
         /*Temperature-based tags. Specifying neither implies a biome is temperate*/
         public static final Type HOT = new Type("HOT");
         public static final Type COLD = new Type("COLD");
@@ -84,8 +87,6 @@ public class BiomeDictionary
         public static final Type WASTELAND = new Type("WASTELAND");
         public static final Type BEACH = new Type("BEACH");
 
-        private static final Map<String, Type> byName = new HashMap<String, Type>();
-
         private final String name;
         private final List<Type> subTypes;
         private final Set<Biome> biomes = new HashSet<Biome>();
@@ -108,6 +109,11 @@ public class BiomeDictionary
          * Gets the name for this type.
          */
         public String getName()
+        {
+            return name;
+        }
+
+        public String toString()
         {
             return name;
         }
