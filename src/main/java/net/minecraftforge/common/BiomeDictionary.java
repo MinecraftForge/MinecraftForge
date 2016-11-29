@@ -356,7 +356,7 @@ public class BiomeDictionary
     }
 
     /**
-     * Ensure that the given biome has been tagged with at least one type
+     * Ensure that at least one type has been added to the given biome.
      */
     static void ensureHasTypes(Biome biome)
     {
