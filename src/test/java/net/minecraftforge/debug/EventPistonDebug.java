@@ -23,27 +23,33 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = EventPistonDebug.MODID)
-public class EventPistonDebug {
+public class EventPistonDebug
+{
     public static final String MODID = "EventPistonDebug";
     
     private static Block shiftOnMove = new BlockShiftOnMove();
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
+    public void preInit(FMLPreInitializationEvent event)
+    {
         GameRegistry.register(shiftOnMove);
         GameRegistry.register(new ItemBlock(shiftOnMove).setRegistryName(shiftOnMove.getRegistryName()));
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
+    public void init(FMLInitializationEvent event)
+    {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
-    public void onPistonExtend(PistonEvent.PistonExtendEvent event) {
-        if (event.getWorld().isRemote) {
+    public void onPistonExtend(PistonEvent.PistonExtendEvent event)
+    {
+        if (event.getWorld().isRemote)
+        {
             BlockPistonStructureHelper pistonHelper =
                     new BlockPistonStructureHelper(event.getWorld(), event.getPos(), event.getFacing(), true);
-            for (EntityPlayer player : event.getWorld().playerEntities) {
+            for (EntityPlayer player : event.getWorld().playerEntities)
+            {
                 if (pistonHelper.canMove())
                     player.addChatMessage(new TextComponentString(String.format("Piston will extend moving %d blocks and destroy %d blocks",
                             pistonHelper.getBlocksToMove().size(), pistonHelper.getBlocksToDestroy().size())));
@@ -53,7 +59,8 @@ public class EventPistonDebug {
         } else {
             World world = event.getWorld();
             BlockPos pushedBlockPos = event.getPos().offset(event.getFacing());
-            if (world.getBlockState(pushedBlockPos).getBlock().equals(shiftOnMove) && event.getFacing() != EnumFacing.DOWN) {
+            if (world.getBlockState(pushedBlockPos).getBlock().equals(shiftOnMove) && event.getFacing() != EnumFacing.DOWN)
+            {
                 world.setBlockToAir(pushedBlockPos);
                 world.setBlockState(pushedBlockPos.up(), shiftOnMove.getDefaultState());
             }
@@ -62,11 +69,15 @@ public class EventPistonDebug {
     }
 
     @SubscribeEvent
-    public void onPistonRetract(PistonEvent.PistonRetractEvent event) {
-        if (!event.getWorld().isRemote) {
-            for (EntityPlayer player : event.getWorld().playerEntities) {
+    public void onPistonRetract(PistonEvent.PistonRetractEvent event)
+    {
+        if (!event.getWorld().isRemote)
+        {
+            for (EntityPlayer player : event.getWorld().playerEntities)
+            {
                 boolean isSticky = event.getWorld().getBlockState(event.getPos()).getValue(BlockPistonExtension.TYPE) == EnumPistonType.STICKY;
-                if (isSticky) {
+                if (isSticky)
+                {
                     BlockPistonStructureHelper pistonHelper =
                             new BlockPistonStructureHelper(event.getWorld(), event.getPos(), event.getFacing(), false);
                     if (pistonHelper.canMove())
@@ -82,7 +93,8 @@ public class EventPistonDebug {
         event.setCanceled(event.getWorld().getBlockState(event.getPos().offset(event.getFacing(), 2)).getBlock() == Blocks.COBBLESTONE);
     }
     
-    public static class BlockShiftOnMove extends Block {
+    public static class BlockShiftOnMove extends Block
+    {
         public static String blockName = "shiftonmove";
         public static ResourceLocation blockId = new ResourceLocation(MODID, blockName);
         
