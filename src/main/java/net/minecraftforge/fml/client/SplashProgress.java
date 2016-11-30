@@ -172,7 +172,8 @@ public class SplashProgress
 
         final ResourceLocation fontLoc = new ResourceLocation(getString("fontTexture", "textures/font/ascii.png"));
         final ResourceLocation logoLoc = new ResourceLocation(getString("logoTexture", "textures/gui/title/mojang.png"));
-        final ResourceLocation forgeLoc = new ResourceLocation(getString("forgeTexture", "fml:textures/gui/forge.gif"));
+        final ResourceLocation forgeLoc = new ResourceLocation(getString("forgeTexture", "fml:textures/gui/forge.png"));
+        final ResourceLocation forgeFallbackLoc = new ResourceLocation("fml:textures/gui/forge.png");
 
         File miscPackFile = new File(Minecraft.getMinecraft().mcDataDir, getString("resourcePackPath", "resources"));
 
@@ -244,9 +245,9 @@ public class SplashProgress
             public void run()
             {
                 setGL();
-                fontTexture = new Texture(fontLoc);
-                logoTexture = new Texture(logoLoc, false);
-                forgeTexture = new Texture(forgeLoc);
+                fontTexture = new Texture(fontLoc, null);
+                logoTexture = new Texture(logoLoc, null, false);
+                forgeTexture = new Texture(forgeLoc, forgeFallbackLoc);
                 glEnable(GL_TEXTURE_2D);
                 fontRenderer = new SplashFontRenderer();
                 glDisable(GL_TEXTURE_2D);
@@ -315,8 +316,8 @@ public class SplashProgress
 
                     // forge logo
                     setColor(backgroundColor);
-                    float fw = (float)forgeTexture.getWidth() / 2 / 2;
-                    float fh = (float)forgeTexture.getHeight() / 2 / 2;
+                    float fw = (float)forgeTexture.getWidth() / 2;
+                    float fh = (float)forgeTexture.getHeight() / 2;
                     if(rotate)
                     {
                         float sh = Math.max(fw, fh);
@@ -327,7 +328,7 @@ public class SplashProgress
                     {
                         glTranslatef(320 + w/2 - fw - logoOffset, 240 + h/2 - fh - logoOffset, 0);
                     }
-                    int f = (angle / 10) % forgeTexture.getFrames();
+                    int f = (angle / 5) % forgeTexture.getFrames();
                     glEnable(GL_TEXTURE_2D);
                     forgeTexture.bind();
                     glBegin(GL_QUADS);
@@ -641,33 +642,47 @@ public class SplashProgress
         private final int frames;
         private final int size;
 
-        public Texture(ResourceLocation location)
+        public Texture(ResourceLocation location, ResourceLocation fallback)
         {
-            this(location, true);
+            this(location, fallback, true);
         }
 
-        public Texture(ResourceLocation location, boolean allowRP)
+        public Texture(ResourceLocation location, ResourceLocation fallback, boolean allowRP)
         {
             InputStream s = null;
             try
             {
                 this.location = location;
-                s = open(location, allowRP);
+                s = open(location, fallback, allowRP);
                 ImageInputStream stream = ImageIO.createImageInputStream(s);
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(stream);
                 if(!readers.hasNext()) throw new IOException("No suitable reader found for image" + location);
                 ImageReader reader = readers.next();
                 reader.setInput(stream);
-                frames = reader.getNumImages(true);
+                int frames = reader.getNumImages(true);
                 BufferedImage[] images = new BufferedImage[frames];
                 for(int i = 0; i < frames; i++)
                 {
                     images[i] = reader.read(i);
                 }
                 reader.dispose();
-                int size = 1;
                 width = images[0].getWidth();
-                height = images[0].getHeight();
+                int height = images[0].getHeight();
+                // Animation strip
+                if (height > width && height % width == 0)
+                {
+                    frames = height / width;
+                    BufferedImage original = images[0];
+                    height = width;
+                    images = new BufferedImage[frames];
+                    for (int i = 0; i < frames; i++)
+                    {
+                        images[i] = original.getSubimage(0, i * height, width, height);
+                    }
+                }
+                this.frames = frames;
+                this.height = height;
+                int size = 1;
                 while((size / width) * (size / height) < frames) size *= 2;
                 this.size = size;
                 glEnable(GL_TEXTURE_2D);
@@ -816,7 +831,7 @@ public class SplashProgress
         }
     }
 
-    private static InputStream open(ResourceLocation loc, boolean allowRP) throws IOException
+    private static InputStream open(ResourceLocation loc, ResourceLocation fallback, boolean allowRP) throws IOException
     {
         if (!allowRP)
             return mcPack.getInputStream(loc);
@@ -828,6 +843,10 @@ public class SplashProgress
         else if(fmlPack.resourceExists(loc))
         {
             return fmlPack.getInputStream(loc);
+        }
+        else if(!mcPack.resourceExists(loc) && fallback != null)
+        {
+            return open(fallback, null, true);
         }
         return mcPack.getInputStream(loc);
     }
