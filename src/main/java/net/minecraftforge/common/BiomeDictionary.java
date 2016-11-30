@@ -368,7 +368,7 @@ public class BiomeDictionary
     {
         if (!hasAnyType(biome))
         {
-            FMLLog.warning("No types have been added to Biome %s, types will be assigned on a best-effort guess.");
+            FMLLog.warning("No types have been added to Biome %s, types will be assigned on a best-effort guess.", biome.getRegistryName());
             makeBestGuess(biome);
         }
     }
