@@ -316,8 +316,8 @@ public class SplashProgress
 
                     // forge logo
                     setColor(backgroundColor);
-                    float fw = (float)forgeTexture.getWidth() / 2 / 2;
-                    float fh = (float)forgeTexture.getHeight() / 2 / 2;
+                    float fw = (float)forgeTexture.getWidth() / 2;
+                    float fh = (float)forgeTexture.getHeight() / 2;
                     if(rotate)
                     {
                         float sh = Math.max(fw, fh);
