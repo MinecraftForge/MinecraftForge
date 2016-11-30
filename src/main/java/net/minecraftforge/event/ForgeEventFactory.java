@@ -635,5 +635,13 @@ public class ForgeEventFactory
         Result result = evt.getResult();
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
     }
+    
+    public static boolean onPistonMove(World world, BlockPos pos, EnumFacing facing, boolean extending)
+    {
+        if (extending)
+            return MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.PistonEvent.PistonExtendEvent(world, pos, facing));
+        else
+            return MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.PistonEvent.PistonRetractEvent(world, pos, facing));
+    }
 
 }
