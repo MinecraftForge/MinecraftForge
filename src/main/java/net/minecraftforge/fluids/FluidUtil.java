@@ -37,7 +37,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.templates.VoidFluidHandler;
 import net.minecraftforge.fluids.capability.wrappers.BlockLiquidWrapper;
+import net.minecraftforge.fluids.capability.wrappers.BlockWrapper;
 import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -370,6 +372,34 @@ public class FluidUtil
     }
 
     /**
+     * Gets the fluid handler for a given fluid's block.
+     * The handler's fill method will place a fluid block with the appropriate amount when not simulated.
+     *
+     * @param world the world the block has to be placed in
+     * @param pos   the position the block has to be placed at
+     * @param fluid the fluid to place
+     * @return the fluid block's fluider handler
+     */
+    private static IFluidHandler getPlacementFluidHandler(final World world, final BlockPos pos, Fluid fluid)
+    {
+        final Block block = fluid.getBlock();
+        IFluidHandler handler;
+        if (block instanceof IFluidBlock)
+        {
+            handler = new FluidBlockWrapper((IFluidBlock) block, world, pos);
+        }
+        else if (block instanceof BlockLiquid)
+        {
+            handler = new BlockLiquidWrapper((BlockLiquid) block, world, pos);
+        }
+        else
+        {
+            handler = new BlockWrapper(block, world, pos);
+        }
+        return handler;
+    }
+
+    /**
      * Helper method to get the fluid contained in an itemStack
      */
     @Nullable
@@ -431,7 +461,9 @@ public class FluidUtil
      * @param fluidStack The fluidStack to place.
      * @param pos        The position in the world to place the fluid block
      * @return true if successful
+     * @deprecated use {@link #tryPlaceFluid(EntityPlayer, World, BlockPos, ItemStack, FluidStack)}
      */
+    @Deprecated
     public static boolean tryPlaceFluid(@Nullable EntityPlayer player, World worldIn, FluidStack fluidStack, BlockPos pos)
     {
         if (worldIn == null || fluidStack == null || pos == null)
@@ -458,6 +490,7 @@ public class FluidUtil
         if (worldIn.provider.doesWaterVaporize() && fluid.doesVaporize(fluidStack))
         {
             fluid.vaporize(player, worldIn, pos, fluidStack);
+            return true;
         }
         else
         {
@@ -466,13 +499,17 @@ public class FluidUtil
                 worldIn.destroyBlock(pos, true);
             }
 
-            SoundEvent soundevent = fluid.getEmptySound(fluidStack);
-            worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-            IBlockState fluidBlockState = fluid.getBlock().getDefaultState();
-            worldIn.setBlockState(pos, fluidBlockState, 11);
+            IFluidHandler handler = getPlacementFluidHandler(worldIn, pos, fluid);
+            int consumed = handler.fill(fluidStack, false);
+            if (consumed == fluidStack.amount)
+            {
+                handler.fill(fluidStack, true);
+                SoundEvent soundevent = fluid.getEmptySound(fluidStack);
+                worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                return true;
+            }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -510,5 +547,70 @@ public class FluidUtil
             }
         }
         return FluidActionResult.FAILURE;
+    }
+
+    /**
+     * Tries to place a fluid in the world in block form and drains the container.
+     * Makes a fluid emptying sound when successful.
+     * Honors the amount of fluid contained by the used container.
+     * Checks if water-like fluids should vaporize like in the nether.
+     *
+     * Modeled after {@link net.minecraft.item.ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}
+     *
+     * @param player    Player who places the fluid. May be null for blocks like dispensers.
+     * @param world     World to place the fluid in
+     * @param pos       The position in the world to place the fluid block
+     * @param container The fluid container holding the fluidStack to place
+     * @param resource  The fluidStack to place
+     * @return the container's ItemStack with the remaining amount of fluid if the placement was successful, null otherwise
+     */
+    @Nonnull
+    public static FluidActionResult tryPlaceFluid(@Nullable EntityPlayer player, World world, BlockPos pos, @Nonnull ItemStack container, FluidStack resource)
+    {
+        if (world == null || resource == null || pos == null)
+        {
+            return FluidActionResult.FAILURE;
+        }
+
+        Fluid fluid = resource.getFluid();
+        if (fluid == null || !fluid.canBePlacedInWorld())
+        {
+            return FluidActionResult.FAILURE;
+        }
+
+        // check that we can place the fluid at the destination
+        IBlockState destBlockState = world.getBlockState(pos);
+        Material destMaterial = destBlockState.getMaterial();
+        boolean isDestNonSolid = !destMaterial.isSolid();
+        boolean isDestReplaceable = destBlockState.getBlock().isReplaceable(world, pos);
+        if (!world.isAirBlock(pos) && !isDestNonSolid && !isDestReplaceable)
+        {
+            return FluidActionResult.FAILURE; // Non-air, solid, unreplacable block. We can't put fluid here.
+        }
+
+        if (world.provider.doesWaterVaporize() && fluid.doesVaporize(resource))
+        {
+            fluid.vaporize(player, world, pos, resource);
+            return tryEmptyContainer(container, new VoidFluidHandler(), Integer.MAX_VALUE, player, true);
+        }
+        else
+        {
+            if (!world.isRemote && (isDestNonSolid || isDestReplaceable) && !destMaterial.isLiquid())
+            {
+                world.destroyBlock(pos, true);
+            }
+
+            // Defer the placement to the fluid block
+            // Instead of actually "filling", the fluid handler method replaces the block
+            IFluidHandler handler = getPlacementFluidHandler(world, pos, fluid);
+            FluidActionResult result = tryEmptyContainer(container, handler, Integer.MAX_VALUE, player, true);
+            if (result.isSuccess())
+            {
+                SoundEvent soundevent = fluid.getEmptySound(resource);
+                world.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            }
+
+            return result;
+        }
     }
 }

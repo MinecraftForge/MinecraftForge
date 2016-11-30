@@ -29,6 +29,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -69,7 +70,37 @@ public class BlockLiquidWrapper implements IFluidHandler
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        return 0;
+        // NOTE: "Filling" means placement in this context!
+        // If the stack contains more available fluid than the full source block,
+        // set a source block
+        int closest = Fluid.BUCKET_VOLUME;
+        int quanta = 8;
+        if (resource.amount < Fluid.BUCKET_VOLUME)
+        {
+            // For Vanilla liquids, only treat lava blocks like finite liquids
+            Material material = blockLiquid.getMaterial(blockLiquid.getDefaultState());
+            if (material == Material.LAVA)
+            {
+                // Figure out maximum level to match stack amount
+                float quantaAmount = Fluid.BUCKET_VOLUME / 8f;
+                closest = MathHelper.floor_float(quantaAmount * MathHelper.floor_float(resource.amount / quantaAmount));
+                quanta = MathHelper.floor_float(closest / quantaAmount);
+            }
+            else
+            {
+                quanta = 0;
+            }
+        }
+        // If too little (or too much, technically impossible) fluid is to be placed, abort
+        if (quanta < 1 || quanta > 8)
+            return 0;
+
+        if (doFill)
+        {
+            world.setBlockState(blockPos, blockLiquid.getDefaultState().withProperty(BlockLiquid.LEVEL, 8 - quanta), 11);
+        }
+
+        return closest;
     }
 
     @Nullable
