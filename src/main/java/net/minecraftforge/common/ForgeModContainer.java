@@ -24,6 +24,7 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.world.biome.Biome;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
@@ -38,11 +39,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -57,8 +56,10 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -82,7 +83,6 @@ import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.WorldAccessContainer;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
@@ -428,8 +428,22 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Subscribe
     public void postInit(FMLPostInitializationEvent evt)
     {
-        BiomeDictionary.registerAllBiomesAndGenerateEvents();
+        registerAllBiomesAndGenerateEvents();
         ForgeChunkManager.loadConfiguration();
+    }
+
+    private static void registerAllBiomesAndGenerateEvents()
+    {
+        for (Biome biome : ForgeRegistries.BIOMES.getValues())
+        {
+            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
+            {
+                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator)biome.theBiomeDecorator;
+                decorator.fireCreateEventAndReplace(biome);
+            }
+
+            BiomeDictionary.ensureHasTypes(biome);
+        }
     }
 
     @Subscribe
