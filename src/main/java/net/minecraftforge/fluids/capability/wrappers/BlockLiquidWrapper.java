@@ -75,10 +75,10 @@ public class BlockLiquidWrapper implements IFluidHandler
         // set a source block
         int closest = Fluid.BUCKET_VOLUME;
         int quanta = 8;
+        Material material = blockLiquid.getMaterial(blockLiquid.getDefaultState());
         if (resource.amount < Fluid.BUCKET_VOLUME)
         {
             // For Vanilla liquids, only treat lava blocks like finite liquids
-            Material material = blockLiquid.getMaterial(blockLiquid.getDefaultState());
             if (material == Material.LAVA)
             {
                 // Figure out maximum level to match stack amount
@@ -97,7 +97,8 @@ public class BlockLiquidWrapper implements IFluidHandler
 
         if (doFill)
         {
-            world.setBlockState(blockPos, blockLiquid.getDefaultState().withProperty(BlockLiquid.LEVEL, 8 - quanta), 11);
+            BlockLiquid flowingBlock = BlockLiquid.getFlowingBlock(material);
+            world.setBlockState(blockPos, flowingBlock.getDefaultState().withProperty(BlockLiquid.LEVEL, 8 - quanta), 11);
         }
 
         return closest;
