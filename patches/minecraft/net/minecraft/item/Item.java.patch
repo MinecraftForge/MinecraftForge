@@ -386,7 +386,6 @@
 +     * @return  A ModelBiped to render instead of the default
 +     */
 +    @SideOnly(Side.CLIENT)
-+    @Nullable
 +    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default)
 +    {
 +        return _default;
