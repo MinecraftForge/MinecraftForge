@@ -25,7 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Predicate;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -107,12 +110,12 @@ import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.event.world.PistonEvent.PistonExtendEvent;
+import net.minecraftforge.event.world.PistonEvent.PistonRetractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-
-import javax.annotation.Nullable;
 
 public class ForgeEventFactory
 {
@@ -639,9 +642,9 @@ public class ForgeEventFactory
     public static boolean onPistonMove(World world, BlockPos pos, EnumFacing facing, boolean extending)
     {
         if (extending)
-            return MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.PistonEvent.PistonExtendEvent(world, pos, facing));
+            return MinecraftForge.EVENT_BUS.post(new PistonExtendEvent(world, pos, facing));
         else
-            return MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.PistonEvent.PistonRetractEvent(world, pos, facing));
+            return MinecraftForge.EVENT_BUS.post(new PistonRetractEvent(world, pos, facing));
     }
 
 }

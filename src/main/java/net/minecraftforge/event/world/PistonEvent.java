@@ -35,8 +35,8 @@ public class PistonEvent extends BlockEvent
     }
     
     /***
-     * Posts when a piston tries to retract
-     * If canceled the piston will not pull the block it is attached to
+     * Posts when a sticky piston tries to retract
+     * If canceled the piston will not pull the block it is attached to, this will not stop retraction
      ***/
     @Cancelable
     public static class PistonRetractEvent extends PistonEvent
