@@ -1,50 +1,44 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityCreeper.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityCreeper.java
-@@ -1,5 +1,6 @@
+@@ -1,7 +1,9 @@
  package net.minecraft.entity.monster;
  
-+import java.util.ArrayList;
  import java.util.Collection;
++
  import javax.annotation.Nullable;
++
  import net.minecraft.entity.Entity;
-@@ -16,6 +17,7 @@
- import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
- import net.minecraft.entity.ai.EntityAIWatchClosest;
- import net.minecraft.entity.effect.EntityLightningBolt;
-+import net.minecraft.entity.item.EntityItem;
- import net.minecraft.entity.passive.EntityOcelot;
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.init.Items;
-@@ -184,22 +186,30 @@
+ import net.minecraft.entity.EntityAreaEffectCloud;
+ import net.minecraft.entity.EntityLiving;
+@@ -184,10 +186,12 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
 +    	if(net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
          super.func_70645_a(p_70645_1_);
- 
+-
          if (this.field_70170_p.func_82736_K().func_82766_b("doMobLoot"))
          {
-+        	ArrayList<EntityItem> drops = new ArrayList<EntityItem>();
++            captureDrops = true;
++            this.capturedDrops.clear();
              if (p_70645_1_.func_76346_g() instanceof EntitySkeleton)
              {
                  int i = Item.func_150891_b(Items.field_151096_cd);
-                 int j = Item.func_150891_b(Items.field_151084_co);
-                 int k = i + this.field_70146_Z.nextInt(j - i + 1);
--                this.func_145779_a(Item.func_150899_d(k), 1);
-+                drops.add(new EntityItem(this.field_70170_p, field_70165_t, field_70163_u, field_70161_v, new ItemStack(Item.func_150899_d(k))));
-             }
+@@ -198,8 +202,16 @@
              else if (p_70645_1_.func_76346_g() instanceof EntityCreeper && p_70645_1_.func_76346_g() != this && ((EntityCreeper)p_70645_1_.func_76346_g()).func_70830_n() && ((EntityCreeper)p_70645_1_.func_76346_g()).func_70650_aV())
              {
                  ((EntityCreeper)p_70645_1_.func_76346_g()).func_175493_co();
 -                this.func_70099_a(new ItemStack(Items.field_151144_bL, 1, 4), 0.0F);
-+                drops.add(new EntityItem(this.field_70170_p, field_70165_t, field_70163_u, field_70161_v, new ItemStack(Items.field_151144_bL, 1, 4)));
++                this.func_70099_a(new ItemStack(Items.field_151144_bL, 1, 4), 0);
              }
-+            if(drops.isEmpty()) return; //no need to fire the event
-+            if(net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_70645_1_, drops, 0, this.field_70718_bc > 0)) {
-+            	for(EntityItem entityItem : drops) {
-+            		this.field_70170_p.func_72838_d(entityItem);
-+            	}
++            captureDrops = false;
++            int lootingLevel = p_70645_1_.func_76346_g() != null ? net.minecraftforge.common.ForgeHooks.getLootingLevel(this, p_70645_1_.func_76346_g(), p_70645_1_) : 0;
++            if(!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_70645_1_, this.capturedDrops, lootingLevel, this.field_70718_bc > 0)) {
++                for(net.minecraft.entity.item.EntityItem entityItem : this.capturedDrops) {
++                    this.field_70170_p.func_72838_d(entityItem);
++                }
 +            }
++            
          }
      }
  
