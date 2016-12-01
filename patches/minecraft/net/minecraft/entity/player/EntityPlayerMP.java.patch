@@ -21,11 +21,14 @@
          {
              this.func_71053_j();
              this.field_71070_bA = this.field_71069_bz;
-@@ -436,6 +436,7 @@
+@@ -434,8 +434,9 @@
+         }
+     }
  
-     public void func_70645_a(DamageSource p_70645_1_)
+-    public void func_70645_a(DamageSource p_70645_1_)
++    public boolean onDeath(DamageSource cause)
      {
-+        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, cause)) return true;
          boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
          this.field_71135_a.func_147359_a(new SPacketCombatEvent(this.func_110142_aN(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
  
@@ -39,7 +42,7 @@
              this.field_71071_by.func_70436_m();
 +
 +            captureDrops = false;
-+            net.minecraftforge.event.entity.player.PlayerDropsEvent event = new net.minecraftforge.event.entity.player.PlayerDropsEvent(this, p_70645_1_, capturedDrops, field_70718_bc > 0);
++            net.minecraftforge.event.entity.player.PlayerDropsEvent event = new net.minecraftforge.event.entity.player.PlayerDropsEvent(this, cause, capturedDrops, field_70718_bc > 0);
 +            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
 +            {
 +                for (net.minecraft.entity.item.EntityItem item : capturedDrops)
@@ -50,7 +53,16 @@
          }
  
          for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreCriteria.field_96642_c))
-@@ -547,6 +560,7 @@
+@@ -491,6 +504,8 @@
+         this.func_70066_B();
+         this.func_70052_a(0, false);
+         this.func_110142_aN().func_94549_h();
++        
++        return false;
+     }
+ 
+     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
+@@ -547,6 +562,7 @@
      @Nullable
      public Entity func_184204_a(int p_184204_1_)
      {
@@ -58,7 +70,7 @@
          this.field_184851_cj = true;
  
          if (this.field_71093_bK == 1 && p_184204_1_ == 1)
-@@ -704,7 +718,7 @@
+@@ -704,7 +720,7 @@
          BlockPos blockpos = new BlockPos(i, j, k);
          IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -67,7 +79,7 @@
          {
              BlockPos blockpos1 = blockpos.func_177977_b();
              IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
-@@ -744,6 +758,7 @@
+@@ -744,6 +760,7 @@
              this.field_71070_bA = p_180468_1_.func_174876_a(this.field_71071_by, this);
              this.field_71070_bA.field_75152_c = this.field_71139_cq;
              this.field_71070_bA.func_75132_a(this);
@@ -75,7 +87,7 @@
          }
      }
  
-@@ -787,6 +802,7 @@
+@@ -787,6 +804,7 @@
  
              this.field_71070_bA.field_75152_c = this.field_71139_cq;
              this.field_71070_bA.func_75132_a(this);
@@ -83,7 +95,7 @@
          }
      }
  
-@@ -796,6 +812,7 @@
+@@ -796,6 +814,7 @@
          this.field_71070_bA = new ContainerMerchant(this.field_71071_by, p_180472_1_, this.field_70170_p);
          this.field_71070_bA.field_75152_c = this.field_71139_cq;
          this.field_71070_bA.func_75132_a(this);
@@ -91,7 +103,7 @@
          IInventory iinventory = ((ContainerMerchant)this.field_71070_bA).func_75174_d();
          ITextComponent itextcomponent = p_180472_1_.func_145748_c_();
          this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "minecraft:villager", itextcomponent, iinventory.func_70302_i_()));
-@@ -894,6 +911,7 @@
+@@ -894,6 +913,7 @@
      public void func_71128_l()
      {
          this.field_71070_bA.func_75134_a(this);
@@ -99,7 +111,7 @@
          this.field_71070_bA = this.field_71069_bz;
      }
  
-@@ -925,6 +943,7 @@
+@@ -925,6 +945,7 @@
      {
          if (p_71064_1_ != null)
          {

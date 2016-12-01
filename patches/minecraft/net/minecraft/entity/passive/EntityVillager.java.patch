@@ -75,6 +75,31 @@
      public boolean func_70941_o()
      {
          return this.field_70952_f;
+@@ -462,11 +502,12 @@
+         }
+     }
+ 
+-    public void func_70645_a(DamageSource p_70645_1_)
++    public boolean onDeath(DamageSource cause)
+     {
++    	if(super.onDeath(cause)) return true; 
+         if (this.field_70954_d != null)
+         {
+-            Entity entity = p_70645_1_.func_76346_g();
++            Entity entity = cause.func_76346_g();
+ 
+             if (entity != null)
+             {
+@@ -489,8 +530,7 @@
+                 }
+             }
+         }
+-
+-        super.func_70645_a(p_70645_1_);
++        return false;
+     }
+ 
+     public void func_70932_a_(EntityPlayer p_70932_1_)
 @@ -607,15 +647,13 @@
  
      private void func_175554_cu()

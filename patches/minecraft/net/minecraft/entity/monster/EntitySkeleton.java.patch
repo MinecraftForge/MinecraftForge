@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySkeleton.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySkeleton.java
+@@ -54,13 +54,13 @@
+         return SoundEvents.field_187868_fj;
+     }
+ 
+-    public void func_70645_a(DamageSource p_70645_1_)
++    public boolean onDeath(DamageSource cause)
+     {
+-        super.func_70645_a(p_70645_1_);
++        if(super.onDeath(cause)) return true;
+ 
+-        if (p_70645_1_.func_76346_g() instanceof EntityCreeper)
++        if (cause.func_76346_g() instanceof EntityCreeper)
+         {
+-            EntityCreeper entitycreeper = (EntityCreeper)p_70645_1_.func_76346_g();
++            EntityCreeper entitycreeper = (EntityCreeper)cause.func_76346_g();
+ 
+             if (entitycreeper.func_70830_n() && entitycreeper.func_70650_aV())
+             {
+@@ -68,6 +68,7 @@
+                 this.func_70099_a(new ItemStack(Items.field_151144_bL, 1, 0), 0.0F);
+             }
+         }
++        return false;
+     }
+ 
+     protected EntityArrow func_190726_a(float p_190726_1_)
