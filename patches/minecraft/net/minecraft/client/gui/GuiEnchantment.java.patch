@@ -9,7 +9,7 @@
                  {
                      this.func_73729_b(i1, j + 14 + 19 * l, 0, 185, 108, 19);
                      this.func_73729_b(i1 + 1, j + 15 + 19 * l, 16 * l, 239, 16, 16);
-@@ -217,11 +217,16 @@
+@@ -217,11 +217,12 @@
              int l = this.field_147075_G.field_185002_i[j];
              int i1 = j + 1;
  
@@ -20,11 +20,7 @@
 -                list.add("" + TextFormatting.WHITE + TextFormatting.ITALIC + I18n.func_135052_a("container.enchant.clue", new Object[] {enchantment.func_77316_c(l)}));
 +                list.add("" + TextFormatting.WHITE + TextFormatting.ITALIC + I18n.func_135052_a("container.enchant.clue", new Object[] {enchantment == null ? "" : enchantment.func_77316_c(l)}));
  
-+                if(enchantment == null)
-+                {
-+                    list.add("");
-+                    list.add(TextFormatting.RED + I18n.func_135052_a("forge.container.enchant.enchantabilityTooLow"));
-+                } else
++                if(enchantment == null) java.util.Collections.addAll(list, "", TextFormatting.RED + I18n.func_135052_a("forge.container.enchant.limitedEnchantability")); else
                  if (!flag)
                  {
                      list.add("");

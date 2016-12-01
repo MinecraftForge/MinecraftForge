@@ -184,4 +184,4 @@ fml.button.continue=Continue
 fml.button.open.mods.folder=Open Mods Folder
 fml.button.open.file=Open %s
 
-forge.container.enchant.enchantabilityTooLow=Enchantability Low
+forge.container.enchant.limitedEnchantability=Limited Enchantability
