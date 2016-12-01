@@ -215,7 +215,7 @@ public class FluidPlacementTest
         @Override
         public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
         {
-            return new FluidHandlerItemStack.SwapEmpty(stack, getEmpty(), 1000);
+            return new FluidHandlerItemStack.SwapEmpty(stack, new ItemStack(emptyContainer), 1000);
         }
     }
 }

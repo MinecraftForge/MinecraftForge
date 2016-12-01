@@ -247,16 +247,24 @@ public class BlockFluidFinite extends BlockFluidBase
     @Override
     public int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, boolean doPlace)
     {
+        IBlockState existing = world.getBlockState(pos);
+        float quantaAmount = Fluid.BUCKET_VOLUME / quantaPerBlockFloat;
         // If the stack contains more available fluid than the full source block,
         // set a source block
         int closest = Fluid.BUCKET_VOLUME;
         int quanta = quantaPerBlock;
-        if (fluidStack.amount < Fluid.BUCKET_VOLUME)
+        if (fluidStack.amount < closest)
         {
             // Figure out maximum level to match stack amount
-            float quantaAmount = Fluid.BUCKET_VOLUME / quantaPerBlockFloat;
             closest = MathHelper.floor_float(quantaAmount * MathHelper.floor_float(fluidStack.amount / quantaAmount));
             quanta = MathHelper.floor_float(closest / quantaAmount);
+        }
+        if (existing.getBlock() == this)
+        {
+            int existingQuanta = existing.getValue(LEVEL) + 1;
+            int missingQuanta = quantaPerBlock - existingQuanta;
+            closest = Math.min(closest, MathHelper.floor_float(missingQuanta * quantaAmount));
+            quanta = Math.min(quanta + existingQuanta, quantaPerBlock);
         }
 
         // If too little (or too much, technically impossible) fluid is to be placed, abort

@@ -115,7 +115,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
         {
             ItemStack drainedStack = result.getResult();
 
-            if (stack.func_190916_E() == 1)
+            if (drainedStack.func_190916_E() == 1)
             {
                 return drainedStack;
             }
