@@ -1,22 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityCreeper.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityCreeper.java
-@@ -1,7 +1,9 @@
- package net.minecraft.entity.monster;
- 
- import java.util.Collection;
-+
- import javax.annotation.Nullable;
-+
- import net.minecraft.entity.Entity;
- import net.minecraft.entity.EntityAreaEffectCloud;
- import net.minecraft.entity.EntityLiving;
-@@ -184,10 +186,12 @@
+@@ -184,10 +184,13 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
 +    	if(net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
          super.func_70645_a(p_70645_1_);
 -
++        
          if (this.field_70170_p.func_82736_K().func_82766_b("doMobLoot"))
          {
 +            captureDrops = true;
@@ -24,12 +15,9 @@
              if (p_70645_1_.func_76346_g() instanceof EntitySkeleton)
              {
                  int i = Item.func_150891_b(Items.field_151096_cd);
-@@ -198,8 +202,16 @@
-             else if (p_70645_1_.func_76346_g() instanceof EntityCreeper && p_70645_1_.func_76346_g() != this && ((EntityCreeper)p_70645_1_.func_76346_g()).func_70830_n() && ((EntityCreeper)p_70645_1_.func_76346_g()).func_70650_aV())
-             {
+@@ -200,6 +203,14 @@
                  ((EntityCreeper)p_70645_1_.func_76346_g()).func_175493_co();
--                this.func_70099_a(new ItemStack(Items.field_151144_bL, 1, 4), 0.0F);
-+                this.func_70099_a(new ItemStack(Items.field_151144_bL, 1, 4), 0);
+                 this.func_70099_a(new ItemStack(Items.field_151144_bL, 1, 4), 0.0F);
              }
 +            captureDrops = false;
 +            int lootingLevel = p_70645_1_.func_76346_g() != null ? net.minecraftforge.common.ForgeHooks.getLootingLevel(this, p_70645_1_.func_76346_g(), p_70645_1_) : 0;
