@@ -49,7 +49,7 @@ public class FluidPlacementTest
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        if (ENABLE)
+        if (ENABLE && ModelFluidDebug.ENABLE)
         {
             proxy.preInit(event);
         }
@@ -121,6 +121,12 @@ public class FluidPlacementTest
         {
             return 0xFFFFFF00;
         }
+
+        @Override
+        public String getLocalizedName(FluidStack stack)
+        {
+            return "Finite Fluid";
+        }
     }
 
     public static final class FiniteFluidBlock extends BlockFluidFinite
@@ -148,6 +154,18 @@ public class FluidPlacementTest
             setCreativeTab(CreativeTabs.MISC);
             setRegistryName(MODID, name);
             setUnlocalizedName(MODID + ":" + name);
+        }
+
+        @Nonnull
+        @Override
+        public String getItemStackDisplayName(@Nonnull ItemStack stack)
+        {
+            FluidStack fluid = getFluid(stack);
+            if (fluid == null)
+            {
+                return "Empty Variable Container";
+            }
+            return "Variable Container (" + getFluid(stack).getLocalizedName() + ")";
         }
 
         @Override
