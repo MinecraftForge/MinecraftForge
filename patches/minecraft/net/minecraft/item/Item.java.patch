@@ -670,38 +670,29 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1006,9 +1604,34 @@
+@@ -1006,9 +1604,26 @@
              return this.field_78008_j;
          }
  
 +        @Deprecated // Use getRepairItemStack below
          public Item func_150995_f()
          {
--            return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
-+            switch (this)
-+            {
-+                case WOOD:    return Item.func_150898_a(Blocks.field_150344_f);
-+                case STONE:   return Item.func_150898_a(Blocks.field_150347_e);
-+                case GOLD:    return Items.field_151043_k;
-+                case IRON:    return Items.field_151042_j;
-+                case DIAMOND: return Items.field_151045_i;
-+                default:      return Items.field_190931_a;
-+            }
+             return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
          }
 +
 +        public ToolMaterial setRepairItem(ItemStack stack)
 +        {
 +            if (!this.repairMaterial.func_190926_b()) throw new RuntimeException("Repair material has already been set");
 +            if (this == WOOD || this == STONE || this == GOLD || this == IRON || this == DIAMOND) throw new RuntimeException("Can not change vanilla tool repair materials");
-+            this.repairMaterial = stack.func_77946_l();
++            this.repairMaterial = stack;
 +            return this;
 +        }
 +
 +        public ItemStack getRepairItemStack()
 +        {
-+            if (!repairMaterial.func_190926_b()) return repairMaterial.func_77946_l();
++            if (!repairMaterial.func_190926_b()) return repairMaterial;
 +            Item ret = this.func_150995_f();
-+            repairMaterial = new ItemStack(ret, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
++            if (ret != null) repairMaterial = new ItemStack(ret, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
 +            return repairMaterial;
 +        }
      }
