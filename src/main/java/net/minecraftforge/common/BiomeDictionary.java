@@ -451,7 +451,7 @@ public class BiomeDictionary
         addTypes(Biomes.MUTATED_PLAINS,                   PLAINS                                           );
         addTypes(Biomes.MUTATED_DESERT,                   HOT,      DRY,        SANDY                      );
         addTypes(Biomes.MUTATED_EXTREME_HILLS,            MOUNTAIN, SPARSE                                 );
-        addTypes(Biomes.MUTATED_FOREST, FOREST,           HILLS                                            );
+        addTypes(Biomes.MUTATED_FOREST,                   FOREST,   HILLS                                  );
         addTypes(Biomes.MUTATED_TAIGA,                    COLD,     CONIFEROUS, FOREST,   MOUNTAIN         );
         addTypes(Biomes.MUTATED_SWAMPLAND,                WET,      SWAMP,      HILLS                      );
         addTypes(Biomes.MUTATED_ICE_FLATS,                COLD,     SNOWY,      HILLS                      );
@@ -464,7 +464,7 @@ public class BiomeDictionary
         addTypes(Biomes.MUTATED_REDWOOD_TAIGA,            DENSE,    FOREST                                 );
         addTypes(Biomes.MUTATED_REDWOOD_TAIGA_HILLS,      DENSE,    FOREST,     HILLS                      );
         addTypes(Biomes.MUTATED_EXTREME_HILLS_WITH_TREES, MOUNTAIN, SPARSE                                 );
-        addTypes(Biomes.MUTATED_SAVANNA, MOUNTAIN,        HOT,      DRY,        SPARSE,   SAVANNA          );
+        addTypes(Biomes.MUTATED_SAVANNA,                  HOT,      DRY,        SPARSE,   SAVANNA, MOUNTAIN);
         addTypes(Biomes.MUTATED_SAVANNA_ROCK,             HOT,      DRY,        SPARSE,   SAVANNA, HILLS   );
         addTypes(Biomes.MUTATED_MESA,                     HOT,      DRY,        SPARSE,   SAVANNA, MOUNTAIN);
         addTypes(Biomes.MUTATED_MESA_ROCK,                HOT,      DRY,        SPARSE,   HILLS            );
