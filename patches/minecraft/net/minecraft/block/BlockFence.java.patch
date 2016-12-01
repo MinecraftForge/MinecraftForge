@@ -1,15 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFence.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFence.java
-@@ -153,7 +153,7 @@
+@@ -153,7 +153,10 @@
  
      public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
      {
 -        return p_176221_1_.func_177226_a(field_176526_a, Boolean.valueOf(this.func_176524_e(p_176221_2_, p_176221_3_.func_177978_c()))).func_177226_a(field_176525_b, Boolean.valueOf(this.func_176524_e(p_176221_2_, p_176221_3_.func_177974_f()))).func_177226_a(field_176527_M, Boolean.valueOf(this.func_176524_e(p_176221_2_, p_176221_3_.func_177968_d()))).func_177226_a(field_176528_N, Boolean.valueOf(this.func_176524_e(p_176221_2_, p_176221_3_.func_177976_e())));
-+        return getFenceState(p_176221_1_, p_176221_2_, p_176221_3_);
++        return p_176221_1_.func_177226_a(field_176526_a, canFenceConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH))
++                .func_177226_a(field_176525_b, canFenceConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST))
++                .func_177226_a(field_176527_M, canFenceConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH))
++                .func_177226_a(field_176528_N, canFenceConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST));
      }
  
      public IBlockState func_185499_a(IBlockState p_185499_1_, Rotation p_185499_2_)
-@@ -188,4 +188,42 @@
+@@ -188,4 +191,34 @@
      {
          return new BlockStateContainer(this, new IProperty[] {field_176526_a, field_176525_b, field_176528_N, field_176527_M});
      }
@@ -40,14 +43,6 @@
 +    {
 +        Block block = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
 +        return block.canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d()) || func_176524_e(world, pos.func_177972_a(facing));
-+    }
-+
-+    private IBlockState getFenceState(IBlockState state, IBlockAccess world, BlockPos pos)
-+    {
-+        return state.func_177226_a(field_176526_a, canFenceConnectTo(world, pos, EnumFacing.NORTH))
-+                .func_177226_a(field_176525_b, canFenceConnectTo(world, pos, EnumFacing.EAST))
-+                .func_177226_a(field_176527_M, canFenceConnectTo(world, pos, EnumFacing.SOUTH))
-+                .func_177226_a(field_176528_N, canFenceConnectTo(world, pos, EnumFacing.WEST));
 +    }
 +
 +    /* ======================================== FORGE END ======================================== */
