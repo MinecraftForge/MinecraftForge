@@ -56,7 +56,9 @@ public class EventPistonDebug
                 else
                     player.addChatMessage(new TextComponentString("Piston won't extend"));
             }
-        } else {
+        }
+        else
+        {
             World world = event.getWorld();
             BlockPos pushedBlockPos = event.getPos().offset(event.getFacing());
             if (world.getBlockState(pushedBlockPos).getBlock().equals(shiftOnMove) && event.getFacing() != EnumFacing.DOWN)
@@ -85,7 +87,9 @@ public class EventPistonDebug
                                 pistonHelper.getBlocksToMove().size(), pistonHelper.getBlocksToDestroy().size())));
                     else
                         player.addChatMessage(new TextComponentString("Piston won't retract"));
-                } else {
+                }
+                else
+                {
                     player.addChatMessage(new TextComponentString("Piston will retract"));
                 }
             }

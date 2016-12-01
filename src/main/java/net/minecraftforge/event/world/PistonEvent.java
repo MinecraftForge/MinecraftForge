@@ -17,7 +17,8 @@ public class PistonEvent extends BlockEvent
         this.facing = facing;
     }
     
-    public EnumFacing getFacing() {
+    public EnumFacing getFacing()
+    {
         return this.facing;
     }
     
