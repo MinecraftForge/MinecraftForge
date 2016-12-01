@@ -1,6 +1,51 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/AbstractHorse.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/AbstractHorse.java
-@@ -981,6 +981,7 @@
+@@ -2,6 +2,8 @@
+ 
+ import com.google.common.base.Optional;
+ import com.google.common.base.Predicate;
++
++import java.util.ArrayList;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+@@ -27,6 +29,7 @@
+ import net.minecraft.entity.ai.attributes.IAttribute;
+ import net.minecraft.entity.ai.attributes.IAttributeInstance;
+ import net.minecraft.entity.ai.attributes.RangedAttribute;
++import net.minecraft.entity.item.EntityItem;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+@@ -606,19 +609,26 @@
+ 
+     public void func_70645_a(DamageSource p_70645_1_)
+     {
++    	if(net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
+         super.func_70645_a(p_70645_1_);
+ 
+         if (!this.field_70170_p.field_72995_K && this.field_110296_bG != null)
+         {
++        	ArrayList<EntityItem> drops = new ArrayList<EntityItem>();
+             for (int i = 0; i < this.field_110296_bG.func_70302_i_(); ++i)
+             {
+                 ItemStack itemstack = this.field_110296_bG.func_70301_a(i);
+ 
+                 if (!itemstack.func_190926_b())
+                 {
+-                    this.func_70099_a(itemstack, 0.0F);
++                    drops.add(new EntityItem(field_70170_p, field_70165_t, field_70163_u, field_70161_v, itemstack));
+                 }
+             }
++            if(net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_70645_1_, drops, 0, this.field_70718_bc > 0)) {
++            	for(EntityItem entityItem : drops) {
++            		field_70170_p.func_72838_d(entityItem);
++            	}
++            }
+         }
+     }
+ 
+@@ -981,6 +991,7 @@
          }
  
          this.func_110232_cE();
@@ -8,7 +53,7 @@
      }
  
      public boolean func_70878_b(EntityAnimal p_70878_1_)
-@@ -1219,4 +1220,22 @@
+@@ -1219,4 +1230,22 @@
  
          return p_180482_2_;
      }
