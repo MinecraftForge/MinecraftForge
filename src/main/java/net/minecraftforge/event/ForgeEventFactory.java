@@ -108,6 +108,8 @@ import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.event.world.PistonEvent.PistonExtendEvent;
+import net.minecraftforge.event.world.PistonEvent.PistonRetractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -637,6 +639,14 @@ public class ForgeEventFactory
 
         Result result = evt.getResult();
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
+    }
+    
+    public static boolean onPistonMove(World world, BlockPos pos, EnumFacing facing, boolean extending)
+    {
+        if (extending)
+            return MinecraftForge.EVENT_BUS.post(new PistonExtendEvent(world, pos, facing));
+        else
+            return MinecraftForge.EVENT_BUS.post(new PistonRetractEvent(world, pos, facing));
     }
 
 }
