@@ -11,34 +11,34 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 @Mod(modid="canapplyatenchantingtabletest", name="CanApplyAtEnchantingTableTest", version="0.0.0")
 public class CanApplyAtEnchantingTableTest
 {
-	public static final boolean ENABLE = true;
+    public static final boolean ENABLE = true;
 
-	public static final Item testItem = new Item()
-	{
-		public boolean isItemTool(ItemStack stack)
-		{
-			return true;
-		}
+    public static final Item testItem = new Item()
+    {
+        public boolean isItemTool(ItemStack stack)
+        {
+            return true;
+        }
 
-		@Override
-		public int getItemEnchantability()
-		{
-			return 30;
-		}
+        @Override
+        public int getItemEnchantability()
+        {
+            return 30;
+        }
 
-		@Override
-		public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
-		{
-			return super.canApplyAtEnchantingTable(stack, enchantment) || enchantment == Enchantments.FORTUNE;
-		}
-	};
+        @Override
+        public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
+        {
+            return super.canApplyAtEnchantingTable(stack, enchantment) || enchantment == Enchantments.FORTUNE;
+        }
+    };
 
-	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event)
-	{
-		if(ENABLE)
-		{
-			GameRegistry.register(testItem.setRegistryName("test_item").setUnlocalizedName("FortuneEnchantableOnly").setMaxStackSize(1));
-		}
-	}
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        if(ENABLE)
+        {
+            GameRegistry.register(testItem.setRegistryName("test_item").setUnlocalizedName("FortuneEnchantableOnly").setMaxStackSize(1));
+        }
+    }
 }
