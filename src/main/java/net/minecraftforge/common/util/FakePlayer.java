@@ -49,7 +49,7 @@ public class FakePlayer extends EntityPlayerMP
     @Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
     @Override public boolean isEntityInvulnerable(DamageSource source){ return true; }
     @Override public boolean canAttackPlayer(EntityPlayer player){ return false; }
-    @Override public void onDeath(DamageSource source){ return; }
+    @Override public boolean onDeath(DamageSource source){ return false; }
     @Override public void onUpdate(){ return; }
     @Override public Entity changeDimension(int dim){ return this; }
     @Override public void handleClientSettings(CPacketClientSettings pkt){ return; }
