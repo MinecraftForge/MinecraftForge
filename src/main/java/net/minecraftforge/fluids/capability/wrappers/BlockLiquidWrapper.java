@@ -116,17 +116,13 @@ public class BlockLiquidWrapper implements IFluidHandler
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain)
     {
-        if (resource == null)
+        if (resource == null || resource.amount < Fluid.BUCKET_VOLUME)
         {
             return null;
         }
 
         IBlockState blockState = world.getBlockState(blockPos);
-        if (blockState.getMaterial() != Material.LAVA && resource.amount < Fluid.BUCKET_VOLUME)
-        {
-            return null;
-        }
-        if (blockState.getBlock() == blockLiquid && (blockState.getMaterial() == Material.LAVA || blockState.getValue(BlockLiquid.LEVEL) == 0))
+        if (blockState.getBlock() == blockLiquid && blockState.getValue(BlockLiquid.LEVEL) == 0)
         {
             FluidStack containedStack = getStack(blockState);
             if (containedStack != null && resource.containsFluid(containedStack))
@@ -146,12 +142,12 @@ public class BlockLiquidWrapper implements IFluidHandler
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        IBlockState blockState = world.getBlockState(blockPos);
-
-        if (blockState.getMaterial() != Material.LAVA && maxDrain < Fluid.BUCKET_VOLUME)
+        if (maxDrain < Fluid.BUCKET_VOLUME)
         {
             return null;
         }
+
+        IBlockState blockState = world.getBlockState(blockPos);
         if (blockState.getBlock() == blockLiquid)
         {
             FluidStack containedStack = getStack(blockState);
@@ -176,9 +172,9 @@ public class BlockLiquidWrapper implements IFluidHandler
         {
             return new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
         }
-        else if (material == Material.LAVA)
+        else if (material == Material.LAVA && blockState.getValue(BlockLiquid.LEVEL) == 0)
         {
-            return new FluidStack(FluidRegistry.LAVA, (8 - blockState.getValue(BlockLiquid.LEVEL)) * 125);
+            return new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME);
         }
         else
         {
