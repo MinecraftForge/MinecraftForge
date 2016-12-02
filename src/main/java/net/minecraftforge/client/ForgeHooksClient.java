@@ -202,8 +202,7 @@ public class ForgeHooksClient
 
     public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot slot, ModelBiped _default)
     {
-        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slot, _default);
-        return model == null ? _default : model;
+        return itemStack.getItem().getArmorModel(entityLiving, itemStack, slot, _default);
     }
 
     //This properly moves the domain, if provided, to the front of the string before concatenating
