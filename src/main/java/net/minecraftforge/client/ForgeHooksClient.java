@@ -261,9 +261,9 @@ public class ForgeHooksClient
         GameSettings settings = Minecraft.getMinecraft().gameSettings;
         int[] ranges = ForgeModContainer.blendRanges;
         int distance = 0;
-        if (settings.fancyGraphics && settings.renderDistanceChunks >= 0 && settings.renderDistanceChunks < ranges.length)
+        if (settings.fancyGraphics && ranges.length > 0)
         {
-            distance = ranges[settings.renderDistanceChunks];
+            distance = ranges[MathHelper.clamp_int(settings.renderDistanceChunks, 0, ranges.length-1)];
         }
 
         int r = 0;
