@@ -669,12 +669,15 @@ public class ForgeHooksClient
     }
 
     private static int slotMainHand = 0;
-    // FIXME
+
     public static boolean shouldCauseReequipAnimation(@Nonnull ItemStack from, @Nonnull ItemStack to, int slot)
     {
-        boolean fromInvalid = from.func_190926_b(), toInvalid = to.func_190926_b();
+        boolean fromInvalid = from.func_190926_b();
+        boolean toInvalid   = to.func_190926_b();
+
         if (fromInvalid && toInvalid) return false;
         if (fromInvalid || toInvalid) return true;
+
         boolean changed = false;
         if (slot != -1)
         {
