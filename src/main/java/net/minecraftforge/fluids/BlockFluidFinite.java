@@ -64,7 +64,7 @@ public class BlockFluidFinite extends BlockFluidBase
     @Override
     public boolean canCollideCheck(@Nonnull IBlockState state, boolean fullHit)
     {
-        return fullHit && state.getValue(LEVEL) == quantaPerBlock - 1;
+        return fullHit;
     }
 
     @Override

@@ -9,17 +9,16 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -29,6 +28,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
@@ -40,8 +40,6 @@ public class FluidPlacementTest
     public static final String VERSION = "1.0";
 
     public static final boolean ENABLE = true;
-
-    private static Item emptyContainer;
 
     @SidedProxy
     public static CommonProxy proxy;
@@ -59,16 +57,13 @@ public class FluidPlacementTest
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            emptyContainer = new ItemBucket(Blocks.AIR)
-                .setRegistryName(MODID, "empty_fluid_container")
-                .setUnlocalizedName(MODID + ":empty_fluid_container")
-                .setMaxStackSize(16);
             FluidRegistry.registerFluid(FiniteFluid.instance);
             FluidRegistry.addBucketForFluid(FiniteFluid.instance);
-            GameRegistry.register(emptyContainer);
+            GameRegistry.register(EmptyFluidContainer.instance);
             GameRegistry.register(FluidContainer.instance);
             GameRegistry.register(FiniteFluidBlock.instance);
             GameRegistry.register(new ItemBlock(FiniteFluidBlock.instance).setRegistryName(FiniteFluidBlock.instance.getRegistryName()));
+            MinecraftForge.EVENT_BUS.register(FluidContainer.instance);
         }
     }
 
@@ -85,7 +80,7 @@ public class FluidPlacementTest
         {
             super.preInit(event);
             Item fluid = Item.getItemFromBlock(FiniteFluidBlock.instance);
-            ModelLoader.setCustomModelResourceLocation(emptyContainer, 0, new ModelResourceLocation("forge:bucket", "inventory"));
+            ModelLoader.setCustomModelResourceLocation(EmptyFluidContainer.instance, 0, new ModelResourceLocation("forge:bucket", "inventory"));
             ModelLoader.setBucketModelDefinition(FluidContainer.instance);
             // no need to pass the locations here, since they'll be loaded by the block model logic.
             ModelBakery.registerItemVariants(fluid);
@@ -143,6 +138,56 @@ public class FluidPlacementTest
         }
     }
 
+    public static final class EmptyFluidContainer extends ItemBucket
+    {
+        public static final EmptyFluidContainer instance = new EmptyFluidContainer();
+        public static final String name = "empty_fluid_container";
+
+        private EmptyFluidContainer()
+        {
+            super(Blocks.AIR);
+            setRegistryName(MODID, name);
+            setUnlocalizedName(MODID + ":" + name);
+            setMaxStackSize(16);
+        }
+
+        @Override
+        public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
+        {
+            return new EmptyContainerHandler(stack);
+        }
+
+        private static final class EmptyContainerHandler extends FluidBucketWrapper
+        {
+            public EmptyContainerHandler(@Nonnull ItemStack container)
+            {
+                super(container);
+            }
+
+            @Override
+            public int fill(FluidStack resource, boolean doFill)
+            {
+                if (container.func_190916_E() != 1 || resource == null || resource.amount > Fluid.BUCKET_VOLUME || container
+                    .getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
+                {
+                    return 0;
+                }
+
+                if (doFill)
+                {
+                    container = new ItemStack(FluidContainer.instance);
+                    NBTTagCompound tag = new NBTTagCompound();
+                    NBTTagCompound fluidTag = new NBTTagCompound();
+                    resource.writeToNBT(fluidTag);
+                    tag.setTag(FLUID_NBT_KEY, fluidTag);
+                    container.setTagCompound(tag);
+                }
+
+                return resource.amount;
+            }
+        }
+    }
+
     public static final class FluidContainer extends UniversalBucket
     {
         public static final FluidContainer instance = new FluidContainer();
@@ -150,7 +195,7 @@ public class FluidPlacementTest
 
         private FluidContainer()
         {
-            super(1000, new ItemStack(emptyContainer), false);
+            super(1000, new ItemStack(EmptyFluidContainer.instance), false);
             setCreativeTab(CreativeTabs.MISC);
             setRegistryName(MODID, name);
             setUnlocalizedName(MODID + ":" + name);
@@ -161,7 +206,7 @@ public class FluidPlacementTest
         public String getItemStackDisplayName(@Nonnull ItemStack stack)
         {
             FluidStack fluid = getFluid(stack);
-            if (fluid == null)
+            if (fluid == null || fluid.getFluid() == null)
             {
                 return "Empty Variable Container";
             }
@@ -181,7 +226,11 @@ public class FluidPlacementTest
         @SideOnly(Side.CLIENT)
         public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
         {
-            tooltip.add(getFluid(stack).amount + "/1000");
+            FluidStack fluid = getFluid(stack);
+            if (fluid != null)
+            {
+                tooltip.add(fluid.amount + "/1000");
+            }
         }
 
         @Override
@@ -215,7 +264,7 @@ public class FluidPlacementTest
         @Override
         public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
         {
-            return new FluidHandlerItemStack.SwapEmpty(stack, new ItemStack(emptyContainer), 1000);
+            return new FluidHandlerItemStack.SwapEmpty(stack, new ItemStack(EmptyFluidContainer.instance), 1000);
         }
     }
 }

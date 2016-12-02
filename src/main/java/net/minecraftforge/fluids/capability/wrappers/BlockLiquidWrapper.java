@@ -71,7 +71,7 @@ public class BlockLiquidWrapper implements IFluidHandler
     public int fill(FluidStack resource, boolean doFill)
     {
         // NOTE: "Filling" means placement in this context!
-        Material material = blockLiquid.getMaterial(blockLiquid.getDefaultState());
+        Material material = blockLiquid.getDefaultState().getMaterial();
         BlockLiquid flowingBlock = BlockLiquid.getFlowingBlock(material);
         IBlockState existing = world.getBlockState(blockPos);
         float quantaAmount = Fluid.BUCKET_VOLUME / 8f;
@@ -116,13 +116,17 @@ public class BlockLiquidWrapper implements IFluidHandler
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain)
     {
-        if (resource == null || resource.amount < Fluid.BUCKET_VOLUME)
+        if (resource == null)
         {
             return null;
         }
 
         IBlockState blockState = world.getBlockState(blockPos);
-        if (blockState.getBlock() == blockLiquid && blockState.getValue(BlockLiquid.LEVEL) == 0)
+        if (blockState.getMaterial() != Material.LAVA && resource.amount < Fluid.BUCKET_VOLUME)
+        {
+            return null;
+        }
+        if (blockState.getBlock() == blockLiquid && (blockState.getMaterial() == Material.LAVA || blockState.getValue(BlockLiquid.LEVEL) == 0))
         {
             FluidStack containedStack = getStack(blockState);
             if (containedStack != null && resource.containsFluid(containedStack))
@@ -142,12 +146,12 @@ public class BlockLiquidWrapper implements IFluidHandler
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (maxDrain < Fluid.BUCKET_VOLUME)
+        IBlockState blockState = world.getBlockState(blockPos);
+
+        if (blockState.getMaterial() != Material.LAVA && maxDrain < Fluid.BUCKET_VOLUME)
         {
             return null;
         }
-
-        IBlockState blockState = world.getBlockState(blockPos);
         if (blockState.getBlock() == blockLiquid)
         {
             FluidStack containedStack = getStack(blockState);
@@ -172,9 +176,9 @@ public class BlockLiquidWrapper implements IFluidHandler
         {
             return new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
         }
-        else if (material == Material.LAVA && blockState.getValue(BlockLiquid.LEVEL) == 0)
+        else if (material == Material.LAVA)
         {
-            return new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME);
+            return new FluidStack(FluidRegistry.LAVA, (8 - blockState.getValue(BlockLiquid.LEVEL)) * 125);
         }
         else
         {

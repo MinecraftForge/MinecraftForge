@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLiquid.java
+@@ -87,7 +87,7 @@
+ 
+     public boolean func_176209_a(IBlockState p_176209_1_, boolean p_176209_2_)
+     {
+-        return p_176209_2_ && ((Integer)p_176209_1_.func_177229_b(field_176367_b)).intValue() == 0;
++        return p_176209_2_ && (p_176209_1_.func_185904_a() == Material.field_151587_i || ((Integer)p_176209_1_.func_177229_b(field_176367_b)).intValue() == 0);
+     }
+ 
+     public boolean func_176212_b(IBlockAccess p_176212_1_, BlockPos p_176212_2_, EnumFacing p_176212_3_)
