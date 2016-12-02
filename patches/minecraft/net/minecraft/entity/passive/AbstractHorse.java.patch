@@ -10,7 +10,7 @@
          if (!this.field_70170_p.field_72995_K && this.field_110296_bG != null)
          {
 +            captureDrops = true;
-+        	this.capturedDrops.clear();
++            this.capturedDrops.clear();
              for (int i = 0; i < this.field_110296_bG.func_70302_i_(); ++i)
              {
                  ItemStack itemstack = this.field_110296_bG.func_70301_a(i);

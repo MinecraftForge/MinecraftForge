@@ -6,8 +6,7 @@
      {
 +    	if(net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
          super.func_70645_a(p_70645_1_);
--
-+        
+ 
          if (this.field_70170_p.func_82736_K().func_82766_b("doMobLoot"))
          {
 +            captureDrops = true;
