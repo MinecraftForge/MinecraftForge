@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStairs.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStairs.java
+@@ -188,7 +188,7 @@
+         return this.field_150151_M.func_185889_a(p_185484_2_, p_185484_3_);
+     }
+ 
+-    public float func_149638_a(Entity p_149638_1_)
++    public float func_149638_a(@Nullable Entity p_149638_1_)
+     {
+         return this.field_150149_b.func_149638_a(p_149638_1_);
+     }
 @@ -445,6 +445,29 @@
          return new BlockStateContainer(this, new IProperty[] {field_176309_a, field_176308_b, field_176310_M});
      }

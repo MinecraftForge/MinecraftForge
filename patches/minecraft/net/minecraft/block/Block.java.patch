@@ -134,6 +134,15 @@
              float f = 0.5F;
              double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
+@@ -584,7 +591,7 @@
+         return 0;
+     }
+ 
+-    public float func_149638_a(Entity p_149638_1_)
++    public float func_149638_a(@Nullable Entity p_149638_1_)
+     {
+         return this.field_149781_w / 5.0F;
+     }
 @@ -627,7 +634,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
@@ -742,7 +751,7 @@
 +     * @param explosion The explosion
 +     * @return The amount of the explosion absorbed.
 +     */
-+    public float getExplosionResistance(World world, BlockPos pos, Entity exploder, Explosion explosion)
++    public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
 +    {
 +        return func_149638_a(exploder);
 +    }
