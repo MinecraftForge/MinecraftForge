@@ -183,3 +183,5 @@ fml.button.visitjavadownloads=Oracle Java SE Downloads
 fml.button.continue=Continue
 fml.button.open.mods.folder=Open Mods Folder
 fml.button.open.file=Open %s
+
+forge.container.enchant.limitedEnchantability=Limited Enchantability
