@@ -4,7 +4,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
-+    	if(net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
          super.func_70645_a(p_70645_1_);
  
          if (!this.field_70170_p.field_72995_K && this.field_110296_bG != null)
@@ -20,10 +20,10 @@
              }
 +            captureDrops = false;
 +            int lootingLevel = p_70645_1_.func_76346_g() != null ? net.minecraftforge.common.ForgeHooks.getLootingLevel(this, p_70645_1_.func_76346_g(), p_70645_1_) : 0;
-+            if(!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_70645_1_, capturedDrops, lootingLevel, this.field_70718_bc > 0)) {
-+            	for(net.minecraft.entity.item.EntityItem entityItem : capturedDrops) {
-+            		field_70170_p.func_72838_d(entityItem);
-+            	}
++            if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_70645_1_, capturedDrops, lootingLevel, this.field_70718_bc > 0)) {
++                for (net.minecraft.entity.item.EntityItem entityItem : capturedDrops) {
++                    field_70170_p.func_72838_d(entityItem);
++                }
 +            }
          }
      }
