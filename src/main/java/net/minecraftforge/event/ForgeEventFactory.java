@@ -22,9 +22,12 @@ package net.minecraftforge.event;
 import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import com.google.common.base.Predicate;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -109,22 +112,42 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
+import javax.annotation.Nullable;
+
 public class ForgeEventFactory
 {
 
+    /**
+     * @deprecated Use {@link #onPlayerMultiBlockPlace(EntityPlayer, List, EnumFacing, EnumHand)} instead.
+     */
+    @Deprecated
     public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction)
+    {
+        return onPlayerMultiBlockPlace(player, blockSnapshots, direction, null);
+    }
+
+    public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction, @Nullable EnumHand hand)
     {
         BlockSnapshot snap = blockSnapshots.get(0);
         IBlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().offset(direction.getOpposite()));
-        MultiPlaceEvent event = new MultiPlaceEvent(blockSnapshots, placedAgainst, player);
+        MultiPlaceEvent event = new MultiPlaceEvent(blockSnapshots, placedAgainst, player, hand);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
 
+    /**
+     * @deprecated Use {@link #onPlayerBlockPlace(EntityPlayer, BlockSnapshot, EnumFacing, EnumHand)} instead.
+     */
+    @Deprecated
     public static PlaceEvent onPlayerBlockPlace(EntityPlayer player, BlockSnapshot blockSnapshot, EnumFacing direction)
     {
+        return onPlayerBlockPlace(player, blockSnapshot, direction, null);
+    }
+
+    public static PlaceEvent onPlayerBlockPlace(EntityPlayer player, BlockSnapshot blockSnapshot, EnumFacing direction, @Nullable EnumHand hand)
+    {
         IBlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().offset(direction.getOpposite()));
-        PlaceEvent event = new PlaceEvent(blockSnapshot, placedAgainst, player);
+        PlaceEvent event = new PlaceEvent(blockSnapshot, placedAgainst, player, hand);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
@@ -220,6 +243,13 @@ public class ForgeEventFactory
         PlayerEvent.NameFormat event = new PlayerEvent.NameFormat(player, username);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getDisplayname();
+    }
+
+    public static List<Predicate<Entity>> gatherEntitySelectors(Map<String, String> map, String mainSelector, ICommandSender sender, Vec3d position)
+    {
+        EntitySelectorEvent event=new EntitySelectorEvent(map, mainSelector, sender, position);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getSelectors();
     }
 
     public static float fireBlockHarvesting(List<ItemStack> drops, World world, BlockPos pos, IBlockState state, int fortune, float dropChance, boolean silkTouch, EntityPlayer player)
@@ -544,8 +574,8 @@ public class ForgeEventFactory
         Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
         {
-            IBlockState state = player.worldObj.getBlockState(player.playerLocation);
-            return state.getBlock().isBed(state, player.worldObj, player.playerLocation, player);
+            IBlockState state = player.worldObj.getBlockState(player.bedLocation);
+            return state.getBlock().isBed(state, player.worldObj, player.bedLocation, player);
         }
         else
             return canContinueSleep == Result.ALLOW;

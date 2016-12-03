@@ -100,7 +100,7 @@ class ChunkIOProvider implements Runnable
         this.chunk.setLastSaveTime(provider.worldObj.getTotalWorldTime());
         this.provider.chunkGenerator.recreateStructures(this.chunk, this.chunkInfo.x, this.chunkInfo.z);
 
-        provider.id2ChunkMap.put(ChunkPos.chunkXZ2Int(this.chunkInfo.x, this.chunkInfo.z), this.chunk);
+        provider.id2ChunkMap.put(ChunkPos.asLong(this.chunkInfo.x, this.chunkInfo.z), this.chunk);
         this.chunk.onChunkLoad();
         this.chunk.populateChunk(provider, provider.chunkGenerator);
 

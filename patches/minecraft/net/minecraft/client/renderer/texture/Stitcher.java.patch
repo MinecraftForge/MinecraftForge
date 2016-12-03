@@ -25,6 +25,15 @@
      }
  
      public List<TextureAtlasSprite> func_94309_g()
+@@ -148,7 +154,7 @@
+ 
+             if (flag3 ^ flag4)
+             {
+-                flag = flag3;
++                flag = !flag3 && flag1; //Forge: Fix stitcher not expanding entire height before growing width, and {potentially} growing larger then the max size.
+             }
+             else
+             {
 @@ -240,7 +246,7 @@
  
              public String toString()
