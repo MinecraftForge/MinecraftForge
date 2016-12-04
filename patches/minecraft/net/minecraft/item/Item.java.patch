@@ -287,19 +287,6 @@
 +    }
 +
 +    /**
-+     * Determines the base experience for a player when they remove this item from a furnace slot.
-+     * This number must be between 0 and 1 for it to be valid.
-+     * This number will be multiplied by the stack size to get the total experience.
-+     *
-+     * @param item The item stack the player is picking up.
-+     * @return The amount to award for each item.
-+     */
-+    public float getSmeltingExperience(ItemStack item)
-+    {
-+        return -1; //-1 will default to the old lookups.
-+    }
-+
-+    /**
 +     *
 +     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
 +     *
