@@ -853,6 +853,14 @@ public class GameData {
             if (itemId != idHint) throw new IllegalStateException(String.format("ItemBlock at block id %d insertion failed, got id %d.", idHint, itemId));
             verifyItemBlockName((ItemBlock) item);
         }
+        
+        // handle substitution for the item
+        if (getMain().itemSubstitutions.containsKey(name))
+        {
+            Item substitute = getMain().itemSubstitutions.get(name);
+            ((RegistryDelegate.Delegate<Item>) item.delegate).changeReference(substitute); // original delegate has wrong reference
+            ((RegistryDelegate.Delegate<Item>) substitute.delegate).setName(name); // substitute has wrong name
+        }
 
         // block the Block Registry slot with the same id
         useSlot(itemId);
@@ -897,6 +905,14 @@ public class GameData {
         {
             if (blockId != idHint) throw new IllegalStateException(String.format("Block at itemblock id %d insertion failed, got id %d.", idHint, blockId));
             verifyItemBlockName(itemBlock);
+        }
+        
+        // handle substitution for the block
+        if (getMain().blockSubstitutions.containsKey(name))
+        {
+            Block substitute = getMain().blockSubstitutions.get(name);
+            ((RegistryDelegate.Delegate<Block>) block.delegate).changeReference(substitute); // original delegate has wrong reference
+            ((RegistryDelegate.Delegate<Block>) substitute.delegate).setName(name); // substitute has wrong name
         }
 
         useSlot(blockId);
@@ -1002,7 +1018,7 @@ public class GameData {
             boolean isBlock = pass == 0;
             String type = isBlock ? "block" : "item";
             FMLControlledNamespacedRegistry<?> registry = isBlock ? iBlockRegistry : iItemRegistry;
-            registry.validateContent((isBlock ? MAX_BLOCK_ID : MAX_ITEM_ID), type, availabilityMap, blockedIds, iBlockRegistry);
+            registry.validateContent((isBlock ? MAX_BLOCK_ID : MAX_ITEM_ID), type, availabilityMap, blockedIds, iBlockRegistry, iItemRegistry);
         }
 
         FMLLog.fine("Registry consistency check successful");
