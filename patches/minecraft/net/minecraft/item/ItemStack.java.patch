@@ -186,6 +186,15 @@
  
          if (this.field_77990_d != null)
          {
+@@ -344,7 +368,7 @@
+ 
+     public static boolean func_77970_a(ItemStack p_77970_0_, ItemStack p_77970_1_)
+     {
+-        return p_77970_0_.func_190926_b() && p_77970_1_.func_190926_b() ? true : (!p_77970_0_.func_190926_b() && !p_77970_1_.func_190926_b() ? (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null ? false : p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) : false);
++        return p_77970_0_.func_190926_b() && p_77970_1_.func_190926_b() ? true : (!p_77970_0_.func_190926_b() && !p_77970_1_.func_190926_b() ? (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null ? false : (p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) && p_77970_0_.areCapsCompatible(p_77970_1_)) : false);
+     }
+ 
+     public static boolean func_77989_b(ItemStack p_77989_0_, ItemStack p_77989_1_)
 @@ -758,6 +782,7 @@
              }
          }
