@@ -4,7 +4,7 @@
                          {
                              pathnodetype = PathNodeType.DANGER_FIRE;
                          }
-+                        else if(block1.isBurning(p_186330_1_, blockpos$pooledmutableblockpos.func_181079_c(j + p_186330_2_, p_186330_3_, i + p_186330_4_))) pathnodetype = PathNodeType.DAMAGE_FIRE;
++                        else if(block1.isBurning(p_186330_1_, blockpos$pooledmutableblockpos.func_181079_c(j + p_186330_2_, p_186330_3_, i + p_186330_4_))) pathnodetype = PathNodeType.DANGER_FIRE;
                      }
                  }
              }
