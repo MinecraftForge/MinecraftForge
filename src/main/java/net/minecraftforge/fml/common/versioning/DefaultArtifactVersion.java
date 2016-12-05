@@ -21,7 +21,6 @@ package net.minecraftforge.fml.common.versioning;
 
 public class DefaultArtifactVersion implements ArtifactVersion
 {
-
     private ComparableVersion comparableVersion;
     private String label;
     private boolean unbounded;
@@ -71,7 +70,7 @@ public class DefaultArtifactVersion implements ArtifactVersion
     @Override
     public boolean containsVersion(ArtifactVersion source)
     {
-        if (!source.getLabel().equals(getLabel()))
+        if (source.getLabel() != null && !source.getLabel().equals(getLabel()))
         {
             return false;
         }
