@@ -55,3 +55,5 @@ net/minecraft/world/storage/loot/LootEntry.<init>(II[Lnet/minecraft/world/storag
 net/minecraft/world/storage/loot/LootEntryItem.<init>(Lnet/minecraft/item/Item;II[Lnet/minecraft/world/storage/loot/functions/LootFunction;[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46644_1_,p_i46644_2_,p_i46644_3_,p_i46644_4_,p_i46644_5_,entryName
 net/minecraft/world/storage/loot/LootEntryTable.<init>(Lnet/minecraft/util/ResourceLocation;II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46639_1_,p_i46639_2_,p_i46639_3_,p_i46639_4_,entryName
 net/minecraft/world/storage/loot/LootEntryEmpty.<init>(II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46645_1_,p_i46645_2_,p_i46645_3_,entryName
+
+net/minecraft/world/chunk/BlockStateContainer.setBits(IZ)V=|p_186012_1_,forceBits
