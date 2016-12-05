@@ -329,6 +329,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
     private void kickWithMessage(String message)
     {
+        FMLLog.log(Level.ERROR, "Network Disconnect: %s", message);
         final TextComponentString TextComponentString = new TextComponentString(message);
         if (side == Side.CLIENT)
         {
