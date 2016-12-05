@@ -203,6 +203,24 @@
      }
  
      public static boolean func_179545_c(@Nullable ItemStack p_179545_0_, @Nullable ItemStack p_179545_1_)
+@@ -712,7 +739,7 @@
+                 {
+                     Block block = Block.func_149684_b(nbttaglist1.func_150307_f(j1));
+ 
+-                    if (block != null)
++                    if (block != net.minecraft.init.Blocks.field_150350_a)
+                     {
+                         list.add(TextFormatting.DARK_GRAY + block.func_149732_F());
+                     }
+@@ -737,7 +764,7 @@
+                 {
+                     Block block1 = Block.func_149684_b(nbttaglist2.func_150307_f(k1));
+ 
+-                    if (block1 != null)
++                    if (block1 != net.minecraft.init.Blocks.field_150350_a)
+                     {
+                         list.add(TextFormatting.DARK_GRAY + block1.func_149732_F());
+                     }
 @@ -764,6 +791,7 @@
              }
          }
