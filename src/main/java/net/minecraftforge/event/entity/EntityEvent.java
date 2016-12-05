@@ -69,12 +69,11 @@ public class EntityEvent extends Event
 
     /**
      * CanUpdate is fired when an Entity is being created. <br>
-     * This event is fired whenever vanilla Minecraft determines that an entity<br>
-     * cannot update in {@link World#updateEntityWithOptionalForce(net.minecraft.entity.Entity, boolean)} <br>
+     * This event is fired every time an entity tries to update <br>
      * <br>
      * {@link CanUpdate#canUpdate} contains the boolean value of whether this entity can update.<br>
      * If the modder decides that this Entity can be updated, they may change canUpdate to true, <br>
-     * and the entity with then be updated.<br>
+     * and the entity with then be updated, or vice versa.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -82,10 +81,11 @@ public class EntityEvent extends Event
      **/
     public static class CanUpdate extends EntityEvent
     {
-        private boolean canUpdate = false;
-        public CanUpdate(Entity entity)
+        private boolean canUpdate;
+        public CanUpdate(Entity entity, boolean canUpdate)
         {
             super(entity);
+            this.canUpdate = canUpdate;
         }
 
         public boolean getCanUpdate()

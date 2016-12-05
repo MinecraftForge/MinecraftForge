@@ -384,9 +384,9 @@ public class ForgeEventFactory
         return null;
     }
 
-    public static boolean canEntityUpdate(Entity entity)
+    public static boolean canEntityUpdate(Entity entity, boolean canUpdate)
     {
-        EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(entity);
+        EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(entity, canUpdate);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getCanUpdate();
     }
