@@ -821,7 +821,30 @@
          {
              BlockPos blockpos = p_175666_1_.func_177972_a(enumfacing);
  
-@@ -3621,6 +3816,115 @@
+@@ -3544,18 +3739,14 @@
+             {
+                 IBlockState iblockstate = this.func_180495_p(blockpos);
+ 
+-                if (Blocks.field_150441_bU.func_185547_C(iblockstate))
++                iblockstate.func_177230_c().onNeighborChange(this, blockpos, p_175666_1_);
++                if (iblockstate.func_177230_c().isNormalCube(iblockstate, this, blockpos))
+                 {
+-                    iblockstate.func_189546_a(this, blockpos, p_175666_2_, p_175666_1_);
+-                }
+-                else if (iblockstate.func_185915_l())
+-                {
+                     blockpos = blockpos.func_177972_a(enumfacing);
+                     iblockstate = this.func_180495_p(blockpos);
+-
+-                    if (Blocks.field_150441_bU.func_185547_C(iblockstate))
++                    if (iblockstate.func_177230_c().getWeakChanges(this, blockpos))
+                     {
+-                        iblockstate.func_189546_a(this, blockpos, p_175666_2_, p_175666_1_);
++                        iblockstate.func_177230_c().onNeighborChange(this, blockpos, p_175666_1_);
+                     }
+                 }
+             }
+@@ -3621,6 +3812,115 @@
          return i >= -128 && i <= 128 && j >= -128 && j <= 128;
      }
  
