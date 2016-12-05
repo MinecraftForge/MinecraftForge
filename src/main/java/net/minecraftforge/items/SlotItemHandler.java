@@ -88,6 +88,12 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
+    public int getSlotStackLimit()
+    {
+        return this.itemHandler.getSlotLimit(this.index);
+    }
+
+    @Override
     public int getItemStackLimit(@Nonnull ItemStack stack)
     {
         ItemStack maxAdd = stack.copy();

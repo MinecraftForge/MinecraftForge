@@ -1,6 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Container.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Container.java
-@@ -708,7 +708,7 @@
+@@ -578,18 +578,19 @@
+                 if (!itemstack.func_190926_b() && itemstack.func_77973_b() == p_75135_1_.func_77973_b() && (!p_75135_1_.func_77981_g() || p_75135_1_.func_77960_j() == itemstack.func_77960_j()) && ItemStack.func_77970_a(p_75135_1_, itemstack))
+                 {
+                     int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
++                    int maxSize = Math.min(slot.func_75219_a(), p_75135_1_.func_77976_d());
+ 
+-                    if (j <= p_75135_1_.func_77976_d())
++                    if (j <= maxSize)
+                     {
+                         p_75135_1_.func_190920_e(0);
+                         itemstack.func_190920_e(j);
+                         slot.func_75218_e();
+                         flag = true;
+                     }
+-                    else if (itemstack.func_190916_E() < p_75135_1_.func_77976_d())
++                    else if (itemstack.func_190916_E() < maxSize)
+                     {
+-                        p_75135_1_.func_190918_g(p_75135_1_.func_77976_d() - itemstack.func_190916_E());
+-                        itemstack.func_190920_e(p_75135_1_.func_77976_d());
++                        p_75135_1_.func_190918_g(maxSize - itemstack.func_190916_E());
++                        itemstack.func_190920_e(maxSize);
+                         slot.func_75218_e();
+                         flag = true;
+                     }
+@@ -708,7 +709,7 @@
                  p_94525_2_.func_190920_e(1);
                  break;
              case 2:
