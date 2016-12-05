@@ -1,6 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Container.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Container.java
-@@ -650,7 +650,7 @@
+@@ -606,18 +606,19 @@
+                 if (itemstack != null && func_184997_a(p_75135_1_, itemstack))
+                 {
+                     int j = itemstack.field_77994_a + p_75135_1_.field_77994_a;
++                    int maxSize = Math.min(slot.func_75219_a(), p_75135_1_.func_77976_d());
+ 
+-                    if (j <= p_75135_1_.func_77976_d())
++                    if (j <= maxSize)
+                     {
+                         p_75135_1_.field_77994_a = 0;
+                         itemstack.field_77994_a = j;
+                         slot.func_75218_e();
+                         flag = true;
+                     }
+-                    else if (itemstack.field_77994_a < p_75135_1_.func_77976_d())
++                    else if (itemstack.field_77994_a < maxSize)
+                     {
+-                        p_75135_1_.field_77994_a -= p_75135_1_.func_77976_d() - itemstack.field_77994_a;
+-                        itemstack.field_77994_a = p_75135_1_.func_77976_d();
++                        p_75135_1_.field_77994_a -= maxSize - itemstack.field_77994_a;
++                        itemstack.field_77994_a = maxSize;
+                         slot.func_75218_e();
+                         flag = true;
+                     }
+@@ -650,7 +651,7 @@
                  Slot slot1 = (Slot)this.field_75151_b.get(i);
                  ItemStack itemstack1 = slot1.func_75211_c();
  
@@ -9,7 +33,7 @@
                  {
                      slot1.func_75215_d(p_75135_1_.func_77946_l());
                      slot1.func_75218_e();
-@@ -728,7 +728,7 @@
+@@ -728,7 +729,7 @@
                  p_94525_2_.field_77994_a = 1;
                  break;
              case 2:
