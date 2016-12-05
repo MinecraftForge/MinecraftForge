@@ -59,7 +59,7 @@ public class VanillaInventoryCodeHooks
                 for (int j = 0; j < dest.getSizeInventory(); j++)
                 {
                     ItemStack destStack = dest.getStackInSlot(j);
-                    if (destStack.func_190926_b() || destStack.func_190916_E() < destStack.getMaxStackSize() && destStack.func_190916_E() < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack))
+                    if (dest.isItemValidForSlot(j, extractItem) && (destStack.func_190926_b() || destStack.func_190916_E() < destStack.getMaxStackSize() && destStack.func_190916_E() < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack)))
                     {
                         extractItem = handler.extractItem(i, 1, false);
                         if (destStack.func_190926_b())
