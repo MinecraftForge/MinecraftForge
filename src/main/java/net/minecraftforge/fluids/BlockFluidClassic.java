@@ -359,6 +359,20 @@ public class BlockFluidClassic extends BlockFluidBase
 
     /* IFluidBlock */
     @Override
+    public int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, boolean doPlace)
+    {
+        if (fluidStack.amount < Fluid.BUCKET_VOLUME)
+        {
+            return 0;
+        }
+        if (doPlace)
+        {
+            world.setBlockState(pos, this.getDefaultState(), 11);
+        }
+        return Fluid.BUCKET_VOLUME;
+    }
+
+    @Override
     public FluidStack drain(World world, BlockPos pos, boolean doDrain)
     {
         if (!isSourceBlock(world, pos))

@@ -177,14 +177,15 @@ public class UniversalBucket extends Item
             if (player.canPlayerEdit(targetPos, mop.sideHit, itemstack))
             {
                 // try placing liquid
-                if (FluidUtil.tryPlaceFluid(player, player.getEntityWorld(), fluidStack, targetPos)
-                        && !player.capabilities.isCreativeMode)
+                FluidActionResult result = FluidUtil.tryPlaceFluid(player, world, targetPos, itemstack, fluidStack);
+                if (result.isSuccess() && !player.capabilities.isCreativeMode)
                 {
                     // success!
                     player.addStat(StatList.getObjectUseStats(this));
 
                     itemstack.func_190918_g(1);
-                    ItemStack emptyStack = !getEmpty().func_190926_b() ? getEmpty().copy() : new ItemStack(this);
+                    ItemStack drained = result.getResult();
+                    ItemStack emptyStack = !drained.func_190926_b() ? drained.copy() : new ItemStack(this);
 
                     // check whether we replace the item or add the empty one to the inventory
                     if (itemstack.func_190926_b())
