@@ -48,7 +48,6 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent.LeftClickBlock event)
     {
-        if (event.getItemStack().func_190926_b()) return;
         if (event.getItemStack().getItem() != Items.STICK) return;
 
         // This is just a example of how to interact with the TE, note the strong type binding that getCapability has
@@ -71,7 +70,6 @@ public class TestCapabilityMod
     public void onInteractItem(PlayerInteractEvent.RightClickItem event)
     {
         if (!event.getEntityPlayer().isSneaking()) return;
-        if (event.getItemStack().func_190926_b()) return;
         if (event.getItemStack().getItem() != Items.STICK) return;
 
         if (event.getItemStack().hasCapability(TEST_CAP, null))
@@ -154,7 +152,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onItemLoad(AttachCapabilitiesEvent.Item event)
     {
-        if (!event.getItemStack().func_190926_b() && event.getItemStack().getItem() == Items.STICK)
+        if (event.getItemStack().getItem() == Items.STICK)
             event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider(event.getItemStack()));
     }
 
