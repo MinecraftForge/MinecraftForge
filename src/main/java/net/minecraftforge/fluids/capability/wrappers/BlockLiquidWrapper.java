@@ -26,10 +26,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -40,7 +39,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 /**
  * Wrapper to handle vanilla Water or Lava as an IFluidHandler.
- * Methods are modeled after {@link net.minecraft.item.ItemBucket#onItemRightClick(ItemStack, World, EntityPlayer, EnumHand)}
+ * Methods are modeled after {@link ItemBucket#onItemRightClick(World, EntityPlayer, EnumHand)}
  */
 public class BlockLiquidWrapper implements IFluidHandler
 {
@@ -71,45 +70,19 @@ public class BlockLiquidWrapper implements IFluidHandler
     public int fill(FluidStack resource, boolean doFill)
     {
         // NOTE: "Filling" means placement in this context!
-        Material material = blockLiquid.getDefaultState().getMaterial();
-        BlockLiquid flowingBlock = BlockLiquid.getFlowingBlock(material);
-        IBlockState existing = world.getBlockState(blockPos);
-        float quantaAmount = Fluid.BUCKET_VOLUME / 8f;
-        // If the stack contains more available fluid than the full source block,
-        // set a source block
-        int closest = Fluid.BUCKET_VOLUME;
-        int quanta = 8;
         if (resource.amount < Fluid.BUCKET_VOLUME)
         {
-            // For Vanilla liquids, only treat lava blocks like finite liquids
-            if (material == Material.LAVA)
-            {
-                // Figure out maximum level to match stack amount
-                closest = MathHelper.floor_float(quantaAmount * MathHelper.floor_float(resource.amount / quantaAmount));
-                quanta = MathHelper.floor_float(closest / quantaAmount);
-            }
-            else
-            {
-                quanta = 0;
-            }
-        }
-        if ((existing.getBlock() == blockLiquid || existing.getBlock() == flowingBlock) && material == Material.LAVA)
-        {
-            int existingQuanta = 8 - existing.getValue(BlockLiquid.LEVEL);
-            int missingQuanta = 8 - existingQuanta;
-            closest = Math.min(closest, MathHelper.floor_float(missingQuanta * quantaAmount));
-            quanta = Math.min(quanta + existingQuanta, 8);
-        }
-        // If too little (or too much, technically impossible) fluid is to be placed, abort
-        if (quanta < 1 || quanta > 8)
             return 0;
+        }
 
         if (doFill)
         {
-            world.setBlockState(blockPos, flowingBlock.getDefaultState().withProperty(BlockLiquid.LEVEL, 8 - quanta), 11);
+            Material material = blockLiquid.getDefaultState().getMaterial();
+            BlockLiquid block = BlockLiquid.getStaticBlock(material);
+            world.setBlockState(blockPos, block.getDefaultState().withProperty(BlockLiquid.LEVEL, 0), 11);
         }
 
-        return closest;
+        return Fluid.BUCKET_VOLUME;
     }
 
     @Nullable
