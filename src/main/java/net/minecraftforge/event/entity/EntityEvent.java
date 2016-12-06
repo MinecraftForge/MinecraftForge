@@ -82,10 +82,11 @@ public class EntityEvent extends Event
     public static class CanUpdate extends EntityEvent
     {
         private boolean canUpdate;
+        public final boolean canUpdateOriginal;
         public CanUpdate(Entity entity, boolean canUpdate)
         {
             super(entity);
-            this.canUpdate = canUpdate;
+            this.canUpdate = this.canUpdateOriginal = canUpdate;
         }
 
         public boolean getCanUpdate()
