@@ -30,6 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.SetMultimap;
 
 /**
  * @author cpw
@@ -40,13 +41,31 @@ public class ProxyInjector
     public static void inject(ModContainer mod, ASMDataTable data, Side side, ILanguageAdapter languageAdapter)
     {
         FMLLog.fine("Attempting to inject @SidedProxy classes into %s", mod.getModId());
-        Set<ASMData> targets = data.getAnnotationsFor(mod).get(SidedProxy.class.getName());
+        SetMultimap<String, ASMData> modData = data.getAnnotationsFor(mod);
+        Set<ASMData> mods = modData.get(Mod.class.getName());
+        Set<ASMData> targets = modData.get(SidedProxy.class.getName());
         ClassLoader mcl = Loader.instance().getModClassLoader();
 
         for (ASMData targ : targets)
         {
             try
             {
+                String amodid = (String)targ.getAnnotationInfo().get("modid");
+                if (Strings.isNullOrEmpty(amodid))
+                {
+                    amodid = ASMDataTable.getOwnerModID(mods, targ);
+                    if (Strings.isNullOrEmpty(amodid))
+                    {
+                        FMLLog.bigWarning("Could not determine owning mod for @SidedProxy on %s for mod %s", targ.getClassName(), mod.getModId());
+                        continue;
+                    }
+                }
+                if (!mod.getModId().equals(amodid))
+                {
+                    FMLLog.fine("Skipping proxy injection for %s.%s since it is not for mod %s", targ.getClassName(), targ.getObjectName(), mod.getModId());
+                    continue;
+                }
+
                 Class<?> proxyTarget = Class.forName(targ.getClassName(), true, mcl);
                 Field target = proxyTarget.getDeclaredField(targ.getObjectName());
                 if (target == null)
@@ -58,11 +77,6 @@ public class ProxyInjector
                 target.setAccessible(true);
 
                 SidedProxy annotation = target.getAnnotation(SidedProxy.class);
-                if (!Strings.isNullOrEmpty(annotation.modId()) && !annotation.modId().equals(mod.getModId()))
-                {
-                    FMLLog.fine("Skipping proxy injection for %s.%s since it is not for mod %s", targ.getClassName(), targ.getObjectName(), mod.getModId());
-                    continue;
-                }
                 String targetType = side.isClient() ? annotation.clientSide() : annotation.serverSide();
                 if(targetType.equals(""))
                 {

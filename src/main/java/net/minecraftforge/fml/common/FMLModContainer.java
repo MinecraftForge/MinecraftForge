@@ -435,11 +435,27 @@ public class FMLModContainer implements ModContainer
 
     private void parseSimpleFieldAnnotation(SetMultimap<String, ASMData> annotations, String annotationClassName, Function<ModContainer, Object> retriever) throws IllegalAccessException
     {
+        Set<ASMDataTable.ASMData> mods = annotations.get(Mod.class.getName());
         String[] annName = annotationClassName.split("\\.");
         String annotationName = annName[annName.length - 1];
         for (ASMData targets : annotations.get(annotationClassName))
         {
             String targetMod = (String)targets.getAnnotationInfo().get("value");
+            String owner = (String)targets.getAnnotationInfo().get("owner");
+            if (Strings.isNullOrEmpty(owner))
+            {
+                owner = ASMDataTable.getOwnerModID(mods, targets);
+                if (Strings.isNullOrEmpty(owner))
+                {
+                    FMLLog.bigWarning("Could not determine owning mod for @%s on %s for mod %s", annotationClassName, targets.getClassName(), this.getModId());
+                    continue;
+                }
+            }
+            if (!this.getModId().equals(owner))
+            {
+                FMLLog.fine("Skipping @%s injection for %s.%s since it is not for mod %s", annotationClassName, targets.getClassName(), targets.getObjectName(), this.getModId());
+                continue;
+            }
             Field f = null;
             Object injectedMod = null;
             ModContainer mc = this;

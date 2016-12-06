@@ -44,7 +44,7 @@ public class ObjectHolderTest
         }
     }
 
-    @Mod.EventBusSubscriber
+    @Mod.EventBusSubscriber(modid = MODID)
     public static class Registration {
         @SubscribeEvent
         public static void newRegistry(RegistryEvent.NewRegistry event) {
