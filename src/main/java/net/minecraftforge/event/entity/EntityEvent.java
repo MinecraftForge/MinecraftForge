@@ -86,12 +86,17 @@ public class EntityEvent extends Event
         public CanUpdate(Entity entity, boolean canUpdate)
         {
             super(entity);
-            this.canUpdate = this.canUpdateOriginal = canUpdate;
+            this.canUpdate = canUpdate;
+            this.canUpdateOriginal = canUpdate;
+        }
+        
+        public boolean getCanUpdateOriginal(){
+            return canUpdateOriginal;
         }
 
         public boolean getCanUpdate()
         {
-            return canUpdateOriginal;
+            return canUpdate;
         }
 
         public void setCanUpdate(boolean canUpdate)
