@@ -204,15 +204,15 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     }
 
     @Override
-    public boolean isItemValidForSlot(int slot, ItemStack stack)
+    public boolean acceptsStack(int slot, @Nonnull ItemStack stack)
     {
         return true;
     }
 
     @Override
-    public int getInventoryStackLimit(int slot, ItemStack stack)
+    public int getEffectiveStackLimit(int slot, @Nonnull ItemStack stack)
     {
-        return stack != null ? stack.getMaxStackSize() : 64;
+        return getStackLimit(slot, stack);
     }
 
     protected void validateSlotIndex(int slot)

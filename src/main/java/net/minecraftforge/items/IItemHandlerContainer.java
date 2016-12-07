@@ -20,6 +20,7 @@ package net.minecraftforge.items;
 
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -33,13 +34,13 @@ public interface IItemHandlerContainer
      * @param stack The stack being tested
      * @return True if the provided stack is acceptable
      */
-    boolean isItemValidForSlot(int slot, ItemStack stack);
+    boolean acceptsStack(int slot, @Nonnull ItemStack stack);
 
     /**
-     * Gets the stack size limit allowed by the given slot
+     * Gets the stack size limit allowed by the given slot and the given stack
      * @param slot The slot number within the inventory
      * @param stack An optional stack, for when the limit depends on the input
      * @return The stack size limit
      */
-    int getInventoryStackLimit(int slot, @Nullable ItemStack stack);
+    int getEffectiveStackLimit(int slot, @Nonnull ItemStack stack);
 }

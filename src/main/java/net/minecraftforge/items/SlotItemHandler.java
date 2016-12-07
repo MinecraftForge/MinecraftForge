@@ -49,7 +49,7 @@ public class SlotItemHandler extends Slot
             return false;
         IItemHandlerContainer ihc = getItemHandlerContainer();
         if (ihc != null)
-            return ihc.isItemValidForSlot(slotNumber, stack);
+            return ihc.acceptsStack(slotNumber, stack);
 
         IItemHandler handler = this.getItemHandler();
         ItemStack remainder;
@@ -103,7 +103,7 @@ public class SlotItemHandler extends Slot
     {
         IItemHandlerContainer ihc = getItemHandlerContainer();
         if (ihc != null)
-            return ihc.getInventoryStackLimit(slotNumber, stack);
+            return ihc.getEffectiveStackLimit(slotNumber, stack);
 
 
         ItemStack maxAdd = stack.copy();
