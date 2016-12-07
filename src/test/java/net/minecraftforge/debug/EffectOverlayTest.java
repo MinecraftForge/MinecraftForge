@@ -38,16 +38,16 @@ public class EffectOverlayTest
     @EventHandler
     public void peri(FMLInitializationEvent event)
     {
-        Items.LEATHER_CHESTPLATE.subscribeStackOverlayHandler(testStackHandler);
-        Items.LEATHER_CHESTPLATE.subscribeStackOverlayColor(testStackColor);
-        Items.LEATHER_CHESTPLATE.subscribeArmorOverlayColor(testArmorColor);
-        Items.LEATHER_CHESTPLATE.subscribeArmorOverlayHandler(testArmorHandler);
+        StackOverlayManager.registerHandler(testStackHandler, Items.LEATHER_CHESTPLATE);
+        StackOverlayManager.registerColor(testStackColor, Items.LEATHER_CHESTPLATE);
+        ArmorOverlayManager.registerHandler(testArmorHandler, Items.LEATHER_CHESTPLATE);
+        ArmorOverlayManager.registerColor(testArmorColor, Items.LEATHER_CHESTPLATE);
 
-        Items.LEATHER_BOOTS.subscribeArmorOverlayColor(testArmorColor);
-        Items.LEATHER_BOOTS.subscribeStackOverlayColor(testStackColor);
+        ArmorOverlayManager.registerColor(testArmorColor, Items.LEATHER_BOOTS);
+        StackOverlayManager.registerColor(testStackColor, Items.LEATHER_BOOTS);
 
-        Items.LEATHER_HELMET.subscribeArmorOverlayHandler(testArmorHandler);
-        Items.LEATHER_HELMET.subscribeStackOverlayHandler(testStackHandler);
+        ArmorOverlayManager.registerHandler(testArmorHandler, Items.LEATHER_HELMET);
+        StackOverlayManager.registerHandler(testStackHandler, Items.LEATHER_HELMET);
     }
 
     private static IStackOverlayColor testStackColor = new IStackOverlayColor() {
@@ -61,12 +61,6 @@ public class EffectOverlayTest
         public int getSecondPassColor(ItemStack stack) {
             return 0xFFCC1100;
         }
-
-        @Override
-        public boolean useForStack(ItemStack stack)
-        {
-            return true;
-        }
     };
 
     private static final IStackOverlayHandler testStackHandler = new IStackOverlayHandler()
@@ -75,15 +69,14 @@ public class EffectOverlayTest
         @Override
         public void manageFirstPassVectors(ItemStack stack, long time, float[] scaleVector, float[] rotationVector, float[] translationVector)
         {
-            float scale = (float) Math.sin(time / 150000.0F);
-            scaleVector[0] = scale;
-            scaleVector[1] = scale;
-            scaleVector[2] = scale;
+            scaleVector[0] = 12.0F;
+            scaleVector[1] = 12.0F;
+            scaleVector[2] = 12.0F;
             rotationVector[0] = 150.0F;
             rotationVector[1] = 0.0F;
             rotationVector[2] = 0.0F;
             rotationVector[3] = 1.0F;
-            translationVector[0] = 1.0F;
+            translationVector[0] = (time % 3000L) / 150000.0F;
             translationVector[1] = 0.0F;
             translationVector[2] = 0.0F;
         }
@@ -91,22 +84,14 @@ public class EffectOverlayTest
         @Override
         public void manageSecondPassVectors(ItemStack stack, long time, float[] scaleVector, float[] rotationVector, float[] translationVector)
         {
-            float scale = (float) Math.cos(time / -177984.0F);
-            scaleVector[0] = scale;
-            scaleVector[1] = scale;
             rotationVector[0] = 190.0F;
+            translationVector[0] = (time % 3873L) / -177984.0F;
         }
 
         @Override
         public ResourceLocation getOverlayTexture(ItemStack stack)
         {
             return EMBER;
-        }
-
-        @Override
-        public boolean useForStack(ItemStack stack)
-        {
-            return true;
         }
 
     };
@@ -125,19 +110,13 @@ public class EffectOverlayTest
         {
             return 0xCCFF0000;
         }
-
-        @Override
-        public boolean useForStack(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
-        {
-            return true;
-        }
     };
 
     private static final IArmorOverlayHandler testArmorHandler = new IArmorOverlayHandler()
     {
 
         @Override
-        public ResourceLocation getOverlayTexture(ItemStack stack,EntityLivingBase wearer, EntityEquipmentSlot slot)
+        public ResourceLocation getOverlayTexture(ItemStack stack,EntityLivingBase wearer)
         {
             return EMBER;
         }
@@ -161,12 +140,6 @@ public class EffectOverlayTest
         public void manageSecondPassVectors(ItemStack armorStack, EntityLivingBase wearer, EntityEquipmentSlot slot, float time, float[] scaleVector, float[] rotationVector, float[] translationVector)
         {
             translationVector[0] = time * 0.03003F;
-        }
-
-        @Override
-        public boolean useForStack(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
-        {
-            return true;
         }
 
 

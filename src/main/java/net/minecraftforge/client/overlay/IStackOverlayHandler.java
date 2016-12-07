@@ -21,9 +21,6 @@ package net.minecraftforge.client.overlay;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
 
 /**
  * Interface for controlling ItemStack's effect overlay.
@@ -76,13 +73,6 @@ public interface IStackOverlayHandler
      * */
     ResourceLocation getOverlayTexture(ItemStack stack);
 
-    /**
-     * Checks for the first applicable handler when multiple are subscribed to an item.
-     *
-     * @return true to override vanilla/other subscribers' handlers
-     * */
-    boolean useForStack(ItemStack stack);
-
     class Vanilla implements IStackOverlayHandler
     {
 
@@ -116,64 +106,6 @@ public interface IStackOverlayHandler
             return defaultGlint;
         }
 
-        @Override
-        public boolean useForStack(ItemStack stack)
-        {
-            return true;
-        }
-
-    }
-
-    final class SubscriptionWrapper implements IStackOverlayHandler
-    {
-        IStackOverlayHandler[] subscribers;
-
-        IStackOverlayHandler cached;
-
-        public SubscriptionWrapper(IStackOverlayHandler toSubscribe)
-        {
-           subscribers = new IStackOverlayHandler[] {toSubscribe};
-        }
-
-        public void addSubscription(IStackOverlayHandler toSubscribe)
-        {
-            if(Loader.instance().hasReachedState(LoaderState.AVAILABLE)) {
-                FMLLog.bigWarning("Skipping subscription of {} to StackOverlayHandlers because it's too late in the load cycle..", toSubscribe.getClass());
-                return; //Trump bad behavior
-            }
-            IStackOverlayHandler[] grow = new IStackOverlayHandler[subscribers.length + 1];
-            for(int i = 0; i < subscribers.length; i++)
-                grow[i] = subscribers[i];
-            grow[subscribers.length] = toSubscribe;
-            subscribers = grow;
-        }
-
-        @Override
-        public void manageFirstPassVectors(ItemStack stack, long time, float[] scaleVector, float[] rotationVector, float[] translationVector)
-        {
-            cached.manageFirstPassVectors(stack, time, scaleVector, rotationVector, translationVector);
-        }
-
-        @Override
-        public void manageSecondPassVectors(ItemStack stack, long time, float[] scaleVector, float[] rotationVector, float[] translationVector)
-        {
-            cached.manageSecondPassVectors(stack, time, scaleVector, rotationVector, translationVector);
-        }
-
-        @Override
-        public ResourceLocation getOverlayTexture(ItemStack stack)
-        {
-            for(int i = 0; i < subscribers.length; i++)
-                if((cached = subscribers[i]).useForStack(stack))
-                    return cached.getOverlayTexture(stack);
-            return (cached = VANILLA).getOverlayTexture(stack);
-        }
-
-        @Override
-        public boolean useForStack(ItemStack stack)
-        {
-            return true;
-        }
     }
 
 }
