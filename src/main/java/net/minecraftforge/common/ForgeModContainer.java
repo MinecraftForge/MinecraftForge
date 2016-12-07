@@ -104,6 +104,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static double zombieSummonBaseChance = 0.1;
     public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
     public static float zombieBabyChance = 0.05f;
+    public static long dayTicks = 24000L;
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
     public static boolean forgeLightPipelineEnabled = true;
@@ -260,6 +261,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.", 0.0D, 1.0D);
         prop.setLanguageKey("forge.configgui.zombieBabyChance").setRequiresWorldRestart(true);
         zombieBabyChance = (float) prop.getDouble(0.05);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "dayTicks", 24000,
+                "The number of ticks in the day/night cycle.");
+        prop.setLanguageKey("forge.configgui.dayTicks").setRequiresWorldRestart(true);
+        dayTicks = prop.getLong(24000);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", Boolean.TRUE,

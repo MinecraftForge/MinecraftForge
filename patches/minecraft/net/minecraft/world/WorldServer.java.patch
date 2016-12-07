@@ -51,6 +51,17 @@
          return this;
      }
  
+@@ -173,8 +183,8 @@
+         {
+             if (this.func_82736_K().func_82766_b("doDaylightCycle"))
+             {
+-                long i = this.field_72986_A.func_76073_f() + 24000L;
+-                this.field_72986_A.func_76068_b(i - i % 24000L);
++                long i = this.field_72986_A.func_76073_f() + net.minecraftforge.common.ForgeModContainer.dayTicks;
++                this.field_72986_A.func_76068_b(i - i % net.minecraftforge.common.ForgeModContainer.dayTicks);
+             }
+ 
+             this.func_73053_d();
 @@ -214,6 +224,10 @@
          this.field_175740_d.func_75528_a();
          this.field_72984_F.func_76318_c("portalForcer");
