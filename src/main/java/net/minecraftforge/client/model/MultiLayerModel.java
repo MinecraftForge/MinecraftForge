@@ -38,6 +38,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.FMLLog;
@@ -248,7 +249,7 @@ public final class MultiLayerModel implements IModelCustomData
 
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals("forge") && (
+            return modelLocation.getResourceDomain().equals(ForgeModContainer.MOD_ID) && (
                 modelLocation.getResourcePath().equals("multi-layer") ||
                 modelLocation.getResourcePath().equals("models/block/multi-layer") ||
                 modelLocation.getResourcePath().equals("models/item/multi-layer"));

@@ -103,7 +103,7 @@ public class DynBucketTest
 
             ModelLoader.setBucketModelDefinition(dynBucket);
 
-            final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation("forge", "dynbottle"), "inventory");
+            final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation(ForgeModContainer.MOD_ID, "dynbottle"), "inventory");
             ModelLoader.setCustomMeshDefinition(dynBottle, new ItemMeshDefinition()
             {
                 @Override

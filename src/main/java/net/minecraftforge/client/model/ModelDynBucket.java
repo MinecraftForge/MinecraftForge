@@ -45,6 +45,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -64,7 +65,7 @@ import com.google.common.collect.Maps;
 
 public final class ModelDynBucket implements IModel, IModelCustomData, IRetexturableModel
 {
-    public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation("forge", "dynbucket"), "inventory");
+    public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation(ForgeModContainer.MOD_ID, "dynbucket"), "inventory");
 
     // minimal Z offset to prevent depth-fighting
     private static final float NORTH_Z_BASE = 7.496f / 16f;
@@ -230,7 +231,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
         @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals("forge") && modelLocation.getResourcePath().contains("forgebucket");
+            return modelLocation.getResourceDomain().equals(ForgeModContainer.MOD_ID) && modelLocation.getResourcePath().contains("forgebucket");
         }
 
         @Override

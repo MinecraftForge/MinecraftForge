@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.CheckResult;
 import net.minecraftforge.fml.common.Loader;
@@ -41,7 +42,7 @@ import net.minecraftforge.fml.common.ModContainer;
 public class GuiSlotModList extends GuiScrollingList
 {
     
-    private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation("forge", "textures/gui/version_check_icons.png");
+    private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeModContainer.MOD_ID, "textures/gui/version_check_icons.png");
     
     private GuiModList parent;
     private ArrayList<ModContainer> mods;

@@ -494,7 +494,7 @@ public class ForgeChunkManager
             {
                 NBTTagCompound ticketHolder = ticketList.getCompoundTagAt(i);
                 String modId = ticketHolder.getString("Owner");
-                boolean isPlayer = "forge".equals(modId);
+                boolean isPlayer = ForgeModContainer.MOD_ID.equals(modId);
 
                 if (!isPlayer && !Loader.isModLoaded(modId))
                 {
@@ -600,7 +600,7 @@ public class ForgeChunkManager
                     tickets = orderedLoadingCallback.playerTicketsLoaded(ImmutableListMultimap.copyOf(tickets), world);
                     playerTickets.putAll(tickets);
                 }
-                ForgeChunkManager.tickets.get(world).putAll("forge", tickets.values());
+                ForgeChunkManager.tickets.get(world).putAll(ForgeModContainer.MOD_ID, tickets.values());
                 loadingCallback.ticketsLoaded(ImmutableList.copyOf(tickets.values()), world);
             }
         }
@@ -702,7 +702,7 @@ public class ForgeChunkManager
         }
         Ticket ticket = new Ticket(mc.getModId(),type,world,player);
         playerTickets.put(player, ticket);
-        tickets.get(world).put("forge", ticket);
+        tickets.get(world).put(ForgeModContainer.MOD_ID, ticket);
         return ticket;
     }
     /**
@@ -770,7 +770,7 @@ public class ForgeChunkManager
         if (ticket.isPlayerTicket())
         {
             playerTickets.remove(ticket.player, ticket);
-            tickets.get(ticket.world).remove("forge",ticket);
+            tickets.get(ticket.world).remove(ForgeModContainer.MOD_ID, ticket);
         }
         else
         {
@@ -856,7 +856,7 @@ public class ForgeChunkManager
         chunkConstraints.clear();
         for (String mod : config.getCategoryNames())
         {
-            if (mod.equals("forge") || mod.equals("defaults"))
+            if (mod.equals(ForgeModContainer.MOD_ID) || mod.equals("defaults"))
             {
                 continue;
             }
@@ -1061,18 +1061,18 @@ public class ForgeChunkManager
 
         config.setCategoryPropertyOrder("defaults", propOrder);
 
-        config.addCustomCategoryComment("forge", "Sample mod specific control section.\n" +
+        config.addCustomCategoryComment(ForgeModContainer.MOD_ID, "Sample mod specific control section.\n" +
                 "Copy this section and rename the with the modid for the mod you wish to override.\n" +
                 "A value of zero in either entry effectively disables any chunkloading capabilities\n" +
                 "for that mod");
 
-        temp = config.get("forge", "maximumTicketCount", 200);
+        temp = config.get(ForgeModContainer.MOD_ID, "maximumTicketCount", 200);
         temp.setComment("Maximum ticket count for the mod. Zero disables chunkloading capabilities.");
-        temp = config.get("forge", "maximumChunksPerTicket", 25);
+        temp = config.get(ForgeModContainer.MOD_ID, "maximumChunksPerTicket", 25);
         temp.setComment("Maximum chunks per ticket for the mod.");
         for (String mod : config.getCategoryNames())
         {
-            if (mod.equals("forge") || mod.equals("defaults"))
+            if (mod.equals(ForgeModContainer.MOD_ID) || mod.equals("defaults"))
             {
                 continue;
             }
@@ -1101,7 +1101,7 @@ public class ForgeChunkManager
         List<ConfigCategory> list = new ArrayList<ConfigCategory>();
         for (String mod : config.getCategoryNames())
         {
-            if (mod.equals("forge") || mod.equals("defaults"))
+            if (mod.equals(ForgeModContainer.MOD_ID) || mod.equals("defaults"))
             {
                 continue;
             }

@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -25,10 +26,10 @@ public class PotionRegistryDebug {
 
   @Mod.EventHandler
   public void preInit(FMLPreInitializationEvent event) {
-    Potion forge = new PotionForge(new ResourceLocation("forge", "forge"), false, 0xff00ff); // test automatic id distribution
-    Potion forgy = new PotionForge(new ResourceLocation("forge", "forgy"), true, 0x00ff00); // test that ids above 127 work
-    GameData.getPotionRegistry().register(-1, new ResourceLocation("forge", "forge"), forge); //TODo: Generic this out in GameRegistry, 'RegistryEntry' base type?
-    GameData.getPotionRegistry().register(200, new ResourceLocation("forge", "forgy"), forgy);
+    Potion forge = new PotionForge(new ResourceLocation(ForgeModContainer.MOD_ID, "forge"), false, 0xff00ff); // test automatic id distribution
+    Potion forgy = new PotionForge(new ResourceLocation(ForgeModContainer.MOD_ID, "forgy"), true, 0x00ff00); // test that ids above 127 work
+    GameData.getPotionRegistry().register(-1, new ResourceLocation(ForgeModContainer.MOD_ID, "forge"), forge); //TODo: Generic this out in GameRegistry, 'RegistryEntry' base type?
+    GameData.getPotionRegistry().register(200, new ResourceLocation(ForgeModContainer.MOD_ID, "forgy"), forgy);
 
     Random rand = new Random();
     TIntSet taken = new TIntHashSet(100);
@@ -36,7 +37,7 @@ public class PotionRegistryDebug {
     taken.add(ra);
 
     // a new potion with a random id so that forge has to remap it
-    //new PotionForge(ra, new ResourceLocation("forge", "realRandomPotion"), false, 0x0000ff);
+    //new PotionForge(ra, new ResourceLocation(ForgeModContainer.MOD_ID, "realRandomPotion"), false, 0x0000ff);
 
     for(int i = 0; i < 20; i++) {
       int r = rand.nextInt(200) + 35;
@@ -46,7 +47,7 @@ public class PotionRegistryDebug {
       taken.add(r);
       // this potions will most likely not have the same IDs between server and client.
       // The forge handshake on connect should fix this.
-      //new PotionForge(new ResourceLocation("forge", "randomPotion" + r), false, 0xff00ff);
+      //new PotionForge(new ResourceLocation(ForgeModContainer.MOD_ID, "randomPotion" + r), false, 0xff00ff);
     }
   }
 
