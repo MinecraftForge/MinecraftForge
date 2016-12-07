@@ -12,7 +12,7 @@
          IBlockState iblockstate = p_189553_1_.func_180495_p(blockpos);
          Block block = iblockstate.func_177230_c();
          Material material = iblockstate.func_185904_a();
-+        if(block.isBurning(p_189553_1_, blockpos)) block = Blocks.field_150480_ab; // If the block is burning, make the AI think it is a fire block
++        if(block.isBurning(p_189553_1_, blockpos)) return PathNodeType.DAMAGE_FIRE;
          return material == Material.field_151579_a ? PathNodeType.OPEN : (block != Blocks.field_150415_aT && block != Blocks.field_180400_cw && block != Blocks.field_150392_bi ? (block == Blocks.field_150480_ab ? PathNodeType.DAMAGE_FIRE : (block == Blocks.field_150434_aF ? PathNodeType.DAMAGE_CACTUS : (block instanceof BlockDoor && material == Material.field_151575_d && !((Boolean)iblockstate.func_177229_b(BlockDoor.field_176519_b)).booleanValue() ? PathNodeType.DOOR_WOOD_CLOSED : (block instanceof BlockDoor && material == Material.field_151573_f && !((Boolean)iblockstate.func_177229_b(BlockDoor.field_176519_b)).booleanValue() ? PathNodeType.DOOR_IRON_CLOSED : (block instanceof BlockDoor && ((Boolean)iblockstate.func_177229_b(BlockDoor.field_176519_b)).booleanValue() ? PathNodeType.DOOR_OPEN : (block instanceof BlockRailBase ? PathNodeType.RAIL : (!(block instanceof BlockFence) && !(block instanceof BlockWall) && (!(block instanceof BlockFenceGate) || ((Boolean)iblockstate.func_177229_b(BlockFenceGate.field_176466_a)).booleanValue()) ? (material == Material.field_151586_h ? PathNodeType.WATER : (material == Material.field_151587_i ? PathNodeType.LAVA : (block.func_176205_b(p_189553_1_, blockpos) ? PathNodeType.OPEN : PathNodeType.BLOCKED))) : PathNodeType.FENCE))))))) : PathNodeType.TRAPDOOR);
      }
  }
