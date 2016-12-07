@@ -27,7 +27,7 @@ import java.util.List;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeVersion;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.state.IBlockState;
@@ -426,7 +426,7 @@ public final class ItemLayerModel implements IRetexturableModel
 
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals(ForgeModContainer.MOD_ID) && (
+            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
                 modelLocation.getResourcePath().equals("item-layer") ||
                 modelLocation.getResourcePath().equals("models/block/item-layer") ||
                 modelLocation.getResourcePath().equals("models/item/item-layer"));

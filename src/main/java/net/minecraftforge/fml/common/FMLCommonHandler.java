@@ -55,7 +55,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.model.animation.Animation;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.CompoundDataFixer;
@@ -517,7 +516,7 @@ public class FMLCommonHandler
         modNames.add("fml");
         if (!noForge)
         {
-            modNames.add(ForgeModContainer.MOD_ID);
+            modNames.add(ForgeVersion.MOD_ID);
         }
 
         if (Loader.instance().getFMLBrandingProperties().containsKey("snooperbranding"))

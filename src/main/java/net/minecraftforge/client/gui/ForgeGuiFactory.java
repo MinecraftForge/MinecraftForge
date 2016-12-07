@@ -116,7 +116,7 @@ public class ForgeGuiFactory implements IModGuiFactory
     {
         public ForgeConfigGui(GuiScreen parentScreen)
         {
-            super(parentScreen, getConfigElements(), ForgeModContainer.MOD_ID, false, false, I18n.format("forge.configgui.forgeConfigTitle"));
+            super(parentScreen, getConfigElements(), ForgeVersion.MOD_ID, false, false, I18n.format("forge.configgui.forgeConfigTitle"));
         }
 
         private static List<IConfigElement> getConfigElements()

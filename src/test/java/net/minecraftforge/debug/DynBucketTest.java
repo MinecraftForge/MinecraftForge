@@ -30,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.debug.ModelFluidDebug.TestFluid;
 import net.minecraftforge.debug.ModelFluidDebug.TestGas;
@@ -103,7 +104,7 @@ public class DynBucketTest
 
             ModelLoader.setBucketModelDefinition(dynBucket);
 
-            final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation(ForgeModContainer.MOD_ID, "dynbottle"), "inventory");
+            final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbottle"), "inventory");
             ModelLoader.setCustomMeshDefinition(dynBottle, new ItemMeshDefinition()
             {
                 @Override
