@@ -465,7 +465,7 @@ public class SplashProgress
                 setColor(barColor);
                 drawBox((barWidth - 2) * (usedMemory) / (maxMemory), barHeight - 2); // Step can sometimes be 0.
                 // progress text
-                String progress = "" + usedMemory + "MB / " + maxMemory + "MB";
+                String progress = "" + usedMemory + " MB / " + maxMemory + " MB";
                 glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
                 setColor(fontColor);
                 glScalef(2, 2, 1);
