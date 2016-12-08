@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
@@ -74,8 +75,8 @@ public class ArmorOverlayManager
      * */
     public static boolean applyForgeOverlay(TextureManager textureManager, ItemStack stack, EntityLivingBase wearer, float partialTicks, EntityEquipmentSlot slot, ModelBase model, float swing, float swingScale, float headYaw, float headPitch, float scale)
     {
-        IArmorOverlayHandler currentHandler = stack.getItem().getArmorOverlayHandler(stack);
-        IArmorOverlayColor currentColor = stack.getItem().getArmorOverlayColor(stack);
+        IArmorOverlayHandler currentHandler = ((ItemArmor)stack.getItem()).getArmorOverlayHandler(stack);
+        IArmorOverlayColor currentColor = ((ItemArmor)stack.getItem()).getArmorOverlayColor(stack);
         final float time = wearer.ticksExisted + partialTicks;
         textureManager.bindTexture(currentHandler.getOverlayTexture(stack, wearer));
         GlStateManager.enableBlend();
@@ -180,7 +181,7 @@ public class ArmorOverlayManager
     /**
      * Fallback map lookup for handlers
      * */
-    public static IArmorOverlayHandler getHandler(Item item)
+    public static IArmorOverlayHandler getHandler(ItemArmor item)
     {
         IArmorOverlayHandler entry = handlerMap.get(item.delegate);
         return  entry == null ? IArmorOverlayHandler.VANILLA : entry;
@@ -189,7 +190,7 @@ public class ArmorOverlayManager
     /**
      * Fallback map lookup for colors
      * */
-    public static IArmorOverlayColor getColor(Item item)
+    public static IArmorOverlayColor getColor(ItemArmor item)
     {
         IArmorOverlayColor entry = colorMap.get(item.delegate);
         return entry == null ? IArmorOverlayColor.VANILLA : entry;
