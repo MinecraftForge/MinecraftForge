@@ -64,6 +64,7 @@ import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.asm.FMLSanityChecker;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -474,16 +475,27 @@ public class SplashProgress
                 {
                     memoryBarColor = memoryLowColor;
                 }
+                setColor(memoryLowColor);
+                glPushMatrix();
+                glTranslatef((barWidth - 2) * (totalMemory) / (maxMemory) - 2, 0, 0);
+                drawBox(2, barHeight - 2);
+                glPopMatrix();
                 setColor(memoryBarColor);
-                drawBox((barWidth - 2) * (usedMemory) / (maxMemory), barHeight - 2); // Step can sometimes be 0.
+                drawBox((barWidth - 2) * (usedMemory) / (maxMemory), barHeight - 2);
+
                 // progress text
-                String progress = "" + usedMemory + " MB / " + maxMemory + " MB";
+                String progress = getMemoryString(usedMemory) + " / " + getMemoryString(maxMemory);
                 glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
                 setColor(fontColor);
                 glScalef(2, 2, 1);
                 glEnable(GL_TEXTURE_2D);
                 fontRenderer.drawString(progress, 0, 0, 0x000000);
                 glPopMatrix();
+            }
+
+            private String getMemoryString(int memory)
+            {
+                return StringUtils.leftPad(Integer.toString(memory), 4, ' ') + " MB";
             }
 
             private void setGL()
