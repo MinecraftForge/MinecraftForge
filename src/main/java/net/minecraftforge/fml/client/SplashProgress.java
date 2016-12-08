@@ -103,14 +103,16 @@ public class SplashProgress
 
     private static boolean enabled;
     private static boolean rotate;
-    private static boolean showMemoryWarning;
-    private static int memWarnPercent;
     private static int logoOffset;
     private static int backgroundColor;
     private static int fontColor;
     private static int barBorderColor;
     private static int barColor;
     private static int barBackgroundColor;
+    private static boolean showMemory;
+    private static int memoryGoodColor;
+    private static int memoryWarnColor;
+    private static int memoryLowColor;
     static final Semaphore mutex = new Semaphore(1);
 
     private static String getString(String name, String def)
@@ -168,13 +170,16 @@ public class SplashProgress
         // Optifine authors - add this key to the blackboard if you feel your modifications are now compatible with this code.
         enabled =            getBool("enabled",      defaultEnabled) && ( (!FMLClientHandler.instance().hasOptifine()) || Launch.blackboard.containsKey("optifine.ForgeSplashCompatible"));
         rotate =             getBool("rotate",       false);
+        showMemory =         getBool("showMemory",   true);
         logoOffset =         getInt("logoOffset",    0);
         backgroundColor =    getHex("background",    0xFFFFFF);
         fontColor =          getHex("font",          0x000000);
         barBorderColor =     getHex("barBorder",     0xC0C0C0);
         barColor =           getHex("bar",           0xCB3D35);
         barBackgroundColor = getHex("barBackground", 0xFFFFFF);
-        memWarnPercent     = getInt("memoryWarningPercent", 85);
+        memoryGoodColor =    getHex("memoryGood",    0x78CB34);
+        memoryWarnColor =    getHex("memoryWarn",    0xE6E84A);
+        memoryLowColor =     getHex("memoryLow",     0xE42F2F);
 
         final ResourceLocation fontLoc = new ResourceLocation(getString("fontTexture", "textures/font/ascii.png"));
         final ResourceLocation logoLoc = new ResourceLocation(getString("logoTexture", "textures/gui/title/mojang.png"));
@@ -298,9 +303,14 @@ public class SplashProgress
                     glEnd();
                     glDisable(GL_TEXTURE_2D);
 
-                    // memory usage warning
-                    setColor(fontColor);
-                    drawMemoryWarning();
+                    // memory usage
+                    if (showMemory)
+                    {
+                        glPushMatrix();
+                        glTranslatef(320 - (float) barWidth / 2, 20, 0);
+                        drawMemoryBar();
+                        glPopMatrix();
+                    }
 
                     // bars
                     if(first != null)
@@ -411,6 +421,51 @@ public class SplashProgress
                 drawBox((barWidth - 2) * (b.getStep() + 1) / (b.getSteps() + 1), barHeight - 2); // Step can sometimes be 0.
                 // progress text
                 String progress = "" + b.getStep() + "/" + b.getSteps();
+                glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
+                setColor(fontColor);
+                glScalef(2, 2, 1);
+                glEnable(GL_TEXTURE_2D);
+                fontRenderer.drawString(progress, 0, 0, 0x000000);
+                glPopMatrix();
+            }
+
+            private void drawMemoryBar() {
+                int maxMemory = bytesToMb(Runtime.getRuntime().maxMemory());
+                int totalMemory = bytesToMb(Runtime.getRuntime().totalMemory());
+                int freeMemory = bytesToMb(Runtime.getRuntime().freeMemory());
+                int usedMemory = totalMemory - freeMemory;
+                float usedMemoryPercent = usedMemory / (float) maxMemory;
+
+                glPushMatrix();
+                // title - message
+                setColor(fontColor);
+                glScalef(2, 2, 1);
+                glEnable(GL_TEXTURE_2D);
+                fontRenderer.drawString("Memory Used / Total", 0, 0, 0x000000);
+                glDisable(GL_TEXTURE_2D);
+                glPopMatrix();
+                // border
+                glPushMatrix();
+                glTranslatef(0, textHeight2, 0);
+                setColor(barBorderColor);
+                drawBox(barWidth, barHeight);
+                // interior
+                setColor(backgroundColor);
+                glTranslatef(1, 1, 0);
+                drawBox(barWidth - 2, barHeight - 2);
+                // slidy part
+                int barColor;
+                if (usedMemoryPercent < 0.75f) {
+                    barColor = memoryGoodColor;
+                } else if (usedMemoryPercent < 0.85f) {
+                    barColor = memoryWarnColor;
+                } else {
+                    barColor = memoryLowColor;
+                }
+                setColor(barColor);
+                drawBox((barWidth - 2) * (usedMemory) / (maxMemory), barHeight - 2); // Step can sometimes be 0.
+                // progress text
+                String progress = "" + usedMemory + " Mb / " + maxMemory + "Mb";
                 glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
                 setColor(fontColor);
                 glScalef(2, 2, 1);
@@ -842,47 +897,8 @@ public class SplashProgress
         return mcPack.getInputStream(loc);
     }
 
-    private static void drawMemoryWarning()
+    private static int bytesToMb(long bytes)
     {
-        long maxMemory = Runtime.getRuntime().maxMemory();
-        long totalMemory = Runtime.getRuntime().totalMemory();
-        long freeMemory = Runtime.getRuntime().freeMemory();
-        long usedMemory = totalMemory - freeMemory;
-        long usedMemoryPercent = usedMemory * 100L / maxMemory;
-        if (usedMemoryPercent >= memWarnPercent)
-        {
-            showMemoryWarning = true;
-        }
-
-        if (showMemoryWarning)
-        {
-            glPushMatrix();
-            glScalef(2, 2, 1);
-
-            List<String> list = Lists.newArrayList(
-                    String.format("Memory: % 2d%% %03d/%03dMB", usedMemoryPercent, bytesToMb(usedMemory), bytesToMb(maxMemory)),
-                    String.format("Allocated: % 2d%% %03dMB", totalMemory * 100L / maxMemory, bytesToMb(totalMemory))
-            );
-            for (int i = 0; i < list.size(); ++i)
-            {
-                String s = list.get(i);
-
-                if (!Strings.isNullOrEmpty(s))
-                {
-                    int y = 2 + fontRenderer.FONT_HEIGHT * i;
-                    int x = 160 - (fontRenderer.getStringWidth(s) / 2);
-                    glEnable(GL_TEXTURE_2D);
-                    fontRenderer.drawString(s, x, y, 0x000000);
-                    glDisable(GL_TEXTURE_2D);
-                }
-            }
-
-            glPopMatrix();
-        }
-    }
-
-    private static long bytesToMb(long bytes)
-    {
-        return bytes / 1024L / 1024L;
+        return (int) (bytes / 1024L / 1024L);
     }
 }
