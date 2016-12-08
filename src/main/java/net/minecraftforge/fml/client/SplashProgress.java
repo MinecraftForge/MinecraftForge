@@ -33,7 +33,6 @@ import java.io.PrintWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.IntBuffer;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
@@ -43,8 +42,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -113,6 +110,8 @@ public class SplashProgress
     private static int memoryGoodColor;
     private static int memoryWarnColor;
     private static int memoryLowColor;
+    private static float memoryColorPercent;
+    private static long memoryColorChangeTime;
     static final Semaphore mutex = new Semaphore(1);
 
     private static String getString(String name, String def)
@@ -454,15 +453,28 @@ public class SplashProgress
                 glTranslatef(1, 1, 0);
                 drawBox(barWidth - 2, barHeight - 2);
                 // slidy part
-                int barColor;
-                if (usedMemoryPercent < 0.75f) {
-                    barColor = memoryGoodColor;
-                } else if (usedMemoryPercent < 0.85f) {
-                    barColor = memoryWarnColor;
-                } else {
-                    barColor = memoryLowColor;
+
+                long time = System.currentTimeMillis();
+                if (usedMemoryPercent > memoryColorPercent || (time - memoryColorChangeTime > 1000))
+                {
+                    memoryColorChangeTime = time;
+                    memoryColorPercent = usedMemoryPercent;
                 }
-                setColor(barColor);
+                
+                int memoryBarColor;
+                if (memoryColorPercent < 0.75f)
+                {
+                    memoryBarColor = memoryGoodColor;
+                }
+                else if (memoryColorPercent < 0.85f)
+                {
+                    memoryBarColor = memoryWarnColor;
+                }
+                else
+                {
+                    memoryBarColor = memoryLowColor;
+                }
+                setColor(memoryBarColor);
                 drawBox((barWidth - 2) * (usedMemory) / (maxMemory), barHeight - 2); // Step can sometimes be 0.
                 // progress text
                 String progress = "" + usedMemory + " MB / " + maxMemory + " MB";
