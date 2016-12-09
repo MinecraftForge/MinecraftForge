@@ -128,7 +128,15 @@
                  {
                      IBlockState iblockstate = this.func_180495_p(p_175654_1_);
  
-@@ -587,7 +603,7 @@
+@@ -563,6 +579,7 @@
+ 
+     public void func_180497_b(BlockPos p_180497_1_, Block p_180497_2_, int p_180497_3_, int p_180497_4_)
+     {
++        if (p_180497_2_ == null) return; //Forge: Prevent null blocks from ticking, can happen if blocks are removed in old worlds. TODO: Fix real issue causing block to be null.
+         if (p_180497_1_ instanceof BlockPos.MutableBlockPos || p_180497_1_ instanceof BlockPos.PooledMutableBlockPos)
+         {
+             p_180497_1_ = new BlockPos(p_180497_1_);
+@@ -587,7 +604,7 @@
  
      public void func_72939_s()
      {
@@ -137,7 +145,7 @@
          {
              if (this.field_80004_Q++ >= 300)
              {
-@@ -711,6 +727,9 @@
+@@ -711,6 +728,9 @@
                  {
                      NextTickListEntry nextticklistentry1 = (NextTickListEntry)iterator.next();
                      iterator.remove();
@@ -147,7 +155,7 @@
                      int k = 0;
  
                      if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0), nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0)))
-@@ -837,6 +856,10 @@
+@@ -837,6 +857,10 @@
  
      public boolean func_175660_a(EntityPlayer p_175660_1_, BlockPos p_175660_2_)
      {
@@ -158,7 +166,7 @@
          return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
      }
  
-@@ -902,6 +925,7 @@
+@@ -902,6 +926,7 @@
          }
          else
          {
@@ -166,7 +174,7 @@
              this.field_72987_B = true;
              BiomeProvider biomeprovider = this.field_73011_w.func_177499_m();
              List<Biome> list = biomeprovider.func_76932_a();
-@@ -986,6 +1010,7 @@
+@@ -986,6 +1011,7 @@
              }
  
              chunkproviderserver.func_186027_a(p_73044_1_);
@@ -174,7 +182,7 @@
  
              for (Chunk chunk : Lists.newArrayList(chunkproviderserver.func_189548_a()))
              {
-@@ -1030,6 +1055,7 @@
+@@ -1030,6 +1056,7 @@
          this.field_72986_A.func_176135_e(this.func_175723_af().func_177732_i());
          this.field_73019_z.func_75755_a(this.field_72986_A, this.field_73061_a.func_184103_al().func_72378_q());
          this.field_72988_C.func_75744_a();
@@ -182,7 +190,7 @@
      }
  
      public boolean func_72838_d(Entity p_72838_1_)
-@@ -1041,7 +1067,7 @@
+@@ -1041,7 +1068,7 @@
      {
          for (Entity entity : Lists.newArrayList(p_175650_1_))
          {
@@ -191,7 +199,7 @@
              {
                  this.field_72996_f.add(entity);
                  this.func_72923_a(entity);
-@@ -1122,7 +1148,7 @@
+@@ -1122,7 +1149,7 @@
      {
          if (super.func_72942_c(p_72942_1_))
          {
@@ -200,7 +208,7 @@
              return true;
          }
          else
-@@ -1144,6 +1170,7 @@
+@@ -1144,6 +1171,7 @@
      public Explosion func_72885_a(@Nullable Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
          Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
@@ -208,7 +216,7 @@
          explosion.func_77278_a();
          explosion.func_77279_a(false);
  
-@@ -1189,7 +1216,7 @@
+@@ -1189,7 +1217,7 @@
              {
                  if (this.func_147485_a(blockeventdata))
                  {
@@ -217,7 +225,7 @@
                  }
              }
  
-@@ -1215,27 +1242,31 @@
+@@ -1215,27 +1243,31 @@
  
          if (this.field_73003_n != this.field_73004_o)
          {
@@ -255,7 +263,7 @@
          }
      }
  
-@@ -1314,6 +1345,11 @@
+@@ -1314,6 +1346,11 @@
          return this.field_73061_a.func_152345_ab();
      }
  
