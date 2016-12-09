@@ -13,7 +13,7 @@
          return this.field_135039_a.compareTo(p_compareTo_1_.field_135039_a);
      }
 +
-+    // Forge: add access to Locale so modders can create correct number formatters
++    // Forge: add access to Locale so modders can create correct string and number formatters
 +    private final java.util.Locale javaLocale;
 +    public java.util.Locale getJavaLocale() { return javaLocale; }
  }
