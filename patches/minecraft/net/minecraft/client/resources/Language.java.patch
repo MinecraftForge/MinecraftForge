@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/Language.java
++++ ../src-work/minecraft/net/minecraft/client/resources/Language.java
+@@ -17,6 +17,7 @@
+         this.field_135037_b = p_i1303_2_;
+         this.field_135038_c = p_i1303_3_;
+         this.field_135036_d = p_i1303_4_;
++        this.javaLocale = new java.util.Locale(field_135039_a, field_135037_b);
+     }
+ 
+     public String func_135034_a()
+@@ -48,4 +49,8 @@
+     {
+         return this.field_135039_a.compareTo(p_compareTo_1_.field_135039_a);
+     }
++
++    // Forge: add access to Locale so modders can create correct number formatters
++    private final java.util.Locale javaLocale;
++    public java.util.Locale getJavaLocale() { return javaLocale; }
+ }
