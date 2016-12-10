@@ -345,6 +345,15 @@
          float f = this.func_72826_c(p_72880_1_);
          float f1 = 1.0F - (MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.25F);
          f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
+@@ -1592,7 +1694,7 @@
+             try
+             {
+                 ++entity.field_70173_aa;
+-                entity.func_70071_h_();
++                if (net.minecraftforge.event.ForgeEventFactory.onEntityUpdate(entity)) entity.func_70071_h_();
+             }
+             catch (Throwable throwable2)
+             {
 @@ -1608,6 +1710,12 @@
                      entity.func_85029_a(crashreportcategory);
                  }
@@ -460,13 +469,22 @@
 +        boolean isForced = getPersistentChunks().containsKey(new net.minecraft.util.math.ChunkPos(i >> 4, j >> 4));
 +        int k = isForced ? 0 : 32;
 +        boolean canUpdate = !p_72866_2_ || this.func_175663_a(i - k, 0, j - k, i + k, 0, j + k, true);
-+        canUpdate = net.minecraftforge.event.ForgeEventFactory.canEntityUpdate(p_72866_1_, canUpdate);
++        if (!canUpdate) canUpdate = net.minecraftforge.event.ForgeEventFactory.canEntityUpdate(p_72866_1_);
  
 -        if (!p_72866_2_ || this.func_175663_a(i - 32, 0, j - 32, i + 32, 0, j + 32, true))
 +        if (canUpdate)
          {
              p_72866_1_.field_70142_S = p_72866_1_.field_70165_t;
              p_72866_1_.field_70137_T = p_72866_1_.field_70163_u;
+@@ -1843,7 +1984,7 @@
+                 }
+                 else
+                 {
+-                    p_72866_1_.func_70071_h_();
++                    if (net.minecraftforge.event.ForgeEventFactory.onEntityUpdate(p_72866_1_)) p_72866_1_.func_70071_h_();
+                 }
+             }
+ 
 @@ -2024,6 +2165,11 @@
                              blockpos$pooledmutableblockpos.func_185344_t();
                              return true;

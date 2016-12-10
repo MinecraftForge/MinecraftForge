@@ -384,9 +384,9 @@ public class ForgeEventFactory
         return null;
     }
 
-    public static boolean canEntityUpdate(Entity entity, boolean defaultValue)
+    public static boolean canEntityUpdate(Entity entity)
     {
-        EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(entity, defaultValue);
+        EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(entity);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getCanUpdate();
     }
@@ -637,6 +637,10 @@ public class ForgeEventFactory
 
         Result result = evt.getResult();
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
+    }
+    
+    public static boolean onEntityUpdate(Entity entity) {
+        return !MinecraftForge.EVENT_BUS.post(new EntityEvent.Update(entity));
     }
 
 }
