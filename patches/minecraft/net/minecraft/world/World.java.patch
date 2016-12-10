@@ -350,7 +350,7 @@
              {
                  ++entity.field_70173_aa;
 -                entity.func_70071_h_();
-+                if (net.minecraftforge.event.ForgeEventFactory.onEntityUpdate(entity)) entity.func_70071_h_();
++                net.minecraftforge.event.ForgeEventFactory.onEntityUpdate(entity);
              }
              catch (Throwable throwable2)
              {
@@ -481,7 +481,7 @@
                  else
                  {
 -                    p_72866_1_.func_70071_h_();
-+                    if (net.minecraftforge.event.ForgeEventFactory.onEntityUpdate(p_72866_1_)) p_72866_1_.func_70071_h_();
++                    net.minecraftforge.event.ForgeEventFactory.onEntityUpdate(p_72866_1_);
                  }
              }
  

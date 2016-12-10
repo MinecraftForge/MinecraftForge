@@ -639,8 +639,9 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
     }
     
-    public static boolean onEntityUpdate(Entity entity) {
-        return !MinecraftForge.EVENT_BUS.post(new EntityEvent.Update(entity));
+    public static void onEntityUpdate(Entity entity) {
+        if (!MinecraftForge.EVENT_BUS.post(new EntityEvent.Update(entity)))
+            entity.onUpdate();
     }
 
 }
