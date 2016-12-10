@@ -460,7 +460,7 @@
 +        boolean isForced = getPersistentChunks().containsKey(new net.minecraft.util.math.ChunkPos(i >> 4, j >> 4));
 +        int k = isForced ? 0 : 32;
 +        boolean canUpdate = !p_72866_2_ || this.func_175663_a(i - k, 0, j - k, i + k, 0, j + k, true);
-+        if (!canUpdate) canUpdate = net.minecraftforge.event.ForgeEventFactory.canEntityUpdate(p_72866_1_);
++        canUpdate = net.minecraftforge.event.ForgeEventFactory.canEntityUpdate(p_72866_1_, canUpdate);
  
 -        if (!p_72866_2_ || this.func_175663_a(i - 32, 0, j - 32, i + 32, 0, j + 32, true))
 +        if (canUpdate)
