@@ -63,7 +63,7 @@ public class DifficultyChangeEvent extends Event
 
     public void setDifficulty(@Nonnull EnumDifficulty difficulty)
     {
-        this.difficulty = difficulty;
+        this.difficulty = com.google.common.base.Preconditions.checkNotNull(difficulty);
     }
 
     public EnumDifficulty getDefaultNewDifficulty()
