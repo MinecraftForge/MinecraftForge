@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod(modid = "difficultychangeeventtest", name = "DifficultyChangeEventTest", version = "0.0.0")
 public class DifficultyChangeEventTest
 {
-    private static final boolean ENABLE = true;
+    private static final boolean ENABLE = false;
 
     @EventHandler
     public void init(FMLInitializationEvent event)
