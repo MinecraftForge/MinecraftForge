@@ -217,7 +217,7 @@
 +     */
 +    public int getRespawnDimension(net.minecraft.entity.player.EntityPlayerMP player)
 +    {
-+        return 0;
++        return player.getSpawnDimension();
 +    }
 +
 +    /**

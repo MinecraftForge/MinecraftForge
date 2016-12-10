@@ -103,19 +103,20 @@
  
          this.func_148540_a(new SPacketPlayerListItem(SPacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[] {p_72367_1_}));
      }
-@@ -450,13 +482,23 @@
+@@ -450,13 +482,24 @@
  
      public EntityPlayerMP func_72368_a(EntityPlayerMP p_72368_1_, int p_72368_2_, boolean p_72368_3_)
      {
 +        World world = field_72400_f.func_71218_a(p_72368_2_);
 +        if (world == null)
 +        {
-+            p_72368_2_ = 0;
++            p_72368_2_ = p_72368_1_.getSpawnDimension();
 +        }
 +        else if (!world.field_73011_w.func_76567_e())
 +        {
 +            p_72368_2_ = world.field_73011_w.getRespawnDimension(p_72368_1_);
 +        }
++        if (field_72400_f.func_71218_a(p_72368_2_) == null) p_72368_2_ = 0;
 +
          p_72368_1_.func_71121_q().func_73039_n().func_72787_a(p_72368_1_);
          p_72368_1_.func_71121_q().func_73039_n().func_72790_b(p_72368_1_);
@@ -129,7 +130,7 @@
          p_72368_1_.field_71093_bK = p_72368_2_;
          PlayerInteractionManager playerinteractionmanager;
  
-@@ -472,6 +514,7 @@
+@@ -472,6 +515,7 @@
          EntityPlayerMP entityplayermp = new EntityPlayerMP(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), playerinteractionmanager);
          entityplayermp.field_71135_a = p_72368_1_.field_71135_a;
          entityplayermp.func_71049_a(p_72368_1_, p_72368_3_);
@@ -137,7 +138,7 @@
          entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
          entityplayermp.func_174817_o(p_72368_1_);
          entityplayermp.func_184819_a(p_72368_1_.func_184591_cq());
-@@ -519,6 +562,7 @@
+@@ -519,6 +563,7 @@
          this.field_177454_f.put(entityplayermp.func_110124_au(), entityplayermp);
          entityplayermp.func_71116_b();
          entityplayermp.func_70606_j(entityplayermp.func_110143_aJ());
@@ -145,7 +146,7 @@
          return entityplayermp;
      }
  
-@@ -533,15 +577,20 @@
+@@ -533,15 +578,20 @@
  
      public void func_187242_a(EntityPlayerMP p_187242_1_, int p_187242_2_)
      {
@@ -168,7 +169,7 @@
          this.func_72375_a(p_187242_1_, worldserver);
          p_187242_1_.field_71135_a.func_147364_a(p_187242_1_.field_70165_t, p_187242_1_.field_70163_u, p_187242_1_.field_70161_v, p_187242_1_.field_70177_z, p_187242_1_.field_70125_A);
          p_187242_1_.field_71134_c.func_73080_a(worldserver1);
-@@ -553,17 +602,27 @@
+@@ -553,17 +603,27 @@
          {
              p_187242_1_.field_71135_a.func_147359_a(new SPacketEntityEffect(p_187242_1_.func_145782_y(), potioneffect));
          }
@@ -199,7 +200,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 / 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 / 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -574,7 +633,7 @@
+@@ -574,7 +634,7 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -208,7 +209,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 * 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 * 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -585,7 +644,8 @@
+@@ -585,7 +645,8 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -218,7 +219,7 @@
          {
              BlockPos blockpos;
  
-@@ -620,7 +680,7 @@
+@@ -620,7 +681,7 @@
              if (p_82448_1_.func_70089_S())
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
