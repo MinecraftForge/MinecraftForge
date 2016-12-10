@@ -19,33 +19,40 @@
 
 package net.minecraftforge.event;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
  * DifficultyChangeEvent is fired when difficulty is changing. <br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onDifficultyChange(EnumDifficulty, EnumDifficulty)}.<br>
  * <br>
- * This event is {@link Cancelable}.<br>
- * If this event is canceled, the difficulty is not changed.<br>
+ * This event is not {@link Cancelable}.<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event has a result. {@link HasResult}<br>
+ * ALLOW: final difficulty is given by subscribers.<br>
+ * DEFAULT: final difficulty is the same as difficulty in argument.<br>
+ * DENY: no change.<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
+@HasResult
 public class DifficultyChangeEvent extends Event
 {
     private EnumDifficulty difficulty;
+    private final EnumDifficulty defaultNewDifficulty;
     private final EnumDifficulty oldDifficulty;
 
     public DifficultyChangeEvent(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
     {
         this.difficulty = difficulty;
+        this.defaultNewDifficulty = difficulty;
         this.oldDifficulty = oldDifficulty;
     }
 
@@ -54,11 +61,14 @@ public class DifficultyChangeEvent extends Event
         return difficulty;
     }
 
-    public void setDifficulty(EnumDifficulty difficulty)
+    public void setDifficulty(@Nonnull EnumDifficulty difficulty)
     {
-        if (difficulty == null)
-            return;
         this.difficulty = difficulty;
+    }
+
+    public EnumDifficulty getDefaultNewDifficulty()
+    {
+        return defaultNewDifficulty;
     }
 
     public EnumDifficulty getOldDifficulty()

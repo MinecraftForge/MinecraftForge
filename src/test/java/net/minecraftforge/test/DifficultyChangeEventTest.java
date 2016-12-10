@@ -1,21 +1,18 @@
 package net.minecraftforge.test;
 
+import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import net.minecraft.util.EnumHand;
-import net.minecraft.world.EnumDifficulty;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = "difficultychangeeventtest", name = "DifficultyChangeEventTest", version = "0.0.0")
 public class DifficultyChangeEventTest
 {
-    public static final boolean ENABLE = true;
+    private static final boolean ENABLE = true;
 
     @EventHandler
     public void init(FMLInitializationEvent event)
@@ -27,8 +24,16 @@ public class DifficultyChangeEventTest
     @SubscribeEvent
     public void onDifficultyChange(DifficultyChangeEvent event)
     {
+        if (event.getDifficulty() == EnumDifficulty.EASY)
+        {
+            event.setResult(Result.ALLOW);
+            event.setDifficulty(EnumDifficulty.NORMAL);
+        }
         if (event.getDifficulty() == EnumDifficulty.HARD)
-            event.setDifficulty(EnumDifficulty.PEACEFUL);
-        System.out.println("Difficulty changed from " + event.getOldDifficulty() + " to " + event.getDifficulty());
+        {
+            event.setResult(Result.DENY);
+        }
+        System.out.println("Difficulty changed from " + event.getOldDifficulty() + " to " + (event.getResult() == Result.ALLOW ? event.getDifficulty()
+                : event.getResult() == Result.DENY ? event.getOldDifficulty() : event.getDefaultNewDifficulty()));
     }
 }
