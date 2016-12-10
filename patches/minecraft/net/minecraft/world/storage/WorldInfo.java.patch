@@ -16,6 +16,15 @@
          p_76064_1_.func_74772_a("RandomSeed", this.field_76100_a);
          p_76064_1_.func_74778_a("generatorName", this.field_76098_b.func_77127_a());
          p_76064_1_.func_74768_a("generatorVersion", this.field_76098_b.func_77131_c());
+@@ -709,7 +711,7 @@
+ 
+     public void func_176144_a(EnumDifficulty p_176144_1_)
+     {
+-        this.field_176158_z = p_176144_1_;
++        this.field_176158_z = net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_176144_1_, this.field_176158_z);
+     }
+ 
+     public boolean func_176123_z()
 @@ -807,6 +809,26 @@
          });
      }
