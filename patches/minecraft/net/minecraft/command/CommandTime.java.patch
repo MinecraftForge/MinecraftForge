@@ -5,7 +5,7 @@
                  if ("day".equals(p_184881_3_[1]))
                  {
 -                    i1 = 1000;
-+                    i1 = (int) net.minecraftforge.common.ForgeModContainer.dayTicks / 24;
++                    i1 = Math.round(net.minecraftforge.common.ForgeModContainer.dayTicks / 24.0f);
                  }
                  else if ("night".equals(p_184881_3_[1]))
                  {
