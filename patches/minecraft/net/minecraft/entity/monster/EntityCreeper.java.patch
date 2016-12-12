@@ -14,7 +14,7 @@
              if (p_70645_1_.func_76346_g() instanceof EntitySkeleton)
              {
                  int i = Item.func_150891_b(Items.field_151096_cd);
-@@ -200,6 +203,14 @@
+@@ -200,6 +203,13 @@
                  ((EntityCreeper)p_70645_1_.func_76346_g()).func_175493_co();
                  this.func_70099_a(new ItemStack(Items.field_151144_bL, 1, 4), 0.0F);
              }
@@ -25,7 +25,6 @@
 +                    this.field_70170_p.func_72838_d(entityItem);
 +                }
 +            }
-+            
          }
      }
  
