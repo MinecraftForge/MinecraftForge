@@ -21,17 +21,30 @@ package net.minecraftforge.fml.common.asm.transformers.deobf;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 import org.objectweb.asm.commons.RemappingMethodAdapter;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class FMLRemappingAdapter extends RemappingClassAdapter {
     public FMLRemappingAdapter(ClassVisitor cv)
     {
         super(cv, FMLDeobfuscatingRemapper.INSTANCE);
     }
+
+    // From SpecialSource
+    private static final List<Handle> META_FACTORIES = Arrays.asList(
+            new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
+                    "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"),
+            new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "altMetafactory",
+                    "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;")
+    );
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
@@ -88,6 +101,22 @@ public class FMLRemappingAdapter extends RemappingClassAdapter {
             if (mv != null) {
                 mv.visitFieldInsn(opcode, type, fieldName, newDesc);
             }
+        }
+
+        @Override
+        public void visitInvokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs)
+        {
+            // Partially taken from SpecialSource
+
+            // Special case lambda metaFactory to get new name
+            if (META_FACTORIES.contains(bsm))
+            {
+                String owner = Type.getReturnType(desc).getInternalName();
+                String odesc = ((Type) bsmArgs[0]).getDescriptor(); // First constant argument is "samMethodType - Signature and return type of method to be implemented by the function object."
+                name = remapper.mapMethodName(owner, name, odesc);
+            }
+
+            super.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
         }
     }
 }
