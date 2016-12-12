@@ -133,12 +133,15 @@ public class FMLModContainer implements ModContainer
         {
             throw new IllegalArgumentException("Modid cannot be null or empty");
         }
-        if (modid.length() > 64) {
-            FMLLog.bigWarning("The modid %s is longer than the recommended maximum of 64 characters. Truncation will be enforced in 1.11", modid);
+        if (modid.length() > 64)
+        {
+            FMLLog.bigWarning("The modid %s is longer than the recommended maximum of 64 characters. Truncation is enforced in 1.11", modid);
+            throw new IllegalArgumentException(String.format("The modid %s is longer than the recommended maximum of 64 characters. Truncation is enforced in 1.11", modid));
         }
         if (!modid.equals(modid.toLowerCase(Locale.ENGLISH)))
         {
-            FMLLog.bigWarning("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11", modid);
+            FMLLog.bigWarning("The modid %s is not the same as it's lowercase version. Lowercasing is enforced in 1.11", modid);
+            throw new IllegalArgumentException(String.format("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11", modid));
         }
     }
     private ILanguageAdapter getLanguageAdapter()
