@@ -21,7 +21,7 @@
      {
 -        return this.func_186032_a(p_150808_1_, p_150808_2_, p_150808_3_).func_185891_c();
 +        IBlockState state = this.func_186032_a(p_150808_1_, p_150808_2_, p_150808_3_); //Forge: Can sometimes be called before we are added to the global world list. So use the less accurate one during that. It'll be recalculated later
-+        return this.field_189550_d ? state.func_185891_c() : state.getLightOpacity(this.field_76637_e, new BlockPos(p_150808_1_, p_150808_2_, p_150808_3_));
++        return !this.field_76636_d ? state.func_185891_c() : state.getLightOpacity(this.field_76637_e, new BlockPos(p_150808_1_, p_150808_2_, p_150808_3_));
      }
  
      public IBlockState func_177435_g(BlockPos p_177435_1_)
