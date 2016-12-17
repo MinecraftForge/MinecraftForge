@@ -26,18 +26,18 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @Cancelable
 public class ClientChatSendingEvent extends Event
 {
-    private ITextComponent message;
-    public ClientChatSendingEvent(ITextComponent message)
+    private String message;
+    public ClientChatSendingEvent(String message)
     {
         this.setMessage(message);
     }
 
-    public ITextComponent getMessage()
+    public String getMessage()
     {
         return message;
     }
 
-    public void setMessage(ITextComponent message)
+    public void setMessage(String message)
     {
         this.message = message;
     }
