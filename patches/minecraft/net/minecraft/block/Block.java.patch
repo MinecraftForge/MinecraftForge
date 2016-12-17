@@ -247,7 +247,7 @@
 +     */
 +    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        return state.func_185904_a().func_76218_k() && state.func_185917_h() && !state.func_185897_m();
++        return state.func_185915_l();
 +    }
 +
 +    /**
