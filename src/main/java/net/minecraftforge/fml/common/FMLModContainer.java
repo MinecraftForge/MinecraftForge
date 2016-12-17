@@ -53,6 +53,7 @@ import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 
@@ -300,8 +301,14 @@ public class FMLModContainer implements ModContainer
                 {
                     version = new Properties();
                     FileInputStream fis = new FileInputStream(propsFile);
-                    version.load(fis);
-                    fis.close();
+                    try
+                    {
+                        version.load(fis);
+                    }
+                    finally
+                    {
+                        IOUtils.closeQuietly(fis);
+                    }
                 }
             }
             return version;
