@@ -30,6 +30,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModContainerFactory;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import java.util.regex.Matcher;
@@ -101,16 +102,7 @@ public class JarDiscoverer implements ITypeDiscoverer
         }
         finally
         {
-            if (jar != null)
-            {
-                try
-                {
-                    jar.close();
-                }
-                catch (Exception e)
-                {
-                }
-            }
+            IOUtils.closeQuietly(jar);
         }
         return foundMods;
     }
