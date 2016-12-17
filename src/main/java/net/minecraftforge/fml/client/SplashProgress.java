@@ -64,6 +64,7 @@ import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.asm.FMLSanityChecker;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -106,6 +107,12 @@ public class SplashProgress
     private static int barBorderColor;
     private static int barColor;
     private static int barBackgroundColor;
+    private static boolean showMemory;
+    private static int memoryGoodColor;
+    private static int memoryWarnColor;
+    private static int memoryLowColor;
+    private static float memoryColorPercent;
+    private static long memoryColorChangeTime;
     static final Semaphore mutex = new Semaphore(1);
 
     private static String getString(String name, String def)
@@ -163,12 +170,16 @@ public class SplashProgress
         // Optifine authors - add this key to the blackboard if you feel your modifications are now compatible with this code.
         enabled =            getBool("enabled",      defaultEnabled) && ( (!FMLClientHandler.instance().hasOptifine()) || Launch.blackboard.containsKey("optifine.ForgeSplashCompatible"));
         rotate =             getBool("rotate",       false);
+        showMemory =         getBool("showMemory",   true);
         logoOffset =         getInt("logoOffset",    0);
         backgroundColor =    getHex("background",    0xFFFFFF);
         fontColor =          getHex("font",          0x000000);
         barBorderColor =     getHex("barBorder",     0xC0C0C0);
         barColor =           getHex("bar",           0xCB3D35);
         barBackgroundColor = getHex("barBackground", 0xFFFFFF);
+        memoryGoodColor =    getHex("memoryGood",    0x78CB34);
+        memoryWarnColor =    getHex("memoryWarn",    0xE6E84A);
+        memoryLowColor =     getHex("memoryLow",     0xE42F2F);
 
         final ResourceLocation fontLoc = new ResourceLocation(getString("fontTexture", "textures/font/ascii.png"));
         final ResourceLocation logoLoc = new ResourceLocation(getString("logoTexture", "textures/gui/title/mojang.png"));
@@ -293,6 +304,15 @@ public class SplashProgress
                     glEnd();
                     glDisable(GL_TEXTURE_2D);
 
+                    // memory usage
+                    if (showMemory)
+                    {
+                        glPushMatrix();
+                        glTranslatef(320 - (float) barWidth / 2, 20, 0);
+                        drawMemoryBar();
+                        glPopMatrix();
+                    }
+
                     // bars
                     if(first != null)
                     {
@@ -408,6 +428,75 @@ public class SplashProgress
                 glEnable(GL_TEXTURE_2D);
                 fontRenderer.drawString(progress, 0, 0, 0x000000);
                 glPopMatrix();
+            }
+
+            private void drawMemoryBar() {
+                int maxMemory = bytesToMb(Runtime.getRuntime().maxMemory());
+                int totalMemory = bytesToMb(Runtime.getRuntime().totalMemory());
+                int freeMemory = bytesToMb(Runtime.getRuntime().freeMemory());
+                int usedMemory = totalMemory - freeMemory;
+                float usedMemoryPercent = usedMemory / (float) maxMemory;
+
+                glPushMatrix();
+                // title - message
+                setColor(fontColor);
+                glScalef(2, 2, 1);
+                glEnable(GL_TEXTURE_2D);
+                fontRenderer.drawString("Memory Used / Total", 0, 0, 0x000000);
+                glDisable(GL_TEXTURE_2D);
+                glPopMatrix();
+                // border
+                glPushMatrix();
+                glTranslatef(0, textHeight2, 0);
+                setColor(barBorderColor);
+                drawBox(barWidth, barHeight);
+                // interior
+                setColor(backgroundColor);
+                glTranslatef(1, 1, 0);
+                drawBox(barWidth - 2, barHeight - 2);
+                // slidy part
+
+                long time = System.currentTimeMillis();
+                if (usedMemoryPercent > memoryColorPercent || (time - memoryColorChangeTime > 1000))
+                {
+                    memoryColorChangeTime = time;
+                    memoryColorPercent = usedMemoryPercent;
+                }
+                
+                int memoryBarColor;
+                if (memoryColorPercent < 0.75f)
+                {
+                    memoryBarColor = memoryGoodColor;
+                }
+                else if (memoryColorPercent < 0.85f)
+                {
+                    memoryBarColor = memoryWarnColor;
+                }
+                else
+                {
+                    memoryBarColor = memoryLowColor;
+                }
+                setColor(memoryLowColor);
+                glPushMatrix();
+                glTranslatef((barWidth - 2) * (totalMemory) / (maxMemory) - 2, 0, 0);
+                drawBox(2, barHeight - 2);
+                glPopMatrix();
+                setColor(memoryBarColor);
+                drawBox((barWidth - 2) * (usedMemory) / (maxMemory), barHeight - 2);
+
+                // progress text
+                String progress = getMemoryString(usedMemory) + " / " + getMemoryString(maxMemory);
+                glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
+                setColor(fontColor);
+                glScalef(2, 2, 1);
+                glEnable(GL_TEXTURE_2D);
+                fontRenderer.drawString(progress, 0, 0, 0x000000);
+                glPopMatrix();
+            }
+
+            private String getMemoryString(int memory)
+            {
+                return StringUtils.leftPad(Integer.toString(memory), 4, ' ') + " MB";
             }
 
             private void setGL()
@@ -849,5 +938,10 @@ public class SplashProgress
             return open(fallback, null, true);
         }
         return mcPack.getInputStream(loc);
+    }
+
+    private static int bytesToMb(long bytes)
+    {
+        return (int) (bytes / 1024L / 1024L);
     }
 }
