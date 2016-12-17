@@ -431,7 +431,7 @@
      public boolean func_175700_a(TileEntity p_175700_1_)
      {
 -        boolean flag = this.field_147482_g.add(p_175700_1_);
-+        if (p_175700_1_.func_145831_w() != null) // Forge - set the world early as vanilla doesn't set it until next tick
++        if (p_175700_1_.func_145831_w() != this) // Forge - set the world early as vanilla doesn't set it until next tick
 +            p_175700_1_.func_145834_a(this);
  
 +        List<TileEntity> dest = field_147481_N ? field_147484_a : field_147482_g;
