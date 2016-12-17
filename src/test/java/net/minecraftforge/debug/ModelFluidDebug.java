@@ -12,6 +12,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -32,7 +33,7 @@ public class ModelFluidDebug
     @SidedProxy
     public static CommonProxy proxy;
 
-    public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation("forge", "blocks/milk_still"), new ResourceLocation("forge", "blocks/milk_flow"));
+    public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow"));
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
