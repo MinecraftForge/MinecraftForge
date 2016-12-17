@@ -1,5 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/AbstractHorse.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/AbstractHorse.java
+@@ -604,10 +604,9 @@
+         this.field_110278_bp = 1;
+     }
+ 
+-    public void func_70645_a(DamageSource p_70645_1_)
++    public boolean onDeath(DamageSource cause)
+     {
+-        super.func_70645_a(p_70645_1_);
+-
++        if(super.onDeath(cause)) return true;
+         if (!this.field_70170_p.field_72995_K && this.field_110296_bG != null)
+         {
+             for (int i = 0; i < this.field_110296_bG.func_70302_i_(); ++i)
+@@ -620,6 +619,7 @@
+                 }
+             }
+         }
++        return false;
+     }
+ 
+     public void func_70636_d()
 @@ -981,6 +981,7 @@
          }
  

@@ -56,3 +56,29 @@
                              entityzombie.func_180482_a(this.field_70170_p.func_175649_E(new BlockPos(entityzombie)), (IEntityLivingData)null);
                              this.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
                              entityzombie.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
+@@ -529,13 +541,13 @@
+         return this.func_70631_g_() ? 0.0D : -0.45D;
+     }
+ 
+-    public void func_70645_a(DamageSource p_70645_1_)
++    public boolean onDeath(DamageSource cause)
+     {
+-        super.func_70645_a(p_70645_1_);
++        if(super.onDeath(cause)) return true;
+ 
+-        if (p_70645_1_.func_76346_g() instanceof EntityCreeper)
++        if (cause.func_76346_g() instanceof EntityCreeper)
+         {
+-            EntityCreeper entitycreeper = (EntityCreeper)p_70645_1_.func_76346_g();
++            EntityCreeper entitycreeper = (EntityCreeper)cause.func_76346_g();
+ 
+             if (entitycreeper.func_70830_n() && entitycreeper.func_70650_aV())
+             {
+@@ -548,6 +560,7 @@
+                 }
+             }
+         }
++        return false;
+     }
+ 
+     protected ItemStack func_190732_dj()

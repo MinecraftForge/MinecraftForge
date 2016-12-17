@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityIronGolem.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityIronGolem.java
+@@ -283,13 +283,13 @@
+         }
+     }
+ 
+-    public void func_70645_a(DamageSource p_70645_1_)
++    public boolean onDeath(DamageSource cause)
+     {
+         if (!this.func_70850_q() && this.field_70717_bb != null && this.field_70857_d != null)
+         {
+             this.field_70857_d.func_82688_a(this.field_70717_bb.func_70005_c_(), -5);
+         }
+ 
+-        super.func_70645_a(p_70645_1_);
++        return super.onDeath(cause);
+     }
+ }

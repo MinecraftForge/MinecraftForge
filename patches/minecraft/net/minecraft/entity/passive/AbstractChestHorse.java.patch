@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/AbstractChestHorse.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/AbstractChestHorse.java
+@@ -70,9 +70,9 @@
+         return SoundEvents.field_187582_aw;
+     }
+ 
+-    public void func_70645_a(DamageSource p_70645_1_)
++    public boolean onDeath(DamageSource cause)
+     {
+-        super.func_70645_a(p_70645_1_);
++        if(super.onDeath(cause)) return true;
+ 
+         if (this.func_190695_dh())
+         {
+@@ -83,6 +83,7 @@
+ 
+             this.func_110207_m(false);
+         }
++        return false;
+     }
+ 
+     public static void func_190694_b(DataFixer p_190694_0_, Class<?> p_190694_1_)

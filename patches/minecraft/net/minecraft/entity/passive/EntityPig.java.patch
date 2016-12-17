@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityPig.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityPig.java
+@@ -173,9 +173,9 @@
+         }
+     }
+ 
+-    public void func_70645_a(DamageSource p_70645_1_)
++    public boolean onDeath(DamageSource cause)
+     {
+-        super.func_70645_a(p_70645_1_);
++        if(super.onDeath(cause)) return true;
+ 
+         if (!this.field_70170_p.field_72995_K)
+         {
+@@ -184,6 +184,7 @@
+                 this.func_145779_a(Items.field_151141_av, 1);
+             }
+         }
++        return false;
+     }
+ 
+     @Nullable

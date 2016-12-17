@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/AbstractSkeleton.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/AbstractSkeleton.java
+@@ -157,13 +157,13 @@
+         }
+     }
+ 
+-    public void func_70645_a(DamageSource p_70645_1_)
++    public boolean onDeath(DamageSource cause)
+     {
+-        super.func_70645_a(p_70645_1_);
++        if(super.onDeath(cause)) return true;
+ 
+-        if (p_70645_1_.func_76364_f() instanceof EntityArrow && p_70645_1_.func_76346_g() instanceof EntityPlayer)
++        if (cause.func_76364_f() instanceof EntityArrow && cause.func_76346_g() instanceof EntityPlayer)
+         {
+-            EntityPlayer entityplayer = (EntityPlayer)p_70645_1_.func_76346_g();
++            EntityPlayer entityplayer = (EntityPlayer)cause.func_76346_g();
+             double d0 = entityplayer.field_70165_t - this.field_70165_t;
+             double d1 = entityplayer.field_70161_v - this.field_70161_v;
+ 
+@@ -172,6 +172,7 @@
+                 entityplayer.func_71029_a(AchievementList.field_187994_v);
+             }
+         }
++        return false;
+     }
+ 
+     protected void func_180481_a(DifficultyInstance p_180481_1_)
