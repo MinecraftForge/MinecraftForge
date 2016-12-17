@@ -251,7 +251,7 @@ public class ForgeHooks
         for (int x = 0; x < 9; x++)
         {
             ItemStack stack = player.inventory.getStackInSlot(x);
-            if (stack != null && stack.isItemEqual(result) && ItemStack.areItemStackTagsEqual(stack, result))
+            if (stack != null && stack.isItemEqual(result) && ItemStack.areItemStackTagsEqual(stack, result) && !MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerChangeCurrentItemEvent(player, x)))
             {
                 player.inventory.currentItem = x;
                 return true;
@@ -264,7 +264,7 @@ public class ForgeHooks
         }
 
         int slot = player.inventory.getFirstEmptyStack();
-        if (slot < 0 || slot >= 9)
+        if ((slot < 0 || slot >= 9) && !MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerChangeCurrentItemEvent(player, slot)))
         {
             slot = player.inventory.currentItem;
         }

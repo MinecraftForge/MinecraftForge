@@ -151,7 +151,21 @@
              {
                  this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
              }
-@@ -676,7 +719,9 @@
+@@ -638,8 +681,11 @@
+     {
+         if (p_147355_1_.func_149614_c() >= 0 && p_147355_1_.func_149614_c() < InventoryPlayer.func_70451_h())
+         {
+-            this.field_147369_b.field_71071_by.field_70461_c = p_147355_1_.func_149614_c();
+-            this.field_147369_b.func_143004_u();
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerChangeCurrentItemEvent(this.field_147369_b, p_147355_1_.func_149614_c())))
++            {
++                this.field_147369_b.field_71071_by.field_70461_c = p_147355_1_.func_149614_c();
++                this.field_147369_b.func_143004_u();
++            }
+         }
+         else
+         {
+@@ -676,7 +722,9 @@
              }
              else
              {
@@ -162,7 +176,7 @@
                  this.field_147367_d.func_71203_ab().func_148544_a(chatcomponenttranslation1, false);
              }
  
-@@ -812,7 +857,7 @@
+@@ -812,7 +860,7 @@
                          return;
                      }
  

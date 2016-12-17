@@ -1,6 +1,48 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -311,6 +311,14 @@
+@@ -180,24 +180,27 @@
+     @SideOnly(Side.CLIENT)
+     public void func_70453_c(int p_70453_1_)
+     {
+-        if (p_70453_1_ > 0)
++        if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerChangeCurrentItemEvent(this.field_70458_d, p_70453_1_)))
+         {
+-            p_70453_1_ = 1;
+-        }
++            if (p_70453_1_ > 0)
++            {
++                p_70453_1_ = 1;
++            }
+ 
+-        if (p_70453_1_ < 0)
+-        {
+-            p_70453_1_ = -1;
+-        }
++            if (p_70453_1_ < 0)
++            {
++                p_70453_1_ = -1;
++            }
+ 
+-        for (this.field_70461_c -= p_70453_1_; this.field_70461_c < 0; this.field_70461_c += 9)
+-        {
+-            ;
+-        }
++            for (this.field_70461_c -= p_70453_1_; this.field_70461_c < 0; this.field_70461_c += 9)
++            {
++                ;
++            }
+ 
+-        while (this.field_70461_c >= 9)
+-        {
+-            this.field_70461_c -= 9;
++            while (this.field_70461_c >= 9)
++            {
++                this.field_70461_c -= 9;
++            }
+         }
+     }
+ 
+@@ -311,6 +314,14 @@
                  this.field_70462_a[i].func_77945_a(this.field_70458_d.field_70170_p, this.field_70458_d, i, this.field_70461_c == i);
              }
          }
