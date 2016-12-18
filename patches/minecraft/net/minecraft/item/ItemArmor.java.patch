@@ -65,12 +65,12 @@
 +    }
 +
 +    /**
-+     * Holds onto either a pointer to IArmorOverlayHandler.VANILLA, or a wrapper if IArmorOverlayHandlers are subscribed
++     * Holds onto either a reference to IArmorOverlayHandler.VANILLA, or a wrapper if IArmorOverlayHandlers are subscribed
 +     * */
 +    private net.minecraftforge.client.overlay.IArmorOverlayHandler overlayHandler = net.minecraftforge.client.overlay.IArmorOverlayHandler.VANILLA;
 +
 +    /**
-+     * Holds onto either a pointer to IArmorOverlayColor.VANILLA, or a wrapper if IArmorOverlayColors are subscribed
++     * Holds onto either a reference to IArmorOverlayColor.VANILLA, or a wrapper if IArmorOverlayColors are subscribed
 +     * */
 +    private net.minecraftforge.client.overlay.IArmorOverlayColor overlayColor = net.minecraftforge.client.overlay.IArmorOverlayColor.VANILLA;
 +
