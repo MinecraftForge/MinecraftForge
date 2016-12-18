@@ -128,7 +128,7 @@ public interface IStackOverlayHandler
     {
         IStackOverlayHandler[] subscribers;
 
-        IStackOverlayHandler cachedPointer;
+        IStackOverlayHandler cached;
 
         public SubscriptionWrapper(IStackOverlayHandler toSubscribe)
         {
@@ -151,23 +151,22 @@ public interface IStackOverlayHandler
         @Override
         public void manageFirstPassVectors(ItemStack stack, long time, float[] scaleVector, float[] rotationVector, float[] translationVector)
         {
-            cachedPointer.manageFirstPassVectors(stack, time, scaleVector, rotationVector, translationVector);
+            cached.manageFirstPassVectors(stack, time, scaleVector, rotationVector, translationVector);
         }
 
         @Override
         public void manageSecondPassVectors(ItemStack stack, long time, float[] scaleVector, float[] rotationVector, float[] translationVector)
         {
-            cachedPointer.manageSecondPassVectors(stack, time, scaleVector, rotationVector, translationVector);
+            cached.manageSecondPassVectors(stack, time, scaleVector, rotationVector, translationVector);
         }
 
         @Override
         public ResourceLocation getOverlayTexture(ItemStack stack)
         {
             for(int i = 0; i < subscribers.length; i++)
-                if((cachedPointer = subscribers[i]).useForStack(stack))
-                    return cachedPointer.getOverlayTexture(stack);
-            cachedPointer = VANILLA;
-            return cachedPointer.getOverlayTexture(stack);
+                if((cached = subscribers[i]).useForStack(stack))
+                    return cached.getOverlayTexture(stack);
+            return (cached = VANILLA).getOverlayTexture(stack);
         }
 
         @Override

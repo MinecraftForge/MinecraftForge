@@ -88,7 +88,7 @@ public interface IStackOverlayColor
     {
         IStackOverlayColor[] subscribers;
 
-        IStackOverlayColor cachedPointer;
+        IStackOverlayColor cached;
 
         public SubscriptionWrapper(IStackOverlayColor toSubscribe)
         {
@@ -113,16 +113,15 @@ public interface IStackOverlayColor
         public int getFirstPassColor(ItemStack stack)
         {
             for(int i = 0; i < subscribers.length; i++)
-                if((cachedPointer = subscribers[i]).useForStack(stack))
-                    return cachedPointer.getFirstPassColor(stack);
-            cachedPointer = VANILLA;
-            return cachedPointer.getFirstPassColor(stack);
+                if((cached = subscribers[i]).useForStack(stack))
+                    return cached.getFirstPassColor(stack);
+            return (cached = VANILLA).getFirstPassColor(stack);
         }
 
         @Override
         public int getSecondPassColor(ItemStack stack)
         {
-            return cachedPointer.getSecondPassColor(stack);
+            return cached.getSecondPassColor(stack);
         }
 
         @Override

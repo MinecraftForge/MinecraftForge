@@ -670,12 +670,12 @@
 +    }
 +
 +    /**
-+     * Holds onto either a pointer to IStackOverlayHandler.VANILLA, or a wrapper if IStackOverlayHandlers are subscribed
++     * Holds onto either a reference to IStackOverlayHandler.VANILLA, or a wrapper if IStackOverlayHandlers are subscribed
 +     * */
 +    private net.minecraftforge.client.overlay.IStackOverlayHandler overlayHandler = net.minecraftforge.client.overlay.IStackOverlayHandler.VANILLA;
 +
 +    /**
-+     * Holds onto either a pointer to IStackOverlayColor.VANILLA, or a wrapper if IStackOverlayColors are subscribed
++     * Holds onto either a reference to IStackOverlayColor.VANILLA, or a wrapper if IStackOverlayColors are subscribed
 +     * */
 +    private net.minecraftforge.client.overlay.IStackOverlayColor overlayColor = net.minecraftforge.client.overlay.IStackOverlayColor.VANILLA;
 +
