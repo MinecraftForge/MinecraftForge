@@ -38,7 +38,19 @@
  
          if (block == this)
          {
-@@ -164,6 +170,17 @@
+@@ -111,8 +117,10 @@
+         }
+         else
+         {
++            net.minecraftforge.event.world.BlockEvent.ReplaceEvent event = net.minecraftforge.event.ForgeEventFactory.onBlockReplace(p_176353_1_, p_176353_2_, p_176353_1_.func_180495_p(p_176353_2_), Blocks.field_150350_a.func_176223_P());
++            if (event.isCanceled()) return true;
+             this.func_176226_b(p_176353_1_, p_176353_2_, p_176353_3_, 0);
+-            p_176353_1_.func_175698_g(p_176353_2_);
++            p_176353_1_.func_175656_a(p_176353_2_, event.getNextState());
+             return false;
+         }
+     }
+@@ -164,6 +172,17 @@
          return ((Integer)p_176201_1_.func_177229_b(field_176355_a)).intValue();
      }
  

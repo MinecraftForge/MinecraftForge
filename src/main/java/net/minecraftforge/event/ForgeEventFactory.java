@@ -645,4 +645,11 @@ public class ForgeEventFactory
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e);
         return e.getLevel();
     }
+
+    public static BlockEvent.ReplaceEvent onBlockReplace(World world, BlockPos pos, IBlockState currentState, IBlockState nextState)
+    {
+        BlockEvent.ReplaceEvent event = new BlockEvent.ReplaceEvent(world, pos, currentState, nextState);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
 }
