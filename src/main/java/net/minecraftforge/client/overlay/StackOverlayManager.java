@@ -46,20 +46,6 @@ public final class StackOverlayManager
 {
 
     /**
-     * Map of active Item.delegate > IStackOverlayHandler entries.
-     * */
-    private static final Map<RegistryDelegate<Item>, IStackOverlayHandler> handlerMap = Maps.newHashMap();
-
-    /**
-     * Map of active Item.delegate > IStackOverlayColor entries.
-     * */
-    private static final Map<RegistryDelegate<Item>, IStackOverlayColor> colorMap = Maps.newHashMap();
-
-    /**
-     * Map of the active Item.delegate > StackOverlayColor entries.
-     * */
-
-    /**
      * Static Vec3 passed for scaling
      * */
     private static final float[] scaleVector = new float[3];
@@ -84,8 +70,8 @@ public final class StackOverlayManager
     public static boolean applyForgeOverlay(TextureManager textureManager, ItemStack stack, IBakedModel model)
     {
         long time = Minecraft.getSystemTime();
-        IStackOverlayHandler currentHandler = stack.getItem().getStackOverlayHandler(stack);
-        IStackOverlayColor currentColor = stack.getItem().getStackOverlayColor(stack);
+        IStackOverlayHandler currentHandler = stack.getItem().getStackOverlayHandler();
+        IStackOverlayColor currentColor = stack.getItem().getStackOverlayColor();
 
         GlStateManager.depthFunc(514);
         GlStateManager.disableLighting();
@@ -147,8 +133,8 @@ public final class StackOverlayManager
         VertexBuffer vertexbuffer = tessellator.getBuffer();
         vertexbuffer.begin(7, DefaultVertexFormats.ITEM);
         for (EnumFacing enumfacing : EnumFacing.values())
-            renderStreamlinedQuads(vertexbuffer, model.getQuads((IBlockState)null, enumfacing, 0L), color);
-        renderStreamlinedQuads(vertexbuffer, model.getQuads((IBlockState)null, (EnumFacing)null, 0L), color);
+            renderStreamlinedQuads(vertexbuffer, model.getQuads(null, enumfacing, 0L), color);
+        renderStreamlinedQuads(vertexbuffer, model.getQuads(null, null, 0L), color);
         tessellator.draw();
     }
 
@@ -156,61 +142,5 @@ public final class StackOverlayManager
     {
         for (BakedQuad quad : quads)
             net.minecraftforge.client.model.pipeline.LightUtil.renderQuadColor(renderer, quad, color);
-    }
-
-    /**
-     * Registers an instance of IItemOverlay to a group of items
-     *
-     * @param itemOverlay the overlay being registered
-     * @param itemsIn the items that will be using the overlay
-     * */
-    @Deprecated
-    public static void registerHandler(IStackOverlayHandler itemOverlay, Item... itemsIn)
-    {
-        for (Item item : itemsIn)
-        {
-            if (item == null) throw new IllegalArgumentException("Item registered to item overlay handler cannot be null!");
-            if (item.getRegistryName() == null) throw new IllegalArgumentException("Item must be registered before assigning an overlay handler.");
-            handlerMap.put(item.delegate, itemOverlay);
-        }
-    }
-
-    /**
-     * Returns the corresponding IItemOverlay for the given Item. Falls back to IItemOverlay.VANILLA if no entry exists.
-     *
-     * @param item the Item in question
-     * */
-    public static IStackOverlayHandler getHandler(Item item)
-    {
-        final IStackOverlayHandler entry = handlerMap.get(item.delegate);
-        return entry == null ? IStackOverlayHandler.VANILLA : entry;
-    }
-
-    /**
-     * Registers an instance of IStackolor to a group of items
-     *
-     * @param color the color being registered
-     * @param itemsIn the items that will be using the overlay
-     * */
-    @Deprecated
-    public static void registerColor(IStackOverlayColor color, Item... itemsIn)
-    {
-        for (Item item : itemsIn)
-        {
-            if (item == null) throw new IllegalArgumentException("Item registered to item overlay handler cannot be null!");
-            if (item.getRegistryName() == null) throw new IllegalArgumentException("Item must be registered before assigning an overlay handler.");
-            colorMap.put(item.delegate, color);
-        }
-    }
-
-    /**
-     * Returns the corresponding IStackOverlayColor for the given Item. Falls back to IStackOverlay.VANILLA if no entry exists.
-     *
-     * @param item the Item in question
-     * */
-    public static IStackOverlayColor getColor(Item item)
-    {
-        final IStackOverlayColor entry = colorMap.get(item.delegate);
-        return entry == null ? IStackOverlayColor.VANILLA : entry;
     }
 }

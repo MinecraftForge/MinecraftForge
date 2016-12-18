@@ -23,6 +23,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 
 /**
  * Handler for the appearance of the effect overlays on armor models. {@link IArmorOverlayColor} is for the coloring.
@@ -42,10 +45,11 @@ public interface IArmorOverlayHandler
      *
      * @param stack the ItemStack in question
      * @param wearer the Entity in question
+     * @param slot the Slot that the armor is in
      *
      * @return the ResourceLocation of the effect texture.
      * */
-    ResourceLocation getOverlayTexture(ItemStack stack, EntityLivingBase wearer);
+    ResourceLocation getOverlayTexture(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot);
 
     /**
      * Passes vectors for the scaling, rotation, and translation during effect rendering. <br>
@@ -75,13 +79,20 @@ public interface IArmorOverlayHandler
      * */
     void manageSecondPassVectors(ItemStack armorStack, EntityLivingBase wearer,  EntityEquipmentSlot slot, float time, final float[] scaleVector, final float[] rotationVector, final float[] translationVector);
 
+    /**
+     * Checks for the first applicable handler when multiple are subscribed to an item.
+     *
+     * @return true to override vanilla/other subscribers' handlers
+     * */
+    boolean useForStack(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot);
+
     class Vanilla implements IArmorOverlayHandler
     {
 
         protected Vanilla(){}
 
         @Override
-        public ResourceLocation getOverlayTexture(ItemStack stack, EntityLivingBase wearer)
+        public ResourceLocation getOverlayTexture(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
         {
             return defaultGlint;
         }
@@ -111,6 +122,66 @@ public interface IArmorOverlayHandler
             translationVector[1] = time * 0.06006F;
         }
 
+        @Override
+        public boolean useForStack(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
+        {
+            return true;
+        }
+
+    }
+
+    final class SubscriptionWrapper implements IArmorOverlayHandler
+    {
+
+        IArmorOverlayHandler[] subscribers;
+
+        IArmorOverlayHandler cachedPointer;
+
+        public SubscriptionWrapper(IArmorOverlayHandler toSubscribe)
+        {
+            subscribers = new IArmorOverlayHandler[] {toSubscribe};
+        }
+
+        public void addSubscription(IArmorOverlayHandler toSubscribe)
+        {
+            if(Loader.instance().hasReachedState(LoaderState.AVAILABLE)) {
+                FMLLog.bigWarning("Skipping subscription of {} to ArmorOverlayHandlers because it's too late in the load cycle..", toSubscribe.getClass());
+                return; //Trump bad behavior
+            }
+            IArmorOverlayHandler[] grow = new IArmorOverlayHandler[subscribers.length + 1];
+            for(int i = 0; i < subscribers.length; i++)
+                grow[i] = subscribers[i];
+            grow[subscribers.length] = toSubscribe;
+            subscribers = grow;
+        }
+
+        @Override
+        public void manageFirstPassVectors(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot, float time, float[] scaleVector, float[] rotationVector, float[] translationVector)
+        {
+            cachedPointer.manageFirstPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
+        }
+
+        @Override
+        public void manageSecondPassVectors(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot, float time, float[] scaleVector, float[] rotationVector, float[] translationVector)
+        {
+            cachedPointer.manageSecondPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
+        }
+
+        @Override
+        public ResourceLocation getOverlayTexture(ItemStack stack, EntityLivingBase wearer,  EntityEquipmentSlot slot)
+        {
+            for(int i = 0; i < subscribers.length; i++)
+                if((cachedPointer = subscribers[i]).useForStack(stack, wearer, slot))
+                    return cachedPointer.getOverlayTexture(stack, wearer, slot);
+            cachedPointer = VANILLA;
+            return cachedPointer.getOverlayTexture(stack, wearer, slot);
+        }
+
+        @Override
+        public boolean useForStack(ItemStack stack, EntityLivingBase wearer,  EntityEquipmentSlot slot)
+        {
+            return true;
+        }
     }
 
 }
