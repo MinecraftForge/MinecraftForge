@@ -158,12 +158,12 @@
              IBlockState iblockstate = this.func_180495_p(p_190529_1_);
  
 -            if (iblockstate.func_177230_c() == Blocks.field_190976_dk)
-+            if (iblockstate.func_177230_c() instanceof net.minecraftforge.common.IObserver)
++            if (true)
              {
                  try
                  {
 -                    ((BlockObserver)iblockstate.func_177230_c()).func_190962_b(iblockstate, this, p_190529_1_, p_190529_2_, p_190529_3_);
-+                    ((net.minecraftforge.common.IObserver)iblockstate.func_177230_c()).neighborChangedObserver(iblockstate, this, p_190529_1_, p_190529_2_, p_190529_3_);
++                    iblockstate.func_177230_c().func_190962_b(iblockstate, this, p_190529_1_, p_190529_2_, p_190529_3_);
                  }
                  catch (Throwable throwable)
                  {

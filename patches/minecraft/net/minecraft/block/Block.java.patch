@@ -197,7 +197,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +932,1166 @@
+@@ -908,6 +932,1177 @@
      {
      }
  
@@ -1130,6 +1130,17 @@
 +    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor){}
 +
 +    /**
++     * Called whenever an update for an Observer is received.
++     *
++     * @param state The listening block's state.
++     * @param world The current world.
++     * @param pos The listening block's position.
++     * @param neighborBlock The updated block.
++     * @param neighborPos The updated block's position.
++     */
++    public void func_190962_b(IBlockState p_190962_1_, World p_190962_2_, BlockPos p_190962_3_, Block p_190962_4_, BlockPos p_190962_5_){}
++
++    /**
 +     * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
 +     * @param world The world
 +     * @param pos Block position in world
@@ -1364,7 +1375,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2385,7 @@
+@@ -1201,14 +2396,7 @@
              }
              else
              {
