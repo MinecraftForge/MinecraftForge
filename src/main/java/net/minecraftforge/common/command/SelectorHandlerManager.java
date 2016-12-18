@@ -20,9 +20,11 @@
 package net.minecraftforge.common.command;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedMap;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -36,7 +38,7 @@ import net.minecraftforge.fml.common.Loader;
 
 /**
  * Allows registration of custom selector types by assigning a {@link SelectorHandler} to a prefix
- * To check whether a new prefix conflicts with any registered prefix, the methods {@link #isShadowed} and {@link #isShadowing} can be used
+ * To check whether a new prefix conflicts with any registered prefix, the methods {@link #getShadowed(String)} and {@link #getShadowing(String)} can be used
  * This class handles calls to the {@link EntitySelector} methods {@link EntitySelector#matchEntities matchEntities},
  * {@link EntitySelector#matchesMultiplePlayers matchesMultiplePlayers} and {@link EntitySelector#isSelector isSelector}.<br>
  * The calls are delegated to the handler with the longest matching prefix
@@ -48,8 +50,8 @@ public class SelectorHandlerManager
     }
 
     //the ordering is reversed such that longer prefixes appear before their shorter substrings
-    private static final SortedMap<String, SelectorHandler> selectorHandlers = new TreeMap<String, SelectorHandler>(Collections.<String> reverseOrder());
-    private static final SortedMap<String, String> registeringMods = new TreeMap<String, String>(Collections.<String> reverseOrder());
+    private static final NavigableMap<String, SelectorHandler> selectorHandlers = new TreeMap<String, SelectorHandler>(Collections.<String> reverseOrder());
+    private static final NavigableMap<String, String> registeringMods = new TreeMap<String, String>(Collections.<String> reverseOrder());
 
     private static final SelectorHandler vanillaHandler = new SelectorHandler()
     {
@@ -77,51 +79,60 @@ public class SelectorHandlerManager
         for (final String prefix : ArrayUtils.toArray("@p", "@a", "@r", "@e"))
         {
             selectorHandlers.put(prefix, vanillaHandler);
-            registeringMods.put(prefix, "Minecraft");
+            registeringMods.put(prefix, "minecraft");
         }
     }
 
     /**
-     * Returns whether there is already a more specific prefix registered
+     * Returns a collection of all registered prefixes more specific than {@code prefix}
+     *
+     * @return A {@link Map} mapping the prefixes to the mod ids registering them
      */
-    public static boolean isShadowed(final String prefix)
+    public static Map<String, String> getShadowing(final String prefix)
     {
-        for (final String other : registeringMods.keySet())
-            if (prefix.startsWith(other))
-                return true;
+        Map<String, String> ret = new HashMap<String, String>();
 
-        return false;
+        for (final Entry<String, String> other : registeringMods.headMap(prefix).entrySet())
+            if (other.getKey().startsWith(prefix))
+                ret.put(other.getKey(), other.getValue());
+
+        return ret;
     }
 
     /**
-     * Returns whether there is already a less specific prefix registered
+     * Returns a collection of all registered prefixes less specific than {@code prefix}
+     *
+     * @return A {@link Map} mapping the prefixes to the mod ids registering them
      */
-    public static boolean isShadowing(final String prefix)
+    public static Map<String, String> getShadowed(final String prefix)
     {
-        for (final String other : registeringMods.keySet())
-            if (other.startsWith(prefix))
-                return true;
+        Map<String, String> ret = new HashMap<String, String>();
 
-        return false;
+        for (final Entry<String, String> other : registeringMods.subMap(prefix, true, prefix.substring(0, 1), true).entrySet())
+            if (prefix.startsWith(other.getKey()))
+                ret.put(other.getKey(), other.getValue());
+
+        return ret;
     }
 
     /**
-     * Registers a new {@link SelectorHandler} for the given prefix.
-     * Warnings are emitted when {@link #isShadowing} or {@link #isShadowed} would return {@code true}
+     * Registers a new {@link SelectorHandler} for {@code prefix}.
+     * Warnings are emitted for all prefixes returned by {@link #getShadowing} and {@link #getShadowed}
+     *
+     * @param prefix A non-empty string
      */
     public static void register(final String prefix, final SelectorHandler handler)
     {
+        if (prefix.isEmpty())
+            throw new IllegalArgumentException("Prefix must not be empty");
+
         final String modName = Loader.instance().activeModContainer().getName();
 
-        for (final Entry<String, String> prefixData : registeringMods.entrySet())
-        {
-            final String otherPrefix = prefixData.getKey();
+        for (Entry<String, String> other : getShadowed(prefix).entrySet())
+            FMLLog.info("Selector prefix '%s' of mod '%s' is shadowing prefix '%s' of mod '%s'", prefix, modName, other.getKey(), other.getValue());
 
-            if (prefix.startsWith(otherPrefix))
-                FMLLog.info("Selector prefix '%s' of mod '%s' is shadowing prefix '%s' of mod '%s'", prefix, modName, otherPrefix, prefixData.getValue());
-            else if (otherPrefix.startsWith(prefix))
-                FMLLog.info("Selector prefix '%s' of mod '%s' is shadowed by prefix '%s' of mod '%s'", prefix, modName, otherPrefix, prefixData.getValue());
-        }
+        for (Entry<String, String> other : getShadowing(prefix).entrySet())
+            FMLLog.info("Selector prefix '%s' of mod '%s' is shadowed by prefix '%s' of mod '%s'", prefix, modName, other.getKey(), other.getValue());
 
         selectorHandlers.put(prefix, handler);
         registeringMods.put(prefix, modName);
@@ -132,9 +143,10 @@ public class SelectorHandlerManager
      */
     public static SelectorHandler getHandler(final String selectorStr)
     {
-        for (final Entry<String, SelectorHandler> handler : selectorHandlers.entrySet())
-            if (selectorStr.startsWith(handler.getKey()))
-                return handler.getValue();
+        if (!selectorStr.isEmpty())
+            for (final Entry<String, SelectorHandler> handler : selectorHandlers.subMap(selectorStr, true, selectorStr.substring(0, 1), true).entrySet())
+                if (selectorStr.startsWith(handler.getKey()))
+                    return handler.getValue();
 
         return vanillaHandler;
     }

@@ -30,6 +30,11 @@ import net.minecraft.entity.Entity;
  */
 public abstract class SelectorHandler
 {
+    /**
+     * Returns a {@link List} of {@link Entity Entities} of class {@code targetClass} ({@code T}) represented by {@code token}
+     * 
+     * @param sender The {@link ICommandSender} that initiated the query
+     */
     public abstract <T extends Entity> List<T> matchEntities(ICommandSender sender, String token, Class<? extends T> targetClass) throws CommandException;
 
     /**
