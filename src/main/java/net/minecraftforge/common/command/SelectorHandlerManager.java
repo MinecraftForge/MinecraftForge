@@ -126,16 +126,16 @@ public class SelectorHandlerManager
         if (prefix.isEmpty())
             throw new IllegalArgumentException("Prefix must not be empty");
 
-        final String modName = Loader.instance().activeModContainer().getName();
+        final String modId = Loader.instance().activeModContainer().getModId();
 
         for (Entry<String, String> other : getShadowed(prefix).entrySet())
-            FMLLog.info("Selector prefix '%s' of mod '%s' is shadowing prefix '%s' of mod '%s'", prefix, modName, other.getKey(), other.getValue());
+            FMLLog.info("Selector prefix '%s' of mod '%s' is shadowing prefix '%s' of mod '%s'", prefix, modId, other.getKey(), other.getValue());
 
         for (Entry<String, String> other : getShadowing(prefix).entrySet())
-            FMLLog.info("Selector prefix '%s' of mod '%s' is shadowed by prefix '%s' of mod '%s'", prefix, modName, other.getKey(), other.getValue());
+            FMLLog.info("Selector prefix '%s' of mod '%s' is shadowed by prefix '%s' of mod '%s'", prefix, modId, other.getKey(), other.getValue());
 
         selectorHandlers.put(prefix, handler);
-        registeringMods.put(prefix, modName);
+        registeringMods.put(prefix, modId);
     }
 
     /**
