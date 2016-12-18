@@ -135,7 +135,7 @@ public interface IArmorOverlayHandler
 
         IArmorOverlayHandler[] subscribers;
 
-        IArmorOverlayHandler cachedPointer;
+        IArmorOverlayHandler cached;
 
         public SubscriptionWrapper(IArmorOverlayHandler toSubscribe)
         {
@@ -158,23 +158,22 @@ public interface IArmorOverlayHandler
         @Override
         public void manageFirstPassVectors(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot, float time, float[] scaleVector, float[] rotationVector, float[] translationVector)
         {
-            cachedPointer.manageFirstPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
+            cached.manageFirstPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
         }
 
         @Override
         public void manageSecondPassVectors(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot, float time, float[] scaleVector, float[] rotationVector, float[] translationVector)
         {
-            cachedPointer.manageSecondPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
+            cached.manageSecondPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
         }
 
         @Override
         public ResourceLocation getOverlayTexture(ItemStack stack, EntityLivingBase wearer,  EntityEquipmentSlot slot)
         {
             for(int i = 0; i < subscribers.length; i++)
-                if((cachedPointer = subscribers[i]).useForStack(stack, wearer, slot))
-                    return cachedPointer.getOverlayTexture(stack, wearer, slot);
-            cachedPointer = VANILLA;
-            return cachedPointer.getOverlayTexture(stack, wearer, slot);
+                if((cached = subscribers[i]).useForStack(stack, wearer, slot))
+                    return cached.getOverlayTexture(stack, wearer, slot);
+            return (cached = VANILLA).getOverlayTexture(stack, wearer, slot);
         }
 
         @Override

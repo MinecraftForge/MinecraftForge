@@ -98,7 +98,7 @@ public interface IArmorOverlayColor
     {
         IArmorOverlayColor[] subscribers;
 
-        IArmorOverlayColor cachedPointer;
+        IArmorOverlayColor cached;
 
         public SubscriptionWrapper(IArmorOverlayColor toSubscribe)
         {
@@ -123,16 +123,15 @@ public interface IArmorOverlayColor
         public int getFirstPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
         {
             for(int i = 0; i < subscribers.length; i++)
-                if((cachedPointer = subscribers[i]).useForStack(stack, wearer, slot))
-                    return cachedPointer.getFirstPassColor(stack, wearer, slot);
-            cachedPointer = VANILLA;
-            return cachedPointer.getFirstPassColor(stack, wearer, slot);
+                if((cached = subscribers[i]).useForStack(stack, wearer, slot))
+                    return cached.getFirstPassColor(stack, wearer, slot);
+            return (cached = VANILLA).getFirstPassColor(stack, wearer, slot);
         }
 
         @Override
         public int getSecondPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
         {
-            return cachedPointer.getSecondPassColor(stack, wearer, slot);
+            return cached.getSecondPassColor(stack, wearer, slot);
         }
 
         @Override
