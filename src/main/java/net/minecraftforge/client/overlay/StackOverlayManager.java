@@ -56,7 +56,7 @@ public final class StackOverlayManager
     private static final float[] rotationVector = new float[4];
 
     /**
-     * Static Vec3 passsed for translation
+     * Static Vec3 passed for translation
      * */
     private static final float[] translationVector = new float[3];
 
