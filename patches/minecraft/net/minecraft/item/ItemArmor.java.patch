@@ -11,45 +11,7 @@
      }
  
      public ActionResult<ItemStack> func_77659_a(World p_77659_1_, EntityPlayer p_77659_2_, EnumHand p_77659_3_)
-@@ -221,6 +223,37 @@
-         return multimap;
-     }
- 
-+    /**
-+     * Determines if this armor will be rendered with the secondary 'overlay' texture.
-+     * If this is true, the first texture will be rendered using a tint of the color
-+     * specified by getColor(ItemStack)
-+     *
-+     * @param stack The stack
-+     * @return true/false
-+     */
-+    public boolean hasOverlay(ItemStack stack)
-+    {
-+        return this.field_77878_bZ == ItemArmor.ArmorMaterial.LEATHER || func_82814_b(stack) != 0x00FFFFFF;
-+    }
-+
-+    /**
-+     * Returns the IArmorOverlayHandler for the armor effect overlay.
-+     * */
-+    @javax.annotation.Nonnull
-+    public net.minecraftforge.client.overlay.IArmorOverlayHandler getArmorOverlayHandler(ItemStack stack)
-+    {
-+        return net.minecraftforge.client.overlay.ArmorOverlayManager.getHandler(this);
-+    }
-+
-+    /**
-+     * Returns the IArmorOverlayColor for the armor effect overlay.
-+     * */
-+    @javax.annotation.Nonnull
-+    public net.minecraftforge.client.overlay.IArmorOverlayColor getArmorOverlayColor(ItemStack stack)
-+    {
-+        return net.minecraftforge.client.overlay.ArmorOverlayManager.getColor(this);
-+    }
-+
-     public static enum ArmorMaterial
-     {
-         LEATHER("leather", 5, new int[]{1, 2, 3, 1}, 15, SoundEvents.field_187728_s, 0.0F),
-@@ -235,6 +268,8 @@
+@@ -235,6 +237,8 @@
          private final int field_78055_h;
          private final SoundEvent field_185020_j;
          private final float field_189417_k;
@@ -58,7 +20,7 @@
  
          private ArmorMaterial(String p_i47117_3_, int p_i47117_4_, int[] p_i47117_5_, int p_i47117_6_, SoundEvent p_i47117_7_, float p_i47117_8_)
          {
-@@ -266,6 +301,7 @@
+@@ -266,6 +270,7 @@
              return this.field_185020_j;
          }
  
@@ -66,10 +28,12 @@
          public Item func_151685_b()
          {
              return this == LEATHER ? Items.field_151116_aA : (this == CHAIN ? Items.field_151042_j : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
-@@ -281,5 +317,21 @@
+@@ -281,5 +286,86 @@
          {
              return this.field_189417_k;
          }
++
++    /* ======================================== FORGE START =====================================*/
 +
 +        public ArmorMaterial setRepairItem(ItemStack stack)
 +        {
@@ -87,4 +51,67 @@
 +            return repairMaterial;
 +        }
      }
++    /**
++     * Determines if this armor will be rendered with the secondary 'overlay' texture.
++     * If this is true, the first texture will be rendered using a tint of the color
++     * specified by getColor(ItemStack)
++     *
++     * @param stack The stack
++     * @return true/false
++     */
++    public boolean hasOverlay(ItemStack stack)
++    {
++        return this.field_77878_bZ == ItemArmor.ArmorMaterial.LEATHER || func_82814_b(stack) != 0x00FFFFFF;
++    }
++
++    /**
++     * Holds onto either a pointer to IArmorOverlayHandler.VANILLA, or a wrapper if IArmorOverlayHandlers are subscribed
++     * */
++    private net.minecraftforge.client.overlay.IArmorOverlayHandler overlayHandler = net.minecraftforge.client.overlay.IArmorOverlayHandler.VANILLA;
++
++    /**
++     * Holds onto either a pointer to IArmorOverlayColor.VANILLA, or a wrapper if IArmorOverlayColors are subscribed
++     * */
++    private net.minecraftforge.client.overlay.IArmorOverlayColor overlayColor = net.minecraftforge.client.overlay.IArmorOverlayColor.VANILLA;
++
++    /**
++     * Returns the IArmorOverlayHandler for the ItemStack's effect overlay.
++     * */
++    @javax.annotation.Nonnull
++    public final net.minecraftforge.client.overlay.IArmorOverlayHandler getArmorOverlayHandler()
++    {
++        return overlayHandler;
++    }
++
++    /**
++     * Returns the IArmorOverlayColor for the ItemStack's effect overlay.
++     * */
++    @javax.annotation.Nonnull
++    public final net.minecraftforge.client.overlay.IArmorOverlayColor getArmorOverlayColor()
++    {
++        return overlayColor;
++    }
++
++    /**
++     * Adds an IArmorOverlay handler to the list of subscribers. Note that this works as first come, first serve.
++     * */
++    public final void subscribeArmorOverlayHandler(net.minecraftforge.client.overlay.IArmorOverlayHandler toSubscribe)
++    {
++        if(overlayHandler instanceof net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper)
++            ((net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper)overlayHandler).addSubscription(toSubscribe);
++        else
++            overlayHandler = new net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper(toSubscribe);
++    }
++
++    /**
++     * Adds an IArmorOverlay handler to the list of subscribers. Note that this works as first come, first serve.
++     * */
++    public final void subscribeArmorOverlayColor(net.minecraftforge.client.overlay.IArmorOverlayColor toSubscribe)
++    {
++        if(overlayColor instanceof net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)
++            ((net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)overlayColor).addSubscription(toSubscribe);
++        else
++            overlayColor = new net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper(toSubscribe);
++    }
++    /* ======================================== FORGE END   =====================================*/
  }

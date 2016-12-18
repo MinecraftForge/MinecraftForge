@@ -20,6 +20,9 @@
 package net.minecraftforge.client.overlay;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 
 /**
  * Handler for the the coloring of ItemStacks' effect overlays.
@@ -52,6 +55,13 @@ public interface IStackOverlayColor
      * */
     int getSecondPassColor(ItemStack stack);
 
+    /**
+     * Checks for the first applicable handler when multiple are subscribed to an item.
+     *
+     * @return true to override vanilla/other subscribers' handlers
+     * */
+    boolean useForStack(ItemStack stack);
+
     class Vanilla implements IStackOverlayColor
     {
 
@@ -65,6 +75,60 @@ public interface IStackOverlayColor
         public int getSecondPassColor(ItemStack stack)
         {
             return defaultOverlayColor;
+        }
+
+        @Override
+        public boolean useForStack(ItemStack stack)
+        {
+            return true;
+        }
+    }
+
+    final class SubscriptionWrapper implements IStackOverlayColor
+    {
+        IStackOverlayColor[] subscribers;
+
+        IStackOverlayColor cachedPointer;
+
+        public SubscriptionWrapper(IStackOverlayColor toSubscribe)
+        {
+            subscribers = new IStackOverlayColor[] {toSubscribe};
+        }
+
+        public void addSubscription(IStackOverlayColor toSubscribe)
+        {
+            if(Loader.instance().hasReachedState(LoaderState.AVAILABLE))
+            {
+                FMLLog.bigWarning("Skipping subscription of {} to StackOverlayColors because it's too late in the load cycle..", toSubscribe.getClass());
+                return; //Trump bad behavior
+            }
+            IStackOverlayColor[] grow = new IStackOverlayColor[subscribers.length + 1];
+            for(int i = 0; i < subscribers.length; i++)
+                grow[i] = subscribers[i];
+            grow[subscribers.length] = toSubscribe;
+            subscribers = grow;
+        }
+
+        @Override
+        public int getFirstPassColor(ItemStack stack)
+        {
+            for(int i = 0; i < subscribers.length; i++)
+                if((cachedPointer = subscribers[i]).useForStack(stack))
+                    return cachedPointer.getFirstPassColor(stack);
+            cachedPointer = VANILLA;
+            return cachedPointer.getFirstPassColor(stack);
+        }
+
+        @Override
+        public int getSecondPassColor(ItemStack stack)
+        {
+            return cachedPointer.getSecondPassColor(stack);
+        }
+
+        @Override
+        public boolean useForStack(ItemStack stack)
+        {
+            return true;
         }
     }
 }

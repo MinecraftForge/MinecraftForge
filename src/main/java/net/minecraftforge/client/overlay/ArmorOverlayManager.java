@@ -41,16 +41,6 @@ import javax.annotation.Nonnull;
 public class ArmorOverlayManager
 {
 
-    /**
-     * Map of active Item.delegate > IArmorOverlayHandler entries.
-     * */
-    private static final Map<RegistryDelegate<Item>, IArmorOverlayHandler> handlerMap = Maps.newHashMap();
-
-    /**
-     * Map of active Item.delegate > IArmorOverlayColor entries.
-     * */
-    private static final Map<RegistryDelegate<Item>, IArmorOverlayColor> colorMap = Maps.newHashMap();
-
     private ArmorOverlayManager(){}
 
     /**
@@ -75,10 +65,10 @@ public class ArmorOverlayManager
      * */
     public static boolean applyForgeOverlay(TextureManager textureManager, ItemStack stack, EntityLivingBase wearer, float partialTicks, EntityEquipmentSlot slot, ModelBase model, float swing, float swingScale, float headYaw, float headPitch, float scale)
     {
-        IArmorOverlayHandler currentHandler = ((ItemArmor)stack.getItem()).getArmorOverlayHandler(stack);
-        IArmorOverlayColor currentColor = ((ItemArmor)stack.getItem()).getArmorOverlayColor(stack);
+        IArmorOverlayHandler currentHandler = ((ItemArmor)stack.getItem()).getArmorOverlayHandler();
+        IArmorOverlayColor currentColor = ((ItemArmor)stack.getItem()).getArmorOverlayColor();
         final float time = wearer.ticksExisted + partialTicks;
-        textureManager.bindTexture(currentHandler.getOverlayTexture(stack, wearer));
+        textureManager.bindTexture(currentHandler.getOverlayTexture(stack, wearer, slot));
         GlStateManager.enableBlend();
         GlStateManager.depthFunc(514);
         GlStateManager.depthMask(false);
@@ -140,59 +130,4 @@ public class ArmorOverlayManager
         return false;
     }
 
-    /**
-     *  Do not use for items packaged with your mod. Instead directly override Item.getArmorOverlayHandler<br><br>
-     *
-     *  Registers an instance of IArmorOverlayHandler to a group of items
-     *
-     * @param handler the handler being registered
-     * @param itemsIn the items corresponding to the armor that will be using the overlay
-     * */
-    @Deprecated
-    public static void registerHandler(@Nonnull IArmorOverlayHandler handler, @Nonnull Item... itemsIn)
-    {
-        for (Item item : itemsIn)
-        {
-            if (item == null) throw new IllegalArgumentException("Item registered to armor overlay handler cannot be null!");
-            if (item.getRegistryName() == null) throw new IllegalArgumentException("Item must be registered before assigning an overlay handler.");
-            handlerMap.put(item.delegate, handler);
-        }
-    }
-
-    /**
-     * Do not use for items packaged with your mod. Instead directly override Item.getArmorOverlayColor<br><br>
-     *
-     * Registers an instance of IArmorOverlayHandler to a group of items
-     *
-     * @param color the handler being registered
-     * @param itemsIn the items corresponding to the armor that will be using the overlay
-     * */
-    @Deprecated
-    public static void registerColor(@Nonnull IArmorOverlayColor color, @Nonnull Item... itemsIn)
-    {
-        for (Item item : itemsIn)
-        {
-            if (item == null) throw new IllegalArgumentException("Item registered to armor overlay handler cannot be null!");
-            if (item.getRegistryName() == null) throw new IllegalArgumentException("Item must be registered before assigning an overlay handler.");
-            colorMap.put(item.delegate, color);
-        }
-    }
-
-    /**
-     * Fallback map lookup for handlers
-     * */
-    public static IArmorOverlayHandler getHandler(ItemArmor item)
-    {
-        IArmorOverlayHandler entry = handlerMap.get(item.delegate);
-        return  entry == null ? IArmorOverlayHandler.VANILLA : entry;
-    }
-
-    /**
-     * Fallback map lookup for colors
-     * */
-    public static IArmorOverlayColor getColor(ItemArmor item)
-    {
-        IArmorOverlayColor entry = colorMap.get(item.delegate);
-        return entry == null ? IArmorOverlayColor.VANILLA : entry;
-    }
 }
