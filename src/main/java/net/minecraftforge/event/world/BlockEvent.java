@@ -208,8 +208,7 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when a block is replaced, like ice changing to water, water and lava to Obsidian/Cobblestone/Stone, and
-     * Grass to Dirt
+     * Fired when a block is replaced (Ice changing to Water, Grass changing to Dirt)
      */
     @Cancelable
     public static class ReplaceEvent extends BlockEvent
