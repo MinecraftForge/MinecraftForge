@@ -1138,7 +1138,7 @@
 +     * @param neighborBlock The updated block.
 +     * @param neighborPos The updated block's position.
 +     */
-+    public void func_190962_b(IBlockState p_190962_1_, World p_190962_2_, BlockPos p_190962_3_, Block p_190962_4_, BlockPos p_190962_5_){}
++    public void onNeighborChangeObserver(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighborPos){}
 +
 +    /**
 +     * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.

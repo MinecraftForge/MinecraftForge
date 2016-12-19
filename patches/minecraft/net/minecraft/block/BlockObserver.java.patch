@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockObserver.java
++++ ../src-work/minecraft/net/minecraft/block/BlockObserver.java
+@@ -145,4 +145,12 @@
+     {
+         return this.func_176223_P().func_177226_a(field_176387_N, EnumFacing.func_82600_a(p_176203_1_ & 7));
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    @Override
++    public void onNeighborChangeObserver(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighborPos)
++    {
++        func_190962_b(state, world, pos, neighborBlock, neighborPos);
++    }
++    /* ========================================= FORGE END ======================================*/
+ }
