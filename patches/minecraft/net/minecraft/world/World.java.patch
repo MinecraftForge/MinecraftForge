@@ -163,7 +163,7 @@
                  try
                  {
 -                    ((BlockObserver)iblockstate.func_177230_c()).func_190962_b(iblockstate, this, p_190529_1_, p_190529_2_, p_190529_3_);
-+                    iblockstate.func_177230_c().onNeighborChangeObserver(iblockstate, this, p_190529_1_, p_190529_2_, p_190529_3_);
++                    iblockstate.func_177230_c().observedNeighborChange(iblockstate, this, p_190529_1_, p_190529_2_, p_190529_3_);
                  }
                  catch (Throwable throwable)
                  {

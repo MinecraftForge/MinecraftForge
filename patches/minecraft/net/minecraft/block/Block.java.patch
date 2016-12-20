@@ -1130,15 +1130,15 @@
 +    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor){}
 +
 +    /**
-+     * Called whenever an update for an Observer is received.
++     * Called on an Observer block whenever an update for an Observer is received.
 +     *
-+     * @param state The listening block's state.
++     * @param observerState The Observer block's state.
 +     * @param world The current world.
-+     * @param pos The listening block's position.
-+     * @param neighborBlock The updated block.
-+     * @param neighborPos The updated block's position.
++     * @param observerPos The Observer block's position.
++     * @param changedBlock The updated block.
++     * @param changedBlockPos The updated block's position.
 +     */
-+    public void onNeighborChangeObserver(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighborPos){}
++    public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos){}
 +
 +    /**
 +     * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
