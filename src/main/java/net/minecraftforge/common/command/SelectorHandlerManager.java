@@ -101,12 +101,15 @@ public class SelectorHandlerManager
     }
 
     /**
-     * Returns a collection of all registered prefixes less specific than {@code prefix}
+     * Returns a collection of all registered prefixes at most as specific as {@code prefix}
      *
      * @return A {@link Map} mapping the prefixes to the mod ids registering them
      */
     public static Map<String, String> getShadowed(final String prefix)
     {
+        if (prefix.isEmpty())
+            return Collections.emptyMap();
+
         Map<String, String> ret = new HashMap<String, String>();
 
         for (final Entry<String, String> other : registeringMods.subMap(prefix, true, prefix.substring(0, 1), true).entrySet())
