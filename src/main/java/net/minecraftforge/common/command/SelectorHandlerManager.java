@@ -90,12 +90,19 @@ public class SelectorHandlerManager
      */
     public static Map<String, String> getShadowing(final String prefix)
     {
-        Map<String, String> ret = new HashMap<String, String>();
+        final Map<String, String> ret = new HashMap<String, String>();
 
         for (final Entry<String, String> other : registeringMods.descendingMap().tailMap(prefix, false).entrySet())
+        {
             if (other.getKey().startsWith(prefix))
+            {
                 ret.put(other.getKey(), other.getValue());
-            else return ret;
+            }
+            else
+            {
+                return ret;
+            }
+        }
 
         return ret;
     }
@@ -108,13 +115,19 @@ public class SelectorHandlerManager
     public static Map<String, String> getShadowed(final String prefix)
     {
         if (prefix.isEmpty())
+        {
             return Collections.emptyMap();
+        }
 
-        Map<String, String> ret = new HashMap<String, String>();
+        final Map<String, String> ret = new HashMap<String, String>();
 
         for (final Entry<String, String> other : registeringMods.subMap(prefix, true, prefix.substring(0, 1), true).entrySet())
+        {
             if (prefix.startsWith(other.getKey()))
+            {
                 ret.put(other.getKey(), other.getValue());
+            }
+        }
 
         return ret;
     }
@@ -128,15 +141,21 @@ public class SelectorHandlerManager
     public static void register(final String prefix, final SelectorHandler handler)
     {
         if (prefix.isEmpty())
+        {
             throw new IllegalArgumentException("Prefix must not be empty");
+        }
 
         final String modId = Loader.instance().activeModContainer().getModId();
 
-        for (Entry<String, String> other : getShadowed(prefix).entrySet())
+        for (final Entry<String, String> other : getShadowed(prefix).entrySet())
+        {
             FMLLog.info("Selector prefix '%s' of mod '%s' is shadowing prefix '%s' of mod '%s'", prefix, modId, other.getKey(), other.getValue());
+        }
 
-        for (Entry<String, String> other : getShadowing(prefix).entrySet())
+        for (final Entry<String, String> other : getShadowing(prefix).entrySet())
+        {
             FMLLog.info("Selector prefix '%s' of mod '%s' is shadowed by prefix '%s' of mod '%s'", prefix, modId, other.getKey(), other.getValue());
+        }
 
         selectorHandlers.put(prefix, handler);
         registeringMods.put(prefix, modId);
@@ -148,9 +167,15 @@ public class SelectorHandlerManager
     public static SelectorHandler getHandler(final String selectorStr)
     {
         if (!selectorStr.isEmpty())
+        {
             for (final Entry<String, SelectorHandler> handler : selectorHandlers.subMap(selectorStr, true, selectorStr.substring(0, 1), true).entrySet())
+            {
                 if (selectorStr.startsWith(handler.getKey()))
+                {
                     return handler.getValue();
+                }
+            }
+        }
 
         return vanillaHandler;
     }
