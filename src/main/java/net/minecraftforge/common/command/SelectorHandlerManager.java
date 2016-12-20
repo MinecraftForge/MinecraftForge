@@ -92,9 +92,10 @@ public class SelectorHandlerManager
     {
         Map<String, String> ret = new HashMap<String, String>();
 
-        for (final Entry<String, String> other : registeringMods.headMap(prefix).entrySet())
+        for (final Entry<String, String> other : registeringMods.descendingMap().tailMap(prefix, false).entrySet())
             if (other.getKey().startsWith(prefix))
                 ret.put(other.getKey(), other.getValue());
+            else return ret;
 
         return ret;
     }
