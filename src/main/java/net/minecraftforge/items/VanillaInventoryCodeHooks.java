@@ -54,19 +54,19 @@ public class VanillaInventoryCodeHooks
         for (int i = 0; i < handler.getSlots(); i++)
         {
             ItemStack extractItem = handler.extractItem(i, 1, true);
-            if (!extractItem.func_190926_b())
+            if (!extractItem.isEmpty())
             {
                 for (int j = 0; j < dest.getSizeInventory(); j++)
                 {
                     ItemStack destStack = dest.getStackInSlot(j);
-                    if (dest.isItemValidForSlot(j, extractItem) && (destStack.func_190926_b() || destStack.func_190916_E() < destStack.getMaxStackSize() && destStack.func_190916_E() < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack)))
+                    if (dest.isItemValidForSlot(j, extractItem) && (destStack.isEmpty() || destStack.getCount() < destStack.getMaxStackSize() && destStack.getCount() < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack)))
                     {
                         extractItem = handler.extractItem(i, 1, false);
-                        if (destStack.func_190926_b())
+                        if (destStack.isEmpty())
                             dest.setInventorySlotContents(j, extractItem);
                         else
                         {
-                            destStack.func_190917_f(1);
+                            destStack.grow(1);
                             dest.setInventorySlotContents(j, destStack);
                         }
                         dest.markDirty();
@@ -98,10 +98,10 @@ public class VanillaInventoryCodeHooks
             ItemStack dispensedStack = stack.copy().splitStack(1);
             ItemStack remainder = putStackInInventoryAllSlots(dropper, destination, itemHandler, dispensedStack);
 
-            if (remainder.func_190926_b())
+            if (remainder.isEmpty())
             {
                 remainder = stack.copy();
-                remainder.func_190918_g(1);
+                remainder.shrink(1);
             }
             else
             {
@@ -136,13 +136,13 @@ public class VanillaInventoryCodeHooks
             {
                 for (int i = 0; i < hopper.getSizeInventory(); ++i)
                 {
-                    if (!hopper.getStackInSlot(i).func_190926_b())
+                    if (!hopper.getStackInSlot(i).isEmpty())
                     {
                         ItemStack originalSlotContents = hopper.getStackInSlot(i).copy();
                         ItemStack insertStack = hopper.decrStackSize(i, 1);
                         ItemStack remainder = putStackInInventoryAllSlots(hopper, destination, itemHandler, insertStack);
 
-                        if (remainder.func_190926_b())
+                        if (remainder.isEmpty())
                         {
                             return true;
                         }
@@ -158,7 +158,7 @@ public class VanillaInventoryCodeHooks
 
     private static ItemStack putStackInInventoryAllSlots(TileEntity source, Object destination, IItemHandler destInventory, ItemStack stack)
     {
-        for (int slot = 0; slot < destInventory.getSlots() && !stack.func_190926_b(); slot++)
+        for (int slot = 0; slot < destInventory.getSlots() && !stack.isEmpty(); slot++)
         {
             stack = insertStack(source, destination, destInventory, stack, slot);
         }
@@ -172,22 +172,22 @@ public class VanillaInventoryCodeHooks
     {
         ItemStack itemstack = destInventory.getStackInSlot(slot);
 
-        if (destInventory.insertItem(slot, stack, true).func_190926_b())
+        if (destInventory.insertItem(slot, stack, true).isEmpty())
         {
             boolean insertedItem = false;
             boolean inventoryWasEmpty = isEmpty(destInventory);
 
-            if (itemstack.func_190926_b())
+            if (itemstack.isEmpty())
             {
                 destInventory.insertItem(slot, stack, false);
-                stack = ItemStack.field_190927_a;
+                stack = ItemStack.EMPTY;
                 insertedItem = true;
             }
             else if (ItemHandlerHelper.canItemStacksStack(itemstack, stack))
             {
-                int originalSize = stack.func_190916_E();
+                int originalSize = stack.getCount();
                 stack = destInventory.insertItem(slot, stack, false);
-                insertedItem = originalSize < stack.func_190916_E();
+                insertedItem = originalSize < stack.getCount();
             }
 
             if (insertedItem)
@@ -231,7 +231,7 @@ public class VanillaInventoryCodeHooks
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
             ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
-            if (stackInSlot.func_190926_b() || stackInSlot.func_190916_E() != stackInSlot.getMaxStackSize())
+            if (stackInSlot.isEmpty() || stackInSlot.getCount() != stackInSlot.getMaxStackSize())
             {
                 return false;
             }
@@ -244,7 +244,7 @@ public class VanillaInventoryCodeHooks
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
             ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
-            if (stackInSlot.func_190916_E() > 0)
+            if (stackInSlot.getCount() > 0)
             {
                 return false;
             }
@@ -256,9 +256,9 @@ public class VanillaInventoryCodeHooks
     public static Pair<IItemHandler, Object> getItemHandler(World worldIn, double x, double y, double z, final EnumFacing side)
     {
         Pair<IItemHandler, Object> destination = null;
-        int i = MathHelper.floor_double(x);
-        int j = MathHelper.floor_double(y);
-        int k = MathHelper.floor_double(z);
+        int i = MathHelper.floor(x);
+        int j = MathHelper.floor(y);
+        int k = MathHelper.floor(z);
         BlockPos blockpos = new BlockPos(i, j, k);
         net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
         Block block = state.getBlock();

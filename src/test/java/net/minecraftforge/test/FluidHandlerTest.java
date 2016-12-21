@@ -98,7 +98,7 @@ public class FluidHandlerTest
 
     private static String stackString(@Nonnull ItemStack stack)
     {
-        if (stack.func_190926_b())
+        if (stack.isEmpty())
         {
             return "no item";
         }
@@ -113,13 +113,13 @@ public class FluidHandlerTest
             {
                 resourceDomain = stack.getItem().getRegistryName().getResourceDomain();
             }
-            return stack.func_190916_E() + " " + stack.getDisplayName() + " (" + resourceDomain + ")";
+            return stack.getCount() + " " + stack.getDisplayName() + " (" + resourceDomain + ")";
         }
     }
 
     private static List<ItemStack> getAllItems()
     {
-        NonNullList<ItemStack> list = NonNullList.func_191196_a();
+        NonNullList<ItemStack> list = NonNullList.create();
         for (Item item : ForgeRegistries.ITEMS.getValues())
         {
             for (CreativeTabs tab : item.getCreativeTabs())

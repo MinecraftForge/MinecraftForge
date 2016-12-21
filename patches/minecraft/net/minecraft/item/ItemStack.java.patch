@@ -48,7 +48,7 @@
          this.field_151002_e = Item.func_111206_d(p_i47263_1_.func_74779_i("id"));
          this.field_77994_a = p_i47263_1_.func_74771_c("Count");
          this.field_77991_e = Math.max(0, p_i47263_1_.func_74765_d("Damage"));
-@@ -124,6 +132,7 @@
+@@ -124,11 +132,12 @@
          }
  
          this.func_190923_F();
@@ -56,6 +56,12 @@
      }
  
      public boolean func_190926_b()
+     {
+-        return this == field_190927_a ? true : (this.field_151002_e != null && this.field_151002_e != Item.func_150898_a(Blocks.field_150350_a) ? (this.field_77994_a <= 0 ? true : this.field_77991_e < -32768 || this.field_77991_e > 65535) : true);
++        return this == field_190927_a ? true : (getItemRaw() != null && getItemRaw() != Item.func_150898_a(Blocks.field_150350_a) ? (this.field_77994_a <= 0 ? true : this.field_77991_e < -32768 || this.field_77991_e > 65535) : true);
+     }
+ 
+     public static void func_189868_a(DataFixer p_189868_0_)
 @@ -148,11 +157,12 @@
  
      public Item func_77973_b()
@@ -266,7 +272,7 @@
      @SideOnly(Side.CLIENT)
      public int func_190921_D()
      {
-@@ -1013,4 +1085,18 @@
+@@ -1013,4 +1085,28 @@
      {
          this.func_190917_f(-p_190918_1_);
      }
@@ -276,12 +282,22 @@
 +     */
 +    private void forgeInit()
 +    {
-+        if (this.field_151002_e != null)
++        Item item = getItemRaw();
++        if (item != null)
 +        {
-+            this.delegate = this.field_151002_e.delegate;
-+            net.minecraftforge.common.capabilities.ICapabilityProvider provider = this.field_151002_e.initCapabilities(this, this.capNBT);
-+            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this.field_151002_e, this, provider);
++            this.delegate = item.delegate;
++            net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(item, this, provider);
 +            if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
 +        }
++    }
++
++    /**
++     * Internal call to get the actual item, not the delegate.
++     * In all other methods, FML replaces calls to this.item with the item delegate.
++     */
++    private Item getItemRaw()
++    {
++        return this.field_151002_e;
 +    }
  }

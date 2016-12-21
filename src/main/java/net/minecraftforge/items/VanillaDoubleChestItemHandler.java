@@ -110,7 +110,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
         TileEntityChest chest = getChest(accessingUpperChest);
-        return chest != null ? chest.getStackInSlot(targetSlot) : ItemStack.field_190927_a;
+        return chest != null ? chest.getStackInSlot(targetSlot) : ItemStack.EMPTY;
     }
 
     @Override
@@ -146,7 +146,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
         TileEntityChest chest = getChest(accessingUpperChest);
-        return chest != null ? chest.getSingleChestHandler().extractItem(targetSlot, amount, simulate) : ItemStack.field_190927_a;
+        return chest != null ? chest.getSingleChestHandler().extractItem(targetSlot, amount, simulate) : ItemStack.EMPTY;
     }
 
     @Override

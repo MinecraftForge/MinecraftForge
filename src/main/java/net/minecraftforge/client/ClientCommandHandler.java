@@ -94,20 +94,20 @@ public class ClientCommandHandler extends CommandHandler
             }
             else
             {
-                sender.addChatMessage(format(RED, "commands.generic.permission"));
+                sender.sendMessage(format(RED, "commands.generic.permission"));
             }
         }
         catch (WrongUsageException wue)
         {
-            sender.addChatMessage(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorObjects())));
+            sender.sendMessage(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorObjects())));
         }
         catch (CommandException ce)
         {
-            sender.addChatMessage(format(RED, ce.getMessage(), ce.getErrorObjects()));
+            sender.sendMessage(format(RED, ce.getMessage(), ce.getErrorObjects()));
         }
         catch (Throwable t)
         {
-            sender.addChatMessage(format(RED, "commands.generic.exception"));
+            sender.sendMessage(format(RED, "commands.generic.exception"));
             t.printStackTrace();
         }
 
@@ -133,7 +133,7 @@ public class ClientCommandHandler extends CommandHandler
             Minecraft mc = FMLClientHandler.instance().getClient();
             if (mc.currentScreen instanceof GuiChat)
             {
-                List<String> commands = getTabCompletionOptions(mc.thePlayer, leftOfCursor, mc.thePlayer.getPosition());
+                List<String> commands = getTabCompletions(mc.player, leftOfCursor, mc.player.getPosition());
                 if (commands != null && !commands.isEmpty())
                 {
                     if (leftOfCursor.indexOf(' ') == -1)

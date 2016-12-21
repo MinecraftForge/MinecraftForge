@@ -268,7 +268,7 @@ public class DynBucketTest
                 return false;
             }
 
-            if (heldItem.func_190926_b())
+            if (heldItem.isEmpty())
             {
                 sendText(playerIn, tank);
                 return false;
@@ -290,7 +290,7 @@ public class DynBucketTest
 
         private void sendText(EntityPlayer player, IFluidHandler tank)
         {
-            if (player.worldObj.isRemote)
+            if (player.world.isRemote)
             {
                 String text;
                 IFluidTankProperties[] tankProperties = tank.getTankProperties();
@@ -301,7 +301,7 @@ public class DynBucketTest
                 {
                     text = "empty";
                 }
-                player.addChatMessage(new TextComponentString(text));
+                player.sendMessage(new TextComponentString(text));
             }
         }
     }

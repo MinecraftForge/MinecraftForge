@@ -139,7 +139,7 @@ import com.google.gson.JsonObject;
 /**
  * Handles primary communication from hooked code into the system
  *
- * The FML entry point is {@link #beginMinecraftLoading(Minecraft, List, IReloadableResourceManager)} called from
+ * The FML entry point is {@link #beginMinecraftLoading(Minecraft, List, IReloadableResourceManager, MetadataSerializer)} called from
  * {@link Minecraft}
  *
  * Obfuscated code should focus on this class and other members of the "server"
@@ -474,7 +474,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void displayGuiScreen(EntityPlayer player, GuiScreen gui)
     {
-        if (client.thePlayer==player && gui != null) {
+        if (client.player==player && gui != null) {
             client.displayGuiScreen(gui);
         }
     }
@@ -567,12 +567,12 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public WorldClient getWorldClient()
     {
-        return client.theWorld;
+        return client.world;
     }
 
     public EntityPlayerSP getClientPlayerEntity()
     {
-        return client.thePlayer;
+        return client.player;
     }
 
     @Override

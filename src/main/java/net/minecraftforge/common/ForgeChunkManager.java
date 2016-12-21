@@ -84,7 +84,7 @@ import com.google.common.collect.Sets;
  * The basic principle is a ticket based system.
  * 1. Mods register a callback {@link #setForcedChunkLoadingCallback(Object, LoadingCallback)}
  * 2. Mods ask for a ticket {@link #requestTicket(Object, World, Type)} and then hold on to that ticket.
- * 3. Mods request chunks to stay loaded {@link #forceChunk(Ticket, ChunkCoordIntPair)} or remove chunks from force loading {@link #unforceChunk(Ticket, ChunkCoordIntPair)}.
+ * 3. Mods request chunks to stay loaded {@link #forceChunk(Ticket, ChunkPos)} or remove chunks from force loading {@link #unforceChunk(Ticket, ChunkPos)}.
  * 4. When a world unloads, the tickets associated with that world are saved by the chunk manager.
  * 5. When a world loads, saved tickets are offered to the mods associated with the tickets. The {@link Ticket#getModData()} that is set by the mod should be used to re-register
  * chunks to stay loaded (and maybe take other actions).
@@ -923,8 +923,8 @@ public class ForgeChunkManager
                 }
                 if (tick.ticketType == Type.ENTITY && tick.entity != null && tick.entity.writeToNBTOptional(new NBTTagCompound()))
                 {
-                    ticket.setInteger("chunkX", MathHelper.floor_double(tick.entity.chunkCoordX));
-                    ticket.setInteger("chunkZ", MathHelper.floor_double(tick.entity.chunkCoordZ));
+                    ticket.setInteger("chunkX", MathHelper.floor(tick.entity.chunkCoordX));
+                    ticket.setInteger("chunkZ", MathHelper.floor(tick.entity.chunkCoordZ));
                     ticket.setLong("PersistentIDMSB", tick.entity.getPersistentID().getMostSignificantBits());
                     ticket.setLong("PersistentIDLSB", tick.entity.getPersistentID().getLeastSignificantBits());
                     tickets.appendTag(ticket);

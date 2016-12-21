@@ -44,15 +44,15 @@ public class PlayerMainInvWrapper extends RangedWrapper
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
     {
         ItemStack rest = super.insertItem(slot, stack, simulate);
-        if (rest.func_190916_E()!= stack.func_190916_E())
+        if (rest.getCount()!= stack.getCount())
         {
             // the stack in the slot changed, animate it
             ItemStack inSlot = getStackInSlot(slot);
-            if(!inSlot.func_190926_b())
+            if(!inSlot.isEmpty())
             {
-                if (getInventoryPlayer().player.worldObj.isRemote)
+                if (getInventoryPlayer().player.world.isRemote)
                 {
-                    inSlot.func_190915_d(5);
+                    inSlot.setAnimationsToGo(5);
                 }
                 else if(getInventoryPlayer().player instanceof EntityPlayerMP) {
                     getInventoryPlayer().player.openContainer.detectAndSendChanges();
