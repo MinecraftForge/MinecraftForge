@@ -45,7 +45,7 @@
                  }
              }
  
-+            if (flag && !itemstack1.func_77973_b().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = null;
++            if (flag && !itemstack1.func_77973_b().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = ItemStack.field_190927_a;
 +
              if (StringUtils.isBlank(this.field_82857_m))
              {
