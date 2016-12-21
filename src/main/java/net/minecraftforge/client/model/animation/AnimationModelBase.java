@@ -88,7 +88,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         VertexBuffer.setTranslation(-0.5, -1.5, -0.5);
 
         lighter.setParent(new VertexBufferConsumer(VertexBuffer));
-        lighter.setWorld(entity.worldObj);
+        lighter.setWorld(entity.world);
         lighter.setState(Blocks.AIR.getDefaultState());
         lighter.setBlockPos(pos);
         boolean empty = true;

@@ -282,7 +282,7 @@ public final class Clips
             public TRSRTransformation apply(float time)
             {
                 float clipTime = input.apply(time);
-                return fromClip.apply(clipTime).slerp(toClip.apply(clipTime), MathHelper.clamp_float(progress.apply(time), 0, 1));
+                return fromClip.apply(clipTime).slerp(toClip.apply(clipTime), MathHelper.clamp(progress.apply(time), 0, 1));
             }
         };
     }

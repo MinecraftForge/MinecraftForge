@@ -148,7 +148,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
-                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerList())
+                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers())
                 {
                     NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                     if (dispatcher != null) builder.add(dispatcher);
@@ -176,7 +176,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             {
                 int dimension = (Integer)args;
                 ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
-                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerList())
+                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers())
                 {
                     if (dimension == player.dimension)
                     {
@@ -210,7 +210,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             {
                 TargetPoint tp = (TargetPoint)args;
                 ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
-                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerList())
+                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers())
                 {
                     if (player.dimension == tp.dimension)
                     {

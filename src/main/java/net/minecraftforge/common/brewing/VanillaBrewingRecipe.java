@@ -60,16 +60,16 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
     @Override
     public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
     {
-        if (!input.func_190926_b() && !ingredient.func_190926_b() && isIngredient(ingredient))
+        if (!input.isEmpty() && !ingredient.isEmpty() && isIngredient(ingredient))
         {
             ItemStack result = PotionHelper.doReaction(ingredient, input);
             if (result != input)
             {
                 return result;
             }
-            return ItemStack.field_190927_a;
+            return ItemStack.EMPTY;
         }
 
-        return ItemStack.field_190927_a;
+        return ItemStack.EMPTY;
     }
 }

@@ -139,10 +139,10 @@ public class ModelLoaderRegistryDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         @Override
-        public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+        public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
         {
             return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
         }
@@ -244,7 +244,7 @@ public class ModelLoaderRegistryDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         @Override
         public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
@@ -329,7 +329,7 @@ public class ModelLoaderRegistryDebug
             this.counter++;
             this.hidden.add(Integer.toString(this.counter));
             TextComponentString text = new TextComponentString("" + this.counter);
-            if (this.worldObj.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
+            if (this.world.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
         }
 
         public void decrement()
@@ -342,7 +342,7 @@ public class ModelLoaderRegistryDebug
             this.hidden.remove(Integer.toString(this.counter));
             this.counter--;
             TextComponentString text = new TextComponentString("" + this.counter);
-            if (this.worldObj.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
+            if (this.world.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
         }
 
         public void setMax(int max)
@@ -381,7 +381,7 @@ public class ModelLoaderRegistryDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
     }
 
     /**
@@ -408,7 +408,7 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+        public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
         {
             return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
         }
@@ -438,7 +438,7 @@ public class ModelLoaderRegistryDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
         {
@@ -511,11 +511,11 @@ public class ModelLoaderRegistryDebug
 
         public void cycleColors()
         {
-            if (this.worldObj.isRemote)
+            if (this.world.isRemote)
             {
                 FMLLog.info("%b", shouldIncrement);
                 /*
-                IBakedModel bakedModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(this.worldObj.getBlockState(this.pos), this.worldObj, this.pos);
+                IBakedModel bakedModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(this.world.getBlockState(this.pos), this.world, this.pos);
                 if (bakedModel != null && bakedModel instanceof OBJBakedModel)
                 {
                     OBJBakedModel objBaked = (OBJBakedModel) bakedModel;
@@ -558,7 +558,7 @@ public class ModelLoaderRegistryDebug
                             objBaked.scheduleRebake();
                         }
                     }
-                    this.worldObj.markBlockRangeForRenderUpdate(this.pos, this.pos);
+                    this.world.markBlockRangeForRenderUpdate(this.pos, this.pos);
                 }*/
             }
         }
@@ -591,10 +591,10 @@ public class ModelLoaderRegistryDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         @Override
-        public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+        public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
         {
             return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
         }
@@ -769,10 +769,10 @@ public class ModelLoaderRegistryDebug
         @Override
         public void update()
         {
-            if (this.worldObj.isRemote)
+            if (this.world.isRemote)
             {
                 Vector3d teLoc = new Vector3d(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
-                EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+                EntityPlayer player = Minecraft.getMinecraft().player;
                 Vector3d playerLoc = new Vector3d();
                 playerLoc.setX(player.posX);
                 playerLoc.setY(player.posY + player.getEyeHeight());
@@ -793,7 +793,7 @@ public class ModelLoaderRegistryDebug
                 matrix.setIdentity();
                 matrix.setRotation(rot);
                 transform = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(matrix));
-                this.worldObj.markBlockRangeForRenderUpdate(this.pos, this.pos);
+                this.world.markBlockRangeForRenderUpdate(this.pos, this.pos);
             }
         }
     }

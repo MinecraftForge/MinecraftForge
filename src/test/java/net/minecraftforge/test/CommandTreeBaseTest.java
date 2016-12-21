@@ -32,13 +32,13 @@ public class CommandTreeBaseTest
         }
 
         @Override
-        public String getCommandName()
+        public String getName()
         {
             return "treecommand_test";
         }
 
         @Override
-        public String getCommandUsage(ICommandSender sender)
+        public String getUsage(ICommandSender sender)
         {
             return "commands.treecommand_test.usage";
         }
@@ -46,13 +46,13 @@ public class CommandTreeBaseTest
         public static class CommandPing extends CommandBase
         {
             @Override
-            public String getCommandName()
+            public String getName()
             {
                 return "ping";
             }
 
             @Override
-            public String getCommandUsage(ICommandSender sender)
+            public String getUsage(ICommandSender sender)
             {
                 return "commands.treecommand_test.ping.usage";
             }
@@ -60,7 +60,7 @@ public class CommandTreeBaseTest
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
             {
-                sender.addChatMessage(new TextComponentString("Pong!"));
+                sender.sendMessage(new TextComponentString("Pong!"));
             }
         }
 
@@ -75,13 +75,13 @@ public class CommandTreeBaseTest
             }
 
             @Override
-            public String getCommandName()
+            public String getName()
             {
                 return "value";
             }
 
             @Override
-            public String getCommandUsage(ICommandSender sender)
+            public String getUsage(ICommandSender sender)
             {
                 return "commands.treecommand_test.value.usage";
             }
@@ -89,13 +89,13 @@ public class CommandTreeBaseTest
             public static class CommandSet extends CommandBase
             {
                 @Override
-                public String getCommandName()
+                public String getName()
                 {
                     return "set";
                 }
 
                 @Override
-                public String getCommandUsage(ICommandSender sender)
+                public String getUsage(ICommandSender sender)
                 {
                     return "commands.treecommand_test.value.set.usage";
                 }
@@ -104,20 +104,20 @@ public class CommandTreeBaseTest
                 public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
                 {
                     value = CommandTreeTest.parseInt(args[0]);
-                    sender.addChatMessage(new TextComponentString("Test value set to: " + value));
+                    sender.sendMessage(new TextComponentString("Test value set to: " + value));
                 }
             }
 
             public static class CommandGet extends CommandBase
             {
                 @Override
-                public String getCommandName()
+                public String getName()
                 {
                     return "get";
                 }
 
                 @Override
-                public String getCommandUsage(ICommandSender sender)
+                public String getUsage(ICommandSender sender)
                 {
                     return "commands.treecommand_test.value.get.usage";
                 }
@@ -125,7 +125,7 @@ public class CommandTreeBaseTest
                 @Override
                 public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
                 {
-                    sender.addChatMessage(new TextComponentString("Test value: " + value));
+                    sender.sendMessage(new TextComponentString("Test value: " + value));
                 }
             }
         }

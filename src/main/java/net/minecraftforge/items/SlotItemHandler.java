@@ -43,7 +43,7 @@ public class SlotItemHandler extends Slot
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack)
     {
-        if (stack.func_190926_b())
+        if (stack.isEmpty())
             return false;
 
         IItemHandler handler = this.getItemHandler();
@@ -53,7 +53,7 @@ public class SlotItemHandler extends Slot
             IItemHandlerModifiable handlerModifiable = (IItemHandlerModifiable) handler;
             ItemStack currentStack = handlerModifiable.getStackInSlot(index);
 
-            handlerModifiable.setStackInSlot(index, ItemStack.field_190927_a);
+            handlerModifiable.setStackInSlot(index, ItemStack.EMPTY);
 
             remainder = handlerModifiable.insertItem(index, stack, true);
 
@@ -63,7 +63,7 @@ public class SlotItemHandler extends Slot
         {
             remainder = handler.insertItem(index, stack, true);
         }
-        return remainder.func_190926_b() || remainder.func_190916_E() < stack.func_190916_E();
+        return remainder.isEmpty() || remainder.getCount() < stack.getCount();
     }
 
     @Override
@@ -98,27 +98,27 @@ public class SlotItemHandler extends Slot
     {
         ItemStack maxAdd = stack.copy();
         int maxInput = stack.getMaxStackSize();
-        maxAdd.func_190920_e(maxInput);
+        maxAdd.setCount(maxInput);
 
         IItemHandler handler = this.getItemHandler();
         ItemStack currentStack = handler.getStackInSlot(index);
         if (handler instanceof IItemHandlerModifiable) {
             IItemHandlerModifiable handlerModifiable = (IItemHandlerModifiable) handler;
 
-            handlerModifiable.setStackInSlot(index, ItemStack.field_190927_a);
+            handlerModifiable.setStackInSlot(index, ItemStack.EMPTY);
 
             ItemStack remainder = handlerModifiable.insertItem(index, maxAdd, true);
 
             handlerModifiable.setStackInSlot(index, currentStack);
 
-            return maxInput - remainder.func_190916_E();
+            return maxInput - remainder.getCount();
         }
         else
         {
             ItemStack remainder = handler.insertItem(index, maxAdd, true);
 
-            int current = currentStack.func_190916_E();
-            int added = maxInput - remainder.func_190916_E();
+            int current = currentStack.getCount();
+            int added = maxInput - remainder.getCount();
             return current + added;
         }
     }
@@ -126,7 +126,7 @@ public class SlotItemHandler extends Slot
     @Override
     public boolean canTakeStack(EntityPlayer playerIn)
     {
-        return !this.getItemHandler().extractItem(index, 1, true).func_190926_b();
+        return !this.getItemHandler().extractItem(index, 1, true).isEmpty();
     }
 
     @Override
