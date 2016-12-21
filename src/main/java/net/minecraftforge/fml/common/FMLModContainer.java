@@ -140,8 +140,8 @@ public class FMLModContainer implements ModContainer
         }
         if (!modid.equals(modid.toLowerCase(Locale.ENGLISH)))
         {
-            FMLLog.bigWarning("The modid %s is not the same as it's lowercase version. Lowercasing is enforced in 1.11", modid);
-            throw new IllegalArgumentException(String.format("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11", modid));
+            FMLLog.bigWarning("The modid %s is not the same as it's lowercase version. Lowercasing is now enforced in 1.11, please inform the mod author about this", modid);
+            throw new IllegalArgumentException(String.format("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11, please inform the mod author about this", modid));
         }
     }
     private ILanguageAdapter getLanguageAdapter()
