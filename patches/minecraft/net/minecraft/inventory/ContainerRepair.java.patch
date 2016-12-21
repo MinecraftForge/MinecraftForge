@@ -41,12 +41,12 @@
                                  {
                                      flag1 = false;
                                      ++i;
-@@ -281,6 +285,8 @@
-                 }
+@@ -297,6 +301,8 @@
+                 itemstack1.func_151001_c(this.field_82857_m);
              }
  
 +            if (flag && !itemstack1.func_77973_b().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = ItemStack.field_190927_a;
 +
-             if (StringUtils.isBlank(this.field_82857_m))
-             {
-                 if (itemstack.func_82837_s())
+             this.field_82854_e = j + i;
+ 
+             if (i <= 0)
