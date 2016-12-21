@@ -224,7 +224,7 @@
          {
 -            if (!p_187251_1_.func_70093_af() || p_187251_1_.func_184614_ca().func_190926_b() && p_187251_1_.func_184592_cb().func_190926_b())
 +            net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks
-+                    .onRightClickBlock(p_187251_1_, p_187251_4_, p_187251_5_, p_187251_6_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(field_73090_b, getBlockReachDistance() + 1));
++                    .onRightClickBlock(p_187251_1_, p_187251_4_, p_187251_5_, p_187251_6_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(p_187251_1_, getBlockReachDistance() + 1));
 +            if (event.isCanceled()) return EnumActionResult.PASS;
 +
 +            EnumActionResult ret = p_187251_3_.onItemUseFirst(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);

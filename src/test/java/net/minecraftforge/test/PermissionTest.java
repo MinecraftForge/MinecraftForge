@@ -65,13 +65,13 @@ public class PermissionTest
     public static class CommandPermissionTest extends CommandBase
     {
         @Override
-        public String getCommandName()
+        public String getName()
         {
             return "permission_test";
         }
 
         @Override
-        public String getCommandUsage(ICommandSender sender)
+        public String getUsage(ICommandSender sender)
         {
             return "commands.permission_test.usage";
         }
@@ -89,7 +89,7 @@ public class PermissionTest
 
             if(args.length < 1)
             {
-                sender.addChatMessage(new TextComponentString("claim, unclaim, setblock, read_tile"));
+                sender.sendMessage(new TextComponentString("claim, unclaim, setblock, read_tile"));
                 return;
             }
 
@@ -104,12 +104,12 @@ public class PermissionTest
                     if(b)
                     {
                         //claim chunk
-                        sender.addChatMessage(new TextComponentString("Chunk claimed!"));
+                        sender.sendMessage(new TextComponentString("Chunk claimed!"));
                     }
                     else
                     {
                         //unclaim chunk
-                        sender.addChatMessage(new TextComponentString("Chunk unclaimed!"));
+                        sender.sendMessage(new TextComponentString("Chunk unclaimed!"));
                     }
                 }
                 else
@@ -134,7 +134,7 @@ public class PermissionTest
                     i = parseInt(args[5], 0, 15);
                 }
 
-                if(!player.worldObj.isBlockLoaded(blockpos))
+                if(!player.world.isBlockLoaded(blockpos))
                 {
                     throw new CommandException("commands.setblock.outOfWorld");
                 }
@@ -146,7 +146,7 @@ public class PermissionTest
                     {
                         throw new CommandException("commands.generic.permission");
                     }
-                    else if(!player.worldObj.setBlockState(blockpos, state, 2))
+                    else if(!player.world.setBlockState(blockpos, state, 2))
                     {
                         throw new CommandException("commands.setblock.noChange");
                     }
@@ -156,12 +156,12 @@ public class PermissionTest
             else if(args[0].equals("read_tile"))
             {
                 BlockPos blockpos = parseBlockPos(sender, args, 1, false);
-                TileEntity tileEntity = player.worldObj.getTileEntity(blockpos);
+                TileEntity tileEntity = player.world.getTileEntity(blockpos);
 
                 if(PermissionAPI.hasPermission(player.getGameProfile(), Permissions.READ_TILE, new BlockPosContext(player, blockpos, null, null).set(ContextKeys.TILE_ENTITY, tileEntity)))
                 {
                     NBTTagCompound tag = tileEntity == null ? null : tileEntity.serializeNBT();
-                    sender.addChatMessage(new TextComponentString(String.valueOf(tag)));
+                    sender.sendMessage(new TextComponentString(String.valueOf(tag)));
                 }
                 else
                 {

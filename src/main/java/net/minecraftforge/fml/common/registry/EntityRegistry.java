@@ -202,14 +202,11 @@ public class EntityRegistry
      * Once registered mob eggs can be created by using minecraft:spawn_egg with NBT entry 'entity_name' with
      * value of the name this class is registered in the classToStringMapping with.
      *
-     * @param entityClass The entity class
+     * @param name The entity ResourceLocation
      * @param primary Primary egg color
      * @param secondary Secondary egg color
      *
-     * @throws IllegalArgumentException if entityClass is not registered in classToStringMapping.
-     *
      */
-
     public static void registerEgg(ResourceLocation name, int primary, int secondary)
     {
         EntityEntry entry = ForgeRegistries.ENTITIES.getValue(name);
@@ -222,7 +219,7 @@ public class EntityRegistry
     }
 
     /**
-     * Add a spawn entry for the supplied entity in the supplied {@link BiomeGenBase} list
+     * Add a spawn entry for the supplied entity in the supplied {@link Biome} list
      * @param entityClass Entity class added
      * @param weightedProb Probability
      * @param min Min spawn count
@@ -256,7 +253,7 @@ public class EntityRegistry
     }
 
     /**
-     * Add a spawn entry for the supplied entity in the supplied {@link BiomeGenBase} list
+     * Add a spawn entry for the supplied entity in the supplied {@link Biome} list
      * @param entityName The entity name
      * @param weightedProb Probability
      * @param min Min spawn count
@@ -352,7 +349,7 @@ public class EntityRegistry
         EntityRegistration er = lookupModSpawn(entity.getClass(), true);
         if (er != null)
         {
-            entityTracker.addEntityToTracker(entity, er.getTrackingRange(), er.getUpdateFrequency(), er.sendsVelocityUpdates());
+            entityTracker.track(entity, er.getTrackingRange(), er.getUpdateFrequency(), er.sendsVelocityUpdates());
             return true;
         }
         return false;

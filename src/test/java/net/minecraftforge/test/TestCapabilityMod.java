@@ -61,7 +61,7 @@ public class TestCapabilityMod
         if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.DIRT && event.getItemStack().hasCapability(TEST_CAP, null))
         {
             IExampleCapability cap = event.getItemStack().getCapability(TEST_CAP, null);
-            event.getEntityPlayer().addChatMessage(new TextComponentString((cap.getVal() ? TextFormatting.GREEN : TextFormatting.RED) + "" + TextFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
+            event.getEntityPlayer().sendMessage(new TextComponentString((cap.getVal() ? TextFormatting.GREEN : TextFormatting.RED) + "" + TextFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
             event.setCanceled(true);
         }
     }

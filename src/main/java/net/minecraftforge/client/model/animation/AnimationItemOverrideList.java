@@ -73,11 +73,11 @@ public final class AnimationItemOverrideList extends ItemOverrideList
             IAnimationStateMachine asm = stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
             if(world == null && entity != null)
             {
-                world = entity.worldObj;
+                world = entity.world;
             }
             if(world == null)
             {
-                world = Minecraft.getMinecraft().theWorld;
+                world = Minecraft.getMinecraft().world;
             }
             IModelState state = asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
             return model.bake(new ModelStateComposition(state, this.state), format, bakedTextureGetter);

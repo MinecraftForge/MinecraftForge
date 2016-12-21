@@ -86,14 +86,14 @@ public class UniversalBucket extends Item
     @Override
     public boolean hasContainerItem(@Nonnull ItemStack stack)
     {
-        return !getEmpty().func_190926_b();
+        return !getEmpty().isEmpty();
     }
 
     @Nonnull
     @Override
     public ItemStack getContainerItem(@Nonnull ItemStack itemStack)
     {
-        if (!getEmpty().func_190926_b())
+        if (!getEmpty().isEmpty())
         {
             // Create a copy such that the game can't mess with it
             return getEmpty().copy();
@@ -129,7 +129,7 @@ public class UniversalBucket extends Item
         FluidStack fluidStack = getFluid(stack);
         if (fluidStack == null)
         {
-            if(!getEmpty().func_190926_b())
+            if(!getEmpty().isEmpty())
             {
                 return getEmpty().getDisplayName();
             }
@@ -183,12 +183,12 @@ public class UniversalBucket extends Item
                     // success!
                     player.addStat(StatList.getObjectUseStats(this));
 
-                    itemstack.func_190918_g(1);
+                    itemstack.shrink(1);
                     ItemStack drained = result.getResult();
-                    ItemStack emptyStack = !drained.func_190926_b() ? drained.copy() : new ItemStack(this);
+                    ItemStack emptyStack = !drained.isEmpty() ? drained.copy() : new ItemStack(this);
 
                     // check whether we replace the item or add the empty one to the inventory
-                    if (itemstack.func_190926_b())
+                    if (itemstack.isEmpty())
                     {
                         return ActionResult.newResult(EnumActionResult.SUCCESS, emptyStack);
                     }
@@ -235,7 +235,7 @@ public class UniversalBucket extends Item
         BlockPos pos = target.getBlockPos();
 
         ItemStack singleBucket = emptyBucket.copy();
-        singleBucket.func_190920_e(1);
+        singleBucket.setCount(1);
 
         FluidActionResult filledResult = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, target.sideHit);
         if (filledResult.isSuccess())

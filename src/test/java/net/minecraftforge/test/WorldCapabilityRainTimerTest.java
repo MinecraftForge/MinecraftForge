@@ -40,7 +40,7 @@ public class WorldCapabilityRainTimerTest {
         @SubscribeEvent
         public void attatchTimer(AttachCapabilitiesEvent.World event)
         {
-            if (!event.getWorld().isRemote && !event.getWorld().provider.getHasNoSky())
+            if (!event.getWorld().isRemote && !event.getWorld().provider.hasNoSky())
                 event.addCapability(new ResourceLocation(MODID, "rainTimer"), new RainTimerProvider());
         }
 
