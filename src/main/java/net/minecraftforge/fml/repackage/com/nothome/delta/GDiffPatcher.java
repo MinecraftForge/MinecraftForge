@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.repackage.com.nothome.delta;
 
+import org.apache.commons.compress.utils.IOUtils;
+
 import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_INT;
 import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_UBYTE;
 import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_USHORT;
@@ -70,16 +72,16 @@ public class GDiffPatcher {
 		throws IOException
 	{
         RandomAccessFileSeekableSource source =new RandomAccessFileSeekableSource(new RandomAccessFile(sourceFile, "r"));
-        InputStream patch = new FileInputStream(patchFile);
-        OutputStream output = new FileOutputStream(outputFile);
+        InputStream patch = null;
+        OutputStream output = null;
         try {
+            patch = new FileInputStream(patchFile);
+            output = new FileOutputStream(outputFile);
             patch(source, patch, output);
-        } catch (IOException e) {
-            throw e;
         } finally {
-            source.close();
-            patch.close();
-            output.close();
+            IOUtils.closeQuietly(source);
+            IOUtils.closeQuietly(patch);
+            IOUtils.closeQuietly(output);
         }
     }
 

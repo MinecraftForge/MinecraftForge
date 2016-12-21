@@ -33,6 +33,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModContainerFactory;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Throwables;
@@ -73,8 +74,14 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
             try
             {
                 FileInputStream fis = new FileInputStream(metadata);
-                mc = MetadataCollection.from(fis,modDir.getName());
-                fis.close();
+                try
+                {
+                    mc = MetadataCollection.from(fis, modDir.getName());
+                }
+                finally
+                {
+                    IOUtils.closeQuietly(fis);
+                }
                 FMLLog.fine("Found an mcmod.info file in directory %s", modDir.getName());
             }
             catch (Exception e)
@@ -101,11 +108,11 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
             if (match.matches())
             {
                 ASMModParser modParser = null;
+                FileInputStream fis = null;
                 try
                 {
-                    FileInputStream fis = new FileInputStream(file);
+                    fis = new FileInputStream(file);
                     modParser = new ASMModParser(fis);
-                    fis.close();
                     candidate.addClassEntry(path+file.getName());
                 }
                 catch (LoaderException e)
@@ -115,7 +122,11 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                 }
                 catch (Exception e)
                 {
-                    Throwables.propagate(e);
+                    throw Throwables.propagate(e);
+                }
+                finally
+                {
+                    IOUtils.closeQuietly(fis);
                 }
 
                 modParser.validate();
