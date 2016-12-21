@@ -5,7 +5,7 @@
              ItemStack itemstack = this.func_185060_a(entityplayer);
  
 +            int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
-+            i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_77615_1_, p_77615_2_, (EntityPlayer)p_77615_3_, i, itemstack != null || flag);
++            i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_77615_1_, p_77615_2_, entityplayer, i, !itemstack.func_190926_b() || flag);
 +            if (i < 0) return;
 +
              if (!itemstack.func_190926_b() || flag)
@@ -21,7 +21,7 @@
                  if ((double)f >= 0.1D)
                  {
 -                    boolean flag1 = flag && itemstack.func_77973_b() == Items.field_151032_g;
-+                    boolean flag1 = entityplayer.field_71075_bZ.field_75098_d || (itemstack.func_77973_b() instanceof ItemArrow ? ((ItemArrow)itemstack.func_77973_b()).isInfinite(itemstack, p_77615_1_, entityplayer) : false);
++                    boolean flag1 = entityplayer.field_71075_bZ.field_75098_d || itemstack.func_77973_b() instanceof ItemArrow && ((ItemArrow) itemstack.func_77973_b()).isInfinite(itemstack, p_77615_1_, entityplayer);
  
                      if (!p_77615_2_.field_72995_K)
                      {
