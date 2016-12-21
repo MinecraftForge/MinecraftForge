@@ -1038,9 +1038,18 @@ public class ForgeHooks
         return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteract(player, hand, entity));
     }
 
+    @Deprecated
     public static boolean onItemRightClick(EntityPlayer player, EnumHand hand)
     {
         return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickItem(player, hand));
+    }
+    
+    // TODO: Get rid of the old onItemRightClick in 1.12
+    public static PlayerInteractEvent.RightClickItem onItemRightClick2(EntityPlayer player, EnumHand hand)
+    {
+        PlayerInteractEvent.RightClickItem evt = new PlayerInteractEvent.RightClickItem(player, hand);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
     }
 
     public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(EntityPlayer player, BlockPos pos, EnumFacing face, Vec3d hitVec)
