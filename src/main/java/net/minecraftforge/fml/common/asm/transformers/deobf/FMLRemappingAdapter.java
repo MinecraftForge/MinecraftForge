@@ -38,7 +38,6 @@ public class FMLRemappingAdapter extends RemappingClassAdapter {
         super(cv, FMLDeobfuscatingRemapper.INSTANCE);
     }
 
-    // From SpecialSource
     private static final List<Handle> META_FACTORIES = Arrays.asList(
             new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
                     "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"),
@@ -106,8 +105,6 @@ public class FMLRemappingAdapter extends RemappingClassAdapter {
         @Override
         public void visitInvokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs)
         {
-            // Partially taken from SpecialSource
-
             // Special case lambda metaFactory to get new name
             if (META_FACTORIES.contains(bsm))
             {
