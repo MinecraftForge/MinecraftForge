@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.common.discovery;
 
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarFile;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModContainerFactory;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import java.util.regex.Matcher;
@@ -54,7 +56,15 @@ public class JarDiscoverer implements ITypeDiscoverer
             if (modInfo != null)
             {
                 FMLLog.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
-                mc = MetadataCollection.from(jar.getInputStream(modInfo), candidate.getModContainer().getName());
+                InputStream inputStream = jar.getInputStream(modInfo);
+                try
+                {
+                    mc = MetadataCollection.from(inputStream, candidate.getModContainer().getName());
+                }
+                finally
+                {
+                    IOUtils.closeQuietly(inputStream);
+                }
             }
             else
             {
@@ -73,7 +83,15 @@ public class JarDiscoverer implements ITypeDiscoverer
                     ASMModParser modParser;
                     try
                     {
-                        modParser = new ASMModParser(jar.getInputStream(ze));
+                        InputStream inputStream = jar.getInputStream(ze);
+                        try
+                        {
+                            modParser = new ASMModParser(inputStream);
+                        }
+                        finally
+                        {
+                            IOUtils.closeQuietly(inputStream);
+                        }
                         candidate.addClassEntry(ze.getName());
                     }
                     catch (LoaderException e)
@@ -101,16 +119,7 @@ public class JarDiscoverer implements ITypeDiscoverer
         }
         finally
         {
-            if (jar != null)
-            {
-                try
-                {
-                    jar.close();
-                }
-                catch (Exception e)
-                {
-                }
-            }
+            IOUtils.closeQuietly(jar);
         }
         return foundMods;
     }
