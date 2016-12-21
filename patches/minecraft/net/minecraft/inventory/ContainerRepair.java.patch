@@ -41,12 +41,11 @@
                                  {
                                      flag1 = false;
                                      ++i;
-@@ -304,6 +308,8 @@
+@@ -304,6 +308,7 @@
                  itemstack1 = ItemStack.field_190927_a;
              }
  
 +            if (flag && !itemstack1.func_77973_b().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = ItemStack.field_190927_a;
-+
              if (k == i && k > 0 && this.field_82854_e >= 40)
              {
                  this.field_82854_e = 39;
