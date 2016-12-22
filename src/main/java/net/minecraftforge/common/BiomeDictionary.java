@@ -104,7 +104,16 @@ public class BiomeDictionary
             Type ret = EnumHelper.addEnum(Type.class, name, new Class[]{Type[].class}, new Object[]{subTypes});
             if (ret.ordinal() >= typeInfoList.length)
             {
-                typeInfoList = Arrays.copyOf(typeInfoList, ret.ordinal());
+                typeInfoList = Arrays.copyOf(typeInfoList, ret.ordinal()+1);
+            }
+            for(BiomeInfo bInfo:biomeList)
+            {
+                if(bInfo != null)
+                {
+                    EnumSet<Type> oldSet = bInfo.typeList;
+                    bInfo.typeList = EnumSet.noneOf(Type.class);
+                    bInfo.typeList.addAll(oldSet);
+                }
             }
             return ret;
         }
