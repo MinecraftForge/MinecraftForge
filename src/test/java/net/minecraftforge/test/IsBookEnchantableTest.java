@@ -1,15 +1,18 @@
 package net.minecraftforge.test;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = "is_book_enchantable_test", name = "Test for isBookEnchantable", version = "1.0")
+@Mod(modid = IsBookEnchantableTest.MOD_ID, name = "Test for isBookEnchantable", version = "1.0")
 @Mod.EventBusSubscriber
 public class IsBookEnchantableTest
 {
+    static final String MOD_ID = "is_book_enchantable_test";
+
     private static final Item TEST_ITEM = new TestItem();
 
     @SubscribeEvent
@@ -24,7 +27,14 @@ public class IsBookEnchantableTest
 
         private TestItem()
         {
+            setUnlocalizedName(MOD_ID + "." + NAME);
             setRegistryName(NAME);
+            setCreativeTab(CreativeTabs.MISC);
+        }
+
+        @Override
+        public int getItemEnchantability() {
+            return 15;
         }
 
         @Override
