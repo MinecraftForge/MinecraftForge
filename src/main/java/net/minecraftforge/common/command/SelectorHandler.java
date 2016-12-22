@@ -44,8 +44,9 @@ public abstract class SelectorHandler
 
     /**
      * Returns whether the string represents a selector <br>
-     * This method indicated whether {@link #matchEntities this.matchEntities} should be used to resolve the string<br>
-     * <b>Note:</b> Since the handler is chosen based on the registered prefix, this will mostly return {@code true}<br>
+     * <b>Note:</b> Returning {@code false} does not prevent {@link #matchEntities this.matchEntities} from being called. It is recommended to not override this method and
+     * simply throw an exception there <br>
+     * <b>Note:</b> If {@code selectorStr} could be a valid entity name, this method should return {@code false} and {@link #matchEntities this.matchEntities} should return an empty list instead of throwing in case {@code selectorStr} is not a valid selector <br>
      * <b>Note:</b> Mostly for legacy reasons.
      * (Since {@link net.minecraft.command.EntitySelector#matchEntities(ICommandSender, String, Class) EntitySelector.matchEntities}
      * returns an empty list when the string is illformed instead of throwing an exception (as is indirectly done when this method returns {@code false})
