@@ -33,7 +33,8 @@ public class IsBookEnchantableTest
         }
 
         @Override
-        public int getItemEnchantability() {
+        public int getItemEnchantability()
+        {
             return 15;
         }
 
