@@ -1,6 +1,7 @@
 package net.minecraftforge.test;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.RegistryEvent;
@@ -49,6 +50,12 @@ public class IsBookEnchantableTest
         public boolean isBookEnchantable(ItemStack stack, ItemStack book)
         {
             return false;
+        }
+
+        @Override
+        public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
+        {
+            return true;
         }
     }
 }
