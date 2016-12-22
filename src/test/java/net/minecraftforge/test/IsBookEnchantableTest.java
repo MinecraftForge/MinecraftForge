@@ -27,9 +27,16 @@ public class IsBookEnchantableTest
 
         private TestItem()
         {
+            maxStackSize = 1;
             setUnlocalizedName(MOD_ID + "." + NAME);
             setRegistryName(NAME);
             setCreativeTab(CreativeTabs.MISC);
+        }
+
+        @Override
+        public boolean isItemTool(ItemStack stack)
+        {
+            return true;
         }
 
         @Override
