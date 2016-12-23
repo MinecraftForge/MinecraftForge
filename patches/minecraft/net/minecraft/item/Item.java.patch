@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,613 @@
+@@ -433,11 +440,623 @@
          return false;
      }
  
@@ -669,12 +669,22 @@
 +        return builder.build();
 +    }
 +
++    /**
++     * Whether this Item is considered a shield.
++     * @param stack the ItemStack
++     * @return True if the item is considered a shield
++     */
++    public boolean isShield(ItemStack stack)
++    {
++        return stack.func_77973_b() == Items.field_185159_cQ;
++    }
++
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -971,6 +1580,8 @@
+@@ -971,6 +1590,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -683,7 +693,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1006,9 +1617,26 @@
+@@ -1006,9 +1627,26 @@
              return this.field_78008_j;
          }
  

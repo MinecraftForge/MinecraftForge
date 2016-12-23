@@ -192,6 +192,15 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
+@@ -998,7 +1061,7 @@
+ 
+     protected void func_184590_k(float p_184590_1_)
+     {
+-        if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b() == Items.field_185159_cQ)
++        if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b().isShield(this.field_184627_bm))
+         {
+             int i = 1 + MathHelper.func_76141_d(p_184590_1_);
+             this.field_184627_bm.func_77972_a(i, this);
 @@ -1006,6 +1069,7 @@
              if (this.field_184627_bm.func_190926_b())
              {
