@@ -49,6 +49,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
@@ -63,6 +64,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
@@ -108,6 +110,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean disableVersionCheck = false;
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
+    public static boolean forgeCloudsEnabled = true;
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
 
@@ -284,6 +287,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_CLIENT, "forgeCloudsEnabled", true,
+                "Enable uploading cloud geometry to the GPU for faster rendering.");
+        prop.setLanguageKey("forge.configgui.forgeCloudsEnabled");
+        forgeCloudsEnabled = prop.getBoolean(true);
+        propOrder.add(prop.getName());
+
         prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder,
                 "The timestamp of the last reminder to update to Java 8 in number of milliseconds since January 1, 1970, 00:00:00 GMT. Nag will show only once every 24 hours. To disable it set this to some really high number.");
         java8Reminder = prop.getLong(java8Reminder);
@@ -322,16 +331,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             if (!event.isWorldRunning())
             {
-                if (Configuration.CATEGORY_GENERAL.equals(event.getConfigID()))
-                {
-                    syncConfig(false);
-                }
-                else if ("chunkLoader".equals(event.getConfigID()))
+                if ("chunkLoader".equals(event.getConfigID()))
                 {
                     ForgeChunkManager.syncConfigDefaults();
                     ForgeChunkManager.loadConfiguration();
                 }
-                else if (VERSION_CHECK_CAT.equals(event.getConfigID()))
+                else
                 {
                     syncConfig(false);
                 }
@@ -344,6 +349,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                     disableStairSlabCulling = tmp;
                     FMLCommonHandler.instance().reloadRenderers();
                 }
+                syncConfig(false);
             }
         }
     }
@@ -454,6 +460,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             RecipeSorter.sortCraftManager();
         }
         FluidRegistry.validateFluidRegistry();
+
+        if (evt.getSide() == Side.CLIENT)
+        {
+            CloudRenderer.init();
+        }
     }
 
     @Subscribe
