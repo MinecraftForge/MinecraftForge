@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/profiler/Profiler.java
++++ ../src-work/minecraft/net/minecraft/profiler/Profiler.java
+@@ -170,4 +170,16 @@
+                 return (this.field_76331_c.hashCode() & 11184810) + 4473924;
+             }
+         }
++
++    // Begin Forge
++    /**
++     * @param section The profiling section.
++     * @return The total amount of time spent in the section in nanoseconds.
++     */
++    public long getTotalTime(String section)
++    {
++        if (!field_76324_e.containsKey(section))
++            return -1L;
++        return field_76324_e.get(section);
++    }
+ }
