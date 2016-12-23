@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,613 @@
+@@ -433,11 +440,662 @@
          return false;
      }
  
@@ -669,12 +669,61 @@
 +        return builder.build();
 +    }
 +
++    /**
++     * Holds onto either a reference to IStackOverlayHandler.VANILLA, or a wrapper if IStackOverlayHandlers are subscribed
++     * */
++    private net.minecraftforge.client.overlay.IStackOverlayHandler overlayHandler = net.minecraftforge.client.overlay.IStackOverlayHandler.VANILLA;
++
++    /**
++     * Holds onto either a reference to IStackOverlayColor.VANILLA, or a wrapper if IStackOverlayColors are subscribed
++     * */
++    private net.minecraftforge.client.overlay.IStackOverlayColor overlayColor = net.minecraftforge.client.overlay.IStackOverlayColor.VANILLA;
++
++    /**
++     * Returns the IStackOverlayHandler for the ItemStack's effect overlay.
++     * */
++    @javax.annotation.Nonnull
++    public final net.minecraftforge.client.overlay.IStackOverlayHandler getStackOverlayHandler()
++    {
++        return overlayHandler;
++    }
++
++    /**
++     * Returns the IStackOverlayColor for the ItemStack's effect overlay.
++     * */
++    @javax.annotation.Nonnull
++    public final net.minecraftforge.client.overlay.IStackOverlayColor getStackOverlayColor()
++    {
++        return overlayColor;
++    }
++
++    /**
++     * Adds an IStackOverlay handler to the list of subscribers. Note that this works as first come, first serve.
++     * */
++    public final void subscribeStackOverlayHandler(net.minecraftforge.client.overlay.IStackOverlayHandler toSubscribe)
++    {
++        if(overlayHandler instanceof net.minecraftforge.client.overlay.IStackOverlayHandler.SubscriptionWrapper)
++            ((net.minecraftforge.client.overlay.IStackOverlayHandler.SubscriptionWrapper)overlayHandler).addSubscription(toSubscribe);
++        else
++            overlayHandler = new net.minecraftforge.client.overlay.IStackOverlayHandler.SubscriptionWrapper(toSubscribe);
++    }
++
++    /**
++     * Adds an IStackOverlay handler to the list of subscribers. Note that this works as first come, first serve.
++     * */
++    public final void subscribeStackOverlayColor(net.minecraftforge.client.overlay.IStackOverlayColor toSubscribe)
++    {
++        if(overlayColor instanceof net.minecraftforge.client.overlay.IStackOverlayColor.SubscriptionWrapper)
++            ((net.minecraftforge.client.overlay.IStackOverlayColor.SubscriptionWrapper)overlayColor).addSubscription(toSubscribe);
++        else
++            overlayColor = new net.minecraftforge.client.overlay.IStackOverlayColor.SubscriptionWrapper(toSubscribe);
++    }
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -971,6 +1580,8 @@
+@@ -971,6 +1629,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -683,7 +732,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1006,9 +1617,26 @@
+@@ -1006,9 +1666,26 @@
              return this.field_78008_j;
          }
  
