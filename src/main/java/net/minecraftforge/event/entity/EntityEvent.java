@@ -135,4 +135,20 @@ public class EntityEvent extends Event
         public int getOldChunkZ() { return oldChunkZ; }
         public void setOldChunkZ(int oldChunkZ) { this.oldChunkZ = oldChunkZ; }
     }
+    
+    /**
+     * This event is fired whenever an entity is about to tick in {@link World#updateEntityWithOptionalForce(net.minecraft.entity.Entity, boolean)} <br>
+     * <br>
+     * This event is {@link Cancelable}. Canceling the event will prevent the entity from updating.<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     **/
+    @Cancelable
+    public static class Update extends EntityEvent
+    {
+        public Update(Entity entity)
+        {
+            super(entity);
+        }
+    }
 }

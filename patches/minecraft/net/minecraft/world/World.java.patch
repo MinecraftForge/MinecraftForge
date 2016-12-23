@@ -359,6 +359,15 @@
          float f = this.func_72826_c(p_72880_1_);
          float f1 = 1.0F - (MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.25F);
          f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
+@@ -1592,7 +1694,7 @@
+             try
+             {
+                 ++entity.field_70173_aa;
+-                entity.func_70071_h_();
++                net.minecraftforge.event.ForgeEventFactory.onEntityUpdate(entity);
+             }
+             catch (Throwable throwable2)
+             {
 @@ -1608,6 +1710,12 @@
                      entity.func_85029_a(crashreportcategory);
                  }
@@ -481,6 +490,15 @@
          {
              p_72866_1_.field_70142_S = p_72866_1_.field_70165_t;
              p_72866_1_.field_70137_T = p_72866_1_.field_70163_u;
+@@ -1843,7 +1984,7 @@
+                 }
+                 else
+                 {
+-                    p_72866_1_.func_70071_h_();
++                    net.minecraftforge.event.ForgeEventFactory.onEntityUpdate(p_72866_1_);
+                 }
+             }
+ 
 @@ -2024,6 +2165,11 @@
                              blockpos$pooledmutableblockpos.func_185344_t();
                              return true;

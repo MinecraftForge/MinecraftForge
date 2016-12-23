@@ -638,6 +638,11 @@ public class ForgeEventFactory
         Result result = evt.getResult();
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
     }
+    
+    public static void onEntityUpdate(Entity entity) {
+        if (!MinecraftForge.EVENT_BUS.post(new EntityEvent.Update(entity)))
+            entity.onUpdate();
+    }
 
     public static int onEnchantmentLevelSet(World world, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int level)
     {
