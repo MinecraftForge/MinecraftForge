@@ -60,7 +60,7 @@ import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.relauncher.ModListHelper;
 import net.minecraftforge.fml.relauncher.Side;
 
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.CharMatcher;

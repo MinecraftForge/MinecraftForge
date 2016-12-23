@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.repackage.com.nothome.delta;
 
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 
 import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_INT;
 import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_UBYTE;

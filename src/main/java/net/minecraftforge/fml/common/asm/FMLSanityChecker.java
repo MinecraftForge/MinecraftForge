@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
