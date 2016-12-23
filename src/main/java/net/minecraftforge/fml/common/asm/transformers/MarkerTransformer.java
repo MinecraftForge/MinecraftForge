@@ -35,7 +35,7 @@ import java.util.zip.ZipOutputStream;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
