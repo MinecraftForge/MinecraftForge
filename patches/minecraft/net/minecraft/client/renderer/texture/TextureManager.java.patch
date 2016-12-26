@@ -4,7 +4,7 @@
  
          if (itextureobject != null)
          {
-+            this.field_110585_a.remove(p_147645_1_);
++            this.field_110585_a.remove(p_147645_1_); // Forge: fix MC-98707
              TextureUtil.func_147942_a(itextureobject.func_110552_b());
          }
      }
