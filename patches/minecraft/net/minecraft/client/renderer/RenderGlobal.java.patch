@@ -98,7 +98,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p().func_186068_a() == 1)
          {
              this.func_180448_r();
-@@ -1437,6 +1459,12 @@
+@@ -1437,6 +1459,13 @@
  
      public void func_180447_b(float p_180447_1_, int p_180447_2_)
      {
@@ -108,10 +108,11 @@
 +            renderer.render(p_180447_1_, this.field_72777_q.field_71441_e, field_72777_q);
 +            return;
 +        }
++        if (net.minecraftforge.client.CloudRenderer.instance().render(this.field_72773_u, p_180447_1_)) return;
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1864,8 +1892,11 @@
+@@ -1864,8 +1893,11 @@
                  double d4 = (double)blockpos.func_177956_o() - d1;
                  double d5 = (double)blockpos.func_177952_p() - d2;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -124,7 +125,7 @@
                  {
                      if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
                      {
-@@ -2333,7 +2364,7 @@
+@@ -2333,7 +2365,7 @@
  
                  if (block.func_176223_P().func_185904_a() != Material.field_151579_a)
                  {

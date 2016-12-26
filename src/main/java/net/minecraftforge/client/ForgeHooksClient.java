@@ -97,6 +97,7 @@ import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.ProfilerEnableEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
@@ -746,6 +747,13 @@ public class ForgeHooksClient
     public static ScreenshotEvent onScreenshot(BufferedImage image, File screenshotFile)
     {
         ScreenshotEvent event = new ScreenshotEvent(image, screenshotFile);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static ProfilerEnableEvent onProfilingEnable()
+    {
+        ProfilerEnableEvent event = new ProfilerEnableEvent();
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
