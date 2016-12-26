@@ -172,14 +172,14 @@ public class BiomeDictionary
     {
         Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot add types to unregistered biome %s", biome);
 
-        List<Type> subTypes = listSubTypes(types);
+        Collection<Type> supertypes = listSupertypes(types);
 
-        for (Type type : subTypes)
+        for (Type type : supertypes)
         {
             type.biomes.add(biome);
         }
 
-        getBiomeInfo(biome).types.addAll(subTypes);
+        getBiomeInfo(biome).types.addAll(supertypes);
     }
 
     /**
@@ -212,7 +212,7 @@ public class BiomeDictionary
     {
         for (Type type : getTypes(biomeA))
         {
-            if (containsType(getTypes(biomeB), type))
+            if (getTypes(biomeB).contains(type))
             {
                 return true;
             }
@@ -375,35 +375,24 @@ public class BiomeDictionary
         }
     }
 
-    private static boolean containsType(Set<Type> types, Type type)
+    private static Collection<Type> listSupertypes(Type... types)
     {
-        if (type.hasSubTypes())
-        {
-            return !Collections.disjoint(types, type.subTypes);
-        }
-        else
-        {
-            return types.contains(type);
-        }
-    }
+        Set<Type> supertypes = new HashSet<Type>();
+        Deque<Type> next = new ArrayDeque<Type>();
+        Collections.addAll(next, types);
 
-    private static List<Type> listSubTypes(Type... types)
-    {
-        List<Type> subTags = new ArrayList<Type>();
-
-        for (Type type : types)
+        while (!next.isEmpty())
         {
-            if (type.hasSubTypes())
+            Type type = next.remove();
+
+            for (Type sType : Type.byName.values())
             {
-                subTags.addAll(type.subTypes);
-            }
-            else
-            {
-                subTags.add(type);
+                if (type.subTypes.contains(type) && supertypes.add(sType))
+                    next.add(sType);
             }
         }
 
-        return subTags;
+        return supertypes;
     }
 
     private static void registerVanillaBiomes()
