@@ -1,6 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -137,9 +137,12 @@
+@@ -131,15 +131,19 @@
+ 
+         if (itextureobject != null)
+         {
++            this.field_110585_a.remove(p_147645_1_);
+             TextureUtil.func_147942_a(itextureobject.func_110552_b());
+         }
+     }
  
      public void func_110549_a(IResourceManager p_110549_1_)
      {
