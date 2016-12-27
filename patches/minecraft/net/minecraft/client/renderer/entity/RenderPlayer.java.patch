@@ -16,3 +16,15 @@
      }
  
      private void func_177137_d(AbstractClientPlayer p_177137_1_)
+@@ -127,6 +129,11 @@
+                     {
+                         modelbiped$armpose1 = ModelBiped.ArmPose.BLOCK;
+                     }
++                    // FORGE: fix MC-88356 allow offhand to use bow and arrow animation
++                    else if (enumaction1 == EnumAction.BOW)
++                    {
++                        modelbiped$armpose1 = ModelBiped.ArmPose.BOW_AND_ARROW;
++                    }
+                 }
+             }
+ 

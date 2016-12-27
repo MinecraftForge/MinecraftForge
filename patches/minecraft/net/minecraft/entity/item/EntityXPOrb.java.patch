@@ -6,5 +6,5 @@
              {
 +                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerPickupXpEvent(p_70100_1_, this))) return;
                  p_70100_1_.field_71090_bL = 2;
-                 this.field_70170_p.func_184148_a((EntityPlayer)null, p_70100_1_.field_70165_t, p_70100_1_.field_70163_u, p_70100_1_.field_70161_v, SoundEvents.field_187607_bg, SoundCategory.PLAYERS, 0.1F, 0.5F * ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.8F));
                  p_70100_1_.func_71001_a(this, 1);
+                 ItemStack itemstack = EnchantmentHelper.func_92099_a(Enchantments.field_185296_A, p_70100_1_);

@@ -21,6 +21,8 @@ package net.minecraftforge.items;
 
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public interface IItemHandlerModifiable extends IItemHandler
 {
     /**
@@ -34,5 +36,5 @@ public interface IItemHandlerModifiable extends IItemHandler
      * @throws RuntimeException if the handler is called in a way that the handler
      * was not expecting.
      **/
-    void setStackInSlot(int slot, ItemStack stack);
+    void setStackInSlot(int slot, @Nonnull ItemStack stack);
 }

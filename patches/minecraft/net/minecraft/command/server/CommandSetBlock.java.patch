@@ -1,20 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/command/server/CommandSetBlock.java
 +++ ../src-work/minecraft/net/minecraft/command/server/CommandSetBlock.java
-@@ -55,6 +55,8 @@
-                 i = func_175764_a(p_184881_3_[4], 0, 15);
-             }
- 
-+            IBlockState state = block.func_176203_a(i);
-+
-             World world = p_184881_2_.func_130014_f_();
- 
-             if (!world.func_175667_e(blockpos))
-@@ -66,7 +68,7 @@
+@@ -70,7 +70,7 @@
                  NBTTagCompound nbttagcompound = new NBTTagCompound();
                  boolean flag = false;
  
 -                if (p_184881_3_.length >= 7 && block.func_149716_u())
-+                if (p_184881_3_.length >= 7 && block.hasTileEntity(state))
++                if (p_184881_3_.length >= 7 && block.hasTileEntity(iblockstate))
                  {
                      String s = func_147178_a(p_184881_2_, p_184881_3_, 6).func_150260_c();
  

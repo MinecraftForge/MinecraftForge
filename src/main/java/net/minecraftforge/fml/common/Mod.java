@@ -39,6 +39,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * This defines a Mod to FML.
@@ -281,6 +282,12 @@ public @interface Mod
          * The mod object to inject into this field
          */
         String value() default "";
+
+        /**
+         * Optional owner modid, required if this annotation is on something that is not inside the main class of a mod container.
+         * This is required to prevent mods from classloading other, potentially disabled mods.
+         */
+        String owner() default "";
     }
     /**
      * Populate the annotated field with the mod's metadata.
@@ -294,6 +301,12 @@ public @interface Mod
          * The mod id specifying the metadata to load here
          */
         String value() default "";
+
+        /**
+         * Optional owner modid, required if this annotation is on something that is not inside the main class of a mod container.
+         * This is required to prevent mods from classloading other, potentially disabled mods.
+         */
+        String owner() default "";
     }
 
     /**
@@ -304,5 +317,21 @@ public @interface Mod
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface InstanceFactory {
+    }
+
+    /**
+     * A class which will be subscribed to {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS} at mod construction time.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface EventBusSubscriber {
+        Side[] value() default { Side.CLIENT, Side.SERVER };
+
+        /**
+         * Optional value, only nessasary if tis annotation is not on the same class that has a @Mod annotation.
+         * Needed to prevent early classloading of classes not owned by your mod.
+         * @return
+         */
+        String modid() default "";
     }
 }

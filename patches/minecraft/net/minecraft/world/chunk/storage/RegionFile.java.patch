@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
-@@ -94,6 +94,39 @@
-         }
-     }
+@@ -97,6 +97,39 @@
+ 
+     @Nullable
  
 +    // This is a copy (sort of) of the method below it, make sure they stay in sync
 +    public synchronized boolean chunkExists(int x, int z)

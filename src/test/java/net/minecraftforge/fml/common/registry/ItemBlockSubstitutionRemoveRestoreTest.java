@@ -1,7 +1,5 @@
 package net.minecraftforge.fml.common.registry;
 
-import com.google.common.base.Function;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
@@ -17,7 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -32,10 +30,10 @@ public class ItemBlockSubstitutionRemoveRestoreTest
     private static class ItemMyDirt extends ItemMultiTexture
     {
         public ItemMyDirt() {
-            super(Blocks.DIRT, Blocks.DIRT, new Function<ItemStack, String>()
+            super(Blocks.DIRT, Blocks.DIRT, new Mapper()
             {
-                @Nullable
-                public String apply(@Nullable ItemStack p_apply_1_)
+                @Nonnull
+                public String apply(@Nonnull ItemStack p_apply_1_)
                 {
                     return BlockDirt.DirtType.byMetadata(p_apply_1_.getMetadata()).getUnlocalizedName();
                 }

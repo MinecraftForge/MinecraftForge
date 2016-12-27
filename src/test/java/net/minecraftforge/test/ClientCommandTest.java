@@ -1,6 +1,7 @@
 package net.minecraftforge.test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -15,6 +16,8 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 
+import javax.annotation.Nullable;
+
 @Mod(modid="clientcommandtest", name="Client Command Test", version="0.0.0", clientSideOnly = true)
 public class ClientCommandTest {
     @EventHandler
@@ -25,13 +28,13 @@ public class ClientCommandTest {
 
     private class TestCommand extends CommandBase {
         @Override
-        public String getCommandName()
+        public String getName()
         {
             return "clientCommandTest";
         }
 
         @Override
-        public String getCommandUsage(ICommandSender sender)
+        public String getUsage(ICommandSender sender)
         {
             return "clientCommandTest <block>";
         }
@@ -43,14 +46,14 @@ public class ClientCommandTest {
         }
 
         @Override
-        public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos)
+        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
         {
             if (args.length > 0)
             {
                 return getListOfStringsMatchingLastWord(args, GameData.getBlockRegistry().getKeys());
             }
 
-            return null;
+            return Collections.emptyList();
         }
 
         @Override
@@ -58,11 +61,11 @@ public class ClientCommandTest {
         {
             if (args.length > 0)
             {
-                sender.addChatMessage(new TextComponentString("Input: " + Arrays.toString(args)));
+                sender.sendMessage(new TextComponentString("Input: " + Arrays.toString(args)));
             }
             else
             {
-                sender.addChatMessage(new TextComponentString("No arguments."));
+                sender.sendMessage(new TextComponentString("No arguments."));
             }
         }
     }

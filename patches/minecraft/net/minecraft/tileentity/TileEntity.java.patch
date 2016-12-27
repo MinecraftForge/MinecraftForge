@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -21,7 +21,7 @@
+@@ -21,10 +21,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -8,8 +8,12 @@
 +public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
      private static final Logger field_145852_a = LogManager.getLogger();
-     private static final Map < String, Class <? extends TileEntity >> field_145855_i = Maps. < String, Class <? extends TileEntity >> newHashMap();
-@@ -63,6 +63,8 @@
+-    private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = new RegistryNamespaced();
++    private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = net.minecraftforge.fml.common.registry.GameData.getTileEntityRegistry();
+     protected World field_145850_b;
+     protected BlockPos field_174879_c = BlockPos.field_177992_a;
+     protected boolean field_145846_f;
+@@ -60,6 +60,8 @@
      public void func_145839_a(NBTTagCompound p_145839_1_)
      {
          this.field_174879_c = new BlockPos(p_145839_1_.func_74762_e("x"), p_145839_1_.func_74762_e("y"), p_145839_1_.func_74762_e("z"));
@@ -18,7 +22,7 @@
      }
  
      public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
-@@ -84,6 +86,8 @@
+@@ -81,6 +83,8 @@
              p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
              p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
              p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
@@ -27,7 +31,7 @@
              return p_189516_1_;
          }
      }
-@@ -92,10 +96,11 @@
+@@ -90,10 +94,11 @@
      {
          TileEntity tileentity = null;
          String s = p_190200_1_.func_74779_i("id");
@@ -35,12 +39,12 @@
  
          try
          {
--            Class <? extends TileEntity > oclass = (Class)field_145855_i.get(s);
-+            oclass = field_145855_i.get(s);
+-            Class <? extends TileEntity > oclass = (Class)field_190562_f.func_82594_a(new ResourceLocation(s));
++            oclass = (Class)field_190562_f.func_82594_a(new ResourceLocation(s));
  
              if (oclass != null)
              {
-@@ -105,6 +110,9 @@
+@@ -103,6 +108,9 @@
          catch (Throwable throwable1)
          {
              field_145852_a.error("Failed to create block entity {}", new Object[] {s, throwable1});
@@ -50,7 +54,7 @@
          }
  
          if (tileentity != null)
-@@ -117,6 +125,9 @@
+@@ -115,6 +123,9 @@
              catch (Throwable throwable)
              {
                  field_145852_a.error("Failed to load data for block entity {}", new Object[] {s, throwable});
@@ -60,7 +64,7 @@
                  tileentity = null;
              }
          }
-@@ -158,7 +169,6 @@
+@@ -156,7 +167,6 @@
          }
      }
  
@@ -68,7 +72,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -305,6 +315,198 @@
+@@ -297,6 +307,205 @@
      {
      }
  
@@ -150,6 +154,10 @@
 +        else if (type == Blocks.field_150486_ae || type == Blocks.field_150447_bR)
 +        {
 +            bb = new net.minecraft.util.math.AxisAlignedBB(pos.func_177982_a(-1, 0, -1), pos.func_177982_a(2, 2, 2));
++        }
++        else if (type == Blocks.field_185779_df)
++        {
++            bb = INFINITE_EXTENT_AABB;
 +        }
 +        else if (type != null && type != Blocks.field_150461_bJ)
 +        {
@@ -242,12 +250,15 @@
 +        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
 +    }
 +
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }
@@ -266,4 +277,4 @@
 +
      static
      {
-         func_145826_a(TileEntityFurnace.class, "Furnace");
+         func_190560_a("furnace", TileEntityFurnace.class);

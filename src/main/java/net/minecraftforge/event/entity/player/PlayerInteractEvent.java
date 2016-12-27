@@ -35,6 +35,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT;
@@ -48,15 +49,13 @@ import static net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
 public class PlayerInteractEvent extends PlayerEvent
 {
     private final EnumHand hand;
-    private final ItemStack stack;
     private final BlockPos pos;
     private final EnumFacing face;
 
-    private PlayerInteractEvent(EntityPlayer player, EnumHand hand, ItemStack stack, BlockPos pos, EnumFacing face)
+    private PlayerInteractEvent(EntityPlayer player, EnumHand hand, BlockPos pos, EnumFacing face)
     {
         super(Preconditions.checkNotNull(player, "Null player in PlayerInteractEvent!"));
         this.hand = Preconditions.checkNotNull(hand, "Null hand in PlayerInteractEvent!");
-        this.stack = stack;
         this.pos = Preconditions.checkNotNull(pos, "Null position in PlayerInteractEvent!");
         this.face = face;
     }
@@ -78,9 +77,9 @@ public class PlayerInteractEvent extends PlayerEvent
         private final Vec3d localPos;
         private final Entity target;
 
-        public EntityInteractSpecific(EntityPlayer player, EnumHand hand, ItemStack stack, Entity target, Vec3d localPos)
+        public EntityInteractSpecific(EntityPlayer player, EnumHand hand, Entity target, Vec3d localPos)
         {
-            super(player, hand, stack, new BlockPos(target), null);
+            super(player, hand, new BlockPos(target), null);
             this.localPos = localPos;
             this.target = target;
         }
@@ -120,9 +119,9 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private final Entity target;
 
-        public EntityInteract(EntityPlayer player, EnumHand hand, ItemStack stack, Entity target)
+        public EntityInteract(EntityPlayer player, EnumHand hand, Entity target)
         {
-            super(player, hand, stack, new BlockPos(target), null);
+            super(player, hand, new BlockPos(target), null);
             this.target = target;
         }
 
@@ -147,9 +146,8 @@ public class PlayerInteractEvent extends PlayerEvent
         private Result useItem = DEFAULT;
         private final Vec3d hitVec;
 
-        public RightClickBlock(EntityPlayer player, EnumHand hand, ItemStack stack,
-                               BlockPos pos, EnumFacing face, Vec3d hitVec) {
-            super(player, hand, stack, pos, face);
+        public RightClickBlock(EntityPlayer player, EnumHand hand, BlockPos pos, EnumFacing face, Vec3d hitVec) {
+            super(player, hand, pos, face);
             this.hitVec = hitVec;
         }
 
@@ -218,9 +216,9 @@ public class PlayerInteractEvent extends PlayerEvent
     @Cancelable
     public static class RightClickItem extends PlayerInteractEvent
     {
-        public RightClickItem(EntityPlayer player, EnumHand hand, ItemStack stack)
+        public RightClickItem(EntityPlayer player, EnumHand hand)
         {
-            super(player, hand, stack, new BlockPos(player), null);
+            super(player, hand, new BlockPos(player), null);
         }
     }
 
@@ -233,7 +231,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public RightClickEmpty(EntityPlayer player, EnumHand hand)
         {
-            super(player, hand, null, new BlockPos(player), null);
+            super(player, hand, new BlockPos(player), null);
         }
     }
 
@@ -258,7 +256,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
         public LeftClickBlock(EntityPlayer player, BlockPos pos, EnumFacing face, Vec3d hitVec)
         {
-            super(player, EnumHand.MAIN_HAND, player.getHeldItem(EnumHand.MAIN_HAND), pos, face);
+            super(player, EnumHand.MAIN_HAND, pos, face);
             this.hitVec = hitVec;
         }
 
@@ -315,9 +313,9 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public static class LeftClickEmpty extends PlayerInteractEvent
     {
-        public LeftClickEmpty(EntityPlayer player, ItemStack stack)
+        public LeftClickEmpty(EntityPlayer player, @Nonnull ItemStack stack)
         {
-            super(player, EnumHand.MAIN_HAND, stack, new BlockPos(player), null);
+            super(player, EnumHand.MAIN_HAND, new BlockPos(player), null);
         }
     }
 
@@ -332,10 +330,10 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * @return The itemstack involved in this interaction, or null if the hand was empty.
      */
-    @Nullable
+    @Nonnull
     public ItemStack getItemStack()
     {
-        return stack;
+        return getEntityPlayer().getHeldItem(hand);
     }
 
     /**

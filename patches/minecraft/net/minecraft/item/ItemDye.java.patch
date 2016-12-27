@@ -1,15 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemDye.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemDye.java
-@@ -50,7 +50,7 @@
+@@ -52,7 +52,7 @@
  
              if (enumdyecolor == EnumDyeColor.WHITE)
              {
--                if (func_179234_a(p_180614_1_, p_180614_3_, p_180614_4_))
-+                if (applyBonemeal(p_180614_1_, p_180614_3_, p_180614_4_, p_180614_2_))
+-                if (func_179234_a(itemstack, p_180614_2_, p_180614_3_))
++                if (applyBonemeal(itemstack, p_180614_2_, p_180614_3_, p_180614_1_))
                  {
-                     if (!p_180614_3_.field_72995_K)
+                     if (!p_180614_2_.field_72995_K)
                      {
-@@ -97,8 +97,18 @@
+@@ -78,7 +78,7 @@
+ 
+                     if (p_180614_2_.func_175623_d(p_180614_3_))
+                     {
+-                        IBlockState iblockstate1 = Blocks.field_150375_by.func_180642_a(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, 0, p_180614_1_);
++                        IBlockState iblockstate1 = Blocks.field_150375_by.getStateForPlacement(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, 0, p_180614_1_, p_180614_4_);
+                         p_180614_2_.func_180501_a(p_180614_3_, iblockstate1, 10);
+ 
+                         if (!p_180614_1_.field_71075_bZ.field_75098_d)
+@@ -99,8 +99,18 @@
  
      public static boolean func_179234_a(ItemStack p_179234_0_, World p_179234_1_, BlockPos p_179234_2_)
      {
@@ -28,7 +37,7 @@
          if (iblockstate.func_177230_c() instanceof IGrowable)
          {
              IGrowable igrowable = (IGrowable)iblockstate.func_177230_c();
-@@ -142,6 +152,16 @@
+@@ -144,6 +154,16 @@
                  p_180617_0_.func_175688_a(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)p_180617_1_.func_177958_n() + field_77697_d.nextFloat()), (double)p_180617_1_.func_177956_o() + (double)field_77697_d.nextFloat() * iblockstate.func_185900_c(p_180617_0_, p_180617_1_).field_72337_e, (double)((float)p_180617_1_.func_177952_p() + field_77697_d.nextFloat()), d0, d1, d2, new int[0]);
              }
          }

@@ -30,6 +30,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is a cellular-automata based finite fluid block implementation.
  *
@@ -60,9 +62,9 @@ public class BlockFluidFinite extends BlockFluidBase
     }
 
     @Override
-    public boolean canCollideCheck(IBlockState state, boolean fullHit)
+    public boolean canCollideCheck(@Nonnull IBlockState state, boolean fullHit)
     {
-        return fullHit && state.getValue(LEVEL) == quantaPerBlock - 1;
+        return fullHit;
     }
 
     @Override
@@ -72,7 +74,7 @@ public class BlockFluidFinite extends BlockFluidBase
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
+    public void updateTick(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand)
     {
         boolean changed = false;
         int quantaRemaining = state.getValue(LEVEL) + 1;
@@ -243,9 +245,44 @@ public class BlockFluidFinite extends BlockFluidBase
 
     /* IFluidBlock */
     @Override
+    public int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, boolean doPlace)
+    {
+        IBlockState existing = world.getBlockState(pos);
+        float quantaAmount = Fluid.BUCKET_VOLUME / quantaPerBlockFloat;
+        // If the stack contains more available fluid than the full source block,
+        // set a source block
+        int closest = Fluid.BUCKET_VOLUME;
+        int quanta = quantaPerBlock;
+        if (fluidStack.amount < closest)
+        {
+            // Figure out maximum level to match stack amount
+            closest = MathHelper.floor(quantaAmount * MathHelper.floor(fluidStack.amount / quantaAmount));
+            quanta = MathHelper.floor(closest / quantaAmount);
+        }
+        if (existing.getBlock() == this)
+        {
+            int existingQuanta = existing.getValue(LEVEL) + 1;
+            int missingQuanta = quantaPerBlock - existingQuanta;
+            closest = Math.min(closest, MathHelper.floor(missingQuanta * quantaAmount));
+            quanta = Math.min(quanta + existingQuanta, quantaPerBlock);
+        }
+
+        // If too little (or too much, technically impossible) fluid is to be placed, abort
+        if (quanta < 1 || quanta > 16)
+            return 0;
+
+        if (doPlace)
+        {
+            world.setBlockState(pos, getDefaultState().withProperty(LEVEL, quanta - 1), 11);
+        }
+
+        return closest;
+    }
+
+    @Override
     public FluidStack drain(World world, BlockPos pos, boolean doDrain)
     {
-        final FluidStack fluidStack = new FluidStack(getFluid(), MathHelper.floor_float(getQuantaPercentage(world, pos) * Fluid.BUCKET_VOLUME));
+        final FluidStack fluidStack = new FluidStack(getFluid(), MathHelper.floor(getQuantaPercentage(world, pos) * Fluid.BUCKET_VOLUME));
 
         if (doDrain)
         {

@@ -88,6 +88,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.Models;
@@ -368,7 +369,7 @@ public final class ModelLoader extends ModelBakery
             for(String s : getVariantNames(Items.BUCKET))
             {
                 ModelResourceLocation memory = getInventoryVariant(s);
-                IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation("forge", "item/bucket"));
+                IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(ForgeVersion.MOD_ID, "item/bucket"));
                 // only on successful load, otherwise continue using the old model
                 if(model != getMissingModel())
                 {
@@ -396,7 +397,7 @@ public final class ModelLoader extends ModelBakery
                 for(String s : getVariantNames(Items.MILK_BUCKET))
                 {
                     ModelResourceLocation memory = getInventoryVariant(s);
-                    IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation("forge", "item/bucket_milk"));
+                    IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(ForgeVersion.MOD_ID, "item/bucket_milk"));
                     // only on successful load, otherwise continue using the old model
                     if(model != getMissingModel())
                     {
@@ -985,7 +986,7 @@ public final class ModelLoader extends ModelBakery
 
         public void register(TextureMap map)
         {
-            map.setTextureEntry(White.LOCATION.toString(), White.INSTANCE);
+            map.setTextureEntry(White.INSTANCE);
         }
     }
 

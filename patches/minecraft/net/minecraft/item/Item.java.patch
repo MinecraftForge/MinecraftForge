@@ -14,7 +14,7 @@
      private static final IItemPropertyGetter field_185046_b = new IItemPropertyGetter()
      {
          @SideOnly(Side.CLIENT)
-@@ -196,6 +196,7 @@
+@@ -202,6 +202,7 @@
          return p_77654_1_;
      }
  
@@ -22,7 +22,15 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -316,6 +317,7 @@
+@@ -223,6 +224,7 @@
+         return this;
+     }
+ 
++    @Deprecated
+     public int func_77612_l()
+     {
+         return this.field_77699_b;
+@@ -322,6 +324,7 @@
          return this.field_77700_c;
      }
  
@@ -30,7 +38,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -371,7 +373,7 @@
+@@ -377,7 +380,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -39,7 +47,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -389,7 +391,11 @@
+@@ -395,7 +398,11 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -52,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -426,11 +432,569 @@
+@@ -433,11 +440,613 @@
          return false;
      }
  
@@ -108,7 +116,7 @@
 +     * @param hand Which hand the item is being held in.
 +     * @return Return PASS to allow vanilla handling, any other to skip normal code.
 +     */
-+    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
++    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
 +    {
 +        return EnumActionResult.PASS;
 +    }
@@ -131,6 +139,19 @@
 +    {
 +        canRepair = false;
 +        return this;
++    }
++
++    /**
++     * Override this method to change the NBT data being sent to the client.
++     * You should ONLY override this when you have no other choice, as this might change behavior client side!
++     *
++     * @param stack The stack to send the NBT tag for
++     * @return The NBT tag
++     */
++    @Nullable
++    public NBTTagCompound getNBTShareTag(ItemStack stack)
++    {
++        return stack.func_77978_p();
 +    }
 +
 +    /**
@@ -184,7 +205,7 @@
 +    {
 +        if (!hasContainerItem(itemStack))
 +        {
-+            return null;
++            return ItemStack.field_190927_a;
 +        }
 +        return new ItemStack(func_77668_q());
 +    }
@@ -235,6 +256,7 @@
 +     * @param itemstack The current item stack
 +     * @return A new Entity object to spawn or null
 +     */
++    @Nullable
 +    public Entity createEntity(World world, Entity location, ItemStack itemstack)
 +    {
 +        return null;
@@ -334,6 +356,7 @@
 +     * @param type The subtype, can be null or "overlay"
 +     * @return Path of texture to bind, or null to use default
 +     */
++    @Nullable
 +    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type)
 +    {
 +        return null;
@@ -347,6 +370,7 @@
 +     * @return A instance of FontRenderer or null to use default
 +     */
 +    @SideOnly(Side.CLIENT)
++    @Nullable
 +    public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack)
 +    {
 +        return null;
@@ -362,6 +386,7 @@
 +     * @return  A ModelBiped to render instead of the default
 +     */
 +    @SideOnly(Side.CLIENT)
++    @Nullable
 +    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default)
 +    {
 +        return null;
@@ -436,6 +461,17 @@
 +        return (double)stack.func_77952_i() / (double)stack.func_77958_k();
 +    }
 +
++    /**
++     * Returns the packed int RGB value used to render the durability bar in the GUI.
++     * Defaults to a value based on the hue scaled as the damage decreases, but can be overriden.
++     *
++     * @param stack Stack to get durability from
++     * @return A packed RGB value for the durability colour (0x00RRGGBB)
++     */
++    public int getRGBDurabilityForDisplay(ItemStack stack)
++    {
++        return MathHelper.func_181758_c(Math.max(0.0F, (float)(stack.func_77958_k() - stack.func_77952_i()) / stack.func_77958_k()) / 3.0F, 1.0F, 1.0F);
++    }
 +    /**
 +     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item,
 +     * but can be overridden here for other sources such as NBT.
@@ -522,14 +558,16 @@
 +    }
 +
 +    /**
-+     * Queries the harvest level of this item stack for the specifred tool class,
++     * Queries the harvest level of this item stack for the specified tool class,
 +     * Returns -1 if this tool is not of the specified type
 +     *
 +     * @param stack This item stack instance
 +     * @param toolClass Tool Class
++     * @param player The player trying to harvest the given blockstate
++     * @param blockState The block to harvest
 +     * @return Harvest level, or -1 if not the specified tool type.
 +     */
-+    public int getHarvestLevel(ItemStack stack, String toolClass)
++    public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState)
 +    {
 +        Integer ret = toolClasses.get(toolClass);
 +        return ret == null ? -1 : ret;
@@ -544,6 +582,19 @@
 +    public int getItemEnchantability(ItemStack stack)
 +    {
 +        return func_77619_b();
++    }
++
++    /**
++     * Checks whether an item can be enchanted with a certain enchantment. This applies specifically to enchanting an item in the enchanting table and is called when retrieving the list of possible enchantments for an item.
++     * Enchantments may additionally (or exclusively) be doing their own checks in {@link net.minecraft.enchantment.Enchantment#canApplyAtEnchantingTable(ItemStack)}; check the individual implementation for reference.
++     * By default this will check if the enchantment type is valid for this item type.
++     * @param stack the item stack to be enchanted
++     * @param enchantment the enchantment to be applied
++     * @return true if the enchantment can be applied to this item
++     */
++    public boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.enchantment.Enchantment enchantment)
++    {
++        return enchantment.field_77351_y.func_77557_a(stack.func_77973_b());
 +    }
 +
 +    /**
@@ -595,7 +646,8 @@
 +     * @param nbt NBT of this item serialized, or null.
 +     * @return A holder instance associated with this ItemStack where you can hold capabilities for the life of this item.
 +     */
-+    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
++    @Nullable
++    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
 +    {
 +        return null;
 +    }
@@ -621,52 +673,39 @@
 +
      public static void func_150900_l()
      {
-         func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -962,6 +1526,10 @@
+         func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
+@@ -972,6 +1581,8 @@
+         private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
- 
 +        //Added by forge for custom Tool materials.
-+        @Deprecated public Item customCraftingMaterial = null; // Remote in 1.8.1
-+        private ItemStack repairMaterial = null;
-+
++        private ItemStack repairMaterial = ItemStack.field_190927_a;
+ 
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-             this.field_78001_f = p_i1874_3_;
-@@ -996,9 +1564,36 @@
+@@ -1007,9 +1618,26 @@
              return this.field_78008_j;
          }
  
 +        @Deprecated // Use getRepairItemStack below
          public Item func_150995_f()
          {
--            return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
-+            switch (this)
-+            {
-+                case WOOD:    return Item.func_150898_a(Blocks.field_150344_f);
-+                case STONE:   return Item.func_150898_a(Blocks.field_150347_e);
-+                case GOLD:    return Items.field_151043_k;
-+                case IRON:    return Items.field_151042_j;
-+                case DIAMOND: return Items.field_151045_i;
-+                default:      return customCraftingMaterial;
-+            }
+             return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
          }
 +
 +        public ToolMaterial setRepairItem(ItemStack stack)
 +        {
-+            if (this.repairMaterial != null || customCraftingMaterial != null) throw new RuntimeException("Can not change already set repair material");
++            if (!this.repairMaterial.func_190926_b()) throw new RuntimeException("Repair material has already been set");
 +            if (this == WOOD || this == STONE || this == GOLD || this == IRON || this == DIAMOND) throw new RuntimeException("Can not change vanilla tool repair materials");
 +            this.repairMaterial = stack;
-+            this.customCraftingMaterial = stack.func_77973_b();
 +            return this;
 +        }
 +
 +        public ItemStack getRepairItemStack()
 +        {
-+            if (repairMaterial != null) return repairMaterial;
++            if (!repairMaterial.func_190926_b()) return repairMaterial;
 +            Item ret = this.func_150995_f();
-+            if (ret == null) return null;
-+            repairMaterial = new ItemStack(ret, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
++            if (ret != null) repairMaterial = new ItemStack(ret, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
 +            return repairMaterial;
 +        }
      }

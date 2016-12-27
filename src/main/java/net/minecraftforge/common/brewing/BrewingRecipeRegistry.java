@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
+
+import javax.annotation.Nonnull;
 
 public class BrewingRecipeRegistry {
 
@@ -47,7 +50,7 @@ public class BrewingRecipeRegistry {
      *            done.
      * @return true if the recipe was added.
      */
-    public static boolean addRecipe(ItemStack input, ItemStack ingredient, ItemStack output)
+    public static boolean addRecipe(@Nonnull ItemStack input, @Nonnull ItemStack ingredient, @Nonnull ItemStack output)
     {
         return addRecipe(new BrewingRecipe(input, ingredient, output));
     }
@@ -66,7 +69,7 @@ public class BrewingRecipeRegistry {
      *            done.
      * @return true if the recipe was added.
      */
-    public static boolean addRecipe(ItemStack input, String ingredient, ItemStack output)
+    public static boolean addRecipe(@Nonnull ItemStack input, @Nonnull String ingredient, @Nonnull ItemStack output)
     {
         return addRecipe(new BrewingOreRecipe(input, ingredient, output));
     }
@@ -82,12 +85,13 @@ public class BrewingRecipeRegistry {
 
     /**
      * Returns the output ItemStack obtained by brewing the passed input and
-     * ingredient. Null if no matches are found.
+     * ingredient.
      */
-    public static ItemStack getOutput(ItemStack input, ItemStack ingredient)
+    @Nonnull
+    public static ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
     {
-        if (input == null || input.getMaxStackSize() != 1 || input.stackSize != 1) return null;
-        if (ingredient == null || ingredient.stackSize <= 0) return null;
+        if (input.isEmpty() || input.getMaxStackSize() != 1 || input.getCount() != 1) return ItemStack.EMPTY;
+        if (ingredient.isEmpty()) return ItemStack.EMPTY;
 
         for (IBrewingRecipe recipe : recipes)
         {
@@ -97,15 +101,15 @@ public class BrewingRecipeRegistry {
                 return output;
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     /**
      * Returns true if the passed input and ingredient have an output
      */
-    public static boolean hasOutput(ItemStack input, ItemStack ingredient)
+    public static boolean hasOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
     {
-        return getOutput(input, ingredient) != null;
+        return !getOutput(input, ingredient).isEmpty();
     }
 
     /**
@@ -113,13 +117,13 @@ public class BrewingRecipeRegistry {
      * Extra parameters exist to allow modders to create bigger brewing stands
      * without much hassle
      */
-    public static boolean canBrew(ItemStack[] inputs, ItemStack ingredient, int[] inputIndexes)
+    public static boolean canBrew(NonNullList<ItemStack> inputs, @Nonnull ItemStack ingredient, int[] inputIndexes)
     {
-        if (ingredient == null || ingredient.stackSize <= 0) return false;
+        if (ingredient.isEmpty()) return false;
 
         for (int i : inputIndexes)
         {
-            if (hasOutput(inputs[i], ingredient))
+            if (hasOutput(inputs.get(i), ingredient))
             {
                 return true;
             }
@@ -132,14 +136,14 @@ public class BrewingRecipeRegistry {
      * Used by the brewing stand to brew its inventory Extra parameters exist to
      * allow modders to create bigger brewing stands without much hassle
      */
-    public static void brewPotions(ItemStack[] inputs, ItemStack ingredient, int[] inputIndexes)
+    public static void brewPotions(NonNullList<ItemStack> inputs, @Nonnull ItemStack ingredient, int[] inputIndexes)
     {
         for (int i : inputIndexes)
         {
-            ItemStack output = getOutput(inputs[i], ingredient);
-            if (output != null)
+            ItemStack output = getOutput(inputs.get(i), ingredient);
+            if (!output.isEmpty())
             {
-                inputs[i] = output;
+                inputs.set(i, output);
             }
         }
     }
@@ -148,9 +152,9 @@ public class BrewingRecipeRegistry {
      * Returns true if the passed ItemStack is a valid ingredient for any of the
      * recipes in the registry.
      */
-    public static boolean isValidIngredient(ItemStack stack)
+    public static boolean isValidIngredient(@Nonnull ItemStack stack)
     {
-        if (stack == null || stack.stackSize <= 0) return false;
+        if (stack.isEmpty()) return false;
 
         for (IBrewingRecipe recipe : recipes)
         {
@@ -166,9 +170,9 @@ public class BrewingRecipeRegistry {
      * Returns true if the passed ItemStack is a valid input for any of the
      * recipes in the registry.
      */
-    public static boolean isValidInput(ItemStack stack)
+    public static boolean isValidInput(@Nonnull ItemStack stack)
     {
-        if (stack == null || stack.getMaxStackSize() != 1 || stack.stackSize != 1) return false;
+        if (stack.getMaxStackSize() != 1 || stack.getCount() != 1) return false;
 
         for (IBrewingRecipe recipe : recipes)
         {

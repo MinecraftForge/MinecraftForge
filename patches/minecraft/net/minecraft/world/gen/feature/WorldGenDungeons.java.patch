@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
-@@ -154,6 +154,6 @@
+@@ -159,6 +159,6 @@
  
-     private String func_76543_b(Random p_76543_1_)
+     private ResourceLocation func_76543_b(Random p_76543_1_)
      {
 -        return field_175916_b[p_76543_1_.nextInt(field_175916_b.length)];
 +        return net.minecraftforge.common.DungeonHooks.getRandomDungeonMob(p_76543_1_);

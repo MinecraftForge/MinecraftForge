@@ -57,7 +57,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.collect.Lists;
 
-@Mod(modid = ModelLoaderRegistryDebug.MODID, name = "ForgeDebugModelLoaderRegistry", version = ModelLoaderRegistryDebug.VERSION)
+@Mod(modid = ModelLoaderRegistryDebug.MODID, name = "ForgeDebugModelLoaderRegistry", version = ModelLoaderRegistryDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelLoaderRegistryDebug
 {
     public static final String MODID = "forgedebugmodelloaderregistry";
@@ -120,7 +120,7 @@ public class ModelLoaderRegistryDebug
     {
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
         public static final CustomModelBlock instance = new CustomModelBlock();
-        public static final String name = "CustomModelBlock";
+        public static final String name = "custom_model_block";
         private int counter = 1;
 
         private CustomModelBlock()
@@ -139,10 +139,10 @@ public class ModelLoaderRegistryDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque() { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         @Override
-        public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+        public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
         {
             return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
         }
@@ -168,7 +168,7 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             if(world.isRemote)
             {
@@ -221,7 +221,7 @@ public class ModelLoaderRegistryDebug
     public static class OBJTesseractBlock extends Block implements ITileEntityProvider
     {
         public static final OBJTesseractBlock instance = new OBJTesseractBlock();
-        public static final String name = "OBJTesseractBlock";
+        public static final String name = "obj_tesseract_block";
 
         private OBJTesseractBlock()
         {
@@ -244,10 +244,10 @@ public class ModelLoaderRegistryDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque() { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             if (world.getTileEntity(pos) == null) world.setTileEntity(pos, new OBJTesseractTileEntity());
             OBJTesseractTileEntity tileEntity = (OBJTesseractTileEntity) world.getTileEntity(pos);
@@ -329,7 +329,7 @@ public class ModelLoaderRegistryDebug
             this.counter++;
             this.hidden.add(Integer.toString(this.counter));
             TextComponentString text = new TextComponentString("" + this.counter);
-            if (this.worldObj.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
+            if (this.world.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
         }
 
         public void decrement()
@@ -342,7 +342,7 @@ public class ModelLoaderRegistryDebug
             this.hidden.remove(Integer.toString(this.counter));
             this.counter--;
             TextComponentString text = new TextComponentString("" + this.counter);
-            if (this.worldObj.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
+            if (this.world.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
         }
 
         public void setMax(int max)
@@ -364,7 +364,7 @@ public class ModelLoaderRegistryDebug
     public static class OBJVertexColoring1 extends Block
     {
         public static final OBJVertexColoring1 instance = new OBJVertexColoring1();
-        public static final String name = "OBJVertexColoring1";
+        public static final String name = "obj_vertex_coloring1";
 
         private OBJVertexColoring1()
         {
@@ -381,7 +381,7 @@ public class ModelLoaderRegistryDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque() { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
     }
 
     /**
@@ -396,7 +396,7 @@ public class ModelLoaderRegistryDebug
     {
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
         public static final OBJDirectionEye instance = new OBJDirectionEye();
-        public static final String name = "OBJDirectionEye";
+        public static final String name = "obj_direction_eye";
 
         private OBJDirectionEye()
         {
@@ -408,7 +408,7 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+        public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
         {
             return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
         }
@@ -438,7 +438,7 @@ public class ModelLoaderRegistryDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque() { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
         {
@@ -471,7 +471,7 @@ public class ModelLoaderRegistryDebug
     public static class OBJVertexColoring2 extends Block implements ITileEntityProvider
     {
         public static final OBJVertexColoring2 instance = new OBJVertexColoring2();
-        public static final String name = "OBJVertexColoring2";
+        public static final String name = "obj_vertex_coloring2";
 
         private OBJVertexColoring2()
         {
@@ -488,7 +488,7 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             if (world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof OBJVertexColoring2TileEntity)
             {
@@ -511,11 +511,11 @@ public class ModelLoaderRegistryDebug
 
         public void cycleColors()
         {
-            if (this.worldObj.isRemote)
+            if (this.world.isRemote)
             {
                 FMLLog.info("%b", shouldIncrement);
                 /*
-                IBakedModel bakedModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(this.worldObj.getBlockState(this.pos), this.worldObj, this.pos);
+                IBakedModel bakedModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(this.world.getBlockState(this.pos), this.world, this.pos);
                 if (bakedModel != null && bakedModel instanceof OBJBakedModel)
                 {
                     OBJBakedModel objBaked = (OBJBakedModel) bakedModel;
@@ -558,7 +558,7 @@ public class ModelLoaderRegistryDebug
                             objBaked.scheduleRebake();
                         }
                     }
-                    this.worldObj.markBlockRangeForRenderUpdate(this.pos, this.pos);
+                    this.world.markBlockRangeForRenderUpdate(this.pos, this.pos);
                 }*/
             }
         }
@@ -573,7 +573,7 @@ public class ModelLoaderRegistryDebug
     {
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
         public static final OBJDirectionBlock instance = new OBJDirectionBlock();
-        public static final String name = "OBJDirectionBlock";
+        public static final String name = "obj_direction_block";
 
         private OBJDirectionBlock()
         {
@@ -591,10 +591,10 @@ public class ModelLoaderRegistryDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque() { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         @Override
-        public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+        public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
         {
             return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
         }
@@ -651,7 +651,7 @@ public class ModelLoaderRegistryDebug
         public static final PropertyBool WEST = PropertyBool.create("west");
         public static final PropertyBool EAST = PropertyBool.create("east");
         public static final OBJCustomDataBlock instance = new OBJCustomDataBlock();
-        public static final String name = "OBJCustomDataBlock";
+        public static final String name = "obj_custom_data_block";
 
         private OBJCustomDataBlock()
         {
@@ -708,7 +708,7 @@ public class ModelLoaderRegistryDebug
     public static class OBJDynamicEye extends Block implements ITileEntityProvider
     {
         public static final OBJDynamicEye instance = new OBJDynamicEye();
-        public static final String name = "OBJDynamicEye";
+        public static final String name = "obj_dynamic_eye";
         private OBJDynamicEye()
         {
             super(Material.IRON);
@@ -769,10 +769,10 @@ public class ModelLoaderRegistryDebug
         @Override
         public void update()
         {
-            if (this.worldObj.isRemote)
+            if (this.world.isRemote)
             {
                 Vector3d teLoc = new Vector3d(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
-                EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+                EntityPlayer player = Minecraft.getMinecraft().player;
                 Vector3d playerLoc = new Vector3d();
                 playerLoc.setX(player.posX);
                 playerLoc.setY(player.posY + player.getEyeHeight());
@@ -793,7 +793,7 @@ public class ModelLoaderRegistryDebug
                 matrix.setIdentity();
                 matrix.setRotation(rot);
                 transform = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(matrix));
-                this.worldObj.markBlockRangeForRenderUpdate(this.pos, this.pos);
+                this.world.markBlockRangeForRenderUpdate(this.pos, this.pos);
             }
         }
     }

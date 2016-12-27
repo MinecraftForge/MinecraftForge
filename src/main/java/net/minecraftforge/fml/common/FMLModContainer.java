@@ -20,6 +20,7 @@ package net.minecraftforge.fml.common;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -35,6 +36,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.Mod.Metadata;
 import net.minecraftforge.fml.common.asm.transformers.BlamingTransformer;
@@ -51,6 +54,7 @@ import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 
@@ -131,12 +135,15 @@ public class FMLModContainer implements ModContainer
         {
             throw new IllegalArgumentException("Modid cannot be null or empty");
         }
-        if (modid.length() > 64) {
-            FMLLog.bigWarning("The modid %s is longer than the recommended maximum of 64 characters. Truncation will be enforced in 1.11", modid);
+        if (modid.length() > 64)
+        {
+            FMLLog.bigWarning("The modid %s is longer than the recommended maximum of 64 characters. Truncation is enforced in 1.11", modid);
+            throw new IllegalArgumentException(String.format("The modid %s is longer than the recommended maximum of 64 characters. Truncation is enforced in 1.11", modid));
         }
         if (!modid.equals(modid.toLowerCase(Locale.ENGLISH)))
         {
-            FMLLog.bigWarning("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11", modid);
+            FMLLog.bigWarning("The modid %s is not the same as it's lowercase version. Lowercasing is enforced in 1.11", modid);
+            throw new IllegalArgumentException(String.format("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11", modid));
         }
     }
     private ILanguageAdapter getLanguageAdapter()
@@ -248,6 +255,8 @@ public class FMLModContainer implements ModContainer
             "[1.9.4,1.10)".equals(mcVersionString) ||
             "[1.10]".equals(mcVersionString))
                 mcVersionString = "[1.9.4,1.10.2]";
+        if ("[1.11]".equals(mcVersionString))
+            mcVersionString = "[1.11,1.11.2]";
         if (!Strings.isNullOrEmpty(mcVersionString))
         {
             minecraftAccepted = VersionParser.parseRange(mcVersionString);
@@ -284,7 +293,15 @@ public class FMLModContainer implements ModContainer
                 if (versionFile != null)
                 {
                     version = new Properties();
-                    version.load(source.getInputStream(versionFile));
+                    InputStream sourceInputStream = source.getInputStream(versionFile);
+                    try
+                    {
+                        version.load(sourceInputStream);
+                    }
+                    finally
+                    {
+                        IOUtils.closeQuietly(sourceInputStream);
+                    }
                 }
                 source.close();
             }
@@ -295,8 +312,14 @@ public class FMLModContainer implements ModContainer
                 {
                     version = new Properties();
                     FileInputStream fis = new FileInputStream(propsFile);
-                    version.load(fis);
-                    fis.close();
+                    try
+                    {
+                        version.load(fis);
+                    }
+                    finally
+                    {
+                        IOUtils.closeQuietly(fis);
+                    }
                 }
             }
             return version;
@@ -433,11 +456,27 @@ public class FMLModContainer implements ModContainer
 
     private void parseSimpleFieldAnnotation(SetMultimap<String, ASMData> annotations, String annotationClassName, Function<ModContainer, Object> retriever) throws IllegalAccessException
     {
+        Set<ASMDataTable.ASMData> mods = annotations.get(Mod.class.getName());
         String[] annName = annotationClassName.split("\\.");
         String annotationName = annName[annName.length - 1];
         for (ASMData targets : annotations.get(annotationClassName))
         {
             String targetMod = (String)targets.getAnnotationInfo().get("value");
+            String owner = (String)targets.getAnnotationInfo().get("owner");
+            if (Strings.isNullOrEmpty(owner))
+            {
+                owner = ASMDataTable.getOwnerModID(mods, targets);
+                if (Strings.isNullOrEmpty(owner))
+                {
+                    FMLLog.bigWarning("Could not determine owning mod for @%s on %s for mod %s", annotationClassName, targets.getClassName(), this.getModId());
+                    continue;
+                }
+            }
+            if (!this.getModId().equals(owner))
+            {
+                FMLLog.fine("Skipping @%s injection for %s.%s since it is not for mod %s", annotationClassName, targets.getClassName(), targets.getObjectName(), this.getModId());
+                continue;
+            }
             Field f = null;
             Object injectedMod = null;
             ModContainer mc = this;
@@ -573,6 +612,9 @@ public class FMLModContainer implements ModContainer
                 eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints), expectedFingerprint));
             }
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide(), getLanguageAdapter());
+            AutomaticEventSubscriber.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
+            ConfigManager.load(this.getModId(), Config.Type.INSTANCE);
+
             processFieldAnnotations(event.getASMHarvestedData());
         }
         catch (Throwable e)

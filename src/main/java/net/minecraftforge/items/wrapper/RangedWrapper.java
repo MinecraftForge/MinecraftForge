@@ -23,6 +23,8 @@ import com.google.common.base.Preconditions;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
+
 /**
  * A wrapper that composes another IItemHandlerModifiable, exposing only a range of the composed slots.
  * Shifting of slot indices is handled automatically for you.
@@ -48,6 +50,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
+    @Nonnull
     public ItemStack getStackInSlot(int slot)
     {
         if (checkSlot(slot))
@@ -55,11 +58,12 @@ public class RangedWrapper implements IItemHandlerModifiable {
             return compose.getStackInSlot(slot + minSlot);
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
+    @Nonnull
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
     {
         if (checkSlot(slot))
         {
@@ -70,6 +74,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
+    @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
         if (checkSlot(slot))
@@ -77,16 +82,27 @@ public class RangedWrapper implements IItemHandlerModifiable {
             return compose.extractItem(slot + minSlot, amount, simulate);
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack)
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
         if (checkSlot(slot))
         {
             compose.setStackInSlot(slot + minSlot, stack);
         }
+    }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        if (checkSlot(slot))
+        {
+            return compose.getSlotLimit(slot + minSlot);
+        }
+
+        return 0;
     }
 
     private boolean checkSlot(int localSlot)

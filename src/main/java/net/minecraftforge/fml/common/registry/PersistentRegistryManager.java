@@ -20,8 +20,9 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -33,6 +34,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -64,6 +67,37 @@ import com.google.common.collect.Sets.SetView;
 @SuppressWarnings("WeakerAccess")
 public class PersistentRegistryManager
 {
+    public static void fireCreateRegistryEvents() {
+        MinecraftForge.EVENT_BUS.post(new RegistryEvent.NewRegistry());
+    }
+
+    public static void fireRegistryEvents()
+    {
+        List<ResourceLocation> registryKeys = Lists.newArrayList(PersistentRegistry.ACTIVE.registries.keySet());
+        Collections.sort(registryKeys, new Comparator<ResourceLocation>()
+        {
+            @Override
+            public int compare(ResourceLocation o1, ResourceLocation o2)
+            {
+                return o1.toString().compareToIgnoreCase(o2.toString());
+            }
+        });
+        fireRegistryEvent(PersistentRegistry.ACTIVE.registries, BLOCKS);
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject any blocks
+        fireRegistryEvent(PersistentRegistry.ACTIVE.registries, ITEMS);
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject any items
+        for (ResourceLocation rl : registryKeys) {
+            if (rl == BLOCKS || rl == ITEMS) continue;
+            fireRegistryEvent(PersistentRegistry.ACTIVE.registries, rl);
+        }
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject everything else
+    }
+    private static void fireRegistryEvent(BiMap<ResourceLocation, FMLControlledNamespacedRegistry<?>> registries, ResourceLocation name)
+    {
+        final RegistryEvent.Register<?> event = registries.get(name).buildRegistryRegisterEvent(name);
+        MinecraftForge.EVENT_BUS.post(event);
+    }
+
     enum PersistentRegistry
     {
         ACTIVE, VANILLA, FROZEN, STAGING;
@@ -155,6 +189,7 @@ public class PersistentRegistryManager
     public static final ResourceLocation SOUNDEVENTS = new ResourceLocation("minecraft:soundevents");
     public static final ResourceLocation POTIONTYPES = new ResourceLocation("minecraft:potiontypes");
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
+    public static final ResourceLocation ENTITIES = new ResourceLocation("minecraft:entities");
     static final ResourceLocation SUBSTITUTION_ORIGINALS = new ResourceLocation("fml:suboriginals");
 
     @Deprecated //Use RegistryBuilder TODO: Remove in 1.11
@@ -166,7 +201,7 @@ public class PersistentRegistryManager
             IForgeRegistry.CreateCallback<T> createCallback)
     {
         return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                addCallback, getLegacyClear(clearCallback), getLegacyCreate(createCallback), null);
+                getLegacyAdd(addCallback), getLegacyClear(clearCallback), getLegacyCreate(createCallback), null);
     }
     @Deprecated //Use RegistryBuilder TODO: Remove in 1.11 {Make package private so only builder can use it}
     public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
@@ -774,6 +809,36 @@ public class PersistentRegistryManager
                 {
                     try {
                         mtd.invoke(cb, slaveset);
+                    } catch (Exception e) {
+                        e.printStackTrace( );
+                        Throwables.propagate(e);
+                    }
+                }
+            };
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return cb; //Assume they are ussing modern API
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            Throwables.propagate(e);
+        }
+        return null; //Will never get here unless things go wonkey...
+    }
+
+    //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.AddCallback<T> getLegacyAdd(final IForgeRegistry.AddCallback<T> cb)
+    {
+        if (cb == null)
+            return null;
+        try {
+            final Method mtd = cb.getClass().getMethod("onAdd", Object.class, int.class, Map.class);
+            return new IForgeRegistry.AddCallback<T>()
+            {
+                @Override
+                public void onAdd(T obj, int id, Map<ResourceLocation, ?> slaveset)
+                {
+                    try {
+                        mtd.invoke(cb, obj, id, slaveset);
                     } catch (Exception e) {
                         e.printStackTrace( );
                         Throwables.propagate(e);

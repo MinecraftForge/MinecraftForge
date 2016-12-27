@@ -26,6 +26,7 @@ import java.util.EnumMap;
 
 import com.google.common.base.Throwables;
 
+import net.minecraft.util.IThreadListener;
 import org.apache.logging.log4j.Level;
 
 import io.netty.channel.ChannelHandler;
@@ -104,6 +105,10 @@ import net.minecraftforge.fml.relauncher.Side;
  *  </pre>
  * </code>
  *
+ * Note: As of Minecraft 1.8 packets are by default handled on the network thread.
+ * That means that your {@link IMessageHandler} can not interact with most game objects directly.
+ * Minecraft provides a convenient way to make your code execute on the main thread instead using {@link IThreadListener#addScheduledTask(Runnable)}.
+ * The way to obtain an {@link IThreadListener} is using either the {@link net.minecraft.client.Minecraft} instance (client side) or a {@link net.minecraft.world.WorldServer} instance (server side).
  *
  * @author cpw
  *

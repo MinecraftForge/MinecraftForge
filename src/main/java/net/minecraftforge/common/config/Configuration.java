@@ -62,6 +62,7 @@ import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.FMLInjectionData;
+import org.apache.commons.io.IOUtils;
 
 /**
  * This class offers advanced configurations capabilities, allowing to provide
@@ -113,7 +114,7 @@ public class Configuration
     /**
      * Create a configuration file for the file given in parameter with the provided config version number.
      */
-    public Configuration(File file, String configVersion)
+    private void runConfiguration(File file, String configVersion)
     {
         this.file = file;
         this.definedConfigVersion = configVersion;
@@ -145,10 +146,15 @@ public class Configuration
         }
     }
 
+    public Configuration(File file, String configVersion)
+    {
+        runConfiguration(file, configVersion);
+    }
+
     public Configuration(File file, String configVersion, boolean caseSensitiveCustomCategories)
     {
-        this(file, configVersion);
         this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
+        runConfiguration(file, configVersion);
     }
 
     public Configuration(File file, boolean caseSensitiveCustomCategories)
@@ -1050,20 +1056,8 @@ public class Configuration
         }
         finally
         {
-            if (buffer != null)
-            {
-                try
-                {
-                    buffer.close();
-                } catch (IOException e){}
-            }
-            if (input != null)
-            {
-                try
-                {
-                    input.close();
-                } catch (IOException e){}
-            }
+            IOUtils.closeQuietly(buffer);
+            IOUtils.closeQuietly(input);
         }
 
         resetChangedState();

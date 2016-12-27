@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -299,7 +299,7 @@
+@@ -313,7 +313,7 @@
      public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
      {
          Item item = p_77514_3_.func_77973_b();
@@ -9,7 +9,7 @@
  
          if (i <= 0)
          {
-@@ -346,7 +346,7 @@
+@@ -360,7 +360,7 @@
      {
          List<EnchantmentData> list = Lists.<EnchantmentData>newArrayList();
          Item item = p_77513_1_.func_77973_b();
@@ -18,17 +18,7 @@
  
          if (i <= 0)
          {
-@@ -387,7 +387,8 @@
- 
-         while (iterator.hasNext())
-         {
--            if (!p_185282_1_.field_76302_b.func_77326_a(((EnchantmentData)iterator.next()).field_76302_b))
-+            Enchantment e2 = iterator.next().field_76302_b;
-+            if (!p_185282_1_.field_76302_b.func_77326_a(e2) || !e2.func_77326_a(p_185282_1_.field_76302_b)) //Forge BugFix: Let Both enchantments veto being together
-             {
-                 iterator.remove();
-             }
-@@ -402,7 +403,7 @@
+@@ -416,7 +416,7 @@
  
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {

@@ -12,8 +12,8 @@
  
          try
          {
--            networkmanager.func_179290_a(new C00Handshake(210, serveraddress.func_78861_a(), serveraddress.func_78864_b(), EnumConnectionState.STATUS));
-+            networkmanager.func_179290_a(new C00Handshake(210, serveraddress.func_78861_a(), serveraddress.func_78864_b(), EnumConnectionState.STATUS, true));
+-            networkmanager.func_179290_a(new C00Handshake(316, serveraddress.func_78861_a(), serveraddress.func_78864_b(), EnumConnectionState.STATUS));
++            networkmanager.func_179290_a(new C00Handshake(316, serveraddress.func_78861_a(), serveraddress.func_78864_b(), EnumConnectionState.STATUS, true));
              networkmanager.func_179290_a(new CPacketServerQuery());
          }
          catch (Throwable throwable)

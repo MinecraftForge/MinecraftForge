@@ -23,6 +23,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
+import javax.annotation.Nonnull;
+
 public class VanillaHopperItemHandler extends InvWrapper
 {
     private final TileEntityHopper hopper;
@@ -34,19 +36,34 @@ public class VanillaHopperItemHandler extends InvWrapper
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
+    @Nonnull
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (stack == null)
-            return null;
-        if (simulate || !hopper.mayTransfer())
-            return super.insertItem(slot, stack, simulate);
-
-        int curStackSize = stack.stackSize;
-        ItemStack itemStack = super.insertItem(slot, stack, false);
-        if (itemStack == null || curStackSize != itemStack.stackSize)
+        if (simulate)
         {
-            hopper.setTransferCooldown(8);
+            return super.insertItem(slot, stack, simulate);
         }
-        return itemStack;
+        else
+        {
+            boolean wasEmpty = getInv().isEmpty();
+
+            int originalStackSize = stack.getCount();
+            stack = super.insertItem(slot, stack, simulate);
+
+            if (wasEmpty && originalStackSize > stack.getCount())
+            {
+                if (!hopper.mayTransfer())
+                {
+                    // This cooldown is always set to 8 in vanilla with one exception:
+                    // Hopper -> Hopper transfer sets this cooldown to 7 when this hopper
+                    // has not been updated as recently as the one pushing items into it.
+                    // This vanilla behavior is preserved by VanillaInventoryCodeHooks#insertStack,
+                    // the cooldown is set properly by the hopper that is pushing items into this one.
+                    hopper.setTransferCooldown(8);
+                }
+            }
+
+            return stack;
+        }
     }
 }

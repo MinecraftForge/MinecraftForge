@@ -26,15 +26,15 @@ apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
 apply plugin: "net.minecraftforge.gradle.launch4j"
 
-minecraft.version = "1.10.2"
+minecraft.version = "1.11.2"
 
 minecraft {
-    mappings = 'snapshot_nodoc_20160518'
+    mappings = 'snapshot_nodoc_20161220'
     workspaceDir = "projects"
     versionJson = "jsons/${minecraft.version}-dev.json"
     buildUserdev = true
     buildInstaller = true
-    installerVersion = "1.4"
+    installerVersion = "1.5"
 
     def common = {
         patchPrefixOriginal "../src-base/minecraft"
@@ -84,8 +84,6 @@ task changelog(type: JenkinsChangelog) {
     // skip if there is no forge jenkins pass
     onlyIf {
         project.hasProperty('forgeJenkinsPass')
-        // Not sure what abrar was trying to do here...
-        //project.file("build/distributions/${project.name}-${project.version}-changelog.txt").text = ""
     }
 
     outputs.upToDateWhen { false } // never up to date
@@ -108,13 +106,14 @@ task crowdin(type: CrowdinDownload) {
 }
 
 def extraTxts = [
-    changelog, // yeah we can do thi, because gradle and groovy are awesome
     "CREDITS-fml.txt",
     "LICENSE-new.txt",
     "MinecraftForge-Credits.txt",
     "Paulscode SoundSystem CodecIBXM License.txt",
     "Paulscode IBXM Library License.txt"
 ]
+if (project.hasProperty('forgeJenkinsPass'))
+    extraTxts += changelog
 
 outputJar {
     classifier = 'universal'
@@ -135,6 +134,7 @@ installer {
     classifier = 'installer'
     from extraTxts
     from "src/main/resources/forge_logo.png"
+    from "src/main/resources/url.png"
     rename "forge_logo\\.png", "big_logo.png"
 }
 
@@ -177,7 +177,8 @@ task makeMdk(type: Zip) {
     into ('eclipse') {
         from 'mdk/eclipse'
     }
-    from changelog.output
+    if (project.hasProperty('forgeJenkinsPass'))
+        from changelog.output
     from ('mdk') {
         filter(ReplaceTokens, tokens: [
         VERSION: project.version,
@@ -211,7 +212,8 @@ tasks.build.dependsOn 'launch4j'
 // MAVEN
 
 artifacts {
-    archives changelog.output
+    if (project.hasProperty('forgeJenkinsPass'))
+        archives changelog.output
     archives file("build/distributions/${project.name}-${project.version}-installer-win.exe")
     archives makeMdk
 }
@@ -365,11 +367,17 @@ String getVersionFromJava(File file)
 
     if (branch && branch != 'master' && branch != 'HEAD' && branch != minecraft.version && branch != minecraft.version + '.0')
     {
-        if (!(branch.endsWith('.x') && minecraft.version.startsWith(branch.substring(0, branch.length() -1))))
+        if (!(branch.endsWith('.x') && minecraft.version.startsWith(branch.substring(0, branch.length() -2))))
             out += "-$branch"
     }
 
     return out;
+}
+
+reobfuscate {
+    extraSrg = [
+    'MD: net/minecraftforge/fml/common/registry/FMLControlledNamespacedRegistry/getKeys ()Ljava/util/Set; net/minecraftforge/fml/common/registry/FMLControlledNamespacedRegistry/getKeys ()Ljava/util/Set;'
+    ]
 }
 
 task resetBuildNumber << {

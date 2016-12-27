@@ -31,6 +31,8 @@ import java.lang.ref.WeakReference;
 
 import com.google.common.base.Objects;
 
+import javax.annotation.Nonnull;
+
 public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandlerModifiable
 {
     // Dummy cache value to signify that we have checked and definitely found no adjacent chests
@@ -102,16 +104,17 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     }
 
     @Override
+    @Nonnull
     public ItemStack getStackInSlot(int slot)
     {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
         TileEntityChest chest = getChest(accessingUpperChest);
-        return chest != null ? chest.getStackInSlot(targetSlot) : null;
+        return chest != null ? chest.getStackInSlot(targetSlot) : ItemStack.EMPTY;
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack)
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
@@ -127,7 +130,8 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
+    @Nonnull
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
     {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
@@ -136,12 +140,20 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     }
 
     @Override
+    @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
         TileEntityChest chest = getChest(accessingUpperChest);
-        return chest != null ? chest.getSingleChestHandler().extractItem(targetSlot, amount, simulate) : null;
+        return chest != null ? chest.getSingleChestHandler().extractItem(targetSlot, amount, simulate) : ItemStack.EMPTY;
+    }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        boolean accessingUpperChest = slot < 27;
+        return getChest(accessingUpperChest).getInventoryStackLimit();
     }
 
     @Override

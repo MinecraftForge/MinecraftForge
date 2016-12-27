@@ -57,6 +57,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -515,7 +516,7 @@ public class FMLCommonHandler
         modNames.add("fml");
         if (!noForge)
         {
-            modNames.add("forge");
+            modNames.add(ForgeVersion.MOD_ID);
         }
 
         if (Loader.instance().getFMLBrandingProperties().containsKey("snooperbranding"))
@@ -570,9 +571,9 @@ public class FMLCommonHandler
         bus().post(new PlayerEvent.PlayerLoggedOutEvent(player));
     }
 
-    public void firePlayerRespawnEvent(EntityPlayer player)
+    public void firePlayerRespawnEvent(EntityPlayer player, boolean endConquered)
     {
-        bus().post(new PlayerEvent.PlayerRespawnEvent(player));
+        bus().post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
     }
 
     public void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item)
@@ -745,5 +746,15 @@ public class FMLCommonHandler
 
     public void reloadRenderers() {
         sidedDelegate.reloadRenderers();
+    }
+
+    public void fireSidedRegistryEvents()
+    {
+        sidedDelegate.fireSidedRegistryEvents();
+    }
+
+    public CompoundDataFixer getDataFixer()
+    {
+        return (CompoundDataFixer)sidedDelegate.getDataFixer();
     }
 }

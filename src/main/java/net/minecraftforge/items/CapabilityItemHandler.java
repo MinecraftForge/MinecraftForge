@@ -72,7 +72,7 @@ public class CapabilityItemHandler
 
                     if (j >= 0 && j < instance.getSlots())
                     {
-                        itemHandlerModifiable.setStackInSlot(j, ItemStack.loadItemStackFromNBT(itemTags));
+                        itemHandlerModifiable.setStackInSlot(j, new ItemStack(itemTags));
                     }
                 }
             }

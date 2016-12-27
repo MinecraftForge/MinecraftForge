@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombieVillager.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombieVillager.java
+@@ -48,6 +48,7 @@
+     public void func_190733_a(int p_190733_1_)
+     {
+         this.field_70180_af.func_187227_b(field_190739_c, Integer.valueOf(p_190733_1_));
++        net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, p_190733_1_);
+     }
+ 
+     public int func_190736_dl()
+@@ -85,6 +86,19 @@
+         return super.func_180482_a(p_180482_1_, p_180482_2_);
+     }
+ 
++    private net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof;
++    public void setForgeProfession(net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof)
++    {
++        this.prof = prof;
++        this.func_190733_a(net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof));
++    }
++
++    public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getForgeProfession()
++    {
++        return this.prof;
++    }
++
++
+     public void func_70071_h_()
+     {
+         if (!this.field_70170_p.field_72995_K && this.func_82230_o())

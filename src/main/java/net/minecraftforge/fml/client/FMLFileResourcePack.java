@@ -65,7 +65,7 @@ public class FMLFileResourcePack extends FileResourcePack implements FMLContaine
                 return new ByteArrayInputStream(("{\n" +
                         " \"pack\": {\n"+
                         "   \"description\": \"dummy FML pack for "+container.getName()+"\",\n"+
-                        "   \"pack_format\": 1\n"+
+                        "   \"pack_format\": 2\n"+
                         "}\n" +
                         "}").getBytes(Charsets.UTF_8));
             }

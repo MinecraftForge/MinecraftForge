@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelResourceLocation.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelResourceLocation.java
-@@ -1,11 +1,8 @@
- package net.minecraft.client.renderer.block.model;
+@@ -2,11 +2,8 @@
  
+ import java.util.Locale;
  import net.minecraft.util.ResourceLocation;
 -import net.minecraftforge.fml.relauncher.Side;
 -import net.minecraftforge.fml.relauncher.SideOnly;

@@ -25,8 +25,10 @@
 package net.minecraftforge.client;
 
 import java.util.BitSet;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
@@ -48,6 +50,15 @@ public class MinecraftForgeClient
     public static BlockRenderLayer getRenderLayer()
     {
         return ForgeHooksClient.renderLayer.get();
+    }
+
+    /**
+     * returns the Locale set by the player in Minecraft.
+     * Useful for creating string and number formatters.
+     */
+    public static Locale getLocale()
+    {
+        return Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getJavaLocale();
     }
 
     private static BitSet stencilBits = new BitSet(8);

@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
-@Mod(modid = "wrnormal", name = "WRNormal", version = "1.0")
+@Mod(modid = "wrnormal", name = "WRNormal", version = "1.0", acceptableRemoteVersions = "*")
 public class WRNormalMod
 {
     @Instance("wrnormal")
@@ -29,7 +29,7 @@ public class WRNormalMod
     @EventHandler
     public void init(FMLPreInitializationEvent event)
     {
-        EntityRegistry.registerModEntity(EntityScaleTest.class, "ScaleTest", 0, instance, 60, 3, true);
+        EntityRegistry.registerModEntity(new ResourceLocation("wrnormal", "scale_test"), EntityScaleTest.class, "scale_test", 0, instance, 60, 3, true);
         proxy.registerRenders();
     }
 

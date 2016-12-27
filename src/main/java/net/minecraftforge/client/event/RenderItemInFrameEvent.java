@@ -25,6 +25,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+import javax.annotation.Nonnull;
+
 /**
  * This event is called when an item is rendered in an item frame.
  * 
@@ -44,6 +46,7 @@ public class RenderItemInFrameEvent extends Event
         renderer = renderItemFrame;
     }
 
+    @Nonnull
     public ItemStack getItem()
     {
         return item;

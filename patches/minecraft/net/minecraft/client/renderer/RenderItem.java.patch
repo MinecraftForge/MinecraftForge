@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/RenderItem.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/RenderItem.java
-@@ -72,7 +72,7 @@
+@@ -71,7 +71,7 @@
      public RenderItem(TextureManager p_i46552_1_, ModelManager p_i46552_2_, ItemColors p_i46552_3_)
      {
          this.field_175057_n = p_i46552_1_;
@@ -9,7 +9,7 @@
          this.func_175041_b();
          this.field_184395_f = p_i46552_3_;
      }
-@@ -224,7 +224,7 @@
+@@ -223,7 +223,7 @@
                  k = k | -16777216;
              }
  
@@ -18,7 +18,7 @@
          }
      }
  
-@@ -246,17 +246,7 @@
+@@ -245,17 +245,7 @@
      public IBakedModel func_184393_a(ItemStack p_184393_1_, @Nullable World p_184393_2_, @Nullable EntityLivingBase p_184393_3_)
      {
          IBakedModel ibakedmodel = this.field_175059_m.func_178089_a(p_184393_1_);
@@ -37,7 +37,7 @@
      }
  
      public void func_184392_a(ItemStack p_184392_1_, EntityLivingBase p_184392_2_, ItemCameraTransforms.TransformType p_184392_3_, boolean p_184392_4_)
-@@ -280,14 +270,9 @@
+@@ -279,14 +269,9 @@
              GlStateManager.func_179147_l();
              GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
              GlStateManager.func_179094_E();
@@ -54,7 +54,7 @@
              this.func_180454_a(p_184394_1_, p_184394_2_);
              GlStateManager.func_187407_a(GlStateManager.CullFace.BACK);
              GlStateManager.func_179121_F();
-@@ -320,7 +305,7 @@
+@@ -319,7 +304,7 @@
          GlStateManager.func_187401_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          this.func_180452_a(p_184390_2_, p_184390_3_, p_184390_4_.func_177556_c());
@@ -63,7 +63,7 @@
          this.func_180454_a(p_184390_1_, p_184390_4_);
          GlStateManager.func_179118_c();
          GlStateManager.func_179101_C();
-@@ -425,12 +410,16 @@
+@@ -418,9 +403,12 @@
                  p_180453_1_.func_175063_a(s, (float)(p_180453_3_ + 19 - 2 - p_180453_1_.func_78256_a(s)), (float)(p_180453_4_ + 6 + 3), 16777215);
                  GlStateManager.func_179145_e();
                  GlStateManager.func_179126_j();
@@ -75,15 +75,25 @@
 -            if (p_180453_2_.func_77951_h())
 +            if (p_180453_2_.func_77973_b().showDurabilityBar(p_180453_2_))
              {
--                int j = (int)Math.round(13.0D - (double)p_180453_2_.func_77952_i() * 13.0D / (double)p_180453_2_.func_77958_k());
--                int i = (int)Math.round(255.0D - (double)p_180453_2_.func_77952_i() * 255.0D / (double)p_180453_2_.func_77958_k());
-+                double health = p_180453_2_.func_77973_b().getDurabilityForDisplay(p_180453_2_);
-+                int j = (int)Math.round(13.0D - health * 13.0D);
-+                int i = (int)Math.round(255.0D - health * 255.0D);
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
-                 GlStateManager.func_179090_x();
-@@ -1059,6 +1048,7 @@
+@@ -429,11 +417,10 @@
+                 GlStateManager.func_179084_k();
+                 Tessellator tessellator = Tessellator.func_178181_a();
+                 VertexBuffer vertexbuffer = tessellator.func_178180_c();
+-                float f = (float)p_180453_2_.func_77952_i();
+-                float f1 = (float)p_180453_2_.func_77958_k();
+-                float f2 = Math.max(0.0F, (f1 - f) / f1);
+-                int i = Math.round(13.0F - f * 13.0F / f1);
+-                int j = MathHelper.func_181758_c(f2 / 3.0F, 1.0F, 1.0F);
++                double health = p_180453_2_.func_77973_b().getDurabilityForDisplay(p_180453_2_);
++                int rgbfordisplay = p_180453_2_.func_77973_b().getRGBDurabilityForDisplay(p_180453_2_);
++                int i = Math.round(13.0F - (float)health * 13.0F);
++                int j = rgbfordisplay;
+                 this.func_181565_a(vertexbuffer, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
+                 this.func_181565_a(vertexbuffer, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
+                 GlStateManager.func_179147_l();
+@@ -1074,6 +1061,7 @@
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.LOAD.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.CORNER.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.DATA.func_185110_a(), "structure_block");

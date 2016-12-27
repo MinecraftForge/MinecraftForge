@@ -9,7 +9,7 @@
              float f2 = p_177077_9_.func_177552_f().func_181688_b(ItemCameraTransforms.TransformType.GROUND).field_178363_d.y;
              GlStateManager.func_179109_b((float)p_177077_2_, (float)p_177077_4_ + f1 + 0.25F * f2, (float)p_177077_6_);
  
-@@ -114,16 +114,13 @@
+@@ -104,16 +104,13 @@
          GlStateManager.func_179094_E();
          IBakedModel ibakedmodel = this.field_177080_a.func_184393_a(itemstack, p_76986_1_.field_70170_p, (EntityLivingBase)null);
          int j = this.func_177077_a(p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_9_, ibakedmodel);
@@ -29,7 +29,7 @@
              GlStateManager.func_179109_b(f3, f4, f5);
          }
  
-@@ -144,10 +141,10 @@
+@@ -134,10 +131,10 @@
                      float f7 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
                      float f9 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
                      float f6 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
@@ -42,7 +42,7 @@
                  this.field_177080_a.func_180454_a(itemstack, ibakedmodel);
                  GlStateManager.func_179121_F();
              }
-@@ -162,10 +159,10 @@
+@@ -152,10 +149,10 @@
                      GlStateManager.func_179109_b(f8, f10, 0.0F);
                  }
  
@@ -55,7 +55,7 @@
              }
          }
  
-@@ -192,4 +189,25 @@
+@@ -182,4 +179,25 @@
      {
          return TextureMap.field_110575_b;
      }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
-@@ -91,6 +91,10 @@
+@@ -83,6 +83,10 @@
              boolean flag = entityplayer.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
              ItemStack itemstack = this.func_185060_a(entityplayer);
  
@@ -8,10 +8,10 @@
 +            i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_77615_1_, p_77615_2_, (EntityPlayer)p_77615_3_, i, itemstack != null || flag);
 +            if (i < 0) return;
 +
-             if (itemstack != null || flag)
+             if (!itemstack.func_190926_b() || flag)
              {
-                 if (itemstack == null)
-@@ -98,12 +102,11 @@
+                 if (itemstack.func_190926_b())
+@@ -90,12 +94,11 @@
                      itemstack = new ItemStack(Items.field_151032_g);
                  }
  
@@ -25,13 +25,13 @@
  
                      if (!p_77615_2_.field_72995_K)
                      {
-@@ -190,6 +193,9 @@
-     {
-         boolean flag = this.func_185060_a(p_77659_3_) != null;
+@@ -183,6 +186,9 @@
+         ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
+         boolean flag = !this.func_185060_a(p_77659_2_).func_190926_b();
  
-+        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(p_77659_1_, p_77659_2_, p_77659_3_, p_77659_4_, flag);
++        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, p_77659_1_, p_77659_2_, p_77659_3_, flag);
 +        if (ret != null) return ret;
 +
-         if (!p_77659_3_.field_71075_bZ.field_75098_d && !flag)
+         if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag)
          {
-             return !flag ? new ActionResult(EnumActionResult.FAIL, p_77659_1_) : new ActionResult(EnumActionResult.PASS, p_77659_1_);
+             return flag ? new ActionResult(EnumActionResult.PASS, itemstack) : new ActionResult(EnumActionResult.FAIL, itemstack);

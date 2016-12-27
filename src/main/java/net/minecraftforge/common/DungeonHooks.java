@@ -22,6 +22,7 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.Random;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 
 public class DungeonHooks
@@ -42,7 +43,7 @@ public class DungeonHooks
      *        Meaning, Zombies are twice as common as spiders or skeletons.
      * @return The new rarity of the monster,
      */
-    public static float addDungeonMob(String name, int rarity)
+    public static float addDungeonMob(ResourceLocation name, int rarity)
     {
         if (rarity <= 0)
         {
@@ -85,21 +86,17 @@ public class DungeonHooks
      * @param rand World generation random number generator
      * @return The mob name
      */
-    public static String getRandomDungeonMob(Random rand)
+    public static ResourceLocation getRandomDungeonMob(Random rand)
     {
         DungeonMob mob = WeightedRandom.getRandomItem(rand, dungeonMobs);
-        if (mob == null)
-        {
-            return "";
-        }
         return mob.type;
     }
 
 
     public static class DungeonMob extends WeightedRandom.Item
     {
-        public String type;
-        public DungeonMob(int weight, String type)
+        public ResourceLocation type;
+        public DungeonMob(int weight, ResourceLocation type)
         {
             super(weight);
             this.type = type;
@@ -114,8 +111,8 @@ public class DungeonHooks
 
     static
     {
-        addDungeonMob("Skeleton", 100);
-        addDungeonMob("Zombie",   200);
-        addDungeonMob("Spider",   100);
+        addDungeonMob(new ResourceLocation("skeleton"), 100);
+        addDungeonMob(new ResourceLocation("zombie"),   200);
+        addDungeonMob(new ResourceLocation("spider"),   100);
     }
 }

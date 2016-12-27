@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerEnchantment.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerEnchantment.java
-@@ -71,9 +71,12 @@
+@@ -70,9 +70,12 @@
          });
          this.func_75146_a(new Slot(this.field_75168_e, 1, 35, 47)
          {
 +            java.util.List<ItemStack> ores = net.minecraftforge.oredict.OreDictionary.getOres("gemLapis");
-             public boolean func_75214_a(@Nullable ItemStack p_75214_1_)
+             public boolean func_75214_a(ItemStack p_75214_1_)
              {
 -                return p_75214_1_.func_77973_b() == Items.field_151100_aR && EnumDyeColor.func_176766_a(p_75214_1_.func_77960_j()) == EnumDyeColor.BLUE;
 +                for (ItemStack ore : ores)
@@ -14,7 +14,7 @@
              }
          });
  
-@@ -158,6 +161,7 @@
+@@ -157,6 +160,7 @@
                  if (!this.field_75172_h.field_72995_K)
                  {
                      int l = 0;
@@ -22,7 +22,7 @@
  
                      for (int j = -1; j <= 1; ++j)
                      {
-@@ -165,37 +169,14 @@
+@@ -164,37 +168,14 @@
                          {
                              if ((j != 0 || k != 0) && this.field_75172_h.func_175623_d(this.field_178150_j.func_177982_a(k, 0, j)) && this.field_75172_h.func_175623_d(this.field_178150_j.func_177982_a(k, 1, j)))
                              {
@@ -66,7 +66,7 @@
                                  }
                              }
                          }
-@@ -205,7 +186,7 @@
+@@ -204,7 +185,7 @@
  
                      for (int i1 = 0; i1 < 3; ++i1)
                      {
@@ -75,3 +75,11 @@
                          this.field_185001_h[i1] = -1;
                          this.field_185002_i[i1] = -1;
  
+@@ -212,6 +193,7 @@
+                         {
+                             this.field_75167_g[i1] = 0;
+                         }
++                        this.field_75167_g[i1] = net.minecraftforge.event.ForgeEventFactory.onEnchantmentLevelSet(field_75172_h, field_178150_j, i1, (int)power, itemstack, field_75167_g[i1]);
+                     }
+ 
+                     for (int j1 = 0; j1 < 3; ++j1)

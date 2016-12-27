@@ -23,6 +23,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 
 import net.minecraftforge.fml.common.ModContainer;
@@ -33,7 +34,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import com.google.common.collect.Maps;
-
 
 public class ASMEventHandler implements IEventListener
 {
@@ -48,8 +48,15 @@ public class ASMEventHandler implements IEventListener
     private final SubscribeEvent subInfo;
     private ModContainer owner;
     private String readable;
+    private java.lang.reflect.Type filter = null;
 
+    @Deprecated
     public ASMEventHandler(Object target, Method method, ModContainer owner) throws Exception
+    {
+        this(target, method, owner, false);
+    }
+
+    public ASMEventHandler(Object target, Method method, ModContainer owner, boolean isGeneric) throws Exception
     {
         this.owner = owner;
         if (Modifier.isStatic(method.getModifiers()))
@@ -58,8 +65,17 @@ public class ASMEventHandler implements IEventListener
             handler = (IEventListener)createWrapper(method).getConstructor(Object.class).newInstance(target);
         subInfo = method.getAnnotation(SubscribeEvent.class);
         readable = "ASM: " + target + " " + method.getName() + Type.getMethodDescriptor(method);
+        if (isGeneric)
+        {
+            java.lang.reflect.Type type = method.getGenericParameterTypes()[0];
+            if (type instanceof ParameterizedType)
+            {
+                filter = ((ParameterizedType)type).getActualTypeArguments()[0];
+            }
+        }
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void invoke(Event event)
     {
@@ -69,7 +85,10 @@ public class ASMEventHandler implements IEventListener
         {
             if (!event.isCancelable() || !event.isCanceled() || subInfo.receiveCanceled())
             {
-                handler.invoke(event);
+                if (filter == null || filter == ((IGenericEvent)event).getGenericType())
+                {
+                    handler.invoke(event);
+                }
             }
         }
         if (GETCONTEXT)

@@ -30,13 +30,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 
+import javax.annotation.Nonnull;
+
 /**
  * MinecartInteractEvent is fired when a player interacts with a minecart. <br>
  * This event is fired whenever a player interacts with a minecart in
- * {@link EntityMinecartContainer#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
- * {@link EntityMinecartEmpty#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
- * {@link EntityMinecartFurnace#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
- * {@link EntityMinecartHopper#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
+ * {@link EntityMinecartContainer#processInitialInteract(EntityPlayer, EnumHand)},
+ * {@link EntityMinecartEmpty#processInitialInteract(EntityPlayer, EnumHand)},
+ * {@link EntityMinecartFurnace#processInitialInteract(EntityPlayer, EnumHand)},
+ * {@link EntityMinecartHopper#processInitialInteract(EntityPlayer, EnumHand)},
  * etc.<br>
  * <br>
  * {@link #player} contains the EntityPlayer that is involved with this minecart interaction.<br>
@@ -52,18 +54,17 @@ import net.minecraft.util.EnumHand;
 public class MinecartInteractEvent extends MinecartEvent
 {
     private final EntityPlayer player;
-    private final ItemStack item;
     private final EnumHand hand;
 
-    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player, ItemStack item, EnumHand hand)
+    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player, EnumHand hand)
     {
         super(minecart);
         this.player = player;
-        this.item = item;
         this.hand = hand;
     }
 
     public EntityPlayer getPlayer() { return player; }
-    public ItemStack getItem() { return item; }
+    @Nonnull
+    public ItemStack getItem() { return player.getHeldItem(hand); }
     public EnumHand getHand() { return hand; }
 }

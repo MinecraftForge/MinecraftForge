@@ -32,7 +32,10 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = NoBedSleepingTest.MODID, name = "ForgeDebugNoBedSleeping", version = NoBedSleepingTest.VERSION)
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@Mod(modid = NoBedSleepingTest.MODID, name = "ForgeDebugNoBedSleeping", version = NoBedSleepingTest.VERSION, acceptableRemoteVersions = "*")
 public class NoBedSleepingTest
 {
     public static final String MODID = "forgedebugnobedsleeping";
@@ -83,12 +86,13 @@ public class NoBedSleepingTest
             {
                 IExtraSleeping inst = SLEEP_CAP.getDefaultInstance();
                 @Override
-                public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+                public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
                     return capability == SLEEP_CAP;
                 }
 
                 @Override
-                public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+                @Nullable
+                public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
                     return capability == SLEEP_CAP ? SLEEP_CAP.<T>cast(inst) : null;
                 }
 
@@ -161,8 +165,10 @@ public class NoBedSleepingTest
         }
 
         @Override
-        public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand)
+        @Nonnull
+        public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand)
         {
+            ItemStack stack = player.getHeldItem(hand);
             if (!world.isRemote)
             {
                 final SleepResult result = player.trySleep(player.getPosition());

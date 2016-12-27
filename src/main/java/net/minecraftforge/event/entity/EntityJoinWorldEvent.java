@@ -30,7 +30,7 @@ import java.util.Collection;
 /**
  * EntityJoinWorldEvent is fired when an Entity joins the world. <br>
  * This event is fired whenever an Entity is added to the world in 
- * {@link World#loadEntities(Collection)}, {@link WorldServer#loadEntities(Collection)} {@link World#joinEntityInSurroundings(Entity)}, and {@link World#spawnEntityInWorld(Entity)}. <br>
+ * {@link World#loadEntities(Collection)}, {@link WorldServer#loadEntities(Collection)} {@link World#joinEntityInSurroundings(Entity)}, and {@link World#spawnEntity(Entity)}. <br>
  * <br>
  * {@link #world} contains the world in which the entity is to join.<br>
  * <br>

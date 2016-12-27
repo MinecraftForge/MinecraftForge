@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModMetadata;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.annotation.Nonnull;
 
@@ -25,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test block state mappings bidirectionality
  */
+@RunWith(ForgeTestRunner.class)
 public class BlockStateMappingsTest
 {
     @BeforeClass

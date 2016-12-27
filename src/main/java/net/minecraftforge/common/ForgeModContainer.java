@@ -24,6 +24,7 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.world.biome.Biome;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
@@ -38,11 +39,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -50,12 +49,17 @@ import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -79,7 +83,6 @@ import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.WorldAccessContainer;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
@@ -122,7 +125,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
-        meta.modId       = "Forge";
+        meta.modId       = ForgeVersion.MOD_ID;
         meta.name        = "Minecraft Forge";
         meta.version     = ForgeVersion.getVersion();
         meta.credits     = "Made possible with help from many people";
@@ -376,11 +379,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 itr.remove();
         }
 
-        FMLLog.log("Forge", Level.DEBUG, "Preloading CrashReport Classes");
+        FMLLog.log(ForgeVersion.MOD_ID, Level.DEBUG, "Preloading CrashReport Classes");
         Collections.sort(all); //Sort it because I like pretty output ;)
         for (String name : all)
         {
-            FMLLog.log("Forge", Level.DEBUG, "\t" + name);
+            FMLLog.log(ForgeVersion.MOD_ID, Level.DEBUG, "\t" + name);
             try
             {
                 Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());
@@ -393,6 +396,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         NetworkRegistry.INSTANCE.register(this, this.getClass(), "*", evt.getASMHarvestedData());
         ForgeNetworkHandler.registerChannel(this, evt.getSide());
+        ConfigManager.load(this.getModId(), Config.Type.INSTANCE);
     }
 
     @Subscribe
@@ -401,6 +405,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         CapabilityItemHandler.register();
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
+        CapabilityEnergy.register();
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         MinecraftForge.EVENT_BUS.register(this);
@@ -415,7 +420,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             universalBucket = new UniversalBucket();
             universalBucket.setUnlocalizedName("forge.bucketFilled");
-            GameRegistry.registerItem(universalBucket, "bucketFilled");
+            GameRegistry.register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
     }
@@ -423,8 +428,22 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Subscribe
     public void postInit(FMLPostInitializationEvent evt)
     {
-        BiomeDictionary.registerAllBiomesAndGenerateEvents();
+        registerAllBiomesAndGenerateEvents();
         ForgeChunkManager.loadConfiguration();
+    }
+
+    private static void registerAllBiomesAndGenerateEvents()
+    {
+        for (Biome biome : ForgeRegistries.BIOMES.getValues())
+        {
+            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
+            {
+                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator)biome.theBiomeDecorator;
+                decorator.fireCreateEventAndReplace(biome);
+            }
+
+            BiomeDictionary.ensureHasTypes(biome);
+        }
     }
 
     @Subscribe

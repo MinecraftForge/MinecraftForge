@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/Biome.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/Biome.java
-@@ -52,7 +52,7 @@
+@@ -53,7 +53,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
  {
      private static final Logger field_150586_aC = LogManager.getLogger();
      protected static final IBlockState field_185365_a = Blocks.field_150348_b.func_176223_P();
-@@ -71,7 +71,7 @@
+@@ -72,7 +72,7 @@
      protected static final WorldGenTrees field_76757_N = new WorldGenTrees(false);
      protected static final WorldGenBigTree field_76758_O = new WorldGenBigTree(false);
      protected static final WorldGenSwamp field_76763_Q = new WorldGenSwamp();
@@ -18,7 +18,7 @@
      private final String field_76791_y;
      private final float field_76748_D;
      private final float field_76749_E;
-@@ -132,11 +132,12 @@
+@@ -134,11 +134,12 @@
          this.field_76761_J.add(new Biome.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.field_76755_L.add(new Biome.SpawnListEntry(EntitySquid.class, 10, 4, 4));
          this.field_82914_M.add(new Biome.SpawnListEntry(EntityBat.class, 10, 8, 8));
@@ -32,7 +32,7 @@
      }
  
      public boolean func_185363_b()
-@@ -232,7 +233,7 @@
+@@ -234,7 +235,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180627_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -41,7 +41,7 @@
      }
  
      public final void func_180628_b(World p_180628_1_, Random p_180628_2_, ChunkPrimer p_180628_3_, int p_180628_4_, int p_180628_5_, double p_180628_6_)
-@@ -325,7 +326,7 @@
+@@ -327,7 +328,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180625_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -50,7 +50,7 @@
      }
  
      public Class <? extends Biome > func_150562_l()
-@@ -391,6 +392,83 @@
+@@ -393,6 +394,83 @@
          return this.field_76766_R;
      }
  

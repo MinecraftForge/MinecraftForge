@@ -1,26 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -51,17 +51,9 @@
-             int i = this.func_77647_b(p_180614_1_.func_77960_j());
-             IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, i, p_180614_2_);
+@@ -46,19 +46,11 @@
+         if (!itemstack.func_190926_b() && p_180614_1_.func_175151_a(p_180614_3_, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(this.field_150939_a, p_180614_3_, false, p_180614_5_, (Entity)null))
+         {
+             int i = this.func_77647_b(itemstack.func_77960_j());
+-            IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, i, p_180614_1_);
++            IBlockState iblockstate1 = this.field_150939_a.getStateForPlacement(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, i, p_180614_1_, p_180614_4_);
  
--            if (p_180614_3_.func_180501_a(p_180614_4_, iblockstate1, 11))
-+            if (placeBlockAt(p_180614_1_, p_180614_2_, p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, iblockstate1))
+-            if (p_180614_2_.func_180501_a(p_180614_3_, iblockstate1, 11))
++            if (placeBlockAt(itemstack, p_180614_1_, p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, iblockstate1))
              {
--                iblockstate1 = p_180614_3_.func_180495_p(p_180614_4_);
+-                iblockstate1 = p_180614_2_.func_180495_p(p_180614_3_);
 -
 -                if (iblockstate1.func_177230_c() == this.field_150939_a)
 -                {
--                    func_179224_a(p_180614_3_, p_180614_2_, p_180614_4_, p_180614_1_);
--                    this.field_150939_a.func_180633_a(p_180614_3_, p_180614_4_, iblockstate1, p_180614_2_, p_180614_1_);
+-                    func_179224_a(p_180614_2_, p_180614_1_, p_180614_3_, itemstack);
+-                    this.field_150939_a.func_180633_a(p_180614_2_, p_180614_3_, iblockstate1, p_180614_1_, itemstack);
 -                }
 -
 -                SoundType soundtype = this.field_150939_a.func_185467_w();
-+                SoundType soundtype = p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().getSoundType(p_180614_3_.func_180495_p(p_180614_4_), p_180614_3_, p_180614_4_, p_180614_2_);
-                 p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
-                 --p_180614_1_.field_77994_a;
++                SoundType soundtype = p_180614_2_.func_180495_p(p_180614_3_).func_177230_c().getSoundType(p_180614_2_.func_180495_p(p_180614_3_), p_180614_2_, p_180614_3_, p_180614_1_);
+                 p_180614_2_.func_184133_a(p_180614_1_, p_180614_3_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+                 itemstack.func_190918_g(1);
              }
-@@ -121,7 +113,7 @@
+@@ -119,7 +111,7 @@
      {
          Block block = p_179222_1_.func_180495_p(p_179222_2_).func_177230_c();
  
@@ -29,7 +32,7 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
-@@ -159,4 +151,32 @@
+@@ -164,4 +156,26 @@
      {
          return this.field_150939_a;
      }
@@ -44,7 +47,7 @@
 +     */
 +    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState)
 +    {
-+        if (!world.func_180501_a(pos, newState, 3)) return false;
++        if (!world.func_180501_a(pos, newState, 11)) return false;
 +
 +        IBlockState state = world.func_180495_p(pos);
 +        if (state.func_177230_c() == this.field_150939_a)
@@ -54,11 +57,5 @@
 +        }
 +
 +        return true;
-+    }
-+
-+    @SideOnly(Side.CLIENT)
-+    public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
-+    {
-+        field_150939_a.addInformation(stack, playerIn, tooltip, advanced);
 +    }
  }

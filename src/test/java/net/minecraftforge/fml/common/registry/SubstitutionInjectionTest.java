@@ -15,6 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.annotation.Nonnull;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
@@ -27,7 +29,12 @@ public class SubstitutionInjectionTest
 {
     private ResourceLocation myDirt = new ResourceLocation("minecraft:dirt");
     private BlockDirt toSub = new BlockDirt() {
-
+        @Override
+        @Nonnull
+        public String toString()
+        {
+            return "SUB" + super.toString() + "SUB";
+        }
     };
 
     @BeforeClass
@@ -103,5 +110,29 @@ public class SubstitutionInjectionTest
         assertEquals("Got my dirt substitute - registry", toSub, fnd);
         dirtitem = (ItemBlock)itemRegistry.getValue(myDirt);
         assertEquals("ItemBlock points at my block", toSub, dirtitem.block);
+
+        // TEST 2 repeat: Does the substitute get injected when told by loading operation? The substitute should be found in the registry
+        PersistentRegistryManager.injectSnapshot(snapshot, true, true);
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+        fnd = blockRegistry.getValue(myDirt);
+        currDirt = Blocks.DIRT;
+        assertEquals("Got my dirt substitute - Blocks", toSub, currDirt);
+        assertEquals("Got my dirt substitute - Blocks and registry", currDirt, fnd);
+        assertEquals("Got my dirt substitute - registry", toSub, fnd);
+
+        dirtitem = (ItemBlock)itemRegistry.getValue(myDirt);
+        assertEquals("ItemBlock points at my block", toSub, dirtitem.block);
+
+        // TEST 3 repeat: Does the substitute get restored when reverting to frozen state? The substitute should be found in the registry again
+        PersistentRegistryManager.revertToFrozen();
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+        fnd = blockRegistry.getValue(myDirt);
+        currDirt = Blocks.DIRT;
+        assertEquals("Got my dirt substitute - Blocks", toSub, currDirt);
+        assertEquals("Got my dirt substitute - Blocks and registry", currDirt, fnd);
+        assertEquals("Got my dirt substitute - registry", toSub, fnd);
+        dirtitem = (ItemBlock)itemRegistry.getValue(myDirt);
+        assertEquals("ItemBlock points at my block", toSub, dirtitem.block);
+
     }
 }

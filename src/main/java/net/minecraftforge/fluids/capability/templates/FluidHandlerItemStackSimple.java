@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids.capability.templates;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
@@ -28,32 +29,39 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fluids.ItemFluidContainer;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 /**
  * FluidHandlerItemStackSimple is a template capability provider for ItemStacks.
- * Data is stored directly in the vanilla NBT, in the same way as the old deprecated {@link ItemFluidContainer}.
+ * Data is stored directly in the vanilla NBT, in the same way as the old ItemFluidContainer.
  *
  * This implementation only allows item containers to be fully filled or emptied, similar to vanilla buckets.
  */
-public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityProvider
+public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabilityProvider
 {
     public static final String FLUID_NBT_KEY = "Fluid";
 
-    protected final ItemStack container;
-    protected final int capacity;
+    @Nonnull
+    protected ItemStack container;
+    protected int capacity;
 
     /**
      * @param container  The container itemStack, data is stored on it directly as NBT.
      * @param capacity   The maximum capacity of this fluid tank.
      */
-    public FluidHandlerItemStackSimple(ItemStack container, int capacity)
+    public FluidHandlerItemStackSimple(@Nonnull ItemStack container, int capacity)
     {
         this.container = container;
         this.capacity = capacity;
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getContainer()
+    {
+        return container;
     }
 
     @Nullable
@@ -88,7 +96,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (container.stackSize != 1 || resource == null || resource.amount <= 0 || !canFillFluidType(resource))
+        if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !canFillFluidType(resource))
         {
             return 0;
         }
@@ -114,7 +122,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain)
     {
-        if (container.stackSize != 1 || resource == null || resource.amount <= 0 || !resource.isFluidEqual(getFluid()))
+        if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !resource.isFluidEqual(getFluid()))
         {
             return null;
         }
@@ -124,7 +132,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (container.stackSize != 1 || maxDrain <= 0)
+        if (container.getCount() != 1 || maxDrain <= 0)
         {
             return null;
         }
@@ -170,16 +178,17 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
     {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+        return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+    @Nullable
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
     {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY ? (T) this : null;
+        return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY ? (T) this : null;
     }
 
     /**
@@ -196,7 +205,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
         protected void setContainerToEmpty()
         {
             super.setContainerToEmpty();
-            container.stackSize--;
+            container.shrink(1);
         }
     }
 
@@ -217,7 +226,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
         protected void setContainerToEmpty()
         {
             super.setContainerToEmpty();
-            container.deserializeNBT(emptyContainer.serializeNBT());
+            container = emptyContainer;
         }
     }
 }

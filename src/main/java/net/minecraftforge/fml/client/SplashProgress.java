@@ -64,6 +64,7 @@ import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.asm.FMLSanityChecker;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -106,6 +107,12 @@ public class SplashProgress
     private static int barBorderColor;
     private static int barColor;
     private static int barBackgroundColor;
+    private static boolean showMemory;
+    private static int memoryGoodColor;
+    private static int memoryWarnColor;
+    private static int memoryLowColor;
+    private static float memoryColorPercent;
+    private static long memoryColorChangeTime;
     static final Semaphore mutex = new Semaphore(1);
 
     private static String getString(String name, String def)
@@ -163,16 +170,21 @@ public class SplashProgress
         // Optifine authors - add this key to the blackboard if you feel your modifications are now compatible with this code.
         enabled =            getBool("enabled",      defaultEnabled) && ( (!FMLClientHandler.instance().hasOptifine()) || Launch.blackboard.containsKey("optifine.ForgeSplashCompatible"));
         rotate =             getBool("rotate",       false);
+        showMemory =         getBool("showMemory",   true);
         logoOffset =         getInt("logoOffset",    0);
         backgroundColor =    getHex("background",    0xFFFFFF);
         fontColor =          getHex("font",          0x000000);
         barBorderColor =     getHex("barBorder",     0xC0C0C0);
         barColor =           getHex("bar",           0xCB3D35);
         barBackgroundColor = getHex("barBackground", 0xFFFFFF);
+        memoryGoodColor =    getHex("memoryGood",    0x78CB34);
+        memoryWarnColor =    getHex("memoryWarn",    0xE6E84A);
+        memoryLowColor =     getHex("memoryLow",     0xE42F2F);
 
         final ResourceLocation fontLoc = new ResourceLocation(getString("fontTexture", "textures/font/ascii.png"));
         final ResourceLocation logoLoc = new ResourceLocation(getString("logoTexture", "textures/gui/title/mojang.png"));
-        final ResourceLocation forgeLoc = new ResourceLocation(getString("forgeTexture", "fml:textures/gui/forge.gif"));
+        final ResourceLocation forgeLoc = new ResourceLocation(getString("forgeTexture", "fml:textures/gui/forge.png"));
+        final ResourceLocation forgeFallbackLoc = new ResourceLocation("fml:textures/gui/forge.png");
 
         File miscPackFile = new File(Minecraft.getMinecraft().mcDataDir, getString("resourcePackPath", "resources"));
 
@@ -244,9 +256,9 @@ public class SplashProgress
             public void run()
             {
                 setGL();
-                fontTexture = new Texture(fontLoc);
-                logoTexture = new Texture(logoLoc, false);
-                forgeTexture = new Texture(forgeLoc);
+                fontTexture = new Texture(fontLoc, null);
+                logoTexture = new Texture(logoLoc, null, false);
+                forgeTexture = new Texture(forgeLoc, forgeFallbackLoc);
                 glEnable(GL_TEXTURE_2D);
                 fontRenderer = new SplashFontRenderer();
                 glDisable(GL_TEXTURE_2D);
@@ -292,6 +304,15 @@ public class SplashProgress
                     glEnd();
                     glDisable(GL_TEXTURE_2D);
 
+                    // memory usage
+                    if (showMemory)
+                    {
+                        glPushMatrix();
+                        glTranslatef(320 - (float) barWidth / 2, 20, 0);
+                        drawMemoryBar();
+                        glPopMatrix();
+                    }
+
                     // bars
                     if(first != null)
                     {
@@ -315,8 +336,8 @@ public class SplashProgress
 
                     // forge logo
                     setColor(backgroundColor);
-                    float fw = (float)forgeTexture.getWidth() / 2 / 2;
-                    float fh = (float)forgeTexture.getHeight() / 2 / 2;
+                    float fw = (float)forgeTexture.getWidth() / 2;
+                    float fh = (float)forgeTexture.getHeight() / 2;
                     if(rotate)
                     {
                         float sh = Math.max(fw, fh);
@@ -327,7 +348,7 @@ public class SplashProgress
                     {
                         glTranslatef(320 + w/2 - fw - logoOffset, 240 + h/2 - fh - logoOffset, 0);
                     }
-                    int f = (angle / 10) % forgeTexture.getFrames();
+                    int f = (angle / 5) % forgeTexture.getFrames();
                     glEnable(GL_TEXTURE_2D);
                     forgeTexture.bind();
                     glBegin(GL_QUADS);
@@ -407,6 +428,75 @@ public class SplashProgress
                 glEnable(GL_TEXTURE_2D);
                 fontRenderer.drawString(progress, 0, 0, 0x000000);
                 glPopMatrix();
+            }
+
+            private void drawMemoryBar() {
+                int maxMemory = bytesToMb(Runtime.getRuntime().maxMemory());
+                int totalMemory = bytesToMb(Runtime.getRuntime().totalMemory());
+                int freeMemory = bytesToMb(Runtime.getRuntime().freeMemory());
+                int usedMemory = totalMemory - freeMemory;
+                float usedMemoryPercent = usedMemory / (float) maxMemory;
+
+                glPushMatrix();
+                // title - message
+                setColor(fontColor);
+                glScalef(2, 2, 1);
+                glEnable(GL_TEXTURE_2D);
+                fontRenderer.drawString("Memory Used / Total", 0, 0, 0x000000);
+                glDisable(GL_TEXTURE_2D);
+                glPopMatrix();
+                // border
+                glPushMatrix();
+                glTranslatef(0, textHeight2, 0);
+                setColor(barBorderColor);
+                drawBox(barWidth, barHeight);
+                // interior
+                setColor(backgroundColor);
+                glTranslatef(1, 1, 0);
+                drawBox(barWidth - 2, barHeight - 2);
+                // slidy part
+
+                long time = System.currentTimeMillis();
+                if (usedMemoryPercent > memoryColorPercent || (time - memoryColorChangeTime > 1000))
+                {
+                    memoryColorChangeTime = time;
+                    memoryColorPercent = usedMemoryPercent;
+                }
+                
+                int memoryBarColor;
+                if (memoryColorPercent < 0.75f)
+                {
+                    memoryBarColor = memoryGoodColor;
+                }
+                else if (memoryColorPercent < 0.85f)
+                {
+                    memoryBarColor = memoryWarnColor;
+                }
+                else
+                {
+                    memoryBarColor = memoryLowColor;
+                }
+                setColor(memoryLowColor);
+                glPushMatrix();
+                glTranslatef((barWidth - 2) * (totalMemory) / (maxMemory) - 2, 0, 0);
+                drawBox(2, barHeight - 2);
+                glPopMatrix();
+                setColor(memoryBarColor);
+                drawBox((barWidth - 2) * (usedMemory) / (maxMemory), barHeight - 2);
+
+                // progress text
+                String progress = getMemoryString(usedMemory) + " / " + getMemoryString(maxMemory);
+                glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
+                setColor(fontColor);
+                glScalef(2, 2, 1);
+                glEnable(GL_TEXTURE_2D);
+                fontRenderer.drawString(progress, 0, 0, 0x000000);
+                glPopMatrix();
+            }
+
+            private String getMemoryString(int memory)
+            {
+                return StringUtils.leftPad(Integer.toString(memory), 4, ' ') + " MB";
             }
 
             private void setGL()
@@ -641,33 +731,47 @@ public class SplashProgress
         private final int frames;
         private final int size;
 
-        public Texture(ResourceLocation location)
+        public Texture(ResourceLocation location, ResourceLocation fallback)
         {
-            this(location, true);
+            this(location, fallback, true);
         }
 
-        public Texture(ResourceLocation location, boolean allowRP)
+        public Texture(ResourceLocation location, ResourceLocation fallback, boolean allowRP)
         {
             InputStream s = null;
             try
             {
                 this.location = location;
-                s = open(location, allowRP);
+                s = open(location, fallback, allowRP);
                 ImageInputStream stream = ImageIO.createImageInputStream(s);
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(stream);
                 if(!readers.hasNext()) throw new IOException("No suitable reader found for image" + location);
                 ImageReader reader = readers.next();
                 reader.setInput(stream);
-                frames = reader.getNumImages(true);
+                int frames = reader.getNumImages(true);
                 BufferedImage[] images = new BufferedImage[frames];
                 for(int i = 0; i < frames; i++)
                 {
                     images[i] = reader.read(i);
                 }
                 reader.dispose();
-                int size = 1;
                 width = images[0].getWidth();
-                height = images[0].getHeight();
+                int height = images[0].getHeight();
+                // Animation strip
+                if (height > width && height % width == 0)
+                {
+                    frames = height / width;
+                    BufferedImage original = images[0];
+                    height = width;
+                    images = new BufferedImage[frames];
+                    for (int i = 0; i < frames; i++)
+                    {
+                        images[i] = original.getSubimage(0, i * height, width, height);
+                    }
+                }
+                this.frames = frames;
+                this.height = height;
+                int size = 1;
                 while((size / width) * (size / height) < frames) size *= 2;
                 this.size = size;
                 glEnable(GL_TEXTURE_2D);
@@ -816,7 +920,7 @@ public class SplashProgress
         }
     }
 
-    private static InputStream open(ResourceLocation loc, boolean allowRP) throws IOException
+    private static InputStream open(ResourceLocation loc, ResourceLocation fallback, boolean allowRP) throws IOException
     {
         if (!allowRP)
             return mcPack.getInputStream(loc);
@@ -829,6 +933,15 @@ public class SplashProgress
         {
             return fmlPack.getInputStream(loc);
         }
+        else if(!mcPack.resourceExists(loc) && fallback != null)
+        {
+            return open(fallback, null, true);
+        }
         return mcPack.getInputStream(loc);
+    }
+
+    private static int bytesToMb(long bytes)
+    {
+        return (int) (bytes / 1024L / 1024L);
     }
 }

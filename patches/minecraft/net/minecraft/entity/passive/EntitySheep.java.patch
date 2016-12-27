@@ -9,18 +9,16 @@
  {
      private static final DataParameter<Byte> field_184774_bv = EntityDataManager.<Byte>func_187226_a(EntitySheep.class, DataSerializers.field_187191_a);
      private final InventoryCrafting field_90016_e = new InventoryCrafting(new Container()
-@@ -176,8 +176,10 @@
-         }
-     }
- 
-+    @SuppressWarnings("unused")
-     public boolean func_184645_a(EntityPlayer p_184645_1_, EnumHand p_184645_2_, @Nullable ItemStack p_184645_3_)
+@@ -180,7 +180,7 @@
      {
-+        if (false)  //Forge: Moved to onSheared
-         if (p_184645_3_ != null && p_184645_3_.func_77973_b() == Items.field_151097_aZ && !this.func_70892_o() && !this.func_70631_g_())
+         ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
+ 
+-        if (itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70892_o() && !this.func_70631_g_())
++        if (false && itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70892_o() && !this.func_70631_g_())   //Forge: Moved to onSheared
          {
              if (!this.field_70170_p.field_72995_K)
-@@ -367,4 +369,19 @@
+             {
+@@ -369,4 +369,19 @@
          field_175514_bm.put(EnumDyeColor.RED, new float[] {0.6F, 0.2F, 0.2F});
          field_175514_bm.put(EnumDyeColor.BLACK, new float[] {0.1F, 0.1F, 0.1F});
      }

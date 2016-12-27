@@ -29,6 +29,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is a fluid block implementation which emulates vanilla Minecraft fluid behavior.
  *
@@ -78,7 +80,7 @@ public class BlockFluidClassic extends BlockFluidBase
     }
 
     @Override
-    public boolean canCollideCheck(IBlockState state, boolean fullHit)
+    public boolean canCollideCheck(@Nonnull IBlockState state, boolean fullHit)
     {
         return fullHit && state.getValue(LEVEL) == 0;
     }
@@ -90,7 +92,7 @@ public class BlockFluidClassic extends BlockFluidBase
     }
 
     @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos)
+    public int getLightValue(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
     {
         if (maxScaledLight == 0)
         {
@@ -101,7 +103,7 @@ public class BlockFluidClassic extends BlockFluidBase
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
+    public void updateTick(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand)
     {
         if (!isSourceBlock(world, pos) && ForgeEventFactory.canCreateFluidSource(world, pos, state, false))
         {
@@ -152,7 +154,7 @@ public class BlockFluidClassic extends BlockFluidBase
                 {
                     world.setBlockState(pos, state.withProperty(LEVEL, quantaPerBlock - expQuanta), 2);
                     world.scheduleUpdate(pos, this, tickRate);
-                    world.notifyNeighborsOfStateChange(pos, this);
+                    world.notifyNeighborsOfStateChange(pos, this, false);
                 }
             }
         }
@@ -356,6 +358,20 @@ public class BlockFluidClassic extends BlockFluidBase
     }
 
     /* IFluidBlock */
+    @Override
+    public int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, boolean doPlace)
+    {
+        if (fluidStack.amount < Fluid.BUCKET_VOLUME)
+        {
+            return 0;
+        }
+        if (doPlace)
+        {
+            world.setBlockState(pos, this.getDefaultState(), 11);
+        }
+        return Fluid.BUCKET_VOLUME;
+    }
+
     @Override
     public FluidStack drain(World world, BlockPos pos, boolean doDrain)
     {

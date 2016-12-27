@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucketMilk.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
-@@ -29,7 +29,7 @@
+@@ -27,7 +27,7 @@
  
          if (!p_77654_2_.field_72995_K)
          {
@@ -9,9 +9,9 @@
          }
  
          if (p_77654_3_ instanceof EntityPlayer)
-@@ -55,4 +55,9 @@
-         p_77659_3_.func_184598_c(p_77659_4_);
-         return new ActionResult(EnumActionResult.SUCCESS, p_77659_1_);
+@@ -53,4 +53,9 @@
+         p_77659_2_.func_184598_c(p_77659_3_);
+         return new ActionResult(EnumActionResult.SUCCESS, p_77659_2_.func_184586_b(p_77659_3_));
      }
 +
 +    @Override

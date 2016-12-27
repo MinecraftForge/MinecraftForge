@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import static org.lwjgl.opengl.GL11.*;
 
-@Mod(modid = ItemTileDebug.MODID, name = "ForgeDebugItemTile", version = "1.0")
+@Mod(modid = ItemTileDebug.MODID, name = "ForgeDebugItemTile", version = "1.0", acceptableRemoteVersions = "*")
 public class ItemTileDebug
 {
     public static final String MODID = "forgedebugitemtile";
@@ -136,7 +136,7 @@ public class ItemTileDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque() { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         @Override
         public TileEntity createNewTileEntity(World world, int meta)

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLever.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLever.java
-@@ -297,6 +297,12 @@
+@@ -296,6 +296,12 @@
          return new BlockStateContainer(this, new IProperty[] {field_176360_a, field_176359_b});
      }
  

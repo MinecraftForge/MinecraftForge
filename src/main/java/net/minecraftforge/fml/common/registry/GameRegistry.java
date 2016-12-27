@@ -67,6 +67,8 @@ import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
+import javax.annotation.Nonnull;
+
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class GameRegistry
 {
@@ -220,17 +222,17 @@ public class GameRegistry
         GameData.getMain().registerSubstitutionAlias(nameToSubstitute, type, object);
     }
 
-    public static void addRecipe(ItemStack output, Object... params)
+    public static void addRecipe(@Nonnull ItemStack output, Object... params)
     {
         addShapedRecipe(output, params);
     }
 
-    public static IRecipe addShapedRecipe(ItemStack output, Object... params)
+    public static IRecipe addShapedRecipe(@Nonnull ItemStack output, Object... params)
     {
         return CraftingManager.getInstance().addRecipe(output, params);
     }
 
-    public static void addShapelessRecipe(ItemStack output, Object... params)
+    public static void addShapelessRecipe(@Nonnull ItemStack output, Object... params)
     {
         CraftingManager.getInstance().addShapelessRecipe(output, params);
     }
@@ -240,24 +242,24 @@ public class GameRegistry
         CraftingManager.getInstance().getRecipeList().add(recipe);
     }
 
-    public static void addSmelting(Block input, ItemStack output, float xp)
+    public static void addSmelting(Block input, @Nonnull ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmeltingRecipeForBlock(input, output, xp);
     }
 
-    public static void addSmelting(Item input, ItemStack output, float xp)
+    public static void addSmelting(Item input, @Nonnull ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmelting(input, output, xp);
     }
 
-    public static void addSmelting(ItemStack input, ItemStack output, float xp)
+    public static void addSmelting(@Nonnull ItemStack input, @Nonnull ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmeltingRecipe(input, output, xp);
     }
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
-        TileEntity.addMapping(tileEntityClass, id);
+        GameData.getTileEntityRegistry().putObject(new ResourceLocation(id), tileEntityClass);
     }
 
     /**
@@ -270,14 +272,10 @@ public class GameRegistry
      */
     public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
     {
-        TileEntity.addMapping(tileEntityClass, id);
-        Map<String, Class<?>> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "145855_i", "nameToClassMap");
+        GameRegistry.registerTileEntity(tileEntityClass, id);
         for (String s : alternatives)
         {
-            if (!teMappings.containsKey(s))
-            {
-                teMappings.put(s, tileEntityClass);
-            }
+            GameData.getTileEntityRegistry().addLegacyName(new ResourceLocation(s), new ResourceLocation(id));
         }
     }
 
@@ -286,7 +284,7 @@ public class GameRegistry
         fuelHandlers.add(handler);
     }
 
-    public static int getFuelValue(ItemStack itemStack)
+    public static int getFuelValue(@Nonnull ItemStack itemStack)
     {
         int fuelValue = 0;
         for (IFuelHandler handler : fuelHandlers)
@@ -366,6 +364,7 @@ public class GameRegistry
      * @param nbtString an nbt stack as a string, will be processed by {@link JsonToNBT}
      * @return a new itemstack
      */
+    @Nonnull
     public static ItemStack makeItemStack(String itemName, int meta, int stackSize, String nbtString)
     {
         if (itemName == null)
@@ -376,7 +375,7 @@ public class GameRegistry
         if (item == null)
         {
             FMLLog.getLogger().log(Level.TRACE, "Unable to find item with name {}", itemName);
-            return null;
+            return ItemStack.EMPTY;
         }
         ItemStack is = new ItemStack(item, stackSize, meta);
         if (!Strings.isNullOrEmpty(nbtString))
@@ -401,134 +400,5 @@ public class GameRegistry
             }
         }
         return is;
-    }
-
-
-
-
-    // ============================= DEPRECATED/INTERNAL MODDERS DO NOT USE =================================
-    /**
-     * Use {@link #register(IForgeRegistryEntry)} instead
-     */
-    @Deprecated public static void registerItem(Item item){ register(item); }
-    /**
-     * Use {@link #register(IForgeRegistryEntry)} instead
-     */
-    @Deprecated
-    public static void registerItem(Item item, String name)
-    {
-        if (item.getRegistryName() == null && Strings.isNullOrEmpty(name))
-            throw new IllegalArgumentException("Attempted to register a item with no name: " + item);
-        if (item.getRegistryName() != null && !item.getRegistryName().toString().equals(name))
-            throw new IllegalArgumentException("Attempted to register a item with conflicting names. Old: " + item.getRegistryName() + " New: " + name);
-        register(item.getRegistryName() == null ? item.setRegistryName(name) : item);
-    }
-    /**
-     * Use {@link #register(IForgeRegistryEntry)} instead
-     */
-    @Deprecated
-    public static Block registerBlock(Block block)
-    {
-        register(block);
-        register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
-        return block;
-    }
-    /**
-     * Use {@link #register(IForgeRegistryEntry)} instead
-     */
-    @Deprecated
-    public static Block registerBlock(Block block, String name)
-    {
-        if (block.getRegistryName() == null && Strings.isNullOrEmpty(name))
-            throw new IllegalArgumentException("Attempted to register a Block with no name: " + block);
-        if (block.getRegistryName() != null && !block.getRegistryName().toString().equals(name))
-            throw new IllegalArgumentException("Attempted to register a Block with conflicting names. Old: " + block.getRegistryName() + " New: " + name);
-        return registerBlock(block.getRegistryName() != null ? block : block.setRegistryName(name));
-    }
-    /**
-     * Use {@link #register(IForgeRegistryEntry)} instead
-     */
-    @Deprecated public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass){ return registerBlock(block, itemclass, block.getRegistryName()); }
-    /**
-     * Use {@link #register(IForgeRegistryEntry)} instead
-     */
-    @Deprecated public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name){ return registerBlock(block, itemclass, name, new Object[] {}); }
-    /**
-     * Use {@link #register(IForgeRegistryEntry)} instead
-     */
-    @Deprecated public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, Object... itemCtorArgs){ return registerBlock(block, itemclass, block.getRegistryName().toString(), itemCtorArgs); }
-    /**
-     * Use {@link #register(IForgeRegistryEntry)} instead
-     */
-    @Deprecated
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, Object... itemCtorArgs)
-    {
-        if (Strings.isNullOrEmpty(name))
-        {
-            throw new IllegalArgumentException("Attempted to register a block with no name: " + block);
-        }
-        if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
-        {
-            FMLLog.warning("The mod %s is attempting to register a block whilst it it being constructed. This is bad modding practice - please use a proper mod lifecycle event.", Loader.instance().activeModContainer());
-        }
-        try
-        {
-            assert block != null : "registerBlock: block cannot be null";
-            if (block.getRegistryName() != null && !block.getRegistryName().toString().equals(name))
-                throw new IllegalArgumentException("Attempted to register a Block with conflicting names. Old: " + block.getRegistryName() + " New: " + name);
-            ItemBlock i = null;
-            if (itemclass != null)
-            {
-                Class<?>[] ctorArgClasses = new Class<?>[itemCtorArgs.length + 1];
-                ctorArgClasses[0] = Block.class;
-                for (int idx = 1; idx < ctorArgClasses.length; idx++)
-                {
-                    ctorArgClasses[idx] = itemCtorArgs[idx - 1].getClass();
-                }
-                Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(ctorArgClasses);
-                i = itemCtor.newInstance(ObjectArrays.concat(block, itemCtorArgs));
-            }
-            // block registration has to happen first
-            register(block.getRegistryName() == null ? block.setRegistryName(name) : block);
-            if (i != null)
-                register(i.setRegistryName(name));
-            return block;
-        } catch (Exception e)
-        {
-            FMLLog.log(Level.ERROR, e, "Caught an exception during block registration");
-            throw new LoaderException(e);
-        }
-    }
-
-    /**
-     *
-     * Use Block.REGISTRY.getValue(ResourceLocation) instead!
-     *
-     *
-     * Look up a mod block in the global "named item list"
-     *
-     * @param modId The modid owning the block
-     * @param name  The name of the block itself
-     * @return The block or null if not found
-     */
-    @Deprecated
-    public static Block findBlock(String modId, String name)
-    {
-        return GameData.findBlock(modId, name);
-    }
-
-    /**
-     * Use Item.REGISTRY.getValue(ResourceLocation) instead!
-     *
-     * Look up a mod item in the global "named item list"
-     *
-     * @param modId The modid owning the item
-     * @param name  The name of the item itself
-     * @return The item or null if not found
-     */
-    @Deprecated
-    public static Item findItem(String modId, String name)
-    {
-        return GameData.findItem(modId, name);
     }
 }

@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemShears.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemShears.java
-@@ -22,7 +22,7 @@
-     {
-         p_179218_1_.func_77972_a(1, p_179218_5_);
+@@ -26,7 +26,7 @@
+         }
+ 
          Block block = p_179218_3_.func_177230_c();
 -        return p_179218_3_.func_185904_a() != Material.field_151584_j && block != Blocks.field_150321_G && block != Blocks.field_150329_H && block != Blocks.field_150395_bd && block != Blocks.field_150473_bD && block != Blocks.field_150325_L ? super.func_179218_a(p_179218_1_, p_179218_2_, p_179218_3_, p_179218_4_, p_179218_5_) : true;
 +        return p_179218_3_.func_185904_a() != Material.field_151584_j && block != Blocks.field_150321_G && block != Blocks.field_150329_H && block != Blocks.field_150395_bd && block != Blocks.field_150473_bD && block != Blocks.field_150325_L && !(p_179218_3_ instanceof net.minecraftforge.common.IShearable) ? super.func_179218_a(p_179218_1_, p_179218_2_, p_179218_3_, p_179218_4_, p_179218_5_) : true;
      }
  
      public boolean func_150897_b(IBlockState p_150897_1_)
-@@ -36,4 +36,71 @@
+@@ -40,4 +40,71 @@
          Block block = p_150893_2_.func_177230_c();
          return block != Blocks.field_150321_G && p_150893_2_.func_185904_a() != Material.field_151584_j ? (block == Blocks.field_150325_L ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_)) : 15.0F;
      }

@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/MapData.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/MapData.java
-@@ -22,7 +22,7 @@
+@@ -21,7 +21,7 @@
  {
      public int field_76201_a;
      public int field_76199_b;
 -    public byte field_76200_c;
 +    public int field_76200_c; //FML byte -> int
      public boolean field_186210_e;
+     public boolean field_191096_f;
      public byte field_76197_d;
-     public byte[] field_76198_e = new byte[16384];
 @@ -46,7 +46,17 @@
  
      public void func_76184_a(NBTTagCompound p_76184_1_)
@@ -28,7 +28,7 @@
          this.field_76201_a = p_76184_1_.func_74762_e("xCenter");
          this.field_76199_b = p_76184_1_.func_74762_e("zCenter");
          this.field_76197_d = p_76184_1_.func_74771_c("scale");
-@@ -97,7 +107,7 @@
+@@ -98,7 +108,7 @@
  
      public NBTTagCompound func_189551_b(NBTTagCompound p_189551_1_)
      {
@@ -37,12 +37,12 @@
          p_189551_1_.func_74768_a("xCenter", this.field_76201_a);
          p_189551_1_.func_74768_a("zCenter", this.field_76199_b);
          p_189551_1_.func_74774_a("scale", this.field_76197_d);
-@@ -178,7 +188,7 @@
-             p_82567_8_ = p_82567_8_ + (p_82567_8_ < 0.0D ? -8.0D : 8.0D);
-             b2 = (byte)((int)(p_82567_8_ * 16.0D / 360.0D));
+@@ -209,7 +219,7 @@
+             p_191095_8_ = p_191095_8_ + (p_191095_8_ < 0.0D ? -8.0D : 8.0D);
+             b2 = (byte)((int)(p_191095_8_ * 16.0D / 360.0D));
  
 -            if (this.field_76200_c < 0)
-+            if (p_82567_2_.field_73011_w.shouldMapSpin(p_82567_3_, p_82567_4_, p_82567_6_, p_82567_8_))
++            if (p_191095_2_.field_73011_w.shouldMapSpin(p_191095_3_, p_191095_4_, p_191095_6_, p_191095_8_))
              {
-                 int k = (int)(p_82567_2_.func_72912_H().func_76073_f() / 10L);
-                 b2 = (byte)(k * k * 34187121 + k * 121 >> 15 & 15);
+                 int l = (int)(p_191095_2_.func_72912_H().func_76073_f() / 10L);
+                 b2 = (byte)(l * l * 34187121 + l * 121 >> 15 & 15);

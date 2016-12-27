@@ -25,7 +25,7 @@
          field_155771_h.info("Loading properties");
          this.field_71340_o = new PropertyManager(new File("server.properties"));
          this.field_154332_n = new ServerEula(new File("eula.txt"));
-@@ -207,6 +211,7 @@
+@@ -208,6 +212,7 @@
              }
              else
              {
@@ -33,7 +33,7 @@
                  this.func_184105_a(new DedicatedPlayerList(this));
                  long j = System.nanoTime();
  
-@@ -256,6 +261,7 @@
+@@ -257,6 +262,7 @@
                  TileEntitySkull.func_184293_a(this.func_152358_ax());
                  TileEntitySkull.func_184294_a(this.func_147130_as());
                  PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -41,7 +41,7 @@
                  field_155771_h.info("Preparing level \"{}\"", new Object[] {this.func_71270_I()});
                  this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
                  long i1 = System.nanoTime() - j;
-@@ -284,7 +290,7 @@
+@@ -285,7 +291,7 @@
                      thread1.start();
                  }
  
@@ -50,7 +50,7 @@
              }
          }
      }
-@@ -507,7 +513,7 @@
+@@ -504,7 +510,7 @@
  
      public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_)
      {
@@ -59,7 +59,7 @@
          {
              return false;
          }
-@@ -581,6 +587,9 @@
+@@ -578,6 +584,9 @@
          return this.field_71340_o.func_73669_a("network-compression-threshold", super.func_175577_aI());
      }
  

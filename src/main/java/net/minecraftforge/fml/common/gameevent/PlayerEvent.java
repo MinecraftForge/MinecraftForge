@@ -25,6 +25,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+import javax.annotation.Nonnull;
+
 public class PlayerEvent extends Event {
     public final EntityPlayer player;
     private PlayerEvent(EntityPlayer player)
@@ -42,9 +44,10 @@ public class PlayerEvent extends Event {
     }
 
     public static class ItemCraftedEvent extends PlayerEvent {
+        @Nonnull
         public final ItemStack crafting;
         public final IInventory craftMatrix;
-        public ItemCraftedEvent(EntityPlayer player, ItemStack crafting, IInventory craftMatrix)
+        public ItemCraftedEvent(EntityPlayer player, @Nonnull ItemStack crafting, IInventory craftMatrix)
         {
             super(player);
             this.crafting = crafting;
@@ -52,8 +55,9 @@ public class PlayerEvent extends Event {
         }
     }
     public static class ItemSmeltedEvent extends PlayerEvent {
+        @Nonnull
         public final ItemStack smelting;
-        public ItemSmeltedEvent(EntityPlayer player, ItemStack crafting)
+        public ItemSmeltedEvent(EntityPlayer player, @Nonnull ItemStack crafting)
         {
             super(player);
             this.smelting = crafting;
@@ -75,10 +79,24 @@ public class PlayerEvent extends Event {
     }
 
     public static class PlayerRespawnEvent extends PlayerEvent {
-        public PlayerRespawnEvent(EntityPlayer player)
+        private final boolean endConquered;
+
+        public PlayerRespawnEvent(EntityPlayer player, boolean endConquered)
         {
             super(player);
+            this.endConquered = endConquered;
         }
+
+        /**
+         * Did this respawn event come from the player conquering the end?
+         * @return if this respawn was because the player conquered the end
+         */
+        public boolean isEndConquered()
+        {
+            return this.endConquered;
+        }
+
+
     }
 
     public static class PlayerChangedDimensionEvent extends PlayerEvent {

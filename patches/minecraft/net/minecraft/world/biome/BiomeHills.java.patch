@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeHills.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeHills.java
-@@ -37,28 +37,20 @@
+@@ -39,28 +39,20 @@
      public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
      {
          super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
@@ -36,7 +36,7 @@
      }
  
      public void func_180622_a(World p_180622_1_, Random p_180622_2_, ChunkPrimer p_180622_3_, int p_180622_4_, int p_180622_5_, double p_180622_6_)
-@@ -86,4 +78,24 @@
+@@ -88,4 +80,24 @@
          EXTRA_TREES,
          MUTATED;
      }

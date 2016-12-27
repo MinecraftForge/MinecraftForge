@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Bootstrap;
 import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.BiomeDictionary;
@@ -85,7 +86,13 @@ public class EnumHelperTest
 
                 for (Constructor<?> declaredConstructor : declaredConstructors)
                 {
-                    seenCtrs.add(declaredConstructor);
+                    boolean filter = declaredConstructor.isSynthetic();
+
+                    if (returnType == EnumEnchantmentType.class && declaredConstructor.getParameterTypes().length == 2)
+                            filter = true; //We don't want people using this method.
+
+                    if (!filter)
+                        seenCtrs.add(declaredConstructor);
                     //System.out.println("    " + declaredConstructor.toString());
 
                     Class<?>[] expectedParameters = declaredConstructor.getParameterTypes();

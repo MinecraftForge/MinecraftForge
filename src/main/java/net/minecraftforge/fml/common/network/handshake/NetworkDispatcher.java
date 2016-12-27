@@ -159,6 +159,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
             serverInitiateHandshake();
             FMLLog.info("Connection received without FML marker, assuming vanilla.");
             this.completeServerSideConnection(ConnectionType.VANILLA);
+            insertIntoChannel();
         }
     }
 
@@ -184,6 +185,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     {
         if (this.state != null) {
             FMLLog.getLogger().log(Level.INFO, "Opening channel which already seems to have a state set. This is a vanilla connection. Handshake handler will stop now");
+            this.manager.channel().config().setAutoRead(true);
             return;
         }
         FMLLog.getLogger().log(Level.TRACE, "Handshake channel activating");
@@ -327,6 +329,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
     private void kickWithMessage(String message)
     {
+        FMLLog.log(Level.ERROR, "Network Disconnect: %s", message);
         final TextComponentString TextComponentString = new TextComponentString(message);
         if (side == Side.CLIENT)
         {
@@ -627,7 +630,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
         private MultiPartCustomPayload(PacketBuffer preamble) throws IOException
         {
-            channel = preamble.readStringFromBuffer(20);
+            channel = preamble.readString(20);
             part_count = preamble.readUnsignedByte();
             int length = preamble.readInt();
             if (length <= 0 || length >= FMLProxyPacket.MAX_LENGTH)

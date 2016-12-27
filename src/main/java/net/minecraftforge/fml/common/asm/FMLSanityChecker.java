@@ -21,6 +21,7 @@ package net.minecraftforge.fml.common.asm;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.security.cert.Certificate;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -113,7 +115,15 @@ public class FMLSanityChecker implements IFMLCallHook
                 mcJarFile = new JarFile(mcPath,true);
                 mcJarFile.getManifest();
                 JarEntry cbrEntry = mcJarFile.getJarEntry("net/minecraft/client/ClientBrandRetriever.class");
-                ByteStreams.toByteArray(mcJarFile.getInputStream(cbrEntry));
+                InputStream mcJarFileInputStream = mcJarFile.getInputStream(cbrEntry);
+                try
+                {
+                    ByteStreams.toByteArray(mcJarFileInputStream);
+                }
+                finally
+                {
+                    IOUtils.closeQuietly(mcJarFileInputStream);
+                }
                 Certificate[] certificates = cbrEntry.getCertificates();
                 certCount = certificates != null ? certificates.length : 0;
                 if (certificates!=null)
@@ -136,17 +146,7 @@ public class FMLSanityChecker implements IFMLCallHook
             }
             finally
             {
-                if (mcJarFile != null)
-                {
-                    try
-                    {
-                        mcJarFile.close();
-                    }
-                    catch (IOException ioe)
-                    {
-                        // Noise
-                    }
-                }
+                IOUtils.closeQuietly(mcJarFile);
             }
         }
         else

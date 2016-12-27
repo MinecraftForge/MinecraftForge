@@ -2,13 +2,13 @@
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentThorns.java
 @@ -51,12 +51,12 @@
  
-             if (itemstack != null)
+             if (!itemstack.func_190926_b())
              {
 -                itemstack.func_77972_a(3, p_151367_1_);
 +                damageArmor(itemstack, 3, p_151367_1_);
              }
          }
-         else if (itemstack != null)
+         else if (!itemstack.func_190926_b())
          {
 -            itemstack.func_77972_a(1, p_151367_1_);
 +            damageArmor(itemstack, 1, p_151367_1_);

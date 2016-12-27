@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityWitherSkull.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityWitherSkull.java
+@@ -62,7 +62,7 @@
+         float f = super.func_180428_a(p_180428_1_, p_180428_2_, p_180428_3_, p_180428_4_);
+         Block block = p_180428_4_.func_177230_c();
+ 
+-        if (this.func_82342_d() && EntityWither.func_181033_a(block))
++        if (this.func_82342_d() && block.canEntityDestroy(p_180428_4_, p_180428_2_, p_180428_3_, this))
+         {
+             f = Math.min(0.8F, f);
+         }

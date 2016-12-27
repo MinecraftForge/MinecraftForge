@@ -1,28 +1,80 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityList.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
-@@ -93,6 +93,7 @@
+@@ -105,10 +105,8 @@
+     public static final ResourceLocation field_191307_a = new ResourceLocation("lightning_bolt");
+     private static final ResourceLocation field_191310_e = new ResourceLocation("player");
+     private static final Logger field_151516_b = LogManager.getLogger();
+-    public static final RegistryNamespaced < ResourceLocation, Class <? extends Entity >> field_191308_b = new RegistryNamespaced();
+     public static final Map<ResourceLocation, EntityList.EntityEggInfo> field_75627_a = Maps.<ResourceLocation, EntityList.EntityEggInfo>newLinkedHashMap();
+-    public static final Set<ResourceLocation> field_191309_d = Sets.<ResourceLocation>newHashSet();
+-    private static final List<String> field_191311_g = Lists.<String>newArrayList();
++    private static final Set<ResourceLocation> EXTRA_NAMES = Sets.newHashSet();
  
-     public static void func_75618_a(Class <? extends Entity > p_75618_0_, String p_75618_1_, int p_75618_2_)
+     @Nullable
+     public static ResourceLocation func_191301_a(Entity p_191301_0_)
+@@ -119,30 +117,44 @@
+     @Nullable
+     public static ResourceLocation func_191306_a(Class <? extends Entity > p_191306_0_)
      {
-+        if (p_75618_2_ < 0 || p_75618_2_ > 255) throw new IllegalArgumentException("Attempted to register a entity with invalid ID: " + p_75618_2_ + " Name: " + p_75618_1_ + " Class: " + p_75618_0_);
-         if (field_75625_b.containsKey(p_75618_1_))
-         {
-             throw new IllegalArgumentException("ID is already registered: " + p_75618_1_);
-@@ -152,9 +153,10 @@
+-        return (ResourceLocation)field_191308_b.func_177774_c(p_191306_0_);
++        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.EntityRegistry.getEntry(p_191306_0_);
++        return entry == null ? null : entry.getRegistryName();
+     }
+ 
+     @Nullable
+     public static String func_75621_b(Entity p_75621_0_)
      {
-         Entity entity = null;
+-        int i = field_191308_b.func_148757_b(p_75621_0_.getClass());
+-        return i == -1 ? null : (String)field_191311_g.get(i);
++        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.EntityRegistry.getEntry(p_75621_0_.getClass());
++        return entry == null ? null : entry.getName();
+     }
  
-+        Class <? extends Entity > oclass = null;
-         try
-         {
--            Class <? extends Entity > oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
-+            oclass = field_75625_b.get(p_75615_0_.func_74779_i("id"));
+     @Nullable
+     public static String func_191302_a(@Nullable ResourceLocation p_191302_0_)
+     {
+-        int i = field_191308_b.func_148757_b(field_191308_b.func_82594_a(p_191302_0_));
+-        return i == -1 ? null : (String)field_191311_g.get(i);
++        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES.getValue(p_191302_0_);
++        return entry == null ? null : entry.getName();
+     }
  
-             if (oclass != null)
-             {
-@@ -168,7 +170,17 @@
+     @Nullable
+     @SideOnly(Side.CLIENT)
+     public static Class <? extends Entity > func_90035_a(int p_90035_0_)
+     {
+-        return (Class)field_191308_b.func_148754_a(p_90035_0_);
++        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.GameData.getEntityRegistry().func_148754_a(p_90035_0_);
++        return entry == null ? null : entry.getEntityClass();
+     }
  
-         if (entity != null)
++    public static int getID(Class<? extends Entity> cls)
++    {
++        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.EntityRegistry.getEntry(cls);
++        return entry == null ? -1 : net.minecraftforge.fml.common.registry.GameData.getEntityRegistry().getId(entry);
++    }
++
++    public static Class<? extends Entity> getClass(ResourceLocation key)
++    {
++        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES.getValue(key);
++        return entry == null ? null : entry.getEntityClass();
++    }
++
+     @Nullable
+     public static Entity func_191304_a(@Nullable Class <? extends Entity > p_191304_0_, World p_191304_1_)
+     {
+@@ -174,7 +186,7 @@
+     @Nullable
+     public static Entity func_188429_b(ResourceLocation p_188429_0_, World p_188429_1_)
+     {
+-        return func_191304_a((Class)field_191308_b.func_82594_a(p_188429_0_), p_188429_1_);
++        return func_191304_a(getClass(p_188429_0_), p_188429_1_);
+     }
+ 
+     @Nullable
+@@ -189,7 +201,17 @@
+         }
+         else
          {
 +            try
 +            {
@@ -32,19 +84,57 @@
 +            {
 +                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
 +                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                        p_75615_0_.func_74779_i("id"), oclass.getName());
++                        p_75615_0_.func_74779_i("id"), entity.func_70005_c_());
 +                entity = null;
 +            }
          }
-         else
-         {
-@@ -208,7 +220,8 @@
-     @Nullable
-     public static Entity func_188429_b(String p_188429_0_, World p_188429_1_)
+ 
+         return entity;
+@@ -197,7 +219,7 @@
+ 
+     public static Set<ResourceLocation> func_180124_b()
      {
--        return func_75616_a(func_180122_a(p_188429_0_), p_188429_1_);
-+        Entity e = func_75620_a(p_188429_0_, p_188429_1_); // Forge: Support entities without global ID
-+        return e == null ? func_75620_a("Pig", p_188429_1_) : e;
+-        return field_191309_d;
++        return Sets.union(net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES.getKeys(), EXTRA_NAMES);
      }
  
-     public static int func_75619_a(Entity p_75619_0_)
+     public static boolean func_180123_a(Entity p_180123_0_, ResourceLocation p_180123_1_)
+@@ -336,7 +358,7 @@
+         func_191305_a("zombie_horse", 3232308, 9945732);
+         func_191305_a("zombie_pigman", 15373203, 5009705);
+         func_191305_a("zombie_villager", 5651507, 7969893);
+-        field_191309_d.add(field_191307_a);
++        EXTRA_NAMES.add(field_191307_a);
+     }
+ 
+     private static void func_191303_a(int p_191303_0_, String p_191303_1_, Class <? extends Entity > p_191303_2_, String p_191303_3_)
+@@ -357,22 +379,19 @@
+         else
+         {
+             ResourceLocation resourcelocation = new ResourceLocation(p_191303_1_);
+-            field_191308_b.func_177775_a(p_191303_0_, resourcelocation, p_191303_2_);
+-            field_191309_d.add(resourcelocation);
+-
+-            while (field_191311_g.size() <= p_191303_0_)
+-            {
+-                field_191311_g.add((String)null);
+-            }
+-
+-            field_191311_g.set(p_191303_0_, p_191303_3_);
++            net.minecraftforge.fml.common.registry.EntityEntry entry =
++                    new net.minecraftforge.fml.common.registry.EntityEntry(p_191303_2_, p_191303_3_);
++            net.minecraftforge.fml.common.registry.GameData.getEntityRegistry().func_177775_a(p_191303_0_, resourcelocation, entry);
+         }
+     }
+ 
+     protected static EntityList.EntityEggInfo func_191305_a(String p_191305_0_, int p_191305_1_, int p_191305_2_)
+     {
+         ResourceLocation resourcelocation = new ResourceLocation(p_191305_0_);
+-        return (EntityList.EntityEggInfo)field_75627_a.put(resourcelocation, new EntityList.EntityEggInfo(resourcelocation, p_191305_1_, p_191305_2_));
++        EntityList.EntityEggInfo egg = new EntityList.EntityEggInfo(resourcelocation, p_191305_1_, p_191305_2_);
++        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES.getValue(resourcelocation);
++        if (entry != null) entry.setEgg(egg);
++        return (EntityList.EntityEggInfo)field_75627_a.put(resourcelocation, egg);
+     }
+ 
+     public static class EntityEggInfo

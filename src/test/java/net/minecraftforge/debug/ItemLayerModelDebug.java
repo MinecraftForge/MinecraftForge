@@ -1,8 +1,11 @@
 package net.minecraftforge.debug;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,7 +20,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.Random;
 
-@Mod(modid = ItemLayerModelDebug.MODID, name = "ForgeDebugItemLayerModel", version = ItemLayerModelDebug.VERSION)
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@Mod(modid = ItemLayerModelDebug.MODID, name = "ForgeDebugItemLayerModel", version = ItemLayerModelDebug.VERSION, acceptableRemoteVersions = "*")
 public class ItemLayerModelDebug
 {
     public static final String MODID = "forgedebugitemlayermodel";
@@ -53,7 +59,7 @@ public class ItemLayerModelDebug
     public static final class TestItem extends Item
     {
         public static final TestItem instance = new TestItem();
-        public static final String name = "TestItem";
+        public static final String name = "test_item";
 
         private TestItem()
         {
@@ -85,6 +91,20 @@ public class ItemLayerModelDebug
             newStack = newStack.copy();
             newStack.setTagCompound(null);
             return !ItemStack.areItemStacksEqual(oldStack, newStack);
+        }
+
+        @Override
+        public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
+            // This tool is a super pickaxe if the player is wearing a helment
+            if("pickaxe".equals(toolClass) && player != null && !player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
+                return 5;
+            }
+            return super.getHarvestLevel(stack, toolClass, player, blockState);
+        }
+
+        @Override
+        public float getStrVsBlock(ItemStack stack, IBlockState state) {
+            return 10f;
         }
     }
 }

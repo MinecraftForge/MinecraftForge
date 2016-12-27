@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -251,6 +251,7 @@
+@@ -191,6 +191,7 @@
  
      private boolean func_145883_k()
      {
@@ -8,7 +8,7 @@
          IInventory iinventory = this.func_145895_l();
  
          if (iinventory == null)
-@@ -357,6 +358,8 @@
+@@ -297,6 +298,8 @@
  
      public static boolean func_145891_a(IHopper p_145891_0_)
      {
@@ -17,47 +17,36 @@
          IInventory iinventory = func_145884_b(p_145891_0_);
  
          if (iinventory != null)
-@@ -506,17 +509,31 @@
- 
-             if (itemstack == null)
-             {
-+                //Forge: BUGFIX: Again, make things respect max stack sizes.
-+                int max = Math.min(p_174916_1_.func_77976_d(), p_174916_0_.func_70297_j_());
-+                if (max >= p_174916_1_.field_77994_a)
-+                {
-                 p_174916_0_.func_70299_a(p_174916_2_, p_174916_1_);
-                 p_174916_1_ = null;
-+                }
-+                else
-+                {
-+                    p_174916_0_.func_70299_a(p_174916_2_, p_174916_1_.func_77979_a(max));
-+                }
-                 flag = true;
-             }
-             else if (func_145894_a(itemstack, p_174916_1_))
-             {
--                int i = p_174916_1_.func_77976_d() - itemstack.field_77994_a;
-+                //Forge: BUGFIX: Again, make things respect max stack sizes.
-+                int max = Math.min(p_174916_1_.func_77976_d(), p_174916_0_.func_70297_j_());
-+                if (max > itemstack.field_77994_a)
-+                {
-+                int i = max - itemstack.field_77994_a;
-                 int j = Math.min(p_174916_1_.field_77994_a, i);
-                 p_174916_1_.field_77994_a -= j;
-                 itemstack.field_77994_a += j;
-                 flag = j > 0;
-+                }
-             }
- 
-             if (flag)
-@@ -662,4 +679,10 @@
-             this.field_145900_a[i] = null;
+@@ -396,6 +399,12 @@
          }
      }
-+
+ 
 +
 +    protected net.minecraftforge.items.IItemHandler createUnSidedHandler()
 +    {
 +        return new net.minecraftforge.items.VanillaHopperItemHandler(this);
 +    }
++
+     public static ItemStack func_174918_a(IInventory p_174918_0_, IInventory p_174918_1_, ItemStack p_174918_2_, @Nullable EnumFacing p_174918_3_)
+     {
+         if (p_174918_1_ instanceof ISidedInventory && p_174918_3_ != null)
+@@ -509,9 +518,10 @@
+         int j = MathHelper.func_76128_c(p_145893_3_);
+         int k = MathHelper.func_76128_c(p_145893_5_);
+         BlockPos blockpos = new BlockPos(i, j, k);
+-        Block block = p_145893_0_.func_180495_p(blockpos).func_177230_c();
++        net.minecraft.block.state.IBlockState state = p_145893_0_.func_180495_p(blockpos);
++        Block block = state.func_177230_c();
+ 
+-        if (block.func_149716_u())
++        if (block.hasTileEntity(state))
+         {
+             TileEntity tileentity = p_145893_0_.func_175625_s(blockpos);
+ 
+@@ -589,4 +599,6 @@
+     {
+         return this.field_145900_a;
+     }
++
++    public long getLastUpdateTime() { return field_190578_g; } // Forge
  }

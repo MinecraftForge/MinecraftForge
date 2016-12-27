@@ -49,18 +49,20 @@ import net.minecraftforge.fml.common.versioning.ComparableVersion;
 
 public class ForgeVersion
 {
+    // This is Forge's Mod Id, used for the ForgeModContainer and resource locations
+    public static final String MOD_ID = "forge";
     //This number is incremented every time we remove deprecated code/major API changes, never reset
-    public static final int majorVersion    = 12;
+    public static final int majorVersion    = 13;
     //This number is incremented every minecraft release, never reset
-    public static final int minorVersion    = 18;
+    public static final int minorVersion    = 20;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
-    public static final int revisionVersion = 1;
+    public static final int revisionVersion = 0;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
-    public static final String mcVersion = "1.10.2";
+    public static final String mcVersion = "1.11.2";
     // This is the MCP data version we're using
-    public static final String mcpVersion = "9.32";
+    public static final String mcpVersion = "9.38";
     @SuppressWarnings("unused")
     private static Status status = PENDING;
     @SuppressWarnings("unused")

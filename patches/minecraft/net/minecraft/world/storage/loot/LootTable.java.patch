@@ -14,7 +14,7 @@
      }
  
      public List<ItemStack> func_186462_a(Random p_186462_1_, LootContext p_186462_2_)
-@@ -146,6 +146,58 @@
+@@ -144,6 +144,58 @@
          return list;
      }
  

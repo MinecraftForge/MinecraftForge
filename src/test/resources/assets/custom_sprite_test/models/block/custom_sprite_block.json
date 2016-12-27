@@ -1,0 +1,7 @@
+{
+  "parent": "block/crafting_table",
+  "textures": {
+    "down": "custom_sprite_test:bottom",
+    "up": "custom_sprite_test:top"
+  }
+}
