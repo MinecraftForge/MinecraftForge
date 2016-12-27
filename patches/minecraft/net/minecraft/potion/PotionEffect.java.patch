@@ -17,7 +17,18 @@
      }
  
      public void func_76452_a(PotionEffect p_76452_1_)
-@@ -200,7 +203,7 @@
+@@ -195,12 +198,18 @@
+         p_82719_1_.func_74768_a("Duration", this.func_76459_b());
+         p_82719_1_.func_74757_a("Ambient", this.func_82720_e());
+         p_82719_1_.func_74757_a("ShowParticles", this.func_188418_e());
++        net.minecraft.nbt.NBTTagList list = new net.minecraft.nbt.NBTTagList();
++        for (net.minecraft.item.ItemStack stack : getCurativeItems())
++        {
++            list.func_74742_a(stack.func_77955_b(new NBTTagCompound()));
++        }
++        p_82719_1_.func_74782_a("CurativeItems", list);
+         return p_82719_1_;
+     }
  
      public static PotionEffect func_82722_b(NBTTagCompound p_82722_0_)
      {
@@ -26,7 +37,29 @@
          Potion potion = Potion.func_188412_a(i);
  
          if (potion == null)
-@@ -240,4 +243,58 @@
+@@ -219,7 +228,20 @@
+                 flag1 = p_82722_0_.func_74767_n("ShowParticles");
+             }
+ 
+-            return new PotionEffect(potion, k, j < 0 ? 0 : j, flag, flag1);
++            PotionEffect ret = new PotionEffect(potion, k, j < 0 ? 0 : j, flag, flag1);
++
++            if (p_82722_0_.func_150297_b("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_LIST))
++            {
++                java.util.List<net.minecraft.item.ItemStack> items = new java.util.ArrayList<net.minecraft.item.ItemStack>();
++                net.minecraft.nbt.NBTTagList list = p_82722_0_.func_150295_c("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
++                for (int iter = 0; iter < list.func_74745_c(); iter++)
++                {
++                    items.add(new net.minecraft.item.ItemStack(list.func_150305_b(iter)));
++                }
++                ret.setCurativeItems(items);
++            }
++
++            return ret;
+         }
+     }
+ 
+@@ -240,4 +262,59 @@
      {
          return this.field_100013_f;
      }
@@ -34,22 +67,23 @@
 +    /* ======================================== FORGE START =====================================*/
 +    /***
 +     * Returns a list of curative items for the potion effect
++     * By default, this list is initialized using {@link Potion#getCurativeItems}
++     *
 +     * @return The list (ItemStack) of curative items for the potion effect
 +     */
 +    public java.util.List<net.minecraft.item.ItemStack> getCurativeItems()
 +    {
 +        if (this.curativeItems == null) //Lazy load this so that we don't create a circular dep on Items.
 +        {
-+            this.curativeItems = new java.util.ArrayList<net.minecraft.item.ItemStack>();
-+            this.curativeItems.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.field_151117_aB));
++            this.curativeItems = func_188419_a().getCurativeItems();
 +        }
 +        return this.curativeItems;
 +    }
 +
 +    /***
 +     * Checks the given ItemStack to see if it is in the list of curative items for the potion effect
-+     * @param stack The ItemStack being checked against the list of curative items for the potion effect
-+     * @return true if the given ItemStack is in the list of curative items for the potion effect, false otherwise
++     * @param stack The ItemStack being checked against the list of curative items for this PotionEffect
++     * @return true if the given ItemStack is in the list of curative items for this PotionEffect, false otherwise
 +     */
 +    public boolean isCurativeItem(net.minecraft.item.ItemStack stack)
 +    {
@@ -65,7 +99,7 @@
 +    }
 +
 +    /***
-+     * Sets the array of curative items for the potion effect
++     * Sets the list of curative items for this potion effect, overwriting any already present
 +     * @param curativeItems The list of ItemStacks being set to the potion effect
 +     */
 +    public void setCurativeItems(java.util.List<net.minecraft.item.ItemStack> curativeItems)
@@ -74,7 +108,7 @@
 +    }
 +
 +    /***
-+     * Adds the given stack to list of curative items for the potion effect
++     * Adds the given stack to the list of curative items for this PotionEffect
 +     * @param stack The ItemStack being added to the curative item list
 +     */
 +    public void addCurativeItem(net.minecraft.item.ItemStack stack)
