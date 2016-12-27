@@ -49,14 +49,14 @@ Here is a short video from @cpw showing how to install and setup Forge
 ## Pull requests
 
 Pull requests should target the current default branch. Currently, that is 
- the 1.10.x branch for Minecraft 1.10.2.
+ the 1.11.x branch for Minecraft 1.11.2.
 
 If you intend to modify a minecraft patch, or add a new one, always run
 ```gradlew genPatches``` to generate your patch and validate that you
 are not doing anything unexpected in your patch.
 
 ### Contributor License Agreement
-As stated in the (https://github.com/MinecraftForge/MinecraftForge/blob/1.10.x/LICENSE-new.txt)
+As stated in the (https://github.com/MinecraftForge/MinecraftForge/blob/1.11.x/LICENSE-new.txt)
  file, we require all contributors to acknowledge the Forge Contributor
  License Agreement. Please ensure you have a valid email address
  associated with your github account to do this. If you have previously
