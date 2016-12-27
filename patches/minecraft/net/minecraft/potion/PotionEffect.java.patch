@@ -13,7 +13,7 @@
          this.field_76461_c = p_i1577_1_.field_76461_c;
          this.field_82724_e = p_i1577_1_.field_82724_e;
          this.field_188421_h = p_i1577_1_.field_188421_h;
-+        this.curativeItems = p_i1577_1_.curativeItems;
++        this.curativeItems = p_i1577_1_.curativeItems == null ? null : new java.util.ArrayList<net.minecraft.item.ItemStack>(p_i1577_1_.curativeItems);
      }
  
      public void func_76452_a(PotionEffect p_76452_1_)
