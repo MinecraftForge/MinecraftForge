@@ -1,15 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucketMilk.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
-@@ -27,7 +27,7 @@
+@@ -20,16 +20,12 @@
  
-         if (!p_77654_2_.field_72995_K)
+     public ItemStack func_77654_b(ItemStack p_77654_1_, World p_77654_2_, EntityLivingBase p_77654_3_)
+     {
++        if (!p_77654_2_.field_72995_K) p_77654_3_.curePotionEffects(p_77654_1_); // FORGE - move up so stack.shrink does not turn stack into air
+         if (p_77654_3_ instanceof EntityPlayer && !((EntityPlayer)p_77654_3_).field_71075_bZ.field_75098_d)
          {
--            p_77654_3_.func_70674_bp();
-+            p_77654_3_.curePotionEffects(p_77654_1_);
+             p_77654_1_.func_190918_g(1);
          }
  
+-        if (!p_77654_2_.field_72995_K)
+-        {
+-            p_77654_3_.func_70674_bp();
+-        }
+-
          if (p_77654_3_ instanceof EntityPlayer)
-@@ -53,4 +53,9 @@
+         {
+             ((EntityPlayer)p_77654_3_).func_71029_a(StatList.func_188057_b(this));
+@@ -53,4 +49,9 @@
          p_77659_2_.func_184598_c(p_77659_3_);
          return new ActionResult(EnumActionResult.SUCCESS, p_77659_2_.func_184586_b(p_77659_3_));
      }
