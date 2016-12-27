@@ -52,6 +52,8 @@ public class PotionCurativeItemDebug
         protected IncurablePotion()
         {
             super(false, 0x94A061);
+            setPotionName("incurable_potion");
+            setIconIndex(6, 0);
         }
 
         @Override
