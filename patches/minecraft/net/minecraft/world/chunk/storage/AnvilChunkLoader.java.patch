@@ -100,7 +100,7 @@
 @@ -121,7 +180,9 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
-             nbttagcompound.func_74768_a("DataVersion", 819);
+             nbttagcompound.func_74768_a("DataVersion", 922);
 +            net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(nbttagcompound);
              this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_75816_2_, nbttagcompound));

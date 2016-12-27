@@ -133,7 +133,7 @@
          GlStateManager.func_179132_a(true);
          GlStateManager.func_179089_o();
 @@ -1400,6 +1413,9 @@
-             this.func_180437_a(renderglobal, p_175068_2_, p_175068_1_);
+             this.func_180437_a(renderglobal, p_175068_2_, p_175068_1_, d0, d1, d2);
          }
  
 +        this.field_78531_r.field_71424_I.func_76318_c("forge_render_last");
