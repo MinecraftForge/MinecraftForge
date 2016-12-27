@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -69,6 +69,8 @@
+@@ -70,6 +70,8 @@
                      p_190901_1_.func_82242_a(-ContainerRepair.this.field_82854_e);
                  }
  
 +                float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_190901_1_, p_190901_2_, ContainerRepair.this.field_82853_g.func_70301_a(0), ContainerRepair.this.field_82853_g.func_70301_a(1));
 +
-                 ContainerRepair.this.field_82853_g.func_70299_a(0, ItemStack.field_190927_a);
+                 ItemStack itemstack = ContainerRepair.this.field_82853_g.func_70301_a(0);
  
-                 if (ContainerRepair.this.field_82856_l > 0)
-@@ -93,7 +95,7 @@
+                 if (itemstack.func_190916_E() != 1 && !p_190901_1_.field_71075_bZ.field_75098_d && !(itemstack.func_77973_b() instanceof ItemNameTag))
+@@ -103,7 +105,7 @@
                  ContainerRepair.this.field_82854_e = 0;
                  IBlockState iblockstate = p_i45807_2_.func_180495_p(p_i45807_3_);
  
@@ -18,7 +18,7 @@
                  {
                      int l = ((Integer)iblockstate.func_177229_b(BlockAnvil.field_176505_b)).intValue();
                      ++l;
-@@ -162,10 +164,12 @@
+@@ -178,10 +180,12 @@
              Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
              j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
              this.field_82856_l = 0;
@@ -32,20 +32,12 @@
  
                  if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
                  {
-@@ -237,7 +241,7 @@
- 
-                             for (Enchantment enchantment : map.keySet())
-                             {
--                                if (enchantment != enchantment1 && !enchantment1.func_77326_a(enchantment))
-+                                if (enchantment != enchantment1 && !(enchantment1.func_77326_a(enchantment) && enchantment.func_77326_a(enchantment1)))  //Forge BugFix: Let Both enchantments veto being together
-                                 {
-                                     flag1 = false;
-                                     ++i;
-@@ -296,6 +300,7 @@
-                 i += k;
-                 itemstack1.func_151001_c(this.field_82857_m);
+@@ -312,6 +316,8 @@
+                 }
              }
-+            if (flag && !itemstack1.func_77973_b().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = ItemStack.field_190927_a;
  
-             this.field_82854_e = j + i;
- 
++            if (flag && !itemstack1.func_77973_b().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = null;
++
+             if (StringUtils.isBlank(this.field_82857_m))
+             {
+                 if (itemstack.func_82837_s())
