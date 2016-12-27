@@ -111,6 +111,7 @@ public class OreDictionary
             registerOre("ingotBrick",    Items.BRICK);
             registerOre("ingotBrickNether", Items.NETHERBRICK);
             registerOre("nuggetGold",  Items.GOLD_NUGGET);
+            registerOre("nuggetIron",  Items.field_191525_da);
 
             // gems and dusts
             registerOre("gemDiamond",  Items.DIAMOND);
