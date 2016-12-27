@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPane.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
-@@ -107,7 +107,10 @@
+@@ -111,7 +111,10 @@
  
      public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
      {
@@ -12,7 +12,7 @@
      }
  
      public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
-@@ -184,4 +187,21 @@
+@@ -188,4 +191,21 @@
      {
          return new BlockStateContainer(this, new IProperty[] {field_176241_b, field_176242_M, field_176244_O, field_176243_N});
      }

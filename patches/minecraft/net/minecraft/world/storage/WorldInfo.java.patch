@@ -11,7 +11,7 @@
 @@ -335,6 +336,7 @@
          nbttagcompound.func_74757_a("Snapshot", false);
          p_76064_1_.func_74782_a("Version", nbttagcompound);
-         p_76064_1_.func_74768_a("DataVersion", 819);
+         p_76064_1_.func_74768_a("DataVersion", 922);
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(p_76064_1_);
          p_76064_1_.func_74772_a("RandomSeed", this.field_76100_a);
          p_76064_1_.func_74778_a("generatorName", this.field_76098_b.func_77127_a());

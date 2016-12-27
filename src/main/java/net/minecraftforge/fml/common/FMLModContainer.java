@@ -255,6 +255,8 @@ public class FMLModContainer implements ModContainer
             "[1.9.4,1.10)".equals(mcVersionString) ||
             "[1.10]".equals(mcVersionString))
                 mcVersionString = "[1.9.4,1.10.2]";
+        if ("[1.11]".equals(mcVersionString))
+            mcVersionString = "[1.11,1.11.2]";
         if (!Strings.isNullOrEmpty(mcVersionString))
         {
             minecraftAccepted = VersionParser.parseRange(mcVersionString);

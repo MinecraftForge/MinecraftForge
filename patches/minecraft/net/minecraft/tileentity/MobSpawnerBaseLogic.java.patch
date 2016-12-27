@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
-@@ -125,10 +125,11 @@
+@@ -124,10 +124,11 @@
                      EntityLiving entityliving = entity instanceof EntityLiving ? (EntityLiving)entity : null;
                      entity.func_70012_b(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v, world.field_73012_v.nextFloat() * 360.0F, 0.0F);
  
