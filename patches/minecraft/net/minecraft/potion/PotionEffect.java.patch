@@ -17,16 +17,11 @@
      }
  
      public void func_76452_a(PotionEffect p_76452_1_)
-@@ -195,12 +198,18 @@
+@@ -195,12 +198,13 @@
          p_82719_1_.func_74768_a("Duration", this.func_76459_b());
          p_82719_1_.func_74757_a("Ambient", this.func_82720_e());
          p_82719_1_.func_74757_a("ShowParticles", this.func_188418_e());
-+        net.minecraft.nbt.NBTTagList list = new net.minecraft.nbt.NBTTagList();
-+        for (net.minecraft.item.ItemStack stack : getCurativeItems())
-+        {
-+            list.func_74742_a(stack.func_77955_b(new NBTTagCompound()));
-+        }
-+        p_82719_1_.func_74782_a("CurativeItems", list);
++        writeCurativeItems(p_82719_1_);
          return p_82719_1_;
      }
  
@@ -37,29 +32,16 @@
          Potion potion = Potion.func_188412_a(i);
  
          if (potion == null)
-@@ -219,7 +228,20 @@
+@@ -219,7 +223,7 @@
                  flag1 = p_82722_0_.func_74767_n("ShowParticles");
              }
  
 -            return new PotionEffect(potion, k, j < 0 ? 0 : j, flag, flag1);
-+            PotionEffect ret = new PotionEffect(potion, k, j < 0 ? 0 : j, flag, flag1);
-+
-+            if (p_82722_0_.func_150297_b("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_LIST))
-+            {
-+                java.util.List<net.minecraft.item.ItemStack> items = new java.util.ArrayList<net.minecraft.item.ItemStack>();
-+                net.minecraft.nbt.NBTTagList list = p_82722_0_.func_150295_c("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-+                for (int iter = 0; iter < list.func_74745_c(); iter++)
-+                {
-+                    items.add(new net.minecraft.item.ItemStack(list.func_150305_b(iter)));
-+                }
-+                ret.setCurativeItems(items);
-+            }
-+
-+            return ret;
++            return readCurativeItems(new PotionEffect(potion, k, j < 0 ? 0 : j, flag, flag1), p_82722_0_);
          }
      }
  
-@@ -240,4 +262,59 @@
+@@ -240,4 +244,85 @@
      {
          return this.field_100013_f;
      }
@@ -117,5 +99,31 @@
 +        {
 +            this.getCurativeItems().add(stack);
 +        }
++    }
++
++    private void writeCurativeItems(NBTTagCompound nbt)
++    {
++        net.minecraft.nbt.NBTTagList list = new net.minecraft.nbt.NBTTagList();
++        for (net.minecraft.item.ItemStack stack : getCurativeItems())
++        {
++            list.func_74742_a(stack.func_77955_b(new NBTTagCompound()));
++        }
++        nbt.func_74782_a("CurativeItems", list);
++    }
++
++    private static PotionEffect readCurativeItems(PotionEffect effect, NBTTagCompound nbt)
++    {
++        if (nbt.func_150297_b("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_LIST))
++        {
++            java.util.List<net.minecraft.item.ItemStack> items = new java.util.ArrayList<net.minecraft.item.ItemStack>();
++            net.minecraft.nbt.NBTTagList list = nbt.func_150295_c("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
++            for (int i = 0; i < list.func_74745_c(); i++)
++            {
++                items.add(new net.minecraft.item.ItemStack(list.func_150305_b(i)));
++            }
++            effect.setCurativeItems(items);
++        }
++
++        return effect;
 +    }
  }
