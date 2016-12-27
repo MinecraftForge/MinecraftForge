@@ -26,8 +26,8 @@
 +    /**
 +     * The result of this function determines is the below 'load' function is called, and the
 +     * default vanilla loading code is bypassed completely.
-+     * @param manager
-+     * @param location
++     * @param manager Main resource manager
++     * @param location File resource location
 +     * @return True to use your own custom load code and bypass vanilla loading.
 +     */
 +    public boolean hasCustomLoader(net.minecraft.client.resources.IResourceManager manager, net.minecraft.util.ResourceLocation location)

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,6 +60,7 @@ import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.relauncher.ModListHelper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.CharMatcher;
@@ -213,7 +215,15 @@ public class Loader
         }
 
         minecraft = new MinecraftDummyContainer(MC_VERSION);
-        mcp = new MCPDummyContainer(MetadataCollection.from(getClass().getResourceAsStream("/mcpmod.info"), "MCP").getMetadataForId("mcp", null));
+        InputStream mcpModInputStream = getClass().getResourceAsStream("/mcpmod.info");
+        try
+        {
+            mcp = new MCPDummyContainer(MetadataCollection.from(mcpModInputStream, "MCP").getMetadataForId("mcp", null));
+        }
+        finally
+        {
+            IOUtils.closeQuietly(mcpModInputStream);
+        }
     }
 
     /**
@@ -348,6 +358,7 @@ public class Loader
     {
         injectedContainers.addAll(additionalContainers);
         FMLLog.fine("Building injected Mod Containers %s", injectedContainers);
+        mods.add(minecraft);
         // Add in the MCP mod container
         mods.add(new InjectedModContainer(mcp,new File("minecraft.jar")));
         for (String cont : injectedContainers)
@@ -492,16 +503,17 @@ public class Loader
 
     /**
      * Used to setup a testharness with a single dummy mod instance for use with various testing hooks
-     * @param dummycontainer A dummy container that will be returned as "active" for all queries
+     * @param containers A list of dummy containers that will be returned as "active" for all queries
      */
-    public void setupTestHarness(ModContainer dummycontainer)
+    public void setupTestHarness(ModContainer... containers)
     {
         modController = new LoadController(this);
-        mods = Lists.newArrayList(dummycontainer);
+        mods = Lists.newArrayList(containers);
+        namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
         modController.transition(LoaderState.LOADING, false);
         modController.transition(LoaderState.CONSTRUCTING, false);
         ObjectHolderRegistry.INSTANCE.findObjectHolders(new ASMDataTable());
-        modController.forceActiveContainer(dummycontainer);
+        modController.forceActiveContainer(containers[0]);
     }
     /**
      * Called from the hook to start mod loading. We trigger the

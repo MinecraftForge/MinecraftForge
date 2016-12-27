@@ -58,7 +58,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
             return compose.getStackInSlot(slot + minSlot);
         }
 
-        return ItemStack.field_190927_a;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
             return compose.extractItem(slot + minSlot, amount, simulate);
         }
 
-        return ItemStack.field_190927_a;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -92,6 +92,17 @@ public class RangedWrapper implements IItemHandlerModifiable {
         {
             compose.setStackInSlot(slot + minSlot, stack);
         }
+    }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        if (checkSlot(slot))
+        {
+            return compose.getSlotLimit(slot + minSlot);
+        }
+
+        return 0;
     }
 
     private boolean checkSlot(int localSlot)

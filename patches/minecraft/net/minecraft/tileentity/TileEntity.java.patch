@@ -72,7 +72,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -303,6 +313,205 @@
+@@ -297,6 +307,205 @@
      {
      }
  

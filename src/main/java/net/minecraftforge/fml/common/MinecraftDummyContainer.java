@@ -19,8 +19,10 @@
 
 package net.minecraftforge.fml.common;
 
+import java.io.File;
 import java.security.cert.Certificate;
 
+import com.google.common.eventbus.EventBus;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
@@ -33,12 +35,29 @@ public class MinecraftDummyContainer extends DummyModContainer
     public MinecraftDummyContainer(String actualMCVersion)
     {
         super(new ModMetadata());
-        getMetadata().modId = "Minecraft";
+        getMetadata().modId = "minecraft";
         getMetadata().name = "Minecraft";
         getMetadata().version = actualMCVersion;
         staticRange = VersionParser.parseRange("["+actualMCVersion+"]");
     }
 
+    @Override
+    public boolean isImmutable()
+    {
+        return true;
+    }
+
+    @Override
+    public File getSource()
+    {
+        return new File("minecraft.jar");
+    }
+
+    @Override
+    public boolean registerBus(EventBus bus, LoadController controller)
+    {
+        return true;
+    }
 
     public VersionRange getStaticVersionRange()
     {

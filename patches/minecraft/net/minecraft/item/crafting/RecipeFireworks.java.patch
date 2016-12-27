@@ -1,27 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
-@@ -87,9 +87,9 @@
-             {
-                 this.field_92102_a = new ItemStack(Items.field_151152_bP, 3);
- 
-+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                 if (l > 0)
-                 {
--                    NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                     NBTTagCompound nbttagcompound3 = new NBTTagCompound();
-                     NBTTagList nbttaglist = new NBTTagList();
- 
-@@ -106,9 +106,9 @@
-                     nbttagcompound3.func_74782_a("Explosions", nbttaglist);
-                     nbttagcompound3.func_74774_a("Flight", (byte)j);
-                     nbttagcompound1.func_74782_a("Fireworks", nbttagcompound3);
--                    this.field_92102_a.func_77982_d(nbttagcompound1);
-                 }
- 
-+                this.field_92102_a.func_77982_d(nbttagcompound1); //Forge BugFix: NPE Protection
-                 return true;
-             }
-             else if (j == 1 && i == 0 && l == 0 && k > 0 && j1 <= 1)
 @@ -251,10 +251,7 @@
          {
              ItemStack itemstack = p_179532_1_.func_70301_a(i);

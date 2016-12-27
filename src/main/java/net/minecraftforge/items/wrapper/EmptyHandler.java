@@ -39,7 +39,7 @@ public class EmptyHandler implements IItemHandlerModifiable
     @Nonnull
     public ItemStack getStackInSlot(int slot)
     {
-        return ItemStack.field_190927_a;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -53,12 +53,18 @@ public class EmptyHandler implements IItemHandlerModifiable
     @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
-        return ItemStack.field_190927_a;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
         // nothing to do here
+    }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        return 0;
     }
 }

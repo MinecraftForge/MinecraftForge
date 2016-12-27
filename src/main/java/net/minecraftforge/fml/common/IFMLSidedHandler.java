@@ -27,6 +27,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
+import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -77,4 +78,6 @@ public interface IFMLSidedHandler
     void reloadRenderers();
 
     void fireSidedRegistryEvents();
+
+    CompoundDataFixer getDataFixer();
 }

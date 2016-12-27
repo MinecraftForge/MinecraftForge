@@ -311,8 +311,11 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires after {@link GuiScreen#handleMouseInput()} provided that the active
-         * screen has not been changed as a result of {@link GuiScreen#handleMouseInput()}.
+         * screen has not been changed as a result of {@link GuiScreen#handleMouseInput()} and
+         * the {@link GuiScreen#mouseHandled} flag has not been set.
+         * Cancel this event when you successfully use the mouse input to prevent other handlers from using the same input.
          */
+        @Cancelable
         public static class Post extends MouseInputEvent
         {
             public Post(GuiScreen gui)
@@ -344,8 +347,11 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires after {@link GuiScreen#handleKeyboardInput()} provided that the active
-         * screen has not been changed as a result of {@link GuiScreen#handleKeyboardInput()}.
+         * screen has not been changed as a result of {@link GuiScreen#handleKeyboardInput()} and
+         * the {@link GuiScreen#keyHandled} flag has not been set.
+         * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
          */
+        @Cancelable
         public static class Post extends KeyboardInputEvent
         {
             public Post(GuiScreen gui)

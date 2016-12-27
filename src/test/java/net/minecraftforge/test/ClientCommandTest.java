@@ -28,13 +28,13 @@ public class ClientCommandTest {
 
     private class TestCommand extends CommandBase {
         @Override
-        public String getCommandName()
+        public String getName()
         {
             return "clientCommandTest";
         }
 
         @Override
-        public String getCommandUsage(ICommandSender sender)
+        public String getUsage(ICommandSender sender)
         {
             return "clientCommandTest <block>";
         }
@@ -46,7 +46,7 @@ public class ClientCommandTest {
         }
 
         @Override
-        public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
         {
             if (args.length > 0)
             {
@@ -61,11 +61,11 @@ public class ClientCommandTest {
         {
             if (args.length > 0)
             {
-                sender.addChatMessage(new TextComponentString("Input: " + Arrays.toString(args)));
+                sender.sendMessage(new TextComponentString("Input: " + Arrays.toString(args)));
             }
             else
             {
-                sender.addChatMessage(new TextComponentString("No arguments."));
+                sender.sendMessage(new TextComponentString("No arguments."));
             }
         }
     }

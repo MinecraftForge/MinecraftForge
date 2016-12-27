@@ -56,16 +56,17 @@
                  {
                      d2 = 1.0D - d1;
                      i = 5;
-@@ -498,7 +511,7 @@
+@@ -498,7 +511,8 @@
  
      private boolean func_175162_d(BlockPos p_175162_1_)
      {
 -        return !this.field_70170_p.func_180495_p(p_175162_1_).func_185915_l() && !this.field_70170_p.func_180495_p(p_175162_1_.func_177984_a()).func_185915_l();
-+        return !this.field_70170_p.func_180495_p(p_175162_1_).func_185915_l();
++        IBlockState iblockstate = field_70170_p.func_180495_p(p_175162_1_);
++        return !iblockstate.func_177230_c().isNormalCube(iblockstate, field_70170_p, p_175162_1_);
      }
  
      public void func_70031_b(boolean p_70031_1_)
-@@ -543,7 +556,13 @@
+@@ -543,7 +557,13 @@
  
      public void func_184185_a(SoundEvent p_184185_1_, float p_184185_2_, float p_184185_3_)
      {

@@ -20,6 +20,8 @@
 package net.minecraftforge.fml.common;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.SetMultimap;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
@@ -44,7 +46,9 @@ public class AutomaticEventSubscriber
     public static void inject(ModContainer mod, ASMDataTable data, Side side)
     {
         FMLLog.fine("Attempting to inject @EventBusSubscriber classes into the eventbus for %s", mod.getModId());
-        Set<ASMDataTable.ASMData> targets = data.getAnnotationsFor(mod).get(Mod.EventBusSubscriber.class.getName());
+        SetMultimap<String, ASMData> modData = data.getAnnotationsFor(mod);
+        Set<ASMDataTable.ASMData> mods = modData.get(Mod.class.getName());
+        Set<ASMDataTable.ASMData> targets = modData.get(Mod.EventBusSubscriber.class.getName());
         ClassLoader mcl = Loader.instance().getModClassLoader();
 
         for (ASMDataTable.ASMData targ : targets)
@@ -62,6 +66,19 @@ public class AutomaticEventSubscriber
                 }
                 if (sides == DEFAULT || sides.contains(side)) {
                     FMLLog.fine("Found @EventBusSubscriber class %s", targ.getClassName());
+                    String amodid = (String)targ.getAnnotationInfo().get("modid");
+                    if (Strings.isNullOrEmpty(amodid)) {
+                        amodid = ASMDataTable.getOwnerModID(mods, targ);
+                        if (Strings.isNullOrEmpty(amodid)) {
+                            FMLLog.bigWarning("Could not determine owning mod for @EventBusSubscriber on %s for mod %s", targ.getClassName(), mod.getModId());
+                            continue;
+                        }
+                    }
+                    if (!mod.getModId().equals(amodid))
+                    {
+                        FMLLog.fine("Skipping @EventBusSubscriber injection for %s since it is not for mod %s", targ.getClassName(), mod.getModId());
+                        continue; //We're not injecting this guy
+                    }
                     Class<?> subscriptionTarget = Class.forName(targ.getClassName(), true, mcl);
                     MinecraftForge.EVENT_BUS.register(subscriptionTarget);
                     FMLLog.fine("Injected @EventBusSubscriber class %s", targ.getClassName());

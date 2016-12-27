@@ -40,11 +40,18 @@
      }
  
      private void func_110569_e()
-@@ -89,12 +102,26 @@
+@@ -74,6 +87,7 @@
+     public void func_174943_a(IResourceManager p_174943_1_, ITextureMapPopulator p_174943_2_)
+     {
+         this.field_110574_e.clear();
++        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
+         p_174943_2_.func_177059_a(this);
+         this.func_110569_e();
+         this.func_147631_c();
+@@ -89,12 +103,25 @@
          int j = Integer.MAX_VALUE;
          int k = 1 << this.field_147636_j;
  
-+        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
 +        net.minecraftforge.fml.common.FMLLog.info("Max texture size: %d", i);
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", skipFirst ? 0 : this.field_110574_e.size());
 +
@@ -168,7 +175,7 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +363,52 @@
+@@ -318,4 +363,48 @@
      {
          return this.field_94249_f;
      }
@@ -183,32 +190,28 @@
 +     * @param name The name of the entry to find
 +     * @return The registered entry, null if nothing was registered.
 +     */
++    @Nullable
 +    public TextureAtlasSprite getTextureExtry(String name)
 +    {
-+        return (TextureAtlasSprite)field_110574_e.get(name);
++        return field_110574_e.get(name);
 +    }
 +
 +    /**
 +     * Adds a texture registry entry to this map for the specified name if one does not already exist.
 +     * Returns false if the map already contains a entry for the specified name.
 +     *
-+     * @param name Entry name
 +     * @param entry Entry instance
 +     * @return True if the entry was added to the map, false otherwise.
 +     */
-+    @Deprecated //Use non-String version
-+    public boolean setTextureEntry(String name, TextureAtlasSprite entry)
++    public boolean setTextureEntry(TextureAtlasSprite entry)
 +    {
++        String name = entry.func_94215_i();
 +        if (!field_110574_e.containsKey(name))
 +        {
 +            field_110574_e.put(name, entry);
 +            return true;
 +        }
 +        return false;
-+    }
-+    public boolean setTextureEntry(TextureAtlasSprite entry)
-+    {
-+        return setTextureEntry(entry.func_94215_i(), entry);
 +    }
 +
 +    public String getBasePath()

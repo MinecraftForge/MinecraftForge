@@ -78,15 +78,15 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     public ItemStack getStackInSlot(int slot)
     {
         int i = getSlot(inv, slot, side);
-        return i == -1 ? ItemStack.field_190927_a : inv.getStackInSlot(i);
+        return i == -1 ? ItemStack.EMPTY : inv.getStackInSlot(i);
     }
 
     @Override
     @Nonnull
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (stack.func_190926_b())
-            return ItemStack.field_190927_a;
+        if (stack.isEmpty())
+            return ItemStack.EMPTY;
 
         int slot1 = getSlot(inv, slot, side);
 
@@ -99,23 +99,23 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         ItemStack stackInSlot = inv.getStackInSlot(slot1);
 
         int m;
-        if (!stackInSlot.func_190926_b())
+        if (!stackInSlot.isEmpty())
         {
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
                 return stack;
 
-            m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit()) - stackInSlot.func_190916_E();
+            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot)) - stackInSlot.getCount();
 
-            if (stack.func_190916_E() <= m)
+            if (stack.getCount() <= m)
             {
                 if (!simulate)
                 {
                     ItemStack copy = stack.copy();
-                    copy.func_190917_f(stackInSlot.func_190916_E());
+                    copy.grow(stackInSlot.getCount());
                     inv.setInventorySlotContents(slot1, copy);
                 }
 
-                return ItemStack.field_190927_a;
+                return ItemStack.EMPTY;
             }
             else
             {
@@ -124,21 +124,21 @@ public class SidedInvWrapper implements IItemHandlerModifiable
                 if (!simulate)
                 {
                     ItemStack copy = stack.splitStack(m);
-                    copy.func_190917_f(stackInSlot.func_190916_E());
+                    copy.grow(stackInSlot.getCount());
                     inv.setInventorySlotContents(slot1, copy);
                     return stack;
                 }
                 else
                 {
-                    stack.func_190918_g(m);
+                    stack.shrink(m);
                     return stack;
                 }
             }
         }
         else
         {
-            m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit());
-            if (m < stack.func_190916_E())
+            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot));
+            if (m < stack.getCount())
             {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
@@ -149,7 +149,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
                 }
                 else
                 {
-                    stack.func_190918_g(m);
+                    stack.shrink(m);
                     return stack;
                 }
             }
@@ -157,7 +157,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             {
                 if (!simulate)
                     inv.setInventorySlotContents(slot1, stack);
-                return ItemStack.field_190927_a;
+                return ItemStack.EMPTY;
             }
         }
 
@@ -177,38 +177,44 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
         if (amount == 0)
-            return ItemStack.field_190927_a;
+            return ItemStack.EMPTY;
 
         int slot1 = getSlot(inv, slot, side);
 
         if (slot1 == -1)
-            return ItemStack.field_190927_a;
+            return ItemStack.EMPTY;
 
         ItemStack stackInSlot = inv.getStackInSlot(slot1);
 
-        if (stackInSlot.func_190926_b())
-            return ItemStack.field_190927_a;
+        if (stackInSlot.isEmpty())
+            return ItemStack.EMPTY;
 
         if (!inv.canExtractItem(slot1, stackInSlot, side))
-            return ItemStack.field_190927_a;
+            return ItemStack.EMPTY;
 
         if (simulate)
         {
-            if (stackInSlot.func_190916_E() < amount)
+            if (stackInSlot.getCount() < amount)
             {
                 return stackInSlot.copy();
             }
             else
             {
                 ItemStack copy = stackInSlot.copy();
-                copy.func_190920_e(amount);
+                copy.setCount(amount);
                 return copy;
             }
         }
         else
         {
-            int m = Math.min(stackInSlot.func_190916_E(), amount);
+            int m = Math.min(stackInSlot.getCount(), amount);
             return inv.decrStackSize(slot1, m);
         }
+    }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        return inv.getInventoryStackLimit();
     }
 }

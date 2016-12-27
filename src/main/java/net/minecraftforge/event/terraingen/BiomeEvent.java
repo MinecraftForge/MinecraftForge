@@ -51,7 +51,7 @@ public class BiomeEvent extends Event
     /**
      * CreateDecorator is fired when a BiomeDecorator is created.<br>
      * This event is fired whenever a BiomeDecorator is created in
-     * {@link DeferredBiomeDecorator#fireCreateEventAndReplace(BiomeGenBase)}.<br>
+     * {@link DeferredBiomeDecorator#fireCreateEventAndReplace(Biome)}.<br>
      * <br>
      * {@link #originalBiomeDecorator} contains the original BiomeDecorator that would be used in vanilla.
      * {@link #newBiomeDecorator} contains the new BiomeDecoration to be used by Minecraft.
