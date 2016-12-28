@@ -28,31 +28,25 @@ import net.minecraft.entity.Entity;
 /**
  * Handler for custom types of selectors registered with {@link SelectorHandlerManager}
  */
-public abstract class SelectorHandler
+public interface SelectorHandler
 {
     /**
-     * Returns a {@link List} of {@link Entity Entities} of class {@code targetClass} ({@code T}) represented by {@code token}
+     * Returns a {@link List} of {@link Entity Entities} of class {@code targetClass} ({@code T}) represented by {@code token}<br>
+     * <b>Note:</b> If {@code token} does not match the overall syntax defined by {@link #isSelector}, this method should return an empty list.
+     * For any other error, an exception should be thrown
      * 
      * @param sender The {@link ICommandSender} that initiated the query
      */
-    public abstract <T extends Entity> List<T> matchEntities(ICommandSender sender, String token, Class<? extends T> targetClass) throws CommandException;
+    public <T extends Entity> List<T> matchEntities(ICommandSender sender, String token, Class<? extends T> targetClass) throws CommandException;
 
     /**
      * Returns whether the selector string potentially matches multiple entities
      */
-    public abstract boolean matchesMultiplePlayers(String selectorStr) throws CommandException;
+    public boolean matchesMultiplePlayers(String selectorStr) throws CommandException;
 
     /**
-     * Returns whether the string represents a selector <br>
-     * <b>Note:</b> Returning {@code false} does not prevent {@link #matchEntities this.matchEntities} from being called. It is recommended to not override this method and
-     * simply throw an exception there <br>
-     * <b>Note:</b> If {@code selectorStr} could be a valid entity name, this method should return {@code false} and {@link #matchEntities this.matchEntities} should return an empty list instead of throwing in case {@code selectorStr} is not a valid selector <br>
-     * <b>Note:</b> Mostly for legacy reasons.
-     * (Since {@link net.minecraft.command.EntitySelector#matchEntities(ICommandSender, String, Class) EntitySelector.matchEntities}
-     * returns an empty list when the string is illformed instead of throwing an exception (as is indirectly done when this method returns {@code false})
+     * Returns whether the string matches the overall syntax of the selector<br>
+     * <b>Note:</b> If this returns {@code false}, {@link #matchEntities} should return an empty list
      */
-    public boolean isSelector(String selectorStr)
-    {
-        return true;
-    }
+    public boolean isSelector(String selectorStr);
 }

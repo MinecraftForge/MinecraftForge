@@ -22,7 +22,7 @@ public class SelectorHandlerTest
         SelectorHandlerManager.register("@es", new Handler("@es")); //Should produce a warning
     }
 
-    private static class Handler extends SelectorHandler
+    private static class Handler implements SelectorHandler
     {
         private final String name;
 
@@ -31,13 +31,12 @@ public class SelectorHandlerTest
             this.name = name;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T extends Entity> List<T> matchEntities(final ICommandSender sender, final String token, final Class<? extends T> targetClass) throws CommandException
         {
-            if (!name.equals(token))
-                throw new CommandException("Invalid selector '" + token + "'");
-
-            return targetClass.isAssignableFrom(sender.getCommandSenderEntity().getClass())
+            final Entity senderEntity = sender.getCommandSenderEntity();
+            return senderEntity != null && targetClass.isAssignableFrom(senderEntity.getClass()) && name.equals(token)
                 ? Collections.singletonList((T) sender.getCommandSenderEntity())
                 : Collections.<T> emptyList();
         }
@@ -46,6 +45,12 @@ public class SelectorHandlerTest
         public boolean matchesMultiplePlayers(final String selectorStr) throws CommandException
         {
             return false;
+        }
+
+        @Override
+        public boolean isSelector(final String selectorStr)
+        {
+            return name.equals(selectorStr);
         }
     }
 }
