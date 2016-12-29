@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucketMilk.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
-@@ -20,16 +20,12 @@
+@@ -20,11 +20,13 @@
  
      public ItemStack func_77654_b(ItemStack p_77654_1_, World p_77654_2_, EntityLivingBase p_77654_3_)
      {
@@ -10,15 +10,11 @@
              p_77654_1_.func_190918_g(1);
          }
  
--        if (!p_77654_2_.field_72995_K)
--        {
--            p_77654_3_.func_70674_bp();
--        }
--
-         if (p_77654_3_ instanceof EntityPlayer)
++        if (false) // FORGE - stack sensitive version at top of method
+         if (!p_77654_2_.field_72995_K)
          {
-             ((EntityPlayer)p_77654_3_).func_71029_a(StatList.func_188057_b(this));
-@@ -53,4 +49,9 @@
+             p_77654_3_.func_70674_bp();
+@@ -53,4 +55,9 @@
          p_77659_2_.func_184598_c(p_77659_3_);
          return new ActionResult(EnumActionResult.SUCCESS, p_77659_2_.func_184586_b(p_77659_3_));
      }
