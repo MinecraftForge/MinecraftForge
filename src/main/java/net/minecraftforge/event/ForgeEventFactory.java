@@ -247,13 +247,6 @@ public class ForgeEventFactory
         return event.getDisplayname();
     }
 
-    public static List<Predicate<Entity>> gatherEntitySelectors(Map<String, String> map, String mainSelector, ICommandSender sender, Vec3d position)
-    {
-        EntitySelectorEvent event=new EntitySelectorEvent(map, mainSelector, sender, position);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getSelectors();
-    }
-
     public static float fireBlockHarvesting(List<ItemStack> drops, World world, BlockPos pos, IBlockState state, int fortune, float dropChance, boolean silkTouch, EntityPlayer player)
     {
         BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
