@@ -33,7 +33,6 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 
 /**
@@ -134,7 +133,6 @@ public class SelectorHandlerManager
 
     /**
      * Registers a new {@link SelectorHandler} for {@code prefix}.
-     * Warnings are emitted for all prefixes returned by {@link #getShadowing} and {@link #getShadowed}
      *
      * @param prefix A non-empty string
      */
@@ -146,16 +144,6 @@ public class SelectorHandlerManager
         }
 
         final String modId = Loader.instance().activeModContainer().getModId();
-
-        for (final Entry<String, String> other : getShadowed(prefix).entrySet())
-        {
-            FMLLog.info("Selector prefix '%s' of mod '%s' is shadowing prefix '%s' of mod '%s'", prefix, modId, other.getKey(), other.getValue());
-        }
-
-        for (final Entry<String, String> other : getShadowing(prefix).entrySet())
-        {
-            FMLLog.info("Selector prefix '%s' of mod '%s' is shadowed by prefix '%s' of mod '%s'", prefix, modId, other.getKey(), other.getValue());
-        }
 
         selectorHandlers.put(prefix, handler);
         registeringMods.put(prefix, modId);

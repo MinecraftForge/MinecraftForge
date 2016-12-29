@@ -18,18 +18,12 @@ public class SelectorHandlerTest
     @EventHandler
     public void init(final FMLInitializationEvent event)
     {
-        SelectorHandlerManager.register("@s", new Handler("@s"));
-        SelectorHandlerManager.register("@es", new Handler("@es")); //Should produce a warning
+        SelectorHandlerManager.register(Handler.name, new Handler());
     }
 
     private static class Handler implements SelectorHandler
     {
-        private final String name;
-
-        public Handler(final String name)
-        {
-            this.name = name;
-        }
+        protected static final String name = "@s";
 
         @SuppressWarnings("unchecked")
         @Override
