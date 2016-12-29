@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,6 @@ public class CustomEntitySelectorTest
         @Nonnull @Override
         public List<Predicate<Entity>> createPredicates(Map<String, String> arguments, String mainSelector, ICommandSender sender, Vec3d position)
         {
-            List<Predicate<Entity>> predicates = Lists.newArrayList();
             String health = arguments.get("forge:min_health");
             if (health != null)
             {
@@ -46,15 +46,13 @@ public class CustomEntitySelectorTest
                 try
                 {
                     final int value = Integer.parseInt(health);
-                    predicates.add(new Predicate<Entity>()
+                    return Collections.<Predicate<Entity>>singletonList(new Predicate<Entity>()
                     {
                         @Override
                         public boolean apply(@Nullable Entity input)
                         {
-                            if (!(input instanceof EntityLivingBase))
-                                return false;
-                            boolean health = ((EntityLivingBase) input).getHealth() >= value;
-                            return invert && !health || !invert && health;
+                            if (!(input instanceof EntityLivingBase)) return false;
+                            return (((EntityLivingBase) input).getHealth() >= value)!=invert;
                         }
                     });
                 }
@@ -63,7 +61,7 @@ public class CustomEntitySelectorTest
                     sender.sendMessage(new TextComponentString("Entity selector 'forge:min_health' has to be an integer"));
                 }
             }
-            return predicates;
+            return Collections.emptyList();
         }
     }
 }
