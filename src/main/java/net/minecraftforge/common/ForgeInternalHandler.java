@@ -53,7 +53,7 @@ public class ForgeInternalHandler
                 {
                     entity.setDead();
                     event.setCanceled(true);
-                    event.getWorld().spawnEntityInWorld(newEntity);
+                    event.getWorld().spawnEntity(newEntity);
                 }
             }
         }

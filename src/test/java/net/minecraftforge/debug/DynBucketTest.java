@@ -30,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.debug.ModelFluidDebug.TestFluid;
 import net.minecraftforge.debug.ModelFluidDebug.TestGas;
@@ -103,7 +104,7 @@ public class DynBucketTest
 
             ModelLoader.setBucketModelDefinition(dynBucket);
 
-            final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation("forge", "dynbottle"), "inventory");
+            final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbottle"), "inventory");
             ModelLoader.setCustomMeshDefinition(dynBottle, new ItemMeshDefinition()
             {
                 @Override
@@ -267,7 +268,7 @@ public class DynBucketTest
                 return false;
             }
 
-            if (heldItem.func_190926_b())
+            if (heldItem.isEmpty())
             {
                 sendText(playerIn, tank);
                 return false;
@@ -289,7 +290,7 @@ public class DynBucketTest
 
         private void sendText(EntityPlayer player, IFluidHandler tank)
         {
-            if (player.worldObj.isRemote)
+            if (player.world.isRemote)
             {
                 String text;
                 IFluidTankProperties[] tankProperties = tank.getTankProperties();
@@ -300,7 +301,7 @@ public class DynBucketTest
                 {
                     text = "empty";
                 }
-                player.addChatMessage(new TextComponentString(text));
+                player.sendMessage(new TextComponentString(text));
             }
         }
     }

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
@@ -145,5 +146,19 @@ public class ASMDataTable
     public Set<ModCandidate> getCandidatesFor(String pkg)
     {
         return this.packageMap.get(pkg);
+    }
+
+    public static String getOwnerModID(Set<ASMData> mods, ASMData targ)
+    {
+        if (mods.size() == 1) {
+            return (String)mods.iterator().next().getAnnotationInfo().get("modid");
+        } else {
+            for (ASMData m : mods) {
+                if (targ.getClassName().startsWith(m.getClassName())) {
+                    return (String)m.getAnnotationInfo().get("modid");
+                }
+            }
+        }
+        return null;
     }
 }

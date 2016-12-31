@@ -41,6 +41,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -104,7 +105,7 @@ public final class ModelFluid implements IModelCustomData
 
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals("forge") && (
+            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
                 modelLocation.getResourcePath().equals("fluid") ||
                 modelLocation.getResourcePath().equals("models/block/fluid") ||
                 modelLocation.getResourcePath().equals("models/item/fluid"));
@@ -176,7 +177,7 @@ public final class ModelFluid implements IModelCustomData
                 if(flow == null) flow = -1000f;
             }
             int flowRound = (int)Math.round(Math.toDegrees(flow));
-            flowRound = MathHelper.clamp_int(flowRound, -1000, 1000);
+            flowRound = MathHelper.clamp(flowRound, -1000, 1000);
             return flowRound;
         }
 

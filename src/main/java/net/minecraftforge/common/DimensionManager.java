@@ -204,7 +204,7 @@ public class DimensionManager
             tmp.add(entry.getValue());
         }
 
-        server.worldServers = tmp.toArray(new WorldServer[tmp.size()]);
+        server.worlds = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
     public static void initDimension(int dim)

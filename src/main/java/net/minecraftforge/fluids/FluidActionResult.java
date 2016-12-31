@@ -34,7 +34,7 @@ import net.minecraft.item.ItemStack;
  */
 public class FluidActionResult
 {
-	public static final FluidActionResult FAILURE = new FluidActionResult(false, ItemStack.field_190927_a);
+	public static final FluidActionResult FAILURE = new FluidActionResult(false, ItemStack.EMPTY);
 
 	public final boolean success;
 	@Nonnull

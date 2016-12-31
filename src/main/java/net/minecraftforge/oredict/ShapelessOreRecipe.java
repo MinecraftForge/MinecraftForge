@@ -19,7 +19,6 @@
 
 package net.minecraftforge.oredict;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,8 +37,8 @@ import javax.annotation.Nonnull;
 
 public class ShapelessOreRecipe implements IRecipe
 {
-    protected ItemStack output = ItemStack.field_190927_a;
-    protected NonNullList<Object> input = NonNullList.func_191196_a();
+    protected ItemStack output = ItemStack.EMPTY;
+    protected NonNullList<Object> input = NonNullList.create();
 
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapelessOreRecipe(Item  result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -110,14 +109,14 @@ public class ShapelessOreRecipe implements IRecipe
     @Override
     public boolean matches(InventoryCrafting var1, World world)
     {
-        NonNullList<Object> required = NonNullList.func_191196_a();
+        NonNullList<Object> required = NonNullList.create();
         required.addAll(input);
 
         for (int x = 0; x < var1.getSizeInventory(); x++)
         {
             ItemStack slot = var1.getStackInSlot(x);
 
-            if (!slot.func_190926_b())
+            if (!slot.isEmpty())
             {
                 boolean inRecipe = false;
                 Iterator<Object> req = required.iterator();

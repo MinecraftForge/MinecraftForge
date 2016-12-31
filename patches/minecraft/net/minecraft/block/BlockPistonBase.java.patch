@@ -26,6 +26,6 @@
 +                // Forge: With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
 +                float chance = iblockstate.func_177230_c() instanceof BlockSnow ? -1.0f : 1.0f;
 +                iblockstate.func_177230_c().func_180653_a(p_176319_1_, blockpos1, iblockstate, chance, 0);
-                 p_176319_1_.func_175698_g(blockpos1);
+                 p_176319_1_.func_180501_a(blockpos1, Blocks.field_150350_a.func_176223_P(), 4);
                  --k;
                  aiblockstate[k] = iblockstate;

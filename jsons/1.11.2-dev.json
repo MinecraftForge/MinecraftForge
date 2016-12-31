@@ -1,0 +1,92 @@
+{
+  "id": "@minecraft_version@-@project@@version@",
+  "time": "@timestamp@",
+  "releaseTime": "1960-01-01T00:00:00-0700",
+  "type": "release",
+  "inheritsFrom": "1.11.2",
+  "minecraftArguments": "--version FML_DEV --tweakClass net.minecraftforge.fml.common.launcher.FMLTweaker",
+  "libraries": [
+    {
+      "name": "net.minecraft:launchwrapper:1.12"
+    },
+    {
+      "name": "jline:jline:2.13",
+      "children": ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "com.google.code.findbugs:jsr305:1.3.9",
+      "children": ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "org.ow2.asm:asm-debug-all:5.0.3",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "com.typesafe.akka:akka-actor_2.11:2.3.3",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "com.typesafe:config:1.2.1",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "org.scala-lang:scala-actors-migration_2.11:1.1.0",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "org.scala-lang:scala-compiler:2.11.1",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "org.scala-lang.plugins:scala-continuations-library_2.11:1.0.2",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "org.scala-lang.plugins:scala-continuations-plugin_2.11.1:1.0.2",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "org.scala-lang:scala-library:2.11.1",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "org.scala-lang.modules:scala-parser-combinators_2.11:1.0.1",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "org.scala-lang:scala-reflect:2.11.1",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "org.scala-lang.modules:scala-swing_2.11:1.0.1",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "org.scala-lang.modules:scala-xml_2.11:1.0.2",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "lzma:lzma:0.0.1"
+    },
+    {
+      "name": "java3d:vecmath:1.5.2"
+    },
+    {
+      "name": "net.sf.trove4j:trove4j:3.0.3"
+    }
+  ]
+}

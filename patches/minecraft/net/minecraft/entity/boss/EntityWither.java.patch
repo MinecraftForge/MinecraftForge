@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/boss/EntityWither.java
 +++ ../src-work/minecraft/net/minecraft/entity/boss/EntityWither.java
-@@ -377,7 +377,7 @@
+@@ -383,7 +383,7 @@
                                  IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
                                  Block block = iblockstate.func_177230_c();
  

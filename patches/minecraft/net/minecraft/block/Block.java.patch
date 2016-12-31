@@ -197,7 +197,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +932,1153 @@
+@@ -908,6 +932,1177 @@
      {
      }
  
@@ -247,7 +247,7 @@
 +     */
 +    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        return state.func_185904_a().func_76218_k() && state.func_185917_h() && !state.func_185897_m();
++        return state.func_185915_l();
 +    }
 +
 +    /**
@@ -1130,6 +1130,17 @@
 +    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor){}
 +
 +    /**
++     * Called on an Observer block whenever an update for an Observer is received.
++     *
++     * @param observerState The Observer block's state.
++     * @param world The current world.
++     * @param observerPos The Observer block's position.
++     * @param changedBlock The updated block.
++     * @param changedBlockPos The updated block's position.
++     */
++    public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos){}
++
++    /**
 +     * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
 +     * @param world The world
 +     * @param pos Block position in world
@@ -1346,12 +1357,25 @@
 +        return func_180642_a(world, pos, facing, hitX, hitY, hitZ, meta, placer);
 +    }
 +
++    /**
++     * Determines if another block can connect to this block
++     *
++     * @param world The current world
++     * @param pos The position of this block
++     * @param facing The side the connecting block is on
++     * @return True to allow another block to connect to this block
++     */
++    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    {
++        return false;
++    }
++
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2372,7 @@
+@@ -1201,14 +2396,7 @@
              }
              else
              {

@@ -49,7 +49,7 @@ public class AnvilUpdateEvent extends Event
     {
         this.left = left;
         this.right = right;
-        this.output = ItemStack.field_190927_a;
+        this.output = ItemStack.EMPTY;
         this.name = name;
         this.setCost(cost);
         this.setMaterialCost(0);

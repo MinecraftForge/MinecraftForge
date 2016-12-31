@@ -261,9 +261,9 @@ public class ForgeHooksClient
         GameSettings settings = Minecraft.getMinecraft().gameSettings;
         int[] ranges = ForgeModContainer.blendRanges;
         int distance = 0;
-        if (settings.fancyGraphics && settings.renderDistanceChunks >= 0 && settings.renderDistanceChunks < ranges.length)
+        if (settings.fancyGraphics && ranges.length > 0)
         {
-            distance = ranges[settings.renderDistanceChunks];
+            distance = ranges[MathHelper.clamp(settings.renderDistanceChunks, 0, ranges.length-1)];
         }
 
         int r = 0;
@@ -669,12 +669,15 @@ public class ForgeHooksClient
     }
 
     private static int slotMainHand = 0;
-    // FIXME
-    public static boolean shouldCauseReequipAnimation(ItemStack from, ItemStack to, int slot)
+
+    public static boolean shouldCauseReequipAnimation(@Nonnull ItemStack from, @Nonnull ItemStack to, int slot)
     {
-        if (from == null && to != null) return true;
-        if (from == null && to == null) return false;
-        if (from != null && to == null) return true;
+        boolean fromInvalid = from.isEmpty();
+        boolean toInvalid   = to.isEmpty();
+
+        if (fromInvalid && toInvalid) return false;
+        if (fromInvalid || toInvalid) return true;
+
         boolean changed = false;
         if (slot != -1)
         {

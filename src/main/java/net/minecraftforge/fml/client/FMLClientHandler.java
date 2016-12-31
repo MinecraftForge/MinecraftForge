@@ -21,6 +21,7 @@ package net.minecraftforge.fml.client;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,6 +83,7 @@ import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
@@ -106,6 +108,7 @@ import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.relauncher.Side;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -136,7 +139,7 @@ import com.google.gson.JsonObject;
 /**
  * Handles primary communication from hooked code into the system
  *
- * The FML entry point is {@link #beginMinecraftLoading(Minecraft, List, IReloadableResourceManager)} called from
+ * The FML entry point is {@link #beginMinecraftLoading(Minecraft, List, IReloadableResourceManager, MetadataSerializer)} called from
  * {@link Minecraft}
  *
  * Obfuscated code should focus on this class and other members of the "server"
@@ -296,9 +299,17 @@ public class FMLClientHandler implements IFMLSidedHandler
             Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
             String optifineVersion = (String) optifineConfig.getField("VERSION").get(null);
             Map<String,Object> dummyOptifineMeta = ImmutableMap.<String,Object>builder().put("name", "Optifine").put("version", optifineVersion).build();
-            ModMetadata optifineMetadata = MetadataCollection.from(getClass().getResourceAsStream("optifinemod.info"),"optifine").getMetadataForId("optifine", dummyOptifineMeta);
-            optifineContainer = new DummyModContainer(optifineMetadata);
-            FMLLog.info("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion());
+            InputStream optifineModInfoInputStream = getClass().getResourceAsStream("optifinemod.info");
+            try
+            {
+                ModMetadata optifineMetadata = MetadataCollection.from(optifineModInfoInputStream, "optifine").getMetadataForId("optifine", dummyOptifineMeta);
+                optifineContainer = new DummyModContainer(optifineMetadata);
+                FMLLog.info("Forge Mod Loader has detected optifine %s, enabling compatibility features", optifineContainer.getVersion());
+            }
+            finally
+            {
+                IOUtils.closeQuietly(optifineModInfoInputStream);
+            }
         }
         catch (Exception e)
         {
@@ -463,7 +474,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void displayGuiScreen(EntityPlayer player, GuiScreen gui)
     {
-        if (client.thePlayer==player && gui != null) {
+        if (client.player==player && gui != null) {
             client.displayGuiScreen(gui);
         }
     }
@@ -556,12 +567,12 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public WorldClient getWorldClient()
     {
-        return client.theWorld;
+        return client.world;
     }
 
     public EntityPlayerSP getClientPlayerEntity()
     {
-        return client.thePlayer;
+        return client.player;
     }
 
     @Override
@@ -1059,5 +1070,11 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void fireSidedRegistryEvents()
     {
         MinecraftForge.EVENT_BUS.post(new ModelRegistryEvent());
+    }
+
+    @Override
+    public CompoundDataFixer getDataFixer()
+    {
+        return (CompoundDataFixer)this.client.getDataFixer();
     }
 }

@@ -149,7 +149,7 @@ public class ModelBakeEventDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         @Override
         public TileEntity createNewTileEntity(World world, int meta)

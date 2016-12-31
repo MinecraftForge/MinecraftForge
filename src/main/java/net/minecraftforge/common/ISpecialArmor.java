@@ -124,7 +124,7 @@ public interface ISpecialArmor
             for (int x = 0; x < inventory.size(); x++)
             {
                 ItemStack stack = inventory.get(x);
-                if (stack.func_190926_b())
+                if (stack.isEmpty())
                 {
                     continue;
                 }
@@ -178,13 +178,13 @@ public interface ISpecialArmor
                             }
                             stack.damageItem(itemDamage, entity);
                         }
-                        if (stack.func_190926_b())
+                        if (stack.isEmpty())
                         {
                             /*if (entity instanceof EntityPlayer)
                             {
                                 stack.onItemDestroyedByUse((EntityPlayer)entity);
                             }*/
-                            inventory.set(prop.Slot, ItemStack.field_190927_a);
+                            inventory.set(prop.Slot, ItemStack.EMPTY);
                         }
                     }
                 }

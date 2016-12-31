@@ -166,7 +166,7 @@ public class GuiConfig extends GuiScreen
         this.allRequireMcRestart = allRequireMcRestart;
         this.modID = modID;
         this.configID = configID;
-        this.isWorldRunning = mc.theWorld != null;
+        this.isWorldRunning = mc.world != null;
         if (title != null)
             this.title = title;
         this.titleLine2 = titleLine2;

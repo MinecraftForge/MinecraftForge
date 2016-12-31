@@ -190,7 +190,7 @@ public enum B3DLoader implements ICustomModelLoader
             this.animation = animation;
             this.frame = frame;
             this.nextFrame = nextFrame;
-            this.progress = MathHelper.clamp_float(progress, 0, 1);
+            this.progress = MathHelper.clamp(progress, 0, 1);
             this.parent = getParent(parent);
         }
 

@@ -118,7 +118,7 @@ public class LivingSpawnEvent extends LivingEvent
     {
         public AllowDespawn(EntityLiving entity)
         {
-            super(entity, entity.worldObj, (float)entity.posX, (float)entity.posY, (float)entity.posZ);
+            super(entity, entity.world, (float)entity.posX, (float)entity.posY, (float)entity.posZ);
         }
 
     }
