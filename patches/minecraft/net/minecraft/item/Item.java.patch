@@ -673,12 +673,12 @@
 +    /**
 +     * 
 +     * @param stack The ItemStack
-+     * @param sheild The sheild in question
-+     * @param entity The Entity holding the sheild
++     * @param shield The shield in question
++     * @param entity The Entity holding the shield
 +     * @param attacker The Entity holding the item
-+     * @return True if this Item can disable the sheild in question
++     * @return True if this Item can disable the shield in question
 +     */
-+    public boolean canDisableSheild(ItemStack stack, ItemStack sheild, Entity entity, Entity attacker)
++    public boolean canDisableShield(ItemStack stack, ItemStack shield, Entity entity, Entity attacker)
 +    {
 +    	return this instanceof ItemAxe;
 +    }

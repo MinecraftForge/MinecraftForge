@@ -5,7 +5,7 @@
                  ItemStack itemstack1 = entityplayer.func_184587_cr() ? entityplayer.func_184607_cu() : ItemStack.field_190927_a;
  
 -                if (!itemstack.func_190926_b() && !itemstack1.func_190926_b() && itemstack.func_77973_b() instanceof ItemAxe && itemstack1.func_77973_b() == Items.field_185159_cQ)
-+                if (!itemstack.func_190926_b() && !itemstack1.func_190926_b() && itemstack.func_77973_b().canDisableSheild(itemstack1, itemstack, p_70652_1_, this) && itemstack1.func_77973_b() == Items.field_185159_cQ)
++                if (!itemstack.func_190926_b() && !itemstack1.func_190926_b() && itemstack.func_77973_b().canDisableShield(itemstack1, itemstack, p_70652_1_, this) && itemstack1.func_77973_b() == Items.field_185159_cQ)
                  {
                      float f1 = 0.25F + (float)EnchantmentHelper.func_185293_e(this) * 0.05F;
  
