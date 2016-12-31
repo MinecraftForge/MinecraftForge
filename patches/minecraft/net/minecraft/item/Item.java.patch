@@ -669,7 +669,7 @@
 +        return builder.build();
 +    }
 +
-+    public boolean canBypassSheild(ItemStack stack, ItemStack sheild, Entity entity, Entity attacker)
++    public boolean canDisableSheild(ItemStack stack, ItemStack sheild, Entity entity, Entity attacker)
 +    {
 +    	return this instanceof ItemAxe;
 +    }

@@ -197,7 +197,7 @@
          super.func_190629_c(p_190629_1_);
  
 -        if (p_190629_1_.func_184614_ca().func_77973_b() instanceof ItemAxe)
-+        if (p_190629_1_.func_184614_ca().func_77973_b().canBypassSheild(p_190629_1_.func_184614_ca(), this.func_184607_cu(), this, p_190629_1_))
++        if (p_190629_1_.func_184614_ca().func_77973_b().canDisableSheild(p_190629_1_.func_184614_ca(), this.func_184607_cu(), this, p_190629_1_))
          {
              this.func_190777_m(true);
          }
