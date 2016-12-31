@@ -217,7 +217,7 @@ public class UniversalBucket extends Item
 
         // not for us to handle
         ItemStack emptyBucket = event.getEmptyBucket();
-        if (emptyBucket == null ||
+        if (emptyBucket.isEmpty() ||
                 !emptyBucket.isItemEqual(getEmpty()) ||
                 (isNbtSensitive() && ItemStack.areItemStackTagsEqual(emptyBucket, getEmpty())))
         {
