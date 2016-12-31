@@ -280,11 +280,10 @@ public abstract class GuiScrollingList
         VertexBuffer worldr = tess.getBuffer();
 
         ScaledResolution res = new ScaledResolution(client);
-        double scaleW = client.displayWidth / res.getScaledWidth_double();
-        double scaleH = client.displayHeight / res.getScaledHeight_double();
+        int scaleRes = res.getScaleFactor();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int)(left      * scaleW), (int)(client.displayHeight - (bottom * scaleH)),
-                       (int)(listWidth * scaleW), (int)(viewHeight * scaleH));
+        GL11.glScissor(left      * scaleRes, client.displayHeight - (bottom * scaleRes),
+                       listWidth * scaleRes, viewHeight * scaleRes);
 
         if (this.client.world != null)
         {
