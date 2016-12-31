@@ -253,15 +253,16 @@ public class GuiIngameForge extends GuiIngame
 
         ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
 
-        if (this.mc.gameSettings.thirdPersonView == 0 && itemstack.getItem() != Item.getItemFromBlock(Blocks.AIR))
+        if (this.mc.gameSettings.thirdPersonView == 0 && !itemstack.isEmpty())
         {
-            if (itemstack.getItem() == Item.getItemFromBlock(Blocks.PUMPKIN))
+            Item item = itemstack.getItem();
+            if (item == Item.getItemFromBlock(Blocks.PUMPKIN))
             {
                 renderPumpkinOverlay(res);
             }
             else
             {
-                itemstack.getItem().renderHelmetOverlay(itemstack, mc.player, res, partialTicks);
+                item.renderHelmetOverlay(itemstack, mc.player, res, partialTicks);
             }
         }
 
