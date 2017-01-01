@@ -395,6 +395,7 @@ public class FMLModContainer implements ModContainer
     }
 
     @Nullable
+    @SuppressWarnings("unchecked")
     private Method gatherAnnotations(Class<?> clazz) throws Exception
     {
         Method factoryMethod = null;
@@ -407,9 +408,7 @@ public class FMLModContainer implements ModContainer
                     if (m.getParameterTypes().length == 1 && FMLEvent.class.isAssignableFrom(m.getParameterTypes()[0]))
                     {
                         m.setAccessible(true);
-                        //noinspection unchecked
-                        Class<? extends FMLEvent> parameterType = (Class<? extends FMLEvent>) m.getParameterTypes()[0];
-                        eventMethods.put(parameterType, m);
+                        eventMethods.put((Class<? extends FMLEvent>)m.getParameterTypes()[0], m);
                     }
                     else
                     {

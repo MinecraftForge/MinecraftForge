@@ -317,7 +317,7 @@ public class EntityRegistry
     @Nullable
     public EntityRegistration lookupModSpawn(Class<? extends Entity> clazz, boolean keepLooking)
     {
-        Class<? extends Entity> localClazz = clazz;
+        Class<?> localClazz = clazz;
 
         do
         {
@@ -326,13 +326,8 @@ public class EntityRegistry
             {
                 return er;
             }
-            Class<?> superClass = localClazz.getSuperclass();
-            keepLooking &= (!Object.class.equals(superClass));
-            if (keepLooking)
-            {
-                //noinspection unchecked
-                localClazz = (Class<? extends Entity>) superClass;
-            }
+            localClazz = localClazz.getSuperclass();
+            keepLooking &= (!Object.class.equals(localClazz));
         }
         while (keepLooking);
 
