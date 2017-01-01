@@ -123,7 +123,7 @@
          if (p_78263_1_ == 167)
          {
              return -1;
-@@ -849,6 +860,27 @@
+@@ -849,6 +860,26 @@
          return this.field_78294_m;
      }
  
@@ -142,7 +142,6 @@
 +        field_78298_i.func_110577_a(location);
 +    }
 +
-+    @javax.annotation.Nonnull
 +    protected IResource getResource(ResourceLocation location) throws IOException
 +    {
 +        return Minecraft.func_71410_x().func_110442_L().func_110536_a(location);
