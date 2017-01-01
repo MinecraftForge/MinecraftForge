@@ -116,6 +116,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
+import javax.annotation.Nonnull;
+
 public final class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
@@ -1113,7 +1115,7 @@ public final class ModelLoader extends ModelBakery
         ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
         {
             @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack)
+            public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
             {
                 return ModelDynBucket.LOCATION;
             }

@@ -30,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is a fluid block implementation which emulates vanilla Minecraft fluid behavior.
@@ -373,6 +374,7 @@ public class BlockFluidClassic extends BlockFluidBase
     }
 
     @Override
+    @Nullable
     public FluidStack drain(World world, BlockPos pos, boolean doDrain)
     {
         if (!isSourceBlock(world, pos))

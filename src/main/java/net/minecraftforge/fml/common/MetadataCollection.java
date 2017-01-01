@@ -41,13 +41,15 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
+import javax.annotation.Nullable;
+
 public class MetadataCollection
 {
     private String modListVersion;
     private ModMetadata[] modList;
     private Map<String, ModMetadata> metadatas = Maps.newHashMap();
 
-    public static MetadataCollection from(InputStream inputStream, String sourceName)
+    public static MetadataCollection from(@Nullable InputStream inputStream, String sourceName)
     {
         if (inputStream == null)
         {

@@ -96,7 +96,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         }
     }
 
-    protected void setFluid(Fluid fluid) {
+    protected void setFluid(@Nullable Fluid fluid) {
         if (fluid == null)
         {
             container = new ItemStack(Items.BUCKET);

@@ -59,7 +59,7 @@ public class EventBus implements IEventExceptionHandler
     public EventBus(@Nonnull IEventExceptionHandler handler)
     {
         this();
-        Preconditions.checkArgument(handler != null, "EventBus exception handler can not be null");
+        Preconditions.checkNotNull(handler, "EventBus exception handler can not be null");
         exceptionHandler = handler;
     }
 

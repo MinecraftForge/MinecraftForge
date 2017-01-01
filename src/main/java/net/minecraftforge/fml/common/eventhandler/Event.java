@@ -153,7 +153,7 @@ public class Event
 
     public void setPhase(@Nonnull EventPriority value)
     {
-        Preconditions.checkArgument(value != null, "setPhase argument must not be null");
+        Preconditions.checkNotNull(value, "setPhase argument must not be null");
         int prev = phase == null ? -1 : phase.ordinal();
         Preconditions.checkArgument(prev < value.ordinal(), "Attempted to set event phase to %s when already %s", value, phase);
         phase = value;

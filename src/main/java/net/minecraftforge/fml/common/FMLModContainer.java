@@ -77,6 +77,8 @@ import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javax.annotation.Nullable;
+
 public class FMLModContainer implements ModContainer
 {
     private Object modInstance;
@@ -280,6 +282,7 @@ public class FMLModContainer implements ModContainer
         }
     }
 
+    @Nullable
     public Properties searchForVersionProperties()
     {
         try
@@ -391,7 +394,7 @@ public class FMLModContainer implements ModContainer
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @Nullable
     private Method gatherAnnotations(Class<?> clazz) throws Exception
     {
         Method factoryMethod = null;
@@ -404,7 +407,9 @@ public class FMLModContainer implements ModContainer
                     if (m.getParameterTypes().length == 1 && FMLEvent.class.isAssignableFrom(m.getParameterTypes()[0]))
                     {
                         m.setAccessible(true);
-                        eventMethods.put((Class<? extends FMLEvent>)m.getParameterTypes()[0], m);
+                        //noinspection unchecked
+                        Class<? extends FMLEvent> parameterType = (Class<? extends FMLEvent>) m.getParameterTypes()[0];
+                        eventMethods.put(parameterType, m);
                     }
                     else
                     {

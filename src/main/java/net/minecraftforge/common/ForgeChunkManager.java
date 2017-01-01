@@ -139,7 +139,7 @@ public class ForgeChunkManager
             @Override
             public Chunk apply(@Nullable ChunkPos input)
             {
-                return world.getChunkFromChunkCoords(input.chunkXPos, input.chunkZPos);
+                return input == null ? null : world.getChunkFromChunkCoords(input.chunkXPos, input.chunkZPos);
             }
         }));
         world.theProfiler.endStartSection("regularChunkLoading");
@@ -687,6 +687,7 @@ public class ForgeChunkManager
         return playerTicketLength - playerTickets.get(username).size();
     }
 
+    @Nullable
     public static Ticket requestPlayerTicket(Object mod, String player, World world, Type type)
     {
         ModContainer mc = getContainer(mod);
@@ -713,6 +714,7 @@ public class ForgeChunkManager
      * @param type The type of ticket
      * @return A ticket with which to register chunks for loading, or null if no further tickets are available
      */
+    @Nullable
     public static Ticket requestTicket(Object mod, World world, Type type)
     {
         ModContainer container = getContainer(mod);
@@ -966,6 +968,7 @@ public class ForgeChunkManager
         }
     }
 
+    @Nullable
     public static Chunk fetchDormantChunk(long coords, World world)
     {
         Cache<Long, Chunk> cache = dormantChunkCache.get(world);
@@ -1110,6 +1113,7 @@ public class ForgeChunkManager
         return list;
     }
 
+    @Nullable
     public static ConfigCategory getConfigFor(Object mod)
     {
         ModContainer container = getContainer(mod);

@@ -24,6 +24,8 @@ import net.minecraft.world.GameType;
 import net.minecraft.client.settings.GameSettings.Options;
 import net.minecraftforge.common.util.EnumHelper;
 
+import javax.annotation.Nullable;
+
 public class EnumHelperClient extends EnumHelper
 {
     private static Class<?>[][] clientTypes =
@@ -33,16 +35,19 @@ public class EnumHelperClient extends EnumHelper
         {EnumOS.class}
     };
 
+    @Nullable
     public static GameType addGameType(String name, int id, String displayName, String shortName)
     {
         return addEnum(GameType.class, name, id, displayName, shortName);
     }
 
+    @Nullable
     public static Options addOptions(String name, String langName, boolean isSlider, boolean isToggle)
     {
         return addEnum(Options.class, name, langName, isSlider, isToggle);
     }
 
+    @Nullable
     public static Options addOptions(String name, String langName, boolean isSlider, boolean isToggle, float valMin, float valMax, float valStep)
     {
         return addEnum(Options.class, name,
@@ -50,11 +55,13 @@ public class EnumHelperClient extends EnumHelper
                 langName, isSlider, isToggle, valMin, valMax, valStep);
     }
 
+    @Nullable
     public static EnumOS addOS2(String name)
     {
         return addEnum(EnumOS.class, name);
     }
 
+    @Nullable
     private static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
     {
         return addEnum(clientTypes, enumType, enumName, paramValues);

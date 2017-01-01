@@ -50,6 +50,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import javax.annotation.Nullable;
+
 /**
  * @author cpw
  *
@@ -242,6 +244,7 @@ public enum NetworkRegistry
      * @param z Z coord
      * @return The server side GUI object (An instance of {@link Container})
      */
+    @Nullable
     public Container getRemoteGuiContainer(ModContainer mc, EntityPlayerMP player, int modGuiId, World world, int x, int y, int z)
     {
         IGuiHandler handler = serverGuiHandlers.get(mc);
@@ -267,6 +270,7 @@ public enum NetworkRegistry
      * @param z Z coord
      * @return The client side GUI object (An instance of {@link net.minecraft.client.gui.Gui})
      */
+    @Nullable
     public Object getLocalGuiContainer(ModContainer mc, EntityPlayer player, int modGuiId, World world, int x, int y, int z)
     {
         IGuiHandler handler = clientGuiHandlers.get(mc);
@@ -291,7 +295,7 @@ public enum NetworkRegistry
      * @param remoteVersionRange the acceptable remote range
      * @param asmHarvestedData internal data
      */
-    public void register(ModContainer fmlModContainer, Class<?> clazz, String remoteVersionRange, ASMDataTable asmHarvestedData)
+    public void register(ModContainer fmlModContainer, Class<?> clazz, @Nullable String remoteVersionRange, ASMDataTable asmHarvestedData)
     {
         NetworkModHolder networkModHolder = new NetworkModHolder(fmlModContainer, clazz, remoteVersionRange, asmHarvestedData);
         registry.put(fmlModContainer, networkModHolder);

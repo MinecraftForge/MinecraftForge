@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
@@ -168,6 +169,7 @@ public enum B3DLoader implements ICustomModelLoader
         private final int frame;
         private final int nextFrame;
         private final float progress;
+        @Nullable
         private final IModelState parent;
 
         public B3DState(Animation animation, int frame)
@@ -185,7 +187,7 @@ public enum B3DLoader implements ICustomModelLoader
             this(animation, frame, nextFrame, progress, null);
         }
 
-        public B3DState(Animation animation, int frame, int nextFrame, float progress, IModelState parent)
+        public B3DState(Animation animation, int frame, int nextFrame, float progress, @Nullable IModelState parent)
         {
             this.animation = animation;
             this.frame = frame;
@@ -194,7 +196,8 @@ public enum B3DLoader implements ICustomModelLoader
             this.parent = getParent(parent);
         }
 
-        private IModelState getParent(IModelState parent)
+        @Nullable
+        private IModelState getParent(@Nullable IModelState parent)
         {
             if (parent == null) return null;
             else if (parent instanceof B3DState) return ((B3DState)parent).parent;
@@ -221,6 +224,7 @@ public enum B3DLoader implements ICustomModelLoader
             return progress;
         }
 
+        @Nullable
         public IModelState getParent()
         {
             return parent;

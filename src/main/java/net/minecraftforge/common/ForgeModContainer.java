@@ -94,6 +94,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
+import javax.annotation.Nullable;
+
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static final String VERSION_CHECK_CAT = "version_checking";
@@ -541,6 +543,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
 
     @Override
+    @Nullable
     public Certificate getSigningCertificate()
     {
         Certificate[] certificates = getClass().getProtectionDomain().getCodeSource().getCertificates();

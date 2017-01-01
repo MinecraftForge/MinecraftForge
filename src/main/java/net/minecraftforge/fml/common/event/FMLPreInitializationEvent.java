@@ -33,6 +33,8 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
+
 /**
  * Called before {@link FMLInitializationEvent} during mod startup.
  *
@@ -132,6 +134,7 @@ public class FMLPreInitializationEvent extends FMLStateEvent
      * such as a unique version number from a properties file shipped as part of the distributable.
      * @return A properties object if one exists, else null
      */
+    @Nullable
     public Properties getVersionProperties()
     {
         if (this.modContainer instanceof FMLModContainer)

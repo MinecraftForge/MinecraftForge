@@ -35,6 +35,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import org.apache.logging.log4j.Level;
 
+import javax.annotation.Nonnull;
+
 /**
  * Simple intermod communications to receive simple messages directed at you
  * from other mods
@@ -91,20 +93,22 @@ public class FMLInterModComms {
         /**
          * This field, and {@link #value} are both at the mod's discretion
          */
+        @Nonnull
         public final String key;
         /**
          * This field, and {@link #key} are both at the mod's discretion
          */
+        @Nonnull
         private final Object value;
 
-        private IMCMessage(String key, Object value)
+        private IMCMessage(@Nonnull String key, @Nonnull Object value)
         {
             this.key = key;
             this.value = value;
             this.isFunction = false;
         }
 
-        private IMCMessage(String key, String value, boolean isFunction) {
+        private IMCMessage(@Nonnull String key, @Nonnull String value, boolean isFunction) {
             this.key = key;
             this.value = value;
             this.isFunction = isFunction;
@@ -164,6 +168,7 @@ public class FMLInterModComms {
          * @throws ClassCastException if this message doesn't contain an Itemstack value
          * @return The Itemstack value
          */
+        @Nonnull
         public ItemStack getItemStackValue()
         {
             return (ItemStack) value;

@@ -52,6 +52,8 @@ import org.apache.logging.log4j.Level;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javax.annotation.Nullable;
+
 /**
  * @author cpw
  *
@@ -343,6 +345,7 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
 
 
     @Override
+    @Nullable
     public Certificate getSigningCertificate()
     {
         Certificate[] certificates = getClass().getProtectionDomain().getCodeSource().getCertificates();

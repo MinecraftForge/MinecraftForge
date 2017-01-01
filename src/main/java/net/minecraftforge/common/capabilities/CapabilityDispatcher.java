@@ -54,7 +54,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     }
 
     @SuppressWarnings("unchecked")
-    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, ICapabilityProvider parent)
+    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, @Nullable ICapabilityProvider parent)
     {
         List<ICapabilityProvider> lstCaps = Lists.newArrayList();
         List<INBTSerializable<NBTBase>> lstWriters = Lists.newArrayList();

@@ -24,8 +24,9 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractBrewingRecipe<T> implements IBrewingRecipe {
-
+public abstract class AbstractBrewingRecipe<T> implements IBrewingRecipe
+{
+    @Nonnull
     private final ItemStack input;
     private final T ingredient;
     private final ItemStack output;
