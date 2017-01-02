@@ -101,6 +101,7 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
     }
 
     @Override
+    @Nullable
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
     {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)

@@ -848,7 +848,7 @@
                      }
                  }
              }
-@@ -3628,6 +3820,112 @@
+@@ -3628,6 +3820,113 @@
          return i >= -128 && i <= 128 && j >= -128 && j <= 128;
      }
  
@@ -943,11 +943,12 @@
 +            capabilityData.setCapabilities(field_73011_w, capabilities);
 +        }
 +    }
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable EnumFacing facing)
 +    {
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, EnumFacing facing)
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }

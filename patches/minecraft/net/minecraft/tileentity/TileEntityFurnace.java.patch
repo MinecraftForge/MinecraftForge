@@ -75,7 +75,7 @@
          }
      }
  
-@@ -447,4 +458,22 @@
+@@ -447,4 +458,23 @@
              this.field_145957_n[i] = null;
          }
      }
@@ -86,7 +86,8 @@
 +
 +    @SuppressWarnings("unchecked")
 +    @Override
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +            if (facing == EnumFacing.DOWN)

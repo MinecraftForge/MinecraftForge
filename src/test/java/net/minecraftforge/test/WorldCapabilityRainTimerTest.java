@@ -1,5 +1,7 @@
 package net.minecraftforge.test;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -139,13 +141,14 @@ public class WorldCapabilityRainTimerTest {
         private IRainTimer timer = TIMER_CAP.getDefaultInstance();
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
         {
             return capability == TIMER_CAP;
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        @Nullable
+        public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
         {
             return capability == TIMER_CAP? TIMER_CAP.<T>cast(this.timer) : null;
         }

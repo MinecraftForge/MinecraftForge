@@ -1,5 +1,7 @@
 package net.minecraftforge.test;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTBase;
@@ -92,12 +94,13 @@ public class TestCapabilityMod
                 this.te = te;
             }
             @Override
-            public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+            public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
             {
                 return TEST_CAP != null && capability == TEST_CAP;
             }
             @Override
-            public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+            @Nullable
+            public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
             {
                 if (TEST_CAP != null && capability == TEST_CAP) return TEST_CAP.cast(this);
                 return null;

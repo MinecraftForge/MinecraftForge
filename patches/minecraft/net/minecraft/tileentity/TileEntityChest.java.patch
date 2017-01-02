@@ -8,7 +8,7 @@
      }
  
      @SuppressWarnings("incomplete-switch")
-@@ -470,4 +471,26 @@
+@@ -470,4 +471,27 @@
              this.field_145985_p[i] = null;
          }
      }
@@ -17,7 +17,8 @@
 +
 +    @SuppressWarnings("unchecked")
 +    @Override
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +        {
