@@ -20,10 +20,10 @@ cache:
 before_install: chmod +x gradlew
 install:
   - ./gradlew --refresh-dependencies
-  - ./gradlew ciWriteBuildNumber --stacktrace
+  - ./gradlew ciWriteBuildNumber
 script:
-  - ./gradlew build --stacktrace
-  - ./gradlew Forge:test --stacktrace
+  - ./gradlew build -S
+  - ./gradlew test -S
 
 notifications:
   email: false
