@@ -19,7 +19,7 @@ cache:
 
 before_install: chmod +x gradlew
 install:
-  - ./gradlew refresh-dependencies
+  - ./gradlew --refresh-dependencies
 script:
   - ./gradlew ciWriteBuildNumber
   - ./gradlew Forge:test
