@@ -23,7 +23,7 @@ install:
   - ./gradlew ciWriteBuildNumber
 script:
   - ./gradlew build -S
-  - ./gradlew test -S
+  - ./gradlew -p projects/Forge test -S
 
 notifications:
   email: false
