@@ -21,9 +21,8 @@ before_install: chmod +x gradlew
 install:
   - ./gradlew --refresh-dependencies
   - ./gradlew ciWriteBuildNumber
-before_script: wget -O /tmp/init.gradle https://gist.githubusercontent.com/cpw/fe8a6ee27bde84d8731a/raw/23341d9838a99eddb323b87a32d03c4e6fd57526/bootstrap.gradle
 script:
-  - ./gradlew -I /tmp/init.gradle build -S
+  - ./gradlew build -S
   - ./gradlew test -S
 
 notifications:
