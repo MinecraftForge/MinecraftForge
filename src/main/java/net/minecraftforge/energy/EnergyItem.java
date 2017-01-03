@@ -155,7 +155,8 @@ public class EnergyItem extends Item implements IEnergyItem
     *            The ItemStack instance.
     * @return The NBTTagCompound of the ItemStack. Can be null if the Item contained in the ItemStack is not an instance of EnergyItem
     */
-    protected static final NBTTagCompound getAndInitializeTagCompound(ItemStack itemStack) {
+    protected static final NBTTagCompound getAndInitializeTagCompound(ItemStack itemStack)
+    {
         NBTTagCompound nbt = itemStack.getTagCompound();
         if (nbt == null)
         {
