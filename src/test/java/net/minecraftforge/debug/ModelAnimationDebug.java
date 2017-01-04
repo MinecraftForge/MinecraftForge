@@ -80,7 +80,7 @@ public class ModelAnimationDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            GameRegistry.register(new Block(Material.field_151575_d)
+            GameRegistry.register(new Block(Material.WOOD)
             {
                 {
                     setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
