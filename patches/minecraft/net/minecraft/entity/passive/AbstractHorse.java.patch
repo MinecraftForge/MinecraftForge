@@ -1,6 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/AbstractHorse.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/AbstractHorse.java
-@@ -981,6 +981,7 @@
+@@ -606,10 +606,13 @@
+ 
+     public void func_70645_a(DamageSource p_70645_1_)
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
+         super.func_70645_a(p_70645_1_);
+ 
+         if (!this.field_70170_p.field_72995_K && this.field_110296_bG != null)
+         {
++            captureDrops = true;
++            this.capturedDrops.clear();
+             for (int i = 0; i < this.field_110296_bG.func_70302_i_(); ++i)
+             {
+                 ItemStack itemstack = this.field_110296_bG.func_70301_a(i);
+@@ -619,6 +622,13 @@
+                     this.func_70099_a(itemstack, 0.0F);
+                 }
+             }
++            captureDrops = false;
++            int lootingLevel = p_70645_1_.func_76346_g() != null ? net.minecraftforge.common.ForgeHooks.getLootingLevel(this, p_70645_1_.func_76346_g(), p_70645_1_) : 0;
++            if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_70645_1_, capturedDrops, lootingLevel, this.field_70718_bc > 0)) {
++                for (net.minecraft.entity.item.EntityItem entityItem : capturedDrops) {
++                    field_70170_p.func_72838_d(entityItem);
++                }
++            }
+         }
+     }
+ 
+@@ -981,6 +991,7 @@
          }
  
          this.func_110232_cE();
@@ -8,7 +36,7 @@
      }
  
      public boolean func_70878_b(EntityAnimal p_70878_1_)
-@@ -1219,4 +1220,22 @@
+@@ -1219,4 +1230,22 @@
  
          return p_180482_2_;
      }
