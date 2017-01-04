@@ -624,7 +624,7 @@ public class Channel {
 		if( p < 32 ) {
 			p = 32;
 		}
-		if( p > 32768 ) {
+		else if( p > 32768 ) {
 			p = 32768;
 		}
 		period = p;
@@ -634,7 +634,7 @@ public class Channel {
 		if( vol < 0 ) {
 			vol = 0;
 		}
-		if( vol > 64 ) {
+		else if( vol > 64 ) {
 			vol = 64;
 		}
 		global_volume[ 0 ] = vol;
@@ -776,7 +776,7 @@ public class Channel {
 			fade_out_volume = 32768;
 			key_on = true;
 		}
-		if( key > 0 ) {
+		else if( key > 0 ) {
 			if( key < 97 ) {
 				porta_period = key_to_period( key );
 				if( effect != 0x03 && effect != 0x05 ) {
@@ -897,7 +897,7 @@ public class Channel {
 		if( tremolo_volume < 0 ) {
 			tremolo_volume = 0;
 		}
-		if( tremolo_volume > 64 ) {
+		else if( tremolo_volume > 64 ) {
 			tremolo_volume = 64;
 		}
 		amplitude = tremolo_volume << IBXM.FP_SHIFT - 6;
@@ -931,7 +931,7 @@ public class Channel {
 		if( vibrato_period < 32 ) {
 			vibrato_period = 32;
 		}
-		if( vibrato_period > 32768 ) {
+		else if( vibrato_period > 32768 ) {
 			vibrato_period = 32768;
 		}
 		if( linear_periods ) {

@@ -100,7 +100,7 @@ public class ScreamTracker3 {
 			}
 		}
 		module.set_num_channels( num_channels );
-		panning_offset = 96 + num_pattern_orders + num_instruments * 2 + num_patterns * 2;
+		panning_offset = 96 + num_pattern_orders + (num_instruments + num_patterns) * 2;
 		for( channel_idx = 0; channel_idx < 32; channel_idx++ ) {
 			if( channel_map[ channel_idx ] < 0 ) continue;
 			panning = 7;
@@ -341,9 +341,7 @@ public class ScreamTracker3 {
 		num_pattern_orders = get_num_pattern_orders( s3m_file );
 		num_instruments = get_num_instruments( s3m_file );
 		num_patterns = get_num_patterns( s3m_file );
-		s3m_file_length += num_pattern_orders;
-		s3m_file_length += num_instruments * 2;
-		s3m_file_length += num_patterns * 2;
+		s3m_file_length += num_pattern_orders + (num_instruments + num_patterns) * 2;
 		/* Read enough of file to calculate the length.*/
 		s3m_file = read_more( s3m_file, s3m_file_length, data_input );
 		for( instrument_idx = 0; instrument_idx < num_instruments; instrument_idx++ ) {
@@ -383,28 +381,21 @@ public class ScreamTracker3 {
 	}
 
 	private static int get_num_pattern_orders( byte[] s3m_file ) {
-		int num_pattern_orders;
-		num_pattern_orders = unsigned_short_le( s3m_file, 32 );
-		return num_pattern_orders;
+		return unsigned_short_le( s3m_file, 32 );
 	}
 
 	private static int get_num_instruments( byte[] s3m_file ) {
-		int num_instruments;
-		num_instruments = unsigned_short_le( s3m_file, 34 );
-		return num_instruments;
+		return unsigned_short_le( s3m_file, 34 );
 	}
 	
 	private static int get_num_patterns( byte[] s3m_file ) {
-		int num_patterns;
-		num_patterns = unsigned_short_le( s3m_file, 36 );
-		return num_patterns;
+		return unsigned_short_le( s3m_file, 36 );
 	}
 
 	private static int get_instrument_offset( byte[] s3m_file, int instrument_idx ) {
-		int instrument_offset, pointer_offset;
+		int pointer_offset;
 		pointer_offset = 96 + get_num_pattern_orders( s3m_file );
-		instrument_offset = unsigned_short_le( s3m_file, pointer_offset + instrument_idx * 2 ) << 4;
-		return instrument_offset;
+		return unsigned_short_le( s3m_file, pointer_offset + instrument_idx * 2 ) << 4;
 	}
 
 	private static int get_sample_data_offset( byte[] s3m_file, int instrument_offset ) {
@@ -432,17 +423,14 @@ public class ScreamTracker3 {
 	}
 
 	private static int get_pattern_offset( byte[] s3m_file, int pattern_idx ) {
-		int pattern_offset, pointer_offset;
+		int pointer_offset;
 		pointer_offset = 96 + get_num_pattern_orders( s3m_file );
 		pointer_offset += get_num_instruments( s3m_file ) * 2;
-		pattern_offset = unsigned_short_le( s3m_file, pointer_offset + pattern_idx * 2 ) << 4;
-		return pattern_offset;
+		return unsigned_short_le( s3m_file, pointer_offset + pattern_idx * 2 ) << 4;
 	}
 
 	private static int get_pattern_length( byte[] s3m_file, int pattern_offset ) {
-		int pattern_length;
-		pattern_length = unsigned_short_le( s3m_file, pattern_offset );
-		return pattern_length;
+		return unsigned_short_le( s3m_file, pattern_offset );
 	}
 
 	private static byte[] read_more( byte[] old_data, int new_length, DataInput data_input ) throws IOException {
@@ -463,8 +451,7 @@ public class ScreamTracker3 {
 	private static int unsigned_short_le( byte[] buffer, int offset ) {
 		int value;
 		value = buffer[ offset ] & 0xFF;
-		value = value | ( ( buffer[ offset + 1 ] & 0xFF ) << 8 );
-		return value;
+		return value | ( ( buffer[ offset + 1 ] & 0xFF ) << 8 );
 	}
 
 	private static String ascii_text( byte[] buffer, int offset, int length ) {
