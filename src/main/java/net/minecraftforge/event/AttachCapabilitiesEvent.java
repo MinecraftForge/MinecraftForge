@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
 
@@ -38,6 +39,7 @@ import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
 {
     private final T obj;
+    private final Class<T> type;
     private final Map<ResourceLocation, ICapabilityProvider> caps = Maps.newLinkedHashMap();
     private final Map<ResourceLocation, ICapabilityProvider> view = Collections.unmodifiableMap(caps);
 
@@ -47,10 +49,19 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
     {
         this((Class<T>)Object.class, obj);
     }
+
+    @SuppressWarnings("unchecked")
     public AttachCapabilitiesEvent(Class<T> type, T obj)
     {
-        super(type);
+        super((Class<T>)obj.getClass());
         this.obj = obj;
+        this.type = type;
+    }
+
+    @Override
+    public boolean matchParameterizedTypeArgument(Type targetType)
+    {
+        return targetType == type || super.matchParameterizedTypeArgument(targetType);
     }
 
     /**
