@@ -18,7 +18,16 @@
      private final String field_76791_y;
      private final float field_76748_D;
      private final float field_76749_E;
-@@ -134,11 +134,12 @@
+@@ -90,6 +90,8 @@
+     protected List<Biome.SpawnListEntry> field_76762_K = Lists.<Biome.SpawnListEntry>newArrayList();
+     protected List<Biome.SpawnListEntry> field_76755_L = Lists.<Biome.SpawnListEntry>newArrayList();
+     protected List<Biome.SpawnListEntry> field_82914_M = Lists.<Biome.SpawnListEntry>newArrayList();
++    // Forge: Stores the spawnable lists for non-vanilla EnumCreatureTypes
++    protected com.google.common.collect.ListMultimap<EnumCreatureType, SpawnListEntry> modSpawnableLists = com.google.common.collect.ArrayListMultimap.create();
+ 
+     public static int func_185362_a(Biome p_185362_0_)
+     {
+@@ -134,11 +136,12 @@
          this.field_76761_J.add(new Biome.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.field_76755_L.add(new Biome.SpawnListEntry(EntitySquid.class, 10, 4, 4));
          this.field_82914_M.add(new Biome.SpawnListEntry(EntityBat.class, 10, 8, 8));
@@ -32,7 +41,16 @@
      }
  
      public boolean func_185363_b()
-@@ -234,7 +235,7 @@
+@@ -182,7 +185,7 @@
+             case AMBIENT:
+                 return this.field_82914_M;
+             default:
+-                return Collections.<Biome.SpawnListEntry>emptyList();
++                return this.modSpawnableLists.get(p_76747_1_); // Forge: Don't return an empty list for non-vanilla EnumCreatureTypes
+         }
+     }
+ 
+@@ -234,7 +237,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180627_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -41,7 +59,7 @@
      }
  
      public final void func_180628_b(World p_180628_1_, Random p_180628_2_, ChunkPrimer p_180628_3_, int p_180628_4_, int p_180628_5_, double p_180628_6_)
-@@ -327,7 +328,7 @@
+@@ -327,7 +330,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180625_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -50,7 +68,7 @@
      }
  
      public Class <? extends Biome > func_150562_l()
-@@ -393,6 +394,83 @@
+@@ -393,6 +396,83 @@
          return this.field_76766_R;
      }
  
