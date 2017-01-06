@@ -22,7 +22,7 @@ install:
   - ./gradlew --refresh-dependencies
   - ./gradlew ciWriteBuildNumber
 script:
-  - travis_wait ./gradlew build -x createExe -S
+  - ./gradlew build -i -x createExe -S
   - ./gradlew -p projects/Forge test -S
 
 notifications:
