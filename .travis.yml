@@ -16,6 +16,7 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - $HOME/build/localCache/Forge/rangemap.txt
 
 before_install: chmod +x gradlew
 install:
