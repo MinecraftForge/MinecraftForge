@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.base.Objects;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -44,5 +45,26 @@ public class ModelStateComposition implements IModelState
             return Optional.of(f.get().compose(s.get()));
         }
         return f.or(s);
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        ModelStateComposition that = (ModelStateComposition) o;
+        return Objects.equal(first, that.first) && Objects.equal(second, that.second);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode(first, second);
     }
 }
