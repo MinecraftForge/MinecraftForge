@@ -29,15 +29,43 @@ import net.minecraft.util.EnumFacing;
 // disadvantages: (possibly) larger memory footprint, overhead on packing the attributes at the final rendering stage
 public class UnpackedBakedQuad extends BakedQuad
 {
-    protected final float[][][] unpackedData;
+    private static boolean cacheUnpacked = true;
+
+    private float[][][] unpackedData;
     protected final VertexFormat format;
     protected boolean packed = false;
+    protected boolean unpacked = false;
 
     public UnpackedBakedQuad(float[][][] unpackedData, int tint, EnumFacing orientation, TextureAtlasSprite texture, boolean applyDiffuseLighting, VertexFormat format)
     {
         super(new int[format.getNextOffset() /* / 4 * 4 */], tint, orientation, texture, applyDiffuseLighting, format);
-        this.unpackedData = unpackedData;
         this.format = format;
+        if (cacheUnpacked)
+        {
+            this.unpackedData = unpackedData;
+            unpacked = true;
+        }
+        else
+        {
+            pack(unpackedData);
+        }
+    }
+
+    private void pack(float[][][] unpackedData)
+    {
+        for(int v = 0; v < 4; v++)
+        {
+            for(int e = 0; e < format.getElementCount(); e++)
+            {
+                LightUtil.pack(unpackedData[v][e], vertexData, format, v, e);
+            }
+        }
+        packed = true;
+    }
+
+    protected float[][][] getUnpackedData()
+    {
+        return unpackedData;
     }
 
     @Override
@@ -45,14 +73,7 @@ public class UnpackedBakedQuad extends BakedQuad
     {
         if(!packed)
         {
-            packed = true;
-            for(int v = 0; v < 4; v++)
-            {
-                for(int e = 0; e < format.getElementCount(); e++)
-                {
-                    LightUtil.pack(unpackedData[v][e], vertexData, format, v, e);
-                }
-            }
+            pack(unpackedData);
         }
         return vertexData;
     }
@@ -60,6 +81,22 @@ public class UnpackedBakedQuad extends BakedQuad
     @Override
     public void pipe(IVertexConsumer consumer)
     {
+        if (!cacheUnpacked)
+        {
+            super.pipe(consumer);
+        }
+        if (!unpacked)
+        {
+            unpackedData = new float[4][format.getElementCount()][4];
+            for(int v = 0; v < 4; v++)
+            {
+                for(int e = 0; e < format.getElementCount(); e++)
+                {
+                    LightUtil.unpack(vertexData, unpackedData[v][e], format, v, e);
+                }
+            }
+            unpacked = true;
+        }
         int[] eMap = LightUtil.mapFormats(consumer.getVertexFormat(), format);
 
         if(hasTintIndex())
@@ -69,7 +106,7 @@ public class UnpackedBakedQuad extends BakedQuad
         consumer.setTexture(sprite);
         consumer.setApplyDiffuseLighting(applyDiffuseLighting);
         consumer.setQuadOrientation(getFace());
-        for(int v = 0; v < 4; v++)
+        for (int v = 0; v < 4; v++)
         {
             for(int e = 0; e < consumer.getVertexFormat().getElementCount(); e++)
             {
@@ -223,5 +260,9 @@ public class UnpackedBakedQuad extends BakedQuad
             }
             return new UnpackedBakedQuad(unpackedData, tint, orientation, texture, applyDiffuseLighting, format);
         }
+    }
+
+    public static void setCacheUnpacked(boolean value) {
+        cacheUnpacked = value;
     }
 }
