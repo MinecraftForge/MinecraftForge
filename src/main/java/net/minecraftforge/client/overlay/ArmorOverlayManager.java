@@ -19,21 +19,13 @@
 
 package net.minecraftforge.client.overlay;
 
-import java.util.Map;
-
-import com.google.common.collect.Maps;
-
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.RegistryDelegate;
-
-import javax.annotation.Nonnull;
 
 /**
  * Offshore handler for the Armors' extra passes. Specifically for reducing patch size & maintaining readability.

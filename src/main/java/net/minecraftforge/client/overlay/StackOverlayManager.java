@@ -19,12 +19,6 @@
 
 package net.minecraftforge.client.overlay;
 
-import java.util.List;
-import java.util.Map;
-
-import com.google.common.collect.Maps;
-
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -34,10 +28,10 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.registry.RegistryDelegate;
+
+import java.util.List;
 
 /**
  * Offshore handler for the Items' extra passes. Specifically for reducing patch size & maintaining readability.

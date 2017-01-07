@@ -28,7 +28,7 @@
          public Item func_151685_b()
          {
              return this == LEATHER ? Items.field_151116_aA : (this == CHAIN ? Items.field_151042_j : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
-@@ -281,5 +286,86 @@
+@@ -281,5 +286,122 @@
          {
              return this.field_189417_k;
          }
@@ -98,9 +98,27 @@
 +    public final void subscribeArmorOverlayHandler(net.minecraftforge.client.overlay.IArmorOverlayHandler toSubscribe)
 +    {
 +        if(overlayHandler instanceof net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper)
-+            ((net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper)overlayHandler).addSubscription(toSubscribe);
++        {
++            if (toSubscribe instanceof net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper)
++            {
++                net.minecraftforge.fml.common.FMLLog.bigWarning("Attempted to subscribe an ArmorOverlayHandler subscription wrapper when one already existed! Skipping.");
++            }
++            else
++            {
++                ((net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper) overlayHandler).addSubscription(toSubscribe);
++            }
++        }
 +        else
-+            overlayHandler = new net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper(toSubscribe);
++        {
++            if (toSubscribe instanceof net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper)
++            {   //Should only happen on substitution
++                overlayHandler = toSubscribe;
++            }
++            else
++            {
++                overlayHandler = new net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper(toSubscribe);
++            }
++        }
 +    }
 +
 +    /**
@@ -109,9 +127,27 @@
 +    public final void subscribeArmorOverlayColor(net.minecraftforge.client.overlay.IArmorOverlayColor toSubscribe)
 +    {
 +        if(overlayColor instanceof net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)
-+            ((net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)overlayColor).addSubscription(toSubscribe);
++        {
++            if (toSubscribe instanceof net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)
++            {
++                net.minecraftforge.fml.common.FMLLog.bigWarning("Attempted to subscribe an ArmorOverlayColor subscription wrapper when one already existed! Skipping.");
++            }
++            else
++            {
++                ((net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper) overlayColor).addSubscription(toSubscribe);
++            }
++        }
 +        else
-+            overlayColor = new net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper(toSubscribe);
++        {
++            if (toSubscribe instanceof net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)
++            {   //Should only happen on substitution
++                overlayColor = toSubscribe;
++            }
++            else
++            {
++                overlayColor = new net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper(toSubscribe);
++            }
++        }
 +    }
 +    /* ======================================== FORGE END   =====================================*/
  }

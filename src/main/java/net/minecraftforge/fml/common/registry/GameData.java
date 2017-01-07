@@ -29,6 +29,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
@@ -37,9 +38,12 @@ import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.overlay.IArmorOverlayColor;
+import net.minecraftforge.client.overlay.IArmorOverlayHandler;
+import net.minecraftforge.client.overlay.IStackOverlayColor;
+import net.minecraftforge.client.overlay.IStackOverlayHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 
 import com.google.common.collect.BiMap;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -262,7 +266,7 @@ public class GameData
         {
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = (ClearableObjectIntIdentityMap<IBlockState>)slaves.get(BLOCKSTATE_TO_ID);
 
-            //So, due to blocks having more in-world states then metadata allows, we have to turn the map into a semi-milti-bimap.
+            //So, due to blocks having more in-world states then metadata allows, we have to turn the map into a semi-multi-bimap.
             //We can do this however because the implementation of the map is last set wins. So we can add all states, then fix the meta bimap.
             //Multiple states -> meta. But meta to CORRECT state.
 
@@ -390,6 +394,23 @@ public class GameData
         public void onSubstituteActivated(Map<ResourceLocation, ?> slaveset, Item original, Item replacement, ResourceLocation name)
         {
             final BiMap<Block, Item> blockItemMap = (BiMap<Block, Item>)slaveset.get(BLOCK_TO_ITEM);
+            if (original instanceof ItemArmor && replacement instanceof ItemArmor)
+            {
+                ItemArmor originalArmor = (ItemArmor) original;
+                ItemArmor replacementArmor = (ItemArmor) replacement;
+                IArmorOverlayHandler handler = originalArmor.getArmorOverlayHandler();
+                IArmorOverlayColor color = originalArmor.getArmorOverlayColor();
+                if(handler instanceof IArmorOverlayHandler.SubscriptionWrapper)
+                    replacementArmor.subscribeArmorOverlayHandler(handler);
+                if(color instanceof IArmorOverlayColor.SubscriptionWrapper)
+                    replacementArmor.subscribeArmorOverlayColor(color);
+            }
+            IStackOverlayHandler handler = original.getStackOverlayHandler();
+            IStackOverlayColor color = original.getStackOverlayColor();
+            if(handler instanceof IStackOverlayHandler.SubscriptionWrapper)
+                replacement.subscribeStackOverlayHandler(handler);
+            if(color instanceof IStackOverlayColor.SubscriptionWrapper)
+                replacement.subscribeStackOverlayColor(color);
         }
     }
 
