@@ -51,7 +51,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
 
     public AnimationItemOverrideList(IModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, ItemOverrideList overrides)
     {
-        this(model, state, format, bakedTextureGetter, overrides.getOverrides());
+        this(model, state, format, bakedTextureGetter, overrides.getOverrides().reverse());
     }
 
     public AnimationItemOverrideList(IModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
