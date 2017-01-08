@@ -768,7 +768,13 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
             if (currId == -1)
             {
                 FMLLog.info("Found a missing id from the world %s", itemName);
-                missingIds.put(entry.getKey(), newId);
+                if(!itemName.getResourceDomain().equals("minecraft")) {//minecraft will migrate the items with their own system
+                    missingIds.put(entry.getKey(), newId);
+                }
+                else
+                {
+                    FMLLog.fine("Ignoring missing vanilla id as minecraft will probably take care of it");
+                }
                 continue; // no block/item -> nothing to add
             }
             else if (currId != newId)
