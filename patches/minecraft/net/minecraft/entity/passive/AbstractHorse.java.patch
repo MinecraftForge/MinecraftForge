@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/AbstractHorse.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/AbstractHorse.java
-@@ -981,6 +981,7 @@
+@@ -104,6 +104,7 @@
+         this.field_70714_bg.func_75776_a(6, new EntityAIWanderAvoidWater(this, 0.7D));
+         this.field_70714_bg.func_75776_a(7, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
+         this.field_70714_bg.func_75776_a(8, new EntityAILookIdle(this));
++        super.func_184651_r();
+     }
+ 
+     protected void func_70088_a()
+@@ -981,6 +982,7 @@
          }
  
          this.func_110232_cE();
@@ -8,7 +16,7 @@
      }
  
      public boolean func_70878_b(EntityAnimal p_70878_1_)
-@@ -1219,4 +1220,22 @@
+@@ -1219,4 +1221,22 @@
  
          return p_180482_2_;
      }

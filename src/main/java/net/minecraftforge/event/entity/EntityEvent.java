@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event.entity;
 
+import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
@@ -134,5 +135,30 @@ public class EntityEvent extends Event
         public void setOldChunkX(int oldChunkX) { this.oldChunkX = oldChunkX; }
         public int getOldChunkZ() { return oldChunkZ; }
         public void setOldChunkZ(int oldChunkZ) { this.oldChunkZ = oldChunkZ; }
+    }
+    
+    /**
+     * GatherAITasks is fired after an Entity does its initial AI setup. <br>
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     **/
+    public static class GatherAITasks extends EntityEvent
+    {
+        private final EntityAITasks tasks;
+        
+        public GatherAITasks(Entity entity, EntityAITasks tasks)
+        {
+            super(entity);
+            this.tasks = tasks;
+        }
+        
+        public EntityAITasks getTasks()
+        {
+            return this.tasks;
+        }
     }
 }

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityWolf.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityWolf.java
+@@ -96,6 +96,7 @@
+             }
+         }));
+         this.field_70715_bh.func_75776_a(5, new EntityAINearestAttackableTarget(this, AbstractSkeleton.class, false));
++        super.func_184651_r();
+     }
+ 
+     protected void func_110147_ax()

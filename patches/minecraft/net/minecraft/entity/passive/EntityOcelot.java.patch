@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
-@@ -299,7 +299,7 @@
+@@ -69,6 +69,7 @@
+         this.field_70714_bg.func_75776_a(10, new EntityAIWanderAvoidWater(this, 0.8D, 1.0000001E-5F));
+         this.field_70714_bg.func_75776_a(11, new EntityAIWatchClosest(this, EntityPlayer.class, 10.0F));
+         this.field_70715_bh.func_75776_a(1, new EntityAITargetNonTamed(this, EntityChicken.class, false, (Predicate)null));
++        super.func_184651_r();
+     }
+ 
+     protected void func_70088_a()
+@@ -299,7 +300,7 @@
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos.func_177977_b());
              Block block = iblockstate.func_177230_c();
  

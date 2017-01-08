@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombie.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombie.java
-@@ -98,7 +98,7 @@
+@@ -80,6 +80,7 @@
+         this.field_70714_bg.func_75776_a(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+         this.field_70714_bg.func_75776_a(8, new EntityAILookIdle(this));
+         this.func_175456_n();
++        super.func_184651_r();
+     }
+ 
+     protected void func_175456_n()
+@@ -98,7 +99,7 @@
          this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23000000417232513D);
          this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
          this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_111128_a(2.0D);
@@ -9,7 +17,7 @@
      }
  
      protected void func_70088_a()
-@@ -239,12 +239,24 @@
+@@ -239,12 +240,24 @@
                  entitylivingbase = (EntityLivingBase)p_70097_1_.func_76346_g();
              }
  
@@ -39,7 +47,7 @@
  
                  for (int l = 0; l < 50; ++l)
                  {
-@@ -252,14 +264,14 @@
+@@ -252,14 +265,14 @@
                      int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
                      int k1 = k + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
  

@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityVex.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityVex.java
+@@ -76,7 +76,6 @@
+ 
+     protected void func_184651_r()
+     {
+-        super.func_184651_r();
+         this.field_70714_bg.func_75776_a(0, new EntityAISwimming(this));
+         this.field_70714_bg.func_75776_a(4, new EntityVex.AIChargeAttack());
+         this.field_70714_bg.func_75776_a(8, new EntityVex.AIMoveRandom());
+@@ -85,6 +84,7 @@
+         this.field_70715_bh.func_75776_a(1, new EntityAIHurtByTarget(this, true, new Class[] {EntityVex.class}));
+         this.field_70715_bh.func_75776_a(2, new EntityVex.AICopyOwnerTarget(this));
+         this.field_70715_bh.func_75776_a(3, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
++        super.func_184651_r();
+     }
+ 
+     protected void func_110147_ax()

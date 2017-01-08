@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityIronGolem.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityIronGolem.java
+@@ -73,6 +73,7 @@
+                 return p_apply_1_ != null && IMob.field_175450_e.apply(p_apply_1_) && !(p_apply_1_ instanceof EntityCreeper);
+             }
+         }));
++        super.func_184651_r();
+     }
+ 
+     protected void func_70088_a()

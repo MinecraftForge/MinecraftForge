@@ -9,7 +9,15 @@
  {
      private static final DataParameter<Byte> field_184774_bv = EntityDataManager.<Byte>func_187226_a(EntitySheep.class, DataSerializers.field_187191_a);
      private final InventoryCrafting field_90016_e = new InventoryCrafting(new Container()
-@@ -180,7 +180,7 @@
+@@ -84,6 +84,7 @@
+         this.field_70714_bg.func_75776_a(6, new EntityAIWanderAvoidWater(this, 1.0D));
+         this.field_70714_bg.func_75776_a(7, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
+         this.field_70714_bg.func_75776_a(8, new EntityAILookIdle(this));
++        super.func_184651_r();
+     }
+ 
+     protected void func_70619_bc()
+@@ -180,7 +181,7 @@
      {
          ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
  
@@ -18,7 +26,7 @@
          {
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -369,4 +369,19 @@
+@@ -369,4 +370,19 @@
          field_175514_bm.put(EnumDyeColor.RED, new float[] {0.6F, 0.2F, 0.2F});
          field_175514_bm.put(EnumDyeColor.BLACK, new float[] {0.1F, 0.1F, 0.1F});
      }

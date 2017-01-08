@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -171,6 +171,7 @@
+@@ -108,6 +108,7 @@
+ 
+     protected void func_184651_r()
+     {
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.GatherAITasks(this, this.field_70714_bg));
+     }
+ 
+     protected void func_110147_ax()
+@@ -171,6 +172,7 @@
      public void func_70624_b(@Nullable EntityLivingBase p_70624_1_)
      {
          this.field_70696_bz = p_70624_1_;
@@ -8,7 +16,7 @@
      }
  
      public boolean func_70686_a(Class <? extends EntityLivingBase > p_70686_1_)
-@@ -708,10 +709,22 @@
+@@ -708,10 +710,22 @@
  
      protected void func_70623_bb()
      {
@@ -31,7 +39,7 @@
          else
          {
              Entity entity = this.field_70170_p.func_72890_a(this, -1.0D);
-@@ -845,7 +858,6 @@
+@@ -845,7 +859,6 @@
          return !this.field_70170_p.func_72953_d(this.func_174813_aQ()) && this.field_70170_p.func_184144_a(this, this.func_174813_aQ()).isEmpty() && this.field_70170_p.func_72917_a(this.func_174813_aQ(), this);
      }
  

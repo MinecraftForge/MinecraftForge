@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityChicken.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityChicken.java
+@@ -61,6 +61,7 @@
+         this.field_70714_bg.func_75776_a(5, new EntityAIWanderAvoidWater(this, 1.0D));
+         this.field_70714_bg.func_75776_a(6, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
+         this.field_70714_bg.func_75776_a(7, new EntityAILookIdle(this));
++        super.func_184651_r();
+     }
+ 
+     public float func_70047_e()

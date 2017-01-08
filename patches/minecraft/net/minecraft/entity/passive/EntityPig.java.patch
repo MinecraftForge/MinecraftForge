@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityPig.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityPig.java
+@@ -65,6 +65,7 @@
+         this.field_70714_bg.func_75776_a(6, new EntityAIWanderAvoidWater(this, 1.0D));
+         this.field_70714_bg.func_75776_a(7, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
+         this.field_70714_bg.func_75776_a(8, new EntityAILookIdle(this));
++        super.func_184651_r();
+     }
+ 
+     protected void func_110147_ax()

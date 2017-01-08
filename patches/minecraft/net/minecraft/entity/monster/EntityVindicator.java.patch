@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityVindicator.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityVindicator.java
+@@ -58,7 +58,6 @@
+ 
+     protected void func_184651_r()
+     {
+-        super.func_184651_r();
+         this.field_70714_bg.func_75776_a(0, new EntityAISwimming(this));
+         this.field_70714_bg.func_75776_a(4, new EntityAIAttackMelee(this, 1.0D, false));
+         this.field_70714_bg.func_75776_a(8, new EntityAIWander(this, 0.6D));
+@@ -69,6 +68,7 @@
+         this.field_70715_bh.func_75776_a(3, new EntityAINearestAttackableTarget(this, EntityVillager.class, true));
+         this.field_70715_bh.func_75776_a(3, new EntityAINearestAttackableTarget(this, EntityIronGolem.class, true));
+         this.field_70715_bh.func_75776_a(4, new EntityVindicator.AIJohnnyAttack(this));
++        super.func_184651_r();
+     }
+ 
+     protected void func_110147_ax()

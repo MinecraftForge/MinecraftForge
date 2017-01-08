@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySpider.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySpider.java
+@@ -61,6 +61,7 @@
+         this.field_70715_bh.func_75776_a(1, new EntityAIHurtByTarget(this, false, new Class[0]));
+         this.field_70715_bh.func_75776_a(2, new EntitySpider.AISpiderTarget(this, EntityPlayer.class));
+         this.field_70715_bh.func_75776_a(3, new EntitySpider.AISpiderTarget(this, EntityIronGolem.class));
++        super.func_184651_r();
+     }
+ 
+     public double func_70042_X()

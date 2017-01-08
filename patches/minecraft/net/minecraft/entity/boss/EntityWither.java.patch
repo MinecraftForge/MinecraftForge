@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/boss/EntityWither.java
 +++ ../src-work/minecraft/net/minecraft/entity/boss/EntityWither.java
-@@ -383,7 +383,7 @@
+@@ -94,6 +94,7 @@
+         this.field_70714_bg.func_75776_a(7, new EntityAILookIdle(this));
+         this.field_70715_bh.func_75776_a(1, new EntityAIHurtByTarget(this, false, new Class[0]));
+         this.field_70715_bh.func_75776_a(2, new EntityAINearestAttackableTarget(this, EntityLiving.class, 0, false, false, field_82219_bJ));
++        super.func_184651_r();
+     }
+ 
+     protected void func_70088_a()
+@@ -383,7 +384,7 @@
                                  IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
                                  Block block = iblockstate.func_177230_c();
  

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/AbstractSkeleton.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/AbstractSkeleton.java
+@@ -82,6 +82,7 @@
+         this.field_70715_bh.func_75776_a(1, new EntityAIHurtByTarget(this, false, new Class[0]));
+         this.field_70715_bh.func_75776_a(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+         this.field_70715_bh.func_75776_a(3, new EntityAINearestAttackableTarget(this, EntityIronGolem.class, true));
++        super.func_184651_r();
+     }
+ 
+     protected void func_110147_ax()

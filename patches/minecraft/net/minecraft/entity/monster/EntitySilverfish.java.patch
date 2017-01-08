@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
+@@ -51,6 +51,7 @@
+         this.field_70714_bg.func_75776_a(5, new EntitySilverfish.AIHideInStone(this));
+         this.field_70715_bh.func_75776_a(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+         this.field_70715_bh.func_75776_a(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
++        super.func_184651_r();
+     }
+ 
+     public double func_70033_W()
