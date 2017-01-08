@@ -785,7 +785,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
             }
             I obj = currentRegistry.getRaw(itemName);
             I sub = obj;
-            // If we have an object in the originals set, we use that for initial adding - substitute activation will read the substitute if necessary later
+            // If we have an object in the originals set, we use that for initial adding - substitute activation will readd the substitute if necessary later
             if (currentRegistry.substitutionOriginals.containsKey(itemName))
             {
                 obj = currentRegistry.substitutionOriginals.get(itemName);
