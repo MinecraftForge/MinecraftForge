@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityBoat.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityBoat.java
+@@ -476,7 +476,7 @@
+ 
+                                 if (!list.isEmpty())
+                                 {
+-                                    f += iblockstate.func_177230_c().field_149765_K;
++                                    f += iblockstate.func_177230_c().getSlipperiness(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos, this);
+                                     ++k1;
+                                 }
+ 
