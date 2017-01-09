@@ -24,6 +24,8 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
@@ -86,6 +88,7 @@ import net.minecraftforge.fml.common.WorldAccessContainer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -344,6 +347,18 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                     disableStairSlabCulling = tmp;
                     FMLCommonHandler.instance().reloadRenderers();
                 }
+            }
+        }
+    }
+
+    @Subscribe
+    public void missingMapping(FMLMissingMappingsEvent event){
+        for (FMLMissingMappingsEvent.MissingMapping evt:event.getAll())
+        {
+            if (evt.name.equals("minecraft:totem"))//This item changed from 1.11 -> 1.11.2
+            {
+                ResourceLocation newTotem = new ResourceLocation("minecraft:totem_of_undying");
+                evt.remap(Item.REGISTRY.getObject(newTotem));
             }
         }
     }

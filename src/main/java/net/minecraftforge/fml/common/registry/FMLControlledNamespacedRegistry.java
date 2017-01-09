@@ -768,14 +768,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
             if (currId == -1)
             {
                 FMLLog.info("Found a missing id from the world %s", itemName);
-                if(!itemName.getResourceDomain().equals("minecraft"))
-                {//minecraft will migrate the items with their own system
-                    missingIds.put(itemName, newId);
-                }
-                else
-                {
-                    FMLLog.fine("Ignoring missing vanilla id as minecraft will probably take care of it");
-                }
+                missingIds.put(itemName, newId);
                 continue; // no block/item -> nothing to add
             }
             else if (currId != newId)
@@ -785,7 +778,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
             }
             I obj = currentRegistry.getRaw(itemName);
             I sub = obj;
-            // If we have an object in the originals set, we use that for initial adding - substitute activation will readd the substitute if necessary later
+            // If we have an object in the originals set, we use that for initial adding - substitute activation will re-add the substitute if necessary later
             if (currentRegistry.substitutionOriginals.containsKey(itemName))
             {
                 obj = currentRegistry.substitutionOriginals.get(itemName);
