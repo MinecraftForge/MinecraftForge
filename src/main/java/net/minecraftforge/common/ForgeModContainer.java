@@ -352,13 +352,14 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     }
 
     @Subscribe
-    public void missingMapping(FMLMissingMappingsEvent event){
-        for (FMLMissingMappingsEvent.MissingMapping evt:event.getAll())
+    public void missingMapping(FMLMissingMappingsEvent event)
+    {
+        for (FMLMissingMappingsEvent.MissingMapping entry : event.getAll())
         {
-            if (evt.name.equals("minecraft:totem"))//This item changed from 1.11 -> 1.11.2
+            if (entry.name.equals("minecraft:totem")) //This item changed from 1.11 -> 1.11.2
             {
                 ResourceLocation newTotem = new ResourceLocation("minecraft:totem_of_undying");
-                evt.remap(Item.REGISTRY.getObject(newTotem));
+                entry.remap(Item.REGISTRY.getObject(newTotem));
             }
         }
     }
