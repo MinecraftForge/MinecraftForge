@@ -178,9 +178,9 @@ public final class ModelLoader extends ModelBakery
         if (firstLoad)
         {
             firstLoad = false;
-            for (Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
+            for (ModelResourceLocation mrl : stateModels.keySet())
             {
-                bakedRegistry.putObject(e.getKey(), missingBaked);
+                bakedRegistry.putObject(mrl, missingBaked);
             }
             return bakedRegistry;
         }
