@@ -17,23 +17,12 @@ public class DifficultyChangeEventTest
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        if (ENABLE)
-            MinecraftForge.EVENT_BUS.register(this);
+        if (ENABLE) MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
     public void onDifficultyChange(DifficultyChangeEvent event)
     {
-        if (event.getDifficulty() == EnumDifficulty.EASY)
-        {
-            event.setResult(Result.ALLOW);
-            event.setDifficulty(EnumDifficulty.NORMAL);
-        }
-        if (event.getDifficulty() == EnumDifficulty.HARD)
-        {
-            event.setResult(Result.DENY);
-        }
-        System.out.println("Difficulty changed from " + event.getOldDifficulty() + " to " + (event.getResult() == Result.ALLOW ? event.getDifficulty()
-                : event.getResult() == Result.DENY ? event.getOldDifficulty() : event.getDefaultNewDifficulty()));
+        System.out.println("Difficulty changed from " + event.getOldDifficulty() + " to " + event.getDifficulty());
     }
 }

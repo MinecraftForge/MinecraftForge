@@ -35,40 +35,24 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
- * This event has a result. {@link HasResult}<br>
- * ALLOW: final difficulty is given by subscribers.<br>
- * DEFAULT: final difficulty is the same as difficulty in argument.<br>
- * DENY: no change.<br>
+ * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@HasResult
 public class DifficultyChangeEvent extends Event
 {
-    private EnumDifficulty difficulty;
-    private final EnumDifficulty defaultNewDifficulty;
+    private final EnumDifficulty difficulty;
     private final EnumDifficulty oldDifficulty;
 
     public DifficultyChangeEvent(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
     {
         this.difficulty = difficulty;
-        this.defaultNewDifficulty = difficulty;
         this.oldDifficulty = oldDifficulty;
     }
 
     public EnumDifficulty getDifficulty()
     {
         return difficulty;
-    }
-
-    public void setDifficulty(@Nonnull EnumDifficulty difficulty)
-    {
-        this.difficulty = com.google.common.base.Preconditions.checkNotNull(difficulty);
-    }
-
-    public EnumDifficulty getDefaultNewDifficulty()
-    {
-        return defaultNewDifficulty;
     }
 
     public EnumDifficulty getOldDifficulty()

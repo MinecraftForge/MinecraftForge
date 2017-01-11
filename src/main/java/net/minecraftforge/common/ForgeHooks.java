@@ -513,12 +513,9 @@ public class ForgeHooks
         return false;
     }
     
-    public static EnumDifficulty onDifficultyChange(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
+    public static void onDifficultyChange(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
     {
-        DifficultyChangeEvent event = new DifficultyChangeEvent(difficulty, oldDifficulty);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() == Event.Result.ALLOW ? event.getDifficulty()
-                : event.getResult() == Event.Result.DENY ? oldDifficulty : difficulty;
+        MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
