@@ -24,7 +24,6 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
@@ -359,7 +358,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             if (entry.name.equals("minecraft:totem")) //This item changed from 1.11 -> 1.11.2
             {
                 ResourceLocation newTotem = new ResourceLocation("minecraft:totem_of_undying");
-                entry.remap(Item.REGISTRY.getObject(newTotem));
+                entry.remap(ForgeRegistries.ITEMS.getValue(newTotem));
             }
         }
     }
