@@ -24,6 +24,8 @@ import java.util.Map;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
+import javax.annotation.Nullable;
+
 public class FMLForgePlugin implements IFMLLoadingPlugin
 {
     public static boolean RUNTIME_DEOBF = false;
@@ -42,6 +44,7 @@ public class FMLForgePlugin implements IFMLLoadingPlugin
     }
 
     @Override
+    @Nullable
     public String getSetupClass()
     {
         return null;

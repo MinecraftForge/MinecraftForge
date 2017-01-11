@@ -47,9 +47,10 @@ public class PlayerInteractEvent extends PlayerEvent
 {
     private final EnumHand hand;
     private final BlockPos pos;
+    @Nullable
     private final EnumFacing face;
 
-    private PlayerInteractEvent(EntityPlayer player, EnumHand hand, BlockPos pos, EnumFacing face)
+    private PlayerInteractEvent(EntityPlayer player, EnumHand hand, BlockPos pos, @Nullable EnumFacing face)
     {
         super(Preconditions.checkNotNull(player, "Null player in PlayerInteractEvent!"));
         this.hand = Preconditions.checkNotNull(hand, "Null hand in PlayerInteractEvent!");

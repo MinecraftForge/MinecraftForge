@@ -36,7 +36,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 /**
  * This class provides several methods and constants used by the Config GUI classes.
@@ -210,14 +210,15 @@ public class GuiUtils
         tessellator.draw();
     }
 
-    private static ItemStack cachedTooltipStack;
+    @Nonnull
+    private static ItemStack cachedTooltipStack = ItemStack.EMPTY;
 
     /**
      * Must be called from {@code GuiScreen.renderToolTip} before {@code GuiScreen.drawHoveringText} is called.
      * 
      * @param stack The stack for which a tooltip is about to be drawn.
      */
-    public static void preItemToolTip(ItemStack stack)
+    public static void preItemToolTip(@Nonnull ItemStack stack)
     {
         cachedTooltipStack = stack;
     }
@@ -227,7 +228,7 @@ public class GuiUtils
      */
     public static void postItemToolTip()
     {
-        cachedTooltipStack = null;
+        cachedTooltipStack = ItemStack.EMPTY;
     }
 
     /**
@@ -255,8 +256,7 @@ public class GuiUtils
      * 
      * @see #drawHoveringText(List, int, int, int, int, int, FontRenderer)
      */
-    public static void drawHoveringText(@Nullable final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
-            int maxTextWidth, FontRenderer font)
+    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
     {
         if (!textLines.isEmpty())
         {

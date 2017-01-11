@@ -48,6 +48,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A universal bucket that can hold any liquid
@@ -103,7 +104,7 @@ public class UniversalBucket extends Item
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void getSubItems(@Nonnull Item itemIn, @Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
+    public void getSubItems(@Nonnull Item itemIn, @Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
     {
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
         {
@@ -276,6 +277,7 @@ public class UniversalBucket extends Item
         return bucket;
     }
 
+    @Nullable
     public FluidStack getFluid(@Nonnull ItemStack container)
     {
         return FluidStack.loadFluidStackFromNBT(container.getTagCompound());

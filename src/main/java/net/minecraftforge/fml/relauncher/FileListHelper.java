@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.relauncher;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
@@ -40,7 +41,7 @@ public final class FileListHelper {
         Arrays.sort(files, CaseInsensitiveFileComparator.INSTANCE);
         return files;
     }
-    public static File[] sortFileList(File dir, FilenameFilter filter)
+    public static File[] sortFileList(File dir, @Nullable FilenameFilter filter)
     {
         File[] files = dir.listFiles(filter);
         return sortFileList(files);

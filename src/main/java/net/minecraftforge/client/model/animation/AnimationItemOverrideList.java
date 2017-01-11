@@ -67,10 +67,10 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     @Override
     public IBakedModel handleItemState(@Nonnull IBakedModel originalModel, @Nonnull ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
     {
-        if(stack.hasCapability(net.minecraftforge.common.model.animation.CapabilityAnimation.ANIMATION_CAPABILITY, null))
+        IAnimationStateMachine asm = stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
+        if (asm != null)
         {
             // TODO: caching?
-            IAnimationStateMachine asm = stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
             if(world == null && entity != null)
             {
                 world = entity.world;

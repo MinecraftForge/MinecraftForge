@@ -237,6 +237,7 @@ public class FluidTank implements IFluidTank, IFluidHandler
      * Use this method to bypass the restrictions from {@link #canDrainFluidType(FluidStack)}
      * Meant for use by the owner of the tank when they have {@link #canDrain()} set to false}.
      */
+    @Nullable
     public FluidStack drainInternal(FluidStack resource, boolean doDrain)
     {
         if (resource == null || !resource.isFluidEqual(getFluid()))
@@ -250,6 +251,7 @@ public class FluidTank implements IFluidTank, IFluidHandler
      * Use this method to bypass the restrictions from {@link #canDrainFluidType(FluidStack)}
      * Meant for use by the owner of the tank when they have {@link #canDrain()} set to false}.
      */
+    @Nullable
     public FluidStack drainInternal(int maxDrain, boolean doDrain)
     {
         if (fluid == null || maxDrain <= 0)
@@ -343,9 +345,9 @@ public class FluidTank implements IFluidTank, IFluidHandler
      *
      * @see IFluidTankProperties#canDrainFluidType(FluidStack)
      */
-    public boolean canDrainFluidType(FluidStack fluid)
+    public boolean canDrainFluidType(@Nullable FluidStack fluid)
     {
-        return canDrain();
+        return fluid != null && canDrain();
     }
 
     protected void onContentsChanged()

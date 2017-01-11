@@ -7,8 +7,8 @@
 +
 +    //Bypass functions to allow querying this registry WITHOUT getting the defaulted value.
 +    // MODDERS DO NOT USE THIS IS FOR FORGE INTERNAL CHECKS
-+    public int getIDForObjectBypass(V bypass) { return super.func_148757_b(bypass); }
-+    public K getNameForObjectBypass(V value) { return super.func_177774_c(value); }
-+    public V getObjectBypass(K name) { return super.func_82594_a(name); }
-+    public V getObjectByIdBypass(int id){ return super.func_148754_a(id); }
++    public int getIDForObjectBypass(@Nullable V bypass) { return super.func_148757_b(bypass); }
++    @Nullable public K getNameForObjectBypass(V value) { return super.func_177774_c(value); }
++    @Nullable public V getObjectBypass(K name) { return super.func_82594_a(name); }
++    @Nullable public V getObjectByIdBypass(int id){ return super.func_148754_a(id); }
  }

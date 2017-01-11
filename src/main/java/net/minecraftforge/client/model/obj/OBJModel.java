@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector2f;
@@ -1068,7 +1069,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 //        public float[] minUVBounds = new float[] {0.0f, 0.0f};
 //        public float[] maxUVBounds = new float[] {1.0f, 1.0f};
 
-        public Group(String name, LinkedHashSet<Face> faces)
+        public Group(String name, @Nullable LinkedHashSet<Face> faces)
         {
             this.name = name != null ? name : DEFAULT_NAME;
             this.faces = faces == null ? new LinkedHashSet<Face>() : faces;
@@ -1129,6 +1130,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             for (String s : visibleGroups) this.visibilityMap.put(s, visibility);
         }
 
+        @Nullable
         public IModelState getParent(IModelState parent)
         {
             if (parent == null) return null;

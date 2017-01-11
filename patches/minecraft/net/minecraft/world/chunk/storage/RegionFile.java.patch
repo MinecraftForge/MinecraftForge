@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
-@@ -97,6 +97,39 @@
- 
-     @Nullable
+@@ -95,6 +95,39 @@
+         }
+     }
  
 +    // This is a copy (sort of) of the method below it, make sure they stay in sync
 +    public synchronized boolean chunkExists(int x, int z)
@@ -37,6 +37,6 @@
 +        return false;
 +    }
 +
+     @Nullable
+ 
      public synchronized DataInputStream func_76704_a(int p_76704_1_, int p_76704_2_)
-     {
-         if (this.func_76705_d(p_76704_1_, p_76704_2_))

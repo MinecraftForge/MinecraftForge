@@ -39,6 +39,8 @@ import org.apache.logging.log4j.Level;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
+import javax.annotation.Nullable;
+
 public class DirectoryDiscoverer implements ITypeDiscoverer
 {
     private class ClassFilter implements FileFilter
@@ -66,7 +68,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
         return found;
     }
 
-    public void exploreFileSystem(String path, File modDir, List<ModContainer> harvestedMods, ModCandidate candidate, MetadataCollection mc)
+    public void exploreFileSystem(String path, File modDir, List<ModContainer> harvestedMods, ModCandidate candidate, @Nullable MetadataCollection mc)
     {
         if (path.length() == 0)
         {

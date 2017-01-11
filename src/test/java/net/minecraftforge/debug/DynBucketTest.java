@@ -22,6 +22,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 
 import net.minecraft.util.EnumFacing;
@@ -108,7 +109,7 @@ public class DynBucketTest
             ModelLoader.setCustomMeshDefinition(dynBottle, new ItemMeshDefinition()
             {
                 @Override
-                public ModelResourceLocation getModelLocation(ItemStack stack)
+                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
                 {
                     return bottle;
                 }
@@ -147,22 +148,26 @@ public class DynBucketTest
     @SubscribeEvent
     public void onBucketFill(FillBucketEvent event)
     {
-        IBlockState state = event.getWorld().getBlockState(event.getTarget().getBlockPos());
-        if (state.getBlock() instanceof IFluidBlock)
+        RayTraceResult target = event.getTarget();
+        if (target != null)
         {
-            Fluid fluid = ((IFluidBlock) state.getBlock()).getFluid();
-            FluidStack fs = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
-
-            ItemStack bucket = event.getEmptyBucket();
-            IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(bucket);
-            if (fluidHandler != null)
+            IBlockState state = event.getWorld().getBlockState(target.getBlockPos());
+            if (state.getBlock() instanceof IFluidBlock)
             {
-                int fillAmount = fluidHandler.fill(fs, true);
-                if (fillAmount > 0)
+                Fluid fluid = ((IFluidBlock) state.getBlock()).getFluid();
+                FluidStack fs = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
+
+                ItemStack bucket = event.getEmptyBucket();
+                IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(bucket);
+                if (fluidHandler != null)
                 {
-                    ItemStack filledBucket = fluidHandler.getContainer();
-                    event.setFilledBucket(filledBucket);
-                    event.setResult(Result.ALLOW);
+                    int fillAmount = fluidHandler.fill(fs, true);
+                    if (fillAmount > 0)
+                    {
+                        ItemStack filledBucket = fluidHandler.getContainer();
+                        event.setFilledBucket(filledBucket);
+                        event.setResult(Result.ALLOW);
+                    }
                 }
             }
         }

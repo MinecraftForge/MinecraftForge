@@ -58,6 +58,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * or if the new potion is a splash potion when the old one wasn't.
      */
     @Override
+    @Nonnull
     public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
     {
         if (!input.isEmpty() && !ingredient.isEmpty() && isIngredient(ingredient))
