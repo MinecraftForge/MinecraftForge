@@ -263,7 +263,7 @@ public class ForgeHooksClient
         int distance = 0;
         if (settings.fancyGraphics && ranges.length > 0)
         {
-            distance = ranges[MathHelper.clamp_int(settings.renderDistanceChunks, 0, ranges.length-1)];
+            distance = ranges[MathHelper.clamp(settings.renderDistanceChunks, 0, ranges.length-1)];
         }
 
         int r = 0;
@@ -672,8 +672,8 @@ public class ForgeHooksClient
 
     public static boolean shouldCauseReequipAnimation(@Nonnull ItemStack from, @Nonnull ItemStack to, int slot)
     {
-        boolean fromInvalid = from.func_190926_b();
-        boolean toInvalid   = to.func_190926_b();
+        boolean fromInvalid = from.isEmpty();
+        boolean toInvalid   = to.isEmpty();
 
         if (fromInvalid && toInvalid) return false;
         if (fromInvalid || toInvalid) return true;

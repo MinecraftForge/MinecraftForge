@@ -353,7 +353,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Nonnull
     public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune)
     {
-        return Items.field_190931_a;
+        return Items.AIR;
     }
 
     @Override

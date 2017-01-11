@@ -75,3 +75,11 @@
                          this.field_185001_h[i1] = -1;
                          this.field_185002_i[i1] = -1;
  
+@@ -212,6 +193,7 @@
+                         {
+                             this.field_75167_g[i1] = 0;
+                         }
++                        this.field_75167_g[i1] = net.minecraftforge.event.ForgeEventFactory.onEnchantmentLevelSet(field_75172_h, field_178150_j, i1, (int)power, itemstack, field_75167_g[i1]);
+                     }
+ 
+                     for (int j1 = 0; j1 < 3; ++j1)

@@ -65,7 +65,7 @@ public class FluidUtil
     @Nonnull
     public static FluidActionResult interactWithFluidHandler(@Nonnull ItemStack stack, IFluidHandler fluidHandler, EntityPlayer player)
     {
-        if (stack.func_190926_b() || fluidHandler == null || player == null)
+        if (stack.isEmpty() || fluidHandler == null || player == null)
         {
             return FluidActionResult.FAILURE;
         }
@@ -99,7 +99,7 @@ public class FluidUtil
     public static FluidActionResult tryFillContainer(@Nonnull ItemStack container, IFluidHandler fluidSource, int maxAmount, @Nullable EntityPlayer player, boolean doFill)
     {
         ItemStack containerCopy = container.copy(); // do not modify the input
-        containerCopy.func_190920_e(1);
+        containerCopy.setCount(1);
         IFluidHandlerItem containerFluidHandler = getFluidHandler(containerCopy);
         if (containerFluidHandler != null)
         {
@@ -144,7 +144,7 @@ public class FluidUtil
     public static FluidActionResult tryEmptyContainer(@Nonnull ItemStack container, IFluidHandler fluidDestination, int maxAmount, @Nullable EntityPlayer player, boolean doDrain)
     {
         ItemStack containerCopy = container.copy(); // do not modify the input
-        containerCopy.func_190920_e(1);
+        containerCopy.setCount(1);
         IFluidHandlerItem containerFluidHandler = getFluidHandler(containerCopy);
         if (containerFluidHandler != null)
         {
@@ -191,7 +191,7 @@ public class FluidUtil
     @Nonnull
     public static FluidActionResult tryFillContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidSource, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player)
     {
-        if (container.func_190926_b())
+        if (container.isEmpty())
         {
             return FluidActionResult.FAILURE;
         }
@@ -204,7 +204,7 @@ public class FluidUtil
                 return new FluidActionResult(container); // creative mode: item does not change
             }
         }
-        else if (container.func_190916_E() == 1) // don't need to stow anything, just fill the container stack
+        else if (container.getCount() == 1) // don't need to stow anything, just fill the container stack
         {
             FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
             if (filledReal.isSuccess())
@@ -219,19 +219,19 @@ public class FluidUtil
             {
                 // check if we can give the itemStack to the inventory
                 ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, filledSimulated.getResult(), true);
-                if (remainder.func_190926_b() || player != null)
+                if (remainder.isEmpty() || player != null)
                 {
                     FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
                     remainder = ItemHandlerHelper.insertItemStacked(inventory, filledReal.getResult(), false);
 
                     // give it to the player or drop it at their feet
-                    if (!remainder.func_190926_b() && player != null)
+                    if (!remainder.isEmpty() && player != null)
                     {
                         ItemHandlerHelper.giveItemToPlayer(player, remainder);
                     }
 
                     ItemStack containerCopy = container.copy();
-                    containerCopy.func_190918_g(1);
+                    containerCopy.shrink(1);
                     return new FluidActionResult(containerCopy);
                 }
             }
@@ -258,7 +258,7 @@ public class FluidUtil
     @Nonnull
     public static FluidActionResult tryEmptyContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidDestination, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player)
     {
-        if (container.func_190926_b())
+        if (container.isEmpty())
         {
             return FluidActionResult.FAILURE;
         }
@@ -271,7 +271,7 @@ public class FluidUtil
                 return new FluidActionResult(container); // creative mode: item does not change
             }
         }
-        else if (container.func_190916_E() == 1) // don't need to stow anything, just fill and edit the container stack
+        else if (container.getCount() == 1) // don't need to stow anything, just fill and edit the container stack
         {
             FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, true);
             if (emptiedReal.isSuccess())
@@ -286,19 +286,19 @@ public class FluidUtil
             {
                 // check if we can give the itemStack to the inventory
                 ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedSimulated.getResult(), true);
-                if (remainder.func_190926_b() || player != null)
+                if (remainder.isEmpty() || player != null)
                 {
                     FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, true);
                     remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal.getResult(), false);
 
                     // give it to the player or drop it at their feet
-                    if (!remainder.func_190926_b() && player != null)
+                    if (!remainder.isEmpty() && player != null)
                     {
                         ItemHandlerHelper.giveItemToPlayer(player, remainder);
                     }
 
                     ItemStack containerCopy = container.copy();
-                    containerCopy.func_190918_g(1);
+                    containerCopy.shrink(1);
                     return new FluidActionResult(containerCopy);
                 }
             }
@@ -377,10 +377,10 @@ public class FluidUtil
     @Nullable
     public static FluidStack getFluidContained(@Nonnull ItemStack container)
     {
-        if (!container.func_190926_b())
+        if (!container.isEmpty())
         {
             container = container.copy();
-            container.func_190920_e(1);
+            container.setCount(1);
             IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
             if (fluidHandler != null)
             {
@@ -435,7 +435,7 @@ public class FluidUtil
     @Nonnull
     public static FluidActionResult tryPickUpFluid(@Nonnull ItemStack emptyContainer, @Nullable EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side)
     {
-        if (emptyContainer.func_190926_b() || worldIn == null || pos == null)
+        if (emptyContainer.isEmpty() || worldIn == null || pos == null)
         {
             return FluidActionResult.FAILURE;
         }

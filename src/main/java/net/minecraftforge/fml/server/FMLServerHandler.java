@@ -260,15 +260,7 @@ public class FMLServerHandler implements IFMLSidedHandler
         finally
         {
             IOUtils.closeQuietly(stream);
-            try
-            {
-                if (zip != null)
-                    zip.close();
-            }
-            catch (IOException e)
-            {
-                // shush
-            }
+            IOUtils.closeQuietly(zip);
         }
     }
 

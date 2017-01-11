@@ -356,7 +356,7 @@ public class ForgeEventFactory
         if (event.getResult() == Result.ALLOW)
         {
             if (!world.isRemote)
-                stack.func_190918_g(1);
+                stack.shrink(1);
             return 1;
         }
         return 0;
@@ -372,8 +372,8 @@ public class ForgeEventFactory
             if (player.capabilities.isCreativeMode)
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 
-            stack.func_190918_g(1);
-            if (stack.func_190926_b())
+            stack.shrink(1);
+            if (stack.isEmpty())
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, event.getFilledBucket());
 
             if (!player.inventory.addItemStackToInventory(event.getFilledBucket()))
@@ -400,8 +400,8 @@ public class ForgeEventFactory
 
     public static int onItemExpire(EntityItem entity, @Nonnull ItemStack item)
     {
-        if (item.func_190926_b()) return -1;
-        ItemExpireEvent event = new ItemExpireEvent(entity, (item.func_190926_b() ? 6000 : item.getItem().getEntityLifespan(item, entity.worldObj)));
+        if (item.isEmpty()) return -1;
+        ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.world)));
         if (!MinecraftForge.EVENT_BUS.post(event)) return -1;
         return event.getExtraLife();
     }
@@ -427,7 +427,7 @@ public class ForgeEventFactory
 
     public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
     {
-        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.worldObj, isMounting));
+        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.world, isMounting));
 
         if(isCanceled)
         {
@@ -498,7 +498,7 @@ public class ForgeEventFactory
 
     public static boolean onPotionAttemptBrew(NonNullList<ItemStack> stacks)
     {
-        NonNullList<ItemStack> tmp = NonNullList.func_191197_a(stacks.size(), ItemStack.field_190927_a);
+        NonNullList<ItemStack> tmp = NonNullList.withSize(stacks.size(), ItemStack.EMPTY);
         for (int x = 0; x < tmp.size(); x++)
             tmp.set(x, stacks.get(x).copy());
 
@@ -577,8 +577,8 @@ public class ForgeEventFactory
         Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
         {
-            IBlockState state = player.worldObj.getBlockState(player.bedLocation);
-            return state.getBlock().isBed(state, player.worldObj, player.bedLocation, player);
+            IBlockState state = player.world.getBlockState(player.bedLocation);
+            return state.getBlock().isBed(state, player.world, player.bedLocation, player);
         }
         else
             return canContinueSleep == Result.ALLOW;
@@ -639,4 +639,10 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
     }
 
+    public static int onEnchantmentLevelSet(World world, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int level)
+    {
+        net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent e = new net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent(world, pos, enchantRow, power, itemStack, level);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e);
+        return e.getLevel();
+    }
 }

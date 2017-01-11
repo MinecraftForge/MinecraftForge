@@ -256,14 +256,14 @@ public class BlockFluidFinite extends BlockFluidBase
         if (fluidStack.amount < closest)
         {
             // Figure out maximum level to match stack amount
-            closest = MathHelper.floor_float(quantaAmount * MathHelper.floor_float(fluidStack.amount / quantaAmount));
-            quanta = MathHelper.floor_float(closest / quantaAmount);
+            closest = MathHelper.floor(quantaAmount * MathHelper.floor(fluidStack.amount / quantaAmount));
+            quanta = MathHelper.floor(closest / quantaAmount);
         }
         if (existing.getBlock() == this)
         {
             int existingQuanta = existing.getValue(LEVEL) + 1;
             int missingQuanta = quantaPerBlock - existingQuanta;
-            closest = Math.min(closest, MathHelper.floor_float(missingQuanta * quantaAmount));
+            closest = Math.min(closest, MathHelper.floor(missingQuanta * quantaAmount));
             quanta = Math.min(quanta + existingQuanta, quantaPerBlock);
         }
 
@@ -282,7 +282,7 @@ public class BlockFluidFinite extends BlockFluidBase
     @Override
     public FluidStack drain(World world, BlockPos pos, boolean doDrain)
     {
-        final FluidStack fluidStack = new FluidStack(getFluid(), MathHelper.floor_float(getQuantaPercentage(world, pos) * Fluid.BUCKET_VOLUME));
+        final FluidStack fluidStack = new FluidStack(getFluid(), MathHelper.floor(getQuantaPercentage(world, pos) * Fluid.BUCKET_VOLUME));
 
         if (doDrain)
         {

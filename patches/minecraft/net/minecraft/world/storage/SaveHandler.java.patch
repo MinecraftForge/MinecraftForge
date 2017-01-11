@@ -37,7 +37,7 @@
          }
          catch (Exception var5)
          {
-@@ -219,6 +223,7 @@
+@@ -220,6 +224,7 @@
              p_75752_1_.func_70020_e(this.field_186341_a.func_188257_a(FixTypes.PLAYER, nbttagcompound));
          }
  
@@ -45,7 +45,7 @@
          return nbttagcompound;
      }
  
-@@ -260,4 +265,22 @@
+@@ -261,4 +266,22 @@
      {
          return this.field_186342_h;
      }

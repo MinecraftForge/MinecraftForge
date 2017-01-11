@@ -42,7 +42,7 @@ public class ShapedOreRecipe implements IRecipe
     public static final int MAX_CRAFT_GRID_WIDTH = 3;
     public static final int MAX_CRAFT_GRID_HEIGHT = 3;
 
-    protected ItemStack output = ItemStack.field_190927_a;
+    protected ItemStack output = ItemStack.EMPTY;
     protected Object[] input = null;
     protected int width = 0;
     protected int height = 0;
@@ -159,7 +159,7 @@ public class ShapedOreRecipe implements IRecipe
         {
             ItemStack ingredient = recipe.recipeItems[i];
 
-            if(ingredient.func_190926_b()) continue;
+            if(ingredient.isEmpty()) continue;
 
             input[i] = recipe.recipeItems[i];
 
@@ -252,7 +252,7 @@ public class ShapedOreRecipe implements IRecipe
                         return false;
                     }
                 }
-                else if (target == null && !slot.func_190926_b())
+                else if (target == null && !slot.isEmpty())
                 {
                     return false;
                 }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -142,9 +142,9 @@
+@@ -146,9 +146,9 @@
          super(p_i45285_2_, p_i45285_3_);
          p_i45285_4_.field_73090_b = this;
          this.field_71134_c = p_i45285_4_;
@@ -12,7 +12,7 @@
          {
              int i = Math.max(0, p_i45285_1_.func_184108_a(p_i45285_2_));
              int j = MathHelper.func_76128_c(p_i45285_2_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
-@@ -253,7 +253,7 @@
+@@ -279,7 +279,7 @@
  
          this.field_71070_bA.func_75142_b();
  
@@ -21,7 +21,7 @@
          {
              this.func_71053_j();
              this.field_71070_bA = this.field_71069_bz;
-@@ -436,6 +436,7 @@
+@@ -462,6 +462,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
@@ -29,7 +29,7 @@
          boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
          this.field_71135_a.func_147359_a(new SPacketCombatEvent(this.func_110142_aN(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
  
-@@ -462,8 +463,20 @@
+@@ -488,8 +489,20 @@
  
          if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory") && !this.func_175149_v())
          {
@@ -50,7 +50,7 @@
          }
  
          for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreCriteria.field_96642_c))
-@@ -547,6 +560,7 @@
+@@ -573,6 +586,7 @@
      @Nullable
      public Entity func_184204_a(int p_184204_1_)
      {
@@ -58,7 +58,7 @@
          this.field_184851_cj = true;
  
          if (this.field_71093_bK == 1 && p_184204_1_ == 1)
-@@ -704,7 +718,7 @@
+@@ -730,7 +744,7 @@
          BlockPos blockpos = new BlockPos(i, j, k);
          IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -67,7 +67,7 @@
          {
              BlockPos blockpos1 = blockpos.func_177977_b();
              IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
-@@ -744,6 +758,7 @@
+@@ -770,6 +784,7 @@
              this.field_71070_bA = p_180468_1_.func_174876_a(this.field_71071_by, this);
              this.field_71070_bA.field_75152_c = this.field_71139_cq;
              this.field_71070_bA.func_75132_a(this);
@@ -75,7 +75,7 @@
          }
      }
  
-@@ -787,6 +802,7 @@
+@@ -813,6 +828,7 @@
  
              this.field_71070_bA.field_75152_c = this.field_71139_cq;
              this.field_71070_bA.func_75132_a(this);
@@ -83,7 +83,7 @@
          }
      }
  
-@@ -796,6 +812,7 @@
+@@ -822,6 +838,7 @@
          this.field_71070_bA = new ContainerMerchant(this.field_71071_by, p_180472_1_, this.field_70170_p);
          this.field_71070_bA.field_75152_c = this.field_71139_cq;
          this.field_71070_bA.func_75132_a(this);
@@ -91,7 +91,7 @@
          IInventory iinventory = ((ContainerMerchant)this.field_71070_bA).func_75174_d();
          ITextComponent itextcomponent = p_180472_1_.func_145748_c_();
          this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "minecraft:villager", itextcomponent, iinventory.func_70302_i_()));
-@@ -894,6 +911,7 @@
+@@ -920,6 +937,7 @@
      public void func_71128_l()
      {
          this.field_71070_bA.func_75134_a(this);
@@ -99,7 +99,7 @@
          this.field_71070_bA = this.field_71069_bz;
      }
  
-@@ -925,6 +943,7 @@
+@@ -951,6 +969,7 @@
      {
          if (p_71064_1_ != null)
          {

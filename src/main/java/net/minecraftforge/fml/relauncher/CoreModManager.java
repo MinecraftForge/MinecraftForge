@@ -24,6 +24,7 @@ import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,6 +56,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Strings;
@@ -464,9 +466,19 @@ public class CoreModManager {
             try
             {
                 Files.createParentDirs(target);
-                FileOutputStream targ = new FileOutputStream(target);
-                ByteStreams.copy(jar.getInputStream(jarEntry), targ);
-                targ.close();
+                FileOutputStream targetOutputStream = null;
+                InputStream jarInputStream = null;
+                try
+                {
+                    targetOutputStream = new FileOutputStream(target);
+                    jarInputStream = jar.getInputStream(jarEntry);
+                    ByteStreams.copy(jarInputStream, targetOutputStream);
+                }
+                finally
+                {
+                    IOUtils.closeQuietly(targetOutputStream);
+                    IOUtils.closeQuietly(jarInputStream);
+                }
                 FMLRelaunchLog.log(Level.DEBUG, "Extracted ContainedDep %s from %s to %s", dep, jar.getName(), target.getCanonicalPath());
                 result.put(dep,target);
             } catch (IOException e)

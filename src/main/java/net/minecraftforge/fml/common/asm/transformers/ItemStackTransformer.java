@@ -65,6 +65,7 @@ public class ItemStackTransformer implements IClassTransformer {
         MethodNode getItemMethod = null;
         for (MethodNode m: classNode.methods)
         {
+            if (m.name.equals("getItemRaw")) continue;
             if (GETITEM_DESC.equals(m.desc) && getItemMethod == null)
             {
                 getItemMethod = m;
@@ -81,7 +82,7 @@ public class ItemStackTransformer implements IClassTransformer {
 
         for (MethodNode m: classNode.methods)
         {
-            if (m.name.equals("forgeInit") || m.name.equals("func_190926_b")) continue;
+            if (m.name.equals("getItemRaw")) continue;
             for (ListIterator<AbstractInsnNode> it = m.instructions.iterator(); it.hasNext(); )
             {
                 AbstractInsnNode insnNode = it.next();

@@ -125,7 +125,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
-        meta.modId       = "forge";
+        meta.modId       = ForgeVersion.MOD_ID;
         meta.name        = "Minecraft Forge";
         meta.version     = ForgeVersion.getVersion();
         meta.credits     = "Made possible with help from many people";
@@ -379,11 +379,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 itr.remove();
         }
 
-        FMLLog.log("Forge", Level.DEBUG, "Preloading CrashReport Classes");
+        FMLLog.log(ForgeVersion.MOD_ID, Level.DEBUG, "Preloading CrashReport Classes");
         Collections.sort(all); //Sort it because I like pretty output ;)
         for (String name : all)
         {
-            FMLLog.log("Forge", Level.DEBUG, "\t" + name);
+            FMLLog.log(ForgeVersion.MOD_ID, Level.DEBUG, "\t" + name);
             try
             {
                 Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());
@@ -420,7 +420,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             universalBucket = new UniversalBucket();
             universalBucket.setUnlocalizedName("forge.bucketFilled");
-            GameRegistry.register(universalBucket.setRegistryName("forge", "bucketFilled"));
+            GameRegistry.register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
     }

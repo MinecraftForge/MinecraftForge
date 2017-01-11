@@ -516,7 +516,7 @@ public class FMLCommonHandler
         modNames.add("fml");
         if (!noForge)
         {
-            modNames.add("forge");
+            modNames.add(ForgeVersion.MOD_ID);
         }
 
         if (Loader.instance().getFMLBrandingProperties().containsKey("snooperbranding"))

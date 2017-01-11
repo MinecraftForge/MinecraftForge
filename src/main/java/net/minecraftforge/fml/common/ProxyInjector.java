@@ -50,7 +50,7 @@ public class ProxyInjector
         {
             try
             {
-                String amodid = (String)targ.getAnnotationInfo().get("modid");
+                String amodid = (String)targ.getAnnotationInfo().get("modId");
                 if (Strings.isNullOrEmpty(amodid))
                 {
                     amodid = ASMDataTable.getOwnerModID(mods, targ);

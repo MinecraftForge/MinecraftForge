@@ -71,7 +71,7 @@ public class FakePlayerFactory
         while (itr.hasNext())
         {
             Entry<GameProfile, FakePlayer> entry = itr.next();
-            if (entry.getValue().worldObj == world)
+            if (entry.getValue().world == world)
             {
                 itr.remove();
             }

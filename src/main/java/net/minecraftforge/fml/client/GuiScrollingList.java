@@ -286,7 +286,7 @@ public abstract class GuiScrollingList
         GL11.glScissor((int)(left      * scaleW), (int)(client.displayHeight - (bottom * scaleH)),
                        (int)(listWidth * scaleW), (int)(viewHeight * scaleH));
 
-        if (this.client.theWorld != null)
+        if (this.client.world != null)
         {
             this.drawGradientRect(this.left, this.top, this.right, this.bottom, 0xC0101010, 0xD0101010);
         }

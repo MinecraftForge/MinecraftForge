@@ -37,15 +37,15 @@ public class ItemHandlerHelper
     @Nonnull
     public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (dest == null || stack.func_190926_b())
-            return ItemStack.field_190927_a;
+        if (dest == null || stack.isEmpty())
+            return ItemStack.EMPTY;
 
         for (int i = 0; i < dest.getSlots(); i++)
         {
             stack = dest.insertItem(i, stack, simulate);
-            if (stack.func_190926_b())
+            if (stack.isEmpty())
             {
-                return ItemStack.field_190927_a;
+                return ItemStack.EMPTY;
             }
         }
 
@@ -54,12 +54,10 @@ public class ItemHandlerHelper
 
     public static boolean canItemStacksStack(@Nonnull ItemStack a, @Nonnull ItemStack b)
     {
-        if (a.func_190926_b() || !a.isItemEqual(b))
+        if (a.isEmpty() || !a.isItemEqual(b) || a.hasTagCompound() != b.hasTagCompound())
             return false;
 
-        final NBTTagCompound aTag = a.getTagCompound();
-        final NBTTagCompound bTag = b.getTagCompound();
-        return (aTag != null || bTag == null) && (aTag == null || aTag.equals(bTag));
+        return (!a.hasTagCompound() || a.getTagCompound().equals(b.getTagCompound())) && a.areCapsCompatible(b);
     }
 
     /**
@@ -68,7 +66,7 @@ public class ItemHandlerHelper
      */
     public static boolean canItemStacksStackRelaxed(@Nonnull ItemStack a, @Nonnull ItemStack b)
     {
-        if (a.func_190926_b() || b.func_190926_b() || a.getItem() != b.getItem())
+        if (a.isEmpty() || b.isEmpty() || a.getItem() != b.getItem())
             return false;
 
         if (!a.isStackable())
@@ -80,18 +78,19 @@ public class ItemHandlerHelper
         if (a.getHasSubtypes() && a.getMetadata() != b.getMetadata())
             return false;
 
-        final NBTTagCompound aTag = a.getTagCompound();
-        final NBTTagCompound bTag = b.getTagCompound();
-        return (aTag != null || bTag == null) && (aTag == null || aTag.equals(bTag));
+        if (a.hasTagCompound() != b.hasTagCompound())
+            return false;
+
+        return (!a.hasTagCompound() || a.getTagCompound().equals(b.getTagCompound())) && a.areCapsCompatible(b);
     }
 
     @Nonnull
     public static ItemStack copyStackWithSize(@Nonnull ItemStack itemStack, int size)
     {
         if (size == 0)
-            return ItemStack.field_190927_a;
+            return ItemStack.EMPTY;
         ItemStack copy = itemStack.copy();
-        copy.func_190920_e(size);
+        copy.setCount(size);
         return copy;
     }
 
@@ -103,7 +102,7 @@ public class ItemHandlerHelper
     @Nonnull
     public static ItemStack insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (inventory == null || stack.func_190926_b())
+        if (inventory == null || stack.isEmpty())
             return stack;
 
         // not stackable -> just insert into a new slot
@@ -122,7 +121,7 @@ public class ItemHandlerHelper
             {
                 stack = inventory.insertItem(i, stack, simulate);
 
-                if (stack.func_190926_b())
+                if (stack.isEmpty())
                 {
                     break;
                 }
@@ -130,15 +129,15 @@ public class ItemHandlerHelper
         }
 
         // insert remainder into empty slots
-        if (!stack.func_190926_b())
+        if (!stack.isEmpty())
         {
             // find empty slot
             for (int i = 0; i < sizeInventory; i++)
             {
-                if (inventory.getStackInSlot(i).func_190926_b())
+                if (inventory.getStackInSlot(i).isEmpty())
                 {
                     stack = inventory.insertItem(i, stack, simulate);
-                    if (stack.func_190926_b())
+                    if (stack.isEmpty())
                     {
                         break;
                     }
@@ -164,7 +163,7 @@ public class ItemHandlerHelper
     public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack, int preferredSlot)
     {
         IItemHandler inventory = new PlayerMainInvWrapper(player.inventory);
-        World world = player.worldObj;
+        World world = player.world;
 
         // try adding it into the inventory
         ItemStack remainder = stack;
@@ -174,27 +173,27 @@ public class ItemHandlerHelper
             remainder = inventory.insertItem(preferredSlot, stack, false);
         }
         // then into the inventory in general
-        if(!remainder.func_190926_b())
+        if(!remainder.isEmpty())
         {
             remainder = insertItemStacked(inventory, remainder, false);
         }
 
         // play sound if something got picked up
-        if (remainder.func_190926_b() || remainder.func_190916_E() != stack.func_190916_E())
+        if (remainder.isEmpty() || remainder.getCount() != stack.getCount())
         {
             world.playSound(player, player.posX, player.posY, player.posZ,
                     SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
 
         // drop remaining itemstack into the world
-        if (!remainder.func_190926_b() && !world.isRemote)
+        if (!remainder.isEmpty() && !world.isRemote)
         {
             EntityItem entityitem = new EntityItem(world, player.posX, player.posY + 0.5, player.posZ, stack);
             entityitem.setPickupDelay(40);
             entityitem.motionX = 0;
             entityitem.motionZ = 0;
 
-            world.spawnEntityInWorld(entityitem);
+            world.spawnEntity(entityitem);
         }
     }
 
@@ -219,15 +218,15 @@ public class ItemHandlerHelper
             {
                 ItemStack itemstack = inv.getStackInSlot(j);
 
-                if (!itemstack.func_190926_b())
+                if (!itemstack.isEmpty())
                 {
-                    proportion += (float)itemstack.func_190916_E() / (float)Math.min(inv.getSlotLimit(j), itemstack.getMaxStackSize());
+                    proportion += (float)itemstack.getCount() / (float)Math.min(inv.getSlotLimit(j), itemstack.getMaxStackSize());
                     ++itemsFound;
                 }
             }
 
             proportion = proportion / (float)inv.getSlots();
-            return MathHelper.floor_float(proportion * 14.0F) + (itemsFound > 0 ? 1 : 0);
+            return MathHelper.floor(proportion * 14.0F) + (itemsFound > 0 ? 1 : 0);
         }
     }
 }

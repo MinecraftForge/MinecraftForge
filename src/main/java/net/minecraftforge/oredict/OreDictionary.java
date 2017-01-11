@@ -62,7 +62,7 @@ public class OreDictionary
     private static List<NonNullList<ItemStack>> idToStack = Lists.newArrayList();
     private static List<NonNullList<ItemStack>> idToStackUn = Lists.newArrayList();
     private static Map<Integer, List<Integer>> stackToId = Maps.newHashMapWithExpectedSize((int)(128 * 0.75));
-    public static final NonNullList<ItemStack> EMPTY_LIST = NonNullList.func_191196_a();
+    public static final NonNullList<ItemStack> EMPTY_LIST = NonNullList.create();
 
     /**
      * Minecraft changed from -1 to Short.MAX_VALUE in 1.5 release for the "block wildcard". Use this in case it
@@ -341,7 +341,8 @@ public class OreDictionary
             new ItemStack(Blocks.GLASS_PANE),
             new ItemStack(Blocks.BONE_BLOCK), // Bone Block, to prevent conversion of dyes into bone meal.
             new ItemStack(Items.BOAT),
-            ItemStack.field_190927_a //So the above can have a comma and we don't have to keep editing extra lines.
+            new ItemStack(Items.OAK_DOOR),
+            ItemStack.EMPTY //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
         List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
@@ -355,7 +356,7 @@ public class OreDictionary
             {
                 ShapedRecipes recipe = (ShapedRecipes)obj;
                 ItemStack output = recipe.getRecipeOutput();
-                if (!output.func_190926_b() && containsMatch(false, exclusions, output))
+                if (!output.isEmpty() && containsMatch(false, exclusions, output))
                 {
                     continue;
                 }
@@ -370,7 +371,7 @@ public class OreDictionary
             {
                 ShapelessRecipes recipe = (ShapelessRecipes)obj;
                 ItemStack output = recipe.getRecipeOutput();
-                if (!output.func_190926_b() && containsMatch(false, exclusions, output))
+                if (!output.isEmpty() && containsMatch(false, exclusions, output))
                 {
                     continue;
                 }
@@ -407,7 +408,7 @@ public class OreDictionary
             idToName.add(name);
             val = idToName.size() - 1; //0 indexed
             nameToId.put(name, val);
-            NonNullList<ItemStack> back = NonNullList.func_191196_a();
+            NonNullList<ItemStack> back = NonNullList.create();
             idToStack.add(back);
             idToStackUn.add(back);
         }
@@ -434,7 +435,7 @@ public class OreDictionary
      */
     public static int[] getOreIDs(@Nonnull ItemStack stack)
     {
-        if (stack.func_190926_b()) throw new IllegalArgumentException("Stack can not be invalid!");
+        if (stack.isEmpty()) throw new IllegalArgumentException("Stack can not be invalid!");
 
         Set<Integer> set = new HashSet<Integer>();
 
@@ -571,7 +572,7 @@ public class OreDictionary
 
     public static boolean itemMatches(@Nonnull ItemStack target, @Nonnull ItemStack input, boolean strict)
     {
-        if (input.func_190926_b() && !target.func_190926_b() || !input.func_190926_b() && target.func_190926_b())
+        if (input.isEmpty() && !target.isEmpty() || !input.isEmpty() && target.isEmpty())
         {
             return false;
         }
@@ -593,7 +594,7 @@ public class OreDictionary
     private static void registerOreImpl(String name, @Nonnull ItemStack ore)
     {
         if ("Unknown".equals(name)) return; //prevent bad IDs.
-        if (ore.func_190926_b())
+        if (ore.isEmpty())
         {
             FMLLog.bigWarning("Invalid registration attempt for an Ore Dictionary item with name %s has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", name);
             return; //prevent bad ItemStacks.

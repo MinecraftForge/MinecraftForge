@@ -93,7 +93,7 @@
                  this.func_181565_a(vertexbuffer, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
                  this.func_181565_a(vertexbuffer, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
                  GlStateManager.func_179147_l();
-@@ -1073,6 +1060,7 @@
+@@ -1074,6 +1061,7 @@
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.LOAD.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.CORNER.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.DATA.func_185110_a(), "structure_block");
