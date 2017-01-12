@@ -123,7 +123,7 @@ import com.google.common.collect.Sets;
 
 public final class ModelLoader extends ModelBakery
 {
-    private static boolean firstLoad = true;
+    private static boolean firstLoad = Boolean.parseBoolean(System.getProperty("fml.skipFirstModelBake", "true"));
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
