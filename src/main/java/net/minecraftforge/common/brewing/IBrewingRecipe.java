@@ -41,7 +41,7 @@ public interface IBrewingRecipe {
 
     /**
      * Returns the output when the passed input is brewed with the passed
-     * ingredient. Null if invalid input or ingredient.
+     * ingredient. Empty if invalid input or ingredient.
      */
     public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient);
 }
