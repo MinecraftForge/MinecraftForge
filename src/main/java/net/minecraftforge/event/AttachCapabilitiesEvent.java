@@ -126,8 +126,8 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
      */
     public static class Item extends AttachCapabilitiesEvent<net.minecraft.item.Item>
     {
-        @Deprecated
         private final net.minecraft.item.ItemStack stack;
+        @Deprecated
         private final net.minecraft.item.Item item;
         public Item(net.minecraft.item.Item item, net.minecraft.item.ItemStack stack)
         {
