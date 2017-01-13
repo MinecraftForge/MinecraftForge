@@ -58,7 +58,7 @@
              }
  
              if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && itemstack.func_77960_j() == 1 && !((ItemStack)this.field_145957_n.get(1)).func_190926_b() && ((ItemStack)this.field_145957_n.get(1)).func_77973_b() == Items.field_151133_ar)
-@@ -300,7 +303,36 @@
+@@ -300,7 +303,62 @@
          else
          {
              Item item = p_145952_0_.func_77973_b();
@@ -71,6 +71,26 @@
 +                if (block == Blocks.field_150376_bx)
 +                {
 +                    return 150;
++                }
++
++                if(block == Blocks.field_150325_L)
++                {
++                    return 100;
++                }
++
++                if(block == Blocks.field_150404_cg)
++                {
++                    return 67;
++                }
++
++                if(block == Blocks.field_150468_ap)
++                {
++                    return 300;
++                }
++
++                if(block == Blocks.field_150471_bO)
++                {
++                    return 100;
 +                }
 +
 +                if (block.func_176223_P().func_185904_a() == Material.field_151575_d)
@@ -88,15 +108,21 @@
 +            if (item instanceof ItemSword && "WOOD".equals(((ItemSword)item).func_150932_j())) return 200;
 +            if (item instanceof ItemHoe && "WOOD".equals(((ItemHoe)item).func_77842_f())) return 200;
 +            if (item == Items.field_151055_y) return 100;
++            if (item == Items.field_151031_f) return 300;
++            if (item == Items.field_151112_aM) return 300;
++            if (item == Items.field_151155_ap) return 200;
 +            if (item == Items.field_151044_h) return 1600;
 +            if (item == Items.field_151129_at) return 20000;
 +            if (item == Item.func_150898_a(Blocks.field_150345_g)) return 100;
++            if (item == Items.field_151054_z) return 100;
 +            if (item == Items.field_151072_bj) return 2400;
++            if (item instanceof ItemDoor && item != Items.field_151139_aw) return 200;
++            if (item instanceof ItemBoat) return 400;
 +            return net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
          }
      }
  
-@@ -418,4 +450,22 @@
+@@ -418,4 +476,22 @@
      {
          this.field_145957_n.clear();
      }
