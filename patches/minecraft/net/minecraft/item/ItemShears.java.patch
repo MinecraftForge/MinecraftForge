@@ -9,7 +9,7 @@
      }
  
      public boolean func_150897_b(IBlockState p_150897_1_)
-@@ -36,4 +36,71 @@
+@@ -36,4 +36,70 @@
          Block block = p_150893_2_.func_177230_c();
          return block != Blocks.field_150321_G && p_150893_2_.func_185904_a() != Material.field_151584_j ? (block == Blocks.field_150325_L ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_)) : 15.0F;
      }
@@ -74,7 +74,6 @@
 +                    player.field_70170_p.func_72838_d(entityitem);
 +                }
 +
-+                itemstack.func_77972_a(1, player);
 +                player.func_71029_a(net.minecraft.stats.StatList.func_188055_a(block));
 +            }
 +        }
