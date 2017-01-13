@@ -29,7 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
- * Fired when the ender dragon or wither attempts to destroy a block. Basically a event version of {@link Block#canEntityDestroy(IBlockState, IBlockAccess, BlockPos, Entity)}<br>
+ * Fired when the ender dragon or wither attempts to destroy a block. Basically an event version of {@link Block#canEntityDestroy(IBlockState, IBlockAccess, BlockPos, Entity)}<br>
  * <br>
  * This event is {@link Cancelable}.<br>
  * If this event is canceled, the block will not be destroyed.<br>
