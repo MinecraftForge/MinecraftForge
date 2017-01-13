@@ -35,6 +35,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
+import javax.annotation.Nullable;
+
 public class ASMDataTable
 {
     public final static class ASMData implements Cloneable
@@ -45,7 +47,7 @@ public class ASMDataTable
         private String objectName;
         private int classVersion;
         private Map<String,Object> annotationInfo;
-        public ASMData(ModCandidate candidate, String annotationName, String className, String objectName, Map<String,Object> info)
+        public ASMData(ModCandidate candidate, String annotationName, String className, @Nullable String objectName, @Nullable Map<String,Object> info)
         {
             this.candidate = candidate;
             this.annotationName = annotationName;
@@ -128,7 +130,7 @@ public class ASMDataTable
         return globalAnnotationData.get(annotation);
     }
 
-    public void addASMData(ModCandidate candidate, String annotation, String className, String objectName, Map<String,Object> annotationInfo)
+    public void addASMData(ModCandidate candidate, String annotation, String className, @Nullable String objectName, @Nullable Map<String,Object> annotationInfo)
     {
         globalAnnotationData.put(annotation, new ASMData(candidate, annotation, className, objectName, annotationInfo));
     }
@@ -148,6 +150,7 @@ public class ASMDataTable
         return this.packageMap.get(pkg);
     }
 
+    @Nullable
     public static String getOwnerModID(Set<ASMData> mods, ASMData targ)
     {
         if (mods.size() == 1) {

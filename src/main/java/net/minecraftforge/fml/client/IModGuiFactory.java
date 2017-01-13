@@ -25,6 +25,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 
+import javax.annotation.Nullable;
+
 public interface IModGuiFactory {
     /**
      * Called when instantiated to initialize with the active minecraft instance.
@@ -85,6 +87,7 @@ public interface IModGuiFactory {
      * @param element The element we wish to paint for
      * @return The Handler for painting it
      */
+    @Nullable
     public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element);
 
     /**

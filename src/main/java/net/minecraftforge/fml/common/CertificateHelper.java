@@ -43,7 +43,7 @@ public class CertificateHelper {
         }
         catch (Exception e)
         {
-            return null;
+            return "CERTIFICATE FINGERPRINT EXCEPTION";
         }
     }
 
@@ -58,7 +58,7 @@ public class CertificateHelper {
         }
         catch (Exception e)
         {
-            return null;
+            return "CERTIFICATE FINGERPRINT EXCEPTION";
         }
     }
 

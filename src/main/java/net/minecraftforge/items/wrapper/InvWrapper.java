@@ -75,15 +75,15 @@ public class InvWrapper implements IItemHandlerModifiable
         if (stack.isEmpty())
             return ItemStack.EMPTY;
 
-        if (!getInv().isItemValidForSlot(slot, stack))
-            return stack;
-
         ItemStack stackInSlot = getInv().getStackInSlot(slot);
 
         int m;
         if (!stackInSlot.isEmpty())
         {
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
+                return stack;
+
+            if (!getInv().isItemValidForSlot(slot, stack))
                 return stack;
 
             m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot)) - stackInSlot.getCount();
@@ -121,6 +121,9 @@ public class InvWrapper implements IItemHandlerModifiable
         }
         else
         {
+            if (!getInv().isItemValidForSlot(slot, stack))
+                return stack;
+
             m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot));
             if (m < stack.getCount())
             {

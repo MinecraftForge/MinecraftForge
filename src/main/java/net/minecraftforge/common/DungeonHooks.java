@@ -62,13 +62,21 @@ public class DungeonHooks
         return rarity;
     }
 
+    // TODO: remove
+    /** @deprecated use {@link #removeDungeonMob(ResourceLocation)} */
+    @Deprecated
+    public static int removeDungeonMob(String name)
+    {
+        return removeDungeonMob(new ResourceLocation(name));
+    }
+
     /**
      * Will completely remove a Mob from the dungeon spawn list.
      *
      * @param name The name of the mob to remove
      * @return The rarity of the removed mob, prior to being removed.
      */
-    public static int removeDungeonMob(String name)
+    public static int removeDungeonMob(ResourceLocation name)
     {
         for (DungeonMob mob : dungeonMobs)
         {

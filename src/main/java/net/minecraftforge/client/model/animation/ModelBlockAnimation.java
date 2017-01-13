@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
+import javax.annotation.Nullable;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
@@ -515,6 +516,7 @@ public class ModelBlockAnimation
         }
     }
 
+    @Nullable
     public TRSRTransformation getPartTransform(IModelState state, BlockPart part, int i)
     {
         ImmutableCollection<MBJointWeight> infos = getJoint(i);

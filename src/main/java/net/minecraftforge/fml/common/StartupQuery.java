@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.minecraft.server.MinecraftServer;
 
+import javax.annotation.Nullable;
+
 public class StartupQuery {
     // internal class/functionality, do not use
 
@@ -80,12 +82,13 @@ public class StartupQuery {
     private static volatile boolean aborted = false;
 
 
-    private StartupQuery(String text, AtomicBoolean result)
+    private StartupQuery(String text, @Nullable AtomicBoolean result)
     {
         this.text = text;
         this.result = result;
     }
 
+    @Nullable
     public Boolean getResult()
     {
         return result == null ? null : result.get();
@@ -159,6 +162,7 @@ public class StartupQuery {
     }
 
     private String text;
+    @Nullable
     private AtomicBoolean result;
     private CountDownLatch signal = new CountDownLatch(1);
     private volatile boolean synchronous;

@@ -33,6 +33,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nullable;
+
 /**
  * An event driven network channel, using {@link FMLNetworkEvent.CustomPacketEvent} and {@link FMLNetworkEvent.CustomNetworkEvent}
  * to deliver messages to an event listener. There is one "bus" for each channel, due to the
@@ -57,6 +59,7 @@ public class FMLEventChannel {
         SERVER()
         {
             @Override
+            @Nullable
             FMLNetworkEvent.CustomPacketEvent<?> make(FMLProxyPacket msg)
             {
                 FMLNetworkEvent.CustomPacketEvent<?> event = null;
@@ -71,6 +74,7 @@ public class FMLEventChannel {
         CLIENT()
         {
             @Override
+            @Nullable
             FMLNetworkEvent.CustomPacketEvent<?> make(FMLProxyPacket msg)
             {
                 FMLNetworkEvent.CustomPacketEvent<?> event = null;
@@ -87,6 +91,7 @@ public class FMLEventChannel {
                 return event;
             }
         };
+        @Nullable
         abstract FMLNetworkEvent.CustomPacketEvent<?> make(FMLProxyPacket msg);
     }
 

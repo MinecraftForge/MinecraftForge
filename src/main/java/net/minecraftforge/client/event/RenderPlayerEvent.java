@@ -25,6 +25,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
+import javax.annotation.Nonnull;
+
 public abstract class RenderPlayerEvent extends PlayerEvent
 {
     private final RenderPlayer renderer;
@@ -99,8 +101,9 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     {
         private int result = -1;
         private final int slot;
+        @Nonnull
         private final ItemStack stack;
-        public SetArmorModel(EntityPlayer player, RenderPlayer renderer, int slot, float partialTick, ItemStack stack)
+        public SetArmorModel(EntityPlayer player, RenderPlayer renderer, int slot, float partialTick, @Nonnull ItemStack stack)
         {
             super(player, renderer, partialTick, 0D, 0D, 0D);
             this.slot = slot;
@@ -126,6 +129,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
             return slot;
         }
 
+        @Nonnull
         public ItemStack getStack()
         {
             return stack;

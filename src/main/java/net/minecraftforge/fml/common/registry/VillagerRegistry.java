@@ -37,6 +37,9 @@ import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
+
+import javax.annotation.Nullable;
+
 /**
  * Registry for villager trading control
  */
@@ -284,7 +287,7 @@ public class VillagerRegistry
             return this;
         }
 
-
+        @Nullable
         public List<ITradeList> getTrades(int level)
         {
             return level >= 0 && level < this.trades.size() ? Collections.unmodifiableList(this.trades.get(level)) : null;
@@ -357,7 +360,7 @@ public class VillagerRegistry
     }
 
     @Deprecated public static VillagerProfession getById(int network){ return INSTANCE.professions.getObjectById(network); }
-    @Deprecated public static int getId(VillagerProfession prof){ return INSTANCE.professions.getId(prof); }
+    @Deprecated public static int getId(@Nullable VillagerProfession prof){ return INSTANCE.professions.getId(prof); }
 
     //TODO: Figure out a good generic system for this. Put on hold for Patches.
 

@@ -33,6 +33,8 @@ import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import javax.annotation.Nullable;
+
 public class ModListHelper {
     public static class JsonModList {
         public String repositoryRoot;
@@ -148,7 +150,7 @@ public class ModListHelper {
             tryAddFile(fileName.toString(), repoRoot, genericName.toString());
         }
     }
-    private static void tryAddFile(String modFileName, File repoRoot, String descriptor) {
+    private static void tryAddFile(String modFileName, @Nullable File repoRoot, String descriptor) {
         File modFile = repoRoot != null ? new File(repoRoot,modFileName) : new File(mcDirectory, modFileName);
         if (!modFile.exists())
         {

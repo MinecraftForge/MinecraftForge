@@ -22,6 +22,8 @@ package net.minecraftforge.fml.client.event;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
+import javax.annotation.Nullable;
+
 /**
  * These events are posted from the GuiConfig screen when the done button is pressed. The events are only posted
  * if the parent screen is not an instance of GuiConfig or if the configID field has been set for
@@ -39,9 +41,10 @@ public class ConfigChangedEvent extends Event
     private final String  modID;
     private final boolean isWorldRunning;
     private final boolean requiresMcRestart;
+    @Nullable
     private final String configID;
 
-    public ConfigChangedEvent(String modID, String configID, boolean isWorldRunning, boolean requiresMcRestart)
+    public ConfigChangedEvent(String modID, @Nullable String configID, boolean isWorldRunning, boolean requiresMcRestart)
     {
         this.modID = modID;
         this.configID = configID;
@@ -76,6 +79,7 @@ public class ConfigChangedEvent extends Event
     /**
      * A String identifier for this ConfigChangedEvent.
      */
+    @Nullable
     public String getConfigID()
     {
         return configID;
@@ -92,7 +96,7 @@ public class ConfigChangedEvent extends Event
      */
     public static class OnConfigChangedEvent extends ConfigChangedEvent
     {
-        public OnConfigChangedEvent(String modID, String configID, boolean isWorldRunning, boolean requiresMcRestart)
+        public OnConfigChangedEvent(String modID, @Nullable String configID, boolean isWorldRunning, boolean requiresMcRestart)
         {
             super(modID, configID, isWorldRunning, requiresMcRestart);
         }
@@ -104,7 +108,7 @@ public class ConfigChangedEvent extends Event
      */
     public static class PostConfigChangedEvent extends ConfigChangedEvent
     {
-        public PostConfigChangedEvent(String modID, String configID, boolean isWorldRunning, boolean requiresMcRestart)
+        public PostConfigChangedEvent(String modID, @Nullable String configID, boolean isWorldRunning, boolean requiresMcRestart)
         {
             super(modID, configID, isWorldRunning, requiresMcRestart);
         }

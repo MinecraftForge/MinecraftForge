@@ -201,6 +201,15 @@
      }
  
      public static boolean func_77989_b(ItemStack p_77989_0_, ItemStack p_77989_1_)
+@@ -354,7 +378,7 @@
+ 
+     private boolean func_77959_d(ItemStack p_77959_1_)
+     {
+-        return this.field_77994_a != p_77959_1_.field_77994_a ? false : (this.func_77973_b() != p_77959_1_.func_77973_b() ? false : (this.field_77991_e != p_77959_1_.field_77991_e ? false : (this.field_77990_d == null && p_77959_1_.field_77990_d != null ? false : this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d))));
++        return this.field_77994_a != p_77959_1_.field_77994_a ? false : (this.func_77973_b() != p_77959_1_.func_77973_b() ? false : (this.field_77991_e != p_77959_1_.field_77991_e ? false : (this.field_77990_d == null && p_77959_1_.field_77990_d != null ? false : (this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d)) && this.areCapsCompatible(p_77959_1_))));
+     }
+ 
+     public static boolean func_179545_c(ItemStack p_179545_0_, ItemStack p_179545_1_)
 @@ -758,6 +782,7 @@
              }
          }

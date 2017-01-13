@@ -20,16 +20,13 @@
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -50,9 +47,10 @@ public class PlayerInteractEvent extends PlayerEvent
 {
     private final EnumHand hand;
     private final BlockPos pos;
+    @Nullable
     private final EnumFacing face;
 
-    private PlayerInteractEvent(EntityPlayer player, EnumHand hand, BlockPos pos, EnumFacing face)
+    private PlayerInteractEvent(EntityPlayer player, EnumHand hand, BlockPos pos, @Nullable EnumFacing face)
     {
         super(Preconditions.checkNotNull(player, "Null player in PlayerInteractEvent!"));
         this.hand = Preconditions.checkNotNull(hand, "Null hand in PlayerInteractEvent!");
@@ -313,22 +311,31 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public static class LeftClickEmpty extends PlayerInteractEvent
     {
-        public LeftClickEmpty(EntityPlayer player, @Nonnull ItemStack stack)
+        public LeftClickEmpty(EntityPlayer player)
         {
             super(player, EnumHand.MAIN_HAND, new BlockPos(player), null);
+        }
+
+        // TODO: remove
+        /** @deprecated use {@link LeftClickEmpty(EntityPlayer)} */
+        @Deprecated
+        public LeftClickEmpty(EntityPlayer player, @Nonnull ItemStack stack)
+        {
+            this(player);
         }
     }
 
     /**
      * @return The hand involved in this interaction. Will never be null.
      */
+    @Nonnull
     public EnumHand getHand()
     {
         return hand;
     }
 
     /**
-     * @return The itemstack involved in this interaction, or null if the hand was empty.
+     * @return The itemstack involved in this interaction, {@code ItemStack.EMPTY} if the hand was empty.
      */
     @Nonnull
     public ItemStack getItemStack()
@@ -343,6 +350,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * Will never be null.
      * @return The position involved in this interaction.
      */
+    @Nonnull
     public BlockPos getPos()
     {
         return pos;

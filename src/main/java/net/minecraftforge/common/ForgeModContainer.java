@@ -24,6 +24,7 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
@@ -86,6 +87,7 @@ import net.minecraftforge.fml.common.WorldAccessContainer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -93,6 +95,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import javax.annotation.Nullable;
 
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
 {
@@ -348,6 +352,19 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         }
     }
 
+    @Subscribe
+    public void missingMapping(FMLMissingMappingsEvent event)
+    {
+        for (FMLMissingMappingsEvent.MissingMapping entry : event.getAll())
+        {
+            if (entry.name.equals("minecraft:totem")) //This item changed from 1.11 -> 1.11.2
+            {
+                ResourceLocation newTotem = new ResourceLocation("minecraft:totem_of_undying");
+                entry.remap(ForgeRegistries.ITEMS.getValue(newTotem));
+            }
+        }
+    }
+
     @SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
@@ -541,6 +558,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
 
     @Override
+    @Nullable
     public Certificate getSigningCertificate()
     {
         Certificate[] certificates = getClass().getProtectionDomain().getCodeSource().getCertificates();

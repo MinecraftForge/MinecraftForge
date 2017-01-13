@@ -29,6 +29,8 @@ import java.util.List;
 
 import com.google.common.base.Joiner;
 
+import javax.annotation.Nullable;
+
 /**
  * Construct a version range from a specification.
  *
@@ -101,7 +103,7 @@ public class VersionRange
      * @throws InvalidVersionSpecificationException
      *
      */
-    public static VersionRange createFromVersionSpec( String spec )
+    public static VersionRange createFromVersionSpec( @Nullable String spec )
         throws InvalidVersionSpecificationException
     {
         if ( spec == null )

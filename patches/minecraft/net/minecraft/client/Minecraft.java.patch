@@ -190,7 +190,7 @@
                          }
  
                          this.field_71439_g.func_184821_cY();
-+                        net.minecraftforge.common.ForgeHooks.onEmptyLeftClick(this.field_71439_g, this.field_71439_g.func_184614_ca());
++                        net.minecraftforge.common.ForgeHooks.onEmptyLeftClick(this.field_71439_g);
                  }
  
                  this.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
