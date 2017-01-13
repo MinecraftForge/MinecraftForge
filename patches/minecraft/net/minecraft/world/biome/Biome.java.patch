@@ -70,6 +70,15 @@
      }
  
      public Class <? extends Biome > func_150562_l()
+@@ -385,7 +390,7 @@
+     @SideOnly(Side.CLIENT)
+     public final int func_185361_o()
+     {
+-        return this.field_76759_H;
++        return getWaterColorMultiplier();
+     }
+ 
+     public final boolean func_150559_j()
 @@ -393,6 +398,83 @@
          return this.field_76766_R;
      }
