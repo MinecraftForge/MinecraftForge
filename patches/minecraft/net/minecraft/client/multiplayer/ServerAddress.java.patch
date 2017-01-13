@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/client/multiplayer/ServerAddress.java
++++ ../src-work/minecraft/net/minecraft/client/multiplayer/ServerAddress.java
+@@ -98,6 +98,13 @@
+             hashtable.put("java.naming.provider.url", "dns:");
+             hashtable.put("com.sun.jndi.dns.timeout.retries", "1");
+             DirContext dircontext = new InitialDirContext(hashtable);
++            try
++            {
++                Attributes lookup = dircontext.getAttributes("_" + net.minecraftforge.common.ForgeModContainer.srvRecordKey + "._tcp." + p_78863_0_, new String[] {"SRV"});
++                String[] result = lookup.get("srv").get().toString().split(" ", 4);
++                return new String[] {result[3], result[2]};
++            }
++            catch (javax.naming.NamingException ignored) {}
+             Attributes attributes = dircontext.getAttributes("_minecraft._tcp." + p_78863_0_, new String[] {"SRV"});
+             String[] astring = attributes.get("srv").get().toString().split(" ", 4);
+             return new String[] {astring[3], astring[2]};

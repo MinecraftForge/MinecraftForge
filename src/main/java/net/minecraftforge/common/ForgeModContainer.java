@@ -110,6 +110,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean replaceVanillaBucketModel = true;
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
+    public static String srvRecordKey = "minecraft";
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -294,6 +295,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.");
         disableStairSlabCulling = prop.getBoolean(disableStairSlabCulling);
         prop.setLanguageKey("forge.configgui.disableStairSlabCulling").setRequiresMcRestart(false);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "srvRecordKey", srvRecordKey,
+                "Override the SRV record Minecraft uses to attempt to determine what server you intend to connect to.");
+        srvRecordKey = prop.getString();
+        prop.setLanguageKey("forge.configgui.srvRecordKey");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
