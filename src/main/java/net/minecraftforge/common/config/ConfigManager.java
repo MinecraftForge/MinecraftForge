@@ -239,6 +239,8 @@ public class ConfigManager
         else if (ftype.getSuperclass() == Object.class) //Only support classes that are one level below Object.
         {
             String sub = category + "." + f.getName().toLowerCase(Locale.ENGLISH);
+            cfg.getCategory(sub).setComment(comment);
+
             Object sinst = get(instance, f);
             for (Field sf : ftype.getDeclaredFields())
             {

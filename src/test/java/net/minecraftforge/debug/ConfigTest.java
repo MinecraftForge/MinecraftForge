@@ -70,5 +70,13 @@ public class ConfigTest
         @LangKey("this.is.not.a.good.key")
         @Comment({"This is a really long", "Multi-line comment"})
         public static String Comments = "Hi Tv!";
+
+        @Comment("Category Comment Test")
+        public static NestedType Inner = new NestedType();
+
+        public static class NestedType
+        {
+            public String HeyLook = "Go in!";
+        }
     }
 }
