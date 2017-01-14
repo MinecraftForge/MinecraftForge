@@ -205,6 +205,24 @@
              double d15 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
              if (d15 > 0.01D)
+@@ -683,7 +709,7 @@
+ 
+         if (BlockRailBase.func_176563_d(iblockstate))
+         {
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l());
++            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = ((BlockRailBase)iblockstate.func_177230_c()).getRailDirection(field_70170_p, new BlockPos(i, j, k), iblockstate, this);
+             p_70495_3_ = (double)j;
+ 
+             if (blockrailbase$enumraildirection.func_177018_c())
+@@ -733,7 +759,7 @@
+ 
+         if (BlockRailBase.func_176563_d(iblockstate))
+         {
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l());
++            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = ((BlockRailBase)iblockstate.func_177230_c()).getRailDirection(field_70170_p, new BlockPos(i, j, k), iblockstate, this);
+             int[][] aint = field_70500_g[blockrailbase$enumraildirection.func_177015_a()];
+             double d0 = (double)i + 0.5D + (double)aint[0][0] * 0.5D;
+             double d1 = (double)j + 0.0625D + (double)aint[0][1] * 0.5D;
 @@ -830,6 +856,12 @@
  
      public void func_70108_f(Entity p_70108_1_)

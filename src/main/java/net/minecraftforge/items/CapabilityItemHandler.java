@@ -47,7 +47,7 @@ public class CapabilityItemHandler
                 for (int i = 0; i < size; i++)
                 {
                     ItemStack stack = instance.getStackInSlot(i);
-                    if (stack != null)
+                    if (!stack.isEmpty())
                     {
                         NBTTagCompound itemTag = new NBTTagCompound();
                         itemTag.setInteger("Slot", i);

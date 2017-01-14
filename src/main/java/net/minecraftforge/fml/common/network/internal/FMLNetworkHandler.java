@@ -60,6 +60,8 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import javax.annotation.Nullable;
+
 public class FMLNetworkHandler
 {
     public static final int READ_TIMEOUT = Integers.parseInt(System.getProperty("fml.readTimeout","30"),30);
@@ -117,6 +119,7 @@ public class FMLNetworkHandler
 
     }
 
+    @Nullable
     public static Packet<?> getEntitySpawningPacket(Entity entity)
     {
         EntityRegistration er = EntityRegistry.instance().lookupModSpawn(entity.getClass(), false);
@@ -132,11 +135,14 @@ public class FMLNetworkHandler
         return channelPair.get(Side.SERVER).generatePacketFrom(new FMLMessage.EntitySpawnMessage(er, entity, er.getContainer()));
     }
 
+    @Nullable
     public static String checkModList(FMLHandshakeMessage.ModList modListPacket, Side side)
     {
         Map<String,String> modList = modListPacket.modList();
         return checkModList(modList, side);
     }
+
+    @Nullable
     public static String checkModList(Map<String,String> listData, Side side)
     {
         List<ModContainer> rejects = Lists.newArrayList();

@@ -54,6 +54,8 @@ import com.google.common.collect.Sets;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 
+import javax.annotation.Nullable;
+
 public class FMLDeobfuscatingRemapper extends Remapper {
     public static final FMLDeobfuscatingRemapper INSTANCE = new FMLDeobfuscatingRemapper();
 
@@ -198,12 +200,13 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     /*
      * Cache the field descriptions for classes so we don't repeatedly reload the same data again and again
      */
-    private Map<String,Map<String,String>> fieldDescriptions = Maps.newHashMap();
+    private final Map<String,Map<String,String>> fieldDescriptions = Maps.newHashMap();
 
     // Cache null values so we don't waste time trying to recompute classes with no field or method maps
     private Set<String> negativeCacheMethods = Sets.newHashSet();
     private Set<String> negativeCacheFields = Sets.newHashSet();
 
+    @Nullable
     private String getFieldType(String owner, String name)
     {
         if (fieldDescriptions.containsKey(owner))
@@ -283,12 +286,12 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     }
 
     @Override
-    public String mapFieldName(String owner, String name, String desc)
+    public String mapFieldName(String owner, String name, @Nullable String desc)
     {
         return mapFieldName(owner, name, desc, false);
     }
 
-    String mapFieldName(String owner, String name, String desc, boolean raw)
+    String mapFieldName(String owner, String name, @Nullable String desc, boolean raw)
     {
         if (classNameBiMap == null || classNameBiMap.isEmpty())
         {
@@ -350,6 +353,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     }
     
     @Override
+    @Nullable
     public String mapSignature(String signature, boolean typeSignature)
     {
         // JDT decorates some lambdas with this and SignatureReader chokes on it
@@ -430,7 +434,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             e.printStackTrace();
         }
     }
-    public void mergeSuperMaps(String name, String superName, String[] interfaces)
+    public void mergeSuperMaps(String name, @Nullable String superName, String[] interfaces)
     {
 //        System.out.printf("Computing super maps for %s: %s %s\n", name, superName, Arrays.asList(interfaces));
         if (classNameBiMap == null || classNameBiMap.isEmpty())
@@ -483,6 +487,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         return ImmutableSet.copyOf(classNameBiMap.keySet());
     }
 
+    @Nullable
     public String getStaticFieldType(String oldType, String oldName, String newType, String newName)
     {
         String fType = getFieldType(newType, newName);

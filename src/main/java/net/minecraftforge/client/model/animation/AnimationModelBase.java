@@ -44,6 +44,7 @@ import net.minecraftforge.common.animation.IEventHandler;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 
+import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
@@ -67,12 +68,12 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingSpeed, float timeAlive, float yawHead, float rotationPitch, float scale)
     {
-        if(!(entity.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)))
+        IAnimationStateMachine capability = entity.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
+        if (capability == null)
         {
             return;
         }
-
-        Pair<IModelState, Iterable<Event>> pair = entity.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null).apply(timeAlive / 20);
+        Pair<IModelState, Iterable<Event>> pair = capability.apply(timeAlive / 20);
         handleEvents((T)entity, timeAlive / 20, pair.getRight());
         IModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
         IBakedModel bakedModel = model.bake(pair.getLeft(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());

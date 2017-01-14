@@ -134,7 +134,7 @@ public class ClientCommandHandler extends CommandHandler
             if (mc.currentScreen instanceof GuiChat)
             {
                 List<String> commands = getTabCompletions(mc.player, leftOfCursor, mc.player.getPosition());
-                if (commands != null && !commands.isEmpty())
+                if (!commands.isEmpty())
                 {
                     if (leftOfCursor.indexOf(' ') == -1)
                     {

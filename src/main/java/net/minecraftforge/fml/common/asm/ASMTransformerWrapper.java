@@ -47,6 +47,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 
+import javax.annotation.Nullable;
+
 public class ASMTransformerWrapper
 {
     private static final Map<String, String> wrapperModMap = Maps.newHashMap();
@@ -80,6 +82,7 @@ public class ASMTransformerWrapper
 
     private static class ASMGenHandler extends URLStreamHandler
     {
+        @Nullable
         protected URLConnection openConnection(URL url) throws IOException
         {
             String file = url.getFile();
@@ -125,6 +128,7 @@ public class ASMTransformerWrapper
         }
 
         @Override
+        @Nullable
         public Permission getPermission()
         {
             return null;
