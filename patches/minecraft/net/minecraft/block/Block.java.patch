@@ -1164,7 +1164,7 @@
 +     */
 +    public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 +    {
-+        return state.func_185915_l();
++        return state.isNormalCube(world, pos);
 +    }
 +
 +    /**

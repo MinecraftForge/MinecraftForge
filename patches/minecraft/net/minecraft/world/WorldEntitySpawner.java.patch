@@ -20,6 +20,15 @@
                          {
                              BlockPos blockpos = func_180621_a(p_77192_1_, chunkpos1.field_77276_a, chunkpos1.field_77275_b);
                              int k1 = blockpos.func_177958_n();
+@@ -94,7 +96,7 @@
+                             int i2 = blockpos.func_177952_p();
+                             IBlockState iblockstate = p_77192_1_.func_180495_p(blockpos);
+ 
+-                            if (!iblockstate.func_185915_l())
++                            if (!iblockstate.isNormalCube(p_77192_1_, blockpos))
+                             {
+                                 int j2 = 0;
+ 
 @@ -145,8 +147,10 @@
  
                                                  entityliving.func_70012_b((double)f, (double)i3, (double)f1, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
@@ -41,7 +50,13 @@
                                                      {
                                                          continue label411;
                                                      }
-@@ -212,8 +216,9 @@
+@@ -207,13 +211,14 @@
+ 
+             if (p_180267_0_ == EntityLiving.SpawnPlacementType.IN_WATER)
+             {
+-                return iblockstate.func_185904_a().func_76224_d() && p_180267_1_.func_180495_p(p_180267_2_.func_177977_b()).func_185904_a().func_76224_d() && !p_180267_1_.func_180495_p(p_180267_2_.func_177984_a()).func_185915_l();
++                return iblockstate.func_185904_a().func_76224_d() && p_180267_1_.func_180495_p(p_180267_2_.func_177977_b()).func_185904_a().func_76224_d() && !p_180267_1_.func_180495_p(p_180267_2_.func_177984_a()).isNormalCube(p_180267_1_, p_180267_2_.func_177984_a());
+             }
              else
              {
                  BlockPos blockpos = p_180267_2_.func_177977_b();
