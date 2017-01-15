@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/util/ClassInheritanceMultiMap.java
++++ ../src-work/minecraft/net/minecraft/util/ClassInheritanceMultiMap.java
+@@ -12,7 +12,7 @@
+ 
+ public class ClassInheritanceMultiMap<T> extends AbstractSet<T>
+ {
+-    private static final Set < Class<? >> field_181158_a = Sets. < Class<? >> newHashSet();
++    private static final Set < Class<? >> field_181158_a = java.util.Collections.synchronizedSet(Sets. < Class<? >> newHashSet());
+     private final Map < Class<?>, List<T >> field_180218_a = Maps. < Class<?>, List<T >> newHashMap();
+     private final Set < Class<? >> field_180216_b = Sets. < Class<? >> newIdentityHashSet();
+     private final Class<T> field_180217_c;
+@@ -24,10 +24,12 @@
+         this.field_180216_b.add(p_i45909_1_);
+         this.field_180218_a.put(p_i45909_1_, this.field_181745_e);
+ 
++        synchronized (field_181158_a) {
+         for (Class<?> oclass : field_181158_a)
+         {
+             this.func_180213_a(oclass);
+         }
++        }
+     }
+ 
+     protected void func_180213_a(Class<?> p_180213_1_)
