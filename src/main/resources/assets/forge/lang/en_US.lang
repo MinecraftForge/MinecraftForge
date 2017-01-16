@@ -172,6 +172,7 @@ fml.messages.countbadandgood=%s of %s mods have this problem
 fml.messages.mod.missing.dependencies=%s is missing mods it depends on.
 fml.messages.mod.missing.dependencies.fix=Include the following mods or remove %s.
 fml.messages.mod.missing.dependencies.see.log=See '%s' for technical information.
+fml.messages.mod.missing.multiple=There were %s errors loading minecraft
 fml.messages.version.restriction.any=any
 fml.messages.version.restriction.lower.inclusive=%s or above
 fml.messages.version.restriction.lower.exclusive=above %s

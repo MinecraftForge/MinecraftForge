@@ -96,6 +96,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.MissingModsException;
+import net.minecraftforge.fml.common.MultipleModsException;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -185,6 +186,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DuplicateModsFoundException dupesFound;
 
+    private MultipleModsException multipleModsException;
+
     private boolean serverShouldBeKilledQuietly;
 
     private List<IResourcePack> resourcePackList;
@@ -252,6 +255,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
             customError = custom;
+        }
+        catch (MultipleModsException multiple)
+        {
+            multipleModsException = multiple;
         }
         catch (LoaderException le)
         {
@@ -333,7 +340,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void finishMinecraftLoading()
     {
-        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null || j8onlymods!=null)
+        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null || j8onlymods!=null || multipleModsException!=null)
         {
             SplashProgress.finish();
             return;
@@ -440,6 +447,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         else if (customError != null)
         {
             showGuiScreen(new GuiCustomModLoadingErrorScreen(customError));
+        }
+        else if (multipleModsException != null)
+        {
+            showGuiScreen(new GuiMultipleModsException(multipleModsException));
         }
         else
         {

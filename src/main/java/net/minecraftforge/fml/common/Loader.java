@@ -236,6 +236,7 @@ public class Loader
     private void sortModList()
     {
         FMLLog.finer("Verifying mod requirements are satisfied");
+        List<RuntimeException> foundExceptions = new ArrayList<RuntimeException>();
         try
         {
             BiMap<String, ArtifactVersion> modVersions = HashBiMap.create();
@@ -252,7 +253,8 @@ public class Loader
                     FMLLog.severe("The mod %s does not wish to run in Minecraft version %s. You will have to remove it to play.", mod.getModId(), getMCVersionString());
                     RuntimeException ret = new WrongMinecraftVersionException(mod, getMCVersionString());
                     FMLLog.severe(ret.getMessage());
-                    throw ret;
+                    foundExceptions.add(ret);
+                    continue;
                 }
                 Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new ArtifactVersionNameFunction());
                 Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
@@ -267,7 +269,8 @@ public class Loader
                     }
                     RuntimeException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
                     FMLLog.severe(ret.getMessage());
-                    throw ret;
+                    foundExceptions.add(ret);
+                    continue;
                 }
                 reqList.putAll(mod.getModId(), names.keySet());
                 ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
@@ -286,11 +289,20 @@ public class Loader
                     FMLLog.severe("The mod %s (%s) requires mod versions %s to be available", mod.getModId(), mod.getName(), versionMissingMods);
                     RuntimeException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
                     FMLLog.severe(ret.toString());
-                    throw ret;
+                    foundExceptions.add(ret);
                 }
             }
 
-            FMLLog.finer("All mod requirements are satisfied");
+            switch (foundExceptions.size())
+            {
+                case 0:
+                    FMLLog.finer("All mod requirements are satisfied");
+                    break;
+                case 1:
+                    throw foundExceptions.get(0);
+                default:
+                    throw new MultipleModsException(foundExceptions);
+            }
 
             reverseDependencies = Multimaps.invertFrom(reqList, ArrayListMultimap.<String,String>create());
             ModSorter sorter = new ModSorter(getActiveModList(), namedMods);
