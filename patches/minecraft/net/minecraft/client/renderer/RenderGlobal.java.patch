@@ -84,6 +84,15 @@
  
              this.func_180443_s();
  
+@@ -933,7 +948,7 @@
+                 BlockPos blockpos2 = renderchunk4.func_178568_j().func_177982_a(8, 8, 8);
+                 boolean flag3 = blockpos2.func_177951_i(blockpos1) < 768.0D;
+ 
+-                if (!renderchunk4.func_188281_o() && !flag3)
++                if (net.minecraftforge.common.ForgeModContainer.alwaysSetupTerrainOffThread || (!renderchunk4.func_188281_o() && !flag3))
+                 {
+                     this.field_175009_l.add(renderchunk4);
+                 }
 @@ -1220,6 +1235,13 @@
  
      public void func_174976_a(float p_174976_1_, int p_174976_2_)
