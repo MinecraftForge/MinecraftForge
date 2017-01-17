@@ -101,6 +101,15 @@
                  {
                      TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity1, p_180446_3_, destroyblockprogress.func_73106_e());
                  }
+@@ -926,7 +942,7 @@
+                 BlockPos blockpos2 = renderchunk4.func_178568_j().func_177982_a(8, 8, 8);
+                 boolean flag3 = blockpos2.func_177951_i(blockpos1) < 768.0D;
+ 
+-                if (!renderchunk4.func_188281_o() && !flag3)
++                if (net.minecraftforge.common.ForgeModContainer.alwaysSetupTerrainOffThread || (!renderchunk4.func_188281_o() && !flag3))
+                 {
+                     this.field_175009_l.add(renderchunk4);
+                 }
 @@ -1213,6 +1229,13 @@
  
      public void func_174976_a(float p_174976_1_, int p_174976_2_)
