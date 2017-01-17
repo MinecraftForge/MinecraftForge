@@ -96,7 +96,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.MissingModsException;
-import net.minecraftforge.fml.common.MultipleModsException;
+import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -186,7 +186,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DuplicateModsFoundException dupesFound;
 
-    private MultipleModsException multipleModsException;
+    private MultipleModsErrored multipleModsErrored;
 
     private boolean serverShouldBeKilledQuietly;
 
@@ -256,9 +256,9 @@ public class FMLClientHandler implements IFMLSidedHandler
             FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
             customError = custom;
         }
-        catch (MultipleModsException multiple)
+        catch (MultipleModsErrored multiple)
         {
-            multipleModsException = multiple;
+            multipleModsErrored = multiple;
         }
         catch (LoaderException le)
         {
@@ -340,7 +340,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void finishMinecraftLoading()
     {
-        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null || j8onlymods!=null || multipleModsException!=null)
+        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null || j8onlymods!=null || multipleModsErrored !=null)
         {
             SplashProgress.finish();
             return;
@@ -448,9 +448,9 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             showGuiScreen(new GuiCustomModLoadingErrorScreen(customError));
         }
-        else if (multipleModsException != null)
+        else if (multipleModsErrored != null)
         {
-            showGuiScreen(new GuiMultipleModsException(multipleModsException));
+            showGuiScreen(new GuiMultipleModsErrored(multipleModsErrored));
         }
         else
         {

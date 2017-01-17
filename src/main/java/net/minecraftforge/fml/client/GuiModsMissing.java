@@ -19,24 +19,14 @@
 
 package net.minecraftforge.fml.client;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 
 public class GuiModsMissing extends GuiErrorBase
 {
-    private File minecraftDir = new File(Loader.instance().getConfigDir().getParent());
-    private File clientLog = new File(minecraftDir, "logs/fml-client-latest.log");
     private MissingModsException modsMissing;
 
     public GuiModsMissing(MissingModsException modsMissing)
@@ -72,7 +62,7 @@ public class GuiModsMissing extends GuiErrorBase
             this.drawCenteredString(this.fontRendererObj, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }
         offset+=20;
-        String seeLogText = I18n.format("fml.messages.mod.missing.dependencies.see.log", clientLog.getName());
+        String seeLogText = I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.clientLog.getName());
         this.drawCenteredString(this.fontRendererObj, seeLogText, this.width / 2, offset, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

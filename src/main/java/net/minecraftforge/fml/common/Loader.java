@@ -301,7 +301,7 @@ public class Loader
                 case 1:
                     throw foundExceptions.get(0);
                 default:
-                    throw new MultipleModsException(foundExceptions);
+                    throw new MultipleModsErrored(foundExceptions);
             }
 
             reverseDependencies = Multimaps.invertFrom(reqList, ArrayListMultimap.<String,String>create());
@@ -530,7 +530,7 @@ public class Loader
         modController.forceActiveContainer(containers[0]);
     }
     /**
-     * Called from the hook to start mofd loading. We trigger the
+     * Called from the hook to start mod loading. We trigger the
      * {@link #identifyMods()} and Constructing, Preinitalization, and Initalization phases here. Finally,
      * the mod list is frozen completely and is consider immutable from then on.
      * @param injectedModContainers containers to inject
