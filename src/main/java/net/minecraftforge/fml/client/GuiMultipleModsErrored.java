@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.fml.client;
 
 import net.minecraft.client.gui.GuiButton;
@@ -37,38 +38,36 @@ public class GuiMultipleModsErrored extends GuiErrorBase
         this.exceptions = exception.exceptions;
     }
 
+    private void switchSubGui()
+    {
+        RuntimeException exception = exceptions.get(pageIndex);
+        if (exception instanceof WrongMinecraftVersionException)
+        {
+            subGui = new GuiWrongMinecraft((WrongMinecraftVersionException) exception);
+        }
+        else if (exception instanceof MissingModsException)
+        {
+            subGui = new GuiModsMissing((MissingModsException) exception);
+        }
+    }
+
     @Override
     public void initGui()
     {
         super.initGui();
         pageIndex = 0;
-        RuntimeException exception = exceptions.get(pageIndex);
-        if (exception instanceof WrongMinecraftVersionException)
-        {
-            subGui = (new GuiWrongMinecraft((WrongMinecraftVersionException) exception));
-        }
-        else if (exception instanceof MissingModsException)
-        {
-            subGui = (new GuiModsMissing((MissingModsException) exception));
-        }
+        switchSubGui();
         subGui.initGui();
         subGui.clearButtons();
-        this.buttonList.add(new GuiButton(3,50, this.height -20, this.width/2 -55 , 20,   "<"));
-        this.buttonList.add(new GuiButton(4, this.width/2 +5, this.height -20, this.width/2 -55, 20, ">"));
+        this.buttonList.add(new GuiButton(1,50, this.height -20, this.width/2 -55 , 20,   "<"));
+        this.buttonList.add(new GuiButton(2, this.width/2 +5, this.height -20, this.width/2 -55, 20, ">"));
     }
 
     @Override
     public void updateScreen()
     {
         RuntimeException exception = exceptions.get(pageIndex);
-        if (exception instanceof WrongMinecraftVersionException)
-        {
-            subGui = (new GuiWrongMinecraft((WrongMinecraftVersionException) exception));
-        }
-        else if (exception instanceof MissingModsException)
-        {
-            subGui = (new GuiModsMissing((MissingModsException) exception));
-        }
+        switchSubGui();
         buttonList.get(2).enabled = pageIndex != 0;
         buttonList.get(3).enabled = pageIndex<exceptions.size()-1;
     }
@@ -86,11 +85,11 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     @Override
     public void actionPerformed(GuiButton button)
     {
-        if(button.id==3)
+        if (button.id == 1)
         {
             pageIndex--;
         }
-        else if(button.id==4)
+        else if (button.id == 2)
         {
             pageIndex++;
         }

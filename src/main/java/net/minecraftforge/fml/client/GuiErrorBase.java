@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.fml.client;
 
 import net.minecraft.client.gui.GuiButton;
@@ -42,15 +43,15 @@ public class GuiErrorBase extends GuiErrorScreen
     {
         super.initGui();
         this.buttonList.clear();
-        this.buttonList.add(new GuiButton(1, 50, this.height - 38, this.width/2 -55, 20, I18n.format("fml.button.open.mods.folder")));
+        this.buttonList.add(new GuiButton(10, 50, this.height - 38, this.width/2 -55, 20, I18n.format("fml.button.open.mods.folder")));
         String openFileText = I18n.format("fml.button.open.file", clientLog.getName());
-        this.buttonList.add(new GuiButton(2, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, openFileText));
+        this.buttonList.add(new GuiButton(11, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, openFileText));
     }
 
     @Override
     protected void actionPerformed(GuiButton button)
     {
-        if (button.id == 1)
+        if (button.id == 10)
         {
             try
             {
@@ -62,7 +63,7 @@ public class GuiErrorBase extends GuiErrorScreen
                 FMLLog.log(Level.ERROR, e, "Problem opening mods folder");
             }
         }
-        else if (button.id == 2)
+        else if (button.id == 11)
         {
             try
             {

@@ -620,7 +620,7 @@ public class Loader
         }
         if (!j8mods.isEmpty())
         {
-            foundExceptions.add(new Java8VersionException(j8mods));
+            throw new Java8VersionException(j8mods);
         }
     }
 

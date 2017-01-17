@@ -37,32 +37,32 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-public class GuiJava8Error extends GuiErrorScreen
+public class GuiJava8Error extends GuiErrorBase
 {
     private Java8VersionException java8VersionException;
     public GuiJava8Error(Java8VersionException java8VersionException)
     {
-        super(null,null);
+        super();
         this.java8VersionException = java8VersionException;
     }
 
     @Override
     public void initGui()
     {
-        this.buttonList.clear();
-        this.buttonList.add(new GuiButton(1, 50, this.height - 38, this.width/2 -55, 20, I18n.format("fml.button.visitjavadownloads")));
+        super.initGui();
+        this.buttonList.add(new GuiButton(1, 50, this.height -57, this.width/2 -55, 20, I18n.format("fml.button.visitjavadownloads")));
         if (java8VersionException.getMods().isEmpty())
         {
-            this.buttonList.add(new GuiButton(3, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, I18n.format("fml.button.continue")));
+            this.buttonList.add(new GuiButton(3, this.width / 2 + 5, this.height -57, this.width / 2 - 55, 20, I18n.format("fml.button.continue")));
         }
         else
         {
-            this.buttonList.add(new GuiButton(2, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, I18n.format("menu.quit")));
+            this.buttonList.add(new GuiButton(2, this.width / 2 + 5, this.height -57, this.width / 2 - 55, 20, I18n.format("menu.quit")));
         }
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException
+    protected void actionPerformed(GuiButton button)
     {
         if (button.id == 1)
         {
@@ -139,9 +139,6 @@ public class GuiJava8Error extends GuiErrorScreen
             offset += 15;
         }
         // super.super
-        for (int i = 0; i < this.buttonList.size(); ++i)
-        {
-            ((GuiButton)this.buttonList.get(i)).drawButton(this.mc, mouseX, mouseY);
-        }
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }
