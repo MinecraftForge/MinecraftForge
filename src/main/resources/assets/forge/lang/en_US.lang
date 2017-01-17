@@ -50,6 +50,8 @@ forge.configgui.forgeLightPipelineEnabled=Forge Light Pipeline Enabled
 forge.configgui.java8Reminder=Java 8 Reminder timestamp
 forge.configgui.disableStairSlabCulling=Disable Stair/Slab culling.
 forge.configgui.disableStairSlabCulling.tooltip=Enable this if you see through blocks touching stairs/slabs with your resource pack.
+forge.configgui.dayTicks=Day length (ticks)
+forge.configgui.dayTicks.tooltip=The number of ticks in the day/night cycle.
 
 forge.configgui.modID.tooltip=The mod ID that you want to define override settings for.
 forge.configgui.modID=Mod ID

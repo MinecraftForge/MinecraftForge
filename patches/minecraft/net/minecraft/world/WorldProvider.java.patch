@@ -29,6 +29,26 @@
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
+@@ -85,8 +71,8 @@
+ 
+     public float func_76563_a(long p_76563_1_, float p_76563_3_)
+     {
+-        int i = (int)(p_76563_1_ % 24000L);
+-        float f = ((float)i + p_76563_3_) / 24000.0F - 0.25F;
++        int i = (int)(p_76563_1_ % net.minecraftforge.common.ForgeModContainer.dayTicks);
++        float f = ((float)i + p_76563_3_) / net.minecraftforge.common.ForgeModContainer.dayTicks - 0.25F;
+ 
+         if (f < 0.0F)
+         {
+@@ -105,7 +91,7 @@
+ 
+     public int func_76559_b(long p_76559_1_)
+     {
+-        return (int)(p_76559_1_ / 24000L % 8L + 8L) % 8;
++        return (int)(p_76559_1_ / net.minecraftforge.common.ForgeModContainer.dayTicks % 8L + 8L) % 8;
+     }
+ 
+     public boolean func_76569_d()
 @@ -160,7 +146,7 @@
      @SideOnly(Side.CLIENT)
      public float func_76571_f()

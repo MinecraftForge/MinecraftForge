@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandTime.java
++++ ../src-work/minecraft/net/minecraft/command/CommandTime.java
+@@ -34,11 +34,11 @@
+ 
+                 if ("day".equals(p_184881_3_[1]))
+                 {
+-                    i1 = 1000;
++                    i1 = Math.round(net.minecraftforge.common.ForgeModContainer.dayTicks / 24.0f);
+                 }
+                 else if ("night".equals(p_184881_3_[1]))
+                 {
+-                    i1 = 13000;
++                    i1 = Math.round(net.minecraftforge.common.ForgeModContainer.dayTicks * 13.0f / 24.0f);
+                 }
+                 else
+                 {
+@@ -62,7 +62,7 @@
+             {
+                 if ("daytime".equals(p_184881_3_[1]))
+                 {
+-                    int k = (int)(p_184881_2_.func_130014_f_().func_72820_D() % 24000L);
++                    int k = (int)(p_184881_2_.func_130014_f_().func_72820_D() % net.minecraftforge.common.ForgeModContainer.dayTicks);
+                     p_184881_2_.func_174794_a(CommandResultStats.Type.QUERY_RESULT, k);
+                     func_152373_a(p_184881_2_, this, "commands.time.query", new Object[] {Integer.valueOf(k)});
+                     return;
+@@ -70,7 +70,7 @@
+ 
+                 if ("day".equals(p_184881_3_[1]))
+                 {
+-                    int j = (int)(p_184881_2_.func_130014_f_().func_72820_D() / 24000L % 2147483647L);
++                    int j = (int)(p_184881_2_.func_130014_f_().func_72820_D() / net.minecraftforge.common.ForgeModContainer.dayTicks % 2147483647L);
+                     p_184881_2_.func_174794_a(CommandResultStats.Type.QUERY_RESULT, j);
+                     func_152373_a(p_184881_2_, this, "commands.time.query", new Object[] {Integer.valueOf(j)});
+                     return;
