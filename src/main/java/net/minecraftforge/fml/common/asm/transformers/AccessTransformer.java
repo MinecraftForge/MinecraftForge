@@ -45,6 +45,7 @@ import java.util.zip.ZipOutputStream;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
 
+import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -469,27 +470,8 @@ public class AccessTransformer implements IClassTransformer
         }
         finally
         {
-            if (outJar != null)
-            {
-                try
-                {
-                    outJar.close();
-                }
-                catch (IOException e)
-                {
-                }
-            }
-
-            if (inJar != null)
-            {
-                try
-                {
-                    inJar.close();
-                }
-                catch (IOException e)
-                {
-                }
-            }
+            IOUtils.closeQuietly(outJar);
+            IOUtils.closeQuietly(inJar);
         }
     }
     Multimap<String, Modifier> getModifiers()
