@@ -301,7 +301,7 @@ public class Loader
                 case 1:
                     throw foundExceptions.get(0);
                 default:
-                    throw new MultipleModsException(foundExceptions);
+                    throw new MultipleModsErrored(foundExceptions);
             }
 
             reverseDependencies = Multimaps.invertFrom(reqList, ArrayListMultimap.<String,String>create());
