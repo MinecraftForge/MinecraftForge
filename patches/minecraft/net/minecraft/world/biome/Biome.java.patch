@@ -154,3 +154,40 @@
      public static void func_185358_q()
      {
          func_185354_a(0, "ocean", new BiomeOcean((new Biome.BiomeProperties("Ocean")).func_185398_c(-1.0F).func_185400_d(0.1F)));
+@@ -549,6 +631,7 @@
+             public Class <? extends EntityLiving > field_76300_b;
+             public int field_76301_c;
+             public int field_76299_d;
++            private final java.lang.reflect.Constructor<?> ctr;
+ 
+             public SpawnListEntry(Class <? extends EntityLiving > p_i1970_1_, int p_i1970_2_, int p_i1970_3_, int p_i1970_4_)
+             {
+@@ -556,12 +639,28 @@
+                 this.field_76300_b = p_i1970_1_;
+                 this.field_76301_c = p_i1970_3_;
+                 this.field_76299_d = p_i1970_4_;
++
++                java.lang.reflect.Constructor<?> tmp = null;
++                try
++                {
++                    tmp = p_i1970_1_.getConstructor(World.class);
++                }
++                catch (NoSuchMethodException e)
++                {
++                    com.google.common.base.Throwables.propagate(e);
++                }
++                ctr = tmp;
+             }
+ 
+             public String toString()
+             {
+                 return this.field_76300_b.getSimpleName() + "*(" + this.field_76301_c + "-" + this.field_76299_d + "):" + this.field_76292_a;
+             }
++
++            public EntityLiving newInstance(World world) throws Exception
++            {
++                return (EntityLiving)ctr.newInstance(world);
++            }
+         }
+ 
+     public static enum TempCategory
