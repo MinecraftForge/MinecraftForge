@@ -170,6 +170,7 @@ public class Loader
 
     private static File minecraftDir;
     private static List<String> injectedContainers;
+    private static List<RuntimeException> foundExceptions = new ArrayList<RuntimeException>();
     private ImmutableMap<String, String> fmlBrandingProperties;
     private File forcedModFile;
     private ModDiscoverer discoverer;
@@ -236,7 +237,6 @@ public class Loader
     private void sortModList()
     {
         FMLLog.finer("Verifying mod requirements are satisfied");
-        List<RuntimeException> foundExceptions = new ArrayList<RuntimeException>();
         try
         {
             BiMap<String, ArtifactVersion> modVersions = HashBiMap.create();
@@ -530,7 +530,7 @@ public class Loader
         modController.forceActiveContainer(containers[0]);
     }
     /**
-     * Called from the hook to start mod loading. We trigger the
+     * Called from the hook to start mofd loading. We trigger the
      * {@link #identifyMods()} and Constructing, Preinitalization, and Initalization phases here. Finally,
      * the mod list is frozen completely and is consider immutable from then on.
      * @param injectedModContainers containers to inject
@@ -620,7 +620,7 @@ public class Loader
         }
         if (!j8mods.isEmpty())
         {
-            throw new Java8VersionException(j8mods);
+            foundExceptions.add(new Java8VersionException(j8mods));
         }
     }
 

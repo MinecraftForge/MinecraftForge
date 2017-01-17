@@ -23,20 +23,15 @@ import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 
-public class GuiWrongMinecraft extends GuiErrorScreen
+public class GuiWrongMinecraft extends GuiErrorBase
 {
     private WrongMinecraftVersionException wrongMC;
     public GuiWrongMinecraft(WrongMinecraftVersionException wrongMC)
     {
-        super(null,null);
+        super();
         this.wrongMC = wrongMC;
     }
-    @Override
-    public void initGui()
-    {
-        super.initGui();
-        this.buttonList.clear();
-    }
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
@@ -50,5 +45,6 @@ public class GuiWrongMinecraft extends GuiErrorScreen
         this.drawCenteredString(this.fontRendererObj, String.format("%s (%s) wants Minecraft %s", wrongMC.mod.getName(), wrongMC.mod.getModId(), wrongMC.mod.acceptableMinecraftVersionRange()), this.width / 2, offset, 0xEEEEEE);
         offset+=20;
         this.drawCenteredString(this.fontRendererObj, "The file 'fml-client-latest.log' contains more information", this.width / 2, offset, 0xFFFFFF);
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

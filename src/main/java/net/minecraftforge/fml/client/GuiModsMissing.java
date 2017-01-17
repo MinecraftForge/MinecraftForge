@@ -32,9 +32,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-import org.apache.logging.log4j.Level;
 
-public class GuiModsMissing extends GuiErrorScreen
+public class GuiModsMissing extends GuiErrorBase
 {
     private File minecraftDir = new File(Loader.instance().getConfigDir().getParent());
     private File clientLog = new File(minecraftDir, "logs/fml-client-latest.log");
@@ -42,46 +41,8 @@ public class GuiModsMissing extends GuiErrorScreen
 
     public GuiModsMissing(MissingModsException modsMissing)
     {
-        super(null,null);
+        super();
         this.modsMissing = modsMissing;
-    }
-
-    @Override
-    public void initGui()
-    {
-        super.initGui();
-        this.buttonList.clear();
-        this.buttonList.add(new GuiButton(1, 50, this.height - 38, this.width/2 -55, 20, I18n.format("fml.button.open.mods.folder")));
-        String openFileText = I18n.format("fml.button.open.file", clientLog.getName());
-        this.buttonList.add(new GuiButton(2, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, openFileText));
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException
-    {
-        if (button.id == 1)
-        {
-            try
-            {
-                File modsDir = new File(minecraftDir, "mods");
-                Desktop.getDesktop().open(modsDir);
-            }
-            catch (Exception e)
-            {
-                FMLLog.log(Level.ERROR, e, "Problem opening mods folder");
-            }
-        }
-        else if (button.id == 2)
-        {
-            try
-            {
-                Desktop.getDesktop().open(clientLog);
-            }
-            catch (Exception e)
-            {
-                FMLLog.log(Level.ERROR, e, "Problem opening log file " + clientLog);
-            }
-        }
     }
 
     @Override
@@ -113,10 +74,6 @@ public class GuiModsMissing extends GuiErrorScreen
         offset+=20;
         String seeLogText = I18n.format("fml.messages.mod.missing.dependencies.see.log", clientLog.getName());
         this.drawCenteredString(this.fontRendererObj, seeLogText, this.width / 2, offset, 0xFFFFFF);
-
-        for (int i = 0; i < this.buttonList.size(); ++i)
-        {
-            this.buttonList.get(i).drawButton(this.mc, mouseX, mouseY);
-        }
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

@@ -26,23 +26,17 @@ import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.ModContainer;
 
-public class GuiDupesFound extends GuiErrorScreen
+public class GuiDupesFound extends GuiErrorBase
 {
 
     private DuplicateModsFoundException dupes;
 
     public GuiDupesFound(DuplicateModsFoundException dupes)
     {
-        super(null,null);
+        super();
         this.dupes = dupes;
     }
 
-    @Override
-    public void initGui()
-    {
-        super.initGui();
-        this.buttonList.clear();
-    }
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
@@ -59,5 +53,6 @@ public class GuiDupesFound extends GuiErrorScreen
             offset+=10;
             this.drawCenteredString(this.fontRendererObj, String.format("%s : %s", mc.getKey().getModId(), mc.getValue().getName()), this.width / 2, offset, 0xEEEEEE);
         }
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }
