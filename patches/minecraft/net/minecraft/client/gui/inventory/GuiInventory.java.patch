@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiInventory.java
++++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiInventory.java
+@@ -112,8 +112,10 @@
+         GlStateManager.func_179138_g(OpenGlHelper.field_77478_a);
+     }
+ 
++    @Override
+     protected void func_146284_a(GuiButton p_146284_1_) throws IOException
+     {
++        super.func_146284_a(p_146284_1_); // Forge: Call GuiContainer#actionPerformed
+         if (p_146284_1_.field_146127_k == 0)
+         {
+             this.field_146297_k.func_147108_a(new GuiAchievements(this, this.field_146297_k.field_71439_g.func_146107_m()));

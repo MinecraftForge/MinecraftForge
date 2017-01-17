@@ -1,6 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
-@@ -180,8 +180,10 @@
+@@ -53,6 +53,7 @@
+     private int field_146992_L;
+     private boolean field_146993_M;
+     private ItemStack field_146994_N = ItemStack.field_190927_a;
++    protected net.minecraftforge.client.player.inventory.tabs.GuiTabList guiTabs = new net.minecraftforge.client.player.inventory.tabs.GuiTabList(this);
+ 
+     public GuiContainer(Container p_i1072_1_)
+     {
+@@ -66,6 +67,7 @@
+         this.field_146297_k.field_71439_g.field_71070_bA = this.field_147002_h;
+         this.field_147003_i = (this.field_146294_l - this.field_146999_f) / 2;
+         this.field_147009_r = (this.field_146295_m - this.field_147000_g) / 2;
++        this.guiTabs.addButtons(field_146292_n, field_147003_i, field_147009_r, field_146999_f, field_147000_g);
+     }
+ 
+     public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+@@ -73,12 +75,15 @@
+         this.func_146276_q_();
+         int i = this.field_147003_i;
+         int j = this.field_147009_r;
++        this.guiTabs.drawTabs(false, p_73863_1_, p_73863_2_, p_73863_3_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146296_j, field_146289_q);
+         this.func_146976_a(p_73863_3_, p_73863_1_, p_73863_2_);
++        this.guiTabs.drawTabs(true, p_73863_1_, p_73863_2_, p_73863_3_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146296_j, field_146289_q);
+         GlStateManager.func_179101_C();
+         RenderHelper.func_74518_a();
+         GlStateManager.func_179140_f();
+         GlStateManager.func_179097_i();
+         super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
++        this.guiTabs.drawTabHoveringText(p_73863_1_, p_73863_2_, field_147003_i, field_147009_r, field_146999_f, field_147000_g, field_146289_q);
+         RenderHelper.func_74520_c();
+         GlStateManager.func_179094_E();
+         GlStateManager.func_179109_b((float)i, (float)j, 0.0F);
+@@ -180,8 +185,10 @@
          GlStateManager.func_179109_b(0.0F, 0.0F, 32.0F);
          this.field_73735_i = 200.0F;
          this.field_146296_j.field_77023_b = 200.0F;
@@ -12,7 +44,7 @@
          this.field_73735_i = 0.0F;
          this.field_146296_j.field_77023_b = 0.0F;
      }
-@@ -239,13 +241,12 @@
+@@ -239,13 +246,12 @@
  
          if (itemstack.func_190926_b() && p_146977_1_.func_111238_b())
          {
@@ -29,7 +61,7 @@
                  this.func_175175_a(i, j, textureatlassprite, 16, 16);
                  GlStateManager.func_179145_e();
                  flag1 = true;
-@@ -319,7 +320,7 @@
+@@ -319,7 +325,7 @@
      protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException
      {
          super.func_73864_a(p_73864_1_, p_73864_2_, p_73864_3_);
@@ -38,7 +70,7 @@
          Slot slot = this.func_146975_c(p_73864_1_, p_73864_2_);
          long i = Minecraft.func_71386_F();
          this.field_146993_M = this.field_146998_K == slot && i - this.field_146997_J < 250L && this.field_146992_L == p_73864_3_;
-@@ -330,6 +331,7 @@
+@@ -330,6 +336,7 @@
              int j = this.field_147003_i;
              int k = this.field_147009_r;
              boolean flag1 = p_73864_1_ < j || p_73864_2_ < k || p_73864_1_ >= j + this.field_146999_f || p_73864_2_ >= k + this.field_147000_g;
@@ -46,7 +78,7 @@
              int l = -1;
  
              if (slot != null)
-@@ -367,7 +369,7 @@
+@@ -367,7 +374,7 @@
                  {
                      if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o().func_190926_b())
                      {
@@ -55,7 +87,7 @@
                          {
                              this.func_184098_a(slot, l, p_73864_3_, ClickType.CLONE);
                          }
-@@ -405,7 +407,7 @@
+@@ -405,7 +412,7 @@
                          {
                              this.field_146987_F = 1;
                          }
@@ -64,11 +96,12 @@
                          {
                              this.field_146987_F = 2;
                          }
-@@ -467,10 +469,12 @@
+@@ -467,10 +474,13 @@
  
      protected void func_146286_b(int p_146286_1_, int p_146286_2_, int p_146286_3_)
      {
 +        super.func_146286_b(p_146286_1_, p_146286_2_, p_146286_3_); //Forge, Call parent to release buttons
++        this.guiTabs.onMouseRelease(field_147003_i, field_147009_r, field_146999_f, field_147000_g, p_146286_3_, p_146286_1_, p_146286_2_);
          Slot slot = this.func_146975_c(p_146286_1_, p_146286_2_);
          int i = this.field_147003_i;
          int j = this.field_147009_r;
@@ -77,7 +110,7 @@
          int k = -1;
  
          if (slot != null)
-@@ -491,7 +495,7 @@
+@@ -491,7 +501,7 @@
                  {
                      for (Slot slot2 : this.field_147002_h.field_75151_b)
                      {
@@ -86,7 +119,7 @@
                          {
                              this.func_184098_a(slot2, slot2.field_75222_d, p_146286_3_, ClickType.QUICK_MOVE);
                          }
-@@ -578,7 +582,7 @@
+@@ -578,7 +588,7 @@
              }
              else if (!this.field_146297_k.field_71439_g.field_71071_by.func_70445_o().func_190926_b())
              {
@@ -95,7 +128,7 @@
                  {
                      this.func_184098_a(slot, k, p_146286_3_, ClickType.CLONE);
                  }
-@@ -630,7 +634,7 @@
+@@ -630,7 +640,7 @@
  
      protected void func_73869_a(char p_73869_1_, int p_73869_2_) throws IOException
      {
@@ -104,7 +137,7 @@
          {
              this.field_146297_k.field_71439_g.func_71053_j();
          }
-@@ -639,11 +643,11 @@
+@@ -639,11 +649,11 @@
  
          if (this.field_147006_u != null && this.field_147006_u.func_75216_d())
          {
@@ -118,7 +151,7 @@
              {
                  this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, func_146271_m() ? 1 : 0, ClickType.THROW);
              }
-@@ -656,7 +660,7 @@
+@@ -656,7 +666,7 @@
          {
              for (int i = 0; i < 9; ++i)
              {
@@ -127,7 +160,7 @@
                  {
                      this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                      return true;
-@@ -689,4 +693,18 @@
+@@ -689,4 +699,30 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }
@@ -143,6 +176,18 @@
 +    public int getGuiTop() { return field_147009_r; }
 +    public int getXSize() { return field_146999_f; }
 +    public int getYSize() { return field_147000_g; }
++    /**
++     * Informs {@link #guiTabs} that a button was pressed
++     */
++    protected void func_146284_a(net.minecraft.client.gui.GuiButton button) throws IOException { guiTabs.actionPerformed(button); }
++    /**
++     * Returns a list of tabs that are registered to the class returned by {@link #getTabsKey() getTabsKey}.
++     */
++    public java.util.List<net.minecraftforge.client.player.inventory.tabs.GuiTab> getTabs() { return this.guiTabs.getTabs(); }
++    /**
++     * Returns the class the guitabs list should be loaded from
++     */
++    public Class<? extends GuiContainer> getTabsKey() { return this.getClass(); }
 +
 +    /* ======================================== FORGE END   =====================================*/
  }
