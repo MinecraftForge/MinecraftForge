@@ -1,6 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityList.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
-@@ -93,6 +93,7 @@
+@@ -90,9 +90,11 @@
+     private static final Map < Class <? extends Entity > , Integer > field_75624_e = Maps. < Class <? extends Entity > , Integer > newHashMap();
+     private static final Map<String, Integer> field_180126_g = Maps.<String, Integer>newHashMap();
+     public static final Map<String, EntityList.EntityEggInfo> field_75627_a = Maps.<String, EntityList.EntityEggInfo>newLinkedHashMap();
++    private static final Map<String, java.lang.reflect.Constructor<? extends Entity>> CACHED_CONSTRUCTORS = Maps.newHashMap();
  
      public static void func_75618_a(Class <? extends Entity > p_75618_0_, String p_75618_1_, int p_75618_2_)
      {
@@ -8,19 +12,43 @@
          if (field_75625_b.containsKey(p_75618_1_))
          {
              throw new IllegalArgumentException("ID is already registered: " + p_75618_1_);
-@@ -152,9 +153,10 @@
-     {
-         Entity entity = null;
+@@ -132,12 +134,20 @@
  
-+        Class <? extends Entity > oclass = null;
          try
          {
--            Class <? extends Entity > oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
-+            oclass = field_75625_b.get(p_75615_0_.func_74779_i("id"));
++            java.lang.reflect.Constructor<? extends Entity> ctr = CACHED_CONSTRUCTORS.get(p_75620_0_);
++            if (ctr == null)
++            {
+             Class <? extends Entity > oclass = (Class)field_75625_b.get(p_75620_0_);
  
              if (oclass != null)
              {
-@@ -168,7 +170,17 @@
+-                entity = (Entity)oclass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_75620_1_});
++                ctr = oclass.getConstructor(World.class);
++                CACHED_CONSTRUCTORS.put(p_75620_0_, ctr);
+             }
++            }
++
++            if (ctr != null)
++                entity = ctr.newInstance(p_75620_1_);
+         }
+         catch (Exception exception)
+         {
+@@ -154,12 +164,7 @@
+ 
+         try
+         {
+-            Class <? extends Entity > oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
+-
+-            if (oclass != null)
+-            {
+-                entity = (Entity)oclass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_75615_1_});
+-            }
++            entity = func_75620_a(p_75615_0_.func_74779_i("id"), p_75615_1_);
+         }
+         catch (Exception exception)
+         {
+@@ -168,7 +173,17 @@
  
          if (entity != null)
          {
@@ -32,13 +60,13 @@
 +            {
 +                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
 +                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                        p_75615_0_.func_74779_i("id"), oclass.getName());
++                        p_75615_0_.func_74779_i("id"), field_75625_b.get(p_75615_0_.func_74779_i("id")).getName());
 +                entity = null;
 +            }
          }
          else
          {
-@@ -208,7 +220,8 @@
+@@ -208,7 +223,8 @@
      @Nullable
      public static Entity func_188429_b(String p_188429_0_, World p_188429_1_)
      {
