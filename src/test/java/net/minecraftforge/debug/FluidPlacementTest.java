@@ -86,7 +86,7 @@ public class FluidPlacementTest
             ModelBakery.registerItemVariants(fluid);
             ModelLoader.setCustomMeshDefinition(fluid, new ItemMeshDefinition()
             {
-                public ModelResourceLocation getModelLocation(ItemStack stack)
+                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
                 {
                     return fluidLocation;
                 }
@@ -214,6 +214,7 @@ public class FluidPlacementTest
         }
 
         @Override
+        @Nullable
         public FluidStack getFluid(ItemStack container)
         {
             container = container.copy();
@@ -234,7 +235,7 @@ public class FluidPlacementTest
         }
 
         @Override
-        public void getSubItems(@Nonnull Item itemIn, @Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
+        public void getSubItems(@Nonnull Item itemIn, @Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
         {
             Fluid[] fluids = new Fluid[]{FluidRegistry.WATER, FluidRegistry.LAVA, FiniteFluid.instance, ModelFluidDebug.TestFluid.instance};
             // add 16 variable fillings

@@ -26,6 +26,8 @@ import com.google.common.base.Throwables;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 
+import javax.annotation.Nullable;
+
 /**
  * This is the core holder object Capabilities.
  * Each capability will have ONE instance of this class,
@@ -55,6 +57,7 @@ public class Capability<T>
          * @param side The side of the object the instance is associated with.
          * @return a NBT holding the data. Null if no data needs to be stored.
          */
+        @Nullable
         NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side);
 
         /**
@@ -103,6 +106,7 @@ public class Capability<T>
      * Quick access to the IStorage's writeNBT. 
      * See {@link IStorage#writeNBT(Capability, Object, EnumFacing)} for documentation.
      */
+    @Nullable
     public NBTBase writeNBT(T instance, EnumFacing side)
     {
     	return storage.writeNBT(this, instance, side);
@@ -117,6 +121,7 @@ public class Capability<T>
      *
      * @return A NEW instance of the default implementation.
      */
+    @Nullable
     public T getDefaultInstance()
     {
         try

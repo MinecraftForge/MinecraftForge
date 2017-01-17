@@ -40,6 +40,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import com.google.common.collect.ImmutableList;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockEvent extends Event
@@ -171,7 +172,6 @@ public class BlockEvent extends Event
     public static class PlaceEvent extends BlockEvent
     {
         private final EntityPlayer player;
-        private final ItemStack itemInHand;
         private final BlockSnapshot blockSnapshot;
         private final IBlockState placedBlock;
         private final IBlockState placedAgainst;
@@ -180,30 +180,29 @@ public class BlockEvent extends Event
         @Deprecated
         public PlaceEvent(BlockSnapshot blockSnapshot, IBlockState placedAgainst, EntityPlayer player)
         {
-            this(blockSnapshot, placedAgainst, player, null);
+            this(blockSnapshot, placedAgainst, player, EnumHand.MAIN_HAND);
         }
 
-        public PlaceEvent(BlockSnapshot blockSnapshot, IBlockState placedAgainst, EntityPlayer player, @Nullable EnumHand hand) {
+        public PlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull IBlockState placedAgainst, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
             super(blockSnapshot.getWorld(), blockSnapshot.getPos(), blockSnapshot.getCurrentBlock());
             this.player = player;
-            this.itemInHand = player.getHeldItem(hand != null ? hand : EnumHand.MAIN_HAND);
             this.blockSnapshot = blockSnapshot;
             this.placedBlock = blockSnapshot.getCurrentBlock();
             this.placedAgainst = placedAgainst;
             this.hand = hand;
             if (DEBUG)
             {
-                System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ][Hand: %s]\n", getPlacedBlock(), placedAgainst, getItemInHand(), player, hand);
+                System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ][Hand: %s]\n", getPlacedBlock(), placedAgainst, player.getHeldItem(hand), player, hand);
             }
         }
 
         public EntityPlayer getPlayer() { return player; }
-        @Nullable
-        public ItemStack getItemInHand() { return itemInHand; }
+        @Nonnull
+        @Deprecated
+        public ItemStack getItemInHand() { return player.getHeldItem(hand); }
         public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
         public IBlockState getPlacedBlock() { return placedBlock; }
         public IBlockState getPlacedAgainst() { return placedAgainst; }
-        @Nullable
         public EnumHand getHand() { return hand; }
     }
 
@@ -222,15 +221,15 @@ public class BlockEvent extends Event
         @Deprecated
         public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, IBlockState placedAgainst, EntityPlayer player)
         {
-            this(blockSnapshots, placedAgainst, player, null);
+            this(blockSnapshots, placedAgainst, player, EnumHand.MAIN_HAND);
         }
 
-        public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, IBlockState placedAgainst, EntityPlayer player, @Nullable EnumHand hand) {
+        public MultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull IBlockState placedAgainst, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
             super(blockSnapshots.get(0), placedAgainst, player, hand);
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG)
             {
-                System.out.printf("Created MultiPlaceEvent - [PlacedAgainst: %s ][ItemInHand: %s ][Player: %s ]\n", placedAgainst, this.getItemInHand(), player);
+                System.out.printf("Created MultiPlaceEvent - [PlacedAgainst: %s ][ItemInHand: %s ][Player: %s ]\n", placedAgainst, player.getHeldItem(hand), player);
             }
         }
 

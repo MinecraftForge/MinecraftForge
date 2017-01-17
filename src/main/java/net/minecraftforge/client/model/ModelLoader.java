@@ -121,8 +121,11 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
+import javax.annotation.Nonnull;
+
 public final class ModelLoader extends ModelBakery
 {
+    private static boolean firstLoad = Boolean.parseBoolean(System.getProperty("fml.skipFirstModelBake", "true"));
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
@@ -173,6 +176,16 @@ public final class ModelLoader extends ModelBakery
         Map<IModel, IBakedModel> bakedModels = Maps.newHashMap();
         HashMultimap<IModel, ModelResourceLocation> models = HashMultimap.create();
         Multimaps.invertFrom(Multimaps.forMap(stateModels), models);
+
+        if (firstLoad)
+        {
+            firstLoad = false;
+            for (ModelResourceLocation mrl : stateModels.keySet())
+            {
+                bakedRegistry.putObject(mrl, missingBaked);
+            }
+            return bakedRegistry;
+        }
 
         ProgressBar bakeBar = ProgressManager.push("ModelLoader: baking", models.keySet().size());
 
@@ -1167,7 +1180,7 @@ public final class ModelLoader extends ModelBakery
         ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
         {
             @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack)
+            public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
             {
                 return ModelDynBucket.LOCATION;
             }

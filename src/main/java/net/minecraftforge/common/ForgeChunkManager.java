@@ -139,7 +139,7 @@ public class ForgeChunkManager
             @Override
             public Chunk apply(@Nullable ChunkPos input)
             {
-                return world.getChunkFromChunkCoords(input.chunkXPos, input.chunkZPos);
+                return input == null ? null : world.getChunkFromChunkCoords(input.chunkXPos, input.chunkZPos);
             }
         }));
         world.theProfiler.endStartSection("regularChunkLoading");
@@ -470,7 +470,10 @@ public class ForgeChunkManager
             return;
         }
 
-        dormantChunkCache.put(world, CacheBuilder.newBuilder().maximumSize(dormantChunkCacheSize).<Long, Chunk>build());
+        if (dormantChunkCacheSize != 0)
+        { // only put into cache if we're using dormant chunk caching
+            dormantChunkCache.put(world, CacheBuilder.newBuilder().maximumSize(dormantChunkCacheSize).<Long, Chunk>build());
+        }
         WorldServer worldServer = (WorldServer) world;
         File chunkDir = worldServer.getChunkSaveLocation();
         File chunkLoaderData = new File(chunkDir, "forcedchunks.dat");
@@ -615,7 +618,10 @@ public class ForgeChunkManager
         }
 
         forcedChunks.remove(world);
-        dormantChunkCache.remove(world);
+        if (dormantChunkCacheSize != 0) // only if in use
+        {
+            dormantChunkCache.remove(world);
+        }
         // integrated server is shutting down
         if (!FMLCommonHandler.instance().getMinecraftServerInstance().isServerRunning())
         {
@@ -687,6 +693,7 @@ public class ForgeChunkManager
         return playerTicketLength - playerTickets.get(username).size();
     }
 
+    @Nullable
     public static Ticket requestPlayerTicket(Object mod, String player, World world, Type type)
     {
         ModContainer mc = getContainer(mod);
@@ -713,6 +720,7 @@ public class ForgeChunkManager
      * @param type The type of ticket
      * @return A ticket with which to register chunks for loading, or null if no further tickets are available
      */
+    @Nullable
     public static Ticket requestTicket(Object mod, World world, Type type)
     {
         ModContainer container = getContainer(mod);
@@ -959,6 +967,7 @@ public class ForgeChunkManager
 
     public static void putDormantChunk(long coords, Chunk chunk)
     {
+        if (dormantChunkCacheSize == 0) return; // Skip if we're not dormant caching chunks
         Cache<Long, Chunk> cache = dormantChunkCache.get(chunk.getWorld());
         if (cache != null)
         {
@@ -966,8 +975,10 @@ public class ForgeChunkManager
         }
     }
 
+    @Nullable
     public static Chunk fetchDormantChunk(long coords, World world)
     {
+        if (dormantChunkCacheSize == 0) return null; // Don't bother with maps at all if its never gonna get a response
         Cache<Long, Chunk> cache = dormantChunkCache.get(world);
         if (cache == null)
         {
@@ -1110,6 +1121,7 @@ public class ForgeChunkManager
         return list;
     }
 
+    @Nullable
     public static ConfigCategory getConfigFor(Object mod)
     {
         ModContainer container = getContainer(mod);

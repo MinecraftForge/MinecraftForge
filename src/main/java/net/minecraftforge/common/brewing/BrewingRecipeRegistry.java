@@ -96,7 +96,7 @@ public class BrewingRecipeRegistry {
         for (IBrewingRecipe recipe : recipes)
         {
             ItemStack output = recipe.getOutput(input, ingredient);
-            if (output != null)
+            if (!output.isEmpty())
             {
                 return output;
             }

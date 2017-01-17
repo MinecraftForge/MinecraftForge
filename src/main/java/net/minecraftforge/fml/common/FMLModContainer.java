@@ -77,6 +77,8 @@ import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javax.annotation.Nullable;
+
 public class FMLModContainer implements ModContainer
 {
     private Object modInstance;
@@ -280,6 +282,7 @@ public class FMLModContainer implements ModContainer
         }
     }
 
+    @Nullable
     public Properties searchForVersionProperties()
     {
         try
@@ -391,6 +394,7 @@ public class FMLModContainer implements ModContainer
         }
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
     private Method gatherAnnotations(Class<?> clazz) throws Exception
     {

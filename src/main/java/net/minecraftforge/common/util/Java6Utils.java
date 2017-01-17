@@ -17,33 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.relauncher;
+package net.minecraftforge.common.util;
+
+import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nullable;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.zip.ZipFile;
 
-public final class FileListHelper {
-    private enum CaseInsensitiveFileComparator implements Comparator<File>
+public class Java6Utils
+{
+    /**
+     * {@link ZipFile} does not implement {@link Closeable} on Java 6.
+     * This method is the same as {@link IOUtils#closeQuietly(Closeable)} but works on {@link ZipFile} on Java 6.
+     */
+    public static void closeZipQuietly(@Nullable ZipFile file)
     {
-        INSTANCE;
-        @Override
-        public int compare(File o1, File o2)
+        try
         {
-            return o1 != null && o2 != null ? o1.getName().compareToIgnoreCase(o2.getName()) : o1 == null ? -1 : 1;
+            if (file != null)
+            {
+                file.close();
+            }
         }
-
-    }
-    public static File[] sortFileList(File[] files)
-    {
-        Arrays.sort(files, CaseInsensitiveFileComparator.INSTANCE);
-        return files;
-    }
-    public static File[] sortFileList(File dir, @Nullable FilenameFilter filter)
-    {
-        File[] files = dir.listFiles(filter);
-        return sortFileList(files);
+        catch (IOException ioe)
+        {
+            // ignore
+        }
     }
 }

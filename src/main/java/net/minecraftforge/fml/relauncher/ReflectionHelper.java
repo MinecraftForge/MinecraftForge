@@ -18,6 +18,7 @@
  */
 package net.minecraftforge.fml.relauncher;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 /**
@@ -46,7 +47,7 @@ public class ReflectionHelper
         private static final long serialVersionUID = 1L;
         //private String[] classNames;
 
-        public UnableToFindClassException(String[] classNames, Exception err)
+        public UnableToFindClassException(String[] classNames, @Nullable Exception err)
         {
             super(err);
             //this.classNames = classNames;
@@ -97,7 +98,7 @@ public class ReflectionHelper
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, E> T getPrivateValue(Class <? super E > classToAccess, E instance, int fieldIndex)
+    public static <T, E> T getPrivateValue(Class <? super E > classToAccess, @Nullable E instance, int fieldIndex)
     {
         try
         {

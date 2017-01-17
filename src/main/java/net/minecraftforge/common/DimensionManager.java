@@ -52,6 +52,8 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 
+import javax.annotation.Nullable;
+
 public class DimensionManager
 {
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
@@ -170,7 +172,7 @@ public class DimensionManager
         return worlds.keySet().toArray(new Integer[worlds.size()]); //Only loaded dims, since usually used to cycle through loaded worlds
     }
 
-    public static void setWorld(int id, WorldServer world, MinecraftServer server)
+    public static void setWorld(int id, @Nullable WorldServer world, MinecraftServer server)
     {
         if (world != null)
         {
@@ -357,7 +359,7 @@ public class DimensionManager
         return dimMap;
     }
 
-    public static void loadDimensionDataMap(NBTTagCompound compoundTag)
+    public static void loadDimensionDataMap(@Nullable NBTTagCompound compoundTag)
     {
         dimensionMap.clear();
         if (compoundTag == null)
@@ -387,6 +389,7 @@ public class DimensionManager
      * Return the current root directory for the world save. Accesses getSaveHandler from the overworld
      * @return the root directory of the save
      */
+    @Nullable
     public static File getCurrentSaveRootDirectory()
     {
         if (DimensionManager.getWorld(0) != null)

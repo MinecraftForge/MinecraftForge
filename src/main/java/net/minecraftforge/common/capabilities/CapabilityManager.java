@@ -39,6 +39,8 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 
+import javax.annotation.Nullable;
+
 public enum CapabilityManager
 {
     INSTANCE;
@@ -63,11 +65,10 @@ public enum CapabilityManager
                 try {
                     return implementation.newInstance();
                 } catch (InstantiationException e) {
-                    Throwables.propagate(e);
+                    throw Throwables.propagate(e);
                 } catch (IllegalAccessException e) {
-                    Throwables.propagate(e);
+                    throw Throwables.propagate(e);
                 }
-                return null;
             }
         });
     }
@@ -115,6 +116,7 @@ public enum CapabilityManager
             if (type == null)
             {
                 FMLLog.log(Level.WARN, "Unable to inject capability at %s.%s (Invalid Annotation)", targetClass, targetName);
+                continue;
             }
             final String capabilityName = type.getInternalName().replace('/', '.').intern();
 

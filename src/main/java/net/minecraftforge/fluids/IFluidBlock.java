@@ -23,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Implement this interface on Block classes which represent world-placeable Fluids.
@@ -60,6 +61,7 @@ public interface IFluidBlock
      *            If false, the drain will only be simulated.
      * @return
      */
+    @Nullable
     FluidStack drain(World world, BlockPos pos, boolean doDrain);
 
     /**

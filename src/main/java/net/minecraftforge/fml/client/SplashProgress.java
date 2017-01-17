@@ -38,6 +38,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -731,12 +733,12 @@ public class SplashProgress
         private final int frames;
         private final int size;
 
-        public Texture(ResourceLocation location, ResourceLocation fallback)
+        public Texture(ResourceLocation location, @Nullable ResourceLocation fallback)
         {
             this(location, fallback, true);
         }
 
-        public Texture(ResourceLocation location, ResourceLocation fallback, boolean allowRP)
+        public Texture(ResourceLocation location, @Nullable ResourceLocation fallback, boolean allowRP)
         {
             InputStream s = null;
             try
@@ -881,14 +883,15 @@ public class SplashProgress
         }
 
         @Override
-        protected void bindTexture(ResourceLocation location)
+        protected void bindTexture(@Nonnull ResourceLocation location)
         {
             if(location != locationFontTexture) throw new IllegalArgumentException();
             fontTexture.bind();
         }
 
+        @Nonnull
         @Override
-        protected IResource getResource(ResourceLocation location) throws IOException
+        protected IResource getResource(@Nonnull ResourceLocation location) throws IOException
         {
             DefaultResourcePack pack = Minecraft.getMinecraft().mcDefaultResourcePack;
             return new SimpleResource(pack.getPackName(), location, pack.getInputStream(location), null, null);
@@ -920,7 +923,7 @@ public class SplashProgress
         }
     }
 
-    private static InputStream open(ResourceLocation loc, ResourceLocation fallback, boolean allowRP) throws IOException
+    private static InputStream open(ResourceLocation loc, @Nullable ResourceLocation fallback, boolean allowRP) throws IOException
     {
         if (!allowRP)
             return mcPack.getInputStream(loc);
