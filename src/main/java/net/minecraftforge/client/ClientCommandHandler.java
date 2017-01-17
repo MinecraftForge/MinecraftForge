@@ -29,6 +29,7 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -62,6 +63,10 @@ public class ClientCommandHandler extends CommandHandler
         if (message.startsWith("/"))
         {
             message = message.substring(1);
+        }
+        else if (ForgeModContainer.clientCommandsRequireSlash)
+        {
+            return 0;
         }
 
         String[] temp = message.split(" ");
