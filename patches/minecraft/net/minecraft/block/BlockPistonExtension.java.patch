@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPistonExtension.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPistonExtension.java
+@@ -252,4 +252,10 @@
+             return this.field_176714_c;
+         }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
++    {
++        return false;
++    }
+ }
