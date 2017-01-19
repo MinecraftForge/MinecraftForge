@@ -197,7 +197,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +932,1188 @@
+@@ -908,6 +932,1192 @@
      {
      }
  
@@ -1039,8 +1039,12 @@
 +        {
 +            if (prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation"))
 +            {
-+                world.func_175656_a(pos, state.func_177231_a(prop));
-+                return true;
++                Block block = state.func_177230_c();
++                if (!(block instanceof BlockBed) && !(block instanceof BlockPistonExtension))
++                {
++                    world.func_175656_a(pos, state.func_177231_a(prop));
++                    return true;
++                }
 +            }
 +        }
 +        return false;
@@ -1386,7 +1390,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2407,7 @@
+@@ -1201,14 +2411,7 @@
              }
              else
              {
