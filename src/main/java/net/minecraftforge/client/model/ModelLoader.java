@@ -249,7 +249,7 @@ public final class ModelLoader extends ModelBakery
         catch(Exception e)
         {
             storeException(location, e);
-            model = getMissingModel();
+            model = ModelLoaderRegistry.getMissingModel(location, e);
         }
         stateModels.put(location, model);
     }
@@ -335,11 +335,12 @@ public final class ModelLoader extends ModelBakery
                         exception = new ItemLoadingException("Could not load item model either from the normal location " + file + " or from the blockstate", normalException, blockstateException);
                     }
                 }
-                stateModels.put(memory, model);
                 if(exception != null)
                 {
                     storeException(memory, exception);
+                    model = ModelLoaderRegistry.getMissingModel(memory, exception);
                 }
+                stateModels.put(memory, model);
             }
         }
         ProgressManager.pop(itemBar);

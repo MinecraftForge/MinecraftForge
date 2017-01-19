@@ -108,6 +108,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean disableVersionCheck = false;
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
+    public static boolean zoomInMissingModelTextInGui = false;
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
 
@@ -278,10 +279,17 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         // Client-Side only properties
         propOrder = new ArrayList<String>();
+
         prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", Boolean.FALSE,
                 "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
         prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
         replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "zoomInMissingModelTextInGui", Boolean.TRUE,
+        "Toggle off to make missing model text in the gui fit inside the slot.");
+        zoomInMissingModelTextInGui = prop.getBoolean(Boolean.FALSE);
+        prop.setLanguageKey("forge.configgui.zoomInMissingModelTextInGui");
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder,
