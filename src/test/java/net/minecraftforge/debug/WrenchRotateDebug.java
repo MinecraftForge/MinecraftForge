@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = WrenchRotateDebug.modID, name = "Wrench Rotate Debug", version = "0.0.0", acceptableRemoteVersions = "*")
+@Mod(modid = WrenchRotateDebug.modID, name = "Wrench Rotate Debug", version = "0.0.0")
 public class WrenchRotateDebug
 {
     public static final String modID = "wrenchrotatedebug";
