@@ -170,7 +170,6 @@ public class Loader
 
     private static File minecraftDir;
     private static List<String> injectedContainers;
-    private static List<RuntimeException> foundExceptions = new ArrayList<RuntimeException>();
     private ImmutableMap<String, String> fmlBrandingProperties;
     private File forcedModFile;
     private ModDiscoverer discoverer;
@@ -237,6 +236,8 @@ public class Loader
     private void sortModList()
     {
         FMLLog.finer("Verifying mod requirements are satisfied");
+        List<WrongMinecraftVersionException> wrongMinecraftExceptions = new ArrayList<WrongMinecraftVersionException>();
+        List<MissingModsException> missingModsExceptions = new ArrayList<MissingModsException>();
         try
         {
             BiMap<String, ArtifactVersion> modVersions = HashBiMap.create();
@@ -251,9 +252,9 @@ public class Loader
                 if (!mod.acceptableMinecraftVersionRange().containsVersion(minecraft.getProcessedVersion()))
                 {
                     FMLLog.severe("The mod %s does not wish to run in Minecraft version %s. You will have to remove it to play.", mod.getModId(), getMCVersionString());
-                    RuntimeException ret = new WrongMinecraftVersionException(mod, getMCVersionString());
+                    WrongMinecraftVersionException ret = new WrongMinecraftVersionException(mod, getMCVersionString());
                     FMLLog.severe(ret.getMessage());
-                    foundExceptions.add(ret);
+                    wrongMinecraftExceptions.add(ret);
                     continue;
                 }
                 Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new ArtifactVersionNameFunction());
@@ -267,9 +268,9 @@ public class Loader
                     {
                         versionMissingMods.add(names.get(modid));
                     }
-                    RuntimeException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    MissingModsException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
                     FMLLog.severe(ret.getMessage());
-                    foundExceptions.add(ret);
+                    missingModsExceptions.add(ret);
                     continue;
                 }
                 reqList.putAll(mod.getModId(), names.keySet());
@@ -287,21 +288,27 @@ public class Loader
                 if (!versionMissingMods.isEmpty())
                 {
                     FMLLog.severe("The mod %s (%s) requires mod versions %s to be available", mod.getModId(), mod.getName(), versionMissingMods);
-                    RuntimeException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    MissingModsException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
                     FMLLog.severe(ret.toString());
-                    foundExceptions.add(ret);
+                    missingModsExceptions.add(ret);
                 }
             }
 
-            switch (foundExceptions.size())
+            if(wrongMinecraftExceptions.isEmpty()&&missingModsExceptions.isEmpty())
             {
-                case 0:
-                    FMLLog.finer("All mod requirements are satisfied");
-                    break;
-                case 1:
-                    throw foundExceptions.get(0);
-                default:
-                    throw new MultipleModsErrored(foundExceptions);
+                FMLLog.finer("All mod requirements are satisfied");
+            }
+            else if(missingModsExceptions.size()==1&&wrongMinecraftExceptions.isEmpty())
+            {
+                throw missingModsExceptions.get(0);
+            }
+            else if(wrongMinecraftExceptions.size()==1&&missingModsExceptions.isEmpty())
+            {
+                throw wrongMinecraftExceptions.get(0);
+            }
+            else
+            {
+                throw new MultipleModsErrored(wrongMinecraftExceptions, missingModsExceptions);
             }
 
             reverseDependencies = Multimaps.invertFrom(reqList, ArrayListMultimap.<String,String>create());

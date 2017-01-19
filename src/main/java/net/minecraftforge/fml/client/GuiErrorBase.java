@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import org.apache.logging.log4j.Level;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 
 public class GuiErrorBase extends GuiErrorScreen
@@ -38,13 +38,18 @@ public class GuiErrorBase extends GuiErrorScreen
         super(null, null);
     }
 
+    private String translateOrDefault(String translateKey, String alternative, Object... format)
+    {
+        return I18n.hasKey(translateKey) ? I18n.format(translateKey, format) : String.format(alternative, format); //When throwing a DuplicateModsException, the translation system does not work...
+    }
+
     @Override
     public void initGui()
     {
         super.initGui();
         this.buttonList.clear();
-        this.buttonList.add(new GuiButton(10, 50, this.height - 38, this.width/2 -55, 20, I18n.format("fml.button.open.mods.folder")));
-        String openFileText = I18n.format("fml.button.open.file", clientLog.getName());
+        this.buttonList.add(new GuiButton(10, 50, this.height - 38, this.width/2 -55, 20, translateOrDefault("fml.button.open.mods.folder", "Open Mods Folder")));
+        String openFileText = translateOrDefault("fml.button.open.file","Open %s",  clientLog.getName());
         this.buttonList.add(new GuiButton(11, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, openFileText));
     }
 

@@ -19,83 +19,139 @@
 
 package net.minecraftforge.fml.client;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fml.common.*;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.MissingModsException;
+import net.minecraftforge.fml.common.MultipleModsErrored;
+import net.minecraftforge.fml.common.WrongMinecraftVersionException;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 
 import java.util.List;
 
 public class GuiMultipleModsErrored extends GuiErrorBase
 {
-    private final List<RuntimeException> exceptions;
-    private int pageIndex;
-    private GuiErrorBase subGui;
+    private final List<WrongMinecraftVersionException> wrongMinecraftExceptions;
+    private final List<MissingModsException> missingModsExceptions;
+    private GuiList list;
 
     public GuiMultipleModsErrored(MultipleModsErrored exception)
     {
         super();
-        this.exceptions = exception.exceptions;
-    }
-
-    private void switchSubGui()
-    {
-        RuntimeException exception = exceptions.get(pageIndex);
-        if (exception instanceof WrongMinecraftVersionException)
-        {
-            subGui = new GuiWrongMinecraft((WrongMinecraftVersionException) exception);
-        }
-        else if (exception instanceof MissingModsException)
-        {
-            subGui = new GuiModsMissing((MissingModsException) exception);
-        }
+        wrongMinecraftExceptions = exception.wrongMinecraftExceptions;
+        missingModsExceptions = exception.missingModsExceptions;
     }
 
     @Override
     public void initGui()
     {
         super.initGui();
-        pageIndex = 0;
-        switchSubGui();
-        subGui.initGui();
-        subGui.clearButtons();
-        this.buttonList.add(new GuiButton(1,50, this.height -20, this.width/2 -55 , 20,   "<"));
-        this.buttonList.add(new GuiButton(2, this.width/2 +5, this.height -20, this.width/2 -55, 20, ">"));
-    }
-
-    @Override
-    public void updateScreen()
-    {
-        RuntimeException exception = exceptions.get(pageIndex);
-        switchSubGui();
-        buttonList.get(2).enabled = pageIndex != 0;
-        buttonList.get(3).enabled = pageIndex<exceptions.size()-1;
+        int additionalSize = missingModsExceptions.isEmpty()||wrongMinecraftExceptions.isEmpty() ? 35 : 70;
+        for(MissingModsException exception : missingModsExceptions)
+        {
+            additionalSize+=exception.missingMods.size()*10;
+        }
+        list = new GuiList(wrongMinecraftExceptions.size()*10+missingModsExceptions.size()*10+additionalSize);
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        ScaledResolution resolution = new ScaledResolution(mc);
-        subGui.setWorldAndResolution(mc, resolution.getScaledWidth(), resolution.getScaledHeight());
-        subGui.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.missing.multiple", exceptions.size()), this.width / 2, 1, 0xFFFFFF);
+        this.drawDefaultBackground();
+        this.list.drawScreen(mouseX, mouseY, partialTicks);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.missing.multiple", missingModsExceptions.size() + wrongMinecraftExceptions.size()), this.width/2, 1, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
     public void actionPerformed(GuiButton button)
     {
-        if (button.id == 1)
+        this.list.actionPerformed(button);
+        super.actionPerformed(button);
+    }
+
+    private class GuiList extends GuiScrollingList
+    {
+        public GuiList(int entryHeight)
         {
-            pageIndex--;
+            super(GuiMultipleModsErrored.this.mc,
+                  GuiMultipleModsErrored.this.width-20,
+                  GuiMultipleModsErrored.this.height -30,
+                  30, GuiMultipleModsErrored.this.height-50,
+                    10,
+                  entryHeight,
+                  GuiMultipleModsErrored.this.width,
+                  GuiMultipleModsErrored.this.height);
         }
-        else if (button.id == 2)
+
+        @Override
+        protected int getSize()
         {
-            pageIndex++;
+            return 1;
         }
-        else
+
+        @Override
+        protected void elementClicked(int index, boolean doubleClick) {}
+
+        @Override
+        protected boolean isSelected(int index)
         {
-            super.actionPerformed(button);
+            return false;
+        }
+
+        @Override
+        protected void drawBackground()
+        {
+            drawDefaultBackground();
+        }
+
+        @Override
+        protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess)
+        {
+            int offset = slotTop;
+            FontRenderer renderer = GuiMultipleModsErrored.this.fontRendererObj;
+            if(!wrongMinecraftExceptions.isEmpty())
+            {
+                renderer.drawString(TextFormatting.UNDERLINE + I18n.format("fml.messages.mod.wrongminecraft", Loader.instance().getMinecraftModContainer().getVersion()), this.left, offset, 0xFFFFFF);
+                offset+=15;
+                for(WrongMinecraftVersionException exception : wrongMinecraftExceptions)
+                {
+                    renderer.drawString(I18n.format("fml.messages.mod.wrongminecraft.requirement", TextFormatting.BOLD + exception.mod.getName() + TextFormatting.RESET, exception.mod.getModId(), exception.mod.acceptableMinecraftVersionRange().toStringFriendly()), this.left, offset, 0xFFFFFF);
+                    offset += 10;
+                }
+                offset+=5;
+                renderer.drawString(I18n.format("fml.messages.mod.wrongminecraft.fix.multiple"), this.left, offset, 0xFFFFFF);
+                offset+=20;
+            }
+            if(!missingModsExceptions.isEmpty())
+            {
+                renderer.drawString(TextFormatting.UNDERLINE + I18n.format("fml.messages.mod.missing.dependencies.multiple"), this.left, offset, 0xFFFFFF);
+                offset+=15;
+                for (MissingModsException exception : missingModsExceptions)
+                {
+                    renderer.drawString(I18n.format("fml.messages.mod.missing.dependencies.fix", TextFormatting.BOLD + exception.getModName() + TextFormatting.RESET), this.left, offset, 0xFFFFFF);
+                    for (ArtifactVersion v : exception.missingMods)
+                    {
+                        offset+=10;
+                        if (v instanceof DefaultArtifactVersion)
+                        {
+                            DefaultArtifactVersion dav =  (DefaultArtifactVersion)v;
+                            if (dav.getRange() != null)
+                            {
+                                String message = String.format(TextFormatting.BOLD +  "%s " + TextFormatting.RESET + "%s", v.getLabel(), dav.getRange().toStringFriendly());
+                                renderer.drawString(message, this.left, offset, 0xEEEEEE);
+                                continue;
+                            }
+                        }
+                        renderer.drawString(String.format("%s : %s", v.getLabel(), v.getRangeString()), this.left, offset, 0xEEEEEE);
+                    }
+                    offset += 15;
+                }
+            }
         }
     }
 }

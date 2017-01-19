@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.client;
 
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -32,8 +31,7 @@ import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.Lists;
 
-import java.awt.*;
-import java.io.IOException;
+import java.awt.Desktop;
 import java.net.URI;
 import java.util.List;
 
@@ -50,14 +48,14 @@ public class GuiJava8Error extends GuiErrorBase
     public void initGui()
     {
         super.initGui();
-        this.buttonList.add(new GuiButton(1, 50, this.height -57, this.width/2 -55, 20, I18n.format("fml.button.visitjavadownloads")));
+        this.buttonList.add(new GuiButton(1, 50, this.height -62, this.width/2 -55, 20, I18n.format("fml.button.visitjavadownloads")));
         if (java8VersionException.getMods().isEmpty())
         {
-            this.buttonList.add(new GuiButton(3, this.width / 2 + 5, this.height -57, this.width / 2 - 55, 20, I18n.format("fml.button.continue")));
+            this.buttonList.add(new GuiButton(3, this.width / 2 + 5, this.height -62, this.width / 2 - 55, 20, I18n.format("fml.button.continue")));
         }
         else
         {
-            this.buttonList.add(new GuiButton(2, this.width / 2 + 5, this.height -57, this.width / 2 - 55, 20, I18n.format("menu.quit")));
+            this.buttonList.add(new GuiButton(2, this.width / 2 + 5, this.height -62, this.width / 2 - 55, 20, I18n.format("menu.quit")));
         }
     }
 

@@ -16,15 +16,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.fml.common;
 
 import java.util.List;
 
 public class MultipleModsErrored extends RuntimeException
 {
-    public List<RuntimeException> exceptions;
-    public MultipleModsErrored(List<RuntimeException> exceptions)
+    public final List<WrongMinecraftVersionException> wrongMinecraftExceptions;
+    public final List<MissingModsException>missingModsExceptions;
+    public MultipleModsErrored(List<WrongMinecraftVersionException> wrongMinecraftExceptions, List<MissingModsException> missingModsExceptions)
     {
-        this.exceptions = exceptions;
+        this.wrongMinecraftExceptions = wrongMinecraftExceptions;
+        this.missingModsExceptions = missingModsExceptions;
     }
 }

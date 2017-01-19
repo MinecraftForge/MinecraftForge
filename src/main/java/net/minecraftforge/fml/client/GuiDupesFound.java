@@ -19,12 +19,11 @@
 
 package net.minecraftforge.fml.client;
 
-import java.io.File;
-import java.util.Map.Entry;
-
-import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.ModContainer;
+
+import java.io.File;
+import java.util.Map.Entry;
 
 public class GuiDupesFound extends GuiErrorBase
 {

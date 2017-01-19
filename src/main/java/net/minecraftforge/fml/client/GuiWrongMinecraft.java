@@ -20,6 +20,8 @@
 package net.minecraftforge.fml.client;
 
 import net.minecraft.client.gui.GuiErrorScreen;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 
@@ -37,14 +39,13 @@ public class GuiWrongMinecraft extends GuiErrorBase
     {
         this.drawDefaultBackground();
         int offset = 75;
-        this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader has found a problem with your minecraft installation", this.width / 2, offset, 0xFFFFFF);
-        offset+=10;
-        this.drawCenteredString(this.fontRendererObj, String.format("The mod listed below does not want to run in Minecraft version %s", Loader.instance().getMinecraftModContainer().getVersion()), this.width / 2, offset, 0xFFFFFF);
-        offset+=5;
-        offset+=10;
-        this.drawCenteredString(this.fontRendererObj, String.format("%s (%s) wants Minecraft %s", wrongMC.mod.getName(), wrongMC.mod.getModId(), wrongMC.mod.acceptableMinecraftVersionRange()), this.width / 2, offset, 0xEEEEEE);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.wrongminecraft", Loader.instance().getMinecraftModContainer().getVersion()), this.width / 2, offset, 0xFFFFFF);
+        offset+=15;
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.wrongminecraft.requirement", TextFormatting.BOLD + wrongMC.mod.getName() + TextFormatting.RESET, wrongMC.mod.getModId(), wrongMC.mod.acceptableMinecraftVersionRange().toStringFriendly()), this.width / 2, offset, 0xEEEEEE);
+        offset+=15;
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.wrongminecraft.fix", wrongMC.mod.getName()),this.width/2, offset, 0xFFFFFF);
         offset+=20;
-        this.drawCenteredString(this.fontRendererObj, "The file 'fml-client-latest.log' contains more information", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.clientLog.getName()), this.width / 2, offset, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }
