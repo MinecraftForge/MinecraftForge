@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/ChunkCache.java
 +++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
+@@ -61,7 +61,7 @@
+     @Nullable
+     public TileEntity func_175625_s(BlockPos p_175625_1_)
+     {
+-        return this.func_190300_a(p_175625_1_, Chunk.EnumCreateEntityType.IMMEDIATE);
++        return this.func_190300_a(p_175625_1_, Chunk.EnumCreateEntityType.QUEUED); // Forge: don't modify world from other threads
+     }
+ 
+     @Nullable
 @@ -69,6 +69,8 @@
      {
          int i = (p_190300_1_.func_177958_n() >> 4) - this.field_72818_a;
