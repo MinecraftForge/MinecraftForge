@@ -16,7 +16,7 @@ public class ConfigTest
       MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @Config(modid = MODID, type = Type.INSTANCE, name = MODID + "_types")
+    @Config(modid = MODID, type = Type.INSTANCE, name = MODID + "_types", category = "testing")
     public static class CONFIG_TYPES
     {
         public static boolean     bool = false;
@@ -53,6 +53,8 @@ public class ConfigTest
         public static NestedType  Inner = new NestedType();
 
         public enum TEST { BIG, BAD, WOLF; }
+
+        @Categorized("inside")
         public static class NestedType
         {
             public String HeyLook = "I'm Inside!";
