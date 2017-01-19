@@ -5,7 +5,7 @@
      public TileEntity func_175625_s(BlockPos p_175625_1_)
      {
 -        return this.func_190300_a(p_175625_1_, Chunk.EnumCreateEntityType.IMMEDIATE);
-+        return this.func_190300_a(p_175625_1_, Chunk.EnumCreateEntityType.QUEUED); // Forge: don't modify world from other threads
++        return this.func_190300_a(p_175625_1_, Chunk.EnumCreateEntityType.CHECK); // Forge: don't modify world from other threads
      }
  
      @Nullable
