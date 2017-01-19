@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * Test for {@link TextureStitchEvent.Pre}.
  */
-@Mod(modid = CustomSpriteTest.MOD_ID, name = CustomSpriteTest.NAME, version = "1.0")
+@Mod(modid = CustomSpriteTest.MOD_ID, name = CustomSpriteTest.NAME, version = "1.0", clientSideOnly = true)
 public class CustomSpriteTest
 {
     static final String MOD_ID = "custom_sprite_test";
