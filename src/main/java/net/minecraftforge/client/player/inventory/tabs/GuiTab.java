@@ -107,7 +107,7 @@ public class GuiTab
     }
 
     /**
-     * ItemStack version of tabs
+     * ResourceLocation version of tabs
      * 
      * @param name
      *            The name of the tab

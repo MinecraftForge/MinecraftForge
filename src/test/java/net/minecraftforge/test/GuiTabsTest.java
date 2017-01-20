@@ -3,12 +3,16 @@ package net.minecraftforge.test;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentProtection;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.player.inventory.tabs.GuiTab;
@@ -92,9 +96,11 @@ public class GuiTabsTest
                     }
                 }.setTargetGui(GuiChest.class).addTo(GuiInventory.class);
             }
+            ItemStack is = new ItemStack(Items.APPLE);
+            is.addEnchantment(new net.minecraft.enchantment.EnchantmentProtection(Enchantment.Rarity.COMMON, EnchantmentProtection.Type.FALL, null), 1);
             for (int i = 0; 13 != i; i++)
             {
-                new GuiTab("Tab3", new ItemStack(Blocks.FURNACE), TestGui2.class) {
+                new GuiTab("Tab3", is, TestGui2.class) {
                     @Override
                     public void onTabClicked()
                     {
