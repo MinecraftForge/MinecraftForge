@@ -48,21 +48,23 @@ public class GuiJava8Error extends GuiErrorBase
     public void initGui()
     {
         super.initGui();
-        this.buttonList.add(new GuiButton(1, 50, this.height -62, this.width/2 -55, 20, I18n.format("fml.button.visitjavadownloads")));
-        if (java8VersionException.getMods().isEmpty())
+        this.buttonList.remove(1);
+        if(java8VersionException.getMods().isEmpty())
         {
-            this.buttonList.add(new GuiButton(3, this.width / 2 + 5, this.height -62, this.width / 2 - 55, 20, I18n.format("fml.button.continue")));
+            this.buttonList.remove(0);
+            this.buttonList.add(new GuiButton(1, 50, this.height -38, this.width / 2 - 55, 20, I18n.format("fml.button.continue")));
         }
-        else
-        {
-            this.buttonList.add(new GuiButton(2, this.width / 2 + 5, this.height -62, this.width / 2 - 55, 20, I18n.format("menu.quit")));
-        }
+        this.buttonList.add(new GuiButton(2, this.width / 2 + 5, this.height -38, this.width/2 -55, 20, I18n.format("fml.button.visitjavadownloads")));
     }
 
     @Override
     protected void actionPerformed(GuiButton button)
     {
         if (button.id == 1)
+        {
+            FMLClientHandler.instance().showGuiScreen(null);
+        }
+        else if (button.id == 2)
         {
             try
             {
@@ -73,13 +75,9 @@ public class GuiJava8Error extends GuiErrorBase
                 FMLLog.log(Level.ERROR, e, "Problem launching browser");
             }
         }
-        else if (button.id == 2)
+        else
         {
-            FMLCommonHandler.instance().exitJava(1,true);
-        }
-        else if (button.id == 3)
-        {
-            FMLClientHandler.instance().showGuiScreen(null);
+            super.actionPerformed(button);
         }
     }
 
@@ -133,8 +131,6 @@ public class GuiJava8Error extends GuiErrorBase
                 this.drawString(this.fontRendererObj, line, (this.width - maxWidth) / 2, offset, 0xFFFFFF);
                 offset += this.fontRendererObj.FONT_HEIGHT + 2;
             }
-
-            offset += 15;
         }
         // super.super
         super.drawScreen(mouseX, mouseY, partialTicks);

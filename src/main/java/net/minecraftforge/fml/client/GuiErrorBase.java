@@ -48,8 +48,8 @@ public class GuiErrorBase extends GuiErrorScreen
     {
         super.initGui();
         this.buttonList.clear();
-        this.buttonList.add(new GuiButton(10, 50, this.height - 38, this.width/2 -55, 20, translateOrDefault("fml.button.open.mods.folder", "Open Mods Folder")));
-        String openFileText = translateOrDefault("fml.button.open.file","Open %s",  clientLog.getName());
+        this.buttonList.add(new GuiButton(10, 50, this.height - 38, this.width / 2 - 55, 20, translateOrDefault("fml.button.open.mods.folder", "Open Mods Folder")));
+        String openFileText = translateOrDefault("fml.button.open.file", "Open %s", clientLog.getName());
         this.buttonList.add(new GuiButton(11, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, openFileText));
     }
 
@@ -79,11 +79,6 @@ public class GuiErrorBase extends GuiErrorScreen
                 FMLLog.log(Level.ERROR, e, "Problem opening log file " + clientLog);
             }
         }
-    }
-
-    public void clearButtons()
-    {
-        buttonList.clear();
     }
 
     @Override

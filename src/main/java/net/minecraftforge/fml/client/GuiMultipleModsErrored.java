@@ -50,12 +50,12 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     public void initGui()
     {
         super.initGui();
-        int additionalSize = missingModsExceptions.isEmpty()||wrongMinecraftExceptions.isEmpty() ? 35 : 70;
+        int additionalSize = missingModsExceptions.isEmpty()||wrongMinecraftExceptions.isEmpty() ? 20 : 55;
         for(MissingModsException exception : missingModsExceptions)
         {
             additionalSize+=exception.missingMods.size()*10;
         }
-        list = new GuiList(wrongMinecraftExceptions.size()*10+missingModsExceptions.size()*10+additionalSize);
+        list = new GuiList(wrongMinecraftExceptions.size()*10+missingModsExceptions.size()*15+additionalSize);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     {
         this.drawDefaultBackground();
         this.list.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.missing.multiple", missingModsExceptions.size() + wrongMinecraftExceptions.size()), this.width/2, 1, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.missing.multiple", missingModsExceptions.size() + wrongMinecraftExceptions.size()), this.width/2, 10, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -147,7 +147,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
                                 continue;
                             }
                         }
-                        renderer.drawString(String.format("%s : %s", v.getLabel(), v.getRangeString()), this.left, offset, 0xEEEEEE);
+                        renderer.drawString(String.format(TextFormatting.BOLD + "%s" + TextFormatting.RESET + " : %s", v.getLabel(), v.getRangeString()), this.left, offset, 0xEEEEEE);
                     }
                     offset += 15;
                 }
