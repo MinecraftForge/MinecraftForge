@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/RecipesIngots.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/RecipesIngots.java
+@@ -16,7 +16,9 @@
+         {
+             Block block = (Block)aobject[0];
+             ItemStack itemstack = (ItemStack)aobject[1];
+-            p_77590_1_.func_92103_a(new ItemStack(block), new Object[] {"###", "###", "###", '#', itemstack});
++            ItemStack itemstackIngredient = itemstack.func_77946_l(); // forge: MC-103403 ensure ingredient stack size is 1 and not 9.
++            itemstackIngredient.func_190920_e(1);
++            p_77590_1_.func_92103_a(new ItemStack(block), new Object[] {"###", "###", "###", '#', itemstackIngredient});
+             p_77590_1_.func_92103_a(itemstack, new Object[] {"#", '#', block});
+         }
+ 

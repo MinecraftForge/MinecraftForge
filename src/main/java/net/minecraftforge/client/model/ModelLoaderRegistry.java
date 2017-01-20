@@ -189,7 +189,7 @@ public class ModelLoaderRegistry
         }
         catch(Exception e)
         {
-            return getMissingModel();
+            return getMissingModel(location, e);
         }
     }
 
@@ -205,7 +205,7 @@ public class ModelLoaderRegistry
         catch(Exception e)
         {
             FMLLog.getLogger().error(error, e);
-            return getMissingModel();
+            return getMissingModel(location, e);
         }
     }
 
@@ -216,6 +216,14 @@ public class ModelLoaderRegistry
             throw new IllegalStateException("Using ModelLoaderRegistry too early.");
         }
         return ModelLoader.VanillaLoader.INSTANCE.getLoader().getMissingModel();
+    }
+
+    static IModel getMissingModel(ResourceLocation location, Throwable cause)
+    {
+        //IModel model =  new FancyMissingModel(ExceptionUtils.getStackTrace(cause).replaceAll("\\t", "    "));
+        IModel model = new FancyMissingModel(getMissingModel(), location.toString());
+        textures.addAll(model.getTextures());
+        return model;
     }
 
     public static void clearModelCache(IResourceManager manager)

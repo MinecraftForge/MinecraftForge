@@ -112,8 +112,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean disableVersionCheck = false;
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
+    public static boolean zoomInMissingModelTextInGui = false;
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
+    public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -282,10 +284,17 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         // Client-Side only properties
         propOrder = new ArrayList<String>();
+
         prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", Boolean.FALSE,
                 "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
         prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
         replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "zoomInMissingModelTextInGui", Boolean.TRUE,
+        "Toggle off to make missing model text in the gui fit inside the slot.");
+        zoomInMissingModelTextInGui = prop.getBoolean(Boolean.FALSE);
+        prop.setLanguageKey("forge.configgui.zoomInMissingModelTextInGui");
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder,
@@ -298,6 +307,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.");
         disableStairSlabCulling = prop.getBoolean(disableStairSlabCulling);
         prop.setLanguageKey("forge.configgui.disableStairSlabCulling").setRequiresMcRestart(false);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "alwaysSetupTerrainOffThread", Boolean.FALSE,
+                "Enable forge to queue all chunk updates to the Chunk Update thread. May increase FPS significantly, but may also cause weird rendering lag. Not recommended for computers " +
+                "without a significant number of cores available.");
+        alwaysSetupTerrainOffThread = prop.getBoolean(Boolean.FALSE);
+        prop.setLanguageKey("forge.configgui.alwaysSetupTerrainOffThread");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
@@ -324,30 +340,22 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         if (getMetadata().modId.equals(event.getModID()))
         {
-            if (!event.isWorldRunning())
+            if ("chunkLoader".equals(event.getConfigID()))
             {
-                if (Configuration.CATEGORY_GENERAL.equals(event.getConfigID()))
-                {
-                    syncConfig(false);
-                }
-                else if ("chunkLoader".equals(event.getConfigID()))
-                {
-                    ForgeChunkManager.syncConfigDefaults();
-                    ForgeChunkManager.loadConfiguration();
-                }
-                else if (VERSION_CHECK_CAT.equals(event.getConfigID()))
-                {
-                    syncConfig(false);
-                }
+                ForgeChunkManager.syncConfigDefaults();
+                ForgeChunkManager.loadConfiguration();
             }
             else
             {
-                boolean tmp = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", disableStairSlabCulling).getBoolean();
-                if (disableStairSlabCulling != tmp)
+                boolean tmpStairs = disableStairSlabCulling;
+
+                syncConfig(false);
+
+                if (event.isWorldRunning() && tmpStairs != disableStairSlabCulling)
                 {
-                    disableStairSlabCulling = tmp;
                     FMLCommonHandler.instance().reloadRenderers();
                 }
+
             }
         }
     }

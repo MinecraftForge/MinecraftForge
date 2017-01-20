@@ -20,6 +20,15 @@
                          {
                              BlockPos blockpos = func_180621_a(p_77192_1_, chunkpos1.field_77276_a, chunkpos1.field_77275_b);
                              int k1 = blockpos.func_177958_n();
+@@ -136,7 +138,7 @@
+ 
+                                                 try
+                                                 {
+-                                                    entityliving = (EntityLiving)biome$spawnlistentry.field_76300_b.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_77192_1_});
++                                                    entityliving = (EntityLiving)biome$spawnlistentry.newInstance(p_77192_1_);
+                                                 }
+                                                 catch (Exception exception)
+                                                 {
 @@ -146,8 +148,10 @@
  
                                                  entityliving.func_70012_b((double)f, (double)i3, (double)f1, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
@@ -52,3 +61,12 @@
                  {
                      return false;
                  }
+@@ -258,7 +263,7 @@
+ 
+                             try
+                             {
+-                                entityliving = (EntityLiving)biome$spawnlistentry.field_76300_b.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_77191_0_});
++                                entityliving = (EntityLiving)biome$spawnlistentry.newInstance(p_77191_0_);
+                             }
+                             catch (Exception exception)
+                             {
