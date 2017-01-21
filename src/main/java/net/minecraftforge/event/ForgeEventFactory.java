@@ -19,14 +19,14 @@
 
 package net.minecraftforge.event;
 
-import com.google.common.base.Predicate;
+
 import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import com.google.common.base.Predicate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -114,6 +114,9 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ForgeEventFactory
 {
