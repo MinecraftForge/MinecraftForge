@@ -19,7 +19,7 @@
      public Village(World p_i1675_1_)
      {
          this.field_75586_a = p_i1675_1_;
-+        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilityies(this);
++        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
      }
  
      public void func_82691_a(World p_82691_1_)
