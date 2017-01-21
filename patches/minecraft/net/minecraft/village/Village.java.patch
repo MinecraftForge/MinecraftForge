@@ -13,7 +13,7 @@
  
      public Village()
      {
-+        this(null);
++        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
      }
  
      public Village(World p_i1675_1_)
@@ -28,7 +28,6 @@
              }
          }
 +        if (this.capabilities != null && p_82690_1_.func_74764_b("ForgeCaps")) this.capabilities.deserializeNBT(p_82690_1_.func_74775_l("ForgeCaps"));
-+
      }
  
      public void func_82689_b(NBTTagCompound p_82689_1_)
@@ -45,6 +44,7 @@
          }
      }
 +
++    /* ======================================== FORGE START =====================================*/
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
@@ -69,4 +69,6 @@
 +        this.func_82689_b(ret);
 +        return ret;
 +    }
++
++    /* ========================================= FORGE END ======================================*/
  }
