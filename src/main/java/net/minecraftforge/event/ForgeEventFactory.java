@@ -19,13 +19,14 @@
 
 package net.minecraftforge.event;
 
+import com.google.common.base.Predicate;
 import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import com.google.common.base.Predicate;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -54,6 +55,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.village.Village;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -112,9 +114,6 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class ForgeEventFactory
 {
@@ -556,6 +555,12 @@ public class ForgeEventFactory
     public static CapabilityDispatcher gatherCapabilities(Entity entity)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent.Entity(entity), null);
+    }
+    
+    @Nullable
+    public static CapabilityDispatcher gatherCapabilityies(Village village)
+    {
+        return gatherCapabilities(new AttachCapabilitiesEvent<Village>(village), null);
     }
 
     @Nullable

@@ -1,0 +1,72 @@
+--- ../src-base/minecraft/net/minecraft/village/Village.java
++++ ../src-work/minecraft/net/minecraft/village/Village.java
+@@ -26,7 +26,7 @@
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.World;
+ 
+-public class Village
++public class Village implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+ {
+     private World field_75586_a;
+     private final List<VillageDoorInfo> field_75584_b = Lists.<VillageDoorInfo>newArrayList();
+@@ -40,9 +40,11 @@
+     private final Map<String, Integer> field_82693_j = Maps.<String, Integer>newHashMap();
+     private final List<Village.VillageAggressor> field_75589_i = Lists.<Village.VillageAggressor>newArrayList();
+     private int field_75587_j;
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
+ 
+     public Village()
+     {
++        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilityies(this);
+     }
+ 
+     public Village(World p_i1675_1_)
+@@ -466,6 +468,8 @@
+                 this.field_82693_j.put(nbttagcompound1.func_74779_i("Name"), Integer.valueOf(nbttagcompound1.func_74762_e("S")));
+             }
+         }
++        if (this.capabilities != null && p_82690_1_.func_74764_b("ForgeCaps")) this.capabilities.deserializeNBT(p_82690_1_.func_74775_l("ForgeCaps"));
++
+     }
+ 
+     public void func_82689_b(NBTTagCompound p_82689_1_)
+@@ -522,6 +526,7 @@
+         }
+ 
+         p_82689_1_.func_74782_a("Players", nbttaglist1);
++        if (this.capabilities != null) p_82689_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
+     }
+ 
+     public void func_82692_h()
+@@ -553,4 +558,31 @@
+             this.field_75590_b = p_i1674_3_;
+         }
+     }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        if (getCapability(capability, facing) != null)
++            return true;
++        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
++    }
++
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
++
++    public void deserializeNBT(NBTTagCompound nbt)
++    {
++        this.func_82690_a(nbt);;
++    }
++
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound ret = new NBTTagCompound();
++        this.func_82689_b(ret);
++        return ret;
++    }
+ }
