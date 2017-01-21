@@ -560,7 +560,7 @@ public class ForgeEventFactory
     }
     
     @Nullable
-    public static CapabilityDispatcher gatherCapabilityies(Village village)
+    public static CapabilityDispatcher gatherCapabilities(Village village)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent<Village>(village), null);
     }
