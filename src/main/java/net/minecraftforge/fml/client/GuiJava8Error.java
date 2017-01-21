@@ -40,7 +40,6 @@ public class GuiJava8Error extends GuiErrorBase
     private Java8VersionException java8VersionException;
     public GuiJava8Error(Java8VersionException java8VersionException)
     {
-        super();
         this.java8VersionException = java8VersionException;
     }
 
@@ -49,7 +48,7 @@ public class GuiJava8Error extends GuiErrorBase
     {
         super.initGui();
         this.buttonList.remove(1);
-        if(java8VersionException.getMods().isEmpty())
+        if (java8VersionException.getMods().isEmpty())
         {
             this.buttonList.remove(0);
             this.buttonList.add(new GuiButton(1, 50, this.height -38, this.width / 2 - 55, 20, I18n.format("fml.button.continue")));
@@ -132,7 +131,6 @@ public class GuiJava8Error extends GuiErrorBase
                 offset += this.fontRendererObj.FONT_HEIGHT + 2;
             }
         }
-        // super.super
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

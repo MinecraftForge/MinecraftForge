@@ -28,9 +28,9 @@ import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 public class GuiWrongMinecraft extends GuiErrorBase
 {
     private WrongMinecraftVersionException wrongMC;
+
     public GuiWrongMinecraft(WrongMinecraftVersionException wrongMC)
     {
-        super();
         this.wrongMC = wrongMC;
     }
 

@@ -41,7 +41,6 @@ public class GuiMultipleModsErrored extends GuiErrorBase
 
     public GuiMultipleModsErrored(MultipleModsErrored exception)
     {
-        super();
         wrongMinecraftExceptions = exception.wrongMinecraftExceptions;
         missingModsExceptions = exception.missingModsExceptions;
     }
@@ -114,7 +113,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
         {
             int offset = slotTop;
             FontRenderer renderer = GuiMultipleModsErrored.this.fontRendererObj;
-            if(!wrongMinecraftExceptions.isEmpty())
+            if (!wrongMinecraftExceptions.isEmpty())
             {
                 renderer.drawString(TextFormatting.UNDERLINE + I18n.format("fml.messages.mod.wrongminecraft", Loader.instance().getMinecraftModContainer().getVersion()), this.left, offset, 0xFFFFFF);
                 offset+=15;
@@ -127,7 +126,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
                 renderer.drawString(I18n.format("fml.messages.mod.wrongminecraft.fix.multiple"), this.left, offset, 0xFFFFFF);
                 offset+=20;
             }
-            if(!missingModsExceptions.isEmpty())
+            if (!missingModsExceptions.isEmpty())
             {
                 renderer.drawString(TextFormatting.UNDERLINE + I18n.format("fml.messages.mod.missing.dependencies.multiple"), this.left, offset, 0xFFFFFF);
                 offset+=15;

@@ -32,7 +32,6 @@ public class GuiDupesFound extends GuiErrorBase
 
     public GuiDupesFound(DuplicateModsFoundException dupes)
     {
-        super();
         this.dupes = dupes;
     }
 

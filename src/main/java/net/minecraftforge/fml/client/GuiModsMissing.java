@@ -31,7 +31,6 @@ public class GuiModsMissing extends GuiErrorBase
 
     public GuiModsMissing(MissingModsException modsMissing)
     {
-        super();
         this.modsMissing = modsMissing;
     }
 

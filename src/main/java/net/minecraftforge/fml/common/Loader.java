@@ -294,15 +294,15 @@ public class Loader
                 }
             }
 
-            if(wrongMinecraftExceptions.isEmpty()&&missingModsExceptions.isEmpty())
+            if (wrongMinecraftExceptions.isEmpty() && missingModsExceptions.isEmpty())
             {
                 FMLLog.finer("All mod requirements are satisfied");
             }
-            else if(missingModsExceptions.size()==1&&wrongMinecraftExceptions.isEmpty())
+            else if (missingModsExceptions.size()==1 && wrongMinecraftExceptions.isEmpty())
             {
                 throw missingModsExceptions.get(0);
             }
-            else if(wrongMinecraftExceptions.size()==1&&missingModsExceptions.isEmpty())
+            else if (wrongMinecraftExceptions.size()==1 && missingModsExceptions.isEmpty())
             {
                 throw wrongMinecraftExceptions.get(0);
             }
