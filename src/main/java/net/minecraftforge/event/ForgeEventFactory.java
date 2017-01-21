@@ -19,7 +19,6 @@
 
 package net.minecraftforge.event;
 
-
 import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
