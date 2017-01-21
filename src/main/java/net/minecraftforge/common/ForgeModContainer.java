@@ -291,7 +291,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_CLIENT, "zoomInMissingModelTextInGui", Boolean.TRUE,
+        prop = config.get(Configuration.CATEGORY_CLIENT, "zoomInMissingModelTextInGui", Boolean.FALSE,
         "Toggle off to make missing model text in the gui fit inside the slot.");
         zoomInMissingModelTextInGui = prop.getBoolean(Boolean.FALSE);
         prop.setLanguageKey("forge.configgui.zoomInMissingModelTextInGui");
