@@ -1,14 +1,20 @@
 package net.minecraftforge.test;
 
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.village.Village;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
@@ -20,9 +26,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0", acceptableRemoteVersions = "*")
 public class TestCapabilityMod
@@ -169,7 +173,51 @@ public class TestCapabilityMod
         if (!(event.getObject() instanceof TileEntity))
             throw new IllegalArgumentException("Generic event handler failed! Expected Tile Entity got " + event.getObject());
     }
+    
+    @SubscribeEvent
+    public void attachVillage(AttachCapabilitiesEvent<Village> event)
+    {
+        System.out.println(event.getObject());
+        event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider(event.getObject()));
+    }
 
+    //Detects if a player has entered the radius of a village
+    @SubscribeEvent
+    public void tick(TickEvent.WorldTickEvent event)
+    {
+        if(!event.world.isRemote)
+        {
+            List<EntityPlayer> players = event.world.playerEntities;
+            int i = 0;
+            for(Village village : event.world.villageCollectionObj.getVillageList())
+            {
+                if(village.hasCapability(TEST_CAP, null))
+                {
+                    boolean playerInRadius = false;
+                    for(EntityPlayer player : players)
+                        if(new Vec3d(player.posX, 0, player.posZ).squareDistanceTo(new Vec3d(village.getCenter().getX(), 0, village.getCenter().getZ())) <= village.getVillageRadius() * village.getVillageRadius())
+                        {
+                            playerInRadius = playerInRadius || true;
+                        }
+                    //If the test cap is true but no players are in radius
+                    if(village.getCapability(TEST_CAP, null).getVal() && !playerInRadius)
+                    {
+                            village.getCapability(TEST_CAP, null).toggleVal();
+                            for(EntityPlayer player : players)
+                                player.sendMessage(new TextComponentString(TextFormatting.RED + "All Players Have Exited Village " + i));
+                    }
+                    //If the test cap is false but there are players in radius
+                    else if(!village.getCapability(TEST_CAP, null).getVal() && playerInRadius)
+                    {
+                        village.getCapability(TEST_CAP, null).toggleVal();
+                        for(EntityPlayer player : players)
+                        player.sendMessage(new TextComponentString(TextFormatting.GREEN + "Some Players Have Entered Village " + i));
+                    }
+                }
+                i++;
+            }
+        }
+    }
     // Capabilities SHOULD be interfaces, NOT concrete classes, this allows for
     // the most flexibility for the implementors.
     public static interface IExampleCapability
