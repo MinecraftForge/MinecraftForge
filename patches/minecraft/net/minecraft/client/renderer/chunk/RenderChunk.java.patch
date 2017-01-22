@@ -9,7 +9,19 @@
                  {
                      TileEntity tileentity = this.field_189564_r.func_190300_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
  
-@@ -181,7 +181,9 @@
+@@ -171,17 +171,19 @@
+ 
+                         if (tileentityspecialrenderer != null)
+                         {
+-                            compiledchunk.func_178490_a(tileentity);
+ 
++
+                             if (tileentityspecialrenderer.func_188185_a(tileentity))
+                             {
+                                 lvt_10_1_.add(tileentity);
+-                            }
++                            } else compiledchunk.func_178490_a(tileentity); // FORGE: Fix TE global renderers rendering twice when their chunk sector visible
+                         }
                      }
                  }
  
