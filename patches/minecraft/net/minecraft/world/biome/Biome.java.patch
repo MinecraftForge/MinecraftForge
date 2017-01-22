@@ -31,7 +31,7 @@
          this.field_76761_J.add(new Biome.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.field_76755_L.add(new Biome.SpawnListEntry(EntitySquid.class, 10, 4, 4));
          this.field_82914_M.add(new Biome.SpawnListEntry(EntityBat.class, 10, 8, 8));
-+        this.addDefaultFlowers();
++        if (shouldAddDefaultFlowers()) this.addDefaultFlowers();
      }
  
      public BiomeDecorator func_76729_a()
@@ -70,7 +70,7 @@
      }
  
      public Class <? extends Biome > func_150562_l()
-@@ -393,6 +398,83 @@
+@@ -393,6 +398,93 @@
          return this.field_76766_R;
      }
  
@@ -123,7 +123,17 @@
 +    public void addDefaultFlowers()
 +    {
 +        addFlower(Blocks.field_150327_N.func_176223_P().func_177226_a(Blocks.field_150327_N.func_176494_l(), BlockFlower.EnumFlowerType.DANDELION), 20);
-+        addFlower(Blocks.field_150328_O.func_176223_P().func_177226_a(Blocks.field_150328_O.func_176494_l(), BlockFlower.EnumFlowerType.POPPY), 20);
++        addFlower(Blocks.field_150328_O.func_176223_P().func_177226_a(Blocks.field_150328_O.func_176494_l(), BlockFlower.EnumFlowerType.POPPY), 10);
++    }
++
++    /**
++     * Whether the Biome class constructor should call addDefaultFlowers. Changing this to false is useful if in addDefaultFlowers you need access
++     * to data that is initialized in your constructor. In that case you must call addDefaultFlowers yourself.
++     * @return true to call addDefaultFlowers in the Biome constructor
++     */
++    protected boolean shouldAddDefaultFlowers()
++    {
++        return true;
 +    }
 +
 +    /** Register a new plant to be planted when bonemeal is used on grass.
@@ -154,7 +164,7 @@
      public static void func_185358_q()
      {
          func_185354_a(0, "ocean", new BiomeOcean((new Biome.BiomeProperties("Ocean")).func_185398_c(-1.0F).func_185400_d(0.1F)));
-@@ -549,6 +631,7 @@
+@@ -549,6 +641,7 @@
              public Class <? extends EntityLiving > field_76300_b;
              public int field_76301_c;
              public int field_76299_d;
@@ -162,7 +172,7 @@
  
              public SpawnListEntry(Class <? extends EntityLiving > p_i1970_1_, int p_i1970_2_, int p_i1970_3_, int p_i1970_4_)
              {
-@@ -556,12 +639,28 @@
+@@ -556,12 +649,28 @@
                  this.field_76300_b = p_i1970_1_;
                  this.field_76301_c = p_i1970_3_;
                  this.field_76299_d = p_i1970_4_;
