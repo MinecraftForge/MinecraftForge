@@ -15,12 +15,11 @@
                          {
 -                            compiledchunk.func_178490_a(tileentity);
  
-+
                              if (tileentityspecialrenderer.func_188185_a(tileentity))
                              {
                                  lvt_10_1_.add(tileentity);
--                            }
-+                            } else compiledchunk.func_178490_a(tileentity); // FORGE: Fix TE global renderers rendering twice when their chunk sector visible
+                             }
++                            else compiledchunk.func_178490_a(tileentity); // FORGE: Fix MC-112730
                          }
                      }
                  }
