@@ -38,13 +38,23 @@ public class TextureStitchEvent extends Event
     }
 
     /**
-     * Fired when the TextureMap is told to refresh it's stitched texture. 
+     * Fired when the TextureMap is told to refresh it's stitched texture.
      * Called after the Stitched list is cleared, but before any blocks or items
      * add themselves to the list.
      */
     public static class Pre extends TextureStitchEvent
     {
         public Pre(TextureMap map){ super(map); }
+    }
+
+    /**
+     * Fired when the TextureMap is told to refresh it's stitched texture.
+     * Called after all textures for the map have been collected, but before the stitching
+     * is done.
+     */
+    public static class Collected extends TextureStitchEvent
+    {
+        public Collected(TextureMap map){ super(map); }
     }
 
     /**
