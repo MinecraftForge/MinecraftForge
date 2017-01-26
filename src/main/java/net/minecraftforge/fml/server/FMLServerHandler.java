@@ -30,8 +30,10 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ServerEula;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.PendingCommand;
+import net.minecraft.server.gui.MinecraftServerGui;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.storage.SaveFormatOld;
@@ -50,6 +52,8 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.IOUtils;
+
+import javax.swing.*;
 
 /**
  * Handles primary communication from hooked code into the system
@@ -96,6 +100,17 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void beginServerLoading(MinecraftServer minecraftServer)
     {
         server = minecraftServer;
+        ServerEula eula = new ServerEula(new File("eula.txt"));
+        if (!eula.hasAcceptedEULA()) //Call this early so it happens before any mod begins loading, saves some time
+        {
+            FMLLog.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
+            eula.createEULAFile();
+            if (minecraftServer.getGuiEnabled())
+            {
+                JOptionPane.showMessageDialog(MinecraftServerGui.getJFrame(), "You need to agree to the EULA in order to run the server. Go to eula.txt for more info.", "Cannot continue loading", JOptionPane.ERROR_MESSAGE);
+            }
+            FMLCommonHandler.instance().exitJava(0, false);
+        }
         Loader.instance().loadMods(injectedModContainers);
         Loader.instance().preinitializeMods();
     }
