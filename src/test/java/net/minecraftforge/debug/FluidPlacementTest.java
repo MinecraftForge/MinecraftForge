@@ -35,6 +35,8 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -70,6 +72,7 @@ public class FluidPlacementTest
         @SubscribeEvent
         public static void registrBlocks(RegistryEvent.Register<Block> event)
         {
+<<<<<<< HEAD
             if (!ENABLE || !ModelFluidDebug.ENABLE)
                 return;
             event.getRegistry().registerAll(
@@ -82,6 +85,9 @@ public class FluidPlacementTest
             if (!ENABLE || !ModelFluidDebug.ENABLE)
                 return;
             FluidRegistry.registerFluid(FiniteFluid.instance);
+=======
+            GameRegistry.register(FiniteFluid.instance);
+>>>>>>> Completely rewrite how fluids are registered
             FluidRegistry.addBucketForFluid(FiniteFluid.instance);
             event.getRegistry().registerAll(
                 EmptyFluidContainer.instance,
@@ -128,7 +134,9 @@ public class FluidPlacementTest
 
         private FiniteFluid()
         {
-            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            super(new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            setUnlocalizedName(name);
+            setRegistryName(name);
         }
 
         @Override

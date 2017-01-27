@@ -50,6 +50,7 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -430,12 +431,12 @@ public final class ModelFluid implements IModelCustomData
 
         String fluidStr = customData.get("fluid");
         JsonElement e = new JsonParser().parse(fluidStr);
-        String fluid = e.getAsString();
-        if(!FluidRegistry.isFluidRegistered(fluid))
+        ResourceLocation fluid = new ResourceLocation(e.getAsString());
+        if(!ForgeRegistries.FLUIDS.containsKey(fluid))
         {
             FMLLog.log.fatal("fluid '{}' not found", fluid);
             return WATER;
         }
-        return new ModelFluid(FluidRegistry.getFluid(fluid));
+        return new ModelFluid(ForgeRegistries.FLUIDS.getValue(fluid));
     }
 }

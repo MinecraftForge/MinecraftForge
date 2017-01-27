@@ -16,12 +16,17 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidDictionary;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import javax.annotation.Nonnull;
 
 @Mod(modid = ModelFluidDebug.MODID, name = "ForgeDebugModelFluid", version = ModelFluidDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelFluidDebug
@@ -128,7 +133,9 @@ public class ModelFluidDebug
 
         private TestFluid()
         {
-            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            super(new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            setUnlocalizedName(name);
+            setRegistryName(name);
         }
 
         @Override
@@ -144,9 +151,11 @@ public class ModelFluidDebug
 
         private TestGas()
         {
-            super(name, new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow"));
+            super(new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow"));
             density = -1000;
             isGaseous = true;
+            setUnlocalizedName(name);
+            setRegistryName(name);
         }
 
         @Override

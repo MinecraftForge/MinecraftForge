@@ -42,6 +42,7 @@ import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -107,9 +108,9 @@ public class UniversalBucket extends Item
     {
         if (!this.isInCreativeTab(tab))
             return;
-        for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
+        for (Fluid fluid : ForgeRegistries.FLUIDS.getValues())
         {
-            if (fluid != FluidRegistry.WATER && fluid != FluidRegistry.LAVA && !fluid.getName().equals("milk"))
+            if (fluid != FluidRegistry.WATER && fluid != FluidRegistry.LAVA && !FluidDictionary.getNames(fluid).contains("milk"))
             {
                 // add all fluids that the bucket can be filled  with
                 FluidStack fs = new FluidStack(fluid, getCapacity());
@@ -140,9 +141,9 @@ public class UniversalBucket extends Item
 
         String unloc = this.getUnlocalizedNameInefficiently(stack);
 
-        if (I18n.canTranslate(unloc + "." + fluidStack.getFluid().getName()))
+        if (I18n.canTranslate(unloc + "." + fluidStack.getFluid().getUnlocalizedName()))
         {
-            return I18n.translateToLocal(unloc + "." + fluidStack.getFluid().getName());
+            return I18n.translateToLocal(unloc + "." + fluidStack.getFluid().getUnlocalizedName());
         }
 
         return I18n.translateToLocalFormatted(unloc + ".name", fluidStack.getLocalizedName());
