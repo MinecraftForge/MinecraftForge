@@ -6,13 +6,13 @@
     },
     "variants": {
         "fluid": [{
-            "custom": { "fluid": "testfluid" }
+            "custom": { "fluid": "forgedebugmodelfluid:testfluid" }
         }],
         "gas": [{
-            "custom": { "fluid": "testgas" }
+            "custom": { "fluid": "forgedebugmodelfluid:testgas" }
         }],
         "milk": [{
-            "custom": { "fluid": "milk" }
+            "custom": { "fluid": "forgedebugmodelfluid:milk" }
         }]
     }
 }

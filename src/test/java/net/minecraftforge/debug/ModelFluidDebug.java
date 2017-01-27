@@ -15,11 +15,13 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidDictionary;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nonnull;
@@ -35,7 +37,7 @@ public class ModelFluidDebug
     @SidedProxy
     public static CommonProxy proxy;
 
-    public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow"));
+    public static final Fluid milkFluid = new Fluid(new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow")).setUnlocalizedName("milk").setRegistryName("milk");
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -50,9 +52,12 @@ public class ModelFluidDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            FluidRegistry.registerFluid(TestFluid.instance);
-            FluidRegistry.registerFluid(TestGas.instance);
-            FluidRegistry.registerFluid(milkFluid);
+            GameRegistry.register(TestFluid.instance);
+            GameRegistry.register(TestGas.instance);
+            GameRegistry.register(milkFluid);
+            FluidDictionary.registerFluid(TestFluid.instance, TestFluid.name);
+            FluidDictionary.registerFluid(TestGas.instance, TestGas.name);
+            FluidDictionary.registerFluid(milkFluid, "milk");
             GameRegistry.register(TestFluidBlock.instance);
             GameRegistry.register(new ItemBlock(TestFluidBlock.instance).setRegistryName(TestFluidBlock.instance.getRegistryName()));
             GameRegistry.register(TestGasBlock.instance);
@@ -135,7 +140,9 @@ public class ModelFluidDebug
 
         private TestFluid()
         {
-            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            super(new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            setUnlocalizedName(name);
+            setRegistryName(name);
         }
 
         @Override
@@ -152,9 +159,11 @@ public class ModelFluidDebug
 
         private TestGas()
         {
-            super(name, new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow"));
+            super(new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow"));
             density = -1000;
             isGaseous = true;
+            setUnlocalizedName(name);
+            setRegistryName(name);
         }
 
         @Override

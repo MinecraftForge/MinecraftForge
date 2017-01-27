@@ -36,6 +36,7 @@ import net.minecraftforge.debug.ModelFluidDebug.TestFluid;
 import net.minecraftforge.debug.ModelFluidDebug.TestGas;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidDictionary;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -139,8 +140,8 @@ public class DynBucketTest
         GameRegistry.register(new ItemBlock(tank), simpleTankName);
         GameRegistry.registerTileEntity(TileSimpleTank.class, "simpletank");
 
-        FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestFluid.name));
-        FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestGas.name));
+        FluidRegistry.addBucketForFluid(FluidDictionary.getFirstFluid(TestFluid.name));
+        FluidRegistry.addBucketForFluid(FluidDictionary.getFirstFluid(TestGas.name));
 
         //GameRegistry.registerItem(dynBucket, "dynbucket");
         GameRegistry.register(dynBottle);

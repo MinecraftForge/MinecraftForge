@@ -35,6 +35,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.item.EnumRarity;
+import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -52,12 +53,9 @@ import net.minecraft.item.EnumRarity;
  * water.
  *
  */
-public class Fluid
+public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
 {
     public static final int BUCKET_VOLUME = 1000;
-
-    /** The unique identification name for this fluid. */
-    protected final String fluidName;
 
     /** The unlocalized name of this fluid. */
     protected String unlocalizedName;
@@ -126,10 +124,15 @@ public class Fluid
      */
     protected Block block = null;
 
+    //TODO Remove in 1.13
+    @Deprecated //Use constructor below
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing)
     {
-        this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
-        this.unlocalizedName = fluidName;
+        this(still, flowing);
+    }
+
+    public Fluid(ResourceLocation still, ResourceLocation flowing)
+    {
         this.still = still;
         this.flowing = flowing;
     }
@@ -148,7 +151,7 @@ public class Fluid
         }
         else
         {
-            FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to the Block "
+            FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + this.getRegistryName() + "' but this Fluid has already been linked to the Block "
                     + this.block + ". You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.");
         }
         return this;
@@ -200,11 +203,6 @@ public class Fluid
     {
         this.emptySound = emptySound;
         return this;
-    }
-
-    public final String getName()
-    {
-        return this.fluidName;
     }
 
     public final Block getBlock()

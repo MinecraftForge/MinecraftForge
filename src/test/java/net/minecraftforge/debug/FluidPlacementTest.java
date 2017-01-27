@@ -33,6 +33,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -67,7 +68,7 @@ public class FluidPlacementTest
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            FluidRegistry.registerFluid(FiniteFluid.instance);
+            GameRegistry.register(FiniteFluid.instance);
             FluidRegistry.addBucketForFluid(FiniteFluid.instance);
             GameRegistry.register(EmptyFluidContainer.instance);
             GameRegistry.register(FluidContainer.instance);
@@ -118,7 +119,9 @@ public class FluidPlacementTest
 
         private FiniteFluid()
         {
-            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            super(new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            setUnlocalizedName(name);
+            setRegistryName(name);
         }
 
         @Override
