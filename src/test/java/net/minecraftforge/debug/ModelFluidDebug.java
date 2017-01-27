@@ -82,6 +82,7 @@ public class ModelFluidDebug
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event)
         {
+<<<<<<< HEAD
             if (!ENABLE)
                 return;
             event.getRegistry().registerAll(
@@ -89,6 +90,20 @@ public class ModelFluidDebug
                 new ItemBlock(GAS_BLOCK).setRegistryName(GAS_BLOCK.getRegistryName()),
                 new ItemBlock(MILK_BLOCK).setRegistryName(MILK_BLOCK.getRegistryName())
             );
+=======
+            GameRegistry.register(TestFluid.instance);
+            GameRegistry.register(TestGas.instance);
+            GameRegistry.register(milkFluid);
+            FluidDictionary.registerFluid(TestFluid.instance, TestFluid.name);
+            FluidDictionary.registerFluid(TestGas.instance, TestGas.name);
+            FluidDictionary.registerFluid(milkFluid, "milk");
+            GameRegistry.register(TestFluidBlock.instance);
+            GameRegistry.register(new ItemBlock(TestFluidBlock.instance).setRegistryName(TestFluidBlock.instance.getRegistryName()));
+            GameRegistry.register(TestGasBlock.instance);
+            GameRegistry.register(new ItemBlock(TestGasBlock.instance).setRegistryName(TestGasBlock.instance.getRegistryName()));
+            GameRegistry.register(MilkFluidBlock.instance);
+            GameRegistry.register(new ItemBlock(MilkFluidBlock.instance).setRegistryName(MilkFluidBlock.instance.getRegistryName()));
+>>>>>>> Completely rewrite how fluids are registered
         }
 
         @SubscribeEvent

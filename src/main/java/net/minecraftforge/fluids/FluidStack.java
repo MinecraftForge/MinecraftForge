@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IRegistryDelegate;
 import java.util.Locale;
+
 import javax.annotation.Nullable;
 
 /**
@@ -100,6 +101,7 @@ public class FluidStack
                 stack = new FluidStack(ForgeRegistries.FLUIDS.getValue(fluid), nbt.getInteger("Amount"));
             }
         }
+<<<<<<< HEAD
         //TODO Drop legacy support for 'FluidName' in 1.14 or 1.15, as it will be outdated 
         else if (nbt.hasKey("FluidName", Constants.NBT.TAG_STRING))
         {

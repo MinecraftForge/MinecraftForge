@@ -73,6 +73,7 @@ public class FluidPlacementTest
         public static void registrBlocks(RegistryEvent.Register<Block> event)
         {
 <<<<<<< HEAD
+<<<<<<< HEAD
             if (!ENABLE || !ModelFluidDebug.ENABLE)
                 return;
             event.getRegistry().registerAll(
@@ -85,6 +86,9 @@ public class FluidPlacementTest
             if (!ENABLE || !ModelFluidDebug.ENABLE)
                 return;
             FluidRegistry.registerFluid(FiniteFluid.instance);
+=======
+            GameRegistry.register(FiniteFluid.instance);
+>>>>>>> Completely rewrite how fluids are registered
 =======
             GameRegistry.register(FiniteFluid.instance);
 >>>>>>> Completely rewrite how fluids are registered

@@ -124,6 +124,13 @@ public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
      */
     protected Block block = null;
 
+    //TODO Remove in 1.13
+    @Deprecated //Use constructor below
+    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing)
+    {
+        this(still, flowing);
+    }
+
     public Fluid(ResourceLocation still, ResourceLocation flowing)
     {
         this.still = still;
@@ -144,8 +151,13 @@ public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
         }
         else
         {
+<<<<<<< HEAD
             FMLLog.log.warn("A mod has attempted to assign Block {} to the Fluid '{}' but this Fluid has already been linked to the Block {}. "
                     + "You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.", block, this.getRegistryName(), this.block);
+=======
+            FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + this.getRegistryName() + "' but this Fluid has already been linked to the Block "
+                    + this.block + ". You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.");
+>>>>>>> Completely rewrite how fluids are registered
         }
         return this;
     }
