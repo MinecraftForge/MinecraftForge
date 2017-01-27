@@ -31,6 +31,7 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidDictionary;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
@@ -63,7 +64,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     public boolean canFillFluidType(FluidStack fluid)
     {
-        if (fluid.getFluid() == FluidRegistry.WATER || fluid.getFluid() == FluidRegistry.LAVA || fluid.getFluid().getName().equals("milk"))
+        if (fluid.getFluid() == FluidRegistry.WATER || fluid.getFluid() == FluidRegistry.LAVA || FluidDictionary.getNames(fluid.getFluid()).contains("milk"))
         {
             return true;
         }
@@ -84,7 +85,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         }
         else if (item == Items.MILK_BUCKET)
         {
-            return FluidRegistry.getFluidStack("milk", Fluid.BUCKET_VOLUME);
+            return FluidDictionary.createFluidStack("milk", Fluid.BUCKET_VOLUME);
         }
         else if (item == ForgeModContainer.getInstance().universalBucket)
         {
@@ -109,7 +110,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         {
             container = new ItemStack(Items.LAVA_BUCKET);
         }
-        else if (fluid.getName().equals("milk"))
+        else if (FluidDictionary.getNames(fluid).contains("milk"))
         {
             container = new ItemStack(Items.MILK_BUCKET);
         }

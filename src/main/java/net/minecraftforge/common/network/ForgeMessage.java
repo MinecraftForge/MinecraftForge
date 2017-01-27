@@ -69,53 +69,6 @@ public abstract class ForgeMessage {
         }
     }
 
-    public static class FluidIdMapMessage extends ForgeMessage {
-        BiMap<Fluid, Integer> fluidIds = HashBiMap.create();
-        Set<String> defaultFluids = Sets.newHashSet();
-        @SuppressWarnings("deprecation")
-        @Override
-        void toBytes(ByteBuf bytes)
-        {
-            Map<Fluid, Integer> ids = FluidRegistry.getRegisteredFluidIDs();
-            bytes.writeInt(ids.size());
-            for (Map.Entry<Fluid, Integer> entry : ids.entrySet())
-            {
-                ByteBufUtils.writeUTF8String(bytes,entry.getKey().getName());
-                bytes.writeInt(entry.getValue());
-            }
-            for (Map.Entry<Fluid, Integer> entry : ids.entrySet())
-            {
-                String defaultName = FluidRegistry.getDefaultFluidName(entry.getKey());
-                ByteBufUtils.writeUTF8String(bytes, defaultName);
-            }
-        }
-
-        @Override
-        void fromBytes(ByteBuf bytes)
-        {
-            int listSize = bytes.readInt();
-            for (int i = 0; i < listSize; i++) {
-                String fluidName = ByteBufUtils.readUTF8String(bytes);
-                int fluidId = bytes.readInt();
-                fluidIds.put(FluidRegistry.getFluid(fluidName), fluidId);
-            }
-            // do we have a defaults list?
-
-            if (bytes.isReadable())
-            {
-                for (int i = 0; i < listSize; i++)
-                {
-                    defaultFluids.add(ByteBufUtils.readUTF8String(bytes));
-                }
-            }
-            else
-            {
-                FMLLog.getLogger().log(Level.INFO, "Legacy server message contains no default fluid list - there may be problems with fluids");
-                defaultFluids.clear();
-            }
-        }
-    }
-
     abstract void toBytes(ByteBuf bytes);
     abstract void fromBytes(ByteBuf bytes);
 }

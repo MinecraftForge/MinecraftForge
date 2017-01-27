@@ -55,7 +55,7 @@ public class FluidHandlerTest
                 throw new RuntimeException("ItemStack was altered by its fluid handler when drain did nothing.");
             }
 
-            for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
+            for (Fluid fluid : ForgeRegistries.FLUIDS.getValues())
             {
                 ItemStack preFillStack = stack.copy();
                 fluidHandler = FluidUtil.getFluidHandler(preFillStack);

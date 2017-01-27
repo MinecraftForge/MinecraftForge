@@ -26,6 +26,8 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 
 /**
@@ -46,6 +48,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<Enchantment>  ENCHANTMENTS = GameRegistry.findRegistry(Enchantment.class);
     public static final IForgeRegistry<VillagerProfession> VILLAGER_PROFESSIONS = GameRegistry.findRegistry(VillagerProfession.class);
     public static final IForgeRegistry<EntityEntry>  ENTITIES     = GameRegistry.findRegistry(EntityEntry.class);
+    public static final IForgeRegistry<Fluid>        FLUIDS       = GameRegistry.findRegistry(Fluid.class);
 
 
     /**

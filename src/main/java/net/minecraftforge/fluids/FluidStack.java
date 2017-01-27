@@ -22,8 +22,10 @@ package net.minecraftforge.fluids;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
 import javax.annotation.Nullable;
@@ -49,12 +51,12 @@ public class FluidStack
             FMLLog.bigWarning("Null fluid supplied to fluidstack. Did you try and create a stack for an unregistered fluid?");
             throw new IllegalArgumentException("Cannot create a fluidstack from a null fluid");
         }
-        else if (!FluidRegistry.isFluidRegistered(fluid))
+        else if (!ForgeRegistries.FLUIDS.containsValue(fluid))
         {
-            FMLLog.bigWarning("Failed attempt to create a FluidStack for an unregistered Fluid %s (type %s)", fluid.getName(), fluid.getClass().getName());
+            FMLLog.bigWarning("Failed attempt to create a FluidStack for an unregistered Fluid %s (type %s)", fluid.getRegistryName(), fluid.getClass().getName());
             throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
         }
-        this.fluidDelegate = FluidRegistry.makeDelegate(fluid);
+        this.fluidDelegate = fluid.delegate;
         this.amount = amount;
     }
 
@@ -89,12 +91,12 @@ public class FluidStack
             return null;
         }
 
-        String fluidName = nbt.getString("FluidName");
-        if (FluidRegistry.getFluid(fluidName) == null)
+        ResourceLocation fluidName = new ResourceLocation(nbt.getString("FluidName"));
+        if (!ForgeRegistries.FLUIDS.containsKey(fluidName))
         {
             return null;
         }
-        FluidStack stack = new FluidStack(FluidRegistry.getFluid(fluidName), nbt.getInteger("Amount"));
+        FluidStack stack = new FluidStack(ForgeRegistries.FLUIDS.getValue(fluidName), nbt.getInteger("Amount"));
 
         if (nbt.hasKey("Tag"))
         {
@@ -105,7 +107,7 @@ public class FluidStack
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
-        nbt.setString("FluidName", FluidRegistry.getFluidName(getFluid()));
+        nbt.setString("FluidName", getFluid().getRegistryName().toString());
         nbt.setInteger("Amount", amount);
 
         if (tag != null)

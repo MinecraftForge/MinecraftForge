@@ -46,6 +46,7 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -64,6 +65,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
@@ -478,7 +480,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             RecipeSorter.sortCraftManager();
         }
-        FluidRegistry.validateFluidRegistry();
     }
 
     @Subscribe
@@ -492,7 +493,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         NBTTagCompound forgeData = new NBTTagCompound();
         NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
         forgeData.setTag("DimensionData", dimData);
-        FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
 
@@ -500,7 +500,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
     {
         DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
-        FluidRegistry.loadFluidDefaults(tag);
+        if (tag.hasKey("DefaultFluidList", 9)) //Load 1.11 Fluids
+        {
+            PersistentRegistryManager.GameDataSnapshot snapshot = PersistentRegistryManager.takeSnapshot();
+            PersistentRegistryManager.GameDataSnapshot.Entry entry = new PersistentRegistryManager.GameDataSnapshot.Entry();
+            snapshot.entries.put(PersistentRegistryManager.FLUIDS, entry);
+            NBTTagList fluidList = tag.getTagList("DefaultFluidList", 8);
+            for (int id = 0; id < fluidList.tagCount(); id++)
+                entry.ids.put(new ResourceLocation(fluidList.getStringTagAt(id).toLowerCase()), id);
+            PersistentRegistryManager.injectSnapshot(snapshot, true, true);
+        }
     }
 
     @Subscribe

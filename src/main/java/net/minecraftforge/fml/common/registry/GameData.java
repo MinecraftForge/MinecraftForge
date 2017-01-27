@@ -37,9 +37,9 @@ import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 
 import com.google.common.collect.BiMap;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -63,9 +63,12 @@ public class GameData
     private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
     private static final int MIN_ENTITY_ID = 0;
     private static final int MAX_ENTITY_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSpawnMob)
+    private static final int MIN_FLUID_ID = 0;
+    private static final int MAX_FLUID_ID = 4095;
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
+    private static final ResourceLocation FLUID_TO_BLOCK = new ResourceLocation("minecraft:fluidtoblockmap");
 
     private static final GameData mainData = new GameData();
 
@@ -82,6 +85,7 @@ public class GameData
         iPotionTypeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONTYPES, PotionType.class, WATER, MIN_POTIONTYPE_ID, MAX_POTIONTYPE_ID, false, null, null, null, null);
         iEnchantmentRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ENCHANTMENTS, Enchantment.class, null, MIN_ENCHANTMENT_ID, MAX_ENCHANTMENT_ID, false, null, null, null, null);
         iEntityRegistry = (FMLControlledNamespacedRegistry<EntityEntry>)new RegistryBuilder<EntityEntry>().setName(PersistentRegistryManager.ENTITIES).setType(EntityEntry.class).setIDRange(MIN_ENTITY_ID, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
+        iFluidRegistry = (FMLControlledNamespacedRegistry<Fluid>)new RegistryBuilder<Fluid>().setName(PersistentRegistryManager.FLUIDS).setType(Fluid.class).setIDRange(MIN_FLUID_ID, MAX_FLUID_ID).addCallback(FluidCallbacks.INSTANCE).create();
 
         try
         {
@@ -104,6 +108,7 @@ public class GameData
     private final FMLControlledNamespacedRegistry<PotionType> iPotionTypeRegistry;
     private final FMLControlledNamespacedRegistry<Enchantment> iEnchantmentRegistry;
     private final FMLControlledNamespacedRegistry<EntityEntry> iEntityRegistry;
+    private final FMLControlledNamespacedRegistry<Fluid> iFluidRegistry;
 
     //TODO: ? These are never used by ID, so they don't need to be full registries/persisted.
     //Need cpw to decide how we want to go about this as they are generic registries that
@@ -153,6 +158,10 @@ public class GameData
     /** INTERNAL ONLY */
     @Deprecated
     public static FMLControlledNamespacedRegistry<EntityEntry> getEntityRegistry() { return getMain().iEntityRegistry; }
+
+    /** INTERNAL ONLY */
+    @Deprecated
+    public static FMLControlledNamespacedRegistry<Fluid> getFluidRegistry() { return getMain().iFluidRegistry; }
 
     @Deprecated
     static Item findItem(String modId, String name)
@@ -230,6 +239,12 @@ public class GameData
     public static ObjectIntIdentityMap<IBlockState> getBlockStateIDMap()
     {
         return (ObjectIntIdentityMap<IBlockState>)getMain().iBlockRegistry.getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static BiMap<Fluid,Block> getFluidBlockMap()
+    {
+        return (BiMap<Fluid,Block>)getMain().iFluidRegistry.getSlaveMap(FLUID_TO_BLOCK, BiMap.class);
     }
 
     public static void vanillaSnapshot()
@@ -456,6 +471,29 @@ public class GameData
         public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
         {
             // no op for the minute?
+        }
+    }
+    private static class FluidCallbacks implements IForgeRegistry.AddCallback<Fluid>,IForgeRegistry.ClearCallback<Fluid>,IForgeRegistry.CreateCallback<Fluid>
+    {
+        static final FluidCallbacks INSTANCE = new FluidCallbacks();
+
+        @Override
+        public void onAdd(Fluid fluid, int id, Map<ResourceLocation, ?> slaveset)
+        {
+            if (fluid.canBePlacedInWorld())
+                ((Map<Fluid, Block>)slaveset.get(FLUID_TO_BLOCK)).put(fluid, fluid.getBlock());
+        }
+
+        @Override
+        public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
+        {
+            ((Map<ResourceLocation,Object>)slaveset).put(FLUID_TO_BLOCK, HashBiMap.<Fluid, Block>create());
+        }
+
+        @Override
+        public void onClear(IForgeRegistry<Fluid> is, Map<ResourceLocation, ?> slaveset)
+        {
+            ((Map<Fluid, Block>)slaveset.get(FLUID_TO_BLOCK)).clear();
         }
     }
 }
