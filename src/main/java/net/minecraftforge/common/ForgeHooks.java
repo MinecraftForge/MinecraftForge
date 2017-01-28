@@ -455,6 +455,12 @@ public class ForgeHooks
                 }
             }
          */
+        PlayerInteractEvent.MiddleClick.Pre middleClickPre = new PlayerInteractEvent.MiddleClick.Pre(player, target);
+        MinecraftForge.EVENT_BUS.post(middleClickPre);
+        if(middleClickPre.isCanceled()){
+            return false;
+        }
+
         ItemStack result;
         boolean isCreative = player.capabilities.isCreativeMode;
         TileEntity te = null;
@@ -482,6 +488,10 @@ public class ForgeHooks
 
             result = target.entityHit.getPickedResult(target);
         }
+
+        PlayerInteractEvent.MiddleClick.Post middleClickPost = new PlayerInteractEvent.MiddleClick.Post(player, target, result);
+        MinecraftForge.EVENT_BUS.post(middleClickPost);
+        result = middleClickPost.getCurrentResult();
 
         if (result.isEmpty())
         {

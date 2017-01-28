@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -322,6 +323,59 @@ public class PlayerInteractEvent extends PlayerEvent
         public LeftClickEmpty(EntityPlayer player, @Nonnull ItemStack stack)
         {
             this(player);
+        }
+    }
+
+    /**
+     * This event is fired on the client side when a player middle clicks while aiming on a block or entity.
+     * There is no update packet for it, you have to send your own when needed.
+     */
+    public static class MiddleClick extends PlayerInteractEvent
+    {
+        private RayTraceResult target;
+        private MiddleClick(EntityPlayer player, RayTraceResult target){
+            super(player, EnumHand.MAIN_HAND, target.typeOfHit == RayTraceResult.Type.BLOCK ? target.getBlockPos() : new BlockPos(target.entityHit), target.typeOfHit == RayTraceResult.Type.BLOCK ? target.sideHit : null);
+            this.target = target;
+        }
+
+        public RayTraceResult getRayTraceResult(){
+            return target;
+        }
+
+        /**
+         * The Pre event is fired before the RayTraceResult gets analyzed.
+         * Cancel this event to prevent the analyzing.
+         */
+        @Cancelable
+        public static class Pre extends MiddleClick
+        {
+            public Pre(EntityPlayer player, RayTraceResult target){
+                super(player, target);
+            }
+        }
+
+        /**
+         * The Post event is fired after the RayTraceResult was analyzed.
+         * You can change the Result ItemStack here or set it to {@code ItemStack.EMPTY} to prevent further updating.
+         */
+        public static class Post extends MiddleClick
+        {
+            private ItemStack currentResult;
+            public Post(EntityPlayer player, RayTraceResult target, ItemStack currentResult){
+                super(player, target);
+                this.currentResult = currentResult;
+            }
+
+            /**
+             * @return The current analyzed result for the RayTraceResult
+             */
+            public ItemStack getCurrentResult(){
+                return this.currentResult;
+            }
+
+            public void setCurrentResult(ItemStack newResult){
+                this.currentResult = newResult;
+            }
         }
     }
 
