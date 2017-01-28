@@ -455,7 +455,6 @@ public class ForgeHooks
                 }
             }
          */
-
         ItemStack result;
         boolean isCreative = player.capabilities.isCreativeMode;
         TileEntity te = null;
@@ -486,7 +485,8 @@ public class ForgeHooks
 
         PlayerInteractEvent.Pick pickEvent = new PlayerInteractEvent.Pick(player, target, result);
         MinecraftForge.EVENT_BUS.post(pickEvent);
-        if(pickEvent.isCanceled()) {
+        if (pickEvent.isCanceled())
+        {
             return false;
         }
         result = pickEvent.getCurrentResult();

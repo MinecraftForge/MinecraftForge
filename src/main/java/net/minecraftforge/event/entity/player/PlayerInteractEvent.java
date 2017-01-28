@@ -336,21 +336,25 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private RayTraceResult target;
         private ItemStack currentResult;
-        public Pick(EntityPlayer player, RayTraceResult target, ItemStack currentResult) {
+        public Pick(EntityPlayer player, RayTraceResult target, ItemStack currentResult)
+        {
             super(player, EnumHand.MAIN_HAND, target.typeOfHit == RayTraceResult.Type.BLOCK ? target.getBlockPos() : new BlockPos(target.entityHit), target.typeOfHit == RayTraceResult.Type.BLOCK ? target.sideHit : null);
             this.target = target;
             this.currentResult = currentResult;
         }
 
-        public RayTraceResult getRayTraceResult() {
+        public RayTraceResult getRayTraceResult()
+        {
             return target;
         }
 
-        public ItemStack getCurrentResult() {
+        public ItemStack getCurrentResult()
+        {
             return this.currentResult;
         }
 
-        public void setCurrentResult(ItemStack newResult) {
+        public void setCurrentResult(ItemStack newResult)
+        {
             this.currentResult = newResult;
         }
     }
