@@ -86,17 +86,46 @@ public class FluidStack
         {
             return null;
         }
-        if (!nbt.hasKey("FluidName", Constants.NBT.TAG_STRING))
-        {
-            return null;
-        }
 
-        ResourceLocation fluidName = new ResourceLocation(nbt.getString("FluidName"));
-        if (!ForgeRegistries.FLUIDS.containsKey(fluidName))
+        FluidStack stack;
+        if (nbt.hasKey("Fluid", Constants.NBT.TAG_STRING))
+        {
+            ResourceLocation fluid = new ResourceLocation(nbt.getString("Fluid"));
+            if (!ForgeRegistries.FLUIDS.containsKey(fluid))
+            {
+                return null;
+            }
+            else
+            {
+                stack = new FluidStack(ForgeRegistries.FLUIDS.getValue(fluid), nbt.getInteger("Amount"));
+            }
+        }
+        //TODO Drop support for this in 1.14 or 1.15
+        else if (nbt.hasKey("FluidName", Constants.NBT.TAG_STRING))
+        {
+            String fluidName = nbt.getString("FluidName").toLowerCase();
+            Fluid fluid = null;
+            for (Fluid f : ForgeRegistries.FLUIDS.getValues())
+            {
+                if (f.getRegistryName().getResourcePath().equals(fluidName));
+                {
+                    fluid = f;
+                    continue;
+                }
+            }
+            if (fluid == null)
+            {
+                return null;
+            }
+            else
+            {
+                stack = new FluidStack(fluid, nbt.getInteger("Amount"));
+            }
+        }
+        else
         {
             return null;
         }
-        FluidStack stack = new FluidStack(ForgeRegistries.FLUIDS.getValue(fluidName), nbt.getInteger("Amount"));
 
         if (nbt.hasKey("Tag"))
         {
@@ -107,7 +136,7 @@ public class FluidStack
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
-        nbt.setString("FluidName", getFluid().getRegistryName().toString());
+        nbt.setString("Fluid", getFluid().getRegistryName().toString());
         nbt.setInteger("Amount", amount);
 
         if (tag != null)
