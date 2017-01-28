@@ -59,5 +59,10 @@ public class ForgeRegistries
         GameData.getMain();
         VillagerRegistry.instance();
     }
+    
+    public static void initForgeRegistries()
+    {
+    	FluidRegistry.registerFluids();
+    }
 
 }

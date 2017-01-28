@@ -31,7 +31,7 @@
              StatList.func_151178_a();
              Biome.func_185358_q();
              func_151353_a();
-+            net.minecraftforge.fluids.FluidRegistry.registerFluids();
++            net.minecraftforge.fml.common.registry.ForgeRegistries.initForgeRegistries();
 +            net.minecraftforge.fml.common.registry.GameData.vanillaSnapshot();
          }
 @@ -524,6 +527,8 @@
