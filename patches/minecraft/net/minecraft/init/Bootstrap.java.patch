@@ -18,7 +18,6 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
-<<<<<<< HEAD
 @@ -524,6 +527,6 @@
                      field_179871_c.error("Errors with built-in loot tables");
                  }
