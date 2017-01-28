@@ -330,10 +330,10 @@ public class PlayerInteractEvent extends PlayerEvent
      * This event is fired on the client side when a player middle clicks while aiming on a block or entity.
      * There is no update packet for it, you have to send your own when needed.
      */
-    public static class MiddleClick extends PlayerInteractEvent
+    public static class Pick extends PlayerInteractEvent
     {
         private RayTraceResult target;
-        private MiddleClick(EntityPlayer player, RayTraceResult target){
+        private Pick(EntityPlayer player, RayTraceResult target){
             super(player, EnumHand.MAIN_HAND, target.typeOfHit == RayTraceResult.Type.BLOCK ? target.getBlockPos() : new BlockPos(target.entityHit), target.typeOfHit == RayTraceResult.Type.BLOCK ? target.sideHit : null);
             this.target = target;
         }
@@ -347,7 +347,7 @@ public class PlayerInteractEvent extends PlayerEvent
          * Cancel this event to prevent the analyzing.
          */
         @Cancelable
-        public static class Pre extends MiddleClick
+        public static class Pre extends Pick
         {
             public Pre(EntityPlayer player, RayTraceResult target){
                 super(player, target);
@@ -358,7 +358,7 @@ public class PlayerInteractEvent extends PlayerEvent
          * The Post event is fired after the RayTraceResult was analyzed.
          * You can change the Result ItemStack here or set it to {@code ItemStack.EMPTY} to prevent further updating.
          */
-        public static class Post extends MiddleClick
+        public static class Post extends Pick
         {
             private ItemStack currentResult;
             public Post(EntityPlayer player, RayTraceResult target, ItemStack currentResult){

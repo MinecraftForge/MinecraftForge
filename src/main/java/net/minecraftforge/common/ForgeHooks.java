@@ -455,9 +455,9 @@ public class ForgeHooks
                 }
             }
          */
-        PlayerInteractEvent.MiddleClick.Pre middleClickPre = new PlayerInteractEvent.MiddleClick.Pre(player, target);
-        MinecraftForge.EVENT_BUS.post(middleClickPre);
-        if(middleClickPre.isCanceled()){
+        PlayerInteractEvent.Pick.Pre pickPre = new PlayerInteractEvent.Pick.Pre(player, target);
+        MinecraftForge.EVENT_BUS.post(pickPre);
+        if(pickPre.isCanceled()){
             return false;
         }
 
@@ -489,9 +489,9 @@ public class ForgeHooks
             result = target.entityHit.getPickedResult(target);
         }
 
-        PlayerInteractEvent.MiddleClick.Post middleClickPost = new PlayerInteractEvent.MiddleClick.Post(player, target, result);
-        MinecraftForge.EVENT_BUS.post(middleClickPost);
-        result = middleClickPost.getCurrentResult();
+        PlayerInteractEvent.Pick.Post pickPost = new PlayerInteractEvent.Pick.Post(player, target, result);
+        MinecraftForge.EVENT_BUS.post(pickPost);
+        result = pickPost.getCurrentResult();
 
         if (result.isEmpty())
         {

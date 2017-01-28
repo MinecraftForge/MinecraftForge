@@ -157,7 +157,7 @@ public class PlayerInteractEventTest
     }
 
     @SubscribeEvent
-    public void middleClickPre(PlayerInteractEvent.MiddleClick.Pre evt)
+    public void middleClickPre(PlayerInteractEvent.Pick.Pre evt)
     {
         if(!ENABLE) return;
         logger.info("RayTraceResult: {}", evt.getRayTraceResult());
@@ -168,7 +168,7 @@ public class PlayerInteractEventTest
     }
 
     @SubscribeEvent
-    public void middleClickPost(PlayerInteractEvent.MiddleClick.Post evt)
+    public void middleClickPost(PlayerInteractEvent.Pick.Post evt)
     {
         if(!ENABLE) return;
         logger.info("result stack: {} | RayTraceResult: {}", evt.getCurrentResult(), evt.getRayTraceResult());
