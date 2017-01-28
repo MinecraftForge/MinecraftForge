@@ -9,6 +9,8 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.apache.logging.log4j.LogManager;
 @@ -265,6 +265,9 @@
+=======
+@@ -264,6 +265,9 @@
          };
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151129_at, ibehaviordispenseitem);
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
@@ -18,7 +20,6 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
-<<<<<<< HEAD
 @@ -524,6 +527,6 @@
                      field_179871_c.error("Errors with built-in loot tables");
                  }
