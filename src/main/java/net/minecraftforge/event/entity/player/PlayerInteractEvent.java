@@ -328,36 +328,29 @@ public class PlayerInteractEvent extends PlayerEvent
 
     /**
      * This event is fired on the client side when a player middle clicks while aiming on a block or entity.
-     * There is no update packet for it, you have to send your own when needed.
-     * You can change the Result ItemStack here or set it to {@link ItemStack#EMPTY} to prevent further updating.
-     * Cancel the event if you want that nothing happens.
+     * The server is not aware of when the client left clicks empty space, you will need to tell the server yourself.
+     * You can change the Result ItemStack here or set it to {@link ItemStack#EMPTY} or cancel the event to prevent further updating.
      */
     @Cancelable
     public static class Pick extends PlayerInteractEvent
     {
         private RayTraceResult target;
         private ItemStack currentResult;
-        public Pick(EntityPlayer player, RayTraceResult target, ItemStack currentResult){
+        public Pick(EntityPlayer player, RayTraceResult target, ItemStack currentResult) {
             super(player, EnumHand.MAIN_HAND, target.typeOfHit == RayTraceResult.Type.BLOCK ? target.getBlockPos() : new BlockPos(target.entityHit), target.typeOfHit == RayTraceResult.Type.BLOCK ? target.sideHit : null);
             this.target = target;
             this.currentResult = currentResult;
         }
 
-        /**
-         * @return The same RayTraceResult as {@link net.minecraft.client.Minecraft#objectMouseOver}
-         */
-        public RayTraceResult getRayTraceResult(){
+        public RayTraceResult getRayTraceResult() {
             return target;
         }
 
-        /**
-         * @return The current analyzed result for the RayTraceResult
-         */
-        public ItemStack getCurrentResult(){
+        public ItemStack getCurrentResult() {
             return this.currentResult;
         }
 
-        public void setCurrentResult(ItemStack newResult){
+        public void setCurrentResult(ItemStack newResult) {
             this.currentResult = newResult;
         }
     }
