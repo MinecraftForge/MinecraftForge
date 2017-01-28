@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
 +++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
-@@ -62,6 +62,7 @@
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.world.World;
- import net.minecraft.world.biome.Biome;
-+import net.minecraftforge.fluids.FluidRegistry;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- import org.apache.logging.log4j.LogManager;
-@@ -258,6 +259,9 @@
+@@ -258,6 +258,9 @@
          };
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151129_at, ibehaviordispenseitem);
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
@@ -18,11 +10,11 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
-@@ -496,6 +500,8 @@
+@@ -496,6 +499,8 @@
              StatList.func_151178_a();
              Biome.func_185358_q();
              func_151353_a();
-+            FluidRegistry.registerFluids();
++            net.minecraftforge.fluids.FluidRegistry.registerFluids();
 +            net.minecraftforge.fml.common.registry.GameData.vanillaSnapshot();
          }
      }
