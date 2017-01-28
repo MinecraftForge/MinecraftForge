@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
 +++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
-@@ -264,6 +264,9 @@
+@@ -62,6 +62,7 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
++import net.minecraftforge.fluids.FluidRegistry;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.logging.log4j.LogManager;
+@@ -264,6 +265,9 @@
          };
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151129_at, ibehaviordispenseitem);
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
@@ -10,12 +18,17 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
++
+@@ -496,6 +500,8 @@
+             StatList.func_151178_a();
+             Biome.func_185358_q();
+             func_151353_a();
++            FluidRegistry.registerFluids();
++            net.minecraftforge.fml.common.registry.GameData.vanillaSnapshot();
+         }
 @@ -524,6 +527,8 @@
                      field_179871_c.error("Errors with built-in loot tables");
                  }
              }
-+
-+            net.minecraftforge.fml.common.registry.GameData.vanillaSnapshot();
-         }
      }
  
