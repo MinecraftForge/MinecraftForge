@@ -101,13 +101,10 @@ public class FluidStack
                 stack = new FluidStack(ForgeRegistries.FLUIDS.getValue(fluid), nbt.getInteger("Amount"));
             }
         }
-<<<<<<< HEAD
         //TODO Drop legacy support for 'FluidName' in 1.14 or 1.15, as it will be outdated 
         else if (nbt.hasKey("FluidName", Constants.NBT.TAG_STRING))
         {
             String fluidName = nbt.getString("FluidName").toLowerCase(Locale.ENGLISH);
-            Fluid fluid = null;
-            for (Fluid f : ForgeRegistries.FLUIDS.getValues())
             {
                 if (f.getRegistryName().getResourcePath().equals(fluidName));
                 {
