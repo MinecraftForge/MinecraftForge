@@ -329,53 +329,36 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * This event is fired on the client side when a player middle clicks while aiming on a block or entity.
      * There is no update packet for it, you have to send your own when needed.
+     * You can change the Result ItemStack here or set it to {@link ItemStack#EMPTY} to prevent further updating.
+     * Cancel the event if you want that nothing happens.
      */
+    @Cancelable
     public static class Pick extends PlayerInteractEvent
     {
         private RayTraceResult target;
-        private Pick(EntityPlayer player, RayTraceResult target){
+        private ItemStack currentResult;
+        public Pick(EntityPlayer player, RayTraceResult target, ItemStack currentResult){
             super(player, EnumHand.MAIN_HAND, target.typeOfHit == RayTraceResult.Type.BLOCK ? target.getBlockPos() : new BlockPos(target.entityHit), target.typeOfHit == RayTraceResult.Type.BLOCK ? target.sideHit : null);
             this.target = target;
+            this.currentResult = currentResult;
         }
 
+        /**
+         * @return The same RayTraceResult as {@link net.minecraft.client.Minecraft#objectMouseOver}
+         */
         public RayTraceResult getRayTraceResult(){
             return target;
         }
 
         /**
-         * The Pre event is fired before the RayTraceResult gets analyzed.
-         * Cancel this event to prevent the analyzing.
+         * @return The current analyzed result for the RayTraceResult
          */
-        @Cancelable
-        public static class Pre extends Pick
-        {
-            public Pre(EntityPlayer player, RayTraceResult target){
-                super(player, target);
-            }
+        public ItemStack getCurrentResult(){
+            return this.currentResult;
         }
 
-        /**
-         * The Post event is fired after the RayTraceResult was analyzed.
-         * You can change the Result ItemStack here or set it to {@code ItemStack.EMPTY} to prevent further updating.
-         */
-        public static class Post extends Pick
-        {
-            private ItemStack currentResult;
-            public Post(EntityPlayer player, RayTraceResult target, ItemStack currentResult){
-                super(player, target);
-                this.currentResult = currentResult;
-            }
-
-            /**
-             * @return The current analyzed result for the RayTraceResult
-             */
-            public ItemStack getCurrentResult(){
-                return this.currentResult;
-            }
-
-            public void setCurrentResult(ItemStack newResult){
-                this.currentResult = newResult;
-            }
+        public void setCurrentResult(ItemStack newResult){
+            this.currentResult = newResult;
         }
     }
 

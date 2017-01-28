@@ -455,11 +455,6 @@ public class ForgeHooks
                 }
             }
          */
-        PlayerInteractEvent.Pick.Pre pickPre = new PlayerInteractEvent.Pick.Pre(player, target);
-        MinecraftForge.EVENT_BUS.post(pickPre);
-        if(pickPre.isCanceled()){
-            return false;
-        }
 
         ItemStack result;
         boolean isCreative = player.capabilities.isCreativeMode;
@@ -489,9 +484,12 @@ public class ForgeHooks
             result = target.entityHit.getPickedResult(target);
         }
 
-        PlayerInteractEvent.Pick.Post pickPost = new PlayerInteractEvent.Pick.Post(player, target, result);
-        MinecraftForge.EVENT_BUS.post(pickPost);
-        result = pickPost.getCurrentResult();
+        PlayerInteractEvent.Pick pickEvent = new PlayerInteractEvent.Pick(player, target, result);
+        MinecraftForge.EVENT_BUS.post(pickEvent);
+        if(pickEvent.isCanceled()){
+            return false;
+        }
+        result = pickEvent.getCurrentResult();
 
         if (result.isEmpty())
         {

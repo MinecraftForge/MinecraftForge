@@ -157,21 +157,14 @@ public class PlayerInteractEventTest
     }
 
     @SubscribeEvent
-    public void middleClickPre(PlayerInteractEvent.Pick.Pre evt)
+    public void middleClickPre(PlayerInteractEvent.Pick evt)
     {
         if(!ENABLE) return;
-        logger.info("RayTraceResult: {}", evt.getRayTraceResult());
+        logger.info("result stack: {} | RayTraceResult: {}", evt.getCurrentResult(), evt.getRayTraceResult());
 
         if(evt.getRayTraceResult().typeOfHit == RayTraceResult.Type.ENTITY && evt.getRayTraceResult().entityHit instanceof EntityHorse)
             // Middle click a horse and  don't get a spawn egg
             evt.setCanceled(true);
-    }
-
-    @SubscribeEvent
-    public void middleClickPost(PlayerInteractEvent.Pick.Post evt)
-    {
-        if(!ENABLE) return;
-        logger.info("result stack: {} | RayTraceResult: {}", evt.getCurrentResult(), evt.getRayTraceResult());
 
         if(evt.getRayTraceResult().typeOfHit == RayTraceResult.Type.BLOCK && evt.getWorld().getBlockState(evt.getPos()).getBlock() == Blocks.BONE_BLOCK)
             // Get a baked potato when middle click a bone block
