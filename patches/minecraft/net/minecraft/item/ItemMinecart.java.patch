@@ -14,7 +14,7 @@
  
                  IBlockState iblockstate1 = world.func_180495_p(blockpos.func_177977_b());
 -                BlockRailBase.EnumRailDirection blockrailbase$enumraildirection1 = iblockstate1.func_177230_c() instanceof BlockRailBase ? (BlockRailBase.EnumRailDirection)iblockstate1.func_177229_b(((BlockRailBase)iblockstate1.func_177230_c()).func_176560_l()) : BlockRailBase.EnumRailDirection.NORTH_SOUTH;
-+                BlockRailBase.EnumRailDirection blockrailbase$enumraildirection1 = iblockstate1.func_177230_c() instanceof BlockRailBase ? ((BlockRailBase)iblockstate.func_177230_c()).getRailDirection(world, blockpos, iblockstate, null) : BlockRailBase.EnumRailDirection.NORTH_SOUTH;
++                BlockRailBase.EnumRailDirection blockrailbase$enumraildirection1 = iblockstate1.func_177230_c() instanceof BlockRailBase ? ((BlockRailBase)iblockstate1.func_177230_c()).getRailDirection(world, blockpos, iblockstate1, null) : BlockRailBase.EnumRailDirection.NORTH_SOUTH;
  
                  if (enumfacing != EnumFacing.DOWN && blockrailbase$enumraildirection1.func_177018_c())
                  {
