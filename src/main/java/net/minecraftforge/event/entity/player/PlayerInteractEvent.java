@@ -328,8 +328,8 @@ public class PlayerInteractEvent extends PlayerEvent
 
     /**
      * This event is fired on the client side when a player middle clicks while aiming on a block or entity.
-     * The server is not aware of when the client left clicks empty space, you will need to tell the server yourself.
-     * You can change the Result ItemStack here or set it to {@link ItemStack#EMPTY} or cancel the event to prevent further updating.
+     * The server is not aware of when the client middle clicks blocks or entities, you will need to tell the server yourself.
+     * You can change the Result ItemStack here or set it to {@link ItemStack#EMPTY}. Cancelling it equals to return {@link ItemStack#EMPTY}.
      */
     @Cancelable
     public static class Pick extends PlayerInteractEvent

@@ -157,13 +157,13 @@ public class PlayerInteractEventTest
     }
 
     @SubscribeEvent
-    public void middleClickPre(PlayerInteractEvent.Pick evt)
+    public void pick(PlayerInteractEvent.Pick evt)
     {
         if(!ENABLE) return;
         logger.info("result stack: {} | RayTraceResult: {}", evt.getCurrentResult(), evt.getRayTraceResult());
 
         if(evt.getRayTraceResult().typeOfHit == RayTraceResult.Type.ENTITY && evt.getRayTraceResult().entityHit instanceof EntityHorse)
-            // Middle click a horse and  don't get a spawn egg
+            // Middle click a horse and don't get a spawn egg
             evt.setCanceled(true);
 
         if(evt.getRayTraceResult().typeOfHit == RayTraceResult.Type.BLOCK && evt.getWorld().getBlockState(evt.getPos()).getBlock() == Blocks.BONE_BLOCK)

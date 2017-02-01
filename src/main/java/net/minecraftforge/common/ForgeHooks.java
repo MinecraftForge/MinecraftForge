@@ -485,11 +485,7 @@ public class ForgeHooks
 
         PlayerInteractEvent.Pick pickEvent = new PlayerInteractEvent.Pick(player, target, result);
         MinecraftForge.EVENT_BUS.post(pickEvent);
-        if (pickEvent.isCanceled())
-        {
-            return false;
-        }
-        result = pickEvent.getCurrentResult();
+        result = pickEvent.isCanceled() ? ItemStack.EMPTY : pickEvent.getCurrentResult();
 
         if (result.isEmpty())
         {
