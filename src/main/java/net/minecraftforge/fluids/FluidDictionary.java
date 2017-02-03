@@ -34,7 +34,7 @@ public class FluidDictionary
     
     public static void registerFluid(Fluid fluid, String name)
     {
-    	Preconditions.checkArgument(ForgeRegistries.FLUIDS.containsValue(fluid), "Cannot register FluidDictionary entry for unregistered fluid %s", fluid);
+        Preconditions.checkArgument(ForgeRegistries.FLUIDS.containsValue(fluid), "Cannot register FluidDictionary entry for unregistered fluid %s", fluid);
         name = name.toLowerCase(Locale.ENGLISH);
         if (FLUID_TO_NAMES.containsKey(fluid))
         {
@@ -95,7 +95,7 @@ public class FluidDictionary
     
     public static boolean nameExists(String name)
     {
-        return NAME_TO_FLUIDS.containsKey(name.toLowerCase());
+        return NAME_TO_FLUIDS.containsKey(name.toLowerCase(Locale.ENGLISH));
     }
     
     public static NonNullList<String> getAllNames()
@@ -108,7 +108,7 @@ public class FluidDictionary
     @Nullable
     public static FluidStack createFluidStack(String name, int amount)
     {
-        Fluid fluid = getFirstFluid(name.toLowerCase());
+        Fluid fluid = getFirstFluid(name.toLowerCase(Locale.ENGLISH));
         return fluid == null ? null : new FluidStack(fluid, amount);
     }
 }
