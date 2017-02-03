@@ -19,10 +19,13 @@
 
 package net.minecraftforge.fluids;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import java.util.Locale;
 import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class FluidDictionary
 {
@@ -31,7 +34,8 @@ public class FluidDictionary
     
     public static void registerFluid(Fluid fluid, String name)
     {
-        name = name.toLowerCase();
+    	Preconditions.checkArgument(ForgeRegistries.FLUIDS.containsValue(fluid), "Cannot register FluidDictionary entry for unregistered fluid %s", fluid);
+        name = name.toLowerCase(Locale.ENGLISH);
         if (FLUID_TO_NAMES.containsKey(fluid))
         {
             FLUID_TO_NAMES.get(fluid).add(name);
@@ -50,6 +54,15 @@ public class FluidDictionary
         }
     }
     
+    public static boolean hasName(Fluid fluid, String name)
+    {
+    	if (FLUID_TO_NAMES.containsKey(fluid))
+    	{
+    		return FLUID_TO_NAMES.get(fluid).contains(name.toLowerCase(Locale.ENGLISH));
+    	}
+    	return false;
+    }
+    
     public static NonNullList<String> getNames(Fluid fluid)
     {
         NonNullList<String> ret = NonNullList.<String>create();
@@ -63,9 +76,9 @@ public class FluidDictionary
     public static NonNullList<Fluid> getFluids(String name)
     {
         NonNullList<Fluid> ret = NonNullList.<Fluid>create();
-        if (NAME_TO_FLUIDS.containsKey(name = name.toLowerCase()))
+        if (nameExists(name))
         {
-            ret.addAll(NAME_TO_FLUIDS.get(name));
+            ret.addAll(NAME_TO_FLUIDS.get(name.toLowerCase(Locale.ENGLISH)));
         }
         return ret;
     }
@@ -75,7 +88,7 @@ public class FluidDictionary
     {
         if (nameExists(name))
         {
-            return NAME_TO_FLUIDS.get(name.toLowerCase()).get(0);
+            return NAME_TO_FLUIDS.get(name.toLowerCase(Locale.ENGLISH)).get(0);
         }
         return null;
     }
