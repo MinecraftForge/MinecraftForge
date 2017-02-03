@@ -100,7 +100,7 @@ public class FluidStack
                 stack = new FluidStack(ForgeRegistries.FLUIDS.getValue(fluid), nbt.getInteger("Amount"));
             }
         }
-        //TODO Drop support for this in 1.14 or 1.15
+        //TODO Drop legacy support for 'FluidNane' in 1.14 or 1.15, as it will be outdated 
         else if (nbt.hasKey("FluidName", Constants.NBT.TAG_STRING))
         {
             String fluidName = nbt.getString("FluidName").toLowerCase();

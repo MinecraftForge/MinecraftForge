@@ -48,7 +48,7 @@ import net.minecraftforge.common.property.PropertyFloat;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
@@ -149,6 +149,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public BlockFluidBase(Fluid fluid, Material material)
     {
         super(material);
+        Preconditions.checkNotNull(fluid.getRegistryName(), "Cannot register Fluid with null registry name %s", fluid);
         this.setTickRandomly(true);
         this.disableStats();
 

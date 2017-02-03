@@ -34,7 +34,7 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
-
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -110,9 +110,8 @@ public abstract class FluidRegistry
      */
     public static boolean addBucketForFluid(Fluid fluid)
     {
-        if(fluid == null || !ForgeRegistries.FLUIDS.containsValue(fluid)) {
-            return false;
-        }
+    	Preconditions.checkNotNull(fluid, "Fluid cannot be null");
+    	Preconditions.checkArgument(ForgeRegistries.FLUIDS.containsValue(fluid), "Cannot register bucket for unregistered Fluid %s", fluid);
         return bucketFluids.add(fluid);
     }
 
