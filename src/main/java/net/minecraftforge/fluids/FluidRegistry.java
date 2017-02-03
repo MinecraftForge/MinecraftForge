@@ -111,8 +111,8 @@ public abstract class FluidRegistry
      */
     public static boolean addBucketForFluid(Fluid fluid)
     {
-    	Preconditions.checkNotNull(fluid, "Fluid cannot be null");
-    	Preconditions.checkArgument(ForgeRegistries.FLUIDS.containsValue(fluid), "Cannot register bucket for unregistered Fluid %s", fluid);
+        Preconditions.checkNotNull(fluid, "Fluid cannot be null");
+        Preconditions.checkArgument(ForgeRegistries.FLUIDS.containsValue(fluid), "Cannot register bucket for unregistered Fluid %s", fluid);
         return bucketFluids.add(fluid);
     }
 
