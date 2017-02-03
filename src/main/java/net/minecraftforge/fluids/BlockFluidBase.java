@@ -150,7 +150,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public BlockFluidBase(Fluid fluid, Material material)
     {
         super(material);
-        Preconditions.checkNotNull(fluid.getRegistryName(), "Cannot register Fluid with null registry name %s", fluid);
+        Preconditions.checkNotNull(fluid.getRegistryName(), "Cannot create Block for Fluid with null registry name %s", fluid);
         this.setTickRandomly(true);
         this.disableStats();
 

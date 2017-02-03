@@ -63,14 +63,14 @@ public abstract class FluidRegistry
     static boolean universalBucketEnabled = false;
     static Set<Fluid> bucketFluids = Sets.newHashSet();
 
-    public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
+    public static final Fluid WATER = new Fluid(new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
         @Override
         public String getLocalizedName(FluidStack fs) {
             return I18n.translateToLocal("tile.water.name");
         }
     }.setBlock(Blocks.WATER).setUnlocalizedName(Blocks.WATER.getUnlocalizedName()).setRegistryName("water");
 
-    public static final Fluid LAVA = new Fluid("lava", new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow")) {
+    public static final Fluid LAVA = new Fluid(new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow")) {
         @Override
         public String getLocalizedName(FluidStack fs) {
             return I18n.translateToLocal("tile.lava.name");

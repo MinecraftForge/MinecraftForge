@@ -124,13 +124,6 @@ public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
      */
     protected Block block = null;
 
-    //TODO Remove in 1.13
-    @Deprecated //Use constructor below
-    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing)
-    {
-        this(still, flowing);
-    }
-
     public Fluid(ResourceLocation still, ResourceLocation flowing)
     {
         this.still = still;
