@@ -27,7 +27,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
-
+import java.util.Locale;
 import javax.annotation.Nullable;
 
 /**
@@ -100,10 +100,10 @@ public class FluidStack
                 stack = new FluidStack(ForgeRegistries.FLUIDS.getValue(fluid), nbt.getInteger("Amount"));
             }
         }
-        //TODO Drop legacy support for 'FluidNane' in 1.14 or 1.15, as it will be outdated 
+        //TODO Drop legacy support for 'FluidName' in 1.14 or 1.15, as it will be outdated 
         else if (nbt.hasKey("FluidName", Constants.NBT.TAG_STRING))
         {
-            String fluidName = nbt.getString("FluidName").toLowerCase();
+            String fluidName = nbt.getString("FluidName").toLowerCase(Locale.ENGLISH);
             Fluid fluid = null;
             for (Fluid f : ForgeRegistries.FLUIDS.getValues())
             {
