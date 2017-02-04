@@ -52,3 +52,12 @@
      public void func_70071_h_()
      {
          if (!this.field_70170_p.field_72995_K && this.func_82230_o())
+@@ -164,7 +195,7 @@
+     {
+         EntityVillager entityvillager = new EntityVillager(this.field_70170_p);
+         entityvillager.func_82149_j(this);
+-        entityvillager.func_70938_b(this.func_190736_dl());
++        entityvillager.setProfession(this.getForgeProfession());
+         entityvillager.func_190672_a(this.field_70170_p.func_175649_E(new BlockPos(entityvillager)), (IEntityLivingData)null, false);
+         entityvillager.func_82187_q();
+ 
