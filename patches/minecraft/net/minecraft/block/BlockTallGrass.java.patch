@@ -18,44 +18,43 @@
      }
  
      public boolean func_176200_f(IBlockAccess p_176200_1_, BlockPos p_176200_2_)
-@@ -53,7 +53,7 @@
-     @Nullable
+@@ -52,7 +52,7 @@
+ 
      public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
      {
--        return p_180660_2_.nextInt(8) == 0 ? Items.field_151014_N : null;
+-        return p_180660_2_.nextInt(8) == 0 ? Items.field_151014_N : Items.field_190931_a;
 +        return null;
      }
  
      public int func_149679_a(int p_149679_1_, Random p_149679_2_)
-@@ -63,7 +63,7 @@
+@@ -62,7 +62,7 @@
  
-     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, @Nullable ItemStack p_180657_6_)
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_)
      {
--        if (!p_180657_1_.field_72995_K && p_180657_6_ != null && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
-+        if (false && !p_180657_1_.field_72995_K && p_180657_6_ != null && p_180657_6_.func_77973_b() == Items.field_151097_aZ) // Forge: Noop Taken care of by IShearable
+-        if (!p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
++        if (false && !p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ) // Forge: Noop Taken care of by IShearable
          {
              p_180657_2_.func_71029_a(StatList.func_188055_a(this));
              func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Blocks.field_150329_H, 1, ((BlockTallGrass.EnumType)p_180657_4_.func_177229_b(field_176497_a)).func_177044_a()));
-@@ -183,4 +183,22 @@
+@@ -181,4 +181,21 @@
              }
          }
      }
 +
 +    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
 +    @Override
-+    public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
++    public NonNullList<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
-+        ret.add(new ItemStack(Blocks.field_150329_H, 1, ((BlockTallGrass.EnumType)world.func_180495_p(pos).func_177229_b(field_176497_a)).func_177044_a()));
-+        return ret;
++        return NonNullList.func_191197_a(1, new ItemStack(Blocks.field_150329_H, 1, ((BlockTallGrass.EnumType)world.func_180495_p(pos).func_177229_b(field_176497_a)).func_177044_a()));
 +    }
 +    @Override
-+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public NonNullList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
-+        if (RANDOM.nextInt(8) != 0) return ret;
++        if (RANDOM.nextInt(8) != 0) return NonNullList.func_191196_a();
 +        ItemStack seed = net.minecraftforge.common.ForgeHooks.getGrassSeed(RANDOM, fortune);
-+        if (seed != null) ret.add(seed);
-+        return ret;
++        if (!seed.func_190926_b())
++            return NonNullList.func_191197_a(1, seed);
++        else
++            return NonNullList.func_191196_a();
 +    }
  }

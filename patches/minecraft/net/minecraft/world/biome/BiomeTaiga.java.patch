@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeTaiga.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeTaiga.java
+@@ -60,7 +60,7 @@
+ 
+     public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
+     {
+-        if (this.field_150644_aH == BiomeTaiga.Type.MEGA || this.field_150644_aH == BiomeTaiga.Type.MEGA_SPRUCE)
++        if ((this.field_150644_aH == BiomeTaiga.Type.MEGA || this.field_150644_aH == BiomeTaiga.Type.MEGA_SPRUCE) && net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.ROCK))
+         {
+             int i = p_180624_2_.nextInt(3);
+ 
+@@ -75,6 +75,7 @@
+ 
+         field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.FERN);
+ 
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS))
+         for (int i1 = 0; i1 < 7; ++i1)
+         {
+             int j1 = p_180624_2_.nextInt(16) + 8;

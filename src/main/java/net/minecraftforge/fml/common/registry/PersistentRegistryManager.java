@@ -1,6 +1,28 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.registry;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -12,6 +34,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -23,6 +47,7 @@ import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
@@ -31,6 +56,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
+
+import javax.annotation.Nullable;
 
 /**
  * Persistent registry manager. Manages the registries loading from disk, and from network. Handles staging
@@ -42,7 +69,38 @@ import com.google.common.collect.Sets.SetView;
 @SuppressWarnings("WeakerAccess")
 public class PersistentRegistryManager
 {
-    private enum PersistentRegistry
+    public static void fireCreateRegistryEvents() {
+        MinecraftForge.EVENT_BUS.post(new RegistryEvent.NewRegistry());
+    }
+
+    public static void fireRegistryEvents()
+    {
+        List<ResourceLocation> registryKeys = Lists.newArrayList(PersistentRegistry.ACTIVE.registries.keySet());
+        Collections.sort(registryKeys, new Comparator<ResourceLocation>()
+        {
+            @Override
+            public int compare(ResourceLocation o1, ResourceLocation o2)
+            {
+                return o1.toString().compareToIgnoreCase(o2.toString());
+            }
+        });
+        fireRegistryEvent(PersistentRegistry.ACTIVE.registries, BLOCKS);
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject any blocks
+        fireRegistryEvent(PersistentRegistry.ACTIVE.registries, ITEMS);
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject any items
+        for (ResourceLocation rl : registryKeys) {
+            if (rl == BLOCKS || rl == ITEMS) continue;
+            fireRegistryEvent(PersistentRegistry.ACTIVE.registries, rl);
+        }
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject everything else
+    }
+    private static void fireRegistryEvent(BiMap<ResourceLocation, FMLControlledNamespacedRegistry<?>> registries, ResourceLocation name)
+    {
+        final RegistryEvent.Register<?> event = registries.get(name).buildRegistryRegisterEvent(name);
+        MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    enum PersistentRegistry
     {
         ACTIVE, VANILLA, FROZEN, STAGING;
 
@@ -56,7 +114,7 @@ public class PersistentRegistryManager
         }
 
         @SuppressWarnings("unchecked")
-        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> getRegistry(ResourceLocation key, @SuppressWarnings("UnusedParameters") Class<T> regType)
+        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> getRegistry(ResourceLocation key, @SuppressWarnings("UnusedParameters") @Nullable Class<T> regType)
         {
             return (FMLControlledNamespacedRegistry<T>)registries.get(key);
         }
@@ -65,13 +123,13 @@ public class PersistentRegistryManager
         {
             if (!registries.containsKey(key))
             {
-                registries.put(key, other.makeShallowCopy());
+                registries.put(key, other.makeShallowCopy(registries));
                 registrySuperTypes.put(regType, key);
             }
             return getRegistry(key, regType);
         }
 
-        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> type, ResourceLocation defaultObjectKey, int minId, int maxId, IForgeRegistry.AddCallback<T> addCallback, IForgeRegistry.ClearCallback<T> clearCallback, IForgeRegistry.CreateCallback<T> createCallback)
+        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> type, ResourceLocation defaultObjectKey, int minId, int maxId, @Nullable IForgeRegistry.AddCallback<T> addCallback, @Nullable IForgeRegistry.ClearCallback<T> clearCallback, @Nullable IForgeRegistry.CreateCallback<T> createCallback, @Nullable IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
         {
             Set<Class<?>> parents = Sets.newHashSet();
             findSuperTypes(type, parents);
@@ -82,7 +140,7 @@ public class PersistentRegistryManager
                 FMLLog.severe("Found existing registry of type %1s named %2s, you cannot create a new registry (%3s) with type %4s, as %4s has a parent of that type", foundType, registrySuperTypes.get(foundType), registryName, type);
                 throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
             }
-            FMLControlledNamespacedRegistry<T> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(defaultObjectKey, minId, maxId, type, addCallback, clearCallback, createCallback);
+            FMLControlledNamespacedRegistry<T> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(defaultObjectKey, minId, maxId, type, registries, addCallback, clearCallback, createCallback, substitutionCallback);
             registries.put(registryName, fmlControlledNamespacedRegistry);
             registrySuperTypes.put(type, registryName);
             return getRegistry(registryName, type);
@@ -133,10 +191,31 @@ public class PersistentRegistryManager
     public static final ResourceLocation SOUNDEVENTS = new ResourceLocation("minecraft:soundevents");
     public static final ResourceLocation POTIONTYPES = new ResourceLocation("minecraft:potiontypes");
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
+    public static final ResourceLocation ENTITIES = new ResourceLocation("minecraft:entities");
+    static final ResourceLocation SUBSTITUTION_ORIGINALS = new ResourceLocation("fml:suboriginals");
 
-    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int minId, int maxId, boolean hasDelegates, IForgeRegistry.AddCallback<T> addCallback, IForgeRegistry.ClearCallback<T> clearCallback, IForgeRegistry.CreateCallback<T> createCallback)
+    @Deprecated //Use RegistryBuilder TODO: Remove in 1.11
+    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
+            ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey,
+            int minId, int maxId, boolean hasDelegates,
+            @Nullable IForgeRegistry.AddCallback<T> addCallback,
+            @Nullable IForgeRegistry.ClearCallback<T> clearCallback,
+            @Nullable IForgeRegistry.CreateCallback<T> createCallback)
     {
-        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, addCallback, clearCallback, createCallback);
+        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
+                getLegacyAdd(addCallback), getLegacyClear(clearCallback), getLegacyCreate(createCallback), null);
+    }
+    @Deprecated //Use RegistryBuilder TODO: Remove in 1.11 {Make package private so only builder can use it}
+    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
+            ResourceLocation registryName, Class<T> registryType, @Nullable ResourceLocation optionalDefaultKey,
+            int minId, int maxId, boolean hasDelegates,
+            @Nullable IForgeRegistry.AddCallback<T> addCallback,
+            @Nullable IForgeRegistry.ClearCallback<T> clearCallback,
+            @Nullable IForgeRegistry.CreateCallback<T> createCallback,
+            @Nullable IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
+    {
+        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
+                addCallback, clearCallback, createCallback, substitutionCallback);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -167,6 +246,35 @@ public class PersistentRegistryManager
         forAllRegistries(PersistentRegistry.ACTIVE, ValidateRegistryFunction.OPERATION);
         forAllRegistries(PersistentRegistry.ACTIVE, DumpRegistryFunction.OPERATION);
         forAllRegistries(PersistentRegistry.ACTIVE, ResetDelegatesFunction.OPERATION);
+
+        List<ResourceLocation> missingRegs = Lists.newArrayList();
+        for (ResourceLocation name : snapshot.entries.keySet())
+        {
+            name = getFixedName(name);
+            if (PersistentRegistry.ACTIVE.getRegistry(name, null) == null)
+            {
+                missingRegs.add(name);
+            }
+        }
+
+        if (missingRegs.size() > 0)
+        {
+            String text = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
+                    "There are " + missingRegs.size() + " missing registries in this save.\n" +
+                    "If you continue the missing registries will get removed.\n" +
+                    "This may cause issues, it is advised that you create a world backup before continuing.\n\n" +
+                    "Missing Registries:\n";
+
+            for (ResourceLocation s : missingRegs)
+                text += s.toString() + "\n";
+
+            boolean confirmed = StartupQuery.confirm(text);
+            if (!confirmed)
+            {
+                StartupQuery.abort();
+                ;
+            }
+        }
 
         // Load the snapshot into the "STAGING" registry
         for (Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapshotEntry : snapshot.entries.entrySet())
@@ -316,21 +424,25 @@ public class PersistentRegistryManager
         newRegistry.loadIds(frozenRegistry.getEntriesNotIn(newRegistry), Maps.<ResourceLocation, Integer>newLinkedHashMap(), remaps.get(registryName), frozenRegistry, registryName);
     }
 
-    private static <T extends IForgeRegistryEntry<T>> void loadPersistentDataToStagingRegistry(boolean injectFrozenData, Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing, Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapEntry, Class<T> regType)
+    // TODO: Remove in 1.11 when we don't care about loading 1.8 worlds and below
+    private static ResourceLocation getFixedName(ResourceLocation registryName)
     {
-        ResourceLocation registryName = snapEntry.getKey();
-
         //Translate old names
         if ("fml:blocks".equals(registryName.toString())) registryName = PersistentRegistryManager.BLOCKS;
         else if ("fml:items".equals(registryName.toString())) registryName = PersistentRegistryManager.ITEMS;
         else if ("fmlgr:villagerprofessions".equals(registryName.toString())) registryName = VillagerRegistry.PROFESSIONS;
 
+        return registryName;
+    }
+
+    private static <T extends IForgeRegistryEntry<T>> void loadPersistentDataToStagingRegistry(boolean injectFrozenData, Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing, Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapEntry, Class<T> regType)
+    {
+        ResourceLocation registryName = getFixedName(snapEntry.getKey());
+
         FMLControlledNamespacedRegistry<T> currentRegistry = PersistentRegistry.ACTIVE.getRegistry(registryName, regType);
         if (currentRegistry == null)
         {
-            FMLLog.severe("An unknown persistent registry type \"%s\" has been encountered. This Forge instance cannot understand it.", registryName);
-            StartupQuery.abort();
-            return; // fake exit to shut up null analysis
+            return; // We've already asked the user if they wish to continue. So if the reg isnt found just assume the user knows and accepted it.
         }
         FMLControlledNamespacedRegistry<T> newRegistry = PersistentRegistry.STAGING.getOrShallowCopyRegistry(registryName, regType, currentRegistry);
         // Copy the persistent substitution set from the currently active one into the new registry
@@ -654,4 +766,94 @@ public class PersistentRegistryManager
         }
     }
 
+
+    //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
+    @Nullable
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.ClearCallback<T> getLegacyClear(@Nullable final IForgeRegistry.ClearCallback<T> cb)
+    {
+        if (cb == null)
+            return null;
+        try {
+            final Method mtd = cb.getClass().getMethod("onClear", Map.class);
+            return new IForgeRegistry.ClearCallback<T>()
+            {
+                @Override
+                public void onClear(IForgeRegistry<T> is, Map<ResourceLocation, ?> slaveset)
+                {
+                    try {
+                        mtd.invoke(cb, slaveset);
+                    } catch (Exception e) {
+                        e.printStackTrace( );
+                        Throwables.propagate(e);
+                    }
+                }
+            };
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return cb; //Assume they are ussing modern API
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            throw Throwables.propagate(e);
+        }
+    }
+
+    //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
+    @Nullable
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.CreateCallback<T> getLegacyCreate(@Nullable final IForgeRegistry.CreateCallback<T> cb)
+    {
+        if (cb == null)
+            return null;
+        try {
+            final Method mtd = cb.getClass().getMethod("onCreate", Map.class);
+            return new IForgeRegistry.CreateCallback<T>()
+            {
+                @Override
+                public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
+                {
+                    try {
+                        mtd.invoke(cb, slaveset);
+                    } catch (Exception e) {
+                        e.printStackTrace( );
+                        Throwables.propagate(e);
+                    }
+                }
+            };
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return cb; //Assume they are ussing modern API
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            throw Throwables.propagate(e);
+        }
+    }
+
+    //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
+    @Nullable
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.AddCallback<T> getLegacyAdd(@Nullable final IForgeRegistry.AddCallback<T> cb)
+    {
+        if (cb == null)
+            return null;
+        try {
+            final Method mtd = cb.getClass().getMethod("onAdd", Object.class, int.class, Map.class);
+            return new IForgeRegistry.AddCallback<T>()
+            {
+                @Override
+                public void onAdd(T obj, int id, Map<ResourceLocation, ?> slaveset)
+                {
+                    try {
+                        mtd.invoke(cb, obj, id, slaveset);
+                    } catch (Exception e) {
+                        e.printStackTrace( );
+                        Throwables.propagate(e);
+                    }
+                }
+            };
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return cb; //Assume they are ussing modern API
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            throw Throwables.propagate(e);
+        }
+    }
 }

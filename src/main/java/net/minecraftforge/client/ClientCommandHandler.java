@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client;
 
 import java.util.List;
@@ -75,20 +94,20 @@ public class ClientCommandHandler extends CommandHandler
             }
             else
             {
-                sender.addChatMessage(format(RED, "commands.generic.permission"));
+                sender.sendMessage(format(RED, "commands.generic.permission"));
             }
         }
         catch (WrongUsageException wue)
         {
-            sender.addChatMessage(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorObjects())));
+            sender.sendMessage(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorObjects())));
         }
         catch (CommandException ce)
         {
-            sender.addChatMessage(format(RED, ce.getMessage(), ce.getErrorObjects()));
+            sender.sendMessage(format(RED, ce.getMessage(), ce.getErrorObjects()));
         }
         catch (Throwable t)
         {
-            sender.addChatMessage(format(RED, "commands.generic.exception"));
+            sender.sendMessage(format(RED, "commands.generic.exception"));
             t.printStackTrace();
         }
 
@@ -114,8 +133,8 @@ public class ClientCommandHandler extends CommandHandler
             Minecraft mc = FMLClientHandler.instance().getClient();
             if (mc.currentScreen instanceof GuiChat)
             {
-                List<String> commands = getTabCompletionOptions(mc.thePlayer, leftOfCursor, mc.thePlayer.getPosition());
-                if (commands != null && !commands.isEmpty())
+                List<String> commands = getTabCompletions(mc.player, leftOfCursor, mc.player.getPosition());
+                if (!commands.isEmpty())
                 {
                     if (leftOfCursor.indexOf(' ') == -1)
                     {

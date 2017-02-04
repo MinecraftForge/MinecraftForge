@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.asm.transformers;
 
 import org.objectweb.asm.*;
@@ -134,11 +153,15 @@ public class TerminalTransformer implements IClassTransformer
             String callingClass = cause.length > 2 ? cause[3].getClassName() : "none";
             String callingParent = cause.length > 3 ? cause[4].getClassName() : "none";
             // FML is allowed to call system exit and the Minecraft applet (from the quit button), and the dedicated server (from itself)
-            if (!(callingClass.startsWith("net.minecraftforge.fml.") ||
-                 ("net.minecraft.client.Minecraft".equals(callingClass) && "net.minecraft.client.Minecraft".equals(callingParent)) ||
-                 ("net.minecraft.server.gui.MinecraftServerGui$1".equals(callingClass) && "java.awt.AWTEventMulticaster".equals(callingParent)) ||
-                 ("net.minecraft.server.dedicated.DedicatedServer".equals(callingClass) && "net.minecraft.server.MinecraftServer".equals(callingParent)))
-               )
+            boolean allowed = false;
+            allowed |= callingClass.startsWith("net.minecraftforge.fml.");
+            allowed |= callingClass.equals("net.minecraft.client.Minecraft")                 && callingParent.equals("net.minecraft.client.Minecraft");
+            allowed |= callingClass.equals("net.minecraft.server.gui.MinecraftServerGui$1")  && callingParent.equals("java.awt.AWTEventMulticaster");
+            allowed |= callingClass.equals("net.minecraft.server.dedicated.DedicatedServer") && callingParent.equals("net.minecraft.server.MinecraftServer");
+            allowed |= callingClass.equals("net.minecraft.server.dedicated.ServerHangWatchdog");
+            allowed |= callingClass.equals("net.minecraft.server.dedicated.ServerHangWatchdog$1");
+
+            if (!allowed)
             {
                 throw new ExitTrappedException();
             }

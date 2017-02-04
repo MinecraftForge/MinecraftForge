@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.network;
 
 import java.io.IOException;
@@ -10,6 +29,8 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 
 import io.netty.buffer.ByteBuf;
+
+import javax.annotation.Nullable;
 
 /**
  * Utilities for interacting with {@link ByteBuf}.
@@ -144,7 +165,7 @@ public class ByteBufUtils {
     public static void writeItemStack(ByteBuf to, ItemStack stack)
     {
         PacketBuffer pb = new PacketBuffer(to);
-        pb.writeItemStackToBuffer(stack);
+        pb.writeItemStack(stack);
     }
 
     /**
@@ -158,7 +179,7 @@ public class ByteBufUtils {
         PacketBuffer pb = new PacketBuffer(from);
         try
         {
-            return pb.readItemStackFromBuffer();
+            return pb.readItemStack();
         } catch (IOException e)
         {
             // Unpossible?
@@ -175,7 +196,7 @@ public class ByteBufUtils {
     public static void writeTag(ByteBuf to, NBTTagCompound tag)
     {
         PacketBuffer pb = new PacketBuffer(to);
-        pb.writeNBTTagCompoundToBuffer(tag);
+        pb.writeCompoundTag(tag);
     }
 
     /**
@@ -184,12 +205,13 @@ public class ByteBufUtils {
      * @param from The buffer to read from
      * @return The read tag
      */
+    @Nullable
     public static NBTTagCompound readTag(ByteBuf from)
     {
         PacketBuffer pb = new PacketBuffer(from);
         try
         {
-            return pb.readNBTTagCompoundFromBuffer();
+            return pb.readCompoundTag();
         } catch (IOException e)
         {
             // Unpossible?

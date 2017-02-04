@@ -1,434 +1,538 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fluids;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.templates.VoidFluidHandler;
+import net.minecraftforge.fluids.capability.wrappers.BlockLiquidWrapper;
+import net.minecraftforge.fluids.capability.wrappers.BlockWrapper;
+import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 public class FluidUtil
 {
-
     private FluidUtil()
     {
     }
 
-    /** Returns true if interaction was successful. */
-    public static boolean interactWithTank(ItemStack stack, EntityPlayer player, IFluidHandler tank, EnumFacing side)
+    /**
+     * Used to handle the common case of a player holding a fluid item and right-clicking on a fluid handler.
+     * First it tries to fill the container item from the fluid handler,
+     * if that action fails then it tries to drain the container item into the fluid handler.
+     *
+     * @param stack        The filled or empty fluid container.
+     *                     Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
+     * @param fluidHandler The fluid handler to interact with.
+     * @param player       The player doing the interaction between the item and fluid handler.
+     * @return a {@link FluidActionResult} holding the result and resulting container.
+     */
+    @Nonnull
+    public static FluidActionResult interactWithFluidHandler(@Nonnull ItemStack stack, IFluidHandler fluidHandler, EntityPlayer player)
     {
-        if (stack == null)
+        if (stack.isEmpty() || fluidHandler == null || player == null)
         {
-            return true;
+            return FluidActionResult.FAILURE;
         }
 
-        ItemStack result;
+        IItemHandler playerInventory = new InvWrapper(player.inventory);
 
-        // regular bucket?
-        int slot = player.inventory.currentItem;
-        if ((result = FluidUtil.tryFillBucket(stack, tank, side, player)) != null ||
-                (result = FluidUtil.tryEmptyBucket(stack, tank, side, player)) != null)
+        FluidActionResult fillResult = tryFillContainerAndStow(stack, fluidHandler, playerInventory, Integer.MAX_VALUE, player);
+        if (fillResult.isSuccess())
         {
-            // "use up" the input item if the player is not in creative
-            if (!player.capabilities.isCreativeMode)
-            {
-                player.inventory.decrStackSize(slot, 1);
-                ItemHandlerHelper.giveItemToPlayer(player, result, slot);
-            }
-            // send inventory updates to client
-            if (player.inventoryContainer != null)
-            {
-                player.inventoryContainer.detectAndSendChanges();
-            }
-            return true;
+            return fillResult;
         }
-        // IFluidContainerItems
         else
         {
-            // copy of the original item for creative mode
-            ItemStack original = stack; // needed for how minecraft manages inventory with interaction
-            ItemStack copy = stack.copy();
-            stack = stack.copy(); // needed so we don't affect itemstacks outside of this function
-            boolean changedBucket = false;
-            // convert to fluidcontainer-bucket if it's a regular empty bucket
-            if (ItemStack.areItemsEqual(stack, FluidContainerRegistry.EMPTY_BUCKET) && FluidRegistry.isUniversalBucketEnabled())
-            {
-                // try using the forge fluid bucket if it's enabled
-                stack = new ItemStack(ForgeModContainer.getInstance().universalBucket, copy.stackSize);
-                changedBucket = true;
-            }
+            return tryEmptyContainerAndStow(stack, fluidHandler, playerInventory, Integer.MAX_VALUE, player);
+        }
+    }
 
-            // try filling an empty fluidcontainer or emptying a filled fluidcontainer
-            if (FluidUtil.tryFillFluidContainerItem(stack, tank, side, player) ||
-                    FluidUtil.tryEmptyFluidContainerItem(stack, tank, side, player))
+    /**
+     * Fill a container from the given fluidSource.
+     *
+     * @param container   The container to be filled. Will not be modified.
+     *                    Separate handling must be done to reduce the stack size, stow containers, etc, on success.
+     *                    See {@link  #tryFillContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer)}.
+     * @param fluidSource The fluid handler to be drained.
+     * @param maxAmount   The largest amount of fluid that should be transferred.
+     * @param player      The player to make the filling noise. Pass null for no noise.
+     * @param doFill      true if the container should actually be filled, false if it should be simulated.
+     * @return a {@link FluidActionResult} holding the filled container if successful.
+     */
+    @Nonnull
+    public static FluidActionResult tryFillContainer(@Nonnull ItemStack container, IFluidHandler fluidSource, int maxAmount, @Nullable EntityPlayer player, boolean doFill)
+    {
+        ItemStack containerCopy = container.copy(); // do not modify the input
+        containerCopy.setCount(1);
+        IFluidHandlerItem containerFluidHandler = getFluidHandler(containerCopy);
+        if (containerFluidHandler != null)
+        {
+            FluidStack simulatedTransfer = tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, false);
+            if (simulatedTransfer != null)
             {
-                original.stackSize--; // this tells the player that the item he held was "used up" and the inventory syncing will then play the correct animation
-                if (player.capabilities.isCreativeMode)
+                if (doFill)
                 {
-                    // reset the stack that got modified
-                    player.inventory.setInventorySlotContents(slot, copy);
+                    tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, true);
+                    if (player != null)
+                    {
+                        SoundEvent soundevent = simulatedTransfer.getFluid().getFillSound(simulatedTransfer);
+                        player.playSound(soundevent, 1f, 1f);
+                    }
                 }
                 else
                 {
-                    // we passed in multiple stacksize and it changed, that means the new items are in the inventory
-                    // but we have to readjust the old ones back
-                    if (changedBucket && stack.stackSize != copy.stackSize)
-                    {
-                        copy.stackSize = stack.stackSize;
-                        // replace the previously changed buckets that were not used back
-                        player.inventory.setInventorySlotContents(slot, copy);
-                    }
-                    // we have the new stack now, but since we changed it from its original we have to set the contents anew
-                    else
-                    {
-                        // if the original stack was multiple, replace it
-                        if (copy.stackSize > 1)
-                        {
-                            player.inventory.setInventorySlotContents(slot, stack);
-                        }
-                        // otherwise reinsert it into the inventory
-                        else
-                        {
-                            player.inventory.setInventorySlotContents(slot, null);
-                            ItemHandlerHelper.giveItemToPlayer(player, stack, slot);
-                        }
-                    }
+                    containerFluidHandler.fill(simulatedTransfer, true);
                 }
-                // send inventory updates to client
-                if (player.inventoryContainer != null)
-                {
-                    player.inventoryContainer.detectAndSendChanges();
-                }
-                return true;
+
+                ItemStack resultContainer = containerFluidHandler.getContainer();
+                return new FluidActionResult(resultContainer);
             }
         }
-
-        return false;
-    }
-
-    @Deprecated
-    public static ItemStack tryFillBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side)
-    {
-        return tryFillBucket(bucket, tank, side, null);
+        return FluidActionResult.FAILURE;
     }
 
     /**
-     * Fill an empty bucket from the given tank. Uses the FluidContainerRegistry.
+     * Takes a filled container and tries to empty it into the given tank.
      *
-     * @param bucket The empty bucket
-     * @param tank   The tank to fill the bucket from
-     * @param side   Side to access the tank from
-     * @return The filled bucket or null if the liquid couldn't be taken from the tank.
+     * @param container        The filled container. Will not be modified.
+     *                         Separate handling must be done to reduce the stack size, stow containers, etc, on success.
+     *                         See {@link #tryEmptyContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer)}.
+     * @param fluidDestination The fluid handler to be filled by the container.
+     * @param maxAmount        The largest amount of fluid that should be transferred.
+     * @param player           Player for making the bucket drained sound. Pass null for no noise.
+     * @param doDrain          true if the container should actually be drained, false if it should be simulated.
+     * @return a {@link FluidActionResult} holding the empty container if the fluid handler was filled.
+     *         NOTE If the container is consumable, the empty container will be null on success.
      */
-    public static ItemStack tryFillBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side, EntityPlayer player)
+    @Nonnull
+    public static FluidActionResult tryEmptyContainer(@Nonnull ItemStack container, IFluidHandler fluidDestination, int maxAmount, @Nullable EntityPlayer player, boolean doDrain)
     {
-        FluidTankInfo[] info = tank.getTankInfo(side);
-        // check for fluid in the tank
-        if (info == null || info.length == 0)
+        ItemStack containerCopy = container.copy(); // do not modify the input
+        containerCopy.setCount(1);
+        IFluidHandlerItem containerFluidHandler = getFluidHandler(containerCopy);
+        if (containerFluidHandler != null)
         {
-            return null;
-        }
-        // check if we actually have an empty bucket
-        if (!FluidContainerRegistry.isEmptyContainer(bucket))
-        {
-            return null;
-        }
-        // fluid in the tank
-        FluidStack inTank = info[0].fluid;
-        // drain one bucket if possible
-        FluidStack liquid = tank.drain(side, FluidContainerRegistry.getContainerCapacity(inTank, bucket), false);
-        if (liquid != null && liquid.amount > 0)
-        {
-            // play sound
-            if(player != null)
+            FluidStack simulatedTransfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, false);
+            if (simulatedTransfer != null)
             {
-                SoundEvent soundevent = liquid.getFluid().getFillSound(liquid);
-                player.playSound(soundevent, 1f, 1f);
-            }
-
-            // success, return filled bucket
-            tank.drain(side, FluidContainerRegistry.getContainerCapacity(liquid, bucket), true);
-            return FluidContainerRegistry.fillFluidContainer(liquid, bucket);
-        }
-
-        return null;
-    }
-
-    @Deprecated
-    public static ItemStack tryEmptyBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side)
-    {
-        return tryEmptyBucket(bucket, tank, side, null);
-    }
-
-    /**
-     * Takes a filled bucket and tries to empty it into the given tank. Uses the FluidContainerRegistry.
-     *
-     * @param bucket The filled bucket
-     * @param tank   The tank to fill with the bucket
-     * @param side   Side to access the tank from
-     * @param player
-     * @return The empty bucket if successful, null if the tank couldn't be filled.
-     */
-    public static ItemStack tryEmptyBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side, EntityPlayer player)
-    {
-        // not a filled bucket
-        if (!FluidContainerRegistry.isFilledContainer(bucket))
-        {
-            return null;
-        }
-
-        // try filling the fluid from the bucket into the tank
-        FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(bucket);
-        if (tank.canFill(side, liquid.getFluid()))
-        {
-            // how much can we put into the tank?
-            int amount = tank.fill(side, liquid, false);
-            // not everything?
-            if (amount == liquid.amount)
-            {
-                // play sound
-                if(player != null)
+                if (doDrain)
                 {
-                    SoundEvent soundevent = liquid.getFluid().getEmptySound(liquid);
-                    player.playSound(soundevent, 1f, 1f);
+                    tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, true);
+                    if (player != null)
+                    {
+                        SoundEvent soundevent = simulatedTransfer.getFluid().getEmptySound(simulatedTransfer);
+                        player.playSound(soundevent, 1f, 1f);
+                    }
                 }
-                // success, fully filled it into the tank, return empty bucket
-                tank.fill(side, liquid, true);
-                return FluidContainerRegistry.drainFluidContainer(bucket);
+                else
+                {
+                    containerFluidHandler.drain(simulatedTransfer, true);
+                }
+
+                ItemStack resultContainer = containerFluidHandler.getContainer();
+                return new FluidActionResult(resultContainer);
             }
         }
-
-        return null;
+        return FluidActionResult.FAILURE;
     }
 
     /**
-     * Takes an IFluidContainerItem and tries to fill it from the given tank.
-     *
-     * @param container The IFluidContainerItem Itemstack to fill. WILL BE MODIFIED!
-     * @param tank      The tank to fill from
-     * @param side      Side to access the tank from
-     * @param player    The player that tries to fill the bucket. Needed if the input itemstack has a stacksize > 1 to determine where the filled container goes.
-     * @return True if the IFluidContainerItem was filled successfully, false otherwise. The passed container will have been modified to accommodate for anything done in this method. New Itemstacks might have been added to the players inventory.
-     */
-    public static boolean tryFillFluidContainerItem(ItemStack container, IFluidHandler tank, EnumFacing side, EntityPlayer player)
-    {
-        return tryFillFluidContainerItem(container, tank, side, new PlayerMainInvWrapper(player.inventory), -1, player);
-    }
-
-    public static boolean tryEmptyFluidContainerItem(ItemStack container, IFluidHandler tank, EnumFacing side, EntityPlayer player)
-    {
-        return tryEmptyFluidContainerItem(container, tank, side, new PlayerMainInvWrapper(player.inventory), -1, player);
-    }
-
-    /**
-     * Takes an IFluidContainerItem and tries to fill it from the given tank.
-     * If the input itemstack has a stacksize >1 new itemstacks will be created and inserted into the given inventory.
+     * Takes an Fluid Container Item and tries to fill it from the given tank.
+     * If the player is in creative mode, the container will not be modified on success, and no additional items created.
+     * If the input itemstack has a stacksize > 1 it will stow the filled container in the given inventory.
      * If the inventory does not accept it, it will be given to the player or dropped at the players feet.
-     * If player is null in this case, the action will be aborted.
-     * To support buckets that are not in the FluidContainerRegistry but implement IFluidContainerItem be sure to convert
-     * the empty bucket to your empty bucket variant before passing it to this function.
+     *      If player is null in this case, the action will be aborted.
      *
-     * @param container  The IFluidContainerItem Itemstack to fill. WILL BE MODIFIED!
-     * @param tank       The tank to fill from
-     * @param side       Side to access the tank from
-     * @param inventory  An inventory where any additionally created item (filled container if multiple empty are present) are put
-     * @param max        Maximum amount to take from the tank. Uses IFluidContainerItem capacity if <= 0
-     * @param player     The player that gets the items the inventory can't take. Can be null, only used if the inventory cannot take the filled stack.
-     * @return True if the IFluidContainerItem was filled successfully, false otherwise. The passed container will have been modified to accommodate for anything done in this method. New Itemstacks might have been added to the players inventory.
+     * @param container   The Fluid Container ItemStack to fill.
+     *                    Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
+     * @param fluidSource The fluid source to fill from
+     * @param inventory   An inventory where any additionally created item (filled container if multiple empty are present) are put
+     * @param maxAmount   Maximum amount of fluid to take from the tank.
+     * @param player      The player that gets the items the inventory can't take.
+     *                    Can be null, only used if the inventory cannot take the filled stack.
+     * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
      */
-    public static boolean tryFillFluidContainerItem(ItemStack container, IFluidHandler tank, EnumFacing side, IItemHandler inventory, int max, EntityPlayer player)
+    @Nonnull
+    public static FluidActionResult tryFillContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidSource, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player)
     {
-        if (!(container.getItem() instanceof IFluidContainerItem))
+        if (container.isEmpty())
         {
-            // not a fluid container
-            return false;
+            return FluidActionResult.FAILURE;
         }
 
-        IFluidContainerItem fluidContainer = (IFluidContainerItem) container.getItem();
-        if (fluidContainer.getFluid(container) != null)
+        if (player != null && player.capabilities.isCreativeMode)
         {
-            // not empty
-            return false;
-        }
-
-        // if no maximum is given, fill fully
-        if (max <= 0)
-        {
-            max = fluidContainer.getCapacity(container);
-        }
-        // check how much liquid we can drain from the tank
-        FluidStack liquid = tank.drain(side, max, false);
-        if (liquid != null && liquid.amount > 0)
-        {
-            // check which itemstack shall be altered by the fill call
-            if (container.stackSize > 1)
+            FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
+            if (filledReal.isSuccess())
             {
-                // create a copy of the container and fill it
-                ItemStack toFill = container.copy();
-                toFill.stackSize = 1;
-                int filled = fluidContainer.fill(toFill, liquid, false);
-                if (filled > 0)
+                return new FluidActionResult(container); // creative mode: item does not change
+            }
+        }
+        else if (container.getCount() == 1) // don't need to stow anything, just fill the container stack
+        {
+            FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
+            if (filledReal.isSuccess())
+            {
+                return filledReal;
+            }
+        }
+        else
+        {
+            FluidActionResult filledSimulated = tryFillContainer(container, fluidSource, maxAmount, player, false);
+            if (filledSimulated.isSuccess())
+            {
+                // check if we can give the itemStack to the inventory
+                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, filledSimulated.getResult(), true);
+                if (remainder.isEmpty() || player != null)
                 {
-                    // This manipulates the container Itemstack!
-                    filled = fluidContainer.fill(toFill, liquid, true);
-                }
-                else
-                {
-                    // IFluidContainer does not accept the fluid/amount
-                    return false;
-                }
+                    FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
+                    remainder = ItemHandlerHelper.insertItemStacked(inventory, filledReal.getResult(), false);
 
-                if(player == null || !player.worldObj.isRemote)
-                {
-                    // check if we can give the itemstack to the inventory
-                    ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, toFill, true);
-                    if (remainder != null && player == null)
-                    {
-                        // couldn't add to the inventory and don't have a player to drop the item at
-                        return false;
-                    }
-                    remainder = ItemHandlerHelper.insertItemStacked(inventory, toFill, false);
-                    // give it to the player or drop it at his feet
-                    if (remainder != null && player != null)
+                    // give it to the player or drop it at their feet
+                    if (!remainder.isEmpty() && player != null)
                     {
                         ItemHandlerHelper.giveItemToPlayer(player, remainder);
                     }
+
+                    ItemStack containerCopy = container.copy();
+                    containerCopy.shrink(1);
+                    return new FluidActionResult(containerCopy);
                 }
-
-                // the result has been given to the player, drain the tank since everything is ok
-                tank.drain(side, filled, true);
-
-                // decrease its stacksize to accommodate the filled one (it was >1 from the check above)
-                container.stackSize--;
             }
-            // just 1 empty container to fill, no special treatment needed
-            else
-            {
-                int filled = fluidContainer.fill(container, liquid, false);
-                if (filled > 0)
-                {
-                    // This manipulates the container Itemstack!
-                    filled = fluidContainer.fill(container, liquid, true);
-                }
-                else
-                {
-                    // IFluidContainer does not accept the fluid/amount
-                    return false;
-                }
-                tank.drain(side, filled, true);
-            }
-
-            // play sound
-            if(player != null)
-            {
-                SoundEvent soundevent = liquid.getFluid().getFillSound(liquid);
-                player.playSound(soundevent, 1f, 1f);
-            }
-
-            return true;
         }
 
-        return false;
+        return FluidActionResult.FAILURE;
     }
 
     /**
-     * Takes an IFluidContainerItem and tries to empty it into the given tank.
-     * If the input itemstack has a stacksize >1 new itemstacks will be created and inserted into the given inventory.
-     * If the inventory does not accept it, it will be given to the player or dropped at the players feet.
-     * If player is null in this case, the action will be aborted.
+     * Takes an Fluid Container Item, tries to empty it into the fluid handler, and stows it in the given inventory.
+     * If the player is in creative mode, the container will not be modified on success, and no additional items created.
+     * If the input itemstack has a stacksize > 1 it will stow the emptied container in the given inventory.
+     * If the inventory does not accept the emptied container, it will be given to the player or dropped at the players feet.
+     *      If player is null in this case, the action will be aborted.
      *
-     * @param container The IFluidContainerItem Itemstack to empty. WILL BE MODIFIED!
-     * @param tank      The tank to fill
-     * @param side      Side to access the tank from
-     * @param inventory  An inventory where any additionally created item (filled container if multiple empty are present) are put
-     * @param max        Maximum amount to take from the tank. Uses IFluidContainerItem capacity if <= 0
-     * @param player     The player that gets the items the inventory can't take. Can be null, only used if the inventory cannot take the emptied stack.
-     * @return True if the container successfully emptied at least 1 mb into the tank, false otherwise. The passed container itemstack will be modified to accommodate for the liquid transaction.
+     * @param container        The filled Fluid Container Itemstack to empty.
+     *                         Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
+     * @param fluidDestination The fluid destination to fill from the fluid container.
+     * @param inventory        An inventory where any additionally created item (filled container if multiple empty are present) are put
+     * @param maxAmount        Maximum amount of fluid to take from the tank.
+     * @param player           The player that gets the items the inventory can't take. Can be null, only used if the inventory cannot take the filled stack.
+     * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
      */
-    public static boolean tryEmptyFluidContainerItem(ItemStack container, IFluidHandler tank, EnumFacing side, IItemHandler inventory, int max, EntityPlayer player)
+    @Nonnull
+    public static FluidActionResult tryEmptyContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidDestination, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player)
     {
-        if (!(container.getItem() instanceof IFluidContainerItem))
+        if (container.isEmpty())
         {
-            // not a fluid container
-            return false;
+            return FluidActionResult.FAILURE;
         }
 
-        IFluidContainerItem fluidContainer = (IFluidContainerItem) container.getItem();
-        if (fluidContainer.getFluid(container) != null)
+        if (player != null && player.capabilities.isCreativeMode)
         {
-            // drain out of the fluidcontainer
-            if (max <= 0)
+            FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, true);
+            if (emptiedReal.isSuccess())
             {
-                max = fluidContainer.getCapacity(container);
+                return new FluidActionResult(container); // creative mode: item does not change
             }
-            FluidStack drained = fluidContainer.drain(container, max, false);
-            if (drained != null)
+        }
+        else if (container.getCount() == 1) // don't need to stow anything, just fill and edit the container stack
+        {
+            FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, true);
+            if (emptiedReal.isSuccess())
             {
-                // check how much we can fill into the tank
-                int filled = tank.fill(side, drained, false);
-                if (filled > 0)
+                return emptiedReal;
+            }
+        }
+        else
+        {
+            FluidActionResult emptiedSimulated = tryEmptyContainer(container, fluidDestination, maxAmount, player, false);
+            if (emptiedSimulated.isSuccess())
+            {
+                // check if we can give the itemStack to the inventory
+                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedSimulated.getResult(), true);
+                if (remainder.isEmpty() || player != null)
                 {
-                    // verify that the new amount can also be drained (buckets can only extract full amounts for example)
-                    drained = fluidContainer.drain(container, filled, false);
-                    // actually transfer the liquid if everything went well
-                    if (drained != null && drained.amount == filled)
+                    FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, true);
+                    remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal.getResult(), false);
+
+                    // give it to the player or drop it at their feet
+                    if (!remainder.isEmpty() && player != null)
                     {
-                        // more than 1 filled itemstack, ensure that we can insert the changed container
-                        if (container.stackSize > 1)
-                        {
-                            // create a copy of the container and drain it
-                            ItemStack toEmpty = container.copy();
-                            toEmpty.stackSize = 1;
-                            drained = fluidContainer.drain(toEmpty, filled, true); // modifies the container!
-
-                            if(player == null || !player.worldObj.isRemote)
-                            {
-                                // try adding the drained container to the inventory
-                                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, toEmpty, true);
-                                if (remainder != null && player == null)
-                                {
-                                    // couldn't add to the inventory and don't have a player to drop the item at
-                                    return false;
-                                }
-                                remainder = ItemHandlerHelper.insertItemStacked(inventory, toEmpty, false);
-                                // give it to the player or drop it at his feet
-                                if (remainder != null && player != null)
-                                {
-                                    ItemHandlerHelper.giveItemToPlayer(player, remainder);
-                                }
-                            }
-
-                            // the result has been given to the player, fill the tank since everything is ok
-                            tank.fill(side, drained, true);
-
-                            // decrease its stacksize to accommodate the filled one (it was >1 from the check above)
-                            container.stackSize--;
-                        }
-                        // itemstack of size 1, no special treatment needed
-                        else
-                        {
-                            // This manipulates the container Itemstack!
-                            drained = fluidContainer.drain(container, filled, true); // modifies the container!
-                            tank.fill(side, drained, true);
-                        }
-
-                        // play sound
-                        if(player != null)
-                        {
-                            SoundEvent soundevent = drained.getFluid().getEmptySound(drained);
-                            player.playSound(soundevent, 1f, 1f);
-                        }
-                        return true;
+                        ItemHandlerHelper.giveItemToPlayer(player, remainder);
                     }
+
+                    ItemStack containerCopy = container.copy();
+                    containerCopy.shrink(1);
+                    return new FluidActionResult(containerCopy);
                 }
             }
         }
 
-        return false;
+        return FluidActionResult.FAILURE;
+    }
+
+    /**
+     * Fill a destination fluid handler from a source fluid handler.
+     *
+     * @param fluidDestination The fluid handler to be filled.
+     * @param fluidSource      The fluid handler to be drained.
+     * @param maxAmount        The largest amount of fluid that should be transferred.
+     * @param doTransfer       True if the transfer should actually be done, false if it should be simulated.
+     * @return the fluidStack that was transferred from the source to the destination. null on failure.
+     */
+    @Nullable
+    public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, int maxAmount, boolean doTransfer)
+    {
+        FluidStack drainable = fluidSource.drain(maxAmount, false);
+        if (drainable != null && drainable.amount > 0)
+        {
+            int fillableAmount = fluidDestination.fill(drainable, false);
+            if (fillableAmount > 0)
+            {
+                if (doTransfer)
+                {
+                    FluidStack drained = fluidSource.drain(fillableAmount, true);
+                    if (drained != null)
+                    {
+                        drained.amount = fluidDestination.fill(drained, true);
+                        return drained;
+                    }
+                }
+                else
+                {
+                    drainable.amount = fillableAmount;
+                    return drainable;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Helper method to get an {@link IFluidHandlerItem} for an itemStack.
+     *
+     * The itemStack passed in here WILL be modified, the {@link IFluidHandlerItem} acts on it directly.
+     * Some {@link IFluidHandlerItem} will change the item entirely, always use {@link IFluidHandlerItem#getContainer()}
+     * after using the fluid handler to get the resulting item back.
+     *
+     * Note that the itemStack MUST have a stackSize of 1 if you want to fill or drain it.
+     * You can't fill or drain multiple items at once, if you do then liquid is multiplied or destroyed.
+     *
+     * Vanilla buckets will be converted to universal buckets if they are enabled.
+     *
+     * Returns null if the itemStack passed in does not have a fluid handler.
+     */
+    @Nullable
+    public static IFluidHandlerItem getFluidHandler(@Nonnull ItemStack itemStack)
+    {
+        if (itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
+        {
+            return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Helper method to get the fluid contained in an itemStack
+     */
+    @Nullable
+    public static FluidStack getFluidContained(@Nonnull ItemStack container)
+    {
+        if (!container.isEmpty())
+        {
+            container = container.copy();
+            container.setCount(1);
+            IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
+            if (fluidHandler != null)
+            {
+                return fluidHandler.drain(Integer.MAX_VALUE, false);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Helper method to get an IFluidHandler for at a block position.
+     *
+     * Returns null if there is no valid fluid handler.
+     */
+    @Nullable
+    public static IFluidHandler getFluidHandler(World world, BlockPos blockPos, @Nullable EnumFacing side)
+    {
+        IBlockState state = world.getBlockState(blockPos);
+        Block block = state.getBlock();
+
+        if (block.hasTileEntity(state))
+        {
+            TileEntity tileEntity = world.getTileEntity(blockPos);
+            if (tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side))
+            {
+                return tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
+            }
+        }
+        else if (block instanceof IFluidBlock)
+        {
+            return new FluidBlockWrapper((IFluidBlock) block, world, blockPos);
+        }
+        else if (block instanceof BlockLiquid)
+        {
+            return new BlockLiquidWrapper((BlockLiquid) block, world, blockPos);
+        }
+
+        return null;
+    }
+
+    /**
+     * Attempts to pick up a fluid in the world and put it in an empty container item.
+     *
+     * @param emptyContainer The empty container to fill.
+     *                       Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
+     * @param playerIn       The player filling the container. Optional.
+     * @param worldIn        The world the fluid is in.
+     * @param pos            The position of the fluid in the world.
+     * @param side           The side of the fluid that is being drained.
+     * @return a {@link FluidActionResult} holding the result and the resulting container.
+     */
+    @Nonnull
+    public static FluidActionResult tryPickUpFluid(@Nonnull ItemStack emptyContainer, @Nullable EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side)
+    {
+        if (emptyContainer.isEmpty() || worldIn == null || pos == null)
+        {
+            return FluidActionResult.FAILURE;
+        }
+
+        IBlockState state = worldIn.getBlockState(pos);
+        Block block = state.getBlock();
+
+        if (block instanceof IFluidBlock || block instanceof BlockLiquid)
+        {
+            IFluidHandler targetFluidHandler = FluidUtil.getFluidHandler(worldIn, pos, side);
+            if (targetFluidHandler != null)
+            {
+                FluidActionResult fluidActionResult = FluidUtil.tryFillContainer(emptyContainer, targetFluidHandler, Integer.MAX_VALUE, playerIn, true);
+                if (fluidActionResult.isSuccess())
+                {
+                    return fluidActionResult;
+                }
+            }
+        }
+        return FluidActionResult.FAILURE;
+    }
+
+    /**
+     * Tries to place a fluid in the world in block form and drains the container.
+     * Makes a fluid emptying sound when successful.
+     * Honors the amount of fluid contained by the used container.
+     * Checks if water-like fluids should vaporize like in the nether.
+     *
+     * Modeled after {@link net.minecraft.item.ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}
+     *
+     * @param player    Player who places the fluid. May be null for blocks like dispensers.
+     * @param world     World to place the fluid in
+     * @param pos       The position in the world to place the fluid block
+     * @param container The fluid container holding the fluidStack to place
+     * @param resource  The fluidStack to place
+     * @return the container's ItemStack with the remaining amount of fluid if the placement was successful, null otherwise
+     */
+    @Nonnull
+    public static FluidActionResult tryPlaceFluid(@Nullable EntityPlayer player, World world, BlockPos pos, @Nonnull ItemStack container, FluidStack resource)
+    {
+        if (world == null || resource == null || pos == null)
+        {
+            return FluidActionResult.FAILURE;
+        }
+
+        Fluid fluid = resource.getFluid();
+        if (fluid == null || !fluid.canBePlacedInWorld())
+        {
+            return FluidActionResult.FAILURE;
+        }
+
+        // check that we can place the fluid at the destination
+        IBlockState destBlockState = world.getBlockState(pos);
+        Material destMaterial = destBlockState.getMaterial();
+        boolean isDestNonSolid = !destMaterial.isSolid();
+        boolean isDestReplaceable = destBlockState.getBlock().isReplaceable(world, pos);
+        if (!world.isAirBlock(pos) && !isDestNonSolid && !isDestReplaceable)
+        {
+            return FluidActionResult.FAILURE; // Non-air, solid, unreplacable block. We can't put fluid here.
+        }
+
+        if (world.provider.doesWaterVaporize() && fluid.doesVaporize(resource))
+        {
+            fluid.vaporize(player, world, pos, resource);
+            return tryEmptyContainer(container, new VoidFluidHandler(), Integer.MAX_VALUE, player, true);
+        }
+        else
+        {
+            if (!world.isRemote && (isDestNonSolid || isDestReplaceable) && !destMaterial.isLiquid())
+            {
+                world.destroyBlock(pos, true);
+            }
+
+            // Defer the placement to the fluid block
+            // Instead of actually "filling", the fluid handler method replaces the block
+            Block block = fluid.getBlock();
+            IFluidHandler handler;
+            if (block instanceof IFluidBlock)
+            {
+                handler = new FluidBlockWrapper((IFluidBlock) block, world, pos);
+            }
+            else if (block instanceof BlockLiquid)
+            {
+                handler = new BlockLiquidWrapper((BlockLiquid) block, world, pos);
+            }
+            else
+            {
+                handler = new BlockWrapper(block, world, pos);
+            }
+            FluidActionResult result = tryEmptyContainer(container, handler, Integer.MAX_VALUE, player, true);
+            if (result.isSuccess())
+            {
+                SoundEvent soundevent = fluid.getEmptySound(resource);
+                world.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            }
+
+            return result;
+        }
     }
 }

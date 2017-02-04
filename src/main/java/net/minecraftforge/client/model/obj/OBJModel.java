@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.model.obj;
 
 import java.io.BufferedReader;
@@ -14,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector2f;
@@ -32,16 +52,15 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelCustomData;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.client.model.IRetexturableModel;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -1036,6 +1055,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
     }
 
+    @Deprecated
     public static class Group implements IModelPart
     {
         public static final String DEFAULT_NAME = "OBJModel.Default.Element.Name";
@@ -1049,7 +1069,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 //        public float[] minUVBounds = new float[] {0.0f, 0.0f};
 //        public float[] maxUVBounds = new float[] {1.0f, 1.0f};
 
-        public Group(String name, LinkedHashSet<Face> faces)
+        public Group(String name, @Nullable LinkedHashSet<Face> faces)
         {
             this.name = name != null ? name : DEFAULT_NAME;
             this.faces = faces == null ? new LinkedHashSet<Face>() : faces;
@@ -1092,6 +1112,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
     }
 
+    @Deprecated
     public static class OBJState implements IModelState
     {
         protected Map<String, Boolean> visibilityMap = Maps.newHashMap();
@@ -1109,6 +1130,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             for (String s : visibleGroups) this.visibilityMap.put(s, visibility);
         }
 
+        @Nullable
         public IModelState getParent(IModelState parent)
         {
             if (parent == null) return null;
@@ -1230,6 +1252,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
     }
 
+    @Deprecated
     public enum OBJProperty implements IUnlistedProperty<OBJState>
     {
         INSTANCE;
@@ -1262,7 +1285,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         private final OBJModel model;
         private IModelState state;
         private final VertexFormat format;
-        private Set<BakedQuad> quads;
+        private ImmutableList<BakedQuad> quads;
         private ImmutableMap<String, TextureAtlasSprite> textures;
         private TextureAtlasSprite sprite = ModelLoader.White.INSTANCE;
 
@@ -1277,98 +1300,122 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
         public void scheduleRebake()
         {
-            this.quads = null;
         }
 
         // FIXME: merge with getQuads
         @Override
         public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, long rand)
         {
-            if(side != null) return ImmutableList.of();
+            if (side != null) return ImmutableList.of();
             if (quads == null)
             {
-                quads = Collections.synchronizedSet(new LinkedHashSet<BakedQuad>());
-                Set<Face> faces = Collections.synchronizedSet(new LinkedHashSet<Face>());
-                Optional<TRSRTransformation> transform = Optional.absent();
-                for (Group g : this.model.getMatLib().getGroups().values())
+                quads = buildQuads(this.state);
+            }
+            if (blockState instanceof IExtendedBlockState)
+            {
+                IExtendedBlockState exState = (IExtendedBlockState) blockState;
+                if (exState.getUnlistedNames().contains(Properties.AnimationProperty))
                 {
-//                    g.minUVBounds = this.model.getMatLib().minUVBounds;
-//                    g.maxUVBounds = this.model.getMatLib().maxUVBounds;
-//                    FMLLog.info("Group: %s u: [%f, %f] v: [%f, %f]", g.name, g.minUVBounds[0], g.maxUVBounds[0], g.minUVBounds[1], g.maxUVBounds[1]);
 
-                    if (this.state instanceof OBJState)
+                    IModelState newState = exState.getValue(Properties.AnimationProperty);
+                    if (newState != null)
                     {
-                        OBJState state = (OBJState) this.state;
-                        if (state.parent != null)
+                        newState = new ModelStateComposition(this.state, newState);
+                        return buildQuads(newState);
+                    }
+                }
+            }
+            return quads;
+        }
+
+        private ImmutableList<BakedQuad> buildQuads(IModelState modelState)
+        {
+            List<BakedQuad> quads = Lists.newArrayList();
+            Collections.synchronizedSet(new LinkedHashSet<BakedQuad>());
+            Set<Face> faces = Collections.synchronizedSet(new LinkedHashSet<Face>());
+            Optional<TRSRTransformation> transform = Optional.absent();
+            for (Group g : this.model.getMatLib().getGroups().values())
+            {
+//                g.minUVBounds = this.model.getMatLib().minUVBounds;
+//                g.maxUVBounds = this.model.getMatLib().maxUVBounds;
+//                FMLLog.info("Group: %s u: [%f, %f] v: [%f, %f]", g.name, g.minUVBounds[0], g.maxUVBounds[0], g.minUVBounds[1], g.maxUVBounds[1]);
+
+                if(modelState.apply(Optional.of(Models.getHiddenModelPart(ImmutableList.of(g.getName())))).isPresent())
+                {
+                    continue;
+                }
+                if (modelState instanceof OBJState)
+                {
+                    OBJState state = (OBJState) modelState;
+                    if (state.parent != null)
+                    {
+                        transform = state.parent.apply(Optional.<IModelPart>absent());
+                    }
+                    //TODO: can this be replaced by updateStateVisibilityMap(OBJState)?
+                    if (state.getGroupNamesFromMap().contains(Group.ALL))
+                    {
+                        state.visibilityMap.clear();
+                        for (String s : this.model.getMatLib().getGroups().keySet())
                         {
-                            transform = state.parent.apply(Optional.<IModelPart>absent());
+                            state.visibilityMap.put(s, state.operation.performOperation(true));
                         }
-                        //TODO: can this be replaced by updateStateVisibilityMap(OBJState)?
-                        if (state.getGroupNamesFromMap().contains(Group.ALL))
+                    }
+                    else if (state.getGroupNamesFromMap().contains(Group.ALL_EXCEPT))
+                    {
+                        List<String> exceptList = state.getGroupNamesFromMap().subList(1, state.getGroupNamesFromMap().size());
+                        state.visibilityMap.clear();
+                        for (String s : this.model.getMatLib().getGroups().keySet())
                         {
-                            state.visibilityMap.clear();
-                            for (String s : this.model.getMatLib().getGroups().keySet())
+                            if (!exceptList.contains(s))
                             {
                                 state.visibilityMap.put(s, state.operation.performOperation(true));
                             }
                         }
-                        else if (state.getGroupNamesFromMap().contains(Group.ALL_EXCEPT))
-                        {
-                            List<String> exceptList = state.getGroupNamesFromMap().subList(1, state.getGroupNamesFromMap().size());
-                            state.visibilityMap.clear();
-                            for (String s : this.model.getMatLib().getGroups().keySet())
-                            {
-                                if (!exceptList.contains(s))
-                                {
-                                    state.visibilityMap.put(s, state.operation.performOperation(true));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            for (String s : state.visibilityMap.keySet())
-                            {
-                                state.visibilityMap.put(s, state.operation.performOperation(state.visibilityMap.get(s)));
-                            }
-                        }
-                        if (state.getGroupsWithVisibility(true).contains(g.getName()))
-                        {
-                            faces.addAll(g.applyTransform(transform));
-                        }
                     }
                     else
                     {
-                        transform = state.apply(Optional.<IModelPart>absent());
+                        for (String s : state.visibilityMap.keySet())
+                        {
+                            state.visibilityMap.put(s, state.operation.performOperation(state.visibilityMap.get(s)));
+                        }
+                    }
+                    if (state.getGroupsWithVisibility(true).contains(g.getName()))
+                    {
                         faces.addAll(g.applyTransform(transform));
                     }
                 }
-                for (Face f : faces)
+                else
                 {
-                    if (this.model.getMatLib().materials.get(f.getMaterialName()).isWhite())
-                    {
-                        for (Vertex v : f.getVertices())
-                        {//update material in each vertex
-                            if (!v.getMaterial().equals(this.model.getMatLib().getMaterial(v.getMaterial().getName())))
-                            {
-                                v.setMaterial(this.model.getMatLib().getMaterial(v.getMaterial().getName()));
-                            }
-                        }
-                        sprite = ModelLoader.White.INSTANCE;
-                    } else sprite = this.textures.get(f.getMaterialName());
-                    UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
-                    builder.setContractUVs(true);
-                    builder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
-                    builder.setTexture(sprite);
-                    Normal faceNormal = f.getNormal();
-                    putVertexData(builder, f.verts[0], faceNormal, TextureCoordinate.getDefaultUVs()[0], sprite);
-                    putVertexData(builder, f.verts[1], faceNormal, TextureCoordinate.getDefaultUVs()[1], sprite);
-                    putVertexData(builder, f.verts[2], faceNormal, TextureCoordinate.getDefaultUVs()[2], sprite);
-                    putVertexData(builder, f.verts[3], faceNormal, TextureCoordinate.getDefaultUVs()[3], sprite);
-                    quads.add(builder.build());
+                    transform = modelState.apply(Optional.<IModelPart>absent());
+                    faces.addAll(g.applyTransform(transform));
                 }
             }
-            List<BakedQuad> quadList = Collections.synchronizedList(Lists.newArrayList(quads));
-            return quadList;
+            for (Face f : faces)
+            {
+                if (this.model.getMatLib().materials.get(f.getMaterialName()).isWhite())
+                {
+                    for (Vertex v : f.getVertices())
+                    {//update material in each vertex
+                        if (!v.getMaterial().equals(this.model.getMatLib().getMaterial(v.getMaterial().getName())))
+                        {
+                            v.setMaterial(this.model.getMatLib().getMaterial(v.getMaterial().getName()));
+                        }
+                    }
+                    sprite = ModelLoader.White.INSTANCE;
+                }
+                else sprite = this.textures.get(f.getMaterialName());
+                UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+                builder.setContractUVs(true);
+                builder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
+                builder.setTexture(sprite);
+                Normal faceNormal = f.getNormal();
+                putVertexData(builder, f.verts[0], faceNormal, TextureCoordinate.getDefaultUVs()[0], sprite);
+                putVertexData(builder, f.verts[1], faceNormal, TextureCoordinate.getDefaultUVs()[1], sprite);
+                putVertexData(builder, f.verts[2], faceNormal, TextureCoordinate.getDefaultUVs()[2], sprite);
+                putVertexData(builder, f.verts[3], faceNormal, TextureCoordinate.getDefaultUVs()[3], sprite);
+                quads.add(builder.build());
+            }
+            return ImmutableList.copyOf(quads);
         }
 
         private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Normal faceNormal, TextureCoordinate defUV, TextureAtlasSprite sprite)

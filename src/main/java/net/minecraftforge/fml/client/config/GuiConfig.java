@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2014 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors (this class):
- *     bspkrs - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.client.config;
@@ -35,6 +42,8 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
+
 /**
  * This class is the base GuiScreen for all config GUI screens. It can be extended by mods to provide the top-level config screen
  * that will be called when the Config button is clicked from the Main Menu Mods list.
@@ -48,6 +57,7 @@ public class GuiConfig extends GuiScreen
      */
     public final GuiScreen parentScreen;
     public String title = "Config GUI";
+    @Nullable
     public String titleLine2;
     public final List<IConfigElement> configElements;
     public final List<IConfigEntry> initEntries;
@@ -61,6 +71,7 @@ public class GuiConfig extends GuiScreen
      * if any configElements were changed (includes child screens). If not defined, the events will be posted if the parent gui is null
      * or if the parent gui is not an instance of GuiConfig.
      */
+    @Nullable
     public final String configID;
     public final boolean isWorldRunning;
     public final boolean allRequireWorldRestart;
@@ -147,8 +158,8 @@ public class GuiConfig extends GuiScreen
      * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category name of the category
      *            currently being edited.
      */
-    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID,
-            boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2)
+    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, @Nullable String configID,
+            boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, @Nullable String titleLine2)
     {
         this.mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
@@ -159,7 +170,7 @@ public class GuiConfig extends GuiScreen
         this.allRequireMcRestart = allRequireMcRestart;
         this.modID = modID;
         this.configID = configID;
-        this.isWorldRunning = mc.theWorld != null;
+        this.isWorldRunning = mc.world != null;
         if (title != null)
             this.title = title;
         this.titleLine2 = titleLine2;

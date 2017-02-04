@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
-@@ -242,6 +242,18 @@
+@@ -244,6 +244,18 @@
          return new BlockStateContainer(this, new IProperty[] {field_176284_a, field_176283_b, field_176285_M});
      }
  

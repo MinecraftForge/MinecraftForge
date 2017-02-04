@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "normal": { "model": "custom_sprite_test:custom_sprite_block" }
+  }
+}

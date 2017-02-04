@@ -1,12 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSlab.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSlab.java
-@@ -50,6 +50,16 @@
+@@ -56,6 +56,19 @@
          return this.func_176552_j();
      }
  
 +    @Override
 +    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
 +    {
++        if (net.minecraftforge.common.ForgeModContainer.disableStairSlabCulling)
++            return super.doesSideBlockRendering(state, world, pos, face);
++
 +        if ( state.func_185914_p() )
 +            return true;
 +
@@ -17,7 +20,7 @@
      public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
      {
          IBlockState iblockstate = super.func_180642_a(p_180642_1_, p_180642_2_, p_180642_3_, p_180642_4_, p_180642_5_, p_180642_6_, p_180642_7_, p_180642_8_).func_177226_a(field_176554_a, BlockSlab.EnumBlockHalf.BOTTOM);
-@@ -77,13 +87,14 @@
+@@ -83,13 +96,14 @@
          {
              return false;
          }

@@ -1,7 +1,27 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.model;
 
 import java.util.EnumMap;
 
+import javax.annotation.Nullable;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
@@ -59,7 +79,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
         }
     }
 
-    public TRSRTransformation(Vector3f translation, Quat4f leftRot, Vector3f scale, Quat4f rightRot)
+    public TRSRTransformation(@Nullable Vector3f translation, @Nullable Quat4f leftRot, @Nullable Vector3f scale, @Nullable Quat4f rightRot)
     {
         this.matrix = mul(translation, leftRot, scale, rightRot);
         this.translation = translation != null ? translation : new Vector3f();
@@ -241,7 +261,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
         );
     }
 
-    public static Matrix4f mul(Vector3f translation, Quat4f leftRot, Vector3f scale, Quat4f rightRot)
+    public static Matrix4f mul(@Nullable Vector3f translation, @Nullable Quat4f leftRot, @Nullable Vector3f scale, @Nullable Quat4f rightRot)
     {
         Matrix4f res = new Matrix4f(), t = new Matrix4f();
         res.setIdentity();

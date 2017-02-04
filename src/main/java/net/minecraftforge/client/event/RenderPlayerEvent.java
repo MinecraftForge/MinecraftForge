@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.event;
 
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -5,6 +24,8 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+
+import javax.annotation.Nonnull;
 
 public abstract class RenderPlayerEvent extends PlayerEvent
 {
@@ -80,8 +101,9 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     {
         private int result = -1;
         private final int slot;
+        @Nonnull
         private final ItemStack stack;
-        public SetArmorModel(EntityPlayer player, RenderPlayer renderer, int slot, float partialTick, ItemStack stack)
+        public SetArmorModel(EntityPlayer player, RenderPlayer renderer, int slot, float partialTick, @Nonnull ItemStack stack)
         {
             super(player, renderer, partialTick, 0D, 0D, 0D);
             this.slot = slot;
@@ -107,6 +129,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
             return slot;
         }
 
+        @Nonnull
         public ItemStack getStack()
         {
             return stack;

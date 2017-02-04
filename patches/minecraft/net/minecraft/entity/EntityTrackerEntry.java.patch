@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
-@@ -438,6 +438,7 @@
+@@ -450,6 +450,7 @@
  
                      this.field_73132_a.func_184178_b(p_73117_1_);
                      p_73117_1_.func_184848_d(this.field_73132_a);
@@ -8,7 +8,7 @@
                  }
              }
              else if (this.field_73134_o.contains(p_73117_1_))
-@@ -445,6 +446,7 @@
+@@ -457,6 +458,7 @@
                  this.field_73134_o.remove(p_73117_1_);
                  this.field_73132_a.func_184203_c(p_73117_1_);
                  p_73117_1_.func_152339_d(this.field_73132_a);
@@ -16,13 +16,13 @@
              }
          }
      }
-@@ -477,6 +479,9 @@
+@@ -489,6 +491,9 @@
              field_151262_p.warn("Fetching addPacket for removed entity");
          }
  
 +        Packet pkt = net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.getEntitySpawningPacket(this.field_73132_a);
 +        if (pkt != null) return pkt;
 +
-         if (this.field_73132_a instanceof EntityItem)
+         if (this.field_73132_a instanceof EntityPlayerMP)
          {
-             return new SPacketSpawnObject(this.field_73132_a, 2, 1);
+             return new SPacketSpawnPlayer((EntityPlayer)this.field_73132_a);

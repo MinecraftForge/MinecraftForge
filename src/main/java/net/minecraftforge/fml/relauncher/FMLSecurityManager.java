@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.relauncher;
 
 import java.security.Permission;
@@ -17,8 +36,8 @@ public class FMLSecurityManager extends SecurityManager {
         if (permName.startsWith("exitVM"))
         {
             Class<?>[] classContexts = getClassContext();
-            String callingClass = classContexts.length > 3 ? classContexts[4].getName() : "none";
-            String callingParent = classContexts.length > 4 ? classContexts[5].getName() : "none";
+            String callingClass = classContexts.length > 4 ? classContexts[4].getName() : "none";
+            String callingParent = classContexts.length > 5 ? classContexts[5].getName() : "none";
             // FML is allowed to call system exit and the Minecraft applet (from the quit button)
             if (!(callingClass.startsWith("net.minecraftforge.fml.")
                     || "net.minecraft.server.dedicated.ServerHangWatchdog$1".equals(callingClass)

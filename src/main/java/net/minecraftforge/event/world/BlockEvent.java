@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.world;
 
 import java.util.EnumSet;
@@ -8,6 +27,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -15,8 +35,13 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import com.google.common.collect.ImmutableList;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockEvent extends Event
 {
@@ -147,30 +172,38 @@ public class BlockEvent extends Event
     public static class PlaceEvent extends BlockEvent
     {
         private final EntityPlayer player;
-        private final ItemStack itemInHand;
         private final BlockSnapshot blockSnapshot;
         private final IBlockState placedBlock;
         private final IBlockState placedAgainst;
+        private final EnumHand hand;
 
+        @Deprecated
         public PlaceEvent(BlockSnapshot blockSnapshot, IBlockState placedAgainst, EntityPlayer player)
         {
+            this(blockSnapshot, placedAgainst, player, EnumHand.MAIN_HAND);
+        }
+
+        public PlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull IBlockState placedAgainst, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
             super(blockSnapshot.getWorld(), blockSnapshot.getPos(), blockSnapshot.getCurrentBlock());
             this.player = player;
-            this.itemInHand = player.getHeldItemMainhand();
             this.blockSnapshot = blockSnapshot;
             this.placedBlock = blockSnapshot.getCurrentBlock();
             this.placedAgainst = placedAgainst;
+            this.hand = hand;
             if (DEBUG)
             {
-                System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ]\n", getPlacedBlock(), placedAgainst, getItemInHand(), player);
+                System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ][Hand: %s]\n", getPlacedBlock(), placedAgainst, player.getHeldItem(hand), player, hand);
             }
         }
 
         public EntityPlayer getPlayer() { return player; }
-        public ItemStack getItemInHand() { return itemInHand; }
+        @Nonnull
+        @Deprecated
+        public ItemStack getItemInHand() { return player.getHeldItem(hand); }
         public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
         public IBlockState getPlacedBlock() { return placedBlock; }
         public IBlockState getPlacedAgainst() { return placedAgainst; }
+        public EnumHand getHand() { return hand; }
     }
 
     /**
@@ -185,13 +218,18 @@ public class BlockEvent extends Event
     {
         private final List<BlockSnapshot> blockSnapshots;
 
+        @Deprecated
         public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, IBlockState placedAgainst, EntityPlayer player)
         {
-            super(blockSnapshots.get(0), placedAgainst, player);
+            this(blockSnapshots, placedAgainst, player, EnumHand.MAIN_HAND);
+        }
+
+        public MultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull IBlockState placedAgainst, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
+            super(blockSnapshots.get(0), placedAgainst, player, hand);
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG)
             {
-                System.out.printf("Created MultiPlaceEvent - [PlacedAgainst: %s ][ItemInHand: %s ][Player: %s ]\n", placedAgainst, this.getItemInHand(), player);
+                System.out.printf("Created MultiPlaceEvent - [PlacedAgainst: %s ][ItemInHand: %s ][Player: %s ]\n", placedAgainst, player.getHeldItem(hand), player);
             }
         }
 
@@ -216,11 +254,13 @@ public class BlockEvent extends Event
     public static class NeighborNotifyEvent extends BlockEvent
     {
         private final EnumSet<EnumFacing> notifiedSides;
+        private final boolean forceRedstoneUpdate;
 
-        public NeighborNotifyEvent(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides)
+        public NeighborNotifyEvent(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides, boolean forceRedstoneUpdate)
         {
             super(world, pos, state);
             this.notifiedSides = notifiedSides;
+            this.forceRedstoneUpdate = forceRedstoneUpdate;
         }
 
         /**
@@ -231,6 +271,86 @@ public class BlockEvent extends Event
         public EnumSet<EnumFacing> getNotifiedSides()
         {
             return notifiedSides;
+        }
+
+        /**
+         * Get if redstone update was forced during setBlock call (0x16 to flags)
+         * @return if the flag was set
+         */
+        public boolean getForceRedstoneUpdate()
+        {
+            return forceRedstoneUpdate;
+        }
+    }
+
+    /**
+     * Fired to check whether a non-source block can turn into a source block.
+     * A result of ALLOW causes a source block to be created even if the liquid
+     * usually doesn't do that (like lava), and a result of DENY prevents creation
+     * even if the liquid usually does do that (like water).
+     */
+    @HasResult
+    public static class CreateFluidSourceEvent extends BlockEvent
+    {
+        public CreateFluidSourceEvent(World world, BlockPos pos, IBlockState state)
+        {
+            super(world, pos, state);
+        }
+    }
+    
+    /**
+     * Fired when a crop block grows.  See subevents.
+     *
+     */
+    public static class CropGrowEvent extends BlockEvent
+    {
+        public CropGrowEvent(World world, BlockPos pos, IBlockState state)
+        {
+            super(world, pos, state);
+        }
+
+        /**
+         * Fired when any "growing age" blocks (for example cacti, chorus plants, or crops
+         * in vanilla) attempt to advance to the next growth age state during a random tick.<br>
+         * <br>
+         * {@link Result#DEFAULT} will pass on to the vanilla growth mechanics.<br>
+         * {@link Result#ALLOW} will force the plant to advance a growth stage.<br>
+         * {@link Result#DENY} will prevent the plant from advancing a growth stage.<br>
+         * <br>
+         * This event is not {@link Cancelable}.<br>
+         * <br>
+         */
+        @HasResult
+        public static class Pre extends CropGrowEvent
+        {
+            public Pre(World world, BlockPos pos, IBlockState state)
+            {
+                super(world, pos, state);
+            }
+        }
+
+        /**
+         * Fired when "growing age" blocks (for example cacti, chorus plants, or crops
+         * in vanilla) have successfully grown. The block's original state is available,
+         * in addition to its new state.<br>
+         * <br>
+         * This event is not {@link Cancelable}.<br>
+         * <br>
+         * This event does not have a result. {@link HasResult}<br>
+         */
+        public static class Post extends CropGrowEvent
+        {
+            private final IBlockState originalState;
+            public Post(World world, BlockPos pos, IBlockState original, IBlockState state)
+            {
+                super(world, pos, state);
+                originalState = original;
+            }
+
+            public IBlockState getOriginalState()
+            {
+                return originalState;
+            }
         }
     }
 }

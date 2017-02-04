@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.property;
 
 import java.util.Collection;
@@ -17,6 +36,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ExtendedBlockState extends BlockStateContainer
 {
@@ -49,7 +71,8 @@ public class ExtendedBlockState extends BlockStateContainer
     }
 
     @Override
-    protected StateImplementation createState(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties)
+    @Nonnull
+    protected StateImplementation createState(@Nonnull Block block, @Nonnull  ImmutableMap<IProperty<?>, Comparable<?>> properties, @Nullable ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties)
     {
         if (unlistedProperties == null || unlistedProperties.isEmpty()) return super.createState(block, properties, unlistedProperties);
         return new ExtendedStateImplementation(block, properties, unlistedProperties, null);
@@ -60,7 +83,7 @@ public class ExtendedBlockState extends BlockStateContainer
         private final ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties;
         private Map<Map<IProperty<?>, Comparable<?>>, BlockStateContainer.StateImplementation> normalMap;
 
-        protected ExtendedStateImplementation(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties, ImmutableTable<IProperty<?>, Comparable<?>, IBlockState> table)
+        protected ExtendedStateImplementation(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties, @Nullable ImmutableTable<IProperty<?>, Comparable<?>, IBlockState> table)
         {
             super(block, properties);
             this.unlistedProperties = unlistedProperties;
@@ -68,7 +91,8 @@ public class ExtendedBlockState extends BlockStateContainer
         }
 
         @Override
-        public <T extends Comparable<T>, V extends T> IBlockState withProperty(IProperty<T> property, V value)
+        @Nonnull
+        public <T extends Comparable<T>, V extends T> IBlockState withProperty(@Nonnull IProperty<T> property, @Nonnull V value)
         {
             if (!this.getProperties().containsKey(property))
             {

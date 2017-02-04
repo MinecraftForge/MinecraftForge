@@ -7,7 +7,7 @@
 -@SideOnly(Side.CLIENT)
  public class ModelBox
  {
-     private PositionTextureVertex[] field_78253_h;
+     private final PositionTextureVertex[] field_78253_h;
 @@ -81,6 +80,7 @@
          }
      }
@@ -15,4 +15,4 @@
 +    @SideOnly(Side.CLIENT)
      public void func_178780_a(VertexBuffer p_178780_1_, float p_178780_2_)
      {
-         for (int i = 0; i < this.field_78254_i.length; ++i)
+         for (TexturedQuad texturedquad : this.field_78254_i)

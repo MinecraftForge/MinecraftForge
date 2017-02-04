@@ -1,7 +1,27 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.patcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -11,6 +31,7 @@ import java.util.jar.JarFile;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.repackage.com.nothome.delta.Delta;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -20,6 +41,8 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
+
+import javax.annotation.Nullable;
 
 public class GenDiffSet {
 
@@ -59,8 +82,7 @@ public class GenDiffSet {
                 String sourceClassName = name.replace('/', '.');
                 String targetClassName = remapper.map(name).replace('/', '.');
                 JarEntry entry = sourceZip.getJarEntry(jarName);
-
-                byte[] vanillaBytes = entry != null ? ByteStreams.toByteArray(sourceZip.getInputStream(entry)) : new byte[0];
+                byte[] vanillaBytes = toByteArray(sourceZip, entry);
                 byte[] patchedBytes = Files.toByteArray(targetFile);
 
                 byte[] diff = delta.compute(vanillaBytes, patchedBytes);
@@ -98,4 +120,21 @@ public class GenDiffSet {
         sourceZip.close();
     }
 
+    private static byte[] toByteArray(JarFile sourceZip, @Nullable JarEntry entry) throws IOException
+    {
+        if (entry == null)
+        {
+            return new byte[0];
+        }
+
+        InputStream sourceZipInputStream = sourceZip.getInputStream(entry);
+        try
+        {
+            return ByteStreams.toByteArray(sourceZipInputStream);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(sourceZipInputStream);
+        }
+    }
 }

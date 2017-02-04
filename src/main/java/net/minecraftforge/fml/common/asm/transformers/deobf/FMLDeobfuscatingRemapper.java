@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors:
- *     cpw - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.common.asm.transformers.deobf;
@@ -46,6 +53,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
+
+import javax.annotation.Nullable;
 
 public class FMLDeobfuscatingRemapper extends Remapper {
     public static final FMLDeobfuscatingRemapper INSTANCE = new FMLDeobfuscatingRemapper();
@@ -191,12 +200,13 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     /*
      * Cache the field descriptions for classes so we don't repeatedly reload the same data again and again
      */
-    private Map<String,Map<String,String>> fieldDescriptions = Maps.newHashMap();
+    private final Map<String,Map<String,String>> fieldDescriptions = Maps.newHashMap();
 
     // Cache null values so we don't waste time trying to recompute classes with no field or method maps
     private Set<String> negativeCacheMethods = Sets.newHashSet();
     private Set<String> negativeCacheFields = Sets.newHashSet();
 
+    @Nullable
     private String getFieldType(String owner, String name)
     {
         if (fieldDescriptions.containsKey(owner))
@@ -252,15 +262,43 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         rawMethodMaps.get(cl).put(oldName+sig, newName);
     }
 
+    String mapMemberFieldName(String owner, String name, String desc)
+    {
+        String remappedName = mapFieldName(owner, name, desc, true);
+        storeMemberFieldMapping(owner, name, desc, remappedName);
+        return remappedName;
+    }
+
+    private void storeMemberFieldMapping(String owner, String name, String desc, String remappedName) {
+        Map<String, String> fieldMap = getRawFieldMap(owner);
+
+        String key = name + ":" + desc;
+        String altKey = name + ":null";
+
+        if (!fieldMap.containsKey(key)) {
+            fieldMap.put(key, remappedName);
+            fieldMap.put(altKey, remappedName);
+
+            // Alternatively, maps could be made mutable and we could just set the relevant entry, saving
+            // the need to regenerate the super map each time
+            fieldNameMaps.remove(owner);
+        }
+    }
+
     @Override
-    public String mapFieldName(String owner, String name, String desc)
+    public String mapFieldName(String owner, String name, @Nullable String desc)
+    {
+        return mapFieldName(owner, name, desc, false);
+    }
+
+    String mapFieldName(String owner, String name, @Nullable String desc, boolean raw)
     {
         if (classNameBiMap == null || classNameBiMap.isEmpty())
         {
             return name;
         }
-        Map<String, String> fieldMap = getFieldMap(owner);
-        return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : name;
+        Map<String, String> fieldMap = getFieldMap(owner, raw);
+        return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : fieldMap!=null && fieldMap.containsKey(name+":null") ? fieldMap.get(name+":null") :name;
     }
 
     @Override
@@ -315,6 +353,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     }
     
     @Override
+    @Nullable
     public String mapSignature(String signature, boolean typeSignature)
     {
         // JDT decorates some lambdas with this and SignatureReader chokes on it
@@ -325,8 +364,22 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         return super.mapSignature(signature, typeSignature);
     }
 
-    private Map<String,String> getFieldMap(String className)
+    private Map<String,String> getRawFieldMap(String className)
     {
+        if (!rawFieldMaps.containsKey(className))
+        {
+            rawFieldMaps.put(className, Maps.<String,String>newHashMap());
+        }
+        return rawFieldMaps.get(className);
+    }
+
+    private Map<String,String> getFieldMap(String className, boolean raw)
+    {
+        if (raw)
+        {
+            return getRawFieldMap(className);
+        }
+
         if (!fieldNameMaps.containsKey(className) && !negativeCacheFields.contains(className))
         {
             findAndMergeSuperMaps(className);
@@ -381,7 +434,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             e.printStackTrace();
         }
     }
-    public void mergeSuperMaps(String name, String superName, String[] interfaces)
+    public void mergeSuperMaps(String name, @Nullable String superName, String[] interfaces)
     {
 //        System.out.printf("Computing super maps for %s: %s %s\n", name, superName, Arrays.asList(interfaces));
         if (classNameBiMap == null || classNameBiMap.isEmpty())
@@ -434,9 +487,10 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         return ImmutableSet.copyOf(classNameBiMap.keySet());
     }
 
+    @Nullable
     public String getStaticFieldType(String oldType, String oldName, String newType, String newName)
     {
-        String fType = getFieldType(oldType, oldName);
+        String fType = getFieldType(newType, newName);
         if (oldType.equals(newType))
         {
             return fType;

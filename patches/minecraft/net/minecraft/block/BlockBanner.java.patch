@@ -1,21 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockBanner.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockBanner.java
-@@ -107,14 +107,7 @@
+@@ -89,16 +89,9 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
--        ItemStack itemstack = this.func_185549_e(p_180653_1_, p_180653_2_, p_180653_3_);
+-        ItemStack itemstack = this.func_185549_e(p_180653_1_, p_180653_2_);
 -
--        if (itemstack != null)
+-        if (itemstack.func_190926_b())
          {
--            func_180635_a(p_180653_1_, p_180653_2_, itemstack);
--        }
--        else
--        {
              super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
          }
+-        else
+-        {
+-            func_180635_a(p_180653_1_, p_180653_2_, itemstack);
+-        }
      }
-@@ -141,6 +134,28 @@
+ 
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
+@@ -120,6 +113,25 @@
          }
      }
  
@@ -27,12 +29,9 @@
 +        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
 +        if (te instanceof TileEntityBanner)
 +        {
-+            TileEntityBanner banner = (TileEntityBanner)te;
-+            ItemStack item = new ItemStack(Items.field_179564_cE, 1, banner.func_175115_b());
-+            NBTTagCompound nbt = new NBTTagCompound();
-+            TileEntityBanner.func_181020_a(nbt, banner.func_175115_b(), banner.func_181021_d());
-+            item.func_77983_a("BlockEntityTag", nbt);
-+            ret.add(item);
++            TileEntityBanner tileentitybanner = (TileEntityBanner)te;
++            ItemStack itemstack = tileentitybanner.func_190615_l();
++            ret.add(itemstack);
 +        }
 +        else
 +        {

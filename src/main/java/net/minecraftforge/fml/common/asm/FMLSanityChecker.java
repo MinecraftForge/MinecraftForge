@@ -1,19 +1,26 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors:
- *     cpw - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.common.asm;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.security.cert.Certificate;
@@ -21,6 +28,8 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import net.minecraftforge.common.util.Java6Utils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -106,7 +115,15 @@ public class FMLSanityChecker implements IFMLCallHook
                 mcJarFile = new JarFile(mcPath,true);
                 mcJarFile.getManifest();
                 JarEntry cbrEntry = mcJarFile.getJarEntry("net/minecraft/client/ClientBrandRetriever.class");
-                ByteStreams.toByteArray(mcJarFile.getInputStream(cbrEntry));
+                InputStream mcJarFileInputStream = mcJarFile.getInputStream(cbrEntry);
+                try
+                {
+                    ByteStreams.toByteArray(mcJarFileInputStream);
+                }
+                finally
+                {
+                    IOUtils.closeQuietly(mcJarFileInputStream);
+                }
                 Certificate[] certificates = cbrEntry.getCertificates();
                 certCount = certificates != null ? certificates.length : 0;
                 if (certificates!=null)
@@ -129,17 +146,7 @@ public class FMLSanityChecker implements IFMLCallHook
             }
             finally
             {
-                if (mcJarFile != null)
-                {
-                    try
-                    {
-                        mcJarFile.close();
-                    }
-                    catch (IOException ioe)
-                    {
-                        // Noise
-                    }
-                }
+                Java6Utils.closeZipQuietly(mcJarFile);
             }
         }
         else

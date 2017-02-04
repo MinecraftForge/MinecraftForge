@@ -1,5 +1,29 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity;
 
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
@@ -8,8 +32,7 @@ import net.minecraft.util.SoundEvent;
 /**
  * PlaySoundAtEntityEvent is fired a sound is to be played at an Entity<br>
  * This event is fired whenever a sound is set to be played at an Entity such as in
- * EntityPlayerSP#playSound(String, float, float), World#playSoundAtEntity(Entity, String, float, float),
- * and World#playerSoundToNearExcept(EntityPlayer, String, float, float).<br>
+ * {@link EntityPlayerSP#playSound(SoundEvent, float, float)} and {@link World#playSound(EntityPlayer, double, double, double, SoundEvent, SoundCategory, float, float)}.<br>
  * <br>
  * {@link #name} contains the name of the sound to be played at the Entity.<br>
  * {@link #volume} contains the volume at which the sound is to be played originally.<br>

@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.relauncher;
 
 import java.io.File;
@@ -13,6 +32,8 @@ import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+
+import javax.annotation.Nullable;
 
 public class ModListHelper {
     public static class JsonModList {
@@ -43,12 +64,28 @@ public class ModListHelper {
                 tryAddFile(modFile, null, modFile);
             }
         }
+
+        String[] extras = new String[]
+        {
+            "mods/mod_list.json",
+            "mods/" + FMLInjectionData.mccversion + "/mod_list.json"
+        };
+
+        for (String extra : extras)
+        {
+            if ((new File(mcDirectory, extra)).exists())
+                parseListFile(extra);
+        }
+
     }
     private static void parseListFile(String listFile) {
         File f;
         try
         {
-            f = new File(mcDirectory, listFile).getCanonicalFile();
+            if (listFile.startsWith("absolute:"))
+                f = new File(listFile.substring(9)).getCanonicalFile();
+            else
+                f = new File(mcDirectory, listFile).getCanonicalFile();
         } catch (IOException e2)
         {
             FMLRelaunchLog.log(Level.INFO, e2, "Unable to canonicalize path %s relative to %s", listFile, mcDirectory.getAbsolutePath());
@@ -113,7 +150,7 @@ public class ModListHelper {
             tryAddFile(fileName.toString(), repoRoot, genericName.toString());
         }
     }
-    private static void tryAddFile(String modFileName, File repoRoot, String descriptor) {
+    private static void tryAddFile(String modFileName, @Nullable File repoRoot, String descriptor) {
         File modFile = repoRoot != null ? new File(repoRoot,modFileName) : new File(mcDirectory, modFileName);
         if (!modFile.exists())
         {

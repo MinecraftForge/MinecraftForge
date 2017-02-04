@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
-@@ -191,10 +191,11 @@
+@@ -199,10 +199,11 @@
          {
              float f = (float)MathHelper.func_76123_f(this.field_70143_R - 3.0F);
  
@@ -13,7 +13,7 @@
                  ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.BLOCK_DUST, this.field_70165_t, this.field_70163_u, this.field_70161_v, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, new int[] {Block.func_176210_f(p_184231_4_)});
              }
          }
-@@ -271,7 +272,7 @@
+@@ -279,7 +280,7 @@
                      }
                  }
  
@@ -22,7 +22,7 @@
                  {
                      this.func_184210_p();
                  }
-@@ -370,7 +371,7 @@
+@@ -378,7 +379,7 @@
              if (!this.field_70170_p.field_72995_K && (this.func_70684_aJ() || this.field_70718_bc > 0 && this.func_146066_aG() && this.field_70170_p.func_82736_K().func_82766_b("doMobLoot")))
              {
                  int i = this.func_70693_a(this.field_70717_bb);
@@ -31,7 +31,7 @@
                  while (i > 0)
                  {
                      int j = EntityXPOrb.func_70527_a(i);
-@@ -431,6 +432,7 @@
+@@ -440,6 +441,7 @@
      {
          this.field_70755_b = p_70604_1_;
          this.field_70756_c = this.field_70173_aa;
@@ -39,7 +39,20 @@
      }
  
      public EntityLivingBase func_110144_aD()
-@@ -784,6 +786,8 @@
+@@ -668,8 +670,10 @@
+         else
+         {
+             Collection<PotionEffect> collection = this.field_70713_bf.values();
+-            this.field_70180_af.func_187227_b(field_184634_g, Boolean.valueOf(func_184593_a(collection)));
+-            this.field_70180_af.func_187227_b(field_184633_f, Integer.valueOf(PotionUtils.func_185181_a(collection)));
++            net.minecraftforge.event.entity.living.PotionColorCalculationEvent event = new net.minecraftforge.event.entity.living.PotionColorCalculationEvent(this, PotionUtils.func_185181_a(collection), func_184593_a(collection), collection);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++            this.field_70180_af.func_187227_b(field_184634_g, event.areParticlesHidden());
++            this.field_70180_af.func_187227_b(field_184633_f, event.getColor());
+             this.func_82142_c(this.func_70644_a(MobEffects.field_76441_p));
+         }
+     }
+@@ -812,6 +816,8 @@
  
      public void func_70691_i(float p_70691_1_)
      {
@@ -48,7 +61,7 @@
          float f = this.func_110143_aJ();
  
          if (f > 0.0F)
-@@ -804,6 +808,7 @@
+@@ -832,6 +838,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -56,19 +69,19 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -892,9 +897,9 @@
+@@ -918,9 +925,9 @@
                          this.field_70718_bc = 100;
-                         this.field_70717_bb = (EntityPlayer)entity;
+                         this.field_70717_bb = (EntityPlayer)entity1;
                      }
--                    else if (entity instanceof EntityWolf)
-+                    else if (entity instanceof net.minecraft.entity.passive.EntityTameable)
+-                    else if (entity1 instanceof EntityWolf)
++                    else if (entity1 instanceof net.minecraft.entity.passive.EntityTameable)
                      {
--                        EntityWolf entitywolf = (EntityWolf)entity;
-+                        net.minecraft.entity.passive.EntityTameable entitywolf = (net.minecraft.entity.passive.EntityTameable)entity;
+-                        EntityWolf entitywolf = (EntityWolf)entity1;
++                        net.minecraft.entity.passive.EntityTameable entitywolf = (net.minecraft.entity.passive.EntityTameable)entity1;
  
                          if (entitywolf.func_70909_n())
                          {
-@@ -1016,6 +1021,7 @@
+@@ -1107,6 +1114,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
@@ -76,13 +89,20 @@
          if (!this.field_70729_aU)
          {
              Entity entity = p_70645_1_.func_76346_g();
-@@ -1043,11 +1049,24 @@
-                     i = EnchantmentHelper.func_185283_h((EntityLivingBase)entity);
-                 }
+@@ -1127,18 +1135,26 @@
  
+             if (!this.field_70170_p.field_72995_K)
+             {
+-                int i = 0;
++                int i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, p_70645_1_);
+ 
+-                if (entity instanceof EntityPlayer)
+-                {
+-                    i = EnchantmentHelper.func_185283_h((EntityLivingBase)entity);
+-                }
 +                captureDrops = true;
 +                capturedDrops.clear();
-+
+ 
                  if (this.func_146066_aG() && this.field_70170_p.func_82736_K().func_82766_b("doMobLoot"))
                  {
                      boolean flag = this.field_70718_bc > 0;
@@ -101,7 +121,7 @@
              }
  
              this.field_70170_p.func_72960_a(this, (byte)3);
-@@ -1124,7 +1143,7 @@
+@@ -1215,7 +1231,7 @@
              BlockPos blockpos = new BlockPos(i, j, k);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
              Block block = iblockstate.func_177230_c();
@@ -110,7 +130,7 @@
          }
      }
  
-@@ -1150,6 +1169,9 @@
+@@ -1241,6 +1257,9 @@
  
      public void func_180430_e(float p_180430_1_, float p_180430_2_)
      {
@@ -120,7 +140,16 @@
          super.func_180430_e(p_180430_1_, p_180430_2_);
          PotionEffect potioneffect = this.func_70660_b(MobEffects.field_76430_j);
          float f = potioneffect == null ? 0.0F : (float)(potioneffect.func_76458_c() + 1);
-@@ -1242,6 +1264,8 @@
+@@ -1257,7 +1276,7 @@
+ 
+             if (iblockstate.func_185904_a() != Material.field_151579_a)
+             {
+-                SoundType soundtype = iblockstate.func_177230_c().func_185467_w();
++                SoundType soundtype = iblockstate.func_177230_c().getSoundType(iblockstate, field_70170_p, new BlockPos(j, k, l), this);
+                 this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
+             }
+         }
+@@ -1334,6 +1353,8 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -129,7 +158,7 @@
              p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f = p_70665_2_;
-@@ -1290,6 +1314,11 @@
+@@ -1383,6 +1404,11 @@
  
      public void func_184609_a(EnumHand p_184609_1_)
      {
@@ -141,41 +170,33 @@
          if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1491,6 +1520,7 @@
+@@ -1613,7 +1639,7 @@
  
-     public void func_110145_l(Entity p_110145_1_)
-     {
-+        if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_110145_1_, false)) return;
-         if (!(p_110145_1_ instanceof EntityBoat) && !(p_110145_1_ instanceof EntityHorse))
-         {
-             double d1 = p_110145_1_.field_70165_t;
-@@ -1515,7 +1545,7 @@
- 
-                 if (!this.field_70170_p.func_184143_b(axisalignedbb1))
-                 {
--                    if (this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u, d12)).func_185896_q())
-+                    if (this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u, d12)).isSideSolid(field_70170_p, new BlockPos(d11, this.field_70163_u, d12), EnumFacing.UP))
+                     if (!this.field_70170_p.func_184143_b(axisalignedbb1))
                      {
-                         this.func_70634_a(d11, this.field_70163_u + 1.0D, d12);
-                         return;
-@@ -1523,14 +1553,14 @@
+-                        if (this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u, d12)).func_185896_q())
++                        if (this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u, d12)).isSideSolid(field_70170_p, new BlockPos(d11, this.field_70163_u, d12), EnumFacing.UP))
+                         {
+                             this.func_70634_a(d11, this.field_70163_u + 1.0D, d12);
+                             return;
+@@ -1621,14 +1647,14 @@
  
-                     BlockPos blockpos = new BlockPos(d11, this.field_70163_u - 1.0D, d12);
+                         BlockPos blockpos = new BlockPos(d11, this.field_70163_u - 1.0D, d12);
  
--                    if (this.field_70170_p.func_180495_p(blockpos).func_185896_q() || this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
-+                    if (this.field_70170_p.func_180495_p(blockpos).isSideSolid(field_70170_p, blockpos, EnumFacing.UP) || this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
+-                        if (this.field_70170_p.func_180495_p(blockpos).func_185896_q() || this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
++                        if (this.field_70170_p.func_180495_p(blockpos).isSideSolid(field_70170_p, blockpos, EnumFacing.UP) || this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
+                         {
+                             d1 = d11;
+                             d13 = this.field_70163_u + 1.0D;
+                             d14 = d12;
+                         }
+                     }
+-                    else if (!this.field_70170_p.func_184143_b(axisalignedbb1.func_72317_d(0.0D, 1.0D, 0.0D)) && this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u + 1.0D, d12)).func_185896_q())
++                    else if (!this.field_70170_p.func_184143_b(axisalignedbb1.func_72317_d(0.0D, 1.0D, 0.0D)) && this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u + 1.0D, d12)).isSideSolid(field_70170_p, new BlockPos(d11, this.field_70163_u + 1.0D, d12), EnumFacing.UP))
                      {
                          d1 = d11;
-                         d13 = this.field_70163_u + 1.0D;
-                         d14 = d12;
-                     }
-                 }
--                else if (!this.field_70170_p.func_184143_b(axisalignedbb1.func_72317_d(0.0D, 1.0D, 0.0D)) && this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u + 1.0D, d12)).func_185896_q())
-+                else if (!this.field_70170_p.func_184143_b(axisalignedbb1.func_72317_d(0.0D, 1.0D, 0.0D)) && this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u + 1.0D, d12)).isSideSolid(field_70170_p, new BlockPos(d11, this.field_70163_u + 1.0D, d12), EnumFacing.UP))
-                 {
-                     d1 = d11;
-                     d13 = this.field_70163_u + 2.0D;
-@@ -1601,6 +1631,7 @@
+                         d13 = this.field_70163_u + 2.0D;
+@@ -1700,6 +1726,7 @@
          }
  
          this.field_70160_al = true;
@@ -183,7 +204,7 @@
      }
  
      protected void func_70629_bd()
-@@ -1860,6 +1891,7 @@
+@@ -1972,6 +1999,7 @@
  
      public void func_70071_h_()
      {
@@ -191,7 +212,15 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2366,6 +2398,40 @@
+@@ -2015,6 +2043,7 @@
+                 if (!ItemStack.func_77989_b(itemstack1, itemstack))
+                 {
+                     ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, entityequipmentslot, itemstack, itemstack1));
+ 
+                     if (!itemstack.func_190926_b())
+                     {
+@@ -2488,6 +2517,40 @@
          this.field_70752_e = true;
      }
  
@@ -232,7 +261,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2386,12 +2452,19 @@
+@@ -2508,12 +2571,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -253,9 +282,9 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2409,8 +2482,10 @@
+@@ -2531,8 +2601,10 @@
  
-         if (itemstack != null && !this.func_184587_cr())
+         if (!itemstack.func_190926_b() && !this.func_184587_cr())
          {
 +            int duration = net.minecraftforge.event.ForgeEventFactory.onItemUseStart(this, itemstack, itemstack.func_77988_m());
 +            if (duration <= 0) return;
@@ -265,18 +294,20 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2493,6 +2568,8 @@
+@@ -2613,7 +2685,9 @@
+         if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
+         {
              this.func_184584_a(this.field_184627_bm, 16);
-             ItemStack itemstack = this.field_184627_bm.func_77950_b(this.field_70170_p, this);
- 
+-            this.func_184611_a(this.func_184600_cs(), this.field_184627_bm.func_77950_b(this.field_70170_p, this));
++            ItemStack itemstack = this.field_184627_bm.func_77950_b(this.field_70170_p, this);
 +            itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, field_184627_bm, func_184605_cv(), itemstack);
-+
-             if (itemstack != null && itemstack.field_77994_a == 0)
-             {
-                 itemstack = null;
-@@ -2523,7 +2600,8 @@
++            this.func_184611_a(this.func_184600_cs(), itemstack);
+             this.func_184602_cy();
+         }
+     }
+@@ -2637,7 +2711,8 @@
      {
-         if (this.field_184627_bm != null)
+         if (!this.field_184627_bm.func_190926_b())
          {
 -            this.field_184627_bm.func_77974_b(this.field_70170_p, this, this.func_184605_cv());
 +            if (!net.minecraftforge.event.ForgeEventFactory.onUseItemStop(this, field_184627_bm, this.func_184605_cv()))
@@ -284,7 +315,7 @@
          }
  
          this.func_184602_cy();
-@@ -2642,4 +2720,28 @@
+@@ -2761,4 +2836,29 @@
      {
          return true;
      }
@@ -296,7 +327,8 @@
 +
 +    @SuppressWarnings("unchecked")
 +    @Override
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +        {
@@ -308,7 +340,7 @@
 +    }
 +
 +    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 +    }

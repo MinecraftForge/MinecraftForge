@@ -1,9 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -53,26 +53,12 @@
- 
+@@ -55,26 +55,12 @@
      protected void func_76572_b()
      {
+         this.field_191067_f = true;
 -        WorldType worldtype = this.field_76579_a.func_72912_H().func_76067_t();
 -
 -        if (worldtype == WorldType.field_77138_c)
@@ -29,7 +29,7 @@
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
-@@ -158,7 +144,7 @@
+@@ -160,7 +146,7 @@
      @SideOnly(Side.CLIENT)
      public float func_76571_f()
      {
@@ -38,7 +38,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -174,13 +160,13 @@
+@@ -177,13 +163,13 @@
  
      public int func_76557_i()
      {
@@ -54,7 +54,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -214,6 +200,327 @@
+@@ -222,6 +208,339 @@
          return new WorldBorder();
      }
  
@@ -181,7 +181,7 @@
 +    {
 +        BlockPos ret = this.field_76579_a.func_175694_M();
 +
-+        boolean isAdventure = field_76579_a.func_72912_H().func_76077_q() == WorldSettings.GameType.ADVENTURE;
++        boolean isAdventure = field_76579_a.func_72912_H().func_76077_q() == GameType.ADVENTURE;
 +        int spawnFuzz = this.field_76579_a instanceof WorldServer ? field_76577_b.getSpawnFuzz((WorldServer)this.field_76579_a, this.field_76579_a.func_73046_m()) : 1;
 +        int border = MathHelper.func_76128_c(field_76579_a.func_175723_af().func_177729_b(ret.func_177958_n(), ret.func_177952_p()));
 +        if (border < spawnFuzz) spawnFuzz = border;
@@ -220,6 +220,18 @@
 +        return 0;
 +    }
 +
++    /**
++     * Called from {@link World#initCapabilities()}, to gather capabilities for this world.
++     * It's safe to access world here since this is called after world is registered.
++     *
++     * On server, called directly after mapStorage and world data such as Scoreboard and VillageCollection are initialized.
++     * On client, called when world is constructed, just before world load event is called.
++     * Note that this method is always called before the world load event.
++     * @return initial holder for capabilities on the world
++     */
++    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities() {
++        return null;
++    }
 +    /*======================================= Start Moved From World =========================================*/
 +
 +    public Biome getBiomeForCoords(BlockPos pos)

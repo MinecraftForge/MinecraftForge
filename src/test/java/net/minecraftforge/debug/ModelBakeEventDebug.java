@@ -22,7 +22,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
@@ -49,10 +48,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 
-@Mod(modid = ModelBakeEventDebug.MODID, version = ModelBakeEventDebug.VERSION)
+import javax.annotation.Nullable;
+
+@Mod(modid = ModelBakeEventDebug.MODID, name = "ForgeDebugModelBakeEvent", version = ModelBakeEventDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelBakeEventDebug
 {
-    public static final String MODID = "ForgeDebugModelBakeEvent";
+    public static final String MODID = "forgedebugmodelbakeevent";
     public static final String VERSION = "1.0";
     public static final int cubeSize = 3;
 
@@ -148,7 +149,7 @@ public class ModelBakeEventDebug
         public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isVisuallyOpaque() { return false; }
+        public boolean causesSuffocation(IBlockState state) { return false; }
 
         @Override
         public TileEntity createNewTileEntity(World world, int meta)
@@ -157,7 +158,7 @@ public class ModelBakeEventDebug
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             TileEntity te = world.getTileEntity(pos);
             if(te instanceof CustomTileEntity)
@@ -253,7 +254,7 @@ public class ModelBakeEventDebug
         }
 
         @Override
-        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
             if(side != null) return ImmutableList.of();
             IExtendedBlockState exState = (IExtendedBlockState)state;
@@ -310,7 +311,7 @@ public class ModelBakeEventDebug
             case WEST:  return new Vec3d(-vec.yCoord,  vec.xCoord,  vec.zCoord);
             case EAST:  return new Vec3d( vec.yCoord, -vec.xCoord,  vec.zCoord);
         }
-        return null;
+        throw new IllegalArgumentException("Unknown Side " + side);
     }
 
     private static Vec3d revRotate(Vec3d vec, EnumFacing side)
@@ -324,6 +325,6 @@ public class ModelBakeEventDebug
             case WEST:  return new Vec3d( vec.yCoord, -vec.xCoord,  vec.zCoord);
             case EAST:  return new Vec3d(-vec.yCoord,  vec.xCoord,  vec.zCoord);
         }
-        return null;
+        throw new IllegalArgumentException("Unknown Side " + side);
     }
 }

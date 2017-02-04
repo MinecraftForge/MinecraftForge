@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
-@@ -205,6 +205,8 @@
+@@ -206,6 +206,8 @@
                      }
                  }
  
 +                WorldType.field_77139_a[this.field_146331_K].onGUICreateWorldPress();
 +
-                 WorldSettings worldsettings = new WorldSettings(i, WorldSettings.GameType.func_77142_a(this.field_146342_r), this.field_146341_s, this.field_146337_w, WorldType.field_77139_a[this.field_146331_K]);
+                 WorldSettings worldsettings = new WorldSettings(i, GameType.func_77142_a(this.field_146342_r), this.field_146341_s, this.field_146337_w, WorldType.field_77139_a[this.field_146331_K]);
                  worldsettings.func_82750_a(this.field_146334_a);
  
-@@ -311,14 +313,7 @@
+@@ -312,14 +314,7 @@
              }
              else if (p_146284_1_.field_146127_k == 8)
              {
@@ -25,7 +25,7 @@
              }
          }
      }
-@@ -370,7 +365,7 @@
+@@ -371,7 +366,7 @@
              this.field_146326_C.field_146125_m = this.field_146344_y;
              this.field_146320_D.field_146125_m = this.field_146344_y;
              this.field_146321_E.field_146125_m = this.field_146344_y;

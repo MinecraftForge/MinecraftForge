@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
@@ -9,7 +28,9 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.block.BlockPrismarine;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.ModContainer;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
@@ -32,15 +53,17 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.registry.GameData;
 
+import javax.annotation.Nonnull;
+
 public class OreDictionary
 {
     private static boolean hasInit = false;
     private static List<String>          idToName = new ArrayList<String>();
     private static Map<String, Integer>  nameToId = new HashMap<String, Integer>(128);
-    private static List<List<ItemStack>> idToStack = Lists.newArrayList();
-    private static List<List<ItemStack>> idToStackUn = Lists.newArrayList();
+    private static List<NonNullList<ItemStack>> idToStack = Lists.newArrayList();
+    private static List<NonNullList<ItemStack>> idToStackUn = Lists.newArrayList();
     private static Map<Integer, List<Integer>> stackToId = Maps.newHashMapWithExpectedSize((int)(128 * 0.75));
-    public static final ImmutableList<ItemStack> EMPTY_LIST = ImmutableList.of();
+    public static final NonNullList<ItemStack> EMPTY_LIST = NonNullList.create();
 
     /**
      * Minecraft changed from -1 to Short.MAX_VALUE in 1.5 release for the "block wildcard". Use this in case it
@@ -89,6 +112,7 @@ public class OreDictionary
             registerOre("ingotBrick",    Items.BRICK);
             registerOre("ingotBrickNether", Items.NETHERBRICK);
             registerOre("nuggetGold",  Items.GOLD_NUGGET);
+            registerOre("nuggetIron",  Items.field_191525_da);
 
             // gems and dusts
             registerOre("gemDiamond",  Items.DIAMOND);
@@ -317,7 +341,10 @@ public class OreDictionary
             new ItemStack(Blocks.DARK_OAK_STAIRS),
             new ItemStack(Blocks.WOODEN_SLAB),
             new ItemStack(Blocks.GLASS_PANE),
-            null //So the above can have a comma and we don't have to keep editing extra lines.
+            new ItemStack(Blocks.BONE_BLOCK), // Bone Block, to prevent conversion of dyes into bone meal.
+            new ItemStack(Items.BOAT),
+            new ItemStack(Items.OAK_DOOR),
+            ItemStack.EMPTY //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
         List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
@@ -331,7 +358,7 @@ public class OreDictionary
             {
                 ShapedRecipes recipe = (ShapedRecipes)obj;
                 ItemStack output = recipe.getRecipeOutput();
-                if (output != null && containsMatch(false, exclusions, output))
+                if (!output.isEmpty() && containsMatch(false, exclusions, output))
                 {
                     continue;
                 }
@@ -346,7 +373,7 @@ public class OreDictionary
             {
                 ShapelessRecipes recipe = (ShapelessRecipes)obj;
                 ItemStack output = recipe.getRecipeOutput();
-                if (output != null && containsMatch(false, exclusions, output))
+                if (!output.isEmpty() && containsMatch(false, exclusions, output))
                 {
                     continue;
                 }
@@ -383,9 +410,9 @@ public class OreDictionary
             idToName.add(name);
             val = idToName.size() - 1; //0 indexed
             nameToId.put(name, val);
-            List<ItemStack> back = Lists.newArrayList();
+            NonNullList<ItemStack> back = NonNullList.create();
             idToStack.add(back);
-            idToStackUn.add(Collections.unmodifiableList(back));
+            idToStackUn.add(back);
         }
         return val;
     }
@@ -408,9 +435,9 @@ public class OreDictionary
      * @param stack The item stack of the ore.
      * @return An array of ids that this ore is registered as.
      */
-    public static int[] getOreIDs(ItemStack stack)
+    public static int[] getOreIDs(@Nonnull ItemStack stack)
     {
-        if (stack == null || stack.getItem() == null) throw new IllegalArgumentException("Stack can not be null!");
+        if (stack.isEmpty()) throw new IllegalArgumentException("Stack can not be invalid!");
 
         Set<Integer> set = new HashSet<Integer>();
 
@@ -450,7 +477,7 @@ public class OreDictionary
      * @param name The ore name, directly calls getOreID
      * @return An arrayList containing ItemStacks registered for this ore
      */
-    public static List<ItemStack> getOres(String name)
+    public static NonNullList<ItemStack> getOres(String name)
     {
         return getOres(getOreID(name));
     }
@@ -470,7 +497,7 @@ public class OreDictionary
      * @param alwaysCreateEntry Flag - should a new entry be created if empty
      * @return An arraylist containing ItemStacks registered for this ore
      */
-    public static List<ItemStack> getOres(String name, boolean alwaysCreateEntry)
+    public static NonNullList<ItemStack> getOres(String name, boolean alwaysCreateEntry)
     {
         if (alwaysCreateEntry) {
             return getOres(getOreID(name));
@@ -510,12 +537,12 @@ public class OreDictionary
      * @param id The ore ID, see getOreID
      * @return An List containing ItemStacks registered for this ore
      */
-    private static List<ItemStack> getOres(int id)
+    private static NonNullList<ItemStack> getOres(int id)
     {
         return idToStackUn.size() > id ? idToStackUn.get(id) : EMPTY_LIST;
     }
 
-    private static boolean containsMatch(boolean strict, ItemStack[] inputs, ItemStack... targets)
+    private static boolean containsMatch(boolean strict, ItemStack[] inputs, @Nonnull ItemStack... targets)
     {
         for (ItemStack input : inputs)
         {
@@ -530,7 +557,7 @@ public class OreDictionary
         return false;
     }
 
-    public static boolean containsMatch(boolean strict, List<ItemStack> inputs, ItemStack... targets)
+    public static boolean containsMatch(boolean strict, NonNullList<ItemStack> inputs, @Nonnull ItemStack... targets)
     {
         for (ItemStack input : inputs)
         {
@@ -545,9 +572,9 @@ public class OreDictionary
         return false;
     }
 
-    public static boolean itemMatches(ItemStack target, ItemStack input, boolean strict)
+    public static boolean itemMatches(@Nonnull ItemStack target, @Nonnull ItemStack input, boolean strict)
     {
-        if (input == null && target != null || input != null && target == null)
+        if (input.isEmpty() && !target.isEmpty() || !input.isEmpty() && target.isEmpty())
         {
             return false;
         }
@@ -557,7 +584,7 @@ public class OreDictionary
     //Convenience functions that make for cleaner code mod side. They all drill down to registerOre(String, int, ItemStack)
     public static void registerOre(String name, Item      ore){ registerOre(name, new ItemStack(ore));  }
     public static void registerOre(String name, Block     ore){ registerOre(name, new ItemStack(ore));  }
-    public static void registerOre(String name, ItemStack ore){ registerOreImpl(name, ore);             }
+    public static void registerOre(String name, @Nonnull ItemStack ore){ registerOreImpl(name, ore);             }
 
     /**
      * Registers a ore item into the dictionary.
@@ -566,10 +593,10 @@ public class OreDictionary
      * @param name The name of the ore
      * @param ore The ore's ItemStack
      */
-    private static void registerOreImpl(String name, ItemStack ore)
+    private static void registerOreImpl(String name, @Nonnull ItemStack ore)
     {
         if ("Unknown".equals(name)) return; //prevent bad IDs.
-        if (ore == null || ore.getItem() == null)
+        if (ore.isEmpty())
         {
             FMLLog.bigWarning("Invalid registration attempt for an Ore Dictionary item with name %s has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", name);
             return; //prevent bad ItemStacks.
@@ -583,9 +610,11 @@ public class OreDictionary
         int hash;
         if (registryName == null)
         {
+            ModContainer modContainer = Loader.instance().activeModContainer();
+            String modContainerName = modContainer == null ? null : modContainer.getName();
             FMLLog.bigWarning("A broken ore dictionary registration with name %s has occurred. It adds an item (type: %s) which is currently unknown to the game registry. This dictionary item can only support a single value when"
                     + " registered with ores like this, and NO I am not going to turn this spam off. Just register your ore dictionary entries after the GameRegistry.\n"
-                    + "TO USERS: YES this is a BUG in the mod "+Loader.instance().activeModContainer().getName()+" report it to them!", name, ore.getItem().getClass());
+                    + "TO USERS: YES this is a BUG in the mod " + modContainerName + " report it to them!", name, ore.getItem().getClass());
             hash = -1;
         }
         else
@@ -618,7 +647,7 @@ public class OreDictionary
         private final String Name;
         private final ItemStack Ore;
 
-        public OreRegisterEvent(String name, ItemStack ore)
+        public OreRegisterEvent(String name, @Nonnull ItemStack ore)
         {
             this.Name = name;
             this.Ore = ore;
@@ -629,6 +658,7 @@ public class OreDictionary
             return Name;
         }
 
+        @Nonnull
         public ItemStack getOre()
         {
             return Ore;
@@ -641,7 +671,7 @@ public class OreDictionary
         stackToId.clear();
         for (int id = 0; id < idToStack.size(); id++)
         {
-            List<ItemStack> ores = idToStack.get(id);
+            NonNullList<ItemStack> ores = idToStack.get(id);
             if (ores == null) continue;
             for (ItemStack ore : ores)
             {

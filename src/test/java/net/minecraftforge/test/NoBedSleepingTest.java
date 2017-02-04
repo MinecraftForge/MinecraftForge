@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTBase.NBTPrimitive;
+import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -32,10 +32,13 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = NoBedSleepingTest.MODID, version = NoBedSleepingTest.VERSION)
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@Mod(modid = NoBedSleepingTest.MODID, name = "ForgeDebugNoBedSleeping", version = NoBedSleepingTest.VERSION, acceptableRemoteVersions = "*")
 public class NoBedSleepingTest
 {
-    public static final String MODID = "ForgeDebugNoBedSleeping";
+    public static final String MODID = "forgedebugnobedsleeping";
     public static final String VERSION = "1.0";
     @CapabilityInject(IExtraSleeping.class)
     private static final Capability<IExtraSleeping> SLEEP_CAP = null;
@@ -74,18 +77,22 @@ public class NoBedSleepingTest
     public static class EventHandler
     {
         @SubscribeEvent
-        public void onEntityConstruct(AttachCapabilitiesEvent evt)
+        public void onEntityConstruct(AttachCapabilitiesEvent.Entity evt)
         {
+            if (!(evt.getEntity() instanceof EntityPlayer))
+                return;
+
             evt.addCapability(new ResourceLocation(MODID, "IExtraSleeping"), new ICapabilitySerializable<NBTPrimitive>()
             {
                 IExtraSleeping inst = SLEEP_CAP.getDefaultInstance();
                 @Override
-                public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+                public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
                     return capability == SLEEP_CAP;
                 }
 
                 @Override
-                public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+                @Nullable
+                public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
                     return capability == SLEEP_CAP ? SLEEP_CAP.<T>cast(inst) : null;
                 }
 
@@ -158,8 +165,10 @@ public class NoBedSleepingTest
         }
 
         @Override
-        public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand)
+        @Nonnull
+        public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand)
         {
+            ItemStack stack = player.getHeldItem(hand);
             if (!world.isRemote)
             {
                 final SleepResult result = player.trySleep(player.getPosition());

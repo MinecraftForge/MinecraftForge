@@ -3,6 +3,7 @@ package net.minecraftforge.test;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -13,14 +14,17 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid="forge.testcapmod",version="1.0")
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0", acceptableRemoteVersions = "*")
 public class TestCapabilityMod
 {
     // A Holder/Marker for if this capability is installed.
@@ -44,7 +48,6 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent.LeftClickBlock event)
     {
-        if (event.getItemStack() == null) return;
         if (event.getItemStack().getItem() != Items.STICK) return;
 
         // This is just a example of how to interact with the TE, note the strong type binding that getCapability has
@@ -55,13 +58,27 @@ public class TestCapabilityMod
             IExampleCapability inv = te.getCapability(TEST_CAP, event.getFace());
             System.out.println("Hi I'm a " + inv.getOwnerType());
         }
-        if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.DIRT)
+        if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.DIRT && event.getItemStack().hasCapability(TEST_CAP, null))
         {
-            event.getEntityPlayer().addChatMessage(new TextComponentString(TextFormatting.RED + "" + TextFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
+            IExampleCapability cap = event.getItemStack().getCapability(TEST_CAP, null);
+            event.getEntityPlayer().sendMessage(new TextComponentString((cap.getVal() ? TextFormatting.GREEN : TextFormatting.RED) + "" + TextFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
             event.setCanceled(true);
         }
     }
 
+    @SubscribeEvent
+    public void onInteractItem(PlayerInteractEvent.RightClickItem event)
+    {
+        if (!event.getEntityPlayer().isSneaking()) return;
+        if (event.getItemStack().getItem() != Items.STICK) return;
+
+        if (event.getItemStack().hasCapability(TEST_CAP, null))
+        {
+            IExampleCapability cap = event.getItemStack().getCapability(TEST_CAP, null);
+            cap.toggleVal();
+            System.out.println("Test value is now: " + (cap.getVal() ? "TRUE" : "FALSE"));
+        }
+    }
 
     // Example of having this annotation on a method, this will be called when the capability is present.
     // You could do something like register event handlers to attach these capabilities to objects, or
@@ -72,6 +89,54 @@ public class TestCapabilityMod
         System.out.println("IExampleCapability was registered wheeeeee!");
     }
 
+    // Having the Provider implement the cap is not recommended as this creates a hard dep on the cap interface.
+    // And does not allow for sidedness.
+    // But as this is a example and we do not care about that here we go.
+    class Provider<V> implements ICapabilitySerializable<NBTTagCompound>, IExampleCapability
+    {
+        private V obj;
+        private boolean value;
+
+        Provider(V obj)
+        {
+            this.obj = obj;
+        }
+        @Override
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+        {
+            return TEST_CAP != null && capability == TEST_CAP;
+        }
+        @Override
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+        {
+            if (TEST_CAP != null && capability == TEST_CAP) return TEST_CAP.cast(this);
+            return null;
+        }
+        @Override
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setBoolean("CapTestVal", this.value);
+            return tag;
+        }
+        @Override
+        public void deserializeNBT(NBTTagCompound tag) {
+            this.value = tag.getBoolean("CapTestVal");
+        }
+        @Override
+        public String getOwnerType() {
+            return obj.getClass().getName();
+        }
+        @Override
+        public boolean getVal() {
+            return this.value;
+        }
+        @Override
+        public void toggleVal() {
+            this.value = !this.value;
+        }
+    }
+
     // An example of how to attach a capability to an arbitrary Tile entity.
     // Note: Doing this IS NOT recommended for normal implementations.
     // If you control the TE it is HIGHLY recommend that you implement a fast
@@ -80,36 +145,29 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onTELoad(AttachCapabilitiesEvent.TileEntity event)
     {
-        // Having the Provider implement the cap is not recomended as this creates a hard dep on the cap interface.
-        // And doesnt allow for sidedness.
-        // But as this is a example and we dont care about that here we go.
-        class Provider implements ICapabilityProvider, IExampleCapability
-        {
-            private TileEntity te;
+        //Attach it! The resource location MUST be unique it's recommended that you tag it with your modid and what the cap is.
+        event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider(event.getTileEntity()));
+    }
 
-            Provider(TileEntity te)
-            {
-                this.te = te;
-            }
-            @Override
-            public boolean hasCapability(Capability<?> capability, EnumFacing facing)
-            {
-                return TEST_CAP != null && capability == TEST_CAP;
-            }
-            @Override
-            public <T> T getCapability(Capability<T> capability, EnumFacing facing)
-            {
-                if (TEST_CAP != null && capability == TEST_CAP) return TEST_CAP.cast(this);
-                return null;
-            }
-            @Override
-            public String getOwnerType() {
-                return te.getClass().getName();
-            }
-        }
+    @SubscribeEvent
+    public void onItemLoad(AttachCapabilitiesEvent.Item event)
+    {
+        if (event.getItemStack().getItem() == Items.STICK)
+            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider(event.getItemStack()));
+    }
 
-        //Attach it! The resource location MUST be unique it's recomneded that you tag it with your modid and what the cap is.
-        event.addCapability(new ResourceLocation("TestCapabilityMod:DummyCap"), new Provider(event.getTileEntity()));
+    @SuppressWarnings("rawtypes")
+    @SubscribeEvent
+    public void attachEvent(AttachCapabilitiesEvent event) //Test Raw type gets everything still.
+    {
+        System.currentTimeMillis();
+    }
+
+    @SubscribeEvent
+    public void attachTileEntity(AttachCapabilitiesEvent<TileEntity> event)
+    {
+        if (!(event.getObject() instanceof TileEntity))
+            throw new IllegalArgumentException("Generic event handler failed! Expected Tile Entity got " + event.getObject());
     }
 
     // Capabilities SHOULD be interfaces, NOT concrete classes, this allows for
@@ -117,6 +175,8 @@ public class TestCapabilityMod
     public static interface IExampleCapability
     {
         String getOwnerType();
+        boolean getVal();
+        void toggleVal();
     }
 
     // Storage implementations are required, tho there is some flexibility here.
@@ -142,5 +202,10 @@ public class TestCapabilityMod
         public String getOwnerType(){
             return "Default Implementation!";
         }
+        public boolean getVal() {
+            return false;
+        }
+        @Override
+        public void toggleVal() {}
     }
 }

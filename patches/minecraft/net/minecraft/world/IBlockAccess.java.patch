@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/IBlockAccess.java
 +++ ../src-work/minecraft/net/minecraft/world/IBlockAccess.java
-@@ -31,4 +31,14 @@
+@@ -28,4 +28,14 @@
  
      @SideOnly(Side.CLIENT)
      WorldType func_175624_G();

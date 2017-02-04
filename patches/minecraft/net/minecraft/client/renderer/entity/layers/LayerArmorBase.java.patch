@@ -1,22 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
-@@ -60,29 +60,27 @@
+@@ -58,31 +58,29 @@
+             if (itemarmor.func_185083_B_() == p_188361_9_)
+             {
                  T t = this.func_188360_a(p_188361_9_);
++                t = getArmorModelHook(p_188361_1_, itemstack, p_188361_9_, t);
                  t.func_178686_a(this.field_177190_a.func_177087_b());
                  t.func_78086_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_4_);
-+                t = getArmorModelHook(p_188361_1_, itemstack, p_188361_9_, t);
                  this.func_188359_a(t, p_188361_9_);
                  boolean flag = this.func_188363_b(p_188361_9_);
 -                this.field_177190_a.func_110776_a(this.func_177181_a(itemarmor, flag));
 +                this.field_177190_a.func_110776_a(this.getArmorResource(p_188361_1_, itemstack, p_188361_9_, null));
  
 -                switch (itemarmor.func_82812_d())
--                {
+                 {
 -                    case LEATHER:
-                         int i = itemarmor.func_82814_b(itemstack);
-+                {
-+                    if (i != 0xFFFFFF) // Allow this for anything, not only cloth
++                    if (itemarmor.hasOverlay(itemstack)) // Allow this for anything, not only cloth
 +                    {
+                         int i = itemarmor.func_82814_b(itemstack);
                          float f = (float)(i >> 16 & 255) / 255.0F;
                          float f1 = (float)(i >> 8 & 255) / 255.0F;
                          float f2 = (float)(i & 255) / 255.0F;
@@ -40,8 +41,8 @@
                          {
                              func_188364_a(this.field_177190_a, p_188361_1_, t, p_188361_2_, p_188361_3_, p_188361_4_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
                          }
-@@ -142,11 +140,13 @@
-         GlStateManager.func_179084_k();
+@@ -139,11 +137,13 @@
+         Minecraft.func_71410_x().field_71460_t.func_191514_d(false);
      }
  
 +    @Deprecated //Use the more sensitive version getArmorResource below
@@ -54,7 +55,7 @@
      private ResourceLocation func_177178_a(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_)
      {
          String s = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {p_177178_1_.func_82812_d().func_179242_c(), Integer.valueOf(p_177178_2_ ? 2 : 1), p_177178_3_ == null ? "" : String.format("_%s", new Object[]{p_177178_3_})});
-@@ -164,4 +164,49 @@
+@@ -161,4 +161,49 @@
      protected abstract void func_177177_a();
  
      protected abstract void func_188359_a(T p_188359_1_, EntityEquipmentSlot p_188359_2_);

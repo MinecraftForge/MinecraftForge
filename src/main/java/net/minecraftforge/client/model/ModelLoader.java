@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.model;
 
 import java.awt.Color;
@@ -12,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -61,16 +81,19 @@ import net.minecraftforge.client.model.animation.AnimationItemOverrideList;
 import net.minecraftforge.client.model.animation.IAnimatedModel;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
@@ -81,8 +104,12 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -94,8 +121,11 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
+import javax.annotation.Nonnull;
+
 public final class ModelLoader extends ModelBakery
 {
+    private static boolean firstLoad = Boolean.parseBoolean(System.getProperty("fml.skipFirstModelBake", "true"));
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
@@ -146,6 +176,16 @@ public final class ModelLoader extends ModelBakery
         Map<IModel, IBakedModel> bakedModels = Maps.newHashMap();
         HashMultimap<IModel, ModelResourceLocation> models = HashMultimap.create();
         Multimaps.invertFrom(Multimaps.forMap(stateModels), models);
+
+        if (firstLoad)
+        {
+            firstLoad = false;
+            for (ModelResourceLocation mrl : stateModels.keySet())
+            {
+                bakedRegistry.putObject(mrl, missingBaked);
+            }
+            return bakedRegistry;
+        }
 
         ProgressBar bakeBar = ProgressManager.push("ModelLoader: baking", models.keySet().size());
 
@@ -222,7 +262,7 @@ public final class ModelLoader extends ModelBakery
         catch(Exception e)
         {
             storeException(location, e);
-            model = getMissingModel();
+            model = ModelLoaderRegistry.getMissingModel(location, e);
         }
         stateModels.put(location, model);
     }
@@ -308,11 +348,12 @@ public final class ModelLoader extends ModelBakery
                         exception = new ItemLoadingException("Could not load item model either from the normal location " + file + " or from the blockstate", normalException, blockstateException);
                     }
                 }
-                stateModels.put(memory, model);
                 if(exception != null)
                 {
                     storeException(memory, exception);
+                    model = ModelLoaderRegistry.getMissingModel(memory, exception);
                 }
+                stateModels.put(memory, model);
             }
         }
         ProgressManager.pop(itemBar);
@@ -339,7 +380,7 @@ public final class ModelLoader extends ModelBakery
             for(String s : getVariantNames(Items.BUCKET))
             {
                 ModelResourceLocation memory = getInventoryVariant(s);
-                IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation("forge", "item/bucket"));
+                IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(ForgeVersion.MOD_ID, "item/bucket"));
                 // only on successful load, otherwise continue using the old model
                 if(model != getMissingModel())
                 {
@@ -354,8 +395,9 @@ public final class ModelLoader extends ModelBakery
             {
                 // can the milk be put into a bucket?
                 Fluid milk = FluidRegistry.getFluid("milk");
-                FluidStack milkStack = new FluidStack(milk, FluidContainerRegistry.BUCKET_VOLUME);
-                if(FluidContainerRegistry.getContainerCapacity(milkStack, new ItemStack(Items.BUCKET)) == FluidContainerRegistry.BUCKET_VOLUME)
+                FluidStack milkStack = new FluidStack(milk, Fluid.BUCKET_VOLUME);
+                IFluidHandler bucketHandler = FluidUtil.getFluidHandler(new ItemStack(Items.BUCKET));
+                if (bucketHandler != null && bucketHandler.fill(milkStack, false) == Fluid.BUCKET_VOLUME)
                 {
                     setBucketModel(Items.MILK_BUCKET);
                 }
@@ -366,7 +408,7 @@ public final class ModelLoader extends ModelBakery
                 for(String s : getVariantNames(Items.MILK_BUCKET))
                 {
                     ModelResourceLocation memory = getInventoryVariant(s);
-                    IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation("forge", "item/bucket_milk"));
+                    IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(ForgeVersion.MOD_ID, "item/bucket_milk"));
                     // only on successful load, otherwise continue using the old model
                     if(model != getMissingModel())
                     {
@@ -489,7 +531,12 @@ public final class ModelLoader extends ModelBakery
             return builder.build();
         }
 
-        public IBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        {
+            return VanillaLoader.INSTANCE.modelCache.getUnchecked(new BakedModelCacheKey(this, state, format, bakedTextureGetter));
+        }
+
+        public IBakedModel bakeImpl(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
             {
@@ -526,6 +573,10 @@ public final class ModelLoader extends ModelBakery
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.createOverrides())).setTexture(particle);
             for(int i = 0; i < model.getElements().size(); i++)
             {
+                if(modelState.apply(Optional.of(Models.getHiddenModelPart(ImmutableList.of(Integer.toString(i))))).isPresent())
+                {
+                    continue;
+                }
                 BlockPart part = model.getElements().get(i);
                 TRSRTransformation transformation = baseState;
                 if(newTransforms.get(i) != null)
@@ -802,11 +853,55 @@ public final class ModelLoader extends ModelBakery
         return missingModel;
     }
 
+    protected final class BakedModelCacheKey
+    {
+        private final VanillaModelWrapper model;
+        private final IModelState state;
+        private final VertexFormat format;
+        private final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
+
+        public BakedModelCacheKey(VanillaModelWrapper model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        {
+            this.model = model;
+            this.state = state;
+            this.format = format;
+            this.bakedTextureGetter = bakedTextureGetter;
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass())
+            {
+                return false;
+            }
+            BakedModelCacheKey that = (BakedModelCacheKey) o;
+            return Objects.equal(model, that.model) && Objects.equal(state, that.state) && Objects.equal(format, that.format) && Objects.equal(bakedTextureGetter, that.bakedTextureGetter);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hashCode(model, state, format, bakedTextureGetter);
+        }
+    }
+
     protected static enum VanillaLoader implements ICustomModelLoader
     {
         INSTANCE;
 
         private ModelLoader loader;
+        private LoadingCache<BakedModelCacheKey, IBakedModel> modelCache = CacheBuilder.newBuilder().maximumSize(50).expireAfterWrite(100, TimeUnit.MILLISECONDS).build(new CacheLoader<BakedModelCacheKey, IBakedModel>() {
+            @Override
+            public IBakedModel load(BakedModelCacheKey key) throws Exception
+            {
+                return key.model.bakeImpl(key.state, key.format, key.bakedTextureGetter);
+            }
+        });
 
         void setLoader(ModelLoader loader)
         {
@@ -866,6 +961,7 @@ public final class ModelLoader extends ModelBakery
         private White()
         {
             super(LOCATION.toString());
+            this.width = this.height = 16;
         }
 
         @Override
@@ -877,10 +973,10 @@ public final class ModelLoader extends ModelBakery
         @Override
         public boolean load(IResourceManager manager, ResourceLocation location)
         {
-            BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage image = new BufferedImage(this.getIconWidth(), this.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = image.createGraphics();
             graphics.setBackground(Color.WHITE);
-            graphics.clearRect(0, 0, 16, 16);
+            graphics.clearRect(0, 0, this.getIconWidth(), this.getIconHeight());
             int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
             pixels[0] = new int[image.getWidth() * image.getHeight()];
             image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels[0], 0, image.getWidth());
@@ -891,7 +987,7 @@ public final class ModelLoader extends ModelBakery
 
         public void register(TextureMap map)
         {
-            map.setTextureEntry(White.LOCATION.toString(), White.INSTANCE);
+            map.setTextureEntry(White.INSTANCE);
         }
     }
 
@@ -1085,7 +1181,7 @@ public final class ModelLoader extends ModelBakery
         ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
         {
             @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack)
+            public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
             {
                 return ModelDynBucket.LOCATION;
             }

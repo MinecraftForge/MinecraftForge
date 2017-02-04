@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFlowerPot.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFlowerPot.java
-@@ -149,13 +149,6 @@
+@@ -165,13 +165,6 @@
  
      public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
@@ -14,7 +14,7 @@
          super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
      }
  
-@@ -377,6 +370,31 @@
+@@ -392,6 +385,31 @@
          return BlockRenderLayer.CUTOUT;
      }
  
@@ -36,7 +36,7 @@
 +        return super.removedByPlayer(state, world, pos, player, willHarvest);
 +    }
 +    @Override
-+    public void func_180657_a(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack tool)
++    public void func_180657_a(World world, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack tool)
 +    {
 +        super.func_180657_a(world, player, pos, state, te, tool);
 +        world.func_175698_g(pos);

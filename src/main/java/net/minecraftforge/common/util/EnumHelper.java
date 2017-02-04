@@ -1,8 +1,28 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.util;
 
 import java.lang.reflect.*;
 import java.util.*;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
@@ -16,6 +36,7 @@ import net.minecraft.entity.item.EntityPainting.EnumArt;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.util.SoundEvent;
@@ -24,6 +45,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
 import net.minecraftforge.classloading.FMLForgePlugin;
+
+import javax.annotation.Nullable;
 
 public class EnumHelper
 {
@@ -38,12 +61,12 @@ public class EnumHelper
     private static Class<?>[][] commonTypes =
     {
         {EnumAction.class},
-        {ArmorMaterial.class, String.class, int.class, int[].class, int.class, SoundEvent.class},
+        {ArmorMaterial.class, String.class, int.class, int[].class, int.class, SoundEvent.class, float.class},
         {EnumArt.class, String.class, int.class, int.class, int.class, int.class},
         {EnumCreatureAttribute.class},
         {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
         {Door.class},
-        {EnumEnchantmentType.class},
+        {EnumEnchantmentType.class, Predicate.class},
         {Sensitivity.class},
         {RayTraceResult.Type.class},
         {EnumSkyBlock.class, int.class},
@@ -52,54 +75,67 @@ public class EnumHelper
         {EnumRarity.class, TextFormatting.class, String.class}
     };
 
+    @Nullable
     public static EnumAction addAction(String name)
     {
         return addEnum(EnumAction.class, name);
     }
-    public static ArmorMaterial addArmorMaterial(String name, String textureName, int durability, int[] reductionAmounts, int enchantability, SoundEvent soundOnEquip)
+    @Nullable
+    public static ArmorMaterial addArmorMaterial(String name, String textureName, int durability, int[] reductionAmounts, int enchantability, SoundEvent soundOnEquip, float toughness)
     {
-        return addEnum(ArmorMaterial.class, name, textureName, durability, reductionAmounts, enchantability, soundOnEquip);
+        return addEnum(ArmorMaterial.class, name, textureName, durability, reductionAmounts, enchantability, soundOnEquip, toughness);
     }
+    @Nullable
     public static EnumArt addArt(String name, String tile, int sizeX, int sizeY, int offsetX, int offsetY)
     {
         return addEnum(EnumArt.class, name, tile, sizeX, sizeY, offsetX, offsetY);
     }
+    @Nullable
     public static EnumCreatureAttribute addCreatureAttribute(String name)
     {
         return addEnum(EnumCreatureAttribute.class, name);
     }
+    @Nullable
     public static EnumCreatureType addCreatureType(String name, Class<?> typeClass, int maxNumber, Material material, boolean peaceful, boolean animal)
     {
         return addEnum(EnumCreatureType.class, name, typeClass, maxNumber, material, peaceful, animal);
     }
+    @Nullable
     public static Door addDoor(String name)
     {
         return addEnum(Door.class, name);
     }
-    public static EnumEnchantmentType addEnchantmentType(String name)
+    @Nullable
+    public static EnumEnchantmentType addEnchantmentType(String name, Predicate<Item> delegate)
     {
-        return addEnum(EnumEnchantmentType.class, name);
+        return addEnum(EnumEnchantmentType.class, name, delegate);
     }
+    @Nullable
     public static Sensitivity addSensitivity(String name)
     {
         return addEnum(Sensitivity.class, name);
     }
+    @Nullable
     public static RayTraceResult.Type addMovingObjectType(String name)
     {
         return addEnum(RayTraceResult.Type.class, name);
     }
+    @Nullable
     public static EnumSkyBlock addSkyBlock(String name, int lightValue)
     {
         return addEnum(EnumSkyBlock.class, name, lightValue);
     }
+    @Nullable
     public static SleepResult addStatus(String name)
     {
         return addEnum(SleepResult.class, name);
     }
+    @Nullable
     public static ToolMaterial addToolMaterial(String name, int harvestLevel, int maxUses, float efficiency, float damage, int enchantability)
     {
         return addEnum(ToolMaterial.class, name, harvestLevel, maxUses, efficiency, damage, enchantability);
     }
+    @Nullable
     public static EnumRarity addRarity(String name, TextFormatting color, String displayName)
     {
         return addEnum(EnumRarity.class, name, color, displayName);
@@ -143,16 +179,20 @@ public class EnumHelper
         return newConstructorAccessor.invoke(reflectionFactory, enumClass.getDeclaredConstructor(parameterTypes));
     }
 
-    private static < T extends Enum<? >> T makeEnum(Class<T> enumClass, String value, int ordinal, Class<?>[] additionalTypes, Object[] additionalValues) throws Exception
+    private static < T extends Enum<? >> T makeEnum(Class<T> enumClass, @Nullable String value, int ordinal, Class<?>[] additionalTypes, @Nullable Object[] additionalValues) throws Exception
     {
-        Object[] params = new Object[additionalValues.length + 2];
+        int additionalParamsCount = additionalValues == null ? 0 : additionalValues.length;
+        Object[] params = new Object[additionalParamsCount + 2];
         params[0] = value;
         params[1] = ordinal;
-        System.arraycopy(additionalValues, 0, params, 2, additionalValues.length);
+        if (additionalValues != null)
+        {
+            System.arraycopy(additionalValues, 0, params, 2, additionalValues.length);
+        }
         return enumClass.cast(newInstance.invoke(getConstructorAccessor(enumClass, additionalTypes), new Object[] {params}));
     }
 
-    public static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception
+    public static void setFailsafeFieldValue(Field field, @Nullable Object target, @Nullable Object value) throws Exception
     {
         field.setAccessible(true);
         Field modifiersField = Field.class.getDeclaredField("modifiers");
@@ -181,13 +221,15 @@ public class EnumHelper
         blankField(enumClass, "enumConstants");
     }
 
-    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
+    @Nullable
+    private static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
     {
         setup();
         return addEnum(commonTypes, enumType, enumName, paramValues);
     }
 
-    public static <T extends Enum<? >> T addEnum(Class<?>[][] map, Class<T> enumType, String enumName, Object... paramValues)
+    @Nullable
+    protected static <T extends Enum<? >> T addEnum(Class<?>[][] map, Class<T> enumType, String enumName, Object... paramValues)
     {
         for (Class<?>[] lookup : map)
         {
@@ -210,13 +252,15 @@ public class EnumHelper
         addEnum(true, enumType, null, paramTypes, (Object[])null);
     }
 
+    @Nullable
     public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object... paramValues)
     {
         return addEnum(false, enumType, enumName, paramTypes, paramValues);
     }
 
     @SuppressWarnings({ "unchecked", "serial" })
-    private static <T extends Enum<? >> T addEnum(boolean test, final Class<T> enumType, String enumName, final Class<?>[] paramTypes, Object[] paramValues)
+    @Nullable
+    private static <T extends Enum<? >> T addEnum(boolean test, final Class<T> enumType, @Nullable String enumName, final Class<?>[] paramTypes, @Nullable Object[] paramValues)
     {
         if (!isSetup)
         {

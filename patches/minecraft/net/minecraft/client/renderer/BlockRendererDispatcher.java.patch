@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
-@@ -29,7 +29,7 @@
+@@ -28,7 +28,7 @@
      public BlockRendererDispatcher(BlockModelShapes p_i46577_1_, BlockColors p_i46577_2_)
      {
          this.field_175028_a = p_i46577_1_;
@@ -9,7 +9,7 @@
          this.field_175025_e = new BlockFluidRenderer(p_i46577_2_);
      }
  
-@@ -44,7 +44,7 @@
+@@ -43,7 +43,7 @@
          {
              p_175020_1_ = p_175020_1_.func_185899_b(p_175020_4_, p_175020_2_);
              IBakedModel ibakedmodel = this.field_175028_a.func_178125_b(p_175020_1_);
@@ -18,7 +18,7 @@
              this.field_175027_c.func_178267_a(p_175020_4_, ibakedmodel1, p_175020_1_, p_175020_2_, Tessellator.func_178181_a().func_178180_c(), true);
          }
      }
-@@ -76,7 +76,9 @@
+@@ -75,7 +75,9 @@
                  switch (enumblockrendertype)
                  {
                      case MODEL:

@@ -1,21 +1,38 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT;
@@ -29,15 +46,14 @@ import static net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
 public class PlayerInteractEvent extends PlayerEvent
 {
     private final EnumHand hand;
-    private final ItemStack stack;
     private final BlockPos pos;
+    @Nullable
     private final EnumFacing face;
 
-    private PlayerInteractEvent(EntityPlayer player, EnumHand hand, ItemStack stack, BlockPos pos, EnumFacing face)
+    private PlayerInteractEvent(EntityPlayer player, EnumHand hand, BlockPos pos, @Nullable EnumFacing face)
     {
         super(Preconditions.checkNotNull(player, "Null player in PlayerInteractEvent!"));
         this.hand = Preconditions.checkNotNull(hand, "Null hand in PlayerInteractEvent!");
-        this.stack = stack;
         this.pos = Preconditions.checkNotNull(pos, "Null position in PlayerInteractEvent!");
         this.face = face;
     }
@@ -59,9 +75,9 @@ public class PlayerInteractEvent extends PlayerEvent
         private final Vec3d localPos;
         private final Entity target;
 
-        public EntityInteractSpecific(EntityPlayer player, EnumHand hand, ItemStack stack, Entity target, Vec3d localPos)
+        public EntityInteractSpecific(EntityPlayer player, EnumHand hand, Entity target, Vec3d localPos)
         {
-            super(player, hand, stack, new BlockPos(target), null);
+            super(player, hand, new BlockPos(target), null);
             this.localPos = localPos;
             this.target = target;
         }
@@ -101,9 +117,9 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private final Entity target;
 
-        public EntityInteract(EntityPlayer player, EnumHand hand, ItemStack stack, Entity target)
+        public EntityInteract(EntityPlayer player, EnumHand hand, Entity target)
         {
-            super(player, hand, stack, new BlockPos(target), null);
+            super(player, hand, new BlockPos(target), null);
             this.target = target;
         }
 
@@ -128,9 +144,8 @@ public class PlayerInteractEvent extends PlayerEvent
         private Result useItem = DEFAULT;
         private final Vec3d hitVec;
 
-        public RightClickBlock(EntityPlayer player, EnumHand hand, ItemStack stack,
-                               BlockPos pos, EnumFacing face, Vec3d hitVec) {
-            super(player, hand, stack, pos, face);
+        public RightClickBlock(EntityPlayer player, EnumHand hand, BlockPos pos, EnumFacing face, Vec3d hitVec) {
+            super(player, hand, pos, face);
             this.hitVec = hitVec;
         }
 
@@ -182,8 +197,11 @@ public class PlayerInteractEvent extends PlayerEvent
         public void setCanceled(boolean canceled)
         {
             super.setCanceled(canceled);
-            useBlock = DENY;
-            useItem = DENY;
+            if (canceled)
+            {
+                useBlock = DENY;
+                useItem = DENY;
+            }
         }
     }
 
@@ -196,9 +214,9 @@ public class PlayerInteractEvent extends PlayerEvent
     @Cancelable
     public static class RightClickItem extends PlayerInteractEvent
     {
-        public RightClickItem(EntityPlayer player, EnumHand hand, ItemStack stack)
+        public RightClickItem(EntityPlayer player, EnumHand hand)
         {
-            super(player, hand, stack, new BlockPos(player), null);
+            super(player, hand, new BlockPos(player), null);
         }
     }
 
@@ -211,7 +229,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public RightClickEmpty(EntityPlayer player, EnumHand hand)
         {
-            super(player, hand, null, new BlockPos(player), null);
+            super(player, hand, new BlockPos(player), null);
         }
     }
 
@@ -220,8 +238,12 @@ public class PlayerInteractEvent extends PlayerEvent
      * This event controls which of {@link net.minecraft.block.Block#onBlockClicked} and/or the item harvesting methods will be called
      * Canceling the event will cause none of the above noted methods to be called.
      * There are various results to this event, see the getters below.
+     *
      * Note that if the event is canceled and the player holds down left mouse, the event will continue to fire.
      * This is due to how vanilla calls the left click handler methods.
+     *
+     * Also note that creative mode directly breaks the block without running any other logic.
+     * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.
      */
     @Cancelable
     public static class LeftClickBlock extends PlayerInteractEvent
@@ -232,7 +254,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
         public LeftClickBlock(EntityPlayer player, BlockPos pos, EnumFacing face, Vec3d hitVec)
         {
-            super(player, EnumHand.MAIN_HAND, player.getHeldItem(EnumHand.MAIN_HAND), pos, face);
+            super(player, EnumHand.MAIN_HAND, pos, face);
             this.hitVec = hitVec;
         }
 
@@ -245,7 +267,7 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * @return If {@link net.minecraft.block.Block#onBlockClicked} should be called
+         * @return If {@link net.minecraft.block.Block#onBlockClicked} should be called. Changing this has no effect in creative mode
          */
         public Result getUseBlock()
         {
@@ -253,7 +275,7 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * @return If the block should be attempted to be mined with the current item
+         * @return If the block should be attempted to be mined with the current item. Changing this has no effect in creative mode
          */
         public Result getUseItem()
         {
@@ -274,26 +296,51 @@ public class PlayerInteractEvent extends PlayerEvent
         public void setCanceled(boolean canceled)
         {
             super.setCanceled(canceled);
-            useBlock = DENY;
-            useItem = DENY;
+            if (canceled)
+            {
+                useBlock = DENY;
+                useItem = DENY;
+            }
+        }
+    }
+
+    /**
+     * This event is fired on the client side when the player left clicks empty space with any ItemStack.
+     * The server is not aware of when the client left clicks empty space, you will need to tell the server yourself.
+     * This event cannot be canceled.
+     */
+    public static class LeftClickEmpty extends PlayerInteractEvent
+    {
+        public LeftClickEmpty(EntityPlayer player)
+        {
+            super(player, EnumHand.MAIN_HAND, new BlockPos(player), null);
+        }
+
+        // TODO: remove
+        /** @deprecated use {@link LeftClickEmpty(EntityPlayer)} */
+        @Deprecated
+        public LeftClickEmpty(EntityPlayer player, @Nonnull ItemStack stack)
+        {
+            this(player);
         }
     }
 
     /**
      * @return The hand involved in this interaction. Will never be null.
      */
+    @Nonnull
     public EnumHand getHand()
     {
         return hand;
     }
 
     /**
-     * @return The itemstack involved in this interaction, or null if the hand was empty.
+     * @return The itemstack involved in this interaction, {@code ItemStack.EMPTY} if the hand was empty.
      */
-    @Nullable
+    @Nonnull
     public ItemStack getItemStack()
     {
-        return stack;
+        return getEntityPlayer().getHeldItem(hand);
     }
 
     /**
@@ -303,6 +350,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * Will never be null.
      * @return The position involved in this interaction.
      */
+    @Nonnull
     public BlockPos getPos()
     {
         return pos;

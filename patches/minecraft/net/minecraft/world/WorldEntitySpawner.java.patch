@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldEntitySpawner.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldEntitySpawner.java
-@@ -78,15 +78,17 @@
+@@ -79,15 +79,17 @@
              {
                  if ((!enumcreaturetype.func_75599_d() || p_77192_3_) && (enumcreaturetype.func_75599_d() || p_77192_2_) && (!enumcreaturetype.func_82705_e() || p_77192_4_))
                  {
@@ -13,14 +13,23 @@
 +                        java.util.ArrayList<ChunkPos> shuffled = com.google.common.collect.Lists.newArrayList(this.field_77193_b);
 +                        java.util.Collections.shuffle(shuffled);
                          BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-                         label415:
+                         label411:
  
 -                        for (ChunkPos chunkpos1 : this.field_77193_b)
 +                        for (ChunkPos chunkpos1 : shuffled)
                          {
                              BlockPos blockpos = func_180621_a(p_77192_1_, chunkpos1.field_77276_a, chunkpos1.field_77275_b);
                              int k1 = blockpos.func_177958_n();
-@@ -145,8 +147,10 @@
+@@ -136,7 +138,7 @@
+ 
+                                                 try
+                                                 {
+-                                                    entityliving = (EntityLiving)biome$spawnlistentry.field_76300_b.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_77192_1_});
++                                                    entityliving = (EntityLiving)biome$spawnlistentry.newInstance(p_77192_1_);
+                                                 }
+                                                 catch (Exception exception)
+                                                 {
+@@ -146,8 +148,10 @@
  
                                                  entityliving.func_70012_b((double)f, (double)i3, (double)f1, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
  
@@ -28,20 +37,20 @@
 +                                                net.minecraftforge.fml.common.eventhandler.Event.Result canSpawn = net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(entityliving, p_77192_1_, f, i3, f1);
 +                                                if (canSpawn == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW || (canSpawn == net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT && (entityliving.func_70601_bi() && entityliving.func_70058_J())))
                                                  {
-+                                                    if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f, l3, f1))
++                                                    if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f, i3, f1))
                                                      ientitylivingdata = entityliving.func_180482_a(p_77192_1_.func_175649_E(new BlockPos(entityliving)), ientitylivingdata);
  
                                                      if (entityliving.func_70058_J())
-@@ -159,7 +163,7 @@
+@@ -160,7 +164,7 @@
                                                          entityliving.func_70106_y();
                                                      }
  
 -                                                    if (j2 >= entityliving.func_70641_bl())
-+                                                    if (i2 >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(entityliving))
++                                                    if (j2 >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(entityliving))
                                                      {
-                                                         continue label415;
+                                                         continue label411;
                                                      }
-@@ -212,8 +216,9 @@
+@@ -213,8 +217,9 @@
              else
              {
                  BlockPos blockpos = p_180267_2_.func_177977_b();
@@ -52,3 +61,12 @@
                  {
                      return false;
                  }
+@@ -258,7 +263,7 @@
+ 
+                             try
+                             {
+-                                entityliving = (EntityLiving)biome$spawnlistentry.field_76300_b.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_77191_0_});
++                                entityliving = (EntityLiving)biome$spawnlistentry.newInstance(p_77191_0_);
+                             }
+                             catch (Exception exception)
+                             {

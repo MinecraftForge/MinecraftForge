@@ -1,8 +1,29 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.items.wrapper;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import javax.annotation.Nonnull;
 
 /**
  * A wrapper that composes another IItemHandlerModifiable, exposing only a range of the composed slots.
@@ -29,6 +50,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
+    @Nonnull
     public ItemStack getStackInSlot(int slot)
     {
         if (checkSlot(slot))
@@ -36,11 +58,12 @@ public class RangedWrapper implements IItemHandlerModifiable {
             return compose.getStackInSlot(slot + minSlot);
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
+    @Nonnull
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
     {
         if (checkSlot(slot))
         {
@@ -51,6 +74,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
+    @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
         if (checkSlot(slot))
@@ -58,16 +82,27 @@ public class RangedWrapper implements IItemHandlerModifiable {
             return compose.extractItem(slot + minSlot, amount, simulate);
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack)
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
         if (checkSlot(slot))
         {
             compose.setStackInSlot(slot + minSlot, stack);
         }
+    }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        if (checkSlot(slot))
+        {
+            return compose.getSlotLimit(slot + minSlot);
+        }
+
+        return 0;
     }
 
     private boolean checkSlot(int localSlot)

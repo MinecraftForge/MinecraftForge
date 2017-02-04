@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.registry;
 
 import com.google.common.reflect.TypeToken;
@@ -8,6 +27,8 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.InjectedModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+
+import javax.annotation.Nullable;
 
 public interface IForgeRegistryEntry<V>
 {
@@ -35,6 +56,7 @@ public interface IForgeRegistryEntry<V>
      *
      * @return Unique identifier or null.
      */
+    @Nullable
     ResourceLocation getRegistryName();
 
     Class<? super V> getRegistryType();
@@ -70,7 +92,7 @@ public interface IForgeRegistryEntry<V>
         //Helper functions
         public final T setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
         public final T setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
-
+        @Nullable
         public final ResourceLocation getRegistryName()
         {
             if (delegate.name() != null) return delegate.name();

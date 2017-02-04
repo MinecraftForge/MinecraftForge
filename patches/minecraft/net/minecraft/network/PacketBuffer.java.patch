@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/network/PacketBuffer.java
++++ ../src-work/minecraft/net/minecraft/network/PacketBuffer.java
+@@ -333,7 +333,7 @@
+ 
+             if (p_150788_1_.func_77973_b().func_77645_m() || p_150788_1_.func_77973_b().func_77651_p())
+             {
+-                nbttagcompound = p_150788_1_.func_77978_p();
++                nbttagcompound = p_150788_1_.func_77973_b().getNBTShareTag(p_150788_1_);
+             }
+ 
+             this.func_150786_a(nbttagcompound);

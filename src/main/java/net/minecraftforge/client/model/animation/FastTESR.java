@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.model.animation;
 
 import org.lwjgl.opengl.GL11;
@@ -12,10 +31,12 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 
+import javax.annotation.Nonnull;
+
 public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T>
 {
     @Override
-    public final void renderTileEntityAt(T te, double x, double y, double z, float partialTicks, int destroyStage)
+    public final void renderTileEntityAt(@Nonnull T te, double x, double y, double z, float partialTicks, int destroyStage)
     {
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer VertexBuffer = tessellator.getBuffer();
@@ -45,5 +66,5 @@ public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRe
     }
 
     @Override
-    public abstract void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer VertexBuffer);
+    public abstract void renderTileEntityFast(@Nonnull T te, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer VertexBuffer);
 }

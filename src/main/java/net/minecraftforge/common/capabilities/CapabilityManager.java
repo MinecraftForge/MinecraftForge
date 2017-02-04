@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.capabilities;
 
 import java.lang.reflect.Field;
@@ -19,6 +38,8 @@ import com.google.common.collect.Maps;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
+
+import javax.annotation.Nullable;
 
 public enum CapabilityManager
 {
@@ -44,11 +65,10 @@ public enum CapabilityManager
                 try {
                     return implementation.newInstance();
                 } catch (InstantiationException e) {
-                    Throwables.propagate(e);
+                    throw Throwables.propagate(e);
                 } catch (IllegalAccessException e) {
-                    Throwables.propagate(e);
+                    throw Throwables.propagate(e);
                 }
-                return null;
             }
         });
     }
@@ -60,7 +80,7 @@ public enum CapabilityManager
      *
      * @param type The Interface to be registered
      * @param storage A default implementation of the storage handler.
-     * @param factor A Factory that will produce new instances of the default implementation.
+     * @param factory A Factory that will produce new instances of the default implementation.
      */
     public <T> void register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory)
     {
@@ -96,6 +116,7 @@ public enum CapabilityManager
             if (type == null)
             {
                 FMLLog.log(Level.WARN, "Unable to inject capability at %s.%s (Invalid Annotation)", targetClass, targetName);
+                continue;
             }
             final String capabilityName = type.getInternalName().replace('/', '.').intern();
 

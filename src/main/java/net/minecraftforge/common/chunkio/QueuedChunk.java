@@ -1,19 +1,35 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.chunkio;
 
+import net.minecraft.world.World;
 
 class QueuedChunk {
     final int x;
     final int z;
-    final net.minecraft.world.chunk.storage.AnvilChunkLoader loader;
-    final net.minecraft.world.World world;
-    final net.minecraft.world.gen.ChunkProviderServer provider;
+    final World world;
 
-    public QueuedChunk(int x, int z, net.minecraft.world.chunk.storage.AnvilChunkLoader loader, net.minecraft.world.World world, net.minecraft.world.gen.ChunkProviderServer provider) {
+    public QueuedChunk(int x, int z, World world) {
         this.x = x;
         this.z = z;
-        this.loader = loader;
         this.world = world;
-        this.provider = provider;
     }
 
     @Override
@@ -40,7 +56,6 @@ class QueuedChunk {
         result.append(this.getClass().getName() + " {" + NEW_LINE);
         result.append(" x: " + x + NEW_LINE);
         result.append(" z: " + z + NEW_LINE);
-        result.append(" loader: " + loader + NEW_LINE );
         result.append(" world: " + world.getWorldInfo().getWorldName() + NEW_LINE);
         result.append(" dimension: " + world.provider.getDimension() + NEW_LINE);
         result.append(" provider: " + world.provider.getClass().getName() + NEW_LINE);

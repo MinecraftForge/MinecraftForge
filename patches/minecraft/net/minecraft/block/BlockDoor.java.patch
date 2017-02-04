@@ -1,15 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -108,7 +108,7 @@
+@@ -107,7 +107,7 @@
      {
          if (this.field_149764_J == Material.field_151573_f)
          {
--            return true;
+-            return false;
 +            return false; //Allow items to interact with the door
          }
          else
          {
-@@ -221,7 +221,7 @@
+@@ -175,7 +175,7 @@
+                 flag1 = true;
+             }
+ 
+-            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).func_185896_q())
++            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).isSideSolid(p_189540_2_,  p_189540_3_.func_177977_b(), EnumFacing.UP))
+             {
+                 p_189540_2_.func_175698_g(p_189540_3_);
+                 flag1 = true;
+@@ -219,7 +219,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {

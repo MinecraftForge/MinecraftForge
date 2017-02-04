@@ -40,7 +40,7 @@
 +
 +    public int getMinimumSpawnHeight(World world)
 +    {
-+        return this == field_77138_c ? 4 : 64;
++        return this == field_77138_c ? 4 : world.func_181545_F() + 1;
 +    }
 +
 +    public double getHorizon(World world)
@@ -143,12 +143,12 @@
 +     *
 +     * @param worldSeed The world seed
 +     * @param parentLayer The parent layer to feed into any layer you return
-+     * @param chunkProviderSettingsJson The JSON string to use when initializing ChunkProviderSettings.Factory
++     * @param chunkProviderSettings The ChunkProviderSettings constructed from the custom JSON
 +     * @return A GenLayer that will return ints representing the Biomes to be generated, see GenLayerBiome
 +     */
-+    public net.minecraft.world.gen.layer.GenLayer getBiomeLayer(long worldSeed, net.minecraft.world.gen.layer.GenLayer parentLayer, String chunkProviderSettingsJson)
++    public net.minecraft.world.gen.layer.GenLayer getBiomeLayer(long worldSeed, net.minecraft.world.gen.layer.GenLayer parentLayer, net.minecraft.world.gen.ChunkProviderSettings chunkProviderSettings)
 +    {
-+        net.minecraft.world.gen.layer.GenLayer ret = new net.minecraft.world.gen.layer.GenLayerBiome(200L, parentLayer, this, chunkProviderSettingsJson);
++        net.minecraft.world.gen.layer.GenLayer ret = new net.minecraft.world.gen.layer.GenLayerBiome(200L, parentLayer, this, chunkProviderSettings);
 +        ret = net.minecraft.world.gen.layer.GenLayerZoom.func_75915_a(1000L, ret, 2);
 +        ret = new net.minecraft.world.gen.layer.GenLayerBiomeEdge(1000L, ret);
 +        return ret;

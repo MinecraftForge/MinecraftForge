@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.model;
 
 import java.util.Arrays;
@@ -5,9 +24,11 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
+import net.minecraftforge.common.ForgeVersion;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.state.IBlockState;
@@ -120,7 +141,7 @@ public final class ItemLayerModel implements IRetexturableModel
         private final boolean isCulled;
         private final ItemOverrideList overrides;
 
-        public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, ItemOverrideList overrides, IBakedModel otherModel)
+        public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, ItemOverrideList overrides, @Nullable IBakedModel otherModel)
         {
             this.quads = quads;
             this.particle = particle;
@@ -406,7 +427,7 @@ public final class ItemLayerModel implements IRetexturableModel
 
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals("forge") && (
+            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
                 modelLocation.getResourcePath().equals("item-layer") ||
                 modelLocation.getResourcePath().equals("models/block/item-layer") ||
                 modelLocation.getResourcePath().equals("models/item/item-layer"));

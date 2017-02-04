@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fluids;
 
 import java.util.Map;
@@ -29,6 +48,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
+
+import javax.annotation.Nullable;
 
 /**
  * Handles Fluid registrations. Fluids MUST be registered in order to function.
@@ -190,28 +211,6 @@ public abstract class FluidRegistry
         return fluids.get(fluidName);
     }
 
-    @Deprecated // Modders should never actually use int ID, use String
-    public static Fluid getFluid(int fluidID)
-    {
-        return fluidIDs.inverse().get(fluidID);
-    }
-
-    @Deprecated // Modders should never actually use int ID, use String
-    public static int getFluidID(Fluid fluid)
-    {
-        Integer ret = fluidIDs.get(fluid);
-        if (ret == null) throw new RuntimeException("Attempted to access ID for unregistered fluid, Stop using this method modder!");
-        return ret;
-    }
-
-    @Deprecated // Modders should never actually use int ID, use String
-    public static int getFluidID(String fluidName)
-    {
-        Integer ret = fluidIDs.get(getFluid(fluidName));
-        if (ret == null) throw new RuntimeException("Attempted to access ID for unregistered fluid, Stop using this method modder!");
-        return ret;
-    }
-
     public static String getFluidName(Fluid fluid)
     {
         return fluids.inverse().get(fluid);
@@ -222,6 +221,7 @@ public abstract class FluidRegistry
         return getFluidName(stack.getFluid());
     }
 
+    @Nullable
     public static FluidStack getFluidStack(String fluidName, int amount)
     {
         if (!fluids.containsKey(fluidName))
@@ -258,7 +258,9 @@ public abstract class FluidRegistry
     {
         if (Loader.instance().hasReachedState(LoaderState.PREINITIALIZATION))
         {
-            FMLLog.getLogger().log(Level.ERROR, "Trying to activate the universal filled bucket too late. Call it statically in your Mods class. Mod: {}", Loader.instance().activeModContainer().getName());
+            ModContainer modContainer = Loader.instance().activeModContainer();
+            String modContainerName = modContainer == null ? null : modContainer.getName();
+            FMLLog.getLogger().log(Level.ERROR, "Trying to activate the universal filled bucket too late. Call it statically in your Mods class. Mod: {}", modContainerName);
         }
         else
         {

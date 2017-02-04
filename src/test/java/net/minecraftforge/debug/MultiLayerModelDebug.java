@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = MultiLayerModelDebug.MODID, version = MultiLayerModelDebug.VERSION)
+@Mod(modid = MultiLayerModelDebug.MODID, name = "ForgeDebugMultiLayerModel", version = MultiLayerModelDebug.VERSION, acceptableRemoteVersions = "*")
 public class MultiLayerModelDebug
 {
     public static final String MODID = "forgedebugmultilayermodel";
@@ -47,7 +47,7 @@ public class MultiLayerModelDebug
                 public boolean isFullCube(IBlockState state) { return false; }
 
                 @Override
-                public boolean canRenderInLayer(BlockRenderLayer layer)
+                public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
                 {
                     return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
                 }

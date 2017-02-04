@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMap.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMap.java
-@@ -58,7 +58,7 @@
+@@ -40,7 +40,7 @@
+         p_190906_0_.func_72823_a(s, mapdata);
+         mapdata.field_76197_d = p_190906_5_;
+         mapdata.func_176054_a(p_190906_1_, p_190906_3_, mapdata.field_76197_d);
+-        mapdata.field_76200_c = (byte)p_190906_0_.field_73011_w.func_186058_p().func_186068_a();
++        mapdata.field_76200_c = p_190906_0_.field_73011_w.getDimension();
+         mapdata.field_186210_e = p_190906_6_;
+         mapdata.field_191096_f = p_190906_7_;
+         mapdata.func_76185_a();
+@@ -68,7 +68,7 @@
              mapdata = new MapData(s);
              mapdata.field_76197_d = 3;
              mapdata.func_176054_a((double)p_77873_2_.func_72912_H().func_76079_c(), (double)p_77873_2_.func_72912_H().func_76074_e(), mapdata.field_76197_d);
@@ -9,7 +18,7 @@
              mapdata.func_76185_a();
              p_77873_2_.func_72823_a(s, mapdata);
          }
-@@ -68,7 +68,7 @@
+@@ -78,7 +78,7 @@
  
      public void func_77872_a(World p_77872_1_, Entity p_77872_2_, MapData p_77872_3_)
      {

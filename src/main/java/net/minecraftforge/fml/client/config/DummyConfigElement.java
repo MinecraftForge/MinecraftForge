@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2014 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors (this class):
- *     bspkrs - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.client.config;
@@ -20,6 +27,8 @@ import java.util.regex.Pattern;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
+
+import javax.annotation.Nullable;
 
 
 /**
@@ -49,6 +58,7 @@ public class DummyConfigElement implements IConfigElement
     protected boolean isListFixedLength = false;
     protected int maxListLength = -1;
     protected List<IConfigElement> childElements;
+    @Nullable
     protected Class<? extends IConfigEntry> configEntryClass;
     protected Class<? extends IArrayEntry> arrayEntryClass;
     
@@ -68,7 +78,7 @@ public class DummyConfigElement implements IConfigElement
             this(name, langKey, new ArrayList<IConfigElement>(), customListEntryClass);
         }
         
-        public DummyCategoryElement(String name, String langKey, List<IConfigElement> childElements, Class<? extends IConfigEntry> customListEntryClass)
+        public DummyCategoryElement(String name, String langKey, List<IConfigElement> childElements, @Nullable Class<? extends IConfigEntry> customListEntryClass)
         {
             super(name, null, ConfigGuiType.CONFIG_CATEGORY, langKey);
             this.childElements = childElements;
@@ -82,7 +92,7 @@ public class DummyConfigElement implements IConfigElement
      */
     public static class DummyListElement extends DummyConfigElement
     {
-        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, int maxListLength, Pattern validStringPattern, Object minValue, Object maxValue)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, int maxListLength, @Nullable Pattern validStringPattern, @Nullable Object minValue, @Nullable Object maxValue)
         {
             super(name, null, type, langKey, minValue, maxValue);
             this.defaultValues = defaultValues;

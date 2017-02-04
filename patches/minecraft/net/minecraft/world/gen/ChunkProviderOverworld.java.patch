@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderOverworld.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderOverworld.java
-@@ -60,6 +60,15 @@
+@@ -62,6 +62,15 @@
  
      public ChunkProviderOverworld(World p_i46668_1_, long p_i46668_2_, boolean p_i46668_4_, String p_i46668_5_)
      {
@@ -16,7 +16,7 @@
          this.field_185995_n = p_i46668_1_;
          this.field_185996_o = p_i46668_4_;
          this.field_185997_p = p_i46668_1_.func_72912_H().func_76067_t();
-@@ -89,6 +98,17 @@
+@@ -91,6 +100,17 @@
              this.field_186001_t = this.field_186000_s.field_177778_E ? Blocks.field_150353_l.func_176223_P() : Blocks.field_150355_j.func_176223_P();
              p_i46668_1_.func_181544_b(this.field_186000_s.field_177841_q);
          }
@@ -34,15 +34,15 @@
      }
  
      public void func_185976_a(int p_185976_1_, int p_185976_2_, ChunkPrimer p_185976_3_)
-@@ -162,6 +182,7 @@
+@@ -164,6 +184,7 @@
  
      public void func_185977_a(int p_185977_1_, int p_185977_2_, ChunkPrimer p_185977_3_, Biome[] p_185977_4_)
      {
 +        if (!net.minecraftforge.event.ForgeEventFactory.onReplaceBiomeBlocks(this, p_185977_1_, p_185977_2_, p_185977_3_, this.field_185995_n)) return;
          double d0 = 0.03125D;
-         this.field_186002_u = this.field_185994_m.func_151599_a(this.field_186002_u, (double)(p_185977_1_ * 16), (double)(p_185977_2_ * 16), 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
+         this.field_186002_u = this.field_185994_m.func_151599_a(this.field_186002_u, (double)(p_185977_1_ * 16), (double)(p_185977_2_ * 16), 16, 16, 0.0625D, 0.0625D, 1.0D);
  
-@@ -366,6 +387,8 @@
+@@ -371,6 +392,8 @@
          boolean flag = false;
          ChunkPos chunkpos = new ChunkPos(p_185931_1_, p_185931_2_);
  
@@ -51,7 +51,7 @@
          if (this.field_185996_o)
          {
              if (this.field_186000_s.field_177829_w)
-@@ -395,6 +418,7 @@
+@@ -405,6 +428,7 @@
          }
  
          if (biome != Biomes.field_76769_d && biome != Biomes.field_76786_s && this.field_186000_s.field_177781_A && !flag && this.field_185990_i.nextInt(this.field_186000_s.field_177782_B) == 0)
@@ -59,7 +59,7 @@
          {
              int i1 = this.field_185990_i.nextInt(16) + 8;
              int j1 = this.field_185990_i.nextInt(256);
-@@ -403,6 +427,7 @@
+@@ -413,6 +437,7 @@
          }
  
          if (!flag && this.field_185990_i.nextInt(this.field_186000_s.field_177777_D / 10) == 0 && this.field_186000_s.field_177783_C)
@@ -67,7 +67,7 @@
          {
              int i2 = this.field_185990_i.nextInt(16) + 8;
              int l2 = this.field_185990_i.nextInt(this.field_185990_i.nextInt(248) + 8);
-@@ -415,6 +440,7 @@
+@@ -425,6 +450,7 @@
          }
  
          if (this.field_186000_s.field_177837_s)
@@ -75,7 +75,7 @@
          {
              for (int j2 = 0; j2 < this.field_186000_s.field_177835_t; ++j2)
              {
-@@ -426,9 +452,12 @@
+@@ -436,9 +462,12 @@
          }
  
          biome.func_180624_a(this.field_185995_n, this.field_185990_i, new BlockPos(i, 0, j));
@@ -88,7 +88,7 @@
          for (int k2 = 0; k2 < 16; ++k2)
          {
              for (int j3 = 0; j3 < 16; ++j3)
-@@ -447,7 +476,10 @@
+@@ -457,7 +486,10 @@
                  }
              }
          }

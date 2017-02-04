@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -35,6 +35,7 @@
+@@ -36,6 +36,7 @@
      public final IChunkLoader field_73247_e;
      public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap(8192);
      public final WorldServer field_73251_h;
@@ -8,7 +8,7 @@
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
-@@ -82,18 +83,73 @@
+@@ -86,20 +87,47 @@
      @Nullable
      public Chunk func_186028_c(int p_186028_1_, int p_186028_2_)
      {
@@ -17,75 +17,50 @@
 +    }
  
 +    @Nullable
-+    public Chunk loadChunk(int X, int Z, Runnable runnable)
++    public Chunk loadChunk(int p_186028_1_, int p_186028_2_, Runnable runnable)
 +    {
-+        long pos = ChunkPos.func_77272_a(X, Z);
-+        this.field_73248_b.remove(Long.valueOf(pos));
-+        Chunk chunk = this.field_73244_f.get(pos);
-+        net.minecraft.world.chunk.storage.AnvilChunkLoader loader = null;
-+
-+        if (this.field_73247_e instanceof net.minecraft.world.chunk.storage.AnvilChunkLoader)
-+        {
-+            loader = (net.minecraft.world.chunk.storage.AnvilChunkLoader) this.field_73247_e;
-+        }
-+
-+        // We can only use the queue for already generated chunks
-+        if (chunk == null && loader != null && loader.chunkExists(this.field_73251_h, X, Z))
-+        {
-+            if (runnable != null)
-+            {
-+                net.minecraftforge.common.chunkio.ChunkIOExecutor.queueChunkLoad(this.field_73251_h, loader, this, X, Z, runnable);
-+                return null;
-+            }
-+            else
-+            {
-+                chunk = net.minecraftforge.common.chunkio.ChunkIOExecutor.syncChunkLoad(this.field_73251_h, loader, this, X, Z);
-+            }
-+        }
-+        else if (chunk == null)
-+        {
-+            chunk = this.originalLoadChunk(X, Z);
-+        }
-+
-+        // If we didn't load the chunk async and have a callback run it now
-+        if (runnable != null)
-+        {
-+            runnable.run();
-+        }
-+
-+        return chunk;
-+    }
-+
-+    public Chunk originalLoadChunk(int p_186025_1_, int p_186025_2_)
-+    {
-+        Chunk chunk = this.func_186026_b(p_186025_1_, p_186025_2_);
-+
++        Chunk chunk = this.func_186026_b(p_186028_1_, p_186028_2_);
          if (chunk == null)
          {
 -            chunk = this.func_73239_e(p_186028_1_, p_186028_2_);
-+            long pos = ChunkPos.func_77272_a(p_186025_1_, p_186025_2_);
-+            if (!loadingChunks.add(pos))
-+            {
-+                net.minecraftforge.fml.common.FMLLog.bigWarning("There is an attempt to load a chunk (%d,%d) in di    >mension %d that is already being loaded. This will cause weird chunk breakages.", p_186025_1_, p_186025_2_, this.field_73251_h.field_73011_w.getDimension());
-+            }
+-
+-            if (chunk != null)
++            long pos = ChunkPos.func_77272_a(p_186028_1_, p_186028_2_);
 +            chunk = net.minecraftforge.common.ForgeChunkManager.fetchDormantChunk(pos, this.field_73251_h);
- 
-+            if (chunk == null)
-+                chunk = this.func_73239_e(p_186025_1_, p_186025_2_);
-+
-             if (chunk != null)
++            if (chunk != null || !(this.field_73247_e instanceof net.minecraft.world.chunk.storage.AnvilChunkLoader))
              {
--                this.field_73244_f.put(ChunkPos.func_77272_a(p_186028_1_, p_186028_2_), chunk);
-+                this.field_73244_f.put(ChunkPos.func_77272_a(p_186025_1_, p_186025_2_), chunk);
++                if (!loadingChunks.add(pos)) net.minecraftforge.fml.common.FMLLog.bigWarning("There is an attempt to load a chunk (%d,%d) in dimension %d that is already being loaded. This will cause weird chunk breakages.", p_186028_1_, p_186028_2_, this.field_73251_h.field_73011_w.getDimension());
++                if (chunk == null) chunk = this.func_73239_e(p_186028_1_, p_186028_2_);
++
++                if (chunk != null)
++                {
+                 this.field_73244_f.put(ChunkPos.func_77272_a(p_186028_1_, p_186028_2_), chunk);
                  chunk.func_76631_c();
                  chunk.func_186030_a(this, this.field_186029_c);
-             }
++                }
 +
-+            loadingChunks.remove(pos);
++                loadingChunks.remove(pos);
+             }
++            else
++            {
++                net.minecraft.world.chunk.storage.AnvilChunkLoader loader = (net.minecraft.world.chunk.storage.AnvilChunkLoader) this.field_73247_e;
++                if (runnable == null)
++                    chunk = net.minecraftforge.common.chunkio.ChunkIOExecutor.syncChunkLoad(this.field_73251_h, loader, this, p_186028_1_, p_186028_2_);
++                else if (loader.chunkExists(this.field_73251_h, p_186028_1_, p_186028_2_))
++                {
++                    // We can only use the async queue for already generated chunks
++                    net.minecraftforge.common.chunkio.ChunkIOExecutor.queueChunkLoad(this.field_73251_h, loader, this, p_186028_1_, p_186028_2_, runnable);
++                    return null;
++                }
++            }
          }
  
++        // If we didn't load the chunk async and have a callback run it now
++        if (runnable != null) runnable.run();
          return chunk;
-@@ -221,6 +277,11 @@
+     }
+ 
+@@ -225,6 +253,11 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
@@ -97,7 +72,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -235,6 +296,11 @@
+@@ -239,6 +272,11 @@
                          this.func_73243_a(chunk);
                          this.field_73244_f.remove(olong);
                          ++i;

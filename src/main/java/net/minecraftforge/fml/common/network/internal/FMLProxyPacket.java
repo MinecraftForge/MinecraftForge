@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.network.internal;
 
 import io.netty.buffer.ByteBuf;
@@ -29,6 +48,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
+
+import javax.annotation.Nullable;
 
 public class FMLProxyPacket implements Packet<INetHandler> {
     final String channel;
@@ -124,7 +145,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
         return new CPacketCustomPayload(channel, payload);
     }
 
-    static final int PART_SIZE = 0x1000000 - 0x50; // Make it a constant so that it gets inlined below.
+    static final int PART_SIZE = 0x100000 - 0x50; // Make it a constant so that it gets inlined below.
     // FIXME int overflow
     public static final int MAX_LENGTH = PART_SIZE * 255;
     public List<Packet<INetHandlerPlayClient>> toS3FPackets() throws IOException
@@ -173,6 +194,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
         this.dispatcher = networkDispatcher;
     }
 
+    @Nullable
     public NetworkManager getOrigin()
     {
         return this.dispatcher != null ? this.dispatcher.manager : null;

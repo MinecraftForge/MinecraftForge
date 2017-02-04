@@ -1,21 +1,43 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
+import javax.annotation.Nonnull;
+
 public abstract class LivingEntityUseItemEvent extends LivingEvent
 {
     private final ItemStack item;
     private int duration;
 
-    private LivingEntityUseItemEvent(EntityLivingBase entity, ItemStack item, int duration)
+    private LivingEntityUseItemEvent(EntityLivingBase entity, @Nonnull ItemStack item, int duration)
     {
         super(entity);
         this.item = item;
         this.setDuration(duration);
     }
 
+    @Nonnull
     public ItemStack getItem()
     {
         return item;
@@ -45,7 +67,7 @@ public abstract class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Start extends LivingEntityUseItemEvent
     {
-        public Start(EntityLivingBase entity, ItemStack item, int duration)
+        public Start(EntityLivingBase entity, @Nonnull ItemStack item, int duration)
         {
             super(entity, item, duration);
         }
@@ -60,7 +82,7 @@ public abstract class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Tick extends LivingEntityUseItemEvent
     {
-        public Tick(EntityLivingBase entity, ItemStack item, int duration)
+        public Tick(EntityLivingBase entity, @Nonnull ItemStack item, int duration)
         {
             super(entity, item, duration);
         }
@@ -81,7 +103,7 @@ public abstract class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Stop extends LivingEntityUseItemEvent
     {
-        public Stop(EntityLivingBase entity, ItemStack item, int duration)
+        public Stop(EntityLivingBase entity, @Nonnull ItemStack item, int duration)
         {
             super(entity, item, duration);
         }
@@ -100,18 +122,19 @@ public abstract class LivingEntityUseItemEvent extends LivingEvent
     public static class Finish extends LivingEntityUseItemEvent
     {
         private ItemStack result;
-        public Finish(EntityLivingBase entity, ItemStack item, int duration, ItemStack result)
+        public Finish(EntityLivingBase entity, @Nonnull ItemStack item, int duration, @Nonnull ItemStack result)
         {
             super(entity, item, duration);
             this.setResultStack(result);
         }
 
+        @Nonnull
         public ItemStack getResultStack()
         {
             return result;
         }
 
-        public void setResultStack(ItemStack result)
+        public void setResultStack(@Nonnull ItemStack result)
         {
             this.result = result;
         }

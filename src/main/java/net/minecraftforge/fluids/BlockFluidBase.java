@@ -1,9 +1,29 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fluids;
 
 import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
@@ -11,6 +31,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -28,6 +49,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+
+import javax.annotation.Nonnull;
 
 /**
  * This is a base implementation for Fluid blocks.
@@ -141,16 +164,25 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
+    @Nonnull
     protected BlockStateContainer createBlockState()
     {
         return new ExtendedBlockState(this, new IProperty[] { LEVEL }, FLUID_RENDER_PROPS.toArray(new IUnlistedProperty<?>[0]));
     }
 
     @Override
-    public int getMetaFromState(IBlockState state)
+    public int getMetaFromState(@Nonnull IBlockState state)
     {
         return state.getValue(LEVEL);
     }
+    @Override
+    @Deprecated
+    @Nonnull
+    public IBlockState getStateFromMeta(int meta)
+    {
+        return this.getDefaultState().withProperty(LEVEL, meta);
+    }
+
     public BlockFluidBase setQuantaPerBlock(int quantaPerBlock)
     {
         if (quantaPerBlock > 16 || quantaPerBlock < 1) quantaPerBlock = 8;
@@ -254,7 +286,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             if (displacements.get(block))
             {
-                block.dropBlockAsItem(world, pos, state, 0);
+                if (state.getBlock() != Blocks.SNOW_LAYER) //Forge: Vanilla has a 'bug' where snowballs don't drop like every other block. So special case because ewww...
+                    block.dropBlockAsItem(world, pos, state, 0);
                 return true;
             }
             return false;
@@ -286,19 +319,19 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public abstract int getQuantaValue(IBlockAccess world, BlockPos pos);
 
     @Override
-    public abstract boolean canCollideCheck(IBlockState state, boolean fullHit);
+    public abstract boolean canCollideCheck(@Nonnull IBlockState state, boolean fullHit);
 
     public abstract int getMaxRenderHeightMeta();
 
     /* BLOCK FUNCTIONS */
     @Override
-    public void onBlockAdded(World world, BlockPos pos, IBlockState state)
+    public void onBlockAdded(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state)
     {
         world.scheduleUpdate(pos, this, tickRate);
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
+    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Block neighborBlock, @Nonnull BlockPos neighbourPos)
     {
         world.scheduleUpdate(pos, this, tickRate);
     }
@@ -311,31 +344,33 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public boolean isPassable(IBlockAccess world, BlockPos pos)
+    public boolean isPassable(@Nonnull IBlockAccess world, @Nonnull BlockPos pos)
     {
         return true;
     }
 
     @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune)
+    @Nonnull
+    public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune)
     {
-        return null;
+        return Items.AIR;
     }
 
     @Override
-    public int quantityDropped(Random par1Random)
+    public int quantityDropped(@Nonnull Random par1Random)
     {
         return 0;
     }
 
     @Override
-    public int tickRate(World world)
+    public int tickRate(@Nonnull World world)
     {
         return tickRate;
     }
 
     @Override
-    public Vec3d modifyAcceleration(World world, BlockPos pos, Entity entity, Vec3d vec)
+    @Nonnull
+    public Vec3d modifyAcceleration(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull Entity entity, @Nonnull Vec3d vec)
     {
         if (densityDir > 0) return vec;
         Vec3d vec_flow = this.getFlowVector(world, pos);
@@ -346,7 +381,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos)
+    public int getLightValue(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
     {
         if (maxScaledLight == 0)
         {
@@ -357,13 +392,13 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state)
+    public boolean isOpaqueCube(@Nonnull IBlockState state)
     {
         return false;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state)
+    public boolean isFullCube(@Nonnull IBlockState state)
     {
         return false;
     }
@@ -379,7 +414,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     */
 
     @Override
-    public int getPackedLightmapCoords(IBlockState state, IBlockAccess world, BlockPos pos)
+    public int getPackedLightmapCoords(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
     {
         int lightThis     = world.getCombinedLight(pos, 0);
         int lightUp       = world.getCombinedLight(pos.up(), 0);
@@ -393,13 +428,14 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     @Override
     @SideOnly(Side.CLIENT)
+    @Nonnull
     public BlockRenderLayer getBlockLayer()
     {
         return this.renderLayer;
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
+    public boolean shouldSideBeRendered(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side)
     {
         IBlockState neighbor = world.getBlockState(pos.offset(side));
         if (neighbor.getMaterial() == state.getMaterial())
@@ -418,7 +454,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public IBlockState getExtendedState(IBlockState oldState, IBlockAccess worldIn, BlockPos pos)
+    @Nonnull
+    public IBlockState getExtendedState(@Nonnull IBlockState oldState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos)
     {
         IExtendedBlockState state = (IExtendedBlockState)oldState;
         state = state.withProperty(FLOW_DIRECTION, (float)getFlowDirection(worldIn, pos));
@@ -529,9 +566,10 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
         for (int i = 0; i < flow.length; i++)
         {
-            if (flow[i] >= 0.875F && end != 1F)
+            if (flow[i] >= 14f / 16)
             {
-                end = flow[i];
+                total += flow[i] * 10;
+                count += 10;
             }
 
             if (flow[i] >= 0)
@@ -562,6 +600,10 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             {
                 return 0.875F;
             }
+        }
+        if (here.getBlock() instanceof BlockLiquid)
+        {
+            return Math.min(1 - BlockLiquid.getLiquidHeightPercent(here.getValue(BlockLiquid.LEVEL)), 14f / 16);
         }
         return !here.getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * 0.875F;
     }
@@ -643,8 +685,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos)
     {
-        return null;
+        return NULL_AABB;
     }
 }

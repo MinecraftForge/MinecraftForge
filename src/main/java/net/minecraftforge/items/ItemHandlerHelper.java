@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.items;
 
 import net.minecraft.entity.item.EntityItem;
@@ -6,45 +25,48 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class ItemHandlerHelper
 {
-    public static ItemStack insertItem(IItemHandler dest, ItemStack stack, boolean simulate)
+    @Nonnull
+    public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (dest == null || stack == null)
-            return stack;
+        if (dest == null || stack.isEmpty())
+            return ItemStack.EMPTY;
 
         for (int i = 0; i < dest.getSlots(); i++)
         {
             stack = dest.insertItem(i, stack, simulate);
-            if (stack == null || stack.stackSize <= 0)
+            if (stack.isEmpty())
             {
-                return null;
+                return ItemStack.EMPTY;
             }
         }
 
         return stack;
     }
 
-    public static boolean canItemStacksStack(ItemStack a, ItemStack b)
+    public static boolean canItemStacksStack(@Nonnull ItemStack a, @Nonnull ItemStack b)
     {
-        if (a == null || !a.isItemEqual(b))
+        if (a.isEmpty() || !a.isItemEqual(b) || a.hasTagCompound() != b.hasTagCompound())
             return false;
 
-        final NBTTagCompound aTag = a.getTagCompound();
-        final NBTTagCompound bTag = b.getTagCompound();
-        return (aTag != null || bTag == null) && (aTag == null || aTag.equals(bTag));
+        return (!a.hasTagCompound() || a.getTagCompound().equals(b.getTagCompound())) && a.areCapsCompatible(b);
     }
 
     /**
      * A relaxed version of canItemStacksStack that stacks itemstacks with different metadata if they don't have subtypes.
      * This usually only applies when players pick up items.
      */
-    public static boolean canItemStacksStackRelaxed(ItemStack a, ItemStack b)
+    public static boolean canItemStacksStackRelaxed(@Nonnull ItemStack a, @Nonnull ItemStack b)
     {
-        if (a == null || b == null || a.getItem() != b.getItem())
+        if (a.isEmpty() || b.isEmpty() || a.getItem() != b.getItem())
             return false;
 
         if (!a.isStackable())
@@ -56,18 +78,19 @@ public class ItemHandlerHelper
         if (a.getHasSubtypes() && a.getMetadata() != b.getMetadata())
             return false;
 
-        final NBTTagCompound aTag = a.getTagCompound();
-        final NBTTagCompound bTag = b.getTagCompound();
-        return (aTag != null || bTag == null) && (aTag == null || aTag.equals(bTag));
+        if (a.hasTagCompound() != b.hasTagCompound())
+            return false;
+
+        return (!a.hasTagCompound() || a.getTagCompound().equals(b.getTagCompound())) && a.areCapsCompatible(b);
     }
 
-    public static ItemStack copyStackWithSize(ItemStack itemStack, int size)
+    @Nonnull
+    public static ItemStack copyStackWithSize(@Nonnull ItemStack itemStack, int size)
     {
         if (size == 0)
-            return null;
-        ItemStack copy = ItemStack.copyItemStack(itemStack);
-        if (copy != null)
-            copy.stackSize = size;
+            return ItemStack.EMPTY;
+        ItemStack copy = itemStack.copy();
+        copy.setCount(size);
         return copy;
     }
 
@@ -76,9 +99,10 @@ public class ItemHandlerHelper
      * This is equivalent to the behaviour of a player picking up an item.
      * Note: This function stacks items without subtypes with different metadata together.
      */
-    public static ItemStack insertItemStacked(IItemHandler inventory, ItemStack stack, boolean simulate)
+    @Nonnull
+    public static ItemStack insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (inventory == null || stack == null)
+        if (inventory == null || stack.isEmpty())
             return stack;
 
         // not stackable -> just insert into a new slot
@@ -97,7 +121,7 @@ public class ItemHandlerHelper
             {
                 stack = inventory.insertItem(i, stack, simulate);
 
-                if (stack == null)
+                if (stack.isEmpty())
                 {
                     break;
                 }
@@ -105,15 +129,15 @@ public class ItemHandlerHelper
         }
 
         // insert remainder into empty slots
-        if (stack != null)
+        if (!stack.isEmpty())
         {
             // find empty slot
             for (int i = 0; i < sizeInventory; i++)
             {
-                if (inventory.getStackInSlot(i) == null)
+                if (inventory.getStackInSlot(i).isEmpty())
                 {
                     stack = inventory.insertItem(i, stack, simulate);
-                    if (stack == null)
+                    if (stack.isEmpty())
                     {
                         break;
                     }
@@ -125,7 +149,7 @@ public class ItemHandlerHelper
     }
 
     /** giveItemToPlayer without preferred slot */
-    public static void giveItemToPlayer(EntityPlayer player, ItemStack stack) {
+    public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack) {
         giveItemToPlayer(player, stack, -1);
     }
 
@@ -136,10 +160,10 @@ public class ItemHandlerHelper
      * @param player The player to give the item to
      * @param stack  The itemstack to insert
      */
-    public static void giveItemToPlayer(EntityPlayer player, ItemStack stack, int preferredSlot)
+    public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack, int preferredSlot)
     {
         IItemHandler inventory = new PlayerMainInvWrapper(player.inventory);
-        World world = player.worldObj;
+        World world = player.world;
 
         // try adding it into the inventory
         ItemStack remainder = stack;
@@ -149,27 +173,60 @@ public class ItemHandlerHelper
             remainder = inventory.insertItem(preferredSlot, stack, false);
         }
         // then into the inventory in general
-        if(remainder != null)
+        if(!remainder.isEmpty())
         {
             remainder = insertItemStacked(inventory, remainder, false);
         }
 
         // play sound if something got picked up
-        if (remainder == null || remainder.stackSize != stack.stackSize)
+        if (remainder.isEmpty() || remainder.getCount() != stack.getCount())
         {
             world.playSound(player, player.posX, player.posY, player.posZ,
                     SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
 
         // drop remaining itemstack into the world
-        if (remainder != null && !world.isRemote)
+        if (!remainder.isEmpty() && !world.isRemote)
         {
             EntityItem entityitem = new EntityItem(world, player.posX, player.posY + 0.5, player.posZ, stack);
             entityitem.setPickupDelay(40);
             entityitem.motionX = 0;
             entityitem.motionZ = 0;
 
-            world.spawnEntityInWorld(entityitem);
+            world.spawnEntity(entityitem);
+        }
+    }
+
+    /**
+     * This method uses the standard vanilla algorithm to calculate a comparator output for how "full" the inventory is.
+     * This method is an adaptation of Container#calcRedstoneFromInventory(IInventory).
+     * @param inv The inventory handler to test.
+     * @return A redstone value in the range [0,15] representing how "full" this inventory is.
+     */
+    public static int calcRedstoneFromInventory(@Nullable IItemHandler inv)
+    {
+        if (inv == null)
+        {
+            return 0;
+        }
+        else
+        {
+            int itemsFound = 0;
+            float proportion = 0.0F;
+
+            for (int j = 0; j < inv.getSlots(); ++j)
+            {
+                ItemStack itemstack = inv.getStackInSlot(j);
+
+                if (!itemstack.isEmpty())
+                {
+                    proportion += (float)itemstack.getCount() / (float)Math.min(inv.getSlotLimit(j), itemstack.getMaxStackSize());
+                    ++itemsFound;
+                }
+            }
+
+            proportion = proportion / (float)inv.getSlots();
+            return MathHelper.floor(proportion * 14.0F) + (itemsFound > 0 ? 1 : 0);
         }
     }
 }

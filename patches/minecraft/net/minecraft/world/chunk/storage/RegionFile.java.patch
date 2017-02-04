@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
-@@ -94,6 +94,39 @@
+@@ -95,6 +95,39 @@
          }
      }
  
@@ -37,6 +37,6 @@
 +        return false;
 +    }
 +
+     @Nullable
+ 
      public synchronized DataInputStream func_76704_a(int p_76704_1_, int p_76704_2_)
-     {
-         if (this.func_76705_d(p_76704_1_, p_76704_2_))

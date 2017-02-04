@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.registry;
 
 import java.lang.reflect.Field;
@@ -15,6 +34,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import javax.annotation.Nullable;
 
 /**
  * Internal registry for tracking {@link ObjectHolder} references
@@ -59,7 +80,7 @@ public enum ObjectHolderRegistry {
         FMLLog.info("Found %d ObjectHolder annotations", objectHolders.size());
     }
 
-    private void scanTarget(Map<String, String> classModIds, Map<String, Class<?>> classCache, String className, String annotationTarget, String value, boolean isClass, boolean extractFromValue)
+    private void scanTarget(Map<String, String> classModIds, Map<String, Class<?>> classCache, String className, @Nullable String annotationTarget, String value, boolean isClass, boolean extractFromValue)
     {
         Class<?> clazz;
         if (classCache.containsKey(className))
@@ -70,7 +91,7 @@ public enum ObjectHolderRegistry {
         {
             try
             {
-                clazz = Class.forName(className, true, getClass().getClassLoader());
+                clazz = Class.forName(className, extractFromValue, getClass().getClassLoader());
                 classCache.put(className, clazz);
             }
             catch (Exception ex)

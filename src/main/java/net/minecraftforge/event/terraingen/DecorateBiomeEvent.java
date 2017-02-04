@@ -1,6 +1,29 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
+
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.util.math.BlockPos;
@@ -9,7 +32,7 @@ import net.minecraft.world.World;
 /**DecorateBiomeEvent is fired when a BiomeDecorator is created.
  * <br>
  * This event is fired whenever a BiomeDecorator is created in
- * DeferredBiomeDecorator#fireCreateEventAndReplace(BiomeGenBase).<br>
+ * {@link DeferredBiomeDecorator#fireCreateEventAndReplace(Biome)}.<br>
  * <br>
  * {@link #world} contains the world that is being decorated. <br>
  * {@link #rand} contains an instance of Random to be used. <br>
@@ -86,7 +109,7 @@ public class DecorateBiomeEvent extends Event
 
         /** Use CUSTOM to filter custom event types
          */
-        public static enum EventType { BIG_SHROOM, CACTUS, CLAY, DEAD_BUSH, LILYPAD, FLOWERS, GRASS, LAKE_WATER, LAKE_LAVA, PUMPKIN, REED, SAND, SAND_PASS2, SHROOM, TREE, CUSTOM }
+        public static enum EventType { BIG_SHROOM, CACTUS, CLAY, DEAD_BUSH, DESERT_WELL, LILYPAD, FLOWERS, FOSSIL, GRASS, ICE, LAKE_WATER, LAKE_LAVA, PUMPKIN, REED, ROCK, SAND, SAND_PASS2, SHROOM, TREE, CUSTOM }
 
         private final EventType type;
 

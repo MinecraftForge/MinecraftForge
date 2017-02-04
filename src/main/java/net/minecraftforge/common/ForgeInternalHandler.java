@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common;
 
 import net.minecraft.entity.Entity;
@@ -26,25 +45,7 @@ public class ForgeInternalHandler
         if (entity.getClass().equals(EntityItem.class))
         {
             ItemStack stack = ((EntityItem)entity).getEntityItem();
-
-            if (stack == null)
-            {
-                //entity.setDead();
-                //event.setCanceled(true);
-                return;
-            }
-
             Item item = stack.getItem();
-            if (item == null)
-            {
-                FMLLog.warning("Attempted to add a EntityItem to the world with a invalid item at " +
-                    "(%2.2f,  %2.2f, %2.2f), this is most likely a config issue between you and the server. Please double check your configs",
-                    entity.posX, entity.posY, entity.posZ);
-                entity.setDead();
-                event.setCanceled(true);
-                return;
-            }
-
             if (item.hasCustomEntity(stack))
             {
                 Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
@@ -52,7 +53,7 @@ public class ForgeInternalHandler
                 {
                     entity.setDead();
                     event.setCanceled(true);
-                    event.getWorld().spawnEntityInWorld(newEntity);
+                    event.getWorld().spawnEntity(newEntity);
                 }
             }
         }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonMoving.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonMoving.java
-@@ -112,7 +112,7 @@
+@@ -115,7 +115,7 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -9,15 +9,15 @@
          {
              TileEntityPiston tileentitypiston = this.func_185589_c(p_180653_1_, p_180653_2_);
  
-@@ -122,6 +122,7 @@
+@@ -125,6 +125,7 @@
                  iblockstate.func_177230_c().func_176226_b(p_180653_1_, p_180653_2_, iblockstate, 0);
              }
          }
-+        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
++        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, 1, p_180653_5_); // mimic vanilla behavior from above and ignore chance
      }
  
-     public RayTraceResult func_180636_a(IBlockState p_180636_1_, World p_180636_2_, BlockPos p_180636_3_, Vec3d p_180636_4_, Vec3d p_180636_5_)
-@@ -195,4 +196,16 @@
+     @Nullable
+@@ -208,4 +209,16 @@
      {
          return new BlockStateContainer(this, new IProperty[] {field_176426_a, field_176425_b});
      }

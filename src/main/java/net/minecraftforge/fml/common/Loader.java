@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors:
- *     cpw - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.common;
@@ -16,6 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,9 +36,11 @@ import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
@@ -50,6 +60,7 @@ import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.relauncher.ModListHelper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.CharMatcher;
@@ -78,6 +89,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import javax.annotation.Nullable;
 
 /**
  * The loader class performs the actual loading of the mod code from disk.
@@ -199,14 +212,22 @@ public class Loader
         }
 
         modClassLoader = new ModClassLoader(getClass().getClassLoader());
-        if (!mccversion.equals(MC_VERSION))
+        if (mccversion !=null && !mccversion.equals(MC_VERSION))
         {
             FMLLog.severe("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, MC_VERSION);
             throw new LoaderException(String.format("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, MC_VERSION));
         }
 
         minecraft = new MinecraftDummyContainer(MC_VERSION);
-        mcp = new MCPDummyContainer(MetadataCollection.from(getClass().getResourceAsStream("/mcpmod.info"), "MCP").getMetadataForId("mcp", null));
+        InputStream mcpModInputStream = getClass().getResourceAsStream("/mcpmod.info");
+        try
+        {
+            mcp = new MCPDummyContainer(MetadataCollection.from(mcpModInputStream, "MCP").getMetadataForId("mcp", null));
+        }
+        finally
+        {
+            IOUtils.closeQuietly(mcpModInputStream);
+        }
     }
 
     /**
@@ -337,9 +358,11 @@ public class Loader
      * Finally, if they are successfully loaded as classes, they are then added
      * to the available mod list.
      */
-    private ModDiscoverer identifyMods()
+    private ModDiscoverer identifyMods(List<String> additionalContainers)
     {
+        injectedContainers.addAll(additionalContainers);
         FMLLog.fine("Building injected Mod Containers %s", injectedContainers);
+        mods.add(minecraft);
         // Add in the MCP mod container
         mods.add(new InjectedModContainer(mcp,new File("minecraft.jar")));
         for (String cont : injectedContainers)
@@ -483,11 +506,26 @@ public class Loader
     }
 
     /**
+     * Used to setup a testharness with a single dummy mod instance for use with various testing hooks
+     * @param containers A list of dummy containers that will be returned as "active" for all queries
+     */
+    public void setupTestHarness(ModContainer... containers)
+    {
+        modController = new LoadController(this);
+        mods = Lists.newArrayList(containers);
+        namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
+        modController.transition(LoaderState.LOADING, false);
+        modController.transition(LoaderState.CONSTRUCTING, false);
+        ObjectHolderRegistry.INSTANCE.findObjectHolders(new ASMDataTable());
+        modController.forceActiveContainer(containers[0]);
+    }
+    /**
      * Called from the hook to start mod loading. We trigger the
      * {@link #identifyMods()} and Constructing, Preinitalization, and Initalization phases here. Finally,
      * the mod list is frozen completely and is consider immutable from then on.
+     * @param injectedModContainers containers to inject
      */
-    public void loadMods()
+    public void loadMods(List<String> injectedModContainers)
     {
         progressBar = ProgressManager.push("Loading", 7);
         progressBar.step("Constructing Mods");
@@ -496,7 +534,7 @@ public class Loader
         namedMods = Maps.newHashMap();
         modController = new LoadController(this);
         modController.transition(LoaderState.LOADING, false);
-        discoverer = identifyMods();
+        discoverer = identifyMods(injectedModContainers);
         ModAPIManager.INSTANCE.manageAPI(modClassLoader, discoverer);
         disableRequestedMods();
         modController.distributeStateMessage(FMLLoadEvent.class);
@@ -520,6 +558,9 @@ public class Loader
                 }
             }
         }
+
+        ConfigManager.loadData(discoverer.getASMTable());
+
         modController.transition(LoaderState.CONSTRUCTING, false);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, discoverer.getASMTable(), reverseDependencies);
 
@@ -580,9 +621,12 @@ public class Loader
             FMLLog.warning("There were errors previously. Not beginning mod initialization phase");
             return;
         }
+        PersistentRegistryManager.fireCreateRegistryEvents();
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
+        PersistentRegistryManager.fireRegistryEvents();
+        FMLCommonHandler.instance().fireSidedRegistryEvents();
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         ItemStackHolderInjector.INSTANCE.inject();
@@ -879,6 +923,7 @@ public class Loader
         return getModObjectList().inverse();
     }
 
+    @Nullable
     public ModContainer activeModContainer()
     {
         return modController != null ? modController.activeContainer() : null;
@@ -976,10 +1021,12 @@ public class Loader
      * Fire a FMLMissingMappingsEvent to let mods determine how blocks/items defined in the world
      * save, but missing from the runtime, are to be handled.
      *
-     * @param missing Map containing missing names with their associated id, blocks need to come before items for remapping.
+     * @param missingBlocks Map containing the missing block names with their associated id. Remapped blocks will be removed from it.
+     * @param missingItems Map containing the missing block names with their associated id. Remapped items will be removed from it.
      * @param isLocalWorld Whether this is executing for a world load (local/server) or a client.
-     * @param gameData GameData instance where the new map's config is to be loaded into.
-     * @return List with the mapping results.
+     * @param remapBlocks Returns a map containing the remapped block names and an array containing the original and new id for the block.
+     * @param remapItems Returns a map containing the remapped item names and an array containing the original and new id for the item.
+     * @return List with the names of the failed remappings.
      */
     public List<String> fireMissingMappingEvent(Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
     {
@@ -1046,7 +1093,10 @@ public class Loader
 
     public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, boolean isFreezing)
     {
-        modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
+        if (modController!=null)
+        {
+            modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
+        }
     }
 
     public void runtimeDisableMod(String modId)
@@ -1147,5 +1197,10 @@ public class Loader
     public final LoaderState getLoaderState()
     {
         return modController != null ? modController.getState() : LoaderState.NOINIT;
+    }
+
+    public void setActiveModContainer(@Nullable ModContainer container)
+    {
+        this.modController.forceActiveContainer(container);
     }
 }

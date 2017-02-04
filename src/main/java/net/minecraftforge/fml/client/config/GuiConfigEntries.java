@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2014 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors (this class):
- *     bspkrs - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package net.minecraftforge.fml.client.config;
 
@@ -1500,9 +1507,9 @@ public class GuiConfigEntries extends GuiListExtended
             comment = I18n.format(configElement.getLanguageKey() + ".tooltip").replace("\\n", "\n");
 
             if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
-                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + comment).split("\n"));
+                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + removeTag(comment, "[default:", "]")).split("\n"));
             else if (configElement.getComment() != null && !configElement.getComment().trim().isEmpty())
-                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + configElement.getComment()).split("\n"));
+                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + removeTag(configElement.getComment(), "[default:", "]")).split("\n"));
             else
                 Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.RED + "No tooltip defined.").split("\n"));
 
@@ -1658,6 +1665,23 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public void onGuiClosed()
         {}
+
+        /**
+         * Get string surrounding tagged area.
+         */
+        private String removeTag(String target, String tagStart, String tagEnd)
+        {
+            int tagStartPosition = tagStartPosition = target.indexOf(tagStart);
+            int tagEndPosition = tagEndPosition = target.indexOf(tagEnd, tagStartPosition + tagStart.length());
+
+            if (-1 == tagStartPosition || -1 == tagEndPosition) 
+                return target;
+
+            String taglessResult = target.substring(0, tagStartPosition);
+            taglessResult += target.substring(tagEndPosition + 1, target.length());
+
+            return taglessResult;
+        }
     }
 
     /**
@@ -1694,18 +1718,18 @@ public class GuiConfigEntries extends GuiListExtended
         public boolean enabled();
 
         /**
-         * Handles user keystrokes for any GuiTextField objects in this entry. Call {@code GuiTextField.keyTyped()} for any GuiTextField
+         * Handles user keystrokes for any GuiTextField objects in this entry. Call {@link GuiTextField#textboxKeyTyped(char, int)} for any GuiTextField
          * objects that should receive the input provided.
          */
         public void keyTyped(char eventChar, int eventKey);
 
         /**
-         * Call {@code GuiTextField.updateCursorCounter()} for any GuiTextField objects in this entry.
+         * Call {@link GuiTextField#updateCursorCounter()} for any GuiTextField objects in this entry.
          */
         public void updateCursorCounter();
 
         /**
-         * Call {@code GuiTextField.mouseClicked()} for and GuiTextField objects in this entry.
+         * Call {@link GuiTextField#mouseClicked(int, int, int)} for and GuiTextField objects in this entry.
          */
         public void mouseClicked(int x, int y, int mouseEvent);
 

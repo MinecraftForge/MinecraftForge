@@ -46,5 +46,5 @@
 -            if (keybinding.func_151463_i() != keybinding.func_151469_h())
 +            if (!keybinding.isSetToDefaultValue())
              {
-                 flag = false;
+                 flag = true;
                  break;

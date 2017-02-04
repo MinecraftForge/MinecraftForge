@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.model;
 
 import java.util.Deque;
@@ -170,7 +189,7 @@ public class ModelLoaderRegistry
         }
         catch(Exception e)
         {
-            return getMissingModel();
+            return getMissingModel(location, e);
         }
     }
 
@@ -186,7 +205,7 @@ public class ModelLoaderRegistry
         catch(Exception e)
         {
             FMLLog.getLogger().error(error, e);
-            return getMissingModel();
+            return getMissingModel(location, e);
         }
     }
 
@@ -197,6 +216,14 @@ public class ModelLoaderRegistry
             throw new IllegalStateException("Using ModelLoaderRegistry too early.");
         }
         return ModelLoader.VanillaLoader.INSTANCE.getLoader().getMissingModel();
+    }
+
+    static IModel getMissingModel(ResourceLocation location, Throwable cause)
+    {
+        //IModel model =  new FancyMissingModel(ExceptionUtils.getStackTrace(cause).replaceAll("\\t", "    "));
+        IModel model = new FancyMissingModel(getMissingModel(), location.toString());
+        textures.addAll(model.getTextures());
+        return model;
     }
 
     public static void clearModelCache(IResourceManager manager)

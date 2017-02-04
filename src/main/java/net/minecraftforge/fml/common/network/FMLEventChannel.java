@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.network;
 
 import io.netty.channel.ChannelFutureListener;
@@ -13,6 +32,8 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
+
+import javax.annotation.Nullable;
 
 /**
  * An event driven network channel, using {@link FMLNetworkEvent.CustomPacketEvent} and {@link FMLNetworkEvent.CustomNetworkEvent}
@@ -38,6 +59,7 @@ public class FMLEventChannel {
         SERVER()
         {
             @Override
+            @Nullable
             FMLNetworkEvent.CustomPacketEvent<?> make(FMLProxyPacket msg)
             {
                 FMLNetworkEvent.CustomPacketEvent<?> event = null;
@@ -52,6 +74,7 @@ public class FMLEventChannel {
         CLIENT()
         {
             @Override
+            @Nullable
             FMLNetworkEvent.CustomPacketEvent<?> make(FMLProxyPacket msg)
             {
                 FMLNetworkEvent.CustomPacketEvent<?> event = null;
@@ -68,6 +91,7 @@ public class FMLEventChannel {
                 return event;
             }
         };
+        @Nullable
         abstract FMLNetworkEvent.CustomPacketEvent<?> make(FMLProxyPacket msg);
     }
 

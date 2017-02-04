@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -118,7 +118,7 @@
+@@ -119,7 +119,7 @@
  
          if (file1.exists())
          {
@@ -9,7 +9,7 @@
  
              if (worldinfo != null)
              {
-@@ -126,8 +126,9 @@
+@@ -127,8 +127,9 @@
              }
          }
  
@@ -20,7 +20,7 @@
      }
  
      public void func_75755_a(WorldInfo p_75755_1_, @Nullable NBTTagCompound p_75755_2_)
-@@ -136,6 +137,8 @@
+@@ -137,6 +138,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  
@@ -29,7 +29,7 @@
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -188,6 +191,7 @@
+@@ -189,6 +192,7 @@
              }
  
              file1.renameTo(file2);
@@ -37,7 +37,7 @@
          }
          catch (Exception var5)
          {
-@@ -218,6 +222,7 @@
+@@ -220,6 +224,7 @@
              p_75752_1_.func_70020_e(this.field_186341_a.func_188257_a(FixTypes.PLAYER, nbttagcompound));
          }
  
@@ -45,7 +45,7 @@
          return nbttagcompound;
      }
  
-@@ -259,4 +264,22 @@
+@@ -261,4 +266,22 @@
      {
          return this.field_186342_h;
      }

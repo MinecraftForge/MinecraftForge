@@ -15,7 +15,7 @@
 -            if (k > this.field_180250_c)
 +            if (k > this.field_180250_c && !this.firstRun)
              {
-                 field_180251_a.fatal("A single server tick took " + String.format("%.2f", new Object[] {Float.valueOf((float)k / 1000.0F)}) + " seconds (should be max " + String.format("%.2f", new Object[] {Float.valueOf(0.05F)}) + ")");
+                 field_180251_a.fatal("A single server tick took {} seconds (should be max {})", new Object[] {String.format("%.2f", new Object[]{Float.valueOf((float)k / 1000.0F)}), String.format("%.2f", new Object[]{Float.valueOf(0.05F)})});
                  field_180251_a.fatal("Considering it to be crashed, server will forcibly shutdown.");
 @@ -75,6 +76,8 @@
                  this.func_180248_a();

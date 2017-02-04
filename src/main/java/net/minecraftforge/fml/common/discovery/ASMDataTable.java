@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors:
- *     cpw - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.common.discovery;
@@ -17,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
@@ -26,6 +34,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+
+import javax.annotation.Nullable;
 
 public class ASMDataTable
 {
@@ -37,7 +47,7 @@ public class ASMDataTable
         private String objectName;
         private int classVersion;
         private Map<String,Object> annotationInfo;
-        public ASMData(ModCandidate candidate, String annotationName, String className, String objectName, Map<String,Object> info)
+        public ASMData(ModCandidate candidate, String annotationName, String className, @Nullable String objectName, @Nullable Map<String,Object> info)
         {
             this.candidate = candidate;
             this.annotationName = annotationName;
@@ -120,7 +130,7 @@ public class ASMDataTable
         return globalAnnotationData.get(annotation);
     }
 
-    public void addASMData(ModCandidate candidate, String annotation, String className, String objectName, Map<String,Object> annotationInfo)
+    public void addASMData(ModCandidate candidate, String annotation, String className, @Nullable String objectName, @Nullable Map<String,Object> annotationInfo)
     {
         globalAnnotationData.put(annotation, new ASMData(candidate, annotation, className, objectName, annotationInfo));
     }
@@ -138,5 +148,20 @@ public class ASMDataTable
     public Set<ModCandidate> getCandidatesFor(String pkg)
     {
         return this.packageMap.get(pkg);
+    }
+
+    @Nullable
+    public static String getOwnerModID(Set<ASMData> mods, ASMData targ)
+    {
+        if (mods.size() == 1) {
+            return (String)mods.iterator().next().getAnnotationInfo().get("modid");
+        } else {
+            for (ASMData m : mods) {
+                if (targ.getClassName().startsWith(m.getClassName())) {
+                    return (String)m.getAnnotationInfo().get("modid");
+                }
+            }
+        }
+        return null;
     }
 }

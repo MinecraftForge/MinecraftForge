@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.model.b3d;
 
 import java.io.FileNotFoundException;
@@ -11,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
@@ -47,6 +67,7 @@ import net.minecraftforge.client.model.b3d.B3DModel.Vertex;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.model.animation.IJoint;
@@ -148,6 +169,7 @@ public enum B3DLoader implements ICustomModelLoader
         private final int frame;
         private final int nextFrame;
         private final float progress;
+        @Nullable
         private final IModelState parent;
 
         public B3DState(Animation animation, int frame)
@@ -165,16 +187,17 @@ public enum B3DLoader implements ICustomModelLoader
             this(animation, frame, nextFrame, progress, null);
         }
 
-        public B3DState(Animation animation, int frame, int nextFrame, float progress, IModelState parent)
+        public B3DState(Animation animation, int frame, int nextFrame, float progress, @Nullable IModelState parent)
         {
             this.animation = animation;
             this.frame = frame;
             this.nextFrame = nextFrame;
-            this.progress = MathHelper.clamp_float(progress, 0, 1);
+            this.progress = MathHelper.clamp(progress, 0, 1);
             this.parent = getParent(parent);
         }
 
-        private IModelState getParent(IModelState parent)
+        @Nullable
+        private IModelState getParent(@Nullable IModelState parent)
         {
             if (parent == null) return null;
             else if (parent instanceof B3DState) return ((B3DState)parent).parent;
@@ -201,6 +224,7 @@ public enum B3DLoader implements ICustomModelLoader
             return progress;
         }
 
+        @Nullable
         public IModelState getParent()
         {
             return parent;
@@ -209,7 +233,14 @@ public enum B3DLoader implements ICustomModelLoader
         public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
             // TODO make more use of Optional
-            if(!part.isPresent()) return parent.apply(part);
+            if(!part.isPresent())
+            {
+                if(parent != null)
+                {
+                    return parent.apply(part);
+                }
+                return Optional.absent();
+            }
             if(!(part.get() instanceof NodeJoint))
             {
                 return Optional.absent();
@@ -364,6 +395,10 @@ public enum B3DLoader implements ICustomModelLoader
         }
     }
 
+    /**
+     * @deprecated use AnimationProperty.
+     */
+    @Deprecated
     public static enum B3DFrameProperty implements IUnlistedProperty<B3DState>
     {
         INSTANCE;
@@ -679,26 +714,30 @@ public enum B3DLoader implements ICustomModelLoader
             if(quads == null)
             {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                generateQuads(builder, node, this.state);
+                generateQuads(builder, node, this.state, ImmutableList.<String>of());
                 quads = builder.build();
             }
             // TODO: caching?
             if(this.state != modelState)
             {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                generateQuads(builder, node, modelState);
+                generateQuads(builder, node, modelState, ImmutableList.<String>of());
                 return builder.build();
             }
             return quads;
         }
 
-        private void generateQuads(ImmutableList.Builder<BakedQuad> builder, Node<?> node, final IModelState state)
+        private void generateQuads(ImmutableList.Builder<BakedQuad> builder, Node<?> node, final IModelState state, ImmutableList<String> path)
         {
+            ImmutableList.Builder<String> pathBuilder = ImmutableList.builder();
+            pathBuilder.addAll(path);
+            pathBuilder.add(node.getName());
+            ImmutableList<String> newPath = pathBuilder.build();
             for(Node<?> child : node.getNodes().values())
             {
-                generateQuads(builder, child, state);
+                generateQuads(builder, child, state, newPath);
             }
-            if(node.getKind() instanceof Mesh && meshes.contains(node.getName()))
+            if(node.getKind() instanceof Mesh && meshes.contains(node.getName()) && !state.apply(Optional.of(Models.getHiddenModelPart(newPath))).isPresent())
             {
                 Mesh mesh = (Mesh)node.getKind();
                 Collection<Face> faces = mesh.bake(new Function<Node<?>, Matrix4f>()

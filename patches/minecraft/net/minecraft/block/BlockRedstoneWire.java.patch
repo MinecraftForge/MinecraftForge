@@ -19,7 +19,7 @@
                  {
                      if (iblockstate.func_185898_k())
                      {
-@@ -409,21 +409,16 @@
+@@ -408,21 +408,16 @@
          IBlockState iblockstate = p_176339_1_.func_180495_p(blockpos);
          boolean flag = iblockstate.func_185915_l();
          boolean flag1 = p_176339_1_.func_180495_p(p_176339_2_.func_177984_a()).func_185915_l();
@@ -44,12 +44,12 @@
          Block block = p_176343_0_.func_177230_c();
  
          if (block == Blocks.field_150488_af)
-@@ -437,7 +432,7 @@
+@@ -436,7 +431,7 @@
          }
          else
          {
--            return p_176343_0_.func_185897_m() && p_176343_1_ != null;
-+            return p_176343_0_.func_177230_c().canConnectRedstone(p_176343_0_, world, pos, p_176343_1_);
+-            return Blocks.field_190976_dk == p_176343_0_.func_177230_c() ? p_176343_1_ == p_176343_0_.func_177229_b(BlockObserver.field_176387_N) : p_176343_0_.func_185897_m() && p_176343_1_ != null;
++            return Blocks.field_190976_dk == p_176343_0_.func_177230_c() ? p_176343_1_ == p_176343_0_.func_177229_b(BlockObserver.field_176387_N) : p_176343_0_.func_177230_c().canConnectRedstone(p_176343_0_, world, pos, p_176343_1_);
          }
      }
  

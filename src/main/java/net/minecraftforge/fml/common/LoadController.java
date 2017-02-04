@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors:
- *     cpw - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.common;
@@ -16,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraftforge.fml.common.LoaderState.ModState;
@@ -47,6 +55,8 @@ import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.SubscriberExceptionHandler;
 import com.google.common.eventbus.SubscriberExceptionContext;
 
+import javax.annotation.Nullable;
+
 public class LoadController
 {
     private Loader loader;
@@ -55,6 +65,7 @@ public class LoadController
     private LoaderState state;
     private Multimap<String, ModState> modStates = ArrayListMultimap.create();
     private Multimap<String, Throwable> errors = ArrayListMultimap.create();
+    private Map<String, String> modNames = Maps.newHashMap();
     private List<ModContainer> activeModList = Lists.newArrayList();
     private ModContainer activeContainer;
     private BiMap<ModContainer, Object> modObjectList;
@@ -123,6 +134,7 @@ public class LoadController
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 modStates.put(mod.getModId(), ModState.DISABLED);
             }
+            modNames.put(mod.getModId(), mod.getName());
         }
 
         eventChannels = eventBus.build();
@@ -142,7 +154,7 @@ public class LoadController
         state = state.transition(!errors.isEmpty());
         if (state != desiredState && !forceState)
         {
-            Throwable toThrow = null;
+            Entry<String, Throwable> toThrow = null;
             FMLLog.severe("Fatal errors were detected during the transition from %s to %s. Loading cannot continue", oldState, desiredState);
             StringBuilder sb = new StringBuilder();
             printModStates(sb);
@@ -152,14 +164,16 @@ public class LoadController
                 FMLLog.severe("The following problems were captured during this phase");
                 for (Entry<String, Throwable> error : errors.entries())
                 {
-                    FMLLog.log(Level.ERROR, error.getValue(), "Caught exception from %s", error.getKey());
+                    String modId = error.getKey();
+                    String modName = modNames.get(modId);
+                    FMLLog.log(Level.ERROR, error.getValue(), "Caught exception from %s (%s)", modName, modId);
                     if (error.getValue() instanceof IFMLHandledException)
                     {
-                        toThrow = error.getValue();
+                        toThrow = error;
                     }
                     else if (toThrow == null)
                     {
-                        toThrow = error.getValue();
+                        toThrow = error;
                     }
                 }
             }
@@ -170,13 +184,12 @@ public class LoadController
                         "ForgeModLoader, especially Optifine, to see if there are fixes available.");
                 throw new RuntimeException("The ForgeModLoader state engine is invalid");
             }
-            if (toThrow != null && toThrow instanceof RuntimeException)
+            if (toThrow != null)
             {
-                throw (RuntimeException)toThrow;
-            }
-            else
-            {
-                throw new LoaderException(toThrow);
+                String modId = toThrow.getKey();
+                String modName = modNames.get(modId);
+                String errMsg = String.format("Caught exception from %s (%s)", modName, modId);
+                throw new LoaderExceptionModCrash(errMsg, toThrow.getValue());
             }
         }
         else if (state != desiredState && forceState)
@@ -187,11 +200,16 @@ public class LoadController
 
     }
 
+    @Nullable
     public ModContainer activeContainer()
     {
         return activeContainer != null ? activeContainer : findActiveContainerFromStack();
     }
 
+    void forceActiveContainer(@Nullable ModContainer container)
+    {
+        activeContainer = container;
+    }
     @Subscribe
     public void propogateStateMessage(FMLEvent stateEvent)
     {
@@ -222,7 +240,7 @@ public class LoadController
             }
         }
         activeContainer = mc;
-        stateEvent.applyModContainer(activeContainer());
+        stateEvent.applyModContainer(mc);
         ThreadContext.put("mod", modId);
         FMLLog.log(modId, Level.TRACE, "Sending event %s to mod %s", stateEvent.getEventType(), modId);
         eventChannels.get(modId).post(stateEvent);
@@ -343,6 +361,7 @@ public class LoadController
         this.state = newState;
     }
 
+    @Nullable
     private ModContainer findActiveContainerFromStack()
     {
         for (Class<?> c : getCallingStack())

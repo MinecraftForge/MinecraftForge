@@ -1,4 +1,23 @@
 
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fluids;
 
 import java.util.Random;
@@ -10,6 +29,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
 
 /**
  * This is a cellular-automata based finite fluid block implementation.
@@ -41,9 +62,9 @@ public class BlockFluidFinite extends BlockFluidBase
     }
 
     @Override
-    public boolean canCollideCheck(IBlockState state, boolean fullHit)
+    public boolean canCollideCheck(@Nonnull IBlockState state, boolean fullHit)
     {
-        return fullHit && state.getValue(LEVEL) == quantaPerBlock - 1;
+        return fullHit;
     }
 
     @Override
@@ -53,7 +74,7 @@ public class BlockFluidFinite extends BlockFluidBase
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
+    public void updateTick(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand)
     {
         boolean changed = false;
         int quantaRemaining = state.getValue(LEVEL) + 1;
@@ -224,9 +245,44 @@ public class BlockFluidFinite extends BlockFluidBase
 
     /* IFluidBlock */
     @Override
+    public int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, boolean doPlace)
+    {
+        IBlockState existing = world.getBlockState(pos);
+        float quantaAmount = Fluid.BUCKET_VOLUME / quantaPerBlockFloat;
+        // If the stack contains more available fluid than the full source block,
+        // set a source block
+        int closest = Fluid.BUCKET_VOLUME;
+        int quanta = quantaPerBlock;
+        if (fluidStack.amount < closest)
+        {
+            // Figure out maximum level to match stack amount
+            closest = MathHelper.floor(quantaAmount * MathHelper.floor(fluidStack.amount / quantaAmount));
+            quanta = MathHelper.floor(closest / quantaAmount);
+        }
+        if (existing.getBlock() == this)
+        {
+            int existingQuanta = existing.getValue(LEVEL) + 1;
+            int missingQuanta = quantaPerBlock - existingQuanta;
+            closest = Math.min(closest, MathHelper.floor(missingQuanta * quantaAmount));
+            quanta = Math.min(quanta + existingQuanta, quantaPerBlock);
+        }
+
+        // If too little (or too much, technically impossible) fluid is to be placed, abort
+        if (quanta < 1 || quanta > 16)
+            return 0;
+
+        if (doPlace)
+        {
+            world.setBlockState(pos, getDefaultState().withProperty(LEVEL, quanta - 1), 11);
+        }
+
+        return closest;
+    }
+
+    @Override
     public FluidStack drain(World world, BlockPos pos, boolean doDrain)
     {
-        final FluidStack fluidStack = new FluidStack(getFluid(), MathHelper.floor_float(getQuantaPercentage(world, pos) * FluidContainerRegistry.BUCKET_VOLUME));
+        final FluidStack fluidStack = new FluidStack(getFluid(), MathHelper.floor(getQuantaPercentage(world, pos) * Fluid.BUCKET_VOLUME));
 
         if (doDrain)
         {

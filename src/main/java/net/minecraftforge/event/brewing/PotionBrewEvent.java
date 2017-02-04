@@ -1,46 +1,71 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.brewing;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityBrewingStand;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
+import javax.annotation.Nonnull;
+
 
 public class PotionBrewEvent extends Event
 {
-    private ItemStack[] stacks;
+    private NonNullList<ItemStack> stacks;
 
-    protected PotionBrewEvent(ItemStack[] stacks)
+    protected PotionBrewEvent(NonNullList<ItemStack> stacks)
     {
         this.stacks = stacks;
     }
 
+    @Nonnull
     public ItemStack getItem(int index)
     {
-        if (index >= stacks.length) return null;
-        return stacks[index];
+        if (index < 0 || index >= stacks.size()) return ItemStack.EMPTY;
+        return stacks.get(index);
     }
 
-    public void setItem(int index, ItemStack stack)
+    public void setItem(int index, @Nonnull ItemStack stack)
     {
-        if (index < stacks.length)
+        if (index < stacks.size())
         {
-            stacks[index] = stack;
+            stacks.set(index, stack);
         }
     }
 
     public int getLength()
     {
-        return stacks.length;
+        return stacks.size();
     }
 
     /**
      * PotionBrewEvent.Pre is fired before vanilla brewing takes place.
      * All changes made to the event's array will be made to the TileEntity if the event is canceled.
      * <br>
-     * The event is fired during the TileEntityBrewingStand#brewPotions() method invocation.<br>
+     * The event is fired during the {@link TileEntityBrewingStand#brewPotions()} method invocation.<br>
      * <br>
-     * {@link #brewingStacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
+     * {@link #stacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
      * <br>
      * This event is {@link Cancelable}.<br>
      * If the event is not canceled, the vanilla brewing will take place instead of modded brewing.
@@ -54,7 +79,7 @@ public class PotionBrewEvent extends Event
     @Cancelable
     public static class Pre extends PotionBrewEvent
     {
-        public Pre(ItemStack[] stacks)
+        public Pre(NonNullList<ItemStack> stacks)
         {
             super(stacks);
         }
@@ -63,9 +88,9 @@ public class PotionBrewEvent extends Event
     /**
      * PotionBrewEvent.Post is fired when a potion is brewed in the brewing stand.
      * <br>
-     * The event is fired during the TileEntityBrewingStand#brewPotions() method invocation.<br>
+     * The event is fired during the {@link TileEntityBrewingStand#brewPotions()} method invocation.<br>
      * <br>
-     * {@link #brewingStacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
+     * {@link #stacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -75,7 +100,7 @@ public class PotionBrewEvent extends Event
      **/
     public static class Post extends PotionBrewEvent
     {
-        public Post(ItemStack[] stacks)
+        public Post(NonNullList<ItemStack> stacks)
         {
             super(stacks);
         }

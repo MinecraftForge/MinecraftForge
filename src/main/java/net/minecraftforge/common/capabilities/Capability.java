@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.capabilities;
 
 import java.util.concurrent.Callable;
@@ -6,6 +25,8 @@ import com.google.common.base.Throwables;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
+
+import javax.annotation.Nullable;
 
 /**
  * This is the core holder object Capabilities.
@@ -36,6 +57,7 @@ public class Capability<T>
          * @param side The side of the object the instance is associated with.
          * @return a NBT holding the data. Null if no data needs to be stored.
          */
+        @Nullable
         NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side);
 
         /**
@@ -55,7 +77,7 @@ public class Capability<T>
          * @param capability The Capability being stored.
          * @param instance An instance of that capabilities interface.
          * @param side The side of the object the instance is associated with.
-         * @param A NBT holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
+         * @param nbt A NBT holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
          */
         void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt);
     }
@@ -84,6 +106,7 @@ public class Capability<T>
      * Quick access to the IStorage's writeNBT. 
      * See {@link IStorage#writeNBT(Capability, Object, EnumFacing)} for documentation.
      */
+    @Nullable
     public NBTBase writeNBT(T instance, EnumFacing side)
     {
     	return storage.writeNBT(this, instance, side);
@@ -98,6 +121,7 @@ public class Capability<T>
      *
      * @return A NEW instance of the default implementation.
      */
+    @Nullable
     public T getDefaultInstance()
     {
         try

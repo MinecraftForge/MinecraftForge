@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.network;
 
 import java.lang.annotation.ElementType;
@@ -9,7 +28,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * A method annotated with this will be called when a remote network connection is offered.
- * The method should have two parameters, of types {@link Map<String,String>} and {@link Side}. It should return a boolean
+ * The method should have two parameters, of types Map<String,String> and {@link Side}. It should return a boolean
  * true indicating that the remote party is acceptable, or false if not.
  *
  * <p>

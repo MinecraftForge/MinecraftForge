@@ -1,7 +1,29 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.eventhandler;
 
 import java.util.*;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+import javax.annotation.Nullable;
 
 
 public class ListenerList
@@ -9,6 +31,7 @@ public class ListenerList
     private static ImmutableList<ListenerList> allLists = ImmutableList.of();
     private static int maxSize = 0;
 
+    @Nullable
     private ListenerList parent;
     private ListenerListInst[] lists = new ListenerListInst[0];
 
@@ -17,7 +40,7 @@ public class ListenerList
         this(null);
     }
 
-    public ListenerList(ListenerList parent)
+    public ListenerList(@Nullable ListenerList parent)
     {
         // parent needs to be set before resize !
         this.parent = parent;
@@ -120,6 +143,8 @@ public class ListenerList
         private IEventListener[] listeners;
         private ArrayList<ArrayList<IEventListener>> priorities;
         private ListenerListInst parent;
+        private List<ListenerListInst> children;
+
 
         private ListenerListInst()
         {
@@ -141,12 +166,15 @@ public class ListenerList
             priorities.clear();
             parent = null;
             listeners = null;
+            if (children != null)
+                children.clear();
         }
 
         private ListenerListInst(ListenerListInst parent)
         {
             this();
             this.parent = parent;
+            this.parent.addChild(this);
         }
 
         /**
@@ -186,7 +214,24 @@ public class ListenerList
 
         protected boolean shouldRebuild()
         {
-            return rebuild || (parent != null && parent.shouldRebuild());
+            return rebuild;// || (parent != null && parent.shouldRebuild());
+        }
+
+        protected void forceRebuild()
+        {
+            this.rebuild = true;
+            if (this.children != null)
+            {
+                for (ListenerListInst child : this.children)
+                    child.forceRebuild();
+            }
+        }
+
+        private void addChild(ListenerListInst child)
+        {
+            if (this.children == null)
+                this.children = Lists.newArrayList();
+            this.children.add(child);
         }
 
         /**
@@ -216,7 +261,7 @@ public class ListenerList
         public void register(EventPriority priority, IEventListener listener)
         {
             priorities.get(priority.ordinal()).add(listener);
-            rebuild = true;
+            this.forceRebuild();
         }
 
         public void unregister(IEventListener listener)
@@ -225,7 +270,7 @@ public class ListenerList
             {
                 if (list.remove(listener))
                 {
-                    rebuild = true;
+                    this.forceRebuild();
                 }
             }
         }

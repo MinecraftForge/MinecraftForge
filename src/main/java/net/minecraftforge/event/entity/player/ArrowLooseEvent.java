@@ -1,14 +1,38 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.player;
 
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemBow;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 /**
  * ArrowLooseEvent is fired when a player stops using a bow.<br>
  * This event is fired whenever a player stops using a bow in
- * ItemBow#onPlayerStoppedUsing(ItemStack, World, EntityPlayer, int).<br>
+ * {@link ItemBow#onPlayerStoppedUsing(ItemStack, World, EntityLivingBase, int)}.<br>
  * <br>
  * {@link #bow} contains the ItemBow ItemStack that was used in this event.<br>
  * {@link #charge} contains the value for how much the player had charged before stopping the shot.<br>
@@ -28,7 +52,7 @@ public class ArrowLooseEvent extends PlayerEvent
     private final boolean hasAmmo;
     private int charge;
 
-    public ArrowLooseEvent(EntityPlayer player, ItemStack bow, World world, int charge, boolean hasAmmo)
+    public ArrowLooseEvent(EntityPlayer player, @Nonnull ItemStack bow, World world, int charge, boolean hasAmmo)
     {
         super(player);
         this.bow = bow;
@@ -37,6 +61,7 @@ public class ArrowLooseEvent extends PlayerEvent
         this.hasAmmo = hasAmmo;
     }
 
+    @Nonnull
     public ItemStack getBow() { return this.bow; }
     public World getWorld() { return this.world; }
     public boolean hasAmmo() { return this.hasAmmo; }

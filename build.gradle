@@ -21,18 +21,20 @@ repositories {
             url = "file:///home/cpw/projects/repo"
         }
 }
+
 apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
 apply plugin: "net.minecraftforge.gradle.launch4j"
 
+minecraft.version = "1.11.2"
+
 minecraft {
-    version = "1.9.4"
-    mappings = 'snapshot_nodoc_20160518'
+    mappings = 'snapshot_nodoc_20161220'
     workspaceDir = "projects"
-    versionJson = "jsons/1.9.4-dev.json"
+    versionJson = "jsons/${minecraft.version}-dev.json"
     buildUserdev = true
     buildInstaller = true
-    installerVersion = "1.4"
+    installerVersion = "1.5"
 
     def common = {
         patchPrefixOriginal "../src-base/minecraft"
@@ -66,7 +68,7 @@ extractForgeResources { exclude "**/log4j2.xml" }
 genGradleProjects { addTestCompileDep "junit:junit:4.12" }
 
 processJson {
-    releaseJson = "jsons/1.9.4-rel.json"
+    releaseJson = "jsons/${minecraft.version}-rel.json"
     addReplacements([
         "@minecraft_version@": project.minecraft.version,
         "@version@": project.version,
@@ -82,8 +84,6 @@ task changelog(type: JenkinsChangelog) {
     // skip if there is no forge jenkins pass
     onlyIf {
         project.hasProperty('forgeJenkinsPass')
-        // Not sure what abrar was trying to do here...
-        //project.file("build/distributions/${project.name}-${project.version}-changelog.txt").text = ""
     }
 
     outputs.upToDateWhen { false } // never up to date
@@ -106,14 +106,14 @@ task crowdin(type: CrowdinDownload) {
 }
 
 def extraTxts = [
-    changelog, // yeah we can do thi, because gradle and groovy are awesome
-    "LICENSE-fml.txt",
     "CREDITS-fml.txt",
+    "LICENSE-new.txt",
     "MinecraftForge-Credits.txt",
-    "MinecraftForge-License.txt",
     "Paulscode SoundSystem CodecIBXM License.txt",
     "Paulscode IBXM Library License.txt"
 ]
+if (project.hasProperty('forgeJenkinsPass'))
+    extraTxts += changelog
 
 outputJar {
     classifier = 'universal'
@@ -134,6 +134,7 @@ installer {
     classifier = 'installer'
     from extraTxts
     from "src/main/resources/forge_logo.png"
+    from "src/main/resources/url.png"
     rename "forge_logo\\.png", "big_logo.png"
 }
 
@@ -176,7 +177,8 @@ task makeMdk(type: Zip) {
     into ('eclipse') {
         from 'mdk/eclipse'
     }
-    from changelog.output
+    if (project.hasProperty('forgeJenkinsPass'))
+        from changelog.output
     from ('mdk') {
         filter(ReplaceTokens, tokens: [
         VERSION: project.version,
@@ -185,11 +187,10 @@ task makeMdk(type: Zip) {
         exclude 'eclipse'
         rename 'gitignore\\.txt', '.gitignore'
         from 'MinecraftForge-Credits.txt'
-        from 'MinecraftForge-License.txt'
+        from 'LICENSE-new.txt'
         from 'Paulscode IBXM Library License.txt'
         from 'Paulscode SoundSystem CodecIBXM License.txt'
         from 'CREDITS-fml.txt'
-        from 'LICENSE-fml.txt'
     }
 }
 tasks.build.dependsOn makeMdk
@@ -211,7 +212,8 @@ tasks.build.dependsOn 'launch4j'
 // MAVEN
 
 artifacts {
-    archives changelog.output
+    if (project.hasProperty('forgeJenkinsPass'))
+        archives changelog.output
     archives file("build/distributions/${project.name}-${project.version}-installer-win.exe")
     archives makeMdk
 }
@@ -220,11 +222,13 @@ task ciWriteBuildNumber << {
     def file = file("src/main/java/net/minecraftforge/common/ForgeVersion.java");
     def bn = System.getenv("BUILD_NUMBER")?:project.ext.properties.buildNumber?:0;
     def outfile = "";
-    def ln = System.getProperty('line.separator')
+    def ln = "\n"; //Linux line endings because we're on git!
 
     file.eachLine{ String s ->
         if (s.matches("^    public static final int buildVersion    = [\\d]+;\$"))
             s = "    public static final int buildVersion    = ${bn};";
+        if (s.matches('^    public static final String mcVersion = "[^\\"]+";'))
+            s = "    public static final String mcVersion = \"${minecraft.version}\";";
         outfile += (s+ln);
     }
     file.write(outfile);
@@ -350,7 +354,7 @@ String getVersionFromJava(File file)
     String branch = null;
     if (!System.getenv().containsKey("GIT_BRANCH"))
     {
-        // TODO: use grgit
+        // TODO: use grgit - Tried to switch 07/07/16 - jgit broken on windows?
         branch = "git rev-parse --abbrev-ref HEAD".execute().text.trim()
     }
     else
@@ -361,10 +365,19 @@ String getVersionFromJava(File file)
 
     def out = "${minecraft.version.replace('-', '_')}-$major.$minor.$revision.$build"
 
-    if (branch && branch != 'master' && branch != 'HEAD')
-        out += "-$branch"
+    if (branch && branch != 'master' && branch != 'HEAD' && branch != minecraft.version && branch != minecraft.version + '.0')
+    {
+        if (!(branch.endsWith('.x') && minecraft.version.startsWith(branch.substring(0, branch.length() -2))))
+            out += "-$branch"
+    }
 
     return out;
+}
+
+reobfuscate {
+    extraSrg = [
+    'MD: net/minecraftforge/fml/common/registry/FMLControlledNamespacedRegistry/getKeys ()Ljava/util/Set; net/minecraftforge/fml/common/registry/FMLControlledNamespacedRegistry/getKeys ()Ljava/util/Set;'
+    ]
 }
 
 task resetBuildNumber << {
@@ -373,7 +386,7 @@ task resetBuildNumber << {
 }
 // re-add old tasks for jenkins compat
 // should be remvoed, and the jenkisn fixed when no longer building with FG 1.2
-task setupForge { dependsOn 'setup' }
+task setupForge { dependsOn 'setup', 'ciWriteBuildNumber' }
 task buildPackages { dependsOn 'build' }
 
 //Temporary hack to fix compile errors caused by mappings shading in Bootstrap

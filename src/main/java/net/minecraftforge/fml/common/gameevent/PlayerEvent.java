@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.gameevent;
 
 import net.minecraft.entity.item.EntityItem;
@@ -5,6 +24,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import javax.annotation.Nonnull;
 
 public class PlayerEvent extends Event {
     public final EntityPlayer player;
@@ -23,9 +44,10 @@ public class PlayerEvent extends Event {
     }
 
     public static class ItemCraftedEvent extends PlayerEvent {
+        @Nonnull
         public final ItemStack crafting;
         public final IInventory craftMatrix;
-        public ItemCraftedEvent(EntityPlayer player, ItemStack crafting, IInventory craftMatrix)
+        public ItemCraftedEvent(EntityPlayer player, @Nonnull ItemStack crafting, IInventory craftMatrix)
         {
             super(player);
             this.crafting = crafting;
@@ -33,8 +55,9 @@ public class PlayerEvent extends Event {
         }
     }
     public static class ItemSmeltedEvent extends PlayerEvent {
+        @Nonnull
         public final ItemStack smelting;
-        public ItemSmeltedEvent(EntityPlayer player, ItemStack crafting)
+        public ItemSmeltedEvent(EntityPlayer player, @Nonnull ItemStack crafting)
         {
             super(player);
             this.smelting = crafting;
@@ -56,10 +79,24 @@ public class PlayerEvent extends Event {
     }
 
     public static class PlayerRespawnEvent extends PlayerEvent {
-        public PlayerRespawnEvent(EntityPlayer player)
+        private final boolean endConquered;
+
+        public PlayerRespawnEvent(EntityPlayer player, boolean endConquered)
         {
             super(player);
+            this.endConquered = endConquered;
         }
+
+        /**
+         * Did this respawn event come from the player conquering the end?
+         * @return if this respawn was because the player conquered the end
+         */
+        public boolean isEndConquered()
+        {
+            return this.endConquered;
+        }
+
+
     }
 
     public static class PlayerChangedDimensionEvent extends PlayerEvent {

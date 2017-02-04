@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.util;
 
 import java.io.Serializable;
@@ -9,7 +28,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import javax.annotation.Nullable;
 
 /**
  * Represents a captured snapshot of a block which will not change
@@ -27,6 +48,7 @@ public class BlockSnapshot implements Serializable
     private final int dimId;
     private transient IBlockState replacedBlock;
     private int flag;
+    @Nullable
     private final NBTTagCompound nbt;
     private transient World world;
     private final ResourceLocation registryName;
@@ -54,7 +76,7 @@ public class BlockSnapshot implements Serializable
         }
     }
 
-    public BlockSnapshot(World world, BlockPos pos, IBlockState state, NBTTagCompound nbt)
+    public BlockSnapshot(World world, BlockPos pos, IBlockState state, @Nullable NBTTagCompound nbt)
     {
         this.setWorld(world);
         this.dimId = world.provider.getDimension();
@@ -79,7 +101,7 @@ public class BlockSnapshot implements Serializable
     /**
      * Raw constructor designed for serialization usages.
      */
-    public BlockSnapshot(int dimension, BlockPos pos, String modId, String blockName, int meta, int flag, NBTTagCompound nbt)
+    public BlockSnapshot(int dimension, BlockPos pos, String modId, String blockName, int meta, int flag, @Nullable NBTTagCompound nbt)
     {
         this.dimId = dimension;
         this.pos = pos.toImmutable();
@@ -131,7 +153,7 @@ public class BlockSnapshot implements Serializable
     {
         if (this.replacedBlock == null)
         {
-            this.replacedBlock = GameRegistry.findBlock(this.getRegistryName().getResourceDomain(), this.getRegistryName().getResourcePath()).getStateFromMeta(getMeta());
+            this.replacedBlock = ForgeRegistries.BLOCKS.getValue(this.getRegistryName()).getStateFromMeta(getMeta());
         }
         return this.replacedBlock;
     }
@@ -139,7 +161,7 @@ public class BlockSnapshot implements Serializable
     public TileEntity getTileEntity()
     {
         if (getNbt() != null)
-            return TileEntity.create(getNbt());
+            return TileEntity.create(getWorld(), getNbt());
         else return null;
     }
 
@@ -303,6 +325,7 @@ public class BlockSnapshot implements Serializable
     public void setReplacedBlock(IBlockState replacedBlock) { this.replacedBlock = replacedBlock; }
     public int getFlag() { return flag; }
     public void setFlag(int flag) { this.flag = flag; }
+    @Nullable
     public NBTTagCompound getNbt() { return nbt; }
     public void setWorld(World world) { this.world = world; }
     public ResourceLocation getRegistryName() { return registryName; }

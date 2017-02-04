@@ -1,6 +1,9 @@
 package net.minecraftforge.debug;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootPool;
@@ -9,11 +12,12 @@ import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid=LootTablesDebug.MODID)
+@Mod(modid = LootTablesDebug.MODID, name = "Loot Table Debug", version = "1.0", acceptableRemoteVersions = "*")
 public class LootTablesDebug {
     public static final String MODID = "loot_table_debug";
     private static final ResourceLocation CUSTOM_LOOT = LootTableList.register(new ResourceLocation(MODID, "custom_loot"));
@@ -38,5 +42,14 @@ public class LootTablesDebug {
 
         // Get rid of all building mats. Which is pool #3, index starts at 0, but 0 is named "main"
         event.getTable().removePool("pool3");
+    }
+
+    @SubscribeEvent
+    public void lootingEvent(LootingLevelEvent event) {
+        // if the player shoots something with a projectile, use looting 3
+        DamageSource damageSource = event.getDamageSource();
+        if(damageSource.isProjectile() && damageSource.getEntity() instanceof EntityPlayer && damageSource.getSourceOfDamage() instanceof EntityArrow) {
+            event.setLootingLevel(3);
+        }
     }
 }

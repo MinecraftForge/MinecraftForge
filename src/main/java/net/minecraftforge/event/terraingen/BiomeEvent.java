@@ -1,5 +1,26 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.terraingen;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.biome.BiomeDecorator;
@@ -10,7 +31,8 @@ import net.minecraft.world.biome.Biome;
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
+ * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}
+ * unless stated otherwise in their Javadocs.
  **/
 public class BiomeEvent extends Event
 {
@@ -29,7 +51,7 @@ public class BiomeEvent extends Event
     /**
      * CreateDecorator is fired when a BiomeDecorator is created.<br>
      * This event is fired whenever a BiomeDecorator is created in
-     * DeferredBiomeDecorator#fireCreateEventAndReplace(BiomeGenBase).<br>
+     * {@link DeferredBiomeDecorator#fireCreateEventAndReplace(Biome)}.<br>
      * <br>
      * {@link #originalBiomeDecorator} contains the original BiomeDecorator that would be used in vanilla.
      * {@link #newBiomeDecorator} contains the new BiomeDecoration to be used by Minecraft.
@@ -73,7 +95,7 @@ public class BiomeEvent extends Event
      * If a method utilizes this {@link Event} as its parameter, the method will
      * receive every child event of this class.<br>
      * <br>
-     * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
+     * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
     public static class BiomeColor extends BiomeEvent
     {

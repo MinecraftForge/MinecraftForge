@@ -12,6 +12,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -21,19 +22,29 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = ModelFluidDebug.MODID, version = ModelFluidDebug.VERSION)
+import javax.annotation.Nonnull;
+
+@Mod(modid = ModelFluidDebug.MODID, name = "ForgeDebugModelFluid", version = ModelFluidDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelFluidDebug
 {
-    public static final String MODID = "ForgeDebugModelFluid";
+    public static final String MODID = "forgedebugmodelfluid";
     public static final String VERSION = "1.0";
+
+    public static final boolean ENABLE = true;
 
     @SidedProxy
     public static CommonProxy proxy;
 
-    public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation("forge", "blocks/milk_still"), new ResourceLocation("forge", "blocks/milk_flow"));
+    public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow"));
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        if (ENABLE)
+        {
+            proxy.preInit(event);
+        }
+    }
 
     public static class CommonProxy
     {
@@ -72,21 +83,21 @@ public class ModelFluidDebug
             ModelBakery.registerItemVariants(milk);
             ModelLoader.setCustomMeshDefinition(fluid, new ItemMeshDefinition()
             {
-                public ModelResourceLocation getModelLocation(ItemStack stack)
+                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
                 {
                     return fluidLocation;
                 }
             });
             ModelLoader.setCustomMeshDefinition(gas, new ItemMeshDefinition()
             {
-                public ModelResourceLocation getModelLocation(ItemStack stack)
+                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
                 {
                     return gasLocation;
                 }
             });
             ModelLoader.setCustomMeshDefinition(milk, new ItemMeshDefinition()
             {
-                public ModelResourceLocation getModelLocation(ItemStack stack)
+                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
                 {
                     return milkLocation;
                 }
@@ -154,7 +165,7 @@ public class ModelFluidDebug
     public static final class TestFluidBlock extends BlockFluidClassic
     {
         public static final TestFluidBlock instance = new TestFluidBlock();
-        public static final String name = "TestFluidBlock";
+        public static final String name = "test_fluid_block";
 
         private TestFluidBlock()
         {
@@ -168,7 +179,7 @@ public class ModelFluidDebug
     public static final class MilkFluidBlock extends BlockFluidClassic
     {
         public static final MilkFluidBlock instance = new MilkFluidBlock();
-        public static final String name = "MilkFluidBlock";
+        public static final String name = "milk_fluid_block";
 
         private MilkFluidBlock()
         {
@@ -182,7 +193,7 @@ public class ModelFluidDebug
     public static final class TestGasBlock extends BlockFluidClassic
     {
         public static final TestGasBlock instance = new TestGasBlock();
-        public static final String name = "TestGasBlock";
+        public static final String name = "test_gas_block";
 
         private TestGasBlock()
         {

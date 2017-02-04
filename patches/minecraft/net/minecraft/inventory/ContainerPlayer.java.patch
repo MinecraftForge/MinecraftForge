@@ -1,12 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
-@@ -49,8 +49,7 @@
-                     }
-                     else
-                     {
--                        EntityEquipmentSlot entityequipmentslot1 = EntityLiving.func_184640_d(p_75214_1_);
--                        return entityequipmentslot1 == entityequipmentslot;
-+                        return p_75214_1_.func_77973_b().isValidArmor(p_75214_1_, entityequipmentslot, field_82862_h);
-                     }
+@@ -44,7 +44,7 @@
                  }
-                 @Nullable
+                 public boolean func_75214_a(ItemStack p_75214_1_)
+                 {
+-                    return entityequipmentslot == EntityLiving.func_184640_d(p_75214_1_);
++                    return p_75214_1_.func_77973_b().isValidArmor(p_75214_1_, entityequipmentslot, field_82862_h);
+                 }
+                 public boolean func_82869_a(EntityPlayer p_82869_1_)
+                 {

@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors:
- *     cpw - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.common;
@@ -32,6 +39,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * This defines a Mod to FML.
@@ -68,7 +76,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public @interface Mod
 {
     /**
-     * The unique mod identifier for this mod
+     * The unique mod identifier for this mod.
+     * <b>Required to be lowercased in the english locale for compatibility. Will be truncated to 64 characters long.</b>
+     *
+     * This will be used to identify your mod for third parties (other mods), it will be used to identify your mod for registries such as block and item registries.
+     * By default, you will have a resource domain that matches the modid. All these uses require that constraints are imposed on the format of the modid.
      */
     String modid();
     /**
@@ -270,6 +282,12 @@ public @interface Mod
          * The mod object to inject into this field
          */
         String value() default "";
+
+        /**
+         * Optional owner modid, required if this annotation is on something that is not inside the main class of a mod container.
+         * This is required to prevent mods from classloading other, potentially disabled mods.
+         */
+        String owner() default "";
     }
     /**
      * Populate the annotated field with the mod's metadata.
@@ -283,6 +301,12 @@ public @interface Mod
          * The mod id specifying the metadata to load here
          */
         String value() default "";
+
+        /**
+         * Optional owner modid, required if this annotation is on something that is not inside the main class of a mod container.
+         * This is required to prevent mods from classloading other, potentially disabled mods.
+         */
+        String owner() default "";
     }
 
     /**
@@ -293,5 +317,21 @@ public @interface Mod
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface InstanceFactory {
+    }
+
+    /**
+     * A class which will be subscribed to {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS} at mod construction time.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface EventBusSubscriber {
+        Side[] value() default { Side.CLIENT, Side.SERVER };
+
+        /**
+         * Optional value, only nessasary if tis annotation is not on the same class that has a @Mod annotation.
+         * Needed to prevent early classloading of classes not owned by your mod.
+         * @return
+         */
+        String modid() default "";
     }
 }

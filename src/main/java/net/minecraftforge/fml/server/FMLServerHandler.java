@@ -1,19 +1,24 @@
 /*
- * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package net.minecraftforge.fml.server;
 
 import java.io.*;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +35,8 @@ import net.minecraft.server.dedicated.PendingCommand;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.storage.SaveFormatOld;
+import net.minecraftforge.common.util.CompoundDataFixer;
+import net.minecraftforge.common.util.Java6Utils;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFMLSidedHandler;
@@ -74,22 +81,22 @@ public class FMLServerHandler implements IFMLSidedHandler
      * A reference to the server itself
      */
     private MinecraftServer server;
-
+    private List<String> injectedModContainers;
     private FMLServerHandler()
     {
-        FMLCommonHandler.instance().beginLoading(this);
+        injectedModContainers = FMLCommonHandler.instance().beginLoading(this);
     }
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
      *
-     * @param minecraftServer
+     * @param minecraftServer server
      */
     @Override
     public void beginServerLoading(MinecraftServer minecraftServer)
     {
         server = minecraftServer;
-        Loader.instance().loadMods();
+        Loader.instance().loadMods(injectedModContainers);
         Loader.instance().preinitializeMods();
     }
 
@@ -254,15 +261,7 @@ public class FMLServerHandler implements IFMLSidedHandler
         finally
         {
             IOUtils.closeQuietly(stream);
-            try
-            {
-                if (zip != null)
-                    zip.close();
-            }
-            catch (IOException e)
-            {
-                // shush
-            }
+            Java6Utils.closeZipQuietly(zip);
         }
     }
 
@@ -322,5 +321,21 @@ public class FMLServerHandler implements IFMLSidedHandler
     public String stripSpecialChars(String message)
     {
         return message;
+    }
+
+    @Override
+    public void reloadRenderers() {
+        // NOOP
+    }
+
+    @Override
+    public void fireSidedRegistryEvents()
+    {
+        // NOOP
+    }
+    @Override
+    public CompoundDataFixer getDataFixer()
+    {
+        return (CompoundDataFixer)this.server.getDataFixer();
     }
 }

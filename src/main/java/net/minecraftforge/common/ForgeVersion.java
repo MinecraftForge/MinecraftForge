@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 /**
  * This software is provided under the terms of the Minecraft Forge Public
  * License v1.0.
@@ -28,20 +47,24 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 
+import javax.annotation.Nullable;
+
 public class ForgeVersion
 {
+    // This is Forge's Mod Id, used for the ForgeModContainer and resource locations
+    public static final String MOD_ID = "forge";
     //This number is incremented every time we remove deprecated code/major API changes, never reset
-    public static final int majorVersion    = 12;
+    public static final int majorVersion    = 13;
     //This number is incremented every minecraft release, never reset
-    public static final int minorVersion    = 17;
+    public static final int minorVersion    = 20;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
     public static final int revisionVersion = 0;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
-    public static final String mcVersion = "1.9.4";
+    public static final String mcVersion = "1.11.2";
     // This is the MCP data version we're using
-    public static final String mcpVersion = "9.28";
+    public static final String mcpVersion = "9.38";
     @SuppressWarnings("unused")
     private static Status status = PENDING;
     @SuppressWarnings("unused")
@@ -72,6 +95,7 @@ public class ForgeVersion
         return getResult(ForgeModContainer.getInstance()).status;
     }
 
+    @Nullable
     public static String getTarget()
     {
         CheckResult res = getResult(ForgeModContainer.getInstance());
@@ -138,15 +162,17 @@ public class ForgeVersion
     public static class CheckResult
     {
         public final Status status;
+        @Nullable
         public final ComparableVersion target;
         public final Map<ComparableVersion, String> changes;
+        @Nullable
         public final String url;
 
-        private CheckResult(Status status, ComparableVersion target, Map<ComparableVersion, String> changes, String url)
+        private CheckResult(Status status, @Nullable ComparableVersion target, @Nullable Map<ComparableVersion, String> changes, @Nullable String url)
         {
             this.status = status;
             this.target = target;
-            this.changes = changes == null ? null : Collections.unmodifiableMap(changes);
+            this.changes = changes == null ? Collections.<ComparableVersion, String>emptyMap() : Collections.unmodifiableMap(changes);
             this.url = url;
         }
     }
@@ -187,7 +213,7 @@ public class ForgeVersion
                     ComparableVersion target = null;
 
                     InputStream con = url.openStream();
-                    String data = new String(ByteStreams.toByteArray(con));
+                    String data = new String(ByteStreams.toByteArray(con), "UTF-8");
                     con.close();
 
                     FMLLog.log("ForgeVersionCheck", Level.DEBUG, "[%s] Received version check data:\n%s", mod.getModId(), data);

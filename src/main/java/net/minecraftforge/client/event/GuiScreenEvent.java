@@ -1,8 +1,29 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.event;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.InventoryEffectRenderer;
 import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.gui.GuiButton;
@@ -48,7 +69,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * The {@code buttonList} field from the GuiScreen object referenced by {@code gui}.
+         * The {@link #buttonList} field from the GuiScreen object referenced by {@link #gui}.
          */
         public List<GuiButton> getButtonList()
         {
@@ -61,11 +82,10 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just after initializing {@code GuiScreen.mc}, {@code GuiScreen.fontRendererObj}, 
-         * {@code GuiScreen.width}, and {@code GuiScreen.height}, and just before calling {@code GuiScreen.buttonList.clear()} 
-         * and {@code GuiScreen.initGui()}. To skip or override a screen's initGui() method cancel the event.<br/><br/>
+         * This event fires just after initializing {@link GuiScreen#mc}, {@link GuiScreen#fontRendererObj},
+         * {@link GuiScreen#width}, and {@link GuiScreen#height}.<br/><br/>
          * 
-         * If canceled the following lines are skipped in {@code GuiScreen.setWorldAndResolution()}:<br/>
+         * If canceled the following lines are skipped in {@link GuiScreen#setWorldAndResolution(Minecraft, int, int)}:<br/>
          * {@code this.buttonList.clear();}<br/>
          * {@code this.initGui();}<br/>
          */
@@ -79,7 +99,7 @@ public class GuiScreenEvent extends Event
         }
         
         /**
-         * This event fires right after {@code GuiScreen.initGui()}.
+         * This event fires right after {@link GuiScreen#initGui()}.
          * This is a good place to alter a GuiScreen's component layout if desired.
          */
         public static class Post extends InitGuiEvent
@@ -130,8 +150,8 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just before {@code GuiScreen.drawScreen()} is called.
-         * Cancel this event to skip {@code GuiScreen.drawScreen()}.
+         * This event fires just before {@link GuiScreen#drawScreen(int, int, float)} is called.
+         * Cancel this event to skip {@link GuiScreen#drawScreen(int, int, float)}.
          */
         @Cancelable
         public static class Pre extends DrawScreenEvent
@@ -143,7 +163,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just after {@code GuiScreen.drawScreen()} is called.
+         * This event fires just after {@link GuiScreen#drawScreen(int, int, float)} is called.
          */
         public static class Post extends DrawScreenEvent
         {
@@ -155,7 +175,7 @@ public class GuiScreenEvent extends Event
     }
 
     /**
-     * This event fires at the end of {@code GuiScreen.drawDefaultBackground()} and before the rest of the Gui draws.
+     * This event fires at the end of {@link GuiScreen#drawDefaultBackground()} and before the rest of the Gui draws.
      * This allows drawing next to Guis, above the background but below any tooltips.
      */
     public static class BackgroundDrawnEvent extends GuiScreenEvent
@@ -191,7 +211,7 @@ public class GuiScreenEvent extends Event
     }
 
     /**
-     * This event fires in {@code InventoryEffectRenderer.updateActivePotionEffects()}
+     * This event fires in {@link InventoryEffectRenderer#updateActivePotionEffects()}
      * when potion effects are active and the gui wants to move over.
      * Cancel this event to prevent the Gui from being moved.
      */
@@ -230,7 +250,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * A COPY of the {@code buttonList} field from the GuiScreen referenced by {@code gui}.
+         * A COPY of the {@link #buttonList} field from the GuiScreen referenced by {@link #gui}.
          */
         public List<GuiButton> getButtonList()
         {
@@ -244,7 +264,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires once it has been determined that a GuiButton object has been clicked.
-         * Cancel this event to bypass {@code GuiScreen.actionPerformed()}.
+         * Cancel this event to bypass {@link GuiScreen#actionPerformed(GuiButton)}.
          * Replace button with a different button from buttonList to have that button's action executed.
          */
         @Cancelable
@@ -257,8 +277,8 @@ public class GuiScreenEvent extends Event
         }
         
         /**
-         * This event fires after {@code GuiScreen.actionPerformed()} provided that the active 
-         * screen has not been changed as a result of {@code GuiScreen.actionPerformed()}.
+         * This event fires after {@link GuiScreen#actionPerformed(GuiButton)} provided that the active
+         * screen has not been changed as a result of {@link GuiScreen#actionPerformed(GuiButton)}.
          */
         public static class Post extends ActionPerformedEvent
         {
@@ -278,7 +298,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires when mouse input is detected by a GuiScreen.
-         * Cancel this event to bypass {@code GuiScreen.handleMouseInput()}.
+         * Cancel this event to bypass {@link GuiScreen#handleMouseInput()}.
          */
         @Cancelable
         public static class Pre extends MouseInputEvent
@@ -290,9 +310,12 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@code GuiScreen.handleMouseInput()} provided that the active
-         * screen has not been changed as a result of {@code GuiScreen.handleMouseInput()}.
+         * This event fires after {@link GuiScreen#handleMouseInput()} provided that the active
+         * screen has not been changed as a result of {@link GuiScreen#handleMouseInput()} and
+         * the {@link GuiScreen#mouseHandled} flag has not been set.
+         * Cancel this event when you successfully use the mouse input to prevent other handlers from using the same input.
          */
+        @Cancelable
         public static class Post extends MouseInputEvent
         {
             public Post(GuiScreen gui)
@@ -311,7 +334,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires when keyboard input is detected by a GuiScreen.
-         * Cancel this event to bypass {@code GuiScreen.handleKeyboardInput()}.
+         * Cancel this event to bypass {@link GuiScreen#handleKeyboardInput()}.
          */
         @Cancelable
         public static class Pre extends KeyboardInputEvent
@@ -323,9 +346,12 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@code GuiScreen.handleKeyboardInput()} provided that the active
-         * screen has not been changed as a result of {@code GuiScreen.handleKeyboardInput()}.
+         * This event fires after {@link GuiScreen#handleKeyboardInput()} provided that the active
+         * screen has not been changed as a result of {@link GuiScreen#handleKeyboardInput()} and
+         * the {@link GuiScreen#keyHandled} flag has not been set.
+         * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
          */
+        @Cancelable
         public static class Post extends KeyboardInputEvent
         {
             public Post(GuiScreen gui)

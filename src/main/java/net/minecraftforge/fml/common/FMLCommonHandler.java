@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors:
- *     cpw - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.common;
@@ -50,6 +57,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -72,6 +80,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import javax.annotation.Nullable;
 
 
 /**
@@ -140,11 +150,12 @@ public class FMLCommonHandler
         return eventBus;
     }
 
-    public void beginLoading(IFMLSidedHandler handler)
+    public List<String> beginLoading(IFMLSidedHandler handler)
     {
         sidedDelegate = handler;
         MinecraftForge.initialize();
 //        MinecraftForge.registerCrashCallable();
+        return ImmutableList.<String>of();
     }
 
     /**
@@ -507,7 +518,7 @@ public class FMLCommonHandler
         modNames.add("fml");
         if (!noForge)
         {
-            modNames.add("forge");
+            modNames.add(ForgeVersion.MOD_ID);
         }
 
         if (Loader.instance().getFMLBrandingProperties().containsKey("snooperbranding"))
@@ -562,9 +573,9 @@ public class FMLCommonHandler
         bus().post(new PlayerEvent.PlayerLoggedOutEvent(player));
     }
 
-    public void firePlayerRespawnEvent(EntityPlayer player)
+    public void firePlayerRespawnEvent(EntityPlayer player, boolean endConquered)
     {
-        bus().post(new PlayerEvent.PlayerRespawnEvent(player));
+        bus().post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
     }
 
     public void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item)
@@ -700,6 +711,7 @@ public class FMLCommonHandler
      * @param inputstream Input stream containing the lang file.
      * @return A new InputStream that vanilla uses to load normal Lang files, Null if this is a 'enhanced' file and loading is done.
      */
+    @Nullable
     public InputStream loadLanguage(Map<String, String> table, InputStream inputstream) throws IOException
     {
         byte[] data = IOUtils.toByteArray(inputstream);
@@ -733,5 +745,19 @@ public class FMLCommonHandler
     public String stripSpecialChars(String message)
     {
         return sidedDelegate != null ? sidedDelegate.stripSpecialChars(message) : message;
+    }
+
+    public void reloadRenderers() {
+        sidedDelegate.reloadRenderers();
+    }
+
+    public void fireSidedRegistryEvents()
+    {
+        sidedDelegate.fireSidedRegistryEvents();
+    }
+
+    public CompoundDataFixer getDataFixer()
+    {
+        return (CompoundDataFixer)sidedDelegate.getDataFixer();
     }
 }

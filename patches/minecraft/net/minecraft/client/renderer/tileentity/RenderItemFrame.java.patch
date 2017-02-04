@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/RenderItemFrame.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/RenderItemFrame.java
-@@ -105,15 +105,18 @@
+@@ -106,15 +106,18 @@
              GlStateManager.func_179140_f();
              int i = p_82402_1_.func_82333_j();
  
@@ -21,7 +21,7 @@
                  this.field_76990_c.field_78724_e.func_110577_a(field_110789_a);
                  GlStateManager.func_179114_b(180.0F, 0.0F, 0.0F, 1.0F);
                  float f = 0.0078125F;
-@@ -142,6 +145,7 @@
+@@ -137,6 +140,7 @@
                  RenderHelper.func_74518_a();
                  GlStateManager.func_179099_b();
              }

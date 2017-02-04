@@ -1,19 +1,26 @@
 /*
- * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package net.minecraftforge.fml.common;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -23,10 +30,14 @@ import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.Mod.Metadata;
 import net.minecraftforge.fml.common.asm.transformers.BlamingTransformer;
@@ -43,6 +54,8 @@ import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 
 import java.util.zip.ZipEntry;
@@ -63,6 +76,8 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
+import javax.annotation.Nullable;
 
 public class FMLModContainer implements ModContainer
 {
@@ -112,8 +127,27 @@ public class FMLModContainer implements ModContainer
             this.languageAdapter = null;
             FMLLog.finer("Using custom language adapter %s for %s (modid: %s)", languageAdapterType, this.className, getModId());
         }
+        sanityCheckModId();
     }
 
+    private void sanityCheckModId()
+    {
+        String modid = (String)this.descriptor.get("modid");
+        if (Strings.isNullOrEmpty(modid))
+        {
+            throw new IllegalArgumentException("Modid cannot be null or empty");
+        }
+        if (modid.length() > 64)
+        {
+            FMLLog.bigWarning("The modid %s is longer than the recommended maximum of 64 characters. Truncation is enforced in 1.11", modid);
+            throw new IllegalArgumentException(String.format("The modid %s is longer than the recommended maximum of 64 characters. Truncation is enforced in 1.11", modid));
+        }
+        if (!modid.equals(modid.toLowerCase(Locale.ENGLISH)))
+        {
+            FMLLog.bigWarning("The modid %s is not the same as it's lowercase version. Lowercasing is enforced in 1.11", modid);
+            throw new IllegalArgumentException(String.format("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11", modid));
+        }
+    }
     private ILanguageAdapter getLanguageAdapter()
     {
         if (languageAdapter == null)
@@ -218,6 +252,13 @@ public class FMLModContainer implements ModContainer
 
         String mcVersionString = (String)descriptor.get("acceptedMinecraftVersions");
         if ("[1.8.8]".equals(mcVersionString)) mcVersionString = "[1.8.8,1.8.9]"; // MC 1.8.8 and 1.8.9 is forward SRG compatible so accept these versions by default.
+        if ("[1.9.4]".equals(mcVersionString) ||
+            "[1.9,1.9.4]".equals(mcVersionString) ||
+            "[1.9.4,1.10)".equals(mcVersionString) ||
+            "[1.10]".equals(mcVersionString))
+                mcVersionString = "[1.9.4,1.10.2]";
+        if ("[1.11]".equals(mcVersionString))
+            mcVersionString = "[1.11,1.11.2]";
         if (!Strings.isNullOrEmpty(mcVersionString))
         {
             minecraftAccepted = VersionParser.parseRange(mcVersionString);
@@ -241,6 +282,7 @@ public class FMLModContainer implements ModContainer
         }
     }
 
+    @Nullable
     public Properties searchForVersionProperties()
     {
         try
@@ -254,7 +296,15 @@ public class FMLModContainer implements ModContainer
                 if (versionFile != null)
                 {
                     version = new Properties();
-                    version.load(source.getInputStream(versionFile));
+                    InputStream sourceInputStream = source.getInputStream(versionFile);
+                    try
+                    {
+                        version.load(sourceInputStream);
+                    }
+                    finally
+                    {
+                        IOUtils.closeQuietly(sourceInputStream);
+                    }
                 }
                 source.close();
             }
@@ -265,8 +315,14 @@ public class FMLModContainer implements ModContainer
                 {
                     version = new Properties();
                     FileInputStream fis = new FileInputStream(propsFile);
-                    version.load(fis);
-                    fis.close();
+                    try
+                    {
+                        version.load(fis);
+                    }
+                    finally
+                    {
+                        IOUtils.closeQuietly(fis);
+                    }
                 }
             }
             return version;
@@ -338,6 +394,7 @@ public class FMLModContainer implements ModContainer
         }
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
     private Method gatherAnnotations(Class<?> clazz) throws Exception
     {
@@ -403,11 +460,27 @@ public class FMLModContainer implements ModContainer
 
     private void parseSimpleFieldAnnotation(SetMultimap<String, ASMData> annotations, String annotationClassName, Function<ModContainer, Object> retriever) throws IllegalAccessException
     {
+        Set<ASMDataTable.ASMData> mods = annotations.get(Mod.class.getName());
         String[] annName = annotationClassName.split("\\.");
         String annotationName = annName[annName.length - 1];
         for (ASMData targets : annotations.get(annotationClassName))
         {
             String targetMod = (String)targets.getAnnotationInfo().get("value");
+            String owner = (String)targets.getAnnotationInfo().get("owner");
+            if (Strings.isNullOrEmpty(owner))
+            {
+                owner = ASMDataTable.getOwnerModID(mods, targets);
+                if (Strings.isNullOrEmpty(owner))
+                {
+                    FMLLog.bigWarning("Could not determine owning mod for @%s on %s for mod %s", annotationClassName, targets.getClassName(), this.getModId());
+                    continue;
+                }
+            }
+            if (!this.getModId().equals(owner))
+            {
+                FMLLog.fine("Skipping @%s injection for %s.%s since it is not for mod %s", annotationClassName, targets.getClassName(), targets.getObjectName(), this.getModId());
+                continue;
+            }
             Field f = null;
             Object injectedMod = null;
             ModContainer mc = this;
@@ -466,6 +539,10 @@ public class FMLModContainer implements ModContainer
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(source);
             modClassLoader.clearNegativeCacheFor(candidate.getClassList());
+
+            //Only place I could think to add this...
+            MinecraftForge.preloadCrashClasses(event.getASMHarvestedData(), getModId(), candidate.getClassList());
+
             Class<?> clazz = Class.forName(className, true, modClassLoader);
 
             Certificate[] certificates = clazz.getProtectionDomain().getCodeSource().getCertificates();
@@ -539,6 +616,9 @@ public class FMLModContainer implements ModContainer
                 eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints), expectedFingerprint));
             }
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide(), getLanguageAdapter());
+            AutomaticEventSubscriber.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
+            ConfigManager.load(this.getModId(), Config.Type.INSTANCE);
+
             processFieldAnnotations(event.getASMHarvestedData());
         }
         catch (Throwable e)

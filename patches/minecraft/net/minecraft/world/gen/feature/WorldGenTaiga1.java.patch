@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
-@@ -53,7 +53,7 @@
+@@ -54,7 +54,7 @@
                      {
                          if (i1 >= 0 && i1 < 256)
                          {
@@ -9,7 +9,7 @@
                              {
                                  flag = false;
                              }
-@@ -72,11 +72,13 @@
+@@ -73,11 +73,13 @@
              }
              else
              {
@@ -26,7 +26,7 @@
                      int k2 = 0;
  
                      for (int l2 = p_180709_3_.func_177956_o() + i; l2 >= p_180709_3_.func_177956_o() + j; --l2)
-@@ -92,8 +94,9 @@
+@@ -93,8 +95,9 @@
                                  if (Math.abs(k3) != k2 || Math.abs(j2) != k2 || k2 <= 0)
                                  {
                                      BlockPos blockpos = new BlockPos(j3, l2, i2);
@@ -37,7 +37,7 @@
                                      {
                                          this.func_175903_a(p_180709_1_, blockpos, field_181637_b);
                                      }
-@@ -113,9 +116,10 @@
+@@ -114,9 +117,10 @@
  
                      for (int i3 = 0; i3 < i - 1; ++i3)
                      {

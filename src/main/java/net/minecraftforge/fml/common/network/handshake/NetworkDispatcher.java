@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.common.network.handshake;
 
 import io.netty.buffer.Unpooled;
@@ -50,6 +69,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
 
+// TODO build test suites to validate the behaviour of this stuff and make it less annoyingly magical
 public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> implements ChannelOutboundHandler {
     private static boolean DEBUG_HANDSHAKE = Boolean.parseBoolean(System.getProperty("fml.debugNetworkHandshake", "false"));
     private static enum ConnectionState {
@@ -127,18 +147,19 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     public void serverToClientHandshake(EntityPlayerMP player)
     {
         this.player = player;
-        insertIntoChannel();
         Boolean fml = this.manager.channel().attr(NetworkRegistry.FML_MARKER).get();
         if (fml != null && fml)
         {
             //FML on client, send server hello
             //TODO: Make this cleaner as it uses netty magic 0.o
+            insertIntoChannel();
         }
         else
         {
             serverInitiateHandshake();
             FMLLog.info("Connection received without FML marker, assuming vanilla.");
             this.completeServerSideConnection(ConnectionType.VANILLA);
+            insertIntoChannel();
         }
     }
 
@@ -164,6 +185,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     {
         if (this.state != null) {
             FMLLog.getLogger().log(Level.INFO, "Opening channel which already seems to have a state set. This is a vanilla connection. Handshake handler will stop now");
+            this.manager.channel().config().setAutoRead(true);
             return;
         }
         FMLLog.getLogger().log(Level.TRACE, "Handshake channel activating");
@@ -307,6 +329,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
     private void kickWithMessage(String message)
     {
+        FMLLog.log(Level.ERROR, "Network Disconnect: %s", message);
         final TextComponentString TextComponentString = new TextComponentString(message);
         if (side == Side.CLIENT)
         {
@@ -562,7 +585,15 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         // Stop the epic channel closed spam at close
         if (!(cause instanceof ClosedChannelException))
         {
-            FMLLog.log(Level.ERROR, cause, "NetworkDispatcher exception");
+            // Mute the reset by peer exception - it's disconnection noise
+            if (cause.getMessage().contains("Connection reset by peer"))
+            {
+                FMLLog.log(Level.DEBUG, cause, "Muted NetworkDispatcher exception");
+            }
+            else
+            {
+                FMLLog.log(Level.ERROR, cause, "NetworkDispatcher exception");
+            }
         }
         super.exceptionCaught(ctx, cause);
     }
@@ -599,7 +630,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
         private MultiPartCustomPayload(PacketBuffer preamble) throws IOException
         {
-            channel = preamble.readStringFromBuffer(20);
+            channel = preamble.readString(20);
             part_count = preamble.readUnsignedByte();
             int length = preamble.readInt();
             if (length <= 0 || length >= FMLProxyPacket.MAX_LENGTH)

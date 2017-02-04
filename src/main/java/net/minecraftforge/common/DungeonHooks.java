@@ -1,8 +1,28 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 
 public class DungeonHooks
@@ -23,7 +43,7 @@ public class DungeonHooks
      *        Meaning, Zombies are twice as common as spiders or skeletons.
      * @return The new rarity of the monster,
      */
-    public static float addDungeonMob(String name, int rarity)
+    public static float addDungeonMob(ResourceLocation name, int rarity)
     {
         if (rarity <= 0)
         {
@@ -42,13 +62,21 @@ public class DungeonHooks
         return rarity;
     }
 
+    // TODO: remove
+    /** @deprecated use {@link #removeDungeonMob(ResourceLocation)} */
+    @Deprecated
+    public static int removeDungeonMob(String name)
+    {
+        return removeDungeonMob(new ResourceLocation(name));
+    }
+
     /**
      * Will completely remove a Mob from the dungeon spawn list.
      *
      * @param name The name of the mob to remove
      * @return The rarity of the removed mob, prior to being removed.
      */
-    public static int removeDungeonMob(String name)
+    public static int removeDungeonMob(ResourceLocation name)
     {
         for (DungeonMob mob : dungeonMobs)
         {
@@ -66,21 +94,17 @@ public class DungeonHooks
      * @param rand World generation random number generator
      * @return The mob name
      */
-    public static String getRandomDungeonMob(Random rand)
+    public static ResourceLocation getRandomDungeonMob(Random rand)
     {
         DungeonMob mob = WeightedRandom.getRandomItem(rand, dungeonMobs);
-        if (mob == null)
-        {
-            return "";
-        }
         return mob.type;
     }
 
 
     public static class DungeonMob extends WeightedRandom.Item
     {
-        public String type;
-        public DungeonMob(int weight, String type)
+        public ResourceLocation type;
+        public DungeonMob(int weight, ResourceLocation type)
         {
             super(weight);
             this.type = type;
@@ -95,8 +119,8 @@ public class DungeonHooks
 
     static
     {
-        addDungeonMob("Skeleton", 100);
-        addDungeonMob("Zombie",   200);
-        addDungeonMob("Spider",   100);
+        addDungeonMob(new ResourceLocation("skeleton"), 100);
+        addDungeonMob(new ResourceLocation("zombie"),   200);
+        addDungeonMob(new ResourceLocation("spider"),   100);
     }
 }

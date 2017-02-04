@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid="PlayerInteractEventTest", name="PlayerInteractEventTest", version="0.0.0")
+@Mod(modid="playerinteracteventtest", name="PlayerInteractEventTest", version="0.0.0", acceptableRemoteVersions = "*")
 public class PlayerInteractEventTest
 {
     // NOTE: Test with both this ON and OFF - ensure none of the test behaviours show when this is off!
@@ -31,6 +31,7 @@ public class PlayerInteractEventTest
     {
         logger = event.getModLog();
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(PlayerInteractEventTest.class); // Test Static event listeners
     }
 
     @SubscribeEvent(receiveCanceled = true) // this triggers after the subclasses below, and we'd like to log them all
@@ -134,14 +135,14 @@ public class PlayerInteractEventTest
                 && evt.getTarget() instanceof EntitySkeleton
                 && evt.getLocalPos().yCoord > evt.getTarget().height / 2.0)
         {
-            // If we right click the upper half of a skeleton it becomes wither skeleton. Otherwise nothing happens.
-            ((EntitySkeleton) evt.getTarget()).setSkeletonType(1);
+            // If we right click the upper half of a skeleton it dies.
+            ((EntitySkeleton) evt.getTarget()).setDead();
             evt.setCanceled(true);
         }
     }
 
     @SubscribeEvent
-    public void interactNormal(PlayerInteractEvent.EntityInteract evt)
+    public static void interactNormal(PlayerInteractEvent.EntityInteract evt)
     {
         if (!ENABLE) return;
 

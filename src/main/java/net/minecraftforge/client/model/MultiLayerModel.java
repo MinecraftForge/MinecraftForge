@@ -1,8 +1,28 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.model;
 
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.vecmath.Matrix4f;
 
 import net.minecraft.block.state.IBlockState;
@@ -19,6 +39,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.FMLLog;
@@ -157,6 +178,7 @@ public final class MultiLayerModel implements IModelCustomData
             return builder.build();
         }
 
+        @Nonnull
         @Override
         public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
@@ -229,7 +251,7 @@ public final class MultiLayerModel implements IModelCustomData
 
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals("forge") && (
+            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
                 modelLocation.getResourcePath().equals("multi-layer") ||
                 modelLocation.getResourcePath().equals("models/block/multi-layer") ||
                 modelLocation.getResourcePath().equals("models/item/multi-layer"));

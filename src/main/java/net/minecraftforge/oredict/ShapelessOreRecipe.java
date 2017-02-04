@@ -1,6 +1,24 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.oredict;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,18 +29,22 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
+import javax.annotation.Nonnull;
+
 public class ShapelessOreRecipe implements IRecipe
 {
-    protected ItemStack output = null;
-    protected ArrayList<Object> input = new ArrayList<Object>();
+    @Nonnull
+    protected ItemStack output = ItemStack.EMPTY;
+    protected NonNullList<Object> input = NonNullList.create();
 
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapelessOreRecipe(Item  result, Object... recipe){ this(new ItemStack(result), recipe); }
 
-    public ShapelessOreRecipe(ItemStack result, Object... recipe)
+    public ShapelessOreRecipe(@Nonnull ItemStack result, Object... recipe)
     {
         output = result.copy();
         for (Object in : recipe)
@@ -79,22 +101,25 @@ public class ShapelessOreRecipe implements IRecipe
     public int getRecipeSize(){ return input.size(); }
 
     @Override
+    @Nonnull
     public ItemStack getRecipeOutput(){ return output; }
 
     @Override
-    public ItemStack getCraftingResult(InventoryCrafting var1){ return output.copy(); }
+    @Nonnull
+    public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1){ return output.copy(); }
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean matches(InventoryCrafting var1, World world)
     {
-        ArrayList<Object> required = new ArrayList<Object>(input);
+        NonNullList<Object> required = NonNullList.create();
+        required.addAll(input);
 
         for (int x = 0; x < var1.getSizeInventory(); x++)
         {
             ItemStack slot = var1.getStackInSlot(x);
 
-            if (slot != null)
+            if (!slot.isEmpty())
             {
                 boolean inRecipe = false;
                 Iterator<Object> req = required.iterator();
@@ -141,13 +166,14 @@ public class ShapelessOreRecipe implements IRecipe
      * manipulate the values in this array as it will effect the recipe itself.
      * @return The recipes input vales.
      */
-    public ArrayList<Object> getInput()
+    public NonNullList<Object> getInput()
     {
         return this.input;
     }
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
+    @Nonnull
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }

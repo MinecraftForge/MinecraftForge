@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid="EntityTravelToDimensionEventTest", name="EntityTravelToDimensionEventTest", version="0.0.0")
+@Mod(modid="entitytraveltodimensioneventtest", name="EntityTravelToDimensionEventTest", version="0.0.0", acceptableRemoteVersions = "*")
 public class EntityTravelToDimensionEventTest
 {
     public static final boolean ENABLE = false;

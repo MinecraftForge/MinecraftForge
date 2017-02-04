@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/MapGenCaves.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/MapGenCaves.java
-@@ -141,9 +141,7 @@
+@@ -140,9 +140,7 @@
                              {
                                  if (l1 >= 0 && l1 < 256)
                                  {
@@ -11,7 +11,7 @@
                                      {
                                          flag3 = true;
                                      }
-@@ -181,33 +179,12 @@
+@@ -180,28 +178,12 @@
                                              IBlockState iblockstate1 = p_180702_5_.func_177856_a(j3, j2, i2);
                                              IBlockState iblockstate2 = (IBlockState)Objects.firstNonNull(p_180702_5_.func_177856_a(j3, j2 + 1, i2), field_186127_b);
  
@@ -31,11 +31,6 @@
 -                                                {
 -                                                    p_180702_5_.func_177855_a(j3, j2, i2, field_186127_b);
 -
--                                                    if (iblockstate2.func_177230_c() == Blocks.field_150354_m)
--                                                    {
--                                                        p_180702_5_.func_177855_a(j3, j2 + 1, i2, iblockstate2.func_177229_b(BlockSand.field_176504_a) == BlockSand.EnumType.RED_SAND ? field_186129_d : field_186128_c);
--                                                    }
--
 -                                                    if (flag1 && p_180702_5_.func_177856_a(j3, j2 - 1, i2).func_177230_c() == Blocks.field_150346_d)
 -                                                    {
 -                                                        blockpos$mutableblockpos.func_181079_c(j3 + p_180702_3_ * 16, 0, i2 + p_180702_4_ * 16);
@@ -47,7 +42,7 @@
                                          }
                                      }
                                  }
-@@ -266,4 +243,71 @@
+@@ -260,4 +242,66 @@
              }
          }
      }
@@ -105,11 +100,6 @@
 +            else
 +            {
 +                data.func_177855_a(x, y, z, field_186127_b);
-+
-+                if (up.func_177230_c() == Blocks.field_150354_m)
-+                {
-+                    data.func_177855_a(x, y + 1, z, up.func_177229_b(BlockSand.field_176504_a) == BlockSand.EnumType.RED_SAND ? field_186129_d : field_186128_c);
-+                }
 +
 +                if (foundTop && data.func_177856_a(x, y - 1, z).func_177230_c() == filler.func_177230_c())
 +                {

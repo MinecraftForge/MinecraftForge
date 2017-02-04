@@ -1,52 +1,47 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors:
- *     cpw - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.common.registry;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.entity.monster.EntityZombieVillager;
 import org.apache.commons.lang3.Validate;
 
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.passive.EntityVillager.EmeraldForItems;
 import net.minecraft.entity.passive.EntityVillager.ITradeList;
-import net.minecraft.entity.passive.EntityVillager.ItemAndEmeraldToItem;
-import net.minecraft.entity.passive.EntityVillager.ListEnchantedBookForEmeralds;
-import net.minecraft.entity.passive.EntityVillager.ListEnchantedItemForEmeralds;
-import net.minecraft.entity.passive.EntityVillager.ListItemForEmeralds;
-import net.minecraft.entity.passive.EntityVillager.PriceInfo;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
+
+import javax.annotation.Nullable;
+
 /**
  * Registry for villager trading control
- *
- * @author cpw
  */
 public class VillagerRegistry
 {
@@ -140,7 +135,7 @@ public class VillagerRegistry
     }
 
     private boolean hasInit = false;
-    private FMLControlledNamespacedRegistry<VillagerProfession> professions = PersistentRegistryManager.createRegistry(PROFESSIONS, VillagerProfession.class, null, 0, 1024, true, null, null, null);
+    private FMLControlledNamespacedRegistry<VillagerProfession> professions = PersistentRegistryManager.createRegistry(PROFESSIONS, VillagerProfession.class, null, 0, 1024, true, null, null, null, null);
     public IForgeRegistry<VillagerProfession> getRegistry() { return this.professions; }
 
 
@@ -151,7 +146,9 @@ public class VillagerRegistry
             return;
         }
 
-        VillagerProfession prof = new VillagerProfession("minecraft:farmer", "minecraft:textures/entity/villager/farmer.png");
+        VillagerProfession prof = new VillagerProfession("minecraft:farmer",
+                "minecraft:textures/entity/villager/farmer.png",
+                "minecraft:textures/entity/zombie_villager/zombie_farmer.png");
         {
             register(prof, 0);
             (new VillagerCareer(prof, "farmer")).init(VanillaTrades.trades[0][0]);
@@ -159,28 +156,44 @@ public class VillagerRegistry
             (new VillagerCareer(prof, "shepherd")).init(VanillaTrades.trades[0][2]);
             (new VillagerCareer(prof, "fletcher")).init(VanillaTrades.trades[0][3]);
         }
-        prof = new VillagerProfession("minecraft:librarian", "minecraft:textures/entity/villager/librarian.png");
+        prof = new VillagerProfession("minecraft:librarian",
+                "minecraft:textures/entity/villager/librarian.png",
+                "minecraft:textures/entity/zombie_villager/zombie_librarian.png");
         {
             register(prof, 1);
             (new VillagerCareer(prof, "librarian")).init(VanillaTrades.trades[1][0]);
+            (new VillagerCareer(prof, "cartographer")).init(VanillaTrades.trades[1][1]);
         }
-        prof = new VillagerProfession("minecraft:priest", "minecraft:textures/entity/villager/priest.png");
+        prof = new VillagerProfession("minecraft:priest",
+                "minecraft:textures/entity/villager/priest.png",
+                "minecraft:textures/entity/zombie_villager/zombie_priest.png");
         {
             register(prof, 2);
             (new VillagerCareer(prof, "cleric")).init(VanillaTrades.trades[2][0]);
         }
-        prof = new VillagerProfession("minecraft:smith", "minecraft:textures/entity/villager/smith.png");
+        prof = new VillagerProfession("minecraft:smith",
+                "minecraft:textures/entity/villager/smith.png",
+                "minecraft:textures/entity/zombie_villager/zombie_smith.png");
         {
             register(prof, 3);
             (new VillagerCareer(prof, "armor")).init(VanillaTrades.trades[3][0]);
             (new VillagerCareer(prof, "weapon")).init(VanillaTrades.trades[3][1]);
             (new VillagerCareer(prof, "tool")).init(VanillaTrades.trades[3][2]);
         }
-        prof = new VillagerProfession("minecraft:butcher", "minecraft:textures/entity/villager/butcher.png");
+        prof = new VillagerProfession("minecraft:butcher",
+                "minecraft:textures/entity/villager/butcher.png",
+                "minecraft:textures/entity/zombie_villager/zombie_butcher.png");
         {
             register(prof, 4);
             (new VillagerCareer(prof, "butcher")).init(VanillaTrades.trades[4][0]);
             (new VillagerCareer(prof, "leather")).init(VanillaTrades.trades[4][1]);
+        }
+        prof = new VillagerProfession("minecraft:nitwit",
+                "minecraft:textures/entity/villager/villager.png",
+                "minecraft:textures/entity/zombie_villager/zombie_villager.png");
+        {
+            register(prof, 5);
+            (new VillagerCareer(prof, "nitwit")).init(VanillaTrades.trades[5][0]);
         }
     }
 
@@ -188,12 +201,19 @@ public class VillagerRegistry
     {
         private ResourceLocation name;
         private ResourceLocation texture;
+        private ResourceLocation zombie;
         private List<VillagerCareer> careers = Lists.newArrayList();
 
+        @Deprecated //Use Zombie texture
         public VillagerProfession(String name, String texture)
+        {
+            this (name, texture, "minecraft:textures/entity/zombie_villager/zombie_villager.png");
+        }
+        public VillagerProfession(String name, String texture, String zombie)
         {
             this.name = new ResourceLocation(name);
             this.texture = new ResourceLocation(texture);
+            this.zombie = new ResourceLocation(zombie);
             this.setRegistryName(this.name);
         }
 
@@ -206,6 +226,7 @@ public class VillagerRegistry
         }
 
         public ResourceLocation getSkin() { return this.texture; }
+        public ResourceLocation getZombieSkin() { return this.zombie; }
         public VillagerCareer getCareer(int id)
         {
             for (VillagerCareer car : this.careers)
@@ -266,7 +287,7 @@ public class VillagerRegistry
             return this;
         }
 
-
+        @Nullable
         public List<ITradeList> getTrades(int level)
         {
             return level >= 0 && level < this.trades.size() ? Collections.unmodifiableList(this.trades.get(level)) : null;
@@ -302,21 +323,18 @@ public class VillagerRegistry
      */
     public static void setRandomProfession(EntityVillager entity, Random rand)
     {
-        Set<ResourceLocation> entries = INSTANCE.professions.getKeys();
-        entity.setProfession(rand.nextInt(entries.size()));
+        List<VillagerProfession> entries = INSTANCE.professions.getValues();
+        entity.setProfession(entries.get(rand.nextInt(entries.size())));
     }
 
-    public static void onSetProfession(EntityVillager entity, VillagerProfession prof)
-    {
-        int network = INSTANCE.professions.getId(prof);
-        if (network == -1 || prof != INSTANCE.professions.getObjectById(network))
-        {
-            throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
-        }
 
-        if (network != entity.getProfession())
-            entity.setProfession(network);
-    }
+
+
+
+
+
+
+    //Below this is INTERNAL USE ONLY DO NOT USE MODDERS
     public static void onSetProfession(EntityVillager entity, int network)
     {
         VillagerProfession prof = INSTANCE.professions.getObjectById(network);
@@ -328,6 +346,21 @@ public class VillagerRegistry
         if (prof != entity.getProfessionForge())
             entity.setProfession(prof);
     }
+
+    public static void onSetProfession(EntityZombieVillager entity, int network)
+    {
+        VillagerProfession prof = INSTANCE.professions.getObjectById(network);
+        if (prof == null && network != -1 || INSTANCE.professions.getId(prof) != network)
+        {
+            throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
+        }
+
+        if (prof != entity.getForgeProfession())
+            entity.setForgeProfession(prof);
+    }
+
+    @Deprecated public static VillagerProfession getById(int network){ return INSTANCE.professions.getObjectById(network); }
+    @Deprecated public static int getId(@Nullable VillagerProfession prof){ return INSTANCE.professions.getId(prof); }
 
     //TODO: Figure out a good generic system for this. Put on hold for Patches.
 

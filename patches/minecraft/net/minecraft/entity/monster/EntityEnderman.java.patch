@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
-@@ -260,7 +260,9 @@
+@@ -267,7 +267,9 @@
  
      private boolean func_70825_j(double p_70825_1_, double p_70825_3_, double p_70825_5_)
      {
@@ -11,7 +11,7 @@
  
          if (flag)
          {
-@@ -345,6 +347,18 @@
+@@ -354,6 +356,18 @@
          }
      }
  

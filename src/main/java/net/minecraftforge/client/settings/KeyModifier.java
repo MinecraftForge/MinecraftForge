@@ -1,4 +1,25 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.settings;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -28,6 +49,12 @@ public enum KeyModifier {
         }
 
         @Override
+        public boolean isActive(@Nullable IKeyConflictContext conflictContext)
+        {
+            return GuiScreen.isCtrlKeyDown();
+        }
+
+        @Override
         public String getLocalizedComboName(int keyCode)
         {
             String keyName = GameSettings.getKeyDisplayString(keyCode);
@@ -44,6 +71,12 @@ public enum KeyModifier {
 
         @Override
         public boolean isActive()
+        {
+            return GuiScreen.isShiftKeyDown();
+        }
+
+        @Override
+        public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
             return GuiScreen.isShiftKeyDown();
         }
@@ -69,6 +102,12 @@ public enum KeyModifier {
         }
 
         @Override
+        public boolean isActive(@Nullable IKeyConflictContext conflictContext)
+        {
+            return GuiScreen.isAltKeyDown();
+        }
+
+        @Override
         public String getLocalizedComboName(int keyCode)
         {
             String keyName = GameSettings.getKeyDisplayString(keyCode);
@@ -89,6 +128,22 @@ public enum KeyModifier {
         }
 
         @Override
+        public boolean isActive(@Nullable IKeyConflictContext conflictContext)
+        {
+            if (conflictContext != null && !conflictContext.conflicts(KeyConflictContext.IN_GAME))
+            {
+                for (KeyModifier keyModifier : MODIFIER_VALUES)
+                {
+                    if (keyModifier.isActive(conflictContext))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
         public String getLocalizedComboName(int keyCode)
         {
             return GameSettings.getKeyDisplayString(keyCode);
@@ -101,7 +156,7 @@ public enum KeyModifier {
     {
         for (KeyModifier keyModifier : MODIFIER_VALUES)
         {
-            if (keyModifier.isActive())
+            if (keyModifier.isActive(null))
             {
                 return keyModifier;
             }
@@ -139,7 +194,13 @@ public enum KeyModifier {
 
     public abstract boolean matches(int keyCode);
 
+    /**
+     * @deprecated use {@link #isActive(IKeyConflictContext)}
+     */
+    @Deprecated
     public abstract boolean isActive();
+
+    public abstract boolean isActive(@Nullable IKeyConflictContext conflictContext);
 
     public abstract String getLocalizedComboName(int keyCode);
 }

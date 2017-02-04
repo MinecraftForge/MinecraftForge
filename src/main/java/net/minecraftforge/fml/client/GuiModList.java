@@ -1,15 +1,20 @@
 /*
- * The FML Forge Mod Loader suite.
- * Copyright (C) 2012 cpw
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.client;
@@ -24,6 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
@@ -79,6 +85,7 @@ public class GuiModList extends GuiScreen
             this.buttonID = buttonID;
         }
 
+        @Nullable
         public static SortType getTypeForButton(GuiButton button)
         {
             for (SortType t : values())
@@ -463,11 +470,12 @@ public class GuiModList extends GuiScreen
 
     private class Info extends GuiScrollingList
     {
+        @Nullable
         private ResourceLocation logoPath;
         private Dimension logoDims;
         private List<ITextComponent> lines = null;
 
-        public Info(int width, List<String> lines, ResourceLocation logoPath, Dimension logoDims)
+        public Info(int width, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims)
         {
             super(GuiModList.this.getMinecraftInstance(),
                   width,

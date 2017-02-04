@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiListWorldSelectionEntry.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiListWorldSelectionEntry.java
-@@ -242,7 +242,7 @@
+@@ -246,7 +246,7 @@
  
          if (this.field_186784_e.func_71359_d().func_90033_f(this.field_186786_g.func_75786_a()))
          {

@@ -1,11 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucket.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucket.java
-@@ -37,6 +37,8 @@
-     {
+@@ -38,6 +38,8 @@
          boolean flag = this.field_77876_a == Blocks.field_150350_a;
-         RayTraceResult raytraceresult = this.func_77621_a(p_77659_2_, p_77659_3_, flag);
-+        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(p_77659_3_, p_77659_2_, p_77659_1_, raytraceresult);
+         ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
+         RayTraceResult raytraceresult = this.func_77621_a(p_77659_1_, p_77659_2_, flag);
++        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(p_77659_2_, p_77659_1_, itemstack, raytraceresult);
 +        if (ret != null) return ret;
  
          if (raytraceresult == null)
          {
+@@ -181,4 +183,16 @@
+             }
+         }
+     }
++
++    @Override
++    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.NBTTagCompound nbt) {
++        if (this.getClass() == ItemBucket.class)
++        {
++            return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
++        }
++        else
++        {
++            return super.initCapabilities(stack, nbt);
++        }
++    }
+ }

@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors:
- *     cpw - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.common;
@@ -62,9 +69,8 @@ public @interface SidedProxy
     String serverSide() default "";
 
     /**
-     * The (optional) name of a mod to load this proxy for. This will help ensure correct behaviour when loading a combined
-     * scala/java mod package. It is almost never going to be required, unless you ship both Scala and Java {@link Mod} content
-     * in a single jar.
+     * The name of a mod to load this proxy for. This is required if this annotation is not in the class with @Mod annotation.
+     * Or there is no other way to determine the mod this annotation belongs to. When in doubt, add this value.
      */
     String modId() default "";
 }

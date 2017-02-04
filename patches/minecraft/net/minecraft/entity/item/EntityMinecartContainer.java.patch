@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
-@@ -200,6 +200,7 @@
+@@ -195,6 +195,7 @@
  
-     public boolean func_184230_a(EntityPlayer p_184230_1_, @Nullable ItemStack p_184230_2_, EnumHand p_184230_3_)
+     public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_)
      {
-+        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_184230_1_, p_184230_2_, p_184230_3_))) return true;
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_184230_1_, p_184230_2_))) return true;
          if (!this.field_70170_p.field_72995_K)
          {
              p_184230_1_.func_71007_a(this);
-@@ -279,6 +280,25 @@
+@@ -274,6 +275,26 @@
          }
      }
  
@@ -16,7 +16,8 @@
 +
 +    @SuppressWarnings("unchecked")
 +    @Override
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +        {
@@ -26,7 +27,7 @@
 +    }
 +
 +    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 +    }

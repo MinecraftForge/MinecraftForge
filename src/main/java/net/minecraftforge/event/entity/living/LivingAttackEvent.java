@@ -1,5 +1,27 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.EntityLivingBase;
@@ -7,8 +29,8 @@ import net.minecraft.entity.EntityLivingBase;
 /**
  * LivingAttackEvent is fired when a living Entity is attacked. <br>
  * This event is fired whenever an Entity is attacked in
- * EntityLivingBase#attackEntityFrom(DamageSource, float) and 
- * EntityPlayer#attackEntityFrom(DamageSource, float). <br>
+ * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)} and
+ * {@link EntityPlayer#attackEntityFrom(DamageSource, float)}. <br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingAttack(EntityLivingBase, DamageSource, float)}.<br>
  * <br>

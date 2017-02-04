@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common;
 
 import java.io.File;
@@ -32,6 +51,8 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
+
+import javax.annotation.Nullable;
 
 public class DimensionManager
 {
@@ -151,7 +172,7 @@ public class DimensionManager
         return worlds.keySet().toArray(new Integer[worlds.size()]); //Only loaded dims, since usually used to cycle through loaded worlds
     }
 
-    public static void setWorld(int id, WorldServer world, MinecraftServer server)
+    public static void setWorld(int id, @Nullable WorldServer world, MinecraftServer server)
     {
         if (world != null)
         {
@@ -185,7 +206,7 @@ public class DimensionManager
             tmp.add(entry.getValue());
         }
 
-        server.worldServers = tmp.toArray(new WorldServer[tmp.size()]);
+        server.worlds = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
     public static void initDimension(int dim)
@@ -338,7 +359,7 @@ public class DimensionManager
         return dimMap;
     }
 
-    public static void loadDimensionDataMap(NBTTagCompound compoundTag)
+    public static void loadDimensionDataMap(@Nullable NBTTagCompound compoundTag)
     {
         dimensionMap.clear();
         if (compoundTag == null)
@@ -368,6 +389,7 @@ public class DimensionManager
      * Return the current root directory for the world save. Accesses getSaveHandler from the overworld
      * @return the root directory of the save
      */
+    @Nullable
     public static File getCurrentSaveRootDirectory()
     {
         if (DimensionManager.getWorld(0) != null)

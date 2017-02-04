@@ -1,13 +1,20 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Minecraft Forge
+ * Copyright (c) 2016.
  *
- * Contributors:
- *     cpw - implementation
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package net.minecraftforge.fml.common;
@@ -48,7 +55,10 @@ public class ModClassLoader extends URLClassLoader
 
     public ModClassLoader(ClassLoader parent) {
         super(new URL[0], null);
-        this.mainClassLoader = (LaunchClassLoader)parent;
+        if (parent instanceof LaunchClassLoader)
+        {
+            this.mainClassLoader = (LaunchClassLoader)parent;
+        }
         this.sources = Lists.newArrayList();
     }
 
@@ -93,6 +103,8 @@ public class ModClassLoader extends URLClassLoader
 
     public boolean isDefaultLibrary(File file)
     {
+        String home = System.getProperty("java.home"); // Nullcheck just in case some JVM decides to be stupid
+        if (home != null && file.getAbsolutePath().startsWith(home)) return true;
         // Should really pull this from the json somehow, but we dont have that at runtime.
         String name = file.getName();
         if (!name.endsWith(".jar")) return false;
@@ -131,7 +143,14 @@ public class ModClassLoader extends URLClassLoader
             "log4j-core-",
             "lwjgl-",
             "lwjgl_util-",
-            "twitch-"
+            "twitch-",
+            "jline-",
+            "jna-",
+            "platform-",
+            "oshi-core-",
+            "netty-",
+            "libraryjavasound-",
+            "fastutil-"
         };
         for (String s : prefixes)
         {
