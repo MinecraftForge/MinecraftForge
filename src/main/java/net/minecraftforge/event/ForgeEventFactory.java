@@ -571,6 +571,11 @@ public class ForgeEventFactory
         return gatherCapabilities(new AttachCapabilitiesEvent.World(world), parent);
     }
 
+    public static CapabilityDispatcher gatherCapabilitiesNotNull(AttachCapabilitiesEvent<?> event){
+        CapabilityDispatcher caps = gatherCapabilities(event, null);
+        return caps != null ? caps : new CapabilityDispatcher(new HashMap<ResourceLocation, ICapabilityProvider>());
+    }
+
     @Nullable
     private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent<?> event, @Nullable ICapabilityProvider parent)
     {
