@@ -22,6 +22,7 @@ package net.minecraftforge.client.model;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1220,6 +1221,16 @@ public final class ModelLoader extends ModelBakery
     public static Function<ResourceLocation, TextureAtlasSprite> defaultTextureGetter()
     {
         return DefaultTextureGetter.INSTANCE;
+    }
+    
+    public static ModelBlock getModelBlock(ResourceLocation location) throws IOException
+    {
+        ModelLoader loader = VanillaLoader.INSTANCE.getLoader();
+        if (loader == null)
+        {
+            throw new IllegalStateException("Using ModelLoaderRegistry too early.");
+        }
+        return loader.loadModel(location);
     }
 
     protected static enum VariantLoader implements ICustomModelLoader
