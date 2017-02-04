@@ -28,6 +28,8 @@ import net.minecraftforge.fml.common.InjectedModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
+import javax.annotation.Nullable;
+
 public interface IForgeRegistryEntry<V>
 {
     /**
@@ -54,6 +56,7 @@ public interface IForgeRegistryEntry<V>
      *
      * @return Unique identifier or null.
      */
+    @Nullable
     ResourceLocation getRegistryName();
 
     Class<? super V> getRegistryType();
@@ -89,6 +92,7 @@ public interface IForgeRegistryEntry<V>
         //Helper functions
         public final T setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
         public final T setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
+        @Nullable
         public final ResourceLocation getRegistryName()
         {
             if (delegate.name() != null) return delegate.name();

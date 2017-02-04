@@ -90,6 +90,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import javax.annotation.Nullable;
+
 /**
  * The loader class performs the actual loading of the mod code from disk.
  *
@@ -887,6 +889,7 @@ public class Loader
         return getModObjectList().inverse();
     }
 
+    @Nullable
     public ModContainer activeModContainer()
     {
         return modController != null ? modController.activeContainer() : null;
@@ -1162,7 +1165,7 @@ public class Loader
         return modController != null ? modController.getState() : LoaderState.NOINIT;
     }
 
-    public void setActiveModContainer(ModContainer container)
+    public void setActiveModContainer(@Nullable ModContainer container)
     {
         this.modController.forceActiveContainer(container);
     }

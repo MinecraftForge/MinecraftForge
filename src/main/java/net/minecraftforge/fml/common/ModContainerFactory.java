@@ -34,6 +34,8 @@ import org.objectweb.asm.Type;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
+import javax.annotation.Nullable;
+
 public class ModContainerFactory
 {
     public static Map<Type, Constructor<? extends ModContainer>> modTypes = Maps.newHashMap();
@@ -58,6 +60,8 @@ public class ModContainerFactory
             Throwables.propagate(e);
         }
     }
+
+    @Nullable
     public ModContainer build(ASMModParser modParser, File modSource, ModCandidate container)
     {
         String className = modParser.getASMType().getClassName();

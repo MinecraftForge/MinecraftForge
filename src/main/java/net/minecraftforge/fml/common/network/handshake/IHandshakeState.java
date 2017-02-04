@@ -21,6 +21,8 @@ package net.minecraftforge.fml.common.network.handshake;
 
 import io.netty.channel.ChannelHandlerContext;
 
+import javax.annotation.Nullable;
+
 public interface IHandshakeState<S> {
-    S accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg);
+    S accept(ChannelHandlerContext ctx, @Nullable FMLHandshakeMessage msg);
 }

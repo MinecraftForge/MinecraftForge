@@ -49,6 +49,8 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
 
+import javax.annotation.Nullable;
+
 public class FMLProxyPacket implements Packet<INetHandler> {
     final String channel;
     private Side target;
@@ -192,6 +194,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
         this.dispatcher = networkDispatcher;
     }
 
+    @Nullable
     public NetworkManager getOrigin()
     {
         return this.dispatcher != null ? this.dispatcher.manager : null;

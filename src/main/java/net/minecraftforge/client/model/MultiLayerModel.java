@@ -22,6 +22,7 @@ package net.minecraftforge.client.model;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.vecmath.Matrix4f;
 
 import net.minecraft.block.state.IBlockState;
@@ -177,6 +178,7 @@ public final class MultiLayerModel implements IModelCustomData
             return builder.build();
         }
 
+        @Nonnull
         @Override
         public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {

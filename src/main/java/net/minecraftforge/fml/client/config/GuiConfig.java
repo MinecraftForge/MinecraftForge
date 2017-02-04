@@ -42,6 +42,8 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
+
 /**
  * This class is the base GuiScreen for all config GUI screens. It can be extended by mods to provide the top-level config screen
  * that will be called when the Config button is clicked from the Main Menu Mods list.
@@ -55,6 +57,7 @@ public class GuiConfig extends GuiScreen
      */
     public final GuiScreen parentScreen;
     public String title = "Config GUI";
+    @Nullable
     public String titleLine2;
     public final List<IConfigElement> configElements;
     public final List<IConfigEntry> initEntries;
@@ -68,6 +71,7 @@ public class GuiConfig extends GuiScreen
      * if any configElements were changed (includes child screens). If not defined, the events will be posted if the parent gui is null
      * or if the parent gui is not an instance of GuiConfig.
      */
+    @Nullable
     public final String configID;
     public final boolean isWorldRunning;
     public final boolean allRequireWorldRestart;
@@ -154,8 +158,8 @@ public class GuiConfig extends GuiScreen
      * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category name of the category
      *            currently being edited.
      */
-    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID,
-            boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2)
+    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, @Nullable String configID,
+            boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, @Nullable String titleLine2)
     {
         this.mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;

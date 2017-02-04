@@ -49,6 +49,8 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
+import javax.annotation.Nullable;
+
 /**
  * Handles Fluid registrations. Fluids MUST be registered in order to function.
  */
@@ -219,6 +221,7 @@ public abstract class FluidRegistry
         return getFluidName(stack.getFluid());
     }
 
+    @Nullable
     public static FluidStack getFluidStack(String fluidName, int amount)
     {
         if (!fluids.containsKey(fluidName))
@@ -255,7 +258,9 @@ public abstract class FluidRegistry
     {
         if (Loader.instance().hasReachedState(LoaderState.PREINITIALIZATION))
         {
-            FMLLog.getLogger().log(Level.ERROR, "Trying to activate the universal filled bucket too late. Call it statically in your Mods class. Mod: {}", Loader.instance().activeModContainer().getName());
+            ModContainer modContainer = Loader.instance().activeModContainer();
+            String modContainerName = modContainer == null ? null : modContainer.getName();
+            FMLLog.getLogger().log(Level.ERROR, "Trying to activate the universal filled bucket too late. Call it statically in your Mods class. Mod: {}", modContainerName);
         }
         else
         {

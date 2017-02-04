@@ -21,6 +21,8 @@ package net.minecraftforge.fml.common.versioning;
 
 import net.minecraft.client.resources.I18n;
 
+import javax.annotation.Nullable;
+
 /**
  * Describes a restriction in versioning.
  *
@@ -38,8 +40,8 @@ public class Restriction
 
     public static final Restriction EVERYTHING = new Restriction( null, false, null, false );
 
-    public Restriction( ArtifactVersion lowerBound, boolean lowerBoundInclusive, ArtifactVersion upperBound,
-                        boolean upperBoundInclusive )
+    public Restriction( @Nullable ArtifactVersion lowerBound, boolean lowerBoundInclusive, @Nullable ArtifactVersion upperBound,
+                       boolean upperBoundInclusive )
     {
         this.lowerBound = lowerBound;
         this.lowerBoundInclusive = lowerBoundInclusive;
@@ -47,6 +49,7 @@ public class Restriction
         this.upperBoundInclusive = upperBoundInclusive;
     }
 
+    @Nullable
     public ArtifactVersion getLowerBound()
     {
         return lowerBound;
@@ -57,6 +60,7 @@ public class Restriction
         return lowerBoundInclusive;
     }
 
+    @Nullable
     public ArtifactVersion getUpperBound()
     {
         return upperBound;

@@ -6,7 +6,6 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
@@ -22,6 +21,7 @@ public class RenderSpecificHandEvent extends Event
     private final float interpolatedPitch;
     private final float swingProgress;
     private final float equipProgress;
+    @Nonnull
     private final ItemStack stack;
 
     public RenderSpecificHandEvent(EnumHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @Nonnull ItemStack stack)

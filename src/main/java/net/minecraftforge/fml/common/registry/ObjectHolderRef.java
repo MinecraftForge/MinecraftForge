@@ -33,6 +33,8 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.common.registry.PersistentRegistryManager.PersistentRegistry;
 
+import javax.annotation.Nullable;
+
 
 /**
  * Internal class used in tracking {@link ObjectHolder} references
@@ -100,6 +102,7 @@ class ObjectHolderRef {
     }
 
 	@SuppressWarnings("unchecked")
+	@Nullable
 	private FMLControlledNamespacedRegistry<?> getRegistryForType(Field field)
     {
         Queue<Class<?>> typesToExamine = new LinkedList<Class<?>>();

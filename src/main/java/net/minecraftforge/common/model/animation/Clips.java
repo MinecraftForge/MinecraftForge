@@ -53,6 +53,8 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
+import javax.annotation.Nullable;
+
 /**
  * Various implementations of IClip, and utility methods.
  */
@@ -426,12 +428,13 @@ public final class Clips
 
         private final ThreadLocal<Function<String, IClip>> clipResolver = new ThreadLocal<Function<String, IClip>>();
 
-        public void setClipResolver(Function<String, IClip> clipResolver)
+        public void setClipResolver(@Nullable Function<String, IClip> clipResolver)
         {
             this.clipResolver.set(clipResolver);
         }
 
         @SuppressWarnings("unchecked")
+        @Nullable
         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
         {
             if(type.getRawType() != IClip.class)

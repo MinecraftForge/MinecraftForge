@@ -27,6 +27,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This event is fired when a player attempts to use a Empty bucket, it
@@ -44,11 +45,12 @@ public class FillBucketEvent extends PlayerEvent
 
     private final ItemStack current;
     private final World world;
+    @Nullable
     private final RayTraceResult target;
 
     private ItemStack result;
 
-    public FillBucketEvent(EntityPlayer player, @Nonnull ItemStack current, World world, RayTraceResult target)
+    public FillBucketEvent(EntityPlayer player, @Nonnull ItemStack current, World world, @Nullable RayTraceResult target)
     {
         super(player);
         this.current = current;
@@ -59,6 +61,7 @@ public class FillBucketEvent extends PlayerEvent
     @Nonnull
     public ItemStack getEmptyBucket() { return this.current; }
     public World getWorld(){ return this.world; }
+    @Nullable
     public RayTraceResult getTarget() { return this.target; }
     @Nonnull
     public ItemStack getFilledBucket() { return this.result; }

@@ -76,10 +76,13 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
 
     public static final IModel MODEL = new ModelDynBucket();
 
+    @Nullable
     private final ResourceLocation baseLocation;
+    @Nullable
     private final ResourceLocation liquidLocation;
+    @Nullable
     private final ResourceLocation coverLocation;
-
+    @Nullable
     private final Fluid fluid;
     private final boolean flipGas;
 
@@ -88,7 +91,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
         this(null, null, null, null, false);
     }
 
-    public ModelDynBucket(ResourceLocation baseLocation, ResourceLocation liquidLocation, ResourceLocation coverLocation, Fluid fluid, boolean flipGas)
+    public ModelDynBucket(@Nullable ResourceLocation baseLocation, @Nullable ResourceLocation liquidLocation, @Nullable ResourceLocation coverLocation, @Nullable Fluid fluid, boolean flipGas)
     {
         this.baseLocation = baseLocation;
         this.liquidLocation = liquidLocation;

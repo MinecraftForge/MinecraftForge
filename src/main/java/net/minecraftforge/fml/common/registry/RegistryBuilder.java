@@ -28,6 +28,8 @@ import com.google.common.collect.Lists;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.IForgeRegistry.*;
 
+import javax.annotation.Nullable;
+
 public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 {
     private ResourceLocation registryName;
@@ -104,6 +106,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
                 getAdd(), getClear(), getCreate(), getSubstitution());
     }
 
+    @Nullable
     private AddCallback<T> getAdd()
     {
         if (this.addCallback.isEmpty())
@@ -121,6 +124,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             }
         };
     }
+
+    @Nullable
     private ClearCallback<T> getClear()
     {
         if (this.clearCallback.isEmpty())
@@ -138,6 +143,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             }
         };
     }
+
+    @Nullable
     private CreateCallback<T> getCreate()
     {
         if (this.createCallback.isEmpty())
@@ -155,6 +162,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             }
         };
     }
+
+    @Nullable
     private SubstitutionCallback<T> getSubstitution()
     {
         if (this.substitutionCallback.isEmpty())
