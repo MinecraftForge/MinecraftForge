@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderZombieVillager.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderZombieVillager.java
+@@ -25,22 +25,7 @@
+ 
+     protected ResourceLocation func_110775_a(EntityZombieVillager p_110775_1_)
+     {
+-        switch (p_110775_1_.func_190736_dl())
+-        {
+-            case 0:
+-                return field_188330_l;
+-            case 1:
+-                return field_188331_m;
+-            case 2:
+-                return field_188332_n;
+-            case 3:
+-                return field_188333_o;
+-            case 4:
+-                return field_188329_p;
+-            case 5:
+-            default:
+-                return field_110864_q;
+-        }
++        return p_110775_1_.getForgeProfession().getZombieSkin();
+     }
+ 
+     protected void func_77043_a(EntityZombieVillager p_77043_1_, float p_77043_2_, float p_77043_3_, float p_77043_4_)

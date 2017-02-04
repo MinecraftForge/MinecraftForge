@@ -8,7 +8,15 @@
      }
  
      public int func_190736_dl()
-@@ -85,6 +86,21 @@
+@@ -64,6 +65,7 @@
+     {
+         super.func_70014_b(p_70014_1_);
+         p_70014_1_.func_74768_a("Profession", this.func_190736_dl());
++        p_70014_1_.func_74778_a("ProfessionName", this.getForgeProfession().getRegistryName().toString());
+         p_70014_1_.func_74768_a("ConversionTime", this.func_82230_o() ? this.field_82234_d : -1);
+     }
+ 
+@@ -85,6 +87,35 @@
          return super.func_180482_a(p_180482_1_, p_180482_2_);
      }
  
@@ -20,10 +28,24 @@
 +        this.func_190733_a(net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof));
 +    }
 +
-+    @Nullable
 +    public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getForgeProfession()
 +    {
++        if (this.prof == null)
++        {
++            this.prof = net.minecraftforge.fml.common.registry.VillagerRegistry.getById(this.func_190736_dl());
++            if (this.prof == null)
++                return net.minecraftforge.fml.common.registry.VillagerRegistry.getById(0); //Farmer
++        }
 +        return this.prof;
++    }
++
++    public void func_184206_a(DataParameter<?> key)
++    {
++        super.func_184206_a(key);
++        if (key.equals(field_190739_c))
++        {
++            net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, this.field_70180_af.func_187225_a(field_190739_c));
++        }
 +    }
 +
 +
