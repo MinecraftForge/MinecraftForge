@@ -507,7 +507,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             snapshot.entries.put(PersistentRegistryManager.FLUIDS, entry);
             NBTTagList fluidList = tag.getTagList("DefaultFluidList", 8);
             for (int id = 0; id < fluidList.tagCount(); id++)
-                entry.ids.put(new ResourceLocation(fluidList.getStringTagAt(id).toLowerCase()), id);
+                entry.ids.put(new ResourceLocation(fluidList.getStringTagAt(id).toLowerCase(Locale.ENGLISH)), id);
             PersistentRegistryManager.injectSnapshot(snapshot, true, true);
         }
     }
