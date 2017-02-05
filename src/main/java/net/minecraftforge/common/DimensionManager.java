@@ -47,7 +47,6 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -56,9 +55,22 @@ import javax.annotation.Nullable;
 
 public class DimensionManager
 {
+    private static class Dimension
+    {
+        private final DimensionType type;
+        private final int delayToUnload;
+        private int ticksWaited;
+        private Dimension(DimensionType type, int delayToUnload)
+        {
+            this.type = type;
+            this.delayToUnload = delayToUnload;
+            this.ticksWaited = 0;
+        }
+    }
+
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
-    private static Hashtable<Integer, DimensionType> dimensions = new Hashtable<Integer, DimensionType>();
+    private static Hashtable<Integer, Dimension> dimensions = new Hashtable<Integer, Dimension>();
     private static ArrayList<Integer> unloadQueue = new ArrayList<Integer>();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
@@ -71,9 +83,9 @@ public class DimensionManager
     {
         int[] ret = new int[dimensions.size()];
         int x = 0;
-        for (Map.Entry<Integer, DimensionType> ent : dimensions.entrySet())
+        for (Map.Entry<Integer, Dimension> ent : dimensions.entrySet())
         {
-            if (ent.getValue() == type)
+            if (ent.getValue().type == type)
             {
                 ret[x++] = ent.getKey();
             }
@@ -96,18 +108,34 @@ public class DimensionManager
         registerDimension( 1, DimensionType.THE_END);
     }
 
-    public static void registerDimension(int id, DimensionType type)
+    /**
+     * Registers a dimension
+     * @param id The ID of the dimension
+     * @param type The type of the dimension
+     * @param delayToUnload the delay in ticks the dimension should stay loaded after being queued to unload
+     */
+    public static void registerDimension(int id, DimensionType type, int delayToUnload)
     {
         DimensionType.getById(type.getId()); //Check if type is invalid {will throw an error} No clue how it would be invalid tho...
         if (dimensions.containsKey(id))
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        dimensions.put(id, type);
+        dimensions.put(id, new Dimension(type, delayToUnload));
         if (id >= 0)
         {
             dimensionMap.set(id);
         }
+    }
+
+    /**
+     * Registers a dimension, defaulting the delay to unload to 300 ticks(15 seconds)
+     * @param id The ID of the dimension
+     * @param type The type of the dimension
+     */
+    public static void registerDimension(int id, DimensionType type)
+    {
+        registerDimension(id, type, 300);
     }
 
     /**
@@ -133,7 +161,7 @@ public class DimensionManager
         {
             throw new IllegalArgumentException(String.format("Could not get provider type for dimension %d, does not exist", dim));
         }
-        return dimensions.get(dim);
+        return dimensions.get(dim).type;
     }
 
     public static WorldProvider getProvider(int dim)
@@ -286,15 +314,30 @@ public class DimensionManager
         }
     }
 
-    public static void unloadWorld(int id) {
-        unloadQueue.add(id);
+    public static void unloadWorld(int id)
+    {
+        if(!unloadQueue.contains(id))
+        {
+            unloadQueue.add(id);
+        }
+        else
+        {
+            dimensions.get(id).ticksWaited = 0;
+        }
     }
 
     /*
     * To be called by the server at the appropriate time, do not call from mod code.
     */
     public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
+        ArrayList<Integer> toRemove = new ArrayList<Integer>();
         for (int id : unloadQueue) {
+            Dimension dimension = dimensions.get(id);
+            if (dimension.ticksWaited != dimension.delayToUnload)
+            {
+                dimension.ticksWaited++;
+                continue;
+            }
             WorldServer w = worlds.get(id);
             try {
                 if (w != null)
@@ -317,8 +360,10 @@ public class DimensionManager
                     setWorld(id, null, w.getMinecraftServer());
                 }
             }
+            toRemove.add(id);
+            dimension.ticksWaited = 0;
         }
-        unloadQueue.clear();
+        unloadQueue.removeAll(toRemove);
     }
 
     /**
