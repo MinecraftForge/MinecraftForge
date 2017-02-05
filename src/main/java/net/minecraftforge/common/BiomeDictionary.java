@@ -179,7 +179,9 @@ public class BiomeDictionary
             type.biomes.add(biome);
         }
 
-        getBiomeInfo(biome).types.addAll(supertypes);
+        BiomeInfo biomeInfo = getBiomeInfo(biome);
+        Collections.addAll(biomeInfo.types, types);
+        biomeInfo.types.addAll(supertypes);
     }
 
     /**
