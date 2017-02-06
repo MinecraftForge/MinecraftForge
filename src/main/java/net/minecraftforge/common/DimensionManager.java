@@ -110,10 +110,10 @@ public class DimensionManager
     }
 
     /**
-     * Registers a dimension
+     * Registers a dimension with a given delay
      * @param id The ID of the dimension
      * @param type The type of the dimension
-     * @param delayToUnload the delay in ticks the dimension should stay loaded after being queued to unload
+     * @param delayToUnload the delay in ticks the dimension should stay loaded after being queued to unload. Must not be negative
      */
     public static void registerDimension(int id, DimensionType type, int delayToUnload)
     {
@@ -122,7 +122,7 @@ public class DimensionManager
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        Preconditions.checkArgument(delayToUnload >=0, "Cannot register dimension with negative delayToUnload(%s)", delayToUnload);
+        Preconditions.checkArgument(delayToUnload >=0, "Cannot register dimension for id %s with negative delayToUnload(%s)", id, delayToUnload);
         dimensions.put(id, new Dimension(type, delayToUnload));
         if (id >= 0)
         {
@@ -346,7 +346,7 @@ public class DimensionManager
             dimension.ticksWaited = 0;
             if (w != null && (!ForgeChunkManager.getPersistentChunksFor(w).isEmpty() || !w.playerEntities.isEmpty()) || dimension.type.shouldLoadSpawn()) //Don't unload the world if the status changed
             {
-                FMLLog.fine("Aborting unload as status changed");
+                FMLLog.fine("Aborting unload for dimension %s as status changed", id);
                 continue;
             }
             try {
