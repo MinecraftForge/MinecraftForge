@@ -344,18 +344,18 @@ public class PlayerInteractEvent extends PlayerEvent
             this.currentResult = currentResult;
         }
 
-        public RayTraceResult getRayTraceResult()
+        public RayTraceResult getTarget()
         {
             return target;
         }
 
         @Nonnull
-        public ItemStack getCurrentResult()
+        public ItemStack getResultStack()
         {
             return this.currentResult;
         }
 
-        public void setCurrentResult(@Nonnull ItemStack newResult)
+        public void setResultStack(@Nonnull ItemStack newResult)
         {
             this.currentResult = newResult;
         }

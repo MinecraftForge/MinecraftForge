@@ -16,7 +16,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -160,15 +159,15 @@ public class PlayerInteractEventTest
     public void pick(PlayerInteractEvent.Pick evt)
     {
         if(!ENABLE) return;
-        logger.info("result stack: {} | RayTraceResult: {}", evt.getCurrentResult(), evt.getRayTraceResult());
+        logger.info("result stack: {} | RayTraceResult: {}", evt.getResultStack(), evt.getTarget());
 
-        if(evt.getRayTraceResult().typeOfHit == RayTraceResult.Type.ENTITY && evt.getRayTraceResult().entityHit instanceof EntityHorse)
+        if(evt.getTarget().typeOfHit == RayTraceResult.Type.ENTITY && evt.getTarget().entityHit instanceof EntityHorse)
             // Middle click a horse and don't get a spawn egg
             evt.setCanceled(true);
 
-        if(evt.getRayTraceResult().typeOfHit == RayTraceResult.Type.BLOCK && evt.getWorld().getBlockState(evt.getPos()).getBlock() == Blocks.BONE_BLOCK)
+        if(evt.getTarget().typeOfHit == RayTraceResult.Type.BLOCK && evt.getWorld().getBlockState(evt.getPos()).getBlock() == Blocks.BONE_BLOCK)
             // Get a baked potato when middle click a bone block
-            evt.setCurrentResult(new ItemStack(Items.BAKED_POTATO));
+            evt.setResultStack(new ItemStack(Items.BAKED_POTATO));
     }
 
 }
