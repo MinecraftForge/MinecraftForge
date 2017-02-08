@@ -24,9 +24,10 @@ repositories {
 
 apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
-apply plugin: "net.minecraftforge.gradle.launch4j"
+//apply plugin: "net.minecraftforge.gradle.launch4j"
 
 minecraft.version = "1.11.2"
+def wrapper_version= "1.0.2"
 
 minecraft {
     mappings = 'snapshot_nodoc_20161220'
@@ -197,25 +198,138 @@ tasks.build.dependsOn makeMdk
 
 // launch4j
 
-launch4j {
-    jar = installer.archivePath.canonicalPath
-    outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
-    icon = file('icon.ico').canonicalPath
-    manifest = file('l4jManifest.xml').canonicalPath
-    jreMinVersion = '1.6.0'
-    initialHeapPercent = 5;
-    maxHeapPercent = 100;
+//launch4j {
+//    jar = installer.archivePath.canonicalPath
+//    outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
+//    icon = file('icon.ico').canonicalPath
+//    manifest = file('l4jManifest.xml').canonicalPath
+//    jreMinVersion = '1.6.0'
+//    initialHeapPercent = 5;
+//    maxHeapPercent = 100;
+//}
+//tasks.generateXmlConfig.dependsOn installer
+//tasks.build.dependsOn 'launch4j'
+
+//Wrapper tasks
+repositories {
+    maven {
+        name = "forge maven"
+        url = "http://files.minecraftforge.net/maven"
+    }
 }
-tasks.generateXmlConfig.dependsOn installer
-tasks.build.dependsOn 'launch4j'
+
+configurations {
+    wrapTar
+    wrapZip
+}
+
+dependencies {
+    wrapZip "net.minecraftforge.javawrapper:javawrapper:$wrapper_version:win@zip"
+    wrapTar "net.minecraftforge.javawrapper:javawrapper:$wrapper_version:linux@tar.gz"
+    wrapTar "net.minecraftforge.javawrapper:javawrapper:$wrapper_version:osx@tar.gz"
+}
+
+def wrapLinux = "javawrapper-v$wrapper_version-linux"
+def wrapOsx = "javawrapper-v$wrapper_version-osx"
+def wrapWin = "javawrapper-v$wrapper_version-win.exe"
+
+def wrapLinuxPath = file("$buildDir/jwrappers/$wrapLinux")
+def wrapOsxPath = file("$buildDir/jwrappers/$wrapOsx")
+def wrapWinPath = file("$buildDir/jwrappers/$wrapWin")
+
+task wrapInstaller(type: Copy) {
+    dependsOn tasks.installer, configurations.wrapTar, configurations.wrapZip
+
+    from zipTree(configurations.wrapZip.singleFile)
+    into "$buildDir/jwrappers"
+
+    from {
+        configurations.wrapTar.asFileTree.each {
+            from tarTree(it)
+        }
+        null
+    }
+
+    into "$buildDir/jwrappers"
+
+    doLast {
+
+        wrapLinuxPath << tasks.installer.archivePath.bytes
+        wrapOsxPath << tasks.installer.archivePath.bytes
+        wrapWinPath << tasks.installer.archivePath.bytes
+
+
+    }
+
+}
+
+task renameWrappers() {
+    dependsOn wrapInstaller
+    doLast {
+
+        copy {
+            from("$buildDir/jwrappers/")
+            into("$buildDir/jwrappers")
+            rename("javawrapper-v$wrapper_version-linux", "forge-$project.version-installer-linux")
+            rename("javawrapper-v$wrapper_version-osx", "forge-$project.version-installer-osx")
+            rename("javawrapper-v$wrapper_version-win.exe", "forge-$project.version-installer-win.exe")
+        }
+        delete {
+            delete wrapWinPath, wrapOsxPath, wrapLinuxPath
+        }
+    }
+}
+
+task pkgLinux(type: Tar) {
+    dependsOn renameWrappers
+    classifier = "linux"
+    baseName = "forge-installer"
+    version = project.version
+    extension = 'tar.gz'
+    destinationDir file("$buildDir/distributions/")
+    compression = Compression.GZIP
+    from "$buildDir/jwrappers/"
+    include "forge-$project.version-installer-linux"
+}
+
+task pkgOsx(type: Tar) {
+    dependsOn renameWrappers
+    classifier = "osx"
+    baseName = "forge-installer"
+    version = project.version
+    extension = 'tar.gz'
+    destinationDir file("$buildDir/distributions/")
+    compression = Compression.GZIP
+    from "$buildDir/jwrappers/"
+    include "forge-$project.version-installer-osx"
+}
+
+task pkgWin(type: Zip) {
+    dependsOn renameWrappers
+    classifier = "win"
+    baseName = "forge-installer"
+    version = project.version
+    destinationDir file("$buildDir/distributions")
+    from "$buildDir/jwrappers/"
+    include "forge-$project.version-installer-win.exe"
+}
+
+task pkgWrapped() {
+    dependsOn pkgLinux, pkgOsx, pkgWin
+}
+
+tasks.build.dependsOn 'pkgWrapped'
 
 // MAVEN
 
 artifacts {
     if (project.hasProperty('forgeJenkinsPass'))
         archives changelog.output
-    archives file("build/distributions/${project.name}-${project.version}-installer-win.exe")
+//    archives file("build/distributions/${project.name}-${project.version}-installer-win.exe")
     archives makeMdk
+    archives pkgWin
+    archives pkgLinux
+    archives pkgOsx
 }
 
 task ciWriteBuildNumber << {
