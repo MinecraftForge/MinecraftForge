@@ -135,7 +135,6 @@ public class MerchantTradeEvent extends PlayerEvent
             this.changedLeft = left;
         }
 
-
         public void setRight(@Nullable ItemStack right)
         {
             this.changedRight = right;
