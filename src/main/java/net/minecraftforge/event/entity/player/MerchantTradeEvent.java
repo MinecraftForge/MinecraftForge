@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.inventory.InventoryMerchant;
@@ -29,6 +30,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * MerchantTradeEvent is fired whenever an event involving merchant trades occurs. <br>
@@ -46,8 +48,8 @@ public class MerchantTradeEvent extends PlayerEvent
 {
     private final IMerchant merchant;
     private final MerchantRecipe trade;
-    protected ItemStack left;
-    protected ItemStack right;
+    private final ItemStack left;
+    private final ItemStack right;
 
     public MerchantTradeEvent(@Nonnull IMerchant merchant, @Nonnull MerchantRecipe trade, @Nonnull ItemStack left, @Nonnull ItemStack right)
     {
@@ -73,13 +75,13 @@ public class MerchantTradeEvent extends PlayerEvent
     @Nonnull
     public ItemStack getLeft()
     {
-        return left;
+        return left.copy();
     }
 
     @Nonnull
     public ItemStack getRight()
     {
-        return right;
+        return right.copy();
     }
 
 
@@ -120,20 +122,35 @@ public class MerchantTradeEvent extends PlayerEvent
     @Cancelable
     public static class Done extends MerchantTradeEvent
     {
+        private ItemStack changedLeft = null;
+        private ItemStack changedRight = null;
+
         public Done(@Nonnull IMerchant merchant, @Nonnull MerchantRecipe trade, @Nonnull ItemStack first, @Nonnull ItemStack second)
         {
             super(merchant, trade, first, second);
         }
 
-        public void setLeft(@Nonnull ItemStack left)
+        public void setLeft(@Nullable ItemStack left)
         {
-            this.left = left;
+            this.changedLeft = left;
         }
 
 
-        public void setRight(@Nonnull ItemStack right)
+        public void setRight(@Nullable ItemStack right)
         {
-            this.right = right;
+            this.changedRight = right;
+        }
+
+        @Nullable
+        public ItemStack getChangedLeft()
+        {
+            return changedLeft;
+        }
+
+        @Nullable
+        public ItemStack getChangedRight()
+        {
+            return changedRight;
         }
     }
 }

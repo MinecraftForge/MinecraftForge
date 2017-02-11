@@ -546,10 +546,10 @@ public class ForgeEventFactory
     {
         MerchantTradeEvent.Done event = new MerchantTradeEvent.Done(merchant, trade, left, right);
         MinecraftForge.EVENT_BUS.post(event);
-        if(left != event.getLeft())
-            inventory.setInventorySlotContents(0, event.getLeft());
-        if(right != event.getRight())
-            inventory.setInventorySlotContents(1, event.getRight());
+        if (event.getChangedLeft() != null)
+            inventory.setInventorySlotContents(0, event.getChangedLeft());
+        if (event.getChangedRight() != null)
+            inventory.setInventorySlotContents(1, event.getChangedRight());
         return event.isCanceled();
     }
 
