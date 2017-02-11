@@ -24,10 +24,9 @@ repositories {
 
 apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
-//apply plugin: "net.minecraftforge.gradle.launch4j"
 
 minecraft.version = "1.11.2"
-def wrapper_version= "1.0.2"
+def wrapper_version= "1.0.3"
 
 minecraft {
     mappings = 'snapshot_nodoc_20161220'
@@ -196,20 +195,6 @@ task makeMdk(type: Zip) {
 }
 tasks.build.dependsOn makeMdk
 
-// launch4j
-
-//launch4j {
-//    jar = installer.archivePath.canonicalPath
-//    outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
-//    icon = file('icon.ico').canonicalPath
-//    manifest = file('l4jManifest.xml').canonicalPath
-//    jreMinVersion = '1.6.0'
-//    initialHeapPercent = 5;
-//    maxHeapPercent = 100;
-//}
-//tasks.generateXmlConfig.dependsOn installer
-//tasks.build.dependsOn 'launch4j'
-
 //Wrapper tasks
 repositories {
     maven {
@@ -247,7 +232,6 @@ task wrapInstaller(type: Copy) {
         configurations.wrapTar.asFileTree.each {
             from tarTree(it)
         }
-        null
     }
 
     into "$buildDir/jwrappers"
@@ -275,7 +259,8 @@ task renameWrappers() {
             rename("javawrapper-v$wrapper_version-win.exe", "forge-$project.version-installer-win.exe")
         }
         delete {
-            delete wrapWinPath, wrapOsxPath, wrapLinuxPath
+            delete wrapLinuxPath, wrapOsxPath, wrapWinPath
+
         }
     }
 }
@@ -325,7 +310,7 @@ tasks.build.dependsOn 'pkgWrapped'
 artifacts {
     if (project.hasProperty('forgeJenkinsPass'))
         archives changelog.output
-//    archives file("build/distributions/${project.name}-${project.version}-installer-win.exe")
+
     archives makeMdk
     archives pkgWin
     archives pkgLinux
