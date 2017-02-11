@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/inventory/SlotMerchantResult.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotMerchantResult.java
+@@ -58,6 +58,7 @@
+             ItemStack itemstack = this.field_75233_a.func_70301_a(0);
+             ItemStack itemstack1 = this.field_75233_a.func_70301_a(1);
+ 
++            if (!net.minecraftforge.event.ForgeEventFactory.onMerchantTrade(field_75233_a, field_75234_h, merchantrecipe, itemstack, itemstack1))
+             if (this.func_75230_a(merchantrecipe, itemstack, itemstack1) || this.func_75230_a(merchantrecipe, itemstack1, itemstack))
+             {
+                 this.field_75234_h.func_70933_a(merchantrecipe);
