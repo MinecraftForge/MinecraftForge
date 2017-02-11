@@ -59,7 +59,8 @@ public class MerchantTradeEvent extends PlayerEvent
     }
 
     @Nonnull
-    public IMerchant getMerchant(){
+    public IMerchant getMerchant()
+    {
         return merchant;
     }
 
