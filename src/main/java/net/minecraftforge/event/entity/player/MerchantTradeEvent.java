@@ -63,25 +63,25 @@ public class MerchantTradeEvent extends PlayerEvent
     @Nonnull
     public IMerchant getMerchant()
     {
-        return merchant;
+        return this.merchant;
     }
 
     @Nonnull
     public MerchantRecipe getTrade()
     {
-        return trade;
+        return this.trade;
     }
 
     @Nonnull
     public ItemStack getLeft()
     {
-        return left.copy();
+        return this.left.copy();
     }
 
     @Nonnull
     public ItemStack getRight()
     {
-        return right.copy();
+        return this.right.copy();
     }
 
 
@@ -144,13 +144,13 @@ public class MerchantTradeEvent extends PlayerEvent
         @Nullable
         public ItemStack getChangedLeft()
         {
-            return changedLeft;
+            return this.changedLeft;
         }
 
         @Nullable
         public ItemStack getChangedRight()
         {
-            return changedRight;
+            return this.changedRight;
         }
     }
 }
