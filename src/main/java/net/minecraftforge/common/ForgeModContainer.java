@@ -116,6 +116,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
+    public static int dimensionUnloadQueueDelay = 300;
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -272,6 +273,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
         forgeLightPipelineEnabled = prop.getBoolean(Boolean.TRUE);
         prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 300,
+                "The default time in ticks the server will wait when a dimension was queued to unload. Can be overridden by mods in their dimension");
+        dimensionUnloadQueueDelay = prop.getInt(300);
+        prop.setLanguageKey("forge.configgui.dimensionUnloadQueueDelay").setRequiresMcRestart(true);
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
