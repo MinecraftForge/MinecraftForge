@@ -190,7 +190,7 @@
 +        {
 +            if (spawnFuzz < 2) spawnFuzz = 2;
 +            int spawnFuzzHalf = spawnFuzz / 2;
-+            ret = field_76579_a.func_175672_r(ret.func_177982_a(field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz, 0, field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz));
++            ret = field_76579_a.func_175672_r(ret.func_177982_a(field_76579_a.field_73012_v.nextInt(spawnFuzz) - spawnFuzzHalf, 0, field_76579_a.field_73012_v.nextInt(spawnFuzz) - spawnFuzzHalf));
 +        }
 +
 +        return ret;
