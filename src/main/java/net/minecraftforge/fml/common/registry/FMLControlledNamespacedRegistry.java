@@ -121,7 +121,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     {
         try
         {
-            ReflectionHelper.findMethod(BitSet.class, this.availabilityMap, new String[]{"trimToSize"}).invoke(this.availabilityMap);
+            ReflectionHelper.findMethod(BitSet.class, "trimToSize", "trimToSize").invoke(this.availabilityMap);
         }
         catch (Exception e)
         {
