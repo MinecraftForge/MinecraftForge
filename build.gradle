@@ -265,6 +265,26 @@ task renameWrappers() {
     }
 }
 
+task createAppDir {
+    dependsOn renameWrappers
+    doLast {
+        def appDir = new File("$buildDir/jwrappers/app-${project.version}/forge-${project.version}-installer.app/Contents/MacOs")
+        if (!appDir.exists()) {
+            appDir.mkdirs()
+        }
+
+        copy {
+            from "$buildDir/jwrappers/forge-${project.version}-osx"
+            into "$buildDir/jwrappers/app-${project.version}/forge-${project.version}-installer.app/Contents/MacOs/"
+        }
+
+        String contents = new File("Info.plist").getText('UTF-8')
+        contents = contents.replaceAll("@NAME@", "forgeinstaller").replaceAll("@VERSION@", project.version).replaceAll("@EXE@", "forge-${project.version}-installer-osx")
+        new File("$buildDir/jwrappers/app-${project.version}/forge-${project.version}-installer.app/Contents/Info.plist").write(contents, 'UTF-8')
+
+    }
+}
+
 task pkgLinux(type: Tar) {
     dependsOn renameWrappers
     classifier = "linux"
@@ -278,15 +298,14 @@ task pkgLinux(type: Tar) {
 }
 
 task pkgOsx(type: Tar) {
-    dependsOn renameWrappers
-    classifier = "osx"
+    dependsOn createAppDir
+    classifier = "osxapp"
     baseName = "forge-installer"
     version = project.version
     extension = 'tar.gz'
     destinationDir file("$buildDir/distributions/")
     compression = Compression.GZIP
-    from "$buildDir/jwrappers/"
-    include "forge-$project.version-installer-osx"
+    from "$buildDir/jwrappers/app-${project.version}"
 }
 
 task pkgWin(type: Zip) {
