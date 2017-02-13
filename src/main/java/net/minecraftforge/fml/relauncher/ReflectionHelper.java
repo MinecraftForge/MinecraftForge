@@ -199,10 +199,6 @@ public class ReflectionHelper
             {
                 failed = e;
             }
-            catch (LinkageError e)
-            {
-                failed = e;
-            }
         }
         throw new UnableToFindMethodException(failed);
     }
@@ -216,19 +212,27 @@ public class ReflectionHelper
      * @param clazz          The class to find the method on.
      * @param methodName     The name of the method to find (used in developer environments, i.e. "getWorldTime").
      * @param methodObfName  The obfuscated name of the method to find (used in obfuscated environments, i.e. "func_72820_D").
-     *                       If the name you are looking for is on a class that is never obfuscated, this should equal methodName.
+     *                       If the name you are looking for is on a class that is never obfuscated, this should be null.
      * @param parameterTypes The parameter types of the method to find.
      * @return The method with the specified name and parameters in the given class.
      */
     @Nonnull
-    public static Method findMethod(@Nonnull Class<?> clazz, @Nonnull String methodName, @Nonnull String methodObfName, Class<?>... parameterTypes)
+    public static Method findMethod(@Nonnull Class<?> clazz, @Nonnull String methodName, @Nullable String methodObfName, Class<?>... parameterTypes)
     {
         Preconditions.checkNotNull(clazz);
         Preconditions.checkArgument(StringUtils.isNotEmpty(methodName), "Method name cannot be empty");
-        Preconditions.checkArgument(StringUtils.isNotEmpty(methodObfName), "Obfuscated Method name cannot be empty");
+
+        String nameToFind;
+        if (methodObfName == null || (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment"))
+        {
+            nameToFind = methodName;
+        }
+        else
+        {
+            nameToFind = methodObfName;
+        }
 
         Throwable failed;
-        String nameToFind = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") ? methodName : methodObfName;
         try
         {
             Method m = clazz.getDeclaredMethod(nameToFind, parameterTypes);
@@ -236,10 +240,6 @@ public class ReflectionHelper
             return m;
         }
         catch (Exception e)
-        {
-            failed = e;
-        }
-        catch (LinkageError e)
         {
             failed = e;
         }
