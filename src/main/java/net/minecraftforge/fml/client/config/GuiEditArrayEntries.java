@@ -132,7 +132,36 @@ public class GuiEditArrayEntries extends GuiListExtended
 
     public void addNewEntry(int index)
     {
-        if (configElement.isList() && configElement.getType() == ConfigGuiType.BOOLEAN)
+        if (configElement.isList() && configElement.getArrayEntryClass() != null)
+        {
+            Class<? extends IArrayEntry> clazz = configElement.getArrayEntryClass();
+            try
+            {
+                Object value;
+                switch(configElement.getType())
+                {
+                    case BOOLEAN:
+                        value = true;
+                        break;
+                    case INTEGER:
+                        value = 0;
+                        break;
+                    case DOUBLE:
+                        value = 0.0D;
+                        break;
+                    default:
+                        value = "";
+                        break;
+                }
+                listEntries.add(index, clazz.getConstructor(GuiEditArray.class, GuiEditArrayEntries.class, IConfigElement.class, Object.class).newInstance(this.owningGui, this, configElement, value));
+            }
+            catch (Throwable e)
+            {
+                FMLLog.severe("There was a critical error instantiating the custom IGuiEditListEntry for property %s.", configElement.getName());
+                e.printStackTrace();
+            }
+        }
+        else if (configElement.isList() && configElement.getType() == ConfigGuiType.BOOLEAN)
             listEntries.add(index, new BooleanEntry(this.owningGui, this, this.configElement, true));
         else if (configElement.isList() && configElement.getType() == ConfigGuiType.INTEGER)
             listEntries.add(index, new IntegerEntry(this.owningGui, this, this.configElement, 0));
