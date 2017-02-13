@@ -232,7 +232,6 @@ public class ReflectionHelper
             nameToFind = methodObfName;
         }
 
-        Throwable failed;
         try
         {
             Method m = clazz.getDeclaredMethod(nameToFind, parameterTypes);
@@ -241,8 +240,7 @@ public class ReflectionHelper
         }
         catch (Exception e)
         {
-            failed = e;
+            throw new UnableToFindMethodException(e);
         }
-        throw new UnableToFindMethodException(failed);
     }
 }
