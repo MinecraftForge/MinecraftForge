@@ -75,7 +75,8 @@ public class SideTransformer implements IClassTransformer
                 fields.remove();
             }
         }
-        InvokeDynamicMethodVisitor invokeDynamicMethodVisitor = new InvokeDynamicMethodVisitor();
+
+        LambdaGatherer lambdaGatherer = new LambdaGatherer();
         Iterator<MethodNode> methods = classNode.methods.iterator();
         while(methods.hasNext())
         {
@@ -87,30 +88,21 @@ public class SideTransformer implements IClassTransformer
                     System.out.println(String.format("Removing Method: %s.%s%s", classNode.name, method.name, method.desc));
                 }
                 methods.remove();
-
-                ListIterator<AbstractInsnNode> insnNodeIterator = method.instructions.iterator();
-                while (insnNodeIterator.hasNext())
-                {
-                    AbstractInsnNode insnNode = insnNodeIterator.next();
-                    if (insnNode.getType() == AbstractInsnNode.INVOKE_DYNAMIC_INSN)
-                    {
-                        insnNode.accept(invokeDynamicMethodVisitor);
-                    }
-                }
+                lambdaGatherer.accept(method);
             }
         }
 
         // remove dynamic lambda methods that are inside of removed methods
-        List<String> dynamicLambdaMethodNames = invokeDynamicMethodVisitor.getDynamicLambdaMethodNames();
-        if (!dynamicLambdaMethodNames.isEmpty())
+        List<Handle> dynamicLambdaHandles = lambdaGatherer.getDynamicLambdaHandles();
+        if (!dynamicLambdaHandles.isEmpty())
         {
             methods = classNode.methods.iterator();
             while (methods.hasNext())
             {
                 MethodNode method = methods.next();
-                for (String dynamicLambdaMethodName : dynamicLambdaMethodNames)
+                for (Handle dynamicLambdaHandle : dynamicLambdaHandles)
                 {
-                    if (method.name.equals(dynamicLambdaMethodName))
+                    if (method.name.equals(dynamicLambdaHandle.getName()) && method.desc.equals(dynamicLambdaHandle.getDesc()))
                     {
                         if (DEBUG)
                         {
@@ -160,15 +152,25 @@ public class SideTransformer implements IClassTransformer
         return false;
     }
 
-    private static class InvokeDynamicMethodVisitor extends MethodVisitor
-    {
+    private static class LambdaGatherer extends MethodVisitor {
         private static final Handle META_FACTORY = new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
                 "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;");
-        private final List<String> dynamicLambdaMethodNames = new ArrayList<String>();
+        private final List<Handle> dynamicLambdaHandles = new ArrayList<Handle>();
 
-        public InvokeDynamicMethodVisitor()
-        {
+        public LambdaGatherer() {
             super(Opcodes.ASM5);
+        }
+
+        public void accept(MethodNode method) {
+            ListIterator<AbstractInsnNode> insnNodeIterator = method.instructions.iterator();
+            while (insnNodeIterator.hasNext())
+            {
+                AbstractInsnNode insnNode = insnNodeIterator.next();
+                if (insnNode.getType() == AbstractInsnNode.INVOKE_DYNAMIC_INSN)
+                {
+                    insnNode.accept(this);
+                }
+            }
         }
 
         @Override
@@ -177,13 +179,13 @@ public class SideTransformer implements IClassTransformer
             if (META_FACTORY.equals(bsm))
             {
                 Handle dynamicLambdaHandle = (Handle) bsmArgs[1];
-                dynamicLambdaMethodNames.add(dynamicLambdaHandle.getName());
+                dynamicLambdaHandles.add(dynamicLambdaHandle);
             }
         }
 
-        public List<String> getDynamicLambdaMethodNames()
+        public List<Handle> getDynamicLambdaHandles()
         {
-            return dynamicLambdaMethodNames;
+            return dynamicLambdaHandles;
         }
     }
 }
