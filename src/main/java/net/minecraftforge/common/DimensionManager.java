@@ -133,7 +133,7 @@ public class DimensionManager
     }
 
     /**
-     * Registers a dimension, defaulting the delay to unload to 300 ticks(15 seconds)
+     * Registers a dimension, setting the delay to the value specified in the forge config(default 300 ticks)
      * @param id The ID of the dimension
      * @param type The type of the dimension
      */
@@ -345,7 +345,7 @@ public class DimensionManager
     * To be called by the server at the appropriate time, do not call from mod code.
     */
     public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
-        ArrayList<Integer> toRemove = new ArrayList<Integer>();
+        IntArrayList toRemove = new IntArrayList();
         for (int id : unloadQueue) {
             Dimension dimension = dimensions.get(id);
             if (dimension.ticksWaited != dimension.delayToUnload)
@@ -364,7 +364,8 @@ public class DimensionManager
             try
             {
                 w.saveAllChunks(true, null);
-            } catch (MinecraftException e)
+            }
+            catch (MinecraftException e)
             {
                 e.printStackTrace();
             }
