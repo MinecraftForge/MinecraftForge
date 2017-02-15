@@ -32,14 +32,8 @@ public class EnergyStorage implements IEnergyStorage
     
     public void setEnergy(int energy)
     {
-		this.energy = energy;
-
-		if (this.energy > capacity) {
-			this.energy = capacity;
-		} else if (this.energy < 0) {
-			this.energy = 0;
-		}
-	}
+        this.energy = MathHelper.clamp_int(energy, 0, capacity)
+    }
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate)
