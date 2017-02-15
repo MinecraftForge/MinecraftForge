@@ -32,7 +32,7 @@ public class EnergyStorage implements IEnergyStorage
     
     public void setEnergy(int energy)
     {
-        this.energy = MathHelper.clamp_int(energy, 0, capacity)
+        this.energy = Math.max(0 , Math.min(capacity, energy));
     }
 
     @Override
