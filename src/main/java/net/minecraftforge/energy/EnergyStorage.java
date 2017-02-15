@@ -29,6 +29,17 @@ public class EnergyStorage implements IEnergyStorage
         this.maxReceive = maxReceive;
         this.maxExtract = maxExtract;
     }
+    
+    public void setEnergy(int energy)
+    {
+		this.energy = energy;
+
+		if (this.energy > capacity) {
+			this.energy = capacity;
+		} else if (this.energy < 0) {
+			this.energy = 0;
+		}
+	}
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate)
