@@ -31,6 +31,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.ArrayEntry;
 import net.minecraftforge.fml.common.FMLLog;
 
+import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Keyboard;
 
 import static net.minecraftforge.fml.client.config.GuiUtils.INVALID;
@@ -80,8 +81,7 @@ public class GuiEditArrayEntries extends GuiListExtended
                 }
                 catch (Throwable e)
                 {
-                    FMLLog.severe("There was a critical error instantiating the custom IGuiEditListEntry for property %s.", configElement.getName());
-                    e.printStackTrace();
+                    FMLLog.log(Level.ERROR, e, "There was a critical error instantiating the custom IGuiEditListEntry for property %s.", configElement.getName());
                 }
             }
         }
@@ -138,7 +138,7 @@ public class GuiEditArrayEntries extends GuiListExtended
             try
             {
                 Object value;
-                switch(configElement.getType())
+                switch (configElement.getType())
                 {
                     case BOOLEAN:
                         value = true;
@@ -151,14 +151,12 @@ public class GuiEditArrayEntries extends GuiListExtended
                         break;
                     default:
                         value = "";
-                        break;
                 }
                 listEntries.add(index, clazz.getConstructor(GuiEditArray.class, GuiEditArrayEntries.class, IConfigElement.class, Object.class).newInstance(this.owningGui, this, configElement, value));
             }
             catch (Throwable e)
             {
-                FMLLog.severe("There was a critical error instantiating the custom IGuiEditListEntry for property %s.", configElement.getName());
-                e.printStackTrace();
+                FMLLog.log(Level.ERROR, e, "There was a critical error instantiating the custom IGuiEditListEntry for property %s.", configElement.getName());
             }
         }
         else if (configElement.isList() && configElement.getType() == ConfigGuiType.BOOLEAN)
