@@ -19,12 +19,6 @@
 
 package net.minecraftforge.event;
 
-import java.io.File;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import com.google.common.base.Predicate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
@@ -65,6 +59,7 @@ import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.ClientChatSendingEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.common.MinecraftForge;
@@ -115,6 +110,11 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class ForgeEventFactory
 {
@@ -337,6 +337,13 @@ public class ForgeEventFactory
     {
         ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
+    }
+
+    @Nonnull
+    public static String onClientSendMessage(String message)
+    {
+        ClientChatSendingEvent event = new ClientChatSendingEvent(message);
+        return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
     }
 
     public static int onHoeUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos)
