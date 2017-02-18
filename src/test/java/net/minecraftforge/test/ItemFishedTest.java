@@ -8,10 +8,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.List;
+
 @Mod(modid = "itemfishtest", name = "ItemFishTest", version = "1.0.0")
 public class ItemFishedTest {
 
-    private static final boolean ENABLE = false;
+    private static final boolean ENABLE = true;
 
     @Mod.EventHandler
     public void onInit(FMLInitializationEvent event)
@@ -27,9 +29,10 @@ public class ItemFishedTest {
     public void onItemFished(ItemFishedEvent event)
     {
         System.out.println("Item fished");
-        event.stacks.clear();
-        event.stacks.add(new ItemStack(Items.SLIME_BALL, 2));
-        event.stacks.add(new ItemStack(Items.SNOWBALL, 3));
+        List<ItemStack> stacks = event.getItemStacks();
+        stacks.clear();
+        stacks.add(new ItemStack(Items.SLIME_BALL, 2));
+        stacks.add(new ItemStack(Items.SNOWBALL, 3));
         event.setRodDamage(50);
     }
 }

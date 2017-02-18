@@ -16,7 +16,7 @@
 +                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
  
 -                for (ItemStack itemstack : this.field_70170_p.func_184146_ak().func_186521_a(LootTableList.field_186387_al).func_186462_a(this.field_70146_Z, lootcontext$builder.func_186471_a()))
-+                for (ItemStack itemstack : event.stacks)
++                for (ItemStack itemstack : event.getItemStacks())
                  {
                      EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u, this.field_70161_v, itemstack);
                      double d0 = this.field_146042_b.field_70165_t - this.field_70165_t;

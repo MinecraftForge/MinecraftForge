@@ -30,22 +30,15 @@ import java.util.List;
 
 /**
  * This event is called when a player fishes an item.
- * You can change the items the player will get using {@link #stacks}
+ * You can change the items the player will get using {@link #getItemStacks()}
  * You can also change the damage the rod will take using {@link #setRodDamage(int)}
- *
- * <b>Do not change the BlockPos {@link #pos}.</b> It should only be used to determine the position of the rod
+ * The BlockPos {@link #getPos()} can be used to determine the position of the rod
  *
  * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}
  */
 public class ItemFishedEvent extends PlayerEvent {
-    /**
-     * Use this to set the items the player will get
-     */
-    public final List<ItemStack> stacks = NonNullList.create();
-    /**
-     * Use this to determine the position of the rod
-     */
-    public final BlockPos pos;
+    private final List<ItemStack> stacks = NonNullList.create();
+    private final BlockPos pos;
     private int rodDamage;
 
     public ItemFishedEvent (EntityPlayer player, List<ItemStack> stacks, int rodDamage, double posX, double posY, double posZ)
@@ -73,5 +66,21 @@ public class ItemFishedEvent extends PlayerEvent {
     {
         Preconditions.checkArgument(rodDamage >= 0);
         this.rodDamage = rodDamage;
+    }
+
+    /**
+     * Use this to set the items the player will get
+     */
+    public List<ItemStack> getItemStacks()
+    {
+        return stacks;
+    }
+
+    /**
+     * Use this to determine the position of the rod
+     */
+    public BlockPos getPos()
+    {
+        return pos;
     }
 }
