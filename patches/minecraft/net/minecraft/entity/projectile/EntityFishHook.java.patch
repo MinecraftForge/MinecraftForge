@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
+@@ -506,6 +506,7 @@
+         {
+             int i = 0;
+ 
++            net.minecraftforge.event.entity.player.ItemFishedEvent event = null;
+             if (this.field_146043_c != null)
+             {
+                 this.func_184527_k();
+@@ -516,8 +517,10 @@
+             {
+                 LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.field_70170_p);
+                 lootcontext$builder.func_186469_a((float)this.field_191518_aw + this.field_146042_b.func_184817_da());
++                event = new net.minecraftforge.event.entity.player.ItemFishedEvent(this.field_146042_b, this.field_70170_p.func_184146_ak().func_186521_a(LootTableList.field_186387_al).func_186462_a(this.field_70146_Z, lootcontext$builder.func_186471_a()), this.field_146051_au ? 2 : 1, field_70165_t, field_70163_u, field_70161_v);
++                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
+ 
+-                for (ItemStack itemstack : this.field_70170_p.func_184146_ak().func_186521_a(LootTableList.field_186387_al).func_186462_a(this.field_70146_Z, lootcontext$builder.func_186471_a()))
++                for (ItemStack itemstack : event.stacks)
+                 {
+                     EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u, this.field_70161_v, itemstack);
+                     double d0 = this.field_146042_b.field_70165_t - this.field_70165_t;
+@@ -547,7 +550,7 @@
+             }
+ 
+             this.func_70106_y();
+-            return i;
++            return event == null ? i : event.getRodDamage();
+         }
+         else
+         {
