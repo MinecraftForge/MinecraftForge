@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.event;
 
+import com.google.common.base.Strings;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
@@ -26,9 +27,11 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 public class ClientChatSendingEvent extends Event
 {
     private String message;
+    private String originalMessage;
     public ClientChatSendingEvent(String message)
     {
         this.setMessage(message);
+        this.originalMessage=message;
     }
 
     public String getMessage()
@@ -38,6 +41,11 @@ public class ClientChatSendingEvent extends Event
 
     public void setMessage(String message)
     {
-        this.message = message == null ? "" : message;
+        this.message = Strings.nullToEmpty(message);
+    }
+
+    public String getOriginalMessage()
+    {
+        return originalMessage;
     }
 }

@@ -8,7 +8,7 @@
  
      public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
      {
-@@ -147,7 +148,10 @@
+@@ -147,7 +145,10 @@
              }
          }
  
@@ -20,7 +20,7 @@
      }
  
      protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
-@@ -157,7 +161,13 @@
+@@ -157,7 +158,13 @@
  
      protected void func_146283_a(List<String> p_146283_1_, int p_146283_2_, int p_146283_3_)
      {
@@ -35,12 +35,11 @@
          {
              GlStateManager.func_179101_C();
              RenderHelper.func_74518_a();
-@@ -414,10 +424,13 @@
+@@ -414,10 +421,12 @@
  
      public void func_175281_b(String p_175281_1_, boolean p_175281_2_)
      {
-+        p_175281_1_=net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(p_175281_1_);
-+        if(p_175281_1_.isEmpty())return;
++        if((p_175281_1_=net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(p_175281_1_)).isEmpty())return;
          if (p_175281_2_)
          {
              this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_175281_1_);
@@ -49,7 +48,7 @@
  
          this.field_146297_k.field_71439_g.func_71165_d(p_175281_1_);
      }
-@@ -432,9 +445,15 @@
+@@ -432,9 +441,15 @@
  
                  if (guibutton.func_146116_c(this.field_146297_k, p_73864_1_, p_73864_2_))
                  {
@@ -65,7 +64,7 @@
                  }
              }
          }
-@@ -464,8 +483,12 @@
+@@ -464,8 +479,12 @@
          this.field_146289_q = p_146280_1_.field_71466_p;
          this.field_146294_l = p_146280_2_;
          this.field_146295_m = p_146280_3_;
@@ -78,7 +77,7 @@
      }
  
      public void func_183500_a(int p_183500_1_, int p_183500_2_)
-@@ -484,7 +507,10 @@
+@@ -484,7 +503,10 @@
          {
              while (Mouse.next())
              {
@@ -89,7 +88,7 @@
              }
          }
  
-@@ -492,7 +518,10 @@
+@@ -492,7 +514,10 @@
          {
              while (Keyboard.next())
              {
@@ -100,7 +99,7 @@
              }
          }
      }
-@@ -554,6 +583,7 @@
+@@ -554,6 +579,7 @@
      public void func_146276_q_()
      {
          this.func_146270_b(0);

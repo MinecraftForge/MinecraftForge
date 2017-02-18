@@ -19,6 +19,12 @@
 
 package net.minecraftforge.event;
 
+import java.io.File;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import com.google.common.base.Predicate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
@@ -110,11 +116,6 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 public class ForgeEventFactory
 {
