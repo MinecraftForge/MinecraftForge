@@ -27,11 +27,11 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 public class ClientChatSendingEvent extends Event
 {
     private String message;
-    private String originalMessage;
+    private final String originalMessage;
     public ClientChatSendingEvent(String message)
     {
         this.setMessage(message);
-        this.originalMessage=message;
+        this.originalMessage = Strings.nullToEmpty(message);
     }
 
     public String getMessage()
