@@ -13,7 +13,7 @@
                                  }
  
 -                                if (this.field_145810_d != null && block instanceof ITileEntityProvider)
-+                                if (this.field_145810_d != null && block.hasTileEntity(iblockstate))
++                                if (this.field_145810_d != null && block.hasTileEntity(this.field_175132_d))
                                  {
                                      TileEntity tileentity = this.field_70170_p.func_175625_s(blockpos1);
  
