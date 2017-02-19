@@ -20,10 +20,9 @@
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnegative;
 import java.util.List;
@@ -32,21 +31,21 @@ import java.util.List;
  * This event is called when a player fishes an item.
  * You can change the items the player will get using {@link #getItemStacks()}
  * You can also change the damage the rod will take using {@link #setRodDamage(int)}
- * The BlockPos {@link #getPos()} can be used to determine the position of the rod
+ * You can use {@link #getHookEntity()} to get stuff based on the entity, like {@link EntityFishHook#fishApproachAngle}
  *
  * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}
  */
 public class ItemFishedEvent extends PlayerEvent {
     private final List<ItemStack> stacks = NonNullList.create();
-    private final BlockPos pos;
+    private final EntityFishHook hook;
     private int rodDamage;
 
-    public ItemFishedEvent (EntityPlayer player, List<ItemStack> stacks, int rodDamage, double posX, double posY, double posZ)
+    public ItemFishedEvent (List<ItemStack> stacks, int rodDamage, EntityFishHook hook)
     {
-        super(player);
+        super(hook.getAngler());
         this.stacks.addAll(stacks);
         this.rodDamage = rodDamage;
-        pos = new BlockPos(posX, posY, posZ);
+        this.hook = hook;
     }
 
     /**
@@ -77,10 +76,10 @@ public class ItemFishedEvent extends PlayerEvent {
     }
 
     /**
-     * Use this to determine the position of the rod
+     * Use this to stuff related to the hook itself, like the position of the bobber
      */
-    public BlockPos getPos()
+    public EntityFishHook getHookEntity()
     {
-        return pos;
+        return hook;
     }
 }
