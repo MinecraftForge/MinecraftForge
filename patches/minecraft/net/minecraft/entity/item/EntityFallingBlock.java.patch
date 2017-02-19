@@ -8,3 +8,12 @@
                      if (BlockFalling.func_185759_i(this.field_70170_p.func_180495_p(new BlockPos(this.field_70165_t, this.field_70163_u - 0.009999999776482582D, this.field_70161_v))))
                      {
                          this.field_70122_E = false;
+@@ -159,7 +160,7 @@
+                                     ((BlockFalling)block).func_176502_a_(this.field_70170_p, blockpos1);
+                                 }
+ 
+-                                if (this.field_145810_d != null && block instanceof ITileEntityProvider)
++                                if (this.field_145810_d != null && block.hasTileEntity(iblockstate))
+                                 {
+                                     TileEntity tileentity = this.field_70170_p.func_175625_s(blockpos1);
+ 
