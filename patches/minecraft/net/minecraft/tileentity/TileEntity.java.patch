@@ -160,7 +160,7 @@
 +            net.minecraft.util.math.AxisAlignedBB cbb = null;
 +            try
 +            {
-+                cbb = field_145850_b.func_180495_p(func_174877_v()).func_185890_d(field_145850_b, pos).func_72321_a(pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p());
++                cbb = field_145850_b.func_180495_p(func_174877_v()).func_185890_d(field_145850_b, pos).func_186670_a(pos);
 +            }
 +            catch (Exception e)
 +            {
