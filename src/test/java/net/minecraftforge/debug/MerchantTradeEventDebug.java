@@ -1,7 +1,6 @@
 package net.minecraftforge.debug;
 
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.entity.player.MerchantTradeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -17,7 +16,7 @@ public class MerchantTradeEventDebug
     public static final String MODID = "merchanttradeeventdebug";
 
     @SubscribeEvent
-    public void onMerchantTradeDone(MerchantTradeEvent.Done event)
+    public void onMerchantTradeDone(MerchantTradeEvent.Transact event)
     {
         event.getEntityPlayer().sendMessage(new TextComponentString(String.format(Locale.ENGLISH, "Trade: %s + %s = %s", event.getTrade().getItemToBuy(), event.getTrade().getSecondItemToBuy(), event.getTrade().getItemToSell())));
         // Not a practical code. Only for debug.
@@ -30,7 +29,7 @@ public class MerchantTradeEventDebug
     }
 
     @SubscribeEvent
-    public void checkMerchantTrade(MerchantTradeEvent.CanTrade event)
+    public void checkMerchantTrade(MerchantTradeEvent.SetupOffer event)
     {
         if(event.getEntityPlayer().experienceLevel < 1){
             event.setResult(Event.Result.DENY);

@@ -537,14 +537,14 @@ public class ForgeEventFactory
 
     public static Result checkMerchantTrade(IMerchant merchant, MerchantRecipe trade, ItemStack left, ItemStack right)
     {
-        MerchantTradeEvent.CanTrade event = new MerchantTradeEvent.CanTrade(merchant, trade, left, right);
+        MerchantTradeEvent.SetupOffer event = new MerchantTradeEvent.SetupOffer(merchant, trade, left, right);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
     }
 
     public static boolean onMerchantTrade(InventoryMerchant inventory, IMerchant merchant, MerchantRecipe trade, ItemStack left, ItemStack right)
     {
-        MerchantTradeEvent.Done event = new MerchantTradeEvent.Done(merchant, trade, left, right);
+        MerchantTradeEvent.Transact event = new MerchantTradeEvent.Transact(merchant, trade, left, right);
         MinecraftForge.EVENT_BUS.post(event);
         if (event.getChangedLeft() != null)
             inventory.setInventorySlotContents(0, event.getChangedLeft());

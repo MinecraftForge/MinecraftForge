@@ -86,7 +86,7 @@ public class MerchantTradeEvent extends PlayerEvent
 
 
     /**
-     * MerchantTradeEvent.CanTrade is fired before the result of trade appears.
+     * MerchantTradeEvent.SetupOffer is fired before the result of trade appears.
      * <br>
      * The event is fired during the {@link InventoryMerchant#resetRecipeAndSlots()} method invocation.<br>
      * <br>
@@ -99,16 +99,16 @@ public class MerchantTradeEvent extends PlayerEvent
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
     @HasResult
-    public static class CanTrade extends MerchantTradeEvent
+    public static class SetupOffer extends MerchantTradeEvent
     {
-        public CanTrade(@Nonnull IMerchant merchant, @Nonnull MerchantRecipe trade, @Nonnull ItemStack first, @Nonnull ItemStack second)
+        public SetupOffer(@Nonnull IMerchant merchant, @Nonnull MerchantRecipe trade, @Nonnull ItemStack first, @Nonnull ItemStack second)
         {
             super(merchant, trade, first, second);
         }
     }
 
     /**
-     * MerchantTradeEvent.Done is fired after the player takes itemstack.
+     * MerchantTradeEvent.Transact is fired after the player takes itemstack.
      * <br>
      * The event is fired during the {@link SlotMerchantResult#onTake(EntityPlayer, ItemStack)} method invocation.<br>
      * <br>
@@ -120,12 +120,12 @@ public class MerchantTradeEvent extends PlayerEvent
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
     @Cancelable
-    public static class Done extends MerchantTradeEvent
+    public static class Transact extends MerchantTradeEvent
     {
         private ItemStack changedLeft = null;
         private ItemStack changedRight = null;
 
-        public Done(@Nonnull IMerchant merchant, @Nonnull MerchantRecipe trade, @Nonnull ItemStack first, @Nonnull ItemStack second)
+        public Transact(@Nonnull IMerchant merchant, @Nonnull MerchantRecipe trade, @Nonnull ItemStack first, @Nonnull ItemStack second)
         {
             super(merchant, trade, first, second);
         }
