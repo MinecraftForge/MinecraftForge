@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/client/particle/Particle.java
++++ ../src-work/minecraft/net/minecraft/client/particle/Particle.java
+@@ -283,6 +283,8 @@
+     public void func_187110_a(double p_187110_1_, double p_187110_3_, double p_187110_5_)
+     {
+         double d0 = p_187110_3_;
++        double origX = p_187110_1_;
++        double origZ = p_187110_5_;
+ 
+         if (this.field_190017_n)
+         {
+@@ -315,14 +317,14 @@
+         }
+ 
+         this.func_187118_j();
+-        this.field_187132_l = p_187110_3_ != p_187110_3_ && d0 < 0.0D;
++        this.field_187132_l = d0 != p_187110_3_ && d0 < 0.0D;
+ 
+-        if (p_187110_1_ != p_187110_1_)
++        if (origX != p_187110_1_)
+         {
+             this.field_187129_i = 0.0D;
+         }
+ 
+-        if (p_187110_5_ != p_187110_5_)
++        if (origZ != p_187110_5_)
+         {
+             this.field_187131_k = 0.0D;
+         }
