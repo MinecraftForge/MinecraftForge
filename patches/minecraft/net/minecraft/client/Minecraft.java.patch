@@ -219,14 +219,14 @@
              }
  
              this.field_71424_I.func_76318_c("gameRenderer");
-@@ -1818,6 +1843,7 @@
-             this.field_71453_ak.func_74428_b();
+@@ -1819,6 +1844,7 @@
          }
  
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostClientTick();
          this.field_71424_I.func_76319_b();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostClientTick();
          this.field_71423_H = func_71386_F();
      }
+ 
 @@ -1924,6 +1950,7 @@
                      }
                  }
