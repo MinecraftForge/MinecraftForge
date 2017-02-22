@@ -1,14 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomePlains.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomePlains.java
-@@ -72,6 +72,7 @@
+@@ -72,7 +72,8 @@
              this.field_76760_I.field_76803_B = 10;
              field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.GRASS);
  
-+            if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
-             for (int i = 0; i < 7; ++i)
+-            for (int i = 0; i < 7; ++i)
++            int moddedAmount = net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS, 7, field_180280_ag, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.Generator.Position.ANYWHERE);
++            for (int i = 0; i < moddedAmount; ++i)
              {
                  int j = p_180624_2_.nextInt(16) + 8;
-@@ -81,7 +82,7 @@
+                 int k = p_180624_2_.nextInt(16) + 8;
+@@ -81,11 +82,12 @@
              }
          }
  
@@ -17,7 +19,13 @@
          {
              field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.SUNFLOWER);
  
-@@ -97,6 +98,21 @@
+-            for (int i1 = 0; i1 < 10; ++i1)
++            int moddedAmount = net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS, 10, field_180280_ag, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.Generator.Position.ANYWHERE);
++            for (int i1 = 0; i1 < moddedAmount; ++i1)
+             {
+                 int j1 = p_180624_2_.nextInt(16) + 8;
+                 int k1 = p_180624_2_.nextInt(16) + 8;
+@@ -97,6 +99,21 @@
          super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
      }
  

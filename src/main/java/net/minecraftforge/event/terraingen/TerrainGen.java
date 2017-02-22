@@ -55,11 +55,37 @@ public abstract class TerrainGen
         return event.getResult() != Result.DENY;
     }
 
+    /**
+     * This call lacks amount data and should not be used any longer.
+     * It's kept for legacy purposes.
+     */
+    @Deprecated
     public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type)
     {
         Decorate event = new Decorate(world, rand, pos, type);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
+    }
+
+    public static int decorate(Decorate event)
+    {
+        MinecraftForge.TERRAIN_GEN_BUS.post(event);
+        return event.getResult() != Result.DENY ? event.getModifiedAmount() : -1;
+    }
+
+    public static int mushroom(World world, Random rand, BlockPos pos, WorldGenerator generator, Decorate.Generator.Position position, int amount)
+    {
+        return decorate(new Decorate.Generator(world, rand, pos, Decorate.EventType.SHROOM, amount, generator, position));
+    }
+
+    public static int decorate(World world, Random rand, BlockPos pos, Decorate.EventType type, int amount, WorldGenerator generator, Decorate.Generator.Position position)
+    {
+        return decorate(new Decorate.Generator(world, rand, pos, type, amount, generator, position));
+    }
+
+    public static int decorate(World world, Random rand, BlockPos pos, Decorate.EventType type, int amount)
+    {
+        return decorate(new Decorate(world, rand, pos, type, amount));
     }
 
     public static boolean generateOre(World world, Random rand, WorldGenerator generator, BlockPos pos, GenerateMinable.EventType type)
