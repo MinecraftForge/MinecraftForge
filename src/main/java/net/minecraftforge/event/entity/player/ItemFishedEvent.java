@@ -35,12 +35,13 @@ import java.util.List;
  *
  * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}
  */
-public class ItemFishedEvent extends PlayerEvent {
+public class ItemFishedEvent extends PlayerEvent
+{
     private final List<ItemStack> stacks = NonNullList.create();
     private final EntityFishHook hook;
     private int rodDamage;
 
-    public ItemFishedEvent (List<ItemStack> stacks, int rodDamage, EntityFishHook hook)
+    public ItemFishedEvent(List<ItemStack> stacks, int rodDamage, EntityFishHook hook)
     {
         super(hook.getAngler());
         this.stacks.addAll(stacks);
@@ -61,7 +62,7 @@ public class ItemFishedEvent extends PlayerEvent {
      * Set the damage the fishing rod will take
      * @param rodDamage The damage the rod will take. Must be greater or equals zero
      */
-    public void setRodDamage (@Nonnegative int rodDamage)
+    public void setRodDamage(@Nonnegative int rodDamage)
     {
         Preconditions.checkArgument(rodDamage >= 0);
         this.rodDamage = rodDamage;

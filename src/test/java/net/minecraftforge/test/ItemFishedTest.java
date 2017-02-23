@@ -11,7 +11,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.List;
 
 @Mod(modid = "itemfishtest", name = "ItemFishTest", version = "1.0.0")
-public class ItemFishedTest {
+public class ItemFishedTest
+{
 
     private static final boolean ENABLE = true;
 
