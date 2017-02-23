@@ -134,6 +134,10 @@ public class ConfigManager
                 String name = (String)targ.getAnnotationInfo().get("name");
                 if (name == null)
                     name = modid;
+                String category = (String)targ.getAnnotationInfo().get("category");
+                if (category == null || category.isEmpty()) {
+                    category = "general";
+                }
                 File file = new File(configDir, name + ".cfg");
 
                 Configuration cfg = CONFIGS.get(file.getAbsolutePath());
@@ -144,7 +148,7 @@ public class ConfigManager
                     CONFIGS.put(file.getAbsolutePath(), cfg);
                 }
 
-                createConfig(cfg, cls, modid, type == Config.Type.INSTANCE);
+                createConfig(cfg, cls, modid, type == Config.Type.INSTANCE, category);
 
                 cfg.save();
 
@@ -160,9 +164,8 @@ public class ConfigManager
     // =======================================================
     //                    INTERNAL
     // =======================================================
-    private static void createConfig(Configuration cfg, Class<?> cls, String modid, boolean isStatic)
+    private static void createConfig(Configuration cfg, Class<?> cls, String modid, boolean isStatic, String category)
     {
-        String category = "general";
         for (Field f : cls.getDeclaredFields())
         {
             if (!Modifier.isPublic(f.getModifiers()))
@@ -238,7 +241,12 @@ public class ConfigManager
         }
         else if (ftype.getSuperclass() == Object.class) //Only support classes that are one level below Object.
         {
-            String sub = category + "." + f.getName().toLowerCase(Locale.ENGLISH);
+            String sub;
+            if (ftype.isAnnotationPresent(Config.Categorized.class)) {
+                sub = category + "." + ftype.getAnnotation(Config.Categorized.class).value();
+            } else {
+                sub = category + "." + f.getName().toLowerCase(Locale.ENGLISH);
+            }
             Object sinst = get(instance, f);
             for (Field sf : ftype.getDeclaredFields())
             {

@@ -39,6 +39,11 @@ public @interface Config
     String name() default "";
 
     /**
+     * The category for this config item
+     */
+    String category() default "general";
+
+    /**
      * The type this is, right now the only value is INSTANCE.
      * This is intended to be expanded upon later for more Forge controlled
      * configs.
@@ -87,5 +92,11 @@ public @interface Config
     {
     	double min() default Double.MIN_VALUE;
     	double max() default Double.MAX_VALUE;
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface Categorized {
+        String value() default "general";
     }
 }
