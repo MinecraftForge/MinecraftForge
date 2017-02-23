@@ -357,7 +357,11 @@ public class SplashProgress
                         clearGL();
                         setGL();
                     }
-                    Display.sync(100);
+                    try
+                    {
+                        Thread.sleep(10);
+                    }
+                    catch (InterruptedException ignored) { }
                 }
                 clearGL();
             }
