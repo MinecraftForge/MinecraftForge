@@ -71,4 +71,24 @@ public class ConfigTest
         @Comment({"This is a really long", "Multi-line comment"})
         public static String Comments = "Hi Tv!";
     }
+    @Config(modid = MODID, name = MODID + "_subcats", category = "")
+    public static class CONFIG_SUBCATS
+    {
+        //public static String THIS_WILL_ERROR = "DUH";
+
+        @Name("test_a")
+        public static SubCat sub1 = new SubCat("Hello");
+        @Name("test_b")
+        public static SubCat sub2 = new SubCat("Goodbye");
+
+        public static class SubCat
+        {
+            @Name("i_say")
+            public static String value;
+            public SubCat(String value)
+            {
+                this.value = value;
+            }
+        }
+    }
 }
