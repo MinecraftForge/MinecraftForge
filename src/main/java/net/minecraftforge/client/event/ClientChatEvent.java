@@ -24,11 +24,11 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
-public class ClientChatSendingEvent extends Event
+public class ClientChatEvent extends Event
 {
     private String message;
     private final String originalMessage;
-    public ClientChatSendingEvent(String message)
+    public ClientChatEvent(String message)
     {
         this.setMessage(message);
         this.originalMessage = Strings.nullToEmpty(message);
