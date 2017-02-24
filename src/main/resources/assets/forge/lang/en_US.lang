@@ -47,6 +47,7 @@ forge.configgui.zombieBaseSummonChance=Zombie Summon Chance
 forge.configgui.stencilbits=Enable GL Stencil Bits
 forge.configgui.replaceBuckets=Use Forge's bucket model
 forge.configgui.forgeLightPipelineEnabled=Forge Light Pipeline Enabled
+forge.configgui.forgeCloudsEnabled=Use Forge's cloud renderer
 forge.configgui.java8Reminder=Java 8 Reminder timestamp
 forge.configgui.disableStairSlabCulling=Disable Stair/Slab culling.
 forge.configgui.zoomInMissingModelTextInGui=Zoom in Missing model text in the GUI

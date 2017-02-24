@@ -50,6 +50,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
@@ -64,6 +65,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
@@ -113,6 +115,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
     public static boolean zoomInMissingModelTextInGui = false;
+    public static boolean forgeCloudsEnabled = true;
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
@@ -304,6 +307,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.setLanguageKey("forge.configgui.zoomInMissingModelTextInGui");
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_CLIENT, "forgeCloudsEnabled", true,
+                "Enable uploading cloud geometry to the GPU for faster rendering.");
+        prop.setLanguageKey("forge.configgui.forgeCloudsEnabled");
+        forgeCloudsEnabled = prop.getBoolean();
+        propOrder.add(prop.getName());
+
         prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", 0,
                 "The timestamp of the last reminder to update to Java 8 in number of milliseconds since January 1, 1970, 00:00:00 GMT. Nag will show only once every 24 hours. To disable it set this to some really high number.");
         java8Reminder = prop.getLong(0);
@@ -486,6 +495,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             RecipeSorter.sortCraftManager();
         }
         FluidRegistry.validateFluidRegistry();
+
+        if (evt.getSide() == Side.CLIENT)
+        {
+            CloudRenderer.init();
+        }
     }
 
     @Subscribe
