@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -856,7 +857,7 @@ public class ForgeHooks
             {
                 ret = EnumActionResult.FAIL; // cancel placement
                 // revert back all captured blocks
-                for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : blockSnapshots)
+                for (BlockSnapshot blocksnapshot : Lists.reverse(blockSnapshots))
                 {
                     world.restoringBlockSnapshots = true;
                     blocksnapshot.restore(true, false);
