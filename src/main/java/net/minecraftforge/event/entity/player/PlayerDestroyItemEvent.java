@@ -22,9 +22,7 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -44,13 +42,15 @@ import javax.annotation.Nullable;
 /**
  * PlayerDestroyItemEvent is fired when a player destroys an item.<br>
  * This event is fired whenever a player destroys an item in
- * {@link PlayerControllerMP#processRightClick(EntityPlayer, World, ItemStack, EnumHand)},
- * {@link PlayerControllerMP#processRightClickBlock(EntityPlayerSP, WorldClient, ItemStack, BlockPos, EnumFacing, Vec3d, EnumHand)},
+ * {@link PlayerControllerMP#onPlayerDestroyBlock(BlockPos)},
+ * {@link PlayerControllerMP#processRightClick(EntityPlayer, World, EnumHand)},
+ * {@link PlayerControllerMP#processRightClickBlock(EntityPlayerSP, WorldClient, BlockPos, EnumFacing, Vec3d, EnumHand)},
+ * {@link EntityPlayer#attackTargetEntityWithCurrentItem(Entity)},
  * {@link EntityPlayer#damageShield(float)},
+ * {@link EntityPlayer#interactOn(Entity, EnumHand)},
  * {@link ForgeHooks#getContainerItem(ItemStack)},
- * {@link PlayerInteractionManager#processRightClick(EntityPlayer, World, ItemStack, EnumHand)},
- * {@link NetHandlerPlayServer#processPlayerBlockPlacement(CPacketPlayerTryUseItem)}
- * and {@link NetHandlerPlayServer#processRightClickBlock(CPacketPlayerTryUseItemOnBlock)}.<br>
+ * {@link PlayerInteractionManager#processRightClick(EntityPlayer, World, ItemStack, EnumHand)}
+ * and {@link PlayerInteractionManager#tryHarvestBlock(BlockPos)}.<br>
  * <br>
  * {@link #original} contains the original ItemStack before the item was destroyed. <br>
  * (@link #hand) contains the hand that the current item was held in.<br>
