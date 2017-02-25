@@ -80,6 +80,7 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
+import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
@@ -204,6 +205,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private WeakReference<NetHandlerPlayClient> currentPlayClient;
 
+    private CloudRenderer cloudRenderer;
+
     /**
      * Called to start the whole game off
      *
@@ -300,6 +303,8 @@ public class FMLClientHandler implements IFMLSidedHandler
                 sharedModList.put(sharedModId, sharedModDescriptor);
             }
         }
+
+        cloudRenderer = new CloudRenderer(resourceManager);
     }
 
     private void detectOptifine()
@@ -1113,5 +1118,16 @@ public class FMLClientHandler implements IFMLSidedHandler
     public boolean isDisplayVSyncForced()
     {
         return SplashProgress.isDisplayVSyncForced;
+    }
+
+    public boolean renderClouds(int cloudTicks, float partialTicks)
+    {
+        net.minecraftforge.client.IRenderHandler renderer = this.client.world.provider.getCloudRenderer();
+        if (renderer != null)
+        {
+            renderer.render(partialTicks, this.client.world, this.client);
+            return true;
+        }
+        return cloudRenderer.render(cloudTicks, partialTicks);
     }
 }

@@ -495,11 +495,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             RecipeSorter.sortCraftManager();
         }
         FluidRegistry.validateFluidRegistry();
-
-        if (evt.getSide() == Side.CLIENT)
-        {
-            CloudRenderer.init();
-        }
     }
 
     @Subscribe

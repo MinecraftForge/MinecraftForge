@@ -47,18 +47,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
 public class CloudRenderer implements IResourceManagerReloadListener
 {
-    private static CloudRenderer instance;
-
-    public static void init()
-    {
-        instance = new CloudRenderer();
-    }
-
-    public static CloudRenderer instance()
-    {
-        return instance;
-    }
-
     // Shared constants.
     private static final float PX_SIZE = 1 / 256F;
 
@@ -85,9 +73,9 @@ public class CloudRenderer implements IResourceManagerReloadListener
     private int texW;
     private int texH;
 
-    public CloudRenderer()
+    public CloudRenderer(IReloadableResourceManager resourceManager)
     {
-        ((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(this);
+        resourceManager.registerReloadListener(this);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -464,9 +452,12 @@ public class CloudRenderer implements IResourceManagerReloadListener
 
     private void reloadTextures()
     {
-        mc.renderEngine.bindTexture(texture);
-        texW = GlStateManager.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
-        texH = GlStateManager.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+        if (mc.renderEngine != null)
+        {
+            mc.renderEngine.bindTexture(texture);
+            texW = GlStateManager.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+            texH = GlStateManager.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+        }
     }
 
     @Override
