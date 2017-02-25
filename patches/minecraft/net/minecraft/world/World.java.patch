@@ -304,18 +304,35 @@
          float f3 = (float)(l >> 16 & 255) / 255.0F;
          float f4 = (float)(l >> 8 & 255) / 255.0F;
          float f5 = (float)(l & 255) / 255.0F;
-@@ -1449,6 +1535,11 @@
+@@ -1438,20 +1524,25 @@
+ 
+     public float func_72826_c(float p_72826_1_)
+     {
+-        return this.field_73011_w.func_76563_a(this.field_72986_A.func_76073_f(), p_72826_1_);
++        return this.field_73011_w.func_76563_a(this.func_72820_D(), p_72826_1_);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public int func_72853_d()
+     {
+-        return this.field_73011_w.func_76559_b(this.field_72986_A.func_76073_f());
++        return this.field_73011_w.func_76559_b(this.func_72820_D());
+     }
  
      public float func_130001_d()
      {
+-        return WorldProvider.field_111203_a[this.field_73011_w.func_76559_b(this.field_72986_A.func_76073_f())];
 +        return field_73011_w.getCurrentMoonPhaseFactor();
-+    }
-+
-+    public float getCurrentMoonPhaseFactorBody()
-+    {
-         return WorldProvider.field_111203_a[this.field_73011_w.func_76559_b(this.field_72986_A.func_76073_f())];
      }
  
++    public float getCurrentMoonPhaseFactorBody()
++    {
++        return WorldProvider.field_111203_a[this.field_73011_w.func_76559_b(this.func_72820_D())];
++    }
++
+     public float func_72929_e(float p_72929_1_)
+     {
+         float f = this.func_72826_c(p_72929_1_);
 @@ -1461,6 +1552,12 @@
      @SideOnly(Side.CLIENT)
      public Vec3d func_72824_f(float p_72824_1_)

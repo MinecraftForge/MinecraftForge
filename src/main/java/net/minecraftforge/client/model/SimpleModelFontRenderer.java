@@ -71,6 +71,7 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
         float ht = h  / 128f;
 
         UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
+        quadBuilder.setTexture(sprite);
         quadBuilder.setQuadOrientation(orientation);
 
         addVertex(quadBuilder, posX + sh,     posY,     x,      y);
@@ -84,6 +85,7 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
             float cuv = 15f / 16f;
 
             quadBuilder = new UnpackedBakedQuad.Builder(format);
+            quadBuilder.setTexture(sprite);
             quadBuilder.setQuadOrientation(orientation);
 
             addVertex(quadBuilder, posX + w + sh,              posY,     cuv, cuv);
@@ -93,6 +95,7 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
             builder.add(quadBuilder.build());
 
             quadBuilder = new UnpackedBakedQuad.Builder(format);
+            quadBuilder.setTexture(sprite);
             quadBuilder.setQuadOrientation(orientation);
 
             addVertex(quadBuilder, posX + sh,                  posY + h,           cuv, cuv);
