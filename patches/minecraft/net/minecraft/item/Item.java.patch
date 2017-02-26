@@ -680,7 +680,7 @@
 +     */
 +    public boolean canDisableShield(ItemStack stack, ItemStack shield, Entity entity, Entity attacker)
 +    {
-+    	return this instanceof ItemAxe;
++        return this instanceof ItemAxe;
 +    }
 +
 +    /* ======================================== FORGE END   =====================================*/
