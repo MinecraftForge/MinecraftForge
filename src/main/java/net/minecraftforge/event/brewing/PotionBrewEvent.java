@@ -42,7 +42,7 @@ public class PotionBrewEvent extends Event
     @Nonnull
     public ItemStack getItem(int index)
     {
-        if (index >= stacks.size()) return ItemStack.EMPTY;
+        if (index < 0 || index >= stacks.size()) return ItemStack.EMPTY;
         return stacks.get(index);
     }
 

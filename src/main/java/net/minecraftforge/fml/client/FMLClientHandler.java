@@ -96,6 +96,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.MissingModsException;
+import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -134,6 +135,8 @@ import com.google.common.collect.Table;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import javax.annotation.Nullable;
 
 
 /**
@@ -182,6 +185,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     private CustomModLoadingErrorDisplayException customError;
 
     private DuplicateModsFoundException dupesFound;
+
+    private MultipleModsErrored multipleModsErrored;
 
     private boolean serverShouldBeKilledQuietly;
 
@@ -250,6 +255,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
             customError = custom;
+        }
+        catch (MultipleModsErrored multiple)
+        {
+            multipleModsErrored = multiple;
         }
         catch (LoaderException le)
         {
@@ -331,7 +340,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void finishMinecraftLoading()
     {
-        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null || j8onlymods!=null)
+        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null || j8onlymods!=null || multipleModsErrored !=null)
         {
             SplashProgress.finish();
             return;
@@ -439,6 +448,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             showGuiScreen(new GuiCustomModLoadingErrorScreen(customError));
         }
+        else if (multipleModsErrored != null)
+        {
+            showGuiScreen(new GuiMultipleModsErrored(multipleModsErrored));
+        }
         else
         {
             logMissingTextureErrors();
@@ -512,7 +525,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     @Override
-    public void showGuiScreen(Object clientGuiElement)
+    public void showGuiScreen(@Nullable Object clientGuiElement)
     {
         GuiScreen gui = (GuiScreen) clientGuiElement;
         client.displayGuiScreen(gui);
@@ -813,6 +826,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     private static final ResourceLocation iconSheet = new ResourceLocation("fml:textures/gui/icons.png");
     private static final CountDownLatch startupConnectionData = new CountDownLatch(1);
 
+    @Nullable
     public String enhanceServerListEntry(ServerListEntryNormal serverListEntry, ServerData serverEntry, int x, int width, int y, int relativeMouseX, int relativeMouseY)
     {
         String tooltip;

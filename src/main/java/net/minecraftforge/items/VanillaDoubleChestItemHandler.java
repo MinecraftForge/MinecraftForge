@@ -32,6 +32,7 @@ import java.lang.ref.WeakReference;
 import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandlerModifiable
 {
@@ -41,7 +42,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     private final TileEntityChest mainChest;
     private final int hashCode;
 
-    public VanillaDoubleChestItemHandler(TileEntityChest mainChest, TileEntityChest other, boolean mainChestIsUpper)
+    public VanillaDoubleChestItemHandler(@Nullable TileEntityChest mainChest, @Nullable TileEntityChest other, boolean mainChestIsUpper)
     {
         super(other);
         this.mainChest = mainChest;
@@ -49,6 +50,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         hashCode = Objects.hashCode(mainChestIsUpper ? mainChest : other) * 31 + Objects.hashCode(!mainChestIsUpper ? mainChest : other);
     }
 
+    @Nullable
     public static VanillaDoubleChestItemHandler get(TileEntityChest chest)
     {
         World world = chest.getWorld();
@@ -81,6 +83,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         return NO_ADJACENT_CHESTS_INSTANCE; //All alone
     }
 
+    @Nullable
     public TileEntityChest getChest(boolean accessingUpper)
     {
         if (accessingUpper == mainChestIsUpper)
@@ -91,6 +94,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         }
     }
 
+    @Nullable
     private TileEntityChest getOtherChest()
     {
         TileEntityChest tileEntityChest = get();

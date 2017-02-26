@@ -32,6 +32,8 @@ import java.util.Set;
 
 import net.minecraft.stats.Achievement;
 
+import javax.annotation.Nullable;
+
 public class AchievementPage
 {
     private String name;
@@ -83,6 +85,7 @@ public class AchievementPage
      * @param name The page's name.
      * @return the achievement page with the given name or null if no such page
      */
+    @Nullable
     public static AchievementPage getAchievementPage(String name)
     {
         for (AchievementPage page : achievementPages)

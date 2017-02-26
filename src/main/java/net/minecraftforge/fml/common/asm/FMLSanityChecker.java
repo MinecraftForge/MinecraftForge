@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.common.asm;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.security.CodeSource;
@@ -29,6 +28,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import net.minecraftforge.common.util.Java6Utils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
@@ -146,7 +146,7 @@ public class FMLSanityChecker implements IFMLCallHook
             }
             finally
             {
-                IOUtils.closeQuietly(mcJarFile);
+                Java6Utils.closeZipQuietly(mcJarFile);
             }
         }
         else

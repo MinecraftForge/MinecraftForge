@@ -22,6 +22,8 @@ package net.minecraftforge.fml.client.config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 
+import javax.annotation.Nullable;
+
 /**
  * This class is blatantly stolen from iChunUtils with permission.
  *
@@ -42,6 +44,7 @@ public class GuiSlider extends GuiButtonExt
     public double maxValue = 5.0D;
     public int precision = 1;
 
+    @Nullable
     public ISlider parent = null;
 
     public String suffix = "";
@@ -53,7 +56,7 @@ public class GuiSlider extends GuiButtonExt
         this(id, xPos, yPos, width, height, prefix, suf, minVal, maxVal, currentVal, showDec, drawStr, null);
     }
 
-    public GuiSlider(int id, int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, ISlider par)
+    public GuiSlider(int id, int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, @Nullable ISlider par)
     {
         super(id, xPos, yPos, width, height, prefix);
         minValue = minVal;

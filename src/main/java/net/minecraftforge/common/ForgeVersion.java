@@ -47,6 +47,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 
+import javax.annotation.Nullable;
+
 public class ForgeVersion
 {
     // This is Forge's Mod Id, used for the ForgeModContainer and resource locations
@@ -93,6 +95,7 @@ public class ForgeVersion
         return getResult(ForgeModContainer.getInstance()).status;
     }
 
+    @Nullable
     public static String getTarget()
     {
         CheckResult res = getResult(ForgeModContainer.getInstance());
@@ -159,15 +162,17 @@ public class ForgeVersion
     public static class CheckResult
     {
         public final Status status;
+        @Nullable
         public final ComparableVersion target;
         public final Map<ComparableVersion, String> changes;
+        @Nullable
         public final String url;
 
-        private CheckResult(Status status, ComparableVersion target, Map<ComparableVersion, String> changes, String url)
+        private CheckResult(Status status, @Nullable ComparableVersion target, @Nullable Map<ComparableVersion, String> changes, @Nullable String url)
         {
             this.status = status;
             this.target = target;
-            this.changes = changes == null ? null : Collections.unmodifiableMap(changes);
+            this.changes = changes == null ? Collections.<ComparableVersion, String>emptyMap() : Collections.unmodifiableMap(changes);
             this.url = url;
         }
     }

@@ -30,6 +30,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import javax.annotation.Nullable;
+
 /**
  * Represents a captured snapshot of a block which will not change
  * automatically.
@@ -46,6 +48,7 @@ public class BlockSnapshot implements Serializable
     private final int dimId;
     private transient IBlockState replacedBlock;
     private int flag;
+    @Nullable
     private final NBTTagCompound nbt;
     private transient World world;
     private final ResourceLocation registryName;
@@ -73,7 +76,7 @@ public class BlockSnapshot implements Serializable
         }
     }
 
-    public BlockSnapshot(World world, BlockPos pos, IBlockState state, NBTTagCompound nbt)
+    public BlockSnapshot(World world, BlockPos pos, IBlockState state, @Nullable NBTTagCompound nbt)
     {
         this.setWorld(world);
         this.dimId = world.provider.getDimension();
@@ -98,7 +101,7 @@ public class BlockSnapshot implements Serializable
     /**
      * Raw constructor designed for serialization usages.
      */
-    public BlockSnapshot(int dimension, BlockPos pos, String modId, String blockName, int meta, int flag, NBTTagCompound nbt)
+    public BlockSnapshot(int dimension, BlockPos pos, String modId, String blockName, int meta, int flag, @Nullable NBTTagCompound nbt)
     {
         this.dimId = dimension;
         this.pos = pos.toImmutable();
@@ -322,6 +325,7 @@ public class BlockSnapshot implements Serializable
     public void setReplacedBlock(IBlockState replacedBlock) { this.replacedBlock = replacedBlock; }
     public int getFlag() { return flag; }
     public void setFlag(int flag) { this.flag = flag; }
+    @Nullable
     public NBTTagCompound getNbt() { return nbt; }
     public void setWorld(World world) { this.world = world; }
     public ResourceLocation getRegistryName() { return registryName; }

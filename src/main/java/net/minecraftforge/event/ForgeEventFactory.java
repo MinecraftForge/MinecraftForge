@@ -143,10 +143,10 @@ public class ForgeEventFactory
     @Deprecated
     public static PlaceEvent onPlayerBlockPlace(EntityPlayer player, BlockSnapshot blockSnapshot, EnumFacing direction)
     {
-        return onPlayerBlockPlace(player, blockSnapshot, direction, null);
+        return onPlayerBlockPlace(player, blockSnapshot, direction, EnumHand.MAIN_HAND);
     }
 
-    public static PlaceEvent onPlayerBlockPlace(EntityPlayer player, BlockSnapshot blockSnapshot, EnumFacing direction, @Nullable EnumHand hand)
+    public static PlaceEvent onPlayerBlockPlace(@Nonnull EntityPlayer player, @Nonnull BlockSnapshot blockSnapshot, @Nonnull EnumFacing direction, @Nonnull EnumHand hand)
     {
         IBlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().offset(direction.getOpposite()));
         PlaceEvent event = new PlaceEvent(blockSnapshot, placedAgainst, player, hand);
@@ -223,6 +223,7 @@ public class ForgeEventFactory
        return event.getDroppedExperience();
     }
 
+    @Nullable
     public static List<Biome.SpawnListEntry> getPotentialSpawns(WorldServer world, EnumCreatureType type, BlockPos pos, List<Biome.SpawnListEntry> oldList)
     {
         WorldEvent.PotentialSpawns event = new WorldEvent.PotentialSpawns(world, type, pos, oldList);
@@ -331,6 +332,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
     }
 
+    @Nullable
     public static ITextComponent onClientChat(byte type, ITextComponent message)
     {
         ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message);
@@ -362,7 +364,8 @@ public class ForgeEventFactory
         return 0;
     }
 
-    public static ActionResult<ItemStack> onBucketUse(EntityPlayer player, World world, ItemStack stack, RayTraceResult target)
+    @Nullable
+    public static ActionResult<ItemStack> onBucketUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull ItemStack stack, @Nullable RayTraceResult target)
     {
         FillBucketEvent event = new FillBucketEvent(player, stack, world, target);
         if (MinecraftForge.EVENT_BUS.post(event)) return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
@@ -543,27 +546,38 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, renderPartialTicks, type, block, pos));
     }
 
+    @Nullable
     public static CapabilityDispatcher gatherCapabilities(TileEntity tileEntity)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent.TileEntity(tileEntity), null);
     }
 
+    @Nullable
     public static CapabilityDispatcher gatherCapabilities(Entity entity)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent.Entity(entity), null);
     }
 
+    @Nullable
     public static CapabilityDispatcher gatherCapabilities(Item item, ItemStack stack, ICapabilityProvider parent)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent.Item(item, stack), parent);
+        // first fire the legacy event
+        AttachCapabilitiesEvent.Item legacyEvent = new AttachCapabilitiesEvent.Item(item, stack);
+        MinecraftForge.EVENT_BUS.post(legacyEvent);
+
+        // fire new event with the caps that were already registered on the legacy event
+        AttachCapabilitiesEvent<ItemStack> event = new AttachCapabilitiesEvent<ItemStack>(ItemStack.class, stack, legacyEvent.caps);
+        return gatherCapabilities(event, parent);
     }
 
+    @Nullable
     public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent.World(world), parent);
     }
 
-    private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent event, ICapabilityProvider parent)
+    @Nullable
+    private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent<?> event, @Nullable ICapabilityProvider parent)
     {
         MinecraftForge.EVENT_BUS.post(event);
         return event.getCapabilities().size() > 0 || parent != null ? new CapabilityDispatcher(event.getCapabilities(), parent) : null;

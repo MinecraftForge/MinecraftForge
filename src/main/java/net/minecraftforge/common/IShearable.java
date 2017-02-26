@@ -35,6 +35,8 @@ import javax.annotation.Nonnull;
  * to support mod-shears as well.
  *
  */
+//TODO Change to World, not IBlockAccess and make Implementor responsible for removing itself from the world.
+//Better mimics vanilla behavior and allows more control for the user.
 public interface IShearable
 {
     /**

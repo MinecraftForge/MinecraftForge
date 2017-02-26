@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarFile;
 
+import net.minecraftforge.common.util.Java6Utils;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
@@ -119,7 +120,7 @@ public class JarDiscoverer implements ITypeDiscoverer
         }
         finally
         {
-            IOUtils.closeQuietly(jar);
+            Java6Utils.closeZipQuietly(jar);
         }
         return foundMods;
     }

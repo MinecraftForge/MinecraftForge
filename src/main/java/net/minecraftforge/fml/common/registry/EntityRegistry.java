@@ -42,6 +42,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ListMultimap;
 
+import javax.annotation.Nullable;
+
 public class EntityRegistry
 {
     public class EntityRegistration
@@ -312,6 +314,7 @@ public class EntityRegistry
         }
     }
 
+    @Nullable
     public EntityRegistration lookupModSpawn(Class<? extends Entity> clazz, boolean keepLooking)
     {
         Class<?> localClazz = clazz;
@@ -331,6 +334,7 @@ public class EntityRegistry
         return null;
     }
 
+    @Nullable
     public EntityRegistration lookupModSpawn(ModContainer mc, int modEntityId)
     {
         for (EntityRegistration er : entityRegistrations.get(mc))
@@ -356,6 +360,7 @@ public class EntityRegistry
     }
 
     //Helper function
+    @Nullable
     public static EntityEntry getEntry(Class<? extends Entity> entry)
     {
         //TODO: Slave map for faster lookup?

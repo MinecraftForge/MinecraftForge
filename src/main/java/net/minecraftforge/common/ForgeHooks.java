@@ -89,12 +89,14 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
@@ -510,6 +512,11 @@ public class ForgeHooks
         }
         return false;
     }
+    
+    public static void onDifficultyChange(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
+    {
+        MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
+    }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
     //Note: When using Optifine, these methods are invoked using reflection, which
@@ -552,7 +559,7 @@ public class ForgeHooks
         return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
     }
 
-    public static int getLootingLevel(Entity target, Entity killer, DamageSource cause)
+    public static int getLootingLevel(Entity target, @Nullable Entity killer, DamageSource cause)
     {
         int looting = 0;
         if (killer instanceof EntityLivingBase)
@@ -619,6 +626,7 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
     }
 
+    @Nullable
     public static EntityItem onPlayerTossEvent(@Nonnull EntityPlayer player, @Nonnull ItemStack item, boolean includeName)
     {
         player.captureDrops = true;
@@ -649,6 +657,7 @@ public class ForgeHooks
         return world.getBlockState(pos).getBlock().getEnchantPowerBonus(world, pos);
     }
 
+    @Nullable
     public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
     {
         ServerChatEvent event = new ServerChatEvent(net.playerEntity, raw, comp);
@@ -793,7 +802,7 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    public static EnumActionResult onPlaceItemIntoWorld(@Nonnull  ItemStack itemstack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
+    public static EnumActionResult onPlaceItemIntoWorld(@Nonnull ItemStack itemstack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand)
     {
         // handle all placement events here
         int meta = itemstack.getItemDamage();
@@ -896,7 +905,7 @@ public class ForgeHooks
         return false;
     }
 
-    public static float onAnvilRepair(EntityPlayer player, ItemStack output, ItemStack left, ItemStack right)
+    public static float onAnvilRepair(EntityPlayer player, @Nonnull ItemStack output, @Nonnull ItemStack left, @Nonnull ItemStack right)
     {
         AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
         MinecraftForge.EVENT_BUS.post(e);
@@ -1009,6 +1018,7 @@ public class ForgeHooks
         return !event.isCanceled();
     }
 
+    @Nullable
     public static RayTraceResult rayTraceEyes(EntityLivingBase entity, double length)
     {
         Vec3d startPos = new Vec3d(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
@@ -1016,6 +1026,7 @@ public class ForgeHooks
         return entity.world.rayTraceBlocks(startPos, endPos);
     }
 
+    @Nullable
     public static Vec3d rayTraceEyeHitVec(EntityLivingBase entity, double length)
     {
         RayTraceResult git = rayTraceEyes(entity, length);
@@ -1062,9 +1073,17 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
     }
 
+    public static void onEmptyLeftClick(EntityPlayer player)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
+    }
+
+    // TODO: remove
+    /** @deprecated use {@link ForgeHooks#onEmptyLeftClick(EntityPlayer)} */
+    @Deprecated
     public static void onEmptyLeftClick(EntityPlayer player, @Nonnull ItemStack stack)
     {
-        MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player, stack));
+        onEmptyLeftClick(player);
     }
 
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
@@ -1077,6 +1096,8 @@ public class ForgeHooks
 
         return ctx;
     }
+
+    @Nullable
     public static LootTable loadLootTable(Gson gson, ResourceLocation name, String data, boolean custom)
     {
         Deque<LootTableContext> que = lootContext.get();
@@ -1132,7 +1153,7 @@ public class ForgeHooks
 
         public String validateEntryName(@Nullable String name)
         {
-            if (!this.entryNames.contains(name))
+            if (name != null && !this.entryNames.contains(name))
             {
                 this.entryNames.add(name);
                 return name;

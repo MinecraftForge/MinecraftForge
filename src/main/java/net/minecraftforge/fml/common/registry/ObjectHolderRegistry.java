@@ -35,6 +35,8 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import javax.annotation.Nullable;
+
 /**
  * Internal registry for tracking {@link ObjectHolder} references
  * @author cpw
@@ -78,7 +80,7 @@ public enum ObjectHolderRegistry {
         FMLLog.info("Found %d ObjectHolder annotations", objectHolders.size());
     }
 
-    private void scanTarget(Map<String, String> classModIds, Map<String, Class<?>> classCache, String className, String annotationTarget, String value, boolean isClass, boolean extractFromValue)
+    private void scanTarget(Map<String, String> classModIds, Map<String, Class<?>> classCache, String className, @Nullable String annotationTarget, String value, boolean isClass, boolean extractFromValue)
     {
         Class<?> clazz;
         if (classCache.containsKey(className))

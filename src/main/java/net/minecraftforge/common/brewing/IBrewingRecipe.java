@@ -30,18 +30,19 @@ public interface IBrewingRecipe {
      * being the item that goes in one of the three bottom slots of the brewing
      * stand (e.g: water bottle)
      */
-    public boolean isInput(@Nonnull ItemStack input);
+    boolean isInput(@Nonnull ItemStack input);
 
     /**
      * Returns true if the passed ItemStack is an ingredient for this recipe.
      * "Ingredient" being the item that goes in the top slot of the brewing
      * stand (e.g: nether wart)
      */
-    public boolean isIngredient(@Nonnull ItemStack ingredient);
+    boolean isIngredient(@Nonnull ItemStack ingredient);
 
     /**
      * Returns the output when the passed input is brewed with the passed
-     * ingredient. Null if invalid input or ingredient.
+     * ingredient. Empty if invalid input or ingredient.
      */
-    public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient);
+    @Nonnull
+    ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient);
 }
