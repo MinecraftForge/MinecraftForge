@@ -117,7 +117,7 @@ public class ConfigManager
         }
     }
 
-    public static void load(String modid, Config.Type type)
+    public static void sync(String modid, Config.Type type)
     {
         FMLLog.fine("Attempting to inject @Config classes into %s for type %s", modid, type);
         ClassLoader mcl = Loader.instance().getModClassLoader();

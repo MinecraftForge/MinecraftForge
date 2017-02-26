@@ -421,7 +421,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         NetworkRegistry.INSTANCE.register(this, this.getClass(), "*", evt.getASMHarvestedData());
         ForgeNetworkHandler.registerChannel(this, evt.getSide());
-        ConfigManager.load(this.getModId(), Config.Type.INSTANCE);
+        ConfigManager.sync(this.getModId(), Config.Type.INSTANCE);
     }
 
     @Subscribe
