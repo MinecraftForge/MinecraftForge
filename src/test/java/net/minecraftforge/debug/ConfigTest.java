@@ -1,19 +1,53 @@
 package net.minecraftforge.debug;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Config.*;
+import net.minecraftforge.common.config.ConfigElement;
+import net.minecraftforge.fml.client.IModGuiFactory;
+import net.minecraftforge.fml.client.config.DummyConfigElement;
+import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.IConfigElement;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = ConfigTest.MODID, name = "ConfigTest", version = "1.0", acceptableRemoteVersions = "*")
-public class ConfigTest
+@Mod(modid = ConfigTest.MODID, name = "ConfigTest", version = "1.0", acceptableRemoteVersions = "*", guiFactory = ConfigTest.GUI_FACTORY)
+public class ConfigTest implements IModGuiFactory
 {
     public static final String MODID = "config_test";
-
+    public static final String GUI_FACTORY = "net.minecraftforge.debug.ConfigTest";
+    
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
       MinecraftForge.EVENT_BUS.register(this);
+    }
+    
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+        System.out.println("Boolean sample config is: " + CONFIG_TYPES.bool);
+        CONFIG_TYPES.bool = !CONFIG_TYPES.bool;
+        System.out.println("Changing boolean sample config to: " + CONFIG_TYPES.bool );
+        ConfigManager.sync(MODID, Type.INSTANCE);
+        System.out.println("Synced config.");
+        System.out.println("Boolean sample config now is: " + CONFIG_TYPES.bool);
+    }
+    
+    @SubscribeEvent
+    public void onConfigChangedEvent(ConfigChangedEvent event) {
+        if(event.getModID().equals(MODID))
+        {
+            ConfigManager.sync(MODID, Type.INSTANCE);
+        }
     }
 
     @Config(modid = MODID, type = Type.INSTANCE, name = MODID + "_types")
@@ -98,5 +132,49 @@ public class ConfigTest
                 this.value = value;
             }
         }
+    }
+
+    public static class ConfigurationGui extends GuiConfig
+    {
+        public ConfigurationGui(GuiScreen parentScreen)
+        {
+            super(parentScreen, collectElements(), MODID, false, false, MODID + " Config Screen");
+        }
+        
+        private static List<IConfigElement> collectElements() {
+            List<IConfigElement> elements = new ArrayList<IConfigElement>();
+            
+            elements.add(new DummyConfigElement.DummyCategoryElement("general", "gui.general", ConfigElement.from(MODID).getChildElements()));
+            
+            List<IConfigElement> subcatElements = new ArrayList<IConfigElement>();
+            subcatElements.add(new DummyConfigElement.DummyCategoryElement("test_a", "test_a", ConfigElement.from(MODID, MODID + "_subcats", "test_a").getChildElements()));
+            subcatElements.add(new DummyConfigElement.DummyCategoryElement("test_b", "test_b", ConfigElement.from(MODID, MODID + "_subcats", "test_b").getChildElements()));
+            elements.add(new DummyConfigElement.DummyCategoryElement("subcats", "gui.subcats", subcatElements));
+            
+            elements.add(new DummyConfigElement.DummyCategoryElement("types", "gui.types", ConfigElement.from(MODID, MODID + "_types").getChildElements()));
+            return elements;
+        }
+    }
+
+    @Override
+    public void initialize(Minecraft minecraftInstance)
+    {}
+
+    @Override
+    public Class<? extends GuiScreen> mainConfigGuiClass()
+    {
+        return ConfigurationGui.class;
+    }
+
+    @Override
+    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories()
+    {
+        return null;
+    }
+
+    @Override
+    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element)
+    {
+        return null;
     }
 }

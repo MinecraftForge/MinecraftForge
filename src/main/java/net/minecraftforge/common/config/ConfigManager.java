@@ -165,9 +165,11 @@ public class ConfigManager
     // =======================================================
     //                    INTERNAL
     // =======================================================
-    static Configuration getConfiguration(String modid) {
+    static Configuration getConfiguration(String modid, String name) {
+        if(name == null || name.isEmpty())
+            name = modid;
         File configDir = Loader.instance().getConfigDir();
-        File configFile = new File(configDir, modid + ".cfg");
+        File configFile = new File(configDir, name + ".cfg");
         return CONFIGS.get(configFile.getAbsolutePath());
     }
     

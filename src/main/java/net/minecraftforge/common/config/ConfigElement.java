@@ -27,11 +27,9 @@ package net.minecraftforge.common.config;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.minecraftforge.fml.client.config.ConfigGuiType;
-import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
@@ -363,25 +361,39 @@ public class ConfigElement implements IConfigElement
         return isProperty ? prop.getMaxValue() : null;
     }
     
-    public static List<IConfigElement> getConfigElementsFromConfigManager(String modid)
+    public static ConfigElement from(String modid)
     {
-        Configuration config = ConfigManager.getConfiguration(modid);
-        Set<String> categoryNames = config.getCategoryNames();
-        if(categoryNames.size() == 1)
+        return from(modid, null);
+    }
+    
+    /**
+     * Provides a ConfigElement which conta
+     * @param modid
+     * @param name
+     * @return
+     */
+    public static ConfigElement from(String modid, String name)
+    {
+        return from(modid, name, "general");//'general' is default in @Config annotation
+    }
+    
+    /**
+     * Provides a ConfigElement derived from the annotation-based config system
+     * @param modid The modid stated in the {@code @Config} annotation.
+     * @param name The name stated in the {@code @Config} annotation.
+     * @param categoryName The category name stated in the {@code @Config} annotation.
+     * @return A ConfigElement based on the described category.
+     */
+    public static ConfigElement from(String modid, String name, String categoryName)
+    {
+        Configuration config = ConfigManager.getConfiguration(modid, name);
+        if(config == null)
         {
-            return new ConfigElement(config.getCategory(categoryNames.iterator().next())).getChildElements();
+            String error = String.format("The configuration '%s' of mod '%s' is not handled by the ConfigManager!", name, modid);
+            throw new RuntimeException(error);
         }
-        else
-        {
-            List<IConfigElement> elements = new ArrayList<IConfigElement>();
-            for(String name : categoryNames)
-            {
-                ConfigCategory category = config.getCategory(name);
-                String languageKey = category.getLanguagekey();
-                List<IConfigElement> children = new ConfigElement(category).getChildElements();
-                elements.add(new DummyCategoryElement(name, languageKey, children));
-            }
-            return elements;
-        }
+        
+        ConfigCategory category = config.getCategory(categoryName);
+        return new ConfigElement(category);
     }
 }
