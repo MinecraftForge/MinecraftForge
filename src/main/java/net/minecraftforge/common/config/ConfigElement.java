@@ -27,9 +27,11 @@ package net.minecraftforge.common.config;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.minecraftforge.fml.client.config.ConfigGuiType;
+import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
@@ -359,5 +361,27 @@ public class ConfigElement implements IConfigElement
     public Object getMaxValue()
     {
         return isProperty ? prop.getMaxValue() : null;
+    }
+    
+    public static List<IConfigElement> getConfigElementsFromConfigManager(String modid)
+    {
+        Configuration config = ConfigManager.getConfiguration(modid);
+        Set<String> categoryNames = config.getCategoryNames();
+        if(categoryNames.size() == 1)
+        {
+            return new ConfigElement(config.getCategory(categoryNames.iterator().next())).getChildElements();
+        }
+        else
+        {
+            List<IConfigElement> elements = new ArrayList<IConfigElement>();
+            for(String name : categoryNames)
+            {
+                ConfigCategory category = config.getCategory(name);
+                String languageKey = category.getLanguagekey();
+                List<IConfigElement> children = new ConfigElement(category).getChildElements();
+                elements.add(new DummyCategoryElement(name, languageKey, children));
+            }
+            return elements;
+        }
     }
 }
