@@ -17,7 +17,6 @@ import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -30,16 +29,6 @@ public class ConfigTest implements IModGuiFactory
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
       MinecraftForge.EVENT_BUS.register(this);
-    }
-    
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        System.out.println("Boolean sample config is: " + CONFIG_TYPES.bool);
-        CONFIG_TYPES.bool = !CONFIG_TYPES.bool;
-        System.out.println("Changing boolean sample config to: " + CONFIG_TYPES.bool );
-        ConfigManager.sync(MODID, Type.INSTANCE);
-        System.out.println("Synced config.");
-        System.out.println("Boolean sample config now is: " + CONFIG_TYPES.bool);
     }
     
     @SubscribeEvent
