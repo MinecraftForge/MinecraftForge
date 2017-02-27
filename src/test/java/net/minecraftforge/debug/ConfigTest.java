@@ -144,14 +144,14 @@ public class ConfigTest implements IModGuiFactory
         private static List<IConfigElement> collectElements() {
             List<IConfigElement> elements = new ArrayList<IConfigElement>();
             
-            elements.add(new DummyConfigElement.DummyCategoryElement("general", "gui.general", ConfigElement.from(MODID).getChildElements()));
+            elements.add(new DummyConfigElement.DummyCategoryElement("general", "gui.general", ConfigElement.from(CONFIG_ANNOTATIONS.class).getChildElements()));
             
-            List<IConfigElement> subcatElements = new ArrayList<IConfigElement>();
-            subcatElements.add(new DummyConfigElement.DummyCategoryElement("test_a", "test_a", ConfigElement.from(MODID, MODID + "_subcats", "test_a").getChildElements()));
-            subcatElements.add(new DummyConfigElement.DummyCategoryElement("test_b", "test_b", ConfigElement.from(MODID, MODID + "_subcats", "test_b").getChildElements()));
-            elements.add(new DummyConfigElement.DummyCategoryElement("subcats", "gui.subcats", subcatElements));
+            //List<IConfigElement> subcatElements = new ArrayList<IConfigElement>();
+            //subcatElements.add(new DummyConfigElement.DummyCategoryElement("test_a", "test_a", ConfigElement.from(MODID, MODID + "_subcats", "test_a").getChildElements()));
+            //subcatElements.add(new DummyConfigElement.DummyCategoryElement("test_b", "test_b", ConfigElement.from(MODID, MODID + "_subcats", "test_b").getChildElements()));
+            elements.add(new DummyConfigElement.DummyCategoryElement("subcats", "gui.subcats", ConfigElement.from(CONFIG_SUBCATS.class).getChildElements()));
             
-            elements.add(new DummyConfigElement.DummyCategoryElement("types", "gui.types", ConfigElement.from(MODID, MODID + "_types").getChildElements()));
+            elements.add(new DummyConfigElement.DummyCategoryElement("types", "gui.types", ConfigElement.from(CONFIG_TYPES.class).getChildElements()));
             return elements;
         }
     }

@@ -29,8 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nullable;
-
 import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
@@ -363,39 +361,24 @@ public class ConfigElement implements IConfigElement
         return isProperty ? prop.getMaxValue() : null;
     }
     
-    public static ConfigElement from(String modid)
-    {
-        return from(modid, null);
-    }
-    
-    /**
-     * Provides a ConfigElement which contains
-     * @param modid
-     * @param name
-     * @return
-     */
-    public static ConfigElement from(String modid, @Nullable String name)
-    {
-        return from(modid, name, "general");//'general' is default in @Config annotation
-    }
-    
     /**
      * Provides a ConfigElement derived from the annotation-based config system
-     * @param modid The modid stated in the {@code @Config} annotation.
-     * @param name The name stated in the {@code @Config} annotation.
-     * @param categoryName The category name stated in the {@code @Config} annotation.
+     * @param configClass the class which contains the configuration
      * @return A ConfigElement based on the described category.
      */
-    public static ConfigElement from(String modid, @Nullable String name, @Nullable String categoryName)
+    public static ConfigElement from(Class<?> configClass)
     {
-        Configuration config = ConfigManager.getConfiguration(modid, name);
+        Config annotation = configClass.getAnnotation(Config.class);
+        if(annotation == null)
+            throw new RuntimeException(String.format("The class '%s' has no @Config annotation!", configClass.getName()));
+        Configuration config = ConfigManager.getConfiguration(annotation.modid(), annotation.name());
         if(config == null)
         {
-            String error = String.format("The configuration '%s' of mod '%s' is not handled by the ConfigManager!", name, modid);
+            String error = String.format("The configuration '%s' of mod '%s' isn't loaded with the ConfigManager!", annotation.name(), annotation.modid());
             throw new RuntimeException(error);
         }
         
-        ConfigCategory category = config.getCategory(categoryName);
+        ConfigCategory category = config.getCategory(annotation.category());
         return new ConfigElement(category);
     }
 }
