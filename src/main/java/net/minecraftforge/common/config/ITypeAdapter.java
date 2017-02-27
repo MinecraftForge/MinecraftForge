@@ -23,11 +23,15 @@ import java.lang.reflect.Field;
 interface ITypeAdapter
 {
 	Property getProp(Configuration cfg, String category, Field field, Object instance, String comment);
+	
+	void setProperty(Configuration cfg, String category, Field field, Object value);
 
 	Object getValue(Property prop);
 
 	public interface Map extends ITypeAdapter
 	{
 		Property getProp(Configuration cfg, String category, String name, Object value);
+		
+		void setProperty(Configuration cfg, String category, String name, Object value);
 	}
 }

@@ -162,7 +162,7 @@ public class ConfigManager
         }
     }
     
-    public void updateConfig(String modid, Config.Type type)
+    public static void updateConfig(String modid, Config.Type type)
     {
         FMLLog.fine("Attempting to update Configuration objects of mod %s for type %s", modid, type);
         ClassLoader mcl = Loader.instance().getModClassLoader();
@@ -229,17 +229,12 @@ public class ConfigManager
     private static void updateConfig(String modid, String category, Configuration cfg, Class<?> ftype, Field f, Object instance)
     {
         ITypeAdapter adapter = ADAPTERS.get(ftype);
-        
-        String comment = null;
-        Comment ca = f.getAnnotation(Comment.class);
-        if (ca != null)
-            comment = NEW_LINE.join(ca.value());
 
         if (adapter != null)
         {
             if (category.isEmpty())
                 throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
-            adapter.getProp(cfg, category, f, instance, comment);
+            adapter.setProperty(cfg, category, f, get(instance, f));
         }
         else if (ftype.getSuperclass() == Enum.class)
         {
@@ -263,11 +258,11 @@ public class ConfigManager
                 
                 if (adpt != null)
                 {
-                    adpt.getProp(cfg, sub, e.getKey(), e.getValue());
+                    adpt.setProperty(cfg, category, e.getKey(), e.getValue());
                 }
                 else if (mtype instanceof Class && ((Class<?>)mtype).getSuperclass() == Enum.class)
                 {
-                    TypeAdapters.Str.getProp(cfg, sub, e.getKey(), ((Enum)e.getValue()).name());
+                    TypeAdapters.Str.setProperty(cfg, sub, e.getKey(), ((Enum)e.getValue()).name());
                 }
                 else
                     throw new RuntimeException("Unknown type in map! " + f.getDeclaringClass() + "/" + f.getName() + " " + mtype);

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge
+a * Minecraft Forge
  * Copyright (c) 2016.
  *
  * This library is free software; you can redistribute it and/or
@@ -51,6 +51,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return prop.getBoolean();
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, Field field, Object value)
+        {
+            cfg.getCategory(category).get(getName(field)).set((Boolean)value);
+        }
     };
     static ITypeAdapter boolA = new MapAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -61,6 +66,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return prop.getBooleanList();
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((boolean[])value);
         }
     };
     static ITypeAdapter Bool = new MapAdapter() {
@@ -73,6 +83,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return Boolean.valueOf(prop.getBoolean());
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((Boolean) value);
+        }
     };
     static ITypeAdapter BoolA = new MapAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -84,6 +99,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return Booleans.asList(prop.getBooleanList()).toArray(new Boolean[prop.getBooleanList().length]);
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(Booleans.toArray(Arrays.asList((Boolean[])value)));
+        }
     };
     static ITypeAdapter flt = new TypeAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -91,6 +111,12 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return (float)prop.getDouble();
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, Field field, Object value)
+        {
+            cfg.getCategory(category).get(getName(field)).set((Float)value);
+            
         }
     };
     static ITypeAdapter fltA = new MapAdapter() {
@@ -103,6 +129,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return Floats.toArray(Doubles.asList(prop.getDoubleList()));
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(Doubles.toArray(Floats.asList((float[])value)));
+        }
     };
     static ITypeAdapter Flt = new MapAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -113,6 +144,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return Float.valueOf((float)prop.getDouble());
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((Float)value);
         }
     };
     static ITypeAdapter FltA = new MapAdapter() {
@@ -125,6 +161,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return Floats.asList(Floats.toArray(Doubles.asList(prop.getDoubleList()))).toArray(new Float[prop.getDoubleList().length]);
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(Doubles.toArray(Arrays.asList((Float[])value)));
+        }
     };
     static ITypeAdapter dbl = new TypeAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -132,6 +173,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return prop.getDouble();
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, Field field, Object value)
+        {
+            cfg.getCategory(category).get(getName(field)).set((Double)value);
         }
     };
     static ITypeAdapter dblA = new MapAdapter() {
@@ -144,6 +190,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return prop.getDoubleList();
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((double[])value);
+        }
     };
     static ITypeAdapter Dbl = new MapAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -154,6 +205,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return Double.valueOf(prop.getDouble());
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((Double)value);
         }
     };
     static ITypeAdapter DblA = new MapAdapter() {
@@ -166,6 +222,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return Doubles.asList(prop.getDoubleList()).toArray(new Double[prop.getDoubleList().length]);
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(Doubles.toArray(Arrays.asList((Double[])value)));
+        }
     };
     static ITypeAdapter byt = new TypeAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -173,6 +234,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return (byte)prop.getInt();
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, Field field, Object value)
+        {
+            cfg.getCategory(category).get(getName(field)).set((Byte)value);
         }
     };
     static ITypeAdapter bytA = new MapAdapter() {
@@ -185,6 +251,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return Bytes.toArray(Ints.asList(prop.getIntList()));
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(Ints.toArray(Bytes.asList((byte[])value)));
+        }
     };
     static ITypeAdapter Byt = new MapAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -195,6 +266,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return Byte.valueOf((byte)prop.getInt());
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((Byte)value);
         }
     };
     static ITypeAdapter BytA = new MapAdapter() {
@@ -207,6 +283,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return Bytes.asList(Bytes.toArray(Ints.asList(prop.getIntList()))).toArray(new Byte[prop.getIntList().length]);
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(Ints.toArray(Arrays.asList((Byte[])value)));
+        }
     };
     static ITypeAdapter chr = new TypeAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -214,6 +295,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return (char)prop.getInt();
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, Field field, Object value)
+        {
+            cfg.getCategory(category).get(getName(field)).set((Character)value);
         }
     };
     static ITypeAdapter chrA = new MapAdapter() {
@@ -237,6 +323,11 @@ class TypeAdapters
                 ret[x] = (char)v[x];
             return ret;
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(toPrim((char[])value));
+        }
     };
     static ITypeAdapter Chr = new MapAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -247,6 +338,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return Character.valueOf((char)prop.getInt());
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((Character)value);
         }
     };
     static ITypeAdapter ChrA = new MapAdapter() {
@@ -270,6 +366,12 @@ class TypeAdapters
                 ret[x] = Character.valueOf((char)v[x]);
             return ret;
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(toPrim((Character[])value));
+        }
+
     };
     static ITypeAdapter shrt = new TypeAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -277,6 +379,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return (short)prop.getInt();
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, Field field, Object value)
+        {
+            cfg.getCategory(category).get(getName(field)).set((Short)value);
         }
     };
     static ITypeAdapter shrtA = new MapAdapter() {
@@ -289,6 +396,12 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return Shorts.toArray(Ints.asList(prop.getIntList()));
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(Ints.toArray(Shorts.asList((short[])value)));
+        }
+        
     };
     static ITypeAdapter Shrt = new MapAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -299,6 +412,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return Short.valueOf((short)prop.getInt());
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((Short)value);
         }
     };
     static ITypeAdapter ShrtA = new MapAdapter() {
@@ -315,6 +433,11 @@ class TypeAdapters
                 ret[x] = Short.valueOf((short)v[x]);
             return ret;
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(Ints.toArray(Arrays.asList((Short[])value)));
+        }
     };
     static ITypeAdapter int_ = new TypeAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -322,6 +445,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return prop.getInt();
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, Field field, Object value)
+        {
+            cfg.getCategory(category).get(getName(field)).set((Integer)value);
         }
     };
     static ITypeAdapter intA = new MapAdapter() {
@@ -334,6 +462,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return prop.getIntList();
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((int[])value);
+        }
     };
     static ITypeAdapter Int = new MapAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -344,6 +477,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return (Integer)prop.getInt();
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((Integer)value);
         }
     };
     static ITypeAdapter IntA = new MapAdapter() {
@@ -356,6 +494,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return Ints.asList(prop.getIntList()).toArray(new Integer[prop.getIntList().length]);
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set(Ints.toArray(Arrays.asList((Integer[])value)));
+        }
     };
     static ITypeAdapter.Map Str = new MapAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -367,6 +510,11 @@ class TypeAdapters
         public Object getValue(Property prop) {
             return prop.getString();
         }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((String)value);
+        }
     };
     static ITypeAdapter StrA = new MapAdapter() {
         public Property getProp(Configuration cfg, String category, Field field, Object instance, String comment) {
@@ -377,6 +525,11 @@ class TypeAdapters
         }
         public Object getValue(Property prop) {
             return prop.getStringList();
+        }
+        @Override
+        public void setProperty(Configuration cfg, String category, String name, Object value)
+        {
+            cfg.getCategory(category).get(name).set((String[])value);
         }
     };
 
@@ -463,5 +616,11 @@ class TypeAdapters
             return f.getName();
         }
     }
-    private static abstract class MapAdapter extends TypeAdapter implements ITypeAdapter.Map {}
+    private static abstract class MapAdapter extends TypeAdapter implements ITypeAdapter.Map {
+        @Override
+        public void setProperty(Configuration cfg, String category, Field field, Object value)
+        {
+            setProperty(cfg, category, getName(field), value);
+        }
+    }
 }
