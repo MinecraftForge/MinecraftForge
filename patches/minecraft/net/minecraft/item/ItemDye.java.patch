@@ -40,7 +40,7 @@
 +    {
          IBlockState iblockstate = p_179234_1_.func_180495_p(p_179234_2_);
  
-+        int hook =  net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_179234_1_, p_179234_2_, iblockstate, p_179234_0_, hand);
++        int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_179234_1_, p_179234_2_, iblockstate, p_179234_0_, hand);
 +        if (hook != 0) return hook > 0;
 +
          if (iblockstate.func_177230_c() instanceof IGrowable)
