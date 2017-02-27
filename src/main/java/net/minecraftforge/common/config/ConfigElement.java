@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
 import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
@@ -367,12 +369,12 @@ public class ConfigElement implements IConfigElement
     }
     
     /**
-     * Provides a ConfigElement which conta
+     * Provides a ConfigElement which contains
      * @param modid
      * @param name
      * @return
      */
-    public static ConfigElement from(String modid, String name)
+    public static ConfigElement from(String modid, @Nullable String name)
     {
         return from(modid, name, "general");//'general' is default in @Config annotation
     }
@@ -384,7 +386,7 @@ public class ConfigElement implements IConfigElement
      * @param categoryName The category name stated in the {@code @Config} annotation.
      * @return A ConfigElement based on the described category.
      */
-    public static ConfigElement from(String modid, String name, String categoryName)
+    public static ConfigElement from(String modid, @Nullable String name, @Nullable String categoryName)
     {
         Configuration config = ConfigManager.getConfiguration(modid, name);
         if(config == null)

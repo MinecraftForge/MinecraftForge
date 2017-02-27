@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -205,7 +206,7 @@ public class ConfigManager
     //                    INTERNAL
     // =======================================================
     static Configuration getConfiguration(String modid, String name) {
-        if(name == null || name.isEmpty())
+        if(Strings.isNullOrEmpty(name))
             name = modid;
         File configDir = Loader.instance().getConfigDir();
         File configFile = new File(configDir, name + ".cfg");
