@@ -355,7 +355,8 @@ public class ForgeEventFactory
      * @deprecated Use {@link #onApplyBonemeal(EntityPlayer, World, BlockPos, IBlockState, ItemStack, EnumHand)} instead.
      */
     @Deprecated
-    public static int onApplyBonemeal(EntityPlayer player, World world, BlockPos pos, IBlockState state, ItemStack stack){
+    public static int onApplyBonemeal(EntityPlayer player, World world, BlockPos pos, IBlockState state, ItemStack stack)
+    {
         return onApplyBonemeal(player, world, pos, state, stack, null);
     }
 
