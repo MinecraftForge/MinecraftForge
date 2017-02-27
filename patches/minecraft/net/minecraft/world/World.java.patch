@@ -505,7 +505,7 @@
                  }
                  else
                  {
-+                	if(!p_72866_1_.updateBlocked)
++                    if(!p_72866_1_.updateBlocked)
                      p_72866_1_.func_70071_h_();
                  }
              }
