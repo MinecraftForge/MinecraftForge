@@ -14,7 +14,7 @@ public class BonemealEventTest
 {
     public static final String MODID = "bonemealeventtest";
 
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     private static Logger logger;
 
     @Mod.EventHandler
