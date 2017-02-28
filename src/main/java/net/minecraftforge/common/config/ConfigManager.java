@@ -142,54 +142,17 @@ public class ConfigManager
 
                 File file = new File(configDir, name + ".cfg");
 
+                boolean loading = false;
                 Configuration cfg = CONFIGS.get(file.getAbsolutePath());
                 if (cfg == null)
                 {
                     cfg = new Configuration(file);
                     cfg.load();
                     CONFIGS.put(file.getAbsolutePath(), cfg);
+                    loading = true;
                 }
 
-                createConfig(cfg, cls, modid, type == Config.Type.INSTANCE, category);
-
-                cfg.save();
-
-            }
-            catch (Exception e)
-            {
-                FMLLog.log(Level.ERROR, e, "An error occurred trying to load a config for %s into %s", modid, targ.getClassName());
-                throw new LoaderException(e);
-            }
-        }
-    }
-    
-    public static void updateConfig(String modid, Config.Type type)
-    {
-        FMLLog.fine("Attempting to update Configuration objects of mod %s for type %s", modid, type);
-        ClassLoader mcl = Loader.instance().getModClassLoader();
-        File configDir = Loader.instance().getConfigDir();
-        Multimap<Config.Type, ASMData> map = asm_data.get(modid);
-
-        if (map == null)
-            return;
-
-        for (ASMData targ : map.get(type))
-        {
-            try
-            {
-                Class<?> cls = Class.forName(targ.getClassName(), true, mcl);
-                String name = (String)targ.getAnnotationInfo().get("name");
-                if (name == null)
-                    name = modid;
-                String category = (String)targ.getAnnotationInfo().get("category");
-                if (category == null)
-                    category = "general";
-
-                File file = new File(configDir, name + ".cfg");
-
-                Configuration cfg = CONFIGS.get(file.getAbsolutePath());
-
-                updateConfig(cfg, cls, modid, type == Config.Type.INSTANCE, category);
+                sync(cfg, cls, modid, type == Config.Type.INSTANCE, category, loading);
 
                 cfg.save();
 
@@ -213,7 +176,7 @@ public class ConfigManager
         return CONFIGS.get(configFile.getAbsolutePath());
     }
     
-    private static void updateConfig(Configuration cfg, Class<?> cls, String modid, boolean isStatic, String category)
+    private static void sync(Configuration cfg, Class<?> cls, String modid, boolean isStatic, String category, boolean loading)
     {
         for (Field f : cls.getDeclaredFields())
         {
@@ -222,82 +185,7 @@ public class ConfigManager
             if (Modifier.isStatic(f.getModifiers()) != isStatic)
                 continue;
 
-            updateConfig(modid, category, cfg, f.getType(), f, null);
-        }
-    }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static void updateConfig(String modid, String category, Configuration cfg, Class<?> ftype, Field f, Object instance)
-    {
-        ITypeAdapter adapter = ADAPTERS.get(ftype);
-
-        if (adapter != null)
-        {
-            if (category.isEmpty())
-                throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
-            adapter.setProperty(cfg, category, f, get(instance, f));
-        }
-        else if (ftype.getSuperclass() == Enum.class)
-        {
-            if (category.isEmpty())
-                throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
-            Enum enu = (Enum)get(instance, f);
-            cfg.getCategory(category).get(getName(f)).set(enu.name());
-        }
-        else if (ftype == Map.class)
-        {
-            if (category.isEmpty())
-                throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
-            String sub = category + "." + getName(f).toLowerCase(Locale.ENGLISH);
-            Map<String, Object> m = (Map<String, Object>)get(instance, f);
-            ParameterizedType type = (ParameterizedType)f.getGenericType();
-            Type mtype = type.getActualTypeArguments()[1];
-
-            for (Entry<String, Object> e : m.entrySet())
-            {
-                ITypeAdapter.Map adpt = MAP_ADAPTERS.get(mtype);
-                
-                if (adpt != null)
-                {
-                    adpt.setProperty(cfg, category, e.getKey(), e.getValue());
-                }
-                else if (mtype instanceof Class && ((Class<?>)mtype).getSuperclass() == Enum.class)
-                {
-                    TypeAdapters.Str.setProperty(cfg, sub, e.getKey(), ((Enum)e.getValue()).name());
-                }
-                else
-                    throw new RuntimeException("Unknown type in map! " + f.getDeclaringClass() + "/" + f.getName() + " " + mtype);
-
-            }
-        }
-        else if (ftype.getSuperclass() == Object.class) //Only support classes that are one level below Object.
-        {
-            String sub = (category.isEmpty() ? "" : category + ".") + getName(f).toLowerCase(Locale.ENGLISH);
-            Object sinst = get(instance, f);
-            for (Field sf : ftype.getDeclaredFields())
-            {
-                if (!Modifier.isPublic(sf.getModifiers()))
-                    continue;
-
-                updateConfig(modid, sub, cfg, sf.getType(), sf, sinst);
-            }
-        }
-        // TODO Lists ? other stuff
-        else
-            throw new RuntimeException("Unknown type in config! " + f.getDeclaringClass() + "/" + f.getName() + " " + ftype);
-
-    }
-    
-    private static void createConfig(Configuration cfg, Class<?> cls, String modid, boolean isStatic, String category)
-    {
-        for (Field f : cls.getDeclaredFields())
-        {
-            if (!Modifier.isPublic(f.getModifiers()))
-                continue;
-            if (Modifier.isStatic(f.getModifiers()) != isStatic)
-                continue;
-
-            createConfig(modid, category, cfg, f.getType(), f, null);
+            syncField(modid, category, cfg, f.getType(), f, null, loading);
         }
     }
 
@@ -305,7 +193,7 @@ public class ConfigManager
     private static final Joiner PIPE = Joiner.on('|');
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static void createConfig(String modid, String category, Configuration cfg, Class<?> ftype, Field f, Object instance)
+    private static void syncField(String modid, String category, Configuration cfg, Class<?> ftype, Field f, Object instance, boolean loading)
     {
         Property prop = null;
 
@@ -325,17 +213,52 @@ public class ConfigManager
         {
             if (category.isEmpty())
                 throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
-            prop = adapter.getProp(cfg, category, f, instance, comment);
-            set(instance, f, adapter.getValue(prop));
+            if(!loading)
+            {
+                Property property = cfg.getCategory(category).get(getName(f));
+                Object fieldValue = get(instance, f);
+                Object propValue = adapter.getValue(property);
+                if(shouldReadFromVar(property, propValue, fieldValue)) 
+                {
+                    adapter.setProperty(cfg, category, f, fieldValue);
+                } 
+                else
+                {
+                    set(instance, f, propValue);
+                }
+                return;
+            }
+            else
+            {
+                prop = adapter.getProp(cfg, category, f, instance, comment);
+                set(instance, f, adapter.getValue(prop));
+            }
         }
         else if (ftype.getSuperclass() == Enum.class)
         {
             if (category.isEmpty())
                 throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
             Enum enu = (Enum)get(instance, f);
-            prop = cfg.get(category, getName(f), enu.name(), comment);
-            prop.setValidationPattern(makePattern((Class<? extends Enum>)ftype));
-            set(instance, f, Enum.valueOf((Class<? extends Enum>)ftype, prop.getString()));
+            if(!loading)
+            {    
+                Property property = cfg.getCategory(category).get(getName(f));
+                String propValue = property.getString();
+                if(shouldReadFromVar(property, propValue, enu.name()))
+                {
+                    TypeAdapters.Str.setProperty(cfg, category, f, enu.name());
+                }
+                else
+                {
+                    set(instance, f, Enum.valueOf((Class<? extends Enum>)ftype, propValue));
+                }
+                return;
+            }
+            else
+            {
+                prop = cfg.get(category, getName(f), enu.name(), comment);
+                prop.setValidationPattern(makePattern((Class<? extends Enum>)ftype));
+                set(instance, f, Enum.valueOf((Class<? extends Enum>)ftype, prop.getString()));
+            }
         }
         else if (ftype == Map.class)
         {
@@ -351,13 +274,43 @@ public class ConfigManager
             for (Entry<String, Object> e : m.entrySet())
             {
                 ITypeAdapter.Map adpt = MAP_ADAPTERS.get(mtype);
-
+                
                 if (adpt != null)
                 {
+                    if(!loading && exists(cfg, sub, e.getKey()))
+                    {
+                        Property property = cfg.getCategory(sub).get(e.getKey());
+                        Object fieldValue = e.getValue();
+                        Object propValue = adpt.getValue(property);
+                        if(shouldReadFromVar(property, propValue, fieldValue))
+                        {
+                            adpt.setProperty(cfg, sub, e.getKey(), fieldValue);
+                        }
+                        else
+                        {
+                            m.put(e.getKey(), propValue);
+                        }
+                        continue;
+                    }
                     prop = adpt.getProp(cfg, sub, e.getKey(), e.getValue());
                 }
                 else if (mtype instanceof Class && ((Class<?>)mtype).getSuperclass() == Enum.class)
                 {
+                    if(!loading && exists(cfg, sub, e.getKey()))
+                    {
+                        Property property = cfg.getCategory(sub).get(e.getKey());
+                        String fieldValue = ((Enum)e.getValue()).name();
+                        String propValue = property.getString();
+                        if(shouldReadFromVar(property, propValue, fieldValue))
+                        {
+                            TypeAdapters.Str.setProperty(cfg, sub, e.getKey(), fieldValue);
+                        }
+                        else
+                        {
+                            m.put(e.getKey(), Enum.valueOf((Class<? extends Enum>)ftype, propValue));
+                        }
+                        continue;
+                    }
                     prop = TypeAdapters.Str.getProp(cfg, sub, e.getKey(), ((Enum)e.getValue()).name());
                     prop.setValidationPattern(makePattern((Class<? extends Enum>)mtype));
                 }
@@ -372,14 +325,15 @@ public class ConfigManager
         else if (ftype.getSuperclass() == Object.class) //Only support classes that are one level below Object.
         {
             String sub = (category.isEmpty() ? "" : category + ".") + getName(f).toLowerCase(Locale.ENGLISH);
-            cfg.getCategory(sub).setComment(comment);
+            ConfigCategory subCat = new ConfigCategory(sub, cfg.getCategory(category));//TODO Make it work. Shall be subcategory
+            subCat.setComment(comment);
             Object sinst = get(instance, f);
             for (Field sf : ftype.getDeclaredFields())
             {
                 if (!Modifier.isPublic(sf.getModifiers()))
                     continue;
 
-                createConfig(modid, sub, cfg, sf.getType(), sf, sinst);
+                syncField(modid, sub, cfg, sf.getType(), sf, sinst, loading);
             }
         }
         // TODO Lists ? other stuff
@@ -414,6 +368,24 @@ public class ConfigManager
             //TODO List length values
         }
     }
+    
+    private static boolean exists(Configuration cfg, String category, String property)
+    {
+        return cfg.hasCategory(category) && cfg.getCategory(category).containsKey(property);
+    }
+    
+    private static boolean shouldReadFromVar(Property property, Object propValue, Object fieldValue)
+    {
+        if(!propValue.equals(fieldValue))
+        {
+            if(property.hasChanged())
+                return false;
+            else
+                return true;
+        }
+        return false;
+    }
+
     private static void set(Object instance, Field f, Object v)
     {
         try {

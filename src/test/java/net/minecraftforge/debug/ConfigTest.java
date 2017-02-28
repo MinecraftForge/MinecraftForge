@@ -37,7 +37,6 @@ public class ConfigTest implements IModGuiFactory
       System.out.println("Old: " + CONFIG_TYPES.bool);
       CONFIG_TYPES.bool = !CONFIG_TYPES.bool;
       System.out.println("New: " + CONFIG_TYPES.bool);
-      ConfigManager.updateConfig(MODID, Type.INSTANCE);
       ConfigManager.sync(MODID, Type.INSTANCE);
       System.out.println("After sync: " + CONFIG_TYPES.bool);
     }
