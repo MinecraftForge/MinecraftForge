@@ -31,17 +31,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.RandomAccess;
 
 /**
  * Wraps a list and keeps track of which active mod container added each element in the list.
  * Adds the method {@link #getModContainer(Object)}.
  */
-public class ModTrackingList<T> extends ForwardingList<T>
+public class ModTrackingList<T> extends ForwardingList<T> implements RandomAccess
 {
     private final List<T> delegate;
     private final Map<T, ModContainer> modContainerMap;
 
-    public ModTrackingList(@Nonnull List<T> delegate)
+    public <D extends List<T> & RandomAccess> ModTrackingList(@Nonnull D delegate)
     {
         this(delegate, new IdentityHashMap<T, ModContainer>());
     }
