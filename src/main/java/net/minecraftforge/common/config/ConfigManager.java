@@ -325,8 +325,7 @@ public class ConfigManager
         else if (ftype.getSuperclass() == Object.class) //Only support classes that are one level below Object.
         {
             String sub = (category.isEmpty() ? "" : category + ".") + getName(f).toLowerCase(Locale.ENGLISH);
-            ConfigCategory subCat = new ConfigCategory(sub, cfg.getCategory(category));//TODO Make it work. Shall be subcategory
-            subCat.setComment(comment);
+            cfg.getCategory(sub).setComment(comment);
             Object sinst = get(instance, f);
             for (Field sf : ftype.getDeclaredFields())
             {
