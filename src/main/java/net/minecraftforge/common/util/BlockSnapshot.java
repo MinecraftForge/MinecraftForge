@@ -48,10 +48,12 @@ public class BlockSnapshot implements Serializable
 
     private final BlockPos pos;
     private final int dimId;
+    @Nullable
     private transient IBlockState replacedBlock;
     private int flag;
     @Nullable
     private final NBTTagCompound nbt;
+    @Nullable
     private transient WeakReference<World> world;
     private final ResourceLocation registryName;
     private final int meta;
@@ -148,7 +150,7 @@ public class BlockSnapshot implements Serializable
     {
         if (this.replacedBlock == null)
         {
-            this.replacedBlock = ForgeRegistries.BLOCKS.getValue(this.getRegistryName()).getStateFromMeta(getMeta());
+            this.replacedBlock = ForgeRegistries.BLOCKS.getValue(getRegistryName()).getStateFromMeta(getMeta());
         }
         return this.replacedBlock;
     }
