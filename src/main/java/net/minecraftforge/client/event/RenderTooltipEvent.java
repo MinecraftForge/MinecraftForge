@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
@@ -26,6 +25,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  */
 public abstract class RenderTooltipEvent extends Event
 {
+    @Nonnull
     protected final ItemStack stack;
     protected final List<String> lines;
     protected int x;
@@ -42,7 +42,7 @@ public abstract class RenderTooltipEvent extends Event
     }
 
     /**
-     * @return The stack which the tooltip is being rendered for. As tooltips can be drawn without itemstacks, this return is {@link Nullable}. 
+     * @return The stack which the tooltip is being rendered for. As tooltips can be drawn without itemstacks, this stack may be empty.
      */
     @Nonnull
     public ItemStack getStack()
@@ -98,7 +98,7 @@ public abstract class RenderTooltipEvent extends Event
         private int screenHeight;
         private int maxWidth;
 
-        public Pre(@Nullable ItemStack stack, @Nonnull List<String> lines, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull FontRenderer fr)
+        public Pre(@Nonnull ItemStack stack, @Nonnull List<String> lines, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull FontRenderer fr)
         {
             super(stack, lines, x, y, fr);
             this.screenWidth = screenWidth;
@@ -181,7 +181,7 @@ public abstract class RenderTooltipEvent extends Event
         private final int width;
         private final int height;
         
-        public Post(@Nullable ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+        public Post(@Nonnull ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
         {
             super(stack, textLines, x, y, fr);
             this.width = width;
@@ -210,7 +210,7 @@ public abstract class RenderTooltipEvent extends Event
      */
     public static class PostBackground extends Post 
     {
-        public PostBackground(@Nullable ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+        public PostBackground(@Nonnull ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
             { super(stack, textLines, x, y, fr, width, height); }
     }
 
@@ -219,7 +219,7 @@ public abstract class RenderTooltipEvent extends Event
      */
     public static class PostText extends Post
     {
-        public PostText(@Nullable ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+        public PostText(@Nonnull ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
             { super(stack, textLines, x, y, fr, width, height); }
     }
 }

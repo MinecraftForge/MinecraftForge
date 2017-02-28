@@ -30,6 +30,7 @@ import java.util.Set;
 import net.minecraft.block.BlockPrismarine;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.ModContainer;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
@@ -111,6 +112,7 @@ public class OreDictionary
             registerOre("ingotBrick",    Items.BRICK);
             registerOre("ingotBrickNether", Items.NETHERBRICK);
             registerOre("nuggetGold",  Items.GOLD_NUGGET);
+            registerOre("nuggetIron",  Items.field_191525_da);
 
             // gems and dusts
             registerOre("gemDiamond",  Items.DIAMOND);
@@ -608,9 +610,11 @@ public class OreDictionary
         int hash;
         if (registryName == null)
         {
+            ModContainer modContainer = Loader.instance().activeModContainer();
+            String modContainerName = modContainer == null ? null : modContainer.getName();
             FMLLog.bigWarning("A broken ore dictionary registration with name %s has occurred. It adds an item (type: %s) which is currently unknown to the game registry. This dictionary item can only support a single value when"
                     + " registered with ores like this, and NO I am not going to turn this spam off. Just register your ore dictionary entries after the GameRegistry.\n"
-                    + "TO USERS: YES this is a BUG in the mod "+Loader.instance().activeModContainer().getName()+" report it to them!", name, ore.getItem().getClass());
+                    + "TO USERS: YES this is a BUG in the mod " + modContainerName + " report it to them!", name, ore.getItem().getClass());
             hash = -1;
         }
         else

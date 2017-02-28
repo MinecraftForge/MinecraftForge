@@ -18,7 +18,16 @@
      private final String field_76791_y;
      private final float field_76748_D;
      private final float field_76749_E;
-@@ -134,11 +134,12 @@
+@@ -90,6 +90,8 @@
+     protected List<Biome.SpawnListEntry> field_76762_K = Lists.<Biome.SpawnListEntry>newArrayList();
+     protected List<Biome.SpawnListEntry> field_76755_L = Lists.<Biome.SpawnListEntry>newArrayList();
+     protected List<Biome.SpawnListEntry> field_82914_M = Lists.<Biome.SpawnListEntry>newArrayList();
++    // Forge: Stores the spawnable lists for non-vanilla EnumCreatureTypes. Can't be an EnumMap as that doesn't handle new enum values being added after it's created.
++    protected java.util.Map<EnumCreatureType, List<Biome.SpawnListEntry>> modSpawnableLists = com.google.common.collect.Maps.newHashMap();
+ 
+     public static int func_185362_a(Biome p_185362_0_)
+     {
+@@ -134,11 +136,12 @@
          this.field_76761_J.add(new Biome.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.field_76755_L.add(new Biome.SpawnListEntry(EntitySquid.class, 10, 4, 4));
          this.field_82914_M.add(new Biome.SpawnListEntry(EntityBat.class, 10, 8, 8));
@@ -32,7 +41,18 @@
      }
  
      public boolean func_185363_b()
-@@ -234,7 +235,7 @@
+@@ -182,7 +185,9 @@
+             case AMBIENT:
+                 return this.field_82914_M;
+             default:
+-                return Collections.<Biome.SpawnListEntry>emptyList();
++                // Forge: Return a non-empty list for non-vanilla EnumCreatureTypes
++                if (!this.modSpawnableLists.containsKey(p_76747_1_)) this.modSpawnableLists.put(p_76747_1_, Lists.<Biome.SpawnListEntry>newArrayList());
++                return this.modSpawnableLists.get(p_76747_1_);
+         }
+     }
+ 
+@@ -234,7 +239,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180627_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -41,7 +61,7 @@
      }
  
      public final void func_180628_b(World p_180628_1_, Random p_180628_2_, ChunkPrimer p_180628_3_, int p_180628_4_, int p_180628_5_, double p_180628_6_)
-@@ -327,7 +328,7 @@
+@@ -327,7 +332,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180625_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -50,7 +70,16 @@
      }
  
      public Class <? extends Biome > func_150562_l()
-@@ -393,6 +394,83 @@
+@@ -385,7 +390,7 @@
+     @SideOnly(Side.CLIENT)
+     public final int func_185361_o()
+     {
+-        return this.field_76759_H;
++        return getWaterColorMultiplier();
+     }
+ 
+     public final boolean func_150559_j()
+@@ -393,6 +398,83 @@
          return this.field_76766_R;
      }
  
@@ -103,7 +132,7 @@
 +    public void addDefaultFlowers()
 +    {
 +        addFlower(Blocks.field_150327_N.func_176223_P().func_177226_a(Blocks.field_150327_N.func_176494_l(), BlockFlower.EnumFlowerType.DANDELION), 20);
-+        addFlower(Blocks.field_150328_O.func_176223_P().func_177226_a(Blocks.field_150328_O.func_176494_l(), BlockFlower.EnumFlowerType.POPPY), 20);
++        addFlower(Blocks.field_150328_O.func_176223_P().func_177226_a(Blocks.field_150328_O.func_176494_l(), BlockFlower.EnumFlowerType.POPPY), 10);
 +    }
 +
 +    /** Register a new plant to be planted when bonemeal is used on grass.
@@ -134,3 +163,40 @@
      public static void func_185358_q()
      {
          func_185354_a(0, "ocean", new BiomeOcean((new Biome.BiomeProperties("Ocean")).func_185398_c(-1.0F).func_185400_d(0.1F)));
+@@ -549,6 +631,7 @@
+             public Class <? extends EntityLiving > field_76300_b;
+             public int field_76301_c;
+             public int field_76299_d;
++            private final java.lang.reflect.Constructor<?> ctr;
+ 
+             public SpawnListEntry(Class <? extends EntityLiving > p_i1970_1_, int p_i1970_2_, int p_i1970_3_, int p_i1970_4_)
+             {
+@@ -556,12 +639,28 @@
+                 this.field_76300_b = p_i1970_1_;
+                 this.field_76301_c = p_i1970_3_;
+                 this.field_76299_d = p_i1970_4_;
++
++                java.lang.reflect.Constructor<?> tmp = null;
++                try
++                {
++                    tmp = p_i1970_1_.getConstructor(World.class);
++                }
++                catch (NoSuchMethodException e)
++                {
++                    com.google.common.base.Throwables.propagate(e);
++                }
++                ctr = tmp;
+             }
+ 
+             public String toString()
+             {
+                 return this.field_76300_b.getSimpleName() + "*(" + this.field_76301_c + "-" + this.field_76299_d + "):" + this.field_76292_a;
+             }
++
++            public EntityLiving newInstance(World world) throws Exception
++            {
++                return (EntityLiving)ctr.newInstance(world);
++            }
+         }
+ 
+     public static enum TempCategory

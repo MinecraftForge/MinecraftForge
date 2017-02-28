@@ -57,6 +57,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
+
 public final class AnimationStateMachine implements IAnimationStateMachine
 {
     private final ImmutableMap<String, ITimeValue> parameters;
@@ -310,6 +312,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         INSTANCE;
 
         @SuppressWarnings("unchecked")
+        @Nullable
         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
         {
             if(type.getRawType() != ImmutableMultimap.class || !(type.getType() instanceof ParameterizedType))

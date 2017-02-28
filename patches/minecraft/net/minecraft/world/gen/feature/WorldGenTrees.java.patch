@@ -21,7 +21,7 @@
                              {
                                  flag = false;
                              }
-@@ -87,9 +87,9 @@
+@@ -87,11 +87,11 @@
              }
              else
              {
@@ -31,8 +31,11 @@
 -                if ((block == Blocks.field_150349_c || block == Blocks.field_150346_d || block == Blocks.field_150458_ak) && p_180709_3_.func_177956_o() < 256 - i - 1)
 +                if (state.func_177230_c().canSustainPlant(state, p_180709_1_, p_180709_3_.func_177977_b(), net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_150345_g) && p_180709_3_.func_177956_o() < p_180709_1_.func_72800_K() - i - 1)
                  {
-                     this.func_175921_a(p_180709_1_, p_180709_3_.func_177977_b());
+-                    this.func_175921_a(p_180709_1_, p_180709_3_.func_177977_b());
++                    state.func_177230_c().onPlantGrow(state, p_180709_1_, p_180709_3_.func_177977_b(), p_180709_3_);
                      int k2 = 3;
+                     int l2 = 0;
+ 
 @@ -111,9 +111,9 @@
                                  if (Math.abs(l1) != j1 || Math.abs(j2) != j1 || p_180709_2_.nextInt(2) != 0 && i4 != 0)
                                  {

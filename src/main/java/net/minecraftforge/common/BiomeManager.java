@@ -33,6 +33,8 @@ import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.util.EnumHelper;
 
+import javax.annotation.Nullable;
+
 public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
@@ -154,6 +156,7 @@ public class BiomeManager
         }
     }
 
+    @Nullable
     public static ImmutableList<BiomeEntry> getBiomes(BiomeType type)
     {
         int idx = type.ordinal();

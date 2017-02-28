@@ -21,6 +21,7 @@ package net.minecraftforge.common.model;
 
 import java.util.EnumMap;
 
+import javax.annotation.Nullable;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
@@ -78,7 +79,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
         }
     }
 
-    public TRSRTransformation(Vector3f translation, Quat4f leftRot, Vector3f scale, Quat4f rightRot)
+    public TRSRTransformation(@Nullable Vector3f translation, @Nullable Quat4f leftRot, @Nullable Vector3f scale, @Nullable Quat4f rightRot)
     {
         this.matrix = mul(translation, leftRot, scale, rightRot);
         this.translation = translation != null ? translation : new Vector3f();
@@ -260,7 +261,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
         );
     }
 
-    public static Matrix4f mul(Vector3f translation, Quat4f leftRot, Vector3f scale, Quat4f rightRot)
+    public static Matrix4f mul(@Nullable Vector3f translation, @Nullable Quat4f leftRot, @Nullable Vector3f scale, @Nullable Quat4f rightRot)
     {
         Matrix4f res = new Matrix4f(), t = new Matrix4f();
         res.setIdentity();

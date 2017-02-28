@@ -32,10 +32,13 @@ import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
+import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 
 import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nonnull;
 
 /**
  * Generic TileEntitySpecialRenderer that works with the Forge model system and animations.
@@ -44,7 +47,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
 {
     protected static BlockRendererDispatcher blockRenderer;
 
-    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, VertexBuffer renderer)
+    public void renderTileEntityFast(@Nonnull T te, double x, double y, double z, float partialTick, int breakStage, @Nonnull VertexBuffer renderer)
     {
         if(!te.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null))
         {
@@ -64,16 +67,20 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
             if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
             {
                 float time = Animation.getWorldTime(getWorld(), partialTick);
-                Pair<IModelState, Iterable<Event>> pair = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null).apply(time);
-                handleEvents(te, time, pair.getRight());
+                IAnimationStateMachine capability = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
+                if (capability != null)
+                {
+                    Pair<IModelState, Iterable<Event>> pair = capability.apply(time);
+                    handleEvents(te, time, pair.getRight());
 
-                // TODO: caching?
-                IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(exState.getClean());
-                exState = exState.withProperty(Properties.AnimationProperty, pair.getLeft());
+                    // TODO: caching?
+                    IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(exState.getClean());
+                    exState = exState.withProperty(Properties.AnimationProperty, pair.getLeft());
 
-                renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
+                    renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
 
-                blockRenderer.getBlockModelRenderer().renderModel(world, model, exState, pos, renderer, false);
+                    blockRenderer.getBlockModelRenderer().renderModel(world, model, exState, pos, renderer, false);
+                }
             }
         }
     }

@@ -29,6 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
@@ -84,6 +85,7 @@ public class GuiModList extends GuiScreen
             this.buttonID = buttonID;
         }
 
+        @Nullable
         public static SortType getTypeForButton(GuiButton button)
         {
             for (SortType t : values())
@@ -468,11 +470,12 @@ public class GuiModList extends GuiScreen
 
     private class Info extends GuiScrollingList
     {
+        @Nullable
         private ResourceLocation logoPath;
         private Dimension logoDims;
         private List<ITextComponent> lines = null;
 
-        public Info(int width, List<String> lines, ResourceLocation logoPath, Dimension logoDims)
+        public Info(int width, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims)
         {
             super(GuiModList.this.getMinecraftInstance(),
                   width,

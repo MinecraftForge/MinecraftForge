@@ -36,6 +36,7 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.common.util.CompoundDataFixer;
+import net.minecraftforge.common.util.Java6Utils;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFMLSidedHandler;
@@ -230,7 +231,8 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public void addModAsResource(ModContainer container)
     {
-        String langFile = "assets/" + container.getModId().toLowerCase() + "/lang/en_US.lang";
+        String langFile = "assets/" + container.getModId().toLowerCase() + "/lang/en_us.lang";
+        String langFile2 = "assets/" + container.getModId().toLowerCase() + "/lang/en_US.lang";
         File source = container.getSource();
         InputStream stream = null;
         ZipFile zip = null;
@@ -238,16 +240,26 @@ public class FMLServerHandler implements IFMLSidedHandler
         {
             if (source.isDirectory() && (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment"))
             {
-                stream = new FileInputStream(new File(source.toURI().resolve(langFile).getPath()));
+                File f = new File(source.toURI().resolve(langFile).getPath());
+                if (!f.exists())
+                    f = new File(source.toURI().resolve(langFile2).getPath());
+                if (!f.exists())
+                    throw new FileNotFoundException(source.toURI().resolve(langFile).getPath());
+                stream = new FileInputStream(f);
             }
             else
             {
                 zip = new ZipFile(source);
                 ZipEntry entry = zip.getEntry(langFile);
-                if(entry == null) throw new FileNotFoundException();
+                if (entry == null) entry = zip.getEntry(langFile2);
+                if (entry == null) throw new FileNotFoundException(langFile);
                 stream = zip.getInputStream(entry);
             }
             LanguageMap.inject(stream);
+        }
+        catch (FileNotFoundException e)
+        {
+            FMLLog.getLogger().warn("Missing English translation for " + container.getModId() + ": " + e.getMessage());
         }
         catch (IOException e)
         {
@@ -260,7 +272,7 @@ public class FMLServerHandler implements IFMLSidedHandler
         finally
         {
             IOUtils.closeQuietly(stream);
-            IOUtils.closeQuietly(zip);
+            Java6Utils.closeZipQuietly(zip);
         }
     }
 

@@ -24,6 +24,7 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
@@ -140,7 +141,7 @@ public final class ItemLayerModel implements IRetexturableModel
         private final boolean isCulled;
         private final ItemOverrideList overrides;
 
-        public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, ItemOverrideList overrides, IBakedModel otherModel)
+        public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, ItemOverrideList overrides, @Nullable IBakedModel otherModel)
         {
             this.quads = quads;
             this.particle = particle;

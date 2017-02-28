@@ -37,6 +37,7 @@ import javax.annotation.Nonnull;
 
 public class ShapelessOreRecipe implements IRecipe
 {
+    @Nonnull
     protected ItemStack output = ItemStack.EMPTY;
     protected NonNullList<Object> input = NonNullList.create();
 
@@ -100,10 +101,12 @@ public class ShapelessOreRecipe implements IRecipe
     public int getRecipeSize(){ return input.size(); }
 
     @Override
+    @Nonnull
     public ItemStack getRecipeOutput(){ return output; }
 
     @Override
-    public ItemStack getCraftingResult(InventoryCrafting var1){ return output.copy(); }
+    @Nonnull
+    public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1){ return output.copy(); }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -169,6 +172,7 @@ public class ShapelessOreRecipe implements IRecipe
     }
 
     @Override
+    @Nonnull
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);

@@ -24,6 +24,7 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
@@ -86,6 +87,7 @@ import net.minecraftforge.fml.common.WorldAccessContainer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -93,6 +95,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import javax.annotation.Nullable;
 
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
 {
@@ -108,8 +112,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean disableVersionCheck = false;
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
+    public static boolean zoomInMissingModelTextInGui = false;
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
+    public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -213,7 +219,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop = config.get(CATEGORY_GENERAL, "sortRecipies", true);
         prop.setComment("Set to true to enable the post initialization sorting of crafting recipes using Forge's sorter. May cause desyncing on conflicting recipes. MUST RESTART MINECRAFT IF CHANGED FROM THE CONFIG GUI.");
         prop.setLanguageKey("forge.configgui.sortRecipies").setRequiresMcRestart(true);
-        shouldSortRecipies = prop.getBoolean(shouldSortRecipies);
+        shouldSortRecipies = prop.getBoolean(true);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringEntities", false);
@@ -262,9 +268,9 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         zombieBabyChance = (float) prop.getDouble(0.05);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", Boolean.TRUE,
+        prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", true,
                 "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
-        forgeLightPipelineEnabled = prop.getBoolean(Boolean.TRUE);
+        forgeLightPipelineEnabled = prop.getBoolean(true);
         prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
         propOrder.add(prop.getName());
 
@@ -278,22 +284,36 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         // Client-Side only properties
         propOrder = new ArrayList<String>();
-        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", Boolean.FALSE,
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", false,
                 "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
         prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
-        replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
+        replaceVanillaBucketModel = prop.getBoolean(false);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder,
+        prop = config.get(Configuration.CATEGORY_CLIENT, "zoomInMissingModelTextInGui", false,
+        "Toggle off to make missing model text in the gui fit inside the slot.");
+        zoomInMissingModelTextInGui = prop.getBoolean(false);
+        prop.setLanguageKey("forge.configgui.zoomInMissingModelTextInGui");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", 0,
                 "The timestamp of the last reminder to update to Java 8 in number of milliseconds since January 1, 1970, 00:00:00 GMT. Nag will show only once every 24 hours. To disable it set this to some really high number.");
-        java8Reminder = prop.getLong(java8Reminder);
+        java8Reminder = prop.getLong(0);
         prop.setLanguageKey("forge.configgui.java8Reminder");
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", disableStairSlabCulling,
+        prop = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", false,
                 "Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.");
-        disableStairSlabCulling = prop.getBoolean(disableStairSlabCulling);
-        prop.setLanguageKey("forge.configgui.disableStairSlabCulling").setRequiresMcRestart(false);
+        disableStairSlabCulling = prop.getBoolean(false);
+        prop.setLanguageKey("forge.configgui.disableStairSlabCulling");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "alwaysSetupTerrainOffThread", false,
+                "Enable forge to queue all chunk updates to the Chunk Update thread. May increase FPS significantly, but may also cause weird rendering lag. Not recommended for computers " +
+                "without a significant number of cores available.");
+        alwaysSetupTerrainOffThread = prop.getBoolean(false);
+        prop.setLanguageKey("forge.configgui.alwaysSetupTerrainOffThread");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
@@ -320,30 +340,35 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         if (getMetadata().modId.equals(event.getModID()))
         {
-            if (!event.isWorldRunning())
+            if ("chunkLoader".equals(event.getConfigID()))
             {
-                if (Configuration.CATEGORY_GENERAL.equals(event.getConfigID()))
-                {
-                    syncConfig(false);
-                }
-                else if ("chunkLoader".equals(event.getConfigID()))
-                {
-                    ForgeChunkManager.syncConfigDefaults();
-                    ForgeChunkManager.loadConfiguration();
-                }
-                else if (VERSION_CHECK_CAT.equals(event.getConfigID()))
-                {
-                    syncConfig(false);
-                }
+                ForgeChunkManager.syncConfigDefaults();
+                ForgeChunkManager.loadConfiguration();
             }
             else
             {
-                boolean tmp = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", disableStairSlabCulling).getBoolean();
-                if (disableStairSlabCulling != tmp)
+                boolean tmpStairs = disableStairSlabCulling;
+
+                syncConfig(false);
+
+                if (event.isWorldRunning() && tmpStairs != disableStairSlabCulling)
                 {
-                    disableStairSlabCulling = tmp;
                     FMLCommonHandler.instance().reloadRenderers();
                 }
+
+            }
+        }
+    }
+
+    @Subscribe
+    public void missingMapping(FMLMissingMappingsEvent event)
+    {
+        for (FMLMissingMappingsEvent.MissingMapping entry : event.getAll())
+        {
+            if (entry.name.equals("minecraft:totem")) //This item changed from 1.11 -> 1.11.2
+            {
+                ResourceLocation newTotem = new ResourceLocation("minecraft:totem_of_undying");
+                entry.remap(ForgeRegistries.ITEMS.getValue(newTotem));
             }
         }
     }
@@ -541,6 +566,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
 
     @Override
+    @Nullable
     public Certificate getSigningCertificate()
     {
         Certificate[] certificates = getClass().getProtectionDomain().getCodeSource().getCertificates();
