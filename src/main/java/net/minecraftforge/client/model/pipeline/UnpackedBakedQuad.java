@@ -124,6 +124,7 @@ public class UnpackedBakedQuad extends BakedQuad
             this.orientation = orientation;
         }
 
+        // FIXME: move (or at least add) into constructor
         public void setTexture(TextureAtlasSprite texture)
         {
             this.texture = texture;
@@ -166,6 +167,10 @@ public class UnpackedBakedQuad extends BakedQuad
             if(!full)
             {
                 throw new IllegalStateException("not enough data");
+            }
+            if(texture == null)
+            {
+                throw new IllegalStateException("texture not set");
             }
             if(contractUVs)
             {

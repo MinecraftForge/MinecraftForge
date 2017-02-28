@@ -98,7 +98,7 @@
          }
  
          return p_178893_1_.equals(this.field_178895_c) && flag;
-@@ -373,13 +384,31 @@
+@@ -373,13 +384,29 @@
          }
          else
          {
@@ -118,9 +118,7 @@
 +                if (ret != EnumActionResult.PASS) return ret;
 +
                  IBlockState iblockstate = p_187099_2_.func_180495_p(p_187099_3_);
-+                boolean bypass = true;
-+                for (ItemStack s : new ItemStack[]{p_187099_1_.func_184614_ca(), p_187099_1_.func_184592_cb()}) //TODO: Expand to more hands? player.inv.getHands()?
-+                    bypass = bypass && (s.func_190926_b() || s.func_77973_b().doesSneakBypassUse(s, p_187099_2_, p_187099_3_, p_187099_1_));
++                boolean bypass = itemstack.func_190926_b() || itemstack.func_77973_b().doesSneakBypassUse(itemstack, p_187099_2_, p_187099_3_, p_187099_1_);
  
 -                if ((!p_187099_1_.func_70093_af() || p_187099_1_.func_184614_ca().func_190926_b() && p_187099_1_.func_184592_cb().func_190926_b()) && iblockstate.func_177230_c().func_180639_a(p_187099_2_, p_187099_3_, iblockstate, p_187099_1_, p_187099_6_, p_187099_4_, f, f1, f2))
 +                if ((!p_187099_1_.func_70093_af() || bypass || event.getUseBlock() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW))
@@ -132,7 +130,7 @@
                  }
  
                  if (!flag && itemstack.func_77973_b() instanceof ItemBlock)
-@@ -395,7 +424,7 @@
+@@ -395,7 +422,7 @@
  
              this.field_78774_b.func_147297_a(new CPacketPlayerTryUseItemOnBlock(p_187099_3_, p_187099_4_, p_187099_6_, f, f1, f2));
  
@@ -141,7 +139,7 @@
              {
                  if (itemstack.func_190926_b())
                  {
-@@ -421,14 +450,20 @@
+@@ -421,14 +448,20 @@
                      {
                          int i = itemstack.func_77960_j();
                          int j = itemstack.func_190916_E();
@@ -163,7 +161,7 @@
                      }
                  }
              }
-@@ -457,6 +492,7 @@
+@@ -457,6 +490,7 @@
              }
              else
              {
@@ -171,7 +169,7 @@
                  int i = itemstack.func_190916_E();
                  ActionResult<ItemStack> actionresult = itemstack.func_77957_a(p_187101_2_, p_187101_1_, p_187101_3_);
                  ItemStack itemstack1 = (ItemStack)actionresult.func_188398_b();
-@@ -464,6 +500,10 @@
+@@ -464,6 +498,10 @@
                  if (itemstack1 != itemstack || itemstack1.func_190916_E() != i)
                  {
                      p_187101_1_.func_184611_a(p_187101_3_, itemstack1);
@@ -182,7 +180,7 @@
                  }
  
                  return actionresult.func_188397_a();
-@@ -500,6 +540,7 @@
+@@ -500,6 +538,7 @@
          this.func_78750_j();
          Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
          this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_4_, vec3d));

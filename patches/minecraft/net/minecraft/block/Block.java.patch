@@ -197,7 +197,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +932,1188 @@
+@@ -908,6 +932,1217 @@
      {
      }
  
@@ -1037,10 +1037,39 @@
 +        IBlockState state = world.func_180495_p(pos);
 +        for (IProperty<?> prop : state.func_177228_b().keySet())
 +        {
-+            if (prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation"))
++            if ((prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation")) && prop.func_177699_b() == EnumFacing.class)
 +            {
-+                world.func_175656_a(pos, state.func_177231_a(prop));
-+                return true;
++                Block block = state.func_177230_c();
++                if (!(block instanceof BlockBed) && !(block instanceof BlockPistonExtension))
++                {
++                    IBlockState newState;
++                    //noinspection unchecked
++                    IProperty<EnumFacing> facingProperty = (IProperty<EnumFacing>) prop;
++                    EnumFacing facing = state.func_177229_b(facingProperty);
++                    java.util.Collection<EnumFacing> validFacings = facingProperty.func_177700_c();
++
++                    // rotate horizontal facings clockwise
++                    if (validFacings.size() == 4 && !validFacings.contains(EnumFacing.UP) && !validFacings.contains(EnumFacing.DOWN))
++                    {
++                        newState = state.func_177226_a(facingProperty, facing.func_176746_e());
++                    }
++                    else
++                    {
++                        // rotate other facings about the axis
++                        EnumFacing rotatedFacing = facing.func_176732_a(axis.func_176740_k());
++                        if (validFacings.contains(rotatedFacing))
++                        {
++                            newState = state.func_177226_a(facingProperty, rotatedFacing);
++                        }
++                        else // abnormal facing property, just cycle it
++                        {
++                            newState = state.func_177231_a(facingProperty);
++                        }
++                    }
++
++                    world.func_175656_a(pos, newState);
++                    return true;
++                }
 +            }
 +        }
 +        return false;
@@ -1059,7 +1088,7 @@
 +        IBlockState state = world.func_180495_p(pos);
 +        for (IProperty<?> prop : state.func_177228_b().keySet())
 +        {
-+            if (prop.func_177701_a().equals("facing") && prop.func_177699_b() == EnumFacing.class)
++            if ((prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation")) && prop.func_177699_b() == EnumFacing.class)
 +            {
 +                @SuppressWarnings("unchecked")
 +                java.util.Collection<EnumFacing> values = ((java.util.Collection<EnumFacing>)prop.func_177700_c());
@@ -1386,7 +1415,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2407,7 @@
+@@ -1201,14 +2436,7 @@
              }
              else
              {
