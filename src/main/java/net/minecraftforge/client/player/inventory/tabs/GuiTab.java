@@ -47,9 +47,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Class used to add a new GuiTab
- * 
- * @author Subaraki, Modified by Ash Indigo
- *
  */
 @SideOnly(Side.CLIENT)
 public class GuiTab
@@ -121,7 +118,7 @@ public class GuiTab
         this.name = name;
         this.iconResLoc = icon;
         // Make sure the vanilla tab doesnt get duplicated
-        if (GuiTab.tabRegistry.get(clazz).contains(VANILLA_INVENTORY_TAB) == false)
+        if (!GuiTab.tabRegistry.get(clazz).contains(VANILLA_INVENTORY_TAB))
         {
             GuiTab.VANILLA_INVENTORY_TAB.addTo(clazz);
         }
@@ -162,7 +159,7 @@ public class GuiTab
         x = x + 6;
         y = y + 8 + (isFirstRow ? 1 : -1);
         GlStateManager.enableLighting();
-        if (getIconStack() != null)
+        if (!getIconStack().isEmpty())
         {
             ItemStack itemstack = getIconStack();
             itemRender.renderItemAndEffectIntoGUI(itemstack, x, y);
