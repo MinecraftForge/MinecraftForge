@@ -197,6 +197,24 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
+@@ -978,7 +1046,7 @@
+     {
+         super.func_190629_c(p_190629_1_);
+ 
+-        if (p_190629_1_.func_184614_ca().func_77973_b() instanceof ItemAxe)
++        if (p_190629_1_.func_184614_ca().func_77973_b().canDisableShield(p_190629_1_.func_184614_ca(), this.func_184607_cu(), this, p_190629_1_))
+         {
+             this.func_190777_m(true);
+         }
+@@ -998,7 +1066,7 @@
+ 
+     protected void func_184590_k(float p_184590_1_)
+     {
+-        if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b() == Items.field_185159_cQ)
++        if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b().isShield(this.field_184627_bm, this))
+         {
+             int i = 1 + MathHelper.func_76141_d(p_184590_1_);
+             this.field_184627_bm.func_77972_a(i, this);
 @@ -1006,6 +1074,7 @@
              if (this.field_184627_bm.func_190926_b())
              {

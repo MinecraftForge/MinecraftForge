@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,613 @@
+@@ -433,11 +440,637 @@
          return false;
      }
  
@@ -668,13 +668,37 @@
 +        }
 +        return builder.build();
 +    }
++    
++    /**
++     * Can this Item disable a shield
++     * @param stack The ItemStack
++     * @param shield The shield in question
++     * @param entity The Entity holding the shield
++     * @param attacker The Entity holding the ItemStack
++     * @return True if this Item can disable the shield in question.
++     */
++    public boolean canDisableShield(ItemStack stack, ItemStack shield, Entity entity, Entity attacker)
++    {
++        return this instanceof ItemAxe;
++    }
++    
++    /**
++     * Is this Item a shield
++     * @param stack The ItemStack
++     * @param entity the Entity holding the ItemStack
++     * @return True if the ItemStack is considered a shield.
++     */
++    public boolean isShield(ItemStack stack, @Nullable Entity entity)
++    {
++        return stack.func_77973_b() == Items.field_185159_cQ;
++    }
 +
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1581,8 @@
+@@ -972,6 +1605,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -683,7 +707,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1007,9 +1618,26 @@
+@@ -1007,9 +1642,26 @@
              return this.field_78008_j;
          }
  
