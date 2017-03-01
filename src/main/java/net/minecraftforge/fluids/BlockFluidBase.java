@@ -453,6 +453,17 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return super.shouldSideBeRendered(state, world, pos, side);
     }
 
+    public boolean isCoveredWithFluid(IBlockAccess world, BlockPos pos)
+    {
+        IBlockState here = world.getBlockState(pos);
+        IBlockState up = world.getBlockState(pos.down(densityDir));
+        if (here.getBlock() == this && (up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock))
+        {
+            	return true;
+        }
+        return false;
+    }
+
     @Override
     @Nonnull
     public IBlockState getExtendedState(@Nonnull IBlockState oldState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos)
@@ -492,6 +503,25 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                 }
             }
         }
+        
+        //check for downflow above corners
+        if(isCoveredWithFluid(worldIn, pos.add(-1, 0, -1)) || isCoveredWithFluid(worldIn, pos.add(-1, 0,  0)) || isCoveredWithFluid(worldIn, pos.add(0, 0, -1)))
+        {
+            corner[0][0] = 1;
+        }
+        if(isCoveredWithFluid(worldIn, pos.add(-1, 0,  0)) || isCoveredWithFluid(worldIn, pos.add(-1, 0,  1)) || isCoveredWithFluid(worldIn, pos.add(0, 0,  1)))
+        {
+            corner[0][1] = 1;
+        }
+        if(isCoveredWithFluid(worldIn, pos.add( 0, 0, -1)) || isCoveredWithFluid(worldIn, pos.add( 1, 0, -1)) || isCoveredWithFluid(worldIn, pos.add(1, 0,  0)))
+        {
+            corner[1][0] = 1;
+        }
+        if(isCoveredWithFluid(worldIn, pos.add( 1, 0,  0)) || isCoveredWithFluid(worldIn, pos.add( 0, 0,  1)) || isCoveredWithFluid(worldIn, pos.add(1, 0,  1)))
+        {
+            corner[1][1] = 1;
+        }
+        
         state = state.withProperty(LEVEL_CORNERS[0], corner[0][0]);
         state = state.withProperty(LEVEL_CORNERS[1], corner[0][1]);
         state = state.withProperty(LEVEL_CORNERS[2], corner[1][1]);
