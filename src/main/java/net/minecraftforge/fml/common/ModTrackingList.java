@@ -74,6 +74,18 @@ public class ModTrackingList<T> extends ForwardingList<T> implements RandomAcces
         }
     }
 
+    private void trackModContainer(@Nonnull Collection<? extends T> elements)
+    {
+        ModContainer modContainer = Loader.instance().activeModContainer();
+        if (modContainer != null)
+        {
+            for (T element : elements)
+            {
+                modContainerMap.put(element, modContainer);
+            }
+        }
+    }
+
     @Override
     public boolean add(@Nonnull T t)
     {
@@ -98,14 +110,7 @@ public class ModTrackingList<T> extends ForwardingList<T> implements RandomAcces
         boolean changed = delegate.addAll(index, elements);
         if (changed)
         {
-            ModContainer modContainer = Loader.instance().activeModContainer();
-            if (modContainer != null)
-            {
-                for (T element : elements)
-                {
-                    modContainerMap.put(element, modContainer);
-                }
-            }
+            trackModContainer(elements);
         }
         return changed;
     }
@@ -116,14 +121,7 @@ public class ModTrackingList<T> extends ForwardingList<T> implements RandomAcces
         boolean changed = delegate.addAll(collection);
         if (changed)
         {
-            ModContainer modContainer = Loader.instance().activeModContainer();
-            if (modContainer != null)
-            {
-                for (T element : collection)
-                {
-                    modContainerMap.put(element, modContainer);
-                }
-            }
+            trackModContainer(collection);
         }
         return changed;
     }
