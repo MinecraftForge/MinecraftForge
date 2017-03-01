@@ -1,7 +1,5 @@
 package net.minecraftforge.debug;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import net.minecraft.client.Minecraft;
@@ -10,11 +8,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Config.*;
-import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.fml.client.IModGuiFactory;
-import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.GuiConfig;
-import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -49,6 +44,7 @@ public class ConfigTest implements IModGuiFactory
         }
     }
 
+    @LangKey("config_test.config.types")
     @Config(modid = MODID, type = Type.INSTANCE, name = MODID + "_types")
     public static class CONFIG_TYPES
     {
@@ -91,6 +87,7 @@ public class ConfigTest implements IModGuiFactory
             public String HeyLook = "I'm Inside!";
         }
     }
+    @LangKey("config_test.config.annotations")
     @Config(modid = MODID)
     public static class CONFIG_ANNOTATIONS
     {
@@ -112,6 +109,7 @@ public class ConfigTest implements IModGuiFactory
             public String HeyLook = "Go in!";
         }
     }
+    @LangKey("config_test.config.subcats")
     @Config(modid = MODID, name = MODID + "_subcats", category = "")
     public static class CONFIG_SUBCATS
     {
@@ -133,28 +131,6 @@ public class ConfigTest implements IModGuiFactory
         }
     }
 
-    public static class ConfigurationGui extends GuiConfig
-    {
-        public ConfigurationGui(GuiScreen parentScreen)
-        {
-            super(parentScreen, collectElements(), MODID, false, false, MODID + " Config Screen");
-        }
-        
-        private static List<IConfigElement> collectElements() {
-            List<IConfigElement> elements = new ArrayList<IConfigElement>();
-            
-            elements.add(new DummyConfigElement.DummyCategoryElement("general", "gui.general", ConfigElement.from(CONFIG_ANNOTATIONS.class).getChildElements()));
-            
-            //List<IConfigElement> subcatElements = new ArrayList<IConfigElement>();
-            //subcatElements.add(new DummyConfigElement.DummyCategoryElement("test_a", "test_a", ConfigElement.from(MODID, MODID + "_subcats", "test_a").getChildElements()));
-            //subcatElements.add(new DummyConfigElement.DummyCategoryElement("test_b", "test_b", ConfigElement.from(MODID, MODID + "_subcats", "test_b").getChildElements()));
-            elements.add(new DummyConfigElement.DummyCategoryElement("subcats", "gui.subcats", ConfigElement.from(CONFIG_SUBCATS.class).getChildElements()));
-            
-            elements.add(new DummyConfigElement.DummyCategoryElement("types", "gui.types", ConfigElement.from(CONFIG_TYPES.class).getChildElements()));
-            return elements;
-        }
-    }
-
     @Override
     public void initialize(Minecraft minecraftInstance)
     {}
@@ -162,7 +138,17 @@ public class ConfigTest implements IModGuiFactory
     @Override
     public Class<? extends GuiScreen> mainConfigGuiClass()
     {
-        return ConfigurationGui.class;
+        return Gui.class;
+    }
+    
+    public static class Gui extends GuiConfig
+    {
+
+        public Gui(GuiScreen parentScreen)
+        {
+            super(parentScreen, MODID, false, false, "Config test config screen", CONFIG_ANNOTATIONS.class, CONFIG_SUBCATS.class, CONFIG_TYPES.class);
+        }
+        
     }
 
     @Override

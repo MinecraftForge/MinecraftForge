@@ -33,6 +33,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -80,6 +81,22 @@ public class GuiConfig extends GuiScreen
     protected HoverChecker undoHoverChecker;
     protected HoverChecker resetHoverChecker;
     protected HoverChecker checkBoxHoverChecker;
+    
+    public GuiConfig(GuiScreen parentScreen, String modID, boolean allRequireWorldRestart, boolean allRequireMcRestart, String title,
+            Class<?>... configClasses)
+    {
+        this(parentScreen, collectConfigElements(configClasses), modID, null, allRequireWorldRestart, allRequireMcRestart, title, null);
+    }
+    
+    private static List<IConfigElement> collectConfigElements(Class<?>[] configClasses)
+    {
+        List<IConfigElement> elements = new ArrayList<IConfigElement>();
+        for(Class<?> clazz : configClasses)
+        {
+            elements.add(ConfigElement.from(clazz));
+        }
+        return elements;
+    }
 
     /**
      * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded. If a non-null value is passed for configID,
