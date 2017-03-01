@@ -5,9 +5,11 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityDropper;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -99,12 +101,24 @@ public class PlayerInteractEventTest
         }
 
         // Spawn egg in main hand, block in offhand -> block should be placed
-        // Sword in main hand, spawn egg in offhand -> nothing should happen
-        if (evt.getItemStack() != null && evt.getItemStack().getItem() == Items.SPAWN_EGG) {
+        if (evt.getItemStack() != null
+                && evt.getItemStack().getItem() == Items.SPAWN_EGG
+                && evt.getHand() == EnumHand.MAIN_HAND
+                && evt.getEntityPlayer().getHeldItemOffhand() != null
+                && evt.getEntityPlayer().getHeldItemOffhand().getItem() instanceof ItemBlock) {
             evt.setCanceled(true);
         }
 
-
+        // Spawn egg in main hand, potion in offhand -> potion should NOT be thrown
+        if (evt.getItemStack() != null
+                && evt.getItemStack().getItem() == Items.SPAWN_EGG
+                && evt.getHand() == EnumHand.MAIN_HAND
+                && evt.getEntityPlayer().getHeldItemOffhand() != null
+                && evt.getEntityPlayer().getHeldItemOffhand().getItem() == Items.SPLASH_POTION) {
+            evt.setCanceled(true);
+            // Fake spawn egg success so splash potion does not trigger
+            evt.setCancellationResult(EnumActionResult.SUCCESS);
+        }
     }
 
     @SubscribeEvent
@@ -112,12 +126,24 @@ public class PlayerInteractEventTest
     {
         if (!ENABLE) return;
 
-        // Use survival mode
+        // Case: Ender pearl in main hand, block in offhand -> Block is NOT placed
+        if (evt.getItemStack() != null
+                && evt.getItemStack().getItem() == Items.ENDER_PEARL
+                && evt.getHand() == EnumHand.MAIN_HAND
+                && evt.getEntityPlayer().getHeldItemOffhand() != null
+                && evt.getEntityPlayer().getHeldItemOffhand().getItem() instanceof ItemBlock)
+        {
+            evt.setCanceled(true);
+            evt.setCancellationResult(EnumActionResult.SUCCESS); // We fake success on the ender pearl so block is not placed
+            return;
+        }
+
         // Case: Ender pearl in main hand, bow in offhand with arrows in inv -> Bow should trigger
         // Case: Sword in main hand, ender pearl in offhand -> Nothing should happen
-
         if (evt.getItemStack() != null && evt.getItemStack().getItem() == Items.ENDER_PEARL)
+        {
             evt.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
@@ -130,6 +156,16 @@ public class PlayerInteractEventTest
                 && evt.getTarget() instanceof EntityArmorStand
                 && evt.getItemStack().getItem() == Items.IRON_HELMET)
             evt.setCanceled(true); // Should not be able to place iron helmet onto armor stand (you will put it on instead)
+
+        if (evt.getItemStack() != null
+                && evt.getTarget() instanceof EntityArmorStand
+                && evt.getItemStack().getItem() == Items.GOLDEN_HELMET)
+        {
+            evt.setCanceled(true);
+            evt.setCancellationResult(EnumActionResult.SUCCESS);
+            // Should not be able to place golden helmet onto armor stand
+            // However you will NOT put it on because we fake success on the armorstand.
+        }
 
         if (evt.getWorld().isRemote
                 && evt.getTarget() instanceof EntitySkeleton
@@ -146,10 +182,18 @@ public class PlayerInteractEventTest
     {
         if (!ENABLE) return;
 
-        if (evt.getItemStack() != null && (evt.getTarget() instanceof EntityHorse || evt.getTarget() instanceof EntityCreeper))
+        if (evt.getItemStack() != null && evt.getTarget() instanceof EntityHorse) {
             // Should not be able to feed wild horses with golden apple (you will start eating it in survival)
-            // Should not be able to ignite creeper with F+S
-            // Applies to both hands
-            evt.setCanceled(true);
+            if (evt.getItemStack().getItem() == Items.GOLDEN_APPLE
+                    && evt.getItemStack().getItemDamage() == 0)
+                evt.setCanceled(true);
+            // Should not be able to feed wild horses with notch apple but you will NOT eat it
+            if (evt.getItemStack().getItem() == Items.GOLDEN_APPLE
+                    && evt.getItemStack().getItemDamage() == 1)
+            {
+                evt.setCanceled(true);
+                evt.setCancellationResult(EnumActionResult.SUCCESS);
+            }
+        }
     }
 }
