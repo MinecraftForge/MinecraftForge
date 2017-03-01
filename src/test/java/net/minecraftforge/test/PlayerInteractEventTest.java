@@ -51,7 +51,7 @@ public class PlayerInteractEventTest
         if (!ENABLE) return;
         logger.info("HIT VEC: {}", evt.getHitVec());
 
-        if (evt.getItemStack() != null)
+        if (!evt.getItemStack().isEmpty())
         {
             if (evt.getItemStack().getItem() == Items.GOLDEN_PICKAXE)
                 evt.setCanceled(true); // Redstone should not activate and pick should not be able to dig anything
@@ -91,29 +91,29 @@ public class PlayerInteractEventTest
         // Case: Flint and steel in main hand on top of a TE will light a fire, not open the TE.
         // Note that if you do this on a chest, the f+s will fail, but then your off hand will open the chest
         // If you dual wield flints and steels and right click a chest nothing should happen
-        if (evt.getItemStack() != null && evt.getItemStack().getItem() == Items.FLINT_AND_STEEL)
+        if (!evt.getItemStack().isEmpty() && evt.getItemStack().getItem() == Items.FLINT_AND_STEEL)
             evt.setUseBlock(Event.Result.DENY);
 
         // Case: Painting in main hand
         // Opening a TE will also place a painting on the TE if possible
-        if (evt.getHand() == EnumHand.MAIN_HAND && evt.getItemStack() != null && evt.getItemStack().getItem() == Items.PAINTING) {
+        if (evt.getHand() == EnumHand.MAIN_HAND && !evt.getItemStack().isEmpty() && evt.getItemStack().getItem() == Items.PAINTING) {
             evt.setUseItem(Event.Result.ALLOW);
         }
 
         // Spawn egg in main hand, block in offhand -> block should be placed
-        if (evt.getItemStack() != null
+        if (!evt.getItemStack().isEmpty()
                 && evt.getItemStack().getItem() == Items.SPAWN_EGG
                 && evt.getHand() == EnumHand.MAIN_HAND
-                && evt.getEntityPlayer().getHeldItemOffhand() != null
+                && !evt.getEntityPlayer().getHeldItemOffhand().isEmpty()
                 && evt.getEntityPlayer().getHeldItemOffhand().getItem() instanceof ItemBlock) {
             evt.setCanceled(true);
         }
 
         // Spawn egg in main hand, potion in offhand -> potion should NOT be thrown
-        if (evt.getItemStack() != null
+        if (!evt.getItemStack().isEmpty()
                 && evt.getItemStack().getItem() == Items.SPAWN_EGG
                 && evt.getHand() == EnumHand.MAIN_HAND
-                && evt.getEntityPlayer().getHeldItemOffhand() != null
+                && !evt.getEntityPlayer().getHeldItemOffhand().isEmpty()
                 && evt.getEntityPlayer().getHeldItemOffhand().getItem() == Items.SPLASH_POTION) {
             evt.setCanceled(true);
             // Fake spawn egg success so splash potion does not trigger
@@ -127,10 +127,10 @@ public class PlayerInteractEventTest
         if (!ENABLE) return;
 
         // Case: Ender pearl in main hand, block in offhand -> Block is NOT placed
-        if (evt.getItemStack() != null
+        if (!evt.getItemStack().isEmpty()
                 && evt.getItemStack().getItem() == Items.ENDER_PEARL
                 && evt.getHand() == EnumHand.MAIN_HAND
-                && evt.getEntityPlayer().getHeldItemOffhand() != null
+                && !evt.getEntityPlayer().getHeldItemOffhand().isEmpty()
                 && evt.getEntityPlayer().getHeldItemOffhand().getItem() instanceof ItemBlock)
         {
             evt.setCanceled(true);
@@ -140,7 +140,7 @@ public class PlayerInteractEventTest
 
         // Case: Ender pearl in main hand, bow in offhand with arrows in inv -> Bow should trigger
         // Case: Sword in main hand, ender pearl in offhand -> Nothing should happen
-        if (evt.getItemStack() != null && evt.getItemStack().getItem() == Items.ENDER_PEARL)
+        if (!evt.getItemStack().isEmpty() && evt.getItemStack().getItem() == Items.ENDER_PEARL)
         {
             evt.setCanceled(true);
         }
@@ -152,12 +152,12 @@ public class PlayerInteractEventTest
         if (!ENABLE) return;
         logger.info("LOCAL POS: {}", evt.getLocalPos());
 
-        if (evt.getItemStack() != null
+        if (!evt.getItemStack().isEmpty()
                 && evt.getTarget() instanceof EntityArmorStand
                 && evt.getItemStack().getItem() == Items.IRON_HELMET)
             evt.setCanceled(true); // Should not be able to place iron helmet onto armor stand (you will put it on instead)
 
-        if (evt.getItemStack() != null
+        if (!evt.getItemStack().isEmpty()
                 && evt.getTarget() instanceof EntityArmorStand
                 && evt.getItemStack().getItem() == Items.GOLDEN_HELMET)
         {
@@ -167,12 +167,12 @@ public class PlayerInteractEventTest
             // However you will NOT put it on because we fake success on the armorstand.
         }
 
-        if (evt.getWorld().isRemote
+        if (!evt.getWorld().isRemote
                 && evt.getTarget() instanceof EntitySkeleton
                 && evt.getLocalPos().yCoord > evt.getTarget().height / 2.0)
         {
             // If we right click the upper half of a skeleton it dies.
-            ((EntitySkeleton) evt.getTarget()).setDead();
+            evt.getTarget().setDead();
             evt.setCanceled(true);
         }
     }
@@ -182,7 +182,7 @@ public class PlayerInteractEventTest
     {
         if (!ENABLE) return;
 
-        if (evt.getItemStack() != null && evt.getTarget() instanceof EntityHorse) {
+        if (!evt.getItemStack().isEmpty() && evt.getTarget() instanceof EntityHorse) {
             // Should not be able to feed wild horses with golden apple (you will start eating it in survival)
             if (evt.getItemStack().getItem() == Items.GOLDEN_APPLE
                     && evt.getItemStack().getItemDamage() == 0)
