@@ -85,15 +85,22 @@ public class BlockSnapshot implements Serializable
         this.setFlag(flag);
     }
 
+    /** @deprecated use {@link #BlockSnapshot(int, BlockPos, ResourceLocation, int, int, NBTTagCompound)} */
+    @Deprecated
+    public BlockSnapshot(int dimension, BlockPos pos, String modId, String blockName, int meta, int flag, @Nullable NBTTagCompound nbt)
+    {
+        this(dimension, pos, new ResourceLocation(modId, blockName), meta, flag, nbt);
+    }
+
     /**
      * Raw constructor designed for serialization usages.
      */
-    public BlockSnapshot(int dimension, BlockPos pos, String modId, String blockName, int meta, int flag, @Nullable NBTTagCompound nbt)
+    public BlockSnapshot(int dimension, BlockPos pos, ResourceLocation registryName, int meta, int flag, @Nullable NBTTagCompound nbt)
     {
         this.dimId = dimension;
         this.pos = pos.toImmutable();
         this.setFlag(flag);
-        this.registryName = new ResourceLocation(modId, blockName);
+        this.registryName = registryName;
         this.meta = meta;
         this.nbt = nbt;
     }
@@ -115,8 +122,7 @@ public class BlockSnapshot implements Serializable
         return new BlockSnapshot(
                 tag.getInteger("dimension"),
                 new BlockPos(tag.getInteger("posX"), tag.getInteger("posY"), tag.getInteger("posZ")),
-                tag.getString("blockMod"),
-                tag.getString("blockName"),
+                new ResourceLocation(tag.getString("blockMod"), tag.getString("blockName")),
                 tag.getInteger("metadata"),
                 tag.getInteger("flag"),
                 nbt);
