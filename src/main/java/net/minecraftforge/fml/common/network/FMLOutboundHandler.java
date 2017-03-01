@@ -27,6 +27,7 @@ import io.netty.util.AttributeKey;
 
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
 import net.minecraftforge.common.util.FakePlayer;
@@ -43,9 +44,10 @@ import com.google.common.collect.Sets;
 import javax.annotation.Nullable;
 
 public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
-    public static final AttributeKey<OutboundTarget> FML_MESSAGETARGET = AttributeKey.valueOf("fml:outboundTarget");
+    public static final AttributeKey<IOutboundTarget> FML_MESSAGETARGET = AttributeKey.valueOf("fml:outboundTarget");
     public static final AttributeKey<Object> FML_MESSAGETARGETARGS = AttributeKey.valueOf("fml:outboundTargetArgs");
-    public enum OutboundTarget {
+    public static final AttributeKey<EntityPlayer> FML_MESSAGETARGETEXCEPT = AttributeKey.valueOf("fml:outboundTargetExcept");
+    public enum OutboundTarget implements IOutboundTarget {
         /**
          * The packet is sent nowhere. It will be on the {@link EmbeddedChannel#outboundMessages()} Queue.
          *
@@ -62,7 +64,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
 
             @Override
             @Nullable
-            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            public List<NetworkDispatcher> selectNetworks(Object args, @Nullable EntityPlayer except, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 return null;
             }
@@ -86,7 +88,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             }
 
             @Override
-            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            public List<NetworkDispatcher> selectNetworks(Object args, @Nullable EntityPlayer except, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 return ImmutableList.of((NetworkDispatcher)args);
             }
@@ -107,7 +109,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             }
 
             @Override
-            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            public List<NetworkDispatcher> selectNetworks(Object args, @Nullable EntityPlayer except, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 return ImmutableList.of(packet.getDispatcher());
             }
@@ -129,10 +131,11 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                 }
             }
             @Override
-            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            public List<NetworkDispatcher> selectNetworks(Object args, @Nullable EntityPlayer except, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 EntityPlayerMP player = (EntityPlayerMP) args;
                 NetworkDispatcher dispatcher = (player == null || player instanceof FakePlayer) ? null : player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                // Null dispatchers may exist for fake players - skip them
                 return dispatcher == null ? ImmutableList.<NetworkDispatcher>of() : ImmutableList.of(dispatcher);
             }
         },
@@ -148,13 +151,16 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             {
             }
             @Override
-            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            public List<NetworkDispatcher> selectNetworks(Object args, @Nullable EntityPlayer except, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
                 for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers())
                 {
-                    NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                    if (dispatcher != null) builder.add(dispatcher);
+                    if (player != except) {
+                        NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                        // Null dispatchers may exist for fake players - skip them
+                        if (dispatcher != null) builder.add(dispatcher);
+                    }
                 }
                 return builder.build();
             }
@@ -175,13 +181,13 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                 }
             }
             @Override
-            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            public List<NetworkDispatcher> selectNetworks(Object args, @Nullable EntityPlayer except, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 int dimension = (Integer)args;
                 ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
                 for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers())
                 {
-                    if (dimension == player.dimension)
+                    if (player != except && dimension == player.dimension)
                     {
                         NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                         // Null dispatchers may exist for fake players - skip them
@@ -209,13 +215,13 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             }
 
             @Override
-            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            public List<NetworkDispatcher> selectNetworks(Object args, @Nullable EntityPlayer except, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 TargetPoint tp = (TargetPoint)args;
                 ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
                 for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers())
                 {
-                    if (player.dimension == tp.dimension)
+                    if (player != except && player.dimension == tp.dimension)
                     {
                         double d4 = tp.x - player.posX;
                         double d5 = tp.y - player.posY;
@@ -224,6 +230,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                         if (d4 * d4 + d5 * d5 + d6 * d6 < tp.range * tp.range)
                         {
                             NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                            // Null dispatchers may exist for fake players - skip them
                             if (dispatcher != null) builder.add(dispatcher);
                         }
                     }
@@ -243,21 +250,24 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             {
             }
             @Override
-            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            public List<NetworkDispatcher> selectNetworks(Object args, @Nullable EntityPlayer except, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 NetworkManager clientConnection = FMLCommonHandler.instance().getClientToServerNetworkManager();
                 return clientConnection == null || clientConnection.channel().attr(NetworkDispatcher.FML_DISPATCHER).get() == null ? ImmutableList.<NetworkDispatcher>of() : ImmutableList.of(clientConnection.channel().attr(NetworkDispatcher.FML_DISPATCHER).get());
             }
         };
 
-        private OutboundTarget(ImmutableSet<Side> sides)
+        OutboundTarget(ImmutableSet<Side> sides)
         {
             this.allowed = sides;
         }
         public final ImmutableSet<Side> allowed;
-        public abstract void validateArgs(Object args);
-        @Nullable
-        public abstract List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet);
+
+        @Override
+        public boolean isSideAllowed(Side side)
+        {
+            return allowed.contains(side);
+        }
     }
 
     @Override
@@ -268,8 +278,9 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             return;
         }
         FMLProxyPacket pkt = (FMLProxyPacket) msg;
-        OutboundTarget outboundTarget;
+        IOutboundTarget outboundTarget;
         Object args = null;
+        EntityPlayer except = null;
         NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
         // INTERNAL message callback - let it pass out
         if (dispatcher != null)
@@ -280,9 +291,10 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
 
         outboundTarget = ctx.channel().attr(FML_MESSAGETARGET).get();
         Side channelSide = ctx.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get();
-        if (outboundTarget != null && outboundTarget.allowed.contains(channelSide))
+        if (outboundTarget != null && outboundTarget.isSideAllowed(channelSide))
         {
             args = ctx.channel().attr(FML_MESSAGETARGETARGS).get();
+            except = ctx.channel().attr(FML_MESSAGETARGETEXCEPT).get();
             outboundTarget.validateArgs(args);
         }
         else if (channelSide == Side.CLIENT)
@@ -294,7 +306,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             throw new FMLNetworkException("Packet arrived at the outbound handler without a valid target!");
         }
 
-        List<NetworkDispatcher> dispatchers = outboundTarget.selectNetworks(args, ctx, pkt);
+        List<NetworkDispatcher> dispatchers = outboundTarget.selectNetworks(args, except, ctx, pkt);
 
         // This will drop the messages into the output queue at the embedded channel
         if (dispatchers == null)
