@@ -457,11 +457,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     {
         IBlockState here = world.getBlockState(pos);
         IBlockState up = world.getBlockState(pos.down(densityDir));
-        if (here.getBlock() == this && (up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock))
-        {
-            	return true;
-        }
-        return false;
+        return here.getBlock() == this && (up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock);
     }
 
     @Override
@@ -505,19 +501,19 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
         
         //check for downflow above corners
-        if(isCoveredWithFluid(worldIn, pos.add(-1, 0, -1)) || isCoveredWithFluid(worldIn, pos.add(-1, 0,  0)) || isCoveredWithFluid(worldIn, pos.add(0, 0, -1)))
+        if(isCoveredWithFluid(worldIn, pos.add(-1, 0, -1)) || isCoveredWithFluid(worldIn, pos.add(-1, 0, 0)) || isCoveredWithFluid(worldIn, pos.add(0, 0, -1)))
         {
             corner[0][0] = 1;
         }
-        if(isCoveredWithFluid(worldIn, pos.add(-1, 0,  0)) || isCoveredWithFluid(worldIn, pos.add(-1, 0,  1)) || isCoveredWithFluid(worldIn, pos.add(0, 0,  1)))
+        if(isCoveredWithFluid(worldIn, pos.add(-1, 0, 0)) || isCoveredWithFluid(worldIn, pos.add(-1, 0, 1)) || isCoveredWithFluid(worldIn, pos.add(0, 0, 1)))
         {
             corner[0][1] = 1;
         }
-        if(isCoveredWithFluid(worldIn, pos.add( 0, 0, -1)) || isCoveredWithFluid(worldIn, pos.add( 1, 0, -1)) || isCoveredWithFluid(worldIn, pos.add(1, 0,  0)))
+        if(isCoveredWithFluid(worldIn, pos.add(0, 0, -1)) || isCoveredWithFluid(worldIn, pos.add(1, 0, -1)) || isCoveredWithFluid(worldIn, pos.add(1, 0, 0)))
         {
             corner[1][0] = 1;
         }
-        if(isCoveredWithFluid(worldIn, pos.add( 1, 0,  0)) || isCoveredWithFluid(worldIn, pos.add( 0, 0,  1)) || isCoveredWithFluid(worldIn, pos.add(1, 0,  1)))
+        if(isCoveredWithFluid(worldIn, pos.add(1, 0, 0)) || isCoveredWithFluid(worldIn, pos.add(0, 0, 1)) || isCoveredWithFluid(worldIn, pos.add(1, 0, 1)))
         {
             corner[1][1] = 1;
         }
