@@ -677,7 +677,7 @@
 +     * @param attacker The Entity holding the ItemStack
 +     * @return True if this Item can disable the shield in question.
 +     */
-+    public boolean canDisableShield(ItemStack stack, ItemStack shield, Entity entity, Entity attacker)
++    public boolean canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker)
 +    {
 +        return this instanceof ItemAxe;
 +    }
@@ -688,7 +688,7 @@
 +     * @param entity the Entity holding the ItemStack
 +     * @return True if the ItemStack is considered a shield.
 +     */
-+    public boolean isShield(ItemStack stack, @Nullable Entity entity)
++    public boolean isShield(ItemStack stack, @Nullable EntityLivingBase entity)
 +    {
 +        return stack.func_77973_b() == Items.field_185159_cQ;
 +    }
