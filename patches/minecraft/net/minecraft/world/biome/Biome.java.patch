@@ -70,6 +70,15 @@
      }
  
      public Class <? extends Biome > func_150562_l()
+@@ -385,7 +390,7 @@
+     @SideOnly(Side.CLIENT)
+     public final int func_185361_o()
+     {
+-        return this.field_76759_H;
++        return getWaterColorMultiplier();
+     }
+ 
+     public final boolean func_150559_j()
 @@ -393,6 +398,83 @@
          return this.field_76766_R;
      }
@@ -123,7 +132,7 @@
 +    public void addDefaultFlowers()
 +    {
 +        addFlower(Blocks.field_150327_N.func_176223_P().func_177226_a(Blocks.field_150327_N.func_176494_l(), BlockFlower.EnumFlowerType.DANDELION), 20);
-+        addFlower(Blocks.field_150328_O.func_176223_P().func_177226_a(Blocks.field_150328_O.func_176494_l(), BlockFlower.EnumFlowerType.POPPY), 20);
++        addFlower(Blocks.field_150328_O.func_176223_P().func_177226_a(Blocks.field_150328_O.func_176494_l(), BlockFlower.EnumFlowerType.POPPY), 10);
 +    }
 +
 +    /** Register a new plant to be planted when bonemeal is used on grass.

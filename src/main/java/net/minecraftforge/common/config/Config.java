@@ -28,9 +28,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Config
 {
-	/**
-	 * The mod id that this configuration is associated with.
-	 */
+    /**
+    * The mod id that this configuration is associated with.
+    */
     String modid();
     /**
      * A user friendly name for the config file,
@@ -45,47 +45,60 @@ public @interface Config
      */
     Type type() default Type.INSTANCE;
 
+    /**
+     * Root element category, defaults to "general", if this is an empty string then the root category is disabled.
+     * Any primitive fields will cause an error, and you must specify sub-category objects
+     */
+    String category() default "general";
+
     public static enum Type
     {
-    	/**
-    	 * Loaded once, directly after mod construction. Before pre-init.
-    	 * This class must have static fields.
-    	 */
-    	INSTANCE(true);
+        /**
+        * Loaded once, directly after mod construction. Before pre-init.
+        * This class must have static fields.
+        */
+        INSTANCE(true);
 
 
-    	private boolean isStatic = true;
-    	private Type(boolean isStatic) { this.isStatic = isStatic; }
-    	public boolean isStatic(){ return this.isStatic; }
+        private boolean isStatic = true;
+        private Type(boolean isStatic) { this.isStatic = isStatic; }
+        public boolean isStatic(){ return this.isStatic; }
     }
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
     public @interface LangKey
     {
-    	String value();
+        String value();
     }
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
     public @interface Comment
     {
-    	String[] value();
+        String[] value();
     }
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
     public @interface RangeInt
     {
-    	int min() default Integer.MIN_VALUE;
-    	int max() default Integer.MAX_VALUE;
+        int min() default Integer.MIN_VALUE;
+        int max() default Integer.MAX_VALUE;
     }
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
     public @interface RangeDouble
     {
-    	double min() default Double.MIN_VALUE;
-    	double max() default Double.MAX_VALUE;
+        double min() default Double.MIN_VALUE;
+        double max() default Double.MAX_VALUE;
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface Name
+    {
+        String value();
     }
 }

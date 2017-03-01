@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockWeb.java
++++ ../src-work/minecraft/net/minecraft/block/BlockWeb.java
+@@ -20,7 +20,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class BlockWeb extends Block
++public class BlockWeb extends Block implements net.minecraftforge.common.IShearable
+ {
+     public BlockWeb()
+     {
+@@ -77,4 +77,10 @@
+             super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
+         }
+     }
++
++    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos) { return true; }
++    @Override
++    public java.util.List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
++        return com.google.common.collect.Lists.newArrayList(new ItemStack(Item.func_150898_a(this)));
++    }
+ }
