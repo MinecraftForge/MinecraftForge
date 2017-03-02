@@ -285,6 +285,15 @@
                              }
                          }
  
+@@ -1385,7 +1465,7 @@
+ 
+         if (this.field_70146_Z.nextFloat() < f)
+         {
+-            this.func_184811_cZ().func_185145_a(Items.field_185159_cQ, 100);
++            this.func_184811_cZ().func_185145_a(this.func_184607_cu().func_77973_b(), 100);
+             this.func_184602_cy();
+             this.field_70170_p.func_72960_a(this, (byte)30);
+         }
 @@ -1443,6 +1523,8 @@
  
      public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
