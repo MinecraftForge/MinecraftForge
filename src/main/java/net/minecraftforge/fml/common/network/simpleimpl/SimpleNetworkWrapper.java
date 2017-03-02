@@ -246,6 +246,10 @@ public class SimpleNetworkWrapper {
      * Send this message to everyone except one player.
      * The {@link IMessageHandler} for this message type should be on the CLIENT side.
      *
+     * This is particularly useful for player-caused events that require instant feedback. The excepted player will not
+     * receive the message, and is therefore expected to reliably predict the outcome of the event.
+     * Must be used with care when synchronizing game logic.
+     *
      * @param message The message to send
      * @param player The player that will not receive the message
      */
@@ -289,6 +293,10 @@ public class SimpleNetworkWrapper {
      * Send this message to everyone within a certain range of a point except one player.
      * The {@link IMessageHandler} for this message type should be on the CLIENT side.
      *
+     * This is particularly useful for player-caused events that require instant feedback. The excepted player will not
+     * receive the message, and is therefore expected to reliably predict the outcome of the event.
+     * Must be used with care when synchronizing game logic.
+     *
      * @param message The message to send
      * @param point The {@link TargetPoint} around which to send
      * @param player The player that will not receive the message
@@ -319,6 +327,10 @@ public class SimpleNetworkWrapper {
     /**
      * Send this message to everyone within the supplied dimension except one player.
      * The {@link IMessageHandler} for this message type should be on the CLIENT side.
+     *
+     * This is particularly useful for player-caused events that require instant feedback. The excepted player will not
+     * receive the message, and is therefore expected to reliably predict the outcome of the event.
+     * Must be used with care when synchronizing game logic.
      *
      * @param message The message to send
      * @param dimensionId The dimension id to target
