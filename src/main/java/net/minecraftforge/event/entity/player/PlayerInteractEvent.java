@@ -209,7 +209,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
     /**
      * This event is fired on both sides before the player triggers {@link net.minecraft.item.Item#onItemRightClick}.
-     * Note that this is NOT fired if the player is targeting a block. For that case, see {@link RightClickBlock}.
+     * Note that this is NOT fired if the player is targeting a block {@link RightClickBlock} or entity {@link EntityInteract} {@link EntityInteractSpecific}.
      *
      * Let result be the return value of {@link net.minecraft.item.Item#onItemRightClick}, or {@link #cancellationResult} if the event is cancelled.
      * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then continue to other hands.

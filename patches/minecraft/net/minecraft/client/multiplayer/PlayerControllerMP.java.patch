@@ -181,10 +181,11 @@
                  }
  
                  return actionresult.func_188397_a();
-@@ -500,6 +539,8 @@
+@@ -500,6 +539,9 @@
          this.func_78750_j();
          Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
          this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_4_, vec3d));
++        if (this.field_78779_k == GameType.SPECTATOR) return EnumActionResult.PASS; // don't fire for spectators to match non-specific EntityInteract
 +        EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAtAction(p_187102_1_, p_187102_2_, p_187102_3_, p_187102_4_);
 +        if(cancelResult != null) return cancelResult;
          return this.field_78779_k == GameType.SPECTATOR ? EnumActionResult.PASS : p_187102_2_.func_184199_a(p_187102_1_, vec3d, p_187102_4_);
