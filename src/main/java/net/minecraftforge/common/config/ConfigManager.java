@@ -118,6 +118,23 @@ public class ConfigManager
         }
     }
 
+    /**
+     * Synchronizes configuration data between the file on disk, the {@code Configuration} object and the annotated
+     * mod classes containing the configuration variables.
+     * 
+     * When first called, this method will try to load the configuration from disk. If this fails, because the file
+     * does not exist, it will be created with default values derived from the mods config classes variable default values
+     * and comments and ranges, as well as configuration names based on the appropriate annotations found in {@code @Config}.
+     * 
+     * Note, that this method is being called by the {@link FMLModContaier}, so the mod needn't call it in init().
+     * 
+     * If this method is called after the initial load, it will check whether the values in the Configuration object differ
+     * from the values in the corresponding variables. If they differ, it will either overwrite the variables if the Configuration
+     * object is marked as changed (e.g. if it was changed with the ConfigGui) or otherwise overwrite the Configuration object's values.
+     * It then proceeds to saving the changes to disk.
+     * @param modid the mod's ID for which the configuration shall be loaded
+     * @param type the configuration type, currently always {@code Config.Type.INSTANCE}
+     */
     public static void sync(String modid, Config.Type type)
     {
         FMLLog.fine("Attempting to inject @Config classes into %s for type %s", modid, type);

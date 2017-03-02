@@ -82,6 +82,16 @@ public class GuiConfig extends GuiScreen
     protected HoverChecker resetHoverChecker;
     protected HoverChecker checkBoxHoverChecker;
     
+    /**
+     * 
+     * @param parentScreen the parrent GuiScreen object
+     * @param modID the mod ID for the mod whose config settings will be editted
+     * @param allRequireWorldRestart whether all config elements on this screen require a world restart
+     * @param allRequireMcRestart whether all config elements on this screen require a game restart
+     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
+     *            edited.
+     * @param configClasses an array of classes annotated with {@code @Config} providing the configuration
+     */
     public GuiConfig(GuiScreen parentScreen, String modID, boolean allRequireWorldRestart, boolean allRequireMcRestart, String title,
             Class<?>... configClasses)
     {
@@ -90,6 +100,10 @@ public class GuiConfig extends GuiScreen
     
     private static List<IConfigElement> collectConfigElements(Class<?>[] configClasses)
     {
+        if(configClasses.length == 1)
+        {
+            return ConfigElement.from(configClasses[0]).getChildElements();
+        }
         List<IConfigElement> elements = new ArrayList<IConfigElement>();
         for(Class<?> clazz : configClasses)
         {
