@@ -44,7 +44,8 @@ import com.google.common.collect.Sets;
 import javax.annotation.Nullable;
 
 public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
-    public static final AttributeKey<IOutboundTarget> FML_MESSAGETARGET = AttributeKey.valueOf("fml:outboundTarget");
+    //TODO Make this an IOutboundTarget in next breaking version
+    public static final AttributeKey<OutboundTarget> FML_MESSAGETARGET = AttributeKey.valueOf("fml:outboundTarget");
     public static final AttributeKey<Object> FML_MESSAGETARGETARGS = AttributeKey.valueOf("fml:outboundTargetArgs");
     public static final AttributeKey<EntityPlayer> FML_MESSAGETARGETEXCEPT = AttributeKey.valueOf("fml:outboundTargetExcept");
     public enum OutboundTarget implements IOutboundTarget {
