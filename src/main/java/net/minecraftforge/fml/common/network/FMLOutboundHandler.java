@@ -268,6 +268,14 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
         {
             return allowed.contains(side);
         }
+
+        /**
+         * Use except player sensitive version
+         */
+        @Deprecated
+        public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet) {
+            return selectNetworks(args, null, context, packet);
+        }
     }
 
     @Override
