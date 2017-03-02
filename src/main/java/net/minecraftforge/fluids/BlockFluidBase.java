@@ -469,11 +469,11 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         float[][] height = new float[3][3];
         float[][] corner = new float[2][2];
         height[1][1] = getFluidHeightForRender(worldIn, pos);
-        if(height[1][1] == 1)
+        if (height[1][1] == 1)
         {
-            for(int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)
             {
-                for(int j = 0; j < 2; j++)
+                for (int j = 0; j < 2; j++)
                 {
                     corner[i][j] = 1;
                 }
@@ -481,19 +481,19 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
         else
         {
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
             {
-                for(int j = 0; j < 3; j++)
+                for (int j = 0; j < 3; j++)
                 {
-                    if(i != 1 || j != 1)
+                    if (i != 1 || j != 1)
                     {
                         height[i][j] = getFluidHeightForRender(worldIn, pos.add(i - 1, 0, j - 1));
                     }
                 }
             }
-            for(int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)
             {
-                for(int j = 0; j < 2; j++)
+                for (int j = 0; j < 2; j++)
                 {
                     corner[i][j] = getFluidHeightAverage(height[i][j], height[i][j + 1], height[i + 1][j], height[i + 1][j + 1]);
                 }
@@ -509,19 +509,19 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         boolean ne = isCoveredWithFluid(worldIn, pos.add(-1, 0,  1));
         boolean sw = isCoveredWithFluid(worldIn, pos.add( 1, 0, -1));
         boolean se = isCoveredWithFluid(worldIn, pos.add( 1, 0,  1));
-        if(nw || n || w)
+        if (nw || n || w)
         {
             corner[0][0] = 1;
         }
-        if(ne || n || e)
+        if (ne || n || e)
         {
             corner[0][1] = 1;
         }
-        if(sw || s || w)
+        if (sw || s || w)
         {
             corner[1][0] = 1;
         }
-        if(se || s || e)
+        if (se || s || e)
         {
             corner[1][1] = 1;
         }
