@@ -501,19 +501,27 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
         
         //check for downflow above corners
-        if(isCoveredWithFluid(worldIn, pos.add(-1, 0, -1)) || isCoveredWithFluid(worldIn, pos.add(-1, 0, 0)) || isCoveredWithFluid(worldIn, pos.add(0, 0, -1)))
+        boolean n =  isCoveredWithFluid(worldIn, pos.add(-1, 0,  0));
+        boolean s =  isCoveredWithFluid(worldIn, pos.add( 1, 0,  0));
+        boolean w =  isCoveredWithFluid(worldIn, pos.add( 0, 0, -1));
+        boolean e =  isCoveredWithFluid(worldIn, pos.add( 0, 0,  1));
+        boolean nw = isCoveredWithFluid(worldIn, pos.add(-1, 0, -1));
+        boolean ne = isCoveredWithFluid(worldIn, pos.add(-1, 0,  1));
+        boolean sw = isCoveredWithFluid(worldIn, pos.add( 1, 0, -1));
+        boolean se = isCoveredWithFluid(worldIn, pos.add( 1, 0,  1));
+        if(nw || n || w)
         {
             corner[0][0] = 1;
         }
-        if(isCoveredWithFluid(worldIn, pos.add(-1, 0, 0)) || isCoveredWithFluid(worldIn, pos.add(-1, 0, 1)) || isCoveredWithFluid(worldIn, pos.add(0, 0, 1)))
+        if(ne || n || e)
         {
             corner[0][1] = 1;
         }
-        if(isCoveredWithFluid(worldIn, pos.add(0, 0, -1)) || isCoveredWithFluid(worldIn, pos.add(1, 0, -1)) || isCoveredWithFluid(worldIn, pos.add(1, 0, 0)))
+        if(sw || s || w)
         {
             corner[1][0] = 1;
         }
-        if(isCoveredWithFluid(worldIn, pos.add(1, 0, 0)) || isCoveredWithFluid(worldIn, pos.add(0, 0, 1)) || isCoveredWithFluid(worldIn, pos.add(1, 0, 1)))
+        if(se || s || e)
         {
             corner[1][1] = 1;
         }
