@@ -104,7 +104,7 @@ public class ForgeGuiFactory implements IModGuiFactory
     public void initialize(Minecraft minecraftInstance) {}
 
     @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass() { return ForgeConfigGui.class; }
+    public GuiScreen mainConfigGui(GuiScreen parent) { return new ForgeConfigGui(parent); }
 
     @Override
     public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() { return null; }

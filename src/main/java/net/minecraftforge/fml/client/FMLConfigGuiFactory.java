@@ -111,9 +111,9 @@ public class FMLConfigGuiFactory implements IModGuiFactory
     }
 
     @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass()
+    public GuiScreen mainConfigGui(GuiScreen parentScreen)
     {
-        return FMLConfigGuiScreen.class;
+        return new FMLConfigGuiScreen(parentScreen);
     }
 
     private static final Set<RuntimeOptionCategoryElement> fmlCategories = ImmutableSet.of(new RuntimeOptionCategoryElement("HELP", "FML"));

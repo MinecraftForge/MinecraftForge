@@ -136,19 +136,9 @@ public class ConfigTest implements IModGuiFactory
     {}
 
     @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass()
+    public GuiScreen mainConfigGui(GuiScreen parentScreen)
     {
-        return Gui.class;
-    }
-    
-    public static class Gui extends GuiConfig
-    {
-
-        public Gui(GuiScreen parentScreen)
-        {
-            super(parentScreen, MODID, false, false, "Config test config screen", CONFIG_ANNOTATIONS.class, CONFIG_SUBCATS.class, CONFIG_TYPES.class);
-        }
-        
+        return new GuiConfig(parentScreen, MODID, false, false, "Config test config screen", CONFIG_ANNOTATIONS.class, CONFIG_SUBCATS.class, CONFIG_TYPES.class);
     }
 
     @Override
