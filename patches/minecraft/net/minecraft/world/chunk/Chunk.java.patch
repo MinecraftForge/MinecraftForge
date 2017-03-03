@@ -206,20 +206,26 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -993,9 +996,13 @@
-         }
-         else
+@@ -984,6 +987,8 @@
+ 
+     protected void func_186034_a(IChunkGenerator p_186034_1_)
+     {
++        if (isPopulatingChunk() && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
++        setPopulatingChunk(Boolean.TRUE);
+         if (this.func_177419_t())
          {
-+            if (field_76637_e.isPopulatingTerrain()) reportCascadingWorldGeneration();
-+            this.field_76637_e.setPopulatingTerrain(true);
+             if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
+@@ -995,8 +1000,10 @@
+         {
              this.func_150809_p();
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
 +            net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.field_76635_g, this.field_76647_h, this.field_76637_e, p_186034_1_, this.field_76637_e.func_72863_F());
              this.func_76630_e();
-+            this.field_76637_e.setPopulatingTerrain(false);
          }
++        setPopulatingChunk(Boolean.FALSE);
      }
  
+     public BlockPos func_177440_h(BlockPos p_177440_1_)
 @@ -1051,7 +1058,7 @@
          {
              BlockPos blockpos = (BlockPos)this.field_177447_w.poll();
@@ -285,7 +291,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1476,4 +1496,32 @@
+@@ -1476,4 +1496,47 @@
          QUEUED,
          CHECK;
      }
@@ -307,10 +313,25 @@
 +        }
 +    }
 +
-+    private void reportCascadingWorldGeneration()
++    private static ThreadLocal<Boolean> populating = new ThreadLocal<Boolean>(); // keep track of cascading chunk generation during chunk population
++
++    /** for Forge internal use, to detect cascading chunk generation issues */
++    private static boolean isPopulatingChunk()
++    {
++        Boolean isPopulating = populating.get();
++        return isPopulating != null && isPopulating;
++    }
++
++    /** for Forge internal use, to detect cascading chunk generation issues */
++    private static void setPopulatingChunk(Boolean populatingTerrain)
++    {
++        populating.set(populatingTerrain);
++    }
++
++    private void logCascadingWorldGeneration()
 +    {
 +        net.minecraftforge.fml.common.ModContainer activeModContainer = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
-+        String format = "%s loaded a new chunk (%d, %d  Dimension: %d) during terrain generation, causing cascading worldgen lag. Please report this to the mod's issue tracker.";
++        String format = "%s loaded a new chunk (%d, %d  Dimension: %d) during chunk population, causing cascading worldgen lag. Please report this to the mod's issue tracker. This log can be disabled in the Forge config.";
 +
 +        if (activeModContainer == null) // vanilla minecraft has problems too (MC-114332), log it at a quieter level.
 +            net.minecraftforge.fml.common.FMLLog.fine(format, "Minecraft", this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
