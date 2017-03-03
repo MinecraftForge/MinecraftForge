@@ -7,14 +7,10 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
- * Created by goreacraft on 17/03/03.
- *
- * This event is fired when DimensionManager is starting to load a new dimmension
- * dimension 0 (Overworld) will not trigger this event
- * {@link DimensionManager#initDimension(int)},
+ * This event is fired when DimensionManager is starting to init a new dimension
+ * with {@link DimensionManager#initDimension(int)},
  * <br>
  * This event is {@link Cancelable}.<br>
- * <br>
  * <br>
  * event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  */
