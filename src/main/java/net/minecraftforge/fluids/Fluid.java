@@ -110,6 +110,7 @@ public class Fluid
      *
      * Generally this is associated with negative density fluids.
      */
+    @Deprecated
     protected boolean isGaseous;
 
     /**
@@ -163,6 +164,7 @@ public class Fluid
     public Fluid setDensity(int density)
     {
         this.density = density;
+	this.isGaseous = density < 0;
         return this;
     }
 
@@ -178,9 +180,9 @@ public class Fluid
         return this;
     }
 
+    @Deprecated
     public Fluid setGaseous(boolean isGaseous)
     {
-        this.isGaseous = isGaseous;
         return this;
     }
 
@@ -301,7 +303,7 @@ public class Fluid
 
     public final boolean isGaseous()
     {
-        return this.isGaseous;
+        return this.density < 0;
     }
 
     public EnumRarity getRarity()
