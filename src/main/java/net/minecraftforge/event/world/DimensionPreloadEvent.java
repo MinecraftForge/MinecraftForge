@@ -3,8 +3,8 @@ package net.minecraftforge.event.world;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * This event is fired when DimensionManager starts to initiate a new dimension
