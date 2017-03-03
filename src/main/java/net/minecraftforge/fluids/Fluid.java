@@ -164,7 +164,7 @@ public class Fluid
     public Fluid setDensity(int density)
     {
         this.density = density;
-	this.isGaseous = density < 0;
+        this.isGaseous = density < 0;
         return this;
     }
 
