@@ -986,3 +986,22 @@
      public void func_184135_a(Packet<?> p_184135_1_)
      {
          throw new UnsupportedOperationException("Can\'t send packets to server unless you\'re on the client.");
+@@ -3609,4 +3910,18 @@
+     {
+         return null;
+     }
++
++    private boolean populatingTerrain; // keep track of cascading chunk generation during chunk decoration
++
++    /** for Forge internal use, to detect cascading chunk generation issues */
++    public boolean isPopulatingTerrain()
++    {
++        return this.populatingTerrain;
++    }
++
++    /** for Forge internal use, to detect cascading chunk generation issues */
++    public void setPopulatingTerrain(boolean populatingTerrain)
++    {
++        this.populatingTerrain = populatingTerrain;
++    }
+ }

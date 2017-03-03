@@ -206,15 +206,21 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -995,6 +998,7 @@
+@@ -993,9 +996,13 @@
+         }
+         else
          {
++            if (field_76637_e.isPopulatingTerrain()) reportCascadingWorldGeneration();
++            this.field_76637_e.setPopulatingTerrain(true);
              this.func_150809_p();
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
 +            net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.field_76635_g, this.field_76647_h, this.field_76637_e, p_186034_1_, this.field_76637_e.func_72863_F());
              this.func_76630_e();
++            this.field_76637_e.setPopulatingTerrain(false);
          }
      }
-@@ -1051,7 +1055,7 @@
+ 
+@@ -1051,7 +1058,7 @@
          {
              BlockPos blockpos = (BlockPos)this.field_177447_w.poll();
  
@@ -223,7 +229,7 @@
              {
                  TileEntity tileentity = this.func_177422_i(blockpos);
                  this.field_76637_e.func_175690_a(blockpos, tileentity);
-@@ -1115,6 +1119,13 @@
+@@ -1115,6 +1122,13 @@
      @SideOnly(Side.CLIENT)
      public void func_186033_a(PacketBuffer p_186033_1_, int p_186033_2_, boolean p_186033_3_)
      {
@@ -237,7 +243,7 @@
          boolean flag = this.field_76637_e.field_73011_w.func_191066_m();
  
          for (int i = 0; i < this.field_76652_q.length; ++i)
-@@ -1163,10 +1174,16 @@
+@@ -1163,10 +1177,16 @@
          this.field_76646_k = true;
          this.func_76590_a();
  
@@ -254,7 +260,7 @@
      }
  
      public Biome func_177411_a(BlockPos p_177411_1_, BiomeProvider p_177411_2_)
-@@ -1231,13 +1248,13 @@
+@@ -1231,13 +1251,13 @@
                      BlockPos blockpos1 = blockpos.func_177982_a(k, (j << 4) + i1, l);
                      boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
@@ -270,7 +276,7 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1368,7 +1385,7 @@
+@@ -1368,7 +1388,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -279,11 +285,12 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1476,4 +1493,20 @@
+@@ -1476,4 +1496,32 @@
          QUEUED,
          CHECK;
      }
 +
++    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * Removes the tile entity at the specified position, only if it's
 +     * marked as invalid.
@@ -298,5 +305,16 @@
 +                field_150816_i.remove(pos);
 +            }
 +        }
++    }
++
++    private void reportCascadingWorldGeneration()
++    {
++        net.minecraftforge.fml.common.ModContainer activeModContainer = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
++        String format = "%s loaded a new chunk (%d, %d  Dimension: %d) during terrain generation, causing cascading worldgen lag. Please report this to the mod's issue tracker.";
++
++        if (activeModContainer == null) // vanilla minecraft has problems too (MC-114332), log it at a quieter level.
++            net.minecraftforge.fml.common.FMLLog.fine(format, "Minecraft", this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
++        else
++            net.minecraftforge.fml.common.FMLLog.warning(format, activeModContainer.getName(), this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
 +    }
  }
