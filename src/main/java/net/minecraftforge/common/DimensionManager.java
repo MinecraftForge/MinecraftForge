@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentMap;
 
+import net.minecraftforge.event.world.DimensionPreloadEvent;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.HashMultiset;
@@ -214,9 +215,12 @@ public class DimensionManager
         {
             throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
         }
+        WorldServer alterantiveDimension = null;
         try
         {
-            DimensionType type = DimensionManager.getProviderType(dim); if(MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.DimensionPreloadEvent(dim, type))) return;
+            DimensionType type = DimensionManager.getProviderType(dim);
+            DimensionPreloadEvent adEvent = new DimensionPreloadEvent(dim, type);
+            alterantiveDimension = adEvent.getAlternativeDimensionToLoad();
         }
         catch (Exception e)
         {
@@ -224,10 +228,9 @@ public class DimensionManager
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
         MinecraftServer mcServer = overworld.getMinecraftServer();
-        ISaveHandler savehandler = overworld.getSaveHandler();
+        //ISaveHandler savehandler = overworld.getSaveHandler();
         //WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
-
-        WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, dim, overworld, mcServer.theProfiler).init()));
+        WorldServer world = (dim == 0 ? overworld : ( alterantiveDimension != null ? alterantiveDimension : ((WorldServer)(new WorldServerMulti(mcServer, overworld.getSaveHandler(), dim, overworld, mcServer.theProfiler).init()))));
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
