@@ -216,7 +216,7 @@ public class DimensionManager
         }
         try
         {
-            DimensionManager.getProviderType(dim);
+            DimensionType type = DimensionManager.getProviderType(dim); if(MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.DimensionPreloadEvent(dim, type))) return;
         }
         catch (Exception e)
         {
