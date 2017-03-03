@@ -291,7 +291,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1476,4 +1496,47 @@
+@@ -1476,4 +1496,46 @@
          QUEUED,
          CHECK;
      }
@@ -318,8 +318,7 @@
 +    /** for Forge internal use, to detect cascading chunk generation issues */
 +    private static boolean isPopulatingChunk()
 +    {
-+        Boolean isPopulating = populating.get();
-+        return isPopulating != null && isPopulating;
++        return populating.get() == Boolean.TRUE;
 +    }
 +
 +    /** for Forge internal use, to detect cascading chunk generation issues */
