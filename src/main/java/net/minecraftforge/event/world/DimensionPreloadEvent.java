@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.event.world;
 
 import net.minecraft.world.DimensionType;
@@ -31,30 +32,37 @@ import net.minecraftforge.common.MinecraftForge;
  * This event can be used to override instantiated dimensions <br>
  * by using {@link #setAlternativeDimension }
  */
-public class DimensionPreloadEvent extends Event {
+
+public class DimensionPreloadEvent extends Event
+{
 
     private final int dimensionId;
     private final DimensionType type;
     private WorldServer alternativeDimension;
 
-    public DimensionPreloadEvent(int dimensionId, DimensionType type) {
+    public DimensionPreloadEvent(int dimensionId, DimensionType type)
+    {
         this.dimensionId = dimensionId;
         this.type = type;
     }
 
-    public int getDimensionId() {
+    public int getDimensionId()
+    {
         return this.dimensionId;
     }
-    public DimensionType getDimensionType() {
+
+    public DimensionType getDimensionType()
+    {
         return this.type;
     }
 
-    public WorldServer getAlternativeDimension() {
+    public WorldServer getAlternativeDimension()
+    {
         return alternativeDimension;
     }
 
-    public void setAlternativeDimension(WorldServer alternativeDimension) {
+    public void setAlternativeDimension(WorldServer alternativeDimension)
+    {
         this.alternativeDimension = alternativeDimension;
     }
-
 }
