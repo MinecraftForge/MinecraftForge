@@ -152,4 +152,10 @@ public class ConfigTest implements IModGuiFactory
     {
         return null;
     }
+
+    @Override
+    public Class<? extends GuiScreen> mainConfigGuiClass()
+    {
+        return null;
+    }
 }
