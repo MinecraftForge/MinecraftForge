@@ -33,6 +33,15 @@
              {
                  EntityLivingBase entitylivingbase = (EntityLivingBase)p_76986_1_.func_184187_bx();
                  f = this.func_77034_a(entitylivingbase.field_70760_ar, entitylivingbase.field_70761_aq, p_76986_9_);
+@@ -136,7 +141,7 @@
+             GlStateManager.func_179141_d();
+             this.field_77045_g.func_78086_a(p_76986_1_, f6, f5, p_76986_9_);
+             this.field_77045_g.func_78087_a(f6, f5, f8, f2, f7, f4, p_76986_1_);
+-
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.PostRotate<T>(field_77045_g, p_76986_1_, this, p_76986_2_, p_76986_4_, p_76986_6_));
+             if (this.field_188301_f)
+             {
+                 boolean flag1 = this.func_177088_c(p_76986_1_);
 @@ -192,6 +197,7 @@
          GlStateManager.func_179089_o();
          GlStateManager.func_179121_F();
