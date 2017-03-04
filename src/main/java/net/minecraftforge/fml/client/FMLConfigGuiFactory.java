@@ -111,7 +111,7 @@ public class FMLConfigGuiFactory implements IModGuiFactory
     }
 
     @Override
-    public GuiScreen mainConfigGui(GuiScreen parentScreen)
+    public GuiScreen createConfigGui(GuiScreen parentScreen)
     {
         return new FMLConfigGuiScreen(parentScreen);
     }

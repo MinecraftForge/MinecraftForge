@@ -285,7 +285,7 @@ public class GuiModList extends GuiScreen
                             GuiScreen newScreen = null;
                             try 
                             {
-                                newScreen = guiFactory.mainConfigGui(this);
+                                newScreen = guiFactory.createConfigGui(this);
                             }
                             catch (AbstractMethodError error)
                             {
@@ -428,7 +428,7 @@ public class GuiModList extends GuiScreen
             {
                 try
                 {
-                    configModButton.enabled = guiFactory.mainConfigGui(this) != null;
+                    configModButton.enabled = guiFactory.createConfigGui(this) != null;
                 }
                 catch(AbstractMethodError error)
                 {

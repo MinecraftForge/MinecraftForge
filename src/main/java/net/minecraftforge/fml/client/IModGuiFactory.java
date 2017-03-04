@@ -36,7 +36,7 @@ public interface IModGuiFactory {
     public void initialize(Minecraft minecraftInstance);
     
     /**
-     * Return an initializedg {@link GuiScreen}. This screen will be displayed
+     * Return an initialized {@link GuiScreen}. This screen will be displayed
      * when the "config" button is pressed in the mod list. It will
      * have a single argument constructor - the "parent" screen, the same as all
      * Minecraft GUIs. The expected behaviour is that this screen will replace the
@@ -58,7 +58,7 @@ public interface IModGuiFactory {
      * @return A class that will be instantiated on clicks on the config button
      *  or null if no GUI is desired.
      */
-    public GuiScreen mainConfigGui(GuiScreen parentScreen);
+    public GuiScreen createConfigGui(GuiScreen parentScreen);
     
     /**
      * Return the name of a class extending {@link GuiScreen}. This class will

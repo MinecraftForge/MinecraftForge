@@ -136,7 +136,7 @@ public class ConfigTest implements IModGuiFactory
     {}
 
     @Override
-    public GuiScreen mainConfigGui(GuiScreen parentScreen)
+    public GuiScreen createConfigGui(GuiScreen parentScreen)
     {
         return new GuiConfig(parentScreen, MODID, false, false, "Config test config screen", CONFIG_ANNOTATIONS.class, CONFIG_SUBCATS.class, CONFIG_TYPES.class);
     }
