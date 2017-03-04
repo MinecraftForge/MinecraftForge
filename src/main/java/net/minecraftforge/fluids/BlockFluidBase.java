@@ -157,6 +157,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         this.tickRate = fluid.viscosity / 200;
         this.densityDir = fluid.density > 0 ? -1 : 1;
         this.hasOverlay = true;
+        this.overlayTexture = fluid.getOverlay();
         fluid.setBlock(this);
 
         this.definedFluid = fluid;

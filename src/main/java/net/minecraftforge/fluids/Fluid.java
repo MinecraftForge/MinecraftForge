@@ -339,6 +339,11 @@ public class Fluid
         return flowing;
     }
 
+    public ResourceLocation getOverlay()
+    {
+        return overlay;
+    }
+
     public SoundEvent getFillSound()
     {
         if(fillSound == null)
