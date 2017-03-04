@@ -206,7 +206,7 @@ public class DimensionManager
             if( dim!=0 ) {
                 DimensionPreloadEvent adEvent = new DimensionPreloadEvent(dim, type);
                 MinecraftForge.EVENT_BUS.post(adEvent);
-                alterantiveDimension = adEvent.getAlternativeDimensionToLoad();
+                alterantiveDimension = adEvent.getAlternativeDimension();
             }
         }
         catch (Exception e)
