@@ -180,6 +180,9 @@ public class Fluid
         return this;
     }
 
+    /**
+     * @deprecated Use setDensity() with a negative value to achieve reverse fluid gravity
+     */
     @Deprecated
     public Fluid setGaseous(boolean isGaseous)
     {
