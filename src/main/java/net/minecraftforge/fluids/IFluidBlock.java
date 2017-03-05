@@ -83,19 +83,4 @@ public interface IFluidBlock
      * @return
      */
     float getFilledPercentage(World world, BlockPos pos);
-
-    /**
-     * Get the texture for the overlay that should be displayed when a player is inside this Block.
-     *
-     * @return the ResourceLocation of the overlay texture
-     */
-    @Nullable
-    public ResourceLocation getOverlayTexture();
-
-    /**
-     * Set the texture for the overlay that should be displayed when a player is inside this Block.
-     *
-     * @param location The overlay texture location
-     */
-    public void setOverlayTexture(ResourceLocation location);
 }

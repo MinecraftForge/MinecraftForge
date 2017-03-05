@@ -110,7 +110,7 @@
 +        Block viewBlock = ActiveRenderInfo.func_186703_a(this.field_78455_a.field_71441_e, this.field_78455_a.func_175606_aa(), partialTicks).func_177230_c();
 +        if (viewBlock instanceof net.minecraftforge.fluids.IFluidBlock)
 +        {
-+            ResourceLocation overlay = ((net.minecraftforge.fluids.IFluidBlock)viewBlock).getOverlayTexture();
++            ResourceLocation overlay = ((net.minecraftforge.fluids.IFluidBlock)viewBlock).getFluid().getOverlay();
 +            if (overlay != null && !net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, partialTicks))
 +            {
 +                this.renderWaterOverlayTexture(partialTicks, overlay);
