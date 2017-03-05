@@ -696,12 +696,12 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Override
     public ResourceLocation getOverlayTexture()
     {
-    	return overlayTexture;
+        return overlayTexture;
     }
 
     @Override
     public void setOverlayTexture(ResourceLocation location)
     {
-    	overlayTexture = location;
+        overlayTexture = location;
     }
 }
