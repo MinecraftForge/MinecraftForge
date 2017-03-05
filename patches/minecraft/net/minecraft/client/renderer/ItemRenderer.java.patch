@@ -42,7 +42,7 @@
              EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
-@@ -452,24 +455,34 @@
+@@ -452,24 +455,33 @@
                  if (iblockstate1.func_191058_s())
                  {
                      iblockstate = iblockstate1;
@@ -59,15 +59,13 @@
  
          if (!this.field_78455_a.field_71439_g.func_175149_v())
          {
--            if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
 +            Block viewBlock = ActiveRenderInfo.func_186703_a(this.field_78455_a.field_71441_e, this.field_78455_a.func_175606_aa(), p_78447_1_).func_177230_c();
-+            if(viewBlock instanceof net.minecraftforge.fluids.IFluidBlock)
-             {
++            if(viewBlock instanceof net.minecraftforge.fluids.IFluidBlock) {
 +                ResourceLocation overlay = ((net.minecraftforge.fluids.IFluidBlock)viewBlock).getOverlayTexture();
 +                if(overlay != null && !net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_)) this.renderWaterOverlayTexture(p_78447_1_, overlay);
-+            }
-+            else if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
-+            {
++            } else
+             if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
+             {
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_))
                  this.func_78448_c(p_78447_1_);
              }
@@ -78,7 +76,7 @@
                  this.func_78442_d(p_78447_1_);
              }
          }
-@@ -506,10 +519,14 @@
+@@ -506,10 +518,14 @@
  
      private void func_78448_c(float p_78448_1_)
      {
@@ -95,7 +93,7 @@
          GlStateManager.func_179131_c(f, f, f, 0.5F);
          GlStateManager.func_179147_l();
          GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-@@ -591,8 +608,8 @@
+@@ -591,8 +607,8 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);
