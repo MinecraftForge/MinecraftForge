@@ -56,16 +56,18 @@
                  this.func_178108_a(p_78447_1_, this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
              }
          }
-@@ -465,11 +470,17 @@
+@@ -465,11 +470,18 @@
          {
              if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
              {
+-                this.func_78448_c(p_78447_1_);
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_))
-                 this.func_78448_c(p_78447_1_);
++                this.renderWaterOverlayTexture(p_78447_1_, field_110929_d);
              }
-+            if (ActiveRenderInfo.func_186703_a(this.field_78455_a.field_71441_e, this.field_78455_a.func_175606_aa(), p_78447_1_).func_177230_c().hasOverlay())
++            ResourceLocation overlay = ActiveRenderInfo.func_186703_a(this.field_78455_a.field_71441_e, this.field_78455_a.func_175606_aa(), p_78447_1_).func_177230_c().getOverlayTexture();
++            if (overlay != null)
 +            {
-+                this.func_78448_c(p_78447_1_);
++                this.renderWaterOverlayTexture(p_78447_1_, overlay);
 +            }
  
              if (this.field_78455_a.field_71439_g.func_70027_ad())
@@ -74,16 +76,23 @@
                  this.func_78442_d(p_78447_1_);
              }
          }
-@@ -506,7 +517,7 @@
+@@ -504,12 +516,12 @@
+         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+     }
  
-     private void func_78448_c(float p_78448_1_)
+-    private void func_78448_c(float p_78448_1_)
++    private void renderWaterOverlayTexture(float partialTicks, ResourceLocation texture)
      {
 -        this.field_78455_a.func_110434_K().func_110577_a(field_110929_d);
-+        this.field_78455_a.func_110434_K().func_110577_a(ActiveRenderInfo.func_186703_a(this.field_78455_a.field_71441_e, this.field_78455_a.func_175606_aa(), p_78448_1_).func_177230_c().getOverlayTexture());
++        this.field_78455_a.func_110434_K().func_110577_a(texture);
          Tessellator tessellator = Tessellator.func_178181_a();
          VertexBuffer vertexbuffer = tessellator.func_178180_c();
-         float f = this.field_78455_a.field_71439_g.func_70013_c(p_78448_1_);
-@@ -591,8 +602,8 @@
+-        float f = this.field_78455_a.field_71439_g.func_70013_c(p_78448_1_);
++        float f = this.field_78455_a.field_71439_g.func_70013_c(partialTicks);
+         GlStateManager.func_179131_c(f, f, f, 0.5F);
+         GlStateManager.func_179147_l();
+         GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+@@ -591,8 +603,8 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);
