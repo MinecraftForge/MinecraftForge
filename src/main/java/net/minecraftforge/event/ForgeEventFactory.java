@@ -35,6 +35,7 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.init.Blocks;
@@ -78,6 +79,7 @@ import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
@@ -439,6 +441,11 @@ public class ForgeEventFactory
         }
         else
             return true;
+    }
+
+    public static boolean onAnimalTame(EntityAnimal animal, EntityPlayer tamer)
+    {
+        return MinecraftForge.EVENT_BUS.post(new AnimalTameEvent(animal, tamer));
     }
 
     public static SleepResult onPlayerSleepInBed(EntityPlayer player, BlockPos pos)
