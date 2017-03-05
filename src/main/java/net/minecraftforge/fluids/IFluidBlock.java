@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -82,4 +83,21 @@ public interface IFluidBlock
      * @return
      */
     float getFilledPercentage(World world, BlockPos pos);
+
+    /**
+     * Get the texture for the overlay that should be displayed when a player is inside this
+     * Block, if {@code hasOverlay} is true. Used for fluids.
+     *
+     * @return the ResourceLocation of the overlay texture
+     */
+    @Nullable
+    public ResourceLocation getOverlayTexture();
+
+    /**
+     * Set the texture for the overlay that should be displayed when a player is inside this
+     * Block, if {@code hasOverlay} is true. Used for fluids.
+     *
+     * @param location The overlay texture location
+     */
+    public void setOverlayTexture(ResourceLocation location);
 }

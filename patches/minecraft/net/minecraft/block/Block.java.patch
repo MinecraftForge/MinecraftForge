@@ -16,15 +16,7 @@
      public static final AxisAlignedBB field_185505_j = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
      @Nullable
      public static final AxisAlignedBB field_185506_k = null;
-@@ -77,6 +78,7 @@
-     protected final BlockStateContainer field_176227_L;
-     private IBlockState field_176228_M;
-     private String field_149770_b;
-+    protected ResourceLocation overlayTexture;
- 
-     public static int func_149682_b(Block p_149682_0_)
-     {
-@@ -307,7 +309,7 @@
+@@ -307,7 +308,7 @@
  
      public boolean func_176200_f(IBlockAccess p_176200_1_, BlockPos p_176200_2_)
      {
@@ -33,7 +25,7 @@
      }
  
      public Block func_149711_c(float p_149711_1_)
-@@ -345,9 +347,10 @@
+@@ -345,9 +346,10 @@
          return this.field_149789_z;
      }
  
@@ -45,7 +37,7 @@
      }
  
      @Deprecated
-@@ -360,13 +363,13 @@
+@@ -360,13 +362,13 @@
      @SideOnly(Side.CLIENT)
      public int func_185484_c(IBlockState p_185484_1_, IBlockAccess p_185484_2_, BlockPos p_185484_3_)
      {
@@ -61,7 +53,7 @@
          }
          else
          {
-@@ -430,7 +433,7 @@
+@@ -430,7 +432,7 @@
                  }
          }
  
@@ -70,7 +62,7 @@
      }
  
      public boolean func_176212_b(IBlockAccess p_176212_1_, BlockPos p_176212_2_, EnumFacing p_176212_3_)
-@@ -521,6 +524,10 @@
+@@ -521,6 +523,10 @@
  
      public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
@@ -81,7 +73,7 @@
      }
  
      public int func_149745_a(Random p_149745_1_)
-@@ -536,8 +543,7 @@
+@@ -536,8 +542,7 @@
      @Deprecated
      public float func_180647_a(IBlockState p_180647_1_, EntityPlayer p_180647_2_, World p_180647_3_, BlockPos p_180647_4_)
      {
@@ -91,7 +83,7 @@
      }
  
      public final void func_176226_b(World p_176226_1_, BlockPos p_176226_2_, IBlockState p_176226_3_, int p_176226_4_)
-@@ -547,20 +553,16 @@
+@@ -547,20 +552,16 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -117,7 +109,7 @@
                  }
              }
          }
-@@ -568,8 +570,13 @@
+@@ -568,8 +569,13 @@
  
      public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_)
      {
@@ -132,7 +124,7 @@
              float f = 0.5F;
              double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -636,7 +643,7 @@
+@@ -636,7 +642,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -141,7 +133,7 @@
      }
  
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)
-@@ -648,6 +655,8 @@
+@@ -648,6 +654,8 @@
      {
      }
  
@@ -150,7 +142,7 @@
      public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
      {
          return this.func_176203_a(p_180642_7_);
-@@ -689,21 +698,35 @@
+@@ -689,21 +697,35 @@
          p_180657_2_.func_71029_a(StatList.func_188055_a(this));
          p_180657_2_.func_71020_j(0.005F);
  
@@ -189,7 +181,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -789,6 +812,7 @@
+@@ -789,6 +811,7 @@
          p_176216_2_.field_70181_x = 0.0D;
      }
  
@@ -197,7 +189,7 @@
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
          return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
-@@ -893,6 +917,7 @@
+@@ -893,6 +916,7 @@
          }
      }
  
@@ -205,7 +197,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +933,1239 @@
+@@ -908,6 +932,1216 @@
      {
      }
  
@@ -1417,35 +1409,12 @@
 +    {
 +        return isBurning(world, pos) ? net.minecraft.pathfinding.PathNodeType.DAMAGE_FIRE : null;
 +    }
-+
-+    /**
-+     * Get the texture for the overlay that should be displayed when a player is inside this
-+     * Block, if {@code hasOverlay} is true. Used for fluids.
-+     *
-+     * @return the ResourceLocation of the overlay texture
-+     */
-+    @Nullable
-+    public ResourceLocation getOverlayTexture()
-+    {
-+        return overlayTexture;
-+    }
-+
-+    /**
-+     * Set the texture for the overlay that should be displayed when a player is inside this
-+     * Block, if {@code hasOverlay} is true. Used for fluids.
-+     *
-+     * @param location The overlay texture location
-+     */
-+    public void setOverlayTexture(ResourceLocation location)
-+    {
-+        overlayTexture = location;
-+    }
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2459,7 @@
+@@ -1201,14 +2435,7 @@
              }
              else
              {
