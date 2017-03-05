@@ -60,9 +60,8 @@
          {
              if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
              {
--                this.func_78448_c(p_78447_1_);
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_))
-+                this.renderWaterOverlayTexture(p_78447_1_, field_110929_d);
+                 this.func_78448_c(p_78447_1_);
              }
 +            Block viewBlock = ActiveRenderInfo.func_186703_a(this.field_78455_a.field_71441_e, this.field_78455_a.func_175606_aa(), p_78447_1_).func_177230_c();
 +            if(viewBlock instanceof net.minecraftforge.fluids.IFluidBlock)
@@ -77,14 +76,15 @@
                  this.func_78442_d(p_78447_1_);
              }
          }
-@@ -504,12 +517,12 @@
-         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
-     }
+@@ -506,10 +519,14 @@
  
--    private void func_78448_c(float p_78448_1_)
-+    private void renderWaterOverlayTexture(float partialTicks, ResourceLocation texture)
+     private void func_78448_c(float p_78448_1_)
      {
 -        this.field_78455_a.func_110434_K().func_110577_a(field_110929_d);
++    	renderWaterOverlayTexture(p_78448_1_, field_110929_d);
++    }
++    private void renderWaterOverlayTexture(float partialTicks, ResourceLocation texture)
++    {
 +        this.field_78455_a.func_110434_K().func_110577_a(texture);
          Tessellator tessellator = Tessellator.func_178181_a();
          VertexBuffer vertexbuffer = tessellator.func_178180_c();
@@ -93,7 +93,7 @@
          GlStateManager.func_179131_c(f, f, f, 0.5F);
          GlStateManager.func_179147_l();
          GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-@@ -591,8 +604,8 @@
+@@ -591,8 +608,8 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);
