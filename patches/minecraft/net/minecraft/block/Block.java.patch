@@ -1446,18 +1446,18 @@
      }
 +    public ResourceLocation getOverlayTexture()
 +    {
-+    	return overlayTexture;
++        return overlayTexture;
 +    }
 +    public void setOverlayTexture(ResourceLocation location)
 +    {
-+    	overlayTexture = location;
++        overlayTexture = location;
 +    }
 +    public boolean hasOverlay()
 +    {
-+    	return hasOverlay;
++        return hasOverlay;
 +    }
 +    public void setOverlay(boolean overlay)
 +    {
-+    	hasOverlay = overlay;
++        hasOverlay = overlay;
 +    }
  }
