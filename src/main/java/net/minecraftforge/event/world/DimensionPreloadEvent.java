@@ -31,8 +31,7 @@ import net.minecraftforge.common.MinecraftForge;
  * <br>
  * This event can be used to override instantiated dimensions <br>
  * by using {@link #setAlternativeDimension }
- */
-
+ **/
 public class DimensionPreloadEvent extends Event
 {
 
