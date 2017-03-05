@@ -42,7 +42,7 @@
              EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
-@@ -452,11 +455,13 @@
+@@ -452,24 +455,34 @@
                  if (iblockstate1.func_191058_s())
                  {
                      iblockstate = iblockstate1;
@@ -56,19 +56,21 @@
                  this.func_178108_a(p_78447_1_, this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
              }
          }
-@@ -465,11 +470,19 @@
+ 
+         if (!this.field_78455_a.field_71439_g.func_175149_v())
          {
-             if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
+-            if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
++            Block viewBlock = ActiveRenderInfo.func_186703_a(this.field_78455_a.field_71441_e, this.field_78455_a.func_175606_aa(), p_78447_1_).func_177230_c();
++            if(viewBlock instanceof net.minecraftforge.fluids.IFluidBlock)
              {
++                ResourceLocation overlay = ((net.minecraftforge.fluids.IFluidBlock)viewBlock).getOverlayTexture();
++                if(overlay != null && !net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_)) this.renderWaterOverlayTexture(p_78447_1_, overlay);
++            }
++            else if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
++            {
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_))
                  this.func_78448_c(p_78447_1_);
              }
-+            Block viewBlock = ActiveRenderInfo.func_186703_a(this.field_78455_a.field_71441_e, this.field_78455_a.func_175606_aa(), p_78447_1_).func_177230_c();
-+            if(viewBlock instanceof net.minecraftforge.fluids.IFluidBlock)
-+            {
-+                ResourceLocation overlay = ((net.minecraftforge.fluids.IFluidBlock)viewBlock).getOverlayTexture();
-+                if(overlay != null) this.renderWaterOverlayTexture(p_78447_1_, overlay);
-+            }
  
              if (this.field_78455_a.field_71439_g.func_70027_ad())
              {
