@@ -197,7 +197,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +932,1216 @@
+@@ -908,6 +932,1217 @@
      {
      }
  
@@ -1409,12 +1409,13 @@
 +    {
 +        return isBurning(world, pos) ? net.minecraft.pathfinding.PathNodeType.DAMAGE_FIRE : null;
 +    }
++
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2435,7 @@
+@@ -1201,14 +2436,7 @@
              }
              else
              {
