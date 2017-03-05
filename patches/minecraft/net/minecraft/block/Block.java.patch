@@ -1427,7 +1427,7 @@
 +    @Nullable
 +    public ResourceLocation getOverlayTexture()
 +    {
-+    	return overlayTexture;
++        return overlayTexture;
 +    }
 +
 +    /**
@@ -1438,7 +1438,7 @@
 +     */
 +    public void setOverlayTexture(ResourceLocation location)
 +    {
-+    	overlayTexture = location;
++        overlayTexture = location;
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +
