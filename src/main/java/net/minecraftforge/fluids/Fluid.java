@@ -137,7 +137,7 @@ public class Fluid
         this.unlocalizedName = fluidName;
         this.still = still;
         this.flowing = flowing;
-        this.overlay = new ResourceLocation("textures/misc/underwater.png");
+        this.overlay = null;
     }
     
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, ResourceLocation overlay)
@@ -339,6 +339,7 @@ public class Fluid
         return flowing;
     }
 
+    @Nullable
     public ResourceLocation getOverlay()
     {
         return overlay;
