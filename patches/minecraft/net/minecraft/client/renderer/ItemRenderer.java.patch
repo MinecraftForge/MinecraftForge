@@ -59,7 +59,7 @@
  
          if (!this.field_78455_a.field_71439_g.func_175149_v())
          {
-+            if (forgeOverlay(p_78447_1_))
++            if (forgeFluidOverlay(p_78447_1_))
              if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
              {
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_))
@@ -105,7 +105,7 @@
          }
      }
 +
-+    private boolean forgeOverlay(float partialTicks)
++    private boolean forgeFluidOverlay(float partialTicks)
 +    {
 +        Block viewBlock = ActiveRenderInfo.func_186703_a(this.field_78455_a.field_71441_e, this.field_78455_a.func_175606_aa(), partialTicks).func_177230_c();
 +        if (viewBlock instanceof net.minecraftforge.fluids.IFluidBlock)
