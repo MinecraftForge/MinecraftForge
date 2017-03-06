@@ -332,4 +332,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         // NOOP
     }
+
+    @Override
+    public boolean isDisplayVSyncForced()
+    {
+        return false;
+    }
 }

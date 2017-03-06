@@ -1056,4 +1056,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         MinecraftForge.EVENT_BUS.post(new ModelRegistryEvent());
     }
+
+    @Override
+    public boolean isDisplayVSyncForced()
+    {
+        return SplashProgress.isDisplayVSyncForced;
+    }
 }
