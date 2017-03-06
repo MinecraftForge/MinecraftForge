@@ -216,14 +216,14 @@ public class DimensionManager
         {
             throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
         }
-        WorldServer alterantiveDimension = null;
+        WorldServer alternativeDimension = null;
         try
         {
             DimensionType type = DimensionManager.getProviderType(dim);
             if (dim != 0) {
                 DimensionPreloadEvent adEvent = new DimensionPreloadEvent(dim, type);
                 MinecraftForge.EVENT_BUS.post(adEvent);
-                alterantiveDimension = adEvent.getAlternativeDimension();
+                alternativeDimension = adEvent.getAlternativeDimension();
             }
         }
         catch (Exception e)
@@ -232,17 +232,19 @@ public class DimensionManager
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
         MinecraftServer mcServer = overworld.getMinecraftServer();
-        WorldServer world = overworld;
-        if(dim != 0)
+        WorldServer world;
+        if (dim == 0)
         {
-            if(alterantiveDimension != null)
-            {
-                world = alterantiveDimension;
-            }
-            else
-            {
-                world = (WorldServer) (new WorldServerMulti(mcServer, overworld.getSaveHandler(), dim, overworld, mcServer.theProfiler).init());
-            }
+            world = overworld;
+        }
+        else if (alternativeDimension != null)
+        {
+            world = alternativeDimension;
+        }
+        else
+        {
+            world = new WorldServerMulti(mcServer, overworld.getSaveHandler(), dim, overworld, mcServer.theProfiler);
+            world.init();
         }
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
