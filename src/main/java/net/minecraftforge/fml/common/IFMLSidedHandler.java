@@ -77,4 +77,6 @@ public interface IFMLSidedHandler
     void reloadRenderers();
 
     void fireSidedRegistryEvents();
+
+    boolean isDisplayVSyncForced();
 }

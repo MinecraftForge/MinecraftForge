@@ -751,4 +751,6 @@ public class FMLCommonHandler
     {
         sidedDelegate.fireSidedRegistryEvents();
     }
+
+    public boolean isDisplayVSyncForced() { return sidedDelegate.isDisplayVSyncForced(); }
 }
