@@ -60,8 +60,11 @@
              entityzombievillager.func_82149_j(entityvillager);
              this.field_70170_p.func_72900_e(entityvillager);
              entityzombievillager.func_180482_a(this.field_70170_p.func_175649_E(new BlockPos(entityzombievillager)), new EntityZombie.GroupData(false));
-@@ -435,7 +447,7 @@
- 
+-            entityzombievillager.func_190733_a(entityvillager.func_70946_n());
++            entityzombievillager.setForgeProfession(entityvillager.getProfessionForge());
+             entityzombievillager.func_82227_f(entityvillager.func_70631_g_());
+             entityzombievillager.func_94061_f(entityvillager.func_175446_cd());
+	     @@ -435,7 +447,7 @@
          if (p_180482_2_ == null)
          {
 -            p_180482_2_ = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < 0.05F);
