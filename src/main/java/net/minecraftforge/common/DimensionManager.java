@@ -232,17 +232,19 @@ public class DimensionManager
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
         MinecraftServer mcServer = overworld.getMinecraftServer();
-        WorldServer world = overworld;
-        if(dim != 0)
+        WorldServer world;
+        if (dim == 0)
         {
-            if(alterantiveDimension != null)
-            {
-                world = alterantiveDimension;
-            }
-            else
-            {
-                world = (WorldServer) (new WorldServerMulti(mcServer, overworld.getSaveHandler(), dim, overworld, mcServer.theProfiler).init());
-            }
+            world = overworld;
+        }
+        else if (alterantiveDimension != null)
+        {
+            world = alterantiveDimension;
+        }
+        else
+        {
+            world = new WorldServerMulti(mcServer, overworld.getSaveHandler(), dim, overworld, mcServer.theProfiler);
+            world.init();
         }
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
