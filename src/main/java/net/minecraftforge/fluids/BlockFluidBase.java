@@ -455,7 +455,6 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     public boolean isCoveredWithFluid(IBlockAccess world, BlockPos pos)
     {
-        IBlockState here = world.getBlockState(pos);
         IBlockState up = world.getBlockState(pos.down(densityDir));
         return up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock;
     }
