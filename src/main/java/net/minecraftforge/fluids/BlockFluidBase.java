@@ -453,10 +453,9 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return super.shouldSideBeRendered(state, world, pos, side);
     }
 
-    public boolean isCoveredWithFluid(IBlockAccess world, BlockPos pos)
+    public boolean isFluid(@Nonnull IBlockState blockstate)
     {
-        IBlockState up = world.getBlockState(pos.down(densityDir));
-        return up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock;
+        return blockstate.getMaterial().isLiquid() || blockstate.getBlock() instanceof IFluidBlock;
     }
 
     @Override
@@ -465,9 +464,11 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     {
         IExtendedBlockState state = (IExtendedBlockState)oldState;
         state = state.withProperty(FLOW_DIRECTION, (float)getFlowDirection(worldIn, pos));
+        IBlockState[][] upBlockState = new IBlockState[3][3];
         float[][] height = new float[3][3];
         float[][] corner = new float[2][2];
-        height[1][1] = getFluidHeightForRender(worldIn, pos);
+        upBlockState[1][1] = worldIn.getBlockState(pos.down(densityDir));
+        height[1][1] = getFluidHeightForRender(worldIn, pos, upBlockState[1][1]);
         if (height[1][1] == 1)
         {
             for (int i = 0; i < 2; i++)
@@ -486,7 +487,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                 {
                     if (i != 1 || j != 1)
                     {
-                        height[i][j] = getFluidHeightForRender(worldIn, pos.add(i - 1, 0, j - 1));
+                        upBlockState[i][j] = worldIn.getBlockState(pos.add(i - 1, 0, j - 1).down(densityDir));
+                        height[i][j] = getFluidHeightForRender(worldIn, pos.add(i - 1, 0, j - 1), upBlockState[i][j]);
                     }
                 }
             }
@@ -497,32 +499,31 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                     corner[i][j] = getFluidHeightAverage(height[i][j], height[i][j + 1], height[i + 1][j], height[i + 1][j + 1]);
                 }
             }
-        }
-        
-        //check for downflow above corners
-        boolean n =  isCoveredWithFluid(worldIn, pos.add(-1, 0,  0));
-        boolean s =  isCoveredWithFluid(worldIn, pos.add( 1, 0,  0));
-        boolean w =  isCoveredWithFluid(worldIn, pos.add( 0, 0, -1));
-        boolean e =  isCoveredWithFluid(worldIn, pos.add( 0, 0,  1));
-        boolean nw = isCoveredWithFluid(worldIn, pos.add(-1, 0, -1));
-        boolean ne = isCoveredWithFluid(worldIn, pos.add(-1, 0,  1));
-        boolean sw = isCoveredWithFluid(worldIn, pos.add( 1, 0, -1));
-        boolean se = isCoveredWithFluid(worldIn, pos.add( 1, 0,  1));
-        if (nw || n || w)
-        {
-            corner[0][0] = 1;
-        }
-        if (ne || n || e)
-        {
-            corner[0][1] = 1;
-        }
-        if (sw || s || w)
-        {
-            corner[1][0] = 1;
-        }
-        if (se || s || e)
-        {
-            corner[1][1] = 1;
+            //check for downflow above corners
+            boolean n =  isFluid(upBlockState[0][1]);
+            boolean s =  isFluid(upBlockState[2][1]);
+            boolean w =  isFluid(upBlockState[1][0]);
+            boolean e =  isFluid(upBlockState[1][2]);
+            boolean nw = isFluid(upBlockState[0][0]);
+            boolean ne = isFluid(upBlockState[0][2]);
+            boolean sw = isFluid(upBlockState[2][0]);
+            boolean se = isFluid(upBlockState[2][2]);
+            if (nw || n || w)
+            {
+                corner[0][0] = 1;
+            }
+            if (ne || n || e)
+            {
+                corner[0][1] = 1;
+            }
+            if (sw || s || w)
+            {
+                corner[1][0] = 1;
+            }
+            if (se || s || e)
+            {
+                corner[1][1] = 1;
+            }
         }
         
         state = state.withProperty(LEVEL_CORNERS[0], corner[0][0]);
@@ -618,6 +619,32 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return end;
     }
 
+    public float getFluidHeightForRender(IBlockAccess world, BlockPos pos, @Nonnull IBlockState up)
+    {
+        IBlockState here = world.getBlockState(pos);
+        if (here.getBlock() == this)
+        {
+            if (up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock)
+            {
+                return 1;
+            }
+
+            if (getMetaFromState(here) == getMaxRenderHeightMeta())
+            {
+                return 0.875F;
+            }
+        }
+        if (here.getBlock() instanceof BlockLiquid)
+        {
+            return Math.min(1 - BlockLiquid.getLiquidHeightPercent(here.getValue(BlockLiquid.LEVEL)), 14f / 16);
+        }
+        return !here.getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * 0.875F;
+    }
+
+    /**
+     * @deprecated we now pass along up from getExtendedState
+     */
+    @Deprecated
     public float getFluidHeightForRender(IBlockAccess world, BlockPos pos)
     {
         IBlockState here = world.getBlockState(pos);
