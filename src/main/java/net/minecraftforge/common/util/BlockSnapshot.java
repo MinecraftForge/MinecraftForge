@@ -41,7 +41,6 @@ import javax.annotation.Nullable;
  * Unlike Block, which only one object can exist per coordinate, BlockSnapshot
  * can exist multiple times for any given Block.
  */
-@SuppressWarnings({"serial", "deprecation"})
 public class BlockSnapshot implements Serializable
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockSnapshot", "false"));
@@ -176,12 +175,12 @@ public class BlockSnapshot implements Serializable
         return restore(force, true);
     }
 
-    public boolean restore(boolean force, boolean applyPhysics)
+    public boolean restore(boolean force, boolean notifyNeighbors)
     {
-        return restoreToLocation(getWorld(), getPos(), force, applyPhysics);
+        return restoreToLocation(getWorld(), getPos(), force, notifyNeighbors);
     }
 
-    public boolean restoreToLocation(World world, BlockPos pos, boolean force, boolean applyPhysics)
+    public boolean restoreToLocation(World world, BlockPos pos, boolean force, boolean notifyNeighbors)
     {
         IBlockState current = getCurrentBlock();
         IBlockState replaced = getReplacedBlock();
@@ -189,7 +188,7 @@ public class BlockSnapshot implements Serializable
         {
             if (force)
             {
-                world.setBlockState(pos, replaced, applyPhysics ? 3 : 2);
+                world.setBlockState(pos, replaced, notifyNeighbors ? 3 : 2);
             }
             else
             {
@@ -197,8 +196,8 @@ public class BlockSnapshot implements Serializable
             }
         }
 
-        world.setBlockState(pos, replaced, applyPhysics ? 3 : 2);
-        world.notifyBlockUpdate(pos, current, replaced, applyPhysics ? 3 : 2);
+        world.setBlockState(pos, replaced, notifyNeighbors ? 3 : 2);
+        world.notifyBlockUpdate(pos, current, replaced, notifyNeighbors ? 3 : 2);
         TileEntity te = null;
         if (getNbt() != null)
         {
@@ -212,7 +211,7 @@ public class BlockSnapshot implements Serializable
 
         if (DEBUG)
         {
-            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][applyPhysics: %s]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), replaced.getBlock().getMetaFromState(replaced), replaced.getBlock().delegate.name(), te, force, applyPhysics);
+            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][notifyNeighbors: %s]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), replaced.getBlock().getMetaFromState(replaced), replaced.getBlock().delegate.name(), te, force, notifyNeighbors);
         }
         return true;
     }
