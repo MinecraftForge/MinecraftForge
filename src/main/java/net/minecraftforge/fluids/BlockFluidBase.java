@@ -457,7 +457,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     {
         IBlockState here = world.getBlockState(pos);
         IBlockState up = world.getBlockState(pos.down(densityDir));
-        return here.getBlock() == this && (up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock);
+        return up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock;
     }
 
     @Override
