@@ -1098,4 +1098,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         return (CompoundDataFixer)this.client.getDataFixer();
     }
+
+    @Override
+    public boolean isDisplayVSyncForced()
+    {
+        return SplashProgress.isDisplayVSyncForced;
+    }
 }

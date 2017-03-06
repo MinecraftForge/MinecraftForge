@@ -757,4 +757,6 @@ public class FMLCommonHandler
     {
         return (CompoundDataFixer)sidedDelegate.getDataFixer();
     }
+
+    public boolean isDisplayVSyncForced() { return sidedDelegate.isDisplayVSyncForced(); }
 }

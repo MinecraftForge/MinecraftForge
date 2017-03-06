@@ -115,6 +115,10 @@ public class SplashProgress
     private static int memoryLowColor;
     private static float memoryColorPercent;
     private static long memoryColorChangeTime;
+    static boolean isDisplayVSyncForced = false;
+    private static final int TIMING_FRAME_COUNT = 200;
+    private static final int TIMING_FRAME_THRESHOLD = TIMING_FRAME_COUNT * 5 * 1000000; // 5 ms per frame, scaled to nanos
+
     static final Semaphore mutex = new Semaphore(1);
 
     private static String getString(String name, String def)
@@ -254,7 +258,8 @@ public class SplashProgress
             private final int barHeight = 20;
             private final int textHeight2 = 20;
             private final int barOffset = 55;
-
+            private long updateTiming;
+            private long framecount;
             public void run()
             {
                 setGL();
@@ -266,6 +271,7 @@ public class SplashProgress
                 glDisable(GL_TEXTURE_2D);
                 while(!done)
                 {
+                    framecount++;
                     ProgressBar first = null, penult = null, last = null;
                     Iterator<ProgressBar> i = ProgressManager.barIterator();
                     while(i.hasNext())
@@ -371,16 +377,40 @@ public class SplashProgress
                     // is trying to impose a framerate or other thing is occurring. Without the mutex, the main
                     // thread would delay waiting for the same global display lock
                     mutex.acquireUninterruptibly();
+                    long updateStart = System.nanoTime();
                     Display.update();
                     // As soon as we're done, we release the mutex. The other thread can now ping the processmessages
                     // call as often as it wants until we get get back here again
+                    long dur = System.nanoTime() - updateStart;
+                    if (framecount < TIMING_FRAME_COUNT) {
+                        updateTiming += dur;
+                    }
                     mutex.release();
                     if(pause)
                     {
                         clearGL();
                         setGL();
                     }
-                    Display.sync(100);
+                    // Such a hack - if the time taken is greater than 10 milliseconds, we're gonna guess that we're on a
+                    // system where vsync is forced through the swapBuffers call - so we have to force a sleep and let the
+                    // loading thread have a turn - some badly designed mods access Keyboard and therefore GlobalLock.lock
+                    // during splash screen, and mutex against the above Display.update call as a result.
+                    // 4 milliseconds is a guess - but it should be enough to trigger in most circumstances. (Maybe if
+                    // 240FPS is possible, this won't fire?)
+                    if (framecount >= TIMING_FRAME_COUNT && updateTiming > TIMING_FRAME_THRESHOLD) {
+                        if (!isDisplayVSyncForced)
+                        {
+                            isDisplayVSyncForced = true;
+                            FMLLog.log(Level.INFO, "Using alternative sync timing : %d frames of Display.update took %d nanos", TIMING_FRAME_COUNT, updateTiming);
+                        }
+                        try { Thread.sleep(16); } catch (InterruptedException ie) {}
+                    } else
+                    {
+                        if (framecount ==TIMING_FRAME_COUNT) {
+                            FMLLog.log(Level.INFO, "Using sync timing. %d frames of Display.update took %d nanos", TIMING_FRAME_COUNT, updateTiming);
+                        }
+                        Display.sync(100);
+                    }
                 }
                 clearGL();
             }
@@ -464,7 +494,7 @@ public class SplashProgress
                     memoryColorChangeTime = time;
                     memoryColorPercent = usedMemoryPercent;
                 }
-                
+
                 int memoryBarColor;
                 if (memoryColorPercent < 0.75f)
                 {

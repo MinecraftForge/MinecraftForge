@@ -349,4 +349,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         return (CompoundDataFixer)this.server.getDataFixer();
     }
+
+    @Override
+    public boolean isDisplayVSyncForced()
+    {
+        return false;
+    }
 }
