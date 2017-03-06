@@ -93,6 +93,7 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
+import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -1092,13 +1093,21 @@ public class ForgeHooks
         LootTableContext ctx = lootContext.get().peek();
 
         if (ctx == null)
-            throw new JsonParseException("Invalid call stack, could to grab json context!"); // Show I throw this? Do we care about custom deserializers outside the manager?
+            throw new JsonParseException("Invalid call stack, could not grab json context!"); // Should I throw this? Do we care about custom deserializers outside the manager?
 
         return ctx;
     }
 
-    @Nullable
+    // TODO: remove
+    /** @deprecated use {@link ForgeHooks#loadLootTable(Gson, ResourceLocation, String, boolean, LootTableManager)} */
+    @Deprecated
     public static LootTable loadLootTable(Gson gson, ResourceLocation name, String data, boolean custom)
+    {
+        return loadLootTable(gson, name, data, custom, null);
+    }
+
+    @Nullable
+    public static LootTable loadLootTable(Gson gson, ResourceLocation name, String data, boolean custom, LootTableManager lootTableManager)
     {
         Deque<LootTableContext> que = lootContext.get();
         if (que == null)
@@ -1121,7 +1130,7 @@ public class ForgeHooks
         }
 
         if (!custom)
-            ret = ForgeEventFactory.loadLootTable(name, ret);
+            ret = ForgeEventFactory.loadLootTable(name, ret, lootTableManager);
 
         if (ret != null)
             ret.freeze();
