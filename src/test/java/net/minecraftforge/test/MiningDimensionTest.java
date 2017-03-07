@@ -3,10 +3,8 @@ package net.minecraftforge.test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Random;
-
 import javax.annotation.Nullable;
 import com.mojang.realmsclient.gui.ChatFormatting;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
