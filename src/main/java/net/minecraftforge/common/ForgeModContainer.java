@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.crash.ICrashReportDetail;
@@ -272,6 +273,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
         forgeLightPipelineEnabled = prop.getBoolean(true);
         prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "cacheUnpackedQuads", Boolean.TRUE,
+                "Enable caching of unpacked date in the quads - speeds up rendering, but leads to more memory usage.");
+        UnpackedBakedQuad.setCacheUnpacked(prop.getBoolean(Boolean.TRUE));
+        prop.setLanguageKey("forge.configgui.cacheUnpackedQuads");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
