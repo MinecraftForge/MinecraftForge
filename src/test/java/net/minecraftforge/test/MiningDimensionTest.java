@@ -3,10 +3,9 @@ package net.minecraftforge.test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Random;
-
+import java.util.logging.Level;
 import javax.annotation.Nullable;
 import com.mojang.realmsclient.gui.ChatFormatting;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -47,6 +46,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -56,6 +56,7 @@ import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.Logger;
 
 @Mod(
         modid = "miningdimensiontest",
@@ -67,8 +68,9 @@ public class MiningDimensionTest
 
     public static final String MOD_NAME = "MiningDimensionTest";
     public static final String MOD_ID = "miningdimensiontest";
-    public static final String commandName = "gmining";
-    public static String dimtypename = "miningdimensiontest";
+    // public static String dimtypename = "miningdimensiontest";
+    private Logger logger;
+
     @Instance("miningdimensiontest")
     public static MiningDimensionTest inst;
     public static DimensionType dimtypetest;
@@ -89,24 +91,26 @@ public class MiningDimensionTest
     }
 
     @EventHandler
+    public void preinit(FMLPreInitializationEvent event)
+    {
+        logger = event.getModLog();
+    }
+    @EventHandler
     public void onInit(FMLInitializationEvent event)
     {
         // dimtypetestid = getNextFreeDimentionTypeId();
-        // dimtypetest = DimensionType.register(dimtypename, "_mine", dimtypetestid , WorldProviderTest.class, false); //does not work... DimensionType... getConstructor(new
-        // Class[0]) NoSuchMethodException
-        // System.out.println("MiningDimensionTest Registered dimension type "+ dimtypetest + " "+ dimtypetest.name() + " " + dimtypetest.getId());
-
+        // dimtypetest = DimensionType.register(dimtypename, "_mine", dimtypetestid , WorldProviderTest.class, false); //does not work unless provider in a standalone class...
+        // logger.info("MiningDimensionTest Registered dimension type "+ dimtypetest + " "+ dimtypetest.name() + " " + dimtypetest.getId());
     }
 
     @EventHandler
     public void onServerStarting(FMLServerStartingEvent event)
     {
         event.registerServerCommand(new MiningDimensionTest.DimensionTestCommand());
-        System.out.println("MiningDimensionTest Registered  command /mining <int>");
+        logger.info("MiningDimensionTest Registered  command /mining <int>");
         // attempt to force load first mining dimension if any
         for (File file : new File(event.getServer().isSinglePlayer() ? "saves" : ".").listFiles())// ugly but good enough for testing
         {
-            // System.out.println("Checking file " + file);
             if (file.isFile() || !file.getName().startsWith(savefoldername))
                 continue;
             String sint = file.getName().replace(savefoldername, "");
@@ -114,7 +118,7 @@ public class MiningDimensionTest
             {
                 miningid = Integer.valueOf(sint);
                 DimensionManager.registerDimension(miningid, dimtypetest);
-                System.out.println("Found OFFLINE mining dimension " + miningid);
+                logger.info("Found OFFLINE mining dimension " + miningid);
                 break;
             }
         }
@@ -142,23 +146,23 @@ public class MiningDimensionTest
     @SubscribeEvent
     public void onDimensionPreload(DimensionPreloadEvent e)
     {
-        System.out.println(MOD_NAME + " WORKS================ DimensionPreloadEvent id: " + e.getDimensionId());
+        logger.info(MOD_NAME + " WORKS================ DimensionPreloadEvent id: " + e.getDimensionId());
 
         if (e.getDimensionId() == miningid)
         {
             if (DimensionManager.getWorld(e.getDimensionId()) == null)
             {
-                System.out.println("Mining dimension detected... generating new dimension for the first time id:" + e.getDimensionId());
+                logger.info("Mining dimension detected... generating new dimension for the first time id:" + e.getDimensionId());
 
                 WorldServer newdim = geterateNewMiningDimension(e.getDimensionId());
                 newdim.init();
-                System.out.println("DimensionPreloadEvent setting alternative");
+                logger.info("DimensionPreloadEvent setting alternative");
                 e.setAlternativeDimension(newdim);
-                System.out.println("DimensionPreloadEvent end event");
+                logger.info("DimensionPreloadEvent end event");
             }
             else
             {
-                System.out.println("Mining dimension detected... doing nothing... id:" + e.getDimensionId());
+                logger.info("Mining dimension detected... doing nothing... id:" + e.getDimensionId());
             }
         }
 
@@ -172,7 +176,7 @@ public class MiningDimensionTest
             FMLEmbeddedChannel channel = NetworkRegistry.INSTANCE.getChannel("FORGE", Side.SERVER);
             channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DISPATCHER);
             channel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(NetworkDispatcher.get(e.getManager()));
-            channel.writeOutbound(new DimensionRegisterMessage(miningid, dimtypetest.toString()));
+            channel.writeOutbound(new DimensionRegisterMessage(miningid, dimtypetest.getName()));
         }
     }
 
