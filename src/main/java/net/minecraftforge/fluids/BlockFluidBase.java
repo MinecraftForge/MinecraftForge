@@ -453,7 +453,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return super.shouldSideBeRendered(state, world, pos, side);
     }
 
-    public boolean isFluid(@Nonnull IBlockState blockstate)
+    private boolean isFluid(@Nonnull IBlockState blockstate)
     {
         return blockstate.getMaterial().isLiquid() || blockstate.getBlock() instanceof IFluidBlock;
     }
