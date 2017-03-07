@@ -16,7 +16,20 @@
          p_70014_1_.func_74768_a("ConversionTime", this.func_82230_o() ? this.field_82234_d : -1);
      }
  
-@@ -85,6 +87,35 @@
+@@ -71,6 +73,12 @@
+     {
+         super.func_70037_a(p_70037_1_);
+         this.func_190733_a(p_70037_1_.func_74762_e("Profession"));
++        if (p_70037_1_.func_74764_b("ProfessionName"))
++        {
++            net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p = net.minecraftforge.fml.common.registry.VillagerRegistry.instance().getRegistry().getValue(new net.minecraft.util.ResourceLocation(p_70037_1_.func_74779_i("ProfessionName")));
++            if (p == null) p = net.minecraftforge.fml.common.registry.VillagerRegistry.instance().getRegistry().getValue(new net.minecraft.util.ResourceLocation("minecraft:farmer"));
++            this.setForgeProfession(p);
++        }
+ 
+         if (p_70037_1_.func_150297_b("ConversionTime", 99) && p_70037_1_.func_74762_e("ConversionTime") > -1)
+         {
+@@ -85,6 +93,36 @@
          return super.func_180482_a(p_180482_1_, p_180482_2_);
      }
  
@@ -39,6 +52,7 @@
 +        return this.prof;
 +    }
 +
++    @Override
 +    public void func_184206_a(DataParameter<?> key)
 +    {
 +        super.func_184206_a(key);
@@ -52,7 +66,7 @@
      public void func_70071_h_()
      {
          if (!this.field_70170_p.field_72995_K && this.func_82230_o())
-@@ -164,7 +195,7 @@
+@@ -164,7 +202,7 @@
      {
          EntityVillager entityvillager = new EntityVillager(this.field_70170_p);
          entityvillager.func_82149_j(this);
