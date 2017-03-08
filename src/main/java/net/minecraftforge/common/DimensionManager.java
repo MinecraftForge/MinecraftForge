@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.google.common.base.Preconditions;
@@ -71,7 +72,7 @@ public class DimensionManager
         }
     }
 
-    private static Int2ObjectOpenHashMap<WorldServer> worlds = new Int2ObjectOpenHashMap<WorldServer>();
+    private static ConcurrentHashMap<Integer, WorldServer> worlds = new ConcurrentHashMap<Integer, WorldServer>();
     private static boolean hasInit = false;
     private static Int2ObjectOpenHashMap<Dimension> dimensions = new Int2ObjectOpenHashMap<Dimension>();
     private static IntArrayList unloadQueue = new IntArrayList();
