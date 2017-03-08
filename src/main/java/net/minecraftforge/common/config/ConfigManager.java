@@ -117,6 +117,15 @@ public class ConfigManager
             map.put(type, target);
         }
     }
+    
+    /**
+     * Bounces to sync().
+     * TODO: remove
+     */
+    public static void load(String modid, Config.Type type)
+    {
+        sync(modid, type);
+    }
 
     /**
      * Synchronizes configuration data between the file on disk, the {@code Configuration} object and the annotated
