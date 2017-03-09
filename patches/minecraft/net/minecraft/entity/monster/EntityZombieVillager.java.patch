@@ -63,7 +63,7 @@
 +        {
 +            this.prof = net.minecraftforge.fml.common.registry.VillagerRegistry.getById(this.func_190736_dl());
 +            if (this.prof == null)
-+                return net.minecraftforge.fml.common.registry.VillagerRegistry.getById(0); //Farmer
++                return net.minecraftforge.fml.common.registry.VillagerRegistry.FARMER;
 +        }
 +        return this.prof;
 +    }
