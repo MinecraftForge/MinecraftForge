@@ -41,6 +41,14 @@ public class LootTableLoadEvent extends Event
     private LootTable table;
     private LootTableManager lootTableManager;
 
+    /**
+     * @deprecated Use {@link #LootTableLoadEvent(ResourceLocation, LootTable, LootTableManager)}<br>
+     */
+    @Deprecated
+    public LootTableLoadEvent(ResourceLocation name, LootTable table) {
+        this(name, table, null);
+    }
+
     public LootTableLoadEvent(ResourceLocation name, LootTable table, LootTableManager lootTableManager)
     {
         this.name = name;

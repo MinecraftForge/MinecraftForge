@@ -637,6 +637,15 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, rand, x, z, hasVillageGenerated));
     }
 
+    /**
+     * @deprecated Use {@link #loadLootTable(ResourceLocation, LootTable, LootTableManager)}<br>
+     */
+    @Deprecated
+    public static LootTable loadLootTable(ResourceLocation name, LootTable table)
+    {
+        return loadLootTable(name, table, null);
+    }
+
     public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTableManager lootTableManager)
     {
         LootTableLoadEvent event = new LootTableLoadEvent(name, table, lootTableManager);
