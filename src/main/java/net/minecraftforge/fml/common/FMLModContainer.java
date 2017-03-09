@@ -148,7 +148,8 @@ public class FMLModContainer implements ModContainer
             throw new IllegalArgumentException(String.format("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11", modid));
         }
     }
-    private ILanguageAdapter getLanguageAdapter()
+
+    public ILanguageAdapter getLanguageAdapter()
     {
         if (languageAdapter == null)
         {
