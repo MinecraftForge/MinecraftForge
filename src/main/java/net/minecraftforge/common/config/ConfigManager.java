@@ -161,7 +161,7 @@ public class ConfigManager
                 Class<?> cls = Class.forName(targ.getClassName(), true, mcl);
                 
                 if(MOD_CONFIG_CLASSES.get(modid) == null)
-                    MOD_CONFIG_CLASSES.put(modid, Sets.newHashSet());
+                    MOD_CONFIG_CLASSES.put(modid, Sets.<Class<?>>newHashSet());
                 MOD_CONFIG_CLASSES.get(modid).add(cls);
                 
                 String name = (String)targ.getAnnotationInfo().get("name");

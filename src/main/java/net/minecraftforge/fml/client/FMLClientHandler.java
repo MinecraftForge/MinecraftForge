@@ -371,7 +371,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             String className = mc.getGuiClassName();
             if (Strings.isNullOrEmpty(className))
             {
-                guiFactories.put(mc, DefaultGuiModFactory.forMod(mc));
+                guiFactories.put(mc, DefaultGuiFactory.forMod(mc));
                 continue;
             }
             try

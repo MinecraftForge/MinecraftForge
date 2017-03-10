@@ -7,13 +7,13 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.common.ModContainer;
 
-public class DefaultGuiModFactory implements IModGuiFactory
+public class DefaultGuiFactory implements IModGuiFactory
 {
     
     protected String modid, title;
     protected Minecraft minecraft;
     
-    protected DefaultGuiModFactory(String modid, String title)
+    protected DefaultGuiFactory(String modid, String title)
     {
         this.modid = modid;
         this.title = title;
@@ -52,7 +52,7 @@ public class DefaultGuiModFactory implements IModGuiFactory
     
     public static IModGuiFactory forMod(ModContainer mod)
     {
-        return new DefaultGuiModFactory(mod.getModId(), mod.getName());
+        return new DefaultGuiFactory(mod.getModId(), mod.getName());
     }
 
 }

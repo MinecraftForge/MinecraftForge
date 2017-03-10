@@ -25,6 +25,7 @@ import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -40,7 +41,6 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.PostConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import org.lwjgl.input.Keyboard;
@@ -125,7 +125,15 @@ public class GuiConfig extends GuiScreen
                 toReturn.add(ConfigElement.from(clazz));
             }
         }
-        toReturn.sort((IConfigElement e1, IConfigElement e2) -> I18n.format(e1.getLanguageKey()).compareTo(I18n.format(e2.getLanguageKey())));
+        toReturn.sort(new Comparator<IConfigElement>(){
+
+            @Override
+            public int compare(IConfigElement e1, IConfigElement e2)
+            {
+                return I18n.format(e1.getLanguageKey()).compareTo(I18n.format(e2.getLanguageKey()));
+            }
+            
+        });
         return toReturn;
     }
 
