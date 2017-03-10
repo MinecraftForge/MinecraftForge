@@ -1,6 +1,11 @@
 package net.minecraftforge.debug;
 
+import java.util.Map;
 import java.util.Set;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -10,7 +15,7 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Config.*;
 import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.GuiConfig;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -37,7 +42,7 @@ public class ConfigTest implements IModGuiFactory
     }
     
     @SubscribeEvent
-    public void onConfigChangedEvent(ConfigChangedEvent event) {
+    public void onConfigChangedEvent(OnConfigChangedEvent event) {
         if(event.getModID().equals(MODID))
         {
             ConfigManager.sync(MODID, Type.INSTANCE);
@@ -130,6 +135,28 @@ public class ConfigTest implements IModGuiFactory
             }
         }
     }
+    
+    @LangKey("config_test.config.map")
+    @Config(modid = MODID, name = MODID + "_map")
+    public static class CONFIG_MAP
+    {
+        @Name("map")
+        public static Map<String, Integer[]> theMap;
+        
+        static 
+        {
+            theMap = Maps.newHashMap();
+            for(int i = 0; i < 7; i++)
+            {
+                Integer[] array = new Integer[6];
+                for (int x = 0; x < array.length; x++)
+                {
+                    array[x] = i + x;
+                }
+                theMap.put("" + i, array);
+            }
+        }
+    }
 
     @Override
     public void initialize(Minecraft minecraftInstance)
@@ -138,7 +165,7 @@ public class ConfigTest implements IModGuiFactory
     @Override
     public GuiScreen createConfigGui(GuiScreen parentScreen)
     {
-        return new GuiConfig(parentScreen, MODID, false, false, "Config test config screen", CONFIG_ANNOTATIONS.class, CONFIG_SUBCATS.class, CONFIG_TYPES.class);
+        return new GuiConfig(parentScreen, MODID, false, false, "Config test config screen", CONFIG_ANNOTATIONS.class, CONFIG_SUBCATS.class, CONFIG_TYPES.class, CONFIG_MAP.class);
     }
 
     @Override

@@ -101,4 +101,14 @@ public @interface Config
     {
         String value();
     }
+    
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.TYPE})
+    public @interface RequiresMcRestart
+    {}
+    
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.TYPE})
+    public @interface RequiresWorldRestart
+    {}
 }

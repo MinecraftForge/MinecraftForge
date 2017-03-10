@@ -391,9 +391,8 @@ public class ConfigElement implements IConfigElement
         {
             langKey = langKeyAnnotation.value();
         }
-        
-        ConfigCategory category = config.getCategory(annotation.category());
-        if(category.getName().isEmpty())
+         
+        if(annotation.category().isEmpty())
         {
             List<IConfigElement> elements = Lists.newArrayList();
             Set<String> catNames = config.getCategoryNames();
@@ -401,13 +400,22 @@ public class ConfigElement implements IConfigElement
             {
                 if(catName.isEmpty())
                     continue;
-                category = config.getCategory(catName);
-                elements.add(new DummyCategoryElement(category.getName(), category.getLanguagekey(), new ConfigElement(category).getChildElements()));
+                ConfigCategory category = config.getCategory(catName);
+                DummyCategoryElement element = new DummyCategoryElement(category.getName(), category.getLanguagekey(), new ConfigElement(category).getChildElements());
+                element.setRequiresMcRestart(category.requiresMcRestart());
+                element.setRequiresWorldRestart(category.requiresWorldRestart());
+                elements.add(element);
             }
                 
             return new DummyCategoryElement(name, langKey, elements);
         }
         else
-            return new DummyCategoryElement(name, langKey, new ConfigElement(category).getChildElements());
+        {
+            ConfigCategory category = config.getCategory(annotation.category());
+            DummyCategoryElement element = new DummyCategoryElement(name, langKey, new ConfigElement(category).getChildElements());   
+            element.setRequiresMcRestart(category.requiresMcRestart());
+            element.setRequiresWorldRestart(category.requiresWorldRestart());
+            return element;
+        } 
     }
 }
