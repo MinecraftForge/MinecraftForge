@@ -31,8 +31,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import com.google.common.base.Objects;
-
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
     protected final BlockInfo blockInfo;
@@ -53,8 +51,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     public void setParent(IVertexConsumer parent)
     {
         super.setParent(parent);
-        if(Objects.equal(getVertexFormat(), parent.getVertexFormat())) return;
-        setVertexFormat(getVertexFormat(parent));
+        VertexFormat format = getVertexFormat(parent);
+        if(format.equals(getVertexFormat())) return;
+        setVertexFormat(format);
         for(int i = 0; i < getVertexFormat().getElementCount(); i++)
         {
             switch(getVertexFormat().getElement(i).getUsage())
