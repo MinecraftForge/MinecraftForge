@@ -136,7 +136,7 @@ public class ConfigTest implements IModGuiFactory
         }
     }
     
-    @LangKey("config_test.config.map")
+    @LangKey("config_test.config.maps")
     @Config(modid = MODID, name = MODID + "_map")
     public static class CONFIG_MAP
     {
