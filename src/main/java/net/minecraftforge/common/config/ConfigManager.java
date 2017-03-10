@@ -352,6 +352,8 @@ public class ConfigManager
                             TypeAdapters.Str.setDefaultValue(property, m.get(property.getName()));
                         m.put(property.getName(), val);
                     }
+                    else
+                        throw new RuntimeException("Unknown type in map! " + f.getDeclaringClass() + "/" + f.getName() + " " + mtype);
                 }
             }
             
@@ -382,6 +384,8 @@ public class ConfigManager
                         TypeAdapters.Str.setDefaultValue(property, defaultValue);
                         TypeAdapters.Str.setValue(property, defaultValue);
                     }
+                    else
+                        throw new RuntimeException("Unknown type in map! " + f.getDeclaringClass() + "/" + f.getName() + " " + mtype);
                 }
                 else //If the key is not new, sync according to shoudlReadFromVar()
                 {
@@ -412,6 +416,8 @@ public class ConfigManager
                         else
                             e.setValue(Enum.valueOf((Class<? extends Enum>)ftype, propVal));
                     }
+                    else
+                        throw new RuntimeException("Unknown type in map! " + f.getDeclaringClass() + "/" + f.getName() + " " + mtype);
                 }
             }
             prop = null;
