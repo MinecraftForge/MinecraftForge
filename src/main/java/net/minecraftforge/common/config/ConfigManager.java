@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Level;
@@ -38,6 +39,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
 import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.LangKey;
@@ -56,7 +58,7 @@ public class ConfigManager
     private static Map<String, Multimap<Config.Type, ASMData>> asm_data = Maps.newHashMap();
     private static Map<Class<?>, ITypeAdapter> ADAPTERS = Maps.newHashMap();
     private static Map<String, Configuration> CONFIGS = Maps.newHashMap();
-    private static Multimap<String, Class<?>> MOD_CONFIG_CLASSES = ArrayListMultimap.create();
+    private static Map<String, Set<Class<?>>> MOD_CONFIG_CLASSES = Maps.newHashMap();
 
     static
     {
@@ -157,7 +159,11 @@ public class ConfigManager
             try
             {
                 Class<?> cls = Class.forName(targ.getClassName(), true, mcl);
-                MOD_CONFIG_CLASSES.put(modid, cls);
+                
+                if(MOD_CONFIG_CLASSES.get(modid) == null)
+                    MOD_CONFIG_CLASSES.put(modid, Sets.newHashSet());
+                MOD_CONFIG_CLASSES.get(modid).add(cls);
+                
                 String name = (String)targ.getAnnotationInfo().get("name");
                 if (name == null)
                     name = modid;

@@ -85,14 +85,13 @@ public class GuiConfig extends GuiScreen
     protected HoverChecker checkBoxHoverChecker;
     
     /**
-     * TODO: handle mcRestart and worldRestart
      * This constructor handles the {@code @Config} configuration classes
      * @param parentScreen the parent GuiScreen object
      * @param mod the mod for which to create a screen
      */
-    public GuiConfig(GuiScreen parentScreen, ModContainer mod)
+    public GuiConfig(GuiScreen parentScreen, String modid, String title)
     {
-        this(parentScreen, mod.getModId(), false, false, mod.getName(), ConfigManager.getModConfigClasses(mod.getModId())); 
+        this(parentScreen, modid, false, false, title, ConfigManager.getModConfigClasses(modid)); 
     }
     
     /**
@@ -113,16 +112,21 @@ public class GuiConfig extends GuiScreen
     
     private static List<IConfigElement> collectConfigElements(Class<?>[] configClasses)
     {
+        List<IConfigElement> toReturn;
         if(configClasses.length == 1)
         {
-            return ConfigElement.from(configClasses[0]).getChildElements();
+            toReturn = ConfigElement.from(configClasses[0]).getChildElements();
         }
-        List<IConfigElement> elements = new ArrayList<IConfigElement>();
-        for(Class<?> clazz : configClasses)
+        else
         {
-            elements.add(ConfigElement.from(clazz));
+            toReturn = new ArrayList<IConfigElement>();
+            for(Class<?> clazz : configClasses)
+            {
+                toReturn.add(ConfigElement.from(clazz));
+            }
         }
-        return elements;
+        toReturn.sort((IConfigElement e1, IConfigElement e2) -> I18n.format(e1.getLanguageKey()).compareTo(I18n.format(e2.getLanguageKey())));
+        return toReturn;
     }
 
     /**

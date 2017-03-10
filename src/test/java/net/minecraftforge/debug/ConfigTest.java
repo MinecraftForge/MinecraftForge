@@ -21,11 +21,10 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = ConfigTest.MODID, name = "ConfigTest", version = "1.0", acceptableRemoteVersions = "*", guiFactory = ConfigTest.GUI_FACTORY)
-public class ConfigTest implements IModGuiFactory
+@Mod(modid = ConfigTest.MODID, name = "ConfigTest", version = "1.0", acceptableRemoteVersions = "*")
+public class ConfigTest
 {
     public static final String MODID = "config_test";
-    public static final String GUI_FACTORY = "net.minecraftforge.debug.ConfigTest";
     
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -141,6 +140,7 @@ public class ConfigTest implements IModGuiFactory
     public static class CONFIG_MAP
     {
         @Name("map")
+        @RequiresMcRestart
         public static Map<String, Integer[]> theMap;
         
         static 
@@ -156,33 +156,5 @@ public class ConfigTest implements IModGuiFactory
                 theMap.put("" + i, array);
             }
         }
-    }
-
-    @Override
-    public void initialize(Minecraft minecraftInstance)
-    {}
-
-    @Override
-    public GuiScreen createConfigGui(GuiScreen parentScreen)
-    {
-        return new GuiConfig(parentScreen, MODID, false, false, "Config test config screen", CONFIG_ANNOTATIONS.class, CONFIG_SUBCATS.class, CONFIG_TYPES.class, CONFIG_MAP.class);
-    }
-
-    @Override
-    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories()
-    {
-        return null;
-    }
-
-    @Override
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element)
-    {
-        return null;
-    }
-
-    @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass()
-    {
-        return null;
     }
 }
