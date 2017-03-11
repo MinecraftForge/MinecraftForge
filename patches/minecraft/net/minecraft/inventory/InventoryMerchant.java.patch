@@ -1,12 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/inventory/InventoryMerchant.java
 +++ ../src-work/minecraft/net/minecraft/inventory/InventoryMerchant.java
-@@ -169,7 +169,8 @@
+@@ -161,6 +161,7 @@
+                 MerchantRecipe merchantrecipe = merchantrecipelist.func_77203_a(itemstack, itemstack1, this.field_70473_e);
+ 
+                 if (merchantrecipe != null && !merchantrecipe.func_82784_g())
++                if (!net.minecraftforge.event.ForgeEventFactory.checkMerchantTrade(field_70476_a, merchantrecipe, itemstack, itemstack1))
                  {
+                     this.field_70472_d = merchantrecipe;
+                     this.func_70299_a(2, merchantrecipe.func_77397_d().func_77946_l());
+@@ -170,6 +171,7 @@
                      merchantrecipe = merchantrecipelist.func_77203_a(itemstack1, itemstack, this.field_70473_e);
  
--                    if (merchantrecipe != null && !merchantrecipe.func_82784_g())
-+                    net.minecraftforge.fml.common.eventhandler.Event.Result canTrade = net.minecraftforge.event.ForgeEventFactory.checkMerchantTrade(field_70476_a, merchantrecipe, itemstack, itemstack1);
-+                    if (canTrade == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW || (canTrade == net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT && merchantrecipe != null && !merchantrecipe.func_82784_g()))
+                     if (merchantrecipe != null && !merchantrecipe.func_82784_g())
++                    if (!net.minecraftforge.event.ForgeEventFactory.checkMerchantTrade(field_70476_a, merchantrecipe, itemstack, itemstack1))
                      {
                          this.field_70472_d = merchantrecipe;
                          this.func_70299_a(2, merchantrecipe.func_77397_d().func_77946_l());

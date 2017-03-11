@@ -535,11 +535,9 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerBrewedPotionEvent(player, stack));
     }
 
-    public static Result checkMerchantTrade(IMerchant merchant, MerchantRecipe trade, ItemStack left, ItemStack right)
+    public static boolean checkMerchantTrade(IMerchant merchant, MerchantRecipe trade, ItemStack left, ItemStack right)
     {
-        MerchantTradeEvent.SetupOffer event = new MerchantTradeEvent.SetupOffer(merchant, trade, left, right);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult();
+        return MinecraftForge.EVENT_BUS.post(new MerchantTradeEvent.SetupOffer(merchant, trade, left, right));
     }
 
     public static boolean onMerchantTrade(InventoryMerchant inventory, IMerchant merchant, MerchantRecipe trade, ItemStack left, ItemStack right)

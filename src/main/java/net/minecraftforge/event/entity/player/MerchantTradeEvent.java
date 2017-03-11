@@ -90,15 +90,14 @@ public class MerchantTradeEvent extends PlayerEvent
      * <br>
      * The event is fired during the {@link InventoryMerchant#resetRecipeAndSlots()} method invocation.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is {@link Cancelable}.<br>
+     * If this event is canceled, the result of trade does not appear.<br>
      * <br>
-     * This event has a result. {@link HasResult}<br>
-     * {@link Result#ALLOW} The result of trade appears.<br>
-     * {@link Result#DENY} The result of trade does not appear.<br>
+     * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    @HasResult
+    @Cancelable
     public static class SetupOffer extends MerchantTradeEvent
     {
         public SetupOffer(@Nonnull IMerchant merchant, @Nonnull MerchantRecipe trade, @Nonnull ItemStack first, @Nonnull ItemStack second)
