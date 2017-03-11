@@ -545,6 +545,7 @@ public class ForgeBlockStateV1 extends Marker
                             builder.put(TransformType.THIRD_PERSON_LEFT_HAND, leftify(thirdperson));
                             builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, firstperson);
                             builder.put(TransformType.FIRST_PERSON_LEFT_HAND, leftify(firstperson));
+                            builder.put(TransformType.FIXED, get(0, 0, 0, 0, 180, 0, 1));
                             ret.state = Optional.<IModelState>of(new SimpleModelState(builder.build()));
                         }
                         // item/handheld

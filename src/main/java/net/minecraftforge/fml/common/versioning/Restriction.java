@@ -212,9 +212,9 @@ public class Restriction
         }
         else if ( getLowerBound() != null && getUpperBound() != null )
         {
-            if ( getLowerBound().equals(getUpperBound()) )
+            if ( getLowerBound().getVersionString().equals(getUpperBound().getVersionString()) )
             {
-                return getLowerBound().toString();
+                return getLowerBound().getVersionString();
             }
             else
             {
