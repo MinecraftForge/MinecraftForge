@@ -26,7 +26,7 @@ apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
 
 minecraft.version = "1.11.2"
-def wrapper_version= "1.0.3"
+def wrapper_version= "1.1.1"
 
 minecraft {
     mappings = 'snapshot_nodoc_20161220'
@@ -215,12 +215,14 @@ dependencies {
 }
 
 def wrapLinux = "javawrapper-v$wrapper_version-linux"
-def wrapOsx = "javawrapper-v$wrapper_version-osx"
+def wrapOsx = "javawrapper-v$wrapper_version-osx.app/Contents/MacOs/javawrapper-v$wrapper_version-osx"
 def wrapWin = "javawrapper-v$wrapper_version-win.exe"
 
 def wrapLinuxPath = file("$buildDir/jwrappers/$wrapLinux")
 def wrapOsxPath = file("$buildDir/jwrappers/$wrapOsx")
 def wrapWinPath = file("$buildDir/jwrappers/$wrapWin")
+
+//def osxBinPath  = file(wrapOsxPath + "/javawrapper-v$wrapper_version")
 
 task wrapInstaller(type: Copy) {
     dependsOn tasks.installer, configurations.wrapTar, configurations.wrapZip
@@ -258,6 +260,8 @@ task renameWrappers() {
             rename("javawrapper-v$wrapper_version-osx", "forge-$project.version-installer-osx")
             rename("javawrapper-v$wrapper_version-win.exe", "forge-$project.version-installer-win.exe")
         }
+
+
         delete {
             delete wrapLinuxPath, wrapOsxPath, wrapWinPath
 
@@ -274,13 +278,17 @@ task createAppDir {
         }
 
         copy {
-            from "$buildDir/jwrappers/forge-${project.version}-osx"
-            into "$buildDir/jwrappers/app-${project.version}/forge-${project.version}-installer.app/Contents/MacOs/"
+            from "$buildDir/jwrappers/javawrapper-v$wrapper_version-osx.app/Contents/MacOs"
+            include "forge-${project.version}-installer-osx"
+            into "$buildDir/jwrappers/app-${project.version}/forge-${project.version}-installer.app/Contents/MacOs"
+
+
         }
 
         String contents = new File("Info.plist").getText('UTF-8')
         contents = contents.replaceAll("@NAME@", "forgeinstaller").replaceAll("@VERSION@", project.version).replaceAll("@EXE@", "forge-${project.version}-installer-osx")
         new File("$buildDir/jwrappers/app-${project.version}/forge-${project.version}-installer.app/Contents/Info.plist").write(contents, 'UTF-8')
+
 
     }
 }
