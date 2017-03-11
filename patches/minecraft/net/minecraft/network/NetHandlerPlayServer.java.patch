@@ -51,3 +51,12 @@
  
                      if (this.field_147367_d.func_71199_h())
                      {
+@@ -1097,7 +1105,7 @@
+             {
+                 ItemStack itemstack2 = this.field_147369_b.field_71070_bA.func_184996_a(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(), p_147351_1_.func_186993_f(), this.field_147369_b);
+ 
+-                if (ItemStack.func_77989_b(p_147351_1_.func_149546_g(), itemstack2))
++                if (ItemStack.areItemStacksEqualUsingNBTShareTag(p_147351_1_.func_149546_g(), itemstack2))
+                 {
+                     this.field_147369_b.field_71135_a.func_147359_a(new SPacketConfirmTransaction(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
+                     this.field_147369_b.field_71137_h = true;
