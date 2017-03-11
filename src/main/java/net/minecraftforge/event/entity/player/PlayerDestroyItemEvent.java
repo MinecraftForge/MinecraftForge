@@ -44,13 +44,13 @@ import javax.annotation.Nullable;
 /**
  * PlayerDestroyItemEvent is fired when a player destroys an item.<br>
  * This event is fired whenever a player destroys an item in
- * {@link PlayerControllerMP#processRightClick(EntityPlayer, World, ItemStack, EnumHand)},
- * {@link PlayerControllerMP#processRightClickBlock(EntityPlayerSP, WorldClient, ItemStack, BlockPos, EnumFacing, Vec3d, EnumHand)},
+ * {@link PlayerControllerMP#processRightClick(EntityPlayer, World, EnumHand)},
+ * {@link PlayerControllerMP#processRightClickBlock(EntityPlayerSP, WorldClient, BlockPos, EnumFacing, Vec3d, EnumHand)},
  * {@link EntityPlayer#damageShield(float)},
  * {@link ForgeHooks#getContainerItem(ItemStack)},
+ * {@link PlayerInteractionManager#tryHarvestBlock(net.minecraft.util.math.BlockPos)}
  * {@link PlayerInteractionManager#processRightClick(EntityPlayer, World, ItemStack, EnumHand)},
- * {@link NetHandlerPlayServer#processPlayerBlockPlacement(CPacketPlayerTryUseItem)}
- * and {@link NetHandlerPlayServer#processRightClickBlock(CPacketPlayerTryUseItemOnBlock)}.<br>
+ * and {@link PlayerInteractionManager#processRightClickBlock(EntityPlayer, World, ItemStack, EnumHand, BlockPos, EnumFacing, float, float, float)}.<br>
  * <br>
  * {@link #original} contains the original ItemStack before the item was destroyed. <br>
  * (@link #hand) contains the hand that the current item was held in.<br>
