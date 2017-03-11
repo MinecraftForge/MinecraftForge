@@ -27,13 +27,16 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -534,5 +537,48 @@ public class FluidUtil
 
             return result;
         }
+    }
+
+    /**
+     * @param fluidStack contents used to fill the bucket.
+     *                   FluidStack is used instead of Fluid to preserve fluid NBT, the amount is ignored.
+     * @return a filled vanilla bucket or filled universal bucket.
+     *         Returns empty itemStack if none of the enabled buckets can hold the fluid.
+     */
+    @Nonnull
+    public static ItemStack getFilledBucket(@Nonnull FluidStack fluidStack)
+    {
+        Fluid fluid = fluidStack.getFluid();
+
+        if (fluidStack.tag == null || fluidStack.tag.hasNoTags())
+        {
+            if (fluid == FluidRegistry.WATER)
+            {
+                return new ItemStack(Items.WATER_BUCKET);
+            }
+            else if (fluid == FluidRegistry.LAVA)
+            {
+                return new ItemStack(Items.LAVA_BUCKET);
+            }
+            else if (fluid.getName().equals("milk"))
+            {
+                return new ItemStack(Items.MILK_BUCKET);
+            }
+        }
+
+        if (FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.getBucketFluids().contains(fluid))
+        {
+            UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
+            ItemStack filledBucket = new ItemStack(bucket);
+            FluidStack fluidContents = new FluidStack(fluidStack, bucket.getCapacity());
+
+            NBTTagCompound tag = new NBTTagCompound();
+            fluidContents.writeToNBT(tag);
+            filledBucket.setTagCompound(tag);
+
+            return filledBucket;
+        }
+
+        return ItemStack.EMPTY;
     }
 }
