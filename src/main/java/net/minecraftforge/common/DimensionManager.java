@@ -28,11 +28,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.google.common.base.Preconditions;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.apache.logging.log4j.Level;
 
@@ -72,9 +70,9 @@ public class DimensionManager
         }
     }
 
-    private static ConcurrentHashMap<Integer, WorldServer> worlds = new ConcurrentHashMap<Integer, WorldServer>();
+    private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
-    private static Int2ObjectOpenHashMap<Dimension> dimensions = new Int2ObjectOpenHashMap<Dimension>();
+    private static Hashtable<Integer, Dimension> dimensions = new Hashtable<Integer, Dimension>();
     private static IntArrayList unloadQueue = new IntArrayList();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
