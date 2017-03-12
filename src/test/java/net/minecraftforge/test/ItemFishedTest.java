@@ -5,8 +5,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemFishedEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -14,14 +15,16 @@ import java.util.List;
 public class ItemFishedTest
 {
 
-    private static final boolean ENABLE = true;
+    private static final boolean ENABLE = false;
+    private static Logger logger;
 
     @Mod.EventHandler
-    public void onInit(FMLInitializationEvent event)
+    public void onInit(FMLPreInitializationEvent event)
     {
         if (ENABLE)
         {
-            System.out.println("Enabling Fishing Test mod");
+            logger = event.getModLog();
+            logger.info("Enabling Fishing Test mod");
             MinecraftForge.EVENT_BUS.register(this);
         }
     }
@@ -29,7 +32,7 @@ public class ItemFishedTest
     @SubscribeEvent
     public void onItemFished(ItemFishedEvent event)
     {
-        System.out.println("Item fished");
+        logger.info("Item fished");
         List<ItemStack> stacks = event.getItemStacks();
         stacks.clear();
         stacks.add(new ItemStack(Items.SLIME_BALL, 2));
