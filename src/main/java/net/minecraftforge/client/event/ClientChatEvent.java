@@ -22,7 +22,25 @@ package net.minecraftforge.client.event;
 import com.google.common.base.Strings;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.client.gui.GuiScreen;
 
+/**
+ * ClientChatEvent is fired whenever the client is about to send a chat message or command to the server. <br>
+ * This event is fired via {@link ForgeEventFactory#onClientSendMessage(String)},
+ * which is executed by {@link GuiScreen#sendChatMessage(String, boolean)}<br>
+ * <br>
+ * {@link #message} contains the message that will be sent to the server. This can be changed by mods.<br>
+ * {@link #originalMessage} contains the original message that was going to be sent to the server. This cannot be changed by mods.<br>
+ * <br>
+ * This event is {@link Cancelable}. <br>
+ * If this event is canceled, the chat message or command is never sent to the server.<br>
+ * <br>
+ * This event does not have a result. {@link HasResult}<br>
+ * <br>
+ * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ **/
 @Cancelable
 public class ClientChatEvent extends Event
 {
