@@ -1,54 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiScreen.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreen.java
-@@ -3,25 +3,8 @@
- import com.google.common.base.Splitter;
- import com.google.common.collect.Lists;
- import com.google.common.collect.Sets;
--import java.awt.Toolkit;
--import java.awt.datatransfer.ClipboardOwner;
--import java.awt.datatransfer.DataFlavor;
--import java.awt.datatransfer.StringSelection;
--import java.awt.datatransfer.Transferable;
--import java.io.File;
--import java.io.IOException;
--import java.net.URI;
--import java.net.URISyntaxException;
--import java.util.Arrays;
--import java.util.List;
--import java.util.Locale;
--import java.util.Set;
- import net.minecraft.client.Minecraft;
--import net.minecraft.client.renderer.GlStateManager;
--import net.minecraft.client.renderer.RenderHelper;
--import net.minecraft.client.renderer.RenderItem;
--import net.minecraft.client.renderer.Tessellator;
--import net.minecraft.client.renderer.VertexBuffer;
-+import net.minecraft.client.renderer.*;
- import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
- import net.minecraft.item.ItemStack;
- import net.minecraft.nbt.JsonToNBT;
-@@ -44,6 +27,20 @@
- import org.lwjgl.input.Keyboard;
- import org.lwjgl.input.Mouse;
- 
-+import java.awt.*;
-+import java.awt.datatransfer.ClipboardOwner;
-+import java.awt.datatransfer.DataFlavor;
-+import java.awt.datatransfer.StringSelection;
-+import java.awt.datatransfer.Transferable;
-+import java.io.File;
-+import java.io.IOException;
-+import java.net.URI;
-+import java.net.URISyntaxException;
-+import java.util.Arrays;
-+import java.util.List;
-+import java.util.Locale;
-+import java.util.Set;
-+
- @SideOnly(Side.CLIENT)
- public abstract class GuiScreen extends Gui implements GuiYesNoCallback
- {
-@@ -63,6 +60,7 @@
+@@ -63,6 +63,7 @@
      private long field_146288_g;
      private int field_146298_h;
      private URI field_175286_t;
