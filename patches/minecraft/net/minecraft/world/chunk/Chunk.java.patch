@@ -210,8 +210,8 @@
  
      protected void func_186034_a(IChunkGenerator p_186034_1_)
      {
-+        if (populating.get() == Boolean.TRUE && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
-+        populating.set(Boolean.TRUE);
++        if (populating && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
++        populating = true;
          if (this.func_177419_t())
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
@@ -222,7 +222,7 @@
 +            net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.field_76635_g, this.field_76647_h, this.field_76637_e, p_186034_1_, this.field_76637_e.func_72863_F());
              this.func_76630_e();
          }
-+        populating.set(Boolean.FALSE);
++        populating = false;
      }
  
      public BlockPos func_177440_h(BlockPos p_177440_1_)
@@ -313,7 +313,7 @@
 +        }
 +    }
 +
-+    private static ThreadLocal<Boolean> populating = new ThreadLocal<Boolean>(); // keep track of cascading chunk generation during chunk population
++    private static boolean populating = false; // keep track of cascading chunk generation during chunk population
 +
 +    private void logCascadingWorldGeneration()
 +    {
