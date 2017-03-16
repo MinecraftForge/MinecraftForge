@@ -561,7 +561,13 @@ public class ForgeEventFactory
     @Nullable
     public static CapabilityDispatcher gatherCapabilities(Item item, ItemStack stack, ICapabilityProvider parent)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent.Item(item, stack), parent);
+        // first fire the legacy event
+        AttachCapabilitiesEvent.Item legacyEvent = new AttachCapabilitiesEvent.Item(item, stack);
+        MinecraftForge.EVENT_BUS.post(legacyEvent);
+
+        // fire new event with the caps that were already registered on the legacy event
+        AttachCapabilitiesEvent<ItemStack> event = new AttachCapabilitiesEvent<ItemStack>(ItemStack.class, stack, legacyEvent.caps);
+        return gatherCapabilities(event, parent);
     }
 
     @Nullable

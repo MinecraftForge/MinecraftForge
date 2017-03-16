@@ -40,6 +40,7 @@ import com.google.common.collect.Multimap;
 
 import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.LangKey;
+import net.minecraftforge.common.config.Config.Name;
 import net.minecraftforge.common.config.Config.RangeDouble;
 import net.minecraftforge.common.config.Config.RangeInt;
 import net.minecraftforge.fml.common.FMLLog;
@@ -134,6 +135,10 @@ public class ConfigManager
                 String name = (String)targ.getAnnotationInfo().get("name");
                 if (name == null)
                     name = modid;
+                String category = (String)targ.getAnnotationInfo().get("category");
+                if (category == null)
+                    category = "general";
+
                 File file = new File(configDir, name + ".cfg");
 
                 Configuration cfg = CONFIGS.get(file.getAbsolutePath());
@@ -144,7 +149,7 @@ public class ConfigManager
                     CONFIGS.put(file.getAbsolutePath(), cfg);
                 }
 
-                createConfig(cfg, cls, modid, type == Config.Type.INSTANCE);
+                createConfig(cfg, cls, modid, type == Config.Type.INSTANCE, category);
 
                 cfg.save();
 
@@ -160,9 +165,8 @@ public class ConfigManager
     // =======================================================
     //                    INTERNAL
     // =======================================================
-    private static void createConfig(Configuration cfg, Class<?> cls, String modid, boolean isStatic)
+    private static void createConfig(Configuration cfg, Class<?> cls, String modid, boolean isStatic, String category)
     {
-        String category = "general";
         for (Field f : cls.getDeclaredFields())
         {
             if (!Modifier.isPublic(f.getModifiers()))
@@ -196,19 +200,25 @@ public class ConfigManager
 
         if (adapter != null)
         {
+            if (category.isEmpty())
+                throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
             prop = adapter.getProp(cfg, category, f, instance, comment);
             set(instance, f, adapter.getValue(prop));
         }
         else if (ftype.getSuperclass() == Enum.class)
         {
+            if (category.isEmpty())
+                throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
             Enum enu = (Enum)get(instance, f);
-            prop = cfg.get(category, f.getName(), enu.name(), comment);
+            prop = cfg.get(category, getName(f), enu.name(), comment);
             prop.setValidationPattern(makePattern((Class<? extends Enum>)ftype));
             set(instance, f, Enum.valueOf((Class<? extends Enum>)ftype, prop.getString()));
         }
         else if (ftype == Map.class)
         {
-            String sub = category + "." + f.getName().toLowerCase(Locale.ENGLISH);
+            if (category.isEmpty())
+                throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
+            String sub = category + "." + getName(f).toLowerCase(Locale.ENGLISH);
             Map<String, Object> m = (Map<String, Object>)get(instance, f);
             ParameterizedType type = (ParameterizedType)f.getGenericType();
             Type mtype = type.getActualTypeArguments()[1];
@@ -238,7 +248,8 @@ public class ConfigManager
         }
         else if (ftype.getSuperclass() == Object.class) //Only support classes that are one level below Object.
         {
-            String sub = category + "." + f.getName().toLowerCase(Locale.ENGLISH);
+            String sub = (category.isEmpty() ? "" : category + ".") + getName(f).toLowerCase(Locale.ENGLISH);
+            cfg.getCategory(sub).setComment(comment);
             Object sinst = get(instance, f);
             for (Field sf : ftype.getDeclaredFields())
             {
@@ -304,6 +315,13 @@ public class ConfigManager
         for (Enum e : cls.getEnumConstants())
             lst.add(e.name());
         return Pattern.compile(PIPE.join(lst));
+    }
+
+    private static String getName(Field f)
+    {
+        if (f.isAnnotationPresent(Name.class))
+            return f.getAnnotation(Name.class).value();
+        return f.getName();
     }
 
 }

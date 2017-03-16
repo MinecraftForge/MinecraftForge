@@ -116,6 +116,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
+    public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -219,7 +220,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop = config.get(CATEGORY_GENERAL, "sortRecipies", true);
         prop.setComment("Set to true to enable the post initialization sorting of crafting recipes using Forge's sorter. May cause desyncing on conflicting recipes. MUST RESTART MINECRAFT IF CHANGED FROM THE CONFIG GUI.");
         prop.setLanguageKey("forge.configgui.sortRecipies").setRequiresMcRestart(true);
-        shouldSortRecipies = prop.getBoolean(shouldSortRecipies);
+        shouldSortRecipies = prop.getBoolean(true);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringEntities", false);
@@ -268,10 +269,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         zombieBabyChance = (float) prop.getDouble(0.05);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", Boolean.TRUE,
+        prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", true,
                 "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
-        forgeLightPipelineEnabled = prop.getBoolean(Boolean.TRUE);
+        forgeLightPipelineEnabled = prop.getBoolean(true);
         prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "logCascadingWorldGeneration", true,
+                "Log cascading chunk generation issues during terrain population.");
+        logCascadingWorldGeneration = prop.getBoolean();
+        prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
@@ -285,34 +292,34 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         // Client-Side only properties
         propOrder = new ArrayList<String>();
 
-        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", Boolean.FALSE,
+        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", false,
                 "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
         prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
-        replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
+        replaceVanillaBucketModel = prop.getBoolean(false);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_CLIENT, "zoomInMissingModelTextInGui", Boolean.FALSE,
+        prop = config.get(Configuration.CATEGORY_CLIENT, "zoomInMissingModelTextInGui", false,
         "Toggle off to make missing model text in the gui fit inside the slot.");
-        zoomInMissingModelTextInGui = prop.getBoolean(Boolean.FALSE);
+        zoomInMissingModelTextInGui = prop.getBoolean(false);
         prop.setLanguageKey("forge.configgui.zoomInMissingModelTextInGui");
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder,
+        prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", 0,
                 "The timestamp of the last reminder to update to Java 8 in number of milliseconds since January 1, 1970, 00:00:00 GMT. Nag will show only once every 24 hours. To disable it set this to some really high number.");
-        java8Reminder = prop.getLong(java8Reminder);
+        java8Reminder = prop.getLong(0);
         prop.setLanguageKey("forge.configgui.java8Reminder");
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", disableStairSlabCulling,
+        prop = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", false,
                 "Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.");
-        disableStairSlabCulling = prop.getBoolean(disableStairSlabCulling);
-        prop.setLanguageKey("forge.configgui.disableStairSlabCulling").setRequiresMcRestart(false);
+        disableStairSlabCulling = prop.getBoolean(false);
+        prop.setLanguageKey("forge.configgui.disableStairSlabCulling");
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_CLIENT, "alwaysSetupTerrainOffThread", Boolean.FALSE,
+        prop = config.get(Configuration.CATEGORY_CLIENT, "alwaysSetupTerrainOffThread", false,
                 "Enable forge to queue all chunk updates to the Chunk Update thread. May increase FPS significantly, but may also cause weird rendering lag. Not recommended for computers " +
                 "without a significant number of cores available.");
-        alwaysSetupTerrainOffThread = prop.getBoolean(Boolean.FALSE);
+        alwaysSetupTerrainOffThread = prop.getBoolean(false);
         prop.setLanguageKey("forge.configgui.alwaysSetupTerrainOffThread");
         propOrder.add(prop.getName());
 
