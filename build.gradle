@@ -340,7 +340,7 @@ artifacts {
 
     archives makeMdk
     archives pkgWin
-    archives pkgLinux
+//    archives pkgLinux
     archives pkgOsx
 }
 
