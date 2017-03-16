@@ -68,6 +68,8 @@ forge.configgui.maximumTicketCount.tooltip=This is the number of chunk loading r
 forge.configgui.maximumTicketCount=Mod Ticket Limit
 forge.configgui.playerTicketCount.tooltip=The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.
 forge.configgui.playerTicketCount=Player Ticket Limit
+forge.configgui.logCascadingWorldGeneration=Log Cascading World Gen
+forge.configgui.logCascadingWorldGeneration.tooltip=Log cascading chunk generation issues during terrain population.
 
 fml.config.sample.basicDouble.tooltip=A double property with no defined bounds.
 fml.config.sample.basicDouble=Unbounded Double

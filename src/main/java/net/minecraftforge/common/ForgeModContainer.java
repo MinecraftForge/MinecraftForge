@@ -117,6 +117,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
     public static int dimensionUnloadQueueDelay = 300;
+    public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -279,6 +280,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "The default time in ticks the server will wait when a dimension was queued to unload. Can be overridden by mods in their dimension");
         dimensionUnloadQueueDelay = prop.getInt(300);
         prop.setLanguageKey("forge.configgui.dimensionUnloadQueueDelay").setRequiresMcRestart(true);
+        
+        prop = config.get(Configuration.CATEGORY_GENERAL, "logCascadingWorldGeneration", true,
+                "Log cascading chunk generation issues during terrain population.");
+        logCascadingWorldGeneration = prop.getBoolean();
+        prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
