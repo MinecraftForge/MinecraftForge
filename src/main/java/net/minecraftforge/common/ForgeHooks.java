@@ -1033,7 +1033,7 @@ public class ForgeHooks
         return git == null ? null : git.hitVec;
     }
 
-    // TODO remove these three
+    // TODO 1.12 remove these three
     @Deprecated
     public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, EnumHand hand)
     {
@@ -1072,7 +1072,7 @@ public class ForgeHooks
         return evt.isCanceled() ? evt.getCancellationResult() : null;
     }
 
-    @Deprecated // TODO remove
+    @Deprecated // TODO 1.12 remove
     public static boolean onItemRightClick(EntityPlayer player, EnumHand hand)
     {
         return onItemRightClickAction(player, hand) != null;
