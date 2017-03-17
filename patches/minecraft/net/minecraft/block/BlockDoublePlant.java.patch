@@ -54,7 +54,7 @@
              return true;
          }
      }
-@@ -281,6 +276,33 @@
+@@ -281,6 +276,24 @@
          return Block.EnumOffsetType.XZ;
      }
  
@@ -74,15 +74,6 @@
 +        if (type == EnumPlantType.FERN) ret.add(new ItemStack(Blocks.field_150329_H, 2, BlockTallGrass.EnumType.FERN.func_177044_a()));
 +        if (type == EnumPlantType.GRASS) ret.add(new ItemStack(Blocks.field_150329_H, 2, BlockTallGrass.EnumType.GRASS.func_177044_a()));
 +        return ret;
-+    }
-+
-+    @Override
-+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
-+    {
-+        //Forge: Break both parts on the client to prevent the top part flickering as default type for a few frames.
-+        if (state.func_177230_c() ==  this && state.func_177229_b(field_176492_b) == EnumBlockHalf.LOWER && world.func_180495_p(pos.func_177984_a()).func_177230_c() == this)
-+            world.func_175698_g(pos.func_177984_a());
-+        return world.func_175698_g(pos);
 +    }
 +
      public static enum EnumBlockHalf implements IStringSerializable
