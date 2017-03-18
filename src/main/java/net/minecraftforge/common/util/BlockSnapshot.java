@@ -127,7 +127,8 @@ public class BlockSnapshot implements Serializable
                 nbt);
     }
 
-    private static NBTTagCompound getTileNBT(TileEntity te)
+    @Nullable
+    private static NBTTagCompound getTileNBT(@Nullable TileEntity te)
     {
         if (te == null) return null;
         NBTTagCompound nbt = new NBTTagCompound();
@@ -160,6 +161,7 @@ public class BlockSnapshot implements Serializable
         return this.replacedBlock;
     }
 
+    @Nullable
     public TileEntity getTileEntity()
     {
         return getNbt() != null ? TileEntity.create(getWorld(), getNbt()) : null;
