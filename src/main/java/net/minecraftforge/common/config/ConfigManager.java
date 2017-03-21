@@ -160,7 +160,7 @@ public class ConfigManager
             {
                 Class<?> cls = Class.forName(targ.getClassName(), true, mcl);
                 
-                if(MOD_CONFIG_CLASSES.get(modid) == null)
+                if (MOD_CONFIG_CLASSES.get(modid) == null)
                     MOD_CONFIG_CLASSES.put(modid, Sets.<Class<?>>newHashSet());
                 MOD_CONFIG_CLASSES.get(modid).add(cls);
                 
@@ -205,7 +205,7 @@ public class ConfigManager
     //                    INTERNAL
     // =======================================================
     static Configuration getConfiguration(String modid, String name) {
-        if(Strings.isNullOrEmpty(name))
+        if (Strings.isNullOrEmpty(name))
             name = modid;
         File configDir = Loader.instance().getConfigDir();
         File configFile = new File(configDir, name + ".cfg");
@@ -259,7 +259,7 @@ public class ConfigManager
                 initializeProperty(prop, langKey, comment, requiresMcRestart, requiresWorldRestart);
                 Object fieldValue = get(instance, f);
                 adapter.setDefaultValue(prop, fieldValue);
-                if(!exists)
+                if (!exists)
                     adapter.setValue(prop, fieldValue);
                 else
                     set(instance, f, adapter.getValue(prop));
@@ -269,13 +269,9 @@ public class ConfigManager
                 Object fieldValue = get(instance, f);
                 Object propValue = adapter.getValue(prop);
                 if (shouldReadFromVar(prop, propValue, fieldValue)) 
-                {
                     adapter.setValue(prop, fieldValue);
-                } 
                 else
-                {
                     set(instance, f, propValue);
-                }
             }
         }
         else if (ftype.getSuperclass() == Enum.class) //Is a enum and write as String
@@ -285,11 +281,11 @@ public class ConfigManager
             Enum enu = (Enum)get(instance, f);
             boolean exists = exists(cfg, category, getName(f));
             prop = property(cfg, category, getName(f), TypeAdapters.Str.getType(), false);
-            if(loading)
+            if (loading)
             {
                 initializeProperty(prop, langKey, comment, requiresMcRestart, requiresWorldRestart);
                 TypeAdapters.Str.setDefaultValue(prop, enu.name());
-                if(!exists)
+                if (!exists)
                     TypeAdapters.Str.setValue(prop, enu.name());
                 else
                     set(instance, f, Enum.valueOf((Class<? extends Enum>)ftype, prop.getString()));
@@ -299,7 +295,7 @@ public class ConfigManager
             {    
                 String propValue = prop.getString();
                 
-                if(shouldReadFromVar(prop, propValue, enu.name()))
+                if (shouldReadFromVar(prop, propValue, enu.name()))
                     TypeAdapters.Str.setValue(prop, enu.name());
                 else
                     set(instance, f, Enum.valueOf((Class<? extends Enum>)ftype, propValue));
@@ -318,7 +314,7 @@ public class ConfigManager
             boolean mapsToArrays = ((Class)mtype).isArray();
 
             ConfigCategory confCat = cfg.getCategory(sub);
-            if(loading)
+            if (loading)
             {
                 //Init category
                 confCat.setComment(comment);
@@ -327,14 +323,14 @@ public class ConfigManager
                 confCat.setRequiresWorldRestart(requiresWorldRestart);
             }
             
-            for(Property property : confCat.getOrderedValues())//Are new keys in the Configuration object?
+            for (Property property : confCat.getOrderedValues())//Are new keys in the Configuration object?
             {
-                if(loading || !m.containsKey(property.getName()))
+                if (loading || !m.containsKey(property.getName()))
                 {
                     String propLangKey = langKey + "." + property.getName();
                     initializeProperty(property, propLangKey, null, requiresMcRestart, requiresWorldRestart);
                     
-                    if(adpt != null)
+                    if (adpt != null)
                     {
                         if(!m.containsKey(property.getName()))
                             adpt.setDefaultValue(property, adpt.getValue(property));
@@ -342,7 +338,7 @@ public class ConfigManager
                             adpt.setDefaultValue(property, m.get(property.getName()));
                         m.put(property.getName(), adpt.getValue(property));
                     }
-                    else if(mtype instanceof Class && ((Class<?>)mtype).getSuperclass() == Enum.class)
+                    else if (mtype instanceof Class && ((Class<?>)mtype).getSuperclass() == Enum.class)
                     {
                         String propValue = property.getString();
                         Enum val = Enum.valueOf((Class<? extends Enum>)mtype, propValue);
@@ -357,9 +353,9 @@ public class ConfigManager
                 }
             }
             
-            for(Entry<String, Object> e : m.entrySet())
+            for (Entry<String, Object> e : m.entrySet())
             {
-                if(!exists(cfg, sub, e.getKey())) //Are new programmatically added keys available?
+                if (!exists(cfg, sub, e.getKey())) //Are new programmatically added keys available?
                 {
                     Property.Type propType;
                     if (adpt != null)
@@ -411,7 +407,7 @@ public class ConfigManager
                     {
                         String propVal = property.getString();
                         String mapVal = ((Enum)e.getValue()).name();
-                        if(shouldReadFromVar(property, propVal, mapVal))
+                        if (shouldReadFromVar(property, propVal, mapVal))
                             TypeAdapters.Str.setValue(property, mapVal);
                         else
                             e.setValue(Enum.valueOf((Class<? extends Enum>)ftype, propVal));
@@ -483,9 +479,9 @@ public class ConfigManager
     private static Property property(Configuration cfg, String category, String property, Property.Type type, boolean isList)
     {
         Property prop = cfg.getCategory(category).get(property);
-        if(prop == null)
+        if (prop == null)
         {
-            if(isList)
+            if (isList)
                 prop = new Property(property, new String[0], type);
             else
                 prop = new Property(property, (String)null, type);
@@ -501,9 +497,9 @@ public class ConfigManager
     
     private static boolean shouldReadFromVar(Property property, Object propValue, Object fieldValue)
     {
-        if(!propValue.equals(fieldValue))
+        if (!propValue.equals(fieldValue))
         {
-            if(property.hasChanged())
+            if (property.hasChanged())
                 return false;
             else
                 return true;

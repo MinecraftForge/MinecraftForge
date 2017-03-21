@@ -223,21 +223,21 @@ public class GuiConfig extends GuiScreen
         this.entryList = new GuiConfigEntries(this, mc);
         this.initEntries = new ArrayList<IConfigEntry>(entryList.listEntries);
         this.allRequireWorldRestart = allRequireWorldRestart;
-        IF:if(!allRequireWorldRestart)
+        IF:if (!allRequireWorldRestart)
         {
-            for(IConfigElement element : configElements)
+            for (IConfigElement element : configElements)
             {
-                if(!element.requiresWorldRestart());
+                if (!element.requiresWorldRestart());
                     break IF;
             }
             allRequireWorldRestart = true;
         }
         this.allRequireMcRestart = allRequireMcRestart;
-        IF:if(!allRequireMcRestart)
+        IF:if (!allRequireMcRestart)
         {
-            for(IConfigElement element : configElements)
+            for (IConfigElement element : configElements)
             {
-                if(!element.requiresMcRestart());
+                if (!element.requiresMcRestart());
                     break IF;
             }
             allRequireMcRestart = true;

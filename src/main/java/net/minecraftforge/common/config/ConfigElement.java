@@ -374,11 +374,11 @@ public class ConfigElement implements IConfigElement
     public static IConfigElement from(Class<?> configClass)
     {
         Config annotation = configClass.getAnnotation(Config.class);
-        if(annotation == null)
+        if (annotation == null)
             throw new RuntimeException(String.format("The class '%s' has no @Config annotation!", configClass.getName()));
         
         Configuration config = ConfigManager.getConfiguration(annotation.modid(), annotation.name());
-        if(config == null)
+        if (config == null)
         {
             String error = String.format("The configuration '%s' of mod '%s' isn't loaded with the ConfigManager!", annotation.name(), annotation.modid());
             throw new RuntimeException(error);
@@ -387,18 +387,18 @@ public class ConfigElement implements IConfigElement
         String name = Strings.isNullOrEmpty(annotation.name()) ? annotation.modid() : annotation.name();
         String langKey = name;
         Config.LangKey langKeyAnnotation = configClass.getAnnotation(Config.LangKey.class);
-        if(langKeyAnnotation != null)
+        if (langKeyAnnotation != null)
         {
             langKey = langKeyAnnotation.value();
         }
          
-        if(annotation.category().isEmpty())
+        if (annotation.category().isEmpty())
         {
             List<IConfigElement> elements = Lists.newArrayList();
             Set<String> catNames = config.getCategoryNames();
-            for(String catName : catNames)
+            for (String catName : catNames)
             {
-                if(catName.isEmpty())
+                if (catName.isEmpty())
                     continue;
                 ConfigCategory category = config.getCategory(catName);
                 DummyCategoryElement element = new DummyCategoryElement(category.getName(), category.getLanguagekey(), new ConfigElement(category).getChildElements());

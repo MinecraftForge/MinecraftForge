@@ -42,7 +42,7 @@ public class ConfigTest
     
     @SubscribeEvent
     public void onConfigChangedEvent(OnConfigChangedEvent event) {
-        if(event.getModID().equals(MODID))
+        if (event.getModID().equals(MODID))
         {
             ConfigManager.sync(MODID, Type.INSTANCE);
         }
@@ -146,7 +146,7 @@ public class ConfigTest
         static 
         {
             theMap = Maps.newHashMap();
-            for(int i = 0; i < 7; i++)
+            for (int i = 0; i < 7; i++)
             {
                 Integer[] array = new Integer[6];
                 for (int x = 0; x < array.length; x++)

@@ -424,7 +424,7 @@ public class GuiModList extends GuiScreen
             IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
             configModButton.visible = true;
             configModButton.enabled = false;
-            if(guiFactory != null)
+            if (guiFactory != null)
             {
                 try
                 {
