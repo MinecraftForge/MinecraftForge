@@ -27,6 +27,11 @@ import net.minecraft.client.gui.GuiScreen;
 
 import javax.annotation.Nullable;
 
+/**
+ * This is the interface you need to implement if you want to provide a customized config screen.
+ * {@link DefaultGuiFactory} provides a default implementation of this interface and will be used
+ * if the mod does not specify anything else.
+ */
 public interface IModGuiFactory {
     /**
      * Called when instantiated to initialize with the active minecraft instance.
@@ -36,15 +41,18 @@ public interface IModGuiFactory {
     public void initialize(Minecraft minecraftInstance);
     
     /**
+     * If this method returns false, the config button in the mod list will be disabled
+     * @return true if this object provides a config gui screen, false otherwise
+     */
+    public boolean hasConfigGui();
+    
+    /**
      * Return an initialized {@link GuiScreen}. This screen will be displayed
      * when the "config" button is pressed in the mod list. It will
      * have a single argument constructor - the "parent" screen, the same as all
      * Minecraft GUIs. The expected behaviour is that this screen will replace the
      * "mod list" screen completely, and will return to the mod list screen through
      * the parent link, once the appropriate action is taken from the config screen.
-     *
-     * A null from this method indicates that the mod does not provide a "config"
-     * button GUI screen, and the config button will be hidden/disabled.
      *
      * This config GUI is anticipated to provide configuration to the mod in a friendly
      * visual way. It should not be abused to set internals such as IDs (they're gonna

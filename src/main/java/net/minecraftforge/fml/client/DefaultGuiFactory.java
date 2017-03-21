@@ -20,6 +20,12 @@ public class DefaultGuiFactory implements IModGuiFactory
     }
 
     @Override
+    public boolean hasConfigGui()
+    {
+        return true;
+    }
+
+    @Override
     public void initialize(Minecraft minecraftInstance)
     {
         this.minecraft = minecraftInstance;
@@ -54,5 +60,4 @@ public class DefaultGuiFactory implements IModGuiFactory
     {
         return new DefaultGuiFactory(mod.getModId(), mod.getName());
     }
-
 }

@@ -428,7 +428,7 @@ public class GuiModList extends GuiScreen
             {
                 try
                 {
-                    configModButton.enabled = guiFactory.createConfigGui(this) != null;
+                    configModButton.enabled = guiFactory.hasConfigGui();
                 }
                 catch(AbstractMethodError error)
                 {

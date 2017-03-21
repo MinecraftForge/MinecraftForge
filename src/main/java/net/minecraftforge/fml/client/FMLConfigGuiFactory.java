@@ -104,6 +104,13 @@ public class FMLConfigGuiFactory implements IModGuiFactory
             return list;
         }
     }
+    
+
+    @Override
+    public boolean hasConfigGui()
+    {
+        return true;
+    }
 
     @Override
     public void initialize(Minecraft minecraftInstance)
