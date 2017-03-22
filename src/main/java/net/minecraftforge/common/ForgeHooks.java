@@ -482,7 +482,7 @@ public class ForgeHooks
                 return false;
             }
 
-            result = target.entityHit.getPickedResult(target);
+            result = target.entityHit.getPickedResult(target, player);
         }
 
         if (result.isEmpty())
