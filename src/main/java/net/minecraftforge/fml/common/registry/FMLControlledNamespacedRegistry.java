@@ -939,13 +939,13 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     }
 
     @Override
-    public void writeEntry(ByteBuf out, I entry)
+    public void writeEntry(@Nonnull ByteBuf out, @Nonnull I entry)
     {
         ByteBufUtils.writeVarInt(out, getId(entry), 5);
     }
 
     @Override
-    public I readEntry(ByteBuf in)
+    public I readEntry(@Nonnull ByteBuf in)
     {
         return getObjectById(ByteBufUtils.readVarInt(in, 5));
     }

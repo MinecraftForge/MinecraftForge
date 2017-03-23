@@ -72,14 +72,14 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * @param out the buffer to write to
      * @param entry the registry entry
      */
-    void writeEntry(ByteBuf out, V entry);
+    void writeEntry(@Nonnull ByteBuf out, @Nonnull V entry);
 
     /**
      * Read a registry entry from the stream. The same format as in {@link #writeEntry(ByteBuf, IForgeRegistryEntry)} is used.
      * @param in the buffer to read from
      * @return the read registry entry
      */
-    V readEntry(ByteBuf in);
+    V readEntry(@Nonnull ByteBuf in);
 
     /**
      * Callback fired when objects are added to the registry. This will fire when the registry is rebuilt
