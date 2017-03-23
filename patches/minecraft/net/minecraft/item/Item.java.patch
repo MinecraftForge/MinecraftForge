@@ -509,12 +509,12 @@
 +        }
 +    }
 +
-+	/**
++     /**
 +     * Checked from {@link net.minecraft.client.multiplayer.PlayerControllerMP#onPlayerDestroyBlock(BlockPos pos) PlayerControllerMP.onPlayerDestroyBlock()}
 +     * when a creative player left-clicks a block with this item.
-+     * @return true if can destroy blocks in creative mode
++     * @return true if the given player can destroy specified block in creative mode with this item
 +     */
-+    public boolean canDestroyBlocksInCreative()
++    public boolean canDestroyBlockInCreative(ItemStack stack, IBlockState state, EntityPlayer player)
 +    {
 +        return !(this instanceof ItemSword);
 +    }
