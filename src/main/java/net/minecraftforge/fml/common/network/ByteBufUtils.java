@@ -29,9 +29,6 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 
@@ -220,15 +217,6 @@ public class ByteBufUtils {
             // Unpossible?
             throw Throwables.propagate(e);
         }
-    }
-
-    private static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> checkRegistry(IForgeRegistry<T> registry)
-    {
-        if (!(registry instanceof FMLControlledNamespacedRegistry))
-        {
-            throw new IllegalArgumentException("Unknown IForgeRegistry implementation.");
-        }
-        return (FMLControlledNamespacedRegistry<T>)registry;
     }
 
     public static String getContentDump(ByteBuf buffer)
