@@ -16,8 +16,8 @@ public class ItemCanDestroyBlocksInCreativeTest{
 		public boolean canDestroyBlocksInCreative(){
 			return false;
 		}
-	}.setRegistryName(MODID, "testItem")
-			.setUnlocalizedName(MODID + ".testItem")
+	}.setRegistryName(MODID, "item_test_candestroyincreative")
+			.setUnlocalizedName(MODID + ".item_test_candestroyincreative")
 			.setCreativeTab(CreativeTabs.TOOLS);
 
 	@Mod.EventHandler
