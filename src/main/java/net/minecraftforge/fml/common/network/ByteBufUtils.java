@@ -222,31 +222,6 @@ public class ByteBufUtils {
         }
     }
 
-    /**
-     * Write a registry entry to the stream. The serialized format is not specified and must not be relied upon.
-     * Do not use this to write to a file, it is used for client-server communication only.
-     * The registry provided must be the one corresponding to the registry entry.
-     * @param to the buffer to write to
-     * @param entry the registry entry
-     * @param registry the registry
-     */
-    public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntry(ByteBuf to, T entry, IForgeRegistry<T> registry)
-    {
-        writeVarInt(to, checkRegistry(registry).getId(entry), 5);
-    }
-
-    /**
-     * Read a registry entry from the stream. The same format as in {@link #writeRegistryEntry(ByteBuf, IForgeRegistryEntry, IForgeRegistry)} is used.
-     * The registry must be the same as the one used when writing the registry entry.
-     * @param from the buffer to read from
-     * @param registry the registry
-     * @return the read registry entry
-     */
-    public static <T extends IForgeRegistryEntry<T>> T readRegistryEntry(ByteBuf from, IForgeRegistry<T> registry)
-    {
-        return checkRegistry(registry).getObjectById(readVarInt(from, 5));
-    }
-
     private static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> checkRegistry(IForgeRegistry<T> registry)
     {
         if (!(registry instanceof FMLControlledNamespacedRegistry))
