@@ -52,14 +52,24 @@ public class RecipeDebug
         CraftingManager.getInstance().addShapelessRecipe(new ItemStack(Items.DIAMOND, 64), Items.PAPER, Items.AIR, Items.PAPER);
     }
 
+    /**
+     * Run tests after {@link ForgeModContainer#onAvailable(FMLLoadCompleteEvent)} has baked the recipe sorter and sorted the recipes.
+     */
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event)
+    public void onAvailable(FMLLoadCompleteEvent evt)
     {
         if (!ENABLE)
         {
             return;
         }
 
+        checkShapelessRecipes();
+
+        runRecipeTest(Lists.<IRecipe>newArrayList(), "Vanilla");
+        runRecipeTest(new ModTrackingList<IRecipe>(Lists.<IRecipe>newArrayList()), "ModTracking");
+    }
+
+    private void checkShapelessRecipes() {
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList())
         {
             if (recipe instanceof ShapelessRecipes)
@@ -73,24 +83,6 @@ public class RecipeDebug
         }
     }
 
-    /**
-     * Run performance test after {@link ForgeModContainer#onAvailable(FMLLoadCompleteEvent)} has baked the recipe sorter.
-     */
-    @Mod.EventHandler
-    public void onAvailable(FMLLoadCompleteEvent evt)
-    {
-        if (!ENABLE)
-        {
-            return;
-        }
-
-        for (int i = 0; i < 5; i++)
-        {
-            runRecipeTest(Lists.<IRecipe>newArrayList(), "Vanilla");
-            runRecipeTest(new ModTrackingList<IRecipe>(Lists.<IRecipe>newArrayList()), "ModTracking");
-        }
-    }
-
     private void runRecipeTest(List<IRecipe> listImpl, String listName)
     {
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -101,7 +93,7 @@ public class RecipeDebug
         }
         Collections.sort(listImpl, RecipeSorter.INSTANCE);
         stopwatch.stop();
-        logger.info("{} recipe list registration and sorting took {} ms", listName, stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        logger.info("10000 {} recipe list registration and sorting took {} ms", listName, stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     /**
