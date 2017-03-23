@@ -79,6 +79,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * @param in the buffer to read from
      * @return the read registry entry
      */
+    @Nullable
     V readEntry(@Nonnull ByteBuf in);
 
     /**

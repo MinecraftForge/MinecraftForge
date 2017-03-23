@@ -945,6 +945,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     }
 
     @Override
+    @Nullable
     public I readEntry(@Nonnull ByteBuf in)
     {
         return getObjectById(ByteBufUtils.readVarInt(in, 5));
