@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = ItemCanDestroyBlocksInCreativeTest.MODID, name = "Item.canDestroyBlocksInCreative() Test", version = "1.0", acceptableRemoteVersions = "*")
 public class ItemCanDestroyBlocksInCreativeTest{
-	public static final boolean ENABLE = true;
+	public static final boolean ENABLE = false;
 	public static final String MODID = "itemcandestroyblocksincreativetest";
 
 	public static Item testItem = new Item(){
@@ -17,11 +17,12 @@ public class ItemCanDestroyBlocksInCreativeTest{
 			return false;
 		}
 	}.setRegistryName(MODID, "testItem")
-	.setUnlocalizedName(MODID + ".testItem")
-	.setCreativeTab(CreativeTabs.TOOLS);
+			.setUnlocalizedName(MODID + ".testItem")
+			.setCreativeTab(CreativeTabs.TOOLS);
 
 	@Mod.EventHandler
 	public static void init(FMLInitializationEvent event){
-		GameRegistry.register(testItem);
+		if(ENABLE)
+			GameRegistry.register(testItem);
 	}
 }
