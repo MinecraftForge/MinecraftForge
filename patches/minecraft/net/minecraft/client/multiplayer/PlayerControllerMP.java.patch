@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -14,11 +14,9 @@
+@@ -14,7 +14,6 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.passive.AbstractHorse;
  import net.minecraft.entity.player.EntityPlayer;
@@ -8,11 +8,7 @@
  import net.minecraft.inventory.ClickType;
  import net.minecraft.item.ItemBlock;
  import net.minecraft.item.ItemStack;
--import net.minecraft.item.ItemSword;
- import net.minecraft.network.PacketBuffer;
- import net.minecraft.network.play.client.CPacketClickWindow;
- import net.minecraft.network.play.client.CPacketCreativeInventoryAction;
-@@ -122,10 +120,16 @@
+@@ -122,10 +121,16 @@
              }
          }
  
@@ -30,7 +26,7 @@
          else
          {
              World world = this.field_78776_a.field_71441_e;
-@@ -143,19 +147,13 @@
+@@ -143,19 +148,13 @@
              else
              {
                  world.func_175718_b(2001, p_187103_1_, Block.func_176210_f(iblockstate));
@@ -51,7 +47,7 @@
  
                      if (!itemstack1.func_190926_b())
                      {
-@@ -163,11 +161,18 @@
+@@ -163,11 +162,18 @@
  
                          if (itemstack1.func_190926_b())
                          {
@@ -70,7 +66,7 @@
                  return flag;
              }
          }
-@@ -207,6 +212,7 @@
+@@ -207,6 +213,7 @@
              if (this.field_78779_k.func_77145_d())
              {
                  this.field_78774_b.func_147297_a(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, p_180511_1_, p_180511_2_));
@@ -78,7 +74,7 @@
                  func_178891_a(this.field_78776_a, this, p_180511_1_, p_180511_2_);
                  this.field_78781_i = 5;
              }
-@@ -218,14 +224,17 @@
+@@ -218,14 +225,17 @@
                  }
  
                  this.field_78774_b.func_147297_a(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, p_180511_1_, p_180511_2_));
@@ -97,7 +93,7 @@
                  if (flag && iblockstate.func_185903_a(this.field_78776_a.field_71439_g, this.field_78776_a.field_71439_g.field_70170_p, p_180511_1_) >= 1.0F)
                  {
                      this.func_187103_a(p_180511_1_);
-@@ -289,7 +298,7 @@
+@@ -289,7 +299,7 @@
  
                  if (this.field_78780_h % 4.0F == 0.0F)
                  {
@@ -106,7 +102,7 @@
                      this.field_78776_a.func_147118_V().func_147682_a(new PositionedSoundRecord(soundtype.func_185846_f(), SoundCategory.NEUTRAL, (soundtype.func_185843_a() + 1.0F) / 8.0F, soundtype.func_185847_b() * 0.5F, p_180512_1_));
                  }
  
-@@ -341,7 +350,7 @@
+@@ -341,7 +351,7 @@
  
          if (!this.field_85183_f.func_190926_b() && !itemstack.func_190926_b())
          {
@@ -115,7 +111,7 @@
          }
  
          return p_178893_1_.equals(this.field_178895_c) && flag;
-@@ -373,13 +382,29 @@
+@@ -373,13 +383,29 @@
          }
          else
          {
@@ -147,7 +143,7 @@
                  }
  
                  if (!flag && itemstack.func_77973_b() instanceof ItemBlock)
-@@ -395,7 +420,7 @@
+@@ -395,7 +421,7 @@
  
              this.field_78774_b.func_147297_a(new CPacketPlayerTryUseItemOnBlock(p_187099_3_, p_187099_4_, p_187099_6_, f, f1, f2));
  
@@ -156,7 +152,7 @@
              {
                  if (itemstack.func_190926_b())
                  {
-@@ -421,14 +446,20 @@
+@@ -421,14 +447,20 @@
                      {
                          int i = itemstack.func_77960_j();
                          int j = itemstack.func_190916_E();
@@ -178,7 +174,7 @@
                      }
                  }
              }
-@@ -457,6 +488,7 @@
+@@ -457,6 +489,7 @@
              }
              else
              {
@@ -186,7 +182,7 @@
                  int i = itemstack.func_190916_E();
                  ActionResult<ItemStack> actionresult = itemstack.func_77957_a(p_187101_2_, p_187101_1_, p_187101_3_);
                  ItemStack itemstack1 = (ItemStack)actionresult.func_188398_b();
-@@ -464,6 +496,10 @@
+@@ -464,6 +497,10 @@
                  if (itemstack1 != itemstack || itemstack1.func_190916_E() != i)
                  {
                      p_187101_1_.func_184611_a(p_187101_3_, itemstack1);
@@ -197,7 +193,7 @@
                  }
  
                  return actionresult.func_188397_a();
-@@ -500,6 +536,7 @@
+@@ -500,6 +537,7 @@
          this.func_78750_j();
          Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
          this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_4_, vec3d));
