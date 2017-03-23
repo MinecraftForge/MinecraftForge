@@ -1,19 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSword.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSword.java
-@@ -65,6 +65,12 @@
-         return true;
-     }
- 
-+    @Override
-+    public boolean canDestroyBlocksInCreative()
-+    {
-+        return false;
-+    }
-+
-     public boolean func_150897_b(IBlockState p_150897_1_)
-     {
-         return p_150897_1_.func_177230_c() == Blocks.field_150321_G;
-@@ -88,7 +94,9 @@
+@@ -88,7 +88,9 @@
  
      public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
      {

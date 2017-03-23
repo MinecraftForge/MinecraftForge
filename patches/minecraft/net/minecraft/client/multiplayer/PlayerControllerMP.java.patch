@@ -11,7 +11,7 @@
              return false;
          }
 +
-+        if (this.field_78779_k.func_77145_d() && !this.field_78776_a.field_71439_g.func_184614_ca().func_190926_b() && !this.field_78776_a.field_71439_g.func_184614_ca().func_77973_b().canDestroyBlocksInCreative())
++        if (this.field_78779_k.func_77145_d() && !stack.func_190926_b() && !stack.func_77973_b().canDestroyBlocksInCreative())
 +        {
 +            return false;
 +        }

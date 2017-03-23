@@ -30,19 +30,7 @@
      public int func_77612_l()
      {
          return this.field_77699_b;
-@@ -256,6 +258,11 @@
-         return false;
-     }
- 
-+    public boolean canDestroyBlocksInCreative()
-+    {
-+        return true;
-+    }
-+
-     public boolean func_150897_b(IBlockState p_150897_1_)
-     {
-         return false;
-@@ -322,6 +329,7 @@
+@@ -322,6 +324,7 @@
          return this.field_77700_c;
      }
  
@@ -50,7 +38,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -377,7 +385,7 @@
+@@ -377,7 +380,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -59,7 +47,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -395,7 +403,11 @@
+@@ -395,7 +398,11 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -72,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +445,613 @@
+@@ -433,11 +440,623 @@
          return false;
      }
  
@@ -521,6 +509,16 @@
 +        }
 +    }
 +
++	/**
++     * Checked from {@link net.minecraft.client.multiplayer.PlayerControllerMP#onPlayerDestroyBlock(BlockPos pos) PlayerControllerMP.onPlayerDestroyBlock()}
++     * when a creative player left-clicks a block with this item.
++     * @return true if can destroy blocks in creative mode
++     */
++    public boolean canDestroyBlocksInCreative()
++    {
++        return !(this instanceof ItemSword);
++    }
++
 +    /**
 +     * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
 +     * @param state The block trying to harvest
@@ -686,7 +684,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1586,8 @@
+@@ -972,6 +1591,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -695,7 +693,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1007,9 +1623,26 @@
+@@ -1007,9 +1628,26 @@
              return this.field_78008_j;
          }
  
