@@ -318,9 +318,9 @@
 +    public boolean canTrample(World world, Block block, BlockPos pos, float fallDistance)
 +    {
 +        return world.field_73012_v.nextFloat() < fallDistance - 0.5F
-+                && this instanceof EntityLivingBase
-+                && (this instanceof EntityPlayer || world.func_82736_K().func_82766_b("mobGriefing"))
-+                && this.field_70130_N * this.field_70130_N * this.field_70131_O > 0.512F;
++            && this instanceof EntityLivingBase
++            && (this instanceof EntityPlayer || world.func_82736_K().func_82766_b("mobGriefing"))
++            && this.field_70130_N * this.field_70130_N * this.field_70131_O > 0.512F;
 +    }
 +    /* ================================== Forge End =====================================*/
 +
