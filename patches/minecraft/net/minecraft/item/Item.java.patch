@@ -1,19 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -31,6 +31,7 @@
- import net.minecraft.entity.item.EntityMinecart;
- import net.minecraft.entity.item.EntityPainting;
- import net.minecraft.entity.player.EntityPlayer;
-+import net.minecraft.entity.player.EntityPlayerMP;
- import net.minecraft.init.Blocks;
- import net.minecraft.init.Items;
- import net.minecraft.init.MobEffects;
-@@ -53,14 +54,15 @@
- import net.minecraft.util.registry.RegistryNamespaced;
- import net.minecraft.util.registry.RegistrySimple;
- import net.minecraft.util.text.translation.I18n;
-+import net.minecraft.world.GameType;
- import net.minecraft.world.World;
+@@ -57,10 +57,10 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -27,7 +14,7 @@
      private static final IItemPropertyGetter field_185046_b = new IItemPropertyGetter()
      {
          @SideOnly(Side.CLIENT)
-@@ -202,6 +204,7 @@
+@@ -202,6 +202,7 @@
          return p_77654_1_;
      }
  
@@ -35,7 +22,7 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -223,6 +226,7 @@
+@@ -223,6 +224,7 @@
          return this;
      }
  
@@ -43,7 +30,7 @@
      public int func_77612_l()
      {
          return this.field_77699_b;
-@@ -322,6 +326,7 @@
+@@ -322,6 +324,7 @@
          return this.field_77700_c;
      }
  
@@ -51,7 +38,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -377,7 +382,7 @@
+@@ -377,7 +380,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -60,7 +47,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -395,7 +400,11 @@
+@@ -395,7 +398,11 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -73,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +442,625 @@
+@@ -433,11 +440,625 @@
          return false;
      }
  
@@ -699,7 +686,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1595,8 @@
+@@ -972,6 +1593,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -708,7 +695,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1007,9 +1632,26 @@
+@@ -1007,9 +1630,26 @@
              return this.field_78008_j;
          }
  
