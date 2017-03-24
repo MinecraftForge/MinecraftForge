@@ -30,11 +30,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.Queues;
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -86,10 +83,10 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
@@ -120,8 +117,11 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 public class ForgeHooks
 {
@@ -751,7 +751,9 @@ public class ForgeHooks
     {
         // Logic from tryHarvestBlock for pre-canceling the event
         boolean preCancelEvent = false;
-        if (gameType.isCreative() && !entityPlayer.getHeldItemMainhand().isEmpty() && !entityPlayer.getHeldItemMainhand().getItem().canDestroyBlockInCreative(world, pos, entityPlayer.getHeldItemMainhand(), entityPlayer))
+        ItemStack stack = entityPlayer.getHeldItemMainhand();
+        if (gameType.isCreative() && !stack.isEmpty()
+                && !stack.getItem().canDestroyBlockInCreative(world, pos, stack, entityPlayer))
             preCancelEvent = true;
 
         if (gameType.isAdventure())
