@@ -199,7 +199,15 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2409,6 +2435,40 @@
+@@ -1945,6 +1971,7 @@
+ 
+                 if (!ItemStack.func_77989_b(itemstack1, itemstack))
+                 {
++                    if (itemstack == null || itemstack1 == null || itemstack.func_77973_b() == null || itemstack.func_77973_b().getNBTShareTag(itemstack) == null || itemstack1.func_77973_b() == null || itemstack1.func_77973_b().getNBTShareTag(itemstack1) == null || !ItemStack.areItemStacksWithShareTagEqual(itemstack1, itemstack))
+                     ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
+ 
+                     if (itemstack != null)
+@@ -2409,6 +2436,40 @@
          this.field_70752_e = true;
      }
  
@@ -240,7 +248,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2429,12 +2489,19 @@
+@@ -2429,12 +2490,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -261,7 +269,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2452,8 +2519,10 @@
+@@ -2452,8 +2520,10 @@
  
          if (itemstack != null && !this.func_184587_cr())
          {
@@ -273,7 +281,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2536,6 +2605,8 @@
+@@ -2536,6 +2606,8 @@
              this.func_184584_a(this.field_184627_bm, 16);
              ItemStack itemstack = this.field_184627_bm.func_77950_b(this.field_70170_p, this);
  
@@ -282,7 +290,7 @@
              if (itemstack != null && itemstack.field_77994_a == 0)
              {
                  itemstack = null;
-@@ -2566,7 +2637,8 @@
+@@ -2566,7 +2638,8 @@
      {
          if (this.field_184627_bm != null)
          {
@@ -292,7 +300,7 @@
          }
  
          this.func_184602_cy();
-@@ -2685,4 +2757,28 @@
+@@ -2685,4 +2758,28 @@
      {
          return true;
      }
