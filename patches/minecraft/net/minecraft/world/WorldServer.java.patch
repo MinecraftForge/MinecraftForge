@@ -51,6 +51,26 @@
          return this;
      }
  
+@@ -173,8 +183,8 @@
+         {
+             if (this.func_82736_K().func_82766_b("doDaylightCycle"))
+             {
+-                long i = this.field_72986_A.func_76073_f() + 24000L;
+-                this.field_72986_A.func_76068_b(i - i % 24000L);
++                long i = this.func_72820_D() + 24000L;
++                this.func_72877_b(i - i % 24000L);
+             }
+ 
+             this.func_73053_d();
+@@ -200,7 +210,7 @@
+ 
+         if (this.func_82736_K().func_82766_b("doDaylightCycle"))
+         {
+-            this.field_72986_A.func_76068_b(this.field_72986_A.func_76073_f() + 1L);
++            this.func_72877_b(this.func_72820_D() + 1L);
+         }
+ 
+         this.field_72984_F.func_76318_c("tickPending");
 @@ -214,6 +224,10 @@
          this.field_175740_d.func_75528_a();
          this.field_72984_F.func_76318_c("portalForcer");
