@@ -453,7 +453,7 @@ public class SplashProgress
                 setColor(barBorderColor);
                 drawBox(barWidth, barHeight);
                 // interior
-                setColor(backgroundColor);
+                setColor(barBackgroundColor);
                 glTranslatef(1, 1, 0);
                 drawBox(barWidth - 2, barHeight - 2);
                 // slidy part
