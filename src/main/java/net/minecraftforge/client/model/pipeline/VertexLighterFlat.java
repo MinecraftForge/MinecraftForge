@@ -33,6 +33,8 @@ import net.minecraft.world.IBlockAccess;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
+    protected static final VertexFormatElement NORMAL_4F = new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.NORMAL, 4);
+
     protected final BlockInfo blockInfo;
     private int tint = -1;
     private boolean diffuse = true;
@@ -95,7 +97,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         VertexFormat format = parent.getVertexFormat();
         if(format.hasNormal()) return format;
         format = new VertexFormat(format);
-        format.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.NORMAL, 4));
+        format.addElement(NORMAL_4F);
         return format;
     }
 
