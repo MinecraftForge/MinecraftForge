@@ -22,11 +22,9 @@ package net.minecraftforge.common.config;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Level;
 
@@ -34,7 +32,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -240,7 +237,7 @@ public class ConfigManager
                     ITypeAdapter adapt = wrapper.getTypeAdapter();
                     Property.Type propType = adapt.getType();
                 
-                    for (String key : wrapper.getEntries())
+                    for (String key : wrapper.getKeys())
                     {
                         String suffix = key.replaceFirst(wrapper.getCategory() + ".", "");
                         
@@ -253,7 +250,7 @@ public class ConfigManager
                             if(!existed)
                                 adapt.setValue(property, wrapper.getValue(key));
                             else
-                                wrapper.setEntry(key, adapt.getValue(property));
+                                wrapper.setValue(key, adapt.getValue(property));
                         }
                         else //If the key is not new, sync according to shoudlReadFromVar()
                         {                        
@@ -263,7 +260,7 @@ public class ConfigManager
                             if (shouldReadFromVar(property, propVal, mapVal))
                                 adapt.setValue(property, mapVal);
                             else
-                                wrapper.setEntry(key, propVal);
+                                wrapper.setValue(key, propVal);
                         }
                     }
                     
@@ -272,13 +269,13 @@ public class ConfigManager
                     
                     for (Property property : confCat.getOrderedValues())//Are new keys in the Configuration object?
                     {
-                        if (!wrapper.handlesEntry(property.getName()))
+                        if (!wrapper.handlesKey(property.getName()))
                             continue;
                         
-                        if (loading || !wrapper.hasEntry(property.getName()))
+                        if (loading || !wrapper.hasKey(property.getName()))
                         {                        
                             Object value = wrapper.getTypeAdapter().getValue(property);
-                            wrapper.setEntry(confCat.getName() + "." + property.getName(), value);
+                            wrapper.setValue(confCat.getName() + "." + property.getName(), value);
                         }
                     }
                     
@@ -326,254 +323,6 @@ public class ConfigManager
 
     static final Joiner NEW_LINE = Joiner.on('\n');
     static final Joiner PIPE = Joiner.on('|');
-
-    /*@SuppressWarnings({ "unchecked", "rawtypes" })
-    private static void syncFieldOld(String modid, String category, Configuration cfg, Class<?> ftype, Field f, Object instance, boolean loading)
-    {
-        Property prop = null;
-
-        String comment = null;
-        Comment ca = f.getAnnotation(Comment.class);
-        if (ca != null)
-            comment = NEW_LINE.join(ca.value());
-
-        String langKey = modid + "." + (category.isEmpty() ? "" : category + ".") + f.getName().toLowerCase(Locale.ENGLISH);
-        LangKey la = f.getAnnotation(LangKey.class);
-        if (la != null)
-            langKey = la.value();
-        
-        boolean requiresMcRestart = f.isAnnotationPresent(Config.RequiresMcRestart.class);
-        boolean requiresWorldRestart = f.isAnnotationPresent(Config.RequiresWorldRestart.class);
-
-        ITypeAdapter adapter = ADAPTERS.get(ftype);
-
-        if (adapter != null) //Has a type adapter for it
-        {
-            if (category.isEmpty())
-                throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
-            boolean exists = exists(cfg, category, getName(f));
-            prop = property(cfg, category, getName(f), adapter.getType(), ftype.isArray());
-            if (loading)
-            {
-                initializeProperty(prop, langKey, comment, requiresMcRestart, requiresWorldRestart);
-                Object fieldValue = get(instance, f);
-                adapter.setDefaultValue(prop, fieldValue);
-                if (!exists)
-                    adapter.setValue(prop, fieldValue);
-                else
-                    set(instance, f, adapter.getValue(prop));
-            }
-            else 
-            {
-                Object fieldValue = get(instance, f);
-                Object propValue = adapter.getValue(prop);
-                if (shouldReadFromVar(prop, propValue, fieldValue)) 
-                    adapter.setValue(prop, fieldValue);
-                else
-                    set(instance, f, propValue);
-            }
-        }
-        else if (ftype.getSuperclass() == Enum.class) //Is a enum and write as String
-        {
-            if (category.isEmpty())
-                throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
-            Enum enu = (Enum)get(instance, f);
-            boolean exists = exists(cfg, category, getName(f));
-            prop = property(cfg, category, getName(f), TypeAdapters.Str.getType(), false);
-            if (loading)
-            {
-                initializeProperty(prop, langKey, comment, requiresMcRestart, requiresWorldRestart);
-                TypeAdapters.Str.setDefaultValue(prop, enu.name());
-                if (!exists)
-                    TypeAdapters.Str.setValue(prop, enu.name());
-                else
-                    set(instance, f, Enum.valueOf((Class<? extends Enum>)ftype, prop.getString()));
-                prop.setValidationPattern(makePattern((Class<? extends Enum>)ftype));
-            }
-            else
-            {    
-                String propValue = prop.getString();
-                
-                if (shouldReadFromVar(prop, propValue, enu.name()))
-                    TypeAdapters.Str.setValue(prop, enu.name());
-                else
-                    set(instance, f, Enum.valueOf((Class<? extends Enum>)ftype, propValue));
-            }
-        }
-        else if (ftype == Map.class) //Syncs a map between config file and object aswell as config class.
-        {
-            if (category.isEmpty())
-                throw new RuntimeException("Can not specify a primitive field when the category is empty: " + f.getDeclaringClass() +"/" + f.getName());
-           
-            String sub = category + "." + getName(f).toLowerCase(Locale.ENGLISH);
-            Map<String, Object> m = (Map<String, Object>)get(instance, f);
-            ParameterizedType type = (ParameterizedType)f.getGenericType();
-            Type mtype = type.getActualTypeArguments()[1];
-            ITypeAdapter adpt = ADAPTERS.get(mtype);
-            boolean mapsToArrays = ((Class)mtype).isArray();
-
-            ConfigCategory confCat = cfg.getCategory(sub);
-            if (loading)
-            {
-                //Init category
-                confCat.setComment(comment);
-                confCat.setLanguageKey(langKey);
-                confCat.setRequiresMcRestart(requiresMcRestart);
-                confCat.setRequiresWorldRestart(requiresWorldRestart);
-            }
-            
-            for (Property property : confCat.getOrderedValues())//Are new keys in the Configuration object?
-            {
-                if (loading || !m.containsKey(property.getName()))
-                {
-                    String propLangKey = langKey + "." + property.getName();
-                    initializeProperty(property, propLangKey, null, requiresMcRestart, requiresWorldRestart);
-                    
-                    if (adpt != null)
-                    {
-                        if(!m.containsKey(property.getName()))
-                            adpt.setDefaultValue(property, adpt.getValue(property));
-                        else
-                            adpt.setDefaultValue(property, m.get(property.getName()));
-                        m.put(property.getName(), adpt.getValue(property));
-                    }
-                    else if (mtype instanceof Class && ((Class<?>)mtype).getSuperclass() == Enum.class)
-                    {
-                        String propValue = property.getString();
-                        Enum val = Enum.valueOf((Class<? extends Enum>)mtype, propValue);
-                        if(!m.containsKey(property.getName()))
-                            TypeAdapters.Str.setDefaultValue(property, TypeAdapters.Str.getValue(property));
-                        else
-                            TypeAdapters.Str.setDefaultValue(property, m.get(property.getName()));
-                        m.put(property.getName(), val);
-                    }
-                    else
-                        throw new RuntimeException("Unknown type in map! " + f.getDeclaringClass() + "/" + f.getName() + " " + mtype);
-                }
-            }
-            
-            for (Entry<String, Object> e : m.entrySet())
-            {
-                if (!exists(cfg, sub, e.getKey())) //Are new programmatically added keys available?
-                {
-                    Property.Type propType;
-                    if (adpt != null)
-                        propType = adpt.getType();
-                    else if (mtype instanceof Class && ((Class<?>)mtype).getSuperclass() == Enum.class)
-                        propType = TypeAdapters.Str.getType();
-                    else
-                        throw new RuntimeException(String.format("A mod tried to pack a '%s' in a map!", mtype.getTypeName()));
-                    
-                    Property property = property(cfg, sub, e.getKey(), propType, mapsToArrays);
-                    String propLangKey = langKey + "." + property.getName();
-                    initializeProperty(property, propLangKey, null, requiresMcRestart, requiresWorldRestart);
-                    
-                    if (adpt != null)
-                    {
-                        adpt.setDefaultValue(property, e.getValue());
-                        adpt.setValue(property, e.getValue());
-                    }
-                    else if (mtype instanceof Class && ((Class<?>)mtype).getSuperclass() == Enum.class)
-                    {
-                        String defaultValue = ((Enum)e.getValue()).name();
-                        TypeAdapters.Str.setDefaultValue(property, defaultValue);
-                        TypeAdapters.Str.setValue(property, defaultValue);
-                    }
-                    else
-                        throw new RuntimeException("Unknown type in map! " + f.getDeclaringClass() + "/" + f.getName() + " " + mtype);
-                }
-                else //If the key is not new, sync according to shoudlReadFromVar()
-                {
-                    Property.Type propType;
-                    if (adpt != null)
-                        propType = adpt.getType();
-                    else if (mtype instanceof Class && ((Class<?>)mtype).getSuperclass() == Enum.class)
-                        propType = TypeAdapters.Str.getType();
-                    else
-                        throw new RuntimeException(String.format("A mod tried to pack a '%s' in a map!", mtype.getTypeName()));
-                    
-                    Property property = property(cfg, sub, e.getKey(), propType, mapsToArrays);
-                    if (adpt != null)
-                    {
-                        Object propVal = adpt.getValue(property);
-                        Object mapVal = e.getValue();
-                        if (shouldReadFromVar(property, propVal, mapVal))
-                            adpt.setValue(property, mapVal);
-                        else
-                            e.setValue(propVal);
-                    }
-                    else if (mtype instanceof Class && ((Class<?>)mtype).getSuperclass() == Enum.class)
-                    {
-                        String propVal = property.getString();
-                        String mapVal = ((Enum)e.getValue()).name();
-                        if (shouldReadFromVar(property, propVal, mapVal))
-                            TypeAdapters.Str.setValue(property, mapVal);
-                        else
-                            e.setValue(Enum.valueOf((Class<? extends Enum>)ftype, propVal));
-                    }
-                    else
-                        throw new RuntimeException("Unknown type in map! " + f.getDeclaringClass() + "/" + f.getName() + " " + mtype);
-                }
-            }
-            prop = null;
-        }
-        else if (ftype.getSuperclass() == Object.class) //Only support classes that are one level below Object.
-        {
-            String sub = (category.isEmpty() ? "" : category + ".") + getName(f).toLowerCase(Locale.ENGLISH);
-            ConfigCategory confCat = cfg.getCategory(sub);
-            confCat.setComment(comment);
-            confCat.setLanguageKey(langKey);
-            confCat.setRequiresMcRestart(requiresMcRestart);
-            confCat.setRequiresWorldRestart(requiresWorldRestart);
-            
-            Object sinst = get(instance, f);
-            for (Field sf : ftype.getDeclaredFields())
-            {
-                if (!Modifier.isPublic(sf.getModifiers()))
-                    continue;
-
-                //syncField(modid, sub, cfg, sf.getType(), sf, sinst, loading);
-            }
-        }
-        // TODO Lists ? other stuff
-        else
-            throw new RuntimeException("Unknown type in config! " + f.getDeclaringClass() + "/" + f.getName() + " " + ftype);
-
-
-        if (prop != null && loading)
-        {
-            RangeInt ia = f.getAnnotation(RangeInt.class);
-            if (ia != null)
-            {
-                prop.setMinValue(ia.min());
-                prop.setMaxValue(ia.max());
-                if (comment != null)
-                    prop.setComment(NEW_LINE.join(new String[]{comment, "Min: " + ia.min(), "Max: " + ia.max()}));
-                else
-                    prop.setComment(NEW_LINE.join(new String[]{"Min: " + ia.min(), "Max: " + ia.max()}));
-            }
-            RangeDouble da = f.getAnnotation(RangeDouble.class);
-            if (da != null)
-            {
-                prop.setMinValue(da.min());
-                prop.setMaxValue(da.max());
-                if (comment != null)
-                    prop.setComment(NEW_LINE.join(new String[]{comment, "Min: " + da.min(), "Max: " + da.max()}));
-                else
-                    prop.setComment(NEW_LINE.join(new String[]{"Min: " + da.min(), "Max: " + da.max()}));
-            }
-
-            //TODO List length values
-        }
-    }*/
-    
-    private static void initializeProperty(Property prop, String langKey, String comment, boolean requiresMcRestart, boolean requiresWorldRestart)
-    {
-        prop.setComment(comment);
-        prop.setLanguageKey(langKey);
-        prop.setRequiresMcRestart(requiresMcRestart);
-        prop.setRequiresWorldRestart(requiresWorldRestart);
-    }
     
     private static Property property(Configuration cfg, String category, String property, Property.Type type, boolean isList)
     {
@@ -604,32 +353,6 @@ public class ConfigManager
                 return true;
         }
         return false;
-    }
-
-    private static void set(Object instance, Field f, Object v)
-    {
-        try {
-            f.set(instance, v);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    private static Object get(Object instance, Field f)
-    {
-        try {
-            return f.get(instance);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    @SuppressWarnings("rawtypes")
-    private static Pattern makePattern(Class<? extends Enum> cls)
-    {
-        List<String> lst = Lists.newArrayList();
-        for (Enum e : cls.getEnumConstants())
-            lst.add(e.name());
-        return Pattern.compile(PIPE.join(lst));
     }
 
     private static String getName(Field f)

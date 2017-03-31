@@ -106,7 +106,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         }
 
         @Override
-        public String[] getEntries()
+        public String[] getKeys()
         {
             Set<String> keys = theMap.keySet();
             String[] keyArray = new String[keys.size()];
@@ -127,20 +127,20 @@ public abstract class FieldWrapper implements IFieldWrapper
         }
 
         @Override
-        public void setEntry(String key, Object value)
+        public void setValue(String key, Object value)
         {
             String suffix = key.replaceFirst(category + "." + name + ".", "");
             theMap.put(suffix, value);
         }
 
         @Override
-        public boolean hasEntry(String name)
+        public boolean hasKey(String name)
         {
             return theMap.containsKey(name);
         }
 
         @Override
-        public boolean handlesEntry(String name)
+        public boolean handlesKey(String name)
         {
             if (name == null)
                 return false;
@@ -182,7 +182,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public Object getValue(String key)
         {
-            if (!hasEntry(key))
+            if (!hasKey(key))
                 throw new IllegalArgumentException("Unsupported Key!");
 
             try
@@ -199,9 +199,9 @@ public abstract class FieldWrapper implements IFieldWrapper
         }
 
         @Override
-        public void setEntry(String key, Object value)
+        public void setValue(String key, Object value)
         {
-            if (!hasEntry(key))
+            if (!hasKey(key))
                 throw new IllegalArgumentException("Unsupported Key!");
             @SuppressWarnings({ "unchecked", "rawtypes" })
             Enum enu = Enum.valueOf((Class<? extends Enum>) field.getType(), (String) value);
@@ -256,7 +256,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public Object getValue(String key)
         {
-            if (!hasEntry(key))
+            if (!hasKey(key))
                 throw new IllegalArgumentException("Unknown key!");
             try
             {
@@ -270,9 +270,9 @@ public abstract class FieldWrapper implements IFieldWrapper
         }
 
         @Override
-        public void setEntry(String key, Object value)
+        public void setValue(String key, Object value)
         {
-            if (!hasEntry(key))
+            if (!hasKey(key))
                 throw new IllegalArgumentException("Unknown key: " + key);
             try
             {
@@ -322,21 +322,21 @@ public abstract class FieldWrapper implements IFieldWrapper
         }
 
         @Override
-        public String[] getEntries()
+        public String[] getKeys()
         {
             return asArray(this.category + "." + this.name);
         }
 
         @Override
-        public boolean hasEntry(String name)
+        public boolean hasKey(String name)
         {
             return (this.category + "." + this.name).equals(name);
         }
 
         @Override
-        public boolean handlesEntry(String name)
+        public boolean handlesKey(String name)
         {
-            return hasEntry(name);
+            return hasKey(name);
         }
 
         @Override

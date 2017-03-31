@@ -16,15 +16,15 @@ public interface IFieldWrapper
      * @param instance The instance whose field shall be queried.
      * @return a list of keys handled by this field
      */
-    public String[] getEntries();
+    public String[] getKeys();
     
     public Object getValue(String key);
     
-    public void setEntry(String key, Object value);
+    public void setValue(String key, Object value);
     
-    public boolean hasEntry(String name);
+    public boolean hasKey(String name);
     
-    public boolean handlesEntry(String name);
+    public boolean handlesKey(String name);
     
     public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart);
     
