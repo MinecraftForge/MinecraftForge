@@ -51,7 +51,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         else
             throw new IllegalArgumentException(String.format("Fields of type '%s' are not supported!", field.getType().getCanonicalName()));
     }
-    
+
     public static boolean hasWrapperFor(Field field)
     {
         if (ADAPTERS.get(field.getType()) != null)
@@ -214,26 +214,26 @@ public abstract class FieldWrapper implements IFieldWrapper
                 Throwables.propagate(e);
             }
         }
-        
+
         @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart)
         {
             super.setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart);
-            
-            Property prop = cfg.getCategory(this.category).get(this.name); //Will be setup in general by ConfigManager
+
+            Property prop = cfg.getCategory(this.category).get(this.name); // Will be setup in general by ConfigManager
 
             List<String> lst = Lists.newArrayList();
-            for (Enum e : ((Class<? extends Enum>)field.getType()).getEnumConstants())
+            for (Enum e : ((Class<? extends Enum>) field.getType()).getEnumConstants())
                 lst.add(e.name());
-            
+
             prop.setValidationPattern(Pattern.compile(PIPE.join(lst)));
             prop.setValidValues(lst.toArray(new String[0]));
-            
+
             String validValues = NEW_LINE.join(lst);
-            
+
             if (desc != null)
-                prop.setComment(NEW_LINE.join(new String[]{desc, "Valid values:"}) + "\n" + validValues);
+                prop.setComment(NEW_LINE.join(new String[] { desc, "Valid values:" }) + "\n" + validValues);
             else
                 prop.setComment("Valid values:" + "\n" + validValues);
         }
@@ -283,33 +283,33 @@ public abstract class FieldWrapper implements IFieldWrapper
                 Throwables.propagate(e);
             }
         }
-        
+
         public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart)
         {
             super.setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart);
-            
+
             Property prop = cfg.getCategory(this.category).get(this.name);
-            
+
             RangeInt ia = field.getAnnotation(RangeInt.class);
             if (ia != null)
             {
                 prop.setMinValue(ia.min());
                 prop.setMaxValue(ia.max());
                 if (desc != null)
-                    prop.setComment(NEW_LINE.join(new String[]{desc, "Min: " + ia.min(), "Max: " + ia.max()}));
+                    prop.setComment(NEW_LINE.join(new String[] { desc, "Min: " + ia.min(), "Max: " + ia.max() }));
                 else
-                    prop.setComment(NEW_LINE.join(new String[]{"Min: " + ia.min(), "Max: " + ia.max()}));
+                    prop.setComment(NEW_LINE.join(new String[] { "Min: " + ia.min(), "Max: " + ia.max() }));
             }
-            
+
             RangeDouble da = field.getAnnotation(RangeDouble.class);
             if (da != null)
             {
                 prop.setMinValue(da.min());
                 prop.setMaxValue(da.max());
                 if (desc != null)
-                    prop.setComment(NEW_LINE.join(new String[]{desc, "Min: " + da.min(), "Max: " + da.max()}));
+                    prop.setComment(NEW_LINE.join(new String[] { desc, "Min: " + da.min(), "Max: " + da.max() }));
                 else
-                    prop.setComment(NEW_LINE.join(new String[]{"Min: " + da.min(), "Max: " + da.max()}));
+                    prop.setComment(NEW_LINE.join(new String[] { "Min: " + da.min(), "Max: " + da.max() }));
             }
         }
     }
@@ -342,16 +342,17 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart)
         {
-            Property prop = cfg.getCategory(this.category).get(this.name); //Will be setup in general by ConfigManager
-            
+            Property prop = cfg.getCategory(this.category).get(this.name); // Will be setup in general by ConfigManager
+
             prop.setComment(desc);
             prop.setLanguageKey(langKey);
             prop.setRequiresMcRestart(reqMCRestart);
             prop.setRequiresWorldRestart(reqWorldRestart);
         }
-        
+
         @Override
-        public String getCategory() {
+        public String getCategory()
+        {
             return category;
         }
 

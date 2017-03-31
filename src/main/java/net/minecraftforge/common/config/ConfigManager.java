@@ -229,7 +229,7 @@ public class ConfigManager
 
             if (FieldWrapper.hasWrapperFor(f)) //Access the field
             {
-                if(Strings.isNullOrEmpty(category))
+                if (Strings.isNullOrEmpty(category))
                     throw new RuntimeException("An empty category may not contain anything but objects representing categories!");
                 try
                 {
@@ -247,7 +247,7 @@ public class ConfigManager
                             Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
                         
                             adapt.setDefaultValue(property, wrapper.getValue(key));
-                            if(!existed)
+                            if (!existed)
                                 adapt.setValue(property, wrapper.getValue(key));
                             else
                                 wrapper.setValue(key, adapt.getValue(property));
@@ -279,7 +279,7 @@ public class ConfigManager
                         }
                     }
                     
-                    if(loading) //Doing this after the loops. The wrapper should set cosmetic stuff. 
+                    if (loading) //Doing this after the loops. The wrapper should set cosmetic stuff. 
                         wrapper.setupConfiguration(cfg, comment, langKey, requiresMcRestart, requiresWorldRestart);
                 
                 }
@@ -290,7 +290,7 @@ public class ConfigManager
                     throw new RuntimeException(error, e);
                 }
             } 
-            else if(f.getType().getSuperclass() != null && f.getType().getSuperclass().equals(Object.class)) //Descend the object tree
+            else if (f.getType().getSuperclass() != null && f.getType().getSuperclass().equals(Object.class)) //Descend the object tree
             { 
                 Object newInstance = null;
                 try
