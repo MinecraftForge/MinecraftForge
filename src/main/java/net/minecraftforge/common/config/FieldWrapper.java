@@ -129,7 +129,8 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public void setEntry(String key, Object value)
         {
-            theMap.put(key, value);
+            String suffix = key.replaceFirst(category + "." + name + ".", "");
+            theMap.put(suffix, value);
         }
 
         @Override

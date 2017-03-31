@@ -127,7 +127,7 @@ public class ConfigTest
         public static class SubCat
         {
             @Name("i_say")
-            public static String value;
+            public String value;
             public SubCat(String value)
             {
                 this.value = value;

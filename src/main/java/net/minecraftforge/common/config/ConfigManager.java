@@ -181,9 +181,6 @@ public class ConfigManager
 
                 sync(cfg, cls, modid, category, loading, null);
 
-                //Debugging
-                System.out.println(cfg.getCategory(category).keySet());
-                
                 cfg.save();
 
             }
@@ -243,29 +240,20 @@ public class ConfigManager
                     ITypeAdapter adapt = wrapper.getTypeAdapter();
                     Property.Type propType = adapt.getType();
                 
-                    ConfigCategory confCat = cfg.getCategory(wrapper.getCategory());
-
-                    for (Property property : confCat.getOrderedValues())//Are new keys in the Configuration object?
-                    {
-                        if (!wrapper.handlesEntry(property.getName()))
-                            continue;
-                        
-                        if (loading || (!wrapper.hasEntry(property.getName()) && wrapper.handlesEntry(property.getName())) )
-                        {                        
-                            Object value = wrapper.getTypeAdapter().getValue(property);
-                            wrapper.setEntry(confCat.getName() + "." + property.getName(), value);
-                        }
-                    }
-                
                     for (String key : wrapper.getEntries())
                     {
                         String suffix = key.replaceFirst(wrapper.getCategory() + ".", "");
-                        if (!exists(cfg, wrapper.getCategory(), suffix)) //Creates keys in category specified by the wrapper if new ones are programaticaly added
+                        
+                        boolean existed = exists(cfg, wrapper.getCategory(), suffix);
+                        if (!existed || loading) //Creates keys in category specified by the wrapper if new ones are programaticaly added
                         {
                             Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
                         
                             adapt.setDefaultValue(property, wrapper.getValue(key));
-                            adapt.setValue(property, wrapper.getValue(key));
+                            if(!existed)
+                                adapt.setValue(property, wrapper.getValue(key));
+                            else
+                                wrapper.setEntry(key, adapt.getValue(property));
                         }
                         else //If the key is not new, sync according to shoudlReadFromVar()
                         {                        
@@ -279,11 +267,26 @@ public class ConfigManager
                         }
                     }
                     
+
+                    ConfigCategory confCat = cfg.getCategory(wrapper.getCategory());
+                    
+                    for (Property property : confCat.getOrderedValues())//Are new keys in the Configuration object?
+                    {
+                        if (!wrapper.handlesEntry(property.getName()))
+                            continue;
+                        
+                        if (loading || !wrapper.hasEntry(property.getName()))
+                        {                        
+                            Object value = wrapper.getTypeAdapter().getValue(property);
+                            wrapper.setEntry(confCat.getName() + "." + property.getName(), value);
+                        }
+                    }
+                    
                     if(loading) //Doing this after the loops. The wrapper should set cosmetic stuff. 
                         wrapper.setupConfiguration(cfg, comment, langKey, requiresMcRestart, requiresWorldRestart);
                 
                 }
-                catch (Exception e)
+                catch (Exception e) //If anything goes wrong, add the errored field and class.
                 {
                     String format = "Error syncing field '%s' of class '%s'!";
                     String error = String.format(format, f.getName(), cls.getName());
