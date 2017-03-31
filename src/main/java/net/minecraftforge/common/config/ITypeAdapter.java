@@ -29,4 +29,6 @@ interface ITypeAdapter
 	Object getValue(Property prop);
 
     Type getType();
+    
+    boolean isArrayAdapter();
 }

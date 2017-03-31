@@ -1,5 +1,8 @@
 package net.minecraftforge.common.config;
 
+/**
+ * The objects are expected to get their wrapped field, the owning class, instance and category string on initialization.
+ */
 public interface IFieldWrapper
 {
 
@@ -22,4 +25,11 @@ public interface IFieldWrapper
     public boolean hasEntry(String name);
     
     public boolean handlesEntry(String name);
+    
+    public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart);
+    
+    /**
+     * @return the category name in which the entries should be saved.
+     */
+    public String getCategory();
 }

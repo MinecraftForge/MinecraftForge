@@ -22,12 +22,9 @@ package net.minecraftforge.common.config;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -35,6 +32,7 @@ import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -44,8 +42,6 @@ import com.google.common.collect.Sets;
 import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
-import net.minecraftforge.common.config.Config.RangeDouble;
-import net.minecraftforge.common.config.Config.RangeInt;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
@@ -56,7 +52,7 @@ import net.minecraftforge.fml.common.discovery.asm.ModAnnotation.EnumHolder;
 public class ConfigManager
 {
     private static Map<String, Multimap<Config.Type, ASMData>> asm_data = Maps.newHashMap();
-    private static Map<Class<?>, ITypeAdapter> ADAPTERS = Maps.newHashMap();
+    static Map<Class<?>, ITypeAdapter> ADAPTERS = Maps.newHashMap();
     private static Map<String, Configuration> CONFIGS = Maps.newHashMap();
     private static Map<String, Set<Class<?>>> MOD_CONFIG_CLASSES = Maps.newHashMap();
 
@@ -183,8 +179,11 @@ public class ConfigManager
                     loading = true;
                 }
 
-                sync(cfg, cls, modid, type == Config.Type.INSTANCE, category, loading);
+                sync(cfg, cls, modid, category, loading, null);
 
+                //Debugging
+                System.out.println(cfg.getCategory(category).keySet());
+                
                 cfg.save();
 
             }
@@ -212,24 +211,121 @@ public class ConfigManager
         return CONFIGS.get(configFile.getAbsolutePath());
     }
     
-    private static void sync(Configuration cfg, Class<?> cls, String modid, boolean isStatic, String category, boolean loading)
+    private static void sync(Configuration cfg, Class<?> cls, String modid, String category, boolean loading, Object instance)
     {
         for (Field f : cls.getDeclaredFields())
         {
             if (!Modifier.isPublic(f.getModifiers()))
                 continue;
-            if (Modifier.isStatic(f.getModifiers()) != isStatic)
+            if (Modifier.isStatic(f.getModifiers()) != (instance == null))
                 continue;
+            
+            String comment = null;
+            Comment ca = f.getAnnotation(Comment.class);
+            if (ca != null)
+                comment = NEW_LINE.join(ca.value());
 
-            syncField(modid, category, cfg, f.getType(), f, null, loading);
+            String langKey = modid + "." + (category.isEmpty() ? "" : category + ".") + f.getName().toLowerCase(Locale.ENGLISH);
+            LangKey la = f.getAnnotation(LangKey.class);
+            if (la != null)
+                langKey = la.value();
+            
+            boolean requiresMcRestart = f.isAnnotationPresent(Config.RequiresMcRestart.class);
+            boolean requiresWorldRestart = f.isAnnotationPresent(Config.RequiresWorldRestart.class);
+
+            if (FieldWrapper.hasWrapperFor(f)) //Access the field
+            {
+                if(Strings.isNullOrEmpty(category))
+                    throw new RuntimeException("An empty category may not contain anything but objects representing categories!");
+                try
+                {
+                    IFieldWrapper wrapper = FieldWrapper.get(instance, f, category);
+                    ITypeAdapter adapt = wrapper.getTypeAdapter();
+                    Property.Type propType = adapt.getType();
+                
+                    ConfigCategory confCat = cfg.getCategory(wrapper.getCategory());
+
+                    for (Property property : confCat.getOrderedValues())//Are new keys in the Configuration object?
+                    {
+                        if (!wrapper.handlesEntry(property.getName()))
+                            continue;
+                        
+                        if (loading || (!wrapper.hasEntry(property.getName()) && wrapper.handlesEntry(property.getName())) )
+                        {                        
+                            Object value = wrapper.getTypeAdapter().getValue(property);
+                            wrapper.setEntry(confCat.getName() + "." + property.getName(), value);
+                        }
+                    }
+                
+                    for (String key : wrapper.getEntries())
+                    {
+                        String suffix = key.replaceFirst(wrapper.getCategory() + ".", "");
+                        if (!exists(cfg, wrapper.getCategory(), suffix)) //Creates keys in category specified by the wrapper if new ones are programaticaly added
+                        {
+                            Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
+                        
+                            adapt.setDefaultValue(property, wrapper.getValue(key));
+                            adapt.setValue(property, wrapper.getValue(key));
+                        }
+                        else //If the key is not new, sync according to shoudlReadFromVar()
+                        {                        
+                            Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
+                            Object propVal = adapt.getValue(property);
+                            Object mapVal = wrapper.getValue(key);
+                            if (shouldReadFromVar(property, propVal, mapVal))
+                                adapt.setValue(property, mapVal);
+                            else
+                                wrapper.setEntry(key, propVal);
+                        }
+                    }
+                    
+                    if(loading) //Doing this after the loops. The wrapper should set cosmetic stuff. 
+                        wrapper.setupConfiguration(cfg, comment, langKey, requiresMcRestart, requiresWorldRestart);
+                
+                }
+                catch (Exception e)
+                {
+                    String format = "Error syncing field '%s' of class '%s'!";
+                    String error = String.format(format, f.getName(), cls.getName());
+                    throw new RuntimeException(error, e);
+                }
+            } 
+            else if(f.getType().getSuperclass() != null && f.getType().getSuperclass().equals(Object.class)) //Descend the object tree
+            { 
+                Object newInstance = null;
+                try
+                {
+                    newInstance = f.get(instance);
+                }
+                catch (Exception e)
+                {
+                    //This should never happen. Previous checks should eliminate this.
+                    Throwables.propagate(e);
+                }
+                
+                String sub = (category.isEmpty() ? "" : category + ".") + getName(f).toLowerCase(Locale.ENGLISH);
+                ConfigCategory confCat = cfg.getCategory(sub);
+                confCat.setComment(comment);
+                confCat.setLanguageKey(langKey);
+                confCat.setRequiresMcRestart(requiresMcRestart);
+                confCat.setRequiresWorldRestart(requiresWorldRestart);
+                
+                sync(cfg, f.getType(), modid, sub, loading, newInstance);
+            }
+            else
+            {
+                String format = "Can't handle field '%s' of class '%s': Unknown type.";
+                String error = String.format(format, f.getName(), cls.getCanonicalName());
+                throw new RuntimeException(error);
+            }
         }
     }
 
-    private static final Joiner NEW_LINE = Joiner.on('\n');
-    private static final Joiner PIPE = Joiner.on('|');
+    static final Joiner NEW_LINE = Joiner.on('\n');
+    static final Joiner PIPE = Joiner.on('|');
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static void syncField(String modid, String category, Configuration cfg, Class<?> ftype, Field f, Object instance, boolean loading)
+    /*@SuppressWarnings({ "unchecked", "rawtypes" })
+    private static void syncFieldOld(String modid, String category, Configuration cfg, Class<?> ftype, Field f, Object instance, boolean loading)
     {
         Property prop = null;
 
@@ -433,7 +529,7 @@ public class ConfigManager
                 if (!Modifier.isPublic(sf.getModifiers()))
                     continue;
 
-                syncField(modid, sub, cfg, sf.getType(), sf, sinst, loading);
+                //syncField(modid, sub, cfg, sf.getType(), sf, sinst, loading);
             }
         }
         // TODO Lists ? other stuff
@@ -466,7 +562,7 @@ public class ConfigManager
 
             //TODO List length values
         }
-    }
+    }*/
     
     private static void initializeProperty(Property prop, String langKey, String comment, boolean requiresMcRestart, boolean requiresWorldRestart)
     {

@@ -65,6 +65,11 @@ class TypeAdapters
         {
             return Type.BOOLEAN;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
+        }
     };
     static ITypeAdapter boolA = new ITypeAdapter() {
         @Override
@@ -86,6 +91,11 @@ class TypeAdapters
         {
             return Type.BOOLEAN;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
     };
     static ITypeAdapter Bool = new ITypeAdapter() {
         public Object getValue(Property prop) {
@@ -105,6 +115,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.BOOLEAN;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
         }
     };
     static ITypeAdapter BoolA = new ITypeAdapter() {
@@ -127,6 +142,11 @@ class TypeAdapters
         {
             return Type.BOOLEAN;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
     };
     static ITypeAdapter flt = new ITypeAdapter() {
         @Override
@@ -147,6 +167,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.DOUBLE;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
         }
     };
     static ITypeAdapter fltA = new ITypeAdapter() {
@@ -169,6 +194,11 @@ class TypeAdapters
         {
             return Type.DOUBLE;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
     };
     static ITypeAdapter Flt = new ITypeAdapter() {
         @Override
@@ -189,6 +219,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.DOUBLE;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
         }
     };
     static ITypeAdapter FltA = new ITypeAdapter() {
@@ -211,6 +246,11 @@ class TypeAdapters
         {
             return Type.DOUBLE;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
     };
     static ITypeAdapter dbl = new ITypeAdapter() {
         @Override
@@ -232,6 +272,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.DOUBLE;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
         }
     };
     static ITypeAdapter dblA = new ITypeAdapter() {
@@ -256,6 +301,12 @@ class TypeAdapters
         {
             return Type.DOUBLE;
         }
+
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
     };
     static ITypeAdapter Dbl = new ITypeAdapter() {
         @Override
@@ -277,6 +328,11 @@ class TypeAdapters
         {
             return Type.DOUBLE;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
+        }
     };
     static ITypeAdapter DblA = new ITypeAdapter() {
         @Override
@@ -297,6 +353,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.DOUBLE;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
         }
     };
     static ITypeAdapter byt = new ITypeAdapter() {
@@ -320,6 +381,11 @@ class TypeAdapters
         {
             return Type.INTEGER;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
+        }
     };
     static ITypeAdapter bytA = new ITypeAdapter() {
         @Override
@@ -340,6 +406,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.INTEGER;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
         }
     };
     static ITypeAdapter Byt = new ITypeAdapter() {
@@ -362,6 +433,11 @@ class TypeAdapters
         {
             return Type.INTEGER;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
+        }
     };
     static ITypeAdapter BytA = new ITypeAdapter() {
         @Override
@@ -383,6 +459,11 @@ class TypeAdapters
         {
             return Type.INTEGER;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
     };
     static ITypeAdapter chr = new ITypeAdapter() {
         
@@ -403,6 +484,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.INTEGER;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
         }
     };
     static ITypeAdapter chrA = new ITypeAdapter() {
@@ -437,6 +523,12 @@ class TypeAdapters
         {
             return Type.INTEGER;
         }
+
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
     };
     static ITypeAdapter Chr = new ITypeAdapter() {
         
@@ -457,6 +549,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.INTEGER;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
         }
     };
     static ITypeAdapter ChrA = new ITypeAdapter() {
@@ -492,6 +589,12 @@ class TypeAdapters
             return Type.INTEGER;
         }
 
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
+
     };
     static ITypeAdapter shrt = new ITypeAdapter() {
         @Override
@@ -512,6 +615,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.INTEGER;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
         }
     };
     static ITypeAdapter shrtA = new ITypeAdapter() {
@@ -534,6 +642,11 @@ class TypeAdapters
         {
             return Type.INTEGER;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
         
     };
     static ITypeAdapter Shrt = new ITypeAdapter() {
@@ -555,6 +668,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.INTEGER;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
         }
     };
     static ITypeAdapter ShrtA = new ITypeAdapter() {
@@ -581,6 +699,11 @@ class TypeAdapters
         {
             return Type.INTEGER;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
     };
     static ITypeAdapter int_ = new ITypeAdapter() {
         @Override
@@ -601,6 +724,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.INTEGER;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
         }
     };
     static ITypeAdapter intA = new ITypeAdapter() {
@@ -623,6 +751,11 @@ class TypeAdapters
         {
             return Type.INTEGER;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
     };
     static ITypeAdapter Int = new ITypeAdapter() {
         @Override
@@ -643,6 +776,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.INTEGER;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
         }
     };
     static ITypeAdapter IntA = new ITypeAdapter() {
@@ -665,6 +803,11 @@ class TypeAdapters
         {
             return Type.INTEGER;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
     };
     static ITypeAdapter Str = new ITypeAdapter() {
         @Override
@@ -686,6 +829,11 @@ class TypeAdapters
         {
             return Type.STRING;
         }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
+        }
     };
     static ITypeAdapter StrA = new ITypeAdapter() {
         @Override
@@ -706,6 +854,11 @@ class TypeAdapters
         public Type getType()
         {
             return Type.STRING;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
         }
     };
 }
