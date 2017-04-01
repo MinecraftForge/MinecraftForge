@@ -27,9 +27,14 @@ package net.minecraftforge.common.config;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
 import net.minecraftforge.fml.client.config.ConfigGuiType;
+import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
@@ -359,5 +364,58 @@ public class ConfigElement implements IConfigElement
     public Object getMaxValue()
     {
         return isProperty ? prop.getMaxValue() : null;
+    }
+    
+    /**
+     * Provides a ConfigElement derived from the annotation-based config system
+     * @param configClass the class which contains the configuration
+     * @return A ConfigElement based on the described category.
+     */
+    public static IConfigElement from(Class<?> configClass)
+    {
+        Config annotation = configClass.getAnnotation(Config.class);
+        if (annotation == null)
+            throw new RuntimeException(String.format("The class '%s' has no @Config annotation!", configClass.getName()));
+        
+        Configuration config = ConfigManager.getConfiguration(annotation.modid(), annotation.name());
+        if (config == null)
+        {
+            String error = String.format("The configuration '%s' of mod '%s' isn't loaded with the ConfigManager!", annotation.name(), annotation.modid());
+            throw new RuntimeException(error);
+        }
+        
+        String name = Strings.isNullOrEmpty(annotation.name()) ? annotation.modid() : annotation.name();
+        String langKey = name;
+        Config.LangKey langKeyAnnotation = configClass.getAnnotation(Config.LangKey.class);
+        if (langKeyAnnotation != null)
+        {
+            langKey = langKeyAnnotation.value();
+        }
+         
+        if (annotation.category().isEmpty())
+        {
+            List<IConfigElement> elements = Lists.newArrayList();
+            Set<String> catNames = config.getCategoryNames();
+            for (String catName : catNames)
+            {
+                if (catName.isEmpty())
+                    continue;
+                ConfigCategory category = config.getCategory(catName);
+                DummyCategoryElement element = new DummyCategoryElement(category.getName(), category.getLanguagekey(), new ConfigElement(category).getChildElements());
+                element.setRequiresMcRestart(category.requiresMcRestart());
+                element.setRequiresWorldRestart(category.requiresWorldRestart());
+                elements.add(element);
+            }
+                
+            return new DummyCategoryElement(name, langKey, elements);
+        }
+        else
+        {
+            ConfigCategory category = config.getCategory(annotation.category());
+            DummyCategoryElement element = new DummyCategoryElement(name, langKey, new ConfigElement(category).getChildElements());   
+            element.setRequiresMcRestart(category.requiresMcRestart());
+            element.setRequiresWorldRestart(category.requiresWorldRestart());
+            return element;
+        } 
     }
 }
