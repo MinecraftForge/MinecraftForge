@@ -18,16 +18,17 @@
  */
 package net.minecraftforge.common.config;
 
-import java.lang.reflect.Field;
+import net.minecraftforge.common.config.Property.Type;
 
 interface ITypeAdapter
 {
-	Property getProp(Configuration cfg, String category, Field field, Object instance, String comment);
+    void setDefaultValue(Property property, Object value);
+	
+	void setValue(Property property, Object value);
 
 	Object getValue(Property prop);
 
-	public interface Map extends ITypeAdapter
-	{
-		Property getProp(Configuration cfg, String category, String name, Object value);
-	}
+    Type getType();
+    
+    boolean isArrayAdapter();
 }

@@ -104,6 +104,13 @@ public class FMLConfigGuiFactory implements IModGuiFactory
             return list;
         }
     }
+    
+
+    @Override
+    public boolean hasConfigGui()
+    {
+        return true;
+    }
 
     @Override
     public void initialize(Minecraft minecraftInstance)
@@ -111,9 +118,15 @@ public class FMLConfigGuiFactory implements IModGuiFactory
     }
 
     @Override
+    public GuiScreen createConfigGui(GuiScreen parentScreen)
+    {
+        return new FMLConfigGuiScreen(parentScreen);
+    }
+    
+    @Override
     public Class<? extends GuiScreen> mainConfigGuiClass()
     {
-        return FMLConfigGuiScreen.class;
+        return null;
     }
 
     private static final Set<RuntimeOptionCategoryElement> fmlCategories = ImmutableSet.of(new RuntimeOptionCategoryElement("HELP", "FML"));
