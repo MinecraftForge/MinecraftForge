@@ -53,7 +53,7 @@ public class GuiTab
 {
     private static ListMultimap<Class<? extends GuiContainer>, GuiTab> tabRegistry = ArrayListMultimap.create();
 
-    private ItemStack iconStack = null;
+    private ItemStack iconStack = ItemStack.EMPTY;
     private ResourceLocation iconResLoc = null;
     private String name = null;
     private Class<? extends GuiContainer> parentContainer;
