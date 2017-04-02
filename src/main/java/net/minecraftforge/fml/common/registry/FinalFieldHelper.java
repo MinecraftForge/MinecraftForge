@@ -21,7 +21,6 @@ package net.minecraftforge.fml.common.registry;
 
 import com.google.common.base.Throwables;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -51,7 +50,7 @@ class FinalFieldHelper
     }
 
 
-    static void setField(Field field, @Nullable Object instance, Object thing) throws Exception
+    static void setField(Field field, Object instance, Object thing) throws Exception
     {
         Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, field, false);
         fieldAccessorSet.invoke(fieldAccessor, instance, thing);

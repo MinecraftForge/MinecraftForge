@@ -57,8 +57,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
-import javax.annotation.Nullable;
-
 /**
  * Persistent registry manager. Manages the registries loading from disk, and from network. Handles staging
  * registry data before loading uniformly into the active registry, and keeps a frozen registry instance
@@ -114,7 +112,7 @@ public class PersistentRegistryManager
         }
 
         @SuppressWarnings("unchecked")
-        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> getRegistry(ResourceLocation key, @SuppressWarnings("UnusedParameters") @Nullable Class<T> regType)
+        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> getRegistry(ResourceLocation key, @SuppressWarnings("UnusedParameters") Class<T> regType)
         {
             return (FMLControlledNamespacedRegistry<T>)registries.get(key);
         }
@@ -129,7 +127,7 @@ public class PersistentRegistryManager
             return getRegistry(key, regType);
         }
 
-        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> type, ResourceLocation defaultObjectKey, int minId, int maxId, @Nullable IForgeRegistry.AddCallback<T> addCallback, @Nullable IForgeRegistry.ClearCallback<T> clearCallback, @Nullable IForgeRegistry.CreateCallback<T> createCallback, @Nullable IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
+        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> type, ResourceLocation defaultObjectKey, int minId, int maxId, IForgeRegistry.AddCallback<T> addCallback, IForgeRegistry.ClearCallback<T> clearCallback, IForgeRegistry.CreateCallback<T> createCallback, IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
         {
             Set<Class<?>> parents = Sets.newHashSet();
             findSuperTypes(type, parents);
@@ -198,21 +196,21 @@ public class PersistentRegistryManager
     public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
             ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey,
             int minId, int maxId, boolean hasDelegates,
-            @Nullable IForgeRegistry.AddCallback<T> addCallback,
-            @Nullable IForgeRegistry.ClearCallback<T> clearCallback,
-            @Nullable IForgeRegistry.CreateCallback<T> createCallback)
+            IForgeRegistry.AddCallback<T> addCallback,
+            IForgeRegistry.ClearCallback<T> clearCallback,
+            IForgeRegistry.CreateCallback<T> createCallback)
     {
         return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
                 getLegacyAdd(addCallback), getLegacyClear(clearCallback), getLegacyCreate(createCallback), null);
     }
     @Deprecated //Use RegistryBuilder TODO: Remove in 1.11 {Make package private so only builder can use it}
     public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
-            ResourceLocation registryName, Class<T> registryType, @Nullable ResourceLocation optionalDefaultKey,
+            ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey,
             int minId, int maxId, boolean hasDelegates,
-            @Nullable IForgeRegistry.AddCallback<T> addCallback,
-            @Nullable IForgeRegistry.ClearCallback<T> clearCallback,
-            @Nullable IForgeRegistry.CreateCallback<T> createCallback,
-            @Nullable IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
+            IForgeRegistry.AddCallback<T> addCallback,
+            IForgeRegistry.ClearCallback<T> clearCallback,
+            IForgeRegistry.CreateCallback<T> createCallback,
+            IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
     {
         return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
                 addCallback, clearCallback, createCallback, substitutionCallback);
@@ -768,8 +766,7 @@ public class PersistentRegistryManager
 
 
     //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
-    @Nullable
-    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.ClearCallback<T> getLegacyClear(@Nullable final IForgeRegistry.ClearCallback<T> cb)
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.ClearCallback<T> getLegacyClear(final IForgeRegistry.ClearCallback<T> cb)
     {
         if (cb == null)
             return null;
@@ -793,13 +790,13 @@ public class PersistentRegistryManager
             return cb; //Assume they are ussing modern API
         } catch (SecurityException e) {
             e.printStackTrace();
-            throw Throwables.propagate(e);
+            Throwables.propagate(e);
         }
+        return null; //Will never get here unless things go wonkey...
     }
 
     //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
-    @Nullable
-    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.CreateCallback<T> getLegacyCreate(@Nullable final IForgeRegistry.CreateCallback<T> cb)
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.CreateCallback<T> getLegacyCreate(final IForgeRegistry.CreateCallback<T> cb)
     {
         if (cb == null)
             return null;
@@ -823,13 +820,13 @@ public class PersistentRegistryManager
             return cb; //Assume they are ussing modern API
         } catch (SecurityException e) {
             e.printStackTrace();
-            throw Throwables.propagate(e);
+            Throwables.propagate(e);
         }
+        return null; //Will never get here unless things go wonkey...
     }
 
     //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
-    @Nullable
-    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.AddCallback<T> getLegacyAdd(@Nullable final IForgeRegistry.AddCallback<T> cb)
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.AddCallback<T> getLegacyAdd(final IForgeRegistry.AddCallback<T> cb)
     {
         if (cb == null)
             return null;
@@ -853,7 +850,8 @@ public class PersistentRegistryManager
             return cb; //Assume they are ussing modern API
         } catch (SecurityException e) {
             e.printStackTrace();
-            throw Throwables.propagate(e);
+            Throwables.propagate(e);
         }
+        return null; //Will never get here unless things go wonkey...
     }
 }

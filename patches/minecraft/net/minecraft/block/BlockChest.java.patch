@@ -9,14 +9,3 @@
      }
  
      private boolean func_176453_o(World p_176453_1_, BlockPos p_176453_2_)
-@@ -587,4 +587,10 @@
-         BASIC,
-         TRAP;
-     }
-+
-+    /* ======================================== FORGE START =====================================*/
-+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
-+    {
-+        return !func_176454_e(world, pos) && super.rotateBlock(world, pos, axis);
-+    }
- }

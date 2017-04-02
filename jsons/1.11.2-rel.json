@@ -20,7 +20,6 @@
   "mainClass": "net.minecraft.launchwrapper.Launch",
   "inheritsFrom": "1.11.2",
   "jar": "1.11.2",
-  "logging": {},
   "libraries": [
     {
       "name": "@artifact@",
@@ -147,7 +146,7 @@
         "inject": true,
         "desc": "A mod that collects statistics about Minecraft and your system.<br>Useful for Forge to understand how Minecraft/Forge are used.",
         "url": "http://www.minecraftforge.net/forum/index.php?topic=43278.0",
-        "artifact": "net.minecraftforge:MercuriusUpdater:1.11.2",
+        "artifact": "net.minecraftforge:MercuriusUpdater:1.11",
         "maven": "http://files.minecraftforge.net/maven/"
     }
 ]

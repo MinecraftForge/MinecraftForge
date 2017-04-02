@@ -40,8 +40,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import javax.annotation.Nullable;
-
 public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
     public static final AttributeKey<OutboundTarget> FML_MESSAGETARGET = AttributeKey.valueOf("fml:outboundTarget");
     public static final AttributeKey<Object> FML_MESSAGETARGETARGS = AttributeKey.valueOf("fml:outboundTargetArgs");
@@ -61,7 +59,6 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             }
 
             @Override
-            @Nullable
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 return null;
@@ -256,7 +253,6 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
         }
         public final ImmutableSet<Side> allowed;
         public abstract void validateArgs(Object args);
-        @Nullable
         public abstract List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet);
     }
 

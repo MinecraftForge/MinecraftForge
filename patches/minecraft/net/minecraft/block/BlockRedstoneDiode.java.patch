@@ -9,27 +9,3 @@
          p_176400_1_.func_190524_a(blockpos, this, p_176400_2_);
          p_176400_1_.func_175695_a(blockpos, this, enumfacing);
      }
-@@ -275,4 +277,23 @@
-     {
-         return BlockRenderLayer.CUTOUT;
-     }
-+
-+    /* ======================================== FORGE START =====================================*/
-+    @Override
-+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
-+    {
-+        if (super.rotateBlock(world, pos, axis))
-+        {
-+            IBlockState state = world.func_180495_p(pos);
-+            state = func_180675_k(state);
-+            world.func_175656_a(pos, state);
-+
-+            if (func_176404_e(world, pos, state))
-+            {
-+                world.func_175684_a(pos, this, 1);
-+            }
-+            return true;
-+        }
-+        return false;
-+    }
- }

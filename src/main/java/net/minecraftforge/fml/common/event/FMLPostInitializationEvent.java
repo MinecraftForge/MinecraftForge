@@ -70,14 +70,14 @@ public class FMLPostInitializationEvent extends FMLStateEvent
                 @Nullable
                 @Override
                 public Class<?> apply(@Nullable Object input) {
-                    return input == null ? null : input.getClass();
+                    return input.getClass();
                 }
             }).toArray(new Class[0]);
             try
             {
                 Class<?> clz = Class.forName(className,true,Loader.instance().getModClassLoader());
                 Constructor<?> ct = clz.getConstructor(args);
-                return Optional.of(ct.newInstance(arguments));
+                return Optional.fromNullable(ct.newInstance(arguments));
             }
             catch (Exception e)
             {

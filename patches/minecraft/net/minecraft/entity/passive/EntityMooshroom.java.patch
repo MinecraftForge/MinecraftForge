@@ -27,7 +27,7 @@
 +    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.math.BlockPos pos, int fortune)
 +    {
 +        this.func_70106_y();
-+        ((net.minecraft.world.WorldServer)this.field_70170_p).func_180505_a(EnumParticleTypes.EXPLOSION_LARGE, false, this.field_70165_t, this.field_70163_u + (double)(this.field_70131_O / 2.0F), this.field_70161_v, 1, 0.0D, 0.0D, 0.0D, 0.0D);
++        this.field_70170_p.func_175688_a(EnumParticleTypes.EXPLOSION_LARGE, this.field_70165_t, this.field_70163_u + (double)(this.field_70131_O / 2.0F), this.field_70161_v, 0.0D, 0.0D, 0.0D, new int[0]);
 +
 +        EntityCow entitycow = new EntityCow(this.field_70170_p);
 +        entitycow.func_70012_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, this.field_70177_z, this.field_70125_A);

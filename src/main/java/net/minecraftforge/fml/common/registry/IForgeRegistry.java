@@ -27,9 +27,6 @@ import java.util.Set;
 import com.google.common.collect.BiMap;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 /**
  * Main interface for the registry system. Use this to query the registry system.
  *
@@ -47,12 +44,12 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     boolean containsKey(ResourceLocation key);
     boolean containsValue(V value);
 
-    @Nullable V getValue(ResourceLocation key);
-    @Nullable ResourceLocation getKey(V value);
+    V getValue(ResourceLocation key);
+    ResourceLocation getKey(V value);
 
-    @Nonnull Set<ResourceLocation>           getKeys();
-    @Nonnull List<V>                         getValues();
-    @Nonnull Set<Entry<ResourceLocation, V>> getEntries();
+    Set<ResourceLocation>           getKeys();
+    List<V>                         getValues();
+    Set<Entry<ResourceLocation, V>> getEntries();
 
     /**
      * Retrieve the slave map of type T from the registry.

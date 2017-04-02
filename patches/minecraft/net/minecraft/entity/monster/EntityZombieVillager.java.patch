@@ -8,11 +8,10 @@
      }
  
      public int func_190736_dl()
-@@ -85,6 +86,21 @@
+@@ -85,6 +86,19 @@
          return super.func_180482_a(p_180482_1_, p_180482_2_);
      }
  
-+    @Nullable
 +    private net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof;
 +    public void setForgeProfession(net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof)
 +    {
@@ -20,7 +19,6 @@
 +        this.func_190733_a(net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof));
 +    }
 +
-+    @Nullable
 +    public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getForgeProfession()
 +    {
 +        return this.prof;

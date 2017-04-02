@@ -39,3 +39,12 @@
      public float func_70603_bj()
      {
          return 1.0F;
+@@ -997,7 +1009,7 @@
+ 
+     public static EntityEquipmentSlot func_184640_d(ItemStack p_184640_0_)
+     {
+-        return p_184640_0_.func_77973_b() != Item.func_150898_a(Blocks.field_150423_aK) && p_184640_0_.func_77973_b() != Items.field_151144_bL ? (p_184640_0_.func_77973_b() instanceof ItemArmor ? ((ItemArmor)p_184640_0_.func_77973_b()).field_77881_a : (p_184640_0_.func_77973_b() == Items.field_185160_cR ? EntityEquipmentSlot.CHEST : (p_184640_0_.func_77973_b() == Items.field_185159_cQ ? EntityEquipmentSlot.OFFHAND : EntityEquipmentSlot.MAINHAND))) : EntityEquipmentSlot.HEAD;
++        return p_184640_0_.func_77973_b() != Item.func_150898_a(Blocks.field_150423_aK) && p_184640_0_.func_77973_b() != Items.field_151144_bL ? (p_184640_0_.func_77973_b() instanceof ItemArmor ? ((ItemArmor)p_184640_0_.func_77973_b()).field_77881_a : (p_184640_0_.func_77973_b() == Items.field_185160_cR ? EntityEquipmentSlot.CHEST : (p_184640_0_.func_77973_b().isShield(p_184640_0_, null) ? EntityEquipmentSlot.OFFHAND : EntityEquipmentSlot.MAINHAND))) : EntityEquipmentSlot.HEAD;
+     }
+ 
+     @Nullable

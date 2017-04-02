@@ -30,8 +30,6 @@ import com.google.common.base.Throwables;
 
 import io.netty.buffer.ByteBuf;
 
-import javax.annotation.Nullable;
-
 /**
  * Utilities for interacting with {@link ByteBuf}.
  * @author cpw
@@ -205,7 +203,6 @@ public class ByteBufUtils {
      * @param from The buffer to read from
      * @return The read tag
      */
-    @Nullable
     public static NBTTagCompound readTag(ByteBuf from)
     {
         PacketBuffer pb = new PacketBuffer(from);

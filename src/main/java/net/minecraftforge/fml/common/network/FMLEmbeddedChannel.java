@@ -31,8 +31,6 @@ import net.minecraftforge.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nullable;
-
 /**
  * Utility wrapper around {@link EmbeddedChannel}. Provides some convenience methods
  * associated with the specific needs of FML network handling.
@@ -74,7 +72,6 @@ public class FMLEmbeddedChannel extends EmbeddedChannel {
         return pkt;
     }
 
-    @Nullable
     public String findChannelHandlerNameForType(Class<? extends ChannelHandler> type)
     {
         String targetName = null;

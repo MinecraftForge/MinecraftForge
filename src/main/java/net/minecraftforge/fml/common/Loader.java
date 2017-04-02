@@ -90,8 +90,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import javax.annotation.Nullable;
-
 /**
  * The loader class performs the actual loading of the mod code from disk.
  *
@@ -236,8 +234,6 @@ public class Loader
     private void sortModList()
     {
         FMLLog.finer("Verifying mod requirements are satisfied");
-        List<WrongMinecraftVersionException> wrongMinecraftExceptions = new ArrayList<WrongMinecraftVersionException>();
-        List<MissingModsException> missingModsExceptions = new ArrayList<MissingModsException>();
         try
         {
             BiMap<String, ArtifactVersion> modVersions = HashBiMap.create();
@@ -252,10 +248,9 @@ public class Loader
                 if (!mod.acceptableMinecraftVersionRange().containsVersion(minecraft.getProcessedVersion()))
                 {
                     FMLLog.severe("The mod %s does not wish to run in Minecraft version %s. You will have to remove it to play.", mod.getModId(), getMCVersionString());
-                    WrongMinecraftVersionException ret = new WrongMinecraftVersionException(mod, getMCVersionString());
+                    RuntimeException ret = new WrongMinecraftVersionException(mod, getMCVersionString());
                     FMLLog.severe(ret.getMessage());
-                    wrongMinecraftExceptions.add(ret);
-                    continue;
+                    throw ret;
                 }
                 Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new ArtifactVersionNameFunction());
                 Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
@@ -268,10 +263,9 @@ public class Loader
                     {
                         versionMissingMods.add(names.get(modid));
                     }
-                    MissingModsException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    RuntimeException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
                     FMLLog.severe(ret.getMessage());
-                    missingModsExceptions.add(ret);
-                    continue;
+                    throw ret;
                 }
                 reqList.putAll(mod.getModId(), names.keySet());
                 ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
@@ -288,28 +282,13 @@ public class Loader
                 if (!versionMissingMods.isEmpty())
                 {
                     FMLLog.severe("The mod %s (%s) requires mod versions %s to be available", mod.getModId(), mod.getName(), versionMissingMods);
-                    MissingModsException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    RuntimeException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
                     FMLLog.severe(ret.toString());
-                    missingModsExceptions.add(ret);
+                    throw ret;
                 }
             }
 
-            if (wrongMinecraftExceptions.isEmpty() && missingModsExceptions.isEmpty())
-            {
-                FMLLog.finer("All mod requirements are satisfied");
-            }
-            else if (missingModsExceptions.size()==1 && wrongMinecraftExceptions.isEmpty())
-            {
-                throw missingModsExceptions.get(0);
-            }
-            else if (wrongMinecraftExceptions.size()==1 && missingModsExceptions.isEmpty())
-            {
-                throw wrongMinecraftExceptions.get(0);
-            }
-            else
-            {
-                throw new MultipleModsErrored(wrongMinecraftExceptions, missingModsExceptions);
-            }
+            FMLLog.finer("All mod requirements are satisfied");
 
             reverseDependencies = Multimaps.invertFrom(reqList, ArrayListMultimap.<String,String>create());
             ModSorter sorter = new ModSorter(getActiveModList(), namedMods);
@@ -908,7 +887,6 @@ public class Loader
         return getModObjectList().inverse();
     }
 
-    @Nullable
     public ModContainer activeModContainer()
     {
         return modController != null ? modController.activeContainer() : null;
@@ -1184,7 +1162,7 @@ public class Loader
         return modController != null ? modController.getState() : LoaderState.NOINIT;
     }
 
-    public void setActiveModContainer(@Nullable ModContainer container)
+    public void setActiveModContainer(ModContainer container)
     {
         this.modController.forceActiveContainer(container);
     }

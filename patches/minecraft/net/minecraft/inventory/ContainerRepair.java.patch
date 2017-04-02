@@ -32,11 +32,12 @@
  
                  if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
                  {
-@@ -327,6 +331,7 @@
-                 i += k;
-                 itemstack1.func_151001_c(this.field_82857_m);
+@@ -312,6 +316,8 @@
+                 }
              }
-+            if (flag && !itemstack1.func_77973_b().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = ItemStack.field_190927_a;
  
-             this.field_82854_e = j + i;
- 
++            if (flag && !itemstack1.func_77973_b().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = null;
++
+             if (StringUtils.isBlank(this.field_82857_m))
+             {
+                 if (itemstack.func_82837_s())

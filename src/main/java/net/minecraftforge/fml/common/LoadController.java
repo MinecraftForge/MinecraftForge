@@ -55,8 +55,6 @@ import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.SubscriberExceptionHandler;
 import com.google.common.eventbus.SubscriberExceptionContext;
 
-import javax.annotation.Nullable;
-
 public class LoadController
 {
     private Loader loader;
@@ -200,13 +198,12 @@ public class LoadController
 
     }
 
-    @Nullable
     public ModContainer activeContainer()
     {
         return activeContainer != null ? activeContainer : findActiveContainerFromStack();
     }
 
-    void forceActiveContainer(@Nullable ModContainer container)
+    void forceActiveContainer(ModContainer container)
     {
         activeContainer = container;
     }
@@ -240,7 +237,7 @@ public class LoadController
             }
         }
         activeContainer = mc;
-        stateEvent.applyModContainer(mc);
+        stateEvent.applyModContainer(activeContainer());
         ThreadContext.put("mod", modId);
         FMLLog.log(modId, Level.TRACE, "Sending event %s to mod %s", stateEvent.getEventType(), modId);
         eventChannels.get(modId).post(stateEvent);
@@ -361,7 +358,6 @@ public class LoadController
         this.state = newState;
     }
 
-    @Nullable
     private ModContainer findActiveContainerFromStack()
     {
         for (Class<?> c : getCallingStack())

@@ -1,13 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/AbstractHorse.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/AbstractHorse.java
-@@ -310,6 +310,7 @@
+@@ -981,6 +981,7 @@
+         }
  
-         this.field_110296_bG.func_110134_a(this);
          this.func_110232_cE();
 +        this.itemHandler = new net.minecraftforge.items.wrapper.InvWrapper(this.field_110296_bG);
      }
  
-     protected void func_110232_cE()
+     public boolean func_70878_b(EntityAnimal p_70878_1_)
 @@ -1219,4 +1220,22 @@
  
          return p_180482_2_;

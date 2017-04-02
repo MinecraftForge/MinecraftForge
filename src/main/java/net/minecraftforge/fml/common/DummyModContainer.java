@@ -34,8 +34,6 @@ import net.minecraftforge.fml.common.versioning.VersionRange;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 
-import javax.annotation.Nullable;
-
 public class DummyModContainer implements ModContainer
 {
     private ModMetadata md;
@@ -166,7 +164,6 @@ public class DummyModContainer implements ModContainer
     }
 
     @Override
-    @Nullable
     public Certificate getSigningCertificate()
     {
         return null;

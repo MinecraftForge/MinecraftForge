@@ -81,8 +81,6 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import javax.annotation.Nullable;
-
 
 /**
  * The main class for non-obfuscated hook handling code
@@ -711,7 +709,6 @@ public class FMLCommonHandler
      * @param inputstream Input stream containing the lang file.
      * @return A new InputStream that vanilla uses to load normal Lang files, Null if this is a 'enhanced' file and loading is done.
      */
-    @Nullable
     public InputStream loadLanguage(Map<String, String> table, InputStream inputstream) throws IOException
     {
         byte[] data = IOUtils.toByteArray(inputstream);

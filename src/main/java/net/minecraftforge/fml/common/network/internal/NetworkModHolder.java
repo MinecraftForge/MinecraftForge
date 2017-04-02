@@ -41,8 +41,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.SetMultimap;
 
-import javax.annotation.Nullable;
-
 public class NetworkModHolder
 {
     public abstract class NetworkChecker {
@@ -120,7 +118,7 @@ public class NetworkModHolder
         this.checker = Preconditions.checkNotNull(checker);
         FMLLog.fine("The mod %s is using a custom checker %s", container.getModId(), checker.getClass().getName());
     }
-    public NetworkModHolder(ModContainer container, Class<?> modClass, @Nullable String acceptableVersionRange, ASMDataTable table)
+    public NetworkModHolder(ModContainer container, Class<?> modClass, String acceptableVersionRange, ASMDataTable table)
     {
         this(container);
         SetMultimap<String, ASMData> annotationTable = table.getAnnotationsFor(container);
