@@ -49,7 +49,8 @@ import javax.annotation.Nullable;
  * {@link EntityPlayer#damageShield(float)},
  * {@link EntityPlayer#interactOn(Entity, EnumHand)},
  * {@link ForgeHooks#getContainerItem(ItemStack)},
- * {@link PlayerInteractionManager#processRightClick(EntityPlayer, World, ItemStack, EnumHand)}
+ * {@link PlayerInteractionManager#processRightClick(EntityPlayer, World, ItemStack, EnumHand)},
+ * {@link PlayerInteractionManager#processRightClickBlock(EntityPlayer, World, ItemStack, EnumHand, BlockPos, EnumFacing, float, float, float)}
  * and {@link PlayerInteractionManager#tryHarvestBlock(BlockPos)}.<br>
  * <br>
  * {@link #original} contains the original ItemStack before the item was destroyed. <br>
