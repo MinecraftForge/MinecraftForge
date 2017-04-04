@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
@@ -182,6 +184,48 @@ public class WorldEvent extends Event
         public WorldSettings getSettings()
         {
             return settings;
+        }
+    }
+
+    /**
+     * Fires before mob spawn events.
+     *
+     * Result is significant:
+     *    DEFAULT: use vanilla spawn rules
+     *    ALLOW:   allow the spawn
+     *    DENY:    deny the spawn
+     *
+     */
+    @HasResult
+    public static class CreatureTypeSpawnEvent extends WorldEvent
+    {
+        private final EntityLiving.SpawnPlacementType type;
+
+        private final BlockPos pos;
+
+        private final IBlockState state;
+
+        public CreatureTypeSpawnEvent(EntityLiving.SpawnPlacementType type, World world, BlockPos pos, IBlockState state)
+        {
+            super(world);
+            this.type = type;
+            this.pos = pos;
+            this.state = state;
+        }
+
+        public EntityLiving.SpawnPlacementType getType()
+        {
+            return type;
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
+        }
+
+        public IBlockState getState()
+        {
+            return state;
         }
     }
 }

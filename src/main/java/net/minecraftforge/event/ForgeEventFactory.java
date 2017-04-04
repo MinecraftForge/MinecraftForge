@@ -659,4 +659,11 @@ public class ForgeEventFactory
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e);
         return e.getLevel();
     }
+
+    public static Result canCreatureTypeSpawnAtPos(EntityLiving.SpawnPlacementType type, World world, BlockPos pos, IBlockState state)
+    {
+        WorldEvent.CreatureTypeSpawnEvent event = new WorldEvent.CreatureTypeSpawnEvent(type, world, pos, state);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
+    }
 }
