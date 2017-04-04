@@ -200,9 +200,7 @@ public class WorldEvent extends Event
     public static class CreatureTypeSpawnEvent extends WorldEvent
     {
         private final EntityLiving.SpawnPlacementType type;
-
         private final BlockPos pos;
-
         private final IBlockState state;
 
         public CreatureTypeSpawnEvent(EntityLiving.SpawnPlacementType type, World world, BlockPos pos, IBlockState state)
