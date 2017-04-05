@@ -61,7 +61,7 @@
                  else if (p_serialize_1_ instanceof LootEntryTable)
                  {
 -                    jsonobject.addProperty("type", "item");
-+                    jsonobject.addProperty("type", "loot_table");
++                    jsonobject.addProperty("type", "loot_table"); //Forge: fix incorrect serialization MC-115407 
                  }
                  else
                  {
