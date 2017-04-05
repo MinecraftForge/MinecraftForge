@@ -100,6 +100,7 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.event.entity.player.UseShovelEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -342,6 +343,18 @@ public class ForgeEventFactory
     public static int onHoeUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos)
     {
         UseHoeEvent event = new UseHoeEvent(player, stack, worldIn, pos);
+        if (MinecraftForge.EVENT_BUS.post(event)) return -1;
+        if (event.getResult() == Result.ALLOW)
+        {
+            stack.damageItem(1, player);
+            return 1;
+        }
+        return 0;
+    }
+
+    public static int onShovelUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos)
+    {
+        UseShovelEvent event = new UseShovelEvent(player, stack, worldIn, pos);
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {
