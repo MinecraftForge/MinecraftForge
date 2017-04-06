@@ -50,6 +50,7 @@ public class ConfigManager
 {
     private static Map<String, Multimap<Config.Type, ASMData>> asm_data = Maps.newHashMap();
     static Map<Class<?>, ITypeAdapter> ADAPTERS = Maps.newHashMap();
+    static Map<Class<?>, Class<?>> ARRAY_REMAP = Maps.newHashMap();
     private static Map<String, Configuration> CONFIGS = Maps.newHashMap();
     private static Map<String, Set<Class<?>>> MOD_CONFIG_CLASSES = Maps.newHashMap();
 
@@ -85,6 +86,16 @@ public class ConfigManager
         register(Integer[].class,   TypeAdapters.IntA);
         register(String.class,      TypeAdapters.Str);
         register(String[].class,    TypeAdapters.StrA);
+
+
+        ARRAY_REMAP.put(Boolean.class,   Boolean[].class  );
+        ARRAY_REMAP.put(Float.class,     Float[].class    );
+        ARRAY_REMAP.put(Double.class,    Double[].class   );
+        ARRAY_REMAP.put(Byte.class,      Byte[].class     );
+        ARRAY_REMAP.put(Character.class, Character[].class);
+        ARRAY_REMAP.put(Short.class,     Short[].class    );
+        ARRAY_REMAP.put(Integer.class,   Integer[].class  );
+        ARRAY_REMAP.put(String.class,    String[].class   );
     }
     private static void register(Class<?> cls, ITypeAdapter adpt)
     {
@@ -110,7 +121,7 @@ public class ConfigManager
             map.put(type, target);
         }
     }
-    
+
     /**
      * Bounces to sync().
      * TODO: remove
@@ -123,13 +134,13 @@ public class ConfigManager
     /**
      * Synchronizes configuration data between the file on disk, the {@code Configuration} object and the annotated
      * mod classes containing the configuration variables.
-     * 
+     *
      * When first called, this method will try to load the configuration from disk. If this fails, because the file
      * does not exist, it will be created with default values derived from the mods config classes variable default values
      * and comments and ranges, as well as configuration names based on the appropriate annotations found in {@code @Config}.
-     * 
+     *
      * Note, that this method is being called by the {@link FMLModContaier}, so the mod needn't call it in init().
-     * 
+     *
      * If this method is called after the initial load, it will check whether the values in the Configuration object differ
      * from the values in the corresponding variables. If they differ, it will either overwrite the variables if the Configuration
      * object is marked as changed (e.g. if it was changed with the ConfigGui) or otherwise overwrite the Configuration object's values.
@@ -152,11 +163,11 @@ public class ConfigManager
             try
             {
                 Class<?> cls = Class.forName(targ.getClassName(), true, mcl);
-                
+
                 if (MOD_CONFIG_CLASSES.get(modid) == null)
                     MOD_CONFIG_CLASSES.put(modid, Sets.<Class<?>>newHashSet());
                 MOD_CONFIG_CLASSES.get(modid).add(cls);
-                
+
                 String name = (String)targ.getAnnotationInfo().get("name");
                 if (name == null)
                     name = modid;
@@ -188,7 +199,7 @@ public class ConfigManager
             }
         }
     }
-    
+
     public static Class<?>[] getModConfigClasses(String modid)
     {
         return MOD_CONFIG_CLASSES.get(modid).toArray(new Class<?>[0]);
@@ -204,7 +215,7 @@ public class ConfigManager
         File configFile = new File(configDir, name + ".cfg");
         return CONFIGS.get(configFile.getAbsolutePath());
     }
-    
+
     private static void sync(Configuration cfg, Class<?> cls, String modid, String category, boolean loading, Object instance)
     {
         for (Field f : cls.getDeclaredFields())
@@ -213,7 +224,7 @@ public class ConfigManager
                 continue;
             if (Modifier.isStatic(f.getModifiers()) != (instance == null))
                 continue;
-            
+
             String comment = null;
             Comment ca = f.getAnnotation(Comment.class);
             if (ca != null)
@@ -223,7 +234,7 @@ public class ConfigManager
             LangKey la = f.getAnnotation(LangKey.class);
             if (la != null)
                 langKey = la.value();
-            
+
             boolean requiresMcRestart = f.isAnnotationPresent(Config.RequiresMcRestart.class);
             boolean requiresWorldRestart = f.isAnnotationPresent(Config.RequiresWorldRestart.class);
 
@@ -236,16 +247,16 @@ public class ConfigManager
                     IFieldWrapper wrapper = FieldWrapper.get(instance, f, category);
                     ITypeAdapter adapt = wrapper.getTypeAdapter();
                     Property.Type propType = adapt.getType();
-                
+
                     for (String key : wrapper.getKeys())
                     {
                         String suffix = key.replaceFirst(wrapper.getCategory() + ".", "");
-                        
+
                         boolean existed = exists(cfg, wrapper.getCategory(), suffix);
                         if (!existed || loading) //Creates keys in category specified by the wrapper if new ones are programaticaly added
                         {
                             Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
-                        
+
                             adapt.setDefaultValue(property, wrapper.getValue(key));
                             if (!existed)
                                 adapt.setValue(property, wrapper.getValue(key));
@@ -253,7 +264,7 @@ public class ConfigManager
                                 wrapper.setValue(key, adapt.getValue(property));
                         }
                         else //If the key is not new, sync according to shoudlReadFromVar()
-                        {                        
+                        {
                             Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
                             Object propVal = adapt.getValue(property);
                             Object mapVal = wrapper.getValue(key);
@@ -263,25 +274,25 @@ public class ConfigManager
                                 wrapper.setValue(key, propVal);
                         }
                     }
-                    
+
 
                     ConfigCategory confCat = cfg.getCategory(wrapper.getCategory());
-                    
+
                     for (Property property : confCat.getOrderedValues())//Are new keys in the Configuration object?
                     {
                         if (!wrapper.handlesKey(property.getName()))
                             continue;
-                        
+
                         if (loading || !wrapper.hasKey(property.getName()))
-                        {                        
+                        {
                             Object value = wrapper.getTypeAdapter().getValue(property);
                             wrapper.setValue(confCat.getName() + "." + property.getName(), value);
                         }
                     }
-                    
-                    if (loading) //Doing this after the loops. The wrapper should set cosmetic stuff. 
+
+                    if (loading) //Doing this after the loops. The wrapper should set cosmetic stuff.
                         wrapper.setupConfiguration(cfg, comment, langKey, requiresMcRestart, requiresWorldRestart);
-                
+
                 }
                 catch (Exception e) //If anything goes wrong, add the errored field and class.
                 {
@@ -289,9 +300,9 @@ public class ConfigManager
                     String error = String.format(format, f.getName(), cls.getName());
                     throw new RuntimeException(error, e);
                 }
-            } 
+            }
             else if (f.getType().getSuperclass() != null && f.getType().getSuperclass().equals(Object.class)) //Descend the object tree
-            { 
+            {
                 Object newInstance = null;
                 try
                 {
@@ -302,14 +313,14 @@ public class ConfigManager
                     //This should never happen. Previous checks should eliminate this.
                     Throwables.propagate(e);
                 }
-                
+
                 String sub = (category.isEmpty() ? "" : category + ".") + getName(f).toLowerCase(Locale.ENGLISH);
                 ConfigCategory confCat = cfg.getCategory(sub);
                 confCat.setComment(comment);
                 confCat.setLanguageKey(langKey);
                 confCat.setRequiresMcRestart(requiresMcRestart);
                 confCat.setRequiresWorldRestart(requiresWorldRestart);
-                
+
                 sync(cfg, f.getType(), modid, sub, loading, newInstance);
             }
             else
@@ -323,7 +334,7 @@ public class ConfigManager
 
     static final Joiner NEW_LINE = Joiner.on('\n');
     static final Joiner PIPE = Joiner.on('|');
-    
+
     private static Property property(Configuration cfg, String category, String property, Property.Type type, boolean isList)
     {
         Property prop = cfg.getCategory(category).get(property);
@@ -337,12 +348,12 @@ public class ConfigManager
         }
         return prop;
     }
-    
+
     private static boolean exists(Configuration cfg, String category, String property)
     {
         return cfg.hasCategory(category) && cfg.getCategory(category).containsKey(property);
     }
-    
+
     private static boolean shouldReadFromVar(Property property, Object propValue, Object fieldValue)
     {
         if (!propValue.equals(fieldValue))

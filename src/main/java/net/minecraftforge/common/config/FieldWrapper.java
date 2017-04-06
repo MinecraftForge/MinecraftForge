@@ -1,6 +1,7 @@
 package net.minecraftforge.common.config;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Iterator;
@@ -67,6 +68,7 @@ public abstract class FieldWrapper implements IFieldWrapper
     {
         private Map<String, Object> theMap = null;
         private Type mType;
+        ITypeAdapter adapter;
 
         @SuppressWarnings("unchecked")
         private MapWrapper(String category, Field field, Object instance)
@@ -90,18 +92,25 @@ public abstract class FieldWrapper implements IFieldWrapper
             ParameterizedType type = (ParameterizedType) field.getGenericType();
             mType = type.getActualTypeArguments()[1];
 
-            if (ADAPTERS.get(mType) == null && !Enum.class.isAssignableFrom((Class<?>) mType))
+            this.adapter = ADAPTERS.get(mType);
+            if (this.adapter == null && mType instanceof GenericArrayType)
+            {
+                this.adapter = ADAPTERS.get(ARRAY_REMAP.get(((GenericArrayType)mType).getGenericComponentType())); //J6 seems to have issues, Need to find a better way to translate this. We don't have access to array depth.
+            }
+
+            if (mType instanceof Class && Enum.class.isAssignableFrom((Class<?>)mType))
+            {
+                this.adapter = TypeAdapters.Str;
+            }
+
+            if (this.adapter == null)
                 throw new IllegalArgumentException(String.format("The map '%s' of class '%s' has target values which are neither primitive nor an enum!",
                         field.getName(), field.getDeclaringClass().getCanonicalName()));
-
         }
 
         @Override
         public ITypeAdapter getTypeAdapter()
         {
-            ITypeAdapter adapter = ADAPTERS.get(mType);
-            if (adapter == null && Enum.class.isAssignableFrom((Class<?>) mType))
-                adapter = TypeAdapters.Str;
             return adapter;
         }
 
