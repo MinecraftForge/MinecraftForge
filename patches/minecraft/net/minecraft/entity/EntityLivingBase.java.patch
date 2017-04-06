@@ -94,10 +94,11 @@
              vec3d1 = vec3d1.func_178789_a(-this.field_70125_A * 0.017453292F);
              vec3d1 = vec3d1.func_178785_b(-this.field_70177_z * 0.017453292F);
              vec3d1 = vec3d1.func_72441_c(this.field_70165_t, this.field_70163_u + (double)this.func_70047_e(), this.field_70161_v);
+-            this.field_70170_p.func_175688_a(EnumParticleTypes.ITEM_CRACK, vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c, new int[] {Item.func_150891_b(p_70669_1_.func_77973_b())});
 +            if (this.field_70170_p instanceof WorldServer) //Forge: Fix MC-2518 spawnParticle is nooped on server, need to use server specific variant
-+                ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.ITEM_CRACK, vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, 0,  vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c, 0.0D, new int[] {Item.func_150891_b(p_70669_1_.func_77973_b())});
-+            else
-             this.field_70170_p.func_175688_a(EnumParticleTypes.ITEM_CRACK, vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c, new int[] {Item.func_150891_b(p_70669_1_.func_77973_b())});
++                ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.ITEM_CRACK, vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, 0,  vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c, 0.0D, Item.func_150891_b(p_70669_1_.func_77973_b()), p_70669_1_.func_77960_j());
++            else //Fix the fact that spawning ItemCrack uses TWO arguments.
++                this.field_70170_p.func_175688_a(EnumParticleTypes.ITEM_CRACK, vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c, Item.func_150891_b(p_70669_1_.func_77973_b()), p_70669_1_.func_77960_j());
          }
      }
  
