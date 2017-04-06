@@ -1,15 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
-@@ -38,7 +38,7 @@
+@@ -38,9 +38,11 @@
      {
          if (!p_180650_1_.field_72995_K)
          {
 -            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_185891_c() > 2)
 +            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) > 2)
              {
-                 p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P());
+-                p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P());
++                net.minecraftforge.event.world.BlockEvent.ReplaceEvent event = net.minecraftforge.event.ForgeEventFactory.onBlockReplace(p_180650_1_, p_180650_2_, p_180650_1_.func_180495_p(p_180650_2_), Blocks.field_150346_d.func_176223_P());
++                if (event.isCanceled()) return;
++                p_180650_1_.func_175656_a(p_180650_2_, event.getNextState());
              }
-@@ -58,7 +58,7 @@
+             else
+             {
+@@ -58,7 +60,7 @@
                          IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos.func_177984_a());
                          IBlockState iblockstate1 = p_180650_1_.func_180495_p(blockpos);
  
@@ -18,7 +23,7 @@
                          {
                              p_180650_1_.func_175656_a(blockpos, Blocks.field_150349_c.func_176223_P());
                          }
-@@ -96,18 +96,11 @@
+@@ -96,18 +98,11 @@
              {
                  if (j >= i / 16)
                  {

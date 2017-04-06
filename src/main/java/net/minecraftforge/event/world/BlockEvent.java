@@ -207,6 +207,28 @@ public class BlockEvent extends Event
     }
 
     /**
+     * Fired when a block is replaced (Ice changing to Water, Grass changing to Dirt)
+     */
+    @Cancelable
+    public static class ReplaceEvent extends BlockEvent
+    {
+
+        private final IBlockState state;
+        private IBlockState nextState;
+
+        public ReplaceEvent(World world, BlockPos pos, IBlockState state, IBlockState nextState) {
+            super(world,pos,state);
+            this.state = state;
+            this.nextState = nextState;
+        }
+
+
+        public IBlockState getState() { return state; }
+        public IBlockState getNextState() { return nextState; }
+        public void setNextState(IBlockState nextState) { this.nextState =  nextState; }
+    }
+
+    /**
      * Fired when a single block placement action of a player triggers the
      * creation of multiple blocks(e.g. placing a bed block). The block returned
      * by {@link #state} and its related methods is the block where

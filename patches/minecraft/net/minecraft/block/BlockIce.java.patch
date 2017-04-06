@@ -27,3 +27,17 @@
              Material material = p_180657_1_.func_180495_p(p_180657_3_.func_177977_b()).func_185904_a();
  
              if (material.func_76230_c() || material.func_76224_d())
+@@ -85,9 +92,11 @@
+         }
+         else
+         {
++            net.minecraftforge.event.world.BlockEvent.ReplaceEvent event = net.minecraftforge.event.ForgeEventFactory.onBlockReplace(p_185679_1_, p_185679_2_, p_185679_1_.func_180495_p(p_185679_2_), Blocks.field_150355_j.func_176223_P());
++            if (event.isCanceled()) return;
+             this.func_176226_b(p_185679_1_, p_185679_2_, p_185679_1_.func_180495_p(p_185679_2_), 0);
+-            p_185679_1_.func_175656_a(p_185679_2_, Blocks.field_150355_j.func_176223_P());
+-            p_185679_1_.func_190524_a(p_185679_2_, Blocks.field_150355_j, p_185679_2_);
++            p_185679_1_.func_175656_a(p_185679_2_, event.getNextState());
++            p_185679_1_.func_190524_a(p_185679_2_, event.getNextState().func_177230_c(), p_185679_2_);
+         }
+     }
+ 
