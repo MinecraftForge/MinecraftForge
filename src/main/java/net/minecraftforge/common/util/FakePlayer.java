@@ -45,6 +45,7 @@ public class FakePlayer extends EntityPlayerMP
     @Override public Vec3d getPositionVector(){ return new Vec3d(0, 0, 0); }
     @Override public boolean canUseCommand(int i, String s){ return false; }
     @Override public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar){}
+    @Override public void sendMessage(ITextComponent component) {}
     @Override public void addStat(StatBase par1StatBase, int par2){}
     @Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
     @Override public boolean isEntityInvulnerable(DamageSource source){ return true; }
