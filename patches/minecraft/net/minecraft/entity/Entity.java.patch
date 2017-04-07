@@ -126,7 +126,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2862,6 +2882,184 @@
+@@ -2862,6 +2882,200 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -159,7 +159,10 @@
 +     *
 +     * @param target The full target the player is looking at
 +     * @return A ItemStack to add to the player's inventory, empty ItemStack if nothing should be added.
++     * @deprecated use {@link #getPickedResult(RayTraceResult, EntityPlayer)}
 +     */
++    //TODO: Remove in 1.12
++    @Deprecated
 +    public ItemStack getPickedResult(RayTraceResult target)
 +    {
 +        if (this instanceof net.minecraft.entity.item.EntityPainting)
@@ -209,6 +212,19 @@
 +            }
 +        }
 +        return ItemStack.field_190927_a;
++    }
++
++    /**
++     * Called when a user uses the creative pick block button on this entity.
++     *
++     * @param target The full target the player is looking at
++     * @param player The player that picked this entity
++     * @return A ItemStack to add to the player's inventory, empty ItemStack if nothing should be added.
++     */
++    @javax.annotation.Nonnull
++    public ItemStack getPickedResult(RayTraceResult target, EntityPlayer player)
++    {
++        return this.getPickedResult(target);
 +    }
 +
 +    public UUID getPersistentID()
