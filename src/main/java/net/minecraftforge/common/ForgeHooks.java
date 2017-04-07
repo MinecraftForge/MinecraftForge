@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -811,7 +812,7 @@ public class ForgeHooks
         NBTTagCompound nbt = null;
         if (itemstack.getTagCompound() != null)
         {
-            nbt = (NBTTagCompound)itemstack.getTagCompound().copy();
+            nbt = itemstack.getTagCompound().copy();
         }
 
         if (!(itemstack.getItem() instanceof ItemBucket)) // if not bucket
@@ -830,11 +831,11 @@ public class ForgeHooks
             NBTTagCompound newNBT = null;
             if (itemstack.getTagCompound() != null)
             {
-                newNBT = (NBTTagCompound)itemstack.getTagCompound().copy();
+                newNBT = itemstack.getTagCompound().copy();
             }
-            net.minecraftforge.event.world.BlockEvent.PlaceEvent placeEvent = null;
+            BlockEvent.PlaceEvent placeEvent = null;
             @SuppressWarnings("unchecked")
-            List<net.minecraftforge.common.util.BlockSnapshot> blockSnapshots = (List<BlockSnapshot>)world.capturedBlockSnapshots.clone();
+            List<BlockSnapshot> blockSnapshots = (List<BlockSnapshot>)world.capturedBlockSnapshots.clone();
             world.capturedBlockSnapshots.clear();
 
             // make sure to set pre-placement item data for event
@@ -853,11 +854,11 @@ public class ForgeHooks
                 placeEvent = ForgeEventFactory.onPlayerBlockPlace(player, blockSnapshots.get(0), side, hand);
             }
 
-            if (placeEvent != null && (placeEvent.isCanceled()))
+            if (placeEvent != null && placeEvent.isCanceled())
             {
                 ret = EnumActionResult.FAIL; // cancel placement
                 // revert back all captured blocks
-                for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : blockSnapshots)
+                for (BlockSnapshot blocksnapshot : Lists.reverse(blockSnapshots))
                 {
                     world.restoringBlockSnapshots = true;
                     blocksnapshot.restore(true, false);
