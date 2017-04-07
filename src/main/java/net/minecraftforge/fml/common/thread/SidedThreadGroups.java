@@ -16,19 +16,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.minecraftforge.common.config;
 
-import net.minecraftforge.common.config.Property.Type;
+package net.minecraftforge.fml.common.thread;
 
-interface ITypeAdapter
+import net.minecraftforge.fml.relauncher.Side;
+
+public final class SidedThreadGroups
 {
-    void setDefaultValue(Property property, Object value);
-	
-	void setValue(Property property, Object value);
+    public static final SidedThreadGroup CLIENT = new SidedThreadGroup(Side.CLIENT);
+    public static final SidedThreadGroup SERVER = new SidedThreadGroup(Side.SERVER);
 
-	Object getValue(Property prop);
-
-    Type getType();
-    
-    boolean isArrayAdapter();
+    private SidedThreadGroups() {
+    }
 }
