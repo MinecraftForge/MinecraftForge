@@ -65,6 +65,8 @@ import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.loot.LootTable;
+import net.minecraft.world.storage.loot.LootTableManager;
+import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
@@ -80,6 +82,7 @@ import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
+import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
@@ -341,6 +344,13 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 
+    @Nonnull
+    public static String onClientSendMessage(String message)
+    {
+        ClientChatEvent event = new ClientChatEvent(message);
+        return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
+    }
+
     public static int onHoeUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos)
     {
         UseHoeEvent event = new UseHoeEvent(player, stack, worldIn, pos);
@@ -353,9 +363,18 @@ public class ForgeEventFactory
         return 0;
     }
 
+    /**
+     * @deprecated Use {@link #onApplyBonemeal(EntityPlayer, World, BlockPos, IBlockState, ItemStack, EnumHand)} instead.
+     */
+    @Deprecated
     public static int onApplyBonemeal(EntityPlayer player, World world, BlockPos pos, IBlockState state, ItemStack stack)
     {
-        BonemealEvent event = new BonemealEvent(player, world, pos, state);
+        return onApplyBonemeal(player, world, pos, state, stack, null);
+    }
+
+    public static int onApplyBonemeal(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull ItemStack stack, @Nullable EnumHand hand)
+    {
+        BonemealEvent event = new BonemealEvent(player, world, pos, state, hand, stack);
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {
@@ -643,9 +662,18 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, rand, x, z, hasVillageGenerated));
     }
 
+    /**
+     * @deprecated Use {@link #loadLootTable(ResourceLocation, LootTable, LootTableManager)}<br>
+     */
+    @Deprecated
     public static LootTable loadLootTable(ResourceLocation name, LootTable table)
     {
-        LootTableLoadEvent event = new LootTableLoadEvent(name, table);
+        return loadLootTable(name, table, null);
+    }
+
+    public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTableManager lootTableManager)
+    {
+        LootTableLoadEvent event = new LootTableLoadEvent(name, table, lootTableManager);
         if (MinecraftForge.EVENT_BUS.post(event))
             return LootTable.EMPTY_LOOT_TABLE;
         return event.getTable();
@@ -665,5 +693,10 @@ public class ForgeEventFactory
         net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent e = new net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent(world, pos, enchantRow, power, itemStack, level);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e);
         return e.getLevel();
+    }
+    
+    public static boolean onEntityDestroyBlock(EntityLivingBase entity, BlockPos pos, IBlockState state)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new LivingDestroyBlockEvent(entity, pos, state));
     }
 }
