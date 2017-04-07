@@ -63,7 +63,6 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
@@ -754,7 +753,9 @@ public class ForgeHooks
     {
         // Logic from tryHarvestBlock for pre-canceling the event
         boolean preCancelEvent = false;
-        if (gameType.isCreative() && !entityPlayer.getHeldItemMainhand().isEmpty() && entityPlayer.getHeldItemMainhand().getItem() instanceof ItemSword)
+        ItemStack itemstack = entityPlayer.getHeldItemMainhand();
+        if (gameType.isCreative() && !itemstack.isEmpty()
+                && !itemstack.getItem().canDestroyBlockInCreative(world, pos, itemstack, entityPlayer))
             preCancelEvent = true;
 
         if (gameType.isAdventure())
@@ -764,7 +765,6 @@ public class ForgeHooks
 
             if (!entityPlayer.isAllowEdit())
             {
-                ItemStack itemstack = entityPlayer.getHeldItemMainhand();
                 if (itemstack.isEmpty() || !itemstack.canDestroy(world.getBlockState(pos).getBlock()))
                     preCancelEvent = true;
             }

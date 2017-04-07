@@ -1,18 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -122,6 +122,12 @@
+@@ -122,10 +122,16 @@
              }
          }
  
+-        if (this.field_78779_k.func_77145_d() && !this.field_78776_a.field_71439_g.func_184614_ca().func_190926_b() && this.field_78776_a.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemSword)
 +        ItemStack stack = field_78776_a.field_71439_g.func_184614_ca();
 +        if (!stack.func_190926_b() && stack.func_77973_b().onBlockStartBreak(stack, p_187103_1_, field_78776_a.field_71439_g))
+         {
+             return false;
+         }
++
++        if (this.field_78779_k.func_77145_d() && !stack.func_190926_b() && !stack.func_77973_b().canDestroyBlockInCreative(field_78776_a.field_71441_e, p_187103_1_, stack, field_78776_a.field_71439_g))
 +        {
 +            return false;
 +        }
-+
-         if (this.field_78779_k.func_77145_d() && !this.field_78776_a.field_71439_g.func_184614_ca().func_190926_b() && this.field_78776_a.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemSword)
+         else
          {
-             return false;
+             World world = this.field_78776_a.field_71441_e;
 @@ -143,19 +149,13 @@
              else
              {
