@@ -26,6 +26,15 @@
      }
  
      public static IBlockState func_176220_d(int p_176220_0_)
+@@ -116,7 +118,7 @@
+             }
+             catch (NumberFormatException var3)
+             {
+-                return null;
++                return net.minecraft.init.Blocks.field_150350_a;
+             }
+         }
+     }
 @@ -292,7 +294,7 @@
  
      public boolean func_176200_f(IBlockAccess p_176200_1_, BlockPos p_176200_2_)

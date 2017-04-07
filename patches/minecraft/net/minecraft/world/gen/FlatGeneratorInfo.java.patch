@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/FlatGeneratorInfo.java
++++ ../src-work/minecraft/net/minecraft/world/gen/FlatGeneratorInfo.java
+@@ -161,7 +161,7 @@
+                 astring = s.split(":", 3);
+                 block = astring.length > 1 ? Block.func_149684_b(astring[0] + ":" + astring[1]) : null;
+ 
+-                if (block != null)
++                if (block != null && (block != Blocks.field_150350_a || (astring[0].equals("minecraft") && astring[1].equals("air"))))
+                 {
+                     j = astring.length > 2 ? Integer.parseInt(astring[2]) : 0;
+                 }
+@@ -169,7 +169,7 @@
+                 {
+                     block = Block.func_149684_b(astring[0]);
+ 
+-                    if (block != null)
++                    if (block == Blocks.field_150350_a && ! astring[0].equals("air")) { return null; } else
+                     {
+                         j = astring.length > 1 ? Integer.parseInt(astring[1]) : 0;
+                     }

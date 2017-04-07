@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/command/server/CommandTestForBlock.java
 +++ ../src-work/minecraft/net/minecraft/command/server/CommandTestForBlock.java
+@@ -49,7 +49,7 @@
+             BlockPos blockpos = func_175757_a(p_184881_2_, p_184881_3_, 0, false);
+             Block block = Block.func_149684_b(p_184881_3_[3]);
+ 
+-            if (block == null)
++            if (block == net.minecraft.init.Blocks.field_150350_a && ! p_184881_3_[3].equals("air") && ! p_184881_3_[3].equals("minecraft:air"))
+             {
+                 throw new NumberInvalidException("commands.setblock.notFound", new Object[] {p_184881_3_[3]});
+             }
 @@ -73,7 +73,7 @@
                      NBTTagCompound nbttagcompound = new NBTTagCompound();
                      boolean flag = false;
