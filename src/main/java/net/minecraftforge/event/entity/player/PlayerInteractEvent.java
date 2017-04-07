@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -322,6 +323,41 @@ public class PlayerInteractEvent extends PlayerEvent
         public LeftClickEmpty(EntityPlayer player, @Nonnull ItemStack stack)
         {
             this(player);
+        }
+    }
+
+    /**
+     * This event is fired on the client side when a player middle clicks while aiming on a block or entity.
+     * The server is not aware of when the client middle clicks blocks or entities, you will need to tell the server yourself.
+     * You can change the Result ItemStack here or set it to {@link ItemStack#EMPTY}. Cancelling it equals to return {@link ItemStack#EMPTY}.
+     */
+    @Cancelable
+    public static class Pick extends PlayerInteractEvent
+    {
+        private RayTraceResult target;
+        @Nonnull
+        private ItemStack currentResult;
+        public Pick(EntityPlayer player, RayTraceResult target, @Nonnull ItemStack currentResult)
+        {
+            super(player, EnumHand.MAIN_HAND, target.typeOfHit == RayTraceResult.Type.BLOCK ? target.getBlockPos() : new BlockPos(target.entityHit), target.typeOfHit == RayTraceResult.Type.BLOCK ? target.sideHit : null);
+            this.target = target;
+            this.currentResult = currentResult;
+        }
+
+        public RayTraceResult getTarget()
+        {
+            return target;
+        }
+
+        @Nonnull
+        public ItemStack getResultStack()
+        {
+            return this.currentResult;
+        }
+
+        public void setResultStack(@Nonnull ItemStack newResult)
+        {
+            this.currentResult = newResult;
         }
     }
 

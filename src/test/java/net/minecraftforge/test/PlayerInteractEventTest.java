@@ -4,16 +4,18 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityDropper;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -152,4 +154,20 @@ public class PlayerInteractEventTest
             // Applies to both hands
             evt.setCanceled(true);
     }
+
+    @SubscribeEvent
+    public void pick(PlayerInteractEvent.Pick evt)
+    {
+        if(!ENABLE) return;
+        logger.info("result stack: {} | RayTraceResult: {}", evt.getResultStack(), evt.getTarget());
+
+        if(evt.getTarget().typeOfHit == RayTraceResult.Type.ENTITY && evt.getTarget().entityHit instanceof EntityHorse)
+            // Middle click a horse and don't get a spawn egg
+            evt.setCanceled(true);
+
+        if(evt.getTarget().typeOfHit == RayTraceResult.Type.BLOCK && evt.getWorld().getBlockState(evt.getPos()).getBlock() == Blocks.BONE_BLOCK)
+            // Get a baked potato when middle click a bone block
+            evt.setResultStack(new ItemStack(Items.BAKED_POTATO));
+    }
+
 }
