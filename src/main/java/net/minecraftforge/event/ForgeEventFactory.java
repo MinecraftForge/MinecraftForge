@@ -361,9 +361,18 @@ public class ForgeEventFactory
         return 0;
     }
 
+    /**
+     * @deprecated Use {@link #onApplyBonemeal(EntityPlayer, World, BlockPos, IBlockState, ItemStack, EnumHand)} instead.
+     */
+    @Deprecated
     public static int onApplyBonemeal(EntityPlayer player, World world, BlockPos pos, IBlockState state, ItemStack stack)
     {
-        BonemealEvent event = new BonemealEvent(player, world, pos, state);
+        return onApplyBonemeal(player, world, pos, state, stack, null);
+    }
+
+    public static int onApplyBonemeal(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull ItemStack stack, @Nullable EnumHand hand)
+    {
+        BonemealEvent event = new BonemealEvent(player, world, pos, state, hand, stack);
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {
