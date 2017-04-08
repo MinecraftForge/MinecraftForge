@@ -276,16 +276,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 300,
-                "The default time in ticks the server will wait when a dimension was queued to unload. Can be overridden by mods in their dimension");
-        dimensionUnloadQueueDelay = prop.getInt(300);
-        prop.setLanguageKey("forge.configgui.dimensionUnloadQueueDelay").setRequiresMcRestart(true);
-        propOrder.add(prop.getName());
-
         prop = config.get(Configuration.CATEGORY_GENERAL, "logCascadingWorldGeneration", true,
                 "Log cascading chunk generation issues during terrain population.");
         logCascadingWorldGeneration = prop.getBoolean();
         prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 300,
+                "The time in ticks the server will wait when a dimension was queued to unload.");
+        dimensionUnloadQueueDelay = prop.getInt(300);
+        prop.setLanguageKey("forge.configgui.dimensionUnloadQueueDelay");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);

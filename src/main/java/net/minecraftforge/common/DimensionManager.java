@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentMap;
 
-import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntListIterator;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.HashMultiset;
@@ -60,12 +60,10 @@ public class DimensionManager
     private static class Dimension
     {
         private final DimensionType type;
-        private final int delayToUnload;
         private int ticksWaited;
-        private Dimension(DimensionType type, int delayToUnload)
+        private Dimension(DimensionType type)
         {
             this.type = type;
-            this.delayToUnload = delayToUnload;
             this.ticksWaited = 0;
         }
     }
@@ -110,35 +108,18 @@ public class DimensionManager
         registerDimension( 1, DimensionType.THE_END);
     }
 
-    /**
-     * Registers a dimension with a given delay
-     * @param id The ID of the dimension
-     * @param type The type of the dimension
-     * @param delayToUnload the delay in ticks the dimension should stay loaded after being queued to unload. Must not be negative
-     */
-    public static void registerDimension(int id, DimensionType type, int delayToUnload)
+    public static void registerDimension(int id, DimensionType type)
     {
         DimensionType.getById(type.getId()); //Check if type is invalid {will throw an error} No clue how it would be invalid tho...
         if (dimensions.containsKey(id))
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        Preconditions.checkArgument(delayToUnload >= 0, "Cannot register dimension for id %s with negative delayToUnload(%s)", id, delayToUnload);
-        dimensions.put(id, new Dimension(type, delayToUnload));
+        dimensions.put(id, new Dimension(type));
         if (id >= 0)
         {
             dimensionMap.set(id);
         }
-    }
-
-    /**
-     * Registers a dimension, setting the delay to the value specified in the forge config(default 300 ticks)
-     * @param id The ID of the dimension
-     * @param type The type of the dimension
-     */
-    public static void registerDimension(int id, DimensionType type)
-    {
-        registerDimension(id, type, ForgeModContainer.dimensionUnloadQueueDelay);
     }
 
     /**
@@ -344,16 +325,17 @@ public class DimensionManager
     * To be called by the server at the appropriate time, do not call from mod code.
     */
     public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
-        IntArrayList toRemove = new IntArrayList();
-        for (int id : unloadQueue) {
+        IntListIterator queueIterator = unloadQueue.iterator();
+        while (queueIterator.hasNext()) {
+            int id = queueIterator.next();
             Dimension dimension = dimensions.get(id);
-            if (dimension.ticksWaited != dimension.delayToUnload)
+            if (dimension.ticksWaited < ForgeModContainer.dimensionUnloadQueueDelay)
             {
                 dimension.ticksWaited++;
                 continue;
             }
             WorldServer w = worlds.get(id);
-            toRemove.add(id);
+            queueIterator.remove();
             dimension.ticksWaited = 0;
             if (w == null || !ForgeChunkManager.getPersistentChunksFor(w).isEmpty() || !w.playerEntities.isEmpty() || dimension.type.shouldLoadSpawn()) //Don't unload the world if the status changed
             {
@@ -375,7 +357,6 @@ public class DimensionManager
                 setWorld(id, null, w.getMinecraftServer());
             }
         }
-        unloadQueue.removeAll(toRemove);
     }
 
     /**
