@@ -116,6 +116,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
+    public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -274,6 +275,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_GENERAL, "logCascadingWorldGeneration", true,
+                "Log cascading chunk generation issues during terrain population.");
+        logCascadingWorldGeneration = prop.getBoolean();
+        prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
+        propOrder.add(prop.getName());
+
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
 
         propOrder = new ArrayList<String>();
@@ -421,7 +428,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         NetworkRegistry.INSTANCE.register(this, this.getClass(), "*", evt.getASMHarvestedData());
         ForgeNetworkHandler.registerChannel(this, evt.getSide());
-        ConfigManager.load(this.getModId(), Config.Type.INSTANCE);
+        ConfigManager.sync(this.getModId(), Config.Type.INSTANCE);
     }
 
     @Subscribe

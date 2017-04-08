@@ -1,18 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -122,6 +122,12 @@
+@@ -122,10 +122,16 @@
              }
          }
  
+-        if (this.field_78779_k.func_77145_d() && !this.field_78776_a.field_71439_g.func_184614_ca().func_190926_b() && this.field_78776_a.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemSword)
 +        ItemStack stack = field_78776_a.field_71439_g.func_184614_ca();
 +        if (!stack.func_190926_b() && stack.func_77973_b().onBlockStartBreak(stack, p_187103_1_, field_78776_a.field_71439_g))
+         {
+             return false;
+         }
++
++        if (this.field_78779_k.func_77145_d() && !stack.func_190926_b() && !stack.func_77973_b().canDestroyBlockInCreative(field_78776_a.field_71441_e, p_187103_1_, stack, field_78776_a.field_71439_g))
 +        {
 +            return false;
 +        }
-+
-         if (this.field_78779_k.func_77145_d() && !this.field_78776_a.field_71439_g.func_184614_ca().func_190926_b() && this.field_78776_a.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemSword)
+         else
          {
-             return false;
+             World world = this.field_78776_a.field_71441_e;
 @@ -143,19 +149,13 @@
              else
              {
@@ -107,7 +112,7 @@
 +            {
 +                // Give the server a chance to fire event as well. That way server event is not dependant on client event.
 +                this.field_78774_b.func_147297_a(new CPacketPlayerTryUseItemOnBlock(p_187099_3_, p_187099_4_, p_187099_6_, f, f1, f2));
-+                return EnumActionResult.PASS;
++                return event.getCancellationResult();
 +            }
 +            EnumActionResult result = EnumActionResult.PASS;
 +
@@ -160,15 +165,16 @@
                      }
                  }
              }
-@@ -457,6 +490,7 @@
+@@ -457,6 +490,8 @@
              }
              else
              {
-+                if (net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187101_1_, p_187101_3_)) return net.minecraft.util.EnumActionResult.PASS;
++                EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClickAction(p_187101_1_, p_187101_3_);
++                if (cancelResult != null) return cancelResult;
                  int i = itemstack.func_190916_E();
                  ActionResult<ItemStack> actionresult = itemstack.func_77957_a(p_187101_2_, p_187101_1_, p_187101_3_);
                  ItemStack itemstack1 = (ItemStack)actionresult.func_188398_b();
-@@ -464,6 +498,10 @@
+@@ -464,6 +499,10 @@
                  if (itemstack1 != itemstack || itemstack1.func_190916_E() != i)
                  {
                      p_187101_1_.func_184611_a(p_187101_3_, itemstack1);
@@ -179,11 +185,13 @@
                  }
  
                  return actionresult.func_188397_a();
-@@ -500,6 +538,7 @@
+@@ -500,6 +539,9 @@
          this.func_78750_j();
          Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
          this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_4_, vec3d));
-+        if(net.minecraftforge.common.ForgeHooks.onInteractEntityAt(p_187102_1_, p_187102_2_, p_187102_3_, p_187102_4_)) return EnumActionResult.PASS;
++        if (this.field_78779_k == GameType.SPECTATOR) return EnumActionResult.PASS; // don't fire for spectators to match non-specific EntityInteract
++        EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAtAction(p_187102_1_, p_187102_2_, p_187102_3_, p_187102_4_);
++        if(cancelResult != null) return cancelResult;
          return this.field_78779_k == GameType.SPECTATOR ? EnumActionResult.PASS : p_187102_2_.func_184199_a(p_187102_1_, vec3d, p_187102_4_);
      }
  

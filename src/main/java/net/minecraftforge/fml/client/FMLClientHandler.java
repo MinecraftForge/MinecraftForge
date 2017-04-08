@@ -333,6 +333,12 @@ public class FMLClientHandler implements IFMLSidedHandler
         client.displayCrashReport(new CrashReport(message, t));
         throw Throwables.propagate(t);
     }
+
+    public boolean hasError()
+    {
+        return modsMissing != null || wrongMC != null || customError != null || dupesFound != null || modSorting != null || j8onlymods != null || multipleModsErrored != null;
+    }
+
     /**
      * Called a bit later on during initialization to finish loading mods
      * Also initializes key bindings
@@ -340,7 +346,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void finishMinecraftLoading()
     {
-        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null || j8onlymods!=null || multipleModsErrored !=null)
+        if (hasError())
         {
             SplashProgress.finish();
             return;
@@ -371,6 +377,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             String className = mc.getGuiClassName();
             if (Strings.isNullOrEmpty(className))
             {
+                guiFactories.put(mc, DefaultGuiFactory.forMod(mc));
                 continue;
             }
             try

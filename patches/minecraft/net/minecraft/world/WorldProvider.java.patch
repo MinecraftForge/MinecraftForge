@@ -200,11 +200,11 @@
 +     *
 +     * @param entity The entity holding the map, playername, or frame-ENTITYID
 +     * @param x X Position
-+     * @param y Y Position
 +     * @param z Z Position
++     * @param rotation the regular rotation of the marker
 +     * @return True to 'spin' the cursor
 +     */
-+    public boolean shouldMapSpin(String entity, double x, double y, double z)
++    public boolean shouldMapSpin(String entity, double x, double z, double rotation)
 +    {
 +        return dimensionId < 0;
 +    }

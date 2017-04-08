@@ -66,7 +66,7 @@ public @interface Config
     }
 
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.FIELD)
+    @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface LangKey
     {
         String value();
@@ -101,4 +101,14 @@ public @interface Config
     {
         String value();
     }
+    
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.TYPE})
+    public @interface RequiresMcRestart
+    {}
+    
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.TYPE})
+    public @interface RequiresWorldRestart
+    {}
 }

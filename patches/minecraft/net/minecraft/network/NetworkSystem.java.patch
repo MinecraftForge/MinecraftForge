@@ -1,5 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkSystem.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkSystem.java
+@@ -50,21 +50,21 @@
+     {
+         protected NioEventLoopGroup func_179280_b()
+         {
+-            return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).build());
++            return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER).build());
+         }
+     };
+     public static final LazyLoadBase<EpollEventLoopGroup> field_181141_b = new LazyLoadBase<EpollEventLoopGroup>()
+     {
+         protected EpollEventLoopGroup func_179280_b()
+         {
+-            return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).build());
++            return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER).build());
+         }
+     };
+     public static final LazyLoadBase<LocalEventLoopGroup> field_180232_b = new LazyLoadBase<LocalEventLoopGroup>()
+     {
+         protected LocalEventLoopGroup func_179280_b()
+         {
+-            return new LocalEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Local Server IO #%d").setDaemon(true).build());
++            return new LocalEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Local Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.CLIENT).build());
+         }
+     };
+     private final MinecraftServer field_151273_d;
 @@ -111,7 +111,7 @@
                          ;
                      }
