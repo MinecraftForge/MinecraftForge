@@ -107,24 +107,27 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -307,8 +368,17 @@
+@@ -305,11 +366,20 @@
+             {
+                 NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
++                try
++                {
                  if (entity.func_70039_c(nbttagcompound2))
                  {
-+                    try
-+                    {
                      p_75820_1_.func_177409_g(true);
                      nbttaglist1.func_74742_a(nbttagcompound2);
-+                    }
-+                    catch (Exception e)
-+                    {
-+                        net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
-+                                "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
-+                                entity.getClass().getName());
-+                    }
                  }
++                }
++                catch (Exception e)
++                {
++                    net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
++                            "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
++                            entity.getClass().getName());
++                }
              }
          }
+ 
 @@ -318,8 +388,17 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
