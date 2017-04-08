@@ -41,7 +41,8 @@
 +    @Deprecated //Use Forge Variant below
      public int func_70946_n()
      {
-         return Math.max(((Integer)this.field_70180_af.func_187225_a(field_184752_bw)).intValue() % 6, 0);
+-        return Math.max(((Integer)this.field_70180_af.func_187225_a(field_184752_bw)).intValue() % 6, 0);
++        return Math.max(((Integer)this.field_70180_af.func_187225_a(field_184752_bw)).intValue(), 0);
      }
  
 +    private net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof;

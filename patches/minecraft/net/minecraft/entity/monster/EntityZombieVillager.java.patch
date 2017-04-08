@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombieVillager.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombieVillager.java
-@@ -48,8 +48,11 @@
+@@ -48,11 +48,14 @@
      public void func_190733_a(int p_190733_1_)
      {
          this.field_70180_af.func_187227_b(field_190739_c, Integer.valueOf(p_190733_1_));
@@ -11,7 +11,11 @@
 +    @Deprecated
      public int func_190736_dl()
      {
-         return Math.max(((Integer)this.field_70180_af.func_187225_a(field_190739_c)).intValue() % 6, 0);
+-        return Math.max(((Integer)this.field_70180_af.func_187225_a(field_190739_c)).intValue() % 6, 0);
++        return Math.max(((Integer)this.field_70180_af.func_187225_a(field_190739_c)).intValue(), 0);
+     }
+ 
+     public static void func_190737_b(DataFixer p_190737_0_)
 @@ -64,6 +67,7 @@
      {
          super.func_70014_b(p_70014_1_);
