@@ -57,7 +57,15 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -316,6 +335,7 @@
+@@ -284,6 +303,7 @@
+ 
+     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
+     {
++        if (this.field_70170_p.field_72995_K || this.field_70128_L) return false; //Forge: Fixes MC-53850
+         if (this.func_180431_b(p_70097_1_))
+         {
+             return false;
+@@ -316,6 +336,7 @@
          p_70014_1_.func_74777_a("Health", (short)this.field_70291_e);
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
          p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -65,7 +73,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -360,17 +380,22 @@
+@@ -360,17 +381,22 @@
          {
              this.func_70106_y();
          }
@@ -89,7 +97,7 @@
              {
                  if (item == Item.func_150898_a(Blocks.field_150364_r))
                  {
-@@ -407,6 +432,7 @@
+@@ -407,6 +433,7 @@
                      }
                  }
  
@@ -97,7 +105,7 @@
                  p_70100_1_.func_71001_a(this, i);
  
                  if (itemstack.func_190926_b())
-@@ -513,6 +539,6 @@
+@@ -513,6 +540,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();
