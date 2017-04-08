@@ -5,7 +5,7 @@
                      try
                      {
 -                        return (LootTable)LootTableManager.field_186526_b.fromJson(s, LootTable.class);
-+                        return net.minecraftforge.common.ForgeHooks.loadLootTable(LootTableManager.field_186526_b, p_186517_1_, s, true);
++                        return net.minecraftforge.common.ForgeHooks.loadLootTable(LootTableManager.field_186526_b, p_186517_1_, s, true, LootTableManager.this);
                      }
                      catch (JsonParseException jsonparseexception)
                      {
@@ -14,7 +14,7 @@
                  try
                  {
 -                    return (LootTable)LootTableManager.field_186526_b.fromJson(s, LootTable.class);
-+                    return net.minecraftforge.common.ForgeHooks.loadLootTable(LootTableManager.field_186526_b, p_186518_1_, s, false);
++                    return net.minecraftforge.common.ForgeHooks.loadLootTable(LootTableManager.field_186526_b, p_186518_1_, s, false, LootTableManager.this);
                  }
                  catch (JsonParseException jsonparseexception)
                  {

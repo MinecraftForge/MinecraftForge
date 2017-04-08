@@ -25,12 +25,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class ConfigTest
 {
     public static final String MODID = "config_test";
-    
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
       MinecraftForge.EVENT_BUS.register(this);
     }
-    
+
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
       System.out.println("Old: " + CONFIG_TYPES.bool);
@@ -39,7 +39,7 @@ public class ConfigTest
       ConfigManager.sync(MODID, Type.INSTANCE);
       System.out.println("After sync: " + CONFIG_TYPES.bool);
     }
-    
+
     @SubscribeEvent
     public void onConfigChangedEvent(OnConfigChangedEvent event) {
         if (event.getModID().equals(MODID))
@@ -134,7 +134,7 @@ public class ConfigTest
             }
         }
     }
-    
+
     @LangKey("config_test.config.maps")
     @Config(modid = MODID, name = MODID + "_map")
     public static class CONFIG_MAP
@@ -142,8 +142,8 @@ public class ConfigTest
         @Name("map")
         @RequiresMcRestart
         public static Map<String, Integer[]> theMap;
-        
-        static 
+
+        static
         {
             theMap = Maps.newHashMap();
             for (int i = 0; i < 7; i++)

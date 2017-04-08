@@ -25,6 +25,7 @@ import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -125,7 +126,7 @@ public class GuiConfig extends GuiScreen
                 toReturn.add(ConfigElement.from(clazz));
             }
         }
-        toReturn.sort(new Comparator<IConfigElement>(){
+        Collections.sort(toReturn, new Comparator<IConfigElement>(){
 
             @Override
             public int compare(IConfigElement e1, IConfigElement e2)
