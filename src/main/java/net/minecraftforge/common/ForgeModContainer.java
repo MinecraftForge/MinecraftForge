@@ -116,8 +116,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
-    public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     public static int dimensionUnloadQueueDelay = 300;
+    public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
