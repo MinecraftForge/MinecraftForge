@@ -29,15 +29,12 @@ import java.util.List;
 
 /**
  * This event is called when a player fishes an item.
- * You can change the items the player will get using {@link #getItemStacks()}
- * You can also change the damage the rod will take using {@link #setRodDamage(int)}
- * You can use {@link #getHookEntity()} to get stuff based on the entity, like {@link EntityFishHook#fishApproachAngle}
  *
  * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}
  */
 public class ItemFishedEvent extends PlayerEvent
 {
-    private final List<ItemStack> stacks = NonNullList.create();
+    private final NonNullList<ItemStack> stacks = NonNullList.create();
     private final EntityFishHook hook;
     private int rodDamage;
 
@@ -60,7 +57,7 @@ public class ItemFishedEvent extends PlayerEvent
 
     /**
      * Set the damage the fishing rod will take
-     * @param rodDamage The damage the rod will take. Must be greater or equals zero
+     * @param rodDamage The damage the rod will take. Must be positive
      */
     public void setRodDamage(@Nonnegative int rodDamage)
     {
@@ -69,9 +66,11 @@ public class ItemFishedEvent extends PlayerEvent
     }
 
     /**
-     * Use this to set the items the player will get
+     * Use this to get the items the player will receive.
+     * You cannot use this to modify the ItemStacks the player will get.
+     * If you want to affect the loot, you should use LootTables
      */
-    public List<ItemStack> getItemStacks()
+    public NonNullList<ItemStack> getItemStacks()
     {
         return stacks;
     }
