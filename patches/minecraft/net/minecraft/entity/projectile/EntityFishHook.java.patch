@@ -8,20 +8,25 @@
              if (this.field_146043_c != null)
              {
                  this.func_184527_k();
-@@ -516,8 +517,11 @@
+@@ -516,8 +517,16 @@
              {
                  LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.field_70170_p);
                  lootcontext$builder.func_186469_a((float)this.field_191518_aw + this.field_146042_b.func_184817_da());
 +                List<ItemStack> result = this.field_70170_p.func_184146_ak().func_186521_a(LootTableList.field_186387_al).func_186462_a(this.field_70146_Z, lootcontext$builder.func_186471_a());
 +                event = new net.minecraftforge.event.entity.player.ItemFishedEvent(result, this.field_146051_au ? 2 : 1, this);
 +                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++                if (event.isCanceled())
++                {
++                    this.func_70106_y();
++                    return event.getRodDamage();
++                }
  
 -                for (ItemStack itemstack : this.field_70170_p.func_184146_ak().func_186521_a(LootTableList.field_186387_al).func_186462_a(this.field_70146_Z, lootcontext$builder.func_186471_a()))
 +                for (ItemStack itemstack : result)
                  {
                      EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u, this.field_70161_v, itemstack);
                      double d0 = this.field_146042_b.field_70165_t - this.field_70165_t;
-@@ -547,7 +551,7 @@
+@@ -547,7 +556,7 @@
              }
  
              this.func_70106_y();
