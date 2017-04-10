@@ -173,7 +173,7 @@ public class AccessTransformer implements IClassTransformer
                 }
                 String className = parts.get(1).replace('/', '.');
                 modifiers.put(className, m);
-                if (DEBUG) System.out.printf("AT RULE: %s %s %s (type %s)\n", toBinary(m.targetAccess), m.name, m.desc, className);
+                if (DEBUG) FMLRelaunchLog.fine("AT RULE: %s %s %s (type %s)", toBinary(m.targetAccess), m.name, m.desc, className);
                 return true;
             }
         });
@@ -183,12 +183,12 @@ public class AccessTransformer implements IClassTransformer
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
         if (bytes == null) { return null; }
+        if (!modifiers.containsKey(transformedName)) { return bytes; }
 
         if (DEBUG)
         {
-            FMLRelaunchLog.fine("Considering all methods and fields on %s (%s)\n", transformedName, name);
+            FMLRelaunchLog.fine("Considering all methods and fields on %s (%s)", transformedName, name);
         }
-        if (!modifiers.containsKey(transformedName)) { return bytes; }
 
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
@@ -202,7 +202,7 @@ public class AccessTransformer implements IClassTransformer
                 classNode.access = getFixedAccess(classNode.access, m);
                 if (DEBUG)
                 {
-                    System.out.println(String.format("Class: %s %s -> %s", name, toBinary(m.oldAccess), toBinary(m.newAccess)));
+                    FMLRelaunchLog.fine("Class: %s %s -> %s", name, toBinary(m.oldAccess), toBinary(m.newAccess));
                 }
                 continue;
             }
@@ -215,7 +215,7 @@ public class AccessTransformer implements IClassTransformer
                         n.access = getFixedAccess(n.access, m);
                         if (DEBUG)
                         {
-                            System.out.println(String.format("Field: %s.%s %s -> %s", name, n.name, toBinary(m.oldAccess), toBinary(m.newAccess)));
+                            FMLRelaunchLog.fine("Field: %s.%s %s -> %s", name, n.name, toBinary(m.oldAccess), toBinary(m.newAccess));
                         }
 
                         if (!m.name.equals("*"))
@@ -251,7 +251,7 @@ public class AccessTransformer implements IClassTransformer
 
                         if (DEBUG)
                         {
-                            System.out.println(String.format("Method: %s.%s%s %s -> %s", name, n.name, n.desc, toBinary(m.oldAccess), toBinary(m.newAccess)));
+                            FMLRelaunchLog.fine("Method: %s.%s%s %s -> %s", name, n.name, n.desc, toBinary(m.oldAccess), toBinary(m.newAccess));
                         }
 
                         if (!m.name.equals("*"))
