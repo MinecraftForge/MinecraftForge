@@ -206,7 +206,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +934,1236 @@
+@@ -908,6 +934,1238 @@
      {
      }
  
@@ -217,10 +217,12 @@
 +    protected static java.util.Random RANDOM = new java.util.Random(); // Useful for random things without a seed.
 +
 +    /**
-+     * Gets the slipperiness at the given location at the given state. Normally between 0 and 1.
++     * Gets the slipperiness at the given location at the given state. Normally
++     * between 0 and 1.
 +     * <p>
-+     * Note that entities may reduce slipperiness by a certain factor of their own; for {@link net.minecraft.entity.EntityLivingBase},
-+     * this is {@code .91}. {@link net.minecraft.entity.item.EntityItem} uses {@code .98}, and
++     * Note that entities may reduce slipperiness by a certain factor of their own;
++     * for {@link net.minecraft.entity.EntityLivingBase}, this is {@code .91}.
++     * {@link net.minecraft.entity.item.EntityItem} uses {@code .98}, and
 +     * {@link net.minecraft.entity.projectile.EntityFishHook} uses {@code .92}.
 +     *
 +     * @param state state of the block
@@ -1443,7 +1445,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2457,7 @@
+@@ -1201,14 +2459,7 @@
              }
              else
              {
