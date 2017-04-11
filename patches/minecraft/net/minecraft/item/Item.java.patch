@@ -54,7 +54,7 @@
 -        Vec3d vec3d1 = vec3d.func_72441_c((double)f6 * 5.0D, (double)f5 * 5.0D, (double)f7 * 5.0D);
 +        if (p_77621_2_ instanceof net.minecraft.entity.player.EntityPlayerMP)
 +        {
-+            d3 = ((net.minecraft.entity.player.EntityPlayerMP)p_77621_2_).field_71134_c.getBlockReachDistance();
++            d3 = p_77621_2_.func_110148_a(net.minecraft.entity.player.EntityPlayerMP.BLOCK_REACH_DISTANCE).func_111126_e();
 +        }
 +        Vec3d vec3d1 = vec3d.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
