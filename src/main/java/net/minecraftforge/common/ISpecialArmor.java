@@ -151,7 +151,9 @@ public interface ISpecialArmor
                 else if (stack.getItem() instanceof ItemArmor && !source.isUnblockable())
                 {
                     ItemArmor armor = (ItemArmor)stack.getItem();
-                    prop = new ArmorProperties(0, 0, armor.damageReduceAmount, armor.toughness, Integer.MAX_VALUE);
+                    prop = new ArmorProperties(0, 0, Integer.MAX_VALUE);
+                    prop.Armor = armor.damageReduceAmount;
+                    prop.Toughness = armor.toughness;
                 }
                 if (prop != null)
                 {
@@ -370,7 +372,10 @@ public interface ISpecialArmor
 
         public ArmorProperties copy()
         {
-            return new ArmorProperties(Priority, AbsorbRatio, Armor, Toughness, AbsorbMax);
+            ArmorProperties copy = new ArmorProperties(Priority, AbsorbRatio, AbsorbMax);
+            copy.Armor = Armor;
+            copy.Toughness = Toughness;
+            return copy;
         }
     }
 }
