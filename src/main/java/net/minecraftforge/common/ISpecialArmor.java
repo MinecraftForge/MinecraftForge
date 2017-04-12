@@ -27,9 +27,12 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import net.minecraft.util.CombatRules;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -45,7 +48,6 @@ import javax.annotation.Nonnull;
  */
 public interface ISpecialArmor
 {
-    //TODO: Change 'int slot' to EnumArmorType
     /**
      * Retrieves the modifiers to be used when calculating armor damage.
      *
@@ -62,7 +64,7 @@ public interface ISpecialArmor
      * @param slot The armor slot the item is in.
      * @return A ArmorProperties instance holding information about how the armor effects damage.
      */
-    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, int slot);
+    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot slot);
 
     /**
      * Get the displayed effective armor.
@@ -72,7 +74,7 @@ public interface ISpecialArmor
      * @param slot The armor slot the item is in.
      * @return The number of armor points for display, 2 per shield.
      */
-    public abstract int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot);
+    public abstract int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, EntityEquipmentSlot slot);
 
     /**
      * Applies damage to the ItemStack. The mod is responsible for reducing the
@@ -86,21 +88,25 @@ public interface ISpecialArmor
      * @param damage The amount of damage being applied to the armor
      * @param slot The armor slot the item is in.
      */
-    public abstract void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot);
+    public abstract void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, EntityEquipmentSlot slot);
 
     public static class ArmorProperties implements Comparable<ArmorProperties>
     {
-        public int    Priority    = 0;
-        public int    AbsorbMax   = Integer.MAX_VALUE;
-        public double AbsorbRatio = 0;
-        public int    Slot        = 0;
+        public int    Priority          = 0;
+        public int    AbsorbMax         = Integer.MAX_VALUE;
+        public double AbsorbRatio       = 0;
+        public double Armor             = 0;        //Additional armor, separate from the armor added by vanilla attributes.
+        public double Toughness         = 0;        //Additional toughness, separate from the armor added by vanilla attributes.
+        public EntityEquipmentSlot Slot = EntityEquipmentSlot.CHEST;
         private static final boolean DEBUG = false; //Only enable this if you wish to be spammed with debugging information.
                                                     //Left it in because I figured it'd be useful for modders developing custom armor.
 
-        public ArmorProperties(int priority, double ratio, int max)
+        public ArmorProperties(int priority, double ratio, double armor, double toughness, int max)
         {
             Priority    = priority;
             AbsorbRatio = ratio;
+            Armor       = armor;
+            Toughness   = toughness;
             AbsorbMax   = max;
         }
 
@@ -117,31 +123,37 @@ public interface ISpecialArmor
         {
             if (DEBUG)
             {
-                System.out.println("Start: " + damage + " " + (damage * 25));
+                System.out.println("Start: " + damage);
             }
-            damage *= 25;
+            
+            double totalArmor = entity.getTotalArmorValue();
+            double totalToughness = entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
+
             ArrayList<ArmorProperties> dmgVals = new ArrayList<ArmorProperties>();
-            for (int x = 0; x < inventory.size(); x++)
+            for (EntityEquipmentSlot slot : EntityEquipmentSlot.values())
             {
-                ItemStack stack = inventory.get(x);
-                if (stack.isEmpty())
+                if (slot.getSlotType() != EntityEquipmentSlot.Type.ARMOR)
                 {
                     continue;
                 }
+                
+                ItemStack stack = inventory.get(slot.getIndex());
                 ArmorProperties prop = null;
                 if (stack.getItem() instanceof ISpecialArmor)
                 {
                     ISpecialArmor armor = (ISpecialArmor)stack.getItem();
-                    prop = armor.getProperties(entity, stack, source, damage / 25D, x).copy();
+                    prop = armor.getProperties(entity, stack, source, damage, slot).copy();
+                    totalArmor += prop.Armor;
+                    totalToughness += prop.Toughness;
                 }
                 else if (stack.getItem() instanceof ItemArmor && !source.isUnblockable())
                 {
                     ItemArmor armor = (ItemArmor)stack.getItem();
-                    prop = new ArmorProperties(0, armor.damageReduceAmount / 25D, Integer.MAX_VALUE);
+                    prop = new ArmorProperties(0, 0, armor.damageReduceAmount, armor.toughness, Integer.MAX_VALUE);
                 }
                 if (prop != null)
                 {
-                    prop.Slot = x;
+                    prop.Slot = slot;
                     dmgVals.add(prop);
                 }
             }
@@ -164,8 +176,8 @@ public interface ISpecialArmor
                     double absorb = damage * prop.AbsorbRatio;
                     if (absorb > 0)
                     {
-                        ItemStack stack = inventory.get(prop.Slot);
-                        int itemDamage = (int)(absorb / 25D < 1 ? 1 : absorb / 25D);
+                        ItemStack stack = inventory.get(prop.Slot.getIndex());
+                        int itemDamage = (int)Math.max(1, absorb);
                         if (stack.getItem() instanceof ISpecialArmor)
                         {
                             ((ISpecialArmor)stack.getItem()).damageArmor(entity, stack, source, itemDamage, prop.Slot);
@@ -174,7 +186,7 @@ public interface ISpecialArmor
                         {
                             if (DEBUG)
                             {
-                                System.out.println("Item: " + stack.toString() + " Absorbed: " + (absorb / 25D) + " Damaged: " + itemDamage);
+                                System.out.println("Item: " + stack.toString() + " Absorbed: " + absorb + " Damaged: " + itemDamage);
                             }
                             stack.damageItem(itemDamage, entity);
                         }
@@ -184,17 +196,37 @@ public interface ISpecialArmor
                             {
                                 stack.onItemDestroyedByUse((EntityPlayer)entity);
                             }*/
-                            inventory.set(prop.Slot, ItemStack.EMPTY);
+                            inventory.set(prop.Slot.getIndex(), ItemStack.EMPTY);
                         }
                     }
                 }
                 damage -= (damage * ratio);
+                
+                if (damage > 0)
+                {
+                    double armorDamage = Math.max(1.0F, damage / 4.0F);
+                    
+                    for (int i = 0; i < inventory.size(); i++)
+                    {
+                        if (inventory.get(i).getItem() instanceof ItemArmor)
+                        {
+                            inventory.get(i).damageItem((int)armorDamage, entity);
+                            
+                            if (inventory.get(i).getCount() == 0)
+                            {
+                                inventory.set(i, ItemStack.EMPTY);
+                            }
+                        }
+                    }
+                    
+                    damage = CombatRules.getDamageAfterAbsorb((float)damage, (float)totalArmor, (float)totalToughness);
+                }
             }
             if (DEBUG)
             {
-                System.out.println("Return: " + (int)(damage / 25.0F) + " " + damage);
+                System.out.println("Return: " + (int)(damage) + " " + damage);
             }
-            return (float)(damage / 25.0F);
+            return (float)(damage);
         }
 
         /**
@@ -336,7 +368,7 @@ public interface ISpecialArmor
 
         public ArmorProperties copy()
         {
-            return new ArmorProperties(Priority, AbsorbRatio, AbsorbMax);
+            return new ArmorProperties(Priority, AbsorbRatio, Armor, Toughness, AbsorbMax);
         }
     }
 }
