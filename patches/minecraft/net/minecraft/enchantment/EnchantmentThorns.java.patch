@@ -23,7 +23,6 @@
 +    private void damageArmor(ItemStack stack, int amount, EntityLivingBase entity)
 +    {
 +        EntityEquipmentSlot targetSlot = null;
-+        int x = 0;
 +        for (EntityEquipmentSlot slot : EntityEquipmentSlot.values())
 +        {
 +            if (slot.func_188453_a() == EntityEquipmentSlot.Type.ARMOR)
@@ -33,7 +32,6 @@
 +                    targetSlot = slot;
 +                    break;
 +                }
-+                x++;
 +            }
 +        }
 +        if (targetSlot == null || !(stack.func_77973_b() instanceof net.minecraftforge.common.ISpecialArmor))
