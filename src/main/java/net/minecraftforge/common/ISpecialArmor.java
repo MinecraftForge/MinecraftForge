@@ -64,7 +64,7 @@ public interface ISpecialArmor
      * @param slot The armor slot the item is in.
      * @return A ArmorProperties instance holding information about how the armor effects damage.
      */
-    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot slot);
+    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, int slot);
 
     /**
      * Get the displayed effective armor.
@@ -74,7 +74,7 @@ public interface ISpecialArmor
      * @param slot The armor slot the item is in.
      * @return The number of armor points for display, 2 per shield.
      */
-    public abstract int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, EntityEquipmentSlot slot);
+    public abstract int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot);
 
     /**
      * Applies damage to the ItemStack. The mod is responsible for reducing the
@@ -88,7 +88,7 @@ public interface ISpecialArmor
      * @param damage The amount of damage being applied to the armor
      * @param slot The armor slot the item is in.
      */
-    public abstract void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, EntityEquipmentSlot slot);
+    public abstract void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot);
 
     public static class ArmorProperties implements Comparable<ArmorProperties>
     {
@@ -97,7 +97,7 @@ public interface ISpecialArmor
         public double AbsorbRatio       = 0;
         public double Armor             = 0;        //Additional armor, separate from the armor added by vanilla attributes.
         public double Toughness         = 0;        //Additional toughness, separate from the armor added by vanilla attributes.
-        public EntityEquipmentSlot Slot = EntityEquipmentSlot.CHEST;
+        public int Slot                 = 0;
         private static final boolean DEBUG = false; //Only enable this if you wish to be spammed with debugging information.
                                                     //Left it in because I figured it'd be useful for modders developing custom armor.
 
@@ -135,14 +135,15 @@ public interface ISpecialArmor
             double totalToughness = entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
 
             ArrayList<ArmorProperties> dmgVals = new ArrayList<ArmorProperties>();
-            for (EntityEquipmentSlot slot : EntityEquipmentSlot.values())
+            for (int slot = 0; slot < inventory.size(); slot++)
             {
-                if (slot.getSlotType() != EntityEquipmentSlot.Type.ARMOR)
+                ItemStack stack = inventory.get(slot);
+                
+                if (stack.isEmpty())
                 {
                     continue;
                 }
                 
-                ItemStack stack = inventory.get(slot.getIndex());
                 ArmorProperties prop = null;
                 if (stack.getItem() instanceof ISpecialArmor)
                 {
@@ -181,7 +182,7 @@ public interface ISpecialArmor
                     double absorb = damage * prop.AbsorbRatio;
                     if (absorb > 0)
                     {
-                        ItemStack stack = inventory.get(prop.Slot.getIndex());
+                        ItemStack stack = inventory.get(prop.Slot);
                         int itemDamage = (int)Math.max(1, absorb);
                         if (stack.getItem() instanceof ISpecialArmor)
                         {
@@ -201,7 +202,7 @@ public interface ISpecialArmor
                             {
                                 stack.onItemDestroyedByUse((EntityPlayer)entity);
                             }*/
-                            inventory.set(prop.Slot.getIndex(), ItemStack.EMPTY);
+                            inventory.set(prop.Slot, ItemStack.EMPTY);
                         }
                     }
                 }

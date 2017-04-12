@@ -270,15 +270,12 @@ public class ForgeHooks
     public static int getTotalArmorValue(EntityPlayer player)
     {
         int ret = player.getTotalArmorValue();
-        for (EntityEquipmentSlot slot : EntityEquipmentSlot.values())
+        for (int x = 0; x < player.inventory.armorInventory.size(); x++)
         {
-            if (slot.getSlotType() == EntityEquipmentSlot.Type.ARMOR)
+            ItemStack stack = player.inventory.armorInventory.get(x);
+            if (stack.getItem() instanceof ISpecialArmor)
             {
-                ItemStack stack = player.getItemStackFromSlot(slot);
-                if (stack.getItem() instanceof ISpecialArmor)
-                {
-                    ret += ((ISpecialArmor)stack.getItem()).getArmorDisplay(player, stack, slot);
-                }
+                ret += ((ISpecialArmor)stack.getItem()).getArmorDisplay(player, stack, x);
             }
         }
         return ret;
