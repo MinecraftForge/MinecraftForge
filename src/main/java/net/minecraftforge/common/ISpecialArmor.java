@@ -101,17 +101,13 @@ public interface ISpecialArmor
         private static final boolean DEBUG = false; //Only enable this if you wish to be spammed with debugging information.
                                                     //Left it in because I figured it'd be useful for modders developing custom armor.
 
-        public ArmorProperties(int priority, double ratio, int max)
-        {
-            this(priority, ratio, 0, 0, max);
-        }
         
-        public ArmorProperties(int priority, double ratio, double armor, double toughness, int max)
+        public ArmorProperties(int priority, double ratio, int max)
         {
             Priority    = priority;
             AbsorbRatio = ratio;
-            Armor       = armor;
-            Toughness   = toughness;
+            Armor       = 0;
+            Toughness   = 0;
             AbsorbMax   = max;
         }
 
