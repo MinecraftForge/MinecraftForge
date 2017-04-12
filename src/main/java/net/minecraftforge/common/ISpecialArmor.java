@@ -201,26 +201,26 @@ public interface ISpecialArmor
                     }
                 }
                 damage -= (damage * ratio);
+            }
+            if (damage > 0 && (totalArmor > 0 || totalToughness > 0))
+            {
+                double armorDamage = Math.max(1.0F, damage / 4.0F);
                 
-                if (damage > 0)
+                for (int i = 0; i < inventory.size(); i++)
                 {
-                    double armorDamage = Math.max(1.0F, damage / 4.0F);
-                    
-                    for (int i = 0; i < inventory.size(); i++)
+                    if (inventory.get(i).getItem() instanceof ItemArmor)
                     {
-                        if (inventory.get(i).getItem() instanceof ItemArmor)
+                        inventory.get(i).damageItem((int)armorDamage, entity);
+                        
+                        if (inventory.get(i).getCount() == 0)
                         {
-                            inventory.get(i).damageItem((int)armorDamage, entity);
-                            
-                            if (inventory.get(i).getCount() == 0)
-                            {
-                                inventory.set(i, ItemStack.EMPTY);
-                            }
+                            inventory.set(i, ItemStack.EMPTY);
                         }
                     }
-                    
-                    damage = CombatRules.getDamageAfterAbsorb((float)damage, (float)totalArmor, (float)totalToughness);
                 }
+                System.out.println(damage);
+                damage = CombatRules.getDamageAfterAbsorb((float)damage, (float)totalArmor, (float)totalToughness);
+                System.out.println(damage);
             }
             if (DEBUG)
             {
