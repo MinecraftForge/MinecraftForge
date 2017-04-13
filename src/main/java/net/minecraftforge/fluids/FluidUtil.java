@@ -43,6 +43,7 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.BlockLiquidWrapper;
 import net.minecraftforge.fluids.capability.wrappers.BlockWrapper;
 import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -79,18 +80,20 @@ public class FluidUtil
             IFluidHandler blockFluidHandler = getFluidHandler(world, pos, side);
             if (blockFluidHandler != null)
             {
-                IItemHandler playerInventory = new InvWrapper(player.inventory);
-
-                FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, blockFluidHandler, playerInventory, Integer.MAX_VALUE, player);
-                if (!fluidActionResult.isSuccess())
+                IItemHandler playerInventory = player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                if (playerInventory != null)
                 {
-                    fluidActionResult = tryEmptyContainerAndStow(heldItem, blockFluidHandler, playerInventory, Integer.MAX_VALUE, player);
-                }
+                    FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, blockFluidHandler, playerInventory, Integer.MAX_VALUE, player);
+                    if (!fluidActionResult.isSuccess())
+                    {
+                        fluidActionResult = tryEmptyContainerAndStow(heldItem, blockFluidHandler, playerInventory, Integer.MAX_VALUE, player);
+                    }
 
-                if (fluidActionResult.isSuccess())
-                {
-                    player.setHeldItem(hand, fluidActionResult.getResult());
-                    return true;
+                    if (fluidActionResult.isSuccess())
+                    {
+                        player.setHeldItem(hand, fluidActionResult.getResult());
+                        return true;
+                    }
                 }
             }
         }
