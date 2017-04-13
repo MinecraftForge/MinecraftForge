@@ -866,7 +866,7 @@ public class ForgeHooks
 
     public static float onAnvilRepair(EntityPlayer player, ItemStack output, ItemStack left, ItemStack right)
     {
-        AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
+        AnvilRepairEvent e = new AnvilRepairEvent(player, output, left, right);
         MinecraftForge.EVENT_BUS.post(e);
         return e.getBreakChance();
     }
