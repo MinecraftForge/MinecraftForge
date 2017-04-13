@@ -20,6 +20,8 @@
 package net.minecraftforge.fluids.capability.wrappers;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
@@ -54,6 +56,17 @@ public class BlockWrapper extends VoidFluidHandler
         }
         if (doFill)
         {
+            if (!world.isRemote)
+            {
+                IBlockState destBlockState = world.getBlockState(blockPos);
+                Material destMaterial = destBlockState.getMaterial();
+                boolean isDestNonSolid = !destMaterial.isSolid();
+                boolean isDestReplaceable = destBlockState.getBlock().isReplaceable(world, blockPos);
+                if ((isDestNonSolid || isDestReplaceable) && !destMaterial.isLiquid())
+                {
+                    world.destroyBlock(blockPos, true);
+                }
+            }
             world.setBlockState(blockPos, block.getDefaultState(), 11);
         }
         return Fluid.BUCKET_VOLUME;
