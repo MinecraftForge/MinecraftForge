@@ -206,7 +206,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +934,1238 @@
+@@ -908,6 +934,1253 @@
      {
      }
  
@@ -234,6 +234,21 @@
 +    public float getSlipperiness(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable Entity entity)
 +    {
 +        return field_149765_K;
++    }
++
++    /**
++     * Sets the base slipperiness level. Normally between 0 and 1.
++     * <p>
++     * <b>Calling this method may have no effect on the function of this block</b>,
++     * or may not have the expected result. This block is free to caclculate
++     * its slipperiness arbitrarily. This method is guaranteed to work on the
++     * base {@code Block} class.
++     *
++     * @param slipperiness the base slipperiness of this block
++     * @see #getSlipperiness(IBlockState, IBlockAccess, BlockPos, Entity)
++     */
++    public void setDefaultSlipperiness(float slipperiness) {
++        this.field_149765_K = slipperiness;
 +    }
 +
 +    /**
@@ -1445,7 +1460,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2459,7 @@
+@@ -1201,14 +2474,7 @@
              }
              else
              {
