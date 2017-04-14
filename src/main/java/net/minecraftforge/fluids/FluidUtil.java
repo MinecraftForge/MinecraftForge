@@ -657,4 +657,28 @@ public class FluidUtil
             return new BlockWrapper(block, world, pos);
         }
     }
+
+    /**
+     * Destroys a block when a fluid is placed in the same position.
+     * Modeled after {@link ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}
+     *
+     * This is a helper method for implementing {@link IFluidBlock#place(World, BlockPos, FluidStack, boolean)}.
+     *
+     * @param world the world that the fluid will be placed in
+     * @param pos   the location that the fluid will be placed
+     */
+    public static void destroyBlockOnFluidPlacement(World world, BlockPos pos)
+    {
+        if (!world.isRemote)
+        {
+            IBlockState destBlockState = world.getBlockState(pos);
+            Material destMaterial = destBlockState.getMaterial();
+            boolean isDestNonSolid = !destMaterial.isSolid();
+            boolean isDestReplaceable = destBlockState.getBlock().isReplaceable(world, pos);
+            if ((isDestNonSolid || isDestReplaceable) && !destMaterial.isLiquid())
+            {
+                world.destroyBlock(pos, true);
+            }
+        }
+    }
 }

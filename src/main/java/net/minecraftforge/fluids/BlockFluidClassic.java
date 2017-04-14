@@ -368,17 +368,7 @@ public class BlockFluidClassic extends BlockFluidBase
         }
         if (doPlace)
         {
-            if (!world.isRemote)
-            {
-                IBlockState destBlockState = world.getBlockState(pos);
-                Material destMaterial = destBlockState.getMaterial();
-                boolean isDestNonSolid = !destMaterial.isSolid();
-                boolean isDestReplaceable = destBlockState.getBlock().isReplaceable(world, pos);
-                if ((isDestNonSolid || isDestReplaceable) && !destMaterial.isLiquid())
-                {
-                    world.destroyBlock(pos, true);
-                }
-            }
+            FluidUtil.destroyBlockOnFluidPlacement(world, pos);
             world.setBlockState(pos, this.getDefaultState(), 11);
         }
         return Fluid.BUCKET_VOLUME;
