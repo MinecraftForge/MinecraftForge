@@ -24,13 +24,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import io.netty.buffer.ByteBuf;
+import com.google.common.collect.BiMap;
 import net.minecraft.util.ResourceLocation;
 
-import com.google.common.collect.BiMap;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Main interface for the registry system. Use this to query the registry system.
