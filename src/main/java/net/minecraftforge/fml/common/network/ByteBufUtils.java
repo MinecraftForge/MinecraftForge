@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import io.netty.buffer.ByteBuf;
@@ -236,7 +237,7 @@ public class ByteBufUtils {
      * @param out the buffer to write to
      * @param entry the registry entry
      */
-    public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntry(ByteBuf out, T entry)
+    public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntry(@Nonnull ByteBuf out, @Nonnull T entry)
     {
         FMLControlledNamespacedRegistry<T> registry = (FMLControlledNamespacedRegistry<T>)GameRegistry.findRegistry(entry.getRegistryType());
         writeUTF8String(out, registry.getRegistryName().toString());
@@ -249,7 +250,8 @@ public class ByteBufUtils {
      * @param registry the registry the entry belongs to
      * @return the read registry entry
      */
-    public static <T extends IForgeRegistryEntry<T>> T readRegistryEntry(ByteBuf in, IForgeRegistry<T> registry)
+    @Nonnull
+    public static <T extends IForgeRegistryEntry<T>> T readRegistryEntry(@Nonnull ByteBuf in, @Nonnull IForgeRegistry<T> registry)
     {
         String registryName = readUTF8String(in);
         int id = readVarInt(in, 5);
@@ -257,7 +259,12 @@ public class ByteBufUtils {
         {
             throw new IllegalArgumentException("Registry mismatch: " + registryName + " != " + registry.getRegistryName());
         }
-        return ((FMLControlledNamespacedRegistry<T>)registry).getObjectById(id);
+        T thing = ((FMLControlledNamespacedRegistry<T>)registry).getRaw(id);
+        if (thing == null)
+        {
+            throw new IllegalArgumentException("Unknown ID " + id + " for registry " + registry.getRegistryName() + " received.");
+        }
+        return thing;
     }
 
     /**
@@ -266,7 +273,7 @@ public class ByteBufUtils {
      * @param out the buffer to write to
      * @param entries the entries to write
      */
-    public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntries(ByteBuf out, Collection<T> entries)
+    public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntries(@Nonnull ByteBuf out, @Nonnull Collection<T> entries)
     {
         writeVarInt(out, entries.size(), 5);
         Iterator<T> it = entries.iterator();
@@ -298,7 +305,8 @@ public class ByteBufUtils {
      * @param registry the registry the entries belong to
      * @return the immutable list of entries
      */
-    public static <T extends IForgeRegistryEntry<T>> List<T> readRegistryEntries(ByteBuf in, IForgeRegistry<T> registry)
+    @Nonnull
+    public static <T extends IForgeRegistryEntry<T>> List<T> readRegistryEntries(@Nonnull ByteBuf in, @Nonnull IForgeRegistry<T> registry)
     {
         int size = readVarInt(in, 5);
         if (size == 0)
