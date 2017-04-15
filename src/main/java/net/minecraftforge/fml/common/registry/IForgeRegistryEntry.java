@@ -66,7 +66,7 @@ public interface IForgeRegistryEntry<V>
     @SuppressWarnings({ "serial", "unchecked" })
     public static class Impl<T  extends IForgeRegistryEntry<T>> implements IForgeRegistryEntry<T>
     {
-        private TypeToken<T>  token = new TypeToken<T>(getClass()){};
+        private TypeToken<T> token = new TypeToken<T>(getClass()){};
         public final RegistryDelegate<T> delegate = PersistentRegistryManager.makeDelegate((T)this, (Class<T>)token.getRawType());
         private ResourceLocation registryName = null;
 
