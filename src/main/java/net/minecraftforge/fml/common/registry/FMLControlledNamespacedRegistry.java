@@ -37,7 +37,6 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import net.minecraftforge.event.RegistryEvent;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
