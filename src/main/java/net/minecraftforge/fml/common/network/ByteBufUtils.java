@@ -20,17 +20,28 @@
 package net.minecraftforge.fml.common.network;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.IForgeRegistry;
+import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
+
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
-
-import io.netty.buffer.ByteBuf;
-
-import javax.annotation.Nullable;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Utilities for interacting with {@link ByteBuf}.
@@ -216,6 +227,104 @@ public class ByteBufUtils {
         {
             // Unpossible?
             throw Throwables.propagate(e);
+        }
+    }
+
+    /**
+     * Write a registry entry to the stream. The serialized format is not specified and must not be relied upon.
+     * Do not use this to write to a file, it is used for client-server communication only.
+     * @param out the buffer to write to
+     * @param entry the registry entry
+     */
+    public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntry(ByteBuf out, T entry)
+    {
+        FMLControlledNamespacedRegistry<T> registry = (FMLControlledNamespacedRegistry<T>)GameRegistry.findRegistry(entry.getRegistryType());
+        writeUTF8String(out, registry.getRegistryName().toString());
+        writeVarInt(out, registry.getId(entry), 5);
+    }
+
+    /**
+     * Read a registry entry from the stream. The same format as in {@link #writeRegistryEntry(ByteBuf, IForgeRegistryEntry)} is used.
+     * @param in the buffer to read from
+     * @param registry the registry the entry belongs to
+     * @return the read registry entry
+     */
+    public static <T extends IForgeRegistryEntry<T>> T readRegistryEntry(ByteBuf in, IForgeRegistry<T> registry)
+    {
+        String registryName = readUTF8String(in);
+        int id = readVarInt(in, 5);
+        if (!registry.getRegistryName().toString().equals(registryName))
+        {
+            throw new IllegalArgumentException("Registry mismatch: " + registryName + " != " + registry.getRegistryName());
+        }
+        return ((FMLControlledNamespacedRegistry<T>)registry).getObjectById(id);
+    }
+
+    /**
+     * Write multiple registry entries from the same registry to the stream. The serialized format may be more compact than using
+     * {@link #writeRegistryEntry(ByteBuf, IForgeRegistryEntry)} multiple times.
+     * @param out the buffer to write to
+     * @param entries the entries to write
+     */
+    public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntries(ByteBuf out, Collection<T> entries)
+    {
+        writeVarInt(out, entries.size(), 5);
+        Iterator<T> it = entries.iterator();
+        if (it.hasNext())
+        {
+            T entry = it.next();
+            FMLControlledNamespacedRegistry<T> registry = (FMLControlledNamespacedRegistry<T>)GameRegistry.findRegistry(entry.getRegistryType());
+            writeUTF8String(out, registry.getRegistryName().toString());
+            do
+            {
+                writeVarInt(out, registry.getId(entry), 5);
+                if (it.hasNext())
+                {
+                    entry = it.next();
+                }
+                else
+                {
+                    break;
+                }
+            }
+            while (true);
+        }
+    }
+
+    /**
+     * Read multiple registry entries from the same registries from the stream. The list of entries must have been written by
+     * {@link #writeRegistryEntries(ByteBuf, Collection)}.
+     * @param in the buffer to read from
+     * @param registry the registry the entries belong to
+     * @return the immutable list of entries
+     */
+    public static <T extends IForgeRegistryEntry<T>> List<T> readRegistryEntries(ByteBuf in, IForgeRegistry<T> registry)
+    {
+        int size = readVarInt(in, 5);
+        if (size == 0)
+        {
+            return ImmutableList.of();
+        }
+        else
+        {
+            String registryName = readUTF8String(in);
+            if (!registry.getRegistryName().toString().equals(registryName))
+            {
+                throw new IllegalArgumentException("Registry mismatch: " + registryName + " != " + registry.getRegistryName());
+            }
+
+            ImmutableList.Builder<T> b = ImmutableList.builder();
+            for (int i = 0; i < size; i++)
+            {
+                int id = readVarInt(in, 5);
+                T thing = ((FMLControlledNamespacedRegistry<T>)registry).getRaw(id);
+                if (thing == null)
+                {
+                    throw new IllegalArgumentException("Unknown ID " + id + " for registry " + registry.getRegistryName() + " received.");
+                }
+                b.add(thing);
+            }
+            return b.build();
         }
     }
 

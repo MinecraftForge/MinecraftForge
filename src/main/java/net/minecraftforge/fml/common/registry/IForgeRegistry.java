@@ -24,13 +24,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.common.collect.BiMap;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.BiMap;
 
 /**
  * Main interface for the registry system. Use this to query the registry system.
@@ -41,6 +41,8 @@ import javax.annotation.Nullable;
 public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
 {
     public Class<V> getRegistrySuperType();
+
+    ResourceLocation getRegistryName();
 
     void register(V value);
 
@@ -65,22 +67,6 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * @return The slavemap if present
      */
     <T> T getSlaveMap(ResourceLocation slaveMapName, Class<T> type);
-
-    /**
-     * Write a registry entry to the stream. The serialized format is not specified and must not be relied upon.
-     * Do not use this to write to a file, it is used for client-server communication only.
-     * @param out the buffer to write to
-     * @param entry the registry entry
-     */
-    void writeEntry(@Nonnull ByteBuf out, @Nonnull V entry);
-
-    /**
-     * Read a registry entry from the stream. The same format as in {@link #writeEntry(ByteBuf, IForgeRegistryEntry)} is used.
-     * @param in the buffer to read from
-     * @return the read registry entry
-     */
-    @Nullable
-    V readEntry(@Nonnull ByteBuf in);
 
     /**
      * Callback fired when objects are added to the registry. This will fire when the registry is rebuilt

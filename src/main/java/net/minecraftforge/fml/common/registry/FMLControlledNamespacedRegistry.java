@@ -58,6 +58,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 {
     public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugRegistryEntries", "false"));
     private final Class<I> superType;
+    private final ResourceLocation registryName;
     private final boolean isDelegated;
     @Nullable
     private ResourceLocation optionalDefaultKey;
@@ -101,10 +102,11 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     @Nullable
     private final SubstitutionCallback<I> substitutionCallback;
 
-    FMLControlledNamespacedRegistry(@Nullable ResourceLocation defaultKey, int minIdValue, int maxIdValue, Class<I> type, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries, @Nullable AddCallback<I> addCallback, @Nullable ClearCallback<I> clearCallback, @Nullable CreateCallback<I> createCallback, @Nullable SubstitutionCallback<I> substitutionCallback)
+    FMLControlledNamespacedRegistry(@Nullable ResourceLocation defaultKey, int minIdValue, int maxIdValue, Class<I> type, ResourceLocation registryName, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries, @Nullable AddCallback<I> addCallback, @Nullable ClearCallback<I> clearCallback, @Nullable CreateCallback<I> createCallback, @Nullable SubstitutionCallback<I> substitutionCallback)
     {
         super(defaultKey);
         this.superType = type;
+        this.registryName = registryName;
         this.optionalDefaultKey = defaultKey;
         this.minId = minIdValue;
         this.maxId = maxIdValue;
@@ -687,7 +689,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 
     FMLControlledNamespacedRegistry<I> makeShallowCopy(BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
     {
-        return new FMLControlledNamespacedRegistry<I>(optionalDefaultKey, minId, maxId, superType, registries, addCallback, clearCallback, createCallback, substitutionCallback);
+        return new FMLControlledNamespacedRegistry<I>(optionalDefaultKey, minId, maxId, superType, registryName, registries, addCallback, clearCallback, createCallback, substitutionCallback);
     }
 
     void resetSubstitutionDelegates()
@@ -822,6 +824,11 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         return superType;
     }
 
+    @Override
+    public ResourceLocation getRegistryName()
+    {
+        return registryName;
+    }
 
     // IForgeRegistry: Modders should only interfaces with these methods
 
@@ -936,18 +943,5 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     RegistryEvent.Register<I> buildRegistryRegisterEvent(ResourceLocation location)
     {
         return new RegistryEvent.Register<I>(location, this);
-    }
-
-    @Override
-    public void writeEntry(@Nonnull ByteBuf out, @Nonnull I entry)
-    {
-        ByteBufUtils.writeVarInt(out, getId(entry), 5);
-    }
-
-    @Override
-    @Nullable
-    public I readEntry(@Nonnull ByteBuf in)
-    {
-        return getObjectById(ByteBufUtils.readVarInt(in, 5));
     }
 }

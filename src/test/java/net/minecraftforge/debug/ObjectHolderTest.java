@@ -93,7 +93,7 @@ class CustomRegistryEntry implements ICustomRegistryEntry
     }
 
     @Override
-    public Class<? super ICustomRegistryEntry> getRegistryType()
+    public Class<ICustomRegistryEntry> getRegistryType()
     {
         return ICustomRegistryEntry.class;
     }
