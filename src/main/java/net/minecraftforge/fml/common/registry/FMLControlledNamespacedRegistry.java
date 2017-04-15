@@ -38,7 +38,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraftforge.event.RegistryEvent;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
@@ -47,7 +46,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.functions.GenericIterableFactory;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
