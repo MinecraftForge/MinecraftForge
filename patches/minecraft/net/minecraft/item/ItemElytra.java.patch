@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemElytra.java
++++ ../src-work/minecraft/net/minecraft/item/ItemElytra.java
+@@ -28,13 +28,13 @@
+             @SideOnly(Side.CLIENT)
+             public float func_185085_a(ItemStack p_185085_1_, @Nullable World p_185085_2_, @Nullable EntityLivingBase p_185085_3_)
+             {
+-                return ItemElytra.func_185069_d(p_185085_1_) ? 0.0F : 1.0F;
++                return ((net.minecraft.item.ItemElytra) p_185085_1_.func_77973_b()).func_185069_d(p_185085_1_) ? 0.0F : 1.0F;
+             }
+         });
+         BlockDispenser.field_149943_a.func_82595_a(this, ItemArmor.field_96605_cw);
+     }
+ 
+-    public static boolean func_185069_d(ItemStack p_185069_0_)
++    public boolean func_185069_d(ItemStack p_185069_0_)
+     {
+         return p_185069_0_.func_77952_i() < p_185069_0_.func_77958_k() - 1;
+     }

@@ -239,6 +239,15 @@
  
                      if (!itemstack.func_190926_b())
                      {
+@@ -2272,7 +2304,7 @@
+         {
+             ItemStack itemstack = this.func_184582_a(EntityEquipmentSlot.CHEST);
+ 
+-            if (itemstack.func_77973_b() == Items.field_185160_cR && ItemElytra.func_185069_d(itemstack))
++            if (itemstack.func_77973_b() instanceof ItemElytra && ((ItemElytra) itemstack.func_77973_b()).func_185069_d(itemstack))
+             {
+                 flag = true;
+ 
 @@ -2488,6 +2520,40 @@
          this.field_70752_e = true;
      }
