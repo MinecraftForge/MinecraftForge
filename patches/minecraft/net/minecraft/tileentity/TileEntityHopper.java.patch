@@ -1,14 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -124,7 +124,7 @@
-         }
-     }
- 
--    private boolean func_145887_i()
-+    protected boolean func_145887_i()
-     {
-         if (this.field_145850_b != null && !this.field_145850_b.field_72995_K)
-         {
 @@ -191,6 +191,7 @@
  
      private boolean func_145883_k()
