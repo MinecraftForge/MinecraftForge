@@ -15,7 +15,7 @@
      }
 +
 +    // FORGE
-+    public boolean isElytraBroken(ItemStack stack)
++    public boolean isElytraUsable(ItemStack stack)
 +    {
 +        return stack.func_77952_i() < stack.func_77958_k() - 1;
 +    }
