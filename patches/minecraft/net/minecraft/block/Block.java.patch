@@ -238,7 +238,7 @@
 +     * Called by WorldServer during an immediate block update in order to check
 +     * whether or not new updates should occur on the same tick.
 +     *
-+     * @param world The current worldrequiresImmediateUpdates
++     * @param world The current world
 +     * @param pos Block position in world
 +     * @param state The current block state
 +     * @return Whether or not this block requires immediate updates
