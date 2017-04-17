@@ -151,7 +151,7 @@
          {
 -            if (p_175654_2_.func_149698_L())
 +            IBlockState iblockstate = this.func_180495_p(p_175654_1_);
-+            if (p_175654_2_.requiresUpdates(this, p_175654_1_, iblockstate))
++            if (p_175654_2_.requiresImmediateUpdates(this, p_175654_1_, iblockstate))
              {
 -                if (this.func_175707_a(p_175654_1_.func_177982_a(-8, -8, -8), p_175654_1_.func_177982_a(8, 8, 8)))
 +                //Keeping here as a note for future when it may be restored.

@@ -243,7 +243,7 @@
 +     * @param state The current block state
 +     * @return Whether or not this block requires immediate updates
 +     */
-+    public boolean requiresUpdates(World world, BlockPos pos, IBlockState state)
++    public boolean requiresImmediateUpdates(World world, BlockPos pos, IBlockState state)
 +    {
 +        return func_149698_L();
 +    }
