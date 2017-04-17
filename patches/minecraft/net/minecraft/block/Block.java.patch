@@ -200,7 +200,7 @@
      {
      }
  
-+    @Deprecated // Forge: Use state sensitive version below
++    @Deprecated // Forge: Use state sensitive requiresImmediateUpdates below
      public boolean func_149698_L()
      {
          return true;
@@ -238,7 +238,7 @@
 +     * Called by WorldServer during an immediate block update in order to check
 +     * whether or not new updates should occur on the same tick.
 +     *
-+     * @param world The current world
++     * @param world The current worldrequiresImmediateUpdates
 +     * @param pos Block position in world
 +     * @param state The current block state
 +     * @return Whether or not this block requires immediate updates
