@@ -19,7 +19,6 @@
 
 package net.minecraftforge.common.util;
 
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 
 import com.google.common.base.Objects;
@@ -41,19 +40,19 @@ import javax.annotation.Nullable;
  * Unlike Block, which only one object can exist per coordinate, BlockSnapshot
  * can exist multiple times for any given Block.
  */
-public class BlockSnapshot implements Serializable
+public class BlockSnapshot
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockSnapshot", "false"));
 
     private final BlockPos pos;
     private final int dimId;
     @Nullable
-    private transient IBlockState replacedBlock;
+    private IBlockState replacedBlock;
     private int flag;
     @Nullable
     private final NBTTagCompound nbt;
     @Nullable
-    private transient WeakReference<World> world;
+    private WeakReference<World> world;
     private final ResourceLocation registryName;
     private final int meta;
 
