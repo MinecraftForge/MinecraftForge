@@ -18,7 +18,7 @@
 +            {
 +                field_146292_n.add(new GuiButton(101, field_147003_i,              field_147009_r - 50, 20, 20, "<"));
 +                field_146292_n.add(new GuiButton(102, field_147003_i + field_146999_f - 20, field_147009_r - 50, 20, 20, ">"));
-+                maxPages = ((tabCount - 12) / 10) + 1;
++                maxPages = (int) Math.ceil((tabCount - 12) / 10D);
 +            }
          }
          else
