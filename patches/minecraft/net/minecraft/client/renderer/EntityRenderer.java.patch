@@ -78,7 +78,18 @@
              if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && !this.field_78531_r.field_71442_b.func_78747_a())
              {
                  this.func_180436_i();
-@@ -1109,7 +1108,7 @@
+@@ -1101,6 +1100,10 @@
+                 GlStateManager.func_179096_D();
+                 this.func_78478_c();
+                 this.field_78510_Z = System.nanoTime();
++                // Forge: Fix MC-112292
++                net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher.field_147556_a.field_147553_e = this.field_78531_r.func_110434_K();
++                // Forge: also fix rendering text before entering world (not part of MC-112292, but the same reason)
++                net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher.field_147556_a.field_147557_n = this.field_78531_r.field_71466_p;
+             }
+ 
+             if (this.field_78531_r.field_71462_r != null)
+@@ -1109,7 +1112,7 @@
  
                  try
                  {
@@ -87,7 +98,7 @@
                  }
                  catch (Throwable throwable)
                  {
-@@ -1204,7 +1203,7 @@
+@@ -1204,7 +1207,7 @@
  
                      if (this.field_78531_r.field_71442_b.func_178889_l() == GameType.SPECTATOR)
                      {
@@ -96,7 +107,7 @@
                      }
                      else
                      {
-@@ -1329,7 +1328,9 @@
+@@ -1329,7 +1332,9 @@
              GlStateManager.func_179094_E();
              RenderHelper.func_74519_b();
              this.field_78531_r.field_71424_I.func_76318_c("entities");
@@ -106,7 +117,7 @@
              RenderHelper.func_74518_a();
              this.func_175072_h();
          }
-@@ -1342,6 +1343,7 @@
+@@ -1342,6 +1347,7 @@
              EntityPlayer entityplayer = (EntityPlayer)entity;
              GlStateManager.func_179118_c();
              this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -114,7 +125,7 @@
              renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_175068_2_);
              GlStateManager.func_179141_d();
          }
-@@ -1388,6 +1390,17 @@
+@@ -1388,6 +1394,17 @@
          GlStateManager.func_179103_j(7425);
          this.field_78531_r.field_71424_I.func_76318_c("translucent");
          renderglobal.func_174977_a(BlockRenderLayer.TRANSLUCENT, (double)p_175068_2_, p_175068_1_, entity);
@@ -132,7 +143,7 @@
          GlStateManager.func_179103_j(7424);
          GlStateManager.func_179132_a(true);
          GlStateManager.func_179089_o();
-@@ -1400,6 +1413,9 @@
+@@ -1400,6 +1417,9 @@
              this.func_180437_a(renderglobal, p_175068_2_, p_175068_1_, d0, d1, d2);
          }
  
@@ -142,7 +153,7 @@
          this.field_78531_r.field_71424_I.func_76318_c("hand");
  
          if (this.field_175074_C)
-@@ -1515,6 +1531,13 @@
+@@ -1515,6 +1535,13 @@
  
      protected void func_78474_d(float p_78474_1_)
      {
@@ -156,7 +167,7 @@
          float f = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f > 0.0F)
-@@ -1845,6 +1868,13 @@
+@@ -1845,6 +1872,13 @@
              this.field_175081_S = f7;
          }
  
@@ -170,7 +181,7 @@
          GlStateManager.func_179082_a(this.field_175080_Q, this.field_175082_R, this.field_175081_S, 0.0F);
      }
  
-@@ -1855,7 +1885,9 @@
+@@ -1855,7 +1889,9 @@
          GlStateManager.func_187432_a(0.0F, -1.0F, 0.0F);
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          IBlockState iblockstate = ActiveRenderInfo.func_186703_a(this.field_78531_r.field_71441_e, entity, p_78468_2_);
@@ -181,7 +192,7 @@
          if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q))
          {
              float f1 = 5.0F;
-@@ -1940,6 +1972,7 @@
+@@ -1940,6 +1976,7 @@
                  GlStateManager.func_179102_b(f * 0.05F);
                  GlStateManager.func_179153_c(Math.min(f, 192.0F) * 0.5F);
              }

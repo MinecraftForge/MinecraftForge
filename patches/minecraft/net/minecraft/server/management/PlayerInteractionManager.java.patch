@@ -199,18 +199,19 @@
                  return flag1;
              }
          }
-@@ -330,8 +352,10 @@
+@@ -330,8 +352,11 @@
          }
          else
          {
-+            if (net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187250_1_, p_187250_4_)) return net.minecraft.util.EnumActionResult.PASS;
++            EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClickAction(p_187250_1_, p_187250_4_);
++            if (cancelResult != null) return cancelResult;
              int i = p_187250_3_.func_190916_E();
              int j = p_187250_3_.func_77960_j();
 +            ItemStack copyBeforeUse = p_187250_3_.func_77946_l();
              ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
              ItemStack itemstack = (ItemStack)actionresult.func_188398_b();
  
-@@ -360,6 +384,7 @@
+@@ -360,6 +385,7 @@
                  if (itemstack.func_190926_b())
                  {
                      p_187250_1_.func_184611_a(p_187250_4_, ItemStack.field_190927_a);
@@ -218,21 +219,19 @@
                  }
  
                  if (!p_187250_1_.func_184587_cr())
-@@ -404,13 +429,25 @@
+@@ -404,13 +430,23 @@
          }
          else
          {
 -            if (!p_187251_1_.func_70093_af() || p_187251_1_.func_184614_ca().func_190926_b() && p_187251_1_.func_184592_cb().func_190926_b())
 +            net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks
 +                    .onRightClickBlock(p_187251_1_, p_187251_4_, p_187251_5_, p_187251_6_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(p_187251_1_, getBlockReachDistance() + 1));
-+            if (event.isCanceled()) return EnumActionResult.PASS;
++            if (event.isCanceled()) return event.getCancellationResult();
 +
 +            EnumActionResult ret = p_187251_3_.onItemUseFirst(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
 +            if (ret != EnumActionResult.PASS) return ret;
 +
-+            boolean bypass = true;
-+            for (ItemStack s : new ItemStack[]{p_187251_1_.func_184614_ca(), p_187251_1_.func_184592_cb()}) //TODO: Expand to more hands? player.inv.getHands()?
-+                bypass = bypass && (s.func_190926_b() || s.func_77973_b().doesSneakBypassUse(s, p_187251_2_, p_187251_5_, p_187251_1_));
++            boolean bypass = p_187251_3_.func_190926_b() || p_187251_3_.func_77973_b().doesSneakBypassUse(p_187251_3_, p_187251_2_, p_187251_5_, p_187251_1_);
 +            EnumActionResult result = EnumActionResult.PASS;
 +
 +            if (!p_187251_1_.func_70093_af() || bypass || event.getUseBlock() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
@@ -247,7 +246,7 @@
                  }
              }
  
-@@ -438,14 +475,20 @@
+@@ -438,14 +474,20 @@
                  {
                      int j = p_187251_3_.func_77960_j();
                      int i = p_187251_3_.func_190916_E();
@@ -268,7 +267,7 @@
                  }
              }
          }
-@@ -455,4 +498,13 @@
+@@ -455,4 +497,13 @@
      {
          this.field_73092_a = p_73080_1_;
      }

@@ -22,6 +22,8 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.annotation.Nonnull;
+
 @Mod(modid = ModelFluidDebug.MODID, name = "ForgeDebugModelFluid", version = ModelFluidDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelFluidDebug
 {
@@ -81,21 +83,21 @@ public class ModelFluidDebug
             ModelBakery.registerItemVariants(milk);
             ModelLoader.setCustomMeshDefinition(fluid, new ItemMeshDefinition()
             {
-                public ModelResourceLocation getModelLocation(ItemStack stack)
+                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
                 {
                     return fluidLocation;
                 }
             });
             ModelLoader.setCustomMeshDefinition(gas, new ItemMeshDefinition()
             {
-                public ModelResourceLocation getModelLocation(ItemStack stack)
+                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
                 {
                     return gasLocation;
                 }
             });
             ModelLoader.setCustomMeshDefinition(milk, new ItemMeshDefinition()
             {
-                public ModelResourceLocation getModelLocation(ItemStack stack)
+                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
                 {
                     return milkLocation;
                 }

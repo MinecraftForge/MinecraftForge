@@ -1,10 +1,25 @@
 package net.minecraftforge.debug;
 
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Config.*;
+import net.minecraftforge.fml.client.IModGuiFactory;
+import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = ConfigTest.MODID, name = "ConfigTest", version = "1.0", acceptableRemoteVersions = "*")
 public class ConfigTest
@@ -16,6 +31,24 @@ public class ConfigTest
       MinecraftForge.EVENT_BUS.register(this);
     }
 
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+      System.out.println("Old: " + CONFIG_TYPES.bool);
+      CONFIG_TYPES.bool = !CONFIG_TYPES.bool;
+      System.out.println("New: " + CONFIG_TYPES.bool);
+      ConfigManager.sync(MODID, Type.INSTANCE);
+      System.out.println("After sync: " + CONFIG_TYPES.bool);
+    }
+
+    @SubscribeEvent
+    public void onConfigChangedEvent(OnConfigChangedEvent event) {
+        if (event.getModID().equals(MODID))
+        {
+            ConfigManager.sync(MODID, Type.INSTANCE);
+        }
+    }
+
+    @LangKey("config_test.config.types")
     @Config(modid = MODID, type = Type.INSTANCE, name = MODID + "_types")
     public static class CONFIG_TYPES
     {
@@ -58,6 +91,7 @@ public class ConfigTest
             public String HeyLook = "I'm Inside!";
         }
     }
+    @LangKey("config_test.config.annotations")
     @Config(modid = MODID)
     public static class CONFIG_ANNOTATIONS
     {
@@ -70,5 +104,57 @@ public class ConfigTest
         @LangKey("this.is.not.a.good.key")
         @Comment({"This is a really long", "Multi-line comment"})
         public static String Comments = "Hi Tv!";
+
+        @Comment("Category Comment Test")
+        public static NestedType Inner = new NestedType();
+
+        public static class NestedType
+        {
+            public String HeyLook = "Go in!";
+        }
+    }
+    @LangKey("config_test.config.subcats")
+    @Config(modid = MODID, name = MODID + "_subcats", category = "")
+    public static class CONFIG_SUBCATS
+    {
+        //public static String THIS_WILL_ERROR = "DUH";
+
+        @Name("test_a")
+        public static SubCat sub1 = new SubCat("Hello");
+        @Name("test_b")
+        public static SubCat sub2 = new SubCat("Goodbye");
+
+        public static class SubCat
+        {
+            @Name("i_say")
+            public String value;
+            public SubCat(String value)
+            {
+                this.value = value;
+            }
+        }
+    }
+
+    @LangKey("config_test.config.maps")
+    @Config(modid = MODID, name = MODID + "_map")
+    public static class CONFIG_MAP
+    {
+        @Name("map")
+        @RequiresMcRestart
+        public static Map<String, Integer[]> theMap;
+
+        static
+        {
+            theMap = Maps.newHashMap();
+            for (int i = 0; i < 7; i++)
+            {
+                Integer[] array = new Integer[6];
+                for (int x = 0; x < array.length; x++)
+                {
+                    array[x] = i + x;
+                }
+                theMap.put("" + i, array);
+            }
+        }
     }
 }

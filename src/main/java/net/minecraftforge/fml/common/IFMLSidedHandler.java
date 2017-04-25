@@ -80,4 +80,6 @@ public interface IFMLSidedHandler
     void fireSidedRegistryEvents();
 
     CompoundDataFixer getDataFixer();
+
+    boolean isDisplayVSyncForced();
 }

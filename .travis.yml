@@ -1,0 +1,30 @@
+sudo: required
+dist: trusty
+
+language: java
+jdk: oraclejdk8
+
+env:
+  - BUILD_NUMBER=9999
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -f  $HOME/.gradle/caches/minecraft/deobfedDeps/providedDummy.jar
+  - rm -f  $HOME/.gradle/caches/minecraft/deobfedDeps/compileDummy.jar
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $TRAVIS_BUILD_DIR/build/localCache/Forge/
+
+before_install: chmod +x gradlew
+install:
+  - ./gradlew --refresh-dependencies
+  - ./gradlew ciWriteBuildNumber
+script:
+  - travis_wait ./gradlew build -x createExe -S
+  - ./gradlew -p projects/Forge test -S
+
+notifications:
+  email: false

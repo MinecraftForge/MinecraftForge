@@ -2,6 +2,8 @@ package net.minecraftforge.test;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -70,7 +72,6 @@ public class TestCapabilityMod
     public void onInteractItem(PlayerInteractEvent.RightClickItem event)
     {
         if (!event.getEntityPlayer().isSneaking()) return;
-        if (event.getItemStack().getItem() != Items.STICK) return;
 
         if (event.getItemStack().hasCapability(TEST_CAP, null))
         {
@@ -143,18 +144,34 @@ public class TestCapabilityMod
     // version of the has/getCapability functions yourself. So you have control
     // over everything yours being called first.
     @SubscribeEvent
-    public void onTELoad(AttachCapabilitiesEvent.TileEntity event)
+    public void onTELoad(AttachCapabilitiesEvent<TileEntity> event)
     {
         //Attach it! The resource location MUST be unique it's recommended that you tag it with your modid and what the cap is.
-        event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider(event.getTileEntity()));
+        event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<TileEntity>(event.getObject()));
     }
 
     @SubscribeEvent
-    public void onItemLoad(AttachCapabilitiesEvent.Item event)
+    public void onItemLoad(AttachCapabilitiesEvent<ItemStack> event)
     {
-        if (event.getItemStack().getItem() == Items.STICK)
-            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider(event.getItemStack()));
+        if (event.getObject().getItem() == Items.STICK)
+            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<ItemStack>(event.getObject()));
     }
+
+    // these can be removed if we remove these legacy events
+    @SubscribeEvent
+    public void onItemLoadLegacy(AttachCapabilitiesEvent<Item> event)
+    {
+        if (event.getObject() == Items.APPLE)
+            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<Item>(event.getObject()));
+    }
+
+    @SubscribeEvent
+    public void onItemLoadLegacy(AttachCapabilitiesEvent.Item event)
+    {
+        if (event.getObject() == Items.ARROW)
+            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<Item>(event.getObject()));
+    }
+
 
     @SuppressWarnings("rawtypes")
     @SubscribeEvent

@@ -42,6 +42,7 @@ public class ShapedOreRecipe implements IRecipe
     public static final int MAX_CRAFT_GRID_WIDTH = 3;
     public static final int MAX_CRAFT_GRID_HEIGHT = 3;
 
+    @Nonnull
     protected ItemStack output = ItemStack.EMPTY;
     protected Object[] input = null;
     protected int width = 0;
@@ -175,12 +176,14 @@ public class ShapedOreRecipe implements IRecipe
     }
 
     @Override
-    public ItemStack getCraftingResult(InventoryCrafting var1){ return output.copy(); }
+    @Nonnull
+    public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1){ return output.copy(); }
 
     @Override
     public int getRecipeSize(){ return input.length; }
 
     @Override
+    @Nonnull
     public ItemStack getRecipeOutput(){ return output; }
 
     @Override

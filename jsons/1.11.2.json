@@ -1,10 +1,10 @@
 {
     "assetIndex": {
         "id": "1.11",
-        "sha1": "e02b8fba4390e173057895c56ecc91e3ce3bbd40",
-        "size": 157392,
-        "url": "https://launchermeta.mojang.com/mc/assets/1.11/e02b8fba4390e173057895c56ecc91e3ce3bbd40/1.11.json",
-        "totalSize": 124275381
+        "sha1": "ea7f56173691250e9805db5e3dda2d65b951ede3",
+        "size": 157395,
+        "url": "https://launchermeta.mojang.com/mc/assets/1.11/ea7f56173691250e9805db5e3dda2d65b951ede3/1.11.json",
+        "totalSize": 124627552
     },
     "assets": "1.11",
     "downloads": {
@@ -242,13 +242,13 @@
             }
         },
         {
-            "name": "com.mojang:realms:1.10.8",
+            "name": "com.mojang:realms:1.10.14",
             "downloads": {
                 "artifact": {
-                    "size": 3025164,
-                    "sha1": "67560bbd6a83d48ae8b956f1feac09010bde879c",
-                    "path": "com/mojang/realms/1.10.8/realms-1.10.8.jar",
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.10.8/realms-1.10.8.jar"
+                    "size": 3162566,
+                    "sha1": "f08caf995313992fcfe03bc12234748328471d0a",
+                    "path": "com/mojang/realms/1.10.14/realms-1.10.14.jar",
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.10.14/realms-1.10.14.jar"
                 }
             }
         },
@@ -546,9 +546,9 @@
         "client": {
             "file": {
                 "id": "client-1.7.xml",
-                "sha1": "49e2e41bc339698bd8199e0da9398c926e68c95d",
-                "size": 467,
-                "url": "https://launchermeta.mojang.com/mc/log_configs/client-1.7.xml/49e2e41bc339698bd8199e0da9398c926e68c95d/client-1.7.xml"
+                "sha1": "6605d632a2399010c0085d3e4da58974d62ccdfe",
+                "size": 871,
+                "url": "https://launchermeta.mojang.com/mc/log_configs/client-1.7.xml/6605d632a2399010c0085d3e4da58974d62ccdfe/client-1.7.xml"
             },
             "argument": "-Dlog4j.configurationFile=${path}",
             "type": "log4j2-xml"
@@ -558,6 +558,6 @@
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
     "releaseTime": "2016-12-21T09:29:12+00:00",
-    "time": "2016-12-21T09:42:21+00:00",
+    "time": "2017-02-27T10:13:05+00:00",
     "type": "release"
 }

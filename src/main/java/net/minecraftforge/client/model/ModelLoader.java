@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -93,6 +94,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
@@ -103,8 +105,12 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -116,8 +122,11 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
+import javax.annotation.Nonnull;
+
 public final class ModelLoader extends ModelBakery
 {
+    private static boolean firstLoad = Boolean.parseBoolean(System.getProperty("fml.skipFirstModelBake", "true"));
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
@@ -143,6 +152,9 @@ public final class ModelLoader extends ModelBakery
     @Override
     public IRegistry<ModelResourceLocation, IBakedModel> setupModelRegistry()
     {
+        if (FMLClientHandler.instance().hasError()) // skip loading models if we're just going to show a fatal error screen
+            return bakedRegistry;
+
         isLoading = true;
         loadBlocks();
         loadVariantItemModels();
@@ -168,6 +180,16 @@ public final class ModelLoader extends ModelBakery
         Map<IModel, IBakedModel> bakedModels = Maps.newHashMap();
         HashMultimap<IModel, ModelResourceLocation> models = HashMultimap.create();
         Multimaps.invertFrom(Multimaps.forMap(stateModels), models);
+
+        if (firstLoad)
+        {
+            firstLoad = false;
+            for (ModelResourceLocation mrl : stateModels.keySet())
+            {
+                bakedRegistry.putObject(mrl, missingBaked);
+            }
+            return bakedRegistry;
+        }
 
         ProgressBar bakeBar = ProgressManager.push("ModelLoader: baking", models.keySet().size());
 
@@ -244,7 +266,7 @@ public final class ModelLoader extends ModelBakery
         catch(Exception e)
         {
             storeException(location, e);
-            model = getMissingModel();
+            model = ModelLoaderRegistry.getMissingModel(location, e);
         }
         stateModels.put(location, model);
     }
@@ -330,11 +352,12 @@ public final class ModelLoader extends ModelBakery
                         exception = new ItemLoadingException("Could not load item model either from the normal location " + file + " or from the blockstate", normalException, blockstateException);
                     }
                 }
-                stateModels.put(memory, model);
                 if(exception != null)
                 {
                     storeException(memory, exception);
+                    model = ModelLoaderRegistry.getMissingModel(memory, exception);
                 }
+                stateModels.put(memory, model);
             }
         }
         ProgressManager.pop(itemBar);
@@ -512,7 +535,12 @@ public final class ModelLoader extends ModelBakery
             return builder.build();
         }
 
-        public IBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        {
+            return VanillaLoader.INSTANCE.modelCache.getUnchecked(new BakedModelCacheKey(this, state, format, bakedTextureGetter));
+        }
+
+        public IBakedModel bakeImpl(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
             {
@@ -829,11 +857,55 @@ public final class ModelLoader extends ModelBakery
         return missingModel;
     }
 
+    protected final class BakedModelCacheKey
+    {
+        private final VanillaModelWrapper model;
+        private final IModelState state;
+        private final VertexFormat format;
+        private final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
+
+        public BakedModelCacheKey(VanillaModelWrapper model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        {
+            this.model = model;
+            this.state = state;
+            this.format = format;
+            this.bakedTextureGetter = bakedTextureGetter;
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass())
+            {
+                return false;
+            }
+            BakedModelCacheKey that = (BakedModelCacheKey) o;
+            return Objects.equal(model, that.model) && Objects.equal(state, that.state) && Objects.equal(format, that.format) && Objects.equal(bakedTextureGetter, that.bakedTextureGetter);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hashCode(model, state, format, bakedTextureGetter);
+        }
+    }
+
     protected static enum VanillaLoader implements ICustomModelLoader
     {
         INSTANCE;
 
         private ModelLoader loader;
+        private LoadingCache<BakedModelCacheKey, IBakedModel> modelCache = CacheBuilder.newBuilder().maximumSize(50).expireAfterWrite(100, TimeUnit.MILLISECONDS).build(new CacheLoader<BakedModelCacheKey, IBakedModel>() {
+            @Override
+            public IBakedModel load(BakedModelCacheKey key) throws Exception
+            {
+                return key.model.bakeImpl(key.state, key.format, key.bakedTextureGetter);
+            }
+        });
 
         void setLoader(ModelLoader loader)
         {
@@ -1113,7 +1185,7 @@ public final class ModelLoader extends ModelBakery
         ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
         {
             @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack)
+            public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
             {
                 return ModelDynBucket.LOCATION;
             }

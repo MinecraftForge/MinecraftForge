@@ -35,6 +35,8 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
+import javax.annotation.Nullable;
+
 /**
  * Various implementations of ITimeValue.
  */
@@ -291,12 +293,13 @@ public final class TimeValues
 
         private final ThreadLocal<Function<String, ITimeValue>> valueResolver = new ThreadLocal<Function<String, ITimeValue>>();
 
-        public void setValueResolver(Function<String, ITimeValue> valueResolver)
+        public void setValueResolver(@Nullable Function<String, ITimeValue> valueResolver)
         {
             this.valueResolver.set(valueResolver);
         }
 
         @SuppressWarnings("unchecked")
+        @Nullable
         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
         {
             if(type.getRawType() != ITimeValue.class)

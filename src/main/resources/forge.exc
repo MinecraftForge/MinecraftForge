@@ -57,3 +57,5 @@ net/minecraft/world/storage/loot/LootEntryTable.<init>(Lnet/minecraft/util/Resou
 net/minecraft/world/storage/loot/LootEntryEmpty.<init>(II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46645_1_,p_i46645_2_,p_i46645_3_,entryName
 
 net/minecraft/world/chunk/BlockStateContainer.setBits(IZ)V=|p_186012_1_,forceBits
+net/minecraft/village/Village.getPlayerReputation(Ljava/util/UUID;)I=|p_82684_1_
+net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_82688_1_,p_82688_2_

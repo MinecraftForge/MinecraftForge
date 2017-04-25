@@ -47,6 +47,9 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.item.crafting.ShieldRecipes;
 import net.minecraft.item.crafting.RecipesBanners.RecipeAddPattern;
 import net.minecraft.item.crafting.RecipesBanners.RecipeDuplicatePattern;
+
+import javax.annotation.Nullable;
+
 import static net.minecraftforge.oredict.RecipeSorter.Category.*;
 
 public class RecipeSorter implements Comparator<IRecipe>
@@ -64,12 +67,13 @@ public class RecipeSorter implements Comparator<IRecipe>
     private static class SortEntry
     {
         private String name;
+        @Nullable
         private Class<?> cls;
         private Category cat;
         List<String> before = Lists.newArrayList();
         List<String> after = Lists.newArrayList();
 
-        private SortEntry(String name, Class<?> cls, Category cat, String deps)
+        private SortEntry(String name, @Nullable Class<?> cls, Category cat, String deps)
         {
             this.name = name;
             this.cls = cls;

@@ -32,6 +32,8 @@ import net.minecraftforge.fml.common.versioning.VersionRange;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;
 
+import javax.annotation.Nullable;
+
 /**
  * The container that wraps around mods in the system.
  * <p>
@@ -141,6 +143,7 @@ public interface ModContainer
 
     VersionRange acceptableMinecraftVersionRange();
 
+    @Nullable
     Certificate getSigningCertificate();
 
     public static final Map<String,String> EMPTY_PROPERTIES = ImmutableMap.of();

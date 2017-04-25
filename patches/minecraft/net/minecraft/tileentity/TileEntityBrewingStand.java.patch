@@ -51,7 +51,7 @@
          {
              Item item = p_94041_2_.func_77973_b();
 -            return p_94041_1_ == 4 ? item == Items.field_151065_br : (item == Items.field_151068_bn || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.field_151069_bo) && this.func_70301_a(p_94041_1_) == ItemStack.field_190927_a;
-+            return p_94041_1_ == 4 ? item == Items.field_151065_br : net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_94041_2_) && this.func_70301_a(p_94041_1_) == ItemStack.field_190927_a;
++            return p_94041_1_ == 4 ? item == Items.field_151065_br : net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_94041_2_) && this.func_70301_a(p_94041_1_).func_190926_b(); // FORGE - Fix MC-111753 Identity comparing with ItemStack.EMPTY
          }
      }
  
@@ -65,7 +65,7 @@
 +
 +    @SuppressWarnings("unchecked")
 +    @Override
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +        {

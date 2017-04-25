@@ -46,6 +46,8 @@ import com.google.common.base.Functions;
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
 
+import javax.annotation.Nullable;
+
 @Plugin(name = "TerminalConsole", category = "Core", elementType = "appender", printObject = true)
 public class TerminalConsoleAppender extends AbstractAppender
 {
@@ -75,6 +77,7 @@ public class TerminalConsoleAppender extends AbstractAppender
     }
 
     @PluginFactory
+    @Nullable
     public static TerminalConsoleAppender createAppender(@PluginAttribute("name") String name, @PluginElement("Filters") Filter filter,
             @PluginElement("Layout") Layout<? extends Serializable> layout, @PluginAttribute("ignoreExceptions") String ignore)
     {

@@ -64,6 +64,8 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.thread.SidedThreadGroup;
+import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.server.FMLServerHandler;
@@ -80,6 +82,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import javax.annotation.Nullable;
 
 
 /**
@@ -199,13 +203,8 @@ public class FMLCommonHandler
      */
     public Side getEffectiveSide()
     {
-        Thread thr = Thread.currentThread();
-        if (thr.getName().equals("Server thread") || thr.getName().startsWith("Netty Server IO"))
-        {
-            return Side.SERVER;
-        }
-
-        return Side.CLIENT;
+        final ThreadGroup group = Thread.currentThread().getThreadGroup();
+        return group instanceof SidedThreadGroup ? ((SidedThreadGroup) group).getSide() : Side.CLIENT;
     }
     /**
      * Raise an exception
@@ -709,6 +708,7 @@ public class FMLCommonHandler
      * @param inputstream Input stream containing the lang file.
      * @return A new InputStream that vanilla uses to load normal Lang files, Null if this is a 'enhanced' file and loading is done.
      */
+    @Nullable
     public InputStream loadLanguage(Map<String, String> table, InputStream inputstream) throws IOException
     {
         byte[] data = IOUtils.toByteArray(inputstream);
@@ -757,4 +757,6 @@ public class FMLCommonHandler
     {
         return (CompoundDataFixer)sidedDelegate.getDataFixer();
     }
+
+    public boolean isDisplayVSyncForced() { return sidedDelegate.isDisplayVSyncForced(); }
 }

@@ -28,6 +28,8 @@ import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nullable;
+
 public class MinecraftDummyContainer extends DummyModContainer
 {
 
@@ -65,6 +67,7 @@ public class MinecraftDummyContainer extends DummyModContainer
     }
 
     @Override
+    @Nullable
     public Certificate getSigningCertificate()
     {
         if (FMLLaunchHandler.side() != Side.CLIENT)
@@ -76,7 +79,7 @@ public class MinecraftDummyContainer extends DummyModContainer
             Certificate[] certificates = cbr.getProtectionDomain().getCodeSource().getCertificates();
             return certificates != null ? certificates[0] : null;
         }
-        catch (Exception e){} // Errors don't matter just return null.
+        catch (Exception ignored){} // Errors don't matter just return null.
         return null;
     }
 }

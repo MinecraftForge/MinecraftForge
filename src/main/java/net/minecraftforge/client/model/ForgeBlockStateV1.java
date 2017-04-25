@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Nullable;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
@@ -218,7 +219,7 @@ public class ForgeBlockStateV1 extends Marker
             return ret;
         }
 
-        private Multimap<String, ForgeBlockStateV1.Variant> getPermutations(List<String> sorted, Map<String, Map<String, ForgeBlockStateV1.Variant>> base, int depth, String prefix, Multimap<String, ForgeBlockStateV1.Variant> ret, ForgeBlockStateV1.Variant parent)
+        private Multimap<String, ForgeBlockStateV1.Variant> getPermutations(List<String> sorted, Map<String, Map<String, ForgeBlockStateV1.Variant>> base, int depth, String prefix, Multimap<String, ForgeBlockStateV1.Variant> ret, @Nullable ForgeBlockStateV1.Variant parent)
         {
             if (depth == sorted.size())
             {
@@ -544,6 +545,7 @@ public class ForgeBlockStateV1 extends Marker
                             builder.put(TransformType.THIRD_PERSON_LEFT_HAND, leftify(thirdperson));
                             builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, firstperson);
                             builder.put(TransformType.FIRST_PERSON_LEFT_HAND, leftify(firstperson));
+                            builder.put(TransformType.FIXED, get(0, 0, 0, 0, 180, 0, 1));
                             ret.state = Optional.<IModelState>of(new SimpleModelState(builder.build()));
                         }
                         // item/handheld
