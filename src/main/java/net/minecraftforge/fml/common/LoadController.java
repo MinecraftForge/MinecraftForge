@@ -54,6 +54,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.SubscriberExceptionHandler;
 import com.google.common.eventbus.SubscriberExceptionContext;
+import org.lwjgl.opengl.Display;
 
 import javax.annotation.Nullable;
 
@@ -150,6 +151,12 @@ public class LoadController
 
     public void transition(LoaderState desiredState, boolean forceState)
     {
+        if (Display.isCreated() && Display.isCloseRequested())
+        {
+            FMLLog.info("The game window is being closed by the player, exiting.");
+            FMLCommonHandler.instance().exitJava(0, false);
+        }
+
         LoaderState oldState = state;
         state = state.transition(!errors.isEmpty());
         if (state != desiredState && !forceState)
