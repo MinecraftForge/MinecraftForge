@@ -83,6 +83,7 @@ import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
@@ -377,7 +378,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             String className = mc.getGuiClassName();
             if (Strings.isNullOrEmpty(className))
             {
-                guiFactories.put(mc, DefaultGuiFactory.forMod(mc));
+                if (ConfigManager.hasConfigForMod(mc.getModId()))
+                {
+                    guiFactories.put(mc, DefaultGuiFactory.forMod(mc));
+                }
                 continue;
             }
             try

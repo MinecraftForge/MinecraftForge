@@ -202,7 +202,12 @@ public class ConfigManager
 
     public static Class<?>[] getModConfigClasses(String modid)
     {
-        return MOD_CONFIG_CLASSES.get(modid).toArray(new Class<?>[0]);
+        return (MOD_CONFIG_CLASSES.containsKey(modid) ? MOD_CONFIG_CLASSES.get(modid).toArray(new Class<?>[0]) : new Class<?>[0]);
+    }
+
+    public static boolean hasConfigForMod(String modid)
+    {
+        return asm_data.containsKey(modid);
     }
 
     // =======================================================
