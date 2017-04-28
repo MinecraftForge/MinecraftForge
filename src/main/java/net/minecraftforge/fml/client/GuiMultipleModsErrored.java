@@ -30,7 +30,9 @@ import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import org.lwjgl.input.Mouse;
 
+import java.io.IOException;
 import java.util.List;
 
 public class GuiMultipleModsErrored extends GuiErrorBase
@@ -71,6 +73,15 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     {
         this.list.actionPerformed(button);
         super.actionPerformed(button);
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException
+    {
+        super.handleMouseInput();
+        int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+        this.list.handleMouseInput(mouseX, mouseY);
     }
 
     private class GuiList extends GuiScrollingList
