@@ -58,6 +58,25 @@ public class VillagerRegistry
         init();
     }
 
+    @GameRegistry.ObjectHolder("minecraft")
+    public static class Professions
+    {
+        @GameRegistry.ObjectHolder("farmer")
+        public static final VillagerProfession FARMER = null;
+        @GameRegistry.ObjectHolder("librarian")
+        public static final VillagerProfession LIBRARIAN = null;
+        @GameRegistry.ObjectHolder("priest")
+        public static final VillagerProfession PRIEST = null;
+        @GameRegistry.ObjectHolder("smith")
+        public static final VillagerProfession SMITH = null;
+        @GameRegistry.ObjectHolder("butcher")
+        public static final VillagerProfession BUTCHER = null;
+        @GameRegistry.ObjectHolder("nitwit")
+        public static final VillagerProfession NITWIT = null;
+
+        private Professions() {}
+    }
+
     /**
      * Allow access to the {@link net.minecraft.world.gen.structure.StructureVillagePieces} array controlling new village
      * creation so you can insert your own new village pieces
@@ -374,4 +393,5 @@ public class VillagerRegistry
         //It is nasty I know but it's vanilla.
         private static final ITradeList[][][][] trades = EntityVillager.GET_TRADES_DONT_USE();
     }
+
 }

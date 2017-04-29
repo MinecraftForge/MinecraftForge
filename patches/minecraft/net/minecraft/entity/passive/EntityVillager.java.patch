@@ -9,6 +9,24 @@
      private int field_175563_bv;
      private int field_175562_bw;
      private boolean field_82190_bM;
+@@ -159,7 +159,7 @@
+             {
+                 this.field_70714_bg.func_75776_a(8, new EntityAIPlay(this, 0.32D));
+             }
+-            else if (this.func_70946_n() == 0)
++            else if (net.minecraftforge.fml.common.registry.VillagerRegistry.Professions.FARMER == getProfessionForge())
+             {
+                 this.field_70714_bg.func_75776_a(6, new EntityAIHarvestFarmland(this, 0.6D));
+             }
+@@ -168,7 +168,7 @@
+ 
+     protected void func_175500_n()
+     {
+-        if (this.func_70946_n() == 0)
++        if (net.minecraftforge.fml.common.registry.VillagerRegistry.Professions.FARMER == getProfessionForge())
+         {
+             this.field_70714_bg.func_75776_a(8, new EntityAIHarvestFarmland(this, 0.6D));
+         }
 @@ -230,7 +230,7 @@
                      if (this.field_70954_d != null && this.field_82189_bL != null)
                      {
@@ -35,7 +53,7 @@
 +            net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p =
 +                net.minecraftforge.fml.common.registry.VillagerRegistry.instance().getRegistry().getValue(new net.minecraft.util.ResourceLocation(p_70037_1_.func_74779_i("ProfessionName")));
 +            if (p == null)
-+                p = net.minecraftforge.fml.common.registry.VillagerRegistry.instance().getRegistry().getValue(new net.minecraft.util.ResourceLocation("minecraft:farmer"));
++                p = net.minecraftforge.fml.common.registry.VillagerRegistry.Professions.FARMER;
 +            this.setProfession(p);
 +        }
          this.field_70956_bz = p_70037_1_.func_74762_e("Riches");
