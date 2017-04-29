@@ -413,4 +413,17 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
     }
+    
+    public static int levelcheck(EntityPlayer player, int oldlevel, int newlevel)
+    {
+        if (oldlevel == -1) {
+            oldlevel = newlevel;
+        }   
+
+        if (oldlevel != newlevel) {
+            MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLevelChangeEvent(player, oldlevel, newlevel));
+            oldlevel = newlevel;
+        }
+        return newlevel;
+    }
 }

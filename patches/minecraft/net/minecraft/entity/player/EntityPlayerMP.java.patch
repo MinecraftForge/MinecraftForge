@@ -45,7 +45,16 @@
                  }
              }
          }
-@@ -440,6 +443,7 @@
+@@ -382,6 +385,8 @@
+             {
+                 this.func_147098_j();
+             }
++            
++            this.oldexperienceLevel = net.minecraftforge.event.ForgeEventFactory.levelcheck(this, oldexperienceLevel, field_71068_ca);
+         }
+         catch (Throwable throwable)
+         {
+@@ -440,6 +445,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
@@ -53,7 +62,7 @@
          if (this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages"))
          {
              Team team = this.func_96124_cp();
-@@ -463,7 +467,20 @@
+@@ -463,7 +469,20 @@
  
          if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
          {
@@ -74,7 +83,7 @@
          }
  
          Collection collection = this.field_70170_p.func_96441_U().func_96520_a(IScoreObjectiveCriteria.field_96642_c);
-@@ -849,6 +866,7 @@
+@@ -849,6 +868,7 @@
      {
          if (p_71064_1_ != null)
          {

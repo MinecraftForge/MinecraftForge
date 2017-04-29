@@ -260,4 +260,18 @@ public class PlayerEvent extends LivingEvent
             return new File(this.playerDirectory, this.playerUUID+"."+suffix);
         }
     }
+    
+    public static class PlayerLevelChangeEvent extends PlayerEvent {
+
+        public final int oldLevel;
+        public final int newLevel;
+
+        public PlayerLevelChangeEvent(EntityPlayer player, int oldlevel, int newlevel)
+        {
+            super(player);
+            this.oldLevel = oldlevel;
+            this.newLevel = newlevel;
+        }
+        
+    }
 }
