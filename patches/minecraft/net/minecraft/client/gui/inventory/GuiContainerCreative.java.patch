@@ -18,7 +18,7 @@
 +            {
 +                field_146292_n.add(new GuiButton(101, field_147003_i,              field_147009_r - 50, 20, 20, "<"));
 +                field_146292_n.add(new GuiButton(102, field_147003_i + field_146999_f - 20, field_147009_r - 50, 20, 20, ">"));
-+                maxPages = ((tabCount - 12) / 10) + 1;
++                maxPages = (int) Math.ceil((tabCount - 12) / 10D);
 +            }
          }
          else
@@ -264,3 +264,41 @@
      }
  
      public int func_147056_g()
+@@ -984,5 +1081,37 @@
+         {
+             return this.field_148332_b.func_82869_a(p_82869_1_);
+         }
++
++        /*========================================= FORGE START =====================================*/
++        public net.minecraft.util.ResourceLocation getBackgroundLocation()
++        {
++            return this.field_148332_b.getBackgroundLocation();
++        }
++
++        public void setBackgroundLocation(net.minecraft.util.ResourceLocation texture)
++        {
++            this.field_148332_b.setBackgroundLocation(texture);
++        }
++
++        public void setBackgroundName(String name)
++        {
++            this.field_148332_b.setBackgroundName(name);
++        }
++
++        public net.minecraft.client.renderer.texture.TextureAtlasSprite getBackgroundSprite()
++        {
++            return this.field_148332_b.getBackgroundSprite();
++        }
++
++        public int getSlotIndex()
++        {
++            return this.field_148332_b.getSlotIndex();
++        }
++
++        public boolean isSameInventory(Slot other)
++        {
++            return this.field_148332_b.isSameInventory(other);
++        }
++        /*========================================= FORGE END =====================================*/
+     }
+ }

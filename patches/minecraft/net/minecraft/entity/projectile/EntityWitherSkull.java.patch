@@ -5,7 +5,7 @@
          Block block = p_180428_4_.func_177230_c();
  
 -        if (this.func_82342_d() && EntityWither.func_181033_a(block))
-+        if (this.func_82342_d() && block.canEntityDestroy(p_180428_4_, p_180428_2_, p_180428_3_, this))
++        if (this.func_82342_d() && block.canEntityDestroy(p_180428_4_, p_180428_2_, p_180428_3_, this) && net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this.field_70235_a, p_180428_3_, p_180428_4_))
          {
              f = Math.min(0.8F, f);
          }

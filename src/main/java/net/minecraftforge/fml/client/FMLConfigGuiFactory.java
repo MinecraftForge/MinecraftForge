@@ -34,6 +34,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.GuiEditArray;
+import net.minecraftforge.fml.client.config.GuiEditArrayEntries;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
 import net.minecraftforge.fml.client.config.DummyConfigElement.DummyListElement;
@@ -79,7 +81,8 @@ public class FMLConfigGuiFactory implements IModGuiFactory
             listsList.add(new DummyListElement("stringListFixed", new String[] {"A", "fixed", "length", "array", "of", "string", "values"}, ConfigGuiType.STRING, "fml.config.sample.stringListFixed", true));
             listsList.add(new DummyListElement("stringListMax", new String[] {"An", "array", "of", "string", "values", "with", "a", "max", "length", "of", "15"}, ConfigGuiType.STRING, "fml.config.sample.stringListMax", 15));
             listsList.add(new DummyListElement("stringListPattern", new String[] {"Valid", "Not Valid", "Is, Valid", "Comma, Separated, Value"}, ConfigGuiType.STRING, "fml.config.sample.stringListPattern", commaDelimitedPattern));
-            
+            listsList.add(new DummyListElement("stringListCustom", new Object[0], ConfigGuiType.STRING, "fml.config.sample.stringListCustom").setArrayEntryClass(CustomArrayEntry.class));
+
             list.add(new DummyCategoryElement("lists", "fml.config.sample.ctgy.lists", listsList));
             
             // Strings category
@@ -104,6 +107,28 @@ public class FMLConfigGuiFactory implements IModGuiFactory
             return list;
         }
     }
+    
+
+    @Override
+    public boolean hasConfigGui()
+    {
+        return true;
+    }
+
+    public static class CustomArrayEntry extends GuiEditArrayEntries.StringEntry
+    {
+        public CustomArrayEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement, Object value)
+        {
+            super(owningScreen, owningEntryList, configElement, value);
+        }
+
+        @Override
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        {
+            textFieldValue.setTextColor((int) (Math.random() * 0xFFFFFF));
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+        }
+    }
 
     @Override
     public void initialize(Minecraft minecraftInstance)
@@ -111,9 +136,15 @@ public class FMLConfigGuiFactory implements IModGuiFactory
     }
 
     @Override
+    public GuiScreen createConfigGui(GuiScreen parentScreen)
+    {
+        return new FMLConfigGuiScreen(parentScreen);
+    }
+    
+    @Override
     public Class<? extends GuiScreen> mainConfigGuiClass()
     {
-        return FMLConfigGuiScreen.class;
+        return null;
     }
 
     private static final Set<RuntimeOptionCategoryElement> fmlCategories = ImmutableSet.of(new RuntimeOptionCategoryElement("HELP", "FML"));

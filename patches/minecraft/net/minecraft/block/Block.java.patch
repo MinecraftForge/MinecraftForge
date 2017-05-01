@@ -83,7 +83,7 @@
      }
  
      public final void func_176226_b(World p_176226_1_, BlockPos p_176226_2_, IBlockState p_176226_3_, int p_176226_4_)
-@@ -547,20 +552,16 @@
+@@ -547,20 +552,17 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -91,7 +91,8 @@
 +        if (!p_180653_1_.field_72995_K && !p_180653_1_.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
          {
 -            int i = this.func_149679_a(p_180653_5_, p_180653_1_.field_73012_v);
-+            java.util.List<ItemStack> items = getDrops(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_);
++            List<ItemStack> items = NonNullList.func_191196_a();
++            items.addAll(getDrops(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_));
 +            p_180653_4_ = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_, p_180653_4_, false, harvesters.get());
  
 -            for (int j = 0; j < i; ++j)
@@ -109,7 +110,7 @@
                  }
              }
          }
-@@ -568,8 +569,13 @@
+@@ -568,8 +570,13 @@
  
      public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_)
      {
@@ -124,7 +125,7 @@
              float f = 0.5F;
              double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -636,7 +642,7 @@
+@@ -636,7 +643,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -133,7 +134,7 @@
      }
  
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)
-@@ -648,6 +654,8 @@
+@@ -648,6 +655,8 @@
      {
      }
  
@@ -142,7 +143,7 @@
      public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
      {
          return this.func_176203_a(p_180642_7_);
-@@ -689,21 +697,35 @@
+@@ -689,21 +698,35 @@
          p_180657_2_.func_71029_a(StatList.func_188055_a(this));
          p_180657_2_.func_71020_j(0.005F);
  
@@ -181,7 +182,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -789,6 +811,7 @@
+@@ -789,6 +812,7 @@
          p_176216_2_.field_70181_x = 0.0D;
      }
  
@@ -189,7 +190,7 @@
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
          return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
-@@ -893,6 +916,7 @@
+@@ -893,6 +917,7 @@
          }
      }
  
@@ -197,7 +198,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +932,1188 @@
+@@ -908,6 +933,1217 @@
      {
      }
  
@@ -1037,10 +1038,39 @@
 +        IBlockState state = world.func_180495_p(pos);
 +        for (IProperty<?> prop : state.func_177228_b().keySet())
 +        {
-+            if (prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation"))
++            if ((prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation")) && prop.func_177699_b() == EnumFacing.class)
 +            {
-+                world.func_175656_a(pos, state.func_177231_a(prop));
-+                return true;
++                Block block = state.func_177230_c();
++                if (!(block instanceof BlockBed) && !(block instanceof BlockPistonExtension))
++                {
++                    IBlockState newState;
++                    //noinspection unchecked
++                    IProperty<EnumFacing> facingProperty = (IProperty<EnumFacing>) prop;
++                    EnumFacing facing = state.func_177229_b(facingProperty);
++                    java.util.Collection<EnumFacing> validFacings = facingProperty.func_177700_c();
++
++                    // rotate horizontal facings clockwise
++                    if (validFacings.size() == 4 && !validFacings.contains(EnumFacing.UP) && !validFacings.contains(EnumFacing.DOWN))
++                    {
++                        newState = state.func_177226_a(facingProperty, facing.func_176746_e());
++                    }
++                    else
++                    {
++                        // rotate other facings about the axis
++                        EnumFacing rotatedFacing = facing.func_176732_a(axis.func_176740_k());
++                        if (validFacings.contains(rotatedFacing))
++                        {
++                            newState = state.func_177226_a(facingProperty, rotatedFacing);
++                        }
++                        else // abnormal facing property, just cycle it
++                        {
++                            newState = state.func_177231_a(facingProperty);
++                        }
++                    }
++
++                    world.func_175656_a(pos, newState);
++                    return true;
++                }
 +            }
 +        }
 +        return false;
@@ -1059,7 +1089,7 @@
 +        IBlockState state = world.func_180495_p(pos);
 +        for (IProperty<?> prop : state.func_177228_b().keySet())
 +        {
-+            if (prop.func_177701_a().equals("facing") && prop.func_177699_b() == EnumFacing.class)
++            if ((prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation")) && prop.func_177699_b() == EnumFacing.class)
 +            {
 +                @SuppressWarnings("unchecked")
 +                java.util.Collection<EnumFacing> values = ((java.util.Collection<EnumFacing>)prop.func_177700_c());
@@ -1386,7 +1416,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2407,7 @@
+@@ -1201,14 +2437,7 @@
              }
              else
              {

@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,613 @@
+@@ -433,11 +440,625 @@
          return false;
      }
  
@@ -454,7 +454,7 @@
 +     * Queries the percentage of the 'Durability' bar that should be drawn.
 +     *
 +     * @param stack The current ItemStack
-+     * @return 1.0 for 100% 0 for 0%
++     * @return 0.0 for 100% (no damage / full bar), 1.0 for 0% (fully damaged / empty bar)
 +     */
 +    public double getDurabilityForDisplay(ItemStack stack)
 +    {
@@ -463,14 +463,14 @@
 +
 +    /**
 +     * Returns the packed int RGB value used to render the durability bar in the GUI.
-+     * Defaults to a value based on the hue scaled as the damage decreases, but can be overriden.
++     * Defaults to a value based on the hue scaled based on {@link #getDurabilityForDisplay}, but can be overriden.
 +     *
 +     * @param stack Stack to get durability from
 +     * @return A packed RGB value for the durability colour (0x00RRGGBB)
 +     */
 +    public int getRGBDurabilityForDisplay(ItemStack stack)
 +    {
-+        return MathHelper.func_181758_c(Math.max(0.0F, (float)(stack.func_77958_k() - stack.func_77952_i()) / stack.func_77958_k()) / 3.0F, 1.0F, 1.0F);
++        return MathHelper.func_181758_c(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
 +    }
 +    /**
 +     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item,
@@ -507,6 +507,18 @@
 +        {
 +            stack.field_77991_e = 0;
 +        }
++    }
++
++    /**
++     * Checked from {@link net.minecraft.client.multiplayer.PlayerControllerMP#onPlayerDestroyBlock(BlockPos pos) PlayerControllerMP.onPlayerDestroyBlock()}
++     * when a creative player left-clicks a block with this item.
++     * Also checked from {@link net.minecraftforge.common.ForgeHooks#onBlockBreakEvent(World, GameType, EntityPlayerMP, BlockPos)  ForgeHooks.onBlockBreakEvent()}
++     * to prevent sending an event.
++     * @return true if the given player can destroy specified block in creative mode with this item
++     */
++    public boolean canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player)
++    {
++        return !(this instanceof ItemSword);
 +    }
 +
 +    /**
@@ -674,7 +686,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1581,8 @@
+@@ -972,6 +1593,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -683,7 +695,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1007,9 +1618,26 @@
+@@ -1007,9 +1630,26 @@
              return this.field_78008_j;
          }
  
