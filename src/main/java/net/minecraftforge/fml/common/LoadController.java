@@ -151,7 +151,7 @@ public class LoadController
 
     public void transition(LoaderState desiredState, boolean forceState)
     {
-        if (Display.isCreated() && Display.isCloseRequested())
+        if (FMLCommonHandler.instance().isDisplayCloseRequested())
         {
             FMLLog.info("The game window is being closed by the player, exiting.");
             FMLCommonHandler.instance().exitJava(0, false);
