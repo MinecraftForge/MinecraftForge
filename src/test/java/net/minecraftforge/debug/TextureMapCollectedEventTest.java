@@ -30,6 +30,9 @@ public class TextureMapCollectedEventTest
 
     public static final boolean ENABLE = true;
 
+    private static final ResourceLocation booklocation = new ResourceLocation("minecraft", "items/book_normal");
+    private static final ResourceLocation pickaxelocation = new ResourceLocation("minecraft", "items/iron_pickaxe");
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -45,13 +48,16 @@ public class TextureMapCollectedEventTest
     }
 
     @SubscribeEvent
-    public void onTextureCollected(TextureStitchEvent.Collected collectedEvent)
+    public void onTextureRegistered(TextureStitchEvent.TextureRegistered registeredEvent)
     {
-        ResourceLocation booklocation = new ResourceLocation("minecraft", "items/book_normal");
-        ResourceLocation pickaxelocation = new ResourceLocation("minecraft", "items/iron_pickaxe");
+        FMLLog.info("Registering Texture: " + registeredEvent.getTextureName());
+        if (registeredEvent.getTextureName().equals(booklocation.toString())) {
+            createTexture(booklocation, registeredEvent.getMap().getTextureExtry(booklocation.toString()), registeredEvent.getMap());
+        }
 
-        createTexture(booklocation, collectedEvent.getMap().getTextureExtry(booklocation.toString()), collectedEvent.getMap());
-        createTexture(pickaxelocation, collectedEvent.getMap().getTextureExtry(pickaxelocation.toString()), collectedEvent.getMap());
+        if (registeredEvent.getTextureName().equals(pickaxelocation.toString())) {
+            createTexture(pickaxelocation, registeredEvent.getMap().getTextureExtry(pickaxelocation.toString()), registeredEvent.getMap());
+        }
     }
 
     //Method to generate the texture!
