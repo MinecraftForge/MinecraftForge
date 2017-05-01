@@ -21,7 +21,6 @@ package net.minecraftforge.client.model.pipeline;
 
 import javax.vecmath.Vector3f;
 
-import com.google.common.base.Objects;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -31,6 +30,8 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+
+import com.google.common.base.Objects;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
