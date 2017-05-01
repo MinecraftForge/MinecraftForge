@@ -103,6 +103,7 @@ public class SplashProgress
 
     private static boolean enabled;
     private static boolean rotate;
+    private static boolean useBgColorOnLogo;
     private static int logoOffset;
     private static int backgroundColor;
     private static int fontColor;
@@ -177,6 +178,7 @@ public class SplashProgress
         enabled =            getBool("enabled",      defaultEnabled) && ( (!FMLClientHandler.instance().hasOptifine()) || Launch.blackboard.containsKey("optifine.ForgeSplashCompatible"));
         rotate =             getBool("rotate",       false);
         showMemory =         getBool("showMemory",   true);
+        useBgColorOnLogo =   getBool("useBgColorOnLogo", true);
         logoOffset =         getInt("logoOffset",    0);
         backgroundColor =    getHex("background",    0xFFFFFF);
         fontColor =          getHex("font",          0x000000);
@@ -297,7 +299,17 @@ public class SplashProgress
                     glLoadIdentity();
 
                     // mojang logo
-                    setColor(backgroundColor);
+
+                    // the default mojang logo has white background instead of transparency, we use this to change it
+                    if (useBgColorOnLogo)
+                    {
+                        setColor(backgroundColor);
+                    }
+                    else
+                    {
+                        clearColor();
+                    }
+
                     glEnable(GL_TEXTURE_2D);
                     logoTexture.bind();
                     glBegin(GL_QUADS);
@@ -343,7 +355,7 @@ public class SplashProgress
                     angle += 1;
 
                     // forge logo
-                    setColor(backgroundColor);
+                    clearColor();
                     float fw = (float)forgeTexture.getWidth() / 2;
                     float fh = (float)forgeTexture.getHeight() / 2;
                     if(rotate)
@@ -418,6 +430,11 @@ public class SplashProgress
             private void setColor(int color)
             {
                 glColor3ub((byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));
+            }
+
+            private void clearColor()
+            {
+                glColor4f(1, 1, 1, 1);
             }
 
             private void drawBox(int w, int h)
