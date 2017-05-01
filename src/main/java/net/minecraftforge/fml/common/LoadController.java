@@ -54,7 +54,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.eventbus.SubscriberExceptionHandler;
 import com.google.common.eventbus.SubscriberExceptionContext;
-import org.lwjgl.opengl.Display;
 
 import javax.annotation.Nullable;
 
