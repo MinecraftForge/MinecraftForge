@@ -21,6 +21,7 @@ package net.minecraftforge.client.model.pipeline;
 
 import javax.vecmath.Vector3f;
 
+import com.google.common.base.Objects;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -54,7 +55,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     {
         super.setParent(parent);
         VertexFormat format = getVertexFormat(parent);
-        if(format.equals(getVertexFormat())) return;
+        if(Objects.equal(format, getVertexFormat())) return;
         setVertexFormat(format);
         for(int i = 0; i < getVertexFormat().getElementCount(); i++)
         {
@@ -95,7 +96,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     private static VertexFormat getVertexFormat(IVertexConsumer parent)
     {
         VertexFormat format = parent.getVertexFormat();
-        if(format.hasNormal()) return format;
+        if(format == null || format.hasNormal()) return format;
         format = new VertexFormat(format);
         format.addElement(NORMAL_4F);
         return format;
