@@ -103,8 +103,14 @@ public class GameRegistry
 
     /**
      * Registers a entity selector factory which is used to create predicates whenever a command containing selectors is executed
-     * Any non vanilla arguments that you expect has to be registered.
+     * Any non vanilla arguments that you expect has to be registered. Otherwise Minecraft will throw an CommandException on usage.
      *
+     * If you want to react to a command like "/kill @e[xyz=5]", you would have to register the argument "xyz" here and check for that argument in the factory.
+     * One factory can listen to any number of arguments as long as they are registered here.
+     *
+     * For inter mod compatibility you might want to use "modid:xyz" (e.g. "forge:min_health") as argument.
+     *
+     * For an example usage, see CustomEntitySelectorTest
      * @param arguments Expected string arguments in commands
      */
     public static void registerEntitySelector(IEntitySelectorFactory factory, String... arguments)

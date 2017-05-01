@@ -1,7 +1,6 @@
 package net.minecraftforge.test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,6 +17,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * You can verify that this test is working fine by following these steps.
+ * Spawn a few cows and a few sheep and then use "/kill @e[forge:min_health=!10]"
+ * All entities with less than 10 health points (current, not max) should die.
+ * This should include the sheep, but not the (healthy) cows.
+ *
+ */
 @Mod(modid = "customentityselectortest", name = "Custom Entity Selector Test", version = "1.0", acceptableRemoteVersions = "*")
 public class CustomEntitySelectorTest
 {
@@ -35,6 +41,8 @@ public class CustomEntitySelectorTest
         public List<Predicate<Entity>> createPredicates(Map<String, String> arguments, String mainSelector, ICommandSender sender, Vec3d position)
         {
             String health = arguments.get("forge:min_health");
+
+            //If our selector is used in this command create a Predicate otherwise return an empty list.
             if (health != null)
             {
                 final boolean invert = health.startsWith("!");
@@ -46,6 +54,8 @@ public class CustomEntitySelectorTest
                 try
                 {
                     final int value = Integer.parseInt(health);
+
+                    //Return a list of predicates. All these predicates have to apply for any entity to be selected.
                     return Collections.<Predicate<Entity>>singletonList(new Predicate<Entity>()
                     {
                         @Override

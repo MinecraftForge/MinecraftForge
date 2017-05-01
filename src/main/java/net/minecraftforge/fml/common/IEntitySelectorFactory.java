@@ -31,8 +31,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Can be registered in {@link net.minecraftforge.fml.common.registry.GameRegistry} to generate entity predicates for custom entity selectors in commands.
- * See CustomEntitySelectorTest
+ * Allows mods to create custom selectors in commands.
+ * Registered in {@link net.minecraftforge.fml.common.registry.GameRegistry#registerEntitySelector(IEntitySelectorFactory, String...)}
+ * For an example implementation, see CustomEntitySelectorTest
  */
 public interface IEntitySelectorFactory
 {

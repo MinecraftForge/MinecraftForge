@@ -34,6 +34,7 @@ import java.util.Map;
 /**
  * Is not fired anymore.
  * Replaced by a factory, which has to be registered with {@link net.minecraftforge.fml.common.registry.GameRegistry#registerEntitySelector(IEntitySelectorFactory, String...)}
+ * TODO remove in 1.12
  */
 @Deprecated
 public class EntitySelectorEvent extends Event
