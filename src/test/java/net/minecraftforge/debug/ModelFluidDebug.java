@@ -152,7 +152,6 @@ public class ModelFluidDebug
         {
             super(name, new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow"));
             density = -1000;
-            isGaseous = true;
         }
 
         @Override

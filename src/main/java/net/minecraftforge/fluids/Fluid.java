@@ -104,6 +104,7 @@ public class Fluid
     protected int viscosity = 1000;
 
     /**
+     * @deprecated This flag is going to be removed, use isLighterThanAir() / density instead.
      * This indicates if the fluid is gaseous.
      *
      * Useful for rendering the fluid in containers and the world.
@@ -304,7 +305,16 @@ public class Fluid
         return this.viscosity;
     }
 
+    /**
+     * @deprecated Use isLighterThanAir() instead
+     */
+    @Deprecated
     public final boolean isGaseous()
+    {
+        return isLighterThanAir();
+    }
+
+    public final boolean isLighterThanAir()
     {
         return this.density < 0;
     }
@@ -368,7 +378,12 @@ public class Fluid
     public int getDensity(FluidStack stack){ return getDensity(); }
     public int getTemperature(FluidStack stack){ return getTemperature(); }
     public int getViscosity(FluidStack stack){ return getViscosity(); }
-    public boolean isGaseous(FluidStack stack){ return isGaseous(); }
+    /**
+     * @deprecated Use isLighterThanAir() instead
+     */
+    @Deprecated
+    public boolean isGaseous(FluidStack stack){ return isLighterThanAir(); }
+    public boolean isLighterThanAir(FluidStack stack){ return isLighterThanAir(); }
     public EnumRarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
     public ResourceLocation getStill(FluidStack stack) { return getStill(); }
@@ -381,7 +396,12 @@ public class Fluid
     public int getDensity(World world, BlockPos pos){ return getDensity(); }
     public int getTemperature(World world, BlockPos pos){ return getTemperature(); }
     public int getViscosity(World world, BlockPos pos){ return getViscosity(); }
-    public boolean isGaseous(World world, BlockPos pos){ return isGaseous(); }
+    /**
+     * @deprecated Use isLighterThanAir() instead
+     */
+    @Deprecated
+    public boolean isGaseous(World world, BlockPos pos){ return isLighterThanAir(); }
+    public boolean isLighterThanAir(World world, BlockPos pos){ return isLighterThanAir(); }
     public EnumRarity getRarity(World world, BlockPos pos){ return getRarity(); }
     public int getColor(World world, BlockPos pos){ return getColor(); }
     public ResourceLocation getStill(World world, BlockPos pos) { return getStill(); }
