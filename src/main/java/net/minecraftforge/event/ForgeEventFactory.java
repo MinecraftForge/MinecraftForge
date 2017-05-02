@@ -253,6 +253,10 @@ public class ForgeEventFactory
         return event.getDisplayname();
     }
 
+    /**
+     * TODO remove in 1.12
+     */
+    @Deprecated
     public static List<Predicate<Entity>> gatherEntitySelectors(Map<String, String> map, String mainSelector, ICommandSender sender, Vec3d position)
     {
         EntitySelectorEvent event=new EntitySelectorEvent(map, mainSelector, sender, position);
