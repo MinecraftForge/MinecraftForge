@@ -362,7 +362,7 @@ public interface ISpecialArmor
         @Override
         public String toString()
         {
-            return String.format("%d, %d, %f, %d", priority, absorbMax, absorbRatio, (absorbRatio == 0 ? 0 : (int)(absorbMax * 100.0D / absorbRatio)));
+            return String.format("%d, %d, %f, %d, %f, %f", priority, absorbMax, absorbRatio, (absorbRatio == 0 ? 0 : (int)(absorbMax * 100.0D / absorbRatio)), armor, toughness);
         }
 
         public ArmorProperties copy()
