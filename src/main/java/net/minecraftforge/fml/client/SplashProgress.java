@@ -188,7 +188,7 @@ public class SplashProgress
         memoryLowColor =     getHex("memoryLow",     0xE42F2F);
 
         final ResourceLocation fontLoc = new ResourceLocation(getString("fontTexture", "textures/font/ascii.png"));
-        final ResourceLocation logoLoc = new ResourceLocation(getString("logoTexture", "textures/gui/title/mojang.png"));
+        final ResourceLocation logoLoc = new ResourceLocation("textures/gui/title/mojang.png");
         final ResourceLocation forgeLoc = new ResourceLocation(getString("forgeTexture", "fml:textures/gui/forge.png"));
         final ResourceLocation forgeFallbackLoc = new ResourceLocation("fml:textures/gui/forge.png");
 
@@ -343,7 +343,7 @@ public class SplashProgress
                     angle += 1;
 
                     // forge logo
-                    setColor(backgroundColor);
+                    glColor4f(1, 1, 1, 1);
                     float fw = (float)forgeTexture.getWidth() / 2;
                     float fh = (float)forgeTexture.getHeight() / 2;
                     if(rotate)
@@ -953,9 +953,9 @@ public class SplashProgress
         }
     }
 
-    private static InputStream open(ResourceLocation loc, @Nullable ResourceLocation fallback, boolean allowRP) throws IOException
+    private static InputStream open(ResourceLocation loc, @Nullable ResourceLocation fallback, boolean allowResourcePack) throws IOException
     {
-        if (!allowRP)
+        if (!allowResourcePack)
             return mcPack.getInputStream(loc);
 
         if(miscPack.resourceExists(loc))
