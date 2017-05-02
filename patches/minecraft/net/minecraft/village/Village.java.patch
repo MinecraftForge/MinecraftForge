@@ -52,13 +52,12 @@
 +    @Deprecated //Hasn't worked since 1.9, use UUID version below.
      public int func_82684_a(String p_82684_1_)
      {
--        Integer integer = (Integer)this.field_82693_j.get(p_82684_1_);
 +        return this.getPlayerReputation(findUUID(p_82684_1_));
 +    }
 +
-+    public int getPlayerReputation(UUID playerName)
++    public int getPlayerReputation(UUID p_82684_1_)
 +    {
-+        Integer integer = (Integer)this.field_82693_j.get(playerName);
+         Integer integer = (Integer)this.field_82693_j.get(p_82684_1_);
          return integer == null ? 0 : integer.intValue();
      }
  
@@ -74,16 +73,14 @@
      public int func_82688_a(String p_82688_1_, int p_82688_2_)
      {
 -        int i = this.func_82684_a(p_82688_1_);
--        int j = MathHelper.func_76125_a(i + p_82688_2_, -30, 10);
--        this.field_82693_j.put(p_82688_1_, Integer.valueOf(j));
 +        return this.modifyPlayerReputation(findUUID(p_82688_1_), p_82688_2_);
 +    }
 +
-+    public int modifyPlayerReputation(UUID playerName, int reputation)
++    public int modifyPlayerReputation(UUID p_82688_1_, int p_82688_2_)
 +    {
-+        int i = this.getPlayerReputation(playerName);
-+        int j = MathHelper.func_76125_a(i + reputation, -30, 10);
-+        this.field_82693_j.put(playerName, Integer.valueOf(j));
++        int i = this.getPlayerReputation(p_82688_1_);
+         int j = MathHelper.func_76125_a(i + p_82688_2_, -30, 10);
+         this.field_82693_j.put(p_82688_1_, Integer.valueOf(j));
          return j;
      }
  
@@ -170,7 +167,7 @@
          }
      }
  
-@@ -553,4 +574,32 @@
+@@ -553,4 +574,30 @@
              this.field_75590_b = p_i1674_3_;
          }
      }
@@ -179,8 +176,6 @@
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
-+        if (getCapability(capability, facing) != null)
-+            return true;
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +
