@@ -39,11 +39,12 @@
  
                      if (!itemstack1.func_190926_b())
                      {
-@@ -164,10 +164,17 @@
+@@ -163,11 +163,18 @@
+ 
                          if (itemstack1.func_190926_b())
                          {
-                             this.field_78776_a.field_71439_g.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
 +                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_78776_a.field_71439_g, copyBeforeUse, EnumHand.MAIN_HAND);
+                             this.field_78776_a.field_71439_g.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
                          }
                      }
                  }

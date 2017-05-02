@@ -212,14 +212,14 @@
              ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
              ItemStack itemstack = (ItemStack)actionresult.func_188398_b();
  
-@@ -360,6 +386,7 @@
+@@ -359,6 +385,7 @@
+ 
                  if (itemstack.func_190926_b())
                  {
-                     p_187250_1_.func_184611_a(p_187250_4_, ItemStack.field_190927_a);
 +                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187250_1_, copyBeforeUse, p_187250_4_);
+                     p_187250_1_.func_184611_a(p_187250_4_, ItemStack.field_190927_a);
                  }
  
-                 if (!p_187250_1_.func_184587_cr())
 @@ -404,13 +431,23 @@
          }
          else

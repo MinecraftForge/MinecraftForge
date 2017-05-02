@@ -245,14 +245,14 @@
                  return EnumActionResult.SUCCESS;
              }
              else
-@@ -1137,6 +1215,7 @@
+@@ -1136,6 +1214,7 @@
+                     {
                          if (itemstack.func_190926_b() && !this.field_71075_bZ.field_75098_d)
                          {
-                             this.func_184611_a(p_190775_2_, ItemStack.field_190927_a);
 +                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, itemstack1, p_190775_2_);
+                             this.func_184611_a(p_190775_2_, ItemStack.field_190927_a);
                          }
  
-                         return EnumActionResult.SUCCESS;
 @@ -1161,6 +1240,7 @@
  
      public void func_71059_n(Entity p_71059_1_)
@@ -261,7 +261,7 @@
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
-@@ -1333,11 +1413,13 @@
+@@ -1333,10 +1413,12 @@
  
                          if (!itemstack1.func_190926_b() && entity instanceof EntityLivingBase)
                          {
@@ -270,11 +270,10 @@
  
                              if (itemstack1.func_190926_b())
                              {
-                                 this.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
 +                                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, beforeHitCopy, EnumHand.MAIN_HAND);
+                                 this.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
                              }
                          }
- 
 @@ -1443,6 +1525,8 @@
  
      public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
