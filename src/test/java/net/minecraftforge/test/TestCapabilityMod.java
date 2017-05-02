@@ -212,10 +212,13 @@ public class TestCapabilityMod
                 {
                     boolean playerInRadius = false;
                     for(EntityPlayer player : players)
+                    {
+                            
                         if(new Vec3d(player.posX, 0, player.posZ).squareDistanceTo(new Vec3d(village.getCenter().getX(), 0, village.getCenter().getZ())) <= village.getVillageRadius() * village.getVillageRadius())
                         {
                             playerInRadius = playerInRadius || true;
                         }
+                    }
                     //If the test cap is true but no players are in radius
                     if(village.getCapability(TEST_CAP, null).getVal() && !playerInRadius)
                     {
