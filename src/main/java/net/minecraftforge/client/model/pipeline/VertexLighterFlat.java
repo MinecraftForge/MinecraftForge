@@ -31,6 +31,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import com.google.common.base.Objects;
+
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
     protected static final VertexFormatElement NORMAL_4F = new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.NORMAL, 4);
@@ -54,7 +56,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     {
         super.setParent(parent);
         VertexFormat format = getVertexFormat(parent);
-        if(format.equals(getVertexFormat())) return;
+        if(Objects.equal(format, getVertexFormat())) return;
         setVertexFormat(format);
         for(int i = 0; i < getVertexFormat().getElementCount(); i++)
         {
@@ -95,7 +97,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     private static VertexFormat getVertexFormat(IVertexConsumer parent)
     {
         VertexFormat format = parent.getVertexFormat();
-        if(format.hasNormal()) return format;
+        if(format == null || format.hasNormal()) return format;
         format = new VertexFormat(format);
         format.addElement(NORMAL_4F);
         return format;
