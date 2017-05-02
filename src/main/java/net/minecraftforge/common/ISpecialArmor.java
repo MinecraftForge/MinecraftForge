@@ -48,6 +48,7 @@ import javax.annotation.Nonnull;
  */
 public interface ISpecialArmor
 {
+    //TODO: Change 'int slot' to EnumArmorType
     /**
      * Retrieves the modifiers to be used when calculating armor damage.
      *
@@ -222,9 +223,7 @@ public interface ISpecialArmor
                         }
                     }
                 }
-                System.out.println(damage);
                 damage = CombatRules.getDamageAfterAbsorb((float)damage, (float)totalArmor, (float)totalToughness);
-                System.out.println(damage);
             }
             if (DEBUG)
             {
