@@ -27,6 +27,11 @@ import net.minecraft.client.gui.GuiScreen;
 
 import javax.annotation.Nullable;
 
+/**
+ * This is the interface you need to implement if you want to provide a customized config screen.
+ * {@link DefaultGuiFactory} provides a default implementation of this interface and will be used
+ * if the mod does not specify anything else.
+ */
 public interface IModGuiFactory {
     /**
      * Called when instantiated to initialize with the active minecraft instance.
@@ -34,6 +39,35 @@ public interface IModGuiFactory {
      * @param minecraftInstance the instance
      */
     public void initialize(Minecraft minecraftInstance);
+    
+    /**
+     * If this method returns false, the config button in the mod list will be disabled
+     * @return true if this object provides a config gui screen, false otherwise
+     */
+    public boolean hasConfigGui();
+    
+    /**
+     * Return an initialized {@link GuiScreen}. This screen will be displayed
+     * when the "config" button is pressed in the mod list. It will
+     * have a single argument constructor - the "parent" screen, the same as all
+     * Minecraft GUIs. The expected behaviour is that this screen will replace the
+     * "mod list" screen completely, and will return to the mod list screen through
+     * the parent link, once the appropriate action is taken from the config screen.
+     *
+     * This config GUI is anticipated to provide configuration to the mod in a friendly
+     * visual way. It should not be abused to set internals such as IDs (they're gonna
+     * keep disappearing anyway), but rather, interesting behaviours. This config GUI
+     * is never run when a server game is running, and should be used to configure
+     * desired behaviours that affect server state. Costs, mod game modes, stuff like that
+     * can be changed here.
+     *
+     * @param parentScreen The screen to which must be returned when closing the
+     * returned screen.
+     * @return A class that will be instantiated on clicks on the config button
+     *  or null if no GUI is desired.
+     */
+    public GuiScreen createConfigGui(GuiScreen parentScreen);
+    
     /**
      * Return the name of a class extending {@link GuiScreen}. This class will
      * be instantiated when the "config" button is pressed in the mod list. It will
@@ -52,11 +86,12 @@ public interface IModGuiFactory {
      * desired behaviours that affect server state. Costs, mod game modes, stuff like that
      * can be changed here.
      *
+     * @deprecated The method {@link IModGuiFactory.maingConfigGui(GuiScreen} is the recommended method.
      * @return A class that will be instantiated on clicks on the config button
      *  or null if no GUI is desired.
      */
+    @Deprecated
     public Class<? extends GuiScreen> mainConfigGuiClass();
-
 
     /**
      * Return a list of the "runtime" categories this mod wishes to populate with

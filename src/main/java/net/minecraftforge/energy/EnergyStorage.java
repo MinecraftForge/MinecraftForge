@@ -15,19 +15,25 @@ public class EnergyStorage implements IEnergyStorage
 
     public EnergyStorage(int capacity)
     {
-        this(capacity, capacity, capacity);
+        this(capacity, capacity, capacity, 0);
     }
 
     public EnergyStorage(int capacity, int maxTransfer)
     {
-        this(capacity, maxTransfer, maxTransfer);
+        this(capacity, maxTransfer, maxTransfer, 0);
     }
 
     public EnergyStorage(int capacity, int maxReceive, int maxExtract)
     {
+        this(capacity, maxReceive, maxExtract, 0);
+    }
+
+    public EnergyStorage(int capacity, int maxReceive, int maxExtract, int energy)
+    {
         this.capacity = capacity;
         this.maxReceive = maxReceive;
         this.maxExtract = maxExtract;
+        this.energy = Math.max(0 , Math.min(capacity, energy));
     }
 
     @Override

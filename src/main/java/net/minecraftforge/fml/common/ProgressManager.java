@@ -32,7 +32,6 @@ import com.google.common.base.Joiner;
 public class ProgressManager
 {
     private static final List<ProgressBar> bars = new CopyOnWriteArrayList<ProgressBar>();
-
     /**
      * Not a fully fleshed out API, may change in future MC versions.
      * However feel free to use and suggest additions.
@@ -57,7 +56,9 @@ public class ProgressManager
         return bar;
     }
 
-
+    public static boolean isDisplayVSyncForced() {
+        return FMLCommonHandler.instance().isDisplayVSyncForced();
+    }
     /**
      * Not a fully fleshed out API, may change in future MC versions.
      * However feel free to use and suggest additions.

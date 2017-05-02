@@ -243,14 +243,16 @@
          this.field_71304_b.func_76318_c("connection");
          this.func_147137_ag().func_151269_c();
          this.field_71304_b.func_76318_c("players");
-@@ -758,6 +760,7 @@
+@@ -758,7 +760,8 @@
  
      public void func_71256_s()
      {
+-        this.field_175590_aa = new Thread(this, "Server thread");
 +        net.minecraftforge.fml.common.StartupQuery.reset();
-         this.field_175590_aa = new Thread(this, "Server thread");
++        this.field_175590_aa = new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, this, "Server thread");
          this.field_175590_aa.start();
      }
+ 
 @@ -774,7 +777,13 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
