@@ -65,7 +65,6 @@ public class CloudRenderer implements IResourceManagerReloadListener
 
     private int displayList = -1;
     private net.minecraft.client.renderer.vertex.VertexBuffer vbo;
-    private boolean enabled = false;
     private int cloudMode = -1;
 
     private DynamicTexture COLOR_TEX = null;
@@ -252,6 +251,11 @@ public class CloudRenderer implements IResourceManagerReloadListener
         return ((int) coord / scale) - (coord < 0 ? 1 : 0);
     }
 
+    private boolean isBuilt()
+    {
+        return OpenGlHelper.useVbo() ? vbo != null : displayList >= 0;
+    }
+
     @SubscribeEvent
     public void checkSettings(ClientTickEvent event)
     {
@@ -262,36 +266,30 @@ public class CloudRenderer implements IResourceManagerReloadListener
                     && mc.world != null
                     && mc.world.provider.isSurfaceWorld();
 
-            if (newEnabled != enabled)
+            if (newEnabled)
             {
-                if (newEnabled)
-                    build();
-                else
-                    dispose();
-                enabled = newEnabled;
-            }
-
-            if (enabled)
-            {
-                if (mc.gameSettings.shouldRenderClouds() != cloudMode)
+                if (isBuilt() && mc.gameSettings.shouldRenderClouds() != cloudMode)
                 {
-                    cloudMode = mc.gameSettings.shouldRenderClouds();
                     dispose();
-                    build();
                 }
 
-                if (OpenGlHelper.useVbo() ? vbo == null : displayList < 0)
+                if (!isBuilt())
                 {
-                    dispose();
                     build();
                 }
             }
+            else if (isBuilt())
+            {
+                dispose();
+            }
+
+            cloudMode = mc.gameSettings.shouldRenderClouds();
         }
     }
 
     public boolean render(int cloudTicks, float partialTicks)
     {
-        if (OpenGlHelper.useVbo() ? vbo == null : displayList < 0)
+        if (!isBuilt())
             return false;
 
         Entity entity = mc.getRenderViewEntity();
