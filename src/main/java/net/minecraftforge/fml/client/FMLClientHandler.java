@@ -81,6 +81,7 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.client.CloudRenderer;
+import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
@@ -1122,7 +1123,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public boolean renderClouds(int cloudTicks, float partialTicks)
     {
-        net.minecraftforge.client.IRenderHandler renderer = this.client.world.provider.getCloudRenderer();
+        IRenderHandler renderer = this.client.world.provider.getCloudRenderer();
         if (renderer != null)
         {
             renderer.render(partialTicks, this.client.world, this.client);
