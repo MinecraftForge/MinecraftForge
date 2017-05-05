@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/World.java
 +++ ../src-work/minecraft/net/minecraft/world/World.java
-@@ -59,8 +59,15 @@
+@@ -59,14 +59,21 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -17,6 +17,14 @@
      private int field_181546_a = 63;
      protected boolean field_72999_e;
      public final List<Entity> field_72996_f = Lists.<Entity>newArrayList();
+     protected final List<Entity> field_72997_g = Lists.<Entity>newArrayList();
+-    public final List<TileEntity> field_147482_g = Lists.<TileEntity>newArrayList();
+-    public final List<TileEntity> field_175730_i = Lists.<TileEntity>newArrayList();
++    public final List<TileEntity> field_147482_g = new net.minecraftforge.common.util.SetBackedList<TileEntity>(); // MC-117075 performance issue when unloading many tile entities
++    public final List<TileEntity> field_175730_i = new net.minecraftforge.common.util.SetBackedList<TileEntity>(); // MC-117075 performance issue when unloading many tile entities
+     private final List<TileEntity> field_147484_a = Lists.<TileEntity>newArrayList();
+     private final List<TileEntity> field_147483_b = Lists.<TileEntity>newArrayList();
+     public final List<EntityPlayer> field_73010_i = Lists.<EntityPlayer>newArrayList();
 @@ -102,6 +109,12 @@
      private final WorldBorder field_175728_M;
      int[] field_72994_J;
