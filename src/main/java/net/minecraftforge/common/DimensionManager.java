@@ -252,9 +252,24 @@ public class DimensionManager
         mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
     }
 
+    public static boolean isWorldLoaded(int id)
+    {
+        return worlds.containsKey(id);
+    }
+
+    @Nullable
     public static WorldServer getWorld(int id)
     {
         return worlds.get(id);
+    }
+
+    public static WorldServer getWorld(int id, boolean ensureLoaded)
+    {
+        if (ensureLoaded && !isWorldLoaded(id))
+        {
+            initDimension(id);
+        }
+        return getWorld(id);
     }
 
     public static WorldServer[] getWorlds()
