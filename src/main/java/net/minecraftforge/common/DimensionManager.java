@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentMap;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntListIterator;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.HashMultiset;
@@ -47,7 +49,6 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -56,10 +57,21 @@ import javax.annotation.Nullable;
 
 public class DimensionManager
 {
+    private static class Dimension
+    {
+        private final DimensionType type;
+        private int ticksWaited;
+        private Dimension(DimensionType type)
+        {
+            this.type = type;
+            this.ticksWaited = 0;
+        }
+    }
+
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
-    private static Hashtable<Integer, DimensionType> dimensions = new Hashtable<Integer, DimensionType>();
-    private static ArrayList<Integer> unloadQueue = new ArrayList<Integer>();
+    private static Hashtable<Integer, Dimension> dimensions = new Hashtable<Integer, Dimension>();
+    private static IntArrayList unloadQueue = new IntArrayList();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
     private static Multiset<Integer> leakedWorlds = HashMultiset.create();
@@ -71,9 +83,9 @@ public class DimensionManager
     {
         int[] ret = new int[dimensions.size()];
         int x = 0;
-        for (Map.Entry<Integer, DimensionType> ent : dimensions.entrySet())
+        for (Map.Entry<Integer, Dimension> ent : dimensions.entrySet())
         {
-            if (ent.getValue() == type)
+            if (ent.getValue().type == type)
             {
                 ret[x++] = ent.getKey();
             }
@@ -103,7 +115,7 @@ public class DimensionManager
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        dimensions.put(id, type);
+        dimensions.put(id, new Dimension(type));
         if (id >= 0)
         {
             dimensionMap.set(id);
@@ -133,7 +145,7 @@ public class DimensionManager
         {
             throw new IllegalArgumentException(String.format("Could not get provider type for dimension %d, does not exist", dim));
         }
-        return dimensions.get(dim);
+        return dimensions.get(dim).type;
     }
 
     public static WorldProvider getProvider(int dim)
@@ -286,39 +298,65 @@ public class DimensionManager
         }
     }
 
-    public static void unloadWorld(int id) {
-        unloadQueue.add(id);
+    /**
+     * Queues a dimension to unload.
+     * If the dimension is already queued, it will reset the delay to unload
+     * @param id The id of the dimension
+     */
+    public static void unloadWorld(int id)
+    {
+        if(!unloadQueue.contains(id))
+        {
+            FMLLog.fine("Queueing dimension %s to unload", id);
+            unloadQueue.add(id);
+        }
+        else
+        {
+            dimensions.get(id).ticksWaited = 0;
+        }
+    }
+
+    public static boolean isWorldQueuedToUnload(int id)
+    {
+        return unloadQueue.contains(id);
     }
 
     /*
     * To be called by the server at the appropriate time, do not call from mod code.
     */
     public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
-        for (int id : unloadQueue) {
+        IntListIterator queueIterator = unloadQueue.iterator();
+        while (queueIterator.hasNext()) {
+            int id = queueIterator.next();
+            Dimension dimension = dimensions.get(id);
+            if (dimension.ticksWaited < ForgeModContainer.dimensionUnloadQueueDelay)
+            {
+                dimension.ticksWaited++;
+                continue;
+            }
             WorldServer w = worlds.get(id);
-            try {
-                if (w != null)
-                {
-                    w.saveAllChunks(true, null);
-                }
-                else
-                {
-                    FMLLog.warning("Unexpected world unload - world %d is already unloaded", id);
-                }
-            } catch (MinecraftException e) {
+            queueIterator.remove();
+            dimension.ticksWaited = 0;
+            if (w == null || !ForgeChunkManager.getPersistentChunksFor(w).isEmpty() || !w.playerEntities.isEmpty() || dimension.type.shouldLoadSpawn()) //Don't unload the world if the status changed
+            {
+                FMLLog.fine("Aborting unload for dimension %s as status changed", id);
+                continue;
+            }
+            try
+            {
+                w.saveAllChunks(true, null);
+            }
+            catch (MinecraftException e)
+            {
                 e.printStackTrace();
             }
             finally
             {
-                if (w != null)
-                {
-                    MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
-                    w.flush();
-                    setWorld(id, null, w.getMinecraftServer());
-                }
+                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
+                w.flush();
+                setWorld(id, null, w.getMinecraftServer());
             }
         }
-        unloadQueue.clear();
     }
 
     /**
