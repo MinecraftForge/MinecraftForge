@@ -116,7 +116,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
-    public static int dimensionUnloadQueueDelay = 300;
+    public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
 
     private static Configuration config;
@@ -282,9 +282,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 300,
-                "The time in ticks the server will wait when a dimension was queued to unload.");
-        dimensionUnloadQueueDelay = prop.getInt(300);
+        prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 0,
+                "The time in ticks the server will wait when a dimension was queued to unload. " +
+                        "This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.");
+        dimensionUnloadQueueDelay = prop.getInt(0);
         prop.setLanguageKey("forge.configgui.dimensionUnloadQueueDelay");
         propOrder.add(prop.getName());
 
