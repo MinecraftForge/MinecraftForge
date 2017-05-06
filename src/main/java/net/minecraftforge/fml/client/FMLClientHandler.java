@@ -951,6 +951,13 @@ public class FMLClientHandler implements IFMLSidedHandler
         throw new RuntimeException("Unknown INetHandler: " + net);
     }
 
+    @Override
+    @Nullable
+    public IThreadListener getMinecraftThread()
+    {
+        return Minecraft.getMinecraft();
+    }
+
     private SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
     private Set<String> badTextureDomains = Sets.newHashSet();
     private Table<String, String, Set<ResourceLocation>> brokenTextures = HashBasedTable.create();
