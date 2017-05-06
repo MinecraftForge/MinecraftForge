@@ -101,6 +101,11 @@ public class SetBackedList<T> extends AbstractList<T>
     @Override
     public T get(int index)
     {
+        if (index < 0)
+        {
+            throw new IndexOutOfBoundsException();
+        }
+
         for (T value : set)
         {
             if (index == 0)
@@ -112,6 +117,7 @@ public class SetBackedList<T> extends AbstractList<T>
                 index--;
             }
         }
+        
         throw new IndexOutOfBoundsException();
     }
 }
