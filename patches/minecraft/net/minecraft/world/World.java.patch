@@ -405,7 +405,7 @@
                      throw new ReportedException(crashreport1);
                  }
              }
-@@ -1678,7 +1794,7 @@
+@@ -1678,11 +1794,11 @@
              {
                  BlockPos blockpos = tileentity.func_174877_v();
  
@@ -414,6 +414,11 @@
                  {
                      try
                      {
+-                        this.field_72984_F.func_76320_a(tileentity.getClass().getSimpleName());
++                        this.field_72984_F.startSection(tileentity.getClass()); // Fix for MC-117087
+                         ((ITickable)tileentity).func_73660_a();
+                         this.field_72984_F.func_76319_b();
+                     }
 @@ -1691,6 +1807,13 @@
                          CrashReport crashreport2 = CrashReport.func_85055_a(throwable, "Ticking block entity");
                          CrashReportCategory crashreportcategory2 = crashreport2.func_85058_a("Block entity being ticked");
