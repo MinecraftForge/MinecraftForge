@@ -405,10 +405,9 @@ public class ModelBlockAnimation
                 Quat4f rot = new Quat4f();
                 rot.set(rotation);
                 TRSRTransformation base = new TRSRTransformation(translation, rot, scale, null);
-                Vector3f negOrigin = (Vector3f) origin.clone();
+                Vector3f negOrigin = new Vector3f(origin);
                 negOrigin.negate();
-                base = new TRSRTransformation(origin, null, null, null).compose(base);
-                base = base.compose(new TRSRTransformation(negOrigin, null, null, null));
+                base = new TRSRTransformation(origin, null, null, null).compose(base).compose(new TRSRTransformation(negOrigin, null, null, null));
                 return TRSRTransformation.blockCenterToCorner(base);
             }
         }
