@@ -123,7 +123,7 @@
  
          if (p_151180_0_[i] != null && p_151180_0_[j] == null)
          {
-@@ -310,4 +317,36 @@
+@@ -310,4 +317,37 @@
      {
          return (StatBase)field_188093_a.get(p_151177_0_);
      }
@@ -135,6 +135,7 @@
 +        field_188094_c.clear();
 +        field_188095_d.clear();
 +        field_188096_e.clear();
++        AchievementList.field_187981_e.clear();
 +
 +        for (StatBase[] sb : new StatBase[][]{field_188065_ae,  field_188066_af, field_75929_E, field_75930_F, field_188067_ai, field_188068_aj})
 +        {

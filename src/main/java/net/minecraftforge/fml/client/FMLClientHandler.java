@@ -83,6 +83,7 @@ import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
@@ -333,6 +334,12 @@ public class FMLClientHandler implements IFMLSidedHandler
         client.displayCrashReport(new CrashReport(message, t));
         throw Throwables.propagate(t);
     }
+
+    public boolean hasError()
+    {
+        return modsMissing != null || wrongMC != null || customError != null || dupesFound != null || modSorting != null || j8onlymods != null || multipleModsErrored != null;
+    }
+
     /**
      * Called a bit later on during initialization to finish loading mods
      * Also initializes key bindings
@@ -340,7 +347,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void finishMinecraftLoading()
     {
-        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null || j8onlymods!=null || multipleModsErrored !=null)
+        if (hasError())
         {
             SplashProgress.finish();
             return;
@@ -371,6 +378,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             String className = mc.getGuiClassName();
             if (Strings.isNullOrEmpty(className))
             {
+                if (ConfigManager.hasConfigForMod(mc.getModId()))
+                {
+                    guiFactories.put(mc, DefaultGuiFactory.forMod(mc));
+                }
                 continue;
             }
             try
@@ -624,6 +635,12 @@ public class FMLClientHandler implements IFMLSidedHandler
     public boolean isLoading()
     {
         return loading;
+    }
+
+    @Override
+    public boolean isDisplayCloseRequested()
+    {
+        return Display.isCreated() && Display.isCloseRequested();
     }
 
     @Override
@@ -1090,5 +1107,11 @@ public class FMLClientHandler implements IFMLSidedHandler
     public CompoundDataFixer getDataFixer()
     {
         return (CompoundDataFixer)this.client.getDataFixer();
+    }
+
+    @Override
+    public boolean isDisplayVSyncForced()
+    {
+        return SplashProgress.isDisplayVSyncForced;
     }
 }

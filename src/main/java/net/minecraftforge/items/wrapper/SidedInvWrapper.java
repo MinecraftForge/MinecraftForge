@@ -112,7 +112,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
                 {
                     ItemStack copy = stack.copy();
                     copy.grow(stackInSlot.getCount());
-                    inv.setInventorySlotContents(slot1, copy);
+                    setInventorySlotContents(slot1, copy);
                 }
 
                 return ItemStack.EMPTY;
@@ -125,7 +125,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
                 {
                     ItemStack copy = stack.splitStack(m);
                     copy.grow(stackInSlot.getCount());
-                    inv.setInventorySlotContents(slot1, copy);
+                    setInventorySlotContents(slot1, copy);
                     return stack;
                 }
                 else
@@ -147,7 +147,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
                 stack = stack.copy();
                 if (!simulate)
                 {
-                    inv.setInventorySlotContents(slot1, stack.splitStack(m));
+                    setInventorySlotContents(slot1, stack.splitStack(m));
                     return stack;
                 }
                 else
@@ -159,7 +159,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             else
             {
                 if (!simulate)
-                    inv.setInventorySlotContents(slot1, stack);
+                    setInventorySlotContents(slot1, stack);
                 return ItemStack.EMPTY;
             }
         }
@@ -172,7 +172,12 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         int slot1 = getSlot(inv, slot, side);
 
         if (slot1 != -1)
-            inv.setInventorySlotContents(slot1, stack);
+            setInventorySlotContents(slot1, stack);
+    }
+
+    private void setInventorySlotContents(int slot, ItemStack stack) {
+      inv.markDirty(); //Notify vanilla of updates, We change the handler to be responsible for this instead of the caller. So mimic vanilla behavior
+      inv.setInventorySlotContents(slot, stack);
     }
 
     @Override
@@ -211,7 +216,9 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         else
         {
             int m = Math.min(stackInSlot.getCount(), amount);
-            return inv.decrStackSize(slot1, m);
+            ItemStack ret = inv.decrStackSize(slot1, m);
+            inv.markDirty();
+            return ret;
         }
     }
 

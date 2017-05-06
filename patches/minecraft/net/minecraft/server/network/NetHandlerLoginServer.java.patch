@@ -18,3 +18,12 @@
              }
          }
      }
+@@ -179,7 +179,7 @@
+             this.field_147335_k = p_147315_1_.func_149300_a(privatekey);
+             this.field_147328_g = NetHandlerLoginServer.LoginState.AUTHENTICATING;
+             this.field_147333_a.func_150727_a(this.field_147335_k);
+-            (new Thread("User Authenticator #" + field_147331_b.incrementAndGet())
++            (new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, "User Authenticator #" + field_147331_b.incrementAndGet())
+             {
+                 public void run()
+                 {

@@ -280,7 +280,7 @@ public class DynBucketTest
             }
 
             // do the thing with the tank and the buckets
-            if (FluidUtil.interactWithFluidHandler(heldItem, tank, playerIn).isSuccess())
+            if (FluidUtil.interactWithFluidHandler(playerIn, hand, worldIn, pos, side))
             {
                 return true;
             }

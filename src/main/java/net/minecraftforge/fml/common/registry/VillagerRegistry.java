@@ -37,6 +37,7 @@ import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import javax.annotation.Nullable;
 
@@ -46,6 +47,8 @@ import javax.annotation.Nullable;
 public class VillagerRegistry
 {
     public static final ResourceLocation PROFESSIONS = new ResourceLocation("minecraft:villagerprofessions");
+    @ObjectHolder("minecraft:farmer")
+    public static final VillagerProfession FARMER = null;
     private static final VillagerRegistry INSTANCE = new VillagerRegistry();
 
     private Map<Class<?>, IVillageCreationHandler> villageCreationHandlers = Maps.newHashMap();

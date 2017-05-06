@@ -61,6 +61,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> setDefaultKey(ResourceLocation key)
+    {
+        this.optionalDefaultKey = key;
+        return this;
+    }
+
     @SuppressWarnings("unchecked")
     public RegistryBuilder<T> addCallback(Object inst)
     {
