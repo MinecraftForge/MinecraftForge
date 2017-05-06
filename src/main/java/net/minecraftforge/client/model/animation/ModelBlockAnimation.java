@@ -326,6 +326,7 @@ public class ModelBlockAnimation
                 time -= Math.floor(time);
                 Vector3f translation = new Vector3f(0, 0, 0);
                 Vector3f scale = new Vector3f(1, 1, 1);
+                Vector3f origin = new Vector3f(0, 0, 0);
                 AxisAngle4f rotation = new AxisAngle4f(0, 0, 0, 0);
                 for(MBVariableClip var : variables)
                 {
@@ -390,11 +391,25 @@ public class ModelBlockAnimation
                         case ZS:
                             scale.z = value;
                             break;
+                        case XORIGIN:
+                            origin.x = value;
+                            break;
+                        case YORIGIN:
+                            origin.y = value;
+                            break;
+                        case ZORIGIN:
+                            origin.z = value;
+                            break;
                     }
                 }
                 Quat4f rot = new Quat4f();
                 rot.set(rotation);
-                return TRSRTransformation.blockCenterToCorner(new TRSRTransformation(translation, rot, scale, null));
+                TRSRTransformation base = new TRSRTransformation(translation, rot, scale, null);
+                Vector3f negOrigin = (Vector3f) origin.clone();
+                negOrigin.negate();
+                base = new TRSRTransformation(origin, null, null, null).compose(base);
+                base = base.compose(new TRSRTransformation(negOrigin, null, null, null));
+                return TRSRTransformation.blockCenterToCorner(base);
             }
         }
     }
@@ -498,7 +513,13 @@ public class ModelBlockAnimation
             @SerializedName("scale_y")
             YS,
             @SerializedName("scale_z")
-            ZS;
+            ZS,
+            @SerializedName("origin_x")
+            XORIGIN,
+            @SerializedName("origin_y")
+            YORIGIN,
+            @SerializedName("origin_z")
+            ZORIGIN;
         }
 
         public static enum Type
