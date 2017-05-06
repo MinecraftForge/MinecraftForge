@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 /**
  * A List implementation with O(1) {@link #contains(Object)} and {@link #remove(Object)}.
  *
- * Sacrifices performance of ordered operations like {@link #get(int)} and {@link #remove(int)}.
+ * Sacrifices performance of ordered operations like {@link #get(int)}, {@link #remove(int)}, and ListIterator.
  * Does not support {@link #set(int, Object)} or {@link #add(int, Object)}.
  * Does not support duplicate elements.
  *
@@ -117,7 +117,7 @@ public class SetBackedList<T> extends AbstractList<T>
                 index--;
             }
         }
-        
+
         throw new IndexOutOfBoundsException();
     }
 }
