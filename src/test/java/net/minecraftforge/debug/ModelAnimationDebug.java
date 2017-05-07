@@ -234,7 +234,7 @@ public class ModelAnimationDebug
         private final VariableValue cycle = new VariableValue(0);
 
         public Spin() {
-            asm = proxy.load(new ResourceLocation(MODID, "asms/block/rotatest.json"), ImmutableMap.of("cycle", cycle));
+            asm = proxy.load(new ResourceLocation(MODID, "asms/block/rotatest.json"), ImmutableMap.<String, ITimeValue>of("cycle", cycle));
 
         }
 
