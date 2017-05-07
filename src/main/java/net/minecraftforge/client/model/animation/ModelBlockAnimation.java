@@ -392,13 +392,13 @@ public class ModelBlockAnimation
                             scale.z = value;
                             break;
                         case XORIGIN:
-                            origin.x = value;
+                            origin.x = value - 0.5F;
                             break;
                         case YORIGIN:
-                            origin.y = value;
+                            origin.y = value - 0.5F;
                             break;
                         case ZORIGIN:
-                            origin.z = value;
+                            origin.z = value - 0.5F;
                             break;
                     }
                 }
