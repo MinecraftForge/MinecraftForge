@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
-@@ -34,6 +34,8 @@
+@@ -14,6 +14,8 @@
+     private final BlockStateContainer field_177488_d;
+     private NibbleArray field_76679_g;
+     private NibbleArray field_76685_h;
++    private int blocklightCount;
++    private int skylightCount;
+ 
+     public ExtendedBlockStorage(int p_i1997_1_, boolean p_i1997_2_)
+     {
+@@ -34,6 +36,8 @@
  
      public void func_177484_a(int p_177484_1_, int p_177484_2_, int p_177484_3_, IBlockState p_177484_4_)
      {
@@ -9,3 +18,46 @@
          IBlockState iblockstate = this.func_177485_a(p_177484_1_, p_177484_2_, p_177484_3_);
          Block block = iblockstate.func_177230_c();
          Block block1 = p_177484_4_.func_177230_c();
+@@ -63,7 +67,7 @@
+ 
+     public boolean func_76663_a()
+     {
+-        return this.field_76682_b == 0;
++        return this.field_76682_b == 0 && this.blocklightCount == 0 && (this.skylightCount == 0 || this.skylightCount == 15 * 16 * 16 * 16); //Forge: Take light into account. Fixes MC-116690
+     }
+ 
+     public boolean func_76675_b()
+@@ -78,6 +82,7 @@
+ 
+     public void func_76657_c(int p_76657_1_, int p_76657_2_, int p_76657_3_, int p_76657_4_)
+     {
++        this.skylightCount += p_76657_4_ - this.func_76670_c(p_76657_1_, p_76657_2_ ,p_76657_3_);
+         this.field_76685_h.func_76581_a(p_76657_1_, p_76657_2_, p_76657_3_, p_76657_4_);
+     }
+ 
+@@ -88,6 +93,7 @@
+ 
+     public void func_76677_d(int p_76677_1_, int p_76677_2_, int p_76677_3_, int p_76677_4_)
+     {
++        this.blocklightCount += p_76677_4_ - this.func_76674_d(p_76677_1_, p_76677_2_ ,p_76677_3_);
+         this.field_76679_g.func_76581_a(p_76677_1_, p_76677_2_, p_76677_3_, p_76677_4_);
+     }
+ 
+@@ -100,6 +106,8 @@
+     {
+         this.field_76682_b = 0;
+         this.field_76683_c = 0;
++        this.blocklightCount = 0;
++        this.skylightCount = 0;
+ 
+         for (int i = 0; i < 16; ++i)
+         {
+@@ -118,6 +126,8 @@
+                             ++this.field_76683_c;
+                         }
+                     }
++                    this.blocklightCount += this.func_76674_d(i, j, k);
++                    if (this.field_76685_h != null) this.skylightCount += this.func_76670_c(i, j, k);
+                 }
+             }
+         }
