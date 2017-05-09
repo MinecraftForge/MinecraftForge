@@ -497,11 +497,12 @@ public class LightingEngine
      */
     private int curToLuminosity(final IBlockState state)
     {
-        return this.lightType == EnumSkyBlock.SKY
-            ? this.curChunk.canSeeSky(this.curPos)
-            ? EnumSkyBlock.SKY.defaultLightValue
-            : 0
-            : MathHelper.clamp(state.getLightValue(this.world, this.curPos), 0, MAX_LIGHT);
+        if (this.lightType == EnumSkyBlock.SKY)
+        {
+            return this.curChunk.canSeeSky(this.curPos) ? EnumSkyBlock.SKY.defaultLightValue : 0;
+        }
+
+        return MathHelper.clamp(state.getLightValue(this.world, this.curPos), 0, MAX_LIGHT);
     }
 
     private int curToOpac(final IBlockState state)
