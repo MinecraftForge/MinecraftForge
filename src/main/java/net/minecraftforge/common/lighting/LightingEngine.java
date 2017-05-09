@@ -26,7 +26,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -35,6 +34,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class LightingEngine
 {
@@ -171,7 +171,7 @@ public class LightingEngine
         }
 
         //renderer accesses world unsynchronized, don't modify anything in that case
-        if (this.world.isRemote && !Minecraft.getMinecraft().isCallingFromMinecraftThread())
+        if (this.world.isRemote && !FMLCommonHandler.instance().getMinecraftThread().isCallingFromMinecraftThread())
         {
             return;
         }

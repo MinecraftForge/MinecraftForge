@@ -23,6 +23,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
@@ -72,6 +74,9 @@ public interface IFMLSidedHandler
     void allowLogins();
 
     IThreadListener getWorldThread(INetHandler net);
+
+    @Nullable
+    IThreadListener getMinecraftThread();
 
     void processWindowMessages();
 
