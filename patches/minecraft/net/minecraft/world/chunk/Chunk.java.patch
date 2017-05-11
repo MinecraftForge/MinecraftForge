@@ -37,7 +37,7 @@
                  extendedblockstorage = new ExtendedBlockStorage(j >> 4 << 4, this.field_76637_e.field_73011_w.func_191066_m());
                  this.field_76652_q[j >> 4] = extendedblockstorage;
                  flag = j >= i1;
-+                net.minecraftforge.common.lighting.LightingHooks.initSkylightForSection(this.field_76637_e, this, extendedblockstorage);
++                net.minecraftforge.common.lighting.LightingHooks.initSkylightForSection(this.field_76637_e, this, extendedblockstorage); //Forge: Always initialize sections properly (See #3870 and #3879)
              }
  
              extendedblockstorage.func_177484_a(i, j & 15, k, p_177436_2_);
@@ -65,7 +65,7 @@
              else
              {
 -                if (flag)
-+                if (false)
++                if (false) //Forge: Don't call generateSkylightMap (as it produces the wrong result; sections are initialized above). Never bypass relightBlock (See #3870)
                  {
                      this.func_76603_b();
                  }
@@ -115,7 +115,7 @@
              extendedblockstorage = new ExtendedBlockStorage(j >> 4 << 4, this.field_76637_e.field_73011_w.func_191066_m());
              this.field_76652_q[j >> 4] = extendedblockstorage;
 -            this.func_76603_b();
-+            net.minecraftforge.common.lighting.LightingHooks.initSkylightForSection(this.field_76637_e, this, extendedblockstorage);
++            net.minecraftforge.common.lighting.LightingHooks.initSkylightForSection(this.field_76637_e, this, extendedblockstorage); //Forge: generateSkylightMap produces the wrong result (See #3870)
          }
  
          this.field_76643_l = true;
