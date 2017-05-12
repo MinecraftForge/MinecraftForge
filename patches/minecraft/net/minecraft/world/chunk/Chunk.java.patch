@@ -283,7 +283,15 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1476,4 +1495,34 @@
+@@ -1407,6 +1426,7 @@
+         else
+         {
+             System.arraycopy(p_177420_1_, 0, this.field_76634_f, 0, this.field_76634_f.length);
++            this.field_82912_p = com.google.common.primitives.Ints.min(this.field_76634_f); // Forge: update min height value
+         }
+     }
+ 
+@@ -1476,4 +1496,34 @@
          QUEUED,
          CHECK;
      }
