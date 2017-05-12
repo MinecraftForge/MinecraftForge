@@ -287,7 +287,7 @@
          else
          {
              System.arraycopy(p_177420_1_, 0, this.field_76634_f, 0, this.field_76634_f.length);
-+            this.field_82912_p = com.google.common.primitives.Ints.min(this.field_76634_f); // Forge: update min height value
++            this.field_82912_p = com.google.common.primitives.Ints.min(this.field_76634_f); // Forge: update min height value (MC-117412)
          }
      }
  
