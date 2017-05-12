@@ -1,14 +1,39 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -35,6 +35,7 @@
+@@ -33,8 +33,31 @@
+     private final Set<Long> field_73248_b = Sets.<Long>newHashSet();
+     public final IChunkGenerator field_186029_c;
      public final IChunkLoader field_73247_e;
-     public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap(8192);
+-    public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap(8192);
++    // Forge start - optimize chunk lookups by using last access cache
++    public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192) {
++
++        private static final long serialVersionUID = 1L;
++        protected Chunk lastChunkByPos = null;
++
++        @Override
++        public Chunk get(long key) {
++            if (this.lastChunkByPos != null && key == this.lastChunkByPos.chunkKey) {
++                return this.lastChunkByPos;
++            }
++            return this.lastChunkByPos = super.get(key);
++        }
++
++        @Override
++        public Chunk remove(long key) {
++            if (this.lastChunkByPos != null && key == this.lastChunkByPos.chunkKey) {
++                this.lastChunkByPos = null;
++            }
++            return super.remove(key);
++        }
++    };
++    // Forge end
      public final WorldServer field_73251_h;
 +    private Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
-@@ -82,20 +83,47 @@
+@@ -82,20 +105,47 @@
      @Nullable
      public Chunk func_186028_c(int p_186028_1_, int p_186028_2_)
      {
@@ -60,7 +85,7 @@
          return chunk;
      }
  
-@@ -221,6 +249,11 @@
+@@ -221,6 +271,11 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
@@ -72,7 +97,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -235,6 +268,11 @@
+@@ -235,6 +290,11 @@
                          this.func_73243_a(chunk);
                          this.field_73244_f.remove(olong);
                          ++i;
