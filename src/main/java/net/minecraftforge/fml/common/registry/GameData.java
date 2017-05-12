@@ -200,19 +200,39 @@ public class GameData
         return new ResourceLocation(prefix, name);
     }
 
+    @SuppressWarnings("unchecked")
     void registerSubstitutionAlias(String name, GameRegistry.Type type, Object toReplace) throws ExistingSubstitutionException
     {
         ResourceLocation nameToSubstitute = new ResourceLocation(name);
-        final BiMap<Block, Item> blockItemMap = getBlockItemMap();
-        if (type == GameRegistry.Type.BLOCK)
+        FMLControlledNamespacedRegistry registry = null;
+        switch (type)
         {
-            iBlockRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Block)toReplace);
-            iBlockRegistry.activateSubstitution(nameToSubstitute);
+        case BLOCK:
+            registry = iBlockRegistry;
+            break;
+        case ITEM:
+            registry = iItemRegistry;
+            break;
+        case POTION:
+            registry = iPotionRegistry;
+            break;
+        case POTION_TYPE:
+            registry = iPotionTypeRegistry;
+            break;
+        case BIOME:
+            registry = iBiomeRegistry;
+            break;
+        case ENCHANTMENT:
+            registry = iEnchantmentRegistry;
+            break;
+        case SOUND_EVENT:
+            registry = iSoundEventRegistry;
+            break;
         }
-        else if (type == GameRegistry.Type.ITEM)
+        if (registry != null)
         {
-            iItemRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Item)toReplace);
-            iItemRegistry.activateSubstitution(nameToSubstitute);
+            registry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (IForgeRegistryEntry) toReplace);
+            registry.activateSubstitution(nameToSubstitute);
         }
     }
 
