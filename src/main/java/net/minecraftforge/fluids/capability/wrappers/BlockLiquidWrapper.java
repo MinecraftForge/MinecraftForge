@@ -19,8 +19,7 @@
 
 package net.minecraftforge.fluids.capability.wrappers;
 
-import javax.annotation.Nullable;
-
+import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -34,8 +33,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
+
+import javax.annotation.Nullable;
 
 /**
  * Wrapper to handle vanilla Water or Lava as an IFluidHandler.
@@ -78,7 +79,7 @@ public class BlockLiquidWrapper implements IFluidHandler
         if (doFill)
         {
             Material material = blockLiquid.getDefaultState().getMaterial();
-            BlockLiquid block = BlockLiquid.getStaticBlock(material);
+            BlockDynamicLiquid block = BlockLiquid.getFlowingBlock(material);
             world.setBlockState(blockPos, block.getDefaultState().withProperty(BlockLiquid.LEVEL, 0), 11);
         }
 
