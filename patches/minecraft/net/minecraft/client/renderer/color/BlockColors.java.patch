@@ -8,34 +8,180 @@
 +    // FORGE: Use RegistryDelegates as non-Vanilla block ids are not constant
 +    private final java.util.Map<net.minecraftforge.fml.common.registry.RegistryDelegate<Block>, IBlockColor> blockColorMap = com.google.common.collect.Maps.newHashMap();
  
-     public static BlockColors func_186723_a()
+     public static BlockColors init()
      {
-@@ -147,7 +148,7 @@
- 
-     public int func_189991_a(IBlockState p_189991_1_)
-     {
--        IBlockColor iblockcolor = (IBlockColor)this.field_186725_a.func_148745_a(Block.func_149682_b(p_189991_1_.func_177230_c()));
-+        IBlockColor iblockcolor = (IBlockColor)this.blockColorMap.get(p_189991_1_.func_177230_c().delegate);
- 
-         if (iblockcolor != null)
+@@ -39,6 +40,12 @@
+                 BlockDoublePlant.EnumPlantType blockdoubleplant$enumplanttype = (BlockDoublePlant.EnumPlantType)state.getValue(BlockDoublePlant.VARIANT);
+                 return worldIn == null || pos == null || blockdoubleplant$enumplanttype != BlockDoublePlant.EnumPlantType.GRASS && blockdoubleplant$enumplanttype != BlockDoublePlant.EnumPlantType.FERN ? -1 : BiomeColorHelper.getGrassColorAtPos(worldIn, pos);
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.DOUBLE_PLANT});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
          {
-@@ -162,7 +163,7 @@
- 
-     public int func_186724_a(IBlockState p_186724_1_, @Nullable IBlockAccess p_186724_2_, @Nullable BlockPos p_186724_3_, int p_186724_4_)
-     {
--        IBlockColor iblockcolor = (IBlockColor)this.field_186725_a.func_148745_a(Block.func_149682_b(p_186724_1_.func_177230_c()));
-+        IBlockColor iblockcolor = (IBlockColor)this.blockColorMap.get(p_186724_1_.func_177230_c().delegate);
-         return iblockcolor == null ? -1 : iblockcolor.func_186720_a(p_186724_1_, p_186724_2_, p_186724_3_, p_186724_4_);
+@@ -66,6 +73,12 @@
+                     return -1;
+                 }
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.FLOWER_POT});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
+         {
+@@ -73,6 +86,12 @@
+             {
+                 return worldIn != null && pos != null ? BiomeColorHelper.getGrassColorAtPos(worldIn, pos) : ColorizerGrass.getGrassColor(0.5D, 1.0D);
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.GRASS});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
+         {
+@@ -81,6 +100,12 @@
+                 BlockPlanks.EnumType blockplanks$enumtype = (BlockPlanks.EnumType)state.getValue(BlockOldLeaf.VARIANT);
+                 return blockplanks$enumtype == BlockPlanks.EnumType.SPRUCE ? ColorizerFoliage.getFoliageColorPine() : (blockplanks$enumtype == BlockPlanks.EnumType.BIRCH ? ColorizerFoliage.getFoliageColorBirch() : (worldIn != null && pos != null ? BiomeColorHelper.getFoliageColorAtPos(worldIn, pos) : ColorizerFoliage.getFoliageColorBasic()));
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.LEAVES});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
+         {
+@@ -88,6 +113,12 @@
+             {
+                 return worldIn != null && pos != null ? BiomeColorHelper.getFoliageColorAtPos(worldIn, pos) : ColorizerFoliage.getFoliageColorBasic();
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.LEAVES2});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
+         {
+@@ -95,6 +126,12 @@
+             {
+                 return worldIn != null && pos != null ? BiomeColorHelper.getWaterColorAtPos(worldIn, pos) : -1;
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.WATER, Blocks.FLOWING_WATER});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
+         {
+@@ -102,6 +139,12 @@
+             {
+                 return BlockRedstoneWire.colorMultiplier(((Integer)state.getValue(BlockRedstoneWire.POWER)).intValue());
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.REDSTONE_WIRE});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
+         {
+@@ -109,6 +152,12 @@
+             {
+                 return worldIn != null && pos != null ? BiomeColorHelper.getGrassColorAtPos(worldIn, pos) : -1;
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.REEDS});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
+         {
+@@ -120,6 +169,12 @@
+                 int l = i * 4;
+                 return j << 16 | k << 8 | l;
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.MELON_STEM, Blocks.PUMPKIN_STEM});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
+         {
+@@ -127,6 +182,12 @@
+             {
+                 return worldIn != null && pos != null ? BiomeColorHelper.getGrassColorAtPos(worldIn, pos) : (state.getValue(BlockTallGrass.TYPE) == BlockTallGrass.EnumType.DEAD_BUSH ? 16777215 : ColorizerGrass.getGrassColor(0.5D, 1.0D));
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.TALLGRASS});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
+         {
+@@ -134,6 +195,12 @@
+             {
+                 return worldIn != null && pos != null ? BiomeColorHelper.getFoliageColorAtPos(worldIn, pos) : ColorizerFoliage.getFoliageColorBasic();
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.VINE});
+         blockcolors.registerBlockColorHandler(new IBlockColor()
+         {
+@@ -141,6 +208,12 @@
+             {
+                 return worldIn != null && pos != null ? 2129968 : 7455580;
+             }
++
++            @Override
++            public boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos) 
++            {
++                return false;
++            }
+         }, new Block[] {Blocks.WATERLILY});
+         return blockcolors;
      }
- 
-@@ -170,7 +171,9 @@
-     {
-         for (Block block : p_186722_2_)
-         {
--            this.field_186725_a.func_148746_a(p_186722_1_, Block.func_149682_b(block));
-+            if (block == null) throw new IllegalArgumentException("Block registered to block color handler cannot be null!");
-+            if (block.getRegistryName() == null) throw new IllegalArgumentException("Block must be registered before assigning color handler.");
-+            this.blockColorMap.put(block.delegate, p_186722_1_);
+@@ -159,6 +232,18 @@
+             return mapcolor != null ? mapcolor.colorValue : -1;
          }
      }
- }
++    
++    public boolean getPreventParticleDiggingColoring(IBlockState state, BlockPos pos) 
++    {
++        IBlockColor iblockcolor = (IBlockColor)this.blockColorMap.get(state.getBlock().delegate);
++        
++        if (iblockcolor != null)
++        {
++            return iblockcolor.preventParticleDiggingColoring(state, pos);
++        }
++        else
++            return false;
++    }
+ 
+     public int colorMultiplier(IBlockState state, @Nullable IBlockAccess blockAccess, @Nullable BlockPos pos, int renderPass)
+     {
