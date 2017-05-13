@@ -1,30 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/client/particle/ParticleDigging.java
 +++ ../src-work/minecraft/net/minecraft/client/particle/ParticleDigging.java
-@@ -1,6 +1,7 @@
- package net.minecraft.client.particle;
- 
- import javax.annotation.Nullable;
-+
- import net.minecraft.block.Block;
+@@ -5,6 +5,7 @@
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.client.Minecraft;
-@@ -9,6 +10,7 @@
+ import net.minecraft.client.renderer.VertexBuffer;
++import net.minecraft.client.renderer.color.IBlockColor;
+ import net.minecraft.entity.Entity;
  import net.minecraft.init.Blocks;
  import net.minecraft.util.math.BlockPos;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.IParticleColorControlling;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- 
-@@ -36,8 +38,9 @@
-     public ParticleDigging setBlockPos(BlockPos pos)
+@@ -37,7 +38,7 @@
      {
          this.sourcePos = pos;
--
+ 
 -        if (this.sourceState.getBlock() == Blocks.GRASS)
-+        
-+        
-+        if (this.sourceState.getBlock() == Blocks.GRASS || (this.sourceState.getBlock() instanceof IParticleColorControlling && ((IParticleColorControlling) this.sourceState.getBlock()).preventColoring(sourceState, sourcePos)))
++        if (this.sourceState.getBlock() == Blocks.GRASS || (this.sourceState.getBlock() instanceof IBlockColor && ((IBlockColor) this.sourceState.getBlock()).preventParticleColoring(sourceState, sourcePos)))
          {
              return this;
          }
