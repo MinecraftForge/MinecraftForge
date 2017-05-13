@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/client/particle/ParticleDigging.java
++++ ../src-work/minecraft/net/minecraft/client/particle/ParticleDigging.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.client.particle;
+ 
++import java.util.Set;
++
+ import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.state.IBlockState;
+@@ -17,6 +19,7 @@
+ {
+     private final IBlockState sourceState;
+     private BlockPos sourcePos;
++    private static Set<Block> colorMultiplyingExceptions = new HashSet<Block>();
+ 
+     protected ParticleDigging(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, IBlockState state)
+     {
+@@ -36,8 +39,16 @@
+     public ParticleDigging setBlockPos(BlockPos pos)
+     {
+         this.sourcePos = pos;
+-
+-        if (this.sourceState.getBlock() == Blocks.GRASS)
++        
++        boolean isException = false;
++        for(Block block : colorMultiplyingExceptions)
++            if(this.sourceState.getBlock() == block || this.sourceState.getBlock() == Blocks.GRASS) 
++            {
++                isException = true;
++                break;
++            }
++        
++        if (isException)
+         {
+             return this;
+         }
+@@ -47,6 +58,24 @@
+             return this;
+         }
+     }
++    
++    /**
++     * Registers a block to except from particle's color multiplying.
++     * @param block Block to except.
++     */
++    public static void registerColorMultiplyingException(Block block) 
++    {
++        colorMultiplyingExceptions.add(block);
++    }
++    
++    /**
++     * Returns a set of blocks which are excepted from particle's color multiplying.
++     * @return Set<Block> A set of blocks which are excepted from particle's color multiplying.
++     */
++    public static Set<Block> getColorMultiplyingException() 
++    {
++        return colorMultiplyingExceptions;
++    }
+ 
+     public ParticleDigging init()
+     {
