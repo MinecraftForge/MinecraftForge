@@ -13,7 +13,7 @@
          this.sourcePos = pos;
  
 -        if (this.sourceState.getBlock() == Blocks.GRASS)
-+        if (this.sourceState.getBlock() == Blocks.GRASS || (this.sourceState.getBlock() instanceof IBlockColor && ((IBlockColor) this.sourceState.getBlock()).preventParticleDiggingColoring(sourceState, sourcePos)))
++        if (this.sourceState.getBlock() == Blocks.GRASS || (this.sourceState.getBlock() instanceof IBlockColor && ((IBlockColor) this.sourceState.getBlock()).preventParticleDiggingColoring(sourceState, sourcePos)) || Minecraft.getMinecraft().getBlockColors().getPreventParticleDiggingColoring(sourceState, sourcePos))
          {
              return this;
          }
