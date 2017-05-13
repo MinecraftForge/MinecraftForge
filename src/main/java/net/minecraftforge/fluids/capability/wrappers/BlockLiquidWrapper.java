@@ -21,7 +21,6 @@ package net.minecraftforge.fluids.capability.wrappers;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -79,7 +78,7 @@ public class BlockLiquidWrapper implements IFluidHandler
         if (doFill)
         {
             Material material = blockLiquid.getDefaultState().getMaterial();
-            BlockDynamicLiquid block = BlockLiquid.getFlowingBlock(material);
+            BlockLiquid block = BlockLiquid.getFlowingBlock(material);
             world.setBlockState(blockPos, block.getDefaultState().withProperty(BlockLiquid.LEVEL, 0), 11);
         }
 
