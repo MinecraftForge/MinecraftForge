@@ -33,8 +33,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 /**
