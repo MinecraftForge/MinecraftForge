@@ -1411,6 +1411,18 @@
 +        return isBurning(world, pos) ? net.minecraft.pathfinding.PathNodeType.DAMAGE_FIRE : null;
 +    }
 +
++    /**
++     * Used to prevent block’s digging & hitting particles from coloring
++     * @param blockState Block’s state
++     * @param pos Block’s position
++     * @return Whether to colour block’s particles or not
++     */
++    @SideOnly(Side.CLIENT)
++    public boolean preventParticleColoring(IBlockState blockState, BlockPos pos)
++    {
++        return false;
++    }
++
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()
