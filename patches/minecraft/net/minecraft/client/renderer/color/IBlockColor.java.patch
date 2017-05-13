@@ -5,6 +5,6 @@
  {
      int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex);
 +    
-+    boolean preventParticleDiggingColoring(IBlockState blockState, BlockPos pos);
++    boolean preventParticleColoring(IBlockState blockState, BlockPos pos);
  }
 \ No newline at end of file
