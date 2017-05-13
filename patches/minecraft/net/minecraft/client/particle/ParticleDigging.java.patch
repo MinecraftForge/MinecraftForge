@@ -4,7 +4,6 @@
  package net.minecraft.client.particle;
  
  import javax.annotation.Nullable;
-+
  import net.minecraft.block.Block;
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.client.Minecraft;
@@ -12,7 +11,7 @@
  import net.minecraft.init.Blocks;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
-+import net.minecraftforge.common.IParticleColorControlling;
++import net.minecraftforge.common.IParticleColoringControlling;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -24,7 +23,7 @@
 -        if (this.sourceState.getBlock() == Blocks.GRASS)
 +        
 +        
-+        if (this.sourceState.getBlock() == Blocks.GRASS || (this.sourceState.getBlock() instanceof IParticleColorControlling && ((IParticleColorControlling) this.sourceState.getBlock()).preventColoring(sourceState, sourcePos)))
++        if (this.sourceState.getBlock() == Blocks.GRASS || (this.sourceState.getBlock() instanceof IParticleColoringControlling && ((IParticleColoringControlling) this.sourceState.getBlock()).preventColoring(sourceState, sourcePos)))
          {
              return this;
          }
