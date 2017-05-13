@@ -19,10 +19,7 @@
      public ParticleDigging setBlockPos(BlockPos pos)
      {
          this.sourcePos = pos;
--
 -        if (this.sourceState.getBlock() == Blocks.GRASS)
-+        
-+        
 +        if (this.sourceState.getBlock() == Blocks.GRASS || (this.sourceState.getBlock() instanceof IParticleColoringControlling && ((IParticleColoringControlling) this.sourceState.getBlock()).preventColoring(sourceState, sourcePos)))
          {
              return this;
