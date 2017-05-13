@@ -4,7 +4,7 @@
      private final BlockStateContainer field_177488_d;
      private NibbleArray field_76679_g;
      private NibbleArray field_76685_h;
-+    private int blocklightCount;
++    private int blocklightCount; //Forge: Keep track of total light such that #isEmpty can return correct state
 +    private int skylightCount;
  
      public ExtendedBlockStorage(int p_i1997_1_, boolean p_i1997_2_)
