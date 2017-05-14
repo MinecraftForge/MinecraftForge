@@ -133,7 +133,19 @@
                  {
                      if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
                      {
-@@ -2328,7 +2359,7 @@
+@@ -2012,7 +2043,10 @@
+ 
+     public void func_174959_b(BlockPos p_174959_1_)
+     {
+-        this.field_184387_ae.add(p_174959_1_.func_185334_h());
++        int i = p_174959_1_.func_177958_n();
++        int j = p_174959_1_.func_177956_o();
++        int k = p_174959_1_.func_177952_p();
++        this.func_184385_a(i - 1, j - 1, k - 1, i + 1, j + 1, k + 1, false); //Forge: Process immediately. Fixes MC-91136
+     }
+ 
+     public void func_147585_a(int p_147585_1_, int p_147585_2_, int p_147585_3_, int p_147585_4_, int p_147585_5_, int p_147585_6_)
+@@ -2328,7 +2362,7 @@
  
                  if (block.func_176223_P().func_185904_a() != Material.field_151579_a)
                  {
