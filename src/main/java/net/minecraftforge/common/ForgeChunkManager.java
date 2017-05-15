@@ -989,14 +989,31 @@ public class ForgeChunkManager
         {
             for (ClassInheritanceMultiMap<Entity> eList : chunk.getEntityLists())
             {
-                Iterator<Entity> itr = eList.iterator();
-                while (itr.hasNext())
+                for (Entity entity : eList)
                 {
-                    (itr.next()).resetEntityId();
+                    if (!entity.isRiding())
+                    {
+                        updateIDs(entity);
+                    }
                 }
             }
         }
         return chunk;
+    }
+
+    private static void updateIDs(Entity entity)
+    {
+        if (entity.isDead) return;
+
+        entity.resetEntityId();
+
+        if (entity.isBeingRidden())
+        {
+            for (Entity passenger : entity.getPassengers())
+            {
+                updateIDs(passenger);
+            }
+        }
     }
 
     static void captureConfig(File configDir)
