@@ -638,7 +638,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             catch (NoSuchMethodException e)
             {
-                FMLLog.log(Level.ERROR, "The container %s (type %s) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
+                FMLLog.log(Level.ERROR, "The container %s (type %s) returned an invalid class for its resource pack.", container.getName(), container.getClass().getName());
                 return;
             }
             catch (Exception e)
