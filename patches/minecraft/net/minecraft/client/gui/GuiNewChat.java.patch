@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiNewChat.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiNewChat.java
+@@ -136,6 +136,10 @@
+ 
+     public void func_146234_a(ITextComponent p_146234_1_, int p_146234_2_)
+     {
++        net.minecraftforge.client.event.ClientChatPrintedEvent event = new net.minecraftforge.client.event.ClientChatPrintedEvent(p_146234_1_, p_146234_2_);
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
++        p_146234_1_ = event.getMessage();
++        p_146234_2_ = event.getChatLineID();
+         this.func_146237_a(p_146234_1_, p_146234_2_, this.field_146247_f.field_71456_v.func_73834_c(), false);
+         field_146249_a.info("[CHAT] {}", new Object[] {field_184062_f.join(field_184061_a.split(p_146234_1_.func_150260_c()))});
+     }
