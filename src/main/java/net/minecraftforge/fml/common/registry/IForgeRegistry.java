@@ -40,8 +40,6 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 {
     public Class<V> getRegistrySuperType();
 
-    ResourceLocation getRegistryName();
-
     void register(V value);
 
     void registerAll(V... values);

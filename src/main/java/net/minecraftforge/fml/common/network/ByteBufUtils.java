@@ -240,7 +240,7 @@ public class ByteBufUtils {
     public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntry(@Nonnull ByteBuf out, @Nonnull T entry)
     {
         FMLControlledNamespacedRegistry<T> registry = (FMLControlledNamespacedRegistry<T>)GameRegistry.findRegistry(entry.getRegistryType());
-        writeUTF8String(out, registry.getRegistryName().toString());
+        writeUTF8String(out, PersistentRegistryManager.getRegistryRegistryName(registry).toString());
         writeVarInt(out, registry.getId(entry), 5);
     }
 
@@ -255,14 +255,15 @@ public class ByteBufUtils {
     {
         String registryName = readUTF8String(in);
         int id = readVarInt(in, 5);
-        if (!registry.getRegistryName().toString().equals(registryName))
+        ResourceLocation expectedRegistryName = PersistentRegistryManager.getRegistryRegistryName(registry);
+        if (!expectedRegistryName.toString().equals(registryName))
         {
-            throw new IllegalArgumentException("Registry mismatch: " + registryName + " != " + registry.getRegistryName());
+            throw new IllegalArgumentException("Registry mismatch: " + registryName + " != " + expectedRegistryName);
         }
         T thing = ((FMLControlledNamespacedRegistry<T>)registry).getRaw(id);
         if (thing == null)
         {
-            throw new IllegalArgumentException("Unknown ID " + id + " for registry " + registry.getRegistryName() + " received.");
+            throw new IllegalArgumentException("Unknown ID " + id + " for registry " + expectedRegistryName + " received.");
         }
         return thing;
     }
@@ -281,7 +282,7 @@ public class ByteBufUtils {
         {
             T entry = it.next();
             FMLControlledNamespacedRegistry<T> registry = (FMLControlledNamespacedRegistry<T>)GameRegistry.findRegistry(entry.getRegistryType());
-            writeUTF8String(out, registry.getRegistryName().toString());
+            writeUTF8String(out, PersistentRegistryManager.getRegistryRegistryName(registry).toString());
             do
             {
                 writeVarInt(out, registry.getId(entry), 5);
@@ -316,9 +317,10 @@ public class ByteBufUtils {
         else
         {
             String registryName = readUTF8String(in);
-            if (!registry.getRegistryName().toString().equals(registryName))
+            ResourceLocation expectedRegistryName = PersistentRegistryManager.getRegistryRegistryName(registry);
+            if (!expectedRegistryName.toString().equals(registryName))
             {
-                throw new IllegalArgumentException("Registry mismatch: " + registryName + " != " + registry.getRegistryName());
+                throw new IllegalArgumentException("Registry mismatch: " + registryName + " != " + expectedRegistryName);
             }
 
             ImmutableList.Builder<T> b = ImmutableList.builder();
@@ -328,7 +330,7 @@ public class ByteBufUtils {
                 T thing = ((FMLControlledNamespacedRegistry<T>)registry).getRaw(id);
                 if (thing == null)
                 {
-                    throw new IllegalArgumentException("Unknown ID " + id + " for registry " + registry.getRegistryName() + " received.");
+                    throw new IllegalArgumentException("Unknown ID " + id + " for registry " + expectedRegistryName + " received.");
                 }
                 b.add(thing);
             }

@@ -140,7 +140,7 @@ public class PersistentRegistryManager
                 FMLLog.severe("Found existing registry of type %1s named %2s, you cannot create a new registry (%3s) with type %4s, as %4s has a parent of that type", foundType, registrySuperTypes.get(foundType), registryName, type);
                 throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
             }
-            FMLControlledNamespacedRegistry<T> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(defaultObjectKey, minId, maxId, type, registryName, registries, addCallback, clearCallback, createCallback, substitutionCallback);
+            FMLControlledNamespacedRegistry<T> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(defaultObjectKey, minId, maxId, type, registries, addCallback, clearCallback, createCallback, substitutionCallback);
             registries.put(registryName, fmlControlledNamespacedRegistry);
             registrySuperTypes.put(type, registryName);
             return getRegistry(registryName, type);
@@ -236,6 +236,9 @@ public class PersistentRegistryManager
         return PersistentRegistry.ACTIVE.getRegistry(registryType);
     }
 
+    public static ResourceLocation getRegistryRegistryName(IForgeRegistry<?> registry) {
+        return PersistentRegistry.ACTIVE.registries.inverse().get(registry);
+    }
 
     public static List<String> injectSnapshot(GameDataSnapshot snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
