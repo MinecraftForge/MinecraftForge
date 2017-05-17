@@ -49,6 +49,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 
     Set<ResourceLocation>           getKeys();
     List<V>                         getValues();
+    V                               getDefaultValue();
     Set<Entry<ResourceLocation, V>> getEntries();
 
     /**
