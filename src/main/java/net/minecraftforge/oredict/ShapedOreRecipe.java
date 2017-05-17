@@ -32,6 +32,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class ShapedOreRecipe implements IRecipe
 {
@@ -44,6 +47,7 @@ public class ShapedOreRecipe implements IRecipe
     protected int width = 0;
     protected int height = 0;
     protected boolean mirrored = true;
+    protected Map<Integer, FluidStack> fluidMap = new HashMap<Integer, FluidStack>();
 
     public ShapedOreRecipe(Block     result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapedOreRecipe(Item      result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -124,6 +128,10 @@ public class ShapedOreRecipe implements IRecipe
             {
                 itemMap.put(chr, OreDictionary.getOres((String)in));
             }
+            else if (in instanceof FluidStack)
+            {
+                itemMap.put(chr, ((FluidStack) in).copy());
+            }
             else
             {
                 String ret = "Invalid shaped ore recipe: ";
@@ -199,12 +207,15 @@ public class ShapedOreRecipe implements IRecipe
             }
         }
 
+        fluidMap.clear();
         return false;
     }
 
     @SuppressWarnings("unchecked")
     protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
+        fluidMap.clear();
+
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++)
         {
             for (int y = 0; y < MAX_CRAFT_GRID_HEIGHT; y++)
@@ -249,6 +260,25 @@ public class ShapedOreRecipe implements IRecipe
                         return false;
                     }
                 }
+                else if (target instanceof FluidStack)
+                {
+                    boolean matched = false;
+
+                    IFluidHandler fluidHandler = FluidUtil.getFluidHandler(slot);
+                    if (fluidHandler != null)
+                    {
+                        FluidStack drained = fluidHandler.drain((FluidStack) target, false);
+                        if (drained != null)
+                        {
+                            matched = drained.containsFluid((FluidStack) target);
+                        }
+                    }
+
+                    if (matched)
+                        fluidMap.put(x + y * width, (FluidStack)target);
+                    else
+                        return false;
+                }
                 else if (target == null && slot != null)
                 {
                     return false;
@@ -278,6 +308,38 @@ public class ShapedOreRecipe implements IRecipe
     @Override
     public ItemStack[] getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
     {
+        if (matches(inv, null))
+        {
+            ItemStack[] ret = new ItemStack[inv.getSizeInventory()];
+            for (int i = 0; i < ret.length; i++)
+            {
+                ItemStack stack = inv.getStackInSlot(i);
+                if (stack != null)
+                {
+                    FluidStack fluidStack = fluidMap.get(i);
+                    if (fluidStack != null)
+                    {
+                        ItemStack container = stack.copy();
+                        container.stackSize = 1;
+                        IFluidHandler fluidHandler = FluidUtil.getFluidHandler(container);
+                        if (fluidHandler != null)
+                        {
+                            fluidHandler.drain(fluidStack, true);
+                            if (container.stackSize <= 0)
+                            {
+                                stack = ForgeHooks.getContainerItem(stack);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        stack = ForgeHooks.getContainerItem(stack);
+                    }
+                    ret[i] = stack;
+                }
+            }
+            return ret;
+        }
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
 }
