@@ -819,6 +819,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         return superType;
     }
 
+
     // IForgeRegistry: Modders should only interfaces with these methods
 
     @Override
@@ -933,4 +934,5 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     {
         return new RegistryEvent.Register<I>(location, this);
     }
+
 }
