@@ -24,10 +24,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -37,11 +33,16 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
-
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
+
+import io.netty.buffer.ByteBuf;
+
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableList;
 
 /**
