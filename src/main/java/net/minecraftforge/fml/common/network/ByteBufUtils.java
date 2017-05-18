@@ -278,25 +278,21 @@ public class ByteBufUtils {
     public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntries(@Nonnull ByteBuf out, @Nonnull Collection<T> entries)
     {
         writeVarInt(out, entries.size(), 5);
+
         Iterator<T> it = entries.iterator();
         if (it.hasNext())
         {
-            T entry = it.next();
-            FMLControlledNamespacedRegistry<T> registry = (FMLControlledNamespacedRegistry<T>)GameRegistry.findRegistry(entry.getRegistryType());
+            T first = it.next();
+            FMLControlledNamespacedRegistry<T> registry = (FMLControlledNamespacedRegistry<T>)GameRegistry.findRegistry(first.getRegistryType());
             writeUTF8String(out, PersistentRegistryManager.getRegistryRegistryName(registry).toString());
-            do
-            {
-                writeVarInt(out, registry.getId(entry), 5);
-                if (it.hasNext())
-                {
-                    entry = it.next();
+            writeVarInt(out, registry.getId(first), 5);
+            while (it.hasNext()) {
+                int id = registry.getId(it.next());
+                if (id == -1) {
+                    throw new IllegalArgumentException("Unregistered IForgeRegistryEntry in collection " + entries + ".");
                 }
-                else
-                {
-                    break;
-                }
+                writeVarInt(out, id, 5);
             }
-            while (true);
         }
     }
 
