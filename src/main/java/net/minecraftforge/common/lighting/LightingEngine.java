@@ -311,6 +311,7 @@ public class LightingEngine
                 else //we didn't become darker, so we need to re-set our initial light value (was set to 0) and notify neighbors
                 {
                     this.curChunk.setLightFor(lightType, this.curPos, curLight);
+                    this.world.notifyLightSet(this.curPos); //Light didn't change, but asynchronous rendering thread could have seen the temporary 0 value
                     this.spreadLightFromCur(curLight);
                 }
             }
