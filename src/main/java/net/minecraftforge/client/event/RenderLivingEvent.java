@@ -22,6 +22,7 @@ package net.minecraftforge.client.event;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.EntityLivingBase;
 
 public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Event
@@ -70,5 +71,27 @@ public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Even
         {
             public Post(EntityLivingBase entity, RenderLivingBase<T> renderer, double x, double y, double z){ super(entity, renderer, x, y, z); }
         }
+    }
+    /**
+     * PostRotate is fired after an entity's model's parts are rotated.<br>
+     * This event is fired immediately after rotation angles are set in
+     * {@link RenderLivingBase#doRender(Double, Double, Double, Float, Float)}.<br>
+     * <br>
+     * {@link #mainModel} contains the model that had the rotation angles set. <br>
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * <br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
+     **/
+    public static class PostRotate<T extends EntityLivingBase> extends RenderLivingEvent<T>
+    {
+        private ModelBase mainModel;
+
+        public PostRotate(ModelBase mainModel, EntityLivingBase entity, RenderLivingBase<T> renderer, double x, double y, double z){
+            super(entity, renderer, x, y, z);
+            this.mainModel = mainModel;
+        }
+
+        public ModelBase getMainModel() { return mainModel; }
     }
 }
