@@ -28,13 +28,25 @@ public class CriticalHitEventTest
     public void onCriticalHit(CriticalHitEvent event)
     {
         ItemStack itemstack = event.getEntityPlayer().getHeldItem(EnumHand.MAIN_HAND);
+        
+        if(event.getDamageModifier()>1F)
+        {
+            System.out.println("By default this hit will be critical.");
+        }
+        else
+        {
+            System.out.println("By default this hit won't be critical.");
+        }
+    
         if (itemstack.getItem() instanceof ItemSword)
         {
             event.setResult(Result.ALLOW); //Every hit is Critical
+            System.out.println("This hit will be critical.");
         }
         else if (!itemstack.isEmpty())
         {
             event.setResult(Result.DENY);//No hit will be Critical
+            System.out.println("This hit wont be critical.");
         }
         else
         {
@@ -43,5 +55,6 @@ public class CriticalHitEventTest
             
         System.out.println(event.getTarget() + " got hit by " + event.getEntityPlayer() + " with a damagemodifier of " + event.getDamageModifier() );
         event.setDamageModifier(2.0F);
+        System.out.println("The damagemodifier is changed to " + event.getDamageModifier());
     }
 }
