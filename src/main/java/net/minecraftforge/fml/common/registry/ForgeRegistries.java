@@ -27,6 +27,7 @@ import net.minecraft.potion.PotionType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
+import net.minecraftforge.gui.GuiProvider;
 
 /**
  * A class that exposes static references to all vanilla and Forge registries.
@@ -45,7 +46,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<PotionType>   POTION_TYPES = GameRegistry.findRegistry(PotionType.class);
     public static final IForgeRegistry<Enchantment>  ENCHANTMENTS = GameRegistry.findRegistry(Enchantment.class);
     public static final IForgeRegistry<VillagerProfession> VILLAGER_PROFESSIONS = GameRegistry.findRegistry(VillagerProfession.class);
-
+    public static final IForgeRegistry<GuiProvider> GUI_PROVIDERS = GameRegistry.findRegistry(GuiProvider.class);
 
     /**
      * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
@@ -54,6 +55,7 @@ public class ForgeRegistries
     {
         GameData.getMain();
         VillagerRegistry.instance();
+        GuiRegistry.instance();
     }
 
 }

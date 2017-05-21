@@ -22,12 +22,14 @@ package net.minecraftforge.common.network;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
+import net.minecraftforge.gui.OpenGuiMessage;
 
 public class ForgeRuntimeCodec extends FMLIndexedMessageToMessageCodec<ForgeMessage> {
     public ForgeRuntimeCodec()
     {
         addDiscriminator(1, ForgeMessage.DimensionRegisterMessage.class);
         addDiscriminator(2, ForgeMessage.FluidIdMapMessage.class);
+        addDiscriminator(3, OpenGuiMessage.class);
     }
     @Override
     public void encodeInto(ChannelHandlerContext ctx, ForgeMessage msg, ByteBuf target) throws Exception
