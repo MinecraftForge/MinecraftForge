@@ -25,11 +25,11 @@ package net.minecraftforge.client.player.inventory.tabs;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -57,8 +57,9 @@ public class GuiTabList
     {
         this.guiContainer = guiContainer;
         this.guiContainerClass = guiContainer.getClass();
-
-        tabs = new ArrayList<GuiTab>(GuiTab.getTabsForGui(this.guiContainer.getClass())); // get a copy of the stored list so it can be modified without consequence
+        tabs = new ArrayList<GuiTab>(); // get a copy of the stored list so it can be modified without consequence
+        // tabs.add(GuiTab.VANILLA_INVENTORY_TAB);
+        tabs.addAll(GuiTab.getTabsForGui(this.guiContainer.getClass()));
         maxPages = setMaxPages();
         getTabs();
         for (GuiTab tab : getTabs())// Set the first page
@@ -89,32 +90,42 @@ public class GuiTabList
             FontRenderer fontRendererObj)
     {
 
-        if (getTabs().size() == 1 && guiContainer instanceof GuiInventory) // Don't draw the base tab if it's the only one
-            return;
+        // if (getTabs().size() == 1 && guiContainer instanceof GuiInventory) // Don't draw the base tab if it's the only one
+        // return;
 
         int start = page * maxTabsPerPage;
         int end = Math.min(getTabs().size(), (page + 1) * maxTabsPerPage);
 
         for (GuiTab tab : getTabs())
-        {
-            if (tab.getTabIndex() >= start && tab.getTabIndex() < end && (tab.isActiveTab(guiContainerClass) || !isFront))
+        { // < end
+            if (tab.getTabIndex() >= start && tab.getTabIndex() <= end && (tab.isActiveTab(guiContainerClass) || !isFront))
             {
                 Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE_TABS);
                 tab.draw(guiContainer, isFront, guiLeft, guiTop, xSize, ySize, itemRender, fontRendererObj);
             }
         }
+
+        if (getTabs().size() > 12)
+        {
+            String page = String.format("%d / %d", this.page + 1, maxPages + 1);
+            int width = fontRendererObj.getStringWidth(page); // 44 Originally
+            fontRendererObj.drawString(page, guiLeft + (xSize / 2) - (width / 2), guiTop - 34, -1);
+            // fontRendererObj.drawString((page + 1) + "/" + (maxPages + 1), guiLeft + (xSize / 2) - (fontRendererObj.getStringWidth((page + 1) + "/" + (maxPages + 1)) / 2), guiTop
+            // - 44, -1);
+        }
     }
 
     public void drawTabHoveringText(int mouseX, int mouseY, int guiLeft, int guiTop, int xSize, int ySize, FontRenderer fontRendererObj)
     {
-        if (getTabs().size() == 1 && guiContainer instanceof GuiInventory) // Don't draw the base tab if it's the only one
-            return;
+        // if (getTabs().size() == 1 && guiContainer instanceof GuiInventory) // Don't draw the base tab if it's the only one
+        // return;
+        
         int start = page * maxTabsPerPage;
         int end = Math.min(getTabs().size(), (page + 1) * maxTabsPerPage);
 
         for (GuiTab tab : getTabs())
-        {
-            if (tab.getTabIndex() >= start && tab.getTabIndex() < end && this.isMouseOverTab(tab, mouseX - guiLeft, mouseY - guiTop, xSize, ySize))
+        { // < end
+            if (tab.getTabIndex() >= start && tab.getTabIndex() <= end && this.isMouseOverTab(tab, mouseX - guiLeft, mouseY - guiTop, xSize, ySize))
             {
                 renderHoveringText(tab, mouseX, mouseY, fontRendererObj);
                 break;
@@ -150,8 +161,8 @@ public class GuiTabList
 
     public void onMouseRelease(int guiLeft, int guiTop, int xSize, int ySize, int state, int mouseX, int mouseY)
     {
-        if (getTabs().size() == 1 && guiContainer instanceof GuiInventory) // don't draw the base tab if it's the only one
-            return;
+        // if (getTabs().size() == 1 && guiContainer instanceof GuiInventory) // don't draw the base tab if it's the only one
+        // return;
         if (state == 0)
         {
             int x = mouseX - guiLeft;
@@ -162,11 +173,11 @@ public class GuiTabList
 
             for (GuiTab tab : getTabs())
             {
-                int index = tab.getTabIndex();
-                if (index >= start && index < end && this.isMouseOverTab(tab, x, y, xSize, ySize))
+                int index = tab.getTabIndex(); // < end
+                if (index >= start && index <= end && this.isMouseOverTab(tab, x, y, xSize, ySize))
                 {
-                    tab.onTabClicked();
-                    //tab.onTabClicked(Minecraft.getMinecraft().thePlayer);
+                    tab.onTabClicked(guiContainer);
+                    // tab.onTabClicked(Minecraft.getMinecraft().thePlayer);
                     return;
                 }
             }
@@ -177,8 +188,18 @@ public class GuiTabList
     {
         if (getTabs().size() > maxTabsPerPage)
         {
-            buttonList.add(new GuiButton(101, guiLeft - 24, guiTop - 22, 20, 20, "<"));
-            buttonList.add(new GuiButton(102, guiLeft + xSize + 4, guiTop - 22, 20, 20, ">"));
+            if (Minecraft.getMinecraft().displayHeight != 480 && Minecraft.getMinecraft().displayWidth != 854)
+            {
+                buttonList.add(new GuiButton(101, guiLeft, guiTop - 46, 20, 20, "<"));
+                buttonList.add(new GuiButton(102, guiLeft + xSize - 24, guiTop - 46, 20, 20, ">"));
+                // buttonList.add(new GuiButton(101, guiLeft - 24, guiTop - 22, 20, 20, "<"));
+                // buttonList.add(new GuiButton(102, guiLeft + xSize + 4, guiTop - 22, 20, 20, ">"));
+            }
+            else
+            {
+                buttonList.add(new GuiButton(101, guiLeft, guiTop - 36, 10, 10, "<"));
+                buttonList.add(new GuiButton(102, guiLeft + xSize - 14, guiTop - 36, 10, 10, ">"));
+            }
         }
     }
 
@@ -198,4 +219,5 @@ public class GuiTabList
     {
         return tabs;
     }
+
 }

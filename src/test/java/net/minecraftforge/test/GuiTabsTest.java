@@ -1,8 +1,12 @@
 package net.minecraftforge.test;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiFurnace;
 import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentProtection;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,8 +15,8 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.player.inventory.tabs.GuiTab;
@@ -20,7 +24,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -28,10 +32,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * Adds 25 tabs to the player inventory and 13 to a test gui
- * Also checks if item stack icon and ResourceLocation icons are working    
+ * Adds 25 tabs to the player inventory and 13 to a test gui Also checks if item stack icon and ResourceLocation icons are working
  * 
  * @author Ash Indigo
  *
@@ -49,9 +53,17 @@ public class GuiTabsTest
     public static CommonProxy proxy;
 
     @EventHandler
-    public void init(FMLInitializationEvent event)
+    public void init(FMLPreInitializationEvent event)
     {
         proxy.init();
+
+        CreativeTabs testTab = (new CreativeTabs("test") {
+            @SideOnly(Side.CLIENT)
+            public ItemStack getTabIconItem()
+            {
+                return new ItemStack(Item.getItemFromBlock(Blocks.ICE));
+            }
+        });
     }
 
     public static class CommonProxy
@@ -76,39 +88,43 @@ public class GuiTabsTest
         public void init()
         {
             super.init();
-            for (int i = 0; 12 != i; i++)
-            {
-                new GuiTab("Tab1", new ItemStack(Blocks.BEDROCK), TestGui.class) {
-                    @Override
-                    public void onTabClicked()
-                    {
-                        GuiTabsTest.INSTANCE.sendToServer(new TabMessageHandler.TabMessage(0));
-                    }
-                }.setTargetGui(TestGui.class).addTo(GuiInventory.class);
-            }
-            for (int i = 0; 13 != i; i++)
-            {
-                new GuiTab("Tab2", new ResourceLocation("textures/blocks/tnt_side.png"), GuiChest.class) {
-                    @Override
-                    public void onTabClicked()
-                    {
-                        GuiTabsTest.INSTANCE.sendToServer(new TabMessageHandler.TabMessage(1));
-                    }
-                }.setTargetGui(GuiChest.class).addTo(GuiInventory.class);
-            }
+            // GuiTab.setDefaultTabForGui(new GuiTab("Tab2T", new ItemStack(Blocks.BRICK_STAIRS), GuiInventory.class) {
+            // @Override
+            // public void onTabClicked(GuiContainer guiContainer)
+            // {
+            // super.onTabClicked(guiContainer);
+            // Minecraft.getMinecraft().displayGuiScreen(new GuiInventory(Minecraft.getMinecraft().player));
+            // }
+            // }.setTargetGui(GuiInventory.class).addTo(GuiInventory.class), GuiInventory.class);
+            new GuiTab("Tab1", new ItemStack(Blocks.BEDROCK), TestGui.class) {
+                @Override
+                public void onTabClicked(GuiContainer guiContainer)
+                {
+                    super.onTabClicked(guiContainer);
+                    GuiTabsTest.INSTANCE.sendToServer(new TabMessageHandler.TabMessage(0));
+                }
+            }.setTargetGui(TestGui.class).addTo(GuiInventory.class);
+            new GuiTab("Tab2", new ResourceLocation("textures/blocks/tnt_side.png"), GuiChest.class) {
+                @Override
+                public void onTabClicked(GuiContainer guiContainer)
+                {
+                    super.onTabClicked(guiContainer);
+                    GuiTabsTest.INSTANCE.sendToServer(new TabMessageHandler.TabMessage(1));
+                }
+            }.setTargetGui(GuiChest.class).addTo(GuiFurnace.class);
+
             ItemStack is = new ItemStack(Items.APPLE);
             is.addEnchantment(new net.minecraft.enchantment.EnchantmentProtection(Enchantment.Rarity.COMMON, EnchantmentProtection.Type.FALL, null), 1);
-            for (int i = 0; 13 != i; i++)
-            {
-                new GuiTab("Tab3", is, TestGui2.class) {
-                    @Override
-                    public void onTabClicked()
-                    {
-                        GuiTabsTest.INSTANCE.sendToServer(new TabMessageHandler.TabMessage(2));
-                    }
-                }.setTargetGui(TestGui2.class).addTo(TestGui.class);
-            }
+            new GuiTab("Tab3", is, TestGui2.class) {
+                @Override
+                public void onTabClicked(GuiContainer guiContainer)
+                {
+                    super.onTabClicked(guiContainer);
+                    GuiTabsTest.INSTANCE.sendToServer(new TabMessageHandler.TabMessage(2));
+                }
+            }.setTargetGui(TestGui2.class).addTo(GuiInventory.class);
         }
+
     }
 
     public static class TestGui extends GuiChest
@@ -116,6 +132,7 @@ public class GuiTabsTest
         public TestGui(IInventory upperInv, IInventory lowerInv)
         {
             super(upperInv, lowerInv);
+
         }
     }
 
@@ -124,6 +141,7 @@ public class GuiTabsTest
         public TestGui2(IInventory upperInv, IInventory lowerInv)
         {
             super(upperInv, lowerInv);
+
         }
     }
 
@@ -159,7 +177,7 @@ public class GuiTabsTest
             case 2:
                 return new TestGui2(player.inventory, invC);
             }
-            return null;    
+            return null;
         }
 
     }
