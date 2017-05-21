@@ -79,14 +79,14 @@ public class LightingEngine
 
     //Bit segment masks
     private static final long
-        mX = (1 << lX) - 1,
-        mY = (1 << lY) - 1,
-        mZ = (1 << lZ) - 1,
-        mL = (1 << lL) - 1,
+        mX = (1L << lX) - 1,
+        mY = (1L << lY) - 1,
+        mZ = (1L << lZ) - 1,
+        mL = (1L << lL) - 1,
         mPos = (mY << sY) | (mX << sX) | (mZ << sZ);
 
     //Bit to check whether y had overflow
-    private static final long yCheck = 1 << (sY + lY);
+    private static final long yCheck = 1L << (sY + lY);
 
     private static final long[] neighborShifts = new long[EnumFacing.VALUES.length];
 
@@ -95,9 +95,12 @@ public class LightingEngine
         for (final EnumFacing dir : EnumFacing.VALUES)
         {
             final Vec3i offset = dir.getDirectionVec();
-            neighborShifts[dir.ordinal()] = (offset.getY() << sY) | (offset.getX() << sX) | (offset.getZ() << sZ);
+            neighborShifts[dir.ordinal()] = ((long) offset.getY() << sY) | ((long) offset.getX() << sX) | ((long) offset.getZ() << sZ);
         }
     }
+
+    //Mask to extract chunk idenitfier
+    private static final long mChunk = ((mX >> 4) << (4 + sX)) | ((mZ >> 4) << (4 + sZ));
 
     //Stored light type to reduce amount of method parameters
     private EnumSkyBlock lightType;
@@ -107,6 +110,7 @@ public class LightingEngine
     private final MutableBlockPos curPos = new MutableBlockPos();
     private PooledLongQueue curQueue;
     private Chunk curChunk;
+    private long curChunkIdentifier;
     private long curData;
 
     //Cached data about neighboring blocks (of tempPos)
@@ -238,7 +242,7 @@ public class LightingEngine
             if (newLight > this.curToCachedLight())
             {
                 //Sets the light to newLight to only schedule once. Clear leading bits of curData for later
-                this.enqueueBrightening(this.curPos, this.curData & this.mPos, newLight, this.curChunk);
+                this.enqueueBrightening(this.curPos, this.curData & mPos, newLight, this.curChunk);
             }
         }
 
@@ -371,7 +375,9 @@ public class LightingEngine
 
             final MutableBlockPos nPos = longToPos(this.neighborsPos[index], nLongPos);
 
-            final Chunk nChunk = this.neighborsChunk[index] = this.posToChunk(nPos);
+            final long nChunkIdentifier = nLongPos & mChunk;
+
+            final Chunk nChunk = this.neighborsChunk[index] = nChunkIdentifier == this.curChunkIdentifier ? this.curChunk : this.posToChunk(nPos);
 
             if (nChunk != null)
             {
@@ -497,7 +503,14 @@ public class LightingEngine
         this.curData = this.curQueue.poll();
         this.isNeighborDataValid = false;
         longToPos(this.curPos, this.curData);
-        this.curChunk = this.curToChunk();
+
+        final long chunkIdentifier = this.curData & mChunk;
+
+        if (this.curChunkIdentifier != chunkIdentifier)
+        {
+            this.curChunk = this.curToChunk();
+            this.curChunkIdentifier = chunkIdentifier;
+        }
 
         return true;
     }
