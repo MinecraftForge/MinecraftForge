@@ -18,21 +18,23 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = LootTablesDebug.MODID, name = "Loot Table Debug", version = "1.0", acceptableRemoteVersions = "*")
-public class LootTablesDebug {
+public class LootTablesDebug
+{
     public static final String MODID = "loot_table_debug";
-    private static final ResourceLocation CUSTOM_LOOT = LootTableList.register(new ResourceLocation(MODID, "custom_loot"));
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-      MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
     public void lootLoad(LootTableLoadEvent event)
     {
         if (!event.getName().equals(LootTableList.CHESTS_SPAWN_BONUS_CHEST))
+        {
             return;
+        }
 
         // Remove axes and replace with chestpeice, First vanilla entry is always called "main"
         LootPool main = event.getTable().getPool("main"); //Note: This CAN NPE if another mod removes things
@@ -45,10 +47,12 @@ public class LootTablesDebug {
     }
 
     @SubscribeEvent
-    public void lootingEvent(LootingLevelEvent event) {
+    public void lootingEvent(LootingLevelEvent event)
+    {
         // if the player shoots something with a projectile, use looting 3
         DamageSource damageSource = event.getDamageSource();
-        if(damageSource.isProjectile() && damageSource.getEntity() instanceof EntityPlayer && damageSource.getSourceOfDamage() instanceof EntityArrow) {
+        if (damageSource.isProjectile() && damageSource.getEntity() instanceof EntityPlayer && damageSource.getSourceOfDamage() instanceof EntityArrow)
+        {
             event.setLootingLevel(3);
         }
     }

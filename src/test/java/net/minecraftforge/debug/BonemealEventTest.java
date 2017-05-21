@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = BonemealEventTest.MODID, version = "1.0")
+@Mod(modid = BonemealEventTest.MODID, name = "Bonemeal Event Test", version = "1.0")
 public class BonemealEventTest
 {
     public static final String MODID = "bonemealeventtest";
