@@ -241,27 +241,15 @@ public class LightingEngine
         //Iterate through enqueued updates (brightening and darkening in parallel) from brightest to darkest so that we only need to iterate once
         for (int curLight = MAX_LIGHT; curLight >= 0; --curLight)
         {
-            this.profiler.startSection("brightening");
-
-            for (this.curQueue = this.queuedBrightenings[curLight]; this.nextItem(); )
-            {
-                final int oldLight = this.curToCachedLight();
-
-                if (oldLight == curLight) //only process this if nothing else has happened at this position since scheduling
-                {
-                    this.world.notifyLightSet(this.curPos);
-
-                    if (curLight > 1)
-                    {
-                        this.spreadLightFromCur(curLight);
-                    }
-                }
-            }
-
-            this.profiler.endStartSection("darkening");
+            this.profiler.startSection("darkening");
 
             for (this.curQueue = this.queuedDarkenings[curLight]; this.nextItem(); )
             {
+                if (this.curToCachedLight() >= curLight) //don't darken if we got brighter due to some other change
+                {
+                    continue;
+                }
+
                 final IBlockState state = this.curToState();
                 final int luminosity = this.curToLuminosity(state);
                 final int opacity = luminosity >= MAX_LIGHT - 1 ? 1 : this.curToOpac(state); //if luminosity is high enough, opacity is irrelevant
@@ -310,9 +298,24 @@ public class LightingEngine
                 }
                 else //we didn't become darker, so we need to re-set our initial light value (was set to 0) and notify neighbors
                 {
-                    this.curChunk.setLightFor(lightType, this.curPos, curLight);
-                    this.world.notifyLightSet(this.curPos); //Light didn't change, but asynchronous rendering thread could have seen the temporary 0 value
-                    this.spreadLightFromCur(curLight);
+                    this.enqueueBrighteningFromCur(curLight); //do not spread to neighbors immediately to avoid scheduling multiple times
+                }
+            }
+
+            this.profiler.endStartSection("brightening");
+
+            for (this.curQueue = this.queuedBrightenings[curLight]; this.nextItem(); )
+            {
+                final int oldLight = this.curToCachedLight();
+
+                if (oldLight == curLight) //only process this if nothing else has happened at this position since scheduling
+                {
+                    this.world.notifyLightSet(this.curPos);
+
+                    if (curLight > 1)
+                    {
+                        this.spreadLightFromCur(curLight);
+                    }
                 }
             }
 
