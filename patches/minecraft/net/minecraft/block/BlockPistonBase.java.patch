@@ -18,6 +18,15 @@
              }
              else
              {
+@@ -344,7 +344,7 @@
+ 
+         BlockPistonStructureHelper blockpistonstructurehelper = new BlockPistonStructureHelper(p_176319_1_, p_176319_2_, p_176319_3_, p_176319_4_);
+ 
+-        if (!blockpistonstructurehelper.func_177253_a())
++        if (!blockpistonstructurehelper.func_177253_a() || net.minecraftforge.event.ForgeEventFactory.onPistonMove(p_176319_1_, p_176319_2_, p_176319_3_, p_176319_4_))
+         {
+             return false;
+         }
 @@ -368,7 +368,9 @@
              {
                  BlockPos blockpos1 = (BlockPos)list2.get(j);
