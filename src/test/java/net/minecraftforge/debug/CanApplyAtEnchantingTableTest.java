@@ -15,7 +15,8 @@ public class CanApplyAtEnchantingTableTest
 
     public static final Item testItem = new Item()
     {
-        public boolean isItemTool(ItemStack stack)
+        @Override
+        public boolean isEnchantable(ItemStack stack)
         {
             return true;
         }
