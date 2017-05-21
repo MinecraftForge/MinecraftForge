@@ -234,7 +234,9 @@ public class SplashProgress
             @Override public void printStackTrace(final PrintWriter s){ s.println(getMessage()); }
             @Override public void printStackTrace(final PrintStream s) { s.println(getMessage()); }
         }, "Loading screen debug info");
-        System.out.println(report.getCompleteReport());
+        StringBuilder systemDetailsBuilder = new StringBuilder();
+        report.getCategory().appendToStringBuilder(systemDetailsBuilder);
+        System.out.println(systemDetailsBuilder.toString());
 
         try
         {
