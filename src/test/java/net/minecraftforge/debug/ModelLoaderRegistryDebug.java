@@ -65,7 +65,10 @@ public class ModelLoaderRegistryDebug
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        if (!ENABLED) return;
+        if (!ENABLED)
+        {
+            return;
+        }
 
         logger = event.getModLog();
         List<Block> blocks = Lists.newArrayList();

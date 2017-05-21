@@ -97,8 +97,6 @@ public class ItemTileDebug
         {
         }
 
-        ;
-
         @SubscribeEvent
         public void onModelBakeEvent(ModelBakeEvent event)
         {

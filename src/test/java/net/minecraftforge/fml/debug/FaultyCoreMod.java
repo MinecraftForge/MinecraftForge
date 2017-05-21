@@ -9,25 +9,30 @@ public class FaultyCoreMod implements IFMLLoadingPlugin
 {
     public static boolean enabled = false;
 
+    @Override
     public String[] getASMTransformerClass()
     {
         return new String[]{FaultyTransformer.class.getName()};
     }
 
+    @Override
     public String getModContainerClass()
     {
         return null;
     }
 
+    @Override
     public String getSetupClass()
     {
         return null;
     }
 
+    @Override
     public void injectData(Map<String, Object> data)
     {
     }
 
+    @Override
     public String getAccessTransformerClass()
     {
         return null;
@@ -36,6 +41,7 @@ public class FaultyCoreMod implements IFMLLoadingPlugin
     public static class FaultyTransformer implements IClassTransformer
     {
 
+        @Override
         public byte[] transform(String name, String transformedName, byte[] basicClass)
         {
             if (enabled && name.equals("net.minecraft.client.gui.GuiMainMenu"))

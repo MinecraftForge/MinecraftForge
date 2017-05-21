@@ -24,7 +24,7 @@ public class PlayerInteractEventTest
 {
     // NOTE: Test with both this ON and OFF - ensure none of the test behaviours show when this is off!
     private static final boolean ENABLE = false;
-    private Logger logger;
+    private static Logger logger;
 
     @EventHandler
     public void preinit(FMLPreInitializationEvent event)

@@ -32,7 +32,10 @@ public class PotionCurativeItemDebug
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt)
     {
-        if (!ENABLED) return;
+        if (!ENABLED)
+        {
+            return;
+        }
 
         Item medicine = new Medicine().setRegistryName(MOD_ID, "medicine");
         GameRegistry.register(medicine);

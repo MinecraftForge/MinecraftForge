@@ -14,7 +14,7 @@ public class BrewingRecipeRegistryTest
 {
 
     public static final boolean ENABLE = false;
-    public static Logger logger;
+    private static Logger logger;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)

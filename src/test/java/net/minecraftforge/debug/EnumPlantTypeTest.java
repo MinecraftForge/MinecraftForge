@@ -10,12 +10,12 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = "enumplanttypetest", name = "EnumPlantTypeTest", version = "1.0", acceptableRemoteVersions = "*")
 public class EnumPlantTypeTest
 {
-    private static Logger LOGGER;
+    private static Logger logger;
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
     {
-        LOGGER = event.getModLog();
+        logger = event.getModLog();
     }
 
     @Mod.EventHandler
@@ -28,33 +28,29 @@ public class EnumPlantTypeTest
         }
         catch (NullPointerException npe)
         {
-            LOGGER.warn("EnumHelper in BiomeType is working incorrectly!", npe);
+            logger.warn("EnumHelper in BiomeType is working incorrectly!", npe);
         }
         finally
         {
             if (biomeType == null || !biomeType.name().equals("FAKE"))
             {
-                LOGGER.warn("EnumHelper in BiomeType is working incorrectly!");
+                logger.warn("EnumHelper in BiomeType is working incorrectly!");
             }
         }
         EnumPlantType plantType = null;
-        if (plantType == null || !plantType.name().equals("FAKE"))
-        {
-            ;
-        }
         try
         {
             plantType = EnumPlantType.getPlantType("FAKE");
         }
         catch (NullPointerException npe)
         {
-            LOGGER.warn("EnumHelper in EnumPlantType is working incorrectly!", npe);
+            logger.warn("EnumHelper in EnumPlantType is working incorrectly!", npe);
         }
         finally
         {
             if (plantType == null || !plantType.name().equals("FAKE"))
             {
-                LOGGER.warn("EnumHelper in EnumPlantType is working incorrectly!");
+                logger.warn("EnumHelper in EnumPlantType is working incorrectly!");
             }
         }
     }
