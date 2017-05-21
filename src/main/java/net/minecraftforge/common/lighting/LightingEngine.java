@@ -31,6 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -47,7 +48,7 @@ public class LightingEngine
     private final World world;
     private final Profiler profiler;
 
-    //Layout of longs: [padding(4)] [z(26)] [y(8)] [x(26)]
+    //Layout of longs: [padding(4)] [y(8)] [x(26)] [z(26)]
     private final PooledLongQueue[] queuedLightUpdates = new PooledLongQueue[EnumSkyBlock.values().length];
 
     //Layout of longs: see above
@@ -69,19 +70,34 @@ public class LightingEngine
         lZ = 26,
         lL = 4;
 
-    //Big segment shifts/positions
+    //Bit segment shifts/positions
     private static final int
-        sX = 0,
+        sZ = 0,
+        sX = sZ + lZ,
         sY = sX + lX,
-        sZ = sY + lY,
-        sL = sZ + lZ;
+        sL = sY + lY;
 
     //Bit segment masks
     private static final long
         mX = (1 << lX) - 1,
         mY = (1 << lY) - 1,
         mZ = (1 << lZ) - 1,
-        mL = (1 << lL) - 1;
+        mL = (1 << lL) - 1,
+        mPos = (mY << sY) | (mX << sX) | (mZ << sZ);
+
+    //Bit to check whether y had overflow
+    private static final long yCheck = 1 << (sY + lY);
+
+    private static final long[] neighborShifts = new long[EnumFacing.VALUES.length];
+
+    static
+    {
+        for (final EnumFacing dir : EnumFacing.VALUES)
+        {
+            final Vec3i offset = dir.getDirectionVec();
+            neighborShifts[dir.ordinal()] = (offset.getY() << sY) | (offset.getX() << sX) | (offset.getZ() << sZ);
+        }
+    }
 
     //Stored light type to reduce amount of method parameters
     private EnumSkyBlock lightType;
@@ -97,6 +113,7 @@ public class LightingEngine
     private boolean isNeighborDataValid = false;
     private final Chunk[] neighborsChunk = new Chunk[EnumFacing.VALUES.length];
     private final MutableBlockPos[] neighborsPos = new MutableBlockPos[EnumFacing.VALUES.length];
+    private final long[] neighborsLongPos = new long[EnumFacing.VALUES.length];
     private final int[] neighborsLight = new int[EnumFacing.VALUES.length];
 
     public LightingEngine(final World world)
@@ -220,8 +237,8 @@ public class LightingEngine
 
             if (newLight > this.curToCachedLight())
             {
-                //Sets the light to newLight to only schedule once
-                this.enqueueBrighteningFromCur(newLight);
+                //Sets the light to newLight to only schedule once. Clear leading bits of curData for later
+                this.enqueueBrightening(this.curPos, this.curData & this.mPos, newLight, this.curChunk);
             }
         }
 
@@ -284,7 +301,7 @@ public class LightingEngine
 
                         if (curLight - this.posToOpac(nPos, posToState(nPos, nChunk)) >= nLight) //schedule neighbor for darkening if we possibly light it
                         {
-                            this.enqueueDarkening(nPos, posToLong(nPos), nLight, nChunk);
+                            this.enqueueDarkening(nPos, this.neighborsLongPos[index], nLight, nChunk);
                         }
                         else //only use for new light calculation if not
                         {
@@ -344,16 +361,15 @@ public class LightingEngine
         {
             final int index = dir.ordinal();
 
-            final MutableBlockPos nPos = this.neighborsPos[index];
+            final long nLongPos = this.neighborsLongPos[index] = this.curData + neighborShifts[index];
 
-            nPos.setPos(this.curPos);
-            nPos.move(dir);
-
-            if (nPos.getY() == -1 || nPos.getY() == 256)
+            if ((nLongPos & yCheck) != 0)
             {
                 this.neighborsChunk[index] = null;
                 continue;
             }
+
+            final MutableBlockPos nPos = longToPos(this.neighborsPos[index], nLongPos);
 
             final Chunk nChunk = this.neighborsChunk[index] = this.posToChunk(nPos);
 
@@ -420,7 +436,7 @@ public class LightingEngine
 
             if (newLight > this.neighborsLight[index])
             {
-                this.enqueueBrightening(nPos, posToLong(nPos), newLight, nChunk);
+                this.enqueueBrightening(nPos, this.neighborsLongPos[index], newLight, nChunk);
             }
         }
     }
@@ -448,7 +464,7 @@ public class LightingEngine
         chunk.setLightFor(this.lightType, pos, 0);
     }
 
-    private static BlockPos longToPos(final MutableBlockPos pos, final long longPos)
+    private static MutableBlockPos longToPos(final MutableBlockPos pos, final long longPos)
     {
         final int posX = (int) (longPos >> sX & mX) - (1 << lX - 1);
         final int posY = (int) (longPos >> sY & mY);
@@ -463,7 +479,7 @@ public class LightingEngine
 
     private static long posToLong(final long x, final long y, final long z)
     {
-        return (z + (1 << lZ - 1) << sZ) | (y << sY) | (x + (1 << lX - 1) << sX);
+        return (y << sY) | (x + (1 << lX - 1) << sX) | (z + (1 << lZ - 1) << sZ);
     }
 
     /**
