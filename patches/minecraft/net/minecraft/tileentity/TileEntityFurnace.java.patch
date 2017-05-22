@@ -36,6 +36,15 @@
                              }
                          }
                      }
+@@ -251,7 +250,7 @@
+ 
+     public int func_174904_a(@Nullable ItemStack p_174904_1_)
+     {
+-        return 200;
++        return p_174904_1_ == null ? 200 : net.minecraftforge.common.smelting.SmeltingRecipeRegistry.getDuration(p_174904_1_);
+     }
+ 
+     private boolean func_145948_k()
 @@ -263,7 +262,11 @@
          else
          {

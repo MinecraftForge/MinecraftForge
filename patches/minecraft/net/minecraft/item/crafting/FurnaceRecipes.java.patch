@@ -1,14 +1,49 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
-@@ -74,6 +74,7 @@
+@@ -60,27 +60,34 @@
+         this.func_151393_a(Blocks.field_150450_ax, new ItemStack(Items.field_151137_ax), 0.7F);
+         this.func_151393_a(Blocks.field_150369_x, new ItemStack(Items.field_151100_aR, 1, EnumDyeColor.BLUE.func_176767_b()), 0.2F);
+         this.func_151393_a(Blocks.field_150449_bY, new ItemStack(Items.field_151128_bU), 0.2F);
++        net.minecraftforge.common.smelting.SmeltingRecipeRegistry.addVanillaRecipe(field_77604_b);
+     }
  
++    @Deprecated // use SmeltingRecipeRegistry
+     public void func_151393_a(Block p_151393_1_, ItemStack p_151393_2_, float p_151393_3_)
+     {
+         this.func_151396_a(Item.func_150898_a(p_151393_1_), p_151393_2_, p_151393_3_);
+     }
+ 
++    @Deprecated // use SmeltingRecipeRegistry
+     public void func_151396_a(Item p_151396_1_, ItemStack p_151396_2_, float p_151396_3_)
+     {
+         this.func_151394_a(new ItemStack(p_151396_1_, 1, 32767), p_151396_2_, p_151396_3_);
+     }
+ 
++    @Deprecated // use SmeltingRecipeRegistry
      public void func_151394_a(ItemStack p_151394_1_, ItemStack p_151394_2_, float p_151394_3_)
      {
 +        if (func_151395_a(p_151394_1_) != null) { net.minecraftforge.fml.common.FMLLog.info("Ignored smelting recipe with conflicting input: " + p_151394_1_ + " = " + p_151394_2_); return; }
          this.field_77604_b.put(p_151394_1_, p_151394_2_);
          this.field_77605_c.put(p_151394_2_, Float.valueOf(p_151394_3_));
      }
-@@ -104,6 +105,9 @@
+ 
++    @Deprecated // use SmeltingRecipeRegistry
+     @Nullable
+     public ItemStack func_151395_a(ItemStack p_151395_1_)
+     {
++        if (true) return net.minecraftforge.common.smelting.SmeltingRecipeRegistry.getOutput(p_151395_1_);
+         for (Entry<ItemStack, ItemStack> entry : this.field_77604_b.entrySet())
+         {
+             if (this.func_151397_a(p_151395_1_, (ItemStack)entry.getKey()))
+@@ -97,6 +104,7 @@
+         return p_151397_2_.func_77973_b() == p_151397_1_.func_77973_b() && (p_151397_2_.func_77960_j() == 32767 || p_151397_2_.func_77960_j() == p_151397_1_.func_77960_j());
+     }
+ 
++    @Deprecated // use SmeltingRecipeRegistry
+     public Map<ItemStack, ItemStack> func_77599_b()
+     {
+         return this.field_77604_b;
+@@ -104,6 +112,9 @@
  
      public float func_151398_b(ItemStack p_151398_1_)
      {

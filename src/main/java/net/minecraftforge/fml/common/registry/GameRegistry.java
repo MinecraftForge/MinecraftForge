@@ -240,16 +240,19 @@ public class GameRegistry
         CraftingManager.getInstance().getRecipeList().add(recipe);
     }
 
+    @Deprecated // Use SmeltingRecipeRegistry
     public static void addSmelting(Block input, ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmeltingRecipeForBlock(input, output, xp);
     }
 
+    @Deprecated // Use SmeltingRecipeRegistry
     public static void addSmelting(Item input, ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmelting(input, output, xp);
     }
 
+    @Deprecated // Use SmeltingRecipeRegistry
     public static void addSmelting(ItemStack input, ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmeltingRecipe(input, output, xp);
