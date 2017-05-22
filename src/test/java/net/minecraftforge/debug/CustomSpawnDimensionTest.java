@@ -8,7 +8,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = CustomSpawnDimensionTest.MODID, name = "CustomSpawnDimensionTest", version = "0.1")
+@Mod(modid = CustomSpawnDimensionTest.MODID, name = "CustomSpawnDimensionTest", version = "0.1", acceptableRemoteVersions = "*")
 public class CustomSpawnDimensionTest
 {
     public static final String MODID = "customspawndimensiontest";

@@ -17,13 +17,14 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod(modid = ForgeNetworkTestMod.MOD_ID, name = ForgeNetworkTestMod.MOD_ID, version = "1.0", acceptableRemoteVersions = "*")
 public class ForgeNetworkTestMod
 {
+    private static final boolean ENABLED = false;
     public static final String MOD_ID = "forgenetworktest";
     private FMLEventChannel channel;
 
     @EventHandler
     public void onPreInit(FMLPreInitializationEvent e)
     {
-        if (e.getSide() == Side.SERVER)
+        if (ENABLED && e.getSide() == Side.SERVER)
         {
             MinecraftForge.EVENT_BUS.register(this);
             channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(MOD_ID);

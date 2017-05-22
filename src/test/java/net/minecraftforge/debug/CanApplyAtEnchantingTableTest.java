@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = "canapplyatenchantingtabletest", name = "CanApplyAtEnchantingTableTest", version = "0.0.0")
+@Mod(modid = "canapplyatenchantingtabletest", name = "CanApplyAtEnchantingTableTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class CanApplyAtEnchantingTableTest
 {
     public static final boolean ENABLE = false;

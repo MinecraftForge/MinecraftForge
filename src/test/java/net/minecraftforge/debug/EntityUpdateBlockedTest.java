@@ -9,7 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
-@Mod(modid = "entityupdateblockedtest", name = "Entity Update Blocked Test", version = "1.0.0")
+@Mod(modid = "entityupdateblockedtest", name = "Entity Update Blocked Test", version = "1.0.0", acceptableRemoteVersions = "*")
 public class EntityUpdateBlockedTest
 {
     @Mod.EventHandler

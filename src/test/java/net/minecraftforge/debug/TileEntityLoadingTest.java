@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
-@Mod(modid = TileEntityLoadingTest.MOD_ID, name = "TileEntity#onLoad() test mod", version = "1.0")
+@Mod(modid = TileEntityLoadingTest.MOD_ID, name = "TileEntity#onLoad() test mod", version = "1.0", acceptableRemoteVersions = "*")
 public class TileEntityLoadingTest
 {
     public static final boolean ENABLED = false;

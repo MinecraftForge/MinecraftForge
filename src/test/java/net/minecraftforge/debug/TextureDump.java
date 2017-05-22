@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
 
-@Mod(modid = TextureDump.MODID, name = "Forge Texture Atlas Dump", version = TextureDump.VERSION, clientSideOnly = true, acceptableRemoteVersions = "*")
+@Mod(modid = TextureDump.MODID, name = "Forge Texture Atlas Dump", version = TextureDump.VERSION, clientSideOnly = true)
 public class TextureDump
 {
     public static final String MODID = "forge_texture_dump";

@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "equipment_change_test", name = "Equipment Change Test", version = "1.0.0")
+@Mod(modid = "equipment_change_test", name = "Equipment Change Test", version = "1.0.0", acceptableRemoteVersions = "*")
 public class EquipmentChangeTest
 {
     private static final boolean ENABLED = false;

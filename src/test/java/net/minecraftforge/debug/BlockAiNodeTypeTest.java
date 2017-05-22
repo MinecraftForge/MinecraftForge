@@ -10,7 +10,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = "ainodetypetest", name = "AiNodeTypeTest", version = "1.0")
+@Mod(modid = "ainodetypetest", name = "AiNodeTypeTest", version = "1.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
 public class BlockAiNodeTypeTest
 {

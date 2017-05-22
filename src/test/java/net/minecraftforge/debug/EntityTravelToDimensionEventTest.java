@@ -29,7 +29,7 @@ public class EntityTravelToDimensionEventTest
     {
         if (ENABLE)
         {
-            logger.info("Travelling to Dimension " + event.getDimension());
+            logger.info("Travelling to Dimension " + event.getDimension() + " Entity: " + event.getEntity());
             event.setCanceled(true);
         }
     }

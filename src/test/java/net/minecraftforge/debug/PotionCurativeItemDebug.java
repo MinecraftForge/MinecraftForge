@@ -23,7 +23,7 @@ import java.util.List;
  * 3. Drink incurable_potion from Brewing creative tab
  * 4. Relog to test that changes to curative items persist, then try drinking milk and eating medicine: they should have no effect
  */
-@Mod(modid = PotionCurativeItemDebug.MOD_ID, name = "Potion Curative Item Debug", version = "1.0")
+@Mod(modid = PotionCurativeItemDebug.MOD_ID, name = "Potion Curative Item Debug", version = "1.0", acceptableRemoteVersions = "*")
 public class PotionCurativeItemDebug
 {
     public static final boolean ENABLED = false;

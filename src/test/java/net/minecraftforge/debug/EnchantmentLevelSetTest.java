@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "enchantmentlevelsettest", name = "EnchantmentLevelSetTest", version = "1.0")
+@Mod(modid = "enchantmentlevelsettest", name = "EnchantmentLevelSetTest", version = "1.0", acceptableRemoteVersions = "*")
 public class EnchantmentLevelSetTest
 {
     public static final boolean ENABLE = false;

@@ -9,19 +9,17 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod(modid = "fluidhandlertest", name = "FluidHandlerTest", version = "0.0.0", acceptableRemoteVersions = "*")
+@Mod(modid = "fluidhandlertest", name = "FluidHandlerTest", version = "0.0.0", clientSideOnly = true)
 public class FluidHandlerTest
 {
     public static final boolean ENABLE = false;
@@ -39,7 +37,7 @@ public class FluidHandlerTest
     @Mod.EventHandler
     public void loadComplete(FMLLoadCompleteEvent event)
     {
-        if (!ENABLE || FMLCommonHandler.instance().getSide() != Side.CLIENT)
+        if (!ENABLE)
         {
             return;
         }

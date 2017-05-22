@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = "brewingreciperegistrytest", name = "BrewingRecipeRegistryTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class BrewingRecipeRegistryTest
 {
-
     public static final boolean ENABLE = false;
     private static Logger logger;
 

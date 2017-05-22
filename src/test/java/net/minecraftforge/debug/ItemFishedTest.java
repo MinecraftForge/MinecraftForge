@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "itemfishtest", name = "ItemFishTest", version = "1.0.0")
+@Mod(modid = "itemfishtest", name = "ItemFishTest", version = "1.0.0", acceptableRemoteVersions = "*")
 public class ItemFishedTest
 {
 

@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = "clientchateventtest", name = "Client Chat Event Test", version = "0.0.0", acceptableRemoteVersions = "*")
+@Mod(modid = "clientchateventtest", name = "Client Chat Event Test", version = "0.0.0", clientSideOnly = true)
 public class ClientChatEventTest
 {
 

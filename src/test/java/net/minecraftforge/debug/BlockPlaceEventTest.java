@@ -5,7 +5,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = BlockPlaceEventTest.MOD_ID, name = "BlockPlaceEvent test mod", version = "1.0")
+@Mod(modid = BlockPlaceEventTest.MOD_ID, name = "BlockPlaceEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
 public class BlockPlaceEventTest
 {
