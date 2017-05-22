@@ -168,7 +168,7 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +363,52 @@
+@@ -318,4 +363,81 @@
      {
          return this.field_94249_f;
      }
@@ -206,9 +206,38 @@
 +        }
 +        return false;
 +    }
++
++    /**
++     * Adds a texture registry entry to this map for the if one with the same icon name
++     * does not exist yet. Returns false if the map already contains a entry for the
++     * specified name.
++     *
++     * @param entry The icon instance
++     * @return True f the entry was added to the map, false otherwise
++     */
 +    public boolean setTextureEntry(TextureAtlasSprite entry)
 +    {
-+        return setTextureEntry(entry.func_94215_i(), entry);
++        return setTextureEntry(entry, false);
++    }
++
++    /**
++     * Adds a texture registry entry to this map for the specified name. Set {@code force}
++     * to {@code true} if you intend to override this texture. Returns false if
++     * {@code force} is {@code false} and the map already contains a entry for the
++     * specified name.
++     *
++     * @param entry The icon instance
++     * @param force Whether you override this
++     * @return False if force is false and there is one exist
++     */
++    public boolean setTextureEntry(TextureAtlasSprite entry, boolean force)
++    {
++        if (force || !field_110574_e.containsKey(entry.func_94215_i()))
++        {
++            field_110574_e.put(entry.func_94215_i(), entry);
++            return true;
++        }
++        return false;
 +    }
 +
 +    public String getBasePath()
