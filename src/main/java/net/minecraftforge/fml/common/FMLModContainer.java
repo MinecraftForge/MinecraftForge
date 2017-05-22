@@ -617,7 +617,7 @@ public class FMLModContainer implements ModContainer
             }
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide(), getLanguageAdapter());
             AutomaticEventSubscriber.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
-            ConfigManager.load(this.getModId(), Config.Type.INSTANCE);
+            ConfigManager.sync(this.getModId(), Config.Type.INSTANCE);
 
             processFieldAnnotations(event.getASMHarvestedData());
         }

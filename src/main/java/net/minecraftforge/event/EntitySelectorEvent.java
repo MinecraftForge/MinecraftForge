@@ -25,22 +25,18 @@ import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.IEntitySelectorFactory;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * EntitySelectorEvent is fired whenever Minecraft collects entity selectors.
- * This happens (one or multiple times) when you use something like @a[gamemode=1] in a command.<br>
- * This event is fired via {@link ForgeEventFactory#gatherEntitySelectors(Map, String, ICommandSender, Vec3d)},
- * which is executed in {@link net.minecraft.command.EntitySelector#matchEntities(ICommandSender, String, Class)}<br>
- * <br>
- * This event is not cancelable and does not have a result.<br>
- * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}
+ * Is not fired anymore.
+ * Replaced by a factory, which has to be registered with {@link net.minecraftforge.fml.common.registry.GameRegistry#registerEntitySelector(IEntitySelectorFactory, String...)}
+ * TODO remove in 1.12
  */
+@Deprecated
 public class EntitySelectorEvent extends Event
 {
 

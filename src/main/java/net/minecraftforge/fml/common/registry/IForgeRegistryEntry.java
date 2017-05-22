@@ -59,7 +59,7 @@ public interface IForgeRegistryEntry<V>
     @Nullable
     ResourceLocation getRegistryName();
 
-    Class<? super V> getRegistryType();
+    Class<V> getRegistryType();
 
     // Default implementation, modders who make extra items SHOULD extend this instead of Object.
     // We have to do this until we get default implementations in Java 8.
@@ -100,6 +100,6 @@ public interface IForgeRegistryEntry<V>
         }
 
         @Override
-        public final Class<? super T> getRegistryType() { return token.getRawType(); };
+        public final Class<T> getRegistryType() { return (Class<T>) token.getRawType(); };
     }
 }
