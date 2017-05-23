@@ -791,7 +791,7 @@ public final class ModelLoader extends ModelBakery
                 textures.addAll(model.getTextures()); // Kick this, just in case.
 
                 models.add(model);
-                builder.add(Pair.of(model, v.getState()));
+                builder.add(Pair.<IModel, IModelState>of(model, new ModelStateComposition(v.getState(), model.getDefaultState())));
             }
 
             if (models.size() == 0) //If all variants are missing, add one with the missing model and default rotation.
