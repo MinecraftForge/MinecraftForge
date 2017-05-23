@@ -32,6 +32,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityZombie;
@@ -39,6 +40,7 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.InventoryMerchant;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -55,6 +57,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.village.MerchantRecipe;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -96,6 +99,7 @@ import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.MerchantTradeEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -559,6 +563,22 @@ public class ForgeEventFactory
     public static void onPlayerBrewedPotion(EntityPlayer player, ItemStack stack)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerBrewedPotionEvent(player, stack));
+    }
+
+    public static boolean checkMerchantTrade(IMerchant merchant, MerchantRecipe trade, ItemStack left, ItemStack right)
+    {
+        return MinecraftForge.EVENT_BUS.post(new MerchantTradeEvent.SetupOffer(merchant, trade, left, right));
+    }
+
+    public static boolean onMerchantTrade(InventoryMerchant inventory, IMerchant merchant, MerchantRecipe trade, ItemStack left, ItemStack right)
+    {
+        MerchantTradeEvent.Transact event = new MerchantTradeEvent.Transact(merchant, trade, left, right);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.getChangedLeft() != null)
+            inventory.setInventorySlotContents(0, event.getChangedLeft());
+        if (event.getChangedRight() != null)
+            inventory.setInventorySlotContents(1, event.getChangedRight());
+        return event.isCanceled();
     }
 
     public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)
