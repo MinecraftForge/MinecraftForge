@@ -647,7 +647,19 @@
 +        }
 +        return builder.build();
 +    }
-+
++    /**
++     * Called from EntityItemFram.getAnalogOutput, used to allow items in item frames to provide their own
++     * Comparator output signal strengths, e.g. displaying any sort of world information, such as biome
++     * temperature, rainfall, etc.
++     * @param worldIn
++     * @param pos
++     * @param stack
++     * @param rotation - the default value from the ItemFrame (rotation amount)
++     * @return redstone signal strength
++     */
++    public int getItemFrameOutput(World worldIn, BlockPos pos, ItemStack stack, int rotation) {
++        return rotation;
++    }
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
