@@ -1,0 +1,75 @@
+--- ../src-base/minecraft/net/minecraft/client/particle/Particle.java
++++ ../src-work/minecraft/net/minecraft/client/particle/Particle.java
+@@ -356,4 +356,72 @@
+     {
+         this.field_187120_G = p_187108_1_;
+     }
++
++    public World getWorld() {
++        return field_187122_b;
++    }
++
++    public double getPosX() {
++        return field_187126_f;
++    }
++
++    public void setPosX(double posX) {
++        this.field_187126_f = posX;
++    }
++
++    public double getPosY() {
++        return field_187127_g;
++    }
++
++    public void setPosY(double posY) {
++        this.field_187127_g = posY;
++    }
++
++    public double getPosZ() {
++        return field_187128_h;
++    }
++
++    public void setPosZ(double posZ) {
++        this.field_187128_h = posZ;
++    }
++
++    public double getMotionX() {
++        return field_187129_i;
++    }
++
++    public void setMotionX(double motionX) {
++        this.field_187129_i = motionX;
++    }
++
++    public double getMotionY() {
++        return field_187130_j;
++    }
++
++    public void setMotionY(double motionY) {
++        this.field_187130_j = motionY;
++    }
++
++    public double getMotionZ() {
++        return field_187131_k;
++    }
++
++    public void setMotionZ(double motionZ) {
++        this.field_187131_k = motionZ;
++    }
++
++    public boolean isCollided() {
++        return field_187132_l;
++    }
++
++    public int getParticleAge() {
++        return field_70546_d;
++    }
++
++    public void setParticleAge(int particleAge) {
++        this.field_70546_d = particleAge;
++    }
++
++    public float getParticleScale() {
++        return field_70544_f;
++    }
+ }
