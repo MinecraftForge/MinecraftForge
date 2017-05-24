@@ -8,6 +8,15 @@
  
      protected WorldInfo()
      {
+@@ -709,7 +710,7 @@
+ 
+     public void func_176144_a(EnumDifficulty p_176144_1_)
+     {
+-        this.field_176158_z = p_176144_1_;
++        this.field_176158_z = net.minecraftforge.common.ForgeHooks.onDifficultyChange(this.field_176158_z, p_176144_1_);
+     }
+ 
+     public boolean func_176123_z()
 @@ -807,6 +808,26 @@
          });
      }

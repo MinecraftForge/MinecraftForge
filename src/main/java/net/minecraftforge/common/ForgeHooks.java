@@ -93,6 +93,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.GameType;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
@@ -101,6 +102,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.ThrowableImpactEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -478,6 +480,12 @@ public class ForgeHooks
             return true;
         }
         return false;
+    }
+
+    public static EnumDifficulty onDifficultyChange(EnumDifficulty oldDifficulty, EnumDifficulty newDifficulty)
+    {
+        DifficultyChangeEvent event = new DifficultyChangeEvent(oldDifficulty, newDifficulty);
+        return (MinecraftForge.EVENT_BUS.post(event) ? oldDifficulty : event.getNewDifficulty());
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
