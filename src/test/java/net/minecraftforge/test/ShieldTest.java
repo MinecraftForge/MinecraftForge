@@ -49,7 +49,7 @@ public class ShieldTest
         ModelLoader.setCustomModelResourceLocation(DIAMOND_SHIELD, 0, new ModelResourceLocation("minecraft:shield", "inventory"));
         ModelLoader.setCustomModelResourceLocation(HEAVY_DIAMOND_SWORD, 0, new ModelResourceLocation("minecraft:diamond_sword", "inventory"));
         TileEntityRendererDispatcher.instance.mapSpecialRenderers.put(TileEntityCustomShield.class, new TileEntitySpecialRenderer<TileEntityCustomShield>()
-                {
+        {
             @Override
             public void renderTileEntityAt(TileEntityCustomShield entity, double x, double y, double z, float partialTicks, int destroyStage)
             {
@@ -59,7 +59,7 @@ public class ShieldTest
                 modelShield.render();
                 GlStateManager.popMatrix();
             }
-                });
+        });
         ForgeHooksClient.registerTESRItemStack(DIAMOND_SHIELD, 0, TileEntityCustomShield.class);
     }
     
