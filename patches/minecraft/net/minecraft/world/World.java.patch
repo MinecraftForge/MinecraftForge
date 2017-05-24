@@ -1020,3 +1020,27 @@
      public void func_184135_a(Packet<?> p_184135_1_)
      {
          throw new UnsupportedOperationException("Can\'t send packets to server unless you\'re on the client.");
+@@ -3609,4 +3915,23 @@
+     {
+         return null;
+     }
++
++    /**
++     * Gets whether this world is to be considered a "fake" world where normal block
++     * processing may need to take place, but certain operations, such as block tracking,
++     * or other "expectations" of a world being a traditional dimension in which players
++     * are exposed to visiting (like the nether) are invalid. Since {@link #isRemote} only
++     * dictates whether a world is considered the "server" or processing world, sometimes,
++     * a "fake" world needs to return {@code false}, but still remain ignored by other mods
++     * for this specific processing. By default, {@link World} and {@link WorldServer},
++     * {@link WorldServerMulti}, and in the client context, {@code WorldClient} are to return
++     * {@code false}.
++     *
++     * @return True if this world is to be considered fake, but still can be utilized for
++     *     traditional mechanics without modification
++     */
++    public boolean isFakeWorld()
++    {
++        return false;
++    }
+ }
