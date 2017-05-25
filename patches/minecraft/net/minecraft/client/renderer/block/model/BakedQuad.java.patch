@@ -28,13 +28,14 @@
          this.field_178215_a = p_i46574_1_;
          this.field_178213_b = p_i46574_2_;
          this.field_178214_c = p_i46574_3_;
-@@ -45,4 +56,23 @@
+@@ -45,4 +56,37 @@
      {
          return this.field_178214_c;
      }
 +
 +    protected final net.minecraft.client.renderer.vertex.VertexFormat format;
 +    protected final boolean applyDiffuseLighting;
++    protected boolean fullbright;
 +
 +    @Override
 +    public void pipe(net.minecraftforge.client.model.pipeline.IVertexConsumer consumer)
@@ -50,5 +51,18 @@
 +    public boolean shouldApplyDiffuseLighting()
 +    {
 +        return applyDiffuseLighting;
++    }
++    
++    public boolean isFullbright()
++    {
++        return fullbright;
++    }
++    
++    /**
++     * <b>NOTE:</b> Setting this to true will only render the quad fullbright if handled specially. Currently only item rendering does this.
++     */
++    public void setFullbright(boolean state)
++    {
++        this.fullbright = state;
 +    }
  }
