@@ -40,27 +40,12 @@ public class ShieldTest
     public static final ItemShield DIAMOND_SHIELD = null;
     public static final ItemSword HEAVY_DIAMOND_SWORD = null;
     
-    private final ModelShield modelShield = new ModelShield();
-    
     @SideOnly(Side.CLIENT)
     @Mod.EventHandler
     public void pre(FMLPreInitializationEvent event)
     {
-        ModelLoader.setCustomModelResourceLocation(DIAMOND_SHIELD, 0, new ModelResourceLocation("minecraft:shield", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(DIAMOND_SHIELD, 0, new ModelResourceLocation("shield_test:diamond_shield", "inventory"));
         ModelLoader.setCustomModelResourceLocation(HEAVY_DIAMOND_SWORD, 0, new ModelResourceLocation("minecraft:diamond_sword", "inventory"));
-        TileEntityRendererDispatcher.instance.mapSpecialRenderers.put(TileEntityCustomShield.class, new TileEntitySpecialRenderer<TileEntityCustomShield>()
-        {
-            @Override
-            public void renderTileEntityAt(TileEntityCustomShield entity, double x, double y, double z, float partialTicks, int destroyStage)
-            {
-                Minecraft.getMinecraft().getTextureManager().bindTexture(BannerTextures.SHIELD_BASE_TEXTURE);
-                GlStateManager.pushMatrix();
-                GlStateManager.scale(1.0F, -1.0F, -1.0F);
-                modelShield.render();
-                GlStateManager.popMatrix();
-            }
-        });
-        ForgeHooksClient.registerTESRItemStack(DIAMOND_SHIELD, 0, TileEntityCustomShield.class);
     }
     
     @SubscribeEvent
