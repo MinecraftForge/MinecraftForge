@@ -19,7 +19,426 @@
  
          return structurevillagepieces$village;
      }
-@@ -1538,6 +1543,7 @@
+@@ -290,10 +295,11 @@
+                     this.field_74887_e.func_78886_a(0, this.field_143015_k - this.field_74887_e.field_78894_e + 12 - 1, 0);
+                 }
+ 
+-                IBlockState iblockstate = Blocks.field_150347_e.func_176223_P();
++                IBlockState iblockstate = this.func_175847_a(Blocks.field_150347_e.func_176223_P());
+                 IBlockState iblockstate1 = this.func_175847_a(Blocks.field_150446_ar.func_176223_P().func_177226_a(BlockStairs.field_176309_a, EnumFacing.NORTH));
+                 IBlockState iblockstate2 = this.func_175847_a(Blocks.field_150446_ar.func_176223_P().func_177226_a(BlockStairs.field_176309_a, EnumFacing.WEST));
+                 IBlockState iblockstate3 = this.func_175847_a(Blocks.field_150446_ar.func_176223_P().func_177226_a(BlockStairs.field_176309_a, EnumFacing.EAST));
++                IBlockState iblockstate5 = this.func_175847_a(Blocks.field_150410_aZ.func_176223_P());
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 1, 1, 3, 3, 7, Blocks.field_150350_a.func_176223_P(), Blocks.field_150350_a.func_176223_P(), false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 5, 1, 3, 9, 3, Blocks.field_150350_a.func_176223_P(), Blocks.field_150350_a.func_176223_P(), false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 0, 0, 3, 0, 8, iblockstate, iblockstate, false);
+@@ -321,26 +327,26 @@
+                 this.func_175811_a(p_74875_1_, iblockstate1, 3, 1, 5, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate2, 1, 2, 7, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate3, 3, 2, 7, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 3, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 4, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 4, 3, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 6, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 7, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 4, 6, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 4, 7, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 6, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 7, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 6, 4, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 7, 4, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 3, 6, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 4, 3, 6, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 3, 8, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 0, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 0, 3, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 4, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 4, 3, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 0, 6, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 0, 7, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 4, 6, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 4, 7, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 2, 6, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 2, 7, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 2, 6, 4, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 2, 7, 4, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 0, 3, 6, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 4, 3, 6, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 2, 3, 8, p_74875_3_);
+                 this.func_189926_a(p_74875_1_, EnumFacing.SOUTH, 2, 4, 7, p_74875_3_);
+                 this.func_189926_a(p_74875_1_, EnumFacing.EAST, 1, 4, 6, p_74875_3_);
+                 this.func_189926_a(p_74875_1_, EnumFacing.WEST, 3, 4, 6, p_74875_3_);
+                 this.func_189926_a(p_74875_1_, EnumFacing.NORTH, 2, 4, 5, p_74875_3_);
+-                IBlockState iblockstate4 = Blocks.field_150468_ap.func_176223_P().func_177226_a(BlockLadder.field_176382_a, EnumFacing.WEST);
++                IBlockState iblockstate4 = this.func_175847_a(Blocks.field_150468_ap.func_176223_P().func_177226_a(BlockLadder.field_176382_a, EnumFacing.WEST));
+ 
+                 for (int i = 1; i <= 9; ++i)
+                 {
+@@ -357,7 +363,7 @@
+ 
+                     if (this.func_175807_a(p_74875_1_, 2, -1, -1, p_74875_3_).func_177230_c() == Blocks.field_185774_da)
+                     {
+-                        this.func_175811_a(p_74875_1_, Blocks.field_150349_c.func_176223_P(), 2, -1, -1, p_74875_3_);
++                        this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150349_c.func_176223_P()), 2, -1, -1, p_74875_3_);
+                     }
+                 }
+ 
+@@ -478,11 +484,12 @@
+                 }
+ 
+                 IBlockState iblockstate = this.func_175847_a(Blocks.field_150364_r.func_176223_P());
++                IBlockState iblockstate1 = this.func_175847_a(Blocks.field_150458_ak.func_176223_P());
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 1, 0, 12, 4, 8, Blocks.field_150350_a.func_176223_P(), Blocks.field_150350_a.func_176223_P(), false);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 1, 0, 1, 2, 0, 7, Blocks.field_150458_ak.func_176223_P(), Blocks.field_150458_ak.func_176223_P(), false);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 4, 0, 1, 5, 0, 7, Blocks.field_150458_ak.func_176223_P(), Blocks.field_150458_ak.func_176223_P(), false);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 7, 0, 1, 8, 0, 7, Blocks.field_150458_ak.func_176223_P(), Blocks.field_150458_ak.func_176223_P(), false);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 10, 0, 1, 11, 0, 7, Blocks.field_150458_ak.func_176223_P(), Blocks.field_150458_ak.func_176223_P(), false);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 1, 0, 1, 2, 0, 7, iblockstate1, iblockstate1, false);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 4, 0, 1, 5, 0, 7, iblockstate1, iblockstate1, false);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 7, 0, 1, 8, 0, 7, iblockstate1, iblockstate1, false);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 10, 0, 1, 11, 0, 7, iblockstate1, iblockstate1, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 0, 0, 0, 0, 8, iblockstate, iblockstate, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 6, 0, 0, 6, 0, 8, iblockstate, iblockstate, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 12, 0, 0, 12, 0, 8, iblockstate, iblockstate, false);
+@@ -516,7 +523,7 @@
+                     for (int k2 = 0; k2 < 13; ++k2)
+                     {
+                         this.func_74871_b(p_74875_1_, k2, 4, j2, p_74875_3_);
+-                        this.func_175808_b(p_74875_1_, Blocks.field_150346_d.func_176223_P(), k2, -1, j2, p_74875_3_);
++                        this.func_175808_b(p_74875_1_, this.func_175847_a(Blocks.field_150346_d.func_176223_P()), k2, -1, j2, p_74875_3_);
+                     }
+                 }
+ 
+@@ -594,9 +601,10 @@
+                 }
+ 
+                 IBlockState iblockstate = this.func_175847_a(Blocks.field_150364_r.func_176223_P());
++                IBlockState iblockstate1 = this.func_175847_a(Blocks.field_150458_ak.func_176223_P());
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 1, 0, 6, 4, 8, Blocks.field_150350_a.func_176223_P(), Blocks.field_150350_a.func_176223_P(), false);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 1, 0, 1, 2, 0, 7, Blocks.field_150458_ak.func_176223_P(), Blocks.field_150458_ak.func_176223_P(), false);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 4, 0, 1, 5, 0, 7, Blocks.field_150458_ak.func_176223_P(), Blocks.field_150458_ak.func_176223_P(), false);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 1, 0, 1, 2, 0, 7, iblockstate1, iblockstate1, false);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 4, 0, 1, 5, 0, 7, iblockstate1, iblockstate1, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 0, 0, 0, 0, 8, iblockstate, iblockstate, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 6, 0, 0, 6, 0, 8, iblockstate, iblockstate, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 0, 0, 5, 0, 0, iblockstate, iblockstate, false);
+@@ -620,7 +628,7 @@
+                     for (int k1 = 0; k1 < 7; ++k1)
+                     {
+                         this.func_74871_b(p_74875_1_, k1, 4, j1, p_74875_3_);
+-                        this.func_175808_b(p_74875_1_, Blocks.field_150346_d.func_176223_P(), k1, -1, j1, p_74875_3_);
++                        this.func_175808_b(p_74875_1_, this.func_175847_a(Blocks.field_150346_d.func_176223_P()), k1, -1, j1, p_74875_3_);
+                     }
+                 }
+ 
+@@ -668,9 +676,10 @@
+                 IBlockState iblockstate4 = this.func_175847_a(Blocks.field_150344_f.func_176223_P());
+                 IBlockState iblockstate5 = this.func_175847_a(Blocks.field_150364_r.func_176223_P());
+                 IBlockState iblockstate6 = this.func_175847_a(Blocks.field_180407_aO.func_176223_P());
++                IBlockState iblockstate9 = this.func_175847_a(Blocks.field_150346_d.func_176223_P());
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 1, 1, 7, 4, 4, Blocks.field_150350_a.func_176223_P(), Blocks.field_150350_a.func_176223_P(), false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 2, 1, 6, 8, 4, 10, Blocks.field_150350_a.func_176223_P(), Blocks.field_150350_a.func_176223_P(), false);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 2, 0, 6, 8, 0, 10, Blocks.field_150346_d.func_176223_P(), Blocks.field_150346_d.func_176223_P(), false);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 2, 0, 6, 8, 0, 10, iblockstate9, iblockstate9, false);
+                 this.func_175811_a(p_74875_1_, iblockstate, 6, 0, 6, p_74875_3_);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 2, 1, 6, 2, 1, 10, iblockstate6, iblockstate6, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 8, 1, 6, 8, 1, 10, iblockstate6, iblockstate6, false);
+@@ -701,26 +710,28 @@
+                     }
+                 }
+ 
++                IBlockState iblockstate10 = this.func_175847_a(Blocks.field_150334_T.func_176223_P());
++                IBlockState iblockstate11 = this.func_175847_a(Blocks.field_150410_aZ.func_176223_P());
+                 this.func_175811_a(p_74875_1_, iblockstate5, 0, 2, 1, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate5, 0, 2, 4, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate5, 8, 2, 1, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate5, 8, 2, 4, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 8, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 8, 2, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 2, 5, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 3, 2, 5, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 5, 2, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 6, 2, 5, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 0, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 0, 2, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 8, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 8, 2, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 2, 2, 5, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 3, 2, 5, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 5, 2, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 6, 2, 5, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 2, 1, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150452_aw.func_176223_P(), 2, 2, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150452_aw.func_176223_P()), 2, 2, 3, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate4, 1, 1, 4, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate7, 2, 1, 4, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate3, 1, 1, 3, p_74875_3_);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 5, 0, 1, 7, 0, 3, Blocks.field_150334_T.func_176223_P(), Blocks.field_150334_T.func_176223_P(), false);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150334_T.func_176223_P(), 6, 1, 1, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150334_T.func_176223_P(), 6, 1, 2, p_74875_3_);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 5, 0, 1, 7, 0, 3, iblockstate10, iblockstate10, false);
++                this.func_175811_a(p_74875_1_, iblockstate10, 6, 1, 1, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate10, 6, 1, 2, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, Blocks.field_150350_a.func_176223_P(), 2, 1, 0, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, Blocks.field_150350_a.func_176223_P(), 2, 2, 0, p_74875_3_);
+                 this.func_189926_a(p_74875_1_, EnumFacing.NORTH, 2, 3, 1, p_74875_3_);
+@@ -732,7 +743,7 @@
+ 
+                     if (this.func_175807_a(p_74875_1_, 2, -1, -1, p_74875_3_).func_177230_c() == Blocks.field_185774_da)
+                     {
+-                        this.func_175811_a(p_74875_1_, Blocks.field_150349_c.func_176223_P(), 2, -1, -1, p_74875_3_);
++                        this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150349_c.func_176223_P()), 2, -1, -1, p_74875_3_);
+                     }
+                 }
+ 
+@@ -815,6 +826,9 @@
+                     }
+                 }
+ 
++                IBlockState iblockstate7 = this.func_175847_a(Blocks.field_150410_aZ.func_176223_P());
++                IBlockState iblockstate8 = this.func_175847_a(Blocks.field_150342_X.func_176223_P());
++                IBlockState iblockstate9 = this.func_175847_a(Blocks.field_150452_aw.func_176223_P());
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 1, 0, 0, 1, 5, iblockstate, iblockstate, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 1, 5, 8, 1, 5, iblockstate, iblockstate, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 8, 1, 0, 8, 1, 4, iblockstate, iblockstate, false);
+@@ -827,27 +841,27 @@
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 2, 5, 7, 4, 5, iblockstate4, iblockstate4, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 8, 2, 1, 8, 4, 4, iblockstate4, iblockstate4, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 2, 0, 7, 4, 0, iblockstate4, iblockstate4, false);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 4, 2, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 5, 2, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 6, 2, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 4, 3, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 5, 3, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 6, 3, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 3, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 3, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 8, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 8, 2, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 8, 3, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 8, 3, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 2, 5, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 3, 2, 5, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 5, 2, 5, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 6, 2, 5, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 4, 2, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 5, 2, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 6, 2, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 4, 3, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 5, 3, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 6, 3, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 0, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 0, 2, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 0, 3, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 0, 3, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 8, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 8, 2, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 8, 3, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 8, 3, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 2, 2, 5, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 3, 2, 5, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 5, 2, 5, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate7, 6, 2, 5, p_74875_3_);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 4, 1, 7, 4, 1, iblockstate4, iblockstate4, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 4, 4, 7, 4, 4, iblockstate4, iblockstate4, false);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 1, 3, 4, 7, 3, 4, Blocks.field_150342_X.func_176223_P(), Blocks.field_150342_X.func_176223_P(), false);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 1, 3, 4, 7, 3, 4, iblockstate8, iblockstate8, false);
+                 this.func_175811_a(p_74875_1_, iblockstate4, 7, 1, 4, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate3, 7, 1, 3, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate1, 6, 1, 4, p_74875_3_);
+@@ -855,10 +869,10 @@
+                 this.func_175811_a(p_74875_1_, iblockstate1, 4, 1, 4, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate1, 3, 1, 4, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 6, 1, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150452_aw.func_176223_P(), 6, 2, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate9, 6, 2, 3, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 4, 1, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150452_aw.func_176223_P(), 4, 2, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150462_ai.func_176223_P(), 7, 1, 1, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate9, 4, 2, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150462_ai.func_176223_P()), 7, 1, 1, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, Blocks.field_150350_a.func_176223_P(), 1, 1, 0, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, Blocks.field_150350_a.func_176223_P(), 1, 2, 0, p_74875_3_);
+                 this.func_189927_a(p_74875_1_, p_74875_3_, p_74875_2_, 1, 1, 0, EnumFacing.NORTH);
+@@ -869,7 +883,7 @@
+ 
+                     if (this.func_175807_a(p_74875_1_, 1, -1, -1, p_74875_3_).func_177230_c() == Blocks.field_185774_da)
+                     {
+-                        this.func_175811_a(p_74875_1_, Blocks.field_150349_c.func_176223_P(), 1, -1, -1, p_74875_3_);
++                        this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150349_c.func_176223_P()), 1, -1, -1, p_74875_3_);
+                     }
+                 }
+ 
+@@ -939,17 +953,22 @@
+                     this.field_74887_e.func_78886_a(0, this.field_143015_k - this.field_74887_e.field_78894_e + 6 - 1, 0);
+                 }
+ 
+-                IBlockState iblockstate = Blocks.field_150347_e.func_176223_P();
++                IBlockState iblockstate = this.func_175847_a(Blocks.field_150347_e.func_176223_P());
+                 IBlockState iblockstate1 = this.func_175847_a(Blocks.field_150476_ad.func_176223_P().func_177226_a(BlockStairs.field_176309_a, EnumFacing.NORTH));
+                 IBlockState iblockstate2 = this.func_175847_a(Blocks.field_150476_ad.func_176223_P().func_177226_a(BlockStairs.field_176309_a, EnumFacing.WEST));
+                 IBlockState iblockstate3 = this.func_175847_a(Blocks.field_150344_f.func_176223_P());
+                 IBlockState iblockstate4 = this.func_175847_a(Blocks.field_150446_ar.func_176223_P().func_177226_a(BlockStairs.field_176309_a, EnumFacing.NORTH));
+                 IBlockState iblockstate5 = this.func_175847_a(Blocks.field_150364_r.func_176223_P());
+                 IBlockState iblockstate6 = this.func_175847_a(Blocks.field_180407_aO.func_176223_P());
++                IBlockState iblockstate7 = this.func_175847_a(Blocks.field_150333_U.func_176223_P());
++                IBlockState iblockstate8 = this.func_175847_a(Blocks.field_150356_k.func_176223_P());
++                IBlockState iblockstate9 = this.func_175847_a(Blocks.field_150411_aY.func_176223_P());
++                IBlockState iblockstate10 = this.func_175847_a(Blocks.field_150460_al.func_176223_P());
++                IBlockState iblockstate11 = this.func_175847_a(Blocks.field_150410_aZ.func_176223_P());
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 1, 0, 9, 4, 6, Blocks.field_150350_a.func_176223_P(), Blocks.field_150350_a.func_176223_P(), false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 0, 0, 9, 0, 6, iblockstate, iblockstate, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 4, 0, 9, 4, 6, iblockstate, iblockstate, false);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 0, 5, 0, 9, 5, 6, Blocks.field_150333_U.func_176223_P(), Blocks.field_150333_U.func_176223_P(), false);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 0, 5, 0, 9, 5, 6, iblockstate7, iblockstate7, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 5, 1, 8, 5, 5, Blocks.field_150350_a.func_176223_P(), Blocks.field_150350_a.func_176223_P(), false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 1, 0, 2, 3, 0, iblockstate3, iblockstate3, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 1, 0, 0, 4, 0, iblockstate5, iblockstate5, false);
+@@ -963,21 +982,21 @@
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 5, 1, 0, 5, 3, 0, iblockstate6, iblockstate6, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 9, 1, 0, 9, 3, 0, iblockstate6, iblockstate6, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 6, 1, 4, 9, 4, 6, iblockstate, iblockstate, false);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150356_k.func_176223_P(), 7, 1, 5, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150356_k.func_176223_P(), 8, 1, 5, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150411_aY.func_176223_P(), 9, 2, 5, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150411_aY.func_176223_P(), 9, 2, 4, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate8, 7, 1, 5, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate8, 8, 1, 5, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate9, 9, 2, 5, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate9, 9, 2, 4, p_74875_3_);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 7, 2, 4, 8, 2, 5, Blocks.field_150350_a.func_176223_P(), Blocks.field_150350_a.func_176223_P(), false);
+                 this.func_175811_a(p_74875_1_, iblockstate, 6, 1, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150460_al.func_176223_P(), 6, 2, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150460_al.func_176223_P(), 6, 3, 3, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150334_T.func_176223_P(), 8, 1, 1, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 4, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 2, 6, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 4, 2, 6, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate10, 6, 2, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate10, 6, 3, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150334_T.func_176223_P()), 8, 1, 1, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 0, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 0, 2, 4, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 2, 2, 6, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 4, 2, 6, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 2, 1, 4, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150452_aw.func_176223_P(), 2, 2, 4, p_74875_3_);
++                this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150452_aw.func_176223_P()), 2, 2, 4, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate3, 1, 1, 5, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate1, 2, 1, 5, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate2, 1, 1, 4, p_74875_3_);
+@@ -996,7 +1015,7 @@
+ 
+                         if (this.func_175807_a(p_74875_1_, i, -1, -1, p_74875_3_).func_177230_c() == Blocks.field_185774_da)
+                         {
+-                            this.func_175811_a(p_74875_1_, Blocks.field_150349_c.func_176223_P(), i, -1, -1, p_74875_3_);
++                            this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150349_c.func_176223_P()), i, -1, -1, p_74875_3_);
+                         }
+                     }
+                 }
+@@ -1126,28 +1145,29 @@
+                     }
+                 }
+ 
++                IBlockState iblockstate11 = this.func_175847_a(Blocks.field_150410_aZ.func_176223_P());
+                 this.func_175811_a(p_74875_1_, iblockstate6, 0, 2, 1, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 0, 2, 4, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 0, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 0, 2, 3, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 4, 2, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 5, 2, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 5, 2, 0, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 6, 2, 0, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 8, 2, 1, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 8, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 8, 2, 3, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 8, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 8, 2, 3, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 8, 2, 4, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate5, 8, 2, 5, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 8, 2, 6, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 8, 2, 7, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 8, 2, 8, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 8, 2, 7, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 8, 2, 8, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 8, 2, 9, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 2, 2, 6, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 2, 7, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 2, 8, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 2, 2, 7, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 2, 2, 8, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 2, 2, 9, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 4, 4, 10, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 5, 4, 10, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate11, 5, 4, 10, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate6, 6, 4, 10, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate5, 5, 5, 10, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, Blocks.field_150350_a.func_176223_P(), 2, 1, 0, p_74875_3_);
+@@ -1162,7 +1182,7 @@
+ 
+                     if (this.func_175807_a(p_74875_1_, 2, -1, -1, p_74875_3_).func_177230_c() == Blocks.field_185774_da)
+                     {
+-                        this.func_175811_a(p_74875_1_, Blocks.field_150349_c.func_176223_P(), 2, -1, -1, p_74875_3_);
++                        this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150349_c.func_176223_P()), 2, -1, -1, p_74875_3_);
+                     }
+                 }
+ 
+@@ -1242,6 +1262,7 @@
+                 IBlockState iblockstate2 = this.func_175847_a(Blocks.field_150446_ar.func_176223_P().func_177226_a(BlockStairs.field_176309_a, EnumFacing.NORTH));
+                 IBlockState iblockstate3 = this.func_175847_a(Blocks.field_150364_r.func_176223_P());
+                 IBlockState iblockstate4 = this.func_175847_a(Blocks.field_180407_aO.func_176223_P());
++                IBlockState iblockstate5 =  this.func_175847_a(Blocks.field_150410_aZ.func_176223_P());
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 0, 4, iblockstate, iblockstate, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 4, 0, 4, 4, 4, iblockstate3, iblockstate3, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 4, 1, 3, 4, 3, iblockstate1, iblockstate1, false);
+@@ -1260,9 +1281,9 @@
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 1, 1, 0, 3, 3, iblockstate1, iblockstate1, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 4, 1, 1, 4, 3, 3, iblockstate1, iblockstate1, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 1, 4, 3, 3, 4, iblockstate1, iblockstate1, false);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 2, 2, 4, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 4, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 0, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 2, 2, 4, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate5, 4, 2, 2, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate1, 1, 1, 0, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate1, 1, 2, 0, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate1, 1, 3, 0, p_74875_3_);
+@@ -1277,7 +1298,7 @@
+ 
+                     if (this.func_175807_a(p_74875_1_, 2, -1, -1, p_74875_3_).func_177230_c() == Blocks.field_185774_da)
+                     {
+-                        this.func_175811_a(p_74875_1_, Blocks.field_150349_c.func_176223_P(), 2, -1, -1, p_74875_3_);
++                        this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150349_c.func_176223_P()), 2, -1, -1, p_74875_3_);
+                     }
+                 }
+ 
+@@ -1305,11 +1326,11 @@
+ 
+                 if (this.field_74913_b)
+                 {
+-                    IBlockState iblockstate5 = Blocks.field_150468_ap.func_176223_P().func_177226_a(BlockLadder.field_176382_a, EnumFacing.SOUTH);
+-                    this.func_175811_a(p_74875_1_, iblockstate5, 3, 1, 3, p_74875_3_);
+-                    this.func_175811_a(p_74875_1_, iblockstate5, 3, 2, 3, p_74875_3_);
+-                    this.func_175811_a(p_74875_1_, iblockstate5, 3, 3, 3, p_74875_3_);
+-                    this.func_175811_a(p_74875_1_, iblockstate5, 3, 4, 3, p_74875_3_);
++                    IBlockState iblockstate6 = this.func_175847_a(Blocks.field_150468_ap.func_176223_P().func_177226_a(BlockLadder.field_176382_a, EnumFacing.SOUTH));
++                    this.func_175811_a(p_74875_1_, iblockstate6, 3, 1, 3, p_74875_3_);
++                    this.func_175811_a(p_74875_1_, iblockstate6, 3, 2, 3, p_74875_3_);
++                    this.func_175811_a(p_74875_1_, iblockstate6, 3, 3, 3, p_74875_3_);
++                    this.func_175811_a(p_74875_1_, iblockstate6, 3, 4, 3, p_74875_3_);
+                 }
+ 
+                 this.func_189926_a(p_74875_1_, EnumFacing.NORTH, 2, 3, 1, p_74875_3_);
+@@ -1538,6 +1559,7 @@
              public List<StructureVillagePieces.PieceWeight> field_74931_h;
              public List<StructureComponent> field_74932_i = Lists.<StructureComponent>newArrayList();
              public List<StructureComponent> field_74930_j = Lists.<StructureComponent>newArrayList();
@@ -27,7 +446,7 @@
  
              public Start()
              {
-@@ -1550,6 +1556,8 @@
+@@ -1550,6 +1572,8 @@
                  this.field_74931_h = p_i2104_6_;
                  this.field_74928_c = p_i2104_7_;
                  Biome biome = p_i2104_1_.func_180300_a(new BlockPos(p_i2104_4_, 0, p_i2104_5_), Biomes.field_180279_ad);
@@ -36,7 +455,16 @@
  
                  if (biome instanceof BiomeDesert)
                  {
-@@ -1622,6 +1630,7 @@
+@@ -1607,7 +1631,7 @@
+                 this.func_175811_a(p_74875_1_, iblockstate, 1, 0, 0, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate, 1, 1, 0, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate, 1, 2, 0, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150325_L.func_176203_a(EnumDyeColor.WHITE.func_176767_b()), 1, 3, 0, p_74875_3_);
++                this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150325_L.func_176203_a(EnumDyeColor.WHITE.func_176767_b())), 1, 3, 0, p_74875_3_);
+                 this.func_189926_a(p_74875_1_, EnumFacing.EAST, 2, 3, 0, p_74875_3_);
+                 this.func_189926_a(p_74875_1_, EnumFacing.NORTH, 1, 3, 1, p_74875_3_);
+                 this.func_189926_a(p_74875_1_, EnumFacing.WEST, 0, 3, 0, p_74875_3_);
+@@ -1622,6 +1646,7 @@
              private int field_74896_a;
              protected int field_189928_h;
              protected boolean field_189929_i;
@@ -44,7 +472,7 @@
  
              public Village()
              {
-@@ -1635,6 +1644,7 @@
+@@ -1635,6 +1660,7 @@
                  {
                      this.field_189928_h = p_i2107_1_.field_189928_h;
                      this.field_189929_i = p_i2107_1_.field_189929_i;
@@ -52,7 +480,7 @@
                  }
              }
  
-@@ -1767,7 +1777,7 @@
+@@ -1767,7 +1793,7 @@
                              EntityZombie entityzombie = new EntityZombie(p_74893_1_);
                              entityzombie.func_70012_b((double)j + 0.5D, (double)k, (double)l + 0.5D, 0.0F, 0.0F);
                              entityzombie.func_180482_a(p_74893_1_.func_175649_E(new BlockPos(entityzombie)), (IEntityLivingData)null);
@@ -61,7 +489,7 @@
                              entityzombie.func_110163_bv();
                              p_74893_1_.func_72838_d(entityzombie);
                          }
-@@ -1776,20 +1786,28 @@
+@@ -1776,20 +1802,28 @@
                              EntityVillager entityvillager = new EntityVillager(p_74893_1_);
                              entityvillager.func_70012_b((double)j + 0.5D, (double)k, (double)l + 0.5D, 0.0F, 0.0F);
                              entityvillager.func_180482_a(p_74893_1_.func_175649_E(new BlockPos(entityvillager)), (IEntityLivingData)null);
@@ -91,3 +519,58 @@
                  if (this.field_189928_h == 1)
                  {
                      if (p_175847_1_.func_177230_c() == Blocks.field_150364_r || p_175847_1_.func_177230_c() == Blocks.field_150363_s)
+@@ -1982,7 +2016,7 @@
+                     {
+                         if (j == 0 || j == 5 || i == 0 || i == 5)
+                         {
+-                            this.func_175811_a(p_74875_1_, Blocks.field_150347_e.func_176223_P(), j, 11, i, p_74875_3_);
++                            this.func_175811_a(p_74875_1_, iblockstate, j, 11, i, p_74875_3_);
+                             this.func_74871_b(p_74875_1_, j, 12, i, p_74875_3_);
+                         }
+                     }
+@@ -2049,9 +2083,10 @@
+                 IBlockState iblockstate2 = this.func_175847_a(Blocks.field_150446_ar.func_176223_P().func_177226_a(BlockStairs.field_176309_a, EnumFacing.NORTH));
+                 IBlockState iblockstate3 = this.func_175847_a(Blocks.field_150364_r.func_176223_P());
+                 IBlockState iblockstate4 = this.func_175847_a(Blocks.field_180407_aO.func_176223_P());
++                IBlockState iblockstate5 = this.func_175847_a(Blocks.field_150346_d.func_176223_P());
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 1, 1, 3, 5, 4, Blocks.field_150350_a.func_176223_P(), Blocks.field_150350_a.func_176223_P(), false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 0, 0, 0, 3, 0, 4, iblockstate, iblockstate, false);
+-                this.func_175804_a(p_74875_1_, p_74875_3_, 1, 0, 1, 2, 0, 3, Blocks.field_150346_d.func_176223_P(), Blocks.field_150346_d.func_176223_P(), false);
++                this.func_175804_a(p_74875_1_, p_74875_3_, 1, 0, 1, 2, 0, 3, iblockstate5, iblockstate5, false);
+ 
+                 if (this.field_74909_b)
+                 {
+@@ -2062,6 +2097,7 @@
+                     this.func_175804_a(p_74875_1_, p_74875_3_, 1, 5, 1, 2, 5, 3, iblockstate3, iblockstate3, false);
+                 }
+ 
++                IBlockState iblockstate6 = this.func_175847_a(Blocks.field_150410_aZ.func_176223_P());
+                 this.func_175811_a(p_74875_1_, iblockstate3, 1, 4, 0, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate3, 2, 4, 0, p_74875_3_);
+                 this.func_175811_a(p_74875_1_, iblockstate3, 1, 4, 4, p_74875_3_);
+@@ -2080,13 +2116,13 @@
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 3, 1, 1, 3, 3, 3, iblockstate1, iblockstate1, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 1, 0, 2, 3, 0, iblockstate1, iblockstate1, false);
+                 this.func_175804_a(p_74875_1_, p_74875_3_, 1, 1, 4, 2, 3, 4, iblockstate1, iblockstate1, false);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 0, 2, 2, p_74875_3_);
+-                this.func_175811_a(p_74875_1_, Blocks.field_150410_aZ.func_176223_P(), 3, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate6, 0, 2, 2, p_74875_3_);
++                this.func_175811_a(p_74875_1_, iblockstate6, 3, 2, 2, p_74875_3_);
+ 
+                 if (this.field_74910_c > 0)
+                 {
+                     this.func_175811_a(p_74875_1_, iblockstate4, this.field_74910_c, 1, 3, p_74875_3_);
+-                    this.func_175811_a(p_74875_1_, Blocks.field_150452_aw.func_176223_P(), this.field_74910_c, 2, 3, p_74875_3_);
++                    this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150452_aw.func_176223_P()), this.field_74910_c, 2, 3, p_74875_3_);
+                 }
+ 
+                 this.func_175811_a(p_74875_1_, Blocks.field_150350_a.func_176223_P(), 1, 1, 0, p_74875_3_);
+@@ -2099,7 +2135,7 @@
+ 
+                     if (this.func_175807_a(p_74875_1_, 1, -1, -1, p_74875_3_).func_177230_c() == Blocks.field_185774_da)
+                     {
+-                        this.func_175811_a(p_74875_1_, Blocks.field_150349_c.func_176223_P(), 1, -1, -1, p_74875_3_);
++                        this.func_175811_a(p_74875_1_, this.func_175847_a(Blocks.field_150349_c.func_176223_P()), 1, -1, -1, p_74875_3_);
+                     }
+                 }
+ 
