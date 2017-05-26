@@ -128,7 +128,7 @@
                  {
                      this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                      return true;
-@@ -686,4 +691,16 @@
+@@ -686,4 +691,17 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }
@@ -138,6 +138,7 @@
 +    /**
 +     * Returns the slot that is currently displayed under the mouse.
 +     */
++    @javax.annotation.Nullable
 +    public Slot getSlotUnderMouse()
 +    {
 +        return this.field_147006_u;

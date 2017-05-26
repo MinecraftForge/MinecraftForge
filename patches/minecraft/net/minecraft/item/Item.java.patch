@@ -367,7 +367,7 @@
 +     * @return A instance of FontRenderer or null to use default
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack)
++    @Nullable public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack)
 +    {
 +        return null;
 +    }
