@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/model/ModelBiped.java
++++ ../src-work/minecraft/net/minecraft/client/model/ModelBiped.java
+@@ -66,6 +66,8 @@
+     public void func_78088_a(Entity p_78088_1_, float p_78088_2_, float p_78088_3_, float p_78088_4_, float p_78088_5_, float p_78088_6_, float p_78088_7_)
+     {
+         this.func_78087_a(p_78088_2_, p_78088_3_, p_78088_4_, p_78088_5_, p_78088_6_, p_78088_7_, p_78088_1_);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ModelPostRotationEvent(this, p_78088_1_, p_78088_2_, p_78088_3_, p_78088_4_, p_78088_5_, p_78088_6_, p_78088_7_));        
++        
+         GlStateManager.func_179094_E();
+ 
+         if (this.field_78091_s)
