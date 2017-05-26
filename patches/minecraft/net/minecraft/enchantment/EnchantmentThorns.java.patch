@@ -22,22 +22,24 @@
 +
 +    private void damageArmor(ItemStack stack, int amount, EntityLivingBase entity)
 +    {
-+        int slot = -1;
-+        int x = 0;
-+        for (ItemStack i : entity.func_184193_aE())
++        EntityEquipmentSlot targetSlot = null;
++        for (EntityEquipmentSlot slot : EntityEquipmentSlot.values())
 +        {
-+            if (i == stack){
-+                slot = x;
-+                break;
++            if (slot.func_188453_a() == EntityEquipmentSlot.Type.ARMOR)
++            {
++                if (entity.func_184582_a(slot) == stack)
++                {
++                    targetSlot = slot;
++                    break;
++                }
 +            }
-+            x++;
 +        }
-+        if (slot == -1 || !(stack.func_77973_b() instanceof net.minecraftforge.common.ISpecialArmor))
++        if (targetSlot == null || !(stack.func_77973_b() instanceof net.minecraftforge.common.ISpecialArmor))
 +        {
 +            stack.func_77972_a(1, entity);
 +            return;
 +        }
 +        net.minecraftforge.common.ISpecialArmor armor = (net.minecraftforge.common.ISpecialArmor)stack.func_77973_b();
-+        armor.damageArmor(entity, stack, DamageSource.func_92087_a(entity), amount, slot);
++        armor.damageArmor(entity, stack, DamageSource.func_92087_a(entity), amount, targetSlot);
 +    }
  }
