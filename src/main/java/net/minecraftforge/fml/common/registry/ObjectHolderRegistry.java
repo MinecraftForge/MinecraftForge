@@ -77,6 +77,12 @@ public enum ObjectHolderRegistry {
         }
         scanTarget(classModIds, classCache, "net.minecraft.init.Blocks", null, "minecraft", true, true);
         scanTarget(classModIds, classCache, "net.minecraft.init.Items", null, "minecraft", true, true);
+        scanTarget(classModIds, classCache, "net.minecraft.init.MobEffects", null, "minecraft", true, true);
+        scanTarget(classModIds, classCache, "net.minecraft.init.Biomes", null, "minecraft", true, true);
+        scanTarget(classModIds, classCache, "net.minecraft.init.Enchantments", null, "minecraft", true, true);
+        scanTarget(classModIds, classCache, "net.minecraft.init.SoundEvents", null, "minecraft", true, true);
+        scanTarget(classModIds, classCache, "net.minecraft.init.PotionTypes", null, "minecraft", true, true);
+
         FMLLog.info("Found %d ObjectHolder annotations", objectHolders.size());
     }
 
@@ -96,7 +102,7 @@ public enum ObjectHolderRegistry {
             }
             catch (Exception ex)
             {
-                // unpossible?
+                // is the field public?
                 throw Throwables.propagate(ex);
             }
         }
@@ -123,7 +129,7 @@ public enum ObjectHolderRegistry {
             }
             catch (Exception ex)
             {
-                // unpossible?
+                // is the field public?
                 throw Throwables.propagate(ex);
             }
         }

@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.lang.reflect.Field;
+import java.util.EnumMap;
 import java.util.Map;
 
 import com.google.common.base.Throwables;
@@ -39,8 +40,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-
+import com.google.common.collect.Maps;
 import com.google.common.collect.BiMap;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.Level;
@@ -83,6 +83,16 @@ public class GameData
         iEnchantmentRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ENCHANTMENTS, Enchantment.class, null, MIN_ENCHANTMENT_ID, MAX_ENCHANTMENT_ID, false, null, null, null, null);
         iEntityRegistry = (FMLControlledNamespacedRegistry<EntityEntry>)new RegistryBuilder<EntityEntry>().setName(PersistentRegistryManager.ENTITIES).setType(EntityEntry.class).setIDRange(MIN_ENTITY_ID, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
 
+        registryTypeMap = Maps.newEnumMap(GameRegistry.Type.class);
+        registryTypeMap.put(GameRegistry.Type.BLOCK, iBlockRegistry);
+        registryTypeMap.put(GameRegistry.Type.ITEM, iItemRegistry);
+        registryTypeMap.put(GameRegistry.Type.POTION, iPotionRegistry);
+        registryTypeMap.put(GameRegistry.Type.POTION_TYPE, iPotionTypeRegistry);
+        registryTypeMap.put(GameRegistry.Type.BIOME, iBiomeRegistry);
+        registryTypeMap.put(GameRegistry.Type.ENCHANTMENT, iEnchantmentRegistry);
+        registryTypeMap.put(GameRegistry.Type.SOUND_EVENT, iSoundEventRegistry);
+        registryTypeMap.put(GameRegistry.Type.ENTITY, iEntityRegistry);
+
         try
         {
             blockField = FinalFieldHelper.makeWritable(ReflectionHelper.findField(ItemBlock.class, "block", "field_150939" + "_a"));
@@ -104,6 +114,8 @@ public class GameData
     private final FMLControlledNamespacedRegistry<PotionType> iPotionTypeRegistry;
     private final FMLControlledNamespacedRegistry<Enchantment> iEnchantmentRegistry;
     private final FMLControlledNamespacedRegistry<EntityEntry> iEntityRegistry;
+
+    private final EnumMap<GameRegistry.Type,FMLControlledNamespacedRegistry> registryTypeMap;
 
     //TODO: ? These are never used by ID, so they don't need to be full registries/persisted.
     //Need cpw to decide how we want to go about this as they are generic registries that
@@ -174,16 +186,13 @@ public class GameData
     void registerSubstitutionAlias(String name, GameRegistry.Type type, Object toReplace) throws ExistingSubstitutionException
     {
         ResourceLocation nameToSubstitute = new ResourceLocation(name);
-        final BiMap<Block, Item> blockItemMap = getBlockItemMap();
-        if (type == GameRegistry.Type.BLOCK)
-        {
-            iBlockRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Block)toReplace);
-            iBlockRegistry.activateSubstitution(nameToSubstitute);
+        FMLControlledNamespacedRegistry registry=registryTypeMap.get(type);
+        if(registry==null){
+            FMLLog.getLogger().log(Level.WARN,"Cannot register substitution. Registry for type %s not found",type);
         }
-        else if (type == GameRegistry.Type.ITEM)
-        {
-            iItemRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Item)toReplace);
-            iItemRegistry.activateSubstitution(nameToSubstitute);
+        else{
+            registry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(),nameToSubstitute, (IForgeRegistryEntry) toReplace);
+            registry.activateSubstitution(nameToSubstitute);
         }
     }
 

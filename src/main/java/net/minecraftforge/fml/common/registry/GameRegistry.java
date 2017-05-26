@@ -347,7 +347,13 @@ public class GameRegistry
     public enum Type
     {
         BLOCK,
-        ITEM;
+        ITEM,
+        BIOME,
+        ENCHANTMENT,
+        POTION,
+        POTION_TYPE,
+        SOUND_EVENT,
+        ENTITY;
     }
 
     /**
