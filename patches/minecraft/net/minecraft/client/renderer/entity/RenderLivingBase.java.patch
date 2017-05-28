@@ -33,7 +33,15 @@
              {
                  EntityLivingBase entitylivingbase = (EntityLivingBase)p_76986_1_.func_184187_bx();
                  f = this.func_77034_a(entitylivingbase.field_70760_ar, entitylivingbase.field_70761_aq, p_76986_9_);
-@@ -192,6 +197,7 @@
+@@ -107,6 +112,7 @@
+                 {
+                     f += f3 * 0.2F;
+                 }
++                f2 = f1 - f; // Forge: Fix MC-1207
+             }
+ 
+             float f7 = p_76986_1_.field_70127_C + (p_76986_1_.field_70125_A - p_76986_1_.field_70127_C) * p_76986_9_;
+@@ -192,6 +198,7 @@
          GlStateManager.func_179089_o();
          GlStateManager.func_179121_F();
          super.func_76986_a(p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
@@ -41,7 +49,7 @@
      }
  
      public float func_188322_c(T p_188322_1_, float p_188322_2_)
-@@ -447,10 +453,11 @@
+@@ -447,10 +454,11 @@
  
      public void func_177067_a(T p_177067_1_, double p_177067_2_, double p_177067_4_, double p_177067_6_)
      {
@@ -54,7 +62,7 @@
  
              if (d0 < (double)(f * f))
              {
-@@ -459,6 +466,7 @@
+@@ -459,6 +467,7 @@
                  this.func_188296_a(p_177067_1_, p_177067_2_, p_177067_4_, p_177067_6_, s, d0);
              }
          }

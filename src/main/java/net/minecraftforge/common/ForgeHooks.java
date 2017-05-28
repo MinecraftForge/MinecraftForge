@@ -55,6 +55,7 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerRepair;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemArmor;
@@ -268,17 +269,13 @@ public class ForgeHooks
 
     public static int getTotalArmorValue(EntityPlayer player)
     {
-        int ret = 0;
+        int ret = player.getTotalArmorValue();
         for (int x = 0; x < player.inventory.armorInventory.size(); x++)
         {
             ItemStack stack = player.inventory.armorInventory.get(x);
             if (stack.getItem() instanceof ISpecialArmor)
             {
                 ret += ((ISpecialArmor)stack.getItem()).getArmorDisplay(player, stack, x);
-            }
-            else if (stack.getItem() instanceof ItemArmor)
-            {
-                ret += ((ItemArmor)stack.getItem()).damageReduceAmount;
             }
         }
         return ret;
