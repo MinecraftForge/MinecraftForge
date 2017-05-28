@@ -1,4 +1,4 @@
-package net.minecraftforge.test;
+package net.minecraftforge.debug;
 
 import java.util.UUID;
 
@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = "playerdamagereworktest", name = "PlayerDamageReworkTest", version = "0.0.0")
+@Mod(modid = "playerdamagereworktest", name = "PlayerDamageReworkTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class PlayerDamageReworkTest
 {
     private static final boolean ENABLE = false;
