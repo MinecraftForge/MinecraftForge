@@ -3,9 +3,9 @@ package net.minecraftforge.debug;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -62,7 +62,9 @@ public class ModelFluidDebug
         }
     }
 
-    public static class ServerProxy extends CommonProxy {}
+    public static class ServerProxy extends CommonProxy
+    {
+    }
 
     public static class ClientProxy extends CommonProxy
     {
