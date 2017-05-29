@@ -38,9 +38,12 @@ public class LightingHooks
         final int xBase = (chunk.xPosition << 4) + x;
         final int zBase = (chunk.zPosition << 4) + z;
 
-        for (int y = yMax; y >= yMin; --y)
+        int y;
+        ExtendedBlockStorage section = null;
+
+        for (y = yMax; y >= yMin; --y)
         {
-            final ExtendedBlockStorage section = sections[y >> 4];
+            section = sections[y >> 4];
 
             if (section == Chunk.NULL_BLOCK_STORAGE)
             {
@@ -50,6 +53,11 @@ public class LightingHooks
                 }
             }
 
+            world.checkLightFor(EnumSkyBlock.SKY, new BlockPos(xBase, y, zBase));
+        }
+
+        if (section == Chunk.NULL_BLOCK_STORAGE && y >= 0)
+        {
             world.checkLightFor(EnumSkyBlock.SKY, new BlockPos(xBase, y, zBase));
         }
     }
