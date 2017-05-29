@@ -9,3 +9,38 @@
          IBlockState iblockstate = this.func_177485_a(p_177484_1_, p_177484_2_, p_177484_3_);
          Block block = iblockstate.func_177230_c();
          Block block1 = p_177484_4_.func_177230_c();
+@@ -42,7 +44,7 @@
+         {
+             --this.field_76682_b;
+ 
+-            if (block.func_149653_t())
++            if (block.getTickRandomly(iblockstate))
+             {
+                 --this.field_76683_c;
+             }
+@@ -52,7 +54,7 @@
+         {
+             ++this.field_76682_b;
+ 
+-            if (block1.func_149653_t())
++            if (block1.getTickRandomly(p_177484_4_))
+             {
+                 ++this.field_76683_c;
+             }
+@@ -107,13 +109,14 @@
+             {
+                 for (int k = 0; k < 16; ++k)
+                 {
+-                    Block block = this.func_177485_a(i, j, k).func_177230_c();
++                    IBlockState state = this.func_177485_a(i, j, k);
++                    Block block = state.func_177230_c();
+ 
+                     if (block != Blocks.field_150350_a)
+                     {
+                         ++this.field_76682_b;
+ 
+-                        if (block.func_149653_t())
++                        if (block.getTickRandomly(state))
+                         {
+                             ++this.field_76683_c;
+                         }

@@ -136,9 +136,22 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int j2 = this.field_73005_l >> 2;
-@@ -528,7 +541,10 @@
+@@ -454,7 +467,7 @@
+                                 Block block = iblockstate.func_177230_c();
+                                 this.field_72984_F.func_76320_a("randomTick");
+ 
+-                                if (block.func_149653_t())
++                                if (block.getTickRandomly(iblockstate))
+                                 {
+                                     block.func_180645_a(this, new BlockPos(k1 + j, i2 + extendedblockstorage.func_76662_d(), l1 + k), iblockstate, this.field_73012_v);
+                                 }
+@@ -526,11 +539,14 @@
+ 
+         if (this.field_72999_e && material != Material.field_151579_a)
          {
-             if (p_175654_2_.func_149698_L())
+-            if (p_175654_2_.func_149698_L())
++            IBlockState iblockstate = this.func_180495_p(p_175654_1_);
++            if (p_175654_2_.requiresImmediateUpdates(this, p_175654_1_, iblockstate))
              {
 -                if (this.func_175707_a(p_175654_1_.func_177982_a(-8, -8, -8), p_175654_1_.func_177982_a(8, 8, 8)))
 +                //Keeping here as a note for future when it may be restored.
@@ -146,8 +159,10 @@
 +                int range = isForced ? 0 : 8;
 +                if (this.func_175707_a(p_175654_1_.func_177982_a(-range, -range, -range), p_175654_1_.func_177982_a(range, range, range)))
                  {
-                     IBlockState iblockstate = this.func_180495_p(p_175654_1_);
+-                    IBlockState iblockstate = this.func_180495_p(p_175654_1_);
  
+                     if (iblockstate.func_185904_a() != Material.field_151579_a && iblockstate.func_177230_c() == p_175654_2_)
+                     {
 @@ -564,6 +580,7 @@
  
      public void func_180497_b(BlockPos p_180497_1_, Block p_180497_2_, int p_180497_3_, int p_180497_4_)
