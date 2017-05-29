@@ -13,7 +13,7 @@
                          if (d3 < d2 || d2 == 0.0D)
                          {
 -                            if (entity1.func_184208_bv() == entity.func_184208_bv())
-+                            if (entity1.func_184208_bv() == entity.func_184208_bv() && !entity.canRiderInteract())
++                            if (entity1.func_184208_bv() == entity.func_184208_bv() && !entity1.canRiderInteract())
                              {
                                  if (d2 == 0.0D)
                                  {
