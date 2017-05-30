@@ -236,6 +236,9 @@ public class PersistentRegistryManager
         return PersistentRegistry.ACTIVE.getRegistry(registryType);
     }
 
+    public static ResourceLocation getRegistryRegistryName(IForgeRegistry<?> registry) {
+        return PersistentRegistry.ACTIVE.registries.inverse().get(registry);
+    }
 
     public static List<String> injectSnapshot(GameDataSnapshot snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {

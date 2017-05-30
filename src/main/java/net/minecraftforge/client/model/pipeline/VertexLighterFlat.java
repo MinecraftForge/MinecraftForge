@@ -35,6 +35,8 @@ import com.google.common.base.Objects;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
+    protected static final VertexFormatElement NORMAL_4F = new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.NORMAL, 4);
+
     protected final BlockInfo blockInfo;
     private int tint = -1;
     private boolean diffuse = true;
@@ -53,8 +55,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     public void setParent(IVertexConsumer parent)
     {
         super.setParent(parent);
-        if(Objects.equal(getVertexFormat(), parent.getVertexFormat())) return;
-        setVertexFormat(getVertexFormat(parent));
+        VertexFormat format = getVertexFormat(parent);
+        if(Objects.equal(format, getVertexFormat())) return;
+        setVertexFormat(format);
         for(int i = 0; i < getVertexFormat().getElementCount(); i++)
         {
             switch(getVertexFormat().getElement(i).getUsage())
@@ -94,9 +97,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     private static VertexFormat getVertexFormat(IVertexConsumer parent)
     {
         VertexFormat format = parent.getVertexFormat();
-        if(format.hasNormal()) return format;
+        if(format == null || format.hasNormal()) return format;
         format = new VertexFormat(format);
-        format.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.NORMAL, 4));
+        format.addElement(NORMAL_4F);
         return format;
     }
 
@@ -108,10 +111,10 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         float[][] lightmap = quadData[lightmapIndex];
         float[][] color = quadData[colorIndex];
 
-        if(normalIndex != -1 && (
-            quadData[normalIndex][0][0] != -1 ||
-            quadData[normalIndex][0][1] != -1 ||
-            quadData[normalIndex][0][2] != -1))
+        // If all three normal values are either -1 or 0, normals must be generated
+        if(quadData[normalIndex][0][0] != quadData[normalIndex][0][1] ||
+            quadData[normalIndex][0][1] != quadData[normalIndex][0][2] ||
+           (quadData[normalIndex][0][0] != -1 && quadData[normalIndex][0][0] != 0))
         {
             normal = quadData[normalIndex];
         }
@@ -286,6 +289,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     public void updateBlockInfo()
     {
-        blockInfo.updateShift(true);
+        blockInfo.updateShift();
     }
 }
