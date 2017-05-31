@@ -999,16 +999,16 @@ public class ForgeChunkManager
         ChunkEntry entry = cache.getIfPresent(ChunkPos.asLong(chunk.xPosition, chunk.zPosition));
         if (entry != null)
         {
-            entry.nbt.setTag("Entities", nbt.getCompoundTag("Entities"));
-            entry.nbt.setTag("TileEntities", nbt.getCompoundTag("TileEntities"));
-        }
+            entry.nbt.setTag("Entities", nbt.getTagList("Entities", Constants.NBT.TAG_COMPOUND));
+            entry.nbt.setTag("TileEntities", nbt.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND));
 
-        ClassInheritanceMultiMap<Entity>[] entityLists = chunk.getEntityLists();
-        for (int i = 0; i < entityLists.length; ++i)
-        {
-            entityLists[i] = new ClassInheritanceMultiMap<Entity>(Entity.class);
+            ClassInheritanceMultiMap<Entity>[] entityLists = chunk.getEntityLists();
+            for (int i = 0; i < entityLists.length; ++i)
+            {
+                entityLists[i] = new ClassInheritanceMultiMap<Entity>(Entity.class);
+            }
+            chunk.getTileEntityMap().clear();
         }
-        chunk.getTileEntityMap().clear();
     }
 
     @Nullable
@@ -1029,14 +1029,14 @@ public class ForgeChunkManager
 
     private static void loadChunkEntities(Chunk chunk, NBTTagCompound nbt, World world)
     {
-        NBTTagList entities = nbt.getTagList("Entities", 10);
+        NBTTagList entities = nbt.getTagList("Entities", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < entities.tagCount(); ++i)
         {
             AnvilChunkLoader.readChunkEntity(entities.getCompoundTagAt(i), world, chunk);
             chunk.setHasEntities(true);
         }
 
-        NBTTagList tileEntities = nbt.getTagList("TileEntities", 10);
+        NBTTagList tileEntities = nbt.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < tileEntities.tagCount(); ++i)
         {
             TileEntity tileentity = TileEntity.create(world, tileEntities.getCompoundTagAt(i));
