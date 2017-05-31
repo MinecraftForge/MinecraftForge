@@ -88,8 +88,9 @@ public class GameRegistry
      * Register a world generator - something that inserts new block types into the world
      *
      * @param generator           the generator
-     * @param modGenerationWeight a weight to assign to this generator. Heavy weights tend to sink to the bottom of
-     *                            list of world generators (i.e. they run later)
+     * @param modGenerationWeight a weight to assign to the generator. The generators will be run in order
+     *                            from least to greatest. The order of generators with the same weight is
+     *                            arbitrary
      */
     public static void registerWorldGenerator(IWorldGenerator generator, int modGenerationWeight)
     {
