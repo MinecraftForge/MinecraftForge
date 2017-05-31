@@ -40,12 +40,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -112,7 +114,7 @@ public class ForgeChunkManager
     private static Map<World, ImmutableSetMultimap<ChunkPos,Ticket>> forcedChunks = new MapMaker().weakKeys().makeMap();
     private static BiMap<UUID,Ticket> pendingEntities = HashBiMap.create();
 
-    private static Map<World,Cache<Long, Chunk>> dormantChunkCache = new MapMaker().weakKeys().makeMap();
+    private static Map<World,Cache<Long, ChunkEntry>> dormantChunkCache = new MapMaker().weakKeys().makeMap();
 
     private static File cfgFile;
     private static Configuration config;
@@ -127,6 +129,18 @@ public class ForgeChunkManager
     {
         MOD_PROP_ORDER.add("maximumTicketCount");
         MOD_PROP_ORDER.add("maximumChunksPerTicket");
+    }
+
+    private static class ChunkEntry
+    {
+        public final Chunk chunk;
+        public final NBTTagCompound nbt;
+
+        public ChunkEntry(Chunk chunk)
+        {
+            this.chunk = chunk;
+            this.nbt = new NBTTagCompound();
+        }
     }
 
     public static Iterator<Chunk> getPersistentChunksIterableFor(final World world, Iterator<Chunk> chunkIterator)
@@ -472,7 +486,7 @@ public class ForgeChunkManager
 
         if (dormantChunkCacheSize != 0)
         { // only put into cache if we're using dormant chunk caching
-            dormantChunkCache.put(world, CacheBuilder.newBuilder().maximumSize(dormantChunkCacheSize).<Long, Chunk>build());
+            dormantChunkCache.put(world, CacheBuilder.newBuilder().maximumSize(dormantChunkCacheSize).<Long, ChunkEntry>build());
         }
         WorldServer worldServer = (WorldServer) world;
         File chunkDir = worldServer.getChunkSaveLocation();
@@ -968,51 +982,65 @@ public class ForgeChunkManager
     public static void putDormantChunk(long coords, Chunk chunk)
     {
         if (dormantChunkCacheSize == 0) return; // Skip if we're not dormant caching chunks
-        Cache<Long, Chunk> cache = dormantChunkCache.get(chunk.getWorld());
+        Cache<Long, ChunkEntry> cache = dormantChunkCache.get(chunk.getWorld());
         if (cache != null)
         {
-            cache.put(coords, chunk);
+            cache.put(coords, new ChunkEntry(chunk));
         }
+    }
+
+    public static void storeChunkNBT(Chunk chunk, NBTTagCompound nbt)
+    {
+        if (dormantChunkCacheSize == 0) return;
+
+        Cache<Long, ChunkEntry> cache = dormantChunkCache.get(chunk.getWorld());
+        if (cache == null) return;
+
+        ChunkEntry entry = cache.getIfPresent(ChunkPos.asLong(chunk.xPosition, chunk.zPosition));
+        if (entry != null)
+        {
+            entry.nbt.setTag("Entities", nbt.getCompoundTag("Entities"));
+            entry.nbt.setTag("TileEntities", nbt.getCompoundTag("TileEntities"));
+        }
+
+        ClassInheritanceMultiMap<Entity>[] entityLists = chunk.getEntityLists();
+        for (int i = 0; i < entityLists.length; ++i)
+        {
+            entityLists[i] = new ClassInheritanceMultiMap<Entity>(Entity.class);
+        }
+        chunk.getTileEntityMap().clear();
     }
 
     @Nullable
     public static Chunk fetchDormantChunk(long coords, World world)
     {
         if (dormantChunkCacheSize == 0) return null; // Don't bother with maps at all if its never gonna get a response
-        Cache<Long, Chunk> cache = dormantChunkCache.get(world);
-        if (cache == null)
-        {
-            return null;
-        }
-        Chunk chunk = cache.getIfPresent(coords);
-        if (chunk != null)
-        {
-            for (ClassInheritanceMultiMap<Entity> eList : chunk.getEntityLists())
-            {
-                for (Entity entity : eList)
-                {
-                    if (!entity.isRiding())
-                    {
-                        updateIDs(entity);
-                    }
-                }
-            }
-        }
-        return chunk;
+
+        Cache<Long, ChunkEntry> cache = dormantChunkCache.get(world);
+        if (cache == null) return null;
+
+        ChunkEntry entry = cache.getIfPresent(coords);
+        if (entry == null) return null;
+
+        loadChunkEntities(entry.chunk, entry.nbt, world);
+
+        return entry.chunk;
     }
 
-    private static void updateIDs(Entity entity)
+    private static void loadChunkEntities(Chunk chunk, NBTTagCompound nbt, World world)
     {
-        if (entity.isDead) return;
-
-        entity.resetEntityId();
-
-        if (entity.isBeingRidden())
+        NBTTagList entities = nbt.getTagList("Entities", 10);
+        for (int i = 0; i < entities.tagCount(); ++i)
         {
-            for (Entity passenger : entity.getPassengers())
-            {
-                updateIDs(passenger);
-            }
+            AnvilChunkLoader.readChunkEntity(entities.getCompoundTagAt(i), world, chunk);
+            chunk.setHasEntities(true);
+        }
+
+        NBTTagList tileEntities = nbt.getTagList("TileEntities", 10);
+        for (int i = 0; i < tileEntities.tagCount(); ++i)
+        {
+            TileEntity tileentity = TileEntity.create(world, tileEntities.getCompoundTagAt(i));
+            if (tileentity != null) chunk.addTileEntity(tileentity);
         }
     }
 
