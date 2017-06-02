@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -98,6 +98,11 @@
+@@ -98,6 +98,13 @@
  @SuppressWarnings("incomplete-switch")
  public abstract class EntityPlayer extends EntityLivingBase
  {
@@ -8,11 +8,21 @@
 +    private java.util.HashMap<Integer, BlockPos> spawnChunkMap = new java.util.HashMap<Integer, BlockPos>();
 +    private java.util.HashMap<Integer, Boolean> spawnForcedMap = new java.util.HashMap<Integer, Boolean>();
 +    public float eyeHeight = this.getDefaultEyeHeight();
++    /** When the value >= 1, the player is allowed to fly. */
++    public static final net.minecraft.entity.ai.attributes.IAttribute ALLOW_FLYING = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "forge.allowFlying", 0.0D, 0.0D, 1.0D).func_111112_a(true);
 +
      private static final DataParameter<Float> field_184829_a = EntityDataManager.<Float>func_187226_a(EntityPlayer.class, DataSerializers.field_187193_c);
      private static final DataParameter<Integer> field_184830_b = EntityDataManager.<Integer>func_187226_a(EntityPlayer.class, DataSerializers.field_187192_b);
      protected static final DataParameter<Byte> field_184827_bp = EntityDataManager.<Byte>func_187226_a(EntityPlayer.class, DataSerializers.field_187191_a);
-@@ -180,6 +185,7 @@
+@@ -167,6 +174,7 @@
+         this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.10000000149011612D);
+         this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188790_f);
+         this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188792_h);
++        this.func_110140_aT().func_111150_b(ALLOW_FLYING);
+     }
+ 
+     protected void func_70088_a()
+@@ -180,6 +188,7 @@
  
      public void func_70071_h_()
      {
@@ -20,7 +30,7 @@
          this.field_70145_X = this.func_175149_v();
  
          if (this.func_175149_v())
-@@ -372,6 +378,7 @@
+@@ -372,6 +381,7 @@
                  this.func_70105_a(f, f1);
              }
          }
@@ -28,7 +38,7 @@
      }
  
      public int func_82145_z()
-@@ -459,11 +466,11 @@
+@@ -459,11 +469,11 @@
              this.field_71109_bG = 0.0F;
              this.func_71015_k(this.field_70165_t - d0, this.field_70163_u - d1, this.field_70161_v - d2);
  
@@ -42,7 +52,7 @@
              }
          }
      }
-@@ -593,11 +600,15 @@
+@@ -593,11 +603,15 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
@@ -58,7 +68,7 @@
          if ("Notch".equals(this.func_70005_c_()))
          {
              this.func_146097_a(new ItemStack(Items.field_151034_e, 1), true, false);
-@@ -609,6 +620,9 @@
+@@ -609,6 +623,9 @@
              this.field_71071_by.func_70436_m();
          }
  
@@ -68,7 +78,7 @@
          if (p_70645_1_ != null)
          {
              this.field_70159_w = (double)(-MathHelper.func_76134_b((this.field_70739_aP + this.field_70177_z) * 0.017453292F) * 0.1F);
-@@ -712,13 +726,24 @@
+@@ -712,13 +729,24 @@
      @Nullable
      public EntityItem func_71040_bB(boolean p_71040_1_)
      {
@@ -95,7 +105,7 @@
      }
  
      @Nullable
-@@ -778,14 +803,22 @@
+@@ -778,14 +806,22 @@
  
      public ItemStack func_184816_a(EntityItem p_184816_1_)
      {
@@ -119,7 +129,7 @@
          if (f > 1.0F)
          {
              int i = EnchantmentHelper.func_185293_e(this);
-@@ -835,12 +868,13 @@
+@@ -835,12 +871,13 @@
              f /= 5.0F;
          }
  
@@ -135,7 +145,7 @@
      }
  
      public static void func_189806_a(DataFixer p_189806_0_)
-@@ -889,6 +923,17 @@
+@@ -889,6 +926,17 @@
              this.field_82248_d = p_70037_1_.func_74767_n("SpawnForced");
          }
  
@@ -153,7 +163,7 @@
          this.field_71100_bB.func_75112_a(p_70037_1_);
          this.field_71075_bZ.func_75095_b(p_70037_1_);
  
-@@ -903,6 +948,7 @@
+@@ -903,6 +951,7 @@
      {
          super.func_70014_b(p_70014_1_);
          p_70014_1_.func_74768_a("DataVersion", 922);
@@ -161,7 +171,7 @@
          p_70014_1_.func_74782_a("Inventory", this.field_71071_by.func_70442_a(new NBTTagList()));
          p_70014_1_.func_74768_a("SelectedItemSlot", this.field_71071_by.field_70461_c);
          p_70014_1_.func_74757_a("Sleeping", this.field_71083_bS);
-@@ -921,6 +967,27 @@
+@@ -921,6 +970,27 @@
              p_70014_1_.func_74757_a("SpawnForced", this.field_82248_d);
          }
  
@@ -189,7 +199,7 @@
          this.field_71100_bB.func_75117_b(p_70014_1_);
          this.field_71075_bZ.func_75091_a(p_70014_1_);
          p_70014_1_.func_74782_a("EnderItems", this.field_71078_a.func_70487_g());
-@@ -928,6 +995,7 @@
+@@ -928,6 +998,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -197,7 +207,7 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -1000,12 +1068,14 @@
+@@ -1000,12 +1071,14 @@
      {
          if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b() == Items.field_185159_cQ)
          {
@@ -212,7 +222,7 @@
  
                  if (enumhand == EnumHand.MAIN_HAND)
                  {
-@@ -1041,7 +1111,10 @@
+@@ -1041,7 +1114,10 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -224,7 +234,7 @@
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f = p_70665_2_;
              p_70665_2_ = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
-@@ -1111,6 +1184,8 @@
+@@ -1111,6 +1187,8 @@
          }
          else
          {
@@ -233,7 +243,7 @@
              ItemStack itemstack = this.func_184586_b(p_190775_2_);
              ItemStack itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
  
-@@ -1120,7 +1195,10 @@
+@@ -1120,7 +1198,10 @@
                  {
                      itemstack.func_190920_e(itemstack1.func_190916_E());
                  }
@@ -245,7 +255,7 @@
                  return EnumActionResult.SUCCESS;
              }
              else
-@@ -1136,6 +1214,7 @@
+@@ -1136,6 +1217,7 @@
                      {
                          if (itemstack.func_190926_b() && !this.field_71075_bZ.field_75098_d)
                          {
@@ -253,7 +263,7 @@
                              this.func_184611_a(p_190775_2_, ItemStack.field_190927_a);
                          }
  
-@@ -1161,6 +1240,7 @@
+@@ -1161,6 +1243,7 @@
  
      public void func_71059_n(Entity p_71059_1_)
      {
@@ -261,7 +271,7 @@
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
-@@ -1333,10 +1413,12 @@
+@@ -1333,10 +1416,12 @@
  
                          if (!itemstack1.func_190926_b() && entity instanceof EntityLivingBase)
                          {
@@ -274,7 +284,7 @@
                                  this.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
                              }
                          }
-@@ -1443,6 +1525,8 @@
+@@ -1443,6 +1528,8 @@
  
      public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
      {
@@ -283,7 +293,7 @@
          EnumFacing enumfacing = (EnumFacing)this.field_70170_p.func_180495_p(p_180469_1_).func_177229_b(BlockHorizontal.field_185512_D);
  
          if (!this.field_70170_p.field_72995_K)
-@@ -1484,8 +1568,9 @@
+@@ -1484,8 +1571,9 @@
  
          this.func_70105_a(0.2F, 0.2F);
  
@@ -295,7 +305,7 @@
              float f1 = 0.5F + (float)enumfacing.func_82601_c() * 0.4F;
              float f = 0.5F + (float)enumfacing.func_82599_e() * 0.4F;
              this.func_175139_a(enumfacing);
-@@ -1532,13 +1617,14 @@
+@@ -1532,13 +1620,14 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
@@ -313,7 +323,7 @@
  
              if (blockpos == null)
              {
-@@ -1547,6 +1633,10 @@
+@@ -1547,6 +1636,10 @@
  
              this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
          }
@@ -324,7 +334,7 @@
  
          this.field_71083_bS = false;
  
-@@ -1565,15 +1655,16 @@
+@@ -1565,15 +1658,16 @@
  
      private boolean func_175143_p()
      {
@@ -344,7 +354,7 @@
          {
              if (!p_180467_2_)
              {
-@@ -1588,16 +1679,17 @@
+@@ -1588,16 +1682,17 @@
          }
          else
          {
@@ -365,7 +375,7 @@
  
              switch (enumfacing)
              {
-@@ -1637,16 +1729,24 @@
+@@ -1637,16 +1732,24 @@
  
      public BlockPos func_180470_cg()
      {
@@ -392,7 +402,16 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
-@@ -1841,6 +1941,10 @@
+@@ -1832,7 +1935,7 @@
+ 
+     public void func_180430_e(float p_180430_1_, float p_180430_2_)
+     {
+-        if (!this.field_71075_bZ.field_75101_c)
++        if (!this.isAllowedToFly())
+         {
+             if (p_180430_1_ >= 2.0F)
+             {
+@@ -1841,6 +1944,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -403,7 +422,7 @@
      }
  
      protected void func_71061_d_()
-@@ -2041,6 +2145,18 @@
+@@ -2041,6 +2148,18 @@
          this.field_175152_f = p_71049_1_.field_175152_f;
          this.field_71078_a = p_71049_1_.field_71078_a;
          this.func_184212_Q().func_187227_b(field_184827_bp, p_71049_1_.func_184212_Q().func_187225_a(field_184827_bp));
@@ -422,7 +441,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -2145,7 +2261,10 @@
+@@ -2145,7 +2264,10 @@
  
      public ITextComponent func_145748_c_()
      {
@@ -434,7 +453,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2154,7 +2273,7 @@
+@@ -2154,7 +2276,7 @@
  
      public float func_70047_e()
      {
@@ -443,7 +462,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2370,6 +2489,168 @@
+@@ -2370,6 +2492,181 @@
          return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }
  
@@ -606,6 +625,19 @@
 +    public boolean hasSpawnDimension() { return spawnDimension != null; }
 +    public int getSpawnDimension() { return spawnDimension != null ? spawnDimension : 0; }
 +    public void setSpawnDimension(@Nullable Integer dimension) { this.spawnDimension = dimension; }
++
++    /**
++     * Returns true if the player is allowed to fly.
++     * True if {@link #ALLOW_FLYING} is >= 1 or if capabilities.allowFlying is true.
++     * @return True if the player is allowed to fly.
++     */
++    public boolean isAllowedToFly()
++    {
++        if (!field_70170_p.field_72995_K) {
++            int i = 0;
++        }
++        return func_110148_a(ALLOW_FLYING).func_111126_e() >= 1.0D || field_71075_bZ.field_75101_c;
++    }
 +
 +    /* ======================================== FORGE END  =====================================*/
 +

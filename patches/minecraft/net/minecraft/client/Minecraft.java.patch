@@ -501,6 +501,15 @@
      }
  
      public boolean func_70002_Q()
+@@ -3058,7 +2954,7 @@
+ 
+     public MusicTicker.MusicType func_147109_W()
+     {
+-        return this.field_71439_g != null ? (this.field_71439_g.field_70170_p.field_73011_w instanceof WorldProviderHell ? MusicTicker.MusicType.NETHER : (this.field_71439_g.field_70170_p.field_73011_w instanceof WorldProviderEnd ? (this.field_71456_v.func_184046_j().func_184054_d() ? MusicTicker.MusicType.END_BOSS : MusicTicker.MusicType.END) : (this.field_71439_g.field_71075_bZ.field_75098_d && this.field_71439_g.field_71075_bZ.field_75101_c ? MusicTicker.MusicType.CREATIVE : MusicTicker.MusicType.GAME))) : MusicTicker.MusicType.MENU;
++        return this.field_71439_g != null ? (this.field_71439_g.field_70170_p.field_73011_w instanceof WorldProviderHell ? MusicTicker.MusicType.NETHER : (this.field_71439_g.field_70170_p.field_73011_w instanceof WorldProviderEnd ? (this.field_71456_v.func_184046_j().func_184054_d() ? MusicTicker.MusicType.END_BOSS : MusicTicker.MusicType.END) : (this.field_71439_g.field_71075_bZ.field_75098_d && this.field_71439_g.isAllowedToFly() ? MusicTicker.MusicType.CREATIVE : MusicTicker.MusicType.GAME))) : MusicTicker.MusicType.MENU;
+     }
+ 
+     public void func_152348_aa()
 @@ -3071,15 +2967,16 @@
              {
                  if (Keyboard.getEventKeyState())

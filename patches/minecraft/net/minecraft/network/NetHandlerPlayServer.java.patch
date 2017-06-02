@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
+@@ -522,7 +522,7 @@
+                             }
+ 
+                             this.field_184344_B = d12 >= -0.03125D;
+-                            this.field_184344_B &= !this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c;
++                            this.field_184344_B &= !this.field_147367_d.func_71231_X() && !this.field_147369_b.isAllowedToFly();
+                             this.field_184344_B &= !this.field_147369_b.func_70644_a(MobEffects.field_188424_y) && !this.field_147369_b.func_184613_cA() && !worldserver.func_72829_c(this.field_147369_b.func_174813_aQ().func_186662_g(0.0625D).func_72321_a(0.0D, -0.55D, 0.0D));
+                             this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
+                             this.field_147367_d.func_184103_al().func_72358_d(this.field_147369_b);
 @@ -617,7 +617,10 @@
                  double d2 = this.field_147369_b.field_70161_v - ((double)blockpos.func_177952_p() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
@@ -51,3 +60,12 @@
  
                      if (this.field_147367_d.func_71199_h())
                      {
+@@ -1260,7 +1268,7 @@
+     public void func_147348_a(CPacketPlayerAbilities p_147348_1_)
+     {
+         PacketThreadUtil.func_180031_a(p_147348_1_, this, this.field_147369_b.func_71121_q());
+-        this.field_147369_b.field_71075_bZ.field_75100_b = p_147348_1_.func_149488_d() && this.field_147369_b.field_71075_bZ.field_75101_c;
++        this.field_147369_b.field_71075_bZ.field_75100_b = p_147348_1_.func_149488_d() && this.field_147369_b.isAllowedToFly();
+     }
+ 
+     public void func_147341_a(CPacketTabComplete p_147341_1_)
