@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,625 @@
+@@ -433,11 +440,647 @@
          return false;
      }
  
@@ -681,12 +681,34 @@
 +        return builder.build();
 +    }
 +
++    /**
++     * Get a movement speed multiplier applied when the item is being used (drawing bow, eating food, etc.).
++     * @param stack The ItemStack
++     * @param entity The entity that is using the item
++     * @return A float between 0.0F and 1.0F
++     */
++    public float getItemUseMovementSpeed(ItemStack stack, EntityLivingBase entity)
++    {
++        return 0.2F;
++    }
++
++    /**
++     * Whether this item should prevent sprinting when being used (drawing bow, eating food, etc.).
++     * @param stack The ItemStack
++     * @param entity The entity that is using the item
++     * @return True if using the item should prevent sprinting
++     */
++    public boolean shouldItemUsePreventSprinting(ItemStack stack, EntityLivingBase entity)
++    {
++        return true;
++    }
++
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1593,8 @@
+@@ -972,6 +1615,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -695,7 +717,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1007,9 +1630,26 @@
+@@ -1007,9 +1652,26 @@
              return this.field_78008_j;
          }
  
