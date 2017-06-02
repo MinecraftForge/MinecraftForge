@@ -9,3 +9,44 @@
          }
      };
      private final NonNullList<ItemStack> field_184799_bw;
+@@ -87,6 +87,10 @@
+         this.field_175441_bm = field_175429_f;
+         this.field_70145_X = this.func_189652_ae();
+         this.func_70105_a(0.5F, 1.975F);
++
++        handHandler = new net.minecraftforge.items.ItemStackHandler(field_184799_bw);
++        armorHandler = new net.minecraftforge.items.ItemStackHandler(field_184800_bx);
++        joinedHandler = new net.minecraftforge.items.wrapper.CombinedInvWrapper(armorHandler, handHandler);
+     }
+ 
+     public EntityArmorStand(World p_i45855_1_, double p_i45855_2_, double p_i45855_4_, double p_i45855_6_)
+@@ -980,4 +984,29 @@
+     {
+         return false;
+     }
++
++    // FORGE
++    private final net.minecraftforge.items.IItemHandlerModifiable handHandler;
++    private final net.minecraftforge.items.IItemHandlerModifiable armorHandler;
++    private final net.minecraftforge.items.IItemHandler joinedHandler;
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
++    }
++
++    @SuppressWarnings("unchecked")
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
++            if (facing == null) return (T) joinedHandler;
++            else if (facing.func_176740_k().func_176720_b()) return (T) handHandler;
++            else if (facing.func_176740_k().func_176722_c()) return (T) armorHandler;
++        }
++        return super.getCapability(capability, facing);
++    }
+ }
