@@ -55,10 +55,8 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerRepair;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemPickaxe;
@@ -149,6 +147,10 @@ public class ForgeHooks
     @Nonnull
     public static ItemStack getGrassSeed(Random rand, int fortune)
     {
+        if (seedList.size() == 0)
+        {
+            return ItemStack.EMPTY; //Some bad mods hack in and empty our list, so lets not hard crash -.-
+        }
         SeedEntry entry = WeightedRandom.getRandomItem(rand, seedList);
         if (entry == null || entry.seed.isEmpty())
         {
@@ -510,7 +512,7 @@ public class ForgeHooks
         }
         return false;
     }
-    
+
     public static void onDifficultyChange(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
     {
         MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
@@ -1269,8 +1271,8 @@ public class ForgeHooks
         return (ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && def));
     }
 
-	public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state, IBlockState blockState)
-	{
-		MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
-	}
+    public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state, IBlockState blockState)
+    {
+        MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+    }
 }
