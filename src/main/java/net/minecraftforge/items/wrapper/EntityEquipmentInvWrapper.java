@@ -163,7 +163,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     protected EntityEquipmentSlot validateSlotIndex(final int slot)
     {
         if (slot < 0 || slot >= slots.size())
-            throw new RuntimeException("Slot " + slot + " not in valid range - [0," + slots.size() + ")");
+            throw new IllegalArgumentException("Slot " + slot + " not in valid range - [0," + slots.size() + ")");
 
         return slots.get(slot);
     }
