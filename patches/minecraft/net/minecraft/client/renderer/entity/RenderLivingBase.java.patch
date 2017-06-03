@@ -49,7 +49,19 @@
      }
  
      public float func_188322_c(T p_188322_1_, float p_188322_2_)
-@@ -447,10 +454,11 @@
+@@ -422,7 +429,10 @@
+         for (LayerRenderer<T> layerrenderer : this.field_177097_h)
+         {
+             boolean flag = this.func_177092_a(p_177093_1_, p_177093_4_, layerrenderer.func_177142_b());
+-            layerrenderer.func_177141_a(p_177093_1_, p_177093_2_, p_177093_3_, p_177093_4_, p_177093_5_, p_177093_6_, p_177093_7_, p_177093_8_);
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Layers.Pre<T>(p_177093_1_, this, layerrenderer, p_177093_1_.field_70165_t, p_177093_1_.field_70163_u, p_177093_1_.field_70161_v))) {
++                layerrenderer.func_177141_a(p_177093_1_, p_177093_2_, p_177093_3_, p_177093_4_, p_177093_5_, p_177093_6_, p_177093_7_, p_177093_8_);
++                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Layers.Post<T>(p_177093_1_, this, layerrenderer, p_177093_1_.field_70165_t, p_177093_1_.field_70163_u, p_177093_1_.field_70161_v));
++            }
+ 
+             if (flag)
+             {
+@@ -447,10 +457,11 @@
  
      public void func_177067_a(T p_177067_1_, double p_177067_2_, double p_177067_4_, double p_177067_6_)
      {
@@ -62,7 +74,7 @@
  
              if (d0 < (double)(f * f))
              {
-@@ -459,6 +467,7 @@
+@@ -459,6 +470,7 @@
                  this.func_188296_a(p_177067_1_, p_177067_2_, p_177067_4_, p_177067_6_, s, d0);
              }
          }
