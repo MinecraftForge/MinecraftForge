@@ -80,7 +80,7 @@ public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Even
     {
         private LayerRenderer<T> layerRenderer;
         
-        public Layers(EntityLivingBase entity, RenderLivingBase<T> entityRenderer, LayerRenderer<T> layerRenderer, double x, double y, double z)
+        protected Layers(EntityLivingBase entity, RenderLivingBase<T> entityRenderer, LayerRenderer<T> layerRenderer, double x, double y, double z)
         {
             super(entity, entityRenderer, x, y, z);
             this.layerRenderer = layerRenderer;
