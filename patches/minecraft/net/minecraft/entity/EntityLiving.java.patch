@@ -39,33 +39,3 @@
      public float func_70603_bj()
      {
          return 1.0F;
-@@ -1423,4 +1435,29 @@
-         IN_AIR,
-         IN_WATER;
-     }
-+
-+    // FORGE
-+    private final net.minecraftforge.items.IItemHandlerModifiable handHandler = new net.minecraftforge.items.ItemStackHandler(field_184656_bv);
-+    private final net.minecraftforge.items.IItemHandlerModifiable armorHandler = new net.minecraftforge.items.ItemStackHandler(field_184657_bw);
-+    private final net.minecraftforge.items.IItemHandler joinedHandler = new net.minecraftforge.items.wrapper.CombinedInvWrapper(armorHandler, handHandler);
-+
-+    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
-+    {
-+        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
-+    }
-+
-+    @SuppressWarnings("unchecked")
-+    @Override
-+    @Nullable
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
-+    {
-+        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-+        {
-+            if (facing == null) return (T) joinedHandler;
-+            else if (facing.func_176740_k().func_176720_b()) return (T) handHandler;
-+            else if (facing.func_176740_k().func_176722_c()) return (T) armorHandler;
-+        }
-+        return super.getCapability(capability, facing);
-+    }
- }
