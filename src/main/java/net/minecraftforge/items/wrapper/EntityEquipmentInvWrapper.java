@@ -42,7 +42,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         {
             if (slot.getSlotType() == slotType)
             {
-                slots.add(slot.getIndex(), slot);
+                slots.add(slot);
             }
         }
 
