@@ -617,6 +617,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
             I original = getRaw(nameToReplace);
             I sub = getPersistentSubstitutions().get(nameToReplace);
             getExistingDelegate(original).changeReference(sub);
+            getExistingDelegate(sub).setName(nameToReplace);
             activeSubstitutions.put(nameToReplace, sub);
             int id = getIDForObjectBypass(original);
             // force the new object into the existing map
