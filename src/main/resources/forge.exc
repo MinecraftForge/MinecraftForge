@@ -27,6 +27,7 @@ net/minecraft/world/gen/ChunkProviderServer.loadChunk(IILjava/lang/Runnable;)Lne
 net/minecraft/block/BlockFire.tryCatchFire(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ILjava/util/Random;ILnet/minecraft/util/EnumFacing;)V=|p_176536_1_,p_176536_2_,p_176536_3_,p_176536_4_,p_176536_5_,face
 net/minecraft/block/BlockSkull.getDrops(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;I)Ljava/util/List;=|p_180663_1_,p_180663_2_,p_180663_3_,fortune
 net/minecraft/item/ItemDye.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/EntityPlayer;)Z=|p_179234_0_,p_179234_1_,p_179234_2_,player
+net/minecraft/item/ItemDye.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/EnumHand;)Z=|p_179234_0_,p_179234_1_,p_179234_2_,player,hand
 net/minecraft/server/management/ItemInWorldManager.removeBlock(Lnet/minecraft/util/math/BlockPos;Z)Z=|p_180235_1_,canHarvest
 net/minecraft/client/gui/GuiScreen.drawHoveringText(Ljava/util/List;IILnet/minecraft/client/gui/FontRenderer;)V=|p_146283_1_,p_146283_2_,p_146283_3_,font
 net/minecraft/block/state/BlockState.<init>(Lnet/minecraft/block/Block;[Lnet/minecraft/block/properties/IProperty;Lcom/google/common/collect/ImmutableMap;)V=|p_i45663_1_,p_i45663_2_,unlistedProperties
@@ -57,3 +58,5 @@ net/minecraft/world/storage/loot/LootEntryTable.<init>(Lnet/minecraft/util/Resou
 net/minecraft/world/storage/loot/LootEntryEmpty.<init>(II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46645_1_,p_i46645_2_,p_i46645_3_,entryName
 
 net/minecraft/world/chunk/BlockStateContainer.setBits(IZ)V=|p_186012_1_,forceBits
+net/minecraft/village/Village.getPlayerReputation(Ljava/util/UUID;)I=|p_82684_1_
+net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_82688_1_,p_82688_2_

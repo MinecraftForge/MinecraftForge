@@ -72,7 +72,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -297,6 +307,205 @@
+@@ -297,6 +307,204 @@
      {
      }
  
@@ -226,9 +226,8 @@
 +
 +
 +    /**
-+     * Called from the Chunk when this is first added to the world. Override instead of adding
-+     * if (firstTick) stuff in update. Happens after validate and after it has been placed into the Chunk tileEntity
-+     * map.
++     * Called when this is first added to the world (by {@link World#addTileEntity(TileEntity)}).
++     * Override instead of adding {@code if (firstTick)} stuff in update.
 +     */
 +    public void onLoad()
 +    {

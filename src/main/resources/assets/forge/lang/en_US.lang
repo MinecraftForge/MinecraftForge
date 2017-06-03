@@ -29,6 +29,8 @@ forge.configgui.clumpingThreshold.tooltip=Controls the number threshold at which
 forge.configgui.clumpingThreshold=Packet Clumping Threshold
 forge.configgui.disableVersionCheck.tooltip=Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.
 forge.configgui.disableVersionCheck=Disable Forge Version Check
+forge.configgui.dimensionUnloadQueueDelay=Delay when unloading dimension
+forge.configgui.dimensionUnloadQueueDelay.tooltip=The time in ticks the server will wait until unloading a dimension. This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.
 forge.configgui.enableGlobalConfig=Enable Global Config
 forge.configgui.forceDuplicateFluidBlockCrash.tooltip=Set this to true to force a crash if more than one block attempts to link back to the same Fluid.
 forge.configgui.forceDuplicateFluidBlockCrash=Force Dupe Fluid Block Crash
@@ -135,6 +137,7 @@ fml.config.sample.stringListMax.tooltip=A string list that has a max length of 1
 fml.config.sample.stringListMax=Max Length String List
 fml.config.sample.stringListPattern.tooltip=A string list that validates each value using a Pattern object.
 fml.config.sample.stringListPattern=Pattern Validated String List
+fml.config.sample.stringListCustom=Custom Entry List
 fml.config.sample.title=This is for playing with the Config GUI behavior. Changes are not saved.
 
 fml.configgui.applyGlobally=Apply globally

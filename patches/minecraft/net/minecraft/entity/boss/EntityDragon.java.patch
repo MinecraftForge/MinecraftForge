@@ -12,7 +12,7 @@
                              flag = true;
                          }
 -                        else if (block != Blocks.field_180401_cv && block != Blocks.field_150343_Z && block != Blocks.field_150377_bs && block != Blocks.field_150357_h && block != Blocks.field_150384_bq && block != Blocks.field_150378_br)
-+                        else if (block.canEntityDestroy(iblockstate, this.field_70170_p, blockpos, this))
++                        else if (block.canEntityDestroy(iblockstate, this.field_70170_p, blockpos, this) && net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this, blockpos, iblockstate))
                          {
                              if (block != Blocks.field_150483_bI && block != Blocks.field_185776_dc && block != Blocks.field_185777_dd && block != Blocks.field_150411_aY && block != Blocks.field_185775_db)
                              {

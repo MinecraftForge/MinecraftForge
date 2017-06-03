@@ -1,37 +1,37 @@
 package net.minecraftforge.debug;
 
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.logging.log4j.Logger;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
 
-import javax.imageio.ImageIO;
-
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.MinecraftForge;
-
-@Mod(modid = TextureDump.MODID, name = "Forge Texture Atlas Dump", version = TextureDump.VERSION, clientSideOnly = true, acceptableRemoteVersions = "*")
+@Mod(modid = TextureDump.MODID, name = "Forge Texture Atlas Dump", version = TextureDump.VERSION, clientSideOnly = true)
 public class TextureDump
 {
     public static final String MODID = "forge_texture_dump";
     public static final String VERSION = "1.0";
 
-    public static final boolean ENABLE = true;
+    public static final boolean ENABLE = false;
+    private static Logger logger;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         if (ENABLE)
         {
+            logger = event.getModLog();
             MinecraftForge.EVENT_BUS.register(this);
         }
     }
@@ -71,11 +71,11 @@ public class TextureDump
             try
             {
                 ImageIO.write(bufferedimage, "png", output);
-                FMLLog.info("[TextureDump] Exported png to: %s", output.getAbsolutePath());
+                logger.info("Exported png to: %s", output.getAbsolutePath());
             }
             catch (IOException ioexception)
             {
-                FMLLog.info("[TextureDump] Unable to write: ", ioexception);
+                logger.info("Unable to write: ", ioexception);
             }
         }
     }
