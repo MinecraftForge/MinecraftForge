@@ -38,7 +38,7 @@
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT_AT)
                  {
                      EnumHand enumhand1 = p_147340_1_.func_186994_b();
-+                    if(net.minecraftforge.common.ForgeHooks.onInteractEntityAt(field_147369_b, entity, p_147340_1_.func_179712_b(), enumhand1)) return;
++                    if(net.minecraftforge.common.ForgeHooks.onInteractEntityAtAction(field_147369_b, entity, p_147340_1_.func_179712_b(), enumhand1) != null) return;
                      entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), enumhand1);
                  }
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.ATTACK)

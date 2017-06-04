@@ -25,6 +25,8 @@ import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -33,6 +35,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.ConfigElement;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -80,6 +84,59 @@ public class GuiConfig extends GuiScreen
     protected HoverChecker undoHoverChecker;
     protected HoverChecker resetHoverChecker;
     protected HoverChecker checkBoxHoverChecker;
+    
+    /**
+     * This constructor handles the {@code @Config} configuration classes
+     * @param parentScreen the parent GuiScreen object
+     * @param mod the mod for which to create a screen
+     */
+    public GuiConfig(GuiScreen parentScreen, String modid, String title)
+    {
+        this(parentScreen, modid, false, false, title, ConfigManager.getModConfigClasses(modid)); 
+    }
+    
+    /**
+     * 
+     * @param parentScreen the parrent GuiScreen object
+     * @param modID the mod ID for the mod whose config settings will be editted
+     * @param allRequireWorldRestart whether all config elements on this screen require a world restart
+     * @param allRequireMcRestart whether all config elements on this screen require a game restart
+     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
+     *            edited.
+     * @param configClasses an array of classes annotated with {@code @Config} providing the configuration
+     */
+    public GuiConfig(GuiScreen parentScreen, String modID, boolean allRequireWorldRestart, boolean allRequireMcRestart, String title,
+            Class<?>... configClasses)
+    {
+        this(parentScreen, collectConfigElements(configClasses), modID, null, allRequireWorldRestart, allRequireMcRestart, title, null);
+    }
+    
+    private static List<IConfigElement> collectConfigElements(Class<?>[] configClasses)
+    {
+        List<IConfigElement> toReturn;
+        if(configClasses.length == 1)
+        {
+            toReturn = ConfigElement.from(configClasses[0]).getChildElements();
+        }
+        else
+        {
+            toReturn = new ArrayList<IConfigElement>();
+            for(Class<?> clazz : configClasses)
+            {
+                toReturn.add(ConfigElement.from(clazz));
+            }
+        }
+        Collections.sort(toReturn, new Comparator<IConfigElement>(){
+
+            @Override
+            public int compare(IConfigElement e1, IConfigElement e2)
+            {
+                return I18n.format(e1.getLanguageKey()).compareTo(I18n.format(e2.getLanguageKey()));
+            }
+            
+        });
+        return toReturn;
+    }
 
     /**
      * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded. If a non-null value is passed for configID,
@@ -167,7 +224,25 @@ public class GuiConfig extends GuiScreen
         this.entryList = new GuiConfigEntries(this, mc);
         this.initEntries = new ArrayList<IConfigEntry>(entryList.listEntries);
         this.allRequireWorldRestart = allRequireWorldRestart;
+        IF:if (!allRequireWorldRestart)
+        {
+            for (IConfigElement element : configElements)
+            {
+                if (!element.requiresWorldRestart());
+                    break IF;
+            }
+            allRequireWorldRestart = true;
+        }
         this.allRequireMcRestart = allRequireMcRestart;
+        IF:if (!allRequireMcRestart)
+        {
+            for (IConfigElement element : configElements)
+            {
+                if (!element.requiresMcRestart());
+                    break IF;
+            }
+            allRequireMcRestart = true;
+        }
         this.modID = modID;
         this.configID = configID;
         this.isWorldRunning = mc.world != null;

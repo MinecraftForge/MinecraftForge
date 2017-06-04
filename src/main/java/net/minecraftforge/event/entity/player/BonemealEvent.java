@@ -23,8 +23,13 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This event is called when a player attempts to use Bonemeal on a block.
@@ -43,13 +48,27 @@ public class BonemealEvent extends PlayerEvent
     private final World world;
     private final BlockPos pos;
     private final IBlockState block;
+    private final EnumHand hand;
+    private final ItemStack stack;
 
+    /**
+     * @deprecated Use {@link #BonemealEvent(EntityPlayer, World, BlockPos, IBlockState, EnumHand, ItemStack)} instead.
+     */
+    @Deprecated
     public BonemealEvent(EntityPlayer player, World world, BlockPos pos, IBlockState block)
+    {
+        this(player, world, pos, block, null, ItemStack.EMPTY);
+    }
+
+    public BonemealEvent(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState block, @Nullable EnumHand hand,
+            @Nonnull ItemStack stack)
     {
         super(player);
         this.world = world;
         this.pos = pos;
         this.block = block;
+        this.hand = hand;
+        this.stack = stack;
     }
 
     public World getWorld()
@@ -65,5 +84,17 @@ public class BonemealEvent extends PlayerEvent
     public IBlockState getBlock()
     {
         return block;
+    }
+
+    @Nullable
+    public EnumHand getHand()
+    {
+        return hand;
+    }
+
+    @Nonnull
+    public ItemStack getStack()
+    {
+        return stack;
     }
 }

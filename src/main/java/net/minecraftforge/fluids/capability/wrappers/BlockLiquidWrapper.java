@@ -78,7 +78,7 @@ public class BlockLiquidWrapper implements IFluidHandler
         if (doFill)
         {
             Material material = blockLiquid.getDefaultState().getMaterial();
-            BlockLiquid block = BlockLiquid.getStaticBlock(material);
+            BlockLiquid block = BlockLiquid.getFlowingBlock(material);
             world.setBlockState(blockPos, block.getDefaultState().withProperty(BlockLiquid.LEVEL, 0), 11);
         }
 

@@ -23,7 +23,8 @@ import static org.junit.Assert.*;
 public class DummyBlockReplacementTest
 {
     private ResourceLocation myDirt = new ResourceLocation("test:dirt");
-    private BlockDirt testDirtBlock = new BlockDirt() {
+    private BlockDirt testDirtBlock = new BlockDirt()
+    {
 
     };
 
@@ -34,7 +35,8 @@ public class DummyBlockReplacementTest
         System.setProperty("fml.doNotBackup", "true");
         Loader.instance();
         Bootstrap.register();
-        Loader.instance().setupTestHarness(new DummyModContainer(new ModMetadata() {{
+        Loader.instance().setupTestHarness(new DummyModContainer(new ModMetadata()
+        {{
             modId = "test";
         }}));
     }
@@ -46,7 +48,7 @@ public class DummyBlockReplacementTest
         PersistentRegistryManager.freezeData();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
 
-        final FMLControlledNamespacedRegistry<Block> blockRegistry = (FMLControlledNamespacedRegistry<Block>)PersistentRegistryManager.findRegistryByType(Block.class);
+        final FMLControlledNamespacedRegistry<Block> blockRegistry = (FMLControlledNamespacedRegistry<Block>) PersistentRegistryManager.findRegistryByType(Block.class);
         Block fnd = blockRegistry.getValue(myDirt);
 
         assertNotEquals("Didn't find my block", fnd, testDirtBlock);

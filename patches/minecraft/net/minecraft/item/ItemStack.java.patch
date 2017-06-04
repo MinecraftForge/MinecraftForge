@@ -40,14 +40,16 @@
      }
  
      private void func_190923_F()
-@@ -109,6 +116,7 @@
+@@ -109,7 +116,8 @@
  
      public ItemStack(NBTTagCompound p_i47263_1_)
      {
+-        this.field_151002_e = Item.func_111206_d(p_i47263_1_.func_74779_i("id"));
 +        this.capNBT = p_i47263_1_.func_74764_b("ForgeCaps") ? p_i47263_1_.func_74775_l("ForgeCaps") : null;
-         this.field_151002_e = Item.func_111206_d(p_i47263_1_.func_74779_i("id"));
++        this.field_151002_e = p_i47263_1_.func_150297_b("id", 8) ? Item.func_111206_d(p_i47263_1_.func_74779_i("id")) : Item.func_150898_a(Blocks.field_150350_a); //Forge fix tons of NumberFormatExceptions that are caused by deserializing EMPTY ItemStacks.
          this.field_77994_a = p_i47263_1_.func_74771_c("Count");
          this.field_77991_e = Math.max(0, p_i47263_1_.func_74765_d("Damage"));
+ 
 @@ -124,11 +132,12 @@
          }
  

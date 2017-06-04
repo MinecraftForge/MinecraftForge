@@ -368,6 +368,7 @@ public class BlockFluidClassic extends BlockFluidBase
         }
         if (doPlace)
         {
+            FluidUtil.destroyBlockOnFluidPlacement(world, pos);
             world.setBlockState(pos, this.getDefaultState(), 11);
         }
         return Fluid.BUCKET_VOLUME;

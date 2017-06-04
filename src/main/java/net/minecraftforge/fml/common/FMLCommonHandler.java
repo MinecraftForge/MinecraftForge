@@ -64,6 +64,8 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.thread.SidedThreadGroup;
+import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.server.FMLServerHandler;
@@ -201,13 +203,8 @@ public class FMLCommonHandler
      */
     public Side getEffectiveSide()
     {
-        Thread thr = Thread.currentThread();
-        if (thr.getName().equals("Server thread") || thr.getName().startsWith("Netty Server IO"))
-        {
-            return Side.SERVER;
-        }
-
-        return Side.CLIENT;
+        final ThreadGroup group = Thread.currentThread().getThreadGroup();
+        return group instanceof SidedThreadGroup ? ((SidedThreadGroup) group).getSide() : Side.CLIENT;
     }
     /**
      * Raise an exception
@@ -439,6 +436,11 @@ public class FMLCommonHandler
 
         boolean confirmed = StartupQuery.confirm(text);
         if (!confirmed) StartupQuery.abort();
+    }
+
+    public boolean isDisplayCloseRequested()
+    {
+        return sidedDelegate != null && sidedDelegate.isDisplayCloseRequested();
     }
 
     public boolean shouldServerBeKilledQuietly()
@@ -760,4 +762,6 @@ public class FMLCommonHandler
     {
         return (CompoundDataFixer)sidedDelegate.getDataFixer();
     }
+
+    public boolean isDisplayVSyncForced() { return sidedDelegate.isDisplayVSyncForced(); }
 }

@@ -31,10 +31,10 @@ public class VanillaRegistryTests
     public void testSetup()
     {
         // All the blocks loaded
-        assertEquals("We have all the blocks via GameData",236,Block.REGISTRY.getKeys().size());
+        assertEquals("We have all the blocks via GameData", 236, Block.REGISTRY.getKeys().size());
 
         // All the items loaded
-        assertEquals("We have all the items via GameData",392,Item.REGISTRY.getKeys().size());
+        assertEquals("We have all the items via GameData", 392, Item.REGISTRY.getKeys().size());
 
         // Our lookups find the same stuff vanilla sees
         final IForgeRegistry<Block> blocks = PersistentRegistryManager.findRegistry(Blocks.AIR);
@@ -64,7 +64,9 @@ public class VanillaRegistryTests
     @Test
     public void testRegistration()
     {
-        Block myBlock = GameRegistry.register(new Block(Material.CAKE) {}, new ResourceLocation("minecraft:testy"));
+        Block myBlock = GameRegistry.register(new Block(Material.CAKE)
+        {
+        }, new ResourceLocation("minecraft:testy"));
         assertNotNull("Registered my block", myBlock);
 
         // Our lookups find the same stuff vanilla sees

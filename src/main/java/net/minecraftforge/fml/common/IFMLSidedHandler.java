@@ -51,6 +51,8 @@ public interface IFMLSidedHandler
 
     MinecraftServer getServer();
 
+    boolean isDisplayCloseRequested();
+
     boolean shouldServerShouldBeKilledQuietly();
 
     void addModAsResource(ModContainer container);
@@ -80,4 +82,6 @@ public interface IFMLSidedHandler
     void fireSidedRegistryEvents();
 
     CompoundDataFixer getDataFixer();
+
+    boolean isDisplayVSyncForced();
 }
