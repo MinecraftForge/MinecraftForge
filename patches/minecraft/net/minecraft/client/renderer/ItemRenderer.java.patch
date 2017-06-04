@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
+@@ -215,7 +215,7 @@
+         vertexbuffer.func_181662_b(135.0D, -7.0D, 0.0D).func_187315_a(1.0D, 0.0D).func_181675_d();
+         vertexbuffer.func_181662_b(-7.0D, -7.0D, 0.0D).func_187315_a(0.0D, 0.0D).func_181675_d();
+         tessellator.func_78381_a();
+-        MapData mapdata = Items.field_151098_aY.func_77873_a(p_187461_1_, this.field_78455_a.field_71441_e);
++        MapData mapdata = ((net.minecraft.item.ItemMap) p_187461_1_.func_77973_b()).func_77873_a(p_187461_1_, this.field_78455_a.field_71441_e);
+ 
+         if (mapdata != null)
+         {
 @@ -311,7 +311,7 @@
          {
              ItemStack itemstack = abstractclientplayer.func_184607_cu();
