@@ -150,7 +150,7 @@ public class ModDiscoverer
             }
             catch (LoaderException le)
             {
-                FMLLog.warn(le, "Identified a problem with the mod candidate {}, ignoring this source", candidate.getModContainer());
+                FMLLog.log.warn("Identified a problem with the mod candidate {}, ignoring this source", candidate.getModContainer(), le);
             }
             catch (Throwable t)
             {

@@ -44,27 +44,25 @@
  
              if (oclass != null)
              {
-@@ -103,6 +108,9 @@
+@@ -103,6 +108,8 @@
          catch (Throwable throwable1)
          {
              field_145852_a.error("Failed to create block entity {}", new Object[] {s, throwable1});
-+            net.minecraftforge.fml.common.FMLLog.error(throwable1,
-+                    "A TileEntity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                    s, oclass.getName());
++            net.minecraftforge.fml.common.FMLLog.log.error("A TileEntity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                    s, oclass.getName(), throwable1);
          }
  
          if (tileentity != null)
-@@ -115,6 +123,9 @@
+@@ -115,6 +122,8 @@
              catch (Throwable throwable)
              {
                  field_145852_a.error("Failed to load data for block entity {}", new Object[] {s, throwable});
-+                net.minecraftforge.fml.common.FMLLog.error(throwable,
-+                        "A TileEntity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                        s, oclass.getName());
++                net.minecraftforge.fml.common.FMLLog.log.error("A TileEntity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        s, oclass.getName(), throwable);
                  tileentity = null;
              }
          }
-@@ -156,7 +167,6 @@
+@@ -156,7 +165,6 @@
          }
      }
  
@@ -72,7 +70,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -297,6 +307,204 @@
+@@ -297,6 +305,204 @@
      {
      }
  

@@ -101,7 +101,7 @@ public class FMLLaunchHandler
         }
         catch (Throwable t)
         {
-            FMLLog.error(t, "An error occurred trying to configure the minecraft home at {} for Forge Mod Loader", minecraftHome.getAbsolutePath());
+            FMLLog.log.error("An error occurred trying to configure the minecraft home at {} for Forge Mod Loader", minecraftHome.getAbsolutePath(), t);
             throw Throwables.propagate(t);
         }
     }

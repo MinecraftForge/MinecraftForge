@@ -76,7 +76,7 @@ public class VersionParser
         }
         catch (InvalidVersionSpecificationException e)
         {
-            FMLLog.error(e, "Unable to parse a version range specification successfully {}", range);
+            FMLLog.log.error("Unable to parse a version range specification successfully {}", range, e);
             throw new LoaderException(e);
         }
     }

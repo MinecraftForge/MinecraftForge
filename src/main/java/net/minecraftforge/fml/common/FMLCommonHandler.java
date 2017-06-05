@@ -215,7 +215,7 @@ public class FMLCommonHandler
      */
     public void raiseException(Throwable exception, String message, boolean stopGame)
     {
-        FMLLog.error(exception, "Something raised an exception. The message was '{}'. 'stopGame' is {}", message, stopGame);
+        FMLLog.log.error("Something raised an exception. The message was '{}'. 'stopGame' is {}", stopGame, exception);
         if (stopGame)
         {
             getSidedDelegate().haltGame(message,exception);
@@ -699,11 +699,11 @@ public class FMLCommonHandler
         }
         catch (InterruptedException e)
         {
-            FMLLog.fatal(e, "Exception caught executing FutureTask: {}", e.toString());
+            FMLLog.log.fatal("Exception caught executing FutureTask: {}", e.toString(), e);
         }
         catch (ExecutionException e)
         {
-            FMLLog.fatal(e, "Exception caught executing FutureTask: {}", e.toString());
+            FMLLog.log.fatal("Exception caught executing FutureTask: {}", e.toString(), e);
         }
     }
 

@@ -95,7 +95,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
             }
             catch (IOException e)
             {
-                FMLLog.error(e, "A critical error occurred copying {} to world specific dat folder - new file will be created.", parentFile.getName());
+                FMLLog.log.error("A critical error occurred copying {} to world specific dat folder - new file will be created.", parentFile.getName(), e);
             }
         }
     }

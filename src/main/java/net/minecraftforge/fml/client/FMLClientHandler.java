@@ -393,7 +393,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                 guiFactories.put(mc, guiFactory);
             } catch (Exception e)
             {
-                FMLLog.error(e, "A critical error occurred instantiating the gui factory for mod {}", mc.getModId());
+                FMLLog.log.error("A critical error occurred instantiating the gui factory for mod {}", mc.getModId(), e);
             }
         }
         loading = false;
@@ -688,7 +688,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             catch (Exception e)
             {
-                FMLLog.error(e, "An unexpected exception occurred constructing the custom resource pack for {}", container.getName());
+                FMLLog.log.error("An unexpected exception occurred constructing the custom resource pack for {}", container.getName(), e);
                 throw Throwables.propagate(e);
             }
         }

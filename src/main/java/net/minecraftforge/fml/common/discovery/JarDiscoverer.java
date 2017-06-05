@@ -97,7 +97,7 @@ public class JarDiscoverer implements ITypeDiscoverer
                     }
                     catch (LoaderException e)
                     {
-                        FMLLog.error(e, "There was a problem reading the entry {} in the jar {} - probably a corrupt zip", ze.getName(), candidate.getModContainer().getPath());
+                        FMLLog.log.error("There was a problem reading the entry {} in the jar {} - probably a corrupt zip", candidate.getModContainer().getPath(), e);
                         jar.close();
                         throw e;
                     }
@@ -116,7 +116,7 @@ public class JarDiscoverer implements ITypeDiscoverer
         }
         catch (Exception e)
         {
-            FMLLog.warn(e, "Zip file {} failed to read properly, it will be ignored", candidate.getModContainer().getName());
+            FMLLog.log.warn("Zip file {} failed to read properly, it will be ignored", candidate.getModContainer().getName(), e);
         }
         finally
         {

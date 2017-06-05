@@ -1083,8 +1083,8 @@ public final class ModelLoader extends ModelBakery
                         if(entry.getValue() instanceof ItemLoadingException)
                         {
                             ItemLoadingException ex = (ItemLoadingException)entry.getValue();
-                            FMLLog.error(ex.normalException, "{}, normal location exception: ", errorMsg);
-                            FMLLog.error(ex.blockstateException, "{}, blockstate location exception: ", errorMsg);
+                            FMLLog.log.error("{}, normal location exception: ", errorMsg, ex.normalException);
+                            FMLLog.log.error("{}, blockstate location exception: ", errorMsg, ex.blockstateException);
                         }
                         else
                         {
@@ -1093,7 +1093,7 @@ public final class ModelLoader extends ModelBakery
                         ResourceLocation blockstateLocation = new ResourceLocation(location.getResourceDomain(), location.getResourcePath());
                         if(loadingExceptions.containsKey(blockstateLocation) && !printedBlockStateErrors.contains(blockstateLocation))
                         {
-                            FMLLog.error(loadingExceptions.get(blockstateLocation),"Exception loading blockstate for the variant {}: ", location);
+                            FMLLog.log.error("Exception loading blockstate for the variant {}: ", location, loadingExceptions.get(blockstateLocation));
                             printedBlockStateErrors.add(blockstateLocation);
                         }
                     }

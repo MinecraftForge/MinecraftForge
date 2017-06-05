@@ -384,7 +384,7 @@ public class CoreModManager {
             }
             catch (IOException ioe)
             {
-                FMLLog.error(ioe, "Unable to read the jar file {} - ignoring", coreMod.getName());
+                FMLLog.log.error("Unable to read the jar file {} - ignoring", coreMod.getName(), ioe);
                 continue;
             }
             finally
@@ -508,7 +508,7 @@ public class CoreModManager {
         }
         catch (Exception e)
         {
-            FMLLog.info(e, "There was a problem trying to load the mod dir tweaker {}", coreMod.getAbsolutePath());
+            FMLLog.log.info("There was a problem trying to load the mod dir tweaker {}", coreMod.getAbsolutePath(), e);
         }
     }
 
@@ -617,21 +617,21 @@ public class CoreModManager {
         catch (ClassNotFoundException cnfe)
         {
             if (!Lists.newArrayList(rootPlugins).contains(coreModClass))
-                FMLLog.error(cnfe, "Coremod {}: Unable to class load the plugin {}", coreModName, coreModClass);
+                FMLLog.log.error("Coremod {}: Unable to class load the plugin {}", coreModClass, cnfe);
             else
                 FMLLog.log.debug("Skipping root plugin {}", coreModClass);
         }
         catch (ClassCastException cce)
         {
-            FMLLog.error(cce, "Coremod {}: The plugin {} is not an implementor of IFMLLoadingPlugin", coreModName, coreModClass);
+            FMLLog.log.error("Coremod {}: The plugin {} is not an implementor of IFMLLoadingPlugin", coreModClass, cce);
         }
         catch (InstantiationException ie)
         {
-            FMLLog.error(ie, "Coremod {}: The plugin class {} was not instantiable", coreModName, coreModClass);
+            FMLLog.log.error("Coremod {}: The plugin class {} was not instantiable", coreModClass, ie);
         }
         catch (IllegalAccessException iae)
         {
-            FMLLog.error(iae, "Coremod {}: The plugin class {} was not accessible", coreModName, coreModClass);
+            FMLLog.log.error("Coremod {}: The plugin class {} was not accessible", coreModClass, iae);
         }
         return null;
     }

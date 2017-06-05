@@ -137,8 +137,8 @@ public class GameRegistry
             }
             catch (Exception e)
             {
-                FMLLog.error(e, "Exception caught during entity selector creation with {} for argument map {} of {} for {} at {}", factory,
-                        arguments, mainSelector, sender, position);
+                FMLLog.log.error("Exception caught during entity selector creation with {} for argument map {} of {} for {} at {}", factory,
+                        arguments, mainSelector, sender, position, e);
             }
         }
         return selectors;

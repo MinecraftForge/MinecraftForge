@@ -152,7 +152,7 @@ class ObjectHolderRef {
         }
         catch (Exception e)
         {
-            FMLLog.warn(e, "Unable to set {} with value {} ({})", this.field, thing, this.injectedObject);
+            FMLLog.log.warn("Unable to set {} with value {} ({})", this.field, thing, this.injectedObject, e);
         }
     }
 }

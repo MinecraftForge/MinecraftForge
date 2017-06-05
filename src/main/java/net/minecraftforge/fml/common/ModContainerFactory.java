@@ -95,7 +95,7 @@ public class ModContainerFactory
                     }
                     return ret;
                 } catch (Exception e) {
-                    FMLLog.error(e, "Unable to construct {} container", ann.getASMType().getClassName());
+                    FMLLog.log.error("Unable to construct {} container", ann.getASMType().getClassName(), e);
                     return null;
                 }
             }

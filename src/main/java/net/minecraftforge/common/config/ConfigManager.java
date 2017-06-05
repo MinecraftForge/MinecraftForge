@@ -194,7 +194,7 @@ public class ConfigManager
             }
             catch (Exception e)
             {
-                FMLLog.error(e, "An error occurred trying to load a config for {} into {}", modid, targ.getClassName());
+                FMLLog.log.error("An error occurred trying to load a config for {} into {}", targ.getClassName(), e);
                 throw new LoaderException(e);
             }
         }

@@ -233,12 +233,12 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         }
         catch(IOException e)
         {
-            FMLLog.error(e, "Exception loading Animation State Machine {}, skipping", location);
+            FMLLog.log.error("Exception loading Animation State Machine {}, skipping", location, e);
             return missing;
         }
         catch(JsonParseException e)
         {
-            FMLLog.error(e, "Exception loading Animation State Machine {}, skipping", location);
+            FMLLog.log.error("Exception loading Animation State Machine {}, skipping", location, e);
             return missing;
         }
         finally

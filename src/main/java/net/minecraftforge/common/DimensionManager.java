@@ -292,8 +292,8 @@ public class DimensionManager
         }
         catch (Exception e)
         {
-            FMLLog.error(e, "An error occurred trying to create an instance of WorldProvider {} ({})",
-                    dim, getProviderType(dim));
+            FMLLog.log.error("An error occurred trying to create an instance of WorldProvider {} ({})",
+                    dim, getProviderType(dim), e);
             throw new RuntimeException(e);
         }
     }

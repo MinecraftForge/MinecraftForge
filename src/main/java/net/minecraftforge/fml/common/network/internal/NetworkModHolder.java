@@ -83,7 +83,7 @@ public class NetworkModHolder
             }
             catch (Exception e)
             {
-                FMLLog.error(e, "Error occurred invoking NetworkCheckHandler {} at {}", checkHandler.getName(), container);
+                FMLLog.log.error("Error occurred invoking NetworkCheckHandler {} at {}", container, e);
                 return false;
             }
         }
@@ -173,7 +173,7 @@ public class NetworkModHolder
             }
             catch (Exception e)
             {
-                FMLLog.warn(e, "The declared version check handler method {} on network mod id {} is not accessible", networkCheckHandlerMethod, container.getModId());
+                FMLLog.log.warn("The declared version check handler method {} on network mod id {} is not accessible", networkCheckHandlerMethod, container.getModId(), e);
             }
         }
         if (this.checkHandler != null)
@@ -192,7 +192,7 @@ public class NetworkModHolder
             }
             catch (InvalidVersionSpecificationException e)
             {
-                FMLLog.warn(e, "Invalid bounded range {} specified for network mod id {}", acceptableVersionRange, container.getModId());
+                FMLLog.log.warn("Invalid bounded range {} specified for network mod id {}", acceptableVersionRange, container.getModId(), e);
             }
             this.checker = new DefaultNetworkChecker();
         }

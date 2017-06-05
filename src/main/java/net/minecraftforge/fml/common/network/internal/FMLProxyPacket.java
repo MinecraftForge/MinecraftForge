@@ -117,12 +117,12 @@ public class FMLProxyPacket implements Packet<INetHandler> {
             }
             catch (FMLNetworkException ne)
             {
-                FMLLog.error(ne, "There was a network exception handling a packet on channel {}", channel);
+                FMLLog.log.error("There was a network exception handling a packet on channel {}", channel, ne);
                 dispatcher.rejectHandshake(ne.getMessage());
             }
             catch (Throwable t)
             {
-                FMLLog.error(t, "There was a critical exception handling a packet on channel {}", channel);
+                FMLLog.log.error("There was a critical exception handling a packet on channel {}", channel, t);
                 dispatcher.rejectHandshake("A fatal error has occurred, this connection is terminated");
             }
         }

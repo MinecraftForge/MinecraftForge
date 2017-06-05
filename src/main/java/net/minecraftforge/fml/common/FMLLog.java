@@ -51,31 +51,6 @@ public class FMLLog
         System.setErr(new TracingPrintStream(LogManager.getLogger("STDERR"), System.err));
     }
 
-    public static void info(Throwable x, String message, Object... args)
-    {
-        logWithException(Level.INFO, x, message, args);
-    }
-
-    public static void warn(Throwable x, String message, Object... args)
-    {
-        logWithException(Level.WARN, x, message, args);
-    }
-
-    public static void error(Throwable x, String message, Object... args)
-    {
-        logWithException(Level.ERROR, x, message, args);
-    }
-
-    public static void fatal(Throwable x, String message, Object... args)
-    {
-        logWithException(Level.FATAL, x, message, args);
-    }
-
-    private static void logWithException(Level level, Throwable x, String message, Object... args)
-    {
-        log.log(level, log.getMessageFactory().newMessage(message, args), x);
-    }
-
     public static void bigWarning(String format, Object... data)
     {
         StackTraceElement[] trace = Thread.currentThread().getStackTrace();

@@ -489,7 +489,7 @@ public class ForgeChunkManager
             }
             catch (IOException e)
             {
-                FMLLog.warn(e, "Unable to read forced chunk data at {} - it will be ignored", chunkLoaderData.getAbsolutePath());
+                FMLLog.log.warn("Unable to read forced chunk data at {} - it will be ignored", chunkLoaderData.getAbsolutePath(), e);
                 return;
             }
             NBTTagList ticketList = forcedChunkData.getTagList("TicketList", Constants.NBT.TAG_COMPOUND);
@@ -949,7 +949,7 @@ public class ForgeChunkManager
         }
         catch (IOException e)
         {
-            FMLLog.warn(e, "Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath());
+            FMLLog.log.warn("Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
             return;
         }
     }
@@ -1015,7 +1015,7 @@ public class ForgeChunkManager
                 dest.delete();
             }
             cfgFile.renameTo(dest);
-            FMLLog.error(e, "A critical error occurred reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak");
+            FMLLog.log.error("A critical error occurred reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak", e);
         }
         syncConfigDefaults();
     }

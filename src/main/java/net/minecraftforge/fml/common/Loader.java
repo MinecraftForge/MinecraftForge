@@ -391,7 +391,7 @@ public class Loader
             }
             catch (Exception e)
             {
-                FMLLog.error(e, "A problem occurred instantiating the injected mod container {}", cont);
+                FMLLog.log.error("A problem occurred instantiating the injected mod container {}", cont, e);
                 throw new LoaderException(e);
             }
             mods.add(new InjectedModContainer(mc,mc.getSource()));
@@ -473,8 +473,8 @@ public class Loader
         }
         catch (IOException ioe)
         {
-            FMLLog.error(ioe, "Failed to resolve loader directories: mods : {} ; config {}", canonicalModsDir.getAbsolutePath(),
-                            configDir.getAbsolutePath());
+            FMLLog.log.error("Failed to resolve loader directories: mods : {} ; config {}", canonicalModsDir.getAbsolutePath(),
+                            configDir.getAbsolutePath(), ioe);
             throw new LoaderException(ioe);
         }
 
@@ -571,7 +571,7 @@ public class Loader
                 }
                 catch (MalformedURLException e)
                 {
-                    FMLLog.error(e, "Encountered a weird problem with non-mod file injection : {}", nonMod.getName());
+                    FMLLog.log.error("Encountered a weird problem with non-mod file injection : {}", nonMod.getName(), e);
                 }
             }
         }

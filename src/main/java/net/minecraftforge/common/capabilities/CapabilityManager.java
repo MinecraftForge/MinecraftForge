@@ -155,7 +155,7 @@ public enum CapabilityManager
                         }
                         catch (Exception e)
                         {
-                            FMLLog.warn(e, "Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName);
+                            FMLLog.log.warn("Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName, e);
                         }
                         return null;
                     }
@@ -180,7 +180,7 @@ public enum CapabilityManager
                         }
                         catch (Exception e)
                         {
-                            FMLLog.warn(e, "Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName);
+                            FMLLog.log.warn("Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName, e);
                         }
                         return null;
                     }

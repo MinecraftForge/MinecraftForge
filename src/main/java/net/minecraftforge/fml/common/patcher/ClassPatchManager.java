@@ -138,7 +138,7 @@ public class ClassPatchManager {
                 }
                 catch (IOException e)
                 {
-                    FMLLog.error(e, "Encountered problem runtime patching class {}", name);
+                    FMLLog.log.error("Encountered problem runtime patching class {}", name, e);
                     continue;
                 }
             }

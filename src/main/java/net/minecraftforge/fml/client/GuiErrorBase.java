@@ -76,7 +76,7 @@ public class GuiErrorBase extends GuiErrorScreen
             }
             catch (Exception e)
             {
-                FMLLog.error(e, "Problem opening log file {}", clientLog);
+                FMLLog.log.error("Problem opening log file {}", clientLog, e);
             }
         }
     }

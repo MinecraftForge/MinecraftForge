@@ -119,7 +119,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                 }
                 catch (LoaderException e)
                 {
-                    FMLLog.error(e, "There was a problem reading the file {} - probably this is a corrupt file", file.getPath());
+                    FMLLog.log.error("There was a problem reading the file {} - probably this is a corrupt file", file.getPath(), e);
                     throw e;
                 }
                 catch (Exception e)

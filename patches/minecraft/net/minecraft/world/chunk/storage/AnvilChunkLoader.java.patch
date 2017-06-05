@@ -107,7 +107,7 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -305,11 +366,20 @@
+@@ -305,11 +366,19 @@
              {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
@@ -121,14 +121,13 @@
 +                }
 +                catch (Exception e)
 +                {
-+                    net.minecraftforge.fml.common.FMLLog.error(e,
-+                            "An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author",
-+                            entity.getClass().getName());
++                    net.minecraftforge.fml.common.FMLLog.log.error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author",
++                            entity.getClass().getName(), e);
 +                }
              }
          }
  
-@@ -318,8 +388,17 @@
+@@ -318,8 +387,16 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -139,14 +138,13 @@
 +            }
 +            catch (Exception e)
 +            {
-+                net.minecraftforge.fml.common.FMLLog.error(e,
-+                        "A TileEntity type {} has throw an exception trying to write state. It will not persist. Report this to the mod author",
-+                        tileentity.getClass().getName());
++                net.minecraftforge.fml.common.FMLLog.log.error("A TileEntity type {} has throw an exception trying to write state. It will not persist. Report this to the mod author",
++                        tileentity.getClass().getName(), e);
 +            }
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -388,6 +467,12 @@
+@@ -388,6 +465,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -159,7 +157,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
-@@ -431,8 +516,6 @@
+@@ -431,8 +514,6 @@
                  p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
              }
          }

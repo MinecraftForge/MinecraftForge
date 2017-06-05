@@ -234,7 +234,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             }
             catch (IOException e)
             {
-                FMLLog.error(e, "A critical exception occurred reading a class file {}", owner);
+                FMLLog.log.error("A critical exception occurred reading a class file {}", owner, e);
             }
             return null;
         }

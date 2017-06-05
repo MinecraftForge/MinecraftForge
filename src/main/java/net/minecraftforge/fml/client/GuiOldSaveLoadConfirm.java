@@ -93,7 +93,7 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback 
                 }
             } catch (IOException e)
             {
-                FMLLog.warn(e, "There was a problem saving the backup {}. Please fix and try again", zip.getName());
+                FMLLog.log.warn("There was a problem saving the backup {}. Please fix and try again", zip.getName(), e);
                 FMLClientHandler.instance().showGuiScreen(new GuiBackupFailed(parent, zip));
                 return;
             }

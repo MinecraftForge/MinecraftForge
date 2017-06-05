@@ -80,7 +80,7 @@ public class LoadController
             @Override
             public void handleException(Throwable exception, SubscriberExceptionContext context)
             {
-                FMLLog.error(exception, "Could not dispatch event: {} to {}", context.getEvent(), context.getSubscriberMethod());
+                FMLLog.log.error("Could not dispatch event: {} to {}", context.getSubscriberMethod(), exception);
             }
         });
         this.masterChannel.register(this);
@@ -173,7 +173,7 @@ public class LoadController
                 {
                     String modId = error.getKey();
                     String modName = modNames.get(modId);
-                    FMLLog.error(error.getValue(), "Caught exception from {} ({})", modName, modId);
+                    FMLLog.log.error("Caught exception from {} ({})", modId, error.getValue());
                     if (error.getValue() instanceof IFMLHandledException)
                     {
                         toThrow = error;

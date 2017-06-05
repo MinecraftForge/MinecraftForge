@@ -74,7 +74,7 @@ public interface ILanguageAdapter {
             catch (ClassNotFoundException e)
             {
                 // Not a singleton, look for @Instance field as a fallback.
-                FMLLog.info(e, "An error occurred trying to load a proxy into {}.{}. Did you declare your mod as 'class' instead of 'object'?", proxyTarget.getSimpleName(), target.getName());
+                FMLLog.log.info("An error occurred trying to load a proxy into {}.{}. Did you declare your mod as 'class' instead of 'object'?", proxyTarget.getSimpleName(), target.getName(), e);
                 return;
             }
 
@@ -110,7 +110,7 @@ public interface ILanguageAdapter {
             }
             catch (InvocationTargetException e)
             {
-                FMLLog.error(e, "An error occurred trying to load a proxy into {}.{}", proxyTarget.getSimpleName(), target.getName());
+                FMLLog.log.error("An error occurred trying to load a proxy into {}.{}", target.getName(), e);
                 throw new LoaderException(e);
             }
 
@@ -167,7 +167,7 @@ public interface ILanguageAdapter {
                             setProxy(target, proxyTarget, proxy);
                         }
                         catch (Exception e) {
-                            FMLLog.error(e, "An error occurred trying to load a proxy into {}.{}", proxyTarget.getSimpleName(), target.getName());
+                            FMLLog.log.error("An error occurred trying to load a proxy into {}.{}", target.getName(), e);
                             throw new LoaderException(e);
                         }
                     }
