@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemRecord.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemRecord.java
-@@ -64,6 +64,17 @@
+@@ -65,6 +65,17 @@
          p_77624_3_.add(this.func_150927_i());
      }
  

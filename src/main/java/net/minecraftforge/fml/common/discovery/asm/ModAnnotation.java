@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.discovery.asm.ASMModParser.AnnotationType;
 
 import org.objectweb.asm.Type;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -74,7 +74,7 @@ public class ModAnnotation
     @Override
     public String toString()
     {
-        return Objects.toStringHelper("Annotation")
+        return MoreObjects.toStringHelper("Annotation")
                 .add("type",type)
                 .add("name",asmType.getClassName())
                 .add("member",member)

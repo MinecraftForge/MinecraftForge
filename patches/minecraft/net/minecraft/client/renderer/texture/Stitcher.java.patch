@@ -11,7 +11,7 @@
 +            bar.step(stitcher$holder.func_98150_a().func_94215_i());
              if (!this.func_94310_b(stitcher$holder))
              {
-                 String s = String.format("Unable to fit: %s - size: %dx%d - Maybe try a lowerresolution resourcepack?", new Object[] {stitcher$holder.func_98150_a().func_94215_i(), Integer.valueOf(stitcher$holder.func_98150_a().func_94211_a()), Integer.valueOf(stitcher$holder.func_98150_a().func_94216_b())});
+                 String s = String.format("Unable to fit: %s - size: %dx%d - Maybe try a lowerresolution resourcepack?", stitcher$holder.func_98150_a().func_94215_i(), stitcher$holder.func_98150_a().func_94211_a(), stitcher$holder.func_98150_a().func_94216_b());
 +                net.minecraftforge.fml.common.FMLLog.info(s);
 +                for (Stitcher.Holder h : astitcher$holder)
 +                    net.minecraftforge.fml.common.FMLLog.info("  %s", h);

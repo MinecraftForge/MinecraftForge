@@ -8,7 +8,7 @@
 +public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
      private static final Logger field_145852_a = LogManager.getLogger();
--    private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = new RegistryNamespaced();
+-    private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = new RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> ();
 +    private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = net.minecraftforge.fml.common.registry.GameData.getTileEntityRegistry();
      protected World field_145850_b;
      protected BlockPos field_174879_c = BlockPos.field_177992_a;
@@ -47,7 +47,7 @@
 @@ -103,6 +108,9 @@
          catch (Throwable throwable1)
          {
-             field_145852_a.error("Failed to create block entity {}", new Object[] {s, throwable1});
+             field_145852_a.error("Failed to create block entity {}", s, throwable1);
 +            net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, throwable1,
 +                    "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
 +                    s, oclass.getName());
@@ -57,7 +57,7 @@
 @@ -115,6 +123,9 @@
              catch (Throwable throwable)
              {
-                 field_145852_a.error("Failed to load data for block entity {}", new Object[] {s, throwable});
+                 field_145852_a.error("Failed to load data for block entity {}", s, throwable);
 +                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, throwable,
 +                        "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
 +                        s, oclass.getName());

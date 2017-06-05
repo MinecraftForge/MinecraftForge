@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomePlains.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomePlains.java
-@@ -72,6 +72,7 @@
+@@ -80,6 +80,7 @@
              this.field_76760_I.field_76803_B = 10;
              field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.GRASS);
  
@@ -8,7 +8,7 @@
              for (int i = 0; i < 7; ++i)
              {
                  int j = p_180624_2_.nextInt(16) + 8;
-@@ -81,7 +82,7 @@
+@@ -89,7 +90,7 @@
              }
          }
  
@@ -17,7 +17,7 @@
          {
              field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.SUNFLOWER);
  
-@@ -97,6 +98,21 @@
+@@ -105,6 +106,21 @@
          super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
      }
  

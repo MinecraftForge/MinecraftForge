@@ -4,7 +4,7 @@
  
      public static ModelBlockDefinition func_178331_a(Reader p_178331_0_)
      {
--        return (ModelBlockDefinition)field_178333_a.fromJson(p_178331_0_, ModelBlockDefinition.class);
+-        return (ModelBlockDefinition)JsonUtils.func_193839_a(field_178333_a, p_178331_0_, ModelBlockDefinition.class);
 +        return net.minecraftforge.client.model.BlockStateLoader.load(p_178331_0_, field_178333_a);
      }
  

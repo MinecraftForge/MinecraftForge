@@ -43,6 +43,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTException;
@@ -51,8 +52,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -272,24 +273,25 @@ public class GameRegistry
         GameData.getMain().registerSubstitutionAlias(nameToSubstitute, type, object);
     }
 
-    public static void addRecipe(@Nonnull ItemStack output, Object... params)
+    @Deprecated //TODO Make IRecipe a registry
+    public static IRecipe addShapedRecipe(ResourceLocation name, @Nonnull ItemStack output, Object... params)
     {
-        addShapedRecipe(output, params);
+        throw new RuntimeException("TODO: Forge implement IRecipe registry");
+        //return CraftingManager.addRecipe(output, params);
     }
 
-    public static IRecipe addShapedRecipe(@Nonnull ItemStack output, Object... params)
+    @Deprecated //TODO Make IRecipe a registry
+    public static void addShapelessRecipe(ResourceLocation name, @Nonnull ItemStack output, Ingredient... params)
     {
-        return CraftingManager.getInstance().addRecipe(output, params);
+        throw new RuntimeException("TODO: Forge implement IRecipe registry");
+        //CraftingManager.getInstance().addShapelessRecipe(output, params);
     }
 
-    public static void addShapelessRecipe(@Nonnull ItemStack output, Object... params)
+    @Deprecated //TODO Make IRecipe a registry
+    public static void addRecipe(ResourceLocation name, IRecipe recipe)
     {
-        CraftingManager.getInstance().addShapelessRecipe(output, params);
-    }
-
-    public static void addRecipe(IRecipe recipe)
-    {
-        CraftingManager.getInstance().getRecipeList().add(recipe);
+        throw new RuntimeException("TODO: Forge implement IRecipe registry");
+        //CraftingManager.getInstance().getRecipeList().add(recipe);
     }
 
     public static void addSmelting(Block input, @Nonnull ItemStack output, float xp)

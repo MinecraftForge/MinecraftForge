@@ -145,7 +145,7 @@ public class DynBucketTest
         //GameRegistry.registerItem(dynBucket, "dynbucket");
         GameRegistry.register(dynBottle);
         ItemStack filledBucket = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TestFluid.instance);
-        GameRegistry.addShapelessRecipe(new ItemStack(Items.DIAMOND), filledBucket);
+        //GameRegistry.addShapelessRecipe(new ItemStack(Items.DIAMOND), filledBucket);
 
         proxy.setupModels();
         //MinecraftForge.EVENT_BUS.register(this);
@@ -236,8 +236,10 @@ public class DynBucketTest
         }
 
         @Override
-        public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
+        public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
         {
+            if (!this.func_194125_a(tab))
+                return;
             for (int i = 0; i < 4; i++)
             {
                 ItemStack bucket = new ItemStack(this, 1, i);

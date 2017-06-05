@@ -1,42 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeHills.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeHills.java
-@@ -39,28 +39,20 @@
+@@ -39,28 +39,21 @@
      public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
      {
          super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
 -        int i = 3 + p_180624_2_.nextInt(6);
+ 
+-        for (int j = 0; j < i; ++j)
+-        {
+-            int k = p_180624_2_.nextInt(16);
+-            int l = p_180624_2_.nextInt(28) + 4;
+-            int i1 = p_180624_2_.nextInt(16);
+-            BlockPos blockpos = p_180624_3_.func_177982_a(k, l, i1);
 +        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Pre(p_180624_1_, p_180624_2_, p_180624_3_));
 +        WorldGenerator emeralds = new EmeraldGenerator();
 +        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(p_180624_1_, p_180624_2_, emeralds, p_180624_3_, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.EMERALD))
 +            emeralds.func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_);
  
--        for (int j = 0; j < i; ++j)
-+        for (int i = 0; i < 7; ++i)
-         {
--            int k = p_180624_2_.nextInt(16);
--            int l = p_180624_2_.nextInt(28) + 4;
--            int i1 = p_180624_2_.nextInt(16);
--            BlockPos blockpos = p_180624_3_.func_177982_a(k, l, i1);
--
 -            if (p_180624_1_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150348_b)
 -            {
 -                p_180624_1_.func_180501_a(blockpos, Blocks.field_150412_bA.func_176223_P(), 2);
 -            }
 -        }
 -
--        for (i = 0; i < 7; ++i)
--        {
-             int j1 = p_180624_2_.nextInt(16);
-             int k1 = p_180624_2_.nextInt(64);
-             int l1 = p_180624_2_.nextInt(16);
+         for (int j1 = 0; j1 < 7; ++j1)
+         {
+             int k1 = p_180624_2_.nextInt(16);
+             int l1 = p_180624_2_.nextInt(64);
+             int i2 = p_180624_2_.nextInt(16);
 +            if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(p_180624_1_, p_180624_2_, field_82915_S, p_180624_3_.func_177982_a(j1, k1, l1), net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.SILVERFISH))
-             this.field_82915_S.func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_.func_177982_a(j1, k1, l1));
+             this.field_82915_S.func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_.func_177982_a(k1, l1, i2));
          }
 +        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Post(p_180624_1_, p_180624_2_, p_180624_3_));
      }
  
      public void func_180622_a(World p_180622_1_, Random p_180622_2_, ChunkPrimer p_180622_3_, int p_180622_4_, int p_180622_5_, double p_180622_6_)
-@@ -88,4 +80,24 @@
+@@ -88,4 +81,24 @@
          EXTRA_TREES,
          MUTATED;
      }

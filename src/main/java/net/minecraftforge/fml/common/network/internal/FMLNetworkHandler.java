@@ -54,8 +54,6 @@ import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.apache.logging.log4j.core.helpers.Integers;
-
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -64,8 +62,8 @@ import javax.annotation.Nullable;
 
 public class FMLNetworkHandler
 {
-    public static final int READ_TIMEOUT = Integers.parseInt(System.getProperty("fml.readTimeout","30"),30);
-    public static final int LOGIN_TIMEOUT = Integers.parseInt(System.getProperty("fml.loginTimeout","600"),600);
+    public static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("fml.readTimeout","30"));
+    public static final int LOGIN_TIMEOUT = Integer.parseInt(System.getProperty("fml.loginTimeout","600"));
     private static EnumMap<Side, FMLEmbeddedChannel> channelPair;
 
     public static void fmlServerHandshake(PlayerList scm, NetworkManager manager, EntityPlayerMP player)

@@ -84,7 +84,7 @@ public class GuiConfigEntries extends GuiListExtended
     {
         super(mc, parent.width, parent.height, parent.titleLine2 != null ? 33 : 23, parent.height - 32, 20);
         this.owningScreen = parent;
-        this.setShowSelectionBox(false);
+        this.func_193651_b(false);
         this.mc = mc;
         this.listEntries = new ArrayList<IConfigEntry>();
 
@@ -562,10 +562,10 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
             this.btnValue.packedFGColour = GuiUtils.getColorCode(this.configElement.getValidValues()[currentIndex].charAt(0), true);
-            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+            super.func_192634_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
         }
 
         @Override
@@ -910,14 +910,14 @@ public class GuiConfigEntries extends GuiListExtended
         public abstract void valueButtonPressed(int slotIndex);
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
-            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+            super.func_192634_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
             this.btnValue.width = this.owningEntryList.controlWidth;
             this.btnValue.xPosition = this.owningScreen.entryList.controlX;
             this.btnValue.yPosition = y;
             this.btnValue.enabled = enabled();
-            this.btnValue.drawButton(this.mc, mouseX, mouseY);
+            this.btnValue.func_191745_a(this.mc, mouseX, mouseY, partial);
         }
 
         /**
@@ -1190,9 +1190,9 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
-            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+            super.func_192634_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
             this.textFieldValue.xPosition = this.owningEntryList.controlX + 2;
             this.textFieldValue.yPosition = y + 1;
             this.textFieldValue.width = this.owningEntryList.controlWidth - 4;
@@ -1326,14 +1326,14 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
             this.btnSelectCategory.xPosition = listWidth / 2 - 150;
             this.btnSelectCategory.yPosition = y;
             this.btnSelectCategory.enabled = enabled();
-            this.btnSelectCategory.drawButton(this.mc, mouseX, mouseY);
+            this.btnSelectCategory.func_191745_a(this.mc, mouseX, mouseY, partial);
 
-            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+            super.func_192634_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
         }
 
         @Override
@@ -1526,7 +1526,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
             boolean isChanged = isChanged();
 
@@ -1545,12 +1545,12 @@ public class GuiConfigEntries extends GuiListExtended
             this.btnUndoChanges.xPosition = this.owningEntryList.scrollBarX - 44;
             this.btnUndoChanges.yPosition = y;
             this.btnUndoChanges.enabled = enabled() && isChanged;
-            this.btnUndoChanges.drawButton(this.mc, mouseX, mouseY);
+            this.btnUndoChanges.func_191745_a(this.mc, mouseX, mouseY, partial);
 
             this.btnDefault.xPosition = this.owningEntryList.scrollBarX - 22;
             this.btnDefault.yPosition = y;
             this.btnDefault.enabled = enabled() && !isDefault();
-            this.btnDefault.drawButton(this.mc, mouseX, mouseY);
+            this.btnDefault.func_191745_a(this.mc, mouseX, mouseY, partial);
 
             if (this.tooltipHoverChecker == null)
                 this.tooltipHoverChecker = new HoverChecker(y, y + slotHeight, x, this.owningScreen.entryList.controlX - 8, 800);
@@ -1624,7 +1624,7 @@ public class GuiConfigEntries extends GuiListExtended
         public abstract boolean saveConfigElement();
 
         @Override
-        public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
+        public void func_192633_a(int p_178011_1_, int p_178011_2_, int p_178011_3_, float partial){}
 
         @Override
         public boolean enabled()
@@ -1674,7 +1674,7 @@ public class GuiConfigEntries extends GuiListExtended
             int tagStartPosition = tagStartPosition = target.indexOf(tagStart);
             int tagEndPosition = tagEndPosition = target.indexOf(tagEnd, tagStartPosition + tagStart.length());
 
-            if (-1 == tagStartPosition || -1 == tagEndPosition) 
+            if (-1 == tagStartPosition || -1 == tagEndPosition)
                 return target;
 
             String taglessResult = target.substring(0, tagStartPosition);

@@ -31,7 +31,7 @@
          return this.field_150914_c.contains(p_150893_2_.func_177230_c()) ? this.field_77864_a : 1.0F;
      }
  
-@@ -84,7 +101,9 @@
+@@ -79,7 +96,9 @@
  
      public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
      {
@@ -42,7 +42,7 @@
      }
  
      public Multimap<String, AttributeModifier> func_111205_h(EntityEquipmentSlot p_111205_1_)
-@@ -99,4 +118,28 @@
+@@ -94,4 +113,28 @@
  
          return multimap;
      }

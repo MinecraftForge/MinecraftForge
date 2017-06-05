@@ -20,7 +20,7 @@
 package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -257,7 +257,7 @@ public class LightUtil
         if(tessellator == null)
         {
             Tessellator tes = Tessellator.getInstance();
-            VertexBuffer wr = tes.getBuffer();
+            BufferBuilder wr = tes.getBuffer();
             tessellator = new VertexBufferConsumer(wr);
         }
         return tessellator;
@@ -274,7 +274,7 @@ public class LightUtil
     }
 
     // renders quad in any Vertex Format, but is slower
-    public static void renderQuadColorSlow(VertexBuffer wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColorSlow(BufferBuilder wr, BakedQuad quad, int auxColor)
     {
         ItemConsumer cons;
         if(wr == Tessellator.getInstance().getBuffer())
@@ -294,7 +294,7 @@ public class LightUtil
         quad.pipe(cons);
     }
 
-    public static void renderQuadColor(VertexBuffer wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColor(BufferBuilder wr, BakedQuad quad, int auxColor)
     {
         wr.addVertexData(quad.getVertexData());
         ForgeHooksClient.putQuadColor(wr, quad, auxColor);

@@ -23,7 +23,7 @@ import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BlockModelRenderer;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -54,8 +54,8 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
 
     private final ThreadLocal<VertexBufferConsumer> wrFlat = new ThreadLocal<VertexBufferConsumer>();
     private final ThreadLocal<VertexBufferConsumer> wrSmooth = new ThreadLocal<VertexBufferConsumer>();
-    private final ThreadLocal<VertexBuffer> lastRendererFlat = new ThreadLocal<VertexBuffer>();
-    private final ThreadLocal<VertexBuffer> lastRendererSmooth = new ThreadLocal<VertexBuffer>();
+    private final ThreadLocal<BufferBuilder> lastRendererFlat = new ThreadLocal<BufferBuilder>();
+    private final ThreadLocal<BufferBuilder> lastRendererSmooth = new ThreadLocal<BufferBuilder>();
 
     private final BlockColors colors;
 
@@ -67,7 +67,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     }
 
     @Override
-    public boolean renderModelFlat(IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, VertexBuffer buffer, boolean checkSides, long rand)
+    public boolean renderModelFlat(IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, long rand)
     {
         if(ForgeModContainer.forgeLightPipelineEnabled)
         {
@@ -88,7 +88,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     }
 
     @Override
-    public boolean renderModelSmooth(IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, VertexBuffer buffer, boolean checkSides, long rand)
+    public boolean renderModelSmooth(IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, long rand)
     {
         if(ForgeModContainer.forgeLightPipelineEnabled)
         {
@@ -108,7 +108,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
     }
 
-    public static boolean render(VertexLighterFlat lighter, IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, VertexBuffer wr, boolean checkSides, long rand)
+    public static boolean render(VertexLighterFlat lighter, IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder wr, boolean checkSides, long rand)
     {
         lighter.setWorld(world);
         lighter.setState(state);

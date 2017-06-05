@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeJungle.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeJungle.java
-@@ -68,10 +68,14 @@
+@@ -81,10 +81,14 @@
          super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
          int i = p_180624_2_.nextInt(16) + 8;
          int j = p_180624_2_.nextInt(16) + 8;
@@ -13,6 +13,6 @@
          WorldGenVines worldgenvines = new WorldGenVines();
  
 +        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
-         for (j = 0; j < 50; ++j)
+         for (int j1 = 0; j1 < 50; ++j1)
          {
              k = p_180624_2_.nextInt(16) + 8;

@@ -1,5 +1,5 @@
---- ../src-base/minecraft/net/minecraft/world/WorldSavedData.java
-+++ ../src-work/minecraft/net/minecraft/world/WorldSavedData.java
+--- ../src-base/minecraft/net/minecraft/world/storage/WorldSavedData.java
++++ ../src-work/minecraft/net/minecraft/world/storage/WorldSavedData.java
 @@ -2,7 +2,7 @@
  
  import net.minecraft.nbt.NBTTagCompound;

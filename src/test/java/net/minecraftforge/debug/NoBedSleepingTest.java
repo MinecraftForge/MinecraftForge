@@ -2,6 +2,7 @@ package net.minecraftforge.debug;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.Item;
@@ -79,9 +80,9 @@ public class NoBedSleepingTest
     public static class EventHandler
     {
         @SubscribeEvent
-        public void onEntityConstruct(AttachCapabilitiesEvent.Entity evt)
+        public void onEntityConstruct(AttachCapabilitiesEvent<Entity> evt)
         {
-            if (!(evt.getEntity() instanceof EntityPlayer))
+            if (!(evt.getObject() instanceof EntityPlayer))
             {
                 return;
             }

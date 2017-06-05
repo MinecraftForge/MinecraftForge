@@ -22,10 +22,10 @@ package net.minecraftforge.client.model.animation;
 import java.util.List;
 
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -84,11 +84,11 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         GlStateManager.pushMatrix();
         GlStateManager.rotate(180, 0, 0, 1);
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer VertexBuffer = tessellator.getBuffer();
-        VertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        VertexBuffer.setTranslation(-0.5, -1.5, -0.5);
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        builder.setTranslation(-0.5, -1.5, -0.5);
 
-        lighter.setParent(new VertexBufferConsumer(VertexBuffer));
+        lighter.setParent(new VertexBufferConsumer(builder));
         lighter.setWorld(entity.world);
         lighter.setState(Blocks.AIR.getDefaultState());
         lighter.setBlockPos(pos);
@@ -123,7 +123,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         VertexBuffer.pos(1, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 1).lightmap(240, 0).endVertex();
         VertexBuffer.pos(1, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 0).lightmap(240, 0).endVertex();*/
 
-        VertexBuffer.setTranslation(0, 0, 0);
+        builder.setTranslation(0, 0, 0);
 
         tessellator.draw();
         GlStateManager.popMatrix();

@@ -122,7 +122,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (Minecraft.isFancyGraphicsEnabled())
         {
-            renderVignette(mc.player.getBrightness(partialTicks), res);
+            renderVignette(mc.player.getBrightness(), res);
         }
         else
         {

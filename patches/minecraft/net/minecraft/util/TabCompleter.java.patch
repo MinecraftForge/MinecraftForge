@@ -4,7 +4,7 @@
              this.field_186844_a.func_146175_b(i - this.field_186844_a.func_146198_h());
          }
  
--        this.field_186844_a.func_146191_b((String)this.field_186849_f.get(this.field_186848_e++));
+-        this.field_186844_a.func_146191_b(this.field_186849_f.get(this.field_186848_e++));
 +        this.field_186844_a.func_146191_b(net.minecraft.util.text.TextFormatting.func_110646_a(this.field_186849_f.get(this.field_186848_e++)));
      }
  

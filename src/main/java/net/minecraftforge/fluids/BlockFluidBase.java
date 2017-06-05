@@ -27,6 +27,7 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -525,7 +526,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                 corner[1][1] = 1;
             }
         }
-        
+
         state = state.withProperty(LEVEL_CORNERS[0], corner[0][0]);
         state = state.withProperty(LEVEL_CORNERS[1], corner[0][1]);
         state = state.withProperty(LEVEL_CORNERS[2], corner[1][1]);
@@ -726,6 +727,11 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
         vec = vec.normalize();
         return vec;
+    }
+
+    private boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing face)
+    {
+        return world.getBlockState(pos).func_193401_d(world, pos, face) == BlockFaceShape.SOLID;
     }
 
     /* IFluidBlock */

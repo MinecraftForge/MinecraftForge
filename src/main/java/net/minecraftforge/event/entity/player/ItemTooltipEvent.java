@@ -20,6 +20,8 @@
 package net.minecraftforge.event.entity.player;
 
 import java.util.List;
+
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -27,7 +29,7 @@ import javax.annotation.Nonnull;
 
 public class ItemTooltipEvent extends PlayerEvent
 {
-    private final boolean showAdvancedItemTooltips;
+    private final ITooltipFlag flags;
     @Nonnull
     private final ItemStack itemStack;
     private final List<String> toolTip;
@@ -35,20 +37,20 @@ public class ItemTooltipEvent extends PlayerEvent
     /**
      * This event is fired in {@link ItemStack#getTooltip(EntityPlayer, boolean)}, which in turn is called from it's respective GUIContainer.
      */
-    public ItemTooltipEvent(@Nonnull ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, boolean showAdvancedItemTooltips)
+    public ItemTooltipEvent(@Nonnull ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, ITooltipFlag flags)
     {
         super(entityPlayer);
         this.itemStack = itemStack;
         this.toolTip = toolTip;
-        this.showAdvancedItemTooltips = showAdvancedItemTooltips;
+        this.flags = flags;
     }
 
     /**
-     * Whether the advanced information on item tooltips is being shown, toggled by F3+H.
+     * Use to determine if the advanced information on item tooltips is being shown, toggled by F3+H.
      */
-    public boolean isShowAdvancedItemTooltips()
+    public ITooltipFlag getFlags()
     {
-        return showAdvancedItemTooltips;
+        return flags;
     }
 
     /**

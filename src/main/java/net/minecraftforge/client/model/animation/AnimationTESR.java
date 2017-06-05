@@ -22,7 +22,7 @@ package net.minecraftforge.client.model.animation;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -47,7 +47,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
 {
     protected static BlockRendererDispatcher blockRenderer;
 
-    public void renderTileEntityFast(@Nonnull T te, double x, double y, double z, float partialTick, int breakStage, @Nonnull VertexBuffer renderer)
+    public void renderTileEntityFast(@Nonnull T te, double x, double y, double z, float partialTick, int breakStage, float partial, @Nonnull BufferBuilder renderer)
     {
         if(!te.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null))
         {

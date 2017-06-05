@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/Ingredient.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/Ingredient.java
+@@ -13,6 +13,8 @@
+ 
+ public class Ingredient implements Predicate<ItemStack>
+ {
++    //Because Mojang caches things... we need to invalidate them.. so... here we go..
++    private static final java.util.Set<Ingredient> INSTANCES = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<Ingredient, Boolean>());
+     public static final Ingredient field_193370_a = new Ingredient(new ItemStack[0])
+     {
+         public boolean apply(@Nullable ItemStack p_apply_1_)
+@@ -21,15 +23,19 @@
+         }
+     };
+     private final ItemStack[] field_193371_b;
+-    @SideOnly(Side.CLIENT)
+     private IntList field_194140_c;
+ 
++    protected Ingredient(int size)
++    {
++        this(new ItemStack[size]);
++    }
++
+     private Ingredient(ItemStack... p_i47503_1_)
+     {
+         this.field_193371_b = p_i47503_1_;
++        Ingredient.INSTANCES.add(this);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public ItemStack[] func_193365_a()
+     {
+         return this.field_193371_b;
+@@ -110,4 +116,16 @@
+ 
+         return this.field_194140_c;
+     }
++
++    public static void invalidateAll()
++    {
++        for (Ingredient ing : INSTANCES)
++            if (ing != null)
++                ing.invalidate();
++    }
++
++    protected void invalidate()
++    {
++        this.field_194140_c = null;
++    }
+ }

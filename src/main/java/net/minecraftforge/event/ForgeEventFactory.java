@@ -27,6 +27,7 @@ import java.util.Random;
 
 import com.google.common.base.Predicate;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -54,6 +55,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.village.Village;
 import net.minecraft.world.Explosion;
@@ -62,7 +64,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.loot.LootTable;
@@ -125,15 +127,6 @@ import javax.annotation.Nullable;
 public class ForgeEventFactory
 {
 
-    /**
-     * @deprecated Use {@link #onPlayerMultiBlockPlace(EntityPlayer, List, EnumFacing, EnumHand)} instead.
-     */
-    @Deprecated
-    public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction)
-    {
-        return onPlayerMultiBlockPlace(player, blockSnapshots, direction, null);
-    }
-
     public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction, @Nullable EnumHand hand)
     {
         BlockSnapshot snap = blockSnapshots.get(0);
@@ -141,15 +134,6 @@ public class ForgeEventFactory
         MultiPlaceEvent event = new MultiPlaceEvent(blockSnapshots, placedAgainst, player, hand);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
-    }
-
-    /**
-     * @deprecated Use {@link #onPlayerBlockPlace(EntityPlayer, BlockSnapshot, EnumFacing, EnumHand)} instead.
-     */
-    @Deprecated
-    public static PlaceEvent onPlayerBlockPlace(EntityPlayer player, BlockSnapshot blockSnapshot, EnumFacing direction)
-    {
-        return onPlayerBlockPlace(player, blockSnapshot, direction, EnumHand.MAIN_HAND);
     }
 
     public static PlaceEvent onPlayerBlockPlace(@Nonnull EntityPlayer player, @Nonnull BlockSnapshot blockSnapshot, @Nonnull EnumFacing direction, @Nonnull EnumHand hand)
@@ -254,17 +238,6 @@ public class ForgeEventFactory
         return event.getDisplayname();
     }
 
-    /**
-     * TODO remove in 1.12
-     */
-    @Deprecated
-    public static List<Predicate<Entity>> gatherEntitySelectors(Map<String, String> map, String mainSelector, ICommandSender sender, Vec3d position)
-    {
-        EntitySelectorEvent event=new EntitySelectorEvent(map, mainSelector, sender, position);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getSelectors();
-    }
-
     public static float fireBlockHarvesting(List<ItemStack> drops, World world, BlockPos pos, IBlockState state, int fortune, float dropChance, boolean silkTouch, EntityPlayer player)
     {
         BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
@@ -272,9 +245,9 @@ public class ForgeEventFactory
         return event.getDropChance();
     }
 
-    public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, boolean showAdvancedItemTooltips)
+    public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, ITooltipFlag flags)
     {
-        ItemTooltipEvent event = new ItemTooltipEvent(itemStack, entityPlayer, toolTip, showAdvancedItemTooltips);
+        ItemTooltipEvent event = new ItemTooltipEvent(itemStack, entityPlayer, toolTip, flags);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
@@ -343,7 +316,7 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static ITextComponent onClientChat(byte type, ITextComponent message)
+    public static ITextComponent onClientChat(ChatType type, ITextComponent message)
     {
         ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
@@ -368,14 +341,6 @@ public class ForgeEventFactory
         return 0;
     }
 
-    /**
-     * @deprecated Use {@link #onApplyBonemeal(EntityPlayer, World, BlockPos, IBlockState, ItemStack, EnumHand)} instead.
-     */
-    @Deprecated
-    public static int onApplyBonemeal(EntityPlayer player, World world, BlockPos pos, IBlockState state, ItemStack stack)
-    {
-        return onApplyBonemeal(player, world, pos, state, stack, null);
-    }
 
     public static int onApplyBonemeal(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull ItemStack stack, @Nullable EnumHand hand)
     {
@@ -580,15 +545,15 @@ public class ForgeEventFactory
     @Nullable
     public static CapabilityDispatcher gatherCapabilities(TileEntity tileEntity)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent.TileEntity(tileEntity), null);
+        return gatherCapabilities(new AttachCapabilitiesEvent<TileEntity>(TileEntity.class, tileEntity), null);
     }
 
     @Nullable
     public static CapabilityDispatcher gatherCapabilities(Entity entity)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent.Entity(entity), null);
+        return gatherCapabilities(new AttachCapabilitiesEvent<Entity>(Entity.class, entity), null);
     }
-    
+
     @Nullable
     public static CapabilityDispatcher gatherCapabilities(Village village)
     {
@@ -610,7 +575,7 @@ public class ForgeEventFactory
     @Nullable
     public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent.World(world), parent);
+        return gatherCapabilities(new AttachCapabilitiesEvent<World>(World.class, world), parent);
     }
 
     @Nullable
@@ -658,28 +623,9 @@ public class ForgeEventFactory
         return event.getResult() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
     }
 
-    /**
-     * @deprecated Use {@link #onChunkPopulate(boolean, IChunkGenerator, World, Random, int, int, boolean)}<br>
-     * The Random param should not be world.rand, it should be the same chunk-position-seeded rand used by the Chunk Provider.
-     */
-    @Deprecated
-    public static void onChunkPopulate(boolean pre, IChunkGenerator gen, World world, int x, int z, boolean hasVillageGenerated)
-    {
-        MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, world.rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, world.rand, x, z, hasVillageGenerated));
-    }
-
     public static void onChunkPopulate(boolean pre, IChunkGenerator gen, World world, Random rand, int x, int z, boolean hasVillageGenerated)
     {
         MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, rand, x, z, hasVillageGenerated));
-    }
-
-    /**
-     * @deprecated Use {@link #loadLootTable(ResourceLocation, LootTable, LootTableManager)}<br>
-     */
-    @Deprecated
-    public static LootTable loadLootTable(ResourceLocation name, LootTable table)
-    {
-        return loadLootTable(name, table, null);
     }
 
     public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTableManager lootTableManager)
@@ -705,7 +651,7 @@ public class ForgeEventFactory
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e);
         return e.getLevel();
     }
-    
+
     public static boolean onEntityDestroyBlock(EntityLivingBase entity, BlockPos pos, IBlockState state)
     {
         return !MinecraftForge.EVENT_BUS.post(new LivingDestroyBlockEvent(entity, pos, state));

@@ -9,7 +9,7 @@
  {
 +    @Deprecated // unused
      private static final ResourceLocation field_185177_b = new ResourceLocation("empty");
--    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = new RegistryNamespacedDefaultedByKey(field_185177_b);
+-    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = new RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType>(field_185177_b);
 +    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = net.minecraftforge.fml.common.registry.GameData.getPotionTypesRegistry();
      private static int field_185178_c;
      private final String field_185179_d;

@@ -12,7 +12,7 @@
                      {
                          this.func_175903_a(this.field_175946_l, blockpos, p_181631_3_);
                      }
-@@ -254,7 +254,7 @@
+@@ -269,7 +269,7 @@
              {
                  BlockPos blockpos1 = p_175936_1_.func_177963_a((double)(0.5F + (float)j * f), (double)(0.5F + (float)j * f1), (double)(0.5F + (float)j * f2));
  
@@ -21,7 +21,7 @@
                  {
                      return j;
                  }
-@@ -282,6 +282,7 @@
+@@ -297,6 +297,7 @@
  
          if (!this.func_76497_e())
          {
@@ -29,7 +29,7 @@
              return false;
          }
          else
-@@ -290,15 +291,18 @@
+@@ -305,15 +306,18 @@
              this.func_175941_b();
              this.func_175942_c();
              this.func_175939_d();

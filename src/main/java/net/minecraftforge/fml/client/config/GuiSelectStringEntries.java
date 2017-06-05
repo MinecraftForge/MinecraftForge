@@ -54,7 +54,7 @@ public class GuiSelectStringEntries extends GuiListExtended
         this.mc = mc;
         this.configElement = configElement;
         this.selectableValues = selectableValues;
-        this.setShowSelectionBox(true);
+        this.func_193651_b(true);
 
         listEntries = new ArrayList<IGuiSelectStringListEntry>();
 
@@ -173,7 +173,7 @@ public class GuiSelectStringEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
             owningList.mc.fontRendererObj.drawString(value.getValue(), x + 1, y, slotIndex == owningList.selectedIndex ? 16777215 : 14737632);
         }
@@ -195,7 +195,7 @@ public class GuiSelectStringEntries extends GuiListExtended
         }
 
         @Override
-        public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
+        public void func_192633_a(int p_192633_1_, int p_192633_2_, int p_192633_3_, float p_192633_4_){}
     }
 
     public static interface IGuiSelectStringListEntry extends GuiListExtended.IGuiListEntry

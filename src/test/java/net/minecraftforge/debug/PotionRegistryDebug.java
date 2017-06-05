@@ -3,9 +3,9 @@ package net.minecraftforge.debug;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -81,7 +81,7 @@ public class PotionRegistryDebug
             float a = (float) (potion.getLiquidColor() & 255) / 255.0F;
 
             Tessellator tessellator = Tessellator.getInstance();
-            VertexBuffer buf = tessellator.getBuffer();
+            BufferBuilder buf = tessellator.getBuffer();
             buf.begin(7, DefaultVertexFormats.POSITION_TEX);
             GlStateManager.color(r, g, b, a);
             buf.pos((double) x, (double) (y + height), 0.0D).tex(sprite.getMinU(), sprite.getMaxV()).endVertex();
@@ -110,7 +110,7 @@ public class PotionRegistryDebug
             float b = (float) (potion.getLiquidColor() >> 8 & 255) / 255.0F;
 
             Tessellator tessellator = Tessellator.getInstance();
-            VertexBuffer buf = tessellator.getBuffer();
+            BufferBuilder buf = tessellator.getBuffer();
             buf.begin(7, DefaultVertexFormats.POSITION_TEX);
             GlStateManager.color(r, g, b, alpha);
             buf.pos((double) x, (double) (y + height), 0.0D).tex(sprite.getMinU(), sprite.getMaxV()).endVertex();

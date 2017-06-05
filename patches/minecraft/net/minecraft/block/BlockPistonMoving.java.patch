@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonMoving.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonMoving.java
-@@ -115,7 +115,7 @@
+@@ -116,7 +116,7 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -9,7 +9,7 @@
          {
              TileEntityPiston tileentitypiston = this.func_185589_c(p_180653_1_, p_180653_2_);
  
-@@ -125,6 +125,7 @@
+@@ -126,6 +126,7 @@
                  iblockstate.func_177230_c().func_176226_b(p_180653_1_, p_180653_2_, iblockstate, 0);
              }
          }
@@ -17,11 +17,10 @@
      }
  
      @Nullable
-@@ -208,4 +209,16 @@
-     {
+@@ -210,6 +211,18 @@
          return new BlockStateContainer(this, new IProperty[] {field_176426_a, field_176425_b});
      }
-+
+ 
 +    @Override
 +    public java.util.List<net.minecraft.item.ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
@@ -33,4 +32,7 @@
 +        }
 +        return new java.util.ArrayList();
 +    }
- }
++
+     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
+     {
+         return BlockFaceShape.UNDEFINED;

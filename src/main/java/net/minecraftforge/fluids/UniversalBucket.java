@@ -104,8 +104,10 @@ public class UniversalBucket extends Item
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void getSubItems(@Nonnull Item itemIn, @Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
+    public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
     {
+        if (!this.func_194125_a(tab))
+            return;
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
         {
             if (fluid != FluidRegistry.WATER && fluid != FluidRegistry.LAVA && !fluid.getName().equals("milk"))

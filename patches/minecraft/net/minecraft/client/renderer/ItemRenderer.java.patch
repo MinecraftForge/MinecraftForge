@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-@@ -311,7 +311,7 @@
+@@ -312,7 +312,7 @@
          {
              ItemStack itemstack = abstractclientplayer.func_184607_cu();
  
@@ -9,7 +9,7 @@
              {
                  EnumHand enumhand1 = abstractclientplayer.func_184600_cs();
                  flag = enumhand1 == EnumHand.MAIN_HAND;
-@@ -328,6 +328,7 @@
+@@ -329,6 +329,7 @@
          {
              float f3 = enumhand == EnumHand.MAIN_HAND ? f : 0.0F;
              float f5 = 1.0F - (this.field_187470_g + (this.field_187469_f - this.field_187470_g) * p_78440_1_);
@@ -17,7 +17,7 @@
              this.func_187457_a(abstractclientplayer, p_78440_1_, f1, EnumHand.MAIN_HAND, f3, this.field_187467_d, f5);
          }
  
-@@ -335,6 +336,7 @@
+@@ -336,6 +337,7 @@
          {
              float f4 = enumhand == EnumHand.OFF_HAND ? f : 0.0F;
              float f6 = 1.0F - (this.field_187472_i + (this.field_187471_h - this.field_187472_i) * p_78440_1_);
@@ -25,7 +25,7 @@
              this.func_187457_a(abstractclientplayer, p_78440_1_, f1, EnumHand.OFF_HAND, f4, this.field_187468_e, f6);
          }
  
-@@ -355,7 +357,7 @@
+@@ -356,7 +358,7 @@
                  this.func_187456_a(p_187457_7_, p_187457_5_, enumhandside);
              }
          }
@@ -34,7 +34,7 @@
          {
              if (flag && this.field_187468_e.func_190926_b())
              {
-@@ -439,6 +441,7 @@
+@@ -440,6 +442,7 @@
          if (this.field_78455_a.field_71439_g.func_70094_T())
          {
              IBlockState iblockstate = this.field_78455_a.field_71441_e.func_180495_p(new BlockPos(this.field_78455_a.field_71439_g));
@@ -42,7 +42,7 @@
              EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
-@@ -452,11 +455,13 @@
+@@ -453,11 +456,13 @@
                  if (iblockstate1.func_191058_s())
                  {
                      iblockstate = iblockstate1;
@@ -53,10 +53,10 @@
              if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE)
              {
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
-                 this.func_178108_a(p_78447_1_, this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
+                 this.func_178108_a(this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
              }
          }
-@@ -465,11 +470,13 @@
+@@ -466,11 +471,13 @@
          {
              if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
              {
@@ -67,15 +67,15 @@
              if (this.field_78455_a.field_71439_g.func_70027_ad())
              {
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(field_78455_a.field_71439_g, p_78447_1_))
-                 this.func_78442_d(p_78447_1_);
+                 this.func_78442_d();
              }
          }
-@@ -591,8 +598,8 @@
+@@ -592,8 +599,8 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);
--            this.field_187469_f += MathHelper.func_76131_a((Objects.equal(this.field_187467_d, itemstack) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
--            this.field_187471_h += MathHelper.func_76131_a((float)(Objects.equal(this.field_187468_e, itemstack1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
+-            this.field_187469_f += MathHelper.func_76131_a((Objects.equals(this.field_187467_d, itemstack) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
+-            this.field_187471_h += MathHelper.func_76131_a((float)(Objects.equals(this.field_187468_e, itemstack1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
 +            this.field_187469_f += MathHelper.func_76131_a((!net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack, entityplayersp.field_71071_by.field_70461_c) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
 +            this.field_187471_h += MathHelper.func_76131_a((float)(!net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1, -1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
          }

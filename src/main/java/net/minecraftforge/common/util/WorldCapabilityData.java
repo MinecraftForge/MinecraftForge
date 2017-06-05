@@ -2,7 +2,7 @@ package net.minecraftforge.common.util;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.storage.WorldSavedData;
 
 public class WorldCapabilityData extends WorldSavedData
 {

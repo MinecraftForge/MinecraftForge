@@ -1,17 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
-@@ -130,17 +130,23 @@
+@@ -130,17 +130,21 @@
              {
                  if (iblockstate.func_177230_c() != Blocks.field_150397_co)
                  {
 -                    if (iblockstate.func_185891_c() >= 15 && iblockstate.func_177230_c() != Blocks.field_150357_h)
-+                    if (iblockstate.getLightOpacity(this.field_145850_b, blockpos$mutableblockpos) >= 15 && iblockstate.func_177230_c() != Blocks.field_150357_h)
++                    if (iblockstate.getLightOpacity(field_145850_b, blockpos$mutableblockpos) >= 15 && iblockstate.func_177230_c() != Blocks.field_150357_h)
                      {
                          this.field_146015_k = false;
                          this.field_174909_f.clear();
                          break;
                      }
- 
+-
 +                    float[] customColor = iblockstate.func_177230_c().getBeaconColorMultiplier(iblockstate, this.field_145850_b, blockpos$mutableblockpos, func_174877_v());
 +                    if (customColor != null)
 +                        afloat = customColor;
@@ -20,12 +20,12 @@
                      continue;
 +                    }
                  }
- 
+-
 +                else
-                 afloat = EntitySheep.func_175513_a((EnumDyeColor)iblockstate.func_177229_b(BlockStainedGlassPane.field_176245_a));
+                 afloat = ((EnumDyeColor)iblockstate.func_177229_b(BlockStainedGlassPane.field_176245_a)).func_193349_f();
              }
  
-@@ -181,7 +187,7 @@
+@@ -181,7 +185,7 @@
                      {
                          Block block = this.field_145850_b.func_180495_p(new BlockPos(j1, i2, k1)).func_177230_c();
  
@@ -34,7 +34,7 @@
                          {
                              flag1 = false;
                              break;
-@@ -383,7 +389,7 @@
+@@ -395,7 +399,7 @@
  
      public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
      {

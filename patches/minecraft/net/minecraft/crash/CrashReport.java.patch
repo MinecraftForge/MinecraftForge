@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
-@@ -114,6 +114,7 @@
+@@ -116,6 +116,7 @@
                  return IntCache.func_85144_b();
              }
          });
@@ -8,7 +8,7 @@
      }
  
      public String func_71501_a()
-@@ -203,6 +204,8 @@
+@@ -205,6 +206,8 @@
      {
          StringBuilder stringbuilder = new StringBuilder();
          stringbuilder.append("---- Minecraft Crash Report ----\n");

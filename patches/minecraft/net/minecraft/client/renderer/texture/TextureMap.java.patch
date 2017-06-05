@@ -48,19 +48,19 @@
          p_174943_2_.func_177059_a(this);
          this.func_110569_e();
          this.func_147631_c();
-@@ -89,12 +103,25 @@
+@@ -88,13 +102,25 @@
+         this.field_94258_i.clear();
          int j = Integer.MAX_VALUE;
          int k = 1 << this.field_147636_j;
- 
 +        net.minecraftforge.fml.common.FMLLog.info("Max texture size: %d", i);
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", skipFirst ? 0 : this.field_110574_e.size());
-+
+ 
 +        if(!skipFirst)
          for (Entry<String, TextureAtlasSprite> entry : this.field_110574_e.entrySet())
          {
-             TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)entry.getValue();
+             TextureAtlasSprite textureatlassprite = entry.getValue();
              ResourceLocation resourcelocation = this.func_184396_a(textureatlassprite);
-+            bar.step(resourcelocation.func_110623_a());
++            bar.step(resourcelocation.toString());
              IResource iresource = null;
  
 +            if (textureatlassprite.hasCustomLoader(p_110571_1_, resourcelocation))
@@ -74,31 +74,31 @@
              try
              {
                  PngSizeInfo pngsizeinfo = PngSizeInfo.func_188532_a(p_110571_1_.func_110536_a(resourcelocation));
-@@ -104,12 +131,14 @@
+@@ -104,12 +130,14 @@
              }
              catch (RuntimeException runtimeexception)
              {
--                field_147635_d.error("Unable to parse metadata from {}", new Object[] {resourcelocation, runtimeexception});
-+                //LOGGER.error("Unable to parse metadata from {}", new Object[] {resourcelocation, runtimeexception});
+-                field_147635_d.error("Unable to parse metadata from {}", resourcelocation, runtimeexception);
++                //LOGGER.error("Unable to parse metadata from {}", resourcelocation, runtimeexception);
 +                net.minecraftforge.fml.client.FMLClientHandler.instance().trackBrokenTexture(resourcelocation, runtimeexception.getMessage());
                  continue;
              }
              catch (IOException ioexception)
              {
--                field_147635_d.error("Using missing texture, unable to load {}", new Object[] {resourcelocation, ioexception});
-+                //LOGGER.error("Using missing texture, unable to load {}", new Object[] {resourcelocation, ioexception});
+-                field_147635_d.error("Using missing texture, unable to load {}", resourcelocation, ioexception);
++                //LOGGER.error("Using missing texture, unable to load {}", resourcelocation, ioexception);
 +                net.minecraftforge.fml.client.FMLClientHandler.instance().trackMissingTexture(resourcelocation);
                  continue;
              }
              finally
-@@ -122,17 +151,18 @@
+@@ -122,17 +150,18 @@
  
-             if (lvt_11_2_ < k)
+             if (j1 < k)
              {
--                field_147635_d.warn("Texture {} with size {}x{} limits mip level from {} to {}", new Object[] {resourcelocation, Integer.valueOf(textureatlassprite.func_94211_a()), Integer.valueOf(textureatlassprite.func_94216_b()), Integer.valueOf(MathHelper.func_151239_c(k)), Integer.valueOf(MathHelper.func_151239_c(lvt_11_2_))});
--                k = lvt_11_2_;
+-                field_147635_d.warn("Texture {} with size {}x{} limits mip level from {} to {}", resourcelocation, Integer.valueOf(textureatlassprite.func_94211_a()), Integer.valueOf(textureatlassprite.func_94216_b()), Integer.valueOf(MathHelper.func_151239_c(k)), Integer.valueOf(MathHelper.func_151239_c(j1)));
+-                k = j1;
 +                // FORGE: do not lower the mipmap level, just log the problematic textures
-+                field_147635_d.warn("Texture {} with size {}x{} will have visual artifacts at mip level {}, it can only support level {}. Please report to the mod author that the texture should be some multiple of 16x16.", resourcelocation, textureatlassprite.func_94211_a(), textureatlassprite.func_94216_b(), MathHelper.func_151239_c(k), MathHelper.func_151239_c(lvt_11_2_));
++                field_147635_d.warn("Texture {} with size {}x{} will have visual artifacts at mip level {}, it can only support level {}. Please report to the mod author that the texture should be some multiple of 16x16.", resourcelocation, Integer.valueOf(textureatlassprite.func_94211_a()), Integer.valueOf(textureatlassprite.func_94216_b()), Integer.valueOf(MathHelper.func_151239_c(k)), Integer.valueOf(MathHelper.func_151239_c(j1)));
              }
  
              stitcher.func_110934_a(textureatlassprite);
@@ -109,11 +109,11 @@
          int i1 = MathHelper.func_151239_c(l);
  
 -        if (i1 < this.field_147636_j)
-+        if (false && i1 < this.field_147636_j) // FORGE: do not lower the mipmap level
++        if (false && i1 < this.field_147636_j)  // FORGE: do not lower the mipmap level
          {
-             field_147635_d.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", new Object[] {this.field_94254_c, Integer.valueOf(this.field_147636_j), Integer.valueOf(i1), Integer.valueOf(l)});
+             field_147635_d.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.field_94254_c, Integer.valueOf(this.field_147636_j), Integer.valueOf(i1), Integer.valueOf(l));
              this.field_147636_j = i1;
-@@ -140,9 +170,12 @@
+@@ -140,9 +169,12 @@
  
          this.field_94249_f.func_147963_d(this.field_147636_j);
          stitcher.func_110934_a(this.field_94249_f);
@@ -126,10 +126,10 @@
              stitcher.func_94305_f();
          }
          catch (StitcherException stitcherexception)
-@@ -151,11 +184,16 @@
+@@ -151,11 +183,16 @@
          }
  
-         field_147635_d.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.func_110935_a()), Integer.valueOf(stitcher.func_110936_b()), this.field_94254_c});
+         field_147635_d.info("Created: {}x{} {}-atlas", Integer.valueOf(stitcher.func_110935_a()), Integer.valueOf(stitcher.func_110936_b()), this.field_94254_c);
 +        bar.step("Allocating GL texture");
          TextureUtil.func_180600_a(this.func_110552_b(), this.field_147636_j, stitcher.func_110935_a(), stitcher.func_110936_b());
          Map<String, TextureAtlasSprite> map = Maps.<String, TextureAtlasSprite>newHashMap(this.field_110574_e);
@@ -143,7 +143,7 @@
              if (textureatlassprite1 == this.field_94249_f || this.func_184397_a(p_110571_1_, textureatlassprite1))
              {
                  String s = textureatlassprite1.func_94215_i();
-@@ -186,6 +224,13 @@
+@@ -186,6 +223,13 @@
          {
              textureatlassprite2.func_94217_a(this.field_94249_f);
          }
@@ -157,25 +157,25 @@
      }
  
      private boolean func_184397_a(IResourceManager p_184397_1_, final TextureAtlasSprite p_184397_2_)
-@@ -195,7 +240,7 @@
-         label9:
+@@ -195,7 +239,7 @@
+         label62:
          {
              boolean flag;
 -
-+            if (p_184397_2_.hasCustomLoader(p_184397_1_, resourcelocation)) break label9;
++            if (p_184397_2_.hasCustomLoader(p_184397_1_, resourcelocation)) break label62;
              try
              {
                  iresource = p_184397_1_.func_110536_a(resourcelocation);
-@@ -292,7 +337,7 @@
+@@ -292,7 +336,7 @@
          }
          else
          {
--            TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.field_110574_e.get(p_174942_1_);
-+            TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.field_110574_e.get(p_174942_1_.toString());
+-            TextureAtlasSprite textureatlassprite = this.field_110574_e.get(p_174942_1_);
++            TextureAtlasSprite textureatlassprite = this.field_110574_e.get(p_174942_1_.toString());
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +363,48 @@
+@@ -318,4 +362,48 @@
      {
          return this.field_94249_f;
      }

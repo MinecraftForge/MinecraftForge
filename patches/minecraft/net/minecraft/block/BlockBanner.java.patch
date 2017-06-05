@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockBanner.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockBanner.java
-@@ -89,16 +89,9 @@
+@@ -90,16 +90,9 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -17,8 +17,8 @@
      }
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
-@@ -120,6 +113,25 @@
-         }
+@@ -126,6 +119,25 @@
+         return BlockFaceShape.UNDEFINED;
      }
  
 +    @Override

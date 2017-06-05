@@ -10,9 +10,9 @@
 -    private final Biome[] field_151620_f = new Biome[] {Biomes.field_76774_n, Biomes.field_76774_n, Biomes.field_76774_n, Biomes.field_150584_S};
 +    @SuppressWarnings("unchecked")
 +    private java.util.List<net.minecraftforge.common.BiomeManager.BiomeEntry>[] biomes = new java.util.ArrayList[net.minecraftforge.common.BiomeManager.BiomeType.values().length];
-     private final ChunkProviderSettings field_175973_g;
+     private final ChunkGeneratorSettings field_175973_g;
  
-     public GenLayerBiome(long p_i45560_1_, GenLayer p_i45560_3_, WorldType p_i45560_4_, ChunkProviderSettings p_i45560_5_)
+     public GenLayerBiome(long p_i45560_1_, GenLayer p_i45560_3_, WorldType p_i45560_4_, ChunkGeneratorSettings p_i45560_5_)
 @@ -18,9 +16,30 @@
          super(p_i45560_1_);
          this.field_75909_a = p_i45560_3_;

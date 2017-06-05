@@ -7,9 +7,9 @@
 -    private final BlockRendererDispatcher field_178462_c = Minecraft.func_71410_x().func_175602_ab();
 +    private BlockRendererDispatcher field_178462_c;
  
-     public void func_180535_a(TileEntityPiston p_180535_1_, double p_180535_2_, double p_180535_4_, double p_180535_6_, float p_180535_8_, int p_180535_9_)
+     public void func_192841_a(TileEntityPiston p_192841_1_, double p_192841_2_, double p_192841_4_, double p_192841_6_, float p_192841_8_, int p_192841_9_, float p_192841_10_)
      {
-+        if(field_178462_c == null) field_178462_c = Minecraft.func_71410_x().func_175602_ab();
-         BlockPos blockpos = p_180535_1_.func_174877_v();
-         IBlockState iblockstate = p_180535_1_.func_174927_b();
++        if (field_178462_c == null) field_178462_c = Minecraft.func_71410_x().func_175602_ab(); //Forge: Delay this from constructor to allow us to change it later
+         BlockPos blockpos = p_192841_1_.func_174877_v();
+         IBlockState iblockstate = p_192841_1_.func_174927_b();
          Block block = iblockstate.func_177230_c();

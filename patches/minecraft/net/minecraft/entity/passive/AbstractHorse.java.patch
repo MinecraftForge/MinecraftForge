@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/AbstractHorse.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/AbstractHorse.java
-@@ -310,6 +310,7 @@
+@@ -312,6 +312,7 @@
  
          this.field_110296_bG.func_110134_a(this);
          this.func_110232_cE();
@@ -8,7 +8,7 @@
      }
  
      protected void func_110232_cE()
-@@ -1219,4 +1220,22 @@
+@@ -1227,4 +1228,22 @@
  
          return p_180482_2_;
      }

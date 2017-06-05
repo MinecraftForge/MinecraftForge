@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntitySheep.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntitySheep.java
-@@ -45,7 +45,7 @@
+@@ -46,7 +46,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,7 +9,7 @@
  {
      private static final DataParameter<Byte> field_184774_bv = EntityDataManager.<Byte>func_187226_a(EntitySheep.class, DataSerializers.field_187191_a);
      private final InventoryCrafting field_90016_e = new InventoryCrafting(new Container()
-@@ -180,7 +180,7 @@
+@@ -189,7 +189,7 @@
      {
          ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
  
@@ -18,11 +18,10 @@
          {
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -369,4 +369,19 @@
-         field_175514_bm.put(EnumDyeColor.RED, new float[] {0.6F, 0.2F, 0.2F});
-         field_175514_bm.put(EnumDyeColor.BLACK, new float[] {0.1F, 0.1F, 0.1F});
+@@ -364,6 +364,21 @@
+         return p_180482_2_;
      }
-+
+ 
 +    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos){ return !this.func_70892_o() && !this.func_70631_g_(); }
 +    @Override
 +    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
@@ -37,4 +36,7 @@
 +        this.func_184185_a(SoundEvents.field_187763_eJ, 1.0F, 1.0F);
 +        return ret;
 +    }
- }
++
+     private EnumDyeColor func_175511_a(EntityAnimal p_175511_1_, EntityAnimal p_175511_2_)
+     {
+         int i = ((EntitySheep)p_175511_1_).func_175509_cj().func_176767_b();
