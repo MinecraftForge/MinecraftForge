@@ -9,25 +9,25 @@
      public World field_73092_a;
      public EntityPlayerMP field_73090_b;
      private GameType field_73091_c = GameType.NOT_SET;
-@@ -89,7 +91,7 @@
+@@ -88,7 +90,7 @@
+             int i = this.field_73100_i - this.field_73093_n;
              IBlockState iblockstate = this.field_73092_a.func_180495_p(this.field_180241_i);
-             Block block = iblockstate.func_177230_c();
  
 -            if (iblockstate.func_185904_a() == Material.field_151579_a)
-+            if (block.isAir(iblockstate, field_73092_a, field_180241_i))
++            if (iblockstate.func_177230_c().isAir(iblockstate, field_73092_a, field_180241_i))
              {
                  this.field_73097_j = false;
              }
-@@ -116,7 +118,7 @@
+@@ -114,7 +116,7 @@
+         {
              IBlockState iblockstate1 = this.field_73092_a.func_180495_p(this.field_180240_f);
-             Block block1 = iblockstate1.func_177230_c();
  
 -            if (iblockstate1.func_185904_a() == Material.field_151579_a)
-+            if (block1.isAir(iblockstate1, field_73092_a, field_180240_f))
++            if (iblockstate1.func_177230_c().isAir(iblockstate1, field_73092_a, field_180240_f))
              {
                  this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
                  this.field_73094_o = -1;
-@@ -125,7 +127,7 @@
+@@ -123,7 +125,7 @@
              else
              {
                  int k = this.field_73100_i - this.field_73089_e;
@@ -36,7 +36,7 @@
                  int l = (int)(f1 * 10.0F);
  
                  if (l != this.field_73094_o)
-@@ -139,6 +141,15 @@
+@@ -137,6 +139,15 @@
  
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
@@ -52,7 +52,7 @@
          if (this.func_73083_d())
          {
              if (!this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_))
-@@ -174,17 +185,36 @@
+@@ -172,17 +183,36 @@
                  }
              }
  
@@ -93,7 +93,7 @@
              {
                  this.func_180237_b(p_180784_1_);
              }
-@@ -206,7 +236,7 @@
+@@ -204,7 +234,7 @@
              int i = this.field_73100_i - this.field_73089_e;
              IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180785_1_);
  
@@ -102,7 +102,7 @@
              {
                  float f = iblockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_180785_1_) * (float)(i + 1);
  
-@@ -235,13 +265,17 @@
+@@ -233,13 +263,17 @@
  
      private boolean func_180235_c(BlockPos p_180235_1_)
      {
@@ -124,7 +124,7 @@
          }
  
          return flag;
-@@ -249,7 +283,8 @@
+@@ -247,7 +281,8 @@
  
      public boolean func_180237_b(BlockPos p_180237_1_)
      {
@@ -134,7 +134,7 @@
          {
              return false;
          }
-@@ -266,53 +301,41 @@
+@@ -264,53 +299,41 @@
              }
              else
              {
@@ -200,7 +200,7 @@
                  return flag1;
              }
          }
-@@ -330,8 +353,11 @@
+@@ -328,8 +351,11 @@
          }
          else
          {
@@ -210,9 +210,9 @@
              int j = p_187250_3_.func_77960_j();
 +            ItemStack copyBeforeUse = p_187250_3_.func_77946_l();
              ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-             ItemStack itemstack = (ItemStack)actionresult.func_188398_b();
+             ItemStack itemstack = actionresult.func_188398_b();
  
-@@ -359,6 +385,7 @@
+@@ -357,6 +383,7 @@
  
                  if (itemstack.func_190926_b())
                  {
@@ -220,7 +220,7 @@
                      p_187250_1_.func_184611_a(p_187250_4_, ItemStack.field_190927_a);
                  }
  
-@@ -404,13 +431,23 @@
+@@ -402,13 +429,23 @@
          }
          else
          {
@@ -247,7 +247,7 @@
                  }
              }
  
-@@ -438,14 +475,22 @@
+@@ -436,14 +473,22 @@
                  {
                      int j = p_187251_3_.func_77960_j();
                      int i = p_187251_3_.func_190916_E();
@@ -271,7 +271,7 @@
                  }
              }
          }
-@@ -455,4 +500,13 @@
+@@ -453,4 +498,13 @@
      {
          this.field_73092_a = p_73080_1_;
      }

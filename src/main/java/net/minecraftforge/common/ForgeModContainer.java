@@ -44,6 +44,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.crash.ICrashReportDetail;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
@@ -523,6 +524,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         OreDictionary.rebakeMap();
         StatList.reinit();
+        Ingredient.invalidateAll();
     }
 
 

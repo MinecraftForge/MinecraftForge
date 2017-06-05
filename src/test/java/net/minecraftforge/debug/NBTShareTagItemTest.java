@@ -39,7 +39,7 @@ public class NBTShareTagItemTest
         NBTTagCompound craftedNBT = new NBTTagCompound();
         craftedNBT.setBoolean("crafted", true);
         crafted.setTagCompound(craftedNBT);
-        CraftingManager.getInstance().addShapelessRecipe(crafted, new ItemStack(Items.STICK));
+        //CraftingManager.getInstance().addShapelessRecipe(crafted, new ItemStack(Items.STICK));
     }
 
     public static class ShareTagItem extends Item
@@ -61,9 +61,11 @@ public class NBTShareTagItemTest
         }
 
         @Override
-        public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
+        public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
         {
-            ItemStack creativeMenuItem = new ItemStack(itemIn);
+            if (!this.func_194125_a(tab))
+                return;
+            ItemStack creativeMenuItem = new ItemStack(this);
             NBTTagCompound creativeMenuNBT = new NBTTagCompound();
             creativeMenuNBT.setBoolean("creativeMenu", true);
             creativeMenuItem.setTagCompound(creativeMenuNBT);

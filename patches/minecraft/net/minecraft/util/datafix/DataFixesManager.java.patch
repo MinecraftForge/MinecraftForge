@@ -1,9 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/util/datafix/DataFixesManager.java
 +++ ../src-work/minecraft/net/minecraft/util/datafix/DataFixesManager.java
-@@ -161,6 +161,7 @@
+@@ -165,6 +165,7 @@
      public static DataFixer func_188279_a()
      {
-         DataFixer datafixer = new DataFixer(922);
+         DataFixer datafixer = new DataFixer(1139);
 +        datafixer = new net.minecraftforge.common.util.CompoundDataFixer(datafixer);
          WorldInfo.func_189967_a(datafixer);
          EntityPlayerMP.func_191522_a(datafixer);

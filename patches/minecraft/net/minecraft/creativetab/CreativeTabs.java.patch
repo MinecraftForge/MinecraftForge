@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/creativetab/CreativeTabs.java
 +++ ../src-work/minecraft/net/minecraft/creativetab/CreativeTabs.java
-@@ -122,8 +122,22 @@
-     private EnumEnchantmentType[] field_111230_s;
+@@ -131,8 +131,22 @@
+     private EnumEnchantmentType[] field_111230_s = new EnumEnchantmentType[0];
      private ItemStack field_151245_t;
  
 +    public CreativeTabs(String label)
@@ -23,7 +23,7 @@
          this.field_78033_n = p_i1853_1_;
          this.field_78034_o = p_i1853_2_;
          this.field_151245_t = ItemStack.field_190927_a;
-@@ -201,12 +215,20 @@
+@@ -210,12 +224,20 @@
      @SideOnly(Side.CLIENT)
      public int func_78020_k()
      {
@@ -44,28 +44,8 @@
          return this.field_78033_n < 6;
      }
  
-@@ -248,10 +270,17 @@
-     {
-         for (Item item : Item.field_150901_e)
-         {
--            if (item != null && item.func_77640_w() == this)
-+            if (item == null)
-             {
--                item.func_150895_a(item, this, p_78018_1_);
-+                continue;
-             }
-+            for (CreativeTabs tab : item.getCreativeTabs())
-+            {
-+                if (tab == this)
-+                {
-+                    item.func_150895_a(item, this, p_78018_1_);
-+                }
-+            }
-         }
- 
-         if (this.func_111225_m() != null)
-@@ -284,4 +313,39 @@
-             }
+@@ -262,4 +284,39 @@
+             item.func_150895_a(this, p_78018_1_);
          }
      }
 +

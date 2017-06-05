@@ -24,7 +24,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -201,7 +201,7 @@ public class GuiUtils
         float uScale = 1f / 0x100;
         float vScale = 1f / 0x100;
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer wr = tessellator.getBuffer();
+        BufferBuilder wr = tessellator.getBuffer();
         wr.begin(7, DefaultVertexFormats.POSITION_TEX);
         wr.pos(x        , y + height, zLevel).tex( u          * uScale, ((v + height) * vScale)).endVertex();
         wr.pos(x + width, y + height, zLevel).tex((u + width) * uScale, ((v + height) * vScale)).endVertex();
@@ -215,14 +215,14 @@ public class GuiUtils
 
     /**
      * Must be called from {@code GuiScreen.renderToolTip} before {@code GuiScreen.drawHoveringText} is called.
-     * 
+     *
      * @param stack The stack for which a tooltip is about to be drawn.
      */
     public static void preItemToolTip(@Nonnull ItemStack stack)
     {
         cachedTooltipStack = stack;
     }
-    
+
     /**
      * Must be called from {@code GuiScreen.renderToolTip} after {@code GuiScreen.drawHoveringText} is called.
      */
@@ -250,10 +250,10 @@ public class GuiUtils
     {
         drawHoveringText(cachedTooltipStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
     }
-    
+
     /**
      * Use this version if calling from somewhere where ItemStack context is available.
-     * 
+     *
      * @see #drawHoveringText(List, int, int, int, int, int, FontRenderer)
      */
     public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
@@ -270,7 +270,7 @@ public class GuiUtils
             screenHeight = event.getScreenHeight();
             maxTextWidth = event.getMaxWidth();
             font = event.getFontRenderer();
-            
+
             GlStateManager.disableRescaleNormal();
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableLighting();
@@ -382,7 +382,7 @@ public class GuiUtils
 
             MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(stack, textLines, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
             int tooltipTop = tooltipY;
-            
+
             for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber)
             {
                 String line = textLines.get(lineNumber);
@@ -423,12 +423,12 @@ public class GuiUtils
         GlStateManager.shadeModel(7425);
 
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer vertexbuffer = tessellator.getBuffer();
-        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        vertexbuffer.pos(right, top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-        vertexbuffer.pos(left, top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-        vertexbuffer.pos(left, bottom, zLevel).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-        vertexbuffer.pos(right, bottom, zLevel).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        buffer.pos(right, top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+        buffer.pos(left, top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+        buffer.pos(left, bottom, zLevel).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+        buffer.pos(right, bottom, zLevel).color(endRed, endGreen, endBlue, endAlpha).endVertex();
         tessellator.draw();
 
         GlStateManager.shadeModel(7424);

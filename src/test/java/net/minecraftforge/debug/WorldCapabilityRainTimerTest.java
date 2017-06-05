@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
@@ -41,9 +42,9 @@ public class WorldCapabilityRainTimerTest
     public static class NormalEventHandler
     {
         @SubscribeEvent
-        public void attatchTimer(AttachCapabilitiesEvent.World event)
+        public void attatchTimer(AttachCapabilitiesEvent<World> event)
         {
-            if (!event.getWorld().isRemote && !event.getWorld().provider.hasNoSky())
+            if (!event.getObject().isRemote && !event.getObject().provider.hasNoSky())
             {
                 event.addCapability(new ResourceLocation(MODID, "rainTimer"), new RainTimerProvider());
             }

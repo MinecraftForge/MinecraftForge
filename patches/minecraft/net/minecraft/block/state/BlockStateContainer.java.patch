@@ -49,9 +49,9 @@
              public Collection < IProperty<? >> func_177227_a()
              {
                  return Collections. < IProperty<? >> unmodifiableCollection(this.field_177237_b.keySet());
-@@ -468,5 +485,86 @@
+@@ -473,5 +490,86 @@
              {
-                 return this.field_177239_a.func_176214_u(this);
+                 return this.field_177239_a.func_193383_a(p_193401_1_, this, p_193401_2_, p_193401_3_);
              }
 +
 +            //Forge Start

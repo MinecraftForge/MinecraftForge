@@ -5,7 +5,7 @@
      private boolean func_145934_k()
      {
 +        if (1 == 1) return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145945_j, field_145945_j.get(3), field_145947_i); // divert to VanillaBrewingRegistry
-         ItemStack itemstack = (ItemStack)this.field_145945_j.get(3);
+         ItemStack itemstack = this.field_145945_j.get(3);
  
          if (itemstack.func_190926_b())
 @@ -181,19 +182,17 @@
@@ -13,11 +13,11 @@
      private void func_145940_l()
      {
 +        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(field_145945_j)) return;
-         ItemStack itemstack = (ItemStack)this.field_145945_j.get(3);
+         ItemStack itemstack = this.field_145945_j.get(3);
  
 -        for (int i = 0; i < 3; ++i)
 -        {
--            this.field_145945_j.set(i, PotionHelper.func_185212_d(itemstack, (ItemStack)this.field_145945_j.get(i)));
+-            this.field_145945_j.set(i, PotionHelper.func_185212_d(itemstack, this.field_145945_j.get(i)));
 -        }
 +        net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, field_145945_j.get(3), field_145947_i);
  
@@ -40,7 +40,7 @@
      }
  
      public static void func_189675_a(DataFixer p_189675_0_)
-@@ -289,12 +289,12 @@
+@@ -296,7 +296,7 @@
      {
          if (p_94041_1_ == 3)
          {
@@ -49,13 +49,16 @@
          }
          else
          {
-             Item item = p_94041_2_.func_77973_b();
--            return p_94041_1_ == 4 ? item == Items.field_151065_br : (item == Items.field_151068_bn || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.field_151069_bo) && this.func_70301_a(p_94041_1_) == ItemStack.field_190927_a;
-+            return p_94041_1_ == 4 ? item == Items.field_151065_br : net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_94041_2_) && this.func_70301_a(p_94041_1_).func_190926_b(); // FORGE - Fix MC-111753 Identity comparing with ItemStack.EMPTY
+@@ -308,7 +308,7 @@
+             }
+             else
+             {
+-                return (item == Items.field_151068_bn || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.field_151069_bo) && this.func_70301_a(p_94041_1_).func_190926_b();
++                return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_94041_2_) && this.func_70301_a(p_94041_1_).func_190926_b();
+             }
          }
      }
- 
-@@ -348,6 +348,26 @@
+@@ -377,6 +377,26 @@
          }
      }
  

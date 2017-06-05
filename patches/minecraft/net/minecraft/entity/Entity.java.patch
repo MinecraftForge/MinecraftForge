@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src-work/minecraft/net/minecraft/entity/Entity.java
-@@ -84,7 +84,7 @@
+@@ -85,7 +85,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,18 +9,18 @@
  {
      private static final Logger field_184243_a = LogManager.getLogger();
      private static final List<ItemStack> field_190535_b = Collections.<ItemStack>emptyList();
-@@ -175,6 +175,10 @@
+@@ -177,6 +177,10 @@
      private boolean field_184237_aG;
-     private double[] field_191505_aI;
+     private final double[] field_191505_aI;
      private long field_191506_aJ;
 +    /**
-+     * Setting this to true will prevent the world from calling {@link #onUpdate()} for this entity. 
++     * Setting this to true will prevent the world from calling {@link #onUpdate()} for this entity.
 +     */
 +    public boolean updateBlocked;
  
      public Entity(World p_i1582_1_)
      {
-@@ -197,7 +201,7 @@
+@@ -200,7 +204,7 @@
  
          if (p_i1582_1_ != null)
          {
@@ -29,7 +29,7 @@
          }
  
          this.field_70180_af = new EntityDataManager(this);
-@@ -208,8 +212,16 @@
+@@ -211,8 +215,16 @@
          this.field_70180_af.func_187214_a(field_184234_aB, Boolean.valueOf(false));
          this.field_70180_af.func_187214_a(field_189655_aD, Boolean.valueOf(false));
          this.func_70088_a();
@@ -46,7 +46,7 @@
      public int func_145782_y()
      {
          return this.field_145783_c;
-@@ -1034,7 +1046,7 @@
+@@ -1053,7 +1065,7 @@
  
      protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
      {
@@ -55,7 +55,7 @@
  
          if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
          {
-@@ -1243,12 +1255,12 @@
+@@ -1277,12 +1289,12 @@
              BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -72,15 +72,15 @@
              }
              else
              {
-@@ -1667,6 +1679,7 @@
+@@ -1707,6 +1719,7 @@
              {
                  p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
              }
 +            p_189511_1_.func_74757_a("UpdateBlocked", updateBlocked);
  
-             if (this.field_184236_aF.size() > 0)
+             if (!this.field_184236_aF.isEmpty())
              {
-@@ -1680,6 +1693,9 @@
+@@ -1720,6 +1733,9 @@
                  p_189511_1_.func_74782_a("Tags", nbttaglist);
              }
  
@@ -90,7 +90,7 @@
              this.func_70014_b(p_189511_1_);
  
              if (this.func_184207_aI())
-@@ -1786,7 +1802,11 @@
+@@ -1826,7 +1842,11 @@
              this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
              this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
              this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
@@ -102,7 +102,7 @@
              if (p_70020_1_.func_150297_b("Tags", 9))
              {
                  this.field_184236_aF.clear();
-@@ -1878,7 +1898,10 @@
+@@ -1918,7 +1938,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -114,7 +114,7 @@
              return entityitem;
          }
      }
-@@ -1945,6 +1968,7 @@
+@@ -1985,6 +2008,7 @@
              this.field_70159_w = 0.0D;
              this.field_70181_x = 0.0D;
              this.field_70179_y = 0.0D;
@@ -122,7 +122,7 @@
              this.func_70071_h_();
  
              if (this.func_184218_aH())
-@@ -1992,6 +2016,7 @@
+@@ -2032,6 +2056,7 @@
              }
          }
  
@@ -130,7 +130,7 @@
          if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this))
          {
              if (this.func_184218_aH())
-@@ -2027,6 +2052,7 @@
+@@ -2067,6 +2092,7 @@
          if (this.field_184239_as != null)
          {
              Entity entity = this.field_184239_as;
@@ -138,7 +138,7 @@
              this.field_184239_as = null;
              entity.func_184225_p(this);
          }
-@@ -2472,6 +2498,7 @@
+@@ -2511,6 +2537,7 @@
      {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
          {
@@ -146,7 +146,7 @@
              this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
              MinecraftServer minecraftserver = this.func_184102_h();
              int i = this.field_71093_bK;
-@@ -2565,7 +2592,7 @@
+@@ -2604,7 +2631,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -155,7 +155,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2862,6 +2889,184 @@
+@@ -2901,6 +2928,184 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  

@@ -41,7 +41,6 @@ import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.helpers.Integers;
 
 import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Lists;
@@ -58,7 +57,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
     private INetHandler netHandler;
     private NetworkDispatcher dispatcher;
     private static Multiset<String> badPackets = ConcurrentHashMultiset.create();
-    private static int packetCountWarning = Integers.parseInt(System.getProperty("fml.badPacketCounter", "100"), 100);
+    private static int packetCountWarning = Integer.parseInt(System.getProperty("fml.badPacketCounter", "100"));
 
     public FMLProxyPacket(SPacketCustomPayload original)
     {

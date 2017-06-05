@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagList.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagList.java
-@@ -8,7 +8,7 @@
+@@ -9,7 +9,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
  {
      private static final Logger field_179239_b = LogManager.getLogger();
      private List<NBTBase> field_74747_a = Lists.<NBTBase>newArrayList();
-@@ -282,4 +282,5 @@
+@@ -281,4 +281,5 @@
      {
          return this.field_74746_b;
      }

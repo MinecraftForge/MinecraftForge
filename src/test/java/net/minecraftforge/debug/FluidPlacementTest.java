@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -17,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -235,7 +237,7 @@ public class FluidPlacementTest
 
         @Override
         @SideOnly(Side.CLIENT)
-        public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+        public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced)
         {
             FluidStack fluid = getFluid(stack);
             if (fluid != null)
@@ -245,8 +247,10 @@ public class FluidPlacementTest
         }
 
         @Override
-        public void getSubItems(@Nonnull Item itemIn, @Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
+        public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
         {
+            if (!this.func_194125_a(tab))
+                return;
             Fluid[] fluids = new Fluid[]{FluidRegistry.WATER, FluidRegistry.LAVA, FiniteFluid.instance, ModelFluidDebug.TestFluid.instance};
             // add 16 variable fillings
             for (Fluid fluid : fluids)

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneWire.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneWire.java
-@@ -98,15 +98,15 @@
+@@ -99,15 +99,15 @@
          BlockPos blockpos = p_176341_2_.func_177972_a(p_176341_3_);
          IBlockState iblockstate = p_176341_1_.func_180495_p(p_176341_2_.func_177972_a(p_176341_3_));
  
@@ -19,13 +19,16 @@
                  {
                      if (iblockstate.func_185898_k())
                      {
-@@ -408,21 +408,16 @@
-         IBlockState iblockstate = p_176339_1_.func_180495_p(blockpos);
-         boolean flag = iblockstate.func_185915_l();
-         boolean flag1 = p_176339_1_.func_180495_p(p_176339_2_.func_177984_a()).func_185915_l();
--        return !flag1 && flag && func_176340_e(p_176339_1_, blockpos.func_177984_a()) ? true : (func_176343_a(iblockstate, p_176339_3_) ? true : (iblockstate.func_177230_c() == Blocks.field_150416_aS && iblockstate.func_177229_b(BlockRedstoneDiode.field_185512_D) == p_176339_3_ ? true : !flag && func_176340_e(p_176339_1_, blockpos.func_177977_b())));
-+        return !flag1 && flag && func_176340_e(p_176339_1_, blockpos.func_177984_a()) ? true : (canConnectTo(iblockstate, p_176339_3_, p_176339_1_, p_176339_2_) ? true : (iblockstate.func_177230_c() == Blocks.field_150416_aS && iblockstate.func_177229_b(BlockRedstoneDiode.field_185512_D) == p_176339_3_ ? true : !flag && func_176340_e(p_176339_1_, blockpos.func_177977_b())));
-     }
+@@ -414,7 +414,7 @@
+         {
+             return true;
+         }
+-        else if (func_176343_a(iblockstate, p_176339_3_))
++        else if (canConnectTo(iblockstate, p_176339_3_, p_176339_1_, p_176339_2_))
+         {
+             return true;
+         }
+@@ -430,16 +430,11 @@
  
      protected static boolean func_176340_e(IBlockAccess p_176340_0_, BlockPos p_176340_1_)
      {
@@ -34,7 +37,7 @@
      }
  
 -    protected static boolean func_176346_d(IBlockState p_176346_0_)
-+    protected static boolean canConnectTo(IBlockState p_176343_0_, @Nullable EnumFacing p_176343_1_, IBlockAccess world, BlockPos pos )
++    protected static boolean canConnectTo(IBlockState p_176343_0_, @Nullable EnumFacing p_176343_1_, IBlockAccess world, BlockPos pos)
      {
 -        return func_176343_a(p_176346_0_, (EnumFacing)null);
 -    }
@@ -44,12 +47,12 @@
          Block block = p_176343_0_.func_177230_c();
  
          if (block == Blocks.field_150488_af)
-@@ -436,7 +431,7 @@
+@@ -457,7 +452,7 @@
          }
          else
          {
--            return Blocks.field_190976_dk == p_176343_0_.func_177230_c() ? p_176343_1_ == p_176343_0_.func_177229_b(BlockObserver.field_176387_N) : p_176343_0_.func_185897_m() && p_176343_1_ != null;
-+            return Blocks.field_190976_dk == p_176343_0_.func_177230_c() ? p_176343_1_ == p_176343_0_.func_177229_b(BlockObserver.field_176387_N) : p_176343_0_.func_177230_c().canConnectRedstone(p_176343_0_, world, pos, p_176343_1_);
+-            return p_176343_0_.func_185897_m() && p_176343_1_ != null;
++            return p_176343_0_.func_177230_c().canConnectRedstone(p_176343_0_, world, pos, p_176343_1_);
          }
      }
  

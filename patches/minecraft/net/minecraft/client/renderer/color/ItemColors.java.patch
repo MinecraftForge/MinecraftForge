@@ -4,22 +4,22 @@
  @SideOnly(Side.CLIENT)
  public class ItemColors
  {
--    private final ObjectIntIdentityMap<IItemColor> field_186732_a = new ObjectIntIdentityMap(32);
+-    private final ObjectIntIdentityMap<IItemColor> field_186732_a = new ObjectIntIdentityMap<IItemColor>(32);
 +    // FORGE: Use RegistryDelegates as non-Vanilla item ids are not constant
 +    private final java.util.Map<net.minecraftforge.fml.common.registry.RegistryDelegate<Item>, IItemColor> itemColorMap = com.google.common.collect.Maps.newHashMap();
  
      public static ItemColors func_186729_a(final BlockColors p_186729_0_)
      {
-@@ -134,7 +135,7 @@
+@@ -142,7 +143,7 @@
  
      public int func_186728_a(ItemStack p_186728_1_, int p_186728_2_)
      {
--        IItemColor iitemcolor = (IItemColor)this.field_186732_a.func_148745_a(Item.field_150901_e.func_148757_b(p_186728_1_.func_77973_b()));
-+        IItemColor iitemcolor = (IItemColor)this.itemColorMap.get(p_186728_1_.func_77973_b().delegate);
+-        IItemColor iitemcolor = this.field_186732_a.func_148745_a(Item.field_150901_e.func_148757_b(p_186728_1_.func_77973_b()));
++        IItemColor iitemcolor = this.itemColorMap.get(p_186728_1_.func_77973_b().delegate);
          return iitemcolor == null ? -1 : iitemcolor.func_186726_a(p_186728_1_, p_186728_2_);
      }
  
-@@ -142,7 +143,9 @@
+@@ -150,7 +151,9 @@
      {
          for (Block block : p_186731_2_)
          {
@@ -30,7 +30,7 @@
          }
      }
  
-@@ -150,7 +153,9 @@
+@@ -158,7 +161,9 @@
      {
          for (Item item : p_186730_2_)
          {

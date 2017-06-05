@@ -18,11 +18,10 @@
          {
              this.func_184747_a(false);
              itemstack.func_77972_a(1, p_184645_1_);
-@@ -197,4 +197,12 @@
-     {
+@@ -198,6 +198,14 @@
          return SoundEvents.field_187801_fC;
      }
-+
+ 
 +    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos) { return this.func_184748_o(); }
 +    @Override
 +    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
@@ -30,4 +29,7 @@
 +        this.func_184747_a(false);
 +        return com.google.common.collect.Lists.newArrayList();
 +    }
- }
++
+     public void func_184724_a(boolean p_184724_1_)
+     {
+     }

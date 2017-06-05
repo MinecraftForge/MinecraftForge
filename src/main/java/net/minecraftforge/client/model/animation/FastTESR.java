@@ -25,7 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -36,10 +36,10 @@ import javax.annotation.Nonnull;
 public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T>
 {
     @Override
-    public final void renderTileEntityAt(@Nonnull T te, double x, double y, double z, float partialTicks, int destroyStage)
+    public final void func_192841_a(@Nonnull T te, double x, double y, double z, float partialTicks, int destroyStage, float partial)
     {
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer VertexBuffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -55,10 +55,10 @@ public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRe
             GlStateManager.shadeModel(GL11.GL_FLAT);
         }
 
-        VertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
-        renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, VertexBuffer);
-        VertexBuffer.setTranslation(0, 0, 0);
+        renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, partial, buffer);
+        buffer.setTranslation(0, 0, 0);
 
         tessellator.draw();
 
@@ -66,5 +66,5 @@ public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRe
     }
 
     @Override
-    public abstract void renderTileEntityFast(@Nonnull T te, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer VertexBuffer);
+    public abstract void renderTileEntityFast(@Nonnull T te, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer);
 }

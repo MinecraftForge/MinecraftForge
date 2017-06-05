@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/util/registry/RegistryNamespacedDefaultedByKey.java
 +++ ../src-work/minecraft/net/minecraft/util/registry/RegistryNamespacedDefaultedByKey.java
 @@ -63,4 +63,11 @@
-         V v = super.func_186801_a(p_186801_1_);
+         V v = (V)super.func_186801_a(p_186801_1_);
          return (V)(v == null ? this.field_148761_e : v);
      }
 +

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/ShulkerBoxRecipes.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/ShulkerBoxRecipes.java
+@@ -109,7 +109,6 @@
+                 return true;
+             }
+ 
+-            @SideOnly(Side.CLIENT)
+             public boolean func_194133_a(int p_194133_1_, int p_194133_2_)
+             {
+                 return p_194133_1_ * p_194133_2_ >= 2;

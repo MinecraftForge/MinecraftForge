@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -46,19 +46,11 @@
+@@ -49,24 +49,12 @@
          if (!itemstack.func_190926_b() && p_180614_1_.func_175151_a(p_180614_3_, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(this.field_150939_a, p_180614_3_, false, p_180614_5_, (Entity)null))
          {
              int i = this.func_77647_b(itemstack.func_77960_j());
@@ -10,20 +10,25 @@
 -            if (p_180614_2_.func_180501_a(p_180614_3_, iblockstate1, 11))
 +            if (placeBlockAt(itemstack, p_180614_1_, p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, iblockstate1))
              {
--                iblockstate1 = p_180614_2_.func_180495_p(p_180614_3_);
+                 iblockstate1 = p_180614_2_.func_180495_p(p_180614_3_);
 -
 -                if (iblockstate1.func_177230_c() == this.field_150939_a)
 -                {
 -                    func_179224_a(p_180614_2_, p_180614_1_, p_180614_3_, itemstack);
 -                    this.field_150939_a.func_180633_a(p_180614_2_, p_180614_3_, iblockstate1, p_180614_1_, itemstack);
+-
+-                    if (p_180614_1_ instanceof EntityPlayerMP)
+-                    {
+-                        CriteriaTriggers.field_193137_x.func_193173_a((EntityPlayerMP)p_180614_1_, p_180614_3_, itemstack);
+-                    }
 -                }
 -
 -                SoundType soundtype = this.field_150939_a.func_185467_w();
-+                SoundType soundtype = p_180614_2_.func_180495_p(p_180614_3_).func_177230_c().getSoundType(p_180614_2_.func_180495_p(p_180614_3_), p_180614_2_, p_180614_3_, p_180614_1_);
++                SoundType soundtype = iblockstate1.func_177230_c().getSoundType(iblockstate1, p_180614_2_, p_180614_3_, p_180614_1_);
                  p_180614_2_.func_184133_a(p_180614_1_, p_180614_3_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                  itemstack.func_190918_g(1);
              }
-@@ -119,7 +111,7 @@
+@@ -127,7 +115,7 @@
      {
          Block block = p_179222_1_.func_180495_p(p_179222_2_).func_177230_c();
  
@@ -32,7 +37,7 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
-@@ -164,4 +156,26 @@
+@@ -175,4 +163,29 @@
      {
          return this.field_150939_a;
      }
@@ -54,6 +59,9 @@
 +        {
 +            func_179224_a(world, player, pos, stack);
 +            this.field_150939_a.func_180633_a(world, pos, state, player, stack);
++
++            if (player instanceof EntityPlayerMP)
++                CriteriaTriggers.field_193137_x.func_193173_a((EntityPlayerMP)player, pos, stack);
 +        }
 +
 +        return true;

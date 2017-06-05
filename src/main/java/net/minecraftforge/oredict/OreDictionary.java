@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.minecraft.block.BlockPrismarine;
@@ -40,6 +41,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.common.MinecraftForge;
@@ -347,52 +349,67 @@ public class OreDictionary
             ItemStack.EMPTY //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
-        List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
-        List<IRecipe> recipesToRemove = new ArrayList<IRecipe>();
-        List<IRecipe> recipesToAdd = new ArrayList<IRecipe>();
-
+        int replaced = 0;
         // Search vanilla recipes for recipes to replace
-        for(Object obj : recipes)
+        for(IRecipe obj : CraftingManager.field_193380_a)
         {
-            if(obj.getClass() == ShapedRecipes.class)
+            if(obj.getClass() == ShapedRecipes.class || obj.getClass() == ShapelessRecipes.class)
             {
-                ShapedRecipes recipe = (ShapedRecipes)obj;
-                ItemStack output = recipe.getRecipeOutput();
+                ItemStack output = obj.getRecipeOutput();
                 if (!output.isEmpty() && containsMatch(false, exclusions, output))
                 {
                     continue;
                 }
 
-                if(containsMatch(true, recipe.recipeItems, replaceStacks))
+                NonNullList<Ingredient> lst = obj.func_192400_c();
+                for (int x = 0; x < lst.size(); x++)
                 {
-                    recipesToRemove.add(recipe);
-                    recipesToAdd.add(new ShapedOreRecipe(recipe, replacements));
-                }
-            }
-            else if(obj.getClass() == ShapelessRecipes.class)
-            {
-                ShapelessRecipes recipe = (ShapelessRecipes)obj;
-                ItemStack output = recipe.getRecipeOutput();
-                if (!output.isEmpty() && containsMatch(false, exclusions, output))
-                {
-                    continue;
-                }
+                    Ingredient ing = lst.get(x);
+                    ItemStack[] ingredients = ing.func_193365_a();
+                    String oreName = null;
+                    boolean skip = false;
 
-                if(containsMatch(true, recipe.recipeItems.toArray(new ItemStack[recipe.recipeItems.size()]), replaceStacks))
-                {
-                    recipesToRemove.add((IRecipe)obj);
-                    IRecipe newRecipe = new ShapelessOreRecipe(recipe, replacements);
-                    recipesToAdd.add(newRecipe);
+                    for (ItemStack stack : ingredients)
+                    {
+                        boolean matches = false;
+                        for (Entry<ItemStack, String> ent : replacements.entrySet())
+                        {
+                            if (itemMatches(ent.getKey(), stack, true))
+                            {
+                                matches = true;
+                                if (oreName != null && !oreName.equals(ent.getValue()))
+                                {
+                                    FMLLog.info("Invalid recipe found with multiple oredict ingredients in the same ingredient..."); //TODO: Write a dumper?
+                                    skip = true;
+                                    break;
+                                }
+                                else if (oreName == null)
+                                {
+                                    oreName = ent.getValue();
+                                    break;
+                                }
+                            }
+                        }
+                        if (!matches && oreName != null)
+                        {
+                            //TODO: Properly fix this, Broken recipe example: Beds
+                            //FMLLog.info("Invalid recipe found with ingredient that partially matches ore entries..."); //TODO: Write a dumper?
+                            skip = true;
+                        }
+                        if (skip)
+                            break;
+                    }
+                    if (!skip && oreName != null)
+                    {
+                        //Replace!
+                        lst.set(x, new OreIngredient(oreName));
+                        replaced++;
+                    }
                 }
             }
         }
 
-        recipes.removeAll(recipesToRemove);
-        recipes.addAll(recipesToAdd);
-        if (recipesToRemove.size() > 0)
-        {
-            FMLLog.info("Replaced %d ore recipes", recipesToRemove.size());
-        }
+        FMLLog.info("Replaced %d ore ingredients", replaced);
     }
 
     /**

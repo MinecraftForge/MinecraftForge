@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.animation;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 
 /**
@@ -60,6 +60,6 @@ public final class Event implements Comparable<Event>
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(getClass()).add("event", event).add("offset", offset).toString();
+        return MoreObjects.toStringHelper(getClass()).add("event", event).add("offset", offset).toString();
     }
 }

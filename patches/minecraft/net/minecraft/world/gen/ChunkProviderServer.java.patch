@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -36,6 +36,7 @@
+@@ -35,6 +35,7 @@
      public final IChunkLoader field_73247_e;
-     public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap(8192);
+     public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192);
      public final WorldServer field_73251_h;
 +    private Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
-@@ -86,20 +87,47 @@
+@@ -85,20 +86,47 @@
      @Nullable
      public Chunk func_186028_c(int p_186028_1_, int p_186028_2_)
      {
@@ -60,7 +60,7 @@
          return chunk;
      }
  
-@@ -225,6 +253,11 @@
+@@ -224,6 +252,11 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
@@ -72,7 +72,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -239,6 +272,11 @@
+@@ -238,6 +271,11 @@
                          this.func_73243_a(chunk);
                          this.field_73244_f.remove(olong);
                          ++i;

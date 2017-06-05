@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -131,15 +131,19 @@
+@@ -137,17 +137,20 @@
  
          if (itextureobject != null)
          {
@@ -12,10 +12,18 @@
      public void func_110549_a(IResourceManager p_110549_1_)
      {
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Reloading Texture Manager", this.field_110585_a.keySet().size(), true);
-         for (Entry<ResourceLocation, ITextureObject> entry : this.field_110585_a.entrySet())
+         Iterator<Entry<ResourceLocation, ITextureObject>> iterator = this.field_110585_a.entrySet().iterator();
+ 
+         while (iterator.hasNext())
          {
+             Entry<ResourceLocation, ITextureObject> entry = (Entry)iterator.next();
 +            bar.step(entry.getKey().toString());
-             this.func_110579_a((ResourceLocation)entry.getKey(), (ITextureObject)entry.getValue());
+             ITextureObject itextureobject = entry.getValue();
+ 
+             if (itextureobject == TextureUtil.field_111001_a)
+@@ -159,5 +162,6 @@
+                 this.func_110579_a(entry.getKey(), itextureobject);
+             }
          }
 +        net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }

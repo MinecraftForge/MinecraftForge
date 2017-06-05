@@ -1,6 +1,6 @@
---- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderHell.java
-+++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderHell.java
-@@ -78,6 +78,19 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorHell.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorHell.java
+@@ -77,6 +77,19 @@
          this.field_185946_g = new NoiseGeneratorOctaves(this.field_185954_p, 10);
          this.field_185947_h = new NoiseGeneratorOctaves(this.field_185954_p, 16);
          p_i45637_1_.func_181544_b(63);
@@ -20,7 +20,7 @@
      }
  
      public void func_185936_a(int p_185936_1_, int p_185936_2_, ChunkPrimer p_185936_3_)
-@@ -156,6 +169,7 @@
+@@ -155,6 +168,7 @@
  
      public void func_185937_b(int p_185937_1_, int p_185937_2_, ChunkPrimer p_185937_3_)
      {
@@ -28,7 +28,7 @@
          int i = this.field_185952_n.func_181545_F() + 1;
          double d0 = 0.03125D;
          this.field_73185_q = this.field_73177_m.func_76304_a(this.field_73185_q, p_185937_1_ * 16, p_185937_2_ * 16, 0, 16, 16, 1, 0.03125D, 0.03125D, 1.0D);
-@@ -278,6 +292,10 @@
+@@ -277,6 +291,10 @@
              p_185938_1_ = new double[p_185938_5_ * p_185938_6_ * p_185938_7_];
          }
  
@@ -39,7 +39,7 @@
          double d0 = 684.412D;
          double d1 = 2053.236D;
          this.field_73168_g = this.field_185946_g.func_76304_a(this.field_73168_g, p_185938_2_, p_185938_3_, p_185938_4_, p_185938_5_, 1, p_185938_7_, 1.0D, 0.0D, 1.0D);
-@@ -359,6 +377,7 @@
+@@ -358,6 +376,7 @@
      public void func_185931_b(int p_185931_1_, int p_185931_2_)
      {
          BlockFalling.field_149832_M = true;
@@ -47,7 +47,7 @@
          int i = p_185931_1_ * 16;
          int j = p_185931_2_ * 16;
          BlockPos blockpos = new BlockPos(i, 0, j);
-@@ -366,16 +385,20 @@
+@@ -365,16 +384,20 @@
          ChunkPos chunkpos = new ChunkPos(p_185931_1_, p_185931_2_);
          this.field_73172_c.func_175794_a(this.field_185952_n, this.field_185954_p, chunkpos);
  
@@ -68,7 +68,7 @@
          for (int j1 = 0; j1 < this.field_185954_p.nextInt(this.field_185954_p.nextInt(10) + 1); ++j1)
          {
              this.field_177469_u.func_180709_b(this.field_185952_n, this.field_185954_p, blockpos.func_177982_a(this.field_185954_p.nextInt(16) + 8, this.field_185954_p.nextInt(120) + 4, this.field_185954_p.nextInt(16) + 8));
-@@ -385,7 +408,13 @@
+@@ -384,7 +407,13 @@
          {
              this.field_177468_v.func_180709_b(this.field_185952_n, this.field_185954_p, blockpos.func_177982_a(this.field_185954_p.nextInt(16) + 8, this.field_185954_p.nextInt(128), this.field_185954_p.nextInt(16) + 8));
          }
@@ -82,17 +82,18 @@
          if (this.field_185954_p.nextBoolean())
          {
              this.field_177471_z.func_180709_b(this.field_185952_n, this.field_185954_p, blockpos.func_177982_a(this.field_185954_p.nextInt(16) + 8, this.field_185954_p.nextInt(128), this.field_185954_p.nextInt(16) + 8));
-@@ -395,7 +424,9 @@
+@@ -394,7 +423,10 @@
          {
              this.field_177465_A.func_180709_b(this.field_185952_n, this.field_185954_p, blockpos.func_177982_a(this.field_185954_p.nextInt(16) + 8, this.field_185954_p.nextInt(128), this.field_185954_p.nextInt(16) + 8));
          }
 +        }
  
++
 +        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(this.field_185952_n, this.field_185954_p, field_177467_w, blockpos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.QUARTZ))
          for (int l1 = 0; l1 < 16; ++l1)
          {
              this.field_177467_w.func_180709_b(this.field_185952_n, this.field_185954_p, blockpos.func_177982_a(this.field_185954_p.nextInt(16), this.field_185954_p.nextInt(108) + 10, this.field_185954_p.nextInt(16)));
-@@ -403,17 +434,22 @@
+@@ -402,17 +434,22 @@
  
          int i2 = this.field_185952_n.func_181545_F() / 2 + 1;
  

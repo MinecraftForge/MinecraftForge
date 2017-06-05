@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagString.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagString.java
-@@ -32,7 +32,7 @@
+@@ -29,7 +29,7 @@
      {
          p_152446_3_.func_152450_a(288L);
          this.field_74751_a = p_152446_1_.readUTF();
@@ -9,13 +9,3 @@
      }
  
      public byte func_74732_a()
-@@ -42,7 +42,8 @@
- 
-     public String toString()
-     {
--        return "\"" + this.field_74751_a.replace("\"", "\\\"") + "\"";
-+        // Forge: BugFix: Vanilla does a normal " -> \" conversion but doesn't escape \
-+        return "\"" + org.apache.commons.lang3.StringUtils.replaceEach(this.field_74751_a, new String[]{"\\","\""}, new String[]{"\\\\","\\\""}) + "\"";
-     }
- 
-     public NBTTagString func_74737_b()

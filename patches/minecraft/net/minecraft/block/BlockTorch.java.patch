@@ -1,47 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTorch.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTorch.java
-@@ -81,14 +81,14 @@
+@@ -82,18 +82,8 @@
  
      private boolean func_176594_d(World p_176594_1_, BlockPos p_176594_2_)
      {
+-        Block block = p_176594_1_.func_180495_p(p_176594_2_).func_177230_c();
+-        boolean flag = block == Blocks.field_185775_db || block == Blocks.field_150428_aP;
+-
 -        if (p_176594_1_.func_180495_p(p_176594_2_).func_185896_q())
+-        {
+-            return !flag;
+-        }
+-        else
+-        {
+-            boolean flag1 = block instanceof BlockFence || block == Blocks.field_150359_w || block == Blocks.field_150463_bK || block == Blocks.field_150399_cn;
+-            return flag1 && !flag;
+-        }
 +        IBlockState state = p_176594_1_.func_180495_p(p_176594_2_);
-+        if (state.isSideSolid(p_176594_1_, p_176594_2_, EnumFacing.UP))
-         {
-             return true;
-         }
-         else
-         {
--            Block block = p_176594_1_.func_180495_p(p_176594_2_).func_177230_c();
--            return block instanceof BlockFence || block == Blocks.field_150359_w || block == Blocks.field_150463_bK || block == Blocks.field_150399_cn;
-+            return state.func_177230_c().canPlaceTorchOnTop(state, p_176594_1_, p_176594_2_);
-         }
++        return state.func_177230_c().canPlaceTorchOnTop(state, p_176594_1_, p_176594_2_);
      }
  
-@@ -109,7 +109,7 @@
-     {
-         BlockPos blockpos = p_176595_2_.func_177972_a(p_176595_3_.func_176734_d());
-         boolean flag = p_176595_3_.func_176740_k().func_176722_c();
--        return flag && p_176595_1_.func_175677_d(blockpos, true) || p_176595_3_.equals(EnumFacing.UP) && this.func_176594_d(p_176595_1_, blockpos);
-+        return flag && p_176595_1_.isSideSolid(blockpos, p_176595_3_, true) || p_176595_3_.equals(EnumFacing.UP) && this.func_176594_d(p_176595_1_, blockpos);
-     }
- 
-     public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
-@@ -122,7 +122,7 @@
-         {
-             for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
-             {
--                if (p_180642_1_.func_175677_d(p_180642_2_.func_177972_a(enumfacing.func_176734_d()), true))
-+                if (p_180642_1_.isSideSolid(p_180642_2_.func_177972_a(enumfacing.func_176734_d()), enumfacing, true))
-                 {
-                     return this.func_176223_P().func_177226_a(field_176596_a, enumfacing);
-                 }
-@@ -155,7 +155,7 @@
-             EnumFacing enumfacing1 = enumfacing.func_176734_d();
-             boolean flag = false;
- 
--            if (enumfacing$axis.func_176722_c() && !p_176592_1_.func_175677_d(p_176592_2_.func_177972_a(enumfacing1), true))
-+            if (enumfacing$axis.func_176722_c() && !p_176592_1_.isSideSolid(p_176592_2_.func_177972_a(enumfacing1), enumfacing, true))
-             {
-                 flag = true;
-             }
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)

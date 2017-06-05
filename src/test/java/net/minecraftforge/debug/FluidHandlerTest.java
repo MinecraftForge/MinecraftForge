@@ -134,7 +134,7 @@ public class FluidHandlerTest
         {
             for (CreativeTabs tab : item.getCreativeTabs())
             {
-                item.getSubItems(item, tab, list);
+                item.getSubItems(tab, list);
             }
         }
         return list;

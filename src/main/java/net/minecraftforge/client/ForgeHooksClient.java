@@ -43,16 +43,17 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
+import net.minecraft.client.gui.BossInfoClient;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -87,7 +88,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.BossInfoLerping;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -566,7 +566,7 @@ public class ForgeHooksClient
         return ret;
     }
 
-    public static void putQuadColor(VertexBuffer renderer, BakedQuad quad, int color)
+    public static void putQuadColor(BufferBuilder renderer, BakedQuad quad, int color)
     {
         float cb = color & 0xFF;
         float cg = (color >>> 8) & 0xFF;
@@ -600,7 +600,7 @@ public class ForgeHooksClient
             TileEntitySpecialRenderer<?> r = TileEntityRendererDispatcher.instance.getSpecialRendererByClass(tileClass);
             if (r != null)
             {
-                r.renderTileEntityAt(null, 0, 0, 0, 0, -1);
+                r.func_192841_a(null, 0, 0, 0, 0, -1, 0.0F);
             }
         }
     }
@@ -730,7 +730,7 @@ public class ForgeHooksClient
         return new BlockFaceUV(new float[]{ uMin, vMin, uMax, vMax }, angle);
     }
 
-    public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(ScaledResolution res, BossInfoLerping bossInfo, int x, int y, int increment)
+    public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(ScaledResolution res, BossInfoClient bossInfo, int x, int y, int increment)
     {
         RenderGameOverlayEvent.BossInfo evt = new RenderGameOverlayEvent.BossInfo(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res),
                 BOSSINFO, bossInfo, x, y, increment);

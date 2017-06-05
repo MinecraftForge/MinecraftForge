@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
-@@ -212,6 +212,7 @@
+@@ -211,6 +211,7 @@
              {
                  this.func_175069_a(new ResourceLocation("shaders/post/invert.json"));
              }
@@ -8,7 +8,7 @@
          }
      }
  
-@@ -413,7 +414,7 @@
+@@ -412,7 +413,7 @@
  
                          if (d3 < d2 || d2 == 0.0D)
                          {
@@ -17,7 +17,7 @@
                              {
                                  if (d2 == 0.0D)
                                  {
-@@ -506,7 +507,7 @@
+@@ -505,7 +506,7 @@
                  f = f * 60.0F / 70.0F;
              }
  
@@ -26,7 +26,7 @@
          }
      }
  
-@@ -570,14 +571,8 @@
+@@ -569,14 +570,8 @@
              {
                  BlockPos blockpos = new BlockPos(entity);
                  IBlockState iblockstate = this.field_78531_r.field_71441_e.func_180495_p(blockpos);
@@ -42,7 +42,7 @@
                  GlStateManager.func_179114_b(entity.field_70126_B + (entity.field_70177_z - entity.field_70126_B) * p_78467_1_ + 180.0F, 0.0F, -1.0F, 0.0F);
                  GlStateManager.func_179114_b(entity.field_70127_C + (entity.field_70125_A - entity.field_70127_C) * p_78467_1_, -1.0F, 0.0F, 0.0F);
              }
-@@ -644,17 +639,20 @@
+@@ -643,17 +638,20 @@
  
          if (!this.field_78531_r.field_71474_y.field_74325_U)
          {
@@ -70,7 +70,7 @@
          }
  
          GlStateManager.func_179109_b(0.0F, -f, 0.0F);
-@@ -772,6 +770,7 @@
+@@ -771,6 +769,7 @@
  
              boolean flag = this.field_78531_r.func_175606_aa() instanceof EntityLivingBase && ((EntityLivingBase)this.field_78531_r.func_175606_aa()).func_70608_bn();
  
@@ -93,8 +93,8 @@
  
                  try
                  {
--                    this.field_78531_r.field_71462_r.func_73863_a(k1, l1, p_181560_1_);
-+                    net.minecraftforge.client.ForgeHooksClient.drawScreen(this.field_78531_r.field_71462_r, k1, l1, p_181560_1_);
+-                    this.field_78531_r.field_71462_r.func_73863_a(k1, l1, this.field_78531_r.func_193989_ak());
++                    net.minecraftforge.client.ForgeHooksClient.drawScreen(this.field_78531_r.field_71462_r, k1, l1, this.field_78531_r.func_193989_ak());
                  }
                  catch (Throwable throwable)
                  {

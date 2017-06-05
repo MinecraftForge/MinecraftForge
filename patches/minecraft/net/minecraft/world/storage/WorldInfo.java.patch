@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
-@@ -64,8 +64,9 @@
+@@ -63,8 +63,9 @@
      private double field_176153_H = 0.2D;
      private int field_176154_I = 5;
      private int field_176155_J = 15;
@@ -11,7 +11,7 @@
  
      protected WorldInfo()
      {
-@@ -252,7 +253,7 @@
+@@ -251,7 +252,7 @@
  
              for (String s : nbttagcompound1.func_150296_c())
              {
@@ -20,28 +20,28 @@
              }
          }
      }
-@@ -335,6 +336,7 @@
+@@ -334,6 +335,7 @@
          nbttagcompound.func_74757_a("Snapshot", false);
          p_76064_1_.func_74782_a("Version", nbttagcompound);
-         p_76064_1_.func_74768_a("DataVersion", 922);
+         p_76064_1_.func_74768_a("DataVersion", 1139);
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(p_76064_1_);
          p_76064_1_.func_74772_a("RandomSeed", this.field_76100_a);
          p_76064_1_.func_74778_a("generatorName", this.field_76098_b.func_77127_a());
          p_76064_1_.func_74768_a("generatorVersion", this.field_76098_b.func_77131_c());
-@@ -377,9 +379,10 @@
+@@ -376,9 +378,10 @@
          p_76064_1_.func_74782_a("GameRules", this.field_82577_x.func_82770_a());
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
  
 -        for (Entry<DimensionType, NBTTagCompound> entry : this.field_186348_N.entrySet())
 +        for (Entry<Integer, NBTTagCompound> entry : this.field_186348_N.entrySet())
          {
--            nbttagcompound1.func_74782_a(String.valueOf(((DimensionType)entry.getKey()).func_186068_a()), (NBTBase)entry.getValue());
-+            if (entry.getValue() == null || entry.getValue().func_82582_d()) continue;
-+            nbttagcompound1.func_74782_a(String.valueOf(entry.getKey()), (NBTBase)entry.getValue());
+-            nbttagcompound1.func_74782_a(String.valueOf(((DimensionType)entry.getKey()).func_186068_a()), entry.getValue());
++            if (entry.getValue() != null || entry.getValue().func_82582_d()) continue;
++            nbttagcompound1.func_74782_a(String.valueOf(entry.getKey()), entry.getValue());
          }
  
          p_76064_1_.func_74782_a("DimensionData", nbttagcompound1);
-@@ -709,6 +712,7 @@
+@@ -708,6 +711,7 @@
  
      public void func_176144_a(EnumDifficulty p_176144_1_)
      {
@@ -49,10 +49,10 @@
          this.field_176158_z = p_176144_1_;
      }
  
-@@ -807,17 +811,49 @@
+@@ -805,18 +809,49 @@
+             }
          });
      }
- 
 +    /**
 +     * Allow access to additional mod specific world based properties
 +     * Used by FML to store mod list associated with a world, and maybe an id map
@@ -67,7 +67,7 @@
 +            this.additionalProperties = additionalProperties;
 +        }
 +    }
-+
+ 
 +    public net.minecraft.nbt.NBTBase getAdditionalProperty(String additionalProperty)
 +    {
 +        return this.additionalProperties!=null? this.additionalProperties.get(additionalProperty) : null;
@@ -76,12 +76,12 @@
 +    @Deprecated //Use the int version below, and pass in dimension id NOT TYPE id
      public NBTTagCompound func_186347_a(DimensionType p_186347_1_)
      {
--        NBTTagCompound nbttagcompound = (NBTTagCompound)this.field_186348_N.get(p_186347_1_);
+-        NBTTagCompound nbttagcompound = this.field_186348_N.get(p_186347_1_);
 +        return getDimensionData(p_186347_1_.func_186068_a());
 +    }
-+    public NBTTagCompound getDimensionData(int dimensionID)
++    public NBTTagCompound getDimensionData(int dimensionIn)
 +    {
-+        NBTTagCompound nbttagcompound = (NBTTagCompound)this.field_186348_N.get(dimensionID);
++        NBTTagCompound nbttagcompound = this.field_186348_N.get(dimensionIn);
          return nbttagcompound == null ? new NBTTagCompound() : nbttagcompound;
      }
  

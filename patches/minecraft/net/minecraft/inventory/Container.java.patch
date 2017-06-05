@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Container.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Container.java
-@@ -578,18 +578,19 @@
+@@ -603,18 +603,19 @@
                  if (!itemstack.func_190926_b() && itemstack.func_77973_b() == p_75135_1_.func_77973_b() && (!p_75135_1_.func_77981_g() || p_75135_1_.func_77960_j() == itemstack.func_77960_j()) && ItemStack.func_77970_a(p_75135_1_, itemstack))
                  {
                      int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
@@ -24,7 +24,7 @@
                          slot.func_75218_e();
                          flag = true;
                      }
-@@ -708,7 +709,7 @@
+@@ -752,7 +753,7 @@
                  p_94525_2_.func_190920_e(1);
                  break;
              case 2:

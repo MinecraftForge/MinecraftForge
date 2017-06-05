@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/Biome.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/Biome.java
-@@ -53,7 +53,7 @@
+@@ -50,7 +50,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,16 +9,16 @@
  {
      private static final Logger field_150586_aC = LogManager.getLogger();
      protected static final IBlockState field_185365_a = Blocks.field_150348_b.func_176223_P();
-@@ -72,7 +72,7 @@
+@@ -68,7 +68,7 @@
      protected static final WorldGenTrees field_76757_N = new WorldGenTrees(false);
      protected static final WorldGenBigTree field_76758_O = new WorldGenBigTree(false);
      protected static final WorldGenSwamp field_76763_Q = new WorldGenSwamp();
--    public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = new RegistryNamespaced();
+-    public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = new RegistryNamespaced<ResourceLocation, Biome>();
 +    public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = net.minecraftforge.fml.common.registry.GameData.getBiomeRegistry();
      private final String field_76791_y;
      private final float field_76748_D;
      private final float field_76749_E;
-@@ -90,6 +90,8 @@
+@@ -86,6 +86,8 @@
      protected List<Biome.SpawnListEntry> field_76762_K = Lists.<Biome.SpawnListEntry>newArrayList();
      protected List<Biome.SpawnListEntry> field_76755_L = Lists.<Biome.SpawnListEntry>newArrayList();
      protected List<Biome.SpawnListEntry> field_82914_M = Lists.<Biome.SpawnListEntry>newArrayList();
@@ -27,7 +27,7 @@
  
      public static int func_185362_a(Biome p_185362_0_)
      {
-@@ -134,11 +136,12 @@
+@@ -130,11 +132,12 @@
          this.field_76761_J.add(new Biome.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.field_76755_L.add(new Biome.SpawnListEntry(EntitySquid.class, 10, 4, 4));
          this.field_82914_M.add(new Biome.SpawnListEntry(EntityBat.class, 10, 8, 8));
@@ -41,7 +41,7 @@
      }
  
      public boolean func_185363_b()
-@@ -182,7 +185,9 @@
+@@ -178,7 +181,9 @@
              case AMBIENT:
                  return this.field_82914_M;
              default:
@@ -52,7 +52,7 @@
          }
      }
  
-@@ -234,7 +239,7 @@
+@@ -230,7 +235,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180627_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -61,7 +61,7 @@
      }
  
      public final void func_180628_b(World p_180628_1_, Random p_180628_2_, ChunkPrimer p_180628_3_, int p_180628_4_, int p_180628_5_, double p_180628_6_)
-@@ -327,7 +332,7 @@
+@@ -323,7 +328,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180625_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -70,7 +70,7 @@
      }
  
      public Class <? extends Biome > func_150562_l()
-@@ -385,7 +390,7 @@
+@@ -389,7 +394,7 @@
      @SideOnly(Side.CLIENT)
      public final int func_185361_o()
      {
@@ -79,7 +79,7 @@
      }
  
      public final boolean func_150559_j()
-@@ -393,6 +398,83 @@
+@@ -397,6 +402,83 @@
          return this.field_76766_R;
      }
  
@@ -163,7 +163,7 @@
      public static void func_185358_q()
      {
          func_185354_a(0, "ocean", new BiomeOcean((new Biome.BiomeProperties("Ocean")).func_185398_c(-1.0F).func_185400_d(0.1F)));
-@@ -549,6 +631,7 @@
+@@ -552,6 +634,7 @@
              public Class <? extends EntityLiving > field_76300_b;
              public int field_76301_c;
              public int field_76299_d;
@@ -171,7 +171,7 @@
  
              public SpawnListEntry(Class <? extends EntityLiving > p_i1970_1_, int p_i1970_2_, int p_i1970_3_, int p_i1970_4_)
              {
-@@ -556,12 +639,28 @@
+@@ -559,12 +642,28 @@
                  this.field_76300_b = p_i1970_1_;
                  this.field_76301_c = p_i1970_3_;
                  this.field_76299_d = p_i1970_4_;

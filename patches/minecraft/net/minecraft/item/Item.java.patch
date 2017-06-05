@@ -1,20 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -57,10 +57,10 @@
+@@ -58,10 +58,10 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class Item
 +public class Item extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Item>
  {
--    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = new RegistryNamespaced();
+-    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = new RegistryNamespaced<ResourceLocation, Item>();
 -    private static final Map<Block, Item> field_179220_a = Maps.<Block, Item>newHashMap();
-+    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = net.minecraftforge.fml.common.registry.GameData.getItemRegistry();;
++    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = net.minecraftforge.fml.common.registry.GameData.getItemRegistry();
 +    private static final Map<Block, Item> field_179220_a = net.minecraftforge.fml.common.registry.GameData.getBlockItemMap();
      private static final IItemPropertyGetter field_185046_b = new IItemPropertyGetter()
      {
          @SideOnly(Side.CLIENT)
-@@ -202,6 +202,7 @@
+@@ -197,6 +197,7 @@
          return p_77654_1_;
      }
  
@@ -22,7 +22,7 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -223,6 +224,7 @@
+@@ -218,6 +219,7 @@
          return this;
      }
  
@@ -30,7 +30,7 @@
      public int func_77612_l()
      {
          return this.field_77699_b;
-@@ -322,6 +324,7 @@
+@@ -317,6 +319,7 @@
          return this.field_77700_c;
      }
  
@@ -38,7 +38,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -377,7 +380,7 @@
+@@ -372,7 +375,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -47,7 +47,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -395,7 +398,11 @@
+@@ -390,7 +393,11 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -60,7 +60,17 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,632 @@
+@@ -411,6 +418,9 @@
+     @SideOnly(Side.CLIENT)
+     protected boolean func_194125_a(CreativeTabs p_194125_1_)
+     {
++        for (CreativeTabs tab : this.getCreativeTabs())
++            if (tab == p_194125_1_)
++                return true;
+         CreativeTabs creativetabs = this.func_77640_w();
+         return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
+     }
+@@ -438,11 +448,632 @@
          return false;
      }
  
@@ -693,7 +703,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1600,8 @@
+@@ -1002,6 +1633,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -702,14 +712,17 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1007,9 +1637,26 @@
+@@ -1037,6 +1670,7 @@
              return this.field_78008_j;
          }
  
 +        @Deprecated // Use getRepairItemStack below
          public Item func_150995_f()
          {
-             return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
+             if (this == WOOD)
+@@ -1060,5 +1694,21 @@
+                 return this == DIAMOND ? Items.field_151045_i : null;
+             }
          }
 +
 +        public ToolMaterial setRepairItem(ItemStack stack)

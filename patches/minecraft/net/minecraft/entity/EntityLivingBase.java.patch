@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
-@@ -199,10 +199,11 @@
+@@ -201,10 +201,11 @@
          {
              float f = (float)MathHelper.func_76123_f(this.field_70143_R - 3.0F);
  
@@ -10,10 +10,10 @@
                  double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
                  int i = (int)(150.0D * d0);
 +                if (!p_184231_4_.func_177230_c().addLandingEffects(p_184231_4_, (WorldServer)this.field_70170_p, p_184231_5_, p_184231_4_, this, i))
-                 ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.BLOCK_DUST, this.field_70165_t, this.field_70163_u, this.field_70161_v, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, new int[] {Block.func_176210_f(p_184231_4_)});
+                 ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.BLOCK_DUST, this.field_70165_t, this.field_70163_u, this.field_70161_v, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, Block.func_176210_f(p_184231_4_));
              }
          }
-@@ -279,7 +280,7 @@
+@@ -281,7 +282,7 @@
                      }
                  }
  
@@ -22,7 +22,7 @@
                  {
                      this.func_184210_p();
                  }
-@@ -378,7 +379,7 @@
+@@ -380,7 +381,7 @@
              if (!this.field_70170_p.field_72995_K && (this.func_70684_aJ() || this.field_70718_bc > 0 && this.func_146066_aG() && this.field_70170_p.func_82736_K().func_82766_b("doMobLoot")))
              {
                  int i = this.func_70693_a(this.field_70717_bb);
@@ -31,7 +31,7 @@
                  while (i > 0)
                  {
                      int j = EntityXPOrb.func_70527_a(i);
-@@ -440,6 +441,7 @@
+@@ -442,6 +443,7 @@
      {
          this.field_70755_b = p_70604_1_;
          this.field_70756_c = this.field_70173_aa;
@@ -39,7 +39,7 @@
      }
  
      public EntityLivingBase func_110144_aD()
-@@ -668,8 +670,10 @@
+@@ -670,8 +672,10 @@
          else
          {
              Collection<PotionEffect> collection = this.field_70713_bf.values();
@@ -52,7 +52,7 @@
              this.func_82142_c(this.func_70644_a(MobEffects.field_76441_p));
          }
      }
-@@ -812,6 +816,8 @@
+@@ -819,6 +823,8 @@
  
      public void func_70691_i(float p_70691_1_)
      {
@@ -61,7 +61,7 @@
          float f = this.func_110143_aJ();
  
          if (f > 0.0F)
-@@ -832,6 +838,7 @@
+@@ -839,6 +845,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -69,7 +69,7 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -918,9 +925,9 @@
+@@ -927,9 +934,9 @@
                          this.field_70718_bc = 100;
                          this.field_70717_bb = (EntityPlayer)entity1;
                      }
@@ -81,7 +81,7 @@
  
                          if (entitywolf.func_70909_n())
                          {
-@@ -1089,7 +1096,7 @@
+@@ -1127,7 +1134,7 @@
  
      public void func_70669_a(ItemStack p_70669_1_)
      {
@@ -90,15 +90,16 @@
  
          for (int i = 0; i < 5; ++i)
          {
-@@ -1101,12 +1108,16 @@
+@@ -1139,12 +1146,17 @@
              vec3d1 = vec3d1.func_178789_a(-this.field_70125_A * 0.017453292F);
              vec3d1 = vec3d1.func_178785_b(-this.field_70177_z * 0.017453292F);
              vec3d1 = vec3d1.func_72441_c(this.field_70165_t, this.field_70163_u + (double)this.func_70047_e(), this.field_70161_v);
--            this.field_70170_p.func_175688_a(EnumParticleTypes.ITEM_CRACK, vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c, new int[] {Item.func_150891_b(p_70669_1_.func_77973_b())});
+-            this.field_70170_p.func_175688_a(EnumParticleTypes.ITEM_CRACK, vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c, Item.func_150891_b(p_70669_1_.func_77973_b()));
 +            if (this.field_70170_p instanceof WorldServer) //Forge: Fix MC-2518 spawnParticle is nooped on server, need to use server specific variant
 +                ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.ITEM_CRACK, vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, 0,  vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c, 0.0D, Item.func_150891_b(p_70669_1_.func_77973_b()), p_70669_1_.func_77960_j());
 +            else //Fix the fact that spawning ItemCrack uses TWO arguments.
 +                this.field_70170_p.func_175688_a(EnumParticleTypes.ITEM_CRACK, vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c, Item.func_150891_b(p_70669_1_.func_77973_b()), p_70669_1_.func_77960_j());
++
          }
      }
  
@@ -108,7 +109,7 @@
          if (!this.field_70729_aU)
          {
              Entity entity = p_70645_1_.func_76346_g();
-@@ -1127,18 +1138,26 @@
+@@ -1165,18 +1177,26 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
@@ -140,16 +141,24 @@
              }
  
              this.field_70170_p.func_72960_a(this, (byte)3);
-@@ -1215,7 +1234,7 @@
+@@ -1253,15 +1273,7 @@
              BlockPos blockpos = new BlockPos(i, j, k);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
              Block block = iblockstate.func_177230_c();
--            return block != Blocks.field_150468_ap && block != Blocks.field_150395_bd ? block instanceof BlockTrapDoor && this.func_184604_a(blockpos, iblockstate) : true;
+-
+-            if (block != Blocks.field_150468_ap && block != Blocks.field_150395_bd)
+-            {
+-                return block instanceof BlockTrapDoor && this.func_184604_a(blockpos, iblockstate);
+-            }
+-            else
+-            {
+-                return true;
+-            }
 +            return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(iblockstate, field_70170_p, new BlockPos(i, j, k), this);
          }
      }
  
-@@ -1241,6 +1260,9 @@
+@@ -1287,6 +1299,9 @@
  
      public void func_180430_e(float p_180430_1_, float p_180430_2_)
      {
@@ -159,7 +168,7 @@
          super.func_180430_e(p_180430_1_, p_180430_2_);
          PotionEffect potioneffect = this.func_70660_b(MobEffects.field_76430_j);
          float f = potioneffect == null ? 0.0F : (float)(potioneffect.func_76458_c() + 1);
-@@ -1257,7 +1279,7 @@
+@@ -1303,7 +1318,7 @@
  
              if (iblockstate.func_185904_a() != Material.field_151579_a)
              {
@@ -168,7 +177,7 @@
                  this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
              }
          }
-@@ -1334,6 +1356,8 @@
+@@ -1380,6 +1395,8 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -177,7 +186,7 @@
              p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f = p_70665_2_;
-@@ -1383,6 +1407,11 @@
+@@ -1447,6 +1464,11 @@
  
      public void func_184609_a(EnumHand p_184609_1_)
      {
@@ -189,7 +198,7 @@
          if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1613,7 +1642,7 @@
+@@ -1694,7 +1716,7 @@
  
                      if (!this.field_70170_p.func_184143_b(axisalignedbb1))
                      {
@@ -198,7 +207,7 @@
                          {
                              this.func_70634_a(d11, this.field_70163_u + 1.0D, d12);
                              return;
-@@ -1621,14 +1650,14 @@
+@@ -1702,14 +1724,14 @@
  
                          BlockPos blockpos = new BlockPos(d11, this.field_70163_u - 1.0D, d12);
  
@@ -215,7 +224,7 @@
                      {
                          d1 = d11;
                          d13 = this.field_70163_u + 2.0D;
-@@ -1700,6 +1729,7 @@
+@@ -1781,6 +1803,7 @@
          }
  
          this.field_70160_al = true;
@@ -223,7 +232,7 @@
      }
  
      protected void func_70629_bd()
-@@ -1972,6 +2002,7 @@
+@@ -2054,6 +2077,7 @@
  
      public void func_70071_h_()
      {
@@ -231,7 +240,7 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2015,6 +2046,7 @@
+@@ -2097,6 +2121,7 @@
                  if (!ItemStack.func_77989_b(itemstack1, itemstack))
                  {
                      ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
@@ -239,7 +248,7 @@
  
                      if (!itemstack.func_190926_b())
                      {
-@@ -2488,6 +2520,40 @@
+@@ -2575,6 +2600,40 @@
          this.field_70752_e = true;
      }
  
@@ -280,7 +289,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2508,12 +2574,19 @@
+@@ -2595,12 +2654,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -301,7 +310,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2531,8 +2604,10 @@
+@@ -2618,8 +2684,10 @@
  
          if (!itemstack.func_190926_b() && !this.func_184587_cr())
          {
@@ -313,7 +322,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2613,7 +2688,9 @@
+@@ -2700,7 +2768,9 @@
          if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
          {
              this.func_184584_a(this.field_184627_bm, 16);
@@ -324,7 +333,7 @@
              this.func_184602_cy();
          }
      }
-@@ -2637,7 +2714,8 @@
+@@ -2724,7 +2794,8 @@
      {
          if (!this.field_184627_bm.func_190926_b())
          {
@@ -334,14 +343,13 @@
          }
  
          this.func_184602_cy();
-@@ -2761,4 +2839,29 @@
-     {
+@@ -2852,6 +2923,31 @@
          return true;
      }
-+
+ 
 +    // FORGE
-+    private final net.minecraftforge.items.IItemHandlerModifiable handHandler = new net.minecraftforge.items.ItemStackHandler(field_184630_bs);
-+    private final net.minecraftforge.items.IItemHandlerModifiable armorHandler = new net.minecraftforge.items.ItemStackHandler(field_184631_bt);
++    private final net.minecraftforge.items.IItemHandlerModifiable handHandler = new net.minecraftforge.items.wrapper.EntityHandsInvWrapper(this);
++    private final net.minecraftforge.items.IItemHandlerModifiable armorHandler = new net.minecraftforge.items.wrapper.EntityArmorInvWrapper(this);
 +    private final net.minecraftforge.items.IItemHandler joinedHandler = new net.minecraftforge.items.wrapper.CombinedInvWrapper(armorHandler, handHandler);
 +
 +    @SuppressWarnings("unchecked")
@@ -363,4 +371,7 @@
 +    {
 +        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 +    }
- }
++
+     public boolean func_190631_cK()
+     {
+         return true;

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCocoa.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCocoa.java
-@@ -43,13 +43,14 @@
+@@ -44,13 +44,14 @@
          {
              this.func_176500_f(p_180650_1_, p_180650_2_, p_180650_3_);
          }
@@ -17,7 +17,7 @@
              }
          }
      }
-@@ -131,7 +132,14 @@
+@@ -132,7 +133,14 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -33,7 +33,7 @@
          int j = 1;
  
          if (i >= 2)
-@@ -141,8 +149,9 @@
+@@ -142,8 +150,9 @@
  
          for (int k = 0; k < j; ++k)
          {

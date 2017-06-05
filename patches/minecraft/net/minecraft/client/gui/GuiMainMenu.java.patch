@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-@@ -65,6 +65,8 @@
-     private GuiButton field_175372_K;
-     private boolean field_183502_L;
+@@ -69,6 +69,8 @@
      private GuiScreen field_183503_M;
+     private int field_193978_M;
+     private int field_193979_N;
 +    private GuiButton modButton;
 +    private net.minecraftforge.client.gui.NotificationModUpdateScreen modUpdateNotification;
  
      public GuiMainMenu()
      {
-@@ -216,13 +218,15 @@
+@@ -211,13 +213,15 @@
              this.field_183503_M.func_183500_a(this.field_146294_l, this.field_146295_m);
              this.field_183503_M.func_73866_w_();
          }
@@ -18,15 +18,15 @@
  
      private void func_73969_a(int p_73969_1_, int p_73969_2_)
      {
-         this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 100, p_73969_1_, I18n.func_135052_a("menu.singleplayer", new Object[0])));
-         this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.func_135052_a("menu.multiplayer", new Object[0])));
--        this.field_175372_K = this.func_189646_b(new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online", new Object[0])));
-+        this.field_175372_K = this.func_189646_b(new GuiButton(14, this.field_146294_l / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("menu.online", new Object[0]).replace("Minecraft", "").trim()));
+         this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 100, p_73969_1_, I18n.func_135052_a("menu.singleplayer")));
+         this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.func_135052_a("menu.multiplayer")));
+-        this.field_175372_K = this.func_189646_b(new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online")));
++        this.field_175372_K = this.func_189646_b(new GuiButton(14, this.field_146294_l / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("menu.online").replace("Minecraft", "").trim()));
 +        this.field_146292_n.add(modButton = new GuiButton(6, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("fml.menu.mods")));
      }
  
      private void func_73972_b(int p_73972_1_, int p_73972_2_)
-@@ -270,6 +274,11 @@
+@@ -265,6 +269,11 @@
              this.field_146297_k.func_71400_g();
          }
  
@@ -37,8 +37,8 @@
 +
          if (p_146284_1_.field_146127_k == 11)
          {
-             this.field_146297_k.func_71371_a("Demo_World", "Demo_World", DemoWorldServer.field_73071_a);
-@@ -501,6 +510,8 @@
+             this.field_146297_k.func_71371_a("Demo_World", "Demo_World", WorldServerDemo.field_73071_a);
+@@ -497,6 +506,8 @@
              this.func_73729_b(j + 155, 30, 0, 45, 155, 44);
          }
  
@@ -47,7 +47,7 @@
          GlStateManager.func_179094_E();
          GlStateManager.func_179109_b((float)(this.field_146294_l / 2 + 90), 70.0F, 0.0F);
          GlStateManager.func_179114_b(-20.0F, 0.0F, 0.0F, 1.0F);
-@@ -520,7 +531,15 @@
+@@ -516,7 +527,16 @@
              s = s + ("release".equalsIgnoreCase(this.field_146297_k.func_184123_d()) ? "" : "/" + this.field_146297_k.func_184123_d());
          }
  
@@ -61,10 +61,11 @@
 +                this.func_73731_b(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + brdline * (this.field_146289_q.field_78288_b + 1)), 16777215);
 +            }
 +        }
-         String s1 = "Copyright Mojang AB. Do not distribute!";
-         this.func_73731_b(this.field_146289_q, "Copyright Mojang AB. Do not distribute!", this.field_146294_l - this.field_146289_q.func_78256_a("Copyright Mojang AB. Do not distribute!") - 2, this.field_146295_m - 10, -1);
++
+         this.func_73731_b(this.field_146289_q, "Copyright Mojang AB. Do not distribute!", this.field_193979_N, this.field_146295_m - 10, -1);
  
-@@ -537,6 +556,7 @@
+         if (p_73863_1_ > this.field_193979_N && p_73863_1_ < this.field_193979_N + this.field_193978_M && p_73863_2_ > this.field_146295_m - 10 && p_73863_2_ < this.field_146295_m && Mouse.isInsideWindow())
+@@ -537,6 +557,7 @@
          {
              this.field_183503_M.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
          }
@@ -72,9 +73,9 @@
      }
  
      protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException
-@@ -557,6 +577,8 @@
+@@ -562,6 +583,8 @@
          {
-             this.field_183503_M.func_73864_a(p_73864_1_, p_73864_2_, p_73864_3_);
+             this.field_146297_k.func_147108_a(new GuiWinGame(false, Runnables.doNothing()));
          }
 +
 +        net.minecraftforge.client.ForgeHooksClient.mainMenuMouseClick(p_73864_1_, p_73864_2_, p_73864_3_, this.field_146289_q, this.field_146294_l);

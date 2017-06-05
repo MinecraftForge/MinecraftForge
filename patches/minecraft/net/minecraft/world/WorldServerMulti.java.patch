@@ -30,9 +30,9 @@
      }
  
      public World func_175643_b()
-@@ -59,12 +62,12 @@
-         this.field_96442_D = this.field_175743_a.func_96441_U();
+@@ -60,12 +63,12 @@
          this.field_184151_B = this.field_175743_a.func_184146_ak();
+         this.field_191951_C = this.field_175743_a.func_191952_z();
          String s = VillageCollection.func_176062_a(this.field_73011_w);
 -        VillageCollection villagecollection = (VillageCollection)this.field_72988_C.func_75742_a(VillageCollection.class, s);
 +        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.func_75742_a(VillageCollection.class, s);
@@ -45,7 +45,7 @@
          }
          else
          {
-@@ -72,9 +75,18 @@
+@@ -73,9 +76,18 @@
              this.field_72982_D.func_82566_a(this);
          }
  

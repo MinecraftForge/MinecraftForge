@@ -41,7 +41,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
@@ -508,7 +508,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     }
 
     /*
-     * Divides m by m33, sets last row to (0, 0, 0, 1), extracts linear and translation parts 
+     * Divides m by m33, sets last row to (0, 0, 0, 1), extracts linear and translation parts
      */
     public static Pair<Matrix3f, Vector3f> toAffine(Matrix4f m)
     {
@@ -607,7 +607,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     public String toString()
     {
         genCheck();
-        return Objects.toStringHelper(this.getClass())
+        return MoreObjects.toStringHelper(this.getClass())
             .add("matrix", matrix)
             .add("translation", translation)
             .add("leftRot", leftRot)

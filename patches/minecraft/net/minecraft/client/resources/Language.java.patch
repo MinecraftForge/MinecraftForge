@@ -8,7 +8,7 @@
      }
  
      public String func_135034_a()
-@@ -48,4 +49,8 @@
+@@ -55,4 +56,8 @@
      {
          return this.field_135039_a.compareTo(p_compareTo_1_.field_135039_a);
      }

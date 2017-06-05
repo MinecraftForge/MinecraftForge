@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityVillager.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityVillager.java
-@@ -105,7 +105,7 @@
+@@ -109,7 +109,7 @@
      private boolean field_70959_by;
      private boolean field_175565_bs;
      private int field_70956_bz;
@@ -9,7 +9,7 @@
      private int field_175563_bv;
      private int field_175562_bw;
      private boolean field_82190_bM;
-@@ -230,7 +230,7 @@
+@@ -234,7 +234,7 @@
                      if (this.field_70954_d != null && this.field_82189_bL != null)
                      {
                          this.field_70170_p.func_72960_a(this, (byte)14);
@@ -18,7 +18,7 @@
                      }
                  }
  
-@@ -323,6 +323,7 @@
+@@ -327,6 +327,7 @@
      {
          super.func_70014_b(p_70014_1_);
          p_70014_1_.func_74768_a("Profession", this.func_70946_n());
@@ -26,7 +26,7 @@
          p_70014_1_.func_74768_a("Riches", this.field_70956_bz);
          p_70014_1_.func_74768_a("Career", this.field_175563_bv);
          p_70014_1_.func_74768_a("CareerLevel", this.field_175562_bw);
-@@ -352,6 +353,14 @@
+@@ -356,6 +357,14 @@
      {
          super.func_70037_a(p_70037_1_);
          this.func_70938_b(p_70037_1_.func_74762_e("Profession"));
@@ -41,7 +41,7 @@
          this.field_70956_bz = p_70037_1_.func_74762_e("Riches");
          this.field_175563_bv = p_70037_1_.func_74762_e("Career");
          this.field_175562_bw = p_70037_1_.func_74762_e("CareerLevel");
-@@ -408,13 +417,43 @@
+@@ -412,13 +421,43 @@
      public void func_70938_b(int p_70938_1_)
      {
          this.field_70180_af.func_187227_b(field_184752_bw, Integer.valueOf(p_70938_1_));
@@ -86,7 +86,7 @@
      public boolean func_70941_o()
      {
          return this.field_70952_f;
-@@ -452,7 +491,7 @@
+@@ -456,7 +495,7 @@
                      i = -3;
                  }
  
@@ -95,7 +95,7 @@
  
                  if (this.func_70089_S())
                  {
-@@ -472,7 +511,7 @@
+@@ -476,7 +515,7 @@
              {
                  if (entity instanceof EntityPlayer)
                  {
@@ -104,7 +104,7 @@
                  }
                  else if (entity instanceof IMob)
                  {
-@@ -564,7 +603,7 @@
+@@ -569,7 +608,7 @@
  
              if (this.field_70962_h != null)
              {
@@ -113,7 +113,7 @@
              }
              else
              {
-@@ -607,15 +646,13 @@
+@@ -617,15 +656,13 @@
  
      private void func_175554_cu()
      {
@@ -130,7 +130,7 @@
              this.field_175562_bw = 1;
          }
  
-@@ -626,19 +663,13 @@
+@@ -636,19 +673,13 @@
  
          int i = this.field_175563_bv - 1;
          int j = this.field_175562_bw - 1;
@@ -154,7 +154,7 @@
              }
          }
      }
-@@ -748,7 +779,7 @@
+@@ -758,7 +789,7 @@
                      s1 = "nitwit";
              }
  
@@ -163,7 +163,7 @@
              {
                  ITextComponent itextcomponent = new TextComponentTranslation("entity.Villager." + s1, new Object[0]);
                  itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
-@@ -761,10 +792,6 @@
+@@ -771,10 +802,6 @@
  
                  return itextcomponent;
              }
@@ -174,7 +174,7 @@
          }
      }
  
-@@ -818,7 +845,7 @@
+@@ -828,7 +855,7 @@
  
          if (p_190672_3_)
          {
@@ -183,7 +183,7 @@
          }
  
          this.func_175552_ct();
-@@ -1071,6 +1098,9 @@
+@@ -1089,6 +1116,9 @@
                  p_190888_2_.add(new MerchantRecipe(itemstack, itemstack1));
              }
          }

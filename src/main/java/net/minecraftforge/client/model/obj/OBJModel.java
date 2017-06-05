@@ -64,12 +64,12 @@ import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.core.helpers.Strings;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -294,8 +294,8 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                             String[] pts = splitData[i].split("/");
 
                             int vert = Integer.parseInt(pts[0]);
-                            Integer texture = pts.length < 2 || Strings.isEmpty(pts[1]) ? null : Integer.parseInt(pts[1]);
-                            Integer normal = pts.length < 3 || Strings.isEmpty(pts[2]) ? null : Integer.parseInt(pts[2]);
+                            Integer texture = pts.length < 2 || Strings.isNullOrEmpty(pts[1]) ? null : Integer.parseInt(pts[1]);
+                            Integer normal = pts.length < 3 || Strings.isNullOrEmpty(pts[2]) ? null : Integer.parseInt(pts[2]);
 
                             vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
                             Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), this.vertices.get(vert).getMaterial());
