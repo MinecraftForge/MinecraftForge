@@ -9,7 +9,32 @@
                      {
                          this.field_76634_f[k << 4 | j] = l;
  
-@@ -451,12 +451,13 @@
+@@ -358,13 +358,15 @@
+ 
+         if (j != i)
+         {
+-            this.field_76637_e.func_72975_g(p_76615_1_ + this.field_76635_g * 16, p_76615_3_ + this.field_76647_h * 16, j, i);
++            if (false) this.field_76637_e.func_72975_g(p_76615_1_ + this.field_76635_g * 16, p_76615_3_ + this.field_76647_h * 16, j, i); //Forge: Useless, since heightMap is not updated yet (See #3871)
+             this.field_76634_f[p_76615_3_ << 4 | p_76615_1_] = j;
+             int k = this.field_76635_g * 16 + p_76615_1_;
+             int l = this.field_76647_h * 16 + p_76615_3_;
+ 
+             if (this.field_76637_e.field_73011_w.func_191066_m())
+             {
++                net.minecraftforge.common.lighting.LightingHooks.relightSkylightColumn(this.field_76637_e, this, p_76615_1_, p_76615_3_, i, j);
++            } else if (false) { //Forge: Don't mess up the light cache; World.checkLight already does all necessary steps (See #3871)
+                 if (j < i)
+                 {
+                     for (int j1 = j; j1 < i; ++j1)
+@@ -434,6 +436,7 @@
+             {
+                 this.field_82912_p = l1;
+             }
++            if (true) return; //Forge: Following checks are not needed if the light cache is not messed up (See #3871)
+ 
+             if (this.field_76637_e.field_73011_w.func_191066_m())
+             {
+@@ -451,12 +454,13 @@
  
      public int func_177437_b(BlockPos p_177437_1_)
      {
@@ -25,7 +50,7 @@
      }
  
      public IBlockState func_177435_g(BlockPos p_177435_1_)
-@@ -538,6 +539,7 @@
+@@ -538,6 +542,7 @@
          {
              Block block = p_177436_2_.func_177230_c();
              Block block1 = iblockstate.func_177230_c();
@@ -33,7 +58,7 @@
              ExtendedBlockStorage extendedblockstorage = this.field_76652_q[j >> 4];
              boolean flag = false;
  
-@@ -555,14 +557,19 @@
+@@ -555,14 +560,19 @@
  
              extendedblockstorage.func_177484_a(i, j & 15, k, p_177436_2_);
  
@@ -55,7 +80,7 @@
                      this.field_76637_e.func_175713_t(p_177436_1_);
                  }
              }
-@@ -579,8 +586,7 @@
+@@ -579,8 +589,7 @@
                  }
                  else
                  {
@@ -65,12 +90,12 @@
  
                      if (j1 > 0)
                      {
-@@ -594,34 +600,25 @@
+@@ -594,34 +603,25 @@
                          this.func_76615_h(i, j, k);
                      }
  
 -                    if (j1 != k1 && (j1 < k1 || this.func_177413_a(EnumSkyBlock.SKY, p_177436_1_) > 0 || this.func_177413_a(EnumSkyBlock.BLOCK, p_177436_1_) > 0))
-+                    if (false) //TODO: Wait for proper fix
++                    if (false) //Forge: Error correction is unnecessary as these are fixed (See #3871)
                      {
                          this.func_76595_e(i, k);
                      }
@@ -105,7 +130,7 @@
                          this.field_76637_e.func_175690_a(p_177436_1_, tileentity1);
                      }
  
-@@ -639,6 +636,12 @@
+@@ -639,6 +639,12 @@
  
      public int func_177413_a(EnumSkyBlock p_177413_1_, BlockPos p_177413_2_)
      {
@@ -118,7 +143,7 @@
          int i = p_177413_2_.func_177958_n() & 15;
          int j = p_177413_2_.func_177956_o();
          int k = p_177413_2_.func_177952_p() & 15;
-@@ -677,6 +680,7 @@
+@@ -677,6 +683,7 @@
  
      public int func_177443_a(BlockPos p_177443_1_, int p_177443_2_)
      {
@@ -126,7 +151,7 @@
          int i = p_177443_1_.func_177958_n() & 15;
          int j = p_177443_1_.func_177956_o();
          int k = p_177443_1_.func_177952_p() & 15;
-@@ -725,6 +729,7 @@
+@@ -725,6 +732,7 @@
              k = this.field_76645_j.length - 1;
          }
  
@@ -134,7 +159,7 @@
          p_76612_1_.field_70175_ag = true;
          p_76612_1_.field_70176_ah = this.field_76635_g;
          p_76612_1_.field_70162_ai = k;
-@@ -765,7 +770,7 @@
+@@ -765,7 +773,7 @@
      {
          IBlockState iblockstate = this.func_177435_g(p_177422_1_);
          Block block = iblockstate.func_177230_c();
@@ -143,7 +168,7 @@
      }
  
      @Nullable
-@@ -773,6 +778,12 @@
+@@ -773,6 +781,12 @@
      {
          TileEntity tileentity = (TileEntity)this.field_150816_i.get(p_177424_1_);
  
@@ -156,7 +181,7 @@
          if (tileentity == null)
          {
              if (p_177424_2_ == Chunk.EnumCreateEntityType.IMMEDIATE)
-@@ -782,14 +793,9 @@
+@@ -782,14 +796,9 @@
              }
              else if (p_177424_2_ == Chunk.EnumCreateEntityType.QUEUED)
              {
@@ -172,7 +197,7 @@
  
          return tileentity;
      }
-@@ -806,10 +812,11 @@
+@@ -806,10 +815,11 @@
  
      public void func_177426_a(BlockPos p_177426_1_, TileEntity p_177426_2_)
      {
@@ -185,7 +210,7 @@
          {
              if (this.field_150816_i.containsKey(p_177426_1_))
              {
-@@ -841,8 +848,9 @@
+@@ -841,8 +851,9 @@
  
          for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.field_76645_j)
          {
@@ -196,7 +221,7 @@
      }
  
      public void func_76623_d()
-@@ -858,6 +866,7 @@
+@@ -858,6 +869,7 @@
          {
              this.field_76637_e.func_175681_c(classinheritancemultimap);
          }
@@ -204,7 +229,7 @@
      }
  
      public void func_76630_e()
-@@ -867,8 +876,8 @@
+@@ -867,8 +879,8 @@
  
      public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, Predicate <? super Entity > p_177414_4_)
      {
@@ -215,7 +240,7 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -905,8 +914,8 @@
+@@ -905,8 +917,8 @@
  
      public <T extends Entity> void func_177430_a(Class <? extends T > p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, Predicate <? super T > p_177430_4_)
      {
@@ -226,7 +251,7 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -984,6 +993,8 @@
+@@ -984,6 +996,8 @@
  
      protected void func_186034_a(IChunkGenerator p_186034_1_)
      {
@@ -235,7 +260,7 @@
          if (this.func_177419_t())
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
-@@ -995,8 +1006,10 @@
+@@ -995,8 +1009,10 @@
          {
              this.func_150809_p();
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
@@ -246,7 +271,7 @@
      }
  
      public BlockPos func_177440_h(BlockPos p_177440_1_)
-@@ -1051,7 +1064,7 @@
+@@ -1051,7 +1067,7 @@
          {
              BlockPos blockpos = (BlockPos)this.field_177447_w.poll();
  
@@ -255,7 +280,7 @@
              {
                  TileEntity tileentity = this.func_177422_i(blockpos);
                  this.field_76637_e.func_175690_a(blockpos, tileentity);
-@@ -1115,6 +1128,13 @@
+@@ -1115,6 +1131,13 @@
      @SideOnly(Side.CLIENT)
      public void func_186033_a(PacketBuffer p_186033_1_, int p_186033_2_, boolean p_186033_3_)
      {
@@ -269,7 +294,7 @@
          boolean flag = this.field_76637_e.field_73011_w.func_191066_m();
  
          for (int i = 0; i < this.field_76652_q.length; ++i)
-@@ -1163,10 +1183,16 @@
+@@ -1163,10 +1186,16 @@
          this.field_76646_k = true;
          this.func_76590_a();
  
@@ -286,7 +311,7 @@
      }
  
      public Biome func_177411_a(BlockPos p_177411_1_, BiomeProvider p_177411_2_)
-@@ -1231,13 +1257,13 @@
+@@ -1231,13 +1260,13 @@
                      BlockPos blockpos1 = blockpos.func_177982_a(k, (j << 4) + i1, l);
                      boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
@@ -302,7 +327,7 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1368,7 +1394,7 @@
+@@ -1368,7 +1397,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -311,7 +336,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1476,4 +1502,34 @@
+@@ -1476,4 +1505,34 @@
          QUEUED,
          CHECK;
      }
