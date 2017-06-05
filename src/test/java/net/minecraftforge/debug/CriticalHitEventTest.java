@@ -21,7 +21,7 @@ public class CriticalHitEventTest
     private Logger log;
 
     @EventHandler
-    public void preInit(FMPPreInitializationEvent event)
+    public void preInit(FMLPreInitializationEvent event)
     {
         log = event.getModLog();
     }
