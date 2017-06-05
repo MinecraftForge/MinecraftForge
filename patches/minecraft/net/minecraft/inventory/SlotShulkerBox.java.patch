@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/SlotShulkerBox.java
 +++ ../src-work/minecraft/net/minecraft/inventory/SlotShulkerBox.java
-@@ -1,7 +1,5 @@
- package net.minecraft.inventory;
- 
--import net.minecraft.block.Block;
--import net.minecraft.block.BlockShulkerBox;
- import net.minecraft.item.ItemStack;
- 
- public class SlotShulkerBox extends Slot
-@@ -13,6 +11,6 @@
+@@ -13,6 +13,6 @@
  
      public boolean func_75214_a(ItemStack p_75214_1_)
      {
