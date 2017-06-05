@@ -188,7 +188,7 @@ public class ModelLoaderRegistryDebug
         {
             if (world.isRemote)
             {
-                logger.info("click " + counter);
+                logger.info("click {}", counter);
                 if (player.isSneaking())
                 {
                     counter--;

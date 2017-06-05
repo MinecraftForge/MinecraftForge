@@ -117,7 +117,7 @@ public class MinecraftForge
        Collections.sort(all); //Sort it because I like pretty output ;)
        for (String name : all)
        {
-           ForgeModContainer.log.debug("\t" + name);
+           ForgeModContainer.log.debug("\t{}", name);
            try
            {
                Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());

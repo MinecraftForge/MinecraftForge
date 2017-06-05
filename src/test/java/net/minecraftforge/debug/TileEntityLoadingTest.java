@@ -67,7 +67,7 @@ public class TileEntityLoadingTest
         @Override
         public void onLoad()
         {
-            logger.info("World: " + world + ", Pos: " + pos + ", State: " + world.getBlockState(pos));
+            logger.info("World: {}, Pos: {}, State: {}", world, pos, world.getBlockState(pos));
             if (DEBUG)
             {
                 logger.trace("Stack trace:", new Exception());

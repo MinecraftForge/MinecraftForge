@@ -208,17 +208,17 @@ public class DynBucketTest
 
             for (int i = 0; i < handler.getSlots(); i++)
             {
-                logger.info("Expected 1: " + handler.getStackInSlot(i));
+                logger.info("Expected 1: {}", handler.getStackInSlot(i));
             }
 
             for (int i = 0; i < handler2.getSlots(); i++)
             {
-                logger.info("Expected 2: " + handler2.getStackInSlot(i));
+                logger.info("Expected 2: {}", handler2.getStackInSlot(i));
             }
 
             for (int i = 0; i < joined.getSlots(); i++)
             {
-                logger.info("Joined: " + joined.getStackInSlot(i));
+                logger.info("Joined: {}", joined.getStackInSlot(i));
             }
 
             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);

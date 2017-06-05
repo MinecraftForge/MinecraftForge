@@ -427,7 +427,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         Collections.sort(all); //Sort it because I like pretty output ;)
         for (String name : all)
         {
-            log.debug("\t" + name);
+            log.debug("\t{}", name);
             try
             {
                 Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());

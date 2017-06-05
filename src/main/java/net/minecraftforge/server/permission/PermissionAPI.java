@@ -42,7 +42,7 @@ public class PermissionAPI
     {
         Preconditions.checkNotNull(handler, "Permission handler can't be null!");
         Preconditions.checkState(Loader.instance().getLoaderState().ordinal() <= LoaderState.PREINITIALIZATION.ordinal(), "Can't register after IPermissionHandler PreInit!");
-        FMLLog.log.warn("Replacing " + permissionHandler.getClass().getName() + " with " + handler.getClass().getName());
+        FMLLog.log.warn("Replacing {} with {}", permissionHandler.getClass().getName(), handler.getClass().getName());
         permissionHandler = handler;
     }
 
