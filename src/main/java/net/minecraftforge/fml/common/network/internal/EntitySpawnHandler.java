@@ -140,7 +140,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
             wc.addEntityToWorld(spawnMsg.entityId, entity);
         } catch (Exception e)
         {
-            FMLLog.log.error("A severe problem occurred during the spawning of an entity at ({}, {}, {})", spawnMsg.rawZ, e);
+            FMLLog.log.error("A severe problem occurred during the spawning of an entity at ({}, {}, {})", spawnMsg.rawX, spawnMsg.rawY, spawnMsg.rawZ, e);
             throw Throwables.propagate(e);
         }
     }

@@ -126,7 +126,7 @@ public class ModAPITransformer implements IClassTransformer {
             final RemovingSignatureWriter signatureWriter = new RemovingSignatureWriter(ifaceName);
             sr.accept(signatureWriter);
             classNode.signature = signatureWriter.toString();
-            if (logDebugInfo) FMLLog.log.debug("Optional removal - interface {} removed from type signature");
+            if (logDebugInfo) FMLLog.log.debug("Optional removal - interface {} removed from type signature", interfaceName);
         }
         if (found && logDebugInfo) FMLLog.log.debug("Optional removal - interface {} removed", interfaceName);
         if (!found && logDebugInfo) FMLLog.log.debug("Optional removal - interface {} NOT removed - not found", interfaceName);

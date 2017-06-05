@@ -49,7 +49,7 @@
          {
              field_145852_a.error("Failed to create block entity {}", new Object[] {s, throwable1});
 +            net.minecraftforge.fml.common.FMLLog.log.error("A TileEntity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                    s, oclass.getName(), throwable1);
++                    s, oclass == null ? null : oclass.getName(), throwable1);
          }
  
          if (tileentity != null)

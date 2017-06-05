@@ -168,7 +168,7 @@ public class FMLSanityChecker implements IFMLCallHook
             else
             {
                 log.error("FML has been ordered to ignore the invalid or missing minecraft certificate. This is very likely to cause a problem!");
-                log.error("Technical information: ClientBrandRetriever was at %s, there were {} certificates for it", codeSource.getLocation(), certCount);
+                log.error("Technical information: ClientBrandRetriever was at {}, there were {} certificates for it", codeSource.getLocation(), certCount);
             }
         }
         if (!goodFML)

@@ -56,7 +56,7 @@ public class ModContainerFactory
             Constructor<? extends ModContainer> constructor = container.getConstructor(new Class<?>[] { String.class, ModCandidate.class, Map.class });
             modTypes.put(type, constructor);
         } catch (Exception e) {
-            FMLLog.log.error("Critical error : cannot register mod container type {}, it has an invalid constructor", e);
+            FMLLog.log.error("Critical error : cannot register mod container type {}, it has an invalid constructor", container.getName(), e);
             Throwables.propagate(e);
         }
     }
