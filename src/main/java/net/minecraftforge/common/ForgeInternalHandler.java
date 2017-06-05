@@ -24,15 +24,13 @@ import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.StoreInItemEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -91,7 +89,11 @@ public class ForgeInternalHandler
         Block block = Block.getBlockFromItem(event.getInput().getItem());
         if (event.getResult()==Event.Result.DEFAULT && block instanceof BlockShulkerBox)
         {
-            event.setResult(Event.Result.DENY);
+            NBTTagCompound nbt = event.getInput().getTagCompound();
+            if (nbt!=null&&nbt.hasKey("BlockEntityTag")&&nbt.getCompoundTag("BlockEntityTag").hasKey("Items"))
+            {
+                event.setResult(Event.Result.DENY);
+            }
         }
     }
 }
