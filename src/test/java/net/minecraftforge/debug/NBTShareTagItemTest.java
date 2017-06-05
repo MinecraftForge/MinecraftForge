@@ -1,5 +1,6 @@
 package net.minecraftforge.debug;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -8,13 +9,15 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nullable;
 
-@Mod(modid = NBTShareTagItemTest.MOD_ID, name = "NBTShareTag Item Test", version = "1.0.0")
+@Mod(modid = NBTShareTagItemTest.MOD_ID, name = "NBTShareTag Item Test", version = "1.0.0", acceptableRemoteVersions = "*")
 public class NBTShareTagItemTest
 {
     public static final String MOD_ID = "nbtsharetagitemtest";
@@ -26,6 +29,11 @@ public class NBTShareTagItemTest
         ShareTagItem item = new ShareTagItem();
         item.setRegistryName(itemName);
         GameRegistry.register(item);
+
+        if (event.getSide() == Side.CLIENT)
+        {
+            ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(itemName, "inventory"));
+        }
 
         ItemStack crafted = new ItemStack(item);
         NBTTagCompound craftedNBT = new NBTTagCompound();
