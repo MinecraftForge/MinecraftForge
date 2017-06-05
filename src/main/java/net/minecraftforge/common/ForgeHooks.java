@@ -95,10 +95,7 @@ import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.DifficultyChangeEvent;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.ThrowableImpactEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -1274,5 +1271,21 @@ public class ForgeHooks
     public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state, IBlockState blockState)
     {
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+    }
+
+    public static boolean onStoreInItem(@Nonnull ItemStack input, @Nonnull ItemStack container, @Nonnull IInventory inventory)
+    {
+        NonNullList<ItemStack> contents = NonNullList.withSize(inventory.getSizeInventory(), ItemStack.EMPTY);
+        for (int i = 0;i<inventory.getSizeInventory();i++)
+        {
+            contents.set(i, inventory.getStackInSlot(i));
+        }
+        return onStoreInItem(input, container, contents);
+    }
+    public static boolean onStoreInItem(@Nonnull ItemStack input, @Nonnull ItemStack container, @Nonnull NonNullList<ItemStack> contents)
+    {
+        StoreInItemEvent event = new StoreInItemEvent(input, container, contents);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult()!= Event.Result.DENY;
     }
 }

@@ -19,15 +19,21 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.StoreInItemEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -77,5 +83,15 @@ public class ForgeInternalHandler
         ForgeChunkManager.unloadWorld(event.getWorld());
         if (event.getWorld() instanceof WorldServer)
             FakePlayerFactory.unloadWorld((WorldServer) event.getWorld());
+    }
+
+    @SubscribeEvent
+    public void onStoreInItem(StoreInItemEvent event)
+    {
+        Block block = Block.getBlockFromItem(event.getInput().getItem());
+        if (event.getResult()==Event.Result.DEFAULT && block instanceof BlockShulkerBox)
+        {
+            event.setResult(Event.Result.DENY);
+        }
     }
 }
