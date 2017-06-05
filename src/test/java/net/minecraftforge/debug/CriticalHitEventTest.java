@@ -5,6 +5,7 @@ import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +18,7 @@ import net.minecraft.item.ItemSword;
 public class CriticalHitEventTest
 {
     public static final boolean ENABLE = false;
-    public static final Logger log;
+    private Logger log;
 
     @EventHandler
     public void preInit(FMPPreInitializationEvent event)
