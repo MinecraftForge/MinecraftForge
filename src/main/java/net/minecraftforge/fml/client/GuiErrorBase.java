@@ -65,7 +65,7 @@ public class GuiErrorBase extends GuiErrorScreen
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "Problem opening mods folder");
+                FMLLog.log.error("Problem opening mods folder", e);
             }
         }
         else if (button.id == 11)
@@ -76,7 +76,7 @@ public class GuiErrorBase extends GuiErrorScreen
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "Problem opening log file " + clientLog);
+                FMLLog.error(e, "Problem opening log file {}", clientLog);
             }
         }
     }

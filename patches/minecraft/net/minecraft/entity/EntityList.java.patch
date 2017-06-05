@@ -91,8 +91,8 @@
 +            }
 +            catch (Exception e)
 +            {
-+                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
-+                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                net.minecraftforge.fml.common.FMLLog.error(e,
++                        "An Entity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
 +                        p_75615_0_.func_74779_i("id"), entity.func_70005_c_());
 +                entity = null;
 +            }

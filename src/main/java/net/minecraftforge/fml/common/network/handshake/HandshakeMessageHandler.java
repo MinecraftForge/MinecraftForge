@@ -44,9 +44,9 @@ public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> ext
     protected void channelRead0(ChannelHandlerContext ctx, FMLHandshakeMessage msg) throws Exception
     {
         S state = ctx.attr(fmlHandshakeState).get();
-        FMLLog.fine(stateType.getSimpleName() + ": " + msg.toString(stateType) + "->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.')+1)+":"+state);
+        FMLLog.log.debug(stateType.getSimpleName() + ": " + msg.toString(stateType) + "->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.')+1)+":"+state);
         S newState = state.accept(ctx, msg);
-        FMLLog.fine("  Next: " + newState.name());
+        FMLLog.log.debug("  Next: " + newState.name());
         ctx.attr(fmlHandshakeState).set(newState);
     }
 
@@ -59,16 +59,16 @@ public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> ext
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception
     {
         S state = ctx.attr(fmlHandshakeState).get();
-        FMLLog.fine(stateType.getSimpleName() + ": null->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.')+1)+":"+state);
+        FMLLog.log.debug(stateType.getSimpleName() + ": null->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.')+1)+":"+state);
         S newState = state.accept(ctx, null);
-        FMLLog.fine("  Next: " + newState.name());
+        FMLLog.log.debug("  Next: " + newState.name());
         ctx.attr(fmlHandshakeState).set(newState);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
-        FMLLog.log(Level.ERROR, cause, "HandshakeMessageHandler exception");
+        FMLLog.log.error("HandshakeMessageHandler exception", cause);
         super.exceptionCaught(ctx, cause);
     }
 }

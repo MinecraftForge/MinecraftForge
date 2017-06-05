@@ -263,7 +263,7 @@ public class ForgeChunkManager
             }
             else
             {
-                FMLLog.log(Level.ERROR, "Attempt to create a player ticket without a valid player");
+                FMLLog.log.error("Attempt to create a player ticket without a valid player");
                 throw new RuntimeException();
             }
         }
@@ -277,7 +277,7 @@ public class ForgeChunkManager
         {
             if (depth > getMaxChunkDepthFor(modId) || (depth <= 0 && getMaxChunkDepthFor(modId) > 0))
             {
-                FMLLog.warning("The mod %s tried to modify the chunk ticket depth to: %d, its allowed maximum is: %d", modId, depth, getMaxChunkDepthFor(modId));
+                FMLLog.log.warn("The mod {} tried to modify the chunk ticket depth to: {}, its allowed maximum is: {}", modId, depth, getMaxChunkDepthFor(modId));
             }
             else
             {
@@ -489,7 +489,7 @@ public class ForgeChunkManager
             }
             catch (IOException e)
             {
-                FMLLog.log(Level.WARN, e, "Unable to read forced chunk data at %s - it will be ignored", chunkLoaderData.getAbsolutePath());
+                FMLLog.warn(e, "Unable to read forced chunk data at {} - it will be ignored", chunkLoaderData.getAbsolutePath());
                 return;
             }
             NBTTagList ticketList = forcedChunkData.getTagList("TicketList", Constants.NBT.TAG_COMPOUND);
@@ -501,13 +501,13 @@ public class ForgeChunkManager
 
                 if (!isPlayer && !Loader.isModLoaded(modId))
                 {
-                    FMLLog.warning("Found chunkloading data for mod %s which is currently not available or active - it will be removed from the world save", modId);
+                    FMLLog.log.warn("Found chunkloading data for mod {} which is currently not available or active - it will be removed from the world save", modId);
                     continue;
                 }
 
                 if (!isPlayer && !callbacks.containsKey(modId))
                 {
-                    FMLLog.warning("The mod %s has registered persistent chunkloading data but doesn't seem to want to be called back with it - it will be removed from the world save", modId);
+                    FMLLog.log.warn("The mod {} has registered persistent chunkloading data but doesn't seem to want to be called back with it - it will be removed from the world save", modId);
                     continue;
                 }
 
@@ -561,7 +561,7 @@ public class ForgeChunkManager
             {
                 if (tick.ticketType == Type.ENTITY && tick.entity == null)
                 {
-                    FMLLog.warning("Failed to load persistent chunkloading entity %s from store.", pendingEntities.inverse().get(tick));
+                    FMLLog.log.warn("Failed to load persistent chunkloading entity {} from store.", pendingEntities.inverse().get(tick));
                     loadedTickets.remove(tick.modId, tick);
                 }
             }
@@ -583,7 +583,7 @@ public class ForgeChunkManager
                 }
                 if (tickets.size() > maxTicketLength)
                 {
-                    FMLLog.warning("The mod %s has too many open chunkloading tickets %d. Excess will be dropped", modId, tickets.size());
+                    FMLLog.log.warn("The mod {} has too many open chunkloading tickets {}. Excess will be dropped", modId, tickets.size());
                     tickets.subList(maxTicketLength, tickets.size()).clear();
                 }
                 ForgeChunkManager.tickets.get(world).putAll(modId, tickets);
@@ -641,7 +641,7 @@ public class ForgeChunkManager
         ModContainer container = getContainer(mod);
         if (container == null)
         {
-            FMLLog.warning("Unable to register a callback for an unknown mod %s (%s : %x)", mod, mod.getClass().getName(), System.identityHashCode(mod));
+            FMLLog.log.warn("Unable to register a callback for an unknown mod {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
             return;
         }
 
@@ -699,12 +699,12 @@ public class ForgeChunkManager
         ModContainer mc = getContainer(mod);
         if (mc == null)
         {
-            FMLLog.log(Level.ERROR, "Failed to locate the container for mod instance %s (%s : %x)", mod, mod.getClass().getName(), System.identityHashCode(mod));
+            FMLLog.log.error("Failed to locate the container for mod instance {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
             return null;
         }
         if (playerTickets.get(player).size()>playerTicketLength)
         {
-            FMLLog.warning("Unable to assign further chunkloading tickets to player %s (on behalf of mod %s)", player, mc.getModId());
+            FMLLog.log.warn("Unable to assign further chunkloading tickets to player {} (on behalf of mod {})", player, mc.getModId());
             return null;
         }
         Ticket ticket = new Ticket(mc.getModId(),type,world,player);
@@ -726,13 +726,13 @@ public class ForgeChunkManager
         ModContainer container = getContainer(mod);
         if (container == null)
         {
-            FMLLog.log(Level.ERROR, "Failed to locate the container for mod instance %s (%s : %x)", mod, mod.getClass().getName(), System.identityHashCode(mod));
+            FMLLog.log.error("Failed to locate the container for mod instance {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
             return null;
         }
         String modId = container.getModId();
         if (!callbacks.containsKey(modId))
         {
-            FMLLog.severe("The mod %s has attempted to request a ticket without a listener in place", modId);
+            FMLLog.log.fatal("The mod {} has attempted to request a ticket without a listener in place", modId);
             throw new RuntimeException("Invalid ticket request");
         }
 
@@ -742,7 +742,7 @@ public class ForgeChunkManager
         {
             if (!warnedMods.contains(modId))
             {
-                FMLLog.info("The mod %s has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum : %d", modId, allowedCount);
+                FMLLog.log.info("The mod {} has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum: {}", modId, allowedCount);
                 warnedMods.add(modId);
             }
             return null;
@@ -806,7 +806,7 @@ public class ForgeChunkManager
         }
         if (ticket.isPlayerTicket() ? !playerTickets.containsValue(ticket) : !tickets.get(ticket.world).containsEntry(ticket.modId, ticket))
         {
-            FMLLog.severe("The mod %s attempted to force load a chunk with an invalid ticket. This is not permitted.", ticket.modId);
+            FMLLog.log.fatal("The mod {} attempted to force load a chunk with an invalid ticket. This is not permitted.", ticket.modId);
             return;
         }
         ticket.requestedChunks.add(chunk);
@@ -949,7 +949,7 @@ public class ForgeChunkManager
         }
         catch (IOException e)
         {
-            FMLLog.log(Level.WARN, e, "Unable to write forced chunk data to %s - chunkloading won't work", chunkLoaderData.getAbsolutePath());
+            FMLLog.warn(e, "Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath());
             return;
         }
     }
@@ -1015,7 +1015,7 @@ public class ForgeChunkManager
                 dest.delete();
             }
             cfgFile.renameTo(dest);
-            FMLLog.log(Level.ERROR, e, "A critical error occurred reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak");
+            FMLLog.error(e, "A critical error occurred reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak");
         }
         syncConfigDefaults();
     }
@@ -1068,7 +1068,7 @@ public class ForgeChunkManager
         temp.setMinValue(0);
         dormantChunkCacheSize = temp.getInt(0);
         propOrder.add("dormantChunkCacheSize");
-        FMLLog.info("Configured a dormant chunk cache size of %d", temp.getInt(0));
+        FMLLog.log.info("Configured a dormant chunk cache size of {}", temp.getInt(0));
 
         config.setCategoryPropertyOrder("defaults", propOrder);
 

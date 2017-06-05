@@ -81,7 +81,7 @@ public class GuiEditArrayEntries extends GuiListExtended
                 }
                 catch (Throwable e)
                 {
-                    FMLLog.log(Level.ERROR, e, "There was a critical error instantiating the custom IGuiEditListEntry for property %s.", configElement.getName());
+                    FMLLog.error(e, "There was a critical error instantiating the custom IGuiEditListEntry for property {}.", configElement.getName());
                 }
             }
         }
@@ -156,7 +156,7 @@ public class GuiEditArrayEntries extends GuiListExtended
             }
             catch (Throwable e)
             {
-                FMLLog.log(Level.ERROR, e, "There was a critical error instantiating the custom IGuiEditListEntry for property %s.", configElement.getName());
+                FMLLog.error(e, "There was a critical error instantiating the custom IGuiEditListEntry for property {}.", configElement.getName());
             }
         }
         else if (configElement.isList() && configElement.getType() == ConfigGuiType.BOOLEAN)

@@ -73,7 +73,7 @@ public class EventBus implements IEventExceptionHandler
         ModContainer activeModContainer = Loader.instance().activeModContainer();
         if (activeModContainer == null)
         {
-            FMLLog.log(Level.ERROR, new Throwable(), "Unable to determine registrant mod for %s. This is a critical error and should be impossible", target);
+            FMLLog.error(new Throwable(), "Unable to determine registrant mod for {}. This is a critical error and should be impossible", target);
             activeModContainer = Loader.instance().getMinecraftModContainer();
         }
         listenerOwners.put(target, activeModContainer);
@@ -196,11 +196,11 @@ public class EventBus implements IEventExceptionHandler
     @Override
     public void handleException(EventBus bus, Event event, IEventListener[] listeners, int index, Throwable throwable)
     {
-        FMLLog.log(Level.ERROR, throwable, "Exception caught during firing event %s:", event);
-        FMLLog.log(Level.ERROR, "Index: %d Listeners:", index);
+        FMLLog.error(throwable, "Exception caught during firing event {}:", event);
+        FMLLog.log.error("Index: {} Listeners:", index);
         for (int x = 0; x < listeners.length; x++)
         {
-            FMLLog.log(Level.ERROR, "%d: %s", x, listeners[x]);
+            FMLLog.log.error("{}: {}", x, listeners[x]);
         }
     }
 }

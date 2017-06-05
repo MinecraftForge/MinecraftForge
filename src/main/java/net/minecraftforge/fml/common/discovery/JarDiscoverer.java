@@ -46,7 +46,7 @@ public class JarDiscoverer implements ITypeDiscoverer
     public List<ModContainer> discover(ModCandidate candidate, ASMDataTable table)
     {
         List<ModContainer> foundMods = Lists.newArrayList();
-        FMLLog.fine("Examining file %s for potential mods", candidate.getModContainer().getName());
+        FMLLog.log.debug("Examining file {} for potential mods", candidate.getModContainer().getName());
         JarFile jar = null;
         try
         {
@@ -56,7 +56,7 @@ public class JarDiscoverer implements ITypeDiscoverer
             MetadataCollection mc = null;
             if (modInfo != null)
             {
-                FMLLog.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
+                FMLLog.log.trace("Located mcmod.info file in file {}", candidate.getModContainer().getName());
                 InputStream inputStream = jar.getInputStream(modInfo);
                 try
                 {
@@ -69,7 +69,7 @@ public class JarDiscoverer implements ITypeDiscoverer
             }
             else
             {
-                FMLLog.fine("The mod container %s appears to be missing an mcmod.info file", candidate.getModContainer().getName());
+                FMLLog.log.debug("The mod container {} appears to be missing an mcmod.info file", candidate.getModContainer().getName());
                 mc = MetadataCollection.from(null, "");
             }
             for (ZipEntry ze : Collections.list(jar.entries()))
@@ -97,7 +97,7 @@ public class JarDiscoverer implements ITypeDiscoverer
                     }
                     catch (LoaderException e)
                     {
-                        FMLLog.log(Level.ERROR, e, "There was a problem reading the entry %s in the jar %s - probably a corrupt zip", ze.getName(), candidate.getModContainer().getPath());
+                        FMLLog.error(e, "There was a problem reading the entry {} in the jar {} - probably a corrupt zip", ze.getName(), candidate.getModContainer().getPath());
                         jar.close();
                         throw e;
                     }
@@ -116,7 +116,7 @@ public class JarDiscoverer implements ITypeDiscoverer
         }
         catch (Exception e)
         {
-            FMLLog.log(Level.WARN, e, "Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
+            FMLLog.warn(e, "Zip file {} failed to read properly, it will be ignored", candidate.getModContainer().getName());
         }
         finally
         {

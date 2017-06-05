@@ -182,16 +182,16 @@ public class EntityRegistry
             {
                 EntityEntry entry = new EntityEntry(entityClass, entityName).setRegistryName(registryName);
                 ForgeRegistries.ENTITIES.register(entry);
-                FMLLog.finer("Automatically registered mod %s entity %s as %s", mc.getModId(), entityName, entry.getRegistryName());
+                FMLLog.log.trace("Automatically registered mod {} entity {} as {}", mc.getModId(), entityName, entry.getRegistryName());
             }
             else
             {
-                FMLLog.fine("Skipping automatic mod %s entity registration for already registered entry %s class %s", mc.getModId(), registryName, entityClass.getName());
+                FMLLog.log.debug("Skipping automatic mod {} entity registration for already registered entry {} class {}", mc.getModId(), registryName, entityClass.getName());
             }
         }
         catch (IllegalArgumentException e)
         {
-            FMLLog.log(Level.WARN, e, "The mod %s tried to register the entity (registry,name,class) (%s,%s,%s) one or both of which are already registered", mc.getModId(), registryName, entityName, entityClass.getName());
+            FMLLog.warn(e, "The mod {} tried to register the entity (registry,name,class) ({},{},{}) one or both of which are already registered", mc.getModId(), registryName, entityName, entityClass.getName());
             return;
         }
         entityRegistrations.put(mc, er);
@@ -214,7 +214,7 @@ public class EntityRegistry
         EntityEntry entry = ForgeRegistries.ENTITIES.getValue(name);
         if (entry == null)
         {
-            FMLLog.bigWarning("Attempted to registry a entity egg for entity (%s) that is not in the Entity Registry", name);
+            FMLLog.bigWarning("Attempted to registry a entity egg for entity ({}) that is not in the Entity Registry", name);
             return;
         }
         entry.setEgg(new EntityEggInfo(name, primary, secondary));

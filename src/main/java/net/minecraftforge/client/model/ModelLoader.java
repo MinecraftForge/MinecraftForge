@@ -342,7 +342,7 @@ public final class ModelLoader extends ModelBakery
                 catch(Exception normalException)
                 {
                     // try blockstate json if the item model is missing
-                    FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
+                    FMLLog.log.debug("Item json isn't found for '{}', trying to load the variant from the blockstate json", memory);
                     try
                     {
                         model = ModelLoaderRegistry.getModel(memory);
@@ -375,7 +375,7 @@ public final class ModelLoader extends ModelBakery
                 }
                 catch (Exception exception)
                 {
-                    FMLLog.getLogger().error("Could not load the forge bucket model from the blockstate", exception);
+                    FMLLog.log.error("Could not load the forge bucket model from the blockstate", exception);
                     return;
                 }
             }
@@ -1083,17 +1083,17 @@ public final class ModelLoader extends ModelBakery
                         if(entry.getValue() instanceof ItemLoadingException)
                         {
                             ItemLoadingException ex = (ItemLoadingException)entry.getValue();
-                            FMLLog.getLogger().error(errorMsg + ", normal location exception: ", ex.normalException);
-                            FMLLog.getLogger().error(errorMsg + ", blockstate location exception: ", ex.blockstateException);
+                            FMLLog.error(ex.normalException, "{}, normal location exception: ", errorMsg);
+                            FMLLog.error(ex.blockstateException, "{}, blockstate location exception: ", errorMsg);
                         }
                         else
                         {
-                            FMLLog.getLogger().error(errorMsg, entry.getValue());
+                            FMLLog.log.error(errorMsg, entry.getValue());
                         }
                         ResourceLocation blockstateLocation = new ResourceLocation(location.getResourceDomain(), location.getResourcePath());
                         if(loadingExceptions.containsKey(blockstateLocation) && !printedBlockStateErrors.contains(blockstateLocation))
                         {
-                            FMLLog.getLogger().error("Exception loading blockstate for the variant " + location + ": ", loadingExceptions.get(blockstateLocation));
+                            FMLLog.error(loadingExceptions.get(blockstateLocation),"Exception loading blockstate for the variant {}: ", location);
                             printedBlockStateErrors.add(blockstateLocation);
                         }
                     }
@@ -1116,7 +1116,7 @@ public final class ModelLoader extends ModelBakery
                 errorCount++;
                 if(errorCount < verboseMissingInfoCount)
                 {
-                    FMLLog.severe("Model definition for location %s not found", missing);
+                    FMLLog.log.fatal("Model definition for location {} not found", missing);
                 }
                 modelErrors.put(domain, errorCount);
             }
@@ -1129,7 +1129,7 @@ public final class ModelLoader extends ModelBakery
         {
             if(e.getValue() >= verboseMissingInfoCount)
             {
-                FMLLog.severe("Suppressed additional %s model loading errors for domain %s", e.getValue() - verboseMissingInfoCount, e.getKey());
+                FMLLog.log.fatal("Suppressed additional {} model loading errors for domain {}", e.getValue() - verboseMissingInfoCount, e.getKey());
             }
         }
         isLoading = false;

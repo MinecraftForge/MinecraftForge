@@ -19,73 +19,132 @@
 
 package net.minecraftforge.fml.common;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
+import java.util.Locale;
 
-@SuppressWarnings("static-access")
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
+import net.minecraftforge.fml.relauncher.Side;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
+
+/**
+ * FMLs logging class. <b>Internal use only, NOT FOR MOD LOGGING!</b> Mods use your own log, see {@link FMLPreInitializationEvent#getModLog()}.
+ */
 public class FMLLog
 {
-    private static net.minecraftforge.fml.relauncher.FMLRelaunchLog coreLog = net.minecraftforge.fml.relauncher.FMLRelaunchLog.log;
 
-    public static void log(String targetLog, Level level, String format, Object... data)
-    {
-        coreLog.log(targetLog, level, format, data);
+    public static final Logger log;
+
+    static {
+        log = LogManager.getLogger("FML");
+        // Default side to client for test harness purposes
+        Side side = FMLLaunchHandler.side();
+        if (side == null) side = Side.CLIENT;
+        ThreadContext.put("side", side.name().toLowerCase(Locale.ENGLISH));
+
+        log.debug("Injecting tracing printstreams for STDOUT/STDERR.");
+        System.setOut(new TracingPrintStream(LogManager.getLogger("STDOUT"), System.out));
+        System.setErr(new TracingPrintStream(LogManager.getLogger("STDERR"), System.err));
     }
 
-    public static void log(Level level, String format, Object... data)
+    public static void info(Throwable x, String message, Object... args)
     {
-        coreLog.log(level, format, data);
+        logWithException(Level.INFO, x, message, args);
     }
 
-    public static void log(String targetLog, Level level, Throwable ex, String format, Object... data)
+    public static void warn(Throwable x, String message, Object... args)
     {
-        coreLog.log(targetLog, level, ex, format, data);
+        logWithException(Level.WARN, x, message, args);
     }
 
-    public static void log(Level level, Throwable ex, String format, Object... data)
+    public static void error(Throwable x, String message, Object... args)
     {
-        coreLog.log(level, ex, format, data);
+        logWithException(Level.ERROR, x, message, args);
     }
 
-    public static void severe(String format, Object... data)
+    public static void fatal(Throwable x, String message, Object... args)
     {
-        log(Level.ERROR, format, data);
+        logWithException(Level.FATAL, x, message, args);
+    }
+
+    private static void logWithException(Level level, Throwable x, String message, Object... args)
+    {
+        log.log(level, log.getMessageFactory().newMessage(message, args), x);
     }
 
     public static void bigWarning(String format, Object... data)
     {
         StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-        log(Level.WARN, "****************************************");
-        log(Level.WARN, "* "+format, data);
+        log.warn("****************************************");
+        log.warn("* "+format, data);
         for (int i = 2; i < 8 && i < trace.length; i++)
         {
-            log(Level.WARN, "*  at %s%s", trace[i].toString(), i == 7 ? "..." : "");
+            log.warn("*  at {}{}", trace[i].toString(), i == 7 ? "..." : "");
         }
-        log(Level.WARN, "****************************************");
+        log.warn("****************************************");
     }
 
+    @Deprecated
+    public static void log(String targetLog, Level level, String format, Object... data)
+    {
+        FMLRelaunchLog.log(targetLog, level, format, data);
+    }
+
+    @Deprecated
+    public static void log(Level level, String format, Object... data)
+    {
+        FMLRelaunchLog.log(level, format, data);
+    }
+
+    @Deprecated
+    public static void log(String targetLog, Level level, Throwable ex, String format, Object... data)
+    {
+        FMLRelaunchLog.log(targetLog, level, ex, format, data);
+    }
+
+    @Deprecated
+    public static void log(Level level, Throwable ex, String format, Object... data)
+    {
+        FMLRelaunchLog.log(level, ex, format, data);
+    }
+
+    @Deprecated
+    public static void severe(String format, Object... data)
+    {
+        log(Level.ERROR, format, data);
+    }
+
+    @Deprecated
     public static void warning(String format, Object... data)
     {
         log(Level.WARN, format, data);
     }
 
+    @Deprecated
     public static void info(String format, Object... data)
     {
         log(Level.INFO, format, data);
     }
 
+    @Deprecated
     public static void fine(String format, Object... data)
     {
         log(Level.DEBUG, format, data);
     }
 
+    @Deprecated
     public static void finer(String format, Object... data)
     {
         log(Level.TRACE, format, data);
     }
 
+    @Deprecated
     public static Logger getLogger()
     {
-        return coreLog.getLogger();
+        return log;
     }
 }

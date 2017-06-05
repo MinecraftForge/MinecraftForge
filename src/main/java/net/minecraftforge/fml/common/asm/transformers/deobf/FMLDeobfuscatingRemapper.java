@@ -29,10 +29,10 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.patcher.ClassPatchManager;
-import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
 
-import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.message.Message;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
@@ -112,7 +112,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         }
         catch (IOException ioe)
         {
-            FMLRelaunchLog.log(Level.ERROR, "An error occurred loading the deobfuscation map data", ioe);
+            FMLLog.log.error("An error occurred loading the deobfuscation map data", ioe);
         }
         methodNameMaps = Maps.newHashMapWithExpectedSize(rawMethodMaps.size());
         fieldNameMaps = Maps.newHashMapWithExpectedSize(rawFieldMaps.size());
@@ -133,12 +133,12 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 LZMAInputSupplier zis = new LZMAInputSupplier(classData);
                 CharSource srgSource = zis.asCharSource(Charsets.UTF_8);
                 srgList = srgSource.readLines();
-                FMLRelaunchLog.fine("Loading deobfuscation resource %s with %d records", deobfFileName, srgList.size());
+                FMLLog.log.debug("Loading deobfuscation resource {} with {} records", deobfFileName, srgList.size());
             }
             else
             {
                 srgList = Files.readLines(new File(gradleStartProp), Charsets.UTF_8);
-                FMLRelaunchLog.fine("Loading deobfuscation resource %s with %d records", gradleStartProp, srgList.size());
+                FMLLog.log.debug("Loading deobfuscation resource {} with {} records", gradleStartProp, srgList.size());
             }
 
             rawMethodMaps = Maps.newHashMap();
@@ -166,7 +166,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         }
         catch (IOException ioe)
         {
-            FMLRelaunchLog.log(Level.ERROR, ioe, "An error occurred loading the deobfuscation map data");
+            FMLLog.log.error("An error occurred loading the deobfuscation map data", ioe);
         }
         methodNameMaps = Maps.newHashMapWithExpectedSize(rawMethodMaps.size());
         fieldNameMaps = Maps.newHashMapWithExpectedSize(rawFieldMaps.size());
@@ -234,7 +234,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             }
             catch (IOException e)
             {
-                FMLRelaunchLog.log(Level.ERROR,e, "A critical exception occurred reading a class file %s", owner);
+                FMLLog.error(e, "A critical exception occurred reading a class file {}", owner);
             }
             return null;
         }
@@ -390,7 +390,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
             if (DUMP_FIELD_MAPS)
             {
-                FMLRelaunchLog.finer("Field map for %s : %s", className, fieldNameMaps.get(className));
+                FMLLog.log.trace("Field map for {} : {}", className, fieldNameMaps.get(className));
             }
         }
         return fieldNameMaps.get(className);
@@ -407,7 +407,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             }
             if (DUMP_METHOD_MAPS)
             {
-                FMLRelaunchLog.finer("Method map for %s : %s", className, methodNameMaps.get(className));
+                FMLLog.log.trace("Method map for {} : {}", className, methodNameMaps.get(className));
             }
 
         }

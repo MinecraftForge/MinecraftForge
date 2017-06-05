@@ -121,8 +121,8 @@
 +                }
 +                catch (Exception e)
 +                {
-+                    net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
-+                            "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
++                    net.minecraftforge.fml.common.FMLLog.error(e,
++                            "An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author",
 +                            entity.getClass().getName());
 +                }
              }
@@ -139,8 +139,8 @@
 +            }
 +            catch (Exception e)
 +            {
-+                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
-+                        "A TileEntity type %s has throw an exception trying to write state. It will not persist. Report this to the mod author",
++                net.minecraftforge.fml.common.FMLLog.error(e,
++                        "A TileEntity type {} has throw an exception trying to write state. It will not persist. Report this to the mod author",
 +                        tileentity.getClass().getName());
 +            }
          }
