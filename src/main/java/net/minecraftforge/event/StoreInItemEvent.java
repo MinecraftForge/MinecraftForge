@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
  * This includes shulker boxes as well as various backpacks.<br>
  * If the result of the event is set as {@link Event.Result#DENY} the item won't be allowed in the inventory.
  * The main use for this is to prevent NBT overflows caused by cascaded backpacks/shulker boxes/...<br>
+ * Whether a specific item is allowed in a container must not change over time or with inventory content.<br>
  * <br>
  * {@link #input} the ItemStack that is to be placed in the inventory.<br>
  * {@link #container} A rough representation of the inventory the item is being placed into.
@@ -45,6 +46,7 @@ public class StoreInItemEvent extends Event
     private final ItemStack container;
     @Nonnull
     private final NonNullList<ItemStack> contents;
+
     public StoreInItemEvent(@Nonnull ItemStack input, @Nonnull ItemStack container, @Nonnull NonNullList<ItemStack> contents)
     {
         this.input = input;

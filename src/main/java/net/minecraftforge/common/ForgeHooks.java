@@ -1276,16 +1276,17 @@ public class ForgeHooks
     public static boolean onStoreInItem(@Nonnull ItemStack input, @Nonnull ItemStack container, @Nonnull IInventory inventory)
     {
         NonNullList<ItemStack> contents = NonNullList.withSize(inventory.getSizeInventory(), ItemStack.EMPTY);
-        for (int i = 0;i<inventory.getSizeInventory();i++)
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             contents.set(i, inventory.getStackInSlot(i));
         }
         return onStoreInItem(input, container, contents);
     }
+
     public static boolean onStoreInItem(@Nonnull ItemStack input, @Nonnull ItemStack container, @Nonnull NonNullList<ItemStack> contents)
     {
         StoreInItemEvent event = new StoreInItemEvent(input, container, contents);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult()!= Event.Result.DENY;
+        return event.getResult() != Event.Result.DENY;
     }
 }
