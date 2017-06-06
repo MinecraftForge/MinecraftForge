@@ -62,8 +62,8 @@ public class CriticalHitEventTest
             event.setResult(Result.DEFAULT); //Vanilla Hits
         }       
             
-        log.info(event.getTarget() + " got hit by " + event.getEntityPlayer() + " with a damagemodifier of " + event.getDamageModifier() );
+        log.info("{} got hit by {} with a damagemodifier of {}" , event.getTarget(), event.getEntityPlayer(), event.getDamageModifier());
         event.setDamageModifier(2.0F);
-        log.info("The damagemodifier is changed to " + event.getDamageModifier());
+        log.info("The damagemodifier is changed to {}", event.getDamageModifier());
     }
 }
