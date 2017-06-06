@@ -5,7 +5,7 @@
      public boolean func_180462_a(int p_180462_1_, ItemStack p_180462_2_, EnumFacing p_180462_3_)
      {
 -        return !(Block.func_149634_a(p_180462_2_.func_77973_b()) instanceof BlockShulkerBox);
-+        return net.minecraftforge.common.ForgeHooks.onStoreInItem(p_180462_2_, new ItemStack(field_145850_b.func_180495_p(field_174879_c).func_177230_c()), func_190576_q());
++        return p_180462_2_.func_77973_b().canPutIntoItemInventory(p_180462_2_, new ItemStack(net.minecraft.init.Blocks.field_190975_dA));
      }
  
      public boolean func_180461_b(int p_180461_1_, ItemStack p_180461_2_, EnumFacing p_180461_3_)

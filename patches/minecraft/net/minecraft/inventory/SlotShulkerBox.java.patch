@@ -5,6 +5,6 @@
      public boolean func_75214_a(ItemStack p_75214_1_)
      {
 -        return !(Block.func_149634_a(p_75214_1_.func_77973_b()) instanceof BlockShulkerBox);
-+        return net.minecraftforge.common.ForgeHooks.onStoreInItem(p_75214_1_, new ItemStack(net.minecraft.init.Blocks.field_190986_du), field_75224_c);
++        return p_75214_1_.func_77973_b().canPutIntoItemInventory(p_75214_1_, new ItemStack(net.minecraft.init.Blocks.field_190975_dA));
      }
  }

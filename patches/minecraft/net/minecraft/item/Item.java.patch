@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,632 @@
+@@ -433,11 +440,645 @@
          return false;
      }
  
@@ -688,12 +688,25 @@
 +        return builder.build();
 +    }
 +
++    /**
++     * Checks whether an item can be put into a container that is able to retain its contents as an item
++     * (backpacks, Shulker boxes, etc).<br>
++     * @param stack The item stack to be put into the inventory
++     * @param container A rough representation of the container item. This does not necessarily contain the inventory NBT/capability.
++     * This may be a slight variation of the actual container, e.g. a different color of Shulker box.
++     * @return true if the item should be allowed in the inventory
++     */
++    public boolean canPutIntoItemInventory(ItemStack stack, ItemStack container)
++    {
++        return true;
++    }
++
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1600,8 @@
+@@ -972,6 +1613,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -702,7 +715,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1007,9 +1637,26 @@
+@@ -1007,9 +1650,26 @@
              return this.field_78008_j;
          }
  
