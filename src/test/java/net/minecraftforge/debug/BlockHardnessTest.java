@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod(modid = "blockhardnesstest", name = "Block Hardness Event Test", version = "1.0", acceptableRemoteVersions = "*")
 public class BlockHardnessTest
 {
-    static final boolean ENABLED = true;
+    static final boolean ENABLED = false;
 
     @Mod.EventHandler
     public void onPreIn(FMLPreInitializationEvent event) 
