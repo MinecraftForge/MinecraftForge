@@ -179,6 +179,13 @@ public class ForgeEventFactory
         PlayerEvent.BreakSpeed event = new PlayerEvent.BreakSpeed(player, state, original, pos);
         return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.getNewSpeed());
     }
+    
+    public static float getBlockHardness(EntityPlayer player, IBlockState state, float original, BlockPos pos) 
+    {
+        PlayerEvent.BlockHardness event = new PlayerEvent.BlockHardness(player, state, original, pos);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getNewHardness();
+    }
 
     public static void onPlayerDestroyItem(EntityPlayer player, @Nonnull ItemStack stack, @Nullable EnumHand hand)
     {

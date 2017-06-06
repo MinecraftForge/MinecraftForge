@@ -128,7 +128,56 @@ public class PlayerEvent extends LivingEvent
         public void setNewSpeed(float newSpeed) { this.newSpeed = newSpeed; }
         public BlockPos getPos() { return pos; }
     }
-
+    
+    /**
+     * This event is fired when a player attempts to harvest a block. Specifically through 
+     * {@link ForgeEventFactory#getBlockHardness(EntityPlayer, IBlockState, float, BlockPos)}. 
+     * It allows for the hardness of the block when being mined by a player to be modified.
+     * 
+     * This event does not have a result and can not be cancelled. 
+     */
+    public static class BlockHardness extends PlayerEvent
+    {
+        private final IBlockState state;
+        private final float originalHardness;
+        private final BlockPos pos;
+        private float newHardness = 0.0f;
+        
+        public BlockHardness (EntityPlayer player, IBlockState state, float original, BlockPos pos)
+        {
+            super(player);
+            this.state = state;
+            this.originalHardness = original;
+            this.setNewHardness(original);
+            this.pos = pos;
+        }
+        
+        public IBlockState getStats() 
+        {
+            return this.state;
+        }
+        
+        public float getOriginalHardness()
+        {
+            return this.originalHardness;
+        }
+        
+        public BlockPos getPos()
+        {
+            return this.pos;
+        }
+        
+        public float getNewHardness()
+        {
+            return this.newHardness;
+        }
+        
+        public void setNewHardness(float hardness)
+        {
+            this.newHardness = hardness;
+        }
+    }
+    
     /**
      * NameFormat is fired when a player's display name is retrieved.<br>
      * This event is fired whenever a player's name is retrieved in
