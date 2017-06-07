@@ -26,7 +26,7 @@ public class Envelope {
 			if( point == 0 ) {
 				tick = 0;
 			}
-			if( point > 0 ) {
+			else if( point > 0 ) {
 				if( delta ) tick += ticks[ point - 1 ];
 				if( tick <= ticks[ point - 1 ] ) {
 					System.out.println( "Envelope: Point not valid (" + tick + " <= " + ticks[ point - 1 ] + ")");

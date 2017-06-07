@@ -229,11 +229,6 @@ public class Sample {
 	}
 
 	public boolean has_finished( int sample_idx ) {
-		boolean finished;
-		finished = false;
-		if( loop_length <= 1 && sample_idx > loop_start ) {
-			finished = true;
-		}
-		return finished;
+		return loop_length <= 1 && sample_idx > loop_start;
 	}
 }

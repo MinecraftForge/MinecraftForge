@@ -114,30 +114,25 @@ public class ProTracker {
 			output_pattern_data[ output_idx + 1 ] = ( byte ) instrument;
 			effect = input_pattern_data[ input_idx + 2 ] & 0x0F;
 			effect_param = input_pattern_data[ input_idx + 3 ] & 0xFF;
-			if( effect == 0x01 && effect_param == 0 ) {
-				/* Portamento up of zero has no effect. */
-				effect = 0;
-			}
-			if( effect == 0x02 && effect_param == 0 ) {
-				/* Portamento down of zero has no effect. */
-				effect = 0;
+			if(effect_param == 0){
+				switch(effect){
+					case 0x01:
+					case 0x02:
+					case 0x0A:
+						effect = 0;
+						break;
+					case 0x05:
+						effect = 0x03;
+						break;
+					case 0x06:
+						effect = 0x04;
+						break;
+				}
 			}
 			if( effect == 0x08 && num_channels == 4 ) {
 				/* Some Amiga mods use effect 0x08 for reasons other than panning.*/
 				effect = 0;
 				effect_param = 0;
-			}
-			if( effect == 0x0A && effect_param == 0 ) {
-				/* Volume slide of zero has no effect.*/
-				effect = 0;
-			}
-			if( effect == 0x05 && effect_param == 0 ) {
-				/* Porta + Volume slide of zero has no effect.*/
-				effect = 0x03;
-			}
-			if( effect == 0x06 && effect_param == 0 ) {
-				/* Vibrato + Volume slide of zero has no effect.*/
-				effect = 0x04;
 			}
 			output_pattern_data[ output_idx + 3 ] = ( byte ) effect;
 			output_pattern_data[ output_idx + 4 ] = ( byte ) effect_param;
@@ -155,7 +150,7 @@ public class ProTracker {
 		Sample sample;
 		byte[] raw_sample_data;
 		short[] sample_data;
-		header_offset = ( idx - 1 ) * 30 + 20;
+		header_offset = idx * 30 - 10;
 		instrument = new Instrument();
 		instrument.name = ascii_text( mod_header, header_offset, 22 );
 		sample = new Sample();
