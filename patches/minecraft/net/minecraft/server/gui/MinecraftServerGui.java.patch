@@ -1,6 +1,25 @@
 --- ../src-base/minecraft/net/minecraft/server/gui/MinecraftServerGui.java
 +++ ../src-work/minecraft/net/minecraft/server/gui/MinecraftServerGui.java
-@@ -77,6 +77,7 @@
+@@ -38,7 +38,9 @@
+     private static final Font field_164249_a = new Font("Monospaced", 0, 12);
+     private static final Logger field_164248_b = LogManager.getLogger();
+     private final DedicatedServer field_120021_b;
++    private static JFrame jframe;
+ 
++    public static JFrame getJFrame() { return jframe; }
+     public static void func_120016_a(final DedicatedServer p_120016_0_)
+     {
+         try
+@@ -51,7 +53,7 @@
+         }
+ 
+         MinecraftServerGui minecraftservergui = new MinecraftServerGui(p_120016_0_);
+-        JFrame jframe = new JFrame("Minecraft server");
++        jframe = new JFrame("Minecraft server");
+         jframe.add(minecraftservergui);
+         jframe.pack();
+         jframe.setLocationRelativeTo((Component)null);
+@@ -77,6 +79,7 @@
                  System.exit(0);
              }
          });
@@ -8,7 +27,7 @@
      }
  
      public MinecraftServerGui(DedicatedServer p_i2362_1_)
-@@ -161,8 +162,13 @@
+@@ -161,8 +164,13 @@
          return jpanel;
      }
  
