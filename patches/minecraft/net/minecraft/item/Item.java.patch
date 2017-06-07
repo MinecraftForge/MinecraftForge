@@ -396,7 +396,7 @@
 +    @Nullable
 +    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default)
 +    {
-+        return null;
++        return _default;
 +    }
 +
 +    /**
