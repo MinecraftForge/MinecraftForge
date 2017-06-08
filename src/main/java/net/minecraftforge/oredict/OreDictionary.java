@@ -517,7 +517,8 @@ public class OreDictionary
      */
     public static boolean doesOreNameExist(String name)
     {
-        return nameToId.get(name) != null;
+        Integer count = nameToId.get(name);
+        return count != null && count > 0;
     }
 
     /**
