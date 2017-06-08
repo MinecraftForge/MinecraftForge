@@ -22,6 +22,7 @@ package net.minecraftforge.client.event;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
 
 public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Event
@@ -69,6 +70,42 @@ public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Even
         public static class Post<T extends EntityLivingBase> extends Specials<T>
         {
             public Post(EntityLivingBase entity, RenderLivingBase<T> renderer, double x, double y, double z){ super(entity, renderer, x, y, z); }
+        }
+    }
+    
+    /**
+     * Called for each layer renderer that's rendered on an entity.
+     */
+    public abstract static class Layers<T extends EntityLivingBase> extends RenderLivingEvent<T>
+    {
+        private LayerRenderer<T> layerRenderer;
+        
+        protected Layers(EntityLivingBase entity, RenderLivingBase<T> entityRenderer, LayerRenderer<T> layerRenderer, double x, double y, double z)
+        {
+            super(entity, entityRenderer, x, y, z);
+            this.layerRenderer = layerRenderer;
+        }
+
+        @Cancelable
+        public static class Pre<T extends EntityLivingBase> extends Layers<T>
+        {
+            public Pre(EntityLivingBase entity, RenderLivingBase<T> entityRenderer, LayerRenderer<T> layerRenderer, double x, double y, double z)
+            {
+                super(entity, entityRenderer, layerRenderer, x, y, z);
+            }
+        }
+        
+        public static class Post<T extends EntityLivingBase> extends Layers<T>
+        {
+            public Post(EntityLivingBase entity, RenderLivingBase<T> entityRenderer, LayerRenderer<T> layerRenderer, double x, double y, double z)
+            {
+                super(entity, entityRenderer, layerRenderer, x, y, z);
+            }
+        }
+        
+        public LayerRenderer<T> getLayerRenderer()
+        {
+            return this.layerRenderer;
         }
     }
 }
