@@ -68,11 +68,11 @@ public class EntityEvent extends Event
     }
 
     /**
-     * CanUpdate is fired when an Entity is being created. <br>
+     * AllowUpdate is fired when an Entity is being created. <br>
      * This event is fired whenever vanilla Minecraft determines that an entity<br>
      * cannot update in {@link World#updateEntityWithOptionalForce(net.minecraft.entity.Entity, boolean)} <br>
      * <br>
-     * {@link CanUpdate#canUpdate} contains the boolean value of whether this entity can update.<br>
+     * {@link AllowUpdate#canUpdate} contains the boolean value of whether this entity can update.<br>
      * If the modder decides that this Entity can be updated, they may change canUpdate to true, <br>
      * and the entity with then be updated.<br>
      * <br>
@@ -80,10 +80,10 @@ public class EntityEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class CanUpdate extends EntityEvent
+    public static class AllowUpdate extends EntityEvent
     {
         private boolean canUpdate = false;
-        public CanUpdate(Entity entity)
+        public AllowUpdate(Entity entity)
         {
             super(entity);
         }
@@ -97,6 +97,37 @@ public class EntityEvent extends Event
         {
             this.canUpdate = canUpdate;
         }
+    }
+    
+    /**
+     * CancelUpdate is fired when an Entity is being created. <br>
+     * This event is fired whenever vanilla Minecraft determines that an entity<br>
+     * can update in {@link World#updateEntityWithOptionalForce(net.minecraft.entity.Entity, boolean)} <br>
+     * <br>
+     * {@link CancelUpdate#canUpdate} contains the boolean value of whether this entity can update.<br>
+     * If the modder decides that this Entity should not be updated, they may change canUpdate to false, <br>
+     * and the entity with then be updated.<br>
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     **/
+    public static class CancelUpdate extends EntityEvent
+    {
+    	private boolean canUpdate = true;
+    	public CancelUpdate(Entity entity)
+    	{
+    		super(entity);
+    	}
+    	
+		public boolean getCanUpdate()
+		{
+			return canUpdate;
+		}
+		public void setCanUpdate(boolean canUpdate)
+		{
+			this.canUpdate = canUpdate;
+		}
     }
     
     /**
