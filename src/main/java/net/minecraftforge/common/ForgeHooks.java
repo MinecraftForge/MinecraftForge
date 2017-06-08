@@ -199,6 +199,7 @@ public class ForgeHooks
     public static float blockStrength(@Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos)
     {
         float hardness = state.getBlockHardness(world, pos);
+        hardness = ForgeEventFactory.getBlockHardness(player, state, hardness, pos);
         if (hardness < 0.0F)
         {
             return 0.0F;
