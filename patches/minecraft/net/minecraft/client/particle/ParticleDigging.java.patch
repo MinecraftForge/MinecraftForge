@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/client/particle/ParticleDigging.java
++++ ../src-work/minecraft/net/minecraft/client/particle/ParticleDigging.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.client.particle;
+ 
+ import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.client.Minecraft;
+@@ -9,6 +10,7 @@
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -36,8 +38,9 @@
+     public ParticleDigging setBlockPos(BlockPos pos)
+     {
+         this.sourcePos = pos;
+-        if (this.sourceState.getBlock() == Blocks.GRASS)
++        if (this.sourceState.getBlock() == Blocks.GRASS || this.sourceState.getBlock().preventParticleColoring(sourceState, sourcePos)))
+         {
+             return this;
+         }
