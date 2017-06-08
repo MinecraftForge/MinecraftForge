@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
+import net.minecraftforge.fml.common.registry.VillagerRegistry;
 
 @Mod(modid = ObjectHolderTest.MODID, name = "ObjectHolderTests", version = "1.0", acceptableRemoteVersions = "*")
 public class ObjectHolderTest
@@ -35,6 +36,7 @@ public class ObjectHolderTest
         //verifies interfaces are supported
         assert CustomRegistryObjectHolder.custom_entry_by_interface != null;
 
+        assert VillagerRegistry.Professions.FARMER != null;
     }
 
     protected static class PotionForge extends Potion

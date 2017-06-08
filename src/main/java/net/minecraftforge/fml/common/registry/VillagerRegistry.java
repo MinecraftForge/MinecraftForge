@@ -47,7 +47,11 @@ import javax.annotation.Nullable;
 public class VillagerRegistry
 {
     public static final ResourceLocation PROFESSIONS = new ResourceLocation("minecraft:villagerprofessions");
+    /**
+     * @deprecated Use {@link Professions#FARMER} instead
+     */
     @ObjectHolder("minecraft:farmer")
+    @Deprecated
     public static final VillagerProfession FARMER = null;
     private static final VillagerRegistry INSTANCE = new VillagerRegistry();
 
@@ -56,6 +60,22 @@ public class VillagerRegistry
     private VillagerRegistry()
     {
         init();
+    }
+
+    /**
+     * A utility class of vanilla villager professions.
+     */
+    @GameRegistry.ObjectHolder("minecraft")
+    public static class Professions
+    {
+        public static final VillagerProfession FARMER = null;
+        public static final VillagerProfession LIBRARIAN = null;
+        public static final VillagerProfession PRIEST = null;
+        public static final VillagerProfession SMITH = null;
+        public static final VillagerProfession BUTCHER = null;
+        public static final VillagerProfession NITWIT = null;
+
+        private Professions() {}
     }
 
     /**
@@ -374,4 +394,5 @@ public class VillagerRegistry
         //It is nasty I know but it's vanilla.
         private static final ITradeList[][][][] trades = EntityVillager.GET_TRADES_DONT_USE();
     }
+
 }
