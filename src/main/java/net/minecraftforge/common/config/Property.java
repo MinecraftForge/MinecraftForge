@@ -43,9 +43,10 @@ public class Property
         return comment;
     }
 
-    public void setComment(String comment)
+    public Property setComment(String comment)
     {
         this.comment = comment;
+        return this;
     }
 
     public enum Type
