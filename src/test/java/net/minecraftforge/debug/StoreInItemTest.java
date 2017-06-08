@@ -83,5 +83,11 @@ public class StoreInItemTest
         {
             return (stack.getMetadata() == 0 ? "Can" : "Can't") + " be put into item storage";
         }
+
+        @Override
+        public boolean getHasSubtypes()
+        {
+            return true;
+        }
     }
 }

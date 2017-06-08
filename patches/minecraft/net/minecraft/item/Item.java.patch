@@ -60,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,645 @@
+@@ -433,11 +440,650 @@
          return false;
      }
  
@@ -698,6 +698,11 @@
 +     */
 +    public boolean canPutIntoItemInventory(ItemStack stack, ItemStack container)
 +    {
++        if (stack.func_77973_b() instanceof ItemShulkerBox)
++        {
++            net.minecraft.nbt.NBTTagCompound nbt = stack.func_77978_p();
++            return nbt == null || !nbt.func_74764_b("BlockEntityTag") || !nbt.func_74775_l("BlockEntityTag").func_74764_b("Items");
++        }
 +        return true;
 +    }
 +
@@ -706,7 +711,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1613,8 @@
+@@ -972,6 +1618,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -715,7 +720,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1007,9 +1650,26 @@
+@@ -1007,9 +1655,26 @@
              return this.field_78008_j;
          }
  
