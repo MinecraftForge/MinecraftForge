@@ -21,7 +21,8 @@ import com.google.common.base.Throwables;
 public enum ContainerType
 {
     JAR(JarDiscoverer.class),
-    DIR(DirectoryDiscoverer.class);
+    DIR(DirectoryDiscoverer.class),
+    TWEAK(TweakDiscoverer.class);
 
     private ITypeDiscoverer discoverer;
 
