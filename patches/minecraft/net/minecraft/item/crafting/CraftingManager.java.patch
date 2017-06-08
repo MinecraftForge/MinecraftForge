@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/CraftingManager.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/CraftingManager.java
+@@ -24,7 +24,7 @@
+ public class CraftingManager
+ {
+     private static final CraftingManager field_77598_a = new CraftingManager();
+-    private final List<IRecipe> field_77597_b = Lists.<IRecipe>newArrayList();
++    private final List<IRecipe> field_77597_b = new net.minecraftforge.fml.common.ModTrackingList<IRecipe>(Lists.<IRecipe>newArrayList());
+ 
+     public static CraftingManager func_77594_a()
+     {
+@@ -345,4 +345,15 @@
+     {
+         return this.field_77597_b;
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * returns the ModContainer that registered the given recipe with the CraftingManager.
++     * returns null if the ModContainer is unknown or it was registered by vanilla.
++     */
++    @javax.annotation.Nullable
++    public net.minecraftforge.fml.common.ModContainer getModContainer(IRecipe recipe)
++    {
++        return ((net.minecraftforge.fml.common.ModTrackingList<IRecipe>) field_77597_b).getModContainer(recipe);
++    }
+ }
