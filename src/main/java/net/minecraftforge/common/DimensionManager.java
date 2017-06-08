@@ -19,38 +19,23 @@
 
 package net.minecraftforge.common;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentMap;
-
-import org.apache.logging.log4j.Level;
-
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multiset;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.MinecraftException;
-import net.minecraft.world.World;
-import net.minecraft.world.ServerWorldEventHandler;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldServerMulti;
-import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.SaveHandler;
+import net.minecraft.world.*;
+import net.minecraftforge.event.world.DimensionPreloadEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
+import org.apache.logging.log4j.Level;
+
+import java.io.File;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentMap;
 
 public class DimensionManager
 {
@@ -214,9 +199,15 @@ public class DimensionManager
         {
             throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
         }
+        WorldServer alterantiveDimension = null;
         try
         {
-            DimensionManager.getProviderType(dim);
+            DimensionType type = DimensionManager.getProviderType(dim);
+            if(dim != 0) {
+                DimensionPreloadEvent adEvent = new DimensionPreloadEvent(dim, type);
+                MinecraftForge.EVENT_BUS.post(adEvent);
+                alterantiveDimension = adEvent.getAlternativeDimension();
+            }
         }
         catch (Exception e)
         {
@@ -224,10 +215,7 @@ public class DimensionManager
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
         MinecraftServer mcServer = overworld.getMinecraftServer();
-        ISaveHandler savehandler = overworld.getSaveHandler();
-        //WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
-
-        WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, dim, overworld, mcServer.theProfiler).init()));
+        WorldServer world = (dim == 0 ? overworld : ( alterantiveDimension != null ? alterantiveDimension : ((WorldServer)(new WorldServerMulti(mcServer, overworld.getSaveHandler(), dim, overworld, mcServer.theProfiler).init()))));
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
