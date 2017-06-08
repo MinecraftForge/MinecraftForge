@@ -1,5 +1,7 @@
 package net.minecraftforge.debug;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -16,23 +18,33 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.debug.ModelFluidDebug.TestFluid;
 import net.minecraftforge.debug.ModelFluidDebug.TestGas;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fluids.UniversalBucket;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -44,8 +56,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
-import java.util.List;
-
 @Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
 public class DynBucketTest
 {
@@ -55,11 +65,11 @@ public class DynBucketTest
     private static final ResourceLocation simpleTankName = new ResourceLocation(MODID, "simpletank");
     private static final ResourceLocation testItemName = new ResourceLocation(MODID, "testitem");
 
-    private static final boolean ENABLE = false;
+    private static final boolean ENABLE = true;
 
     static
     {
-        if (ENABLE)
+        if (ENABLE && ModelFluidDebug.ENABLE)
         {
             FluidRegistry.enableUniversalBucket();
         }
@@ -84,7 +94,7 @@ public class DynBucketTest
         @Override
         void setupModels()
         {
-            if (!ENABLE)
+            if (!ENABLE || !ModelFluidDebug.ENABLE)
                 return;
 
             ModelLoader.setBucketModelDefinition(dynBucket);
@@ -108,7 +118,7 @@ public class DynBucketTest
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        if (!ENABLE)
+        if (!ENABLE || !ModelFluidDebug.ENABLE)
             return;
 
         GameRegistry.register(new TestItem(), testItemName);
@@ -122,49 +132,11 @@ public class DynBucketTest
 
         //GameRegistry.registerItem(dynBucket, "dynbucket");
         GameRegistry.register(dynBottle);
-        GameRegistry.addShapelessRecipe(new ItemStack(Items.DIAMOND),
-            UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TestFluid.instance));
-
-        // register fluid containers
-        int i = 0;
-        //registerFluidContainer(FluidRegistry.WATER, i++);
-        //registerFluidContainer(FluidRegistry.LAVA, i++);
-        //registerFluidContainer(FluidRegistry.getFluid(TestFluid.name), i++);
-        //registerFluidContainer(FluidRegistry.getFluid(TestGas.name), i++);
-
-        i = 0;
-        //registerFluidContainer2(FluidRegistry.WATER, i++);
-        //registerFluidContainer2(FluidRegistry.LAVA, i++);
-        //registerFluidContainer2(FluidRegistry.getFluid(TestFluid.name), i++);
-        //registerFluidContainer2(FluidRegistry.getFluid(TestGas.name), i++);
-
-        // Set TestFluidBlocks blockstate to use milk instead of testfluid for the texture to be loaded
-        FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluid("milk"), new ItemStack(Items.MILK_BUCKET), FluidContainerRegistry.EMPTY_BUCKET);
+        ItemStack filledBucket = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TestFluid.instance);
+        GameRegistry.addShapelessRecipe(new ItemStack(Items.DIAMOND), filledBucket);
 
         proxy.setupModels();
         //MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    @SuppressWarnings("unused")
-    private void registerFluidContainer(Fluid fluid, int meta)
-    {
-        if (fluid == null)
-            return;
-
-        FluidStack fs = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
-        ItemStack stack = new ItemStack(dynBucket, 1, meta);
-        FluidContainerRegistry.registerFluidContainer(fs, stack, new ItemStack(Items.BUCKET));
-    }
-
-    @SuppressWarnings("unused")
-    private void registerFluidContainer2(Fluid fluid, int meta)
-    {
-        if (fluid == null)
-            return;
-
-        FluidStack fs = new FluidStack(fluid, 250);
-        ItemStack stack = new ItemStack(dynBottle, 1, meta);
-        FluidContainerRegistry.registerFluidContainer(fs, stack, new ItemStack(Items.GLASS_BOTTLE));
     }
 
     @SubscribeEvent
@@ -174,13 +146,19 @@ public class DynBucketTest
         if (state.getBlock() instanceof IFluidBlock)
         {
             Fluid fluid = ((IFluidBlock) state.getBlock()).getFluid();
-            FluidStack fs = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
+            FluidStack fs = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
 
-            ItemStack filled = FluidContainerRegistry.fillFluidContainer(fs, event.getEmptyBucket());
-            if (filled != null)
+            ItemStack bucket = event.getEmptyBucket();
+            IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(bucket);
+            if (fluidHandler != null)
             {
-                event.setFilledBucket(filled);
-                event.setResult(Result.ALLOW);
+                int fillAmount = fluidHandler.fill(fs, true);
+                if (fillAmount > 0)
+                {
+                    ItemStack filledBucket = fluidHandler.getContainer();
+                    event.setFilledBucket(filledBucket);
+                    event.setResult(Result.ALLOW);
+                }
             }
         }
     }
@@ -240,7 +218,7 @@ public class DynBucketTest
             for (int i = 0; i < 4; i++)
             {
                 ItemStack bucket = new ItemStack(this, 1, i);
-                if (FluidContainerRegistry.isFilledContainer(bucket))
+                if (FluidUtil.getFluidContained(bucket) != null)
                     subItems.add(bucket);
             }
         }
@@ -278,42 +256,37 @@ public class DynBucketTest
         @Override
         public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
         {
-            TileEntity te = worldIn.getTileEntity(pos);
-            if (!(te instanceof IFluidHandler))
-            {
-                return false;
-            }
-            IFluidHandler tank = (IFluidHandler) te;
-            side = side.getOpposite();
+            IFluidHandler tank = FluidUtil.getFluidHandler(worldIn, pos, side.getOpposite());
 
             if (heldItem == null)
             {
-                sendText(playerIn, tank, side);
+                sendText(playerIn, tank);
                 return false;
             }
 
             // do the thing with the tank and the buckets
-            if (FluidUtil.interactWithTank(heldItem, playerIn, tank, side))
+            if (FluidUtil.interactWithFluidHandler(heldItem, tank, playerIn).isSuccess())
             {
                 return true;
             }
             else
             {
-                sendText(playerIn, tank, side);
+                sendText(playerIn, tank);
             }
 
             // prevent interaction of the item if it's a fluidcontainer. Prevents placing liquids when interacting with the tank
-            return FluidContainerRegistry.isFilledContainer(heldItem) || heldItem.getItem() instanceof IFluidContainerItem;
+            return FluidUtil.getFluidHandler(heldItem) != null;
         }
 
-        private void sendText(EntityPlayer player, IFluidHandler tank, EnumFacing side)
+        private void sendText(EntityPlayer player, IFluidHandler tank)
         {
             if (player.worldObj.isRemote)
             {
                 String text;
-                if (tank.getTankInfo(side).length > 0 && tank.getTankInfo(side)[0] != null && tank.getTankInfo(side)[0].fluid != null)
+                IFluidTankProperties[] tankProperties = tank.getTankProperties();
+                if (tankProperties.length > 0 && tankProperties[0] != null && tankProperties[0].getContents() != null)
                 {
-                    text = tank.getTankInfo(side)[0].fluid.amount + "x " + tank.getTankInfo(side)[0].fluid.getLocalizedName();
+                    text = tankProperties[0].getContents().amount + "x " + tankProperties[0].getContents().getLocalizedName();
                 } else
                 {
                     text = "empty";
@@ -323,57 +296,9 @@ public class DynBucketTest
         }
     }
 
-    public static class TileSimpleTank extends TileEntity implements IFluidHandler
+    public static class TileSimpleTank extends TileEntity
     {
         FluidTank tank = new FluidTank(4000);
-
-        @Override
-        public int fill(EnumFacing from, FluidStack resource, boolean doFill)
-        {
-            int filled = tank.fill(resource, doFill);
-            if(doFill && filled > 0) {
-                IBlockState state = worldObj.getBlockState(pos);
-                worldObj.notifyBlockUpdate(pos, state, state, 8); // TODO check flag
-            }
-            return filled;
-        }
-
-        @Override
-        public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
-        {
-            // not used in this test
-            return null;
-        }
-
-        @Override
-        public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
-        {
-            FluidStack drained = tank.drain(maxDrain, doDrain);
-            if(doDrain && drained != null) {
-                IBlockState state = worldObj.getBlockState(pos);
-                worldObj.notifyBlockUpdate(pos, state, state, 8); // TODO check flag
-            }
-            return drained;
-        }
-
-        @Override
-        public boolean canFill(EnumFacing from, Fluid fluid)
-        {
-            return tank.getFluidAmount() == 0 ||
-                    (tank.getFluid().getFluid() == fluid && tank.getFluidAmount() < tank.getCapacity());
-        }
-
-        @Override
-        public boolean canDrain(EnumFacing from, Fluid fluid)
-        {
-            return tank.getFluidAmount() > 0;
-        }
-
-        @Override
-        public FluidTankInfo[] getTankInfo(EnumFacing from)
-        {
-            return new FluidTankInfo[]{new FluidTankInfo(tank)};
-        }
 
         @Override
         public void readFromNBT(NBTTagCompound tags)
@@ -401,6 +326,22 @@ public class DynBucketTest
         public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
             super.onDataPacket(net, pkt);
             readFromNBT(pkt.getNbtCompound());
+        }
+
+        @Override
+        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        {
+            return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+        }
+
+        @Override
+        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        {
+            if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+            {
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(tank);
+            }
+            return super.getCapability(capability, facing);
         }
     }
 }
