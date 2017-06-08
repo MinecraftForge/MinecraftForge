@@ -26,6 +26,7 @@ import java.util.EnumMap;
 
 import com.google.common.base.Throwables;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IThreadListener;
 import org.apache.logging.log4j.Level;
 
@@ -237,6 +238,22 @@ public class SimpleNetworkWrapper {
     public void sendToAll(IMessage message)
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETEXCEPT).set(null);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+    }
+
+    /**
+     * Send this message to everyone except one player.
+     * Must not be used when synchronizing game logic, only instant visual or audio effects.
+     * The {@link IMessageHandler} for this message type should be on the CLIENT side.
+     *
+     * @param message The message to send
+     * @param player The player that will not receive the message
+     */
+    public void sendToAllExcept(IMessage message, EntityPlayer player)
+    {
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETEXCEPT).set(player);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
@@ -265,6 +282,24 @@ public class SimpleNetworkWrapper {
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETEXCEPT).set(null);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+    }
+
+    /**
+     * Send this message to everyone within a certain range of a point except one player.
+     * Must not be used when synchronizing game logic, only instant visual or audio effects.
+     * The {@link IMessageHandler} for this message type should be on the CLIENT side.
+     *
+     * @param message The message to send
+     * @param point The {@link TargetPoint} around which to send
+     * @param player The player that will not receive the message
+     */
+    public void sendToAllAroundExcept(IMessage message, NetworkRegistry.TargetPoint point, EntityPlayer player)
+    {
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETEXCEPT).set(player);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
@@ -279,6 +314,24 @@ public class SimpleNetworkWrapper {
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETEXCEPT).set(null);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+    }
+
+    /**
+     * Send this message to everyone within the supplied dimension except one player.
+     * Must not be used when synchronizing game logic, only instant visual or audio effects.
+     * The {@link IMessageHandler} for this message type should be on the CLIENT side.
+     *
+     * @param message The message to send
+     * @param dimensionId The dimension id to target
+     * @param player The player that will not receive the message
+     */
+    public void sendToDimensionExcept(IMessage message, int dimensionId, EntityPlayer player)
+    {
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETEXCEPT).set(player);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
