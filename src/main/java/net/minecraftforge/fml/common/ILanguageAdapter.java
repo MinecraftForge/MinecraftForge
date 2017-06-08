@@ -19,25 +19,34 @@
 
 package net.minecraftforge.fml.common;
 
+import com.google.common.collect.Lists;
+import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.Level;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.List;
 
-import net.minecraftforge.fml.relauncher.Side;
-
-import org.apache.logging.log4j.Level;
-
-public interface ILanguageAdapter {
+public interface ILanguageAdapter
+{
     public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception;
+
     public boolean supportsStatics();
+
     public void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
+
     public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
 
-    public static class ScalaAdapter implements ILanguageAdapter {
+    public IStaticContainer getStaticContainer(Class<?> clazz, ClassLoader classLoader) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException;
+
+    public static class ScalaAdapter implements ILanguageAdapter
+    {
         @Override
         public Object getNewInstance(FMLModContainer container, Class<?> scalaObjectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception
         {
-            Class<?> sObjectClass = Class.forName(scalaObjectClass.getName()+"$",true,classLoader);
+            Class<?> sObjectClass = Class.forName(scalaObjectClass.getName() + "$", true, classLoader);
             return sObjectClass.getField("MODULE$").get(null);
         }
 
@@ -98,9 +107,9 @@ public interface ILanguageAdapter {
                 {
                     Class<?>[] setterParameters = setter.getParameterTypes();
                     if (setterName.equals(setter.getName()) &&
-                            // Some more validation.
-                            setterParameters.length == 1 &&
-                            setterParameters[0].isAssignableFrom(proxy.getClass()))
+                        // Some more validation.
+                        setterParameters.length == 1 &&
+                        setterParameters[0].isAssignableFrom(proxy.getClass()))
                     {
                         // Here goes nothing...
                         setter.invoke(targetInstance, proxy);
@@ -153,7 +162,8 @@ public interface ILanguageAdapter {
                     // So we don't initialize the field twice.
                     if (target.getAnnotation(SidedProxy.class) != null)
                     {
-                        String targetType = side.isClient() ? target.getAnnotation(SidedProxy.class).clientSide() : target.getAnnotation(SidedProxy.class).serverSide();
+                        String targetType = side.isClient() ? target.getAnnotation(SidedProxy.class).clientSide()
+                                                            : target.getAnnotation(SidedProxy.class).serverSide();
                         try
                         {
                             Object proxy = Class.forName(targetType, true, loader).newInstance();
@@ -166,7 +176,8 @@ public interface ILanguageAdapter {
 
                             setProxy(target, proxyTarget, proxy);
                         }
-                        catch (Exception e) {
+                        catch (Exception e)
+                        {
                             FMLLog.log(Level.ERROR, e, "An error occurred trying to load a proxy into %s.%s", proxyTarget.getSimpleName(), target.getName());
                             throw new LoaderException(e);
                         }
@@ -178,9 +189,17 @@ public interface ILanguageAdapter {
                 FMLLog.finer("Mod does not appear to be a singleton.");
             }
         }
+
+        @Override
+        public IStaticContainer getStaticContainer(Class<?> clazz, ClassLoader classLoader) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException
+        {
+            Class<?> objClass = Class.forName(clazz.getName() + "$", true, classLoader);
+            return new SingletonStaticContainer(objClass.getField("MODULE$").get(null));
+        }
     }
 
-    public static class JavaAdapter implements ILanguageAdapter {
+    public static class JavaAdapter implements ILanguageAdapter
+    {
         @Override
         public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedMethod) throws Exception
         {
@@ -201,8 +220,7 @@ public interface ILanguageAdapter {
         }
 
         @Override
-        public void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException,
-                SecurityException
+        public void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException
         {
             target.set(null, proxy);
         }
@@ -211,6 +229,117 @@ public interface ILanguageAdapter {
         public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader)
         {
             // Nothing to do here.
+        }
+
+        @Override
+        public IStaticContainer getStaticContainer(Class<?> clazz, ClassLoader classLoader) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException
+        {
+            return new ClassStaticContainer(clazz);
+        }
+    }
+
+    public static interface IStaticContainer
+    {
+        public Object getInstance();
+
+        public Class<?> getType();
+
+        public Field[] getFields();
+
+        public Object get(Field field) throws IllegalAccessException;
+
+        public void set(Field field, Object value) throws IllegalAccessException;
+    }
+
+    public static class ClassStaticContainer implements IStaticContainer
+    {
+        private final Class<?> clazz;
+        private Field[] fields;
+
+        public ClassStaticContainer(Class<?> clazz)
+        {
+            this.clazz = clazz;
+        }
+
+        @Override
+        public Object getInstance()
+        {
+            return clazz;
+        }
+
+        @Override
+        public Class<?> getType()
+        {
+            return clazz;
+        }
+
+        @Override
+        public Field[] getFields()
+        {
+            if (fields == null)
+            {
+                List<Field> fields = Lists.newArrayList();
+                for (Field field : clazz.getDeclaredFields())
+                {
+                    if (isValidField(field))
+                    {
+                        fields.add(field);
+                    }
+                }
+                this.fields = fields.toArray(new Field[fields.size()]);
+            }
+            return fields;
+        }
+
+        @Override
+        public Object get(Field field) throws IllegalAccessException
+        {
+            return field.get(getFieldHolder());
+        }
+
+        @Override
+        public void set(Field field, Object value) throws IllegalAccessException
+        {
+            field.set(getFieldHolder(), value);
+        }
+
+        protected Object getFieldHolder()
+        {
+            return null;
+        }
+
+        protected boolean isValidField(Field field)
+        {
+            return Modifier.isStatic(field.getModifiers());
+        }
+    }
+
+    public static class SingletonStaticContainer extends ClassStaticContainer
+    {
+        private final Object singleton;
+
+        public SingletonStaticContainer(Object singleton)
+        {
+            super(singleton.getClass());
+            this.singleton = singleton;
+        }
+
+        @Override
+        public Object getInstance()
+        {
+            return singleton;
+        }
+
+        @Override
+        protected Object getFieldHolder()
+        {
+            return singleton;
+        }
+
+        @Override
+        protected boolean isValidField(Field field)
+        {
+            return !Modifier.isStatic(field.getModifiers());
         }
     }
 }

@@ -79,7 +79,12 @@ public class AutomaticEventSubscriber
                         FMLLog.fine("Skipping @EventBusSubscriber injection for %s since it is not for mod %s", targ.getClassName(), mod.getModId());
                         continue; //We're not injecting this guy
                     }
-                    Class<?> subscriptionTarget = Class.forName(targ.getClassName(), true, mcl);
+                    Class<?> subscriptionTargetClass = Class.forName(targ.getClassName(), true, mcl);
+                    Object subscriptionTarget = subscriptionTargetClass;
+                    if (mod instanceof FMLModContainer)
+                    {
+                        subscriptionTarget = ((FMLModContainer) mod).getLanguageAdapter().getStaticContainer(subscriptionTargetClass, mcl).getInstance();
+                    }
                     MinecraftForge.EVENT_BUS.register(subscriptionTarget);
                     FMLLog.fine("Injected @EventBusSubscriber class %s", targ.getClassName());
                 }
