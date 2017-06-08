@@ -41,7 +41,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTBase;
@@ -53,6 +52,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.common.smelting.SmeltingRecipeRegistry;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -292,19 +292,35 @@ public class GameRegistry
         CraftingManager.getInstance().getRecipeList().add(recipe);
     }
 
-    public static void addSmelting(Block input, @Nonnull ItemStack output, float xp)
+    /**
+     * Adds a smelting recipe.
+     * @deprecated Use {@link SmeltingRecipeRegistry} instead.
+     */
+    @Deprecated
+    public static void addSmelting(Block input, ItemStack output, float xp)
     {
-        FurnaceRecipes.instance().addSmeltingRecipeForBlock(input, output, xp);
+        SmeltingRecipeRegistry.addSimpleRecipe(new ItemStack(input), output, xp);
     }
 
+    /**
+     * Adds a smelting recipe.
+     * @deprecated Use {@link SmeltingRecipeRegistry} instead.
+     */
+    @Deprecated
     public static void addSmelting(Item input, @Nonnull ItemStack output, float xp)
     {
-        FurnaceRecipes.instance().addSmelting(input, output, xp);
+        SmeltingRecipeRegistry.addSimpleRecipe(new ItemStack(input), output, xp);
+
     }
 
+    /**
+     * Adds a smelting recipe.
+     * @deprecated Use {@link SmeltingRecipeRegistry} instead.
+     */
+    @Deprecated
     public static void addSmelting(@Nonnull ItemStack input, @Nonnull ItemStack output, float xp)
     {
-        FurnaceRecipes.instance().addSmeltingRecipe(input, output, xp);
+        SmeltingRecipeRegistry.addSimpleRecipe(input, output, xp);
     }
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
