@@ -43,7 +43,7 @@
 +    @Override
 +    public java.util.List<ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
++        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, 0);
 +        int age = func_185527_x(state);
 +        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
 +
