@@ -38,6 +38,12 @@ public class ServerLaunchWrapper {
 
     private void run(String[] args)
     {
+        if (System.getProperty("log4j.configurationFile") == null)
+        {
+            // Set this early so we don't need to reconfigure later
+            System.setProperty("log4j.configurationFile", "log4j2_server.xml");
+        }
+
         Class<?> launchwrapper = null;
         try
         {

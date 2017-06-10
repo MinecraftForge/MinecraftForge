@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" packages="com.mojang.util,net.minecraftforge.server.console">
+<Configuration status="WARN">
     <Appenders>
         <TerminalConsole name="FmlConsole">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
+            <PatternLayout pattern="%highlightError{[%d{HH:mm:ss}] [%t/%level] [%logger]: %minecraftFormatting{%msg}%n%xEx}" />
         </TerminalConsole>
         <TerminalConsole name="Console">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+            <PatternLayout pattern="%highlightError{[%d{HH:mm:ss}] [%t/%level]: %minecraftFormatting{%msg}%n%xEx}" />
         </TerminalConsole>
-        <!-- Keep a console appender open so log4j2 doesn't close our main out stream if we redirect System.out to the logger -->
-        <Console name="SysOut" target="SYSTEM_OUT"/>
         <Queue name="ServerGuiConsole" ignoreExceptions="true">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %minecraftFormatting{%msg}{strip}%n" />
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %minecraftFormatting{%msg}{strip}%n" />
             <Policies>
                 <TimeBasedTriggeringPolicy />
                 <OnStartupTriggeringPolicy />
@@ -23,7 +21,7 @@
             <Routes pattern="$${ctx:side}">
                 <Route>
                     <RollingRandomAccessFile name="FmlFile" fileName="logs/fml-${ctx:side}-latest.log" filePattern="logs/fml-${ctx:side}-%i.log">
-                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%X{mod}]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
+                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%X{mod}]: %minecraftFormatting{%msg}{strip}%n" />
                         <DefaultRolloverStrategy max="3" fileIndex="max" />
                         <Policies>
                             <OnStartupTriggeringPolicy />
@@ -32,7 +30,7 @@
                 </Route>
                 <Route key="$${ctx:side}">
                     <RandomAccessFile name="FmlFile" fileName="logs/fml-junk-earlystartup.log" >
-                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
+                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %minecraftFormatting{%msg}{strip}%n" />
                     </RandomAccessFile>
                 </Route>
             </Routes>
