@@ -75,11 +75,11 @@ import org.apache.logging.log4j.Level;
 public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> implements ChannelOutboundHandler {
     private static boolean DEBUG_HANDSHAKE = Boolean.parseBoolean(System.getProperty("fml.debugNetworkHandshake", "false"));
     private static enum ConnectionState {
-        OPENING, AWAITING_HANDSHAKE, HANDSHAKING, HANDSHAKECOMPLETE, FINALIZING, CONNECTED;
+        OPENING, AWAITING_HANDSHAKE, HANDSHAKING, HANDSHAKECOMPLETE, FINALIZING, CONNECTED
     }
 
     private static enum ConnectionType {
-        MODDED, BUKKIT, VANILLA;
+        MODDED, BUKKIT, VANILLA
     }
 
     public static NetworkDispatcher get(NetworkManager manager)
@@ -116,20 +116,6 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     private Map<String,String> modList;
     private int overrideLoginDim;
 
-    private static final Field ordered;
-
-    static {
-        try
-        {
-            ordered = Class.forName("io.netty.channel.AbstractChannelHandlerContext").getDeclaredField("ordered");
-            ordered.setAccessible(true);
-        }
-        catch (NoSuchFieldException | ClassNotFoundException e)
-        {
-            FMLLog.log(Level.FATAL, "WOW, Netty changed, ****HAXXXXX****", e);
-            throw new Error(e);
-        }
-    }
     public NetworkDispatcher(NetworkManager manager)
     {
         super(false);
@@ -188,32 +174,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     {
         this.manager.channel().config().setAutoRead(false);
         // Insert ourselves into the pipeline
-        final ChannelPipeline cp = this.manager.channel().pipeline().addBefore("packet_handler", "fml:packet_handler", this);
-        // THIS IS A GHASTLY HACK TO FIX A STUPID "FEATURE" IN NETTY
-        // We force the "AbstractChannelHandlerContext" order field to false - because we don't want
-        // our handshake handler to "WAIT" until it's completed the "handlerAdded" method, before becoming active
-        // in the pipeline
-        final ChannelHandlerContext context = cp.context(this);
-        try
-        {
-            ordered.set(context, false);
-        }
-        catch (IllegalAccessException e)
-        {
-            FMLLog.log(Level.FATAL, "Wow, that reflection failed!", e);
-            throw new Error(e);
-        }
-
-    }
-
-    public void clientToServerHandshake()
-    {
-        insertIntoChannel();
-    }
-
-    @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception
-    {
+        this.manager.channel().pipeline().addBefore("packet_handler", "fml:packet_handler", this);
         if (this.state != null) {
             FMLLog.getLogger().log(Level.INFO, "Opening channel which already seems to have a state set. This is a vanilla connection. Handshake handler will stop now");
             this.manager.channel().config().setAutoRead(true);
@@ -224,6 +185,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         // send ourselves as a user event, to kick the pipeline active
         this.handshakeChannel.pipeline().fireUserEventTriggered(this);
         this.manager.channel().config().setAutoRead(true);
+    }
+
+    public void clientToServerHandshake()
+    {
+        insertIntoChannel();
     }
 
     int serverInitiateHandshake()
