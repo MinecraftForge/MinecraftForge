@@ -84,7 +84,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
     public ItemStack getRecipeOutput(){ return output; }
 
     @Override
-    public boolean matches(InventoryCrafting inv, World world)
+    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world)
     {
         for (int x = 0; x <= MAX_CRAFT_GRID_WIDTH - width; x++)
         {
@@ -143,13 +143,15 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         return this;
     }
 
+    @Nonnull
     public NonNullList<Ingredient> func_192400_c()
     {
         return this.input;
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
+    @Nonnull
+    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) //getRecipeLeftovers
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
@@ -164,6 +166,8 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         return height;
     }
 
+    @Override
+    @Nonnull
     public String func_193358_e()
     {
         return this.group.toString();

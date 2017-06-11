@@ -90,7 +90,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1){ return output.copy(); }
 
     @Override
-    public boolean matches(InventoryCrafting var1, World world)
+    public boolean matches(@Nonnull InventoryCrafting var1, @Nonnull World world)
     {
         NonNullList<Ingredient> required = NonNullList.create();
         required.addAll(input);
@@ -124,7 +124,8 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         return required.isEmpty();
     }
 
-
+    @Override
+    @Nonnull
     public NonNullList<Ingredient> func_192400_c()
     {
         return this.input;
@@ -132,11 +133,13 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
 
     @Override
     @Nonnull
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
+    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv)
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
 
+    @Override
+    @Nonnull
     public String func_193358_e()
     {
         return this.group == null ? "" : this.group.toString();
