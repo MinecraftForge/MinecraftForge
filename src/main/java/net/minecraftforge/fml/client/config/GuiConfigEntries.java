@@ -98,9 +98,9 @@ public class GuiConfigEntries extends GuiListExtended
 
                     // protects against language keys that are not defined in the .lang file
                     if (!I18n.format(configElement.getLanguageKey()).equals(configElement.getLanguageKey()))
-                        length = mc.fontRendererObj.getStringWidth(I18n.format(configElement.getLanguageKey()));
+                        length = mc.fontRenderer.getStringWidth(I18n.format(configElement.getLanguageKey()));
                     else
-                        length = mc.fontRendererObj.getStringWidth(configElement.getName());
+                        length = mc.fontRenderer.getStringWidth(configElement.getName());
 
                     if (length > this.maxLabelTextWidth)
                         this.maxLabelTextWidth = length;
@@ -914,8 +914,8 @@ public class GuiConfigEntries extends GuiListExtended
         {
             super.func_192634_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
             this.btnValue.width = this.owningEntryList.controlWidth;
-            this.btnValue.xPosition = this.owningScreen.entryList.controlX;
-            this.btnValue.yPosition = y;
+            this.btnValue.x = this.owningScreen.entryList.controlX;
+            this.btnValue.y = y;
             this.btnValue.enabled = enabled();
             this.btnValue.func_191745_a(this.mc, mouseX, mouseY, partial);
         }
@@ -1184,7 +1184,7 @@ public class GuiConfigEntries extends GuiListExtended
         {
             super(owningScreen, owningEntryList, configElement);
             beforeValue = configElement.get().toString();
-            this.textFieldValue = new GuiTextField(10, this.mc.fontRendererObj, this.owningEntryList.controlX + 1, 0, this.owningEntryList.controlWidth - 3, 16);
+            this.textFieldValue = new GuiTextField(10, this.mc.fontRenderer, this.owningEntryList.controlX + 1, 0, this.owningEntryList.controlWidth - 3, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(configElement.get().toString());
         }
@@ -1193,8 +1193,8 @@ public class GuiConfigEntries extends GuiListExtended
         public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
             super.func_192634_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
-            this.textFieldValue.xPosition = this.owningEntryList.controlX + 2;
-            this.textFieldValue.yPosition = y + 1;
+            this.textFieldValue.x = this.owningEntryList.controlX + 2;
+            this.textFieldValue.y = y + 1;
             this.textFieldValue.width = this.owningEntryList.controlWidth - 4;
             this.textFieldValue.setEnabled(enabled());
             this.textFieldValue.drawTextBox();
@@ -1328,8 +1328,8 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
-            this.btnSelectCategory.xPosition = listWidth / 2 - 150;
-            this.btnSelectCategory.yPosition = y;
+            this.btnSelectCategory.x = listWidth / 2 - 150;
+            this.btnSelectCategory.y = y;
             this.btnSelectCategory.enabled = enabled();
             this.btnSelectCategory.func_191745_a(this.mc, mouseX, mouseY, partial);
 
@@ -1535,20 +1535,20 @@ public class GuiConfigEntries extends GuiListExtended
                 String label = (!isValidValue ? TextFormatting.RED.toString() :
                         (isChanged ? TextFormatting.WHITE.toString() : TextFormatting.GRAY.toString()))
                         + (isChanged ? TextFormatting.ITALIC.toString() : "") + this.name;
-                this.mc.fontRendererObj.drawString(
+                this.mc.fontRenderer.drawString(
                         label,
                         this.owningScreen.entryList.labelX,
-                        y + slotHeight / 2 - this.mc.fontRendererObj.FONT_HEIGHT / 2,
+                        y + slotHeight / 2 - this.mc.fontRenderer.FONT_HEIGHT / 2,
                         16777215);
             }
 
-            this.btnUndoChanges.xPosition = this.owningEntryList.scrollBarX - 44;
-            this.btnUndoChanges.yPosition = y;
+            this.btnUndoChanges.x = this.owningEntryList.scrollBarX - 44;
+            this.btnUndoChanges.y = y;
             this.btnUndoChanges.enabled = enabled() && isChanged;
             this.btnUndoChanges.func_191745_a(this.mc, mouseX, mouseY, partial);
 
-            this.btnDefault.xPosition = this.owningEntryList.scrollBarX - 22;
-            this.btnDefault.yPosition = y;
+            this.btnDefault.x = this.owningEntryList.scrollBarX - 22;
+            this.btnDefault.y = y;
             this.btnDefault.enabled = enabled() && !isDefault();
             this.btnDefault.func_191745_a(this.mc, mouseX, mouseY, partial);
 
@@ -1635,7 +1635,7 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public int getLabelWidth()
         {
-            return this.mc.fontRendererObj.getStringWidth(this.name);
+            return this.mc.fontRenderer.getStringWidth(this.name);
         }
 
         @Override

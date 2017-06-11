@@ -50,7 +50,7 @@ public class LootTablesDebug
     {
         // if the player shoots something with a projectile, use looting 3
         DamageSource damageSource = event.getDamageSource();
-        if (damageSource.isProjectile() && damageSource.getEntity() instanceof EntityPlayer && damageSource.getSourceOfDamage() instanceof EntityArrow)
+        if (damageSource.isProjectile() && damageSource.getTrueSource() instanceof EntityPlayer && damageSource.getImmediateSource() instanceof EntityArrow)
         {
             event.setLootingLevel(3);
         }

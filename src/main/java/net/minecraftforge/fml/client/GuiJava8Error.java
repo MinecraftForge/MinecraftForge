@@ -87,27 +87,27 @@ public class GuiJava8Error extends GuiErrorBase
         int offset = 25;
         if (!java8VersionException.getMods().isEmpty())
         {
-            this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.java8problem", TextFormatting.RED, TextFormatting.BOLD, TextFormatting.RESET), this.width / 2, offset, 0xFFFFFF);
+            this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.java8problem", TextFormatting.RED, TextFormatting.BOLD, TextFormatting.RESET), this.width / 2, offset, 0xFFFFFF);
         }
         else
         {
-            this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.java8recommended", TextFormatting.RED, TextFormatting.BOLD, TextFormatting.RESET), this.width / 2, offset, 0xFFFFFF);
+            this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.java8recommended", TextFormatting.RED, TextFormatting.BOLD, TextFormatting.RESET), this.width / 2, offset, 0xFFFFFF);
         }
         offset+=15;
-        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.javaversion", System.getProperty("java.version").split("\\.")[1], System.getProperty("java.version")), this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.javaversion", System.getProperty("java.version").split("\\.")[1], System.getProperty("java.version")), this.width / 2, offset, 0xFFFFFF);
         offset += 10;
         if (!java8VersionException.getMods().isEmpty())
         {
-            this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.upgradejavaorremove", TextFormatting.RED,TextFormatting.BOLD, TextFormatting.RESET), this.width / 2, offset, 0xFFFFFF);
+            this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.upgradejavaorremove", TextFormatting.RED,TextFormatting.BOLD, TextFormatting.RESET), this.width / 2, offset, 0xFFFFFF);
             offset += 15;
-            this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.modslistedbelow", I18n.format("fml.messages.requirejava8")), this.width / 2, offset, 0xFFFFFF);
+            this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.modslistedbelow", I18n.format("fml.messages.requirejava8")), this.width / 2, offset, 0xFFFFFF);
             offset += 10;
-            this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.countbadandgood", java8VersionException.getMods().size(), Loader.instance().getActiveModList().size()), this.width / 2, offset, 0xFFFFFF);
+            this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.countbadandgood", java8VersionException.getMods().size(), Loader.instance().getActiveModList().size()), this.width / 2, offset, 0xFFFFFF);
             offset += 5;
             for (ModContainer mc : java8VersionException.getMods())
             {
                 offset += 10;
-                this.drawCenteredString(this.fontRendererObj, String.format("%s (%s)", mc.getName(), mc.getModId()), this.width / 2, offset, 0xEEEEEE);
+                this.drawCenteredString(this.fontRenderer, String.format("%s (%s)", mc.getName(), mc.getModId()), this.width / 2, offset, 0xEEEEEE);
             }
         }
         else
@@ -116,19 +116,19 @@ public class GuiJava8Error extends GuiErrorBase
             List<String> lines = Lists.newArrayList();
             for (String line : text.split("\n"))
             {
-                lines.addAll(this.fontRendererObj.listFormattedStringToWidth(line, this.width - this.fontRendererObj.FONT_HEIGHT * 4));
+                lines.addAll(this.fontRenderer.listFormattedStringToWidth(line, this.width - this.fontRenderer.FONT_HEIGHT * 4));
             }
 
             int maxWidth = 0;
             for (String line : lines)
             {
-                maxWidth = Math.max(maxWidth, this.fontRendererObj.getStringWidth(line));
+                maxWidth = Math.max(maxWidth, this.fontRenderer.getStringWidth(line));
             }
 
             for (String line : lines)
             {
-                this.drawString(this.fontRendererObj, line, (this.width - maxWidth) / 2, offset, 0xFFFFFF);
-                offset += this.fontRendererObj.FONT_HEIGHT + 2;
+                this.drawString(this.fontRenderer, line, (this.width - maxWidth) / 2, offset, 0xFFFFFF);
+                offset += this.fontRenderer.FONT_HEIGHT + 2;
             }
         }
         super.drawScreen(mouseX, mouseY, partialTicks);

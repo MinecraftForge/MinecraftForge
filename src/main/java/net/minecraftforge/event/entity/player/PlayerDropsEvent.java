@@ -48,7 +48,7 @@ public class PlayerDropsEvent extends LivingDropsEvent
      */
     public PlayerDropsEvent(EntityPlayer entity, DamageSource source, List<EntityItem> drops, boolean recentlyHit)
     {
-        super(entity, source, drops, ForgeHooks.getLootingLevel(entity, source.getEntity(), source), recentlyHit);
+        super(entity, source, drops, ForgeHooks.getLootingLevel(entity, source.getTrueSource(), source), recentlyHit);
 
         this.entityPlayer = entity;
     }

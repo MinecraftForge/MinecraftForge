@@ -477,9 +477,9 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         for (Biome biome : ForgeRegistries.BIOMES.getValues())
         {
-            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
+            if (biome.decorator instanceof DeferredBiomeDecorator)
             {
-                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator)biome.theBiomeDecorator;
+                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator)biome.decorator;
                 decorator.fireCreateEventAndReplace(biome);
             }
 

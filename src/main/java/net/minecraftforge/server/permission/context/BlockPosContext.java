@@ -44,7 +44,7 @@ public class BlockPosContext extends PlayerContext
 
     public BlockPosContext(EntityPlayer ep, ChunkPos pos)
     {
-        this(ep, new BlockPos((pos.chunkXPos << 4) + 8, 0, (pos.chunkZPos << 4) + 8), null, null);
+        this(ep, new BlockPos(pos.getXStart() + 8, 0, pos.getZStart() + 8), null, null);
     }
 
     @Override
