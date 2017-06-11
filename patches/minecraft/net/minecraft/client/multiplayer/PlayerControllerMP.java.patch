@@ -106,7 +106,7 @@
          }
  
          return p_178893_1_.equals(this.field_178895_c) && flag;
-@@ -382,13 +395,29 @@
+@@ -382,13 +395,34 @@
          }
          else
          {
@@ -123,7 +123,12 @@
              if (this.field_78779_k != GameType.SPECTATOR)
              {
 +                EnumActionResult ret = itemstack.onItemUseFirst(p_187099_1_, p_187099_2_, p_187099_3_, p_187099_6_, p_187099_4_, f, f1, f2);
-+                if (ret != EnumActionResult.PASS) return ret;
++                if (ret != EnumActionResult.PASS)
++                {
++                    // The server needs to process the item use as well. Otherwise onItemUseFirst won't ever be called on the server without causing weird bugs
++                    this.field_78774_b.func_147297_a(new CPacketPlayerTryUseItemOnBlock(p_187099_3_, p_187099_4_, p_187099_6_, f, f1, f2));
++                    return ret;
++                }
 +
                  IBlockState iblockstate = p_187099_2_.func_180495_p(p_187099_3_);
 +                boolean bypass = itemstack.func_190926_b() || itemstack.func_77973_b().doesSneakBypassUse(itemstack, p_187099_2_, p_187099_3_, p_187099_1_);
@@ -138,7 +143,7 @@
                  }
  
                  if (!flag && itemstack.func_77973_b() instanceof ItemBlock)
-@@ -404,7 +433,7 @@
+@@ -404,7 +438,7 @@
  
              this.field_78774_b.func_147297_a(new CPacketPlayerTryUseItemOnBlock(p_187099_3_, p_187099_4_, p_187099_6_, f, f1, f2));
  
@@ -147,7 +152,7 @@
              {
                  if (itemstack.func_190926_b())
                  {
-@@ -430,14 +459,20 @@
+@@ -430,14 +464,20 @@
                      {
                          int i = itemstack.func_77960_j();
                          int j = itemstack.func_190916_E();
@@ -169,7 +174,7 @@
                      }
                  }
              }
-@@ -466,6 +501,8 @@
+@@ -466,6 +506,8 @@
              }
              else
              {
@@ -178,7 +183,7 @@
                  int i = itemstack.func_190916_E();
                  ActionResult<ItemStack> actionresult = itemstack.func_77957_a(p_187101_2_, p_187101_1_, p_187101_3_);
                  ItemStack itemstack1 = actionresult.func_188398_b();
-@@ -473,6 +510,10 @@
+@@ -473,6 +515,10 @@
                  if (itemstack1 != itemstack || itemstack1.func_190916_E() != i)
                  {
                      p_187101_1_.func_184611_a(p_187101_3_, itemstack1);
@@ -189,7 +194,7 @@
                  }
  
                  return actionresult.func_188397_a();
-@@ -509,6 +550,9 @@
+@@ -509,6 +555,9 @@
          this.func_78750_j();
          Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
          this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_4_, vec3d));
