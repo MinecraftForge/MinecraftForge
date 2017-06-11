@@ -215,6 +215,15 @@
          }
      }
  
+@@ -680,7 +704,7 @@
+ 
+         if ((i1 & 32) == 0)
+         {
+-            this.func_77973_b().func_77624_a(this, p_82840_1_ == null ? null : p_82840_1_.field_70170_p, list, p_82840_2_);
++            this.func_77973_b().addInformation(this, p_82840_1_, list, p_82840_2_);
+         }
+ 
+         if (this.func_77942_o())
 @@ -862,6 +886,7 @@
              }
          }

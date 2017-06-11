@@ -38,7 +38,18 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -372,7 +375,7 @@
+@@ -349,6 +352,10 @@
+     {
+     }
+ 
++    /**
++     * Use Forge player sensitive version
++     */
++    @Deprecated
+     @SideOnly(Side.CLIENT)
+     public void func_77624_a(ItemStack p_77624_1_, @Nullable World p_77624_2_, List<String> p_77624_3_, ITooltipFlag p_77624_4_)
+     {
+@@ -372,7 +379,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -47,7 +58,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -390,7 +393,11 @@
+@@ -390,7 +397,11 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -60,7 +71,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -411,6 +418,9 @@
+@@ -411,6 +422,9 @@
      @SideOnly(Side.CLIENT)
      protected boolean func_194125_a(CreativeTabs p_194125_1_)
      {
@@ -70,7 +81,7 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -438,11 +448,632 @@
+@@ -438,11 +452,647 @@
          return false;
      }
  
@@ -698,12 +709,27 @@
 +        return builder.build();
 +    }
 +
++    /**
++     * Player sensitive version of addInformation
++     * Add information to the items tooltip
++     *
++     * @param stack    The stack the tooltip is being retrieved for
++     * @param playerIn The player retrieving the tooltip
++     * @param tooltip  The lines to be displayed on the tooltip
++     * @param advanced The tooltip flag set by the client
++     */
++    @SideOnly(Side.CLIENT)
++    public void addInformation(ItemStack stack, @Nullable EntityPlayer playerIn, List<String> tooltip, ITooltipFlag advanced)
++    {
++        this.func_77624_a(stack, playerIn == null ? null : playerIn.field_70170_p, tooltip, advanced);
++    }
++
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -1002,6 +1633,8 @@
+@@ -1002,6 +1652,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -712,7 +738,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1037,6 +1670,7 @@
+@@ -1037,6 +1689,7 @@
              return this.field_78008_j;
          }
  
@@ -720,7 +746,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1060,5 +1694,21 @@
+@@ -1060,5 +1713,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
