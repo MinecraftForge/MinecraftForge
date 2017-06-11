@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common.network.handshake;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandler;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -30,6 +31,7 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
 import java.util.Collections;
@@ -71,7 +73,7 @@ import org.apache.logging.log4j.Level;
 
 // TODO build test suites to validate the behaviour of this stuff and make it less annoyingly magical
 public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> implements ChannelOutboundHandler {
-    private static boolean DEBUG_HANDSHAKE = Boolean.parseBoolean(System.getProperty("fml.debugNetworkHandshake", "true"));
+    private static boolean DEBUG_HANDSHAKE = Boolean.parseBoolean(System.getProperty("fml.debugNetworkHandshake", "false"));
     private static enum ConnectionState {
         OPENING, AWAITING_HANDSHAKE, HANDSHAKING, HANDSHAKECOMPLETE, FINALIZING, CONNECTED;
     }
@@ -114,6 +116,20 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     private Map<String,String> modList;
     private int overrideLoginDim;
 
+    private static final Field ordered;
+
+    static {
+        try
+        {
+            ordered = Class.forName("io.netty.channel.AbstractChannelHandlerContext").getDeclaredField("ordered");
+            ordered.setAccessible(true);
+        }
+        catch (NoSuchFieldException | ClassNotFoundException e)
+        {
+            FMLLog.log(Level.FATAL, "WOW, Netty changed, ****HAXXXXX****", e);
+            throw new Error(e);
+        }
+    }
     public NetworkDispatcher(NetworkManager manager)
     {
         super(false);
@@ -172,7 +188,22 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     {
         this.manager.channel().config().setAutoRead(false);
         // Insert ourselves into the pipeline
-        this.manager.channel().pipeline().addBefore("packet_handler", "fml:packet_handler", this);
+        final ChannelPipeline cp = this.manager.channel().pipeline().addBefore("packet_handler", "fml:packet_handler", this);
+        // THIS IS A GHASTLY HACK TO FIX A STUPID "FEATURE" IN NETTY
+        // We force the "AbstractChannelHandlerContext" order field to false - because we don't want
+        // our handshake handler to "WAIT" until it's completed the "handlerAdded" method, before becoming active
+        // in the pipeline
+        final ChannelHandlerContext context = cp.context(this);
+        try
+        {
+            ordered.set(context, false);
+        }
+        catch (IllegalAccessException e)
+        {
+            FMLLog.log(Level.FATAL, "Wow, that reflection failed!", e);
+            throw new Error(e);
+        }
+
     }
 
     public void clientToServerHandshake()
