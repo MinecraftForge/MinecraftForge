@@ -64,7 +64,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     {
         this.drawDefaultBackground();
         this.list.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.missing.multiple", missingModsExceptions.size() + wrongMinecraftExceptions.size()), this.width/2, 10, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.mod.missing.multiple", missingModsExceptions.size() + wrongMinecraftExceptions.size()), this.width/2, 10, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -123,7 +123,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
         protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess)
         {
             int offset = slotTop;
-            FontRenderer renderer = GuiMultipleModsErrored.this.fontRendererObj;
+            FontRenderer renderer = GuiMultipleModsErrored.this.fontRenderer;
             if (!wrongMinecraftExceptions.isEmpty())
             {
                 renderer.drawString(TextFormatting.UNDERLINE + I18n.format("fml.messages.mod.wrongminecraft", Loader.instance().getMinecraftModContainer().getVersion()), this.left, offset, 0xFFFFFF);

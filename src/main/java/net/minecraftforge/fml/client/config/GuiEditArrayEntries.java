@@ -435,7 +435,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         public StringEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement, Object value)
         {
             super(owningScreen, owningEntryList, configElement);
-            this.textFieldValue = new GuiTextField(0, owningEntryList.getMC().fontRendererObj, owningEntryList.width / 4 + 1, 0, owningEntryList.controlWidth - 3, 16);
+            this.textFieldValue = new GuiTextField(0, owningEntryList.getMC().fontRenderer, owningEntryList.width / 4 + 1, 0, owningEntryList.controlWidth - 3, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(value.toString());
             this.isValidated = configElement.getValidationPattern() != null;
@@ -456,7 +456,7 @@ public class GuiEditArrayEntries extends GuiListExtended
             if (configElement.isListLengthFixed() || slotIndex != owningEntryList.listEntries.size() - 1)
             {
                 this.textFieldValue.setVisible(true);
-                this.textFieldValue.yPosition = y + 1;
+                this.textFieldValue.y = y + 1;
                 this.textFieldValue.drawTextBox();
             }
             else
@@ -519,8 +519,8 @@ public class GuiEditArrayEntries extends GuiListExtended
         public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
             super.func_192634_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
-            this.btnValue.xPosition = listWidth / 4;
-            this.btnValue.yPosition = y;
+            this.btnValue.x = listWidth / 4;
+            this.btnValue.y = y;
 
             String trans = I18n.format(String.valueOf(value));
             if (!trans.equals(String.valueOf(value)))
@@ -596,18 +596,18 @@ public class GuiEditArrayEntries extends GuiListExtended
         public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
             if (this.getValue() != null && this.isValidated)
-                owningEntryList.getMC().fontRendererObj.drawString(
+                owningEntryList.getMC().fontRenderer.drawString(
                         isValidValue ? TextFormatting.GREEN + VALID : TextFormatting.RED + INVALID,
-                        listWidth / 4 - owningEntryList.getMC().fontRendererObj.getStringWidth(VALID) - 2,
-                        y + slotHeight / 2 - owningEntryList.getMC().fontRendererObj.FONT_HEIGHT / 2,
+                        listWidth / 4 - owningEntryList.getMC().fontRenderer.getStringWidth(VALID) - 2,
+                        y + slotHeight / 2 - owningEntryList.getMC().fontRenderer.FONT_HEIGHT / 2,
                         16777215);
 
             int half = listWidth / 2;
             if (owningEntryList.canAddMoreEntries)
             {
                 this.btnAddNewEntryAbove.visible = true;
-                this.btnAddNewEntryAbove.xPosition = half + ((half / 2) - 44);
-                this.btnAddNewEntryAbove.yPosition = y;
+                this.btnAddNewEntryAbove.x = half + ((half / 2) - 44);
+                this.btnAddNewEntryAbove.y = y;
                 this.btnAddNewEntryAbove.func_191745_a(owningEntryList.getMC(), mouseX, mouseY, partial);
             }
             else
@@ -616,8 +616,8 @@ public class GuiEditArrayEntries extends GuiListExtended
             if (!configElement.isListLengthFixed() && slotIndex != owningEntryList.listEntries.size() - 1)
             {
                 this.btnRemoveEntry.visible = true;
-                this.btnRemoveEntry.xPosition = half + ((half / 2) - 22);
-                this.btnRemoveEntry.yPosition = y;
+                this.btnRemoveEntry.x = half + ((half / 2) - 22);
+                this.btnRemoveEntry.y = y;
                 this.btnRemoveEntry.func_191745_a(owningEntryList.getMC(), mouseX, mouseY, partial);
             }
             else

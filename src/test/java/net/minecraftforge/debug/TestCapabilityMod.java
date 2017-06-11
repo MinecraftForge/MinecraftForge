@@ -240,7 +240,7 @@ public class TestCapabilityMod
         {
             List<EntityPlayer> players = event.world.playerEntities;
             int i = 0;
-            for (Village village : event.world.villageCollectionObj.getVillageList())
+            for (Village village : event.world.villageCollection.getVillageList())
             {
                 if (village.hasCapability(TEST_CAP, null))
                 {
