@@ -214,7 +214,16 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -936,6 +954,1216 @@
+@@ -931,11 +949,1240 @@
+         return "Block{" + field_149771_c.func_177774_c(this) + "}";
+     }
+ 
++    /**
++     * Use Forge player sensitive version
++     */
++    @Deprecated
+     @SideOnly(Side.CLIENT)
+     public void func_190948_a(ItemStack p_190948_1_, @Nullable World p_190948_2_, List<String> p_190948_3_, ITooltipFlag p_190948_4_)
      {
      }
  
@@ -1426,12 +1435,27 @@
 +        return isBurning(world, pos) ? net.minecraft.pathfinding.PathNodeType.DAMAGE_FIRE : null;
 +    }
 +
++    /**
++     * Player sensitive version of addInformation
++     * Add information to the blocks tooltip, called from the default implementation of {@link ItemBlock#addInformation(ItemStack, EntityPlayer, List, ITooltipFlag)}
++     *
++     * @param stack    The stack the tooltip is being retrieved for
++     * @param playerIn The player retrieving the tooltip
++     * @param tooltip  The lines to be displayed on the tooltip
++     * @param advanced The tooltip flag set by the client
++     */
++    @SideOnly(Side.CLIENT)
++    public void addInformation(ItemStack stack, @Nullable EntityPlayer playerIn, List<String> tooltip, ITooltipFlag advanced)
++    {
++        this.func_190948_a(stack, playerIn == null ? null : playerIn.field_70170_p, tooltip, advanced);
++    }
++
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1247,14 +2475,7 @@
+@@ -1247,14 +2494,7 @@
              }
              else
              {

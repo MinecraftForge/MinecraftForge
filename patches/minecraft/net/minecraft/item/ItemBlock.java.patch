@@ -37,7 +37,18 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
-@@ -175,4 +163,29 @@
+@@ -164,15 +152,47 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+-    public void func_77624_a(ItemStack p_77624_1_, @Nullable World p_77624_2_, List<String> p_77624_3_, ITooltipFlag p_77624_4_)
+-    {
+-        super.func_77624_a(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
+-        this.field_150939_a.func_190948_a(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
+-    }
+ 
+     public Block func_179223_d()
      {
          return this.field_150939_a;
      }
@@ -65,5 +76,18 @@
 +        }
 +
 +        return true;
++    }
++
++    /**
++     * @param stack    The stack the tooltip is being retrieved for
++     * @param playerIn The player retrieving the tooltip
++     * @param tooltip  The lines to be displayed on the tooltip
++     * @param advanced The tooltip flag set by the client
++     */
++    @SideOnly(Side.CLIENT)
++    public void addInformation(ItemStack stack, @Nullable EntityPlayer playerIn, List<String> tooltip, ITooltipFlag advanced)
++    {
++        super.addInformation(stack, playerIn, tooltip, advanced);
++        this.field_150939_a.addInformation(stack, playerIn, tooltip, advanced);
 +    }
  }
