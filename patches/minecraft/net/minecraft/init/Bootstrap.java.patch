@@ -18,20 +18,13 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
-@@ -524,6 +527,6 @@
-             StatList.func_151178_a();
-             Biome.func_185358_q();
-             func_151353_a();
-+            net.minecraftforge.fml.common.registry.ForgeRegistries.initForgeRegistries();
-+            net.minecraftforge.fml.common.registry.GameData.vanillaSnapshot();
-         }
-@@ -524,6 +527,8 @@
+@@ -524,6 +528,9 @@
                      field_179871_c.error("Errors with built-in loot tables");
                  }
              }
 +
-+            net.minecraftforge.fml.common.ForgeRegistries.initForgeRegistries();
-+            net.minecraftforge.registries.GameData.vanillaSnapshot();
++            net.minecraftforge.fml.common.registry.ForgeRegistries.initForgeRegistries();
++            net.minecraftforge.fml.common.registry.GameData.vanillaSnapshot();
          }
      }
  
