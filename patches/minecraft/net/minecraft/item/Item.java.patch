@@ -692,11 +692,11 @@
 +     * Checks whether an item can be put into a container that is able to retain its contents as an item
 +     * (backpacks, Shulker boxes, etc).<br>
 +     * @param stack The item stack to be put into the inventory
-+     * @param container A rough representation of the container item. This does not necessarily contain the inventory NBT/capability.
-+     * This may be a slight variation of the actual container, e.g. a different color of Shulker box.
++     * @param location Some information on the inventory the stack is being put into. Can be (but is not limited to) one of
++     * the implementations in {@link net.minecraftforge.items.PortableInventoryLocation} <br>
 +     * @return true if the item should be allowed in the inventory
 +     */
-+    public boolean canPutIntoItemInventory(ItemStack stack, ItemStack container)
++    public boolean canPutIntoItemInventory(ItemStack stack, net.minecraftforge.items.PortableInventoryLocation location)
 +    {
 +        if (stack.func_77973_b() instanceof ItemShulkerBox)
 +        {

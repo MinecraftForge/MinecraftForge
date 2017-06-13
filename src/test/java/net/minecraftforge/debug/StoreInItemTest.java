@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.items.PortableInventoryLocation;
 
 import javax.annotation.Nonnull;
 
@@ -60,7 +61,7 @@ public class StoreInItemTest
         static Item instance;
 
         @Override
-        public boolean canPutIntoItemInventory(ItemStack stack, ItemStack container)
+        public boolean canPutIntoItemInventory(ItemStack stack, PortableInventoryLocation container)
         {
             return stack.getMetadata() == 0;
         }
