@@ -331,11 +331,22 @@ public class CraftingHelper {
         }
 
         ret.input = NonNullList.withSize(ret.width * ret.height, Ingredient.field_193370_a);
+
+        Set<Character> keys = Sets.newHashSet(itemMap.keySet());
+        keys.remove(' ');
+
         int x = 0;
         for (char chr : shape.toCharArray())
         {
-            ret.input.add(x++, itemMap.get(chr));
+            Ingredient ing = itemMap.get(chr);
+            if (ing == null)
+                throw new IllegalArgumentException("Pattern references symbol '" + chr + "' but it's not defined in the key");
+            ret.input.set(x++, ing);
+            keys.remove(chr);
         }
+
+        if (!keys.isEmpty())
+            throw new IllegalArgumentException("Key defines symbols that aren't used in pattern: " + keys);
 
         return ret;
     }
