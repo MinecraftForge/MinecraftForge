@@ -33,3 +33,11 @@
          }
  
          p_94525_2_.func_190917_f(p_94525_3_);
+@@ -803,6 +804,7 @@
+             ItemStack itemstack = ItemStack.field_190927_a;
+             IRecipe irecipe = CraftingManager.func_192413_b(p_192389_3_, p_192389_1_);
+ 
++            if(irecipe != null && (!irecipe.hasForcedLock() || entityplayermp.func_192037_E().func_193830_f(irecipe)))
+             if (irecipe != null && (irecipe.func_192399_d() || !p_192389_1_.func_82736_K().func_82766_b("doLimitedCrafting") || entityplayermp.func_192037_E().func_193830_f(irecipe)))
+             {
+                 p_192389_4_.func_193056_a(irecipe);

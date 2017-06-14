@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/IRecipe.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/IRecipe.java
-@@ -4,35 +4,30 @@
+@@ -4,36 +4,33 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.NonNullList;
  import net.minecraft.world.World;
@@ -40,3 +40,6 @@
      {
          return "";
      }
++    /** If true this Recipe has to be unlocked in the Players RecipeBook to be usable (acts as if the "doLimitedCrafting" GameRule was set to true) */
++    default boolean hasForcedLock() { return false; }
+ }
