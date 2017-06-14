@@ -334,7 +334,7 @@ public class CraftingHelper {
         int x = 0;
         for (char chr : shape.toCharArray())
         {
-            ret.input.add(x++, itemMap.get(chr));
+            ret.input.set(x++, itemMap.get(chr));
         }
 
         return ret;
