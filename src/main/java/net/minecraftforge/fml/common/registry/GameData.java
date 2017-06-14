@@ -30,6 +30,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.tileentity.TileEntity;
@@ -39,11 +40,12 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 
 import com.google.common.collect.BiMap;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.Level;
+
+import static net.minecraftforge.fml.common.registry.PersistentRegistryManager.*;
 
 public class GameData
 {
@@ -63,6 +65,8 @@ public class GameData
     private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
     private static final int MIN_ENTITY_ID = 0;
     private static final int MAX_ENTITY_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSpawnMob)
+    private static final int MIN_RECIPE_ID = 0;
+    private static final int MAX_RECIPE_ID = Integer.MAX_VALUE >> 5; // Varint CPacketRecipeInfo/SPacketRecipeBook
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
@@ -73,15 +77,15 @@ public class GameData
 
     public GameData()
     {
-        iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MIN_BLOCK_ID, MAX_BLOCK_ID, true, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE);
-        iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MIN_ITEM_ID, MAX_ITEM_ID, true, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE);
-        iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MIN_POTION_ID, MAX_POTION_ID, false, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE, null);
-        iBiomeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BIOMES, Biome.class, null, MIN_BIOME_ID, MAX_BIOME_ID, false, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE, null);
-        iSoundEventRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.SOUNDEVENTS, SoundEvent.class, null, MIN_SOUND_ID, MAX_SOUND_ID, false, null, null, null, null);
-        ResourceLocation WATER = new ResourceLocation("water");
-        iPotionTypeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONTYPES, PotionType.class, WATER, MIN_POTIONTYPE_ID, MAX_POTIONTYPE_ID, false, null, null, null, null);
-        iEnchantmentRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ENCHANTMENTS, Enchantment.class, null, MIN_ENCHANTMENT_ID, MAX_ENCHANTMENT_ID, false, null, null, null, null);
-        iEntityRegistry = (FMLControlledNamespacedRegistry<EntityEntry>)new RegistryBuilder<EntityEntry>().setName(PersistentRegistryManager.ENTITIES).setType(EntityEntry.class).setIDRange(MIN_ENTITY_ID, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
+        iBlockRegistry       = (FMLControlledNamespacedRegistry<Block>)      makeRegistry(BLOCKS,       Block.class,       MIN_BLOCK_ID, MAX_BLOCK_ID).addCallback(BlockCallbacks.INSTANCE).enableDelegates().setDefaultKey(new ResourceLocation("air")).create();
+        iItemRegistry        = (FMLControlledNamespacedRegistry<Item>)       makeRegistry(ITEMS,        Item.class,        MIN_ITEM_ID, MAX_ITEM_ID).addCallback(ItemCallbacks.INSTANCE).enableDelegates().create();
+        iPotionRegistry      = (FMLControlledNamespacedRegistry<Potion>)     makeRegistry(POTIONS,      Potion.class,      MIN_POTION_ID, MAX_POTION_ID).addCallback(PotionCallbacks.INSTANCE).create();
+        iBiomeRegistry       = (FMLControlledNamespacedRegistry<Biome>)      makeRegistry(BIOMES,       Biome.class,       MIN_BIOME_ID, MAX_BIOME_ID).addCallback(BiomeCallbacks.INSTANCE).create();
+        iSoundEventRegistry  = (FMLControlledNamespacedRegistry<SoundEvent>) makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MIN_SOUND_ID, MAX_SOUND_ID).create();
+        iPotionTypeRegistry  = (FMLControlledNamespacedRegistry<PotionType>) makeRegistry(POTIONTYPES,  PotionType.class,  MIN_POTIONTYPE_ID, MAX_POTIONTYPE_ID).setDefaultKey(new ResourceLocation("water")).create();
+        iEnchantmentRegistry = (FMLControlledNamespacedRegistry<Enchantment>)makeRegistry(ENCHANTMENTS, Enchantment.class, MIN_ENCHANTMENT_ID, MAX_ENCHANTMENT_ID).create();
+        iEntityRegistry      = (FMLControlledNamespacedRegistry<EntityEntry>)makeRegistry(ENTITIES,     EntityEntry.class, MIN_ENTITY_ID, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
+        iRecipeRegistry      = (FMLControlledNamespacedRegistry<IRecipe>)    makeRegistry(RECIPES,      IRecipe.class,     MIN_RECIPE_ID, MAX_RECIPE_ID).disableSaving().create();
 
         try
         {
@@ -94,6 +98,11 @@ public class GameData
         }
 
         iTileEntityRegistry = new LegacyNamespacedRegistry<Class<? extends TileEntity>>();
+    }
+
+    private <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int min, int max)
+    {
+        return new RegistryBuilder<T>().setName(name).setType(type).setIDRange(min, max);
     }
     // internal registry objects
     private final FMLControlledNamespacedRegistry<Block> iBlockRegistry;
@@ -109,6 +118,9 @@ public class GameData
     //Need cpw to decide how we want to go about this as they are generic registries that
     //don't follow the same patterns as the other ones.
     private final LegacyNamespacedRegistry<Class<? extends TileEntity>> iTileEntityRegistry;
+
+    //TODO: This is not a recipe that is serilized to disc by ID, so we need to skip over any saving/loading from disc
+    private final FMLControlledNamespacedRegistry<IRecipe> iRecipeRegistry;
 
     /** INTERNAL ONLY */
     @Deprecated
@@ -154,17 +166,9 @@ public class GameData
     @Deprecated
     public static FMLControlledNamespacedRegistry<EntityEntry> getEntityRegistry() { return getMain().iEntityRegistry; }
 
+    /** INTERNAL ONLY */
     @Deprecated
-    static Item findItem(String modId, String name)
-    {
-        return getMain().iItemRegistry.getObject(new ResourceLocation(modId, name));
-    }
-
-    @Deprecated
-    static Block findBlock(String modId, String name)
-    {
-        return getMain().iBlockRegistry.getObject(new ResourceLocation(modId, name));
-    }
+    public static FMLControlledNamespacedRegistry<IRecipe> getRecipeRegistry() { return getMain().iRecipeRegistry; }
 
     protected static GameData getMain()
     {

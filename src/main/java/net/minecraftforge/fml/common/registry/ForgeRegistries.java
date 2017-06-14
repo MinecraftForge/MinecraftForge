@@ -21,7 +21,9 @@ package net.minecraftforge.fml.common.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.init.Bootstrap;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.SoundEvent;
@@ -46,6 +48,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<Enchantment>  ENCHANTMENTS = GameRegistry.findRegistry(Enchantment.class);
     public static final IForgeRegistry<VillagerProfession> VILLAGER_PROFESSIONS = GameRegistry.findRegistry(VillagerProfession.class);
     public static final IForgeRegistry<EntityEntry>  ENTITIES     = GameRegistry.findRegistry(EntityEntry.class);
+    public static final IForgeRegistry<IRecipe>      RECIPES      = GameRegistry.findRegistry(IRecipe.class);
 
 
     /**
@@ -55,6 +58,7 @@ public class ForgeRegistries
     {
         GameData.getMain();
         VillagerRegistry.instance();
+        Bootstrap.register();
     }
 
 }

@@ -125,6 +125,9 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
 
         for (Map.Entry<ResourceLocation, PersistentRegistryManager.GameDataSnapshot.Entry> e : dataSnapshot.entries.entrySet())
         {
+            if (!e.getValue().saveToDisc) //Skip registries that don't need to persist, Currently Recipes.
+                continue;
+
             NBTTagCompound data = new NBTTagCompound();
             registries.setTag(e.getKey().toString(), data);
 

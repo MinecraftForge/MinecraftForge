@@ -38,6 +38,7 @@ import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.common.registry.RegistryBuilder;
 
 import javax.annotation.Nullable;
 
@@ -138,7 +139,7 @@ public class VillagerRegistry
     }
 
     private boolean hasInit = false;
-    private FMLControlledNamespacedRegistry<VillagerProfession> professions = PersistentRegistryManager.createRegistry(PROFESSIONS, VillagerProfession.class, null, 0, 1024, true, null, null, null, null);
+    private FMLControlledNamespacedRegistry<VillagerProfession> professions = (FMLControlledNamespacedRegistry<VillagerProfession>)new RegistryBuilder<VillagerProfession>().setName(PROFESSIONS).setType(VillagerProfession.class).setIDRange(0, 1024).enableDelegates().create();
     public IForgeRegistry<VillagerProfession> getRegistry() { return this.professions; }
 
 

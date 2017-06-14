@@ -62,7 +62,7 @@ public interface IForgeRegistryEntry<V>
     Class<V> getRegistryType();
 
     // Default implementation, modders who make extra items SHOULD extend this instead of Object.
-    // We have to do this until we get default implementations in Java 8.
+    // So, all fields in interfaces are forced static, so even with Java8 people must still extend this.
     @SuppressWarnings({ "serial", "unchecked" })
     public static class Impl<T  extends IForgeRegistryEntry<T>> implements IForgeRegistryEntry<T>
     {
