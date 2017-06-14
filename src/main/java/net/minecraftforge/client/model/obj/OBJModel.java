@@ -78,7 +78,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class OBJModel implements IRetexturableModel, IModelCustomData
+public class OBJModel implements IModel
 {
     //private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;
@@ -95,12 +95,6 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         this.matLib = matLib;
         this.modelLocation = modelLocation;
         this.customData = customData;
-    }
-
-    @Override
-    public Collection<ResourceLocation> getDependencies()
-    {
-        return Collections.emptyList();
     }
 
     @Override
@@ -1280,7 +1274,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
     }
 
-    public class OBJBakedModel implements IPerspectiveAwareModel
+    public class OBJBakedModel implements IBakedModel
     {
         private final OBJModel model;
         private IModelState state;
@@ -1485,12 +1479,6 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             return this.sprite;
         }
 
-        @Override
-        public ItemCameraTransforms getItemCameraTransforms()
-        {
-            return ItemCameraTransforms.DEFAULT;
-        }
-
         // FIXME: merge with getQuads
         /* @Override
         public OBJBakedModel handleBlockState(IBlockState state)
@@ -1577,7 +1565,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
+            return PerspectiveMapWrapper.handlePerspective(this, state, cameraTransformType);
         }
 
         @Override
@@ -1603,11 +1591,5 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             super(String.format("Model '%s' has UVs ('vt') out of bounds 0-1! The missing model will be used instead. Support for UV processing will be added to the OBJ loader in the future.", modelLocation));
             this.modelLocation = modelLocation;
         }
-    }
-
-    @Override
-    public IModelState getDefaultState()
-    {
-        return TRSRTransformation.identity();
     }
 }

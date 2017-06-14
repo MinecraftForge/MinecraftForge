@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.model;
 
+@Deprecated
 public interface IModelUVLock extends IModel
 {
-    public IModel uvlock(boolean value);
 }

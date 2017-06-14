@@ -27,7 +27,7 @@ import com.google.common.base.Optional;
 /**
  * IModel that has animation data.
  */
+@Deprecated
 public interface IAnimatedModel extends IModel
 {
-    Optional<? extends IClip> getClip(String name);
 }
