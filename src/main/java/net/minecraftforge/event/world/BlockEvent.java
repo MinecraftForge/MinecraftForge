@@ -35,13 +35,10 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class BlockEvent extends Event
 {
