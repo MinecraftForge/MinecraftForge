@@ -125,11 +125,11 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
                     {
                         target = input.get(subX + subY * width);
                     }
-                }
-
-                if (!target.apply(inv.getStackInRowAndColumn(x, y)))
-                {
-                    return false;
+                    
+                    if (!target.apply(inv.getStackInRowAndColumn(x, y)))
+                    {
+                        return false;
+                    }
                 }
             }
         }
