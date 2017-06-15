@@ -31,8 +31,11 @@
       "serverreq":true
     },
     {
-      "name": "org.ow2.asm:asm-all:5.1",
-      "serverreq":true
+      "name": "org.ow2.asm:asm-all:5.2",
+      "url" : "http://files.minecraftforge.net/maven/",
+      "checksums" : [ "2ea49e08b876bbd33e0a7ce75c8f371d29e1f10a" ],
+      "serverreq":true,
+      "clientreq":true
     },
     {
       "name": "jline:jline:2.13",

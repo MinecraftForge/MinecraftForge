@@ -37,10 +37,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private ResourceLocation optionalDefaultKey;
     private int minId;
     private int maxId;
+    private boolean hasDelegates = false;
     private List<AddCallback<T>> addCallback = Lists.newArrayList();
     private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
     private List<SubstitutionCallback<T>> substitutionCallback = Lists.newArrayList();
+    private boolean saveToDisc;
 
     public RegistryBuilder<T> setName(ResourceLocation name)
     {
@@ -105,11 +107,23 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> enableDelegates()
+    {
+        this.hasDelegates = true;
+        return this;
+    }
+
+    public RegistryBuilder<T> disableSaving()
+    {
+        this.saveToDisc = false;
+        return this;
+    }
+
     @SuppressWarnings("deprecation")
     public IForgeRegistry<T> create()
     {
-        return PersistentRegistryManager.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, false,
-                getAdd(), getClear(), getCreate(), getSubstitution());
+        return PersistentRegistryManager.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, hasDelegates,
+                getAdd(), getClear(), getCreate(), getSubstitution(), saveToDisc);
     }
 
     @Nullable

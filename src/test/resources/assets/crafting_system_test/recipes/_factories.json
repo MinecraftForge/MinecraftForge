@@ -1,0 +1,8 @@
+{
+  "ingredients": {
+    "nbt": "net.minecraftforge.debug.CraftingSystemTest$IngredientFactory"
+  },
+  "recipes": {
+    "free": "net.minecraftforge.debug.CraftingSystemTest$RecipeFactory"
+  }
+}

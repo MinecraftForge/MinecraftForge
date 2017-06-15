@@ -90,6 +90,7 @@ public class PersistentRegistryManager
         ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject any items
         for (ResourceLocation rl : registryKeys) {
             if (rl == BLOCKS || rl == ITEMS) continue;
+            if (rl == RECIPES) continue; //For now disable, we should fire this event in ServerInit or something...
             fireRegistryEvent(PersistentRegistry.ACTIVE.registries, rl);
         }
         ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject everything else
@@ -129,7 +130,7 @@ public class PersistentRegistryManager
             return getRegistry(key, regType);
         }
 
-        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> type, ResourceLocation defaultObjectKey, int minId, int maxId, @Nullable IForgeRegistry.AddCallback<T> addCallback, @Nullable IForgeRegistry.ClearCallback<T> clearCallback, @Nullable IForgeRegistry.CreateCallback<T> createCallback, @Nullable IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
+        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> type, ResourceLocation defaultObjectKey, int minId, int maxId, @Nullable IForgeRegistry.AddCallback<T> addCallback, @Nullable IForgeRegistry.ClearCallback<T> clearCallback, @Nullable IForgeRegistry.CreateCallback<T> createCallback, @Nullable IForgeRegistry.SubstitutionCallback<T> substitutionCallback, boolean saveToDisc)
         {
             Set<Class<?>> parents = Sets.newHashSet();
             findSuperTypes(type, parents);
@@ -140,7 +141,7 @@ public class PersistentRegistryManager
                 FMLLog.severe("Found existing registry of type %1s named %2s, you cannot create a new registry (%3s) with type %4s, as %4s has a parent of that type", foundType, registrySuperTypes.get(foundType), registryName, type);
                 throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
             }
-            FMLControlledNamespacedRegistry<T> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(defaultObjectKey, minId, maxId, type, registries, addCallback, clearCallback, createCallback, substitutionCallback);
+            FMLControlledNamespacedRegistry<T> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(defaultObjectKey, minId, maxId, type, registries, addCallback, clearCallback, createCallback, substitutionCallback, saveToDisc);
             registries.put(registryName, fmlControlledNamespacedRegistry);
             registrySuperTypes.put(type, registryName);
             return getRegistry(registryName, type);
@@ -193,30 +194,21 @@ public class PersistentRegistryManager
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
     public static final ResourceLocation ENTITIES = new ResourceLocation("minecraft:entities");
     public static final ResourceLocation FLUIDS = new ResourceLocation("minecraft:fluids");
+    public static final ResourceLocation RECIPES = new ResourceLocation("minecraft:recipes");
     static final ResourceLocation SUBSTITUTION_ORIGINALS = new ResourceLocation("fml:suboriginals");
 
-    @Deprecated //Use RegistryBuilder TODO: Remove in 1.11
-    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
-            ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey,
-            int minId, int maxId, boolean hasDelegates,
-            @Nullable IForgeRegistry.AddCallback<T> addCallback,
-            @Nullable IForgeRegistry.ClearCallback<T> clearCallback,
-            @Nullable IForgeRegistry.CreateCallback<T> createCallback)
-    {
-        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                getLegacyAdd(addCallback), getLegacyClear(clearCallback), getLegacyCreate(createCallback), null);
-    }
     @Deprecated //Use RegistryBuilder TODO: Remove in 1.11 {Make package private so only builder can use it}
-    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
+    static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
             ResourceLocation registryName, Class<T> registryType, @Nullable ResourceLocation optionalDefaultKey,
             int minId, int maxId, boolean hasDelegates,
             @Nullable IForgeRegistry.AddCallback<T> addCallback,
             @Nullable IForgeRegistry.ClearCallback<T> clearCallback,
             @Nullable IForgeRegistry.CreateCallback<T> createCallback,
-            @Nullable IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
+            @Nullable IForgeRegistry.SubstitutionCallback<T> substitutionCallback,
+            boolean saveToDisc)
     {
         return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                addCallback, clearCallback, createCallback, substitutionCallback);
+                addCallback, clearCallback, createCallback, substitutionCallback, saveToDisc);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -694,6 +686,7 @@ public class PersistentRegistryManager
             public final Map<ResourceLocation, ResourceLocation> aliases;
             public final Set<Integer> blocked;
             public final Set<ResourceLocation> dummied;
+            public final boolean saveToDisc;
 
             public Entry()
             {
@@ -707,6 +700,7 @@ public class PersistentRegistryManager
                 this.aliases = aliases;
                 this.blocked = blocked;
                 this.dummied = dummies;
+                saveToDisc = false;
             }
 
             public Entry(FMLControlledNamespacedRegistry<?> registry)
@@ -722,6 +716,7 @@ public class PersistentRegistryManager
                 registry.serializeAliases(this.aliases);
                 registry.serializeBlockList(this.blocked);
                 registry.serializeDummied(this.dummied);
+                this.saveToDisc = registry.shouldSaveToDisc();
             }
         }
 

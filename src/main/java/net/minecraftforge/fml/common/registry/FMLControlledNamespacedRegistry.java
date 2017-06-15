@@ -97,8 +97,13 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     private final CreateCallback<I> createCallback;
     @Nullable
     private final SubstitutionCallback<I> substitutionCallback;
+    /**
+     * If true, this registry will persist in the save folder and be reloaded when the world is loaded.
+     * This should only be true if the save format includes this registry entries in ID format.
+     */
+    private final boolean saveToDisc;
 
-    FMLControlledNamespacedRegistry(@Nullable ResourceLocation defaultKey, int minIdValue, int maxIdValue, Class<I> type, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries, @Nullable AddCallback<I> addCallback, @Nullable ClearCallback<I> clearCallback, @Nullable CreateCallback<I> createCallback, @Nullable SubstitutionCallback<I> substitutionCallback)
+    FMLControlledNamespacedRegistry(@Nullable ResourceLocation defaultKey, int minIdValue, int maxIdValue, Class<I> type, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries, @Nullable AddCallback<I> addCallback, @Nullable ClearCallback<I> clearCallback, @Nullable CreateCallback<I> createCallback, @Nullable SubstitutionCallback<I> substitutionCallback, boolean saveToDisc)
     {
         super(defaultKey);
         this.superType = type;
@@ -115,6 +120,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         {
             createCallback.onCreate(slaves, registries);
         }
+        this.saveToDisc = saveToDisc;
     }
 
     void validateContent(ResourceLocation registryName)
@@ -684,7 +690,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 
     FMLControlledNamespacedRegistry<I> makeShallowCopy(BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
     {
-        return new FMLControlledNamespacedRegistry<I>(optionalDefaultKey, minId, maxId, superType, registries, addCallback, clearCallback, createCallback, substitutionCallback);
+        return new FMLControlledNamespacedRegistry<I>(optionalDefaultKey, minId, maxId, superType, registries, addCallback, clearCallback, createCallback, substitutionCallback, saveToDisc);
     }
 
     void resetSubstitutionDelegates()
@@ -933,6 +939,11 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     RegistryEvent.Register<I> buildRegistryRegisterEvent(ResourceLocation location)
     {
         return new RegistryEvent.Register<I>(location, this);
+    }
+
+    public boolean shouldSaveToDisc()
+    {
+        return this.saveToDisc;
     }
 
 }
