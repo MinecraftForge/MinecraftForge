@@ -68,12 +68,6 @@ public class BlockInfo
         shz = (float) offset.zCoord;
     }
 
-    @Deprecated
-    public void updateShift(boolean ignoreY)
-    {
-        updateShift();
-    }
-
     public void setWorld(IBlockAccess world)
     {
         this.world = world;
