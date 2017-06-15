@@ -3,8 +3,10 @@ package net.minecraftforge.debug;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.HorseArmorType;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.util.EnumHelper;
@@ -75,6 +77,8 @@ public class HorseArmorTest
 		@Override
 		public void onHorseArmorTick(World world, EntityHorse horse, ItemStack itemStack) 
 		{
+			if(horse.ticksExisted % 15 == 0)
+				horse.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 20, 1));
 		}
 	}
 }

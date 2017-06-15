@@ -25,15 +25,7 @@
              {
                  this.field_110296_bG.func_70299_a(1, itemstack);
              }
-@@ -142,6 +144,7 @@
-     protected void func_110232_cE()
-     {
-         super.func_110232_cE();
-+        this.field_110296_bG.func_70301_a(1).func_77973_b().onHorseArmorTick(field_70170_p, this, this.field_110296_bG.func_70301_a(1));
-         this.func_146086_d(this.field_110296_bG.func_70301_a(1));
-     }
- 
-@@ -149,6 +152,7 @@
+@@ -149,6 +151,7 @@
      {
          HorseArmorType horsearmortype = HorseArmorType.func_188580_a(p_146086_1_);
          this.field_70180_af.func_187227_b(field_184791_bI, Integer.valueOf(horsearmortype.func_188579_a()));
@@ -41,7 +33,7 @@
          this.func_110230_cF();
  
          if (!this.field_70170_p.field_72995_K)
-@@ -165,7 +169,9 @@
+@@ -165,7 +168,9 @@
  
      public HorseArmorType func_184783_dl()
      {
@@ -52,6 +44,14 @@
      }
  
      public void func_76316_a(IInventory p_76316_1_)
+@@ -207,6 +212,7 @@
+             this.field_70180_af.func_187230_e();
+             this.func_110230_cF();
+         }
++        this.field_110296_bG.func_70301_a(1).func_77973_b().onHorseArmorTick(field_70170_p, this, this.field_110296_bG.func_70301_a(1));
+     }
+ 
+     protected SoundEvent func_184639_G()
 @@ -381,7 +387,7 @@
  
      public boolean func_190682_f(ItemStack p_190682_1_)
