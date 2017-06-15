@@ -177,12 +177,6 @@ public class BlockEvent extends Event
         private final IBlockState placedAgainst;
         private final EnumHand hand;
 
-        @Deprecated
-        public PlaceEvent(BlockSnapshot blockSnapshot, IBlockState placedAgainst, EntityPlayer player)
-        {
-            this(blockSnapshot, placedAgainst, player, EnumHand.MAIN_HAND);
-        }
-
         public PlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull IBlockState placedAgainst, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
             super(blockSnapshot.getWorld(), blockSnapshot.getPos(), blockSnapshot.getCurrentBlock());
             this.player = player;
@@ -217,12 +211,6 @@ public class BlockEvent extends Event
     public static class MultiPlaceEvent extends PlaceEvent
     {
         private final List<BlockSnapshot> blockSnapshots;
-
-        @Deprecated
-        public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, IBlockState placedAgainst, EntityPlayer player)
-        {
-            this(blockSnapshots, placedAgainst, player, EnumHand.MAIN_HAND);
-        }
 
         public MultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull IBlockState placedAgainst, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
             super(blockSnapshots.get(0), placedAgainst, player, hand);
