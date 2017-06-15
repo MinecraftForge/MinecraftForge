@@ -66,13 +66,13 @@ public class OreIngredient extends Ingredient
     }
 
 
-    public boolean apply(@Nullable ItemStack target)
+    public boolean apply(@Nullable ItemStack input)
     {
-        if (target == null)
+        if (input == null)
             return false;
 
-        for (ItemStack ore : this.ores)
-            if (OreDictionary.itemMatches(target, ore, false))
+        for (ItemStack target : this.ores)
+            if (OreDictionary.itemMatches(target, input, false))
                 return true;
 
         return false;
