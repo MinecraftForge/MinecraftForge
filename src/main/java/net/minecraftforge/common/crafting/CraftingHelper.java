@@ -308,6 +308,7 @@ public class CraftingHelper {
         }
 
         HashMap<Character, Ingredient> itemMap = Maps.newHashMap();
+        itemMap.put(' ', Ingredient.field_193370_a);
 
         for (; idx < recipe.length; idx += 2)
         {
