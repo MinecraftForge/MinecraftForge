@@ -36,7 +36,6 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.common.util.CompoundDataFixer;
-import net.minecraftforge.common.util.Java6Utils;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFMLSidedHandler;
@@ -278,7 +277,7 @@ public class FMLServerHandler implements IFMLSidedHandler
         finally
         {
             IOUtils.closeQuietly(stream);
-            Java6Utils.closeZipQuietly(zip);
+            IOUtils.closeQuietly(zip);
         }
     }
 
