@@ -1110,14 +1110,6 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
-    // TODO: remove
-    /** @deprecated use {@link ForgeHooks#onEmptyLeftClick(EntityPlayer)} */
-    @Deprecated
-    public static void onEmptyLeftClick(EntityPlayer player, @Nonnull ItemStack stack)
-    {
-        onEmptyLeftClick(player);
-    }
-
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
     private static LootTableContext getLootTableContext()
     {
