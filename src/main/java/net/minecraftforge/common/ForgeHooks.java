@@ -1034,25 +1034,6 @@ public class ForgeHooks
         return git == null ? null : git.hitVec;
     }
 
-    // TODO 1.12 remove these three
-    @Deprecated
-    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, EnumHand hand)
-    {
-        return onInteractEntityAtAction(player, entity, ray, hand) != null;
-    }
-
-    @Deprecated
-    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, Vec3d vec3d, EnumHand hand)
-    {
-        return onInteractEntityAtAction(player, entity, vec3d, hand) != null;
-    }
-
-    @Deprecated
-    public static boolean onInteractEntity(EntityPlayer player, Entity entity, EnumHand hand)
-    {
-        return onInteractEntityAction(player, entity, hand) != null;
-    }
-
     public static EnumActionResult onInteractEntityAtAction(EntityPlayer player, Entity entity, RayTraceResult ray, EnumHand hand)
     {
         Vec3d vec3d = new Vec3d(ray.hitVec.xCoord - entity.posX, ray.hitVec.yCoord - entity.posY, ray.hitVec.zCoord - entity.posZ);
@@ -1071,12 +1052,6 @@ public class ForgeHooks
         PlayerInteractEvent.EntityInteract evt = new PlayerInteractEvent.EntityInteract(player, hand, entity);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt.isCanceled() ? evt.getCancellationResult() : null;
-    }
-
-    @Deprecated // TODO 1.12 remove
-    public static boolean onItemRightClick(EntityPlayer player, EnumHand hand)
-    {
-        return onItemRightClickAction(player, hand) != null;
     }
 
     public static EnumActionResult onItemRightClickAction(EntityPlayer player, EnumHand hand)
@@ -1119,14 +1094,6 @@ public class ForgeHooks
             throw new JsonParseException("Invalid call stack, could not grab json context!"); // Should I throw this? Do we care about custom deserializers outside the manager?
 
         return ctx;
-    }
-
-    // TODO: remove
-    /** @deprecated use {@link ForgeHooks#loadLootTable(Gson, ResourceLocation, String, boolean, LootTableManager)} */
-    @Deprecated
-    public static LootTable loadLootTable(Gson gson, ResourceLocation name, String data, boolean custom)
-    {
-        return loadLootTable(gson, name, data, custom, null);
     }
 
     @Nullable
