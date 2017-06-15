@@ -33,6 +33,7 @@ import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityPainting.EnumArt;
+import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
@@ -72,7 +73,8 @@ public class EnumHelper
         {EnumSkyBlock.class, int.class},
         {SleepResult.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
-        {EnumRarity.class, TextFormatting.class, String.class}
+        {EnumRarity.class, TextFormatting.class, String.class},
+        {HorseArmorType.class, String.class, String.class, int.class} 
     };
 
     @Nullable
@@ -139,6 +141,19 @@ public class EnumHelper
     public static EnumRarity addRarity(String name, TextFormatting color, String displayName)
     {
         return addEnum(EnumRarity.class, name, color, displayName);
+    }
+    /**
+     * 
+     * @param name - The name the new enum constant should have
+     * @param textureLocation - The path to the texture for this armor type. Formatted as domain:path.
+     * @param hash - A short unique 3 letter name for the armor type 
+     * @param armorStrength - How much protection this armor type should give
+     * @return The created HorseArmorType enum constant
+     */
+    @Nullable 
+    public static HorseArmorType addHorseArmor(String name, String textureLocation, String hash, int armorStrength)
+    {
+        return addEnum(HorseArmorType.class, name, textureLocation, hash, armorStrength);
     }
 
     private static void setup()
