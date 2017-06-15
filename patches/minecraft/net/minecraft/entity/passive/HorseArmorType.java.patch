@@ -1,19 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/HorseArmorType.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/HorseArmorType.java
-@@ -25,6 +25,12 @@
+@@ -25,6 +25,14 @@
          this.field_188587_f = "";
      }
  
 +    //Allows for textures located outside the vanilla horse armor folder
-+    private  HorseArmorType(String textureLocation, String hash, int armorStrengthIn) {
-+    	this.field_188588_g = armorStrengthIn;
-+    	this.field_188586_e = textureLocation;
-+    	this.field_188587_f = hash; }
++    private  HorseArmorType(String textureLocation, String hash, int armorStrengthIn) 
++    {
++        this.field_188588_g = armorStrengthIn;
++        this.field_188586_e = textureLocation;
++        this.field_188587_f = hash; 
++    }
 +    
      private HorseArmorType(int p_i46800_3_, String p_i46800_4_, String p_i46800_5_)
      {
          this.field_188588_g = p_i46800_3_;
-@@ -55,16 +61,41 @@
+@@ -55,16 +63,41 @@
          return this.field_188586_e;
      }
  
@@ -25,7 +27,7 @@
 +    
 +    public static HorseArmorType getByName(String name)
 +    {
-+    	HorseArmorType type = HorseArmorType.valueOf(name);
++        HorseArmorType type = HorseArmorType.valueOf(name);
 +        return type != null ? type : NONE;
 +    }
  
@@ -34,7 +36,7 @@
 -        return p_188580_0_.func_190926_b() ? NONE : func_188576_a(p_188580_0_.func_77973_b());
 +        if(p_188580_0_.func_190926_b())
 +        {
-+        	return NONE;
++            return NONE;
 +        }
 +        else if (p_188580_0_.func_77973_b() == Items.field_151138_bX)
 +        {
@@ -49,14 +51,14 @@
 +            return DIAMOND;
 +        }
 +        else
-+        	return p_188580_0_.func_77973_b().isValidHorseArmor(p_188580_0_) ? p_188580_0_.func_77973_b().getHorseArmorType(p_188580_0_) : NONE;
++            return p_188580_0_.func_77973_b().isValidHorseArmor(p_188580_0_) ? p_188580_0_.func_77973_b().getHorseArmorType(p_188580_0_) : NONE;
      }
  
 +    @Deprecated
      public static HorseArmorType func_188576_a(Item p_188576_0_)
      {
          if (p_188576_0_ == Items.field_151138_bX)
-@@ -81,8 +112,14 @@
+@@ -81,8 +114,14 @@
          }
      }
  

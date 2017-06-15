@@ -38,8 +38,8 @@
      public HorseArmorType func_184783_dl()
      {
 -        return HorseArmorType.func_188575_a(((Integer)this.field_70180_af.func_187225_a(field_184791_bI)).intValue());
-+    	HorseArmorType armor = HorseArmorType.getByName(this.field_70180_af.func_187225_a(HORSE_ARMOR_STRING)); //First check the Forge armor DataParameter
-+    	if(armor == HorseArmorType.NONE) armor = HorseArmorType.func_188575_a(this.field_70180_af.func_187225_a(field_184791_bI)); //If the Forge armor DataParameter returns NONE, fallback to the vanilla armor DataParameter. This is necessary to prevent issues with Forge clients connected to vanilla servers.
++        HorseArmorType armor = HorseArmorType.getByName(this.field_70180_af.func_187225_a(HORSE_ARMOR_STRING)); //First check the Forge armor DataParameter
++        if(armor == HorseArmorType.NONE) armor = HorseArmorType.func_188575_a(this.field_70180_af.func_187225_a(field_184791_bI)); //If the Forge armor DataParameter returns NONE, fallback to the vanilla armor DataParameter. This is necessary to prevent issues with Forge clients connected to vanilla servers.
 +        return armor;
      }
  
