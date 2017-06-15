@@ -127,7 +127,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
                     }
                 }
 
-                if (!target.apply(inv.getStackInRowAndColumn(x, y)))
+                if (target != null && !target.apply(inv.getStackInRowAndColumn(x, y)))
                 {
                     return false;
                 }
