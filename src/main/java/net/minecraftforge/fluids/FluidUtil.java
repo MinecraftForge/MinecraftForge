@@ -101,41 +101,6 @@ public class FluidUtil
     }
 
     /**
-     * Used to handle the common case of a player holding a fluid item and right-clicking on a fluid handler.
-     * First it tries to fill the container item from the fluid handler,
-     * if that action fails then it tries to drain the container item into the fluid handler.
-     *
-     * @param stack        The filled or empty fluid container.
-     *                     Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
-     * @param fluidHandler The fluid handler to interact with.
-     * @param player       The player doing the interaction between the item and fluid handler.
-     * @return a {@link FluidActionResult} holding the result and resulting container.
-     *
-     * @deprecated Use {@link #interactWithFluidHandler(EntityPlayer, EnumHand, World, BlockPos, EnumFacing)} which is easier to use.
-     */
-    @Deprecated
-    @Nonnull
-    public static FluidActionResult interactWithFluidHandler(@Nonnull ItemStack stack, IFluidHandler fluidHandler, EntityPlayer player)
-    {
-        if (stack.isEmpty() || fluidHandler == null || player == null)
-        {
-            return FluidActionResult.FAILURE;
-        }
-
-        IItemHandler playerInventory = new InvWrapper(player.inventory);
-
-        FluidActionResult fillResult = tryFillContainerAndStow(stack, fluidHandler, playerInventory, Integer.MAX_VALUE, player);
-        if (fillResult.isSuccess())
-        {
-            return fillResult;
-        }
-        else
-        {
-            return tryEmptyContainerAndStow(stack, fluidHandler, playerInventory, Integer.MAX_VALUE, player);
-        }
-    }
-
-    /**
      * Fill a container from the given fluidSource.
      *
      * @param container   The container to be filled. Will not be modified.
