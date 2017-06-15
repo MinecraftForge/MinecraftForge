@@ -42,7 +42,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
     private List<SubstitutionCallback<T>> substitutionCallback = Lists.newArrayList();
-    private boolean saveToDisc;
+    private boolean saveToDisc = true;
 
     public RegistryBuilder<T> setName(ResourceLocation name)
     {
