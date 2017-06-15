@@ -308,12 +308,16 @@ public class CraftingHelper {
         }
 
         HashMap<Character, Ingredient> itemMap = Maps.newHashMap();
+        itemMap.put(' ', Ingredient.field_193370_a);
 
         for (; idx < recipe.length; idx += 2)
         {
             Character chr = (Character)recipe[idx];
             Object in = recipe[idx + 1];
             Ingredient ing = CraftingHelper.getIngredient(in);
+
+            if (' ' == chr.charValue())
+                throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
 
             if (ing != null)
             {
