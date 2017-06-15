@@ -3,7 +3,6 @@ package net.minecraftforge.debug;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -188,26 +187,6 @@ public class TestCapabilityMod
             event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<ItemStack>(event.getObject()));
         }
     }
-
-    // these can be removed if we remove these legacy events
-    @SubscribeEvent
-    public void onItemLoadLegacy(AttachCapabilitiesEvent<Item> event)
-    {
-        if (event.getObject() == Items.APPLE)
-        {
-            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<Item>(event.getObject()));
-        }
-    }
-
-    @SubscribeEvent
-    public void onItemLoadLegacy(AttachCapabilitiesEvent.Item event)
-    {
-        if (event.getObject() == Items.ARROW)
-        {
-            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<Item>(event.getObject()));
-        }
-    }
-
 
     @SuppressWarnings("rawtypes")
     @SubscribeEvent

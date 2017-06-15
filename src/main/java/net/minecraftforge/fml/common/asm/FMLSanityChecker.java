@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import net.minecraftforge.common.util.Java6Utils;
 import org.apache.commons.io.IOUtils;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -146,7 +145,7 @@ public class FMLSanityChecker implements IFMLCallHook
             }
             finally
             {
-                Java6Utils.closeZipQuietly(mcJarFile);
+                IOUtils.closeQuietly(mcJarFile);
             }
         }
         else
