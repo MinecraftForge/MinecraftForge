@@ -224,7 +224,7 @@ public class CraftingHelper {
                 tmp.setTag("tag", nbt);
                 tmp.setString("id", itemName);
                 tmp.setInteger("Count", JsonUtils.getInt(json, "count", 1));
-                tmp.setInteger("Data", JsonUtils.getInt(json, "data", 0));
+                tmp.setInteger("Damage", JsonUtils.getInt(json, "data", 0));
 
                 return new ItemStack(tmp);
             }
