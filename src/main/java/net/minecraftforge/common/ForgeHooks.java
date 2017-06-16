@@ -1034,27 +1034,27 @@ public class ForgeHooks
         return git == null ? null : git.hitVec;
     }
 
-    public static EnumActionResult onInteractEntityAtAction(EntityPlayer player, Entity entity, RayTraceResult ray, EnumHand hand)
+    public static EnumActionResult onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, EnumHand hand)
     {
         Vec3d vec3d = new Vec3d(ray.hitVec.xCoord - entity.posX, ray.hitVec.yCoord - entity.posY, ray.hitVec.zCoord - entity.posZ);
-        return onInteractEntityAtAction(player, entity, vec3d, hand);
+        return onInteractEntityAt(player, entity, vec3d, hand);
     }
 
-    public static EnumActionResult onInteractEntityAtAction(EntityPlayer player, Entity entity, Vec3d vec3d, EnumHand hand)
+    public static EnumActionResult onInteractEntityAt(EntityPlayer player, Entity entity, Vec3d vec3d, EnumHand hand)
     {
         PlayerInteractEvent.EntityInteractSpecific evt = new PlayerInteractEvent.EntityInteractSpecific(player, hand, entity, vec3d);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt.isCanceled() ? evt.getCancellationResult() : null;
     }
 
-    public static EnumActionResult onInteractEntityAction(EntityPlayer player, Entity entity, EnumHand hand)
+    public static EnumActionResult onInteractEntity(EntityPlayer player, Entity entity, EnumHand hand)
     {
         PlayerInteractEvent.EntityInteract evt = new PlayerInteractEvent.EntityInteract(player, hand, entity);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt.isCanceled() ? evt.getCancellationResult() : null;
     }
 
-    public static EnumActionResult onItemRightClickAction(EntityPlayer player, EnumHand hand)
+    public static EnumActionResult onItemRightClick(EntityPlayer player, EnumHand hand)
     {
         PlayerInteractEvent.RightClickItem evt = new PlayerInteractEvent.RightClickItem(player, hand);
         MinecraftForge.EVENT_BUS.post(evt);
