@@ -348,8 +348,9 @@ public class GameRegistry
     }
 
     public static boolean isFuelHandled(@Nonnull ItemStack itemStack){
-        for(IFuelHandler handler : fuelHandlers) {
-            if(handler.getBurnTime(itemStack) !=null && handler.getBurnTime(itemStack).isPresent())
+        for(IFuelHandler handler : fuelHandlers)
+        {
+            if(handler.getBurnTime(itemStack).isPresent())
                 return true;
         }
         return false;
