@@ -6,8 +6,8 @@
          ItemStack itemstack1 = this.field_146042_b.func_184592_cb();
 -        boolean flag = itemstack.func_77973_b() == Items.field_151112_aM;
 -        boolean flag1 = itemstack1.func_77973_b() == Items.field_151112_aM;
-+	    boolean flag = itemstack.func_77973_b() instanceof net.minecraft.item.ItemFishingRod;
-+	    boolean flag1 = itemstack1.func_77973_b() instanceof net.minecraft.item.ItemFishingRod;
++        boolean flag = itemstack.func_77973_b() instanceof net.minecraft.item.ItemFishingRod;
++        boolean flag1 = itemstack1.func_77973_b() instanceof net.minecraft.item.ItemFishingRod;
  
          if (!this.field_146042_b.field_70128_L && this.field_146042_b.func_70089_S() && (flag || flag1) && this.func_70068_e(this.field_146042_b) <= 1024.0D)
          {
