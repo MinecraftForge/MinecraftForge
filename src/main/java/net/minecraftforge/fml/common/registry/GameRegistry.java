@@ -346,6 +346,7 @@ public class GameRegistry
         return fuelValue;
     }
 
+
     public enum Type
     {
         BLOCK,
@@ -354,6 +355,9 @@ public class GameRegistry
         ENCHANTMENT,
         POTION,
         POTION_TYPE,
+        /**
+         * Registering substitutions for this does not affect vanilla block sounds as they use SoundTypes
+         */
         SOUND_EVENT,
         ENTITY;
     }
