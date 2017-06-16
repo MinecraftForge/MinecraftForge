@@ -1,6 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
-@@ -206,7 +206,7 @@
+@@ -201,12 +201,12 @@
+             ibakedmodel = this.field_178128_c.func_174951_a();
+         }
+ 
+-        return ibakedmodel.func_177554_e();
++        return ibakedmodel.getParticleTexture(p_178122_1_);
+     }
  
      public IBakedModel func_178125_b(IBlockState p_178125_1_)
      {
