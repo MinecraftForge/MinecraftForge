@@ -21,9 +21,10 @@ package net.minecraftforge.fml.common;
 
 import net.minecraft.item.ItemStack;
 
+import java.util.OptionalInt;
+
 public interface IFuelHandler
 {
-    int getBurnTime(ItemStack fuel);
+    OptionalInt getBurnTime(ItemStack fuel);
     
-    boolean matches(ItemStack stack);
 }

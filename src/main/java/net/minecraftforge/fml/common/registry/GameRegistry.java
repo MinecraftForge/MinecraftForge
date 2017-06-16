@@ -341,19 +341,18 @@ public class GameRegistry
         int fuelValue = 0;
         for (IFuelHandler handler : fuelHandlers)
         {
-            if(handler.matches(itemStack))
-                fuelValue = Math.max(fuelValue, handler.getBurnTime(itemStack));
+            if(isFuelHandled(itemStack))
+                fuelValue = Math.max(fuelValue, handler.getBurnTime(itemStack).getAsInt());
         }
         return fuelValue;
     }
 
     public static boolean isFuelHandled(@Nonnull ItemStack itemStack){
-        boolean handled = false;
         for(IFuelHandler handler : fuelHandlers) {
-            if(handler.matches(itemStack))
-                handled = true;
+            if(handler.getBurnTime(itemStack) !=null && handler.getBurnTime(itemStack).isPresent())
+                return true;
         }
-        return handled;
+        return false;
     }
     
     public enum Type
