@@ -710,9 +710,7 @@ public class CraftingHelper {
             while (itr != null && itr.hasNext())
             {
                 Path f = itr.next();
-                if (!"json".equals(FilenameUtils.getExtension(f.toString())) ||
-                    "_factories.json".equals(FilenameUtils.getName(f.toString())) ||
-                    "_constants.json".equals(FilenameUtils.getName(f.toString())))
+                if (!"json".equals(FilenameUtils.getExtension(f.toString())) || root.relativize(f).toString().startsWith("_"))
                     continue;
 
                 String name = FilenameUtils.removeExtension(root.relativize(f).toString()).replaceAll("\\\\", "/");
@@ -723,6 +721,8 @@ public class CraftingHelper {
                 {
                     reader = Files.newBufferedReader(f);
                     JsonObject json = JsonUtils.func_193839_a(GSON, reader, JsonObject.class);
+                    if (json.has("conditions") && !CraftingHelper.processConditions(json.getAsJsonArray("conditions"), ctx))
+                        continue;
                     IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
                     ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
                 }
