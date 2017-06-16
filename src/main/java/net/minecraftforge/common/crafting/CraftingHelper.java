@@ -533,21 +533,7 @@ public class CraftingHelper {
             {
                 ResourceLocation key = new ResourceLocation(context.getModId(), entry.getKey());
                 String clsName = JsonUtils.getString(entry.getValue(), "ingredients[" + entry.getValue() + "]");
-                try
-                {
-                    Class<?> cls = Class.forName(clsName);
-                    if (!IIngredientFactory.class.isAssignableFrom(cls))
-                        throw new JsonSyntaxException("Class '" + clsName + "\' is not a IIngredientFactory!");
-                    register(key, (IIngredientFactory)cls.newInstance());
-                }
-                catch (ClassNotFoundException e)
-                {
-                    throw new JsonSyntaxException("Could not find ingredient factory: " + clsName, e);
-                }
-                catch (InstantiationException | IllegalAccessException e)
-                {
-                    throw new JsonSyntaxException("Could not instantiate ingredient factory: " + clsName, e);
-                }
+                register(key, getClassInstance(clsName, IIngredientFactory.class));
             }
         }
 
@@ -557,22 +543,37 @@ public class CraftingHelper {
             {
                 ResourceLocation key = new ResourceLocation(context.getModId(), entry.getKey());
                 String clsName = JsonUtils.getString(entry.getValue(), "recipes[" + entry.getValue() + "]");
-                try
-                {
-                    Class<?> cls = Class.forName(clsName);
-                    if (!IRecipeFactory.class.isAssignableFrom(cls))
-                        throw new JsonSyntaxException("Class '" + clsName + "\' is not a IRecipeFactory!");
-                    register(key, (IRecipeFactory)cls.newInstance());
-                }
-                catch (ClassNotFoundException e)
-                {
-                    throw new JsonSyntaxException("Could not find recipe factory: " + clsName, e);
-                }
-                catch (InstantiationException | IllegalAccessException e)
-                {
-                    throw new JsonSyntaxException("Could not instantiate recipe factory: " + clsName, e);
-                }
+                register(key, getClassInstance(clsName, IRecipeFactory.class));
             }
+        }
+
+        if (json.has("conditions"))
+        {
+            for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, "conditions").entrySet())
+            {
+                ResourceLocation key = new ResourceLocation(context.getModId(), entry.getKey());
+                String clsName = JsonUtils.getString(entry.getValue(), "conditions[" + entry.getValue() + "]");
+                register(key, getClassInstance(clsName, IConditionFactory.class));
+            }
+        }
+    }
+
+    private static <T> T getClassInstance(String clsName, Class<T> expected)
+    {
+        try
+        {
+            Class<?> cls = Class.forName(clsName);
+            if (!expected.isAssignableFrom(cls))
+                throw new JsonSyntaxException("Class '" + clsName + "' is not an " + expected.getSimpleName());
+            return (T)cls.newInstance();
+        }
+        catch (ClassNotFoundException e)
+        {
+            throw new JsonSyntaxException("Could not find " + expected.getSimpleName() + ": " + clsName, e);
+        }
+        catch (InstantiationException | IllegalAccessException e)
+        {
+            throw new JsonSyntaxException("Could not instantiate " + expected.getSimpleName() + ": " + clsName, e);
         }
     }
 
