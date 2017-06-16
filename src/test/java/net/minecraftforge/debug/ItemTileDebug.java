@@ -4,8 +4,8 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
 import static org.lwjgl.opengl.GL11.*;
 
 @Mod(modid = ItemTileDebug.MODID, name = "ForgeDebugItemTile", version = "1.0", acceptableRemoteVersions = "*")
@@ -37,10 +38,16 @@ public class ItemTileDebug
     public static CommonProxy proxy;
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        proxy.preInit(event);
+    }
 
     @EventHandler
-    public void init(FMLInitializationEvent event) { proxy.init(event); }
+    public void init(FMLInitializationEvent event)
+    {
+        proxy.init(event);
+    }
 
     public static class CommonProxy
     {
@@ -51,10 +58,14 @@ public class ItemTileDebug
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
 
-        public void init(FMLInitializationEvent event) {}
+        public void init(FMLInitializationEvent event)
+        {
+        }
     }
 
-    public static class ServerProxy extends CommonProxy {}
+    public static class ServerProxy extends CommonProxy
+    {
+    }
 
     public static class ClientProxy extends CommonProxy
     {
@@ -72,7 +83,8 @@ public class ItemTileDebug
         }
 
         @Override
-        public void init(FMLInitializationEvent event) {
+        public void init(FMLInitializationEvent event)
+        {
             ClientRegistry.bindTileEntitySpecialRenderer(CustomTileEntity.class, TestTESR.instance);
         }
     }
@@ -81,7 +93,9 @@ public class ItemTileDebug
     {
         public static final BakeEventHandler instance = new BakeEventHandler();
 
-        private BakeEventHandler() {};
+        private BakeEventHandler()
+        {
+        }
 
         @SubscribeEvent
         public void onModelBakeEvent(ModelBakeEvent event)
@@ -94,7 +108,9 @@ public class ItemTileDebug
     {
         private static final TestTESR instance = new TestTESR();
 
-        private TestTESR() {}
+        private TestTESR()
+        {
+        }
 
         @Override
         public void renderTileEntityAt(CustomTileEntity p_180535_1_, double x, double y, double z, float p_180535_8_, int p_180535_9_)
@@ -130,13 +146,22 @@ public class ItemTileDebug
         }
 
         @Override
-        public boolean isOpaqueCube(IBlockState state) { return false; }
+        public boolean isOpaqueCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean isFullCube(IBlockState state) { return false; }
+        public boolean isFullCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean causesSuffocation(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
         public TileEntity createNewTileEntity(World world, int meta)
@@ -145,5 +170,7 @@ public class ItemTileDebug
         }
     }
 
-    public static class CustomTileEntity extends TileEntity {}
+    public static class CustomTileEntity extends TileEntity
+    {
+    }
 }

@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/village/Village.java
 +++ ../src-work/minecraft/net/minecraft/village/Village.java
-@@ -37,7 +37,7 @@
+@@ -26,7 +26,7 @@
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.World;
+ 
+-public class Village
++public class Village implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+ {
+     private World field_75586_a;
+     private final List<VillageDoorInfo> field_75584_b = Lists.<VillageDoorInfo>newArrayList();
+@@ -37,17 +37,19 @@
      private int field_75581_g;
      private int field_75588_h;
      private int field_82694_i;
@@ -9,7 +18,19 @@
      private final List<Village.VillageAggressor> field_75589_i = Lists.<Village.VillageAggressor>newArrayList();
      private int field_75587_j;
  
-@@ -310,11 +310,11 @@
+     public Village()
+     {
++        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
+     }
+ 
+     public Village(World p_i1675_1_)
+     {
+         this.field_75586_a = p_i1675_1_;
++        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
+     }
+ 
+     public void func_82691_a(World p_82691_1_)
+@@ -310,11 +312,11 @@
          double d0 = Double.MAX_VALUE;
          EntityPlayer entityplayer = null;
  
@@ -24,7 +45,7 @@
  
                  if (entityplayer1 != null)
                  {
-@@ -407,25 +407,51 @@
+@@ -407,25 +409,51 @@
          }
      }
  
@@ -78,7 +99,7 @@
      public void func_82690_a(NBTTagCompound p_82690_1_)
      {
          this.field_75588_h = p_82690_1_.func_74762_e("PopSize");
-@@ -451,19 +477,14 @@
+@@ -451,21 +479,17 @@
          {
              NBTTagCompound nbttagcompound1 = nbttaglist1.func_150305_b(j);
  
@@ -101,8 +122,11 @@
 +                this.field_82693_j.put(findUUID(nbttagcompound1.func_74779_i("Name")), Integer.valueOf(nbttagcompound1.func_74762_e("S")));
              }
          }
++        if (this.capabilities != null && p_82690_1_.func_74764_b("ForgeCaps")) this.capabilities.deserializeNBT(p_82690_1_.func_74775_l("ForgeCaps"));
      }
-@@ -499,18 +520,14 @@
+ 
+     public void func_82689_b(NBTTagCompound p_82689_1_)
+@@ -499,18 +523,14 @@
          p_82689_1_.func_74782_a("Doors", nbttaglist);
          NBTTagList nbttaglist1 = new NBTTagList();
  
@@ -123,7 +147,15 @@
                      nbttagcompound1.func_74768_a("S", ((Integer)this.field_82693_j.get(s)).intValue());
                      nbttaglist1.func_74742_a(nbttagcompound1);
                  }
-@@ -536,9 +553,9 @@
+@@ -522,6 +542,7 @@
+         }
+ 
+         p_82689_1_.func_74782_a("Players", nbttaglist1);
++        if (this.capabilities != null) p_82689_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
+     }
+ 
+     public void func_82692_h()
+@@ -536,9 +557,9 @@
  
      public void func_82683_b(int p_82683_1_)
      {
@@ -135,3 +167,34 @@
          }
      }
  
+@@ -553,4 +574,30 @@
+             this.field_75590_b = p_i1674_3_;
+         }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
++    }
++
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
++
++    public void deserializeNBT(NBTTagCompound nbt)
++    {
++        this.func_82690_a(nbt);;
++    }
++
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound ret = new NBTTagCompound();
++        this.func_82689_b(ret);
++        return ret;
++    }
++
++    /* ========================================= FORGE END ======================================*/
+ }

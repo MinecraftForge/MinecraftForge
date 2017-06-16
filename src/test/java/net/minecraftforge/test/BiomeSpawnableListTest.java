@@ -31,7 +31,7 @@ public class BiomeSpawnableListTest
     }
 
     private boolean spawnableListContainsEntry(Class<? extends EntityLiving> entityClass, int weightedProb, int minGroupCount, int maxGroupCount,
-            EnumCreatureType creatureType, Biome biome)
+                                               EnumCreatureType creatureType, Biome biome)
     {
         boolean found = false;
 

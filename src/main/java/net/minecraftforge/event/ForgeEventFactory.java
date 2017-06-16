@@ -55,6 +55,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.village.Village;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -586,6 +587,12 @@ public class ForgeEventFactory
     public static CapabilityDispatcher gatherCapabilities(Entity entity)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent.Entity(entity), null);
+    }
+    
+    @Nullable
+    public static CapabilityDispatcher gatherCapabilities(Village village)
+    {
+        return gatherCapabilities(new AttachCapabilitiesEvent<Village>(Village.class, village), null);
     }
 
     @Nullable

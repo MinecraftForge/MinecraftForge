@@ -228,13 +228,10 @@ public class SplashProgress
                 return "GL info";
             }
         });
-        CrashReport report = CrashReport.makeCrashReport(new Throwable()
-        {
-            @Override public String getMessage(){ return "This is just a prompt for computer specs to be printed. THIS IS NOT A ERROR"; }
-            @Override public void printStackTrace(final PrintWriter s){ s.println(getMessage()); }
-            @Override public void printStackTrace(final PrintStream s) { s.println(getMessage()); }
-        }, "Loading screen debug info");
-        System.out.println(report.getCompleteReport());
+        CrashReport report = CrashReport.makeCrashReport(new Throwable(), "Loading screen debug info");
+        StringBuilder systemDetailsBuilder = new StringBuilder();
+        report.getCategory().appendToStringBuilder(systemDetailsBuilder);
+        FMLLog.info(systemDetailsBuilder.toString());
 
         try
         {

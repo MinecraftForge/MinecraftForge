@@ -283,7 +283,7 @@
      @SideOnly(Side.CLIENT)
      public int func_190921_D()
      {
-@@ -1013,4 +1085,28 @@
+@@ -1013,4 +1085,66 @@
      {
          this.func_190917_f(-p_190918_1_);
      }
@@ -310,5 +310,43 @@
 +    private Item getItemRaw()
 +    {
 +        return this.field_151002_e;
++    }
++
++    /**
++     * Modeled after ItemStack.areItemStacksEqual
++     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++     */
++    public static boolean areItemStacksEqualUsingNBTShareTag(ItemStack stackA, ItemStack stackB)
++    {
++        if (stackA.func_190926_b())
++            return stackB.func_190926_b();
++        else
++            return !stackB.func_190926_b() && stackA.isItemStackEqualUsingNBTShareTag(stackB);
++    }
++
++    /**
++     * Modeled after ItemStack.isItemStackEqual
++     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++     */
++    private boolean isItemStackEqualUsingNBTShareTag(ItemStack other)
++    {
++        return this.field_77994_a == other.field_77994_a && this.func_77973_b() == other.func_77973_b() && this.field_77991_e == other.field_77991_e && areItemStackShareTagsEqual(this, other);
++    }
++
++    /**
++     * Modeled after ItemStack.areItemStackTagsEqual
++     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++     */
++    public static boolean areItemStackShareTagsEqual(ItemStack stackA, ItemStack stackB)
++    {
++        NBTTagCompound shareTagA = stackA.func_77973_b().getNBTShareTag(stackA);
++        NBTTagCompound shareTagB = stackB.func_77973_b().getNBTShareTag(stackB);
++        if (shareTagA == null)
++            return shareTagB == null;
++        else
++            return shareTagB != null && shareTagA.equals(shareTagB);
 +    }
  }
