@@ -1,11 +1,15 @@
 package net.minecraftforge.debug;
 
 import net.minecraft.block.BlockGravel;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentDigging;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
@@ -20,8 +24,10 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.*;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 /**
- * TODO maybe check ExistingSubstitutionException as well as IncompatibleSubstitutionException (probably in a test test)
  * To verify this is working
  * 1. Check the log for 'Substitution tests successful' resp. 'One or more substitution tests failed'
  * 2. Check the following replacements:
@@ -30,7 +36,15 @@ import org.apache.logging.log4j.Logger;
  * c) Equip a pickaxe and use '/enchant <player> minecraft:efficiency' -> You should get a 'test_substitution' enchantment
  * d) Summon a cow and hit it. It should make a glass break sound
  * e) Summon a cow. It should always render a name tag
- * d) Look for an ocean biome. The water should be red
+ * f) Look for an ocean biome. The water should be red
+ * g) Give yourself a gravel block. (It's tooltip should say "SubstitutionTestBlock"). Place it. It should be unbreakable (in survival).
+ * h) Give yourself a gravel item. It's tooltip should say "SubstitutionTestItem".
+ * <p>
+ * Disabling this mod and reloading the world should be now problem. All replacements should be back to normal again
+ * <p>
+ * Using subclasses for all substitution to make it easier to trace possible issues.
+ * <p>
+ * The used substitutions are in no way useful (as many of the changes can be achieved with out substituting the entire object), but are meant to be easy to identify.
  */
 @Mod(modid = "forge.testsubmod", name = "Forge Substitution Test", version = "1.0", acceptableRemoteVersions = "*")
 public class SubstitutionTest
@@ -45,7 +59,9 @@ public class SubstitutionTest
         logger = evt.getModLog();
         if (enabled)
         {
-            boolean success = testPotion() && testPotionType() && testEnchantment() && testSoundEvent() && testEntity() && testBiome() && testBlock();
+            boolean success =
+                    testPotion() && testPotionType() && testEnchantment() && testSoundEvent() && testEntity() && testBiome() && testBlock() && testItem()
+                            && testExisting() && testIncompatible();
 
             if (success)
             {
@@ -56,45 +72,6 @@ public class SubstitutionTest
                 FMLLog.bigWarning("One or more substitution tests failed");
             }
         }
-    }
-
-    private boolean testPotion()
-    {
-        return replace(GameRegistry.Type.POTION, GameData.getPotionRegistry(), new ResourceLocation("minecraft:slowness"), new TestPotion());
-    }
-
-    private boolean testPotionType()
-    {
-        ResourceLocation typeId = new ResourceLocation("minecraft:swiftness");
-        return replace(GameRegistry.Type.POTION_TYPE, GameData.getPotionTypesRegistry(), typeId,
-                new PotionType(typeId.getResourcePath(), new PotionEffect(MobEffects.SPEED, 600), new PotionEffect(MobEffects.ABSORPTION, 600)));
-    }
-
-    private boolean testEnchantment()
-    {
-        return replace(GameRegistry.Type.ENCHANTMENT, GameData.getEnchantmentRegistry(), new ResourceLocation("minecraft:efficiency"), new TestEnchantment());
-    }
-
-    private boolean testSoundEvent()
-    {
-        return replace(GameRegistry.Type.SOUND_EVENT, GameData.getSoundEventRegistry(), new ResourceLocation("minecraft:entity.cow.hurt"),
-                new SoundEvent(new ResourceLocation("minecraft:block.glass.break")));
-    }
-
-    private boolean testEntity()
-    {
-        return replace(GameRegistry.Type.ENTITY, GameData.getEntityRegistry(), new ResourceLocation("minecraft:cow"), new EntityEntry(TestCow.class, "Cow"));
-    }
-
-    private boolean testBiome()
-    {
-        return replace(GameRegistry.Type.BIOME, GameData.getBiomeRegistry(), new ResourceLocation("minecraft:ocean"), new TestBiome());
-    }
-
-    private boolean testBlock()
-    {
-        return replace(GameRegistry.Type.BLOCK, GameData.getBlockRegistry(), new ResourceLocation("minecraft:gravel"),
-                new TestBlock().setRegistryName("minecraft:gravel"));
     }
 
     /**
@@ -133,32 +110,92 @@ public class SubstitutionTest
         return false;
     }
 
-    private class TestEnchantment extends EnchantmentDigging
+    private boolean testBiome()
     {
-
-        protected TestEnchantment()
-        {
-            super(Enchantment.Rarity.COMMON, EntityEquipmentSlot.MAINHAND);
-            this.setName("test_substitution");
-        }
-
+        return replace(GameRegistry.Type.BIOME, GameData.getBiomeRegistry(), new ResourceLocation("minecraft:ocean"), new TestBiome());
     }
 
-    private class TestPotion extends Potion
+    private boolean testBlock()
     {
+        return replace(GameRegistry.Type.BLOCK, GameData.getBlockRegistry(), new ResourceLocation("minecraft:gravel"), new TestBlock());
+    }
 
-        protected TestPotion()
+    private boolean testEnchantment()
+    {
+        return replace(GameRegistry.Type.ENCHANTMENT, GameData.getEnchantmentRegistry(), new ResourceLocation("minecraft:efficiency"), new TestEnchantment());
+    }
+
+    private boolean testEntity()
+    {
+        return replace(GameRegistry.Type.ENTITY, GameData.getEntityRegistry(), new ResourceLocation("minecraft:cow"), new EntityEntry(TestCow.class, "Cow"));
+    }
+
+    private boolean testExisting()
+    {
+        //Use same registry name as {@link SubstitutionTest#testItem}
+        Item testItem = new Item().setRegistryName("minecraft:flint");
+        try
         {
-            super(false, 0x000000);
-            this.setPotionName("test_substitution");
+            logger.info("Trying to register substitution for already substituted object");
+            GameRegistry.addSubstitutionAlias("minecraft:flint", GameRegistry.Type.ITEM, testItem);
+            //Did not throw existing substitution
+            logger.warn("Able to replace minecraft:flint twice");
+            return false;
         }
+        catch (ExistingSubstitutionException e)
+        {
+            logger.info("Rejected substitution -> Success");
+            return true;
+        }
+    }
+
+    private boolean testIncompatible()
+    {
+        Item testItem = new Item();
+        try
+        {
+            logger.info("Trying to register incompatible substitution");
+            GameRegistry.addSubstitutionAlias("minecraft:sand", GameRegistry.Type.BLOCK, testItem);
+            //Did not throw Incompatible Substitution
+            logger.warn("Able to replace sand block with an item");
+            return false;
+        }
+        catch (ExistingSubstitutionException e)
+        {
+            logger.warn("Sand is already replaced");
+            return false;
+        }
+        catch (IncompatibleSubstitutionException e)
+        {
+            logger.info("Rejected incompatible substitution -> Success.");
+            return true;
+        }
+    }
+
+    private boolean testItem()
+    {
+        //Use same registry name as {@link SubstitutionTest#testExisting}
+        return replace(GameRegistry.Type.ITEM, GameData.getItemRegistry(), new ResourceLocation("minecraft:flint"), new TestItem());
+    }
+
+    private boolean testPotion()
+    {
+        return replace(GameRegistry.Type.POTION, GameData.getPotionRegistry(), new ResourceLocation("minecraft:slowness"), new TestPotion());
+    }
+
+    private boolean testPotionType()
+    {
+        return replace(GameRegistry.Type.POTION_TYPE, GameData.getPotionTypesRegistry(), new ResourceLocation("minecraft:swiftness"), new TestPotionType());
+    }
+
+    private boolean testSoundEvent()
+    {
+        return replace(GameRegistry.Type.SOUND_EVENT, GameData.getSoundEventRegistry(), new ResourceLocation("minecraft:entity.cow.hurt"),
+                new TestSoundEvent());
     }
 
     /**
      * Has to be public. Otherwise EntityEntry cannot find/use the constructor.
-     * <p>
-     * If newly registered and a existing world is loaded, all existent cows will be substituted with this class.
-     * If removed from mod code, all substituted entities will be removed TODO Test without PersistentRegistryManager
      */
     public static class TestCow extends EntityCow
     {
@@ -187,6 +224,44 @@ public class SubstitutionTest
         }
     }
 
+    private class TestSoundEvent extends SoundEvent
+    {
+
+        public TestSoundEvent()
+        {
+            super(new ResourceLocation("minecraft:block.glass.break"));
+        }
+    }
+
+    private class TestEnchantment extends EnchantmentDigging
+    {
+
+        protected TestEnchantment()
+        {
+            super(Enchantment.Rarity.COMMON, EntityEquipmentSlot.MAINHAND);
+            this.setName("test_substitution");
+        }
+
+    }
+
+    private class TestPotion extends Potion
+    {
+
+        protected TestPotion()
+        {
+            super(false, 0x000000);
+            this.setPotionName("test_substitution");
+        }
+    }
+
+    private class TestPotionType extends PotionType
+    {
+        public TestPotionType()
+        {
+            super("swiftness", new PotionEffect(MobEffects.SPEED, 600), new PotionEffect(MobEffects.ABSORPTION, 600));
+        }
+    }
+
     private class TestBiome extends BiomeOcean
     {
 
@@ -203,6 +278,30 @@ public class SubstitutionTest
         {
             setBlockUnbreakable();
             setUnlocalizedName("gravel");
+            setRegistryName("minecraft:gravel");
+        }
+
+        /**
+         * To make sure itemBlock references the right block
+         */
+        @Override
+        public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced)
+        {
+            tooltip.add("SubstitutionTestBlock");
+        }
+    }
+
+    private class TestItem extends Item
+    {
+        public TestItem()
+        {
+            setUnlocalizedName("flint").setCreativeTab(CreativeTabs.MATERIALS);
+        }
+
+        @Override
+        public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced)
+        {
+            tooltip.add("SubstitutionTestItem");
         }
     }
 }
