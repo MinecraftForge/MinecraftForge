@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
+@@ -206,7 +206,7 @@
+ 
+     public IBakedModel func_178125_b(IBlockState p_178125_1_)
+     {
+-        IBakedModel ibakedmodel = this.field_178129_a.get(p_178125_1_);
++        IBakedModel ibakedmodel = this.field_178129_a.get(p_178125_1_.getClean());
+ 
+         if (ibakedmodel == null)
+         {
 @@ -391,5 +391,6 @@
                  return new ModelResourceLocation(s + "_double_slab", s1);
              }
