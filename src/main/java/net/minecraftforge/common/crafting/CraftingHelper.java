@@ -432,6 +432,21 @@ public class CraftingHelper {
             }
             return () -> children.stream().anyMatch(c -> c.getAsBoolean());
         });
+        registerC("forge:and", (context, json) -> {
+            JsonArray values = JsonUtils.getJsonArray(json, "values");
+            List<BooleanSupplier> children = Lists.newArrayList();
+            for (JsonElement j : values)
+            {
+                if (!j.isJsonObject())
+                    throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");
+                children.add(CraftingHelper.getCondition(j.getAsJsonObject(), context));
+            }
+            return () -> children.stream().allMatch(c -> c.getAsBoolean());
+        });
+        registerC("forge:constant", (context, json) -> {
+            boolean value = JsonUtils.getBoolean(json, "value");
+            return () -> value;
+        });
 
         registerR("minecraft:crafting_shaped", (context, json) -> {
             String group = JsonUtils.getString(json, "group", "");
