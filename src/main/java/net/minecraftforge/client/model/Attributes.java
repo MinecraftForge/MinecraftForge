@@ -19,8 +19,6 @@
 
 package net.minecraftforge.client.model;
 
-import java.util.List;
-
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;

@@ -36,7 +36,7 @@ public final class SimpleModelState implements IModelState
 
     public SimpleModelState(ImmutableMap<? extends IModelPart, TRSRTransformation> map)
     {
-        this(map, Optional.<TRSRTransformation>absent());
+        this(map, Optional.absent());
     }
 
     public SimpleModelState(ImmutableMap<? extends IModelPart, TRSRTransformation> map, Optional<TRSRTransformation> def)

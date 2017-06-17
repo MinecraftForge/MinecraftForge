@@ -70,12 +70,6 @@ final class FancyMissingModel implements IModel
     }
 
     @Override
-    public Collection<ResourceLocation> getDependencies()
-    {
-        return ImmutableList.of();
-    }
-
-    @Override
     public Collection<ResourceLocation> getTextures()
     {
         return ImmutableList.of(font2);
@@ -90,13 +84,7 @@ final class FancyMissingModel implements IModel
         return new BakedModel(bigMissing, smallMissing, fontCache.getUnchecked(format), message, bakedTextureGetter.apply(font2));
     }
 
-    @Override
-    public IModelState getDefaultState()
-    {
-        return TRSRTransformation.identity();
-    }
-
-    private static final class BakedModel implements IPerspectiveAwareModel
+    private static final class BakedModel implements IBakedModel
     {
         private final SimpleModelFontRenderer fontRenderer;
         private final String message;
@@ -166,9 +154,6 @@ final class FancyMissingModel implements IModel
 
         @Override
         public TextureAtlasSprite getParticleTexture() { return fontTexture; }
-
-        @Override
-        public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
 
         @Override
         public ItemOverrideList getOverrides() { return ItemOverrideList.NONE; }

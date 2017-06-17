@@ -431,32 +431,21 @@ public class ForgeHooksClient
         flipX.m00 = -1;
     }
 
-    @SuppressWarnings("deprecation")
     public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType, boolean leftHandHackery)
     {
-        if(model instanceof IPerspectiveAwareModel)
-        {
-            Pair<? extends IBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
+        Pair<? extends IBakedModel, Matrix4f> pair = model.handlePerspective(cameraTransformType);
 
-            if(pair.getRight() != null)
-            {
-                Matrix4f matrix = new Matrix4f(pair.getRight());
-                if(leftHandHackery)
-                {
-                    matrix.mul(flipX, matrix);
-                    matrix.mul(matrix, flipX);
-                }
-                multiplyCurrentGlMatrix(matrix);
-            }
-            return pair.getLeft();
-        }
-        else
+        if (pair.getRight() != null)
         {
-            //if(leftHandHackery) GlStateManager.scale(-1, 1, 1);
-            ItemCameraTransforms.applyTransformSide(model.getItemCameraTransforms().getTransform(cameraTransformType), leftHandHackery);
-            //if(leftHandHackery) GlStateManager.scale(-1, 1, 1);
+            Matrix4f matrix = new Matrix4f(pair.getRight());
+            if (leftHandHackery)
+            {
+                matrix.mul(flipX, matrix);
+                matrix.mul(matrix, flipX);
+            }
+            multiplyCurrentGlMatrix(matrix);
         }
-        return model;
+        return pair.getLeft();
     }
 
     private static final FloatBuffer matrixBuf = BufferUtils.createFloatBuffer(16);
@@ -750,4 +739,12 @@ public class ForgeHooksClient
         return event;
     }
 
+    @SuppressWarnings("deprecation")
+    public static Pair<? extends IBakedModel,Matrix4f> handlePerspective(IBakedModel model, ItemCameraTransforms.TransformType type)
+    {
+        TRSRTransformation tr = new TRSRTransformation(model.getItemCameraTransforms().getTransform(type));
+        Matrix4f mat = null;
+        if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
+        return Pair.of(model, mat);
+    }
 }

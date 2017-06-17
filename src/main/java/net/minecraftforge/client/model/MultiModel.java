@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
@@ -35,7 +34,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -62,20 +60,20 @@ import com.google.common.collect.Sets;
 @Deprecated
 public final class MultiModel implements IModel
 {
-    private static final class Baked implements IPerspectiveAwareModel
+    private static final class Baked implements IBakedModel
     {
         private final ResourceLocation location;
+        @Nullable
         private final IBakedModel base;
         private final ImmutableMap<String, IBakedModel> parts;
 
         private final IBakedModel internalBase;
         private ImmutableMap<Optional<EnumFacing>, ImmutableList<BakedQuad>> quads;
         private final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
-        private final ItemOverrideList overrides = new ItemOverrideList(Lists.<ItemOverride>newArrayList())
+        private final ItemOverrideList overrides = new ItemOverrideList(Lists.newArrayList())
         {
             @Override
-            @Nonnull
-            public IBakedModel handleItemState(@Nonnull IBakedModel originalModel, @Nonnull ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+            public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
             {
                 if(originalModel != Baked.this)
                 {
@@ -105,13 +103,13 @@ public final class MultiModel implements IModel
                 if(dirty)
                 {
                     // TODO: caching?
-                    return new Baked(location, newBase instanceof IPerspectiveAwareModel, newBase, builder.build());
+                    return new Baked(location, true, newBase, builder.build());
                 }
                 return Baked.this;
             }
         };
 
-        public Baked(ResourceLocation location, boolean perspective, IBakedModel base, ImmutableMap<String, IBakedModel> parts)
+        public Baked(ResourceLocation location, boolean perspective, @Nullable IBakedModel base, ImmutableMap<String, IBakedModel> parts)
         {
             this.location = location;
             this.base = base;
@@ -129,13 +127,12 @@ public final class MultiModel implements IModel
             }
 
             // Only changes the base model based on perspective, may recurse for parts in the future.
-            if(perspective && base instanceof IPerspectiveAwareModel)
+            if(base != null && perspective)
             {
-                IPerspectiveAwareModel perBase = (IPerspectiveAwareModel)base;
                 ImmutableMap.Builder<TransformType, Pair<Baked, TRSRTransformation>> builder = ImmutableMap.builder();
                 for(TransformType type : TransformType.values())
                 {
-                    Pair<? extends IBakedModel, Matrix4f> p = perBase.handlePerspective(type);
+                    Pair<? extends IBakedModel, Matrix4f> p = base.handlePerspective(type);
                     IBakedModel newBase = p.getLeft();
                     builder.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(p.getRight())));
                 }
@@ -178,7 +175,7 @@ public final class MultiModel implements IModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
             if(quads == null)
             {
@@ -206,7 +203,7 @@ public final class MultiModel implements IModel
                 {
                     quads.addAll(bakedPart.getQuads(state, null, 0));
                 }
-                builder.put(Optional.<EnumFacing>absent(), quads.build());
+                builder.put(Optional.absent(), quads.build());
                 this.quads = builder.build();
             }
             return quads.get(Optional.fromNullable(side));
@@ -228,11 +225,12 @@ public final class MultiModel implements IModel
     }
 
     private final ResourceLocation location;
+    @Nullable
     private final IModel base;
     private final IModelState baseState;
     private final Map<String, Pair<IModel, IModelState>> parts;
 
-    public MultiModel(ResourceLocation location, IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
+    public MultiModel(ResourceLocation location, @Nullable IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
     {
         this.location = location;
         this.base = base;

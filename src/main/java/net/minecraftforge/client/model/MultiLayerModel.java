@@ -22,13 +22,12 @@ package net.minecraftforge.client.model;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -53,9 +52,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-public final class MultiLayerModel implements IModelCustomData
+public final class MultiLayerModel implements IModel
 {
-    public static final MultiLayerModel INSTANCE = new MultiLayerModel(ImmutableMap.<Optional<BlockRenderLayer>, ModelResourceLocation>of());
+    public static final MultiLayerModel INSTANCE = new MultiLayerModel(ImmutableMap.of());
 
     private final ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models;
 
@@ -67,13 +66,7 @@ public final class MultiLayerModel implements IModelCustomData
     @Override
     public Collection<ResourceLocation> getDependencies()
     {
-        return ImmutableList.<ResourceLocation>copyOf(models.values());
-    }
-
-    @Override
-    public Collection<ResourceLocation> getTextures()
-    {
-        return ImmutableList.of();
+        return ImmutableList.copyOf(models.values());
     }
 
     private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
@@ -94,14 +87,8 @@ public final class MultiLayerModel implements IModelCustomData
         return new MultiLayerBakedModel(
             buildModels(models, state, format, bakedTextureGetter),
             missing.bake(missing.getDefaultState(), format, bakedTextureGetter),
-            IPerspectiveAwareModel.MapWrapper.getTransforms(state)
+            PerspectiveMapWrapper.getTransforms(state)
         );
-    }
-
-    @Override
-    public IModelState getDefaultState()
-    {
-        return TRSRTransformation.identity();
     }
 
     @Override
@@ -112,7 +99,7 @@ public final class MultiLayerModel implements IModelCustomData
         {
             if("base".equals(key))
             {
-                builder.put(Optional.<BlockRenderLayer>absent(), getLocation(customData.get(key)));
+                builder.put(Optional.absent(), getLocation(customData.get(key)));
             }
             for(BlockRenderLayer layer : BlockRenderLayer.values())
             {
@@ -138,10 +125,10 @@ public final class MultiLayerModel implements IModelCustomData
         return new ModelResourceLocation("builtin/missing", "missing");
     }
 
-    private static final class MultiLayerBakedModel implements IPerspectiveAwareModel
+    private static final class MultiLayerBakedModel implements IBakedModel
     {
         private final ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> models;
-        private final ImmutableMap<TransformType, TRSRTransformation> cameraTransforms;;
+        private final ImmutableMap<TransformType, TRSRTransformation> cameraTransforms;
         private final IBakedModel base;
         private final IBakedModel missing;
         private final ImmutableMap<Optional<EnumFacing>, ImmutableList<BakedQuad>> quads;
@@ -160,7 +147,7 @@ public final class MultiLayerModel implements IModelCustomData
                 base = missing;
             }
             ImmutableMap.Builder<Optional<EnumFacing>, ImmutableList<BakedQuad>> quadBuilder = ImmutableMap.builder();
-            quadBuilder.put(Optional.<EnumFacing>absent(), buildQuads(models, Optional.<EnumFacing>absent()));
+            quadBuilder.put(Optional.absent(), buildQuads(models, Optional.absent()));
             for(EnumFacing side: EnumFacing.values())
             {
                 quadBuilder.put(Optional.of(side), buildQuads(models, Optional.of(side)));
@@ -178,9 +165,8 @@ public final class MultiLayerModel implements IModelCustomData
             return builder.build();
         }
 
-        @Nonnull
         @Override
-        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
             IBakedModel model;
             BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
@@ -225,15 +211,9 @@ public final class MultiLayerModel implements IModelCustomData
         }
 
         @Override
-        public ItemCameraTransforms getItemCameraTransforms()
-        {
-            return ItemCameraTransforms.DEFAULT;
-        }
-
-        @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, cameraTransforms, cameraTransformType);
+            return PerspectiveMapWrapper.handlePerspective(this, cameraTransforms, cameraTransformType);
         }
 
         @Override
