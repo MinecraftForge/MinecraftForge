@@ -415,7 +415,7 @@
                      try
                      {
 -                        this.field_72984_F.func_76320_a(tileentity.getClass().getSimpleName());
-+                        this.field_72984_F.startSection(tileentity.getClass()); // Fix for MC-117087
++                        this.field_72984_F.func_76320_a(this.field_72984_F.field_76327_a ? net.minecraftforge.common.ForgeHooks.getSimpleName(tileentity.getClass()) : ""); // Fix for MC-117087
                          ((ITickable)tileentity).func_73660_a();
                          this.field_72984_F.func_76319_b();
                      }

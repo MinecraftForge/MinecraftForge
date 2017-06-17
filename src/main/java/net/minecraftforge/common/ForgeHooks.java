@@ -1275,4 +1275,18 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
     }
+
+    private static final ClassValue<String> classNames = new ClassValue<String>()
+    {
+        @Override
+        protected String computeValue(Class<?> type)
+        {
+            return type.getSimpleName();
+        }
+    };
+
+    public static String getSimpleName(Class<?> type)
+    {
+        return classNames.get(type);
+    }
 }
