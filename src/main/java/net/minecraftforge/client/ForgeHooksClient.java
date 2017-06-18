@@ -597,10 +597,10 @@ public class ForgeHooksClient
         Class<? extends TileEntity> tileClass = tileItemMap.get(Pair.of(item, metadata));
         if (tileClass != null)
         {
-            TileEntitySpecialRenderer<?> r = TileEntityRendererDispatcher.instance.getSpecialRendererByClass(tileClass);
+            TileEntitySpecialRenderer<?> r = TileEntityRendererDispatcher.instance.getRenderer(tileClass);
             if (r != null)
             {
-                r.func_192841_a(null, 0, 0, 0, 0, -1, 0.0F);
+                r.render(null, 0, 0, 0, 0, -1, 0.0F);
             }
         }
     }

@@ -238,7 +238,7 @@ public class DynBucketTest
         @Override
         public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
         {
-            if (!this.func_194125_a(tab))
+            if (!this.isInCreativeTab(tab))
                 return;
             for (int i = 0; i < 4; i++)
             {

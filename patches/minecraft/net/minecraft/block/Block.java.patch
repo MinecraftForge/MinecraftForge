@@ -293,7 +293,7 @@
 +     * @param side The side to check
 +     * @return True if the block is solid on the specified side.
 +     */
-+    @Deprecated //Use IBlockState.func_193401_d
++    @Deprecated //Use IBlockState.getBlockFaceShape
 +    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side)
 +    {
 +        if (base_state.func_185896_q() && side == EnumFacing.UP) // Short circuit to vanilla function if its true

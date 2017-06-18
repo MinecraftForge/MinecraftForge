@@ -41,7 +41,7 @@ public class GuiUnicodeGlyphButton extends GuiButtonExt
     }
 
     @Override
-    public void func_191745_a(Minecraft mc, int mouseX, int mouseY, float partial)
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial)
     {
         if (this.visible)
         {

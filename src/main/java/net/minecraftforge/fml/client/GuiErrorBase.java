@@ -86,7 +86,7 @@ public class GuiErrorBase extends GuiErrorScreen
     {
         for(GuiButton button : buttonList)
         {
-            button.func_191745_a(this.mc, mouseX, mouseY, partialTicks);
+            button.drawButton(this.mc, mouseX, mouseY, partialTicks);
         }
     }
 }

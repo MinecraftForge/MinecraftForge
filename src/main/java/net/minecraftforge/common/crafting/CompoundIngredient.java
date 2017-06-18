@@ -1,8 +1,10 @@
 package net.minecraftforge.common.crafting;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
@@ -28,29 +30,31 @@ public class CompoundIngredient extends Ingredient
     }
 
     @Override
-    public ItemStack[] func_193365_a()
+    @Nonnull
+    public ItemStack[] getMatchingStacks()
     {
         if (stacks == null)
         {
             List<ItemStack> tmp = Lists.newArrayList();
             for (Ingredient child : children)
-                for (ItemStack stack : child.func_193365_a())
-                    tmp.add(stack);
+                Collections.addAll(tmp, child.getMatchingStacks());
             stacks = tmp.toArray(new ItemStack[tmp.size()]);
 
         }
         return stacks;
     }
 
+    @Override
+    @Nonnull
     @SideOnly(Side.CLIENT)
-    public IntList func_194139_b()
+    public IntList getValidItemStacksPacked()
     {
         //TODO: Add a child.isInvalid()?
         if (this.itemIds == null)
         {
             this.itemIds = new IntArrayList();
             for (Ingredient child : children)
-                this.itemIds.addAll(child.func_194139_b());
+                this.itemIds.addAll(child.getValidItemStacksPacked());
             this.itemIds.sort(IntComparators.NATURAL_COMPARATOR);
         }
 

@@ -345,7 +345,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public boolean blocksMovement(@Nonnull IBlockAccess world, @Nonnull BlockPos pos)
+    public boolean isPassable(@Nonnull IBlockAccess world, @Nonnull BlockPos pos)
     {
         return true;
     }
@@ -731,7 +731,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     private boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing face)
     {
-        return world.getBlockState(pos).func_193401_d(world, pos, face) == BlockFaceShape.SOLID;
+        return world.getBlockState(pos).getBlockFaceShape(world, pos, face) == BlockFaceShape.SOLID;
     }
 
     /* IFluidBlock */

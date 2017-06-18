@@ -126,7 +126,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
 
     @Override
     @Nonnull
-    public NonNullList<Ingredient> func_192400_c()
+    public NonNullList<Ingredient> getIngredients()
     {
         return this.input;
     }
@@ -140,12 +140,13 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
 
     @Override
     @Nonnull
-    public String func_193358_e()
+    public String getGroup()
     {
         return this.group == null ? "" : this.group.toString();
     }
 
-    public boolean func_194133_a(int p_194133_1_, int p_194133_2_)
+    @Override
+    public boolean canFit(int p_194133_1_, int p_194133_2_)
     {
         return p_194133_1_ * p_194133_2_ >= this.input.size();
     }
@@ -161,7 +162,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         if (ings.isEmpty())
             throw new JsonParseException("No ingredients for shapeless recipe");
 
-        ItemStack itemstack = ShapedRecipes.func_192405_a(JsonUtils.getJsonObject(json, "result"), true);
+        ItemStack itemstack = ShapedRecipes.deserializeItem(JsonUtils.getJsonObject(json, "result"), true);
         return new ShapelessOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), ings, itemstack);
     }
 }
