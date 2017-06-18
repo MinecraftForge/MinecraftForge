@@ -556,6 +556,7 @@ public class GuiModList extends GuiScreen
         }
 
 
+        @Override
         protected void drawHeader(int entryRight, int relativeY, Tessellator tess)
         {
             int top = relativeY;

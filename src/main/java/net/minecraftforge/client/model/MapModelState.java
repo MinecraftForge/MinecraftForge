@@ -53,7 +53,8 @@ public class MapModelState implements IModelState
         this.map = ImmutableMap.copyOf(map);
         this.def = def;
     }
-	
+
+    @Override
     public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
     {
         if(!part.isPresent() || !map.containsKey(part.get())) return def.apply(part);

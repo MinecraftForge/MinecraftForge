@@ -124,6 +124,7 @@ public class FMLCommonHandler
     {
         registerCrashCallable(new ICrashCallable()
         {
+            @Override
             public String call() throws Exception
             {
                 StringBuilder builder = new StringBuilder();
@@ -135,6 +136,7 @@ public class FMLCommonHandler
                 return builder.toString();
             }
 
+            @Override
             public String getLabel()
             {
                 return "Loaded coremods (and transformers)";

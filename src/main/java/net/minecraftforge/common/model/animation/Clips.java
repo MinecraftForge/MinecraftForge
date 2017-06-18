@@ -67,16 +67,19 @@ public final class Clips
     {
         INSTANCE;
 
+        @Override
         public IJointClip apply(IJoint joint)
         {
             return JointClips.IdentityJointClip.INSTANCE;
         }
 
+        @Override
         public Iterable<Event> pastEvents(float lastPollTime, float time)
         {
             return ImmutableSet.<Event>of();
         }
 
+        @Override
         public String getName()
         {
             return "identity";
@@ -119,11 +122,13 @@ public final class Clips
             this.clipName = clipName;
         }
 
+        @Override
         public IJointClip apply(IJoint joint)
         {
             return childClip.apply(joint);
         }
 
+        @Override
         public Iterable<Event> pastEvents(float lastPollTime, float time)
         {
             return childClip.pastEvents(lastPollTime, time);
@@ -163,11 +168,13 @@ public final class Clips
             this.time = time;
         }
 
+        @Override
         public IJointClip apply(final IJoint joint)
         {
             return new IJointClip()
             {
                 private final IJointClip parent = childClip.apply(joint);
+                @Override
                 public TRSRTransformation apply(float time)
                 {
                     return parent.apply(TimeClip.this.time.apply(time));
@@ -175,6 +182,7 @@ public final class Clips
             };
         }
 
+        @Override
         public Iterable<Event> pastEvents(float lastPollTime, float time)
         {
             return childClip.pastEvents(this.time.apply(lastPollTime), this.time.apply(time));
@@ -218,6 +226,7 @@ public final class Clips
             this.progress = progress;
         }
 
+        @Override
         public IJointClip apply(IJoint joint)
         {
             IJointClip fromClip = from.apply(joint);
@@ -225,6 +234,7 @@ public final class Clips
             return blendClips(joint, fromClip, toClip, input, progress);
         }
 
+        @Override
         public Iterable<Event> pastEvents(float lastPollTime, float time)
         {
             float clipLastPollTime = input.apply(lastPollTime);
@@ -281,6 +291,7 @@ public final class Clips
     {
         return new IJointClip()
         {
+            @Override
             public TRSRTransformation apply(float time)
             {
                 float clipTime = input.apply(time);
@@ -296,6 +307,7 @@ public final class Clips
     {
         return Pair.<IModelState, Iterable<Event>>of(new IModelState()
         {
+            @Override
             public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
             {
                 if(!part.isPresent() || !(part.get() instanceof IJoint))
@@ -333,11 +345,13 @@ public final class Clips
             this.event = event;
         }
 
+        @Override
         public IJointClip apply(IJoint joint)
         {
             return clip.apply(joint);
         }
 
+        @Override
         public Iterable<Event> pastEvents(float lastPollTime, float time)
         {
             if(parameter.apply(lastPollTime) < 0 && parameter.apply(time) >= 0)
@@ -382,18 +396,21 @@ public final class Clips
             }
         }
 
+        @Override
         public IJointClip apply(final IJoint joint)
         {
             resolve();
             return clip.apply(joint);
         }
 
+        @Override
         public Iterable<Event> pastEvents(float lastPollTime, float time)
         {
             resolve();
             return clip.pastEvents(lastPollTime, time);
         }
 
+        @Override
         public String getName()
         {
             return clipName;
@@ -433,6 +450,7 @@ public final class Clips
             this.clipResolver.set(clipResolver);
         }
 
+        @Override
         @SuppressWarnings("unchecked")
         @Nullable
         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
@@ -446,6 +464,7 @@ public final class Clips
 
             return (TypeAdapter<T>)new TypeAdapter<IClip>()
             {
+                @Override
                 public void write(JsonWriter out, IClip clip) throws IOException
                 {
                     // IdentityClip + ClipReference
@@ -497,6 +516,7 @@ public final class Clips
                     throw new NotImplementedException("unknown Clip to json: " + clip);
                 }
 
+                @Override
                 public IClip read(JsonReader in) throws IOException
                 {
                     switch(in.peek())

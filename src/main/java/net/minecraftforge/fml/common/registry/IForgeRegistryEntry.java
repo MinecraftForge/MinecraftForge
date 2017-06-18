@@ -90,8 +90,10 @@ public interface IForgeRegistryEntry<V>
         }
 
         //Helper functions
+        @Override
         public final T setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
         public final T setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
+        @Override
         @Nullable
         public final ResourceLocation getRegistryName()
         {

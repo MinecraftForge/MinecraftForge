@@ -772,6 +772,7 @@ public class ForgeBlockStateV1 extends Marker
     {
         public static final TRSRDeserializer INSTANCE = new TRSRDeserializer();
 
+        @Override
         public TRSRTransformation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
         {
             if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString())

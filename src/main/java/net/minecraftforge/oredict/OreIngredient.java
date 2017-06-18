@@ -71,6 +71,7 @@ public class OreIngredient extends Ingredient
     }
 
 
+    @Override
     public boolean apply(@Nullable ItemStack input)
     {
         if (input == null)
@@ -83,6 +84,7 @@ public class OreIngredient extends Ingredient
         return false;
     }
 
+    @Override
     protected void invalidate()
     {
         this.itemIds = null;

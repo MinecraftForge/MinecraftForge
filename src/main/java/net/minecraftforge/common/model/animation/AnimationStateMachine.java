@@ -78,6 +78,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         .expireAfterWrite(100, TimeUnit.MILLISECONDS)
         .build(new CacheLoader<Triple<? extends IClip, Float, Float>, Pair<IModelState, Iterable<Event>>>()
         {
+            @Override
             public Pair<IModelState, Iterable<Event>> load(Triple<? extends IClip, Float, Float> key) throws Exception
             {
                 return Clips.apply(key.getLeft(), key.getMiddle(), key.getRight());
@@ -89,12 +90,14 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     {
         this(parameters, clips, states, ImmutableMultimap.copyOf(Multimaps.newSetMultimap(Maps.transformValues(transitions, new Function<String, Collection<String>>()
         {
+            @Override
             public Collection<String> apply(String input)
             {
                 return ImmutableSet.of(input);
             }
         }), new Supplier<Set<String>>()
         {
+            @Override
             public Set<String> get()
             {
                 return Sets.newHashSet();
@@ -144,6 +147,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         currentState = state;
     }
 
+    @Override
     public Pair<IModelState, Iterable<Event>> apply(float time)
     {
         if(lastPollTime == Float.NEGATIVE_INFINITY)
@@ -178,6 +182,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         }
         return Pair.of(pair.getLeft(), Iterables.filter(pair.getRight(), new Predicate<Event>()
         {
+            @Override
             public boolean apply(Event event)
             {
                 return !event.event().startsWith("!");
@@ -185,6 +190,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         }));
     }
 
+    @Override
     public void transition(String newState)
     {
         IClip nc = clips.get(newState);
@@ -200,11 +206,13 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         currentState = nc;
     }
 
+    @Override
     public String currentState()
     {
         return currentStateName;
     }
 
+    @Override
     public void shouldHandleSpecialEvents(boolean value)
     {
         shouldHandleSpecialEvents = true;
@@ -269,6 +277,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     {
         private AnimationStateMachine asm;
 
+        @Override
         public IClip apply(String name)
         {
             return asm.clips.get(name);
@@ -285,6 +294,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
             this.customParameters = customParameters;
         }
 
+        @Override
         public ITimeValue apply(String name)
         {
             if(asm.parameters.containsKey(name))
@@ -311,6 +321,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     {
         INSTANCE;
 
+        @Override
         @SuppressWarnings("unchecked")
         @Nullable
         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
