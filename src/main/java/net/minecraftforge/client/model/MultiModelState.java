@@ -54,6 +54,7 @@ public final class MultiModelState implements IModelState
         return state;
     }
 
+    @Override
     public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
     {
         if(part.isPresent())
@@ -92,6 +93,7 @@ public final class MultiModelState implements IModelState
             this.index = index;
         }
 
+        @Override
         public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
             Optional<TRSRTransformation> normal = state.apply(part);

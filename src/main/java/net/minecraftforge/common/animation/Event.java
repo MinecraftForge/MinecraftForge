@@ -52,6 +52,7 @@ public final class Event implements Comparable<Event>
         return offset;
     }
 
+    @Override
     public int compareTo(Event event)
     {
         return new Float(offset).compareTo(event.offset);

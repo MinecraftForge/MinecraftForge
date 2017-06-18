@@ -32,6 +32,7 @@ public class LegacyNamespacedRegistry<V> extends RegistryNamespaced<ResourceLoca
 {
     private Map<ResourceLocation, ResourceLocation> legacy_names = Maps.newHashMap();
 
+    @Override
     @Nullable
     public V getObject(@Nullable ResourceLocation name)
     {

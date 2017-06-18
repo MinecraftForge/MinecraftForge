@@ -61,7 +61,7 @@ public class CompoundIngredient extends Ingredient
         return this.itemIds;
     }
 
-
+    @Override
     public boolean apply(@Nullable ItemStack target)
     {
         if (target == null)
@@ -74,6 +74,7 @@ public class CompoundIngredient extends Ingredient
         return false;
     }
 
+    @Override
     protected void invalidate()
     {
         this.itemIds = null;

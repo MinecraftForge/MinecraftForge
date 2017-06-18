@@ -260,13 +260,17 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         }
     }
 
+    @Override
     public void setQuadTint(int tint)
     {
         this.tint = tint;
     }
+    @Override
     public void setQuadOrientation(EnumFacing orientation) {}
     public void setQuadCulled() {}
-    public void setTexture( TextureAtlasSprite texture ) {}
+    @Override
+    public void setTexture(TextureAtlasSprite texture) {}
+    @Override
     public void setApplyDiffuseLighting(boolean diffuse)
     {
         this.diffuse = diffuse;

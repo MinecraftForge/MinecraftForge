@@ -144,6 +144,7 @@ public class GuiSelectString extends GuiScreen
         }
     }
 
+    @Override
     public void handleMouseInput() throws IOException
     {
         super.handleMouseInput();

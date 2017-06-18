@@ -34,6 +34,7 @@ public class ChunkCoordComparator implements java.util.Comparator<ChunkPos>
         z = (int) entityplayer.posZ >> 4;
     }
 
+    @Override
     public int compare(ChunkPos a, ChunkPos b)
     {
         if (a.equals(b))

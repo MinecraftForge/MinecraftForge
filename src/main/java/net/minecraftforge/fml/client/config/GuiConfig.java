@@ -360,6 +360,7 @@ public class GuiConfig extends GuiScreen
         }
     }
 
+    @Override
     public void handleMouseInput() throws IOException
     {
         super.handleMouseInput();
