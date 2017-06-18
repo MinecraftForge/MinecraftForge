@@ -35,7 +35,6 @@ import java.lang.reflect.Field;
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -123,7 +122,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         this.manager = manager;
         this.scm = null;
         this.side = Side.CLIENT;
-        this.modList = new HashMap<>();
+        this.modList = Collections.EMPTY_MAP;
         this.handshakeChannel = new EmbeddedChannel(new HandshakeInjector(this), new ChannelRegistrationHandler(), new FMLHandshakeCodec(), new HandshakeMessageHandler<FMLHandshakeClientState>(FMLHandshakeClientState.class));
         this.handshakeChannel.attr(FML_DISPATCHER).set(this);
         this.handshakeChannel.attr(NetworkRegistry.CHANNEL_SOURCE).set(Side.SERVER);
@@ -139,7 +138,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         this.manager = manager;
         this.scm = scm;
         this.side = Side.SERVER;
-        this.modList = new HashMap<>();
+        this.modList = Collections.EMPTY_MAP;
         this.handshakeChannel = new EmbeddedChannel(new HandshakeInjector(this), new ChannelRegistrationHandler(), new FMLHandshakeCodec(), new HandshakeMessageHandler<FMLHandshakeServerState>(FMLHandshakeServerState.class));
         this.handshakeChannel.attr(FML_DISPATCHER).set(this);
         this.handshakeChannel.attr(NetworkRegistry.CHANNEL_SOURCE).set(Side.CLIENT);
