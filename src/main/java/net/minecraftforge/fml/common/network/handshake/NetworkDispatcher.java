@@ -122,7 +122,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         this.manager = manager;
         this.scm = null;
         this.side = Side.CLIENT;
-        this.modList = Collections.EMPTY_MAP;
+        this.modList = Collections.emptyMap();
         this.handshakeChannel = new EmbeddedChannel(new HandshakeInjector(this), new ChannelRegistrationHandler(), new FMLHandshakeCodec(), new HandshakeMessageHandler<FMLHandshakeClientState>(FMLHandshakeClientState.class));
         this.handshakeChannel.attr(FML_DISPATCHER).set(this);
         this.handshakeChannel.attr(NetworkRegistry.CHANNEL_SOURCE).set(Side.SERVER);
@@ -138,7 +138,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         this.manager = manager;
         this.scm = scm;
         this.side = Side.SERVER;
-        this.modList = Collections.EMPTY_MAP;
+        this.modList = Collections.emptyMap();
         this.handshakeChannel = new EmbeddedChannel(new HandshakeInjector(this), new ChannelRegistrationHandler(), new FMLHandshakeCodec(), new HandshakeMessageHandler<FMLHandshakeServerState>(FMLHandshakeServerState.class));
         this.handshakeChannel.attr(FML_DISPATCHER).set(this);
         this.handshakeChannel.attr(NetworkRegistry.CHANNEL_SOURCE).set(Side.CLIENT);
