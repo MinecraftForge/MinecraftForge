@@ -16,6 +16,6 @@ public class FuelHandlerTest {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-        GameRegistry.registerFuelHandler(fuel -> OptionalInt.of(0));
+        GameRegistry.registerFuelHandler(fuel -> 0);
     }
 }

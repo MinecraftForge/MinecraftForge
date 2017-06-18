@@ -62,17 +62,20 @@
              }
  
              if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && itemstack.func_77960_j() == 1 && !((ItemStack)this.field_145957_n.get(1)).func_190926_b() && ((ItemStack)this.field_145957_n.get(1)).func_77973_b() == Items.field_151133_ar)
-@@ -315,6 +315,10 @@
+@@ -315,8 +315,12 @@
          }
          else
          {
-+            if(net.minecraftforge.fml.common.registry.GameRegistry.isFuelHandled(p_145952_0_))
++            int burnTime = net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
++            if(burnTime >= 0)
 +            {
-+                return net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
++                return burnTime;
 +            }
              Item item = p_145952_0_.func_77973_b();
- 
+-
              if (item == Item.func_150898_a(Blocks.field_150376_bx))
+             {
+                 return 150;
 @@ -530,4 +534,22 @@
      {
          this.field_145957_n.clear();
