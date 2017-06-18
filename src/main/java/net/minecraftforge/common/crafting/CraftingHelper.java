@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -642,7 +643,7 @@ public class CraftingHelper {
         try
         {
             JsonContext ctx = new JsonContext(mod.getModId());
-            URI source = mod.getSource().toURI();
+            URI source = null;
 
             if ("minecraft".equals(mod.getModId()) && DEBUG_LOAD_MINECRAFT)
             {
@@ -658,13 +659,32 @@ public class CraftingHelper {
                 }
             }
 
+            if (mod.getMod() != null) {
+                URL assetDir = mod.getMod().getClass().getResource("/assets/" + mod.getModId() + "/");
+                if (assetDir != null)
+                {
+                    try
+                    {
+                        source = assetDir.toURI();
+                    } catch (URISyntaxException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            if (source == null)
+            {
+                return false;
+            }
+
             Path root = null;
             if ("jar".equals(source.getScheme()))
             {
                 try
                 {
                     fs = FileSystems.newFileSystem(source, Maps.newHashMap());
-                    root = fs.getPath("/assets/" + ctx.getModId() + "/recipes/");
+                    root = fs.getPath("/assets/" + ctx.getModId() + "/recipes");
                 }
                 catch (IOException e)
                 {
@@ -674,7 +694,7 @@ public class CraftingHelper {
             }
             else if ("file".equals(source.getScheme()))
             {
-                root = Paths.get(source).resolve("assets/" + ctx.getModId() + "/recipes/");
+                root = Paths.get(source).resolve("assets/" + ctx.getModId() + "/recipes");
             }
 
             if (root == null || !Files.exists(root))
