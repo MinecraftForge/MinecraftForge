@@ -106,7 +106,7 @@ public class UniversalBucket extends Item
     @Override
     public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
     {
-        if (!this.func_194125_a(tab))
+        if (!this.isInCreativeTab(tab))
             return;
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
         {

@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
 public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T>
 {
     @Override
-    public final void func_192841_a(@Nonnull T te, double x, double y, double z, float partialTicks, int destroyStage, float partial)
+    public final void render(@Nonnull T te, double x, double y, double z, float partialTicks, int destroyStage, float partial)
     {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
