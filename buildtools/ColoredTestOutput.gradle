@@ -1,0 +1,76 @@
+//https://github.com/mendhak/Gradle-Travis-Colored-Output
+tasks.withType(Test) {
+
+    boolean TRAVIS_FOLDING = project.hasProperty('TRAVIS')
+    String ANSI_BOLD_WHITE = "\u001B[0;1m"
+    String ANSI_RESET = "\u001B[0m"
+    String ANSI_BLACK = "\u001B[30m"
+    String ANSI_RED = "\u001B[31m"
+    String ANSI_GREEN = "\u001B[32m"
+    String ANSI_YELLOW = "\u001B[33m"
+    String ANSI_BLUE = "\u001B[34m"
+    String ANSI_PURPLE = "\u001B[35m"
+    String ANSI_CYAN = "\u001B[36m"
+    String ANSI_WHITE = "\u001B[37m"
+    String CHECK_MARK = "\u2713"
+    String NEUTRAL_FACE = "\u0CA0_\u0CA0"
+    String X_MARK = "\u274C"
+
+    beforeSuite { suite ->
+        if (suite.name.startsWith("Test Run") || suite.name.startsWith("Gradle Worker")) return
+
+        if(suite.parent != null && suite.className != null){
+            if(TRAVIS_FOLDING){ out.println("travis_fold:start:" + suite.name +"\r") }
+            out.println(ANSI_BOLD_WHITE + suite.name + ANSI_RESET )
+        }
+
+    }
+    afterTest { descriptor, result ->
+        def indicator = ANSI_WHITE
+
+        if (result.failedTestCount > 0) indicator = ANSI_RED + X_MARK
+        else if (result.skippedTestCount > 0) indicator = ANSI_YELLOW + NEUTRAL_FACE
+        else indicator = ANSI_GREEN + CHECK_MARK
+
+        out.println('    ' + indicator + ANSI_RESET + " " + descriptor.name)
+
+        if (result.failedTestCount > 0) { out.println(' ') }
+
+    }
+
+    afterSuite { desc, result ->
+        if(desc.parent != null && desc.className != null){
+
+            if(TRAVIS_FOLDING && result.failedTestCount==0) { out.println("travis_fold:end:" + desc.name +"\r") }
+            out.println("")
+        }
+
+
+        if (!desc.parent) { // will match the outermost suite
+            def failStyle = ANSI_RED
+            def skipStyle = ANSI_YELLOW
+            def summaryStyle = ANSI_WHITE
+            if(result.failedTestCount>0){ failStyle = ANSI_RED }
+            if(result.skippedTestCount > 0) { skipStyle = ANSI_YELLOW }
+
+            switch(result.resultType){
+                case TestResult.ResultType.SUCCESS:
+                    summaryStyle = ANSI_GREEN
+                    break
+                case TestResult.ResultType.FAILURE:
+                    summaryStyle = ANSI_RED
+                    break
+            }
+
+            out.println( "--------------------------------------------------------------------------")
+            out.println( "Results: " + summaryStyle + "${result.resultType}" + ANSI_RESET
+                    + " (${result.testCount} tests, "
+                    + ANSI_GREEN + "${result.successfulTestCount} passed" + ANSI_RESET
+                    + ", " + failStyle + "${result.failedTestCount} failed" + ANSI_RESET
+                    + ", " + skipStyle + "${result.skippedTestCount} skipped" + ANSI_RESET
+                    + ")")
+            out.println( "--------------------------------------------------------------------------")
+        }
+    }
+
+}
