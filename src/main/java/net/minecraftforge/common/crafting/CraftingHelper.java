@@ -503,7 +503,7 @@ public class CraftingHelper {
             if (ings.size() > 9)
                 throw new JsonParseException("Too many ingredients for shapeless recipe");
 
-            ItemStack itemstack = ShapedRecipes.deserializeItem(JsonUtils.getJsonObject(json, "result"), true);
+            ItemStack itemstack = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
             return new ShapelessRecipes(group, itemstack, ings);
         });
         registerR("forge:ore_shaped", ShapedOreRecipe::factory);
