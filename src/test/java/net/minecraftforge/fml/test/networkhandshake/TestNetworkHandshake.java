@@ -22,7 +22,9 @@ import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFact
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -35,9 +37,6 @@ import java.util.concurrent.CyclicBarrier;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by cpw on 10/06/17.
- */
 public class TestNetworkHandshake
 {
     private static final Packet<?>[] vanillapackets = new Packet[] {
@@ -49,6 +48,9 @@ public class TestNetworkHandshake
     public static NetworkManager server;
     private CyclicBarrier barrier;
 
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(10); // 10 seconds max per method tested, including setup
+
     @BeforeClass
     public static void setupLogging() {
         ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
@@ -58,6 +60,7 @@ public class TestNetworkHandshake
         Configurator.initialize(builder.build());
         Configurator.setRootLevel(Level.DEBUG);
     }
+
     @Before
     public void setup() throws IOException, NoSuchFieldException, IllegalAccessException, InterruptedException
     {
@@ -164,6 +167,7 @@ public class TestNetworkHandshake
         client.setConnectionState(EnumConnectionState.LOGIN);
         server.setConnectionState(EnumConnectionState.LOGIN);
     }
+
     @Test
     public void testNetworkFlow() throws InterruptedException, BrokenBarrierException
     {
