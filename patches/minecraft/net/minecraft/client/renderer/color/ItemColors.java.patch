@@ -6,7 +6,7 @@
  {
 -    private final ObjectIntIdentityMap<IItemColor> field_186732_a = new ObjectIntIdentityMap<IItemColor>(32);
 +    // FORGE: Use RegistryDelegates as non-Vanilla item ids are not constant
-+    private final java.util.Map<net.minecraftforge.fml.common.registry.RegistryDelegate<Item>, IItemColor> itemColorMap = com.google.common.collect.Maps.newHashMap();
++    private final java.util.Map<net.minecraftforge.registries.IRegistryDelegate<Item>, IItemColor> itemColorMap = com.google.common.collect.Maps.newHashMap();
  
      public static ItemColors func_186729_a(final BlockColors p_186729_0_)
      {

@@ -45,13 +45,10 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
 import net.minecraftforge.fml.common.functions.ArtifactVersionNameFunction;
 import net.minecraftforge.fml.common.functions.ModIdFunction;
 import net.minecraftforge.fml.common.registry.*;
-import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 import net.minecraftforge.fml.common.toposort.ModSorter;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.common.toposort.TopologicalSort;
@@ -60,6 +57,8 @@ import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.relauncher.ModListHelper;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.ObjectHolderRegistry;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
@@ -639,11 +638,11 @@ public class Loader
             FMLLog.log.warn("There were errors previously. Not beginning mod initialization phase");
             return;
         }
-        PersistentRegistryManager.fireCreateRegistryEvents();
+        GameData.fireCreateRegistryEvents();
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
-        PersistentRegistryManager.fireRegistryEvents();
+        GameData.fireRegistryEvents();
         FMLCommonHandler.instance().fireSidedRegistryEvents();
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
@@ -836,7 +835,7 @@ public class Loader
         progressBar.step("Finishing up");
         modController.transition(LoaderState.AVAILABLE, false);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
-        PersistentRegistryManager.freezeData();
+        GameData.freezeData();
         FMLLog.log.info("Forge Mod Loader has successfully loaded {} mod{}", mods.size(), mods.size() == 1 ? "" : "s");
         progressBar.step("Completing Minecraft initialization");
     }
@@ -938,7 +937,7 @@ public class Loader
 
     public void serverStopped()
     {
-        PersistentRegistryManager.revertToFrozen();
+        GameData.revertToFrozen();
         modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
         modController.transition(LoaderState.SERVER_STOPPED, true);
         modController.transition(LoaderState.AVAILABLE, true);
@@ -1002,80 +1001,6 @@ public class Loader
         if (difference.size() > 0)
             FMLLog.log.info("Attempting connection with missing mods {} at {}", difference, side);
         return true;
-    }
-
-    /**
-     * Fire a FMLMissingMappingsEvent to let mods determine how blocks/items defined in the world
-     * save, but missing from the runtime, are to be handled.
-     *
-     * @param missingBlocks Map containing the missing block names with their associated id. Remapped blocks will be removed from it.
-     * @param missingItems Map containing the missing block names with their associated id. Remapped items will be removed from it.
-     * @param isLocalWorld Whether this is executing for a world load (local/server) or a client.
-     * @param remapBlocks Returns a map containing the remapped block names and an array containing the original and new id for the block.
-     * @param remapItems Returns a map containing the remapped item names and an array containing the original and new id for the item.
-     * @return List with the names of the failed remappings.
-     */
-    public List<String> fireMissingMappingEvent(Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
-    {
-        if (missingBlocks.isEmpty() && missingItems.isEmpty()) // nothing to do
-        {
-            return ImmutableList.of();
-        }
-
-        FMLLog.log.debug("There are {} mappings missing - attempting a mod remap", missingBlocks.size() + missingItems.size());
-        ArrayListMultimap<String, MissingMapping> missingMappings = ArrayListMultimap.create();
-
-        for (Map.Entry<ResourceLocation, Integer> mapping : missingBlocks.entrySet())
-        {
-            MissingMapping m = new MissingMapping(GameRegistry.Type.BLOCK, mapping.getKey(), mapping.getValue());
-            missingMappings.put(m.resourceLocation.getResourceDomain(), m);
-        }
-        for (Map.Entry<ResourceLocation, Integer> mapping : missingItems.entrySet())
-        {
-            MissingMapping m = new MissingMapping(GameRegistry.Type.ITEM, mapping.getKey(), mapping.getValue());
-            missingMappings.put(m.resourceLocation.getResourceDomain(), m);
-        }
-
-        FMLMissingMappingsEvent missingEvent = new FMLMissingMappingsEvent(missingMappings);
-        modController.propogateStateMessage(missingEvent);
-
-        if (isLocalWorld) // local world, warn about entries still being set to the default action
-        {
-            boolean didWarn = false;
-
-            for (MissingMapping mapping : missingMappings.values())
-            {
-                if (mapping.getAction() == FMLMissingMappingsEvent.Action.DEFAULT)
-                {
-                    if (!didWarn)
-                    {
-                        FMLLog.log.fatal("There are unidentified mappings in this world - we are going to attempt to process anyway");
-                        didWarn = true;
-                    }
-
-                    FMLLog.log.fatal("Unidentified {}: {}, id {}", mapping.type == Type.BLOCK ? "block" : "item", mapping.name, mapping.id);
-                }
-            }
-        }
-        else // remote world, fail on entries with the default action
-        {
-            List<String> missedMapping = new ArrayList<String>();
-
-            for (MissingMapping mapping : missingMappings.values())
-            {
-                if (mapping.getAction() == FMLMissingMappingsEvent.Action.DEFAULT)
-                {
-                    missedMapping.add(mapping.name);
-                }
-            }
-
-            if (!missedMapping.isEmpty())
-            {
-                return ImmutableList.copyOf(missedMapping);
-            }
-        }
-
-        return PersistentRegistryManager.processIdRematches(missingMappings.values(), isLocalWorld, missingBlocks, missingItems, remapBlocks, remapItems);
     }
 
     public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, boolean isFreezing)

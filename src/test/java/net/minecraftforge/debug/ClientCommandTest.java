@@ -10,7 +10,8 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.GameData;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -51,7 +52,7 @@ public class ClientCommandTest
         {
             if (args.length > 0)
             {
-                return getListOfStringsMatchingLastWord(args, GameData.getBlockRegistry().getKeys());
+                return getListOfStringsMatchingLastWord(args, ForgeRegistries.BLOCKS.getKeys());
             }
 
             return Collections.emptyList();

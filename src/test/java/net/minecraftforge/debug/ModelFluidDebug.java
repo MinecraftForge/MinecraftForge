@@ -1,28 +1,27 @@
 package net.minecraftforge.debug;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-
-import javax.annotation.Nonnull;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 @Mod(modid = ModelFluidDebug.MODID, name = "ForgeDebugModelFluid", version = ModelFluidDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelFluidDebug
@@ -31,94 +30,93 @@ public class ModelFluidDebug
     public static final String VERSION = "1.0";
 
     public static final boolean ENABLE = true;
+    private static ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "fluid");
+    private static ModelResourceLocation gasLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "gas");
+    private static ModelResourceLocation milkLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "milk");
+    @ObjectHolder(TestFluidBlock.name)
+    public static final Block FLUID_BLOCK = null;
+    @ObjectHolder(TestFluidBlock.name)
+    public static final Item FLUID_ITEM = null;
+    @ObjectHolder(TestGasBlock.name)
+    public static final Block GAS_BLOCK = null;
+    @ObjectHolder(TestGasBlock.name)
+    public static final Item GAS_ITEM = null;
+    @ObjectHolder(MilkFluidBlock.name)
+    public static final Block MILK_BLOCK = null;
+    @ObjectHolder(MilkFluidBlock.name)
+    public static final Item MILK_ITEM = null;
 
-    @SidedProxy
-    public static CommonProxy proxy;
+    //Used in DynBucketTest/FluidPlacementTest, TODO: Make this a full registry with @ObjectHolder?
+    public static final Fluid MILK = new Fluid("milk", new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow"));
+    public static final Fluid FLUID = new TestFluid();
+    public static final Fluid GAS = new TestGas();
 
-    public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow"));
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         if (ENABLE)
         {
-            proxy.preInit(event);
+            FluidRegistry.registerFluid(FLUID);
+            FluidRegistry.registerFluid(GAS);
+            FluidRegistry.registerFluid(MILK);
         }
     }
 
-    public static class CommonProxy
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
-            FluidRegistry.registerFluid(TestFluid.instance);
-            FluidRegistry.registerFluid(TestGas.instance);
-            FluidRegistry.registerFluid(milkFluid);
-            GameRegistry.register(TestFluidBlock.instance);
-            GameRegistry.register(new ItemBlock(TestFluidBlock.instance).setRegistryName(TestFluidBlock.instance.getRegistryName()));
-            GameRegistry.register(TestGasBlock.instance);
-            GameRegistry.register(new ItemBlock(TestGasBlock.instance).setRegistryName(TestGasBlock.instance.getRegistryName()));
-            GameRegistry.register(MilkFluidBlock.instance);
-            GameRegistry.register(new ItemBlock(MilkFluidBlock.instance).setRegistryName(MilkFluidBlock.instance.getRegistryName()));
+            if (!ENABLE)
+                return;
+            event.getRegistry().registerAll(
+                new TestFluidBlock(),
+                new TestGasBlock(),
+                new MilkFluidBlock()
+            );
         }
-    }
 
-    public static class ServerProxy extends CommonProxy
-    {
-    }
-
-    public static class ClientProxy extends CommonProxy
-    {
-        private static ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "fluid");
-        private static ModelResourceLocation gasLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "gas");
-        private static ModelResourceLocation milkLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "milk");
-
-        @Override
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
         {
-            super.preInit(event);
-            Item fluid = Item.getItemFromBlock(TestFluidBlock.instance);
-            Item gas = Item.getItemFromBlock(TestGasBlock.instance);
-            Item milk = Item.getItemFromBlock(MilkFluidBlock.instance);
+            if (!ENABLE)
+                return;
+            event.getRegistry().registerAll(
+                new ItemBlock(FLUID_BLOCK).setRegistryName(FLUID_BLOCK.getRegistryName()),
+                new ItemBlock(GAS_BLOCK).setRegistryName(GAS_BLOCK.getRegistryName()),
+                new ItemBlock(MILK_BLOCK).setRegistryName(MILK_BLOCK.getRegistryName())
+            );
+        }
+
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
+        {
+            if (!ENABLE)
+                return;
             // no need to pass the locations here, since they'll be loaded by the block model logic.
-            ModelBakery.registerItemVariants(fluid);
-            ModelBakery.registerItemVariants(gas);
-            ModelBakery.registerItemVariants(milk);
-            ModelLoader.setCustomMeshDefinition(fluid, new ItemMeshDefinition()
-            {
-                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-                {
-                    return fluidLocation;
-                }
-            });
-            ModelLoader.setCustomMeshDefinition(gas, new ItemMeshDefinition()
-            {
-                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-                {
-                    return gasLocation;
-                }
-            });
-            ModelLoader.setCustomMeshDefinition(milk, new ItemMeshDefinition()
-            {
-                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-                {
-                    return milkLocation;
-                }
-            });
-            ModelLoader.setCustomStateMapper(TestFluidBlock.instance, new StateMapperBase()
+            ModelBakery.registerItemVariants(FLUID_ITEM);
+            ModelBakery.registerItemVariants(GAS_ITEM);
+            ModelBakery.registerItemVariants(MILK_ITEM);
+            ModelLoader.setCustomMeshDefinition(FLUID_ITEM, is -> fluidLocation);
+            ModelLoader.setCustomMeshDefinition(GAS_ITEM, is -> gasLocation);
+            ModelLoader.setCustomMeshDefinition(MILK_ITEM, is -> milkLocation);
+            ModelLoader.setCustomStateMapper(FLUID_BLOCK, new StateMapperBase()
             {
                 protected ModelResourceLocation getModelResourceLocation(IBlockState state)
                 {
                     return fluidLocation;
                 }
             });
-            ModelLoader.setCustomStateMapper(TestGasBlock.instance, new StateMapperBase()
+            ModelLoader.setCustomStateMapper(GAS_BLOCK, new StateMapperBase()
             {
                 protected ModelResourceLocation getModelResourceLocation(IBlockState state)
                 {
                     return gasLocation;
                 }
             });
-            ModelLoader.setCustomStateMapper(MilkFluidBlock.instance, new StateMapperBase()
+            ModelLoader.setCustomStateMapper(MILK_BLOCK, new StateMapperBase()
             {
                 protected ModelResourceLocation getModelResourceLocation(IBlockState state)
                 {
@@ -131,7 +129,6 @@ public class ModelFluidDebug
     public static final class TestFluid extends Fluid
     {
         public static final String name = "testfluid";
-        public static final TestFluid instance = new TestFluid();
 
         private TestFluid()
         {
@@ -148,7 +145,6 @@ public class ModelFluidDebug
     public static final class TestGas extends Fluid
     {
         public static final String name = "testgas";
-        public static final TestGas instance = new TestGas();
 
         private TestGas()
         {
@@ -166,12 +162,11 @@ public class ModelFluidDebug
 
     public static final class TestFluidBlock extends BlockFluidClassic
     {
-        public static final TestFluidBlock instance = new TestFluidBlock();
         public static final String name = "test_fluid_block";
 
         private TestFluidBlock()
         {
-            super(TestFluid.instance, Material.WATER);
+            super(FLUID, Material.WATER);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
@@ -180,12 +175,11 @@ public class ModelFluidDebug
 
     public static final class MilkFluidBlock extends BlockFluidClassic
     {
-        public static final MilkFluidBlock instance = new MilkFluidBlock();
         public static final String name = "milk_fluid_block";
 
         private MilkFluidBlock()
         {
-            super(milkFluid, Material.WATER);
+            super(MILK, Material.WATER);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
@@ -194,12 +188,11 @@ public class ModelFluidDebug
 
     public static final class TestGasBlock extends BlockFluidClassic
     {
-        public static final TestGasBlock instance = new TestGasBlock();
         public static final String name = "test_gas_block";
 
         private TestGasBlock()
         {
-            super(TestGas.instance, Material.LAVA);
+            super(GAS, Material.LAVA);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));

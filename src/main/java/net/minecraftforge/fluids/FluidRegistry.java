@@ -47,7 +47,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.registry.RegistryDelegate;
+import net.minecraftforge.registries.IRegistryDelegate;
 
 import javax.annotation.Nullable;
 
@@ -411,13 +411,13 @@ public abstract class FluidRegistry
         }
     }
 
-    static RegistryDelegate<Fluid> makeDelegate(Fluid fl)
+    static IRegistryDelegate<Fluid> makeDelegate(Fluid fl)
     {
         return delegates.get(fl);
     }
 
 
-    private static class FluidDelegate implements RegistryDelegate<Fluid>
+    private static class FluidDelegate implements IRegistryDelegate<Fluid>
     {
         private String name;
         private Fluid fluid;

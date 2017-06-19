@@ -37,8 +37,15 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
-@@ -175,4 +163,29 @@
+@@ -173,6 +161,36 @@
+ 
+     public Block func_179223_d()
      {
++        return this.getBlockRaw() == null ? null : this.getBlockRaw().delegate.get();
++    }
++
++    private Block getBlockRaw()
++    {
          return this.field_150939_a;
      }
 +

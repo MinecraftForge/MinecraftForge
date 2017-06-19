@@ -17,16 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.registry;
+package net.minecraftforge.fml.common.asm.transformers;
 
-import net.minecraft.util.ResourceLocation;
-
-public class IncompatibleSubstitutionException extends RuntimeException {
-    public IncompatibleSubstitutionException(ResourceLocation fromName, Object replacement, Object original)
+public class ItemBlockSpecialTransformer extends FieldRedirectTransformer
+{
+    public ItemBlockSpecialTransformer()
     {
-        super(String.format("The substitute %s for %s (type %s) is type incompatible.", replacement.getClass().getName(), fromName, original.getClass().getName()));
+        super("net.minecraft.item.ItemBlockSpecial", "Lnet/minecraft/block/Block;", "getBlockRaw");
     }
-
-    private static final long serialVersionUID = 1L;
-
 }

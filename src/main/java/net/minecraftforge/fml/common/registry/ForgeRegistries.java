@@ -29,6 +29,8 @@ import net.minecraft.potion.PotionType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * A class that exposes static references to all vanilla and Forge registries.
@@ -56,7 +58,7 @@ public class ForgeRegistries
      */
     private static void init()
     {
-        GameData.getMain();
+        GameData.init();
         VillagerRegistry.instance();
         Bootstrap.register();
     }
