@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -171,7 +172,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
     @Nonnull
     public String getGroup()
     {
-        return this.group.toString();
+        return this.group == null ? "" : this.group.toString();
     }
 
     @Override
