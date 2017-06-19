@@ -621,7 +621,7 @@ public class GuiIngameForge extends GuiIngame
         {
             mc.mcProfiler.startSection("toolHighlight");
 
-            if (this.remainingHighlightTicks > 0 && this.highlightingItemStack != null)
+            if (this.remainingHighlightTicks > 0 && !this.highlightingItemStack.isEmpty())
             {
                 String name = this.highlightingItemStack.getDisplayName();
                 if (this.highlightingItemStack.hasDisplayName())
