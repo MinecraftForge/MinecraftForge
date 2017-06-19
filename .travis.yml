@@ -24,7 +24,7 @@ install:
   - ./gradlew ciWriteBuildNumber
 script:
   - travis_wait ./gradlew build -x createExe -S
-  - ./gradlew -p projects/Forge test -S
+  - ./gradlew -p projects/Forge test -S -i
 
 notifications:
   email: false
