@@ -44,6 +44,8 @@ import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
+import net.minecraftforge.debug.ItemTileDebug.TestBlock;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -52,8 +54,11 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -65,9 +70,12 @@ public class ModelAnimationDebug
     public static final String MODID = "forgedebugmodelanimation";
     public static final String VERSION = "0.0";
 
-    public static String blockName = "test_animation_block";
-    public static ResourceLocation blockId = new ResourceLocation(MODID, blockName);
+    public static final String blockName = "test_animation_block";
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
+    @ObjectHolder(blockName)
+    public static final Block TEST_BLOCK = null;
+    @ObjectHolder(blockName)
+    public static final Item TEST_ITEM = null;
 
     @Instance(MODID)
     public static ModelAnimationDebug instance;
@@ -76,16 +84,20 @@ public class ModelAnimationDebug
     public static CommonProxy proxy;
     private static Logger logger;
 
-    public static abstract class CommonProxy
+
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
-            GameRegistry.register(new Block(Material.WOOD)
+            event.getRegistry().register(
+            new Block(Material.WOOD)
             {
                 {
                     setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
                     setUnlocalizedName(MODID + "." + blockName);
-                    setRegistryName(blockId);
+                    setRegistryName(new ResourceLocation(MODID, blockName));
                 }
 
                 @Override
@@ -166,14 +178,28 @@ public class ModelAnimationDebug
                     return true;
                 }
             });
-            GameRegistry.register(new ItemBlock(Block.REGISTRY.getObject(blockId))
-            {
-                @Override
-                public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
+        }
+
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
+        {
+            event.getRegistry().register(
+                new ItemBlock(TEST_BLOCK)
                 {
-                    return new ItemAnimationHolder();
-                }
-            }.setRegistryName(blockId));
+                    @Override
+                    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
+                    {
+                        return new ItemAnimationHolder();
+                    }
+                }.setRegistryName(TEST_BLOCK.getRegistryName())
+            );
+        }
+    }
+
+    public static abstract class CommonProxy
+    {
+        public void preInit(FMLPreInitializationEvent event)
+        {
             GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
         }
 
@@ -197,7 +223,7 @@ public class ModelAnimationDebug
         {
             super.preInit(event);
             B3DLoader.INSTANCE.addDomain(MODID);
-            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(blockId), 0, new ModelResourceLocation(blockId, "inventory"));
+            ModelLoader.setCustomModelResourceLocation(TEST_ITEM, 0, new ModelResourceLocation(TEST_ITEM.getRegistryName(), "inventory"));
             ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, new AnimationTESR<Chest>()
             {
                 @Override

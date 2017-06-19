@@ -2,6 +2,8 @@ package net.minecraftforge.debug;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -31,18 +33,18 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -56,6 +58,13 @@ public class ModelBakeEventDebug
     public static final int cubeSize = 3;
 
     private static ResourceLocation blockName = new ResourceLocation(MODID, CustomModelBlock.name);
+    private static ModelResourceLocation blockLocation = new ModelResourceLocation(blockName, "normal");
+    private static ModelResourceLocation itemLocation = new ModelResourceLocation(blockName, "inventory");
+
+    @ObjectHolder(CustomModelBlock.name)
+    public static final Block CUSTOM_BLOCK = null;
+    @ObjectHolder(CustomModelBlock.name)
+    public static final Block CUSTOM_ITEM = null;
 
     @SuppressWarnings("unchecked")
     public static final IUnlistedProperty<Integer>[] properties = new IUnlistedProperty[6];
@@ -68,41 +77,28 @@ public class ModelBakeEventDebug
         }
     }
 
-    @SidedProxy
-    public static CommonProxy proxy;
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        proxy.preInit(event);
-    }
-
-    public static class CommonProxy
-    {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
-            GameRegistry.register(CustomModelBlock.instance);
-            GameRegistry.register(new ItemBlock(CustomModelBlock.instance).setRegistryName(CustomModelBlock.instance.getRegistryName()));
+            event.getRegistry().register(new CustomModelBlock());
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
-    }
 
-    public static class ServerProxy extends CommonProxy
-    {
-    }
-
-    public static class ClientProxy extends CommonProxy
-    {
-        private static ModelResourceLocation blockLocation = new ModelResourceLocation(blockName, "normal");
-        private static ModelResourceLocation itemLocation = new ModelResourceLocation(blockName, "inventory");
-
-        @Override
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
         {
-            super.preInit(event);
-            Item item = Item.getItemFromBlock(CustomModelBlock.instance);
+            event.getRegistry().register(new ItemBlock(CUSTOM_BLOCK).setRegistryName(CUSTOM_BLOCK.getRegistryName()));
+        }
+
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
+        {
+            Item item = Item.getItemFromBlock(CUSTOM_BLOCK);
             ModelLoader.setCustomModelResourceLocation(item, 0, itemLocation);
-            ModelLoader.setCustomStateMapper(CustomModelBlock.instance, new StateMapperBase()
+            ModelLoader.setCustomStateMapper(CUSTOM_BLOCK, new StateMapperBase()
             {
                 protected ModelResourceLocation getModelResourceLocation(IBlockState p_178132_1_)
                 {
@@ -127,14 +123,13 @@ public class ModelBakeEventDebug
             TextureAtlasSprite base = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/slime");
             TextureAtlasSprite overlay = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/redstone_block");
             IBakedModel customModel = new CustomModel(base, overlay);
-            event.getModelRegistry().putObject(ClientProxy.blockLocation, customModel);
-            event.getModelRegistry().putObject(ClientProxy.itemLocation, customModel);
+            event.getModelRegistry().putObject(blockLocation, customModel);
+            event.getModelRegistry().putObject(itemLocation, customModel);
         }
     }
 
     public static class CustomModelBlock extends BlockContainer
     {
-        public static final CustomModelBlock instance = new CustomModelBlock();
         public static final String name = "custom_model_block";
 
         private CustomModelBlock()

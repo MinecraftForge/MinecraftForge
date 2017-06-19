@@ -44,6 +44,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.crash.ICrashReportDetail;
+import net.minecraft.item.Item;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -58,6 +59,8 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -88,7 +91,6 @@ import net.minecraftforge.fml.common.WorldAccessContainer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -376,12 +378,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         }
     }
 
-    @Subscribe
-    public void missingMapping(FMLMissingMappingsEvent event)
+    @SubscribeEvent
+    public void missingMapping(RegistryEvent.MissingMappings<Item> event)
     {
-        for (FMLMissingMappingsEvent.MissingMapping entry : event.getAll())
+        for (MissingMappings.Mapping<Item> entry : event.getAllMappings())
         {
-            if (entry.name.equals("minecraft:totem")) //This item changed from 1.11 -> 1.11.2
+            if (entry.key.toString().equals("minecraft:totem")) //This item changed from 1.11 -> 1.11.2
             {
                 ResourceLocation newTotem = new ResourceLocation("minecraft:totem_of_undying");
                 entry.remap(ForgeRegistries.ITEMS.getValue(newTotem));
@@ -455,13 +457,17 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             ForgeVersion.startVersionCheck();
         }
+    }
 
+    @SubscribeEvent
+    public void registrItems(RegistryEvent.Register<Item> event)
+    {
         // Add and register the forge universal bucket, if it's enabled
         if(FluidRegistry.isUniversalBucketEnabled())
         {
             universalBucket = new UniversalBucket();
             universalBucket.setUnlocalizedName("forge.bucketFilled");
-            GameRegistry.register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
+            event.getRegistry().register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
     }

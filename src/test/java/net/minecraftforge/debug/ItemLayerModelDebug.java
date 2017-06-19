@@ -11,12 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -26,43 +26,27 @@ public class ItemLayerModelDebug
 {
     public static final String MODID = "forgedebugitemlayermodel";
     public static final String VERSION = "1.0";
+    @ObjectHolder("test_item")
+    public static final Item TEST_ITEM = null;
 
-    @SidedProxy
-    public static CommonProxy proxy;
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        proxy.preInit(event);
-    }
-
-    public static class CommonProxy
-    {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registrItems(RegistryEvent.Register<Item> event)
         {
-            GameRegistry.register(TestItem.instance);
+            event.getRegistry().register(new TestItem());
         }
-    }
 
-    public static class ServerProxy extends CommonProxy
-    {
-    }
-
-    public static class ClientProxy extends CommonProxy
-    {
-        private static ModelResourceLocation modelLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestItem.name, "inventory");
-
-        @Override
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
         {
-            super.preInit(event);
-            ModelLoader.setCustomModelResourceLocation(TestItem.instance, 0, modelLocation);
+            ModelLoader.setCustomModelResourceLocation(TEST_ITEM, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + TestItem.name, "inventory"));
         }
     }
 
     public static final class TestItem extends Item
     {
-        public static final TestItem instance = new TestItem();
         public static final String name = "test_item";
 
         private TestItem()

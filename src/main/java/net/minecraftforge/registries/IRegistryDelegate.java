@@ -17,9 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.registry;
+package net.minecraftforge.registries;
 
-import com.google.common.base.Objects;
 import net.minecraft.util.ResourceLocation;
 
 
@@ -32,7 +31,7 @@ import net.minecraft.util.ResourceLocation;
  *
  * @param <T> the type of thing we're holding onto
  */
-public interface RegistryDelegate<T> {
+public interface IRegistryDelegate<T> {
     /**
      * Get the referent pointed at by this delegate. This will be the currently active item or block, and will change
      * as world saves come and go. Note that item.delegate.get() may NOT be the same object as item, due to item and
@@ -54,57 +53,4 @@ public interface RegistryDelegate<T> {
      * @return The type of delegate
      */
     Class<T> type();
-
-    /*
-     * This is the internal implementation class of the delegate.
-     */
-    final class Delegate<T> implements RegistryDelegate<T>
-    {
-        private T referent;
-        private ResourceLocation name;
-        private final Class<T> type;
-
-        public Delegate(T referent, Class<T> type) {
-            this.referent = referent;
-            this.type = type;
-        }
-
-        @Override
-        public T get() {
-            return referent;
-        }
-
-        @Override
-        public ResourceLocation name() { return name; }
-
-        @Override
-        public Class<T> type()
-        {
-            return this.type;
-        }
-
-        void changeReference(T newTarget)
-        {
-            this.referent = newTarget;
-        }
-
-        void setName(ResourceLocation name) { this.name = name; }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (obj instanceof Delegate)
-            {
-                Delegate<?> other = (Delegate<?>) obj;
-                return Objects.equal(other.name, name);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return Objects.hashCode(name);
-        }
-    }
 }

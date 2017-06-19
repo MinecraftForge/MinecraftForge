@@ -71,11 +71,13 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.RegistryManager;
 
 public class CraftingHelper {
 
@@ -597,20 +599,17 @@ public class CraftingHelper {
         //TODO: Figure out how to remove recipes, and override them. This relies on cpw to help.
         //For now this is only done one after mod init, I want to move this to ServerInit and re-do it many times.
         init();
+        ForgeRegistry<IRecipe> reg = (ForgeRegistry<IRecipe>)ForgeRegistries.RECIPES;
         if (DEBUG_LOAD_MINECRAFT)
-        {
-            Iterator<IRecipe> itr = GameData.getRecipeRegistry().iterator();
-            while(itr.hasNext())
-            {
-                itr.next();
-                itr.remove();
-            }
-        }
+            reg.clear();
+        else
+            GameData.revert(RegistryManager.FROZEN, GameData.RECIPES, false);
         //ModContainer old = Loader.instance().activeModContainer();
         Loader.instance().setActiveModContainer(null);
         Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
         Loader.instance().getActiveModList().forEach((mod) -> loadRecipes(mod));
         Loader.instance().setActiveModContainer(null);
+        reg.freeze();
     }
 
     private static void loadFactories(ModContainer mod)

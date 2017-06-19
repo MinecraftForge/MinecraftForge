@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.registry;
+package net.minecraftforge.registries;
 
 import com.google.common.reflect.TypeToken;
 
@@ -67,7 +67,7 @@ public interface IForgeRegistryEntry<V>
     public static class Impl<T  extends IForgeRegistryEntry<T>> implements IForgeRegistryEntry<T>
     {
         private TypeToken<T> token = new TypeToken<T>(getClass()){};
-        public final RegistryDelegate<T> delegate = PersistentRegistryManager.makeDelegate((T)this, (Class<T>)token.getRawType());
+        public final IRegistryDelegate<T> delegate = new RegistryDelegate<T>((T)this, (Class<T>)token.getRawType());
         private ResourceLocation registryName = null;
 
         public final T setRegistryName(String name)
