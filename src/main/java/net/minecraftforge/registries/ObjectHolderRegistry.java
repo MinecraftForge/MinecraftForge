@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.registry;
+package net.minecraftforge.registries;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -29,6 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import com.google.common.base.Throwables;
@@ -39,10 +40,9 @@ import javax.annotation.Nullable;
 
 /**
  * Internal registry for tracking {@link ObjectHolder} references
- * @author cpw
- *
  */
-public enum ObjectHolderRegistry {
+public enum ObjectHolderRegistry
+{
     INSTANCE;
     private List<ObjectHolderRef> objectHolders = Lists.newArrayList();
 
@@ -97,7 +97,8 @@ public enum ObjectHolderRegistry {
             catch (Exception ex)
             {
                 // unpossible?
-                throw Throwables.propagate(ex);
+                Throwables.throwIfUnchecked(ex);
+                throw new RuntimeException(ex);
             }
         }
         if (isClass)
@@ -124,7 +125,8 @@ public enum ObjectHolderRegistry {
             catch (Exception ex)
             {
                 // unpossible?
-                throw Throwables.propagate(ex);
+                Throwables.throwIfUnchecked(ex);
+                throw new RuntimeException(ex);
             }
         }
     }

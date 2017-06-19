@@ -10,7 +10,7 @@
  public class RecipesBanners
  {
 -    public static class RecipeAddPattern implements IRecipe
-+    public static class RecipeAddPattern extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++    public static class RecipeAddPattern extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
          {
              public boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_)
              {
@@ -102,7 +102,7 @@
          }
  
 -    public static class RecipeDuplicatePattern implements IRecipe
-+    public static class RecipeDuplicatePattern extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++    public static class RecipeDuplicatePattern extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
          {
              public boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_)
              {

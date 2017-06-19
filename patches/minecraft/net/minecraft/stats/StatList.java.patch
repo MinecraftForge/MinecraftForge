@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -162,12 +162,12 @@
+@@ -162,7 +162,7 @@
              }
          }
  
@@ -9,13 +9,7 @@
      }
  
      private static void func_151181_c()
-     {
--        for (Block block : Block.field_149771_c)
-+        for (Block block : net.minecraftforge.fml.common.registry.GameData.getBlockRegistry().typeSafeIterable())
-         {
-             Item item = Item.func_150898_a(block);
- 
-@@ -184,12 +184,12 @@
+@@ -184,7 +184,7 @@
              }
          }
  
@@ -24,13 +18,7 @@
      }
  
      private static void func_75925_c()
-     {
--        for (Item item : Item.field_150901_e)
-+        for (Item item : net.minecraftforge.fml.common.registry.GameData.getItemRegistry().typeSafeIterable())
-         {
-             if (item != null)
-             {
-@@ -208,12 +208,12 @@
+@@ -208,7 +208,7 @@
              }
          }
  
@@ -39,13 +27,7 @@
      }
  
      private static void func_151179_e()
-     {
--        for (Item item : Item.field_150901_e)
-+        for (Item item : net.minecraftforge.fml.common.registry.GameData.getItemRegistry().typeSafeIterable())
-         {
-             if (item != null)
-             {
-@@ -227,12 +227,12 @@
+@@ -227,7 +227,7 @@
              }
          }
  
@@ -54,12 +36,6 @@
      }
  
      private static void func_188054_f()
-     {
--        for (Item item : Item.field_150901_e)
-+        for (Item item : net.minecraftforge.fml.common.registry.GameData.getItemRegistry().typeSafeIterable())
-         {
-             if (item != null)
-             {
 @@ -247,7 +247,7 @@
              }
          }

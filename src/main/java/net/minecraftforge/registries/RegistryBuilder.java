@@ -17,16 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.registry;
+package net.minecraftforge.registries;
 
 import java.util.List;
-import java.util.Map;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.Lists;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.IForgeRegistry.*;
+import net.minecraftforge.registries.IForgeRegistry.*;
 
 import javax.annotation.Nullable;
 
@@ -35,14 +33,15 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private ResourceLocation registryName;
     private Class<T> registryType;
     private ResourceLocation optionalDefaultKey;
-    private int minId;
-    private int maxId;
-    private boolean hasDelegates = false;
+    private int minId = 0;
+    private int maxId = Integer.MAX_VALUE;
     private List<AddCallback<T>> addCallback = Lists.newArrayList();
     private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
-    private List<SubstitutionCallback<T>> substitutionCallback = Lists.newArrayList();
     private boolean saveToDisc = true;
+    private boolean allowOverrides = true;
+    private boolean allowModifications = false;
+    private DummyFactory<T> dummyFactory;
 
     public RegistryBuilder<T> setName(ResourceLocation name)
     {
@@ -63,6 +62,11 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> setMaxID(int max)
+    {
+        return this.setIDRange(0, max);
+    }
+
     public RegistryBuilder<T> setDefaultKey(ResourceLocation key)
     {
         this.optionalDefaultKey = key;
@@ -78,8 +82,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             this.add((ClearCallback<T>)inst);
         if (inst instanceof CreateCallback)
             this.add((CreateCallback<T>)inst);
-        if (inst instanceof SubstitutionCallback)
-            this.add((SubstitutionCallback<T>)inst);
+        if (inst instanceof DummyFactory)
+            this.set((DummyFactory<T>)inst);
         return this;
     }
 
@@ -101,15 +105,9 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    public RegistryBuilder<T> add(SubstitutionCallback<T> sub)
+    public RegistryBuilder<T> set(DummyFactory<T> factory)
     {
-        this.substitutionCallback.add(sub);
-        return this;
-    }
-
-    public RegistryBuilder<T> enableDelegates()
-    {
-        this.hasDelegates = true;
+        this.dummyFactory = factory;
         return this;
     }
 
@@ -119,86 +117,66 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    @SuppressWarnings("deprecation")
+    public RegistryBuilder<T> disableOverrides()
+    {
+        this.allowOverrides = false;
+        return this;
+    }
+
+    public RegistryBuilder<T> allowModification()
+    {
+        this.allowModifications = true;
+        return this;
+    }
+
     public IForgeRegistry<T> create()
     {
-        return PersistentRegistryManager.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, hasDelegates,
-                getAdd(), getClear(), getCreate(), getSubstitution(), saveToDisc);
+        return RegistryManager.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
+                getAdd(), getClear(), getCreate(), saveToDisc, allowOverrides, allowModifications, dummyFactory);
     }
 
     @Nullable
     private AddCallback<T> getAdd()
     {
-        if (this.addCallback.isEmpty())
+        if (addCallback.isEmpty())
             return null;
-        if (this.addCallback.size() == 1)
-            return this.addCallback.get(0);
+        if (addCallback.size() == 1)
+            return addCallback.get(0);
 
-        return new AddCallback<T>()
+        return (owner, stage, id, obj) ->
         {
-            @Override
-            public void onAdd(T obj, int id, Map<ResourceLocation, ?> slaveset)
-            {
-                for (AddCallback<T> cb : RegistryBuilder.this.addCallback)
-                    cb.onAdd(obj, id, slaveset);
-            }
+            for (AddCallback<T> cb : this.addCallback)
+                cb.onAdd(owner, stage, id, obj);
         };
     }
 
     @Nullable
     private ClearCallback<T> getClear()
     {
-        if (this.clearCallback.isEmpty())
+        if (clearCallback.isEmpty())
             return null;
-        if (this.clearCallback.size() == 1)
-            return this.clearCallback.get(0);
+        if (clearCallback.size() == 1)
+            return clearCallback.get(0);
 
-        return new ClearCallback<T>()
+        return (owner, stage) ->
         {
-            @Override
-            public void onClear(IForgeRegistry<T> is, Map<ResourceLocation, ?> slaveset)
-            {
-                for (ClearCallback<T> cb : RegistryBuilder.this.clearCallback)
-                    cb.onClear(is, slaveset);
-            }
+            for (ClearCallback<T> cb : this.clearCallback)
+                cb.onClear(owner, stage);
         };
     }
 
     @Nullable
     private CreateCallback<T> getCreate()
     {
-        if (this.createCallback.isEmpty())
+        if (createCallback.isEmpty())
             return null;
-        if (this.createCallback.size() == 1)
-            return this.createCallback.get(0);
+        if (createCallback.size() == 1)
+            return createCallback.get(0);
 
-        return new CreateCallback<T>()
+        return (owner, stage) ->
         {
-            @Override
-            public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
-            {
-                for (CreateCallback<T> cb : RegistryBuilder.this.createCallback)
-                    cb.onCreate(slaveset, registries);
-            }
-        };
-    }
-
-    @Nullable
-    private SubstitutionCallback<T> getSubstitution()
-    {
-        if (this.substitutionCallback.isEmpty())
-            return null;
-        if (this.substitutionCallback.size() == 1)
-            return this.substitutionCallback.get(0);
-
-        return new SubstitutionCallback<T>()
-        {
-            @Override
-            public void onSubstituteActivated(Map<ResourceLocation, ?> slaveset, T original, T replacement, ResourceLocation name)
-            {
-                for (SubstitutionCallback<T> cb : RegistryBuilder.this.substitutionCallback)
-                    cb.onSubstituteActivated(slaveset, original, replacement, name);
-            }
+            for (CreateCallback<T> cb : this.createCallback)
+                cb.onCreate(owner, stage);
         };
     }
 }

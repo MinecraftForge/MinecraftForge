@@ -98,8 +98,9 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
-import net.minecraftforge.fml.common.registry.GameData;
-import net.minecraftforge.fml.common.registry.RegistryDelegate;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IRegistryDelegate;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -1015,7 +1016,7 @@ public final class ModelLoader extends ModelBakery
         Map<String, Integer> modelErrors = Maps.newHashMap();
         Set<ResourceLocation> printedBlockStateErrors = Sets.newHashSet();
         Multimap<ModelResourceLocation, IBlockState> reverseBlockMap = null;
-        Multimap<ModelResourceLocation, String> reverseItemMap = null;
+        Multimap<ModelResourceLocation, String> reverseItemMap = HashMultimap.create();
         if(enableVerboseMissingInfo)
         {
             reverseBlockMap = HashMultimap.create();
@@ -1023,15 +1024,14 @@ public final class ModelLoader extends ModelBakery
             {
                 reverseBlockMap.put(entry.getValue(), entry.getKey());
             }
-            reverseItemMap = HashMultimap.create();
-            for(Item item : GameData.getItemRegistry().typeSafeIterable())
+            ForgeRegistries.ITEMS.forEach(item ->
             {
                 for(String s : getVariantNames(item))
                 {
                     ModelResourceLocation memory = getInventoryVariant(s);
                     reverseItemMap.put(memory, item.getRegistryName().toString());
                 }
-            }
+            });
         }
 
         for(Map.Entry<ResourceLocation, Exception> entry : loadingExceptions.entrySet())
@@ -1133,7 +1133,7 @@ public final class ModelLoader extends ModelBakery
         isLoading = false;
     }
 
-    private static final Map<RegistryDelegate<Block>, IStateMapper> customStateMappers = Maps.newHashMap();
+    private static final Map<IRegistryDelegate<Block>, IStateMapper> customStateMappers = Maps.newHashMap();
 
     /**
      * Adds a custom IBlockState -> model variant logic.
@@ -1148,14 +1148,14 @@ public final class ModelLoader extends ModelBakery
      */
     public static void onRegisterAllBlocks(BlockModelShapes shapes)
     {
-        for (Entry<RegistryDelegate<Block>, IStateMapper> e : customStateMappers.entrySet())
+        for (Entry<IRegistryDelegate<Block>, IStateMapper> e : customStateMappers.entrySet())
         {
             shapes.registerBlockWithStateMapper(e.getKey().get(), e.getValue());
         }
     }
 
-    private static final Map<RegistryDelegate<Item>, ItemMeshDefinition> customMeshDefinitions = com.google.common.collect.Maps.newHashMap();
-    private static final Map<Pair<RegistryDelegate<Item>, Integer>, ModelResourceLocation> customModels = com.google.common.collect.Maps.newHashMap();
+    private static final Map<IRegistryDelegate<Item>, ItemMeshDefinition> customMeshDefinitions = com.google.common.collect.Maps.newHashMap();
+    private static final Map<Pair<IRegistryDelegate<Item>, Integer>, ModelResourceLocation> customModels = com.google.common.collect.Maps.newHashMap();
 
     /**
      * Adds a simple mapping from Item + metadata to the model variant.
@@ -1196,11 +1196,11 @@ public final class ModelLoader extends ModelBakery
      */
     public static void onRegisterItems(ItemModelMesher mesher)
     {
-        for (Map.Entry<RegistryDelegate<Item>, ItemMeshDefinition> e : customMeshDefinitions.entrySet())
+        for (Map.Entry<IRegistryDelegate<Item>, ItemMeshDefinition> e : customMeshDefinitions.entrySet())
         {
             mesher.register(e.getKey().get(), e.getValue());
         }
-        for (Entry<Pair<RegistryDelegate<Item>, Integer>, ModelResourceLocation> e : customModels.entrySet())
+        for (Entry<Pair<IRegistryDelegate<Item>, Integer>, ModelResourceLocation> e : customModels.entrySet())
         {
             mesher.register(e.getKey().getLeft().get(), e.getKey().getRight(), e.getValue());
         }

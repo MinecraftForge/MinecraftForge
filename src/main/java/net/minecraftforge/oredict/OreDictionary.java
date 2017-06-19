@@ -53,7 +53,8 @@ import com.google.common.collect.Maps;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.GameData;
 
 import javax.annotation.Nonnull;
 
@@ -470,7 +471,7 @@ public class OreDictionary
         }
         else
         {
-            id = GameData.getItemRegistry().getId(registryName);
+            id = Item.REGISTRY.getIDForObject(stack.getItem().delegate.get());
         }
         List<Integer> ids = stackToId.get(id);
         if (ids != null) set.addAll(ids);
@@ -636,7 +637,7 @@ public class OreDictionary
         }
         else
         {
-            hash = GameData.getItemRegistry().getId(registryName);
+            hash = Item.REGISTRY.getIDForObject(ore.getItem().delegate.get());
         }
         if (ore.getItemDamage() != WILDCARD_VALUE)
         {
@@ -702,7 +703,7 @@ public class OreDictionary
                 }
                 else
                 {
-                    hash = GameData.getItemRegistry().getId(name);
+                    hash = Item.REGISTRY.getIDForObject(ore.getItem().delegate.get());
                 }
                 if (ore.getItemDamage() != WILDCARD_VALUE)
                 {

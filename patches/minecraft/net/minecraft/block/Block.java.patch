@@ -5,14 +5,14 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class Block
-+public class Block extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Block>
++public class Block extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Block>
  {
      private static final ResourceLocation field_176230_a = new ResourceLocation("air");
 -    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(field_176230_a);
 -    public static final ObjectIntIdentityMap<IBlockState> field_176229_d = new ObjectIntIdentityMap<IBlockState>();
-+    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = net.minecraftforge.fml.common.registry.GameData.getBlockRegistry();
++    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = net.minecraftforge.registries.GameData.getWrapperDefaulted(Block.class);
 +    @Deprecated //Modders: DO NOT use this! Use GameRegistry
-+    public static final ObjectIntIdentityMap<IBlockState> field_176229_d = net.minecraftforge.fml.common.registry.GameData.getBlockStateIDMap();
++    public static final ObjectIntIdentityMap<IBlockState> field_176229_d = net.minecraftforge.registries.GameData.getBlockStateIDMap();
      public static final AxisAlignedBB field_185505_j = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
      @Nullable
      public static final AxisAlignedBB field_185506_k = null;

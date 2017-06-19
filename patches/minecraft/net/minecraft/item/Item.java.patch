@@ -5,12 +5,12 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class Item
-+public class Item extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Item>
++public class Item extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Item>
  {
 -    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = new RegistryNamespaced<ResourceLocation, Item>();
 -    private static final Map<Block, Item> field_179220_a = Maps.<Block, Item>newHashMap();
-+    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = net.minecraftforge.fml.common.registry.GameData.getItemRegistry();
-+    private static final Map<Block, Item> field_179220_a = net.minecraftforge.fml.common.registry.GameData.getBlockItemMap();
++    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = net.minecraftforge.registries.GameData.getWrapper(Item.class);
++    private static final Map<Block, Item> field_179220_a = net.minecraftforge.registries.GameData.getBlockItemMap();
      private static final IItemPropertyGetter field_185046_b = new IItemPropertyGetter()
      {
          @SideOnly(Side.CLIENT)
