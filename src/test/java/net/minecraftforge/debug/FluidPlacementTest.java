@@ -94,15 +94,10 @@ public class FluidPlacementTest
             ModelLoader.setBucketModelDefinition(FluidContainer.instance);
             // no need to pass the locations here, since they'll be loaded by the block model logic.
             ModelBakery.registerItemVariants(fluid);
-            ModelLoader.setCustomMeshDefinition(fluid, new ItemMeshDefinition()
-            {
-                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-                {
-                    return fluidLocation;
-                }
-            });
+            ModelLoader.setCustomMeshDefinition(fluid, stack -> fluidLocation);
             ModelLoader.setCustomStateMapper(FiniteFluidBlock.instance, new StateMapperBase()
             {
+                @Override
                 protected ModelResourceLocation getModelResourceLocation(IBlockState state)
                 {
                     return fluidLocation;
@@ -249,7 +244,7 @@ public class FluidPlacementTest
         @Override
         public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
         {
-            if (!this.func_194125_a(tab))
+            if (!this.isInCreativeTab(tab))
                 return;
             Fluid[] fluids = new Fluid[]{FluidRegistry.WATER, FluidRegistry.LAVA, FiniteFluid.instance, ModelFluidDebug.TestFluid.instance};
             // add 16 variable fillings

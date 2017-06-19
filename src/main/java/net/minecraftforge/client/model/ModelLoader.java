@@ -165,14 +165,11 @@ public final class ModelLoader extends ModelBakery
         textures.remove(TextureMap.LOCATION_MISSING_TEXTURE);
         textures.addAll(LOCATIONS_BUILTIN_TEXTURES);
 
-        textureMap.loadSprites(resourceManager, new ITextureMapPopulator()
+        textureMap.loadSprites(resourceManager, map ->
         {
-            public void registerSprites(TextureMap map)
+            for (ResourceLocation t : textures)
             {
-                for(ResourceLocation t : textures)
-                {
-                    map.registerSprite(t);
-                }
+                map.registerSprite(t);
             }
         });
 
@@ -226,20 +223,8 @@ public final class ModelLoader extends ModelBakery
     @Override
     protected void loadBlocks()
     {
-        List<Block> blocks = Lists.newArrayList(Iterables.filter(Block.REGISTRY, new Predicate<Block>()
-        {
-            public boolean apply(Block block)
-            {
-                return block.getRegistryName() != null;
-            }
-        }));
-        Collections.sort(blocks, new Comparator<Block>()
-        {
-            public int compare(Block b1, Block b2)
-            {
-                return b1.getRegistryName().toString().compareTo(b2.getRegistryName().toString());
-            }
-        });
+        List<Block> blocks = Lists.newArrayList(Iterables.filter(Block.REGISTRY, block -> block.getRegistryName() != null));
+        blocks.sort(Comparator.comparing(b -> b.getRegistryName().toString()));
         ProgressBar blockBar = ProgressManager.push("ModelLoader: blocks", blocks.size());
 
         BlockStateMapper mapper = this.blockModelShapes.getBlockStateMapper();
@@ -312,6 +297,7 @@ public final class ModelLoader extends ModelBakery
 
         List<Item> items = Lists.newArrayList(Iterables.filter(Item.REGISTRY, new Predicate<Item>()
         {
+            @Override
             public boolean apply(Item item)
             {
                 return item.getRegistryName() != null;
@@ -319,6 +305,7 @@ public final class ModelLoader extends ModelBakery
         }));
         Collections.sort(items, new Comparator<Item>()
         {
+            @Override
             public int compare(Item i1, Item i2)
             {
                 return i1.getRegistryName().toString().compareTo(i2.getRegistryName().toString());
@@ -469,6 +456,7 @@ public final class ModelLoader extends ModelBakery
             this.animation = animation;
         }
 
+        @Override
         public Collection<ResourceLocation> getDependencies()
         {
             Set<ResourceLocation> set = Sets.newHashSet();
@@ -488,6 +476,7 @@ public final class ModelLoader extends ModelBakery
             return ImmutableSet.copyOf(set);
         }
 
+        @Override
         public Collection<ResourceLocation> getTextures()
         {
             // setting parent here to make textures resolve properly
@@ -535,6 +524,7 @@ public final class ModelLoader extends ModelBakery
             return builder.build();
         }
 
+        @Override
         public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             return VanillaLoader.INSTANCE.modelCache.getUnchecked(new BakedModelCacheKey(this, state, format, bakedTextureGetter));
@@ -707,6 +697,7 @@ public final class ModelLoader extends ModelBakery
             return Optional.absent();
         }
 
+        @Override
         public IModelState getDefaultState()
         {
             return ModelRotation.X0_Y0;
@@ -805,16 +796,19 @@ public final class ModelLoader extends ModelBakery
             defaultState = new MultiModelState(builder.build());
         }
 
+        @Override
         public Collection<ResourceLocation> getDependencies()
         {
             return ImmutableList.copyOf(locations);
         }
 
+        @Override
         public Collection<ResourceLocation> getTextures()
         {
             return ImmutableSet.copyOf(textures);
         }
 
+        @Override
         public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
@@ -835,6 +829,7 @@ public final class ModelLoader extends ModelBakery
             return builder.build();
         }
 
+        @Override
         public IModelState getDefaultState()
         {
             return defaultState;
@@ -918,13 +913,16 @@ public final class ModelLoader extends ModelBakery
         }
 
         // NOOP, handled in loader
+        @Override
         public void onResourceManagerReload(IResourceManager resourceManager) {}
 
+        @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
             return true;
         }
 
+        @Override
         public IModel loadModel(ResourceLocation modelLocation) throws Exception
         {
             if(modelLocation.equals(MODEL_MISSING) && loader.missingModel != null)
@@ -1212,6 +1210,7 @@ public final class ModelLoader extends ModelBakery
     {
         INSTANCE;
 
+        @Override
         public TextureAtlasSprite apply(ResourceLocation location)
         {
             return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());

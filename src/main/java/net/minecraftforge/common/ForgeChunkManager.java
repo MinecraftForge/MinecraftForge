@@ -133,18 +133,18 @@ public class ForgeChunkManager
     {
         final ImmutableSetMultimap<ChunkPos, Ticket> persistentChunksFor = getPersistentChunksFor(world);
         final ImmutableSet.Builder<Chunk> builder = ImmutableSet.builder();
-        world.theProfiler.startSection("forcedChunkLoading");
+        world.profiler.startSection("forcedChunkLoading");
         builder.addAll(Iterators.transform(persistentChunksFor.keys().iterator(), new Function<ChunkPos, Chunk>() {
             @Nullable
             @Override
             public Chunk apply(@Nullable ChunkPos input)
             {
-                return input == null ? null : world.getChunkFromChunkCoords(input.chunkXPos, input.chunkZPos);
+                return input == null ? null : world.getChunkFromChunkCoords(input.x, input.z);
             }
         }));
-        world.theProfiler.endStartSection("regularChunkLoading");
+        world.profiler.endStartSection("regularChunkLoading");
         builder.addAll(chunkIterator);
-        world.theProfiler.endSection();
+        world.profiler.endSection();
         return builder.build().iterator();
     }
 

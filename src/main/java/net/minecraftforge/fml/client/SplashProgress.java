@@ -215,6 +215,7 @@ public class SplashProgress
         // getting debug info out of the way, while we still can
         FMLCommonHandler.instance().registerCrashCallable(new ICrashCallable()
         {
+            @Override
             public String call() throws Exception
             {
                 return "' Vendor: '" + glGetString(GL_VENDOR) +
@@ -223,6 +224,7 @@ public class SplashProgress
                        "'";
             }
 
+            @Override
             public String getLabel()
             {
                 return "GL info";
@@ -257,6 +259,7 @@ public class SplashProgress
             private final int barOffset = 55;
             private long updateTiming;
             private long framecount;
+            @Override
             public void run()
             {
                 setGL();
@@ -575,6 +578,7 @@ public class SplashProgress
         });
         thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler()
         {
+            @Override
             public void uncaughtException(Thread t, Throwable e)
             {
                 FMLLog.log(Level.ERROR, e, "Splash thread Exception");

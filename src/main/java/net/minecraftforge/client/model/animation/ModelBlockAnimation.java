@@ -199,6 +199,7 @@ public class ModelBlockAnimation
             initialize();
             return new Iterable<Event>()
             {
+                @Override
                 public Iterator<Event> iterator()
                 {
                     return new UnmodifiableIterator<Event>()
@@ -257,6 +258,7 @@ public class ModelBlockAnimation
                             }
                         }
 
+                        @Override
                         public boolean hasNext()
                         {
                             return curKey != null;
@@ -321,6 +323,7 @@ public class ModelBlockAnimation
                 }
             }
 
+            @Override
             public TRSRTransformation apply(float time)
             {
                 time -= Math.floor(time);
@@ -435,11 +438,13 @@ public class ModelBlockAnimation
             }
         }
 
+        @Override
         public TRSRTransformation getInvBindPose()
         {
             return invBindPose;
         }
 
+        @Override
         public Optional<? extends IJoint> getParent()
         {
             return Optional.absent();

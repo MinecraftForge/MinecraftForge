@@ -114,7 +114,7 @@ public class OreDictionary
             registerOre("ingotBrick",    Items.BRICK);
             registerOre("ingotBrickNether", Items.NETHERBRICK);
             registerOre("nuggetGold",  Items.GOLD_NUGGET);
-            registerOre("nuggetIron",  Items.field_191525_da);
+            registerOre("nuggetIron",  Items.IRON_NUGGET);
 
             // gems and dusts
             registerOre("gemDiamond",  Items.DIAMOND);
@@ -351,7 +351,7 @@ public class OreDictionary
 
         int replaced = 0;
         // Search vanilla recipes for recipes to replace
-        for(IRecipe obj : CraftingManager.field_193380_a)
+        for(IRecipe obj : CraftingManager.REGISTRY)
         {
             if(obj.getClass() == ShapedRecipes.class || obj.getClass() == ShapelessRecipes.class)
             {
@@ -361,11 +361,11 @@ public class OreDictionary
                     continue;
                 }
 
-                NonNullList<Ingredient> lst = obj.func_192400_c();
+                NonNullList<Ingredient> lst = obj.getIngredients();
                 for (int x = 0; x < lst.size(); x++)
                 {
                     Ingredient ing = lst.get(x);
-                    ItemStack[] ingredients = ing.func_193365_a();
+                    ItemStack[] ingredients = ing.getMatchingStacks();
                     String oreName = null;
                     boolean skip = false;
 

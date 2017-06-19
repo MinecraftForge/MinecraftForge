@@ -249,7 +249,7 @@ public class BiomeDictionary
      */
     public static void makeBestGuess(Biome biome)
     {
-        if (biome.theBiomeDecorator.treesPerChunk >= 3)
+        if (biome.decorator.treesPerChunk >= 3)
         {
             if (biome.isHighHumidity() && biome.getTemperature() >= 0.9F)
             {
@@ -293,11 +293,11 @@ public class BiomeDictionary
             BiomeDictionary.addTypes(biome, COLD);
         }
 
-        if (biome.theBiomeDecorator.treesPerChunk > 0 && biome.theBiomeDecorator.treesPerChunk < 3)
+        if (biome.decorator.treesPerChunk > 0 && biome.decorator.treesPerChunk < 3)
         {
             BiomeDictionary.addTypes(biome, SPARSE);
         }
-        else if (biome.theBiomeDecorator.treesPerChunk >= 10)
+        else if (biome.decorator.treesPerChunk >= 10)
         {
             BiomeDictionary.addTypes(biome, DENSE);
         }

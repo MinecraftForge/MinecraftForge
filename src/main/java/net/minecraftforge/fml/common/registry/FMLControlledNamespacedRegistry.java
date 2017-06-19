@@ -840,6 +840,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         add(-1, key, value);
     }
 
+    @Override
     public void registerAll(I... values)
     {
         for (I value: values)

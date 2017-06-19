@@ -36,6 +36,7 @@ public enum B3DClip implements IClip
 {
     INSTANCE;
 
+    @Override
     public IJointClip apply(final IJoint joint)
     {
         if(!(joint instanceof NodeJoint))
@@ -45,6 +46,7 @@ public enum B3DClip implements IClip
         return new NodeClip(((NodeJoint)joint).getNode());
     }
 
+    @Override
     public Iterable<Event> pastEvents(float lastPollTime, float time)
     {
         return ImmutableSet.<Event>of();
@@ -59,6 +61,7 @@ public enum B3DClip implements IClip
             this.node = node;
         }
 
+        @Override
         public TRSRTransformation apply(float time)
         {
             TRSRTransformation ret = TRSRTransformation.identity();

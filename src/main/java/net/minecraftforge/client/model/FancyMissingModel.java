@@ -36,6 +36,7 @@ final class FancyMissingModel implements IModel
     private static final TRSRTransformation smallTransformation = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, null, new Vector3f(.25f, .25f, .25f), null));
     private static final LoadingCache<VertexFormat, SimpleModelFontRenderer> fontCache = CacheBuilder.newBuilder().maximumSize(3).build(new CacheLoader<VertexFormat, SimpleModelFontRenderer>()
     {
+        @Override
         public SimpleModelFontRenderer load(VertexFormat format) throws Exception
         {
             Matrix4f m = new Matrix4f();

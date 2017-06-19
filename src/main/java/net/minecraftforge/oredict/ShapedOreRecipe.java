@@ -84,7 +84,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
     public ItemStack getRecipeOutput(){ return output; }
 
     @Override
-    public boolean matches(InventoryCrafting inv, World world)
+    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world)
     {
         for (int x = 0; x <= MAX_CRAFT_GRID_WIDTH - width; x++)
         {
@@ -143,13 +143,16 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         return this;
     }
 
-    public NonNullList<Ingredient> func_192400_c()
+    @Override
+    @Nonnull
+    public NonNullList<Ingredient> getIngredients()
     {
         return this.input;
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
+    @Nonnull
+    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) //getRecipeLeftovers
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
@@ -164,12 +167,15 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         return height;
     }
 
-    public String func_193358_e()
+    @Override
+    @Nonnull
+    public String getGroup()
     {
         return this.group.toString();
     }
 
-    public boolean func_194133_a(int p_194133_1_, int p_194133_2_)
+    @Override
+    public boolean canFit(int p_194133_1_, int p_194133_2_)
     {
         return p_194133_1_ >= this.width && p_194133_2_ >= this.height;
     }
@@ -191,7 +197,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
             ingMap.put(entry.getKey().toCharArray()[0], CraftingHelper.getIngredient(entry.getValue(), context));
         }
 
-        ingMap.put(' ', Ingredient.field_193370_a);
+        ingMap.put(' ', Ingredient.EMPTY);
 
         JsonArray patternJ = JsonUtils.getJsonArray(json, "pattern");
 
@@ -211,7 +217,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         primer.width = pattern[0].length();
         primer.height = pattern.length;
         primer.mirrored = JsonUtils.getBoolean(json, "mirrored", true);
-        primer.input = NonNullList.withSize(primer.width * primer.height, Ingredient.field_193370_a);
+        primer.input = NonNullList.withSize(primer.width * primer.height, Ingredient.EMPTY);
 
         Set<Character> keys = Sets.newHashSet(ingMap.keySet());
         keys.remove(' ');

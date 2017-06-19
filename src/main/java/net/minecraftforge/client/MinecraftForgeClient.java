@@ -104,6 +104,7 @@ public class MinecraftForgeClient
         .expireAfterAccess(1, TimeUnit.SECONDS)
         .build(new CacheLoader<Pair<World, BlockPos>, ChunkCache>()
         {
+            @Override
             public ChunkCache load(Pair<World, BlockPos> key) throws Exception
             {
                 return new ChunkCache(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);

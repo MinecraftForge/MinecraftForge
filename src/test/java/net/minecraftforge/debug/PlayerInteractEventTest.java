@@ -195,7 +195,7 @@ public class PlayerInteractEventTest
 
         if (!evt.getWorld().isRemote
                 && evt.getTarget() instanceof EntitySkeleton
-                && evt.getLocalPos().yCoord > evt.getTarget().height / 2.0)
+                && evt.getLocalPos().y > evt.getTarget().height / 2.0)
         {
             // If we right click the upper half of a skeleton it dies.
             evt.getTarget().setDead();

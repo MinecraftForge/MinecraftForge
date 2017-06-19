@@ -44,6 +44,7 @@ public class OpenGuiHandler extends SimpleChannelInboundHandler<FMLMessage.OpenG
         {
             thread.addScheduledTask(new Runnable()
             {
+                @Override
                 public void run()
                 {
                     OpenGuiHandler.this.process(msg);

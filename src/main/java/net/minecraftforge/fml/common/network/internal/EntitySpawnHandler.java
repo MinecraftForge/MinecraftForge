@@ -58,6 +58,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
         {
             thread.addScheduledTask(new Runnable()
             {
+                @Override
                 public void run()
                 {
                     EntitySpawnHandler.this.process(msg);

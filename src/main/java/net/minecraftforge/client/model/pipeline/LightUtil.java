@@ -94,6 +94,7 @@ public class LightUtil
         .maximumSize(10)
         .build(new CacheLoader<Pair<VertexFormat, VertexFormat>, int[]>()
         {
+            @Override
             public int[] load(Pair<VertexFormat, VertexFormat> pair)
             {
                 return mapFormats(pair.getLeft(), pair.getRight());
@@ -317,6 +318,7 @@ public class LightUtil
             System.arraycopy(auxColor, 0, this.auxColor, 0, this.auxColor.length);
         }
 
+        @Override
         public void put(int element, float... data)
         {
             if(getVertexFormat().getElement(element).getUsage() == EnumUsage.COLOR)

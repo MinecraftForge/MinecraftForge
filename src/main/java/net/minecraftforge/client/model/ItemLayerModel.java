@@ -86,21 +86,25 @@ public final class ItemLayerModel implements IRetexturableModel
         return builder.build();
     }
 
+    @Override
     public Collection<ResourceLocation> getDependencies()
     {
         return ImmutableList.of();
     }
 
+    @Override
     public Collection<ResourceLocation> getTextures()
     {
         return textures;
     }
 
+    @Override
     public IModelState getDefaultState()
     {
         return TRSRTransformation.identity();
     }
 
+    @Override
     public ItemLayerModel retexture(ImmutableMap<String, String> textures)
     {
         ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
@@ -118,6 +122,7 @@ public final class ItemLayerModel implements IRetexturableModel
         return new ItemLayerModel(builder.build(), overrides);
     }
 
+    @Override
     public IBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
@@ -167,18 +172,20 @@ public final class ItemLayerModel implements IRetexturableModel
             }
         }
 
-        public boolean isAmbientOcclusion() { return true; }
-        public boolean isGui3d() { return false; }
-        public boolean isBuiltInRenderer() { return false; }
-        public TextureAtlasSprite getParticleTexture() { return particle; }
-        public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
-        public ItemOverrideList getOverrides() { return overrides; }
+        @Override public boolean isAmbientOcclusion() { return true; }
+        @Override public boolean isGui3d() { return false; }
+        @Override public boolean isBuiltInRenderer() { return false; }
+        @Override public TextureAtlasSprite getParticleTexture() { return particle; }
+        @Override public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
+        @Override public ItemOverrideList getOverrides() { return overrides; }
+        @Override
         public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
             if(side == null) return quads;
             return ImmutableList.of();
         }
 
+        @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
         {
             Pair<? extends IBakedModel, Matrix4f> pair = IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, type);
@@ -423,8 +430,10 @@ public final class ItemLayerModel implements IRetexturableModel
     {
         INSTANCE;
 
+        @Override
         public void onResourceManagerReload(IResourceManager resourceManager) {}
 
+        @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
             return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
@@ -433,6 +442,7 @@ public final class ItemLayerModel implements IRetexturableModel
                 modelLocation.getResourcePath().equals("models/item/item-layer"));
         }
 
+        @Override
         public IModel loadModel(ResourceLocation modelLocation)
         {
             return ItemLayerModel.INSTANCE;

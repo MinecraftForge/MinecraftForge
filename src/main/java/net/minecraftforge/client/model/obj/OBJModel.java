@@ -1138,6 +1138,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             return parent;
         }
 
+        @Override
         public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
             if (parent != null) return parent.apply(part);
@@ -1256,6 +1257,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
     public enum OBJProperty implements IUnlistedProperty<OBJState>
     {
         INSTANCE;
+        @Override
         public String getName()
         {
             return "OBJProperty";
@@ -1548,6 +1550,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
         private final LoadingCache<IModelState, OBJBakedModel> cache = CacheBuilder.newBuilder().maximumSize(20).build(new CacheLoader<IModelState, OBJBakedModel>()
         {
+            @Override
             public OBJBakedModel load(IModelState state) throws Exception
             {
                 return new OBJBakedModel(model, state, format, textures);

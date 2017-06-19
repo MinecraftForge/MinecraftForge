@@ -282,6 +282,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
                 Function<ResourceLocation, TextureAtlasSprite> textureGetter;
                 textureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
                 {
+                    @Override
                     public TextureAtlasSprite apply(ResourceLocation location)
                     {
                         return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
@@ -340,10 +341,10 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
             return ImmutableList.of();
         }
 
-        public boolean isAmbientOcclusion() { return true;  }
-        public boolean isGui3d() { return false; }
-        public boolean isBuiltInRenderer() { return false; }
-        public TextureAtlasSprite getParticleTexture() { return particle; }
-        public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
+        @Override public boolean isAmbientOcclusion() { return true;  }
+        @Override public boolean isGui3d() { return false; }
+        @Override public boolean isBuiltInRenderer() { return false; }
+        @Override public TextureAtlasSprite getParticleTexture() { return particle; }
+        @Override public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
     }
 }

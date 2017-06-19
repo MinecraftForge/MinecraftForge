@@ -37,6 +37,7 @@ public class ModelStateComposition implements IModelState
         this.second = second;
     }
 
+    @Override
     public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
     {
         Optional<TRSRTransformation> f = first.apply(part), s = second.apply(part);

@@ -997,11 +997,13 @@ public class B3DModel
     {
         private Node<Pivot> parent;
 
+        @Override
         public void setParent(Node<Pivot> parent)
         {
             this.parent = parent;
         }
 
+        @Override
         public Node<Pivot> getParent()
         {
             return parent;
@@ -1064,6 +1066,7 @@ public class B3DModel
             return String.format("Mesh [pivot=%s, brush=%s, data=...]", super.toString(), brush);
         }
 
+        @Override
         @SuppressWarnings("unchecked")
         public void setParent(Node<Mesh> parent)
         {
@@ -1089,6 +1092,7 @@ public class B3DModel
             weightMap = builder.build();
         }
 
+        @Override
         public Node<Mesh> getParent()
         {
             return parent;
@@ -1116,11 +1120,13 @@ public class B3DModel
             return String.format("Bone [data=%s]", data);
         }*/
 
+        @Override
         public void setParent(Node<Bone> parent)
         {
             this.parent = parent;
         }
 
+        @Override
         public Node<Bone> getParent()
         {
             return parent;
