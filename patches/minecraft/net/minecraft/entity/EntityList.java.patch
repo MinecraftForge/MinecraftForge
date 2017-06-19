@@ -44,7 +44,7 @@
      public static Class <? extends Entity > func_90035_a(int p_90035_0_)
      {
 -        return (Class)field_191308_b.func_148754_a(p_90035_0_);
-+        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.GameData.getEntityRegistry().func_148754_a(p_90035_0_);
++        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.registries.GameData.getEntityRegistry().getValue(p_90035_0_);
 +        return entry == null ? null : entry.getEntityClass();
      }
  
@@ -60,7 +60,7 @@
 +    public static int getID(Class<? extends Entity> cls)
 +    {
 +        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.EntityRegistry.getEntry(cls);
-+        return entry == null ? -1 : net.minecraftforge.fml.common.registry.GameData.getEntityRegistry().getId(entry);
++        return entry == null ? -1 : net.minecraftforge.registries.GameData.getEntityRegistry().getID(entry);
 +    }
 +
 +    public static Class<? extends Entity> getClass(ResourceLocation key)
@@ -86,7 +86,7 @@
      public static Entity func_75616_a(int p_75616_0_, World p_75616_1_)
      {
 -        return func_191304_a(func_90035_a(p_75616_0_), p_75616_1_);
-+        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.GameData.getEntityRegistry().func_148754_a(p_75616_0_);
++        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.registries.GameData.getEntityRegistry().getValue(p_75616_0_);
 +        return entry == null ? null : entry.newInstance(p_75616_1_);
      }
  
@@ -134,7 +134,7 @@
      }
  
      private static void func_191303_a(int p_191303_0_, String p_191303_1_, Class <? extends Entity > p_191303_2_, String p_191303_3_)
-@@ -394,22 +420,19 @@
+@@ -394,22 +421,17 @@
          else
          {
              ResourceLocation resourcelocation = new ResourceLocation(p_191303_1_);
@@ -147,9 +147,7 @@
 -            }
 -
 -            field_191311_g.set(p_191303_0_, p_191303_3_);
-+            net.minecraftforge.fml.common.registry.EntityEntry entry =
-+                    new net.minecraftforge.fml.common.registry.EntityEntry(p_191303_2_, p_191303_3_);
-+            net.minecraftforge.fml.common.registry.GameData.getEntityRegistry().func_177775_a(p_191303_0_, resourcelocation, entry);
++            net.minecraftforge.registries.GameData.registerEntity(p_191303_0_, resourcelocation, p_191303_2_, p_191303_3_);
          }
      }
  

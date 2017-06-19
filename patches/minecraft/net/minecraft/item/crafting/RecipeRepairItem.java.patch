@@ -8,7 +8,7 @@
 -import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class RecipeRepairItem implements IRecipe
-+public class RecipeRepairItem extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++public class RecipeRepairItem extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
  {
      public boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_)
      {

@@ -141,6 +141,7 @@ public class EventBus implements IEventExceptionHandler
                     {
                         ModContainer old = Loader.instance().activeModContainer();
                         Loader.instance().setActiveModContainer(owner);
+                        ((IContextSetter)event).setModContainer(owner);
                         asm.invoke(event);
                         Loader.instance().setActiveModContainer(old);
                     }

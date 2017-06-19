@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -21,10 +21,10 @@
+@@ -21,7 +21,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -8,11 +8,7 @@
 +public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
      private static final Logger field_145852_a = LogManager.getLogger();
--    private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = new RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> ();
-+    private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = net.minecraftforge.fml.common.registry.GameData.getTileEntityRegistry();
-     protected World field_145850_b;
-     protected BlockPos field_174879_c = BlockPos.field_177992_a;
-     protected boolean field_145846_f;
+     private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = new RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> ();
 @@ -60,6 +60,8 @@
      public void func_145839_a(NBTTagCompound p_145839_1_)
      {

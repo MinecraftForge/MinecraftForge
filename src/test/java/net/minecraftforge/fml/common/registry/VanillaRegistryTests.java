@@ -8,6 +8,10 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryManager;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +41,7 @@ public class VanillaRegistryTests
         assertEquals("We have all the items via GameData", 411, Item.REGISTRY.getKeys().size());
 
         // Our lookups find the same stuff vanilla sees
-        final IForgeRegistry<Block> blocks = PersistentRegistryManager.findRegistry(Blocks.AIR);
+        final IForgeRegistry<Block> blocks = RegistryManager.ACTIVE.getRegistry(Block.class);
         assertEquals("We have the right blocks for a block", blocks, Block.REGISTRY);
 
         // We can look up stuff through our APIs
@@ -49,7 +53,7 @@ public class VanillaRegistryTests
         assertEquals("We got air when we asked for cheese", Blocks.AIR, blch);
 
         // Our lookups find the same stuff vanilla sees
-        final IForgeRegistry<Item> items = PersistentRegistryManager.findRegistry(Items.BED);
+        final IForgeRegistry<Item> items = RegistryManager.ACTIVE.getRegistry(Item.class);
         assertEquals("We have the right items for an item", items, Item.REGISTRY);
 
         // We can look up stuff through our APIs
@@ -64,13 +68,12 @@ public class VanillaRegistryTests
     @Test
     public void testRegistration()
     {
-        Block myBlock = GameRegistry.register(new Block(Material.CAKE)
-        {
-        }, new ResourceLocation("minecraft:testy"));
+        final IForgeRegistry<Block> blocks = RegistryManager.ACTIVE.getRegistry(Block.class);
+        Block myBlock = (new Block(Material.CAKE){}).setRegistryName(new ResourceLocation("minecraft:testy"));
+        blocks.register(myBlock);
         assertNotNull("Registered my block", myBlock);
 
         // Our lookups find the same stuff vanilla sees
-        final IForgeRegistry<Block> blocks = PersistentRegistryManager.findRegistry(myBlock);
         assertEquals("We have the right blocks for a block", blocks, Block.REGISTRY);
 
         Block found = blocks.getValue(new ResourceLocation("minecraft:testy"));
@@ -80,8 +83,8 @@ public class VanillaRegistryTests
     @Test
     public void testRegistryStates()
     {
-        final FMLControlledNamespacedRegistry<Block> blockVanilla = PersistentRegistryManager.PersistentRegistry.VANILLA.getRegistry(Block.class);
-        final FMLControlledNamespacedRegistry<Block> blockActive = PersistentRegistryManager.PersistentRegistry.ACTIVE.getRegistry(Block.class);
+        final ForgeRegistry<Block> blockVanilla = (ForgeRegistry<Block>)RegistryManager.VANILLA.getRegistry(Block.class);
+        final ForgeRegistry<Block> blockActive = (ForgeRegistry<Block>)RegistryManager.ACTIVE.getRegistry(Block.class);
 
         assertNotEquals("Registry states are distinct", blockActive, blockVanilla);
 
@@ -90,8 +93,8 @@ public class VanillaRegistryTests
 
         assertEquals("Stone from active and vanilla are the same", stoneActive, stoneVanilla);
 
-        int activeId = blockActive.getId(stoneActive);
-        int vanillaId = blockVanilla.getId(stoneVanilla);
+        int activeId = blockActive.getID(stoneActive);
+        int vanillaId = blockVanilla.getID(stoneVanilla);
 
         assertEquals("Stone has correct id", 1, activeId);
         assertEquals("Stone has correct id", 1, vanillaId);

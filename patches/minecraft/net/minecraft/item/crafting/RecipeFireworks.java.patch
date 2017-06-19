@@ -8,7 +8,7 @@
 -import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class RecipeFireworks implements IRecipe
-+public class RecipeFireworks extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++public class RecipeFireworks extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
  {
      private ItemStack field_92102_a = ItemStack.field_190927_a;
  

@@ -15,7 +15,7 @@
                  }
              }
 +
-+            net.minecraftforge.fml.common.registry.GameData.vanillaSnapshot();
++            net.minecraftforge.registries.GameData.vanillaSnapshot();
          }
      }
  

@@ -75,7 +75,7 @@
          this.field_177613_u.put(Items.field_179570_aq, Lists.newArrayList("oak_door"));
          this.field_177613_u.put(Items.field_151124_az, Lists.newArrayList("oak_boat"));
          this.field_177613_u.put(Items.field_190929_cY, Lists.newArrayList("totem"));
-+        for (Entry<net.minecraftforge.fml.common.registry.RegistryDelegate<Item>, Set<String>> e : customVariantNames.entrySet())
++        for (Entry<net.minecraftforge.registries.IRegistryDelegate<Item>, Set<String>> e : customVariantNames.entrySet())
 +        {
 +            this.field_177613_u.put(e.getKey().get(), Lists.newArrayList(e.getValue().iterator()));
 +        }
@@ -155,7 +155,7 @@
 +        this.field_188642_k.put(definition, locations);
 +    }
 +
-+    private static Map<net.minecraftforge.fml.common.registry.RegistryDelegate<Item>, Set<String>> customVariantNames = Maps.newHashMap();
++    private static Map<net.minecraftforge.registries.IRegistryDelegate<Item>, Set<String>> customVariantNames = Maps.newHashMap();
 +
 +    public static void registerItemVariants(Item item, ResourceLocation... names)
 +    {
