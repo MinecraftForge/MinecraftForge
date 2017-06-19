@@ -153,14 +153,6 @@ public @interface Mod
     String certificateFingerprint() default "";
 
     /**
-     * The language the mod is authored in. This will be used to control certain compatibility behaviours for this mod.
-     * Valid values are currently "java", "scala"
-     *
-     * @return The language the mod is authored in
-     */
-    String modLanguage() default "java";
-
-    /**
      * The language adapter to be used to load this mod. This overrides the value of modLanguage. The class must have a
      * public zero variable constructor and implement {@link ILanguageAdapter} just like the Java and Scala adapters.
      *

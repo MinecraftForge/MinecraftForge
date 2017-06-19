@@ -100,7 +100,6 @@ public class FMLModContainer implements ModContainer
     private boolean fingerprintNotPresent;
     private Set<String> sourceFingerprints;
     private Certificate certificate;
-    private String modLanguage;
     private ILanguageAdapter languageAdapter;
     private Disableable disableability;
     private ListMultimap<Class<? extends FMLEvent>, Method> eventMethods;
@@ -119,11 +118,10 @@ public class FMLModContainer implements ModContainer
         this.descriptor = modDescriptor;
         this.eventMethods = ArrayListMultimap.create();
 
-        this.modLanguage = (String)modDescriptor.get("modLanguage");
         String languageAdapterType = (String)modDescriptor.get("modLanguageAdapter");
         if (Strings.isNullOrEmpty(languageAdapterType))
         {
-            this.languageAdapter = "scala".equals(modLanguage) ? new ILanguageAdapter.ScalaAdapter() : new ILanguageAdapter.JavaAdapter();
+            this.languageAdapter = new ILanguageAdapter.JavaAdapter();
         }
         else
         {
