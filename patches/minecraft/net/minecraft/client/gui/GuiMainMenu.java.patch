@@ -73,12 +73,3 @@
      }
  
      protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException
-@@ -562,6 +583,8 @@
-         {
-             this.field_146297_k.func_147108_a(new GuiWinGame(false, Runnables.doNothing()));
-         }
-+
-+        net.minecraftforge.client.ForgeHooksClient.mainMenuMouseClick(p_73864_1_, p_73864_2_, p_73864_3_, this.field_146289_q, this.field_146294_l);
-     }
- 
-     public void func_146281_b()

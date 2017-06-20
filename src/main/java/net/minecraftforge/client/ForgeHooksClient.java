@@ -29,7 +29,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -115,12 +114,8 @@ import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.ITransformation;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.client.GuiJava8Error;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Java8VersionException;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
@@ -314,17 +309,6 @@ public class ForgeHooksClient
             gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
         }
 
-        if (!Loader.instance().java8)
-        {
-            String line = I18n.format("fml.messages.java8warning.1", TextFormatting.RED, TextFormatting.RESET);
-            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (8 * (font.FONT_HEIGHT + 1)), -1);
-            line = I18n.format("fml.messages.java8warning.2");
-            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (9 * (font.FONT_HEIGHT + 1)), -1);
-            splashText = updatescrollcounter < 50 ? "UPDATE!" : "JAVA!";
-            updatescrollcounter+=1;
-            updatescrollcounter%=100;
-        }
-
         String line = null;
         switch(status)
         {
@@ -343,22 +327,6 @@ public class ForgeHooksClient
         }
 
         return splashText;
-    }
-
-    public static void mainMenuMouseClick(int mouseX, int mouseY, int mouseButton, FontRenderer font, int width)
-    {
-        if (!Loader.instance().java8)
-        {
-            if (mouseY >= (4 + (8 * 10)) && mouseY < (4 + (10 * 10)))
-            {
-                int w = font.getStringWidth(I18n.format("fml.messages.java8warning.1", TextFormatting.RED, TextFormatting.RESET));
-                w = Math.max(w, font.getStringWidth(I18n.format("fml.messages.java8warning.2")));
-                if (mouseX >= ((width - w) / 2) && mouseX <= ((width + w) / 2))
-                {
-                    FMLClientHandler.instance().showGuiScreen(new GuiJava8Error(new Java8VersionException(Collections.<ModContainer>emptyList())));
-                }
-            }
-        }
     }
 
     public static ISound playSound(SoundManager manager, ISound sound)
