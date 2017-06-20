@@ -606,16 +606,15 @@ public class CraftingHelper {
         try
         {
             JsonContext ctx = new JsonContext(mod.getModId());
-            URI source = mod.getSource().toURI();
             Path fPath = null;
-            if ("jar".equals(source.getScheme()))
+            if (mod.getSource().isFile())
             {
-                fs = FileSystems.newFileSystem(source, Maps.newHashMap());
+                fs = FileSystems.newFileSystem(mod.getSource().toPath(), null);
                 fPath = fs.getPath("/assets/" + ctx.getModId() + "/recipes/_factories.json");
             }
-            else if ("file".equals(source.getScheme()))
+            else if (mod.getSource().isDirectory())
             {
-                fPath = Paths.get(source).resolve("assets/" + ctx.getModId() + "/recipes/_factories.json");
+                fPath = mod.getSource().toPath().resolve("assets/" + ctx.getModId() + "/recipes/_factories.json");
             }
             if (fPath != null && Files.exists(fPath))
             {
@@ -642,14 +641,14 @@ public class CraftingHelper {
         try
         {
             JsonContext ctx = new JsonContext(mod.getModId());
-            URI source = mod.getSource().toURI();
+            File source = mod.getSource();
 
             if ("minecraft".equals(mod.getModId()) && DEBUG_LOAD_MINECRAFT)
             {
                 try
                 {
-                    source = CraftingManager.class.getResource("/assets/.mcassetsroot").toURI();
-                    source = source.resolve("..");
+                    URI tmp = CraftingManager.class.getResource("/assets/.mcassetsroot").toURI();
+                    source = new File(tmp.resolve("..").getPath());
                 }
                 catch (URISyntaxException e)
                 {
@@ -659,11 +658,11 @@ public class CraftingHelper {
             }
 
             Path root = null;
-            if ("jar".equals(source.getScheme()))
+            if (source.isFile())
             {
                 try
                 {
-                    fs = FileSystems.newFileSystem(source, Maps.newHashMap());
+                    fs = FileSystems.newFileSystem(source.toPath(), null);
                     root = fs.getPath("/assets/" + ctx.getModId() + "/recipes/");
                 }
                 catch (IOException e)
@@ -672,9 +671,9 @@ public class CraftingHelper {
                     return false;
                 }
             }
-            else if ("file".equals(source.getScheme()))
+            else if (source.isDirectory())
             {
-                root = Paths.get(source).resolve("assets/" + ctx.getModId() + "/recipes/");
+                root = source.toPath().resolve("assets/" + ctx.getModId() + "/recipes/");
             }
 
             if (root == null || !Files.exists(root))
