@@ -182,7 +182,6 @@ fml.messages.version.restriction.upper.inclusive=%s or below
 fml.messages.version.restriction.upper.exclusive=below %s
 fml.messages.version.restriction.bounded=between %s and %s
 
-fml.button.visitjavadownloads=Oracle Java SE Downloads
 fml.button.continue=Continue
 fml.button.open.mods.folder=Open Mods Folder
 fml.button.open.file=Open %s
