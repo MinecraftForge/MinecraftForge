@@ -735,7 +735,7 @@ public class CraftingHelper {
                 {
                     reader = Files.newBufferedReader(f);
                     JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-                    if (json.has("conditions") && !CraftingHelper.processConditions(json.getAsJsonArray("conditions"), ctx))
+                    if (json.has("conditions") && !CraftingHelper.processConditions(JsonUtils.getJsonArray(json, "conditions"), ctx))
                         continue;
                     IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
                     ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
