@@ -438,7 +438,7 @@ public class CraftingHelper {
             for (JsonElement j : values)
             {
                 if (!j.isJsonObject())
-                    throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");
+                    throw new JsonSyntaxException("And condition values must be an array of JsonObjects");
                 children.add(CraftingHelper.getCondition(j.getAsJsonObject(), context));
             }
             return () -> children.stream().allMatch(c -> c.getAsBoolean());
