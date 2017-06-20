@@ -20,10 +20,12 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.lang.reflect.Field;
+import java.util.EnumMap;
 import java.util.Map;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -87,6 +89,16 @@ public class GameData
         iEntityRegistry      = (FMLControlledNamespacedRegistry<EntityEntry>)makeRegistry(ENTITIES,     EntityEntry.class, MIN_ENTITY_ID, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
         iRecipeRegistry      = (FMLControlledNamespacedRegistry<IRecipe>)    makeRegistry(RECIPES,      IRecipe.class,     MIN_RECIPE_ID, MAX_RECIPE_ID).disableSaving().create();
 
+        registryTypeMap = Maps.newEnumMap(GameRegistry.Type.class);
+        registryTypeMap.put(GameRegistry.Type.BLOCK, iBlockRegistry);
+        registryTypeMap.put(GameRegistry.Type.ITEM, iItemRegistry);
+        registryTypeMap.put(GameRegistry.Type.POTION, iPotionRegistry);
+        registryTypeMap.put(GameRegistry.Type.POTION_TYPE, iPotionTypeRegistry);
+        registryTypeMap.put(GameRegistry.Type.BIOME, iBiomeRegistry);
+        registryTypeMap.put(GameRegistry.Type.ENCHANTMENT, iEnchantmentRegistry);
+        registryTypeMap.put(GameRegistry.Type.SOUND_EVENT, iSoundEventRegistry);
+        registryTypeMap.put(GameRegistry.Type.ENTITY, iEntityRegistry);
+
         try
         {
             blockField = FinalFieldHelper.makeWritable(ReflectionHelper.findField(ItemBlock.class, "block", "field_150939" + "_a"));
@@ -121,6 +133,8 @@ public class GameData
 
     //TODO: This is not a recipe that is serilized to disc by ID, so we need to skip over any saving/loading from disc
     private final FMLControlledNamespacedRegistry<IRecipe> iRecipeRegistry;
+
+    private final EnumMap<GameRegistry.Type,FMLControlledNamespacedRegistry> registryTypeMap;
 
     /** INTERNAL ONLY */
     @Deprecated
@@ -178,16 +192,13 @@ public class GameData
     void registerSubstitutionAlias(String name, GameRegistry.Type type, Object toReplace) throws ExistingSubstitutionException
     {
         ResourceLocation nameToSubstitute = new ResourceLocation(name);
-        final BiMap<Block, Item> blockItemMap = getBlockItemMap();
-        if (type == GameRegistry.Type.BLOCK)
-        {
-            iBlockRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Block)toReplace);
-            iBlockRegistry.activateSubstitution(nameToSubstitute);
+        FMLControlledNamespacedRegistry registry=registryTypeMap.get(type);
+        if(registry==null){
+            FMLLog.getLogger().log(Level.WARN,"Cannot register substitution. Registry for type %s not found",type);
         }
-        else if (type == GameRegistry.Type.ITEM)
-        {
-            iItemRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Item)toReplace);
-            iItemRegistry.activateSubstitution(nameToSubstitute);
+        else{
+            registry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(),nameToSubstitute, (IForgeRegistryEntry) toReplace);
+            registry.activateSubstitution(nameToSubstitute);
         }
     }
 
