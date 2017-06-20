@@ -443,9 +443,8 @@ public class CraftingHelper {
             }
             return () -> children.stream().allMatch(c -> c.getAsBoolean());
         });
-        registerC("forge:constant", (context, json) -> {
-            boolean value = JsonUtils.getBoolean(json, "value");
-            return () -> value;
+        registerC("forge:false", (context, json) -> {
+            return () -> false;
         });
 
         registerR("minecraft:crafting_shaped", (context, json) -> {
