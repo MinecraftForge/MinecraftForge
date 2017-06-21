@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -302,7 +302,7 @@
+@@ -143,11 +143,12 @@
+         return field_77520_b.field_77497_a;
+     }
+ 
+-    public static float func_152377_a(ItemStack p_152377_0_, EnumCreatureAttribute p_152377_1_)
++    public static float getModifierForCreature(ItemStack stack, @javax.annotation.Nullable Entity entity)
+     {
+         field_77521_c.field_77495_a = 0.0F;
+-        field_77521_c.field_77494_b = p_152377_1_;
+-        func_77518_a(field_77521_c, p_152377_0_);
++        field_77521_c.field_77494_b = entity;
++        func_77518_a(field_77521_c, stack);
++        field_77521_c.field_77494_b = null;
+         return field_77521_c.field_77495_a;
+     }
+ 
+@@ -302,7 +303,7 @@
      public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
      {
          Item item = p_77514_3_.func_77973_b();
@@ -9,7 +25,7 @@
  
          if (i <= 0)
          {
-@@ -357,7 +357,7 @@
+@@ -357,7 +358,7 @@
      {
          List<EnchantmentData> list = Lists.<EnchantmentData>newArrayList();
          Item item = p_77513_1_.func_77973_b();
@@ -18,7 +34,7 @@
  
          if (i <= 0)
          {
-@@ -413,7 +413,7 @@
+@@ -413,7 +414,7 @@
  
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {
@@ -27,3 +43,21 @@
              {
                  for (int i = enchantment.func_77325_b(); i > enchantment.func_77319_d() - 1; --i)
                  {
+@@ -482,7 +483,7 @@
+     static final class ModifierLiving implements EnchantmentHelper.IModifier
+         {
+             public float field_77495_a;
+-            public EnumCreatureAttribute field_77494_b;
++            public @javax.annotation.Nullable Entity field_77494_b;
+ 
+             private ModifierLiving()
+             {
+@@ -490,7 +491,7 @@
+ 
+             public void func_77493_a(Enchantment p_77493_1_, int p_77493_2_)
+             {
+-                this.field_77495_a += p_77493_1_.func_152376_a(p_77493_2_, this.field_77494_b);
++                this.field_77495_a += p_77493_1_.calcDamageByEntity(p_77493_2_, this.field_77494_b);
+             }
+         }
+ }

@@ -12,7 +12,22 @@
      private final EntityEquipmentSlot[] field_185263_a;
      private final Enchantment.Rarity field_77333_a;
      @Nullable
-@@ -134,7 +134,7 @@
+@@ -94,6 +94,14 @@
+         return 0;
+     }
+ 
++    public float calcDamageByEntity(int level, @javax.annotation.Nullable Entity entity)
++    {
++        return func_152376_a(level,entity instanceof EntityLivingBase?((EntityLivingBase) entity).func_70668_bt():EnumCreatureAttribute.UNDEFINED);
++    }
++
++    /**
++     * Consider using Forge's entity sensitive version
++     */
+     public float func_152376_a(int p_152376_1_, EnumCreatureAttribute p_152376_2_)
+     {
+         return 0.0F;
+@@ -134,7 +142,7 @@
  
      public boolean func_92089_a(ItemStack p_92089_1_)
      {
@@ -21,7 +36,7 @@
      }
  
      public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_)
-@@ -155,6 +155,26 @@
+@@ -155,6 +163,26 @@
          return false;
      }
  
