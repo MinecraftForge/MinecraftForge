@@ -220,7 +220,7 @@
                          {
                              d0 = d0 + p_82840_1_.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111125_b();
 -                            d0 = d0 + (double)EnchantmentHelper.func_152377_a(this, EnumCreatureAttribute.UNDEFINED);
-+                            d0 = d0 + (double)EnchantmentHelper.getModifierForCreature(this, null);
++                            d0 = d0 + (double)EnchantmentHelper.getModifierForCreature(this, (Entity) null);
                              flag = true;
                          }
                          else if (attributemodifier.func_111167_a() == Item.field_185050_h)
