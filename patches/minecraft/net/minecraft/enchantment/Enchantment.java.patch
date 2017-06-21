@@ -12,22 +12,18 @@
      private final EntityEquipmentSlot[] field_185263_a;
      private final Enchantment.Rarity field_77333_a;
      @Nullable
-@@ -94,6 +94,14 @@
+@@ -94,6 +94,10 @@
          return 0;
      }
  
-+    public float calcDamageByEntity(int level, @javax.annotation.Nullable Entity entity)
-+    {
-+        return func_152376_a(level,entity instanceof EntityLivingBase?((EntityLivingBase) entity).func_70668_bt():EnumCreatureAttribute.UNDEFINED);
-+    }
-+
 +    /**
 +     * Consider using Forge's entity sensitive version
 +     */
++    @Deprecated
      public float func_152376_a(int p_152376_1_, EnumCreatureAttribute p_152376_2_)
      {
          return 0.0F;
-@@ -134,7 +142,7 @@
+@@ -134,7 +138,7 @@
  
      public boolean func_92089_a(ItemStack p_92089_1_)
      {
@@ -36,7 +32,7 @@
      }
  
      public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_)
-@@ -155,6 +163,26 @@
+@@ -155,6 +159,26 @@
          return false;
      }
  
@@ -63,3 +59,20 @@
      public static void func_185257_f()
      {
          EntityEquipmentSlot[] aentityequipmentslot = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
+@@ -209,4 +233,16 @@
+             return this.field_185275_e;
+         }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++
++    /**
++     * Calculate the damage this enchantment adds to an attack on the given entity
++     */
++    public float calcDamageByEntity(int level, @javax.annotation.Nullable Entity entity)
++    {
++        return func_152376_a(level,entity instanceof EntityLivingBase?((EntityLivingBase) entity).func_70668_bt():EnumCreatureAttribute.UNDEFINED);
++    }
++
++    /* ======================================== FORGE END   =====================================*/
+ }

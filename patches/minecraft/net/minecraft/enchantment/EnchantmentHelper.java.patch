@@ -10,9 +10,9 @@
          field_77521_c.field_77495_a = 0.0F;
 -        field_77521_c.field_77494_b = p_152377_1_;
 -        func_77518_a(field_77521_c, p_152377_0_);
-+        field_77521_c.field_77494_b = entity;
++        field_77521_c.entity = entity;
 +        func_77518_a(field_77521_c, stack);
-+        field_77521_c.field_77494_b = null;
++        field_77521_c.entity = null;
          return field_77521_c.field_77495_a;
      }
  
@@ -48,7 +48,7 @@
          {
              public float field_77495_a;
 -            public EnumCreatureAttribute field_77494_b;
-+            public @javax.annotation.Nullable Entity field_77494_b;
++            public @javax.annotation.Nullable Entity entity;
  
              private ModifierLiving()
              {
@@ -57,7 +57,7 @@
              public void func_77493_a(Enchantment p_77493_1_, int p_77493_2_)
              {
 -                this.field_77495_a += p_77493_1_.func_152376_a(p_77493_2_, this.field_77494_b);
-+                this.field_77495_a += p_77493_1_.calcDamageByEntity(p_77493_2_, this.field_77494_b);
++                this.field_77495_a += p_77493_1_.calcDamageByEntity(p_77493_2_, this.entity);
              }
          }
  }
