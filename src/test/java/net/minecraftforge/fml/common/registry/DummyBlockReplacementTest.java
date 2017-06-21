@@ -70,9 +70,9 @@ public class DummyBlockReplacementTest
 
         fnd = blockRegistry.getValue(myDirt);
         assertNotEquals("Did not find my block", fnd, testDirtBlock);
-        assertTrue("Found a dummy air block", fnd.getClass().getName().endsWith("BlockDummyAir"));
+        assertTrue("Did not find a dummy air block", fnd.getClass().getName().endsWith("BlockDummyAir"));
         final Set<ResourceLocation> dummied = RegistryManager.ACTIVE.takeSnapshot(false).get(GameData.BLOCKS).dummied;
-        assertTrue("Found my block in the dummy list", dummied.contains(myDirt));
+        assertTrue("Did not find my block in the dummy list", dummied.contains(myDirt));
 
         GameData.revertToFrozen();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
@@ -80,6 +80,7 @@ public class DummyBlockReplacementTest
         assertNotEquals("Did not find my block", fnd, testDirtBlock);
         assertEquals("Found a default air block", fnd, Blocks.AIR);
 
+        ((ForgeRegistry<Block>)RegistryManager.ACTIVE.getRegistry(Block.class)).unfreeze();
         RegistryManager.ACTIVE.getRegistry(Block.class).register(testDirtBlock.setRegistryName(myDirt));
         fnd = blockRegistry.getValue(myDirt);
         assertEquals("Found my block", fnd, testDirtBlock);
