@@ -677,7 +677,7 @@ public class CraftingHelper {
                 try
                 {
                     fs = FileSystems.newFileSystem(source.toPath(), null);
-                    root = fs.getPath("/assets/" + ctx.getModId() + "/recipes/");
+                    root = fs.getPath("/assets/" + ctx.getModId() + "/recipes");
                 }
                 catch (IOException e)
                 {
@@ -687,7 +687,7 @@ public class CraftingHelper {
             }
             else if (source.isDirectory())
             {
-                root = source.toPath().resolve("assets/" + ctx.getModId() + "/recipes/");
+                root = source.toPath().resolve("assets/" + ctx.getModId() + "/recipes");
             }
 
             if (root == null || !Files.exists(root))
