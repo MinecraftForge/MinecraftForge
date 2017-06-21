@@ -10,6 +10,8 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
 
+import com.google.common.collect.Maps;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraftforge.fml.common.FMLLog;
@@ -108,9 +110,6 @@ class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends Regis
     }
 
     //internal
-    @Override //We override all public methods, this should be fine as null.
-    protected Map<ResourceLocation, V> createUnderlyingMap(){ return null; }
-
     @Override
     public void lock(){ this.locked = true; }
 

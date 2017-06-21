@@ -28,10 +28,10 @@ public class PotionRegistryDebug
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        Potion forge = new PotionForge(new ResourceLocation(ForgeVersion.MOD_ID, "forge"), false, 0xff00ff).setRegistryName(new ResourceLocation(ForgeVersion.MOD_ID, "forge")); // test automatic id distribution
-        Potion forgy = new PotionForge(new ResourceLocation(ForgeVersion.MOD_ID, "forgy"), true, 0x00ff00).setRegistryName(new ResourceLocation(ForgeVersion.MOD_ID, "forgy")); // test that ids above 127 work
+        Potion forge = new PotionForge(new ResourceLocation(ForgeVersion.MOD_ID, "forge"), false, 0xff00ff).setRegistryName(new ResourceLocation(MODID, "forge")); // test automatic id distribution
+        Potion forgy = new PotionForge(new ResourceLocation(ForgeVersion.MOD_ID, "forgy"), true, 0x00ff00).setRegistryName(new ResourceLocation(MODID, "forgy")); // test that ids above 127 work
         ForgeRegistries.POTIONS.register(forge);
-        Potion.REGISTRY.register(200, forgy.getRegistryName(), forgy);
+        //((ForgeRegistry)ForgeRegistries.POTIONS).register(200, forgy.getRegistryName(), forgy);
 
         Random rand = new Random();
         TIntSet taken = new TIntHashSet(100);
