@@ -241,8 +241,7 @@ public class GameRegistry
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String key)
     {
-        throw new RuntimeException("TODO: TileEntity registration");
-        //TileEntity.register(key, tileEntityClass);
+        TileEntity.register(key, tileEntityClass);
     }
 
     public static void registerFuelHandler(IFuelHandler handler)

@@ -164,6 +164,7 @@ class ObjectHolderRef
         private static Method fieldAccessorSet;
         static Field makeWritable(Field f) throws Exception
         {
+            f.setAccessible(true);
             if (modifiersField == null)
             {
                 Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory");

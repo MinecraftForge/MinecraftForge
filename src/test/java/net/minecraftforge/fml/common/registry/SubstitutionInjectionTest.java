@@ -72,7 +72,7 @@ public class SubstitutionInjectionTest
 
         // TEST 0a: Validate that the ItemBlock for Dirt points at vanilla dirt
         ItemBlock dirtitem = (ItemBlock) itemRegistry.getValue(MC_DIRT);
-        assertEquals("ItemBlock points at my block", currDirt, dirtitem.block);
+        assertEquals("ItemBlock points at my block", currDirt, dirtitem.getBlock());
 
         blockRegistry.register(toSub); //Register a new object, with the same vanilla name, Should cause the item to be replaced
         GameData.freezeData();
