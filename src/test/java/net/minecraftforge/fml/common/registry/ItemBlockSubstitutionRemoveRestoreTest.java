@@ -86,11 +86,11 @@ public class ItemBlockSubstitutionRemoveRestoreTest
         snapshot.get(GameData.ITEMS).substitutions.clear();
         GameData.injectSnapshot(snapshot, false, false);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
-        */
 
         dirtitem = (ItemBlock) itemRegistry.getValue(myDirt);
         assertEquals("ItemBlock points at vanilla block", originalDirt, dirtitem);
         assertNotEquals("ItemBlock points at my block", myDirtInstance, dirtitem);
+        */
 
         // TEST 3: Does the substitute get restored when reverting to frozen state? The substitute should be found in the registry again
         GameData.revertToFrozen();

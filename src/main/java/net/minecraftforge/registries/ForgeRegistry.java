@@ -199,6 +199,15 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     {
         return getID(this.names.get(name));
     }
+    private int getIDRaw(V value)
+    {
+        Integer ret = this.ids.inverse().get(value);
+        return ret == null ? -1 : ret.intValue();
+    }
+    private int getIDRaw(ResourceLocation name)
+    {
+        return getIDRaw(this.names.get(name));
+    }
 
     public V getValue(int id)
     {
@@ -411,6 +420,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (from.superType != this.superType)
             throw new IllegalArgumentException("Attempted to copy to incompatible registry: " + name + " " + from.superType + " -> " + this.superType);
 
+        this.isFrozen = false;
+
         if (this.clear != null)
             this.clear.onClear(this, stage);
 
@@ -421,14 +432,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         */
         this.aliases.clear();
         from.aliases.forEach((f, t) -> this.addAlias(f, t));
-        this.dummies.clear();
-        from.dummies.forEach(dummy -> this.addDummy(dummy));
 
         this.ids.clear();
         this.names.clear();
         this.availabilityMap.clear(0, this.availabilityMap.length());
         this.defaultValue = null;
-        this.isFrozen = false;
 
         boolean errored = false;
 
@@ -442,6 +450,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 errored = true;
             }
         }
+
+        //Needs to be below add so that dummies are persisted
+        this.dummies.clear();
+        from.dummies.forEach(dummy -> this.addDummy(dummy));
 
         if (errored)
             throw new RuntimeException("One of more entry values did not copy to the correct id. Check log for details!");
@@ -538,7 +550,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         {
             ResourceLocation itemName = entry.getKey();
             int newId = entry.getValue();
-            int currId = old.getID(itemName);
+            int currId = old.getIDRaw(itemName);
 
             if (currId == -1)
             {
@@ -572,9 +584,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (DEBUG)
             FMLLog.finer("Registry Dummy Add: %s %d -> %s", key, id, dummy);
 
+        //It was blocked before so we need to unset the blocking map
+        this.availabilityMap.clear(id);
+
         int realId = this.add(id, dummy);
         if (realId != id)
-            FMLLog.warning("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, dummy.getRegistryType().getName(), id, realId);
+            FMLLog.warning("Registered object did not get ID it asked for. Name: %s Type: %s Expected: %s Got: %s", key, dummy.getRegistryType().getName(), id, realId);
         this.dummies.add(key);
 
         return true;
