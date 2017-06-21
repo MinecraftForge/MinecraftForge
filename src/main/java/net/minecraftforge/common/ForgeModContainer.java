@@ -82,12 +82,14 @@ import com.google.common.eventbus.Subscribe;
 import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.common.AutomaticEventSubscriber;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.WorldAccessContainer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
@@ -103,6 +105,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nullable;
 
+@EventBusSubscriber(modid = "forge")
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static final String VERSION_CHECK_CAT = "version_checking";
@@ -444,6 +447,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         NetworkRegistry.INSTANCE.register(this, this.getClass(), "*", evt.getASMHarvestedData());
         ForgeNetworkHandler.registerChannel(this, evt.getSide());
         ConfigManager.sync(this.getModId(), Config.Type.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Subscribe

@@ -40,7 +40,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
     private final Class<V> superType;
     private final Map<ResourceLocation, ResourceLocation> aliases = Maps.newHashMap();
-    private final Map<ResourceLocation, ?> slaves = Maps.newHashMap();
+    final Map<ResourceLocation, ?> slaves = Maps.newHashMap();
     private final ResourceLocation defaultKey;
     private final CreateCallback<V> create;
     private final AddCallback<V> add;
@@ -427,13 +427,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.ids.clear();
         this.names.clear();
         this.availabilityMap.clear(0, this.availabilityMap.length());
+        this.defaultValue = null;
         this.isFrozen = false;
 
         boolean errored = false;
 
         for (Entry<ResourceLocation, V> entry : from.names.entrySet())
         {
-            int id = from.ids.inverse().get(entry.getKey());
+            int id = from.getID(entry.getKey());
             int realId = add(id, entry.getValue());
             if (id != realId && id != -1)
             {
@@ -501,9 +502,18 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return this.isFrozen;
     }
 
+    /**
+     * Used to control the times where people can modify this registry.
+     * Users should only ever register things in the Register<?> events!
+     */
     public void freeze()
     {
         this.isFrozen = true;
+    }
+
+    public void unfreeze()
+    {
+        this.isFrozen = false;
     }
 
     RegistryEvent.Register<V> getRegisterEvent(ResourceLocation name)

@@ -16,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.debug.ObjectHolderTest.CustomRegistryEntry;
@@ -42,21 +43,6 @@ public class ItemTileDebug
     @ObjectHolder(TestBlock.name)
     public static final Block TEST_BLOCK = null;
 
-    @SidedProxy
-    public static CommonProxy proxy;
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        proxy.preInit(event);
-    }
-
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
-        proxy.init(event);
-    }
-
     @Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
@@ -64,6 +50,7 @@ public class ItemTileDebug
         public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
             event.getRegistry().register(new TestBlock());
+            GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
 
         @SubscribeEvent
@@ -71,38 +58,17 @@ public class ItemTileDebug
         {
             event.getRegistry().register(new ItemBlock(TEST_BLOCK).setRegistryName(TEST_BLOCK.getRegistryName()));
         }
-    }
-
-    public static class CommonProxy
-    {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
         {
-            GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
-        }
-        public void init(FMLInitializationEvent event){}
-    }
+            final ModelResourceLocation itemLocation = new ModelResourceLocation(TEST_BLOCK.getRegistryName(), "normal");
 
-    public static class ServerProxy extends CommonProxy{}
-
-    public static class ClientProxy extends CommonProxy
-    {
-        private static ModelResourceLocation itemLocation = new ModelResourceLocation(TEST_BLOCK.getRegistryName(), "normal");
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public void preInit(FMLPreInitializationEvent event)
-        {
-            super.preInit(event);
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(MODID, TestBlock.name));
             ForgeHooksClient.registerTESRItemStack(item, 0, CustomTileEntity.class);
             ModelLoader.setCustomModelResourceLocation(item, 0, itemLocation);
             MinecraftForge.EVENT_BUS.register(BakeEventHandler.instance);
-        }
-
-        @Override
-        public void init(FMLInitializationEvent event)
-        {
             ClientRegistry.bindTileEntitySpecialRenderer(CustomTileEntity.class, TestTESR.instance);
+
         }
     }
 

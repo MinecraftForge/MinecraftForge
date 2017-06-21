@@ -29,9 +29,6 @@ import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -56,6 +53,7 @@ public class AutomaticEventSubscriber
             try
             {
                 //noinspection unchecked
+                @SuppressWarnings("unchecked")
                 List<ModAnnotation.EnumHolder> sidesEnum = (List<ModAnnotation.EnumHolder>)targ.getAnnotationInfo().get("value");
                 EnumSet<Side> sides = DEFAULT;
                 if (sidesEnum != null) {
@@ -65,7 +63,7 @@ public class AutomaticEventSubscriber
                     }
                 }
                 if (sides == DEFAULT || sides.contains(side)) {
-                    FMLLog.log.debug("Found @EventBusSubscriber class {}", targ.getClassName());
+                    //FMLLog.log.debug("Found @EventBusSubscriber class {}", targ.getClassName());
                     String amodid = (String)targ.getAnnotationInfo().get("modid");
                     if (Strings.isNullOrEmpty(amodid)) {
                         amodid = ASMDataTable.getOwnerModID(mods, targ);
@@ -79,6 +77,7 @@ public class AutomaticEventSubscriber
                         FMLLog.log.debug("Skipping @EventBusSubscriber injection for {} since it is not for mod {}", targ.getClassName(), mod.getModId());
                         continue; //We're not injecting this guy
                     }
+                    FMLLog.log.debug("Registering @EventBusSubscriber for {} for mod {}", targ.getClassName(), mod.getModId());
                     Class<?> subscriptionTarget = Class.forName(targ.getClassName(), true, mcl);
                     MinecraftForge.EVENT_BUS.register(subscriptionTarget);
                     FMLLog.log.debug("Injected @EventBusSubscriber class {}", targ.getClassName());
