@@ -63,6 +63,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -101,6 +102,7 @@ public class GameData
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
+    private static final BiConsumer<ResourceLocation, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
 
     static {
         init();
@@ -192,8 +194,13 @@ public class GameData
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
             loadRegistry(r.getKey(), RegistryManager.ACTIVE, RegistryManager.VANILLA, clazz, true);
         }
-        RegistryManager.VANILLA.registries.forEach((name, reg) -> reg.validateContent(name));
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.freeze());
+        RegistryManager.VANILLA.registries.forEach((name, reg) ->
+        {
+            reg.validateContent(name);
+            reg.freeze();
+        });
+        RegistryManager.VANILLA.registries.forEach(LOCK_VANILLA);
+        RegistryManager.ACTIVE.registries.forEach(LOCK_VANILLA);
         FMLLog.fine("Vanilla freeze snapshot created");
     }
 
@@ -206,7 +213,11 @@ public class GameData
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
             loadRegistry(r.getKey(), RegistryManager.ACTIVE, RegistryManager.FROZEN, clazz, true);
         }
-        RegistryManager.FROZEN.registries.forEach((name, reg) -> reg.validateContent(name));
+        RegistryManager.FROZEN.registries.forEach((name, reg) ->
+        {
+            reg.validateContent(name);
+            reg.freeze();
+        });
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.freeze());
         FMLLog.fine("All registries frozen");
     }
@@ -227,7 +238,7 @@ public class GameData
             loadRegistry(r.getKey(), RegistryManager.FROZEN, RegistryManager.ACTIVE, clazz, true);
         }
         // the id mapping has reverted, fire remap events for those that care about id changes
-        Loader.instance().fireRemapEvent(ImmutableMap.of(), ImmutableMap.of(), true);
+        Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
 
         // the id mapping has reverted, ensure we sync up the object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
@@ -574,29 +585,24 @@ public class GameData
             });
         }
 
-        /*
         // Validate that all the STAGING data is good
-        forAllRegistries(PersistentRegistry.STAGING, ValidateRegistryFunction.OPERATION);
+        STAGING.registries.forEach((name, reg) -> reg.validateContent(name));
 
         // Load the STAGING registry into the ACTIVE registry
-        for (Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>> r : PersistentRegistry.ACTIVE.registries.entrySet())
+        for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
-            final Class<? extends IForgeRegistryEntry> registrySuperType = PersistentRegistry.ACTIVE.getRegistrySuperType(r.getKey());
-            loadRegistry(r.getKey(), PersistentRegistry.STAGING, PersistentRegistry.ACTIVE, registrySuperType);
+            final Class<? extends IForgeRegistryEntry> registrySuperType = RegistryManager.ACTIVE.getSuperType(r.getKey());
+            loadRegistry(r.getKey(), STAGING, RegistryManager.ACTIVE, registrySuperType, true);
         }
 
         // Dump the active registry
-        forAllRegistries(PersistentRegistry.ACTIVE, DumpRegistryFunction.OPERATION);
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
 
         // Tell mods that the ids have changed
-        Loader.instance().fireRemapEvent(remaps.get(BLOCKS), remaps.get(ITEMS), false);
+        Loader.instance().fireRemapEvent(remaps, false);
 
         // The id map changed, ensure we apply object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
-
-        // Clean out the staging registry now, we're done with it
-        PersistentRegistry.STAGING.clean();
-        */
 
         // Return an empty list, because we're good
         return ArrayListMultimap.create();
@@ -648,6 +654,10 @@ public class GameData
     {
         List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
         Collections.sort(keys, (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString()));
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
+            if (filter.test(name))
+                ((ForgeRegistry<?>)reg).unfreeze();
+        });
 
         if (filter.test(BLOCKS))
         {
@@ -666,5 +676,11 @@ public class GameData
             MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl));
         }
         ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject everything else
+
+
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
+            if (filter.test(name))
+                ((ForgeRegistry<?>)reg).freeze();
+        });
     }
 }

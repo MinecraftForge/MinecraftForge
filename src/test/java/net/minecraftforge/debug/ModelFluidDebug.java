@@ -52,17 +52,6 @@ public class ModelFluidDebug
     public static final Fluid GAS = new TestGas();
 
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        if (ENABLE)
-        {
-            FluidRegistry.registerFluid(FLUID);
-            FluidRegistry.registerFluid(GAS);
-            FluidRegistry.registerFluid(MILK);
-        }
-    }
-
     @Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
@@ -71,6 +60,13 @@ public class ModelFluidDebug
         {
             if (!ENABLE)
                 return;
+
+            //TODO: Make FluidRegistry a full registry?
+            //Make a delegate system for FluidBlocks/Fluid Stacks?
+            //Fluids must be registered before a FluidStack can be made. Which is done in the block constructor
+            FluidRegistry.registerFluid(FLUID);
+            FluidRegistry.registerFluid(GAS);
+            FluidRegistry.registerFluid(MILK);
             event.getRegistry().registerAll(
                 new TestFluidBlock(),
                 new TestGasBlock(),

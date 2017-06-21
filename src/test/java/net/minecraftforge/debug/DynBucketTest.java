@@ -31,6 +31,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
@@ -94,82 +95,62 @@ public class DynBucketTest
         }
     }
 
-    @SuppressWarnings("unused")
-    public DynBucketTest()
+    @SubscribeEvent
+    public void setupModels(ModelRegistryEvent event)
     {
-        if (!ENABLE || !ModelFluidDebug.ENABLE)
-            MinecraftForge.EVENT_BUS.register(this);
-    }
+        ModelLoader.setBucketModelDefinition(DYN_BOTTLE);
 
-    @SidedProxy
-    public static CommonProxy proxy;
-
-    public static class CommonProxy { void setupModels(){} }
-    public static class ServerProxy extends CommonProxy{}
-    public static class ClientProxy extends CommonProxy
-    {
-        @SuppressWarnings("unused")
-        @Override
-        void setupModels()
+        final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbottle"), "inventory");
+        ModelLoader.setCustomMeshDefinition(DYN_BOTTLE, new ItemMeshDefinition()
         {
-            if (!ENABLE || !ModelFluidDebug.ENABLE)
+            @Override
+            public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
             {
-                return;
+                return bottle;
             }
-
-            ModelLoader.setBucketModelDefinition(DYN_BOTTLE);
-
-            final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbottle"), "inventory");
-            ModelLoader.setCustomMeshDefinition(DYN_BOTTLE, new ItemMeshDefinition()
-            {
-                @Override
-                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-                {
-                    return bottle;
-                }
-            });
-            ModelBakery.registerItemVariants(DYN_BOTTLE, bottle);
-            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(simpleTankName), 0, new ModelResourceLocation(simpleTankName, "normal"));
-            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(testItemName), 0, new ModelResourceLocation(new ResourceLocation("minecraft", "stick"), "inventory"));
-        }
+        });
+        ModelBakery.registerItemVariants(DYN_BOTTLE, bottle);
+        ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(simpleTankName), 0, new ModelResourceLocation(simpleTankName, "normal"));
+        ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(testItemName), 0, new ModelResourceLocation(new ResourceLocation("minecraft", "stick"), "inventory"));
     }
 
-    @Mod.EventBusSubscriber(modid = MODID)
-    public static class Registration
+    @SubscribeEvent
+    public void registrBlocks(RegistryEvent.Register<Block> event)
     {
-        @SubscribeEvent
-        public static void registrBlocks(RegistryEvent.Register<Block> event)
-        {
-            event.getRegistry().register(new BlockSimpleTank().setRegistryName(simpleTankName));
-        }
-
-        @SubscribeEvent
-        public static void registrItems(RegistryEvent.Register<Item> event)
-        {
-            FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestFluid.name));
-            FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestGas.name));
-
-            event.getRegistry().registerAll(
-                new TestItem().setRegistryName(testItemName),
-                new ItemBlock(TANK_BLOCK).setRegistryName(simpleTankName),
-                new DynBottle()
-            );
-        }
-
-        @SubscribeEvent
-        public static void registrRecipes(RegistryEvent.Register<IRecipe> event)
-        {
-            ItemStack filledBucket = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, ModelFluidDebug.FLUID);
-            GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "diamond_to_fluid"), null, filledBucket, Ingredient.func_193368_a(Items.DIAMOND));
-        }
+        event.getRegistry().register(new BlockSimpleTank().setRegistryName(simpleTankName));
+        GameRegistry.registerTileEntity(TileSimpleTank.class, "simpletank");
     }
 
+    @SubscribeEvent
+    public void registrItems(RegistryEvent.Register<Item> event)
+    {
+        FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestFluid.name));
+        FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestGas.name));
+
+        event.getRegistry().registerAll(
+            new TestItem().setRegistryName(testItemName),
+            new ItemBlock(TANK_BLOCK).setRegistryName(simpleTankName),
+            new DynBottle()
+        );
+    }
+
+    @SubscribeEvent
+    public void registrRecipes(RegistryEvent.Register<IRecipe> event)
+    {
+        ItemStack filledBucket = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, ModelFluidDebug.FLUID);
+        GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "diamond_to_fluid"), null, filledBucket, Ingredient.func_193368_a(Items.DIAMOND));
+    }
+
+    @SuppressWarnings("unused")
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
-        GameRegistry.registerTileEntity(TileSimpleTank.class, "simpletank");
-        proxy.setupModels();
+
+        if (!ENABLE || !ModelFluidDebug.ENABLE)
+        {
+            MinecraftForge.EVENT_BUS.register(this);
+        }
     }
 
     @SubscribeEvent

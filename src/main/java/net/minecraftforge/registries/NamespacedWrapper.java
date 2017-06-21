@@ -104,9 +104,6 @@ class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamesp
     }
 
     //internal
-    @Override //We override all public methods, this should be fine as null.
-    protected Map<ResourceLocation, V> createUnderlyingMap(){ return null; }
-
     @Override
     public void lock(){ this.locked = true; }
 

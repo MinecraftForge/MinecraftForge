@@ -27,6 +27,7 @@ import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -52,6 +53,11 @@ public enum ObjectHolderRegistry
         Set<ASMData> allObjectHolders = table.getAll(GameRegistry.ObjectHolder.class.getName());
         Map<String, String> classModIds = Maps.newHashMap();
         Map<String, Class<?>> classCache = Maps.newHashMap();
+        for (ASMData data : table.getAll(Mod.class.getName()))
+        {
+            String modid = (String)data.getAnnotationInfo().get("modid");
+            classModIds.put(data.getClassName(), modid);
+        }
         for (ASMData data : allObjectHolders)
         {
             String className = data.getClassName();
@@ -119,7 +125,7 @@ public enum ObjectHolderRegistry
             }
             try
             {
-                Field f = clazz.getField(annotationTarget);
+                Field f = clazz.getDeclaredField(annotationTarget);
                 addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value), extractFromValue));
             }
             catch (Exception ex)
