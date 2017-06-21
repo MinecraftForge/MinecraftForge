@@ -325,7 +325,14 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            return new Block(Material.AIR).setUnlocalizedName("air").setRegistryName(key);
+            return new BlockDummyAir().setUnlocalizedName("air").setRegistryName(key);
+        }
+        private static class BlockDummyAir extends Block //A named class so DummyBlockReplacementTest can detect if its a dummy
+        {
+            private BlockDummyAir()
+            {
+                super(Material.AIR);
+            }
         }
     }
 
