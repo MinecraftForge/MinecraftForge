@@ -18,6 +18,8 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Field;
+
 /**
  * Vanilla registry tests
  */
@@ -42,7 +44,7 @@ public class VanillaRegistryTests
 
         // Our lookups find the same stuff vanilla sees
         final IForgeRegistry<Block> blocks = RegistryManager.ACTIVE.getRegistry(Block.class);
-        assertEquals("We have the right blocks for a block", blocks, Block.REGISTRY);
+        assertEquals("We have a different block registry then vanilla", blocks, getDelegate(Block.REGISTRY));
 
         // We can look up stuff through our APIs
         Block bl = blocks.getValue(new ResourceLocation("minecraft:air"));
@@ -54,7 +56,7 @@ public class VanillaRegistryTests
 
         // Our lookups find the same stuff vanilla sees
         final IForgeRegistry<Item> items = RegistryManager.ACTIVE.getRegistry(Item.class);
-        assertEquals("We have the right items for an item", items, Item.REGISTRY);
+        assertEquals("We have a different item registry then vanilla", items, getDelegate(Item.REGISTRY));
 
         // We can look up stuff through our APIs
         Item it = items.getValue(new ResourceLocation("minecraft:bed"));
@@ -63,6 +65,20 @@ public class VanillaRegistryTests
         // We find nothing for a non-defaulted registry
         Item none = items.getValue(new ResourceLocation("minecraft:cheese"));
         assertEquals("We got nothing (items) when we asked for cheese", null, none);
+    }
+
+    private Object getDelegate(Object obj)
+    {
+        try
+        {
+            Field f = obj.getClass().getDeclaredField("delegate");
+            f.setAccessible(true);
+            return f.get(obj);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -74,7 +90,7 @@ public class VanillaRegistryTests
         assertNotNull("Registered my block", myBlock);
 
         // Our lookups find the same stuff vanilla sees
-        assertEquals("We have the right blocks for a block", blocks, Block.REGISTRY);
+        assertEquals("We have a different block registry then vanilla", blocks, getDelegate(Block.REGISTRY));
 
         Block found = blocks.getValue(new ResourceLocation("minecraft:testy"));
         assertEquals("Registry lookup works", myBlock, found);
