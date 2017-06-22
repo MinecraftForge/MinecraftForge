@@ -516,7 +516,7 @@ public class FMLModContainer implements ModContainer
                 catch (Exception e)
                 {
                     Throwables.propagateIfPossible(e);
-                    modLog.warn(modLog.getMessageFactory().newMessage("Attempting to load @%s in class %s for %s and failing", annotationName, targets.getClassName(), mc.getModId()), e);
+                    modLog.warn("Attempting to load @{} in class {} for {} and failing", annotationName, targets.getClassName(), mc.getModId(), e);
                 }
             }
             if (f != null)
