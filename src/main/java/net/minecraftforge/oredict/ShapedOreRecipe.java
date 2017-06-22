@@ -106,6 +106,9 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         return false;
     }
 
+    /**
+     * Based on {@link net.minecraft.item.crafting.ShapedRecipes#checkMatch(InventoryCrafting, int, int, boolean)}
+     */
     protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++)
@@ -114,7 +117,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
             {
                 int subX = x - startX;
                 int subY = y - startY;
-                Ingredient target = null;
+                Ingredient target = Ingredient.EMPTY;
 
                 if (subX >= 0 && subY >= 0 && subX < width && subY < height)
                 {
@@ -126,11 +129,11 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
                     {
                         target = input.get(subX + subY * width);
                     }
-                    
-                    if (!target.apply(inv.getStackInRowAndColumn(x, y)))
-                    {
-                        return false;
-                    }
+                }
+
+                if (!target.apply(inv.getStackInRowAndColumn(x, y)))
+                {
+                    return false;
                 }
             }
         }
