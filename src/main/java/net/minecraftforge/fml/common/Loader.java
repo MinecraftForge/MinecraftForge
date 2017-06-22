@@ -175,7 +175,6 @@ public class Loader
     private File forcedModFile;
     private ModDiscoverer discoverer;
     private ProgressBar progressBar;
-    public final boolean java8;
 
     public static Loader instance()
     {
@@ -202,14 +201,6 @@ public class Loader
 
     private Loader()
     {
-        String[] ver = System.getProperty("java.version").split("\\.");
-        int major = Integer.parseInt(ver[1]);
-        java8 = major > 7;
-        if (!java8)
-        {
-            FMLLog.severe("The game is not running with Java 8. Forge recommends Java 8 for maximum compatibility with mods");
-        }
-
         modClassLoader = new ModClassLoader(getClass().getClassLoader());
         if (mccversion !=null && !mccversion.equals(MC_VERSION))
         {
@@ -556,7 +547,6 @@ public class Loader
         ModAPIManager.INSTANCE.manageAPI(modClassLoader, discoverer);
         disableRequestedMods();
         modController.distributeStateMessage(FMLLoadEvent.class);
-        checkJavaCompatibility();
         sortModList();
         ModAPIManager.INSTANCE.cleanupAPIContainers(modController.getActiveModList());
         ModAPIManager.INSTANCE.cleanupAPIContainers(mods);
@@ -612,24 +602,6 @@ public class Loader
         }
         progressBar.step("Initializing mods Phase 1");
         modController.transition(LoaderState.PREINITIALIZATION, false);
-    }
-
-
-    private void checkJavaCompatibility()
-    {
-        if (java8) return;
-        List<ModContainer> j8mods = Lists.newArrayList();
-        for (ModContainer mc : getActiveModList())
-        {
-            if (mc.getClassVersion() >= 52)
-            {
-                j8mods.add(mc);
-            }
-        }
-        if (!j8mods.isEmpty())
-        {
-            throw new Java8VersionException(j8mods);
-        }
     }
 
     public void preinitializeMods()
