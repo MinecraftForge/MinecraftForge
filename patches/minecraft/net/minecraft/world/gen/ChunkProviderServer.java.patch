@@ -46,7 +46,7 @@
 +                net.minecraft.world.chunk.storage.AnvilChunkLoader loader = (net.minecraft.world.chunk.storage.AnvilChunkLoader) this.field_73247_e;
 +                if (runnable == null)
 +                    chunk = net.minecraftforge.common.chunkio.ChunkIOExecutor.syncChunkLoad(this.field_73251_h, loader, this, p_186028_1_, p_186028_2_);
-+                else if (loader.chunkExists(this.field_73251_h, p_186028_1_, p_186028_2_))
++                else if (loader.func_191063_a(p_186028_1_, p_186028_2_))
 +                {
 +                    // We can only use the async queue for already generated chunks
 +                    net.minecraftforge.common.chunkio.ChunkIOExecutor.queueChunkLoad(this.field_73251_h, loader, this, p_186028_1_, p_186028_2_, runnable);
