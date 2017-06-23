@@ -86,7 +86,7 @@ class ItemStackHolderRef {
             is = GameRegistry.makeItemStack(itemName, meta, 1, serializednbt);
         } catch (RuntimeException e)
         {
-            FMLLog.getLogger().log(Level.ERROR, "Caught exception processing itemstack {},{},{} in annotation at {}.{}", itemName, meta, serializednbt,field.getClass().getName(),field.getName());
+            FMLLog.log.error("Caught exception processing itemstack {},{},{} in annotation at {}.{}", itemName, meta, serializednbt,field.getClass().getName(),field.getName());
             throw e;
         }
         try
@@ -96,7 +96,7 @@ class ItemStackHolderRef {
         }
         catch (Exception e)
         {
-            FMLLog.getLogger().log(Level.WARN, "Unable to set {} with value {},{},{}", this.field, this.itemName, this.meta, this.serializednbt);
+            FMLLog.log.warn("Unable to set {} with value {},{},{}", this.field, this.itemName, this.meta, this.serializednbt);
         }
     }
 }

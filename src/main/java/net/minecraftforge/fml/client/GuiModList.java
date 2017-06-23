@@ -295,7 +295,7 @@ public class GuiModList extends GuiScreen
                         }
                         catch (Exception e)
                         {
-                            FMLLog.log(Level.ERROR, e, "There was a critical issue trying to build the config GUI for %s", selectedMod.getModId());
+                            FMLLog.log.error("There was a critical issue trying to build the config GUI for {}", selectedMod.getModId(), e);
                         }
                         return;
                     }

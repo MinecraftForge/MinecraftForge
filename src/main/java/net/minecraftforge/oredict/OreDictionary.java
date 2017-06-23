@@ -409,7 +409,7 @@ public class OreDictionary
             }
         }
 
-        FMLLog.info("Replaced %d ore ingredients", replaced);
+        FMLLog.log.info("Replaced {} ore ingredients", replaced);
     }
 
     /**
@@ -465,7 +465,7 @@ public class OreDictionary
         int id;
         if (registryName == null)
         {
-            FMLLog.log(Level.DEBUG, "Attempted to find the oreIDs for an unregistered object (%s). This won't work very well.", stack);
+            FMLLog.log.debug("Attempted to find the oreIDs for an unregistered object ({}). This won't work very well.", stack);
             return new int[0];
         }
         else
@@ -615,7 +615,7 @@ public class OreDictionary
         if ("Unknown".equals(name)) return; //prevent bad IDs.
         if (ore.isEmpty())
         {
-            FMLLog.bigWarning("Invalid registration attempt for an Ore Dictionary item with name %s has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", name);
+            FMLLog.bigWarning("Invalid registration attempt for an Ore Dictionary item with name {} has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", name);
             return; //prevent bad ItemStacks.
         }
 
@@ -629,7 +629,7 @@ public class OreDictionary
         {
             ModContainer modContainer = Loader.instance().activeModContainer();
             String modContainerName = modContainer == null ? null : modContainer.getName();
-            FMLLog.bigWarning("A broken ore dictionary registration with name %s has occurred. It adds an item (type: %s) which is currently unknown to the game registry. This dictionary item can only support a single value when"
+            FMLLog.bigWarning("A broken ore dictionary registration with name {} has occurred. It adds an item (type: {}) which is currently unknown to the game registry. This dictionary item can only support a single value when"
                     + " registered with ores like this, and NO I am not going to turn this spam off. Just register your ore dictionary entries after the GameRegistry.\n"
                     + "TO USERS: YES this is a BUG in the mod " + modContainerName + " report it to them!", name, ore.getItem().getClass());
             hash = -1;
@@ -697,7 +697,7 @@ public class OreDictionary
                 int hash;
                 if (name == null)
                 {
-                    FMLLog.log(Level.DEBUG, "Defaulting unregistered ore dictionary entry for ore dictionary %s: type %s to -1", getOreName(id), ore.getItem().getClass());
+                    FMLLog.log.debug("Defaulting unregistered ore dictionary entry for ore dictionary {}: type {} to -1", getOreName(id), ore.getItem().getClass());
                     hash = -1;
                 }
                 else

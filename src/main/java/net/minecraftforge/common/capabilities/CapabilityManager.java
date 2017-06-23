@@ -115,7 +115,7 @@ public enum CapabilityManager
             Type type = (Type)entry.getAnnotationInfo().get("value");
             if (type == null)
             {
-                FMLLog.log(Level.WARN, "Unable to inject capability at %s.%s (Invalid Annotation)", targetClass, targetName);
+                FMLLog.log.warn("Unable to inject capability at {}.{} (Invalid Annotation)", targetClass, targetName);
                 continue;
             }
             final String capabilityName = type.getInternalName().replace('/', '.').intern();
@@ -142,7 +142,7 @@ public enum CapabilityManager
                                 {
                                     if ((mtd.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
                                     {
-                                        FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Non-Static)", capabilityName, targetClass, targetName);
+                                        FMLLog.log.warn("Unable to inject capability {} at {}.{} (Non-Static)", capabilityName, targetClass, targetName);
                                         return null;
                                     }
 
@@ -151,11 +151,11 @@ public enum CapabilityManager
                                     return null;
                                 }
                             }
-                            FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Method Not Found)", capabilityName, targetClass, targetName);
+                            FMLLog.log.warn("Unable to inject capability {} at {}.{} (Method Not Found)", capabilityName, targetClass, targetName);
                         }
                         catch (Exception e)
                         {
-                            FMLLog.log(Level.WARN, e, "Unable to inject capability %s at %s.%s", capabilityName, targetClass, targetName);
+                            FMLLog.log.warn("Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName, e);
                         }
                         return null;
                     }
@@ -173,14 +173,14 @@ public enum CapabilityManager
                             Field field = Class.forName(targetClass).getDeclaredField(targetName);
                             if ((field.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
                             {
-                                FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Non-Static)", capabilityName, targetClass, targetName);
+                                FMLLog.log.warn("Unable to inject capability {} at {}.{} (Non-Static)", capabilityName, targetClass, targetName);
                                 return null;
                             }
                             EnumHelper.setFailsafeFieldValue(field, null, input);
                         }
                         catch (Exception e)
                         {
-                            FMLLog.log(Level.WARN, e, "Unable to inject capability %s at %s.%s", capabilityName, targetClass, targetName);
+                            FMLLog.log.warn("Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName, e);
                         }
                         return null;
                     }

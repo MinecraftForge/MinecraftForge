@@ -310,11 +310,11 @@
 +    private void logCascadingWorldGeneration()
 +    {
 +        net.minecraftforge.fml.common.ModContainer activeModContainer = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
-+        String format = "%s loaded a new chunk (%d, %d  Dimension: %d) during chunk population, causing cascading worldgen lag. Please report this to the mod's issue tracker. This log can be disabled in the Forge config.";
++        String format = "{} loaded a new chunk ({}, {}  Dimension: {}) during chunk population, causing cascading worldgen lag. Please report this to the mod's issue tracker. This log can be disabled in the Forge config.";
 +
 +        if (activeModContainer == null) // vanilla minecraft has problems too (MC-114332), log it at a quieter level.
-+            net.minecraftforge.fml.common.FMLLog.fine(format, "Minecraft", this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
++            net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
 +        else
-+            net.minecraftforge.fml.common.FMLLog.warning(format, activeModContainer.getName(), this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
++            net.minecraftforge.fml.common.FMLLog.log.warn(format, activeModContainer.getName(), this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
 +    }
  }

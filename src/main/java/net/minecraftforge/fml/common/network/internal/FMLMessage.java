@@ -183,7 +183,7 @@ public abstract class FMLMessage {
                 entity.getDataManager().writeEntries(pb);
             } catch (IOException e)
             {
-                FMLLog.log(Level.FATAL,e,"Encountered fatal exception trying to send entity spawn data watchers");
+                FMLLog.log.fatal("Encountered fatal exception trying to send entity spawn data watchers", e);
                 throw Throwables.propagate(e);
             }
             buf.writeBytes(tmpBuf);
@@ -235,7 +235,7 @@ public abstract class FMLMessage {
                 dataWatcherList = EntityDataManager.readEntries(new PacketBuffer(dat));
             } catch (IOException e)
             {
-                FMLLog.log(Level.FATAL, e, "There was a critical error decoding the datawatcher stream for a mod entity.");
+                FMLLog.log.fatal("There was a critical error decoding the datawatcher stream for a mod entity.", e);
                 throw Throwables.propagate(e);
             }
 

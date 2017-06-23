@@ -4,7 +4,7 @@
  
      public void func_151394_a(ItemStack p_151394_1_, ItemStack p_151394_2_, float p_151394_3_)
      {
-+        if (func_151395_a(p_151394_1_) != ItemStack.field_190927_a) { net.minecraftforge.fml.common.FMLLog.info("Ignored smelting recipe with conflicting input: " + p_151394_1_ + " = " + p_151394_2_); return; }
++        if (func_151395_a(p_151394_1_) != ItemStack.field_190927_a) { net.minecraftforge.fml.common.FMLLog.log.info("Ignored smelting recipe with conflicting input: {} = {}", p_151394_1_, p_151394_2_); return; }
          this.field_77604_b.put(p_151394_1_, p_151394_2_);
          this.field_77605_c.put(p_151394_2_, Float.valueOf(p_151394_3_));
      }

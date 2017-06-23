@@ -51,7 +51,7 @@ public enum OBJLoader implements ICustomModelLoader {
     public void addDomain(String domain)
     {
         enabledDomains.add(domain.toLowerCase());
-        FMLLog.log(Level.INFO, "OBJLoader: Domain %s has been added.", domain.toLowerCase());
+        FMLLog.log.info("OBJLoader: Domain {} has been added.", domain.toLowerCase());
     }
 
     @Override

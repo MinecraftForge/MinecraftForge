@@ -50,8 +50,7 @@ public class EquipmentChangeTest
     public void onEquipmentChange(LivingEquipmentChangeEvent event)
     {
         //a debug console print
-        logger.info("[Equipment-Change] " + event.getEntity() + " changed his Equipment in "
-                + event.getSlot() + " from " + event.getFrom() + " to " + event.getTo());
+        logger.info("[Equipment-Change] {} changed their Equipment in {} from {} to {}", event.getEntity(), event.getSlot(), event.getFrom(), event.getTo());
     }
 
 }

@@ -27,6 +27,6 @@ public class DifficultyChangeEventTest
     @SubscribeEvent
     public void onDifficultyChange(DifficultyChangeEvent event)
     {
-        logger.info("Difficulty changed from " + event.getOldDifficulty() + " to " + event.getDifficulty());
+        logger.info("Difficulty changed from {} to {}", event.getOldDifficulty(), event.getDifficulty());
     }
 }
