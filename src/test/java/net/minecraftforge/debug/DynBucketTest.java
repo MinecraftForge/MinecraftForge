@@ -137,7 +137,7 @@ public class DynBucketTest
     public void registrRecipes(RegistryEvent.Register<IRecipe> event)
     {
         ItemStack filledBucket = FluidUtil.getFilledBucket(new FluidStack(TestFluid.instance, Fluid.BUCKET_VOLUME));
-        GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "diamond_to_fluid"), null, filledBucket, Ingredient.func_193368_a(Items.DIAMOND));
+        GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "diamond_to_fluid"), null, filledBucket, Ingredient.fromItem(Items.DIAMOND));
     }
 
     @SuppressWarnings("unused")

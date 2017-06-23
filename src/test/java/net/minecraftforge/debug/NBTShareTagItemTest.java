@@ -38,7 +38,7 @@ public class NBTShareTagItemTest
             nbt.setBoolean("crafted", true);
             crafted.setTagCompound(nbt);
 
-            GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "nbt_share"), null, crafted, Ingredient.func_193367_a(Items.STICK));
+            GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "nbt_share"), null, crafted, Ingredient.fromItem(Items.STICK));
         }
 
         @SubscribeEvent
