@@ -134,7 +134,7 @@
      }
  
      private static void func_191303_a(int p_191303_0_, String p_191303_1_, Class <? extends Entity > p_191303_2_, String p_191303_3_)
-@@ -394,22 +421,17 @@
+@@ -394,22 +420,17 @@
          else
          {
              ResourceLocation resourcelocation = new ResourceLocation(p_191303_1_);

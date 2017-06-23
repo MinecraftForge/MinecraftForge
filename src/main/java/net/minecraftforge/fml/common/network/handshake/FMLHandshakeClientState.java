@@ -134,7 +134,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
 
             if (pkt.hasMore())
             {
-                FMLLog.log.debug("Received Mod Registry mapping for {}: {} IDs {} subs {} dummied", pkt.getName(), entry.ids.size(), entry.substitutions.size(), entry.dummied.size());
+                FMLLog.log.debug("Received Mod Registry mapping for {}: {} IDs {} overrides {} dummied", pkt.getName(), entry.ids.size(), entry.overrides.size(), entry.dummied.size());
                 return WAITINGSERVERCOMPLETE;
             }
 
