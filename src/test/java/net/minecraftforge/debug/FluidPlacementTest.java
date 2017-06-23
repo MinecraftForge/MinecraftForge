@@ -1,5 +1,6 @@
 package net.minecraftforge.debug;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -8,7 +9,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -33,7 +34,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -57,38 +58,52 @@ public class FluidPlacementTest
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        if (ENABLE && ModelFluidDebug.ENABLE)
-        {
-            proxy.preInit(event);
-        }
+        if (!ENABLE || !ModelFluidDebug.ENABLE)
+            return;
+        proxy.preInit();
     }
 
-    public static class CommonProxy
+
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registrBlocks(RegistryEvent.Register<Block> event)
         {
+            if (!ENABLE || !ModelFluidDebug.ENABLE)
+                return;
+            event.getRegistry().registerAll(
+                FiniteFluidBlock.instance
+            );
+        }
+        @SubscribeEvent
+        public static void registrItems(RegistryEvent.Register<Item> event)
+        {
+            if (!ENABLE || !ModelFluidDebug.ENABLE)
+                return;
             FluidRegistry.registerFluid(FiniteFluid.instance);
             FluidRegistry.addBucketForFluid(FiniteFluid.instance);
-            GameRegistry.register(EmptyFluidContainer.instance);
-            GameRegistry.register(FluidContainer.instance);
-            GameRegistry.register(FiniteFluidBlock.instance);
-            GameRegistry.register(new ItemBlock(FiniteFluidBlock.instance).setRegistryName(FiniteFluidBlock.instance.getRegistryName()));
+            event.getRegistry().registerAll(
+                EmptyFluidContainer.instance,
+                FluidContainer.instance,
+                new ItemBlock(FiniteFluidBlock.instance).setRegistryName(FiniteFluidBlock.instance.getRegistryName())
+            );
             MinecraftForge.EVENT_BUS.register(FluidContainer.instance);
         }
     }
 
-    public static class ServerProxy extends CommonProxy
-    {
+    public static class CommonProxy {
+        public void preInit(){}
     }
+    public static class ServerProxy extends CommonProxy{}
 
     public static class ClientProxy extends CommonProxy
     {
         private static ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + FiniteFluidBlock.name, "normal");
 
         @Override
-        public void preInit(FMLPreInitializationEvent event)
+        public void preInit()
         {
-            super.preInit(event);
             Item fluid = Item.getItemFromBlock(FiniteFluidBlock.instance);
             ModelLoader.setCustomModelResourceLocation(EmptyFluidContainer.instance, 0, new ModelResourceLocation("forge:bucket", "inventory"));
             ModelLoader.setBucketModelDefinition(FluidContainer.instance);
@@ -246,7 +261,7 @@ public class FluidPlacementTest
         {
             if (!this.isInCreativeTab(tab))
                 return;
-            Fluid[] fluids = new Fluid[]{FluidRegistry.WATER, FluidRegistry.LAVA, FiniteFluid.instance, ModelFluidDebug.TestFluid.instance};
+            Fluid[] fluids = new Fluid[]{FluidRegistry.WATER, FluidRegistry.LAVA, FiniteFluid.instance, ModelFluidDebug.FLUID};
             // add 16 variable fillings
             for (Fluid fluid : fluids)
             {

@@ -5,41 +5,53 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import javax.annotation.Nullable;
 
-@Mod(modid = NBTShareTagItemTest.MOD_ID, name = "NBTShareTag Item Test", version = "1.0.0", acceptableRemoteVersions = "*")
+@Mod(modid = NBTShareTagItemTest.MODID, name = "NBTShareTag Item Test", version = "1.0.0", acceptableRemoteVersions = "*")
 public class NBTShareTagItemTest
 {
-    public static final String MOD_ID = "nbtsharetagitemtest";
-    private static final ResourceLocation itemName = new ResourceLocation(MOD_ID, "nbt_share_tag_item");
+    public static final String MODID = "nbtsharetagitemtest";
+    private static final ResourceLocation itemName = new ResourceLocation(MODID, "nbt_share_tag_item");
+    @ObjectHolder("nbt_share_tag_item")
+    public static final Item TEST_ITEM = null;
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event)
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        ShareTagItem item = new ShareTagItem();
-        item.setRegistryName(itemName);
-        GameRegistry.register(item);
-
-        if (event.getSide() == Side.CLIENT)
+        @SubscribeEvent
+        public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
         {
-            ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(itemName, "inventory"));
+            ItemStack crafted = new ItemStack(TEST_ITEM);
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setBoolean("crafted", true);
+            crafted.setTagCompound(nbt);
+
+            GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "nbt_share"), null, crafted, Ingredient.func_193367_a(Items.STICK));
         }
 
-        ItemStack crafted = new ItemStack(item);
-        NBTTagCompound craftedNBT = new NBTTagCompound();
-        craftedNBT.setBoolean("crafted", true);
-        crafted.setTagCompound(craftedNBT);
-        //CraftingManager.getInstance().addShapelessRecipe(crafted, new ItemStack(Items.STICK));
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
+        {
+            event.getRegistry().register(new ShareTagItem().setRegistryName(itemName));
+        }
+
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
+        {
+            ModelLoader.setCustomModelResourceLocation(TEST_ITEM, 0, new ModelResourceLocation(itemName, "inventory"));
+        }
     }
 
     public static class ShareTagItem extends Item

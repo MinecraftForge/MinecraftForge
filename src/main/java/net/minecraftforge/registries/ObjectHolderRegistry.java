@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.registry;
+package net.minecraftforge.registries;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -27,8 +27,10 @@ import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import com.google.common.base.Throwables;
@@ -39,10 +41,9 @@ import javax.annotation.Nullable;
 
 /**
  * Internal registry for tracking {@link ObjectHolder} references
- * @author cpw
- *
  */
-public enum ObjectHolderRegistry {
+public enum ObjectHolderRegistry
+{
     INSTANCE;
     private List<ObjectHolderRef> objectHolders = Lists.newArrayList();
 
@@ -52,6 +53,11 @@ public enum ObjectHolderRegistry {
         Set<ASMData> allObjectHolders = table.getAll(GameRegistry.ObjectHolder.class.getName());
         Map<String, String> classModIds = Maps.newHashMap();
         Map<String, Class<?>> classCache = Maps.newHashMap();
+        for (ASMData data : table.getAll(Mod.class.getName()))
+        {
+            String modid = (String)data.getAnnotationInfo().get("modid");
+            classModIds.put(data.getClassName(), modid);
+        }
         for (ASMData data : allObjectHolders)
         {
             String className = data.getClassName();
@@ -97,7 +103,8 @@ public enum ObjectHolderRegistry {
             catch (Exception ex)
             {
                 // unpossible?
-                throw Throwables.propagate(ex);
+                Throwables.throwIfUnchecked(ex);
+                throw new RuntimeException(ex);
             }
         }
         if (isClass)
@@ -118,13 +125,14 @@ public enum ObjectHolderRegistry {
             }
             try
             {
-                Field f = clazz.getField(annotationTarget);
+                Field f = clazz.getDeclaredField(annotationTarget);
                 addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value), extractFromValue));
             }
             catch (Exception ex)
             {
                 // unpossible?
-                throw Throwables.propagate(ex);
+                Throwables.throwIfUnchecked(ex);
+                throw new RuntimeException(ex);
             }
         }
     }

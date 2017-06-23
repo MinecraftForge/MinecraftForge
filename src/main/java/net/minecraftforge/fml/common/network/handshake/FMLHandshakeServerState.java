@@ -32,8 +32,9 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.RegistryManager;
 
 enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
 {
@@ -82,11 +83,11 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
         {
             if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
             {
-                PersistentRegistryManager.GameDataSnapshot snapshot = PersistentRegistryManager.takeSnapshot();
-                Iterator<Map.Entry<ResourceLocation, PersistentRegistryManager.GameDataSnapshot.Entry>> itr = snapshot.entries.entrySet().iterator();
+                Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = RegistryManager.ACTIVE.takeSnapshot(false);
+                Iterator<Map.Entry<ResourceLocation, ForgeRegistry.Snapshot>> itr = snapshot.entrySet().iterator();
                 while (itr.hasNext())
                 {
-                    Entry<ResourceLocation, PersistentRegistryManager.GameDataSnapshot.Entry> e = itr.next();
+                    Entry<ResourceLocation, ForgeRegistry.Snapshot> e = itr.next();
                     ctx.writeAndFlush(new FMLHandshakeMessage.RegistryData(itr.hasNext(), e.getKey(), e.getValue())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
                 }
             }

@@ -5,10 +5,10 @@
  import net.minecraft.util.text.translation.I18n;
  
 -public abstract class Enchantment
-+public abstract class Enchantment extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Enchantment>
++public abstract class Enchantment extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Enchantment>
  {
 -    public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = new RegistryNamespaced<ResourceLocation, Enchantment>();
-+    public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = net.minecraftforge.fml.common.registry.GameData.getEnchantmentRegistry();
++    public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = net.minecraftforge.registries.GameData.getWrapper(Enchantment.class);
      private final EntityEquipmentSlot[] field_185263_a;
      private final Enchantment.Rarity field_77333_a;
      @Nullable

@@ -22,7 +22,6 @@ package net.minecraftforge.fml.common.network.handshake;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandler;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -31,7 +30,6 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
 import java.util.Collections;
@@ -53,6 +51,7 @@ import net.minecraft.network.play.server.SPacketJoinGame;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.network.play.server.SPacketDisconnect;
 import net.minecraft.server.management.PlayerList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -66,8 +65,8 @@ import net.minecraftforge.fml.common.network.PacketLoggingHandler;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.ForgeRegistry;
 
 import org.apache.logging.log4j.Level;
 
@@ -103,7 +102,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
     public static final AttributeKey<NetworkDispatcher> FML_DISPATCHER = AttributeKey.valueOf("fml:dispatcher");
     public static final AttributeKey<Boolean> IS_LOCAL = AttributeKey.valueOf("fml:isLocal");
-    public static final AttributeKey<PersistentRegistryManager.GameDataSnapshot> FML_GAMEDATA_SNAPSHOT = AttributeKey.valueOf("fml:gameDataSnapshot");
+    public static final AttributeKey<Map<ResourceLocation, ForgeRegistry.Snapshot>> FML_GAMEDATA_SNAPSHOT = AttributeKey.valueOf("fml:gameDataSnapshot");
     public final NetworkManager manager;
     private final PlayerList scm;
     private EntityPlayerMP player;
@@ -599,11 +598,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     //they do not hold references to the world and causes it to leak.
     private void cleanAttributes(ChannelHandlerContext ctx)
     {
-        ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).remove();
-        ctx.channel().attr(NetworkRegistry.NET_HANDLER).remove();
-        ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).remove();
-        this.handshakeChannel.attr(FML_DISPATCHER).remove();
-        this.manager.channel().attr(FML_DISPATCHER).remove();
+        ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(null);
+        ctx.channel().attr(NetworkRegistry.NET_HANDLER).set(null);
+        ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).set(null);
+        this.handshakeChannel.attr(FML_DISPATCHER).set(null);
+        this.manager.channel().attr(FML_DISPATCHER).set(null);
     }
 
     public void setOverrideDimension(int overrideDim) {

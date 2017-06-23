@@ -17,14 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.registry;
+package net.minecraftforge.registries;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.common.collect.BiMap;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -35,14 +33,13 @@ import javax.annotation.Nullable;
  *
  * @param <V> The top level type for the registry
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
 public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
 {
     public Class<V> getRegistrySuperType();
 
     void register(V value);
 
-    void registerAll(V... values);
+    void registerAll(@SuppressWarnings("unchecked") V... values);
 
     boolean containsKey(ResourceLocation key);
     boolean containsValue(V value);
@@ -70,7 +67,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      */
     interface AddCallback<V extends IForgeRegistryEntry<V>>
     {
-        void onAdd(V obj, int id, Map<ResourceLocation, ?> slaveset);
+        void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V obj);
     }
 
     /**
@@ -79,7 +76,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      */
     interface ClearCallback<V extends IForgeRegistryEntry<V>>
     {
-        void onClear(IForgeRegistry<V> is, Map<ResourceLocation, ?> slaveset);
+        void onClear(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
 
     /**
@@ -87,11 +84,14 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      */
     interface CreateCallback<V extends IForgeRegistryEntry<V>>
     {
-        void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries);
+        void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
 
-    interface SubstitutionCallback<V extends IForgeRegistryEntry<V>>
+    /**
+     * Factory for creating dummy entries, allowing worlds to be loaded and keep the missing block references.
+     */
+    interface DummyFactory<V extends IForgeRegistryEntry<V>>
     {
-        void onSubstituteActivated(Map<ResourceLocation, ?> slaveset, V original, V replacement, ResourceLocation name);
+        V createDummy(ResourceLocation key);
     }
 }
