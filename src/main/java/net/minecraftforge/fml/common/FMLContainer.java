@@ -147,6 +147,16 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
             }
             data.setTag("aliases", aliases);
 
+            NBTTagList overrides = new NBTTagList();
+            for (Entry<ResourceLocation, String> entry : e.getValue().overrides.entrySet())
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("K", entry.getKey().toString());
+                tag.setString("V", entry.getValue().toString());
+                aliases.appendTag(tag);
+            }
+            data.setTag("overrides", overrides);
+
             int[] blocked = new int[e.getValue().blocked.size()];
             int idx = 0;
             for (Integer i : e.getValue().blocked)
