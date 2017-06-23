@@ -230,6 +230,7 @@ public class GameData
             FMLLog.warning("Can't revert to frozen GameData state without freezing first.");
             return;
         }
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
 
         FMLLog.fine("Reverting to frozen data state.");
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
@@ -626,7 +627,7 @@ public class GameData
         snap.blocked.forEach(id -> _new.block(id));
         // Load current dummies BEFORE the snapshot is loaded so that add() will remove from the list.
         snap.dummied.forEach(key -> _new.addDummy(key));
-        _new.loadIds(snap.ids, missing, remaps, active, name);
+        _new.loadIds(snap.ids, snap.overrides, missing, remaps, active, name);
     }
 
     //Another bouncer for generic reasons
@@ -645,7 +646,7 @@ public class GameData
         ForgeRegistry<T> newRegistry = STAGING.getRegistry(name, RegistryManager.FROZEN);
         Map<ResourceLocation, Integer> _new = Maps.newHashMap();
         frozen.getKeys().stream().filter(key -> !newRegistry.containsKey(key)).forEach(key -> _new.put(key, frozen.getID(key)));
-        newRegistry.loadIds(_new, Maps.newLinkedHashMap(), remaps, frozen, name);
+        newRegistry.loadIds(_new, frozen.getOverrideOwners(), Maps.newLinkedHashMap(), remaps, frozen, name);
     }
 
     public static void fireCreateRegistryEvents()

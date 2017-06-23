@@ -58,10 +58,6 @@ public class SubstitutionInjectionTest
     @Test
     public void testSubstitutionInjection() throws Exception
     {
-        //TODO: Decide exactly how I want to deal with subs, this test doesn't really do anything right now
-        if (true == Boolean.valueOf("true").booleanValue())
-            return;
-
         final ForgeRegistry<Block> blockRegistry = (ForgeRegistry<Block>)RegistryManager.ACTIVE.getRegistry(Block.class);
         final ForgeRegistry<Item> itemRegistry = (ForgeRegistry<Item>)RegistryManager.ACTIVE.getRegistry(Item.class);
 
@@ -111,7 +107,7 @@ public class SubstitutionInjectionTest
         assertEquals("ObjectHolder didn't apply - Blocks and registry", currDirt, fnd);
         assertEquals("Got my dirt substitute - registry", vanilDirt, fnd);
         dirtitem = (ItemBlock) itemRegistry.getValue(MC_DIRT);
-        assertEquals("ItemBlock points at my block", toSub, dirtitem.getBlock());
+        assertEquals("ItemBlock points at my block", vanilDirt, dirtitem.getBlock());
 
         // TEST 3: Does the substitute get restored when reverting to frozen state? The substitute should be found in the registry again
         GameData.revertToFrozen();
@@ -133,7 +129,7 @@ public class SubstitutionInjectionTest
         assertEquals("ObjectHolder didn't apply - Blocks and registry", currDirt, fnd);
         assertEquals("Got my dirt substitute - registry", vanilDirt, fnd);
         dirtitem = (ItemBlock) itemRegistry.getValue(MC_DIRT);
-        assertEquals("ItemBlock points at my block", toSub, dirtitem.getBlock());
+        assertEquals("ItemBlock points at my block", vanilDirt, dirtitem.getBlock());
 
         // TEST 3 repeat: Does the substitute get restored when reverting to frozen state? The substitute should be found in the registry again
         GameData.revertToFrozen();

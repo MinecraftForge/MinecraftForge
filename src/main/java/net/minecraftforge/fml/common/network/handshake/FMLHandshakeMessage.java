@@ -184,12 +184,14 @@ public abstract class FMLHandshakeMessage {
             this.name = name;
             this.ids = entry.ids;
             this.dummied = entry.dummied;
+            this.overrides = entry.overrides;
         }
 
         private boolean hasMore;
         private ResourceLocation name;
         private Map<ResourceLocation, Integer> ids;
         private Set<ResourceLocation> dummied;
+        private Map<ResourceLocation, String> overrides;
 
         @Override
         public void fromBytes(ByteBuf buffer)
@@ -206,12 +208,19 @@ public abstract class FMLHandshakeMessage {
             }
 
             length = ByteBufUtils.readVarInt(buffer, 3);
-
             dummied = Sets.newHashSet();
 
             for (int i = 0; i < length; i++)
             {
                 dummied.add(new ResourceLocation(ByteBufUtils.readUTF8String(buffer)));
+            }
+
+            length = ByteBufUtils.readVarInt(buffer, 3);
+            overrides = Maps.newHashMap();
+
+            for (int i = 0; i < length; i++)
+            {
+                overrides.put(new ResourceLocation(ByteBufUtils.readUTF8String(buffer)), ByteBufUtils.readUTF8String(buffer));
             }
         }
 
@@ -232,6 +241,13 @@ public abstract class FMLHandshakeMessage {
             for (ResourceLocation entry: dummied)
             {
                 ByteBufUtils.writeUTF8String(buffer, entry.toString());
+            }
+
+            ByteBufUtils.writeVarInt(buffer, overrides.size(), 3);
+            for (Entry<ResourceLocation, String> entry: overrides.entrySet())
+            {
+                ByteBufUtils.writeUTF8String(buffer, entry.getKey().toString());
+                ByteBufUtils.writeUTF8String(buffer, entry.getValue().toString());
             }
         }
 
