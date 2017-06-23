@@ -29,7 +29,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.debug.ModelFluidDebug.TestFluid;
@@ -144,7 +143,7 @@ public class DynBucketTest
 
         //GameRegistry.registerItem(dynBucket, "dynbucket");
         GameRegistry.register(dynBottle);
-        ItemStack filledBucket = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TestFluid.instance);
+        ItemStack filledBucket = FluidUtil.getFilledBucket(new FluidStack(TestFluid.instance, Fluid.BUCKET_VOLUME));
         //GameRegistry.addShapelessRecipe(new ItemStack(Items.DIAMOND), filledBucket);
 
         proxy.setupModels();
@@ -208,17 +207,17 @@ public class DynBucketTest
 
             for (int i = 0; i < handler.getSlots(); i++)
             {
-                logger.info("Expected 1: " + handler.getStackInSlot(i));
+                logger.info("Expected 1: {}", handler.getStackInSlot(i));
             }
 
             for (int i = 0; i < handler2.getSlots(); i++)
             {
-                logger.info("Expected 2: " + handler2.getStackInSlot(i));
+                logger.info("Expected 2: {}", handler2.getStackInSlot(i));
             }
 
             for (int i = 0; i < joined.getSlots(); i++)
             {
-                logger.info("Joined: " + joined.getStackInSlot(i));
+                logger.info("Joined: {}", joined.getStackInSlot(i));
             }
 
             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);

@@ -27,7 +27,7 @@ public class PlayerSetSpawnTest
     @SubscribeEvent
     public void onPlayerSetSpawn(PlayerSetSpawnEvent event)
     {
-        logger.info(event.isForced() + " " + event.getNewSpawn().toString());
+        logger.info("{} {}", event.isForced(), event.getNewSpawn().toString());
         event.setCanceled(true);
     }
 }

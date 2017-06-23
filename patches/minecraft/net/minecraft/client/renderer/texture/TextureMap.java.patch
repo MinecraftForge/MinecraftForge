@@ -52,7 +52,7 @@
          this.field_94258_i.clear();
          int j = Integer.MAX_VALUE;
          int k = 1 << this.field_147636_j;
-+        net.minecraftforge.fml.common.FMLLog.info("Max texture size: %d", i);
++        net.minecraftforge.fml.common.FMLLog.log.info("Max texture size: {}", i);
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", skipFirst ? 0 : this.field_110574_e.size());
  
 +        if(!skipFirst)

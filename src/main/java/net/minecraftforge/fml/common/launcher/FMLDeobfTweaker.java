@@ -25,9 +25,9 @@ import java.util.List;
 
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.FMLInjectionData;
-import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
 
 public class FMLDeobfTweaker implements ITweaker {
     @Override
@@ -49,13 +49,13 @@ public class FMLDeobfTweaker implements ITweaker {
         classLoader.registerTransformer("net.minecraftforge.fml.common.asm.transformers.ItemStackTransformer");
         try
         {
-            FMLRelaunchLog.fine("Validating minecraft");
+            FMLLog.log.debug("Validating minecraft");
             Class<?> loaderClazz = Class.forName("net.minecraftforge.fml.common.Loader", true, classLoader);
             Method m = loaderClazz.getMethod("injectData", Object[].class);
             m.invoke(null, (Object)FMLInjectionData.data());
             m = loaderClazz.getMethod("instance");
             m.invoke(null);
-            FMLRelaunchLog.fine("Minecraft validated, launching...");
+            FMLLog.log.debug("Minecraft validated, launching...");
         }
         catch (Exception e)
         {

@@ -188,7 +188,7 @@ public class ModelLoaderRegistryDebug
         {
             if (world.isRemote)
             {
-                logger.info("click " + counter);
+                logger.info("click {}", counter);
                 if (player.isSneaking())
                 {
                     counter--;
@@ -574,7 +574,7 @@ public class ModelLoaderRegistryDebug
         {
             if (this.world.isRemote)
             {
-                logger.info("%b", shouldIncrement);
+                logger.info(shouldIncrement);
                 /*
                 IBakedModel bakedModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(this.world.getBlockState(this.pos), this.world, this.pos);
                 if (bakedModel != null && bakedModel instanceof OBJBakedModel)

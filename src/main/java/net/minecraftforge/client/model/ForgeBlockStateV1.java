@@ -188,9 +188,9 @@ public class ForgeBlockStateV1 extends Marker
                             String value = v.textures.get(tex.getValue().substring(1));
                             if (value == null)
                             {
-                                FMLLog.severe("Could not resolve texture name \"" + tex.getValue() + "\" for permutation \"" + e.getKey() + "\"");
+                                FMLLog.log.fatal("Could not resolve texture name \"{}\" for permutation \"{}\"", tex.getValue(), e.getKey());
                                 for (Entry<String, String> t: v.textures.entrySet())
-                                    FMLLog.severe(t.getKey() + "=" + t.getValue());
+                                    FMLLog.log.fatal("{}={}", t.getKey(), t.getValue());
                                 throw new JsonParseException("Could not resolve texture name \"" + tex.getValue() + "\" for permutation \"" + e.getKey() + "\"");
                             }
                             v.textures.put(tex.getKey(), value);

@@ -508,7 +508,7 @@ public enum B3DLoader implements ICustomModelLoader
             {
                 if(e.getValue().getResourcePath().startsWith("#"))
                 {
-                    FMLLog.severe("unresolved texture '%s' for b3d model '%s'", e.getValue().getResourcePath(), modelLocation);
+                    FMLLog.log.fatal("unresolved texture '{}' for b3d model '{}'", e.getValue().getResourcePath(), modelLocation);
                     builder.put(e.getKey(), missing);
                 }
                 else
@@ -563,7 +563,7 @@ public enum B3DLoader implements ICustomModelLoader
                         }
                         else
                         {
-                            FMLLog.severe("unknown mesh definition '%s' in array for b3d model '%s'", s.toString(), modelLocation);
+                            FMLLog.log.fatal("unknown mesh definition '{}' in array for b3d model '{}'", s.toString(), modelLocation);
                             return this;
                         }
                     }
@@ -571,7 +571,7 @@ public enum B3DLoader implements ICustomModelLoader
                 }
                 else
                 {
-                    FMLLog.severe("unknown mesh definition '%s' for b3d model '%s'", e.toString(), modelLocation);
+                    FMLLog.log.fatal("unknown mesh definition '{}' for b3d model '{}'", e.toString(), modelLocation);
                     return this;
                 }
             }
@@ -584,7 +584,7 @@ public enum B3DLoader implements ICustomModelLoader
                 }
                 else
                 {
-                    FMLLog.severe("unknown keyframe definition '%s' for b3d model '%s'", e.toString(), modelLocation);
+                    FMLLog.log.fatal("unknown keyframe definition '{}' for b3d model '{}'", e.toString(), modelLocation);
                     return this;
                 }
             }

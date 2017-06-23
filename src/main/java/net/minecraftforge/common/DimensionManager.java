@@ -169,11 +169,11 @@ public class DimensionManager
                 int leakCount = leakedWorlds.count(System.identityHashCode(w));
                 if (leakCount == 5)
                 {
-                    FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurrences).\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
+                    FMLLog.log.debug("The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());
                 }
                 else if (leakCount % 5 == 0)
                 {
-                    FMLLog.fine("The world %x (%s) may have leaked: seen %d times.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName(), leakCount);
+                    FMLLog.log.debug("The world {} ({}) may have leaked: seen {} times.\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName(), leakCount);
                 }
             }
         }
@@ -191,13 +191,13 @@ public class DimensionManager
             worlds.put(id, world);
             weakWorldMap.put(world, world);
             server.worldTickTimes.put(id, new long[100]);
-            FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
+            FMLLog.log.info("Loading dimension {} ({}) ({})", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
         {
             worlds.remove(id);
             server.worldTickTimes.remove(id);
-            FMLLog.info("Unloading dimension %d", id);
+            FMLLog.log.info("Unloading dimension {}", id);
         }
 
         ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
@@ -292,8 +292,8 @@ public class DimensionManager
         }
         catch (Exception e)
         {
-            FMLCommonHandler.instance().getFMLLogger().log(Level.ERROR, String.format("An error occurred trying to create an instance of WorldProvider %d (%s)",
-                    dim, getProviderType(dim)),e);
+            FMLLog.log.error("An error occurred trying to create an instance of WorldProvider {} ({})",
+                    dim, getProviderType(dim), e);
             throw new RuntimeException(e);
         }
     }
@@ -307,7 +307,7 @@ public class DimensionManager
     {
         if(!unloadQueue.contains(id))
         {
-            FMLLog.fine("Queueing dimension %s to unload", id);
+            FMLLog.log.debug("Queueing dimension {} to unload", id);
             unloadQueue.add(id);
         }
         else
@@ -339,7 +339,7 @@ public class DimensionManager
             dimension.ticksWaited = 0;
             if (w == null || !ForgeChunkManager.getPersistentChunksFor(w).isEmpty() || !w.playerEntities.isEmpty() || dimension.type.shouldLoadSpawn()) //Don't unload the world if the status changed
             {
-                FMLLog.fine("Aborting unload for dimension %s as status changed", id);
+                FMLLog.log.debug("Aborting unload for dimension {} as status changed", id);
                 continue;
             }
             try
