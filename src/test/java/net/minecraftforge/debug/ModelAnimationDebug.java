@@ -306,7 +306,7 @@ public class ModelAnimationDebug
         {
             for (Event event : pastEvents)
             {
-                logger.info("Event: " + event.event() + " " + event.offset() + " " + getPos() + " " + time);
+                logger.info("Event: {} {} {} {}", event.event(), event.offset(), getPos(), time);
             }
         }
 

@@ -137,8 +137,8 @@ public class GameRegistry
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "Exception caught during entity selector creation with %s for argument map %s of %s for %s at %s", factory,
-                        arguments, mainSelector, sender, position);
+                FMLLog.log.error("Exception caught during entity selector creation with {} for argument map {} of {} for {} at {}", factory,
+                        arguments, mainSelector, sender, position, e);
             }
         }
         return selectors;
@@ -424,7 +424,7 @@ public class GameRegistry
         Item item = GameData.getItemRegistry().getObject(new ResourceLocation(itemName));
         if (item == null)
         {
-            FMLLog.getLogger().log(Level.TRACE, "Unable to find item with name {}", itemName);
+            FMLLog.log.trace("Unable to find item with name {}", itemName);
             return ItemStack.EMPTY;
         }
         ItemStack is = new ItemStack(item, stackSize, meta);
@@ -436,12 +436,12 @@ public class GameRegistry
                 nbttag = JsonToNBT.getTagFromJson(nbtString);
             } catch (NBTException e)
             {
-                FMLLog.getLogger().log(Level.WARN, "Encountered an exception parsing ItemStack NBT string {}", nbtString, e);
+                FMLLog.log.warn("Encountered an exception parsing ItemStack NBT string {}", nbtString, e);
                 throw Throwables.propagate(e);
             }
             if (!(nbttag instanceof NBTTagCompound))
             {
-                FMLLog.getLogger().log(Level.WARN, "Unexpected NBT string - multiple values {}", nbtString);
+                FMLLog.log.warn("Unexpected NBT string - multiple values {}", nbtString);
                 throw new RuntimeException("Invalid NBT JSON");
             }
             else

@@ -143,7 +143,7 @@ class ObjectHolderRef {
 
         if (thing == null)
         {
-            FMLLog.getLogger().log(Level.DEBUG, "Unable to lookup {} for {}. This means the object wasn't registered. It's likely just mod options.", injectedObject, field);
+            FMLLog.log.debug("Unable to lookup {} for {}. This means the object wasn't registered. It's likely just mod options.", injectedObject, field);
             return;
         }
         try
@@ -152,7 +152,7 @@ class ObjectHolderRef {
         }
         catch (Exception e)
         {
-            FMLLog.log(Level.WARN, e, "Unable to set %s with value %s (%s)", this.field, thing, this.injectedObject);
+            FMLLog.log.warn("Unable to set {} with value {} ({})", this.field, thing, this.injectedObject, e);
         }
     }
 }

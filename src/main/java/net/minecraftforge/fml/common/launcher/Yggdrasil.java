@@ -49,7 +49,7 @@ public class Yggdrasil
         }
         catch (AuthenticationException e)
         {
-            LogManager.getLogger("FMLTWEAK").error("-- Login failed!  " + e.getMessage());
+            LogManager.getLogger("FMLTWEAK").error("-- Login failed! {}", e.getMessage(), e);
             Throwables.propagate(e);
             return; // don't set other variables
         }
