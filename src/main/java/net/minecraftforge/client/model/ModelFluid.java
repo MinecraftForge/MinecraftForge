@@ -433,7 +433,7 @@ public final class ModelFluid implements IModelCustomData
         String fluid = e.getAsString();
         if(!FluidRegistry.isFluidRegistered(fluid))
         {
-            FMLLog.severe("fluid '%s' not found", fluid);
+            FMLLog.log.fatal("fluid '{}' not found", fluid);
             return WATER;
         }
         return new ModelFluid(FluidRegistry.getFluid(fluid));

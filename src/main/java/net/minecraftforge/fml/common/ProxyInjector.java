@@ -40,7 +40,7 @@ public class ProxyInjector
 {
     public static void inject(ModContainer mod, ASMDataTable data, Side side, ILanguageAdapter languageAdapter)
     {
-        FMLLog.fine("Attempting to inject @SidedProxy classes into %s", mod.getModId());
+        FMLLog.log.debug("Attempting to inject @SidedProxy classes into {}", mod.getModId());
         SetMultimap<String, ASMData> modData = data.getAnnotationsFor(mod);
         Set<ASMData> mods = modData.get(Mod.class.getName());
         Set<ASMData> targets = modData.get(SidedProxy.class.getName());
@@ -56,13 +56,13 @@ public class ProxyInjector
                     amodid = ASMDataTable.getOwnerModID(mods, targ);
                     if (Strings.isNullOrEmpty(amodid))
                     {
-                        FMLLog.bigWarning("Could not determine owning mod for @SidedProxy on %s for mod %s", targ.getClassName(), mod.getModId());
+                        FMLLog.bigWarning("Could not determine owning mod for @SidedProxy on {} for mod {}", targ.getClassName(), mod.getModId());
                         continue;
                     }
                 }
                 if (!mod.getModId().equals(amodid))
                 {
-                    FMLLog.fine("Skipping proxy injection for %s.%s since it is not for mod %s", targ.getClassName(), targ.getObjectName(), mod.getModId());
+                    FMLLog.log.debug("Skipping proxy injection for {}.{} since it is not for mod {}", targ.getClassName(), targ.getObjectName(), mod.getModId());
                     continue;
                 }
 
@@ -71,7 +71,7 @@ public class ProxyInjector
                 if (target == null)
                 {
                     // Impossible?
-                    FMLLog.severe("Attempted to load a proxy type into %s.%s but the field was not found", targ.getClassName(), targ.getObjectName());
+                    FMLLog.log.fatal("Attempted to load a proxy type into {}.{} but the field was not found", targ.getClassName(), targ.getObjectName());
                     throw new LoaderException(String.format("Attempted to load a proxy type into %s.%s but the field was not found", targ.getClassName(), targ.getObjectName()));
                 }
                 target.setAccessible(true);
@@ -86,19 +86,19 @@ public class ProxyInjector
 
                 if (languageAdapter.supportsStatics() && (target.getModifiers() & Modifier.STATIC) == 0 )
                 {
-                    FMLLog.severe("Attempted to load a proxy type %s into %s.%s, but the field is not static", targetType, targ.getClassName(), targ.getObjectName());
+                    FMLLog.log.fatal("Attempted to load a proxy type {} into {}.{}, but the field is not static", targetType, targ.getClassName(), targ.getObjectName());
                     throw new LoaderException(String.format("Attempted to load a proxy type %s into %s.%s, but the field is not static", targetType, targ.getClassName(), targ.getObjectName()));
                 }
                 if (!target.getType().isAssignableFrom(proxy.getClass()))
                 {
-                    FMLLog.severe("Attempted to load a proxy type %s into %s.%s, but the types don't match", targetType, targ.getClassName(), targ.getObjectName());
+                    FMLLog.log.fatal("Attempted to load a proxy type {} into {}.{}, but the types don't match", targetType, targ.getClassName(), targ.getObjectName());
                     throw new LoaderException(String.format("Attempted to load a proxy type %s into %s.%s, but the types don't match", targetType, targ.getClassName(), targ.getObjectName()));
                 }
                 languageAdapter.setProxy(target, proxyTarget, proxy);
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "An error occurred trying to load a proxy into %s.%s", targ.getAnnotationInfo(), targ.getClassName(), targ.getObjectName());
+                FMLLog.log.error("An error occurred trying to load a proxy into {}.{}", targ.getObjectName(), e);
                 throw new LoaderException(e);
             }
         }

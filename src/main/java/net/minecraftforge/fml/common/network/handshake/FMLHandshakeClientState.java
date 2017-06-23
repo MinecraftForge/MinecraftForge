@@ -72,7 +72,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
             }
 
             ServerHello serverHelloPacket = (FMLHandshakeMessage.ServerHello)msg;
-            FMLLog.info("Server protocol version %x", serverHelloPacket.protocolVersion());
+            FMLLog.log.info("Server protocol version {}", Integer.toHexString(serverHelloPacket.protocolVersion()));
             if (serverHelloPacket.protocolVersion() > 1)
             {
                 // Server sent us an extra dimension for the logging in player - stash it for retrieval later
@@ -129,7 +129,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
 
             if (pkt.hasMore())
             {
-                FMLLog.fine("Received Mod Registry mapping for %s: %d IDs %d subs %d dummied", pkt.getName(), entry.ids.size(), entry.substitutions.size(), entry.dummied.size());
+                FMLLog.log.debug("Received Mod Registry mapping for {}: {} IDs {} subs {} dummied", pkt.getName(), entry.ids.size(), entry.substitutions.size(), entry.dummied.size());
                 return WAITINGSERVERCOMPLETE;
             }
 
@@ -140,8 +140,8 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
             {
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                 dispatcher.rejectHandshake("Fatally missing blocks and items");
-                FMLLog.severe("Failed to connect to server: there are %d missing blocks and items", locallyMissing.size());
-                FMLLog.fine("Missing list: %s", locallyMissing);
+                FMLLog.log.fatal("Failed to connect to server: there are {} missing blocks and items", locallyMissing.size());
+                FMLLog.log.debug("Missing list: {}", locallyMissing);
                 return ERROR;
             }
             ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);

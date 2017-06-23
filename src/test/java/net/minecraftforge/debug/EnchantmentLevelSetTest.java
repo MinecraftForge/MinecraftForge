@@ -28,7 +28,7 @@ public class EnchantmentLevelSetTest
     public static void onEnchantmentLevelSet(EnchantmentLevelSetEvent event)
     {
         // invert enchantment level, just for fun
-        logger.info("Enchantment row: " + event.getEnchantRow() + ", level: " + event.getLevel());
+        logger.info("Enchantment row: {}, level: {}", event.getEnchantRow(), event.getLevel());
         event.setLevel(30 - event.getLevel());
     }
 }

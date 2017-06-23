@@ -35,7 +35,7 @@ public class ItemFishedTest
         EntityFishHook hook = event.getHookEntity();
         BlockPos bobberPos = hook.getPosition();
         Biome biomeFishedAt = hook.getEntityWorld().getBiome(bobberPos);
-        logger.info("Item fished in Biome " + biomeFishedAt.getBiomeName());
+        logger.info("Item fished in Biome {}", biomeFishedAt.getBiomeName());
         if (biomeFishedAt.equals(Biomes.OCEAN))
         {
             logger.info("Canceling the event because biome is ocean");

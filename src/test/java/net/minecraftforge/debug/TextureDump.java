@@ -71,7 +71,7 @@ public class TextureDump
             try
             {
                 ImageIO.write(bufferedimage, "png", output);
-                logger.info("Exported png to: %s", output.getAbsolutePath());
+                logger.info("Exported png to: {}", output.getAbsolutePath());
             }
             catch (IOException ioexception)
             {

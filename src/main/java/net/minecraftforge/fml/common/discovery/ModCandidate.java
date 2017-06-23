@@ -78,7 +78,7 @@ public class ModCandidate
         this.mods = sourceType.findMods(this, table);
         if (!baseModCandidateTypes.isEmpty())
         {
-            FMLLog.info("Attempting to reparse the mod container %s", getModContainer().getName());
+            FMLLog.log.info("Attempting to reparse the mod container {}", getModContainer().getName());
             this.mods = sourceType.findMods(this, table);
         }
         return this.mods;

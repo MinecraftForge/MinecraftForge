@@ -253,15 +253,15 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 
         if (existingName == null)
         {
-            FMLLog.bigWarning("Ignoring putObject(%s, %s), not resolvable", name, thing);
+            FMLLog.bigWarning("Ignoring putObject({}, {}), not resolvable", name, thing);
         }
         else if (existingName.equals(name))
         {
-            FMLLog.bigWarning("Ignoring putObject(%s, %s), already added", name, thing);
+            FMLLog.bigWarning("Ignoring putObject({}, {}), already added", name, thing);
         }
         else
         {
-            FMLLog.bigWarning("Ignoring putObject(%s, %s), adding alias to %s instead", name, thing, existingName);
+            FMLLog.bigWarning("Ignoring putObject({}, {}), adding alias to {} instead", name, thing, existingName);
             addAlias(name, existingName);
         }
     }
@@ -464,7 +464,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 
         if (getRaw(name) == thing) // already registered, return prev registration's id
         {
-            FMLLog.bigWarning("The object %s has been registered twice for the same name %s.", thing, name);
+            FMLLog.bigWarning("The object {} has been registered twice for the same name {}.", thing, name);
             return getId(thing);
         }
         if (getRaw(name) != null) // duplicate name
@@ -479,7 +479,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         }
         if (PersistentRegistryManager.isFrozen(this))
         {
-            FMLLog.bigWarning("The object %s (name %s) is being added too late.", thing, name);
+            FMLLog.bigWarning("The object {} (name {}) is being added too late.", thing, name);
         }
 
         if (activeSubstitutions.containsKey(name))
@@ -488,7 +488,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
             thing = activeSubstitutions.get(name);
             if (DEBUG)
             {
-                FMLLog.getLogger().log(Level.DEBUG, "Active substitution: {} {}@{} -> {}@{}", name, oldThing.getClass().getName(), System.identityHashCode(oldThing), thing.getClass().getName(), System.identityHashCode(thing));
+                FMLLog.log.debug("Active substitution: {} {}@{} -> {}@{}", name, oldThing.getClass().getName(), System.identityHashCode(oldThing), thing.getClass().getName(), System.identityHashCode(thing));
             }
         }
 
@@ -501,12 +501,12 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 
         if (this.dummiedLocations.remove(name) && DEBUG)
         {
-            FMLLog.fine("Registry Dummy Remove: %s", name);
+            FMLLog.log.debug("Registry Dummy Remove: {}", name);
         }
 
         if (DEBUG)
         {
-            FMLLog.finer("Registry add: %s %d %s (req. id %d)", name, idToUse, thing, id);
+            FMLLog.log.trace("Registry add: {} {} {} (req. id {})", name, idToUse, thing, id);
         }
         return idToUse;
     }
@@ -515,7 +515,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     {
         if (DEBUG)
         {
-            FMLLog.finer("Registry Dummy Add: %s %d -> %s", rl, id, thing);
+            FMLLog.log.trace("Registry Dummy Add: {} {} -> {}", rl, id, thing);
         }
         this.dummiedLocations.add(rl);
         this.addObjectRaw(id, rl, thing);
@@ -526,7 +526,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         aliases.put(from, to);
         if (DEBUG)
         {
-            FMLLog.finer("Registry alias: %s -> %s", from, to);
+            FMLLog.log.trace("Registry alias: {} -> {}", from, to);
         }
     }
 
@@ -564,11 +564,11 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 
         // sort by id
         Collections.sort(ids);
-        FMLLog.finer("Registry Name : {}", registryName);
+        FMLLog.log.trace("Registry Name : {}", registryName);
         for (int id : ids)
         {
             I thing = getRaw(id);
-            FMLLog.finer("Registry: %d %s %s", id, getNameForObject(thing), thing);
+            FMLLog.log.trace("Registry: {} {} {}", id, getNameForObject(thing), thing);
         }
     }
 
@@ -639,7 +639,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     {
         if (getPersistentSubstitutions().containsKey(nameToReplace) || getPersistentSubstitutions().containsValue(replacement))
         {
-            FMLLog.severe("The substitution of %s has already occurred. You cannot duplicate substitutions", nameToReplace);
+            FMLLog.log.fatal("The substitution of {} has already occurred. You cannot duplicate substitutions", nameToReplace);
             throw new ExistingSubstitutionException(nameToReplace, replacement);
         }
         I original = getRaw(nameToReplace);
@@ -649,16 +649,16 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         }
         if (!original.getClass().isAssignableFrom(replacement.getClass()))
         {
-            FMLLog.severe("The substitute %s for %s (type %s) is type incompatible. This won't work", replacement.getClass().getName(), nameToReplace, original.getClass().getName());
+            FMLLog.log.fatal("The substitute {} for {} (type {}) is type incompatible. This won't work", replacement.getClass().getName(), nameToReplace, original.getClass().getName());
             throw new IncompatibleSubstitutionException(nameToReplace, replacement, original);
         }
         int existingId = getId(replacement);
         if (existingId != -1)
         {
-            FMLLog.severe("The substitute %s for %s is registered into the game independently. This won't work", replacement.getClass().getName(), nameToReplace);
+            FMLLog.log.fatal("The substitute {} for {} is registered into the game independently. This won't work", replacement.getClass().getName(), nameToReplace);
             throw new IllegalArgumentException("The object substitution is already registered. This won't work");
         }
-        FMLLog.log(Level.DEBUG, "Adding substitution %s with %s (name %s)", original, replacement, nameToReplace);
+        FMLLog.log.debug("Adding substitution {} with {} (name {})", original, replacement, nameToReplace);
         getPersistentSubstitutions().put(nameToReplace, replacement);
     }
 
@@ -751,7 +751,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     {
         if (DEBUG && dummied.size() > 0)
         {
-            FMLLog.fine("Registry Dummy Load: [%s]", Joiner.on(", ").join(dummied));
+            FMLLog.log.debug("Registry Dummy Load: [{}]", Joiner.on(", ").join(dummied));
         }
         this.dummiedLocations.addAll(dummied);
     }
@@ -766,13 +766,13 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 
             if (currId == -1)
             {
-                FMLLog.info("Found a missing id from the world %s", itemName);
+                FMLLog.log.info("Found a missing id from the world {}", itemName);
                 missingIds.put(itemName, newId);
                 continue; // no block/item -> nothing to add
             }
             else if (currId != newId)
             {
-                FMLLog.fine("Fixed %s id mismatch %s: %d (init) -> %d (map).", registryName, itemName, currId, newId);
+                FMLLog.log.debug("Fixed {} id mismatch {}: {} (init) -> {} (map).", registryName, itemName, currId, newId);
                 remappedIds.put(itemName, new Integer[] {currId, newId});
             }
             I obj = currentRegistry.getRaw(itemName);
@@ -834,7 +834,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         ResourceLocation key = value.getRegistryName();
         if (key == null)
         {
-            FMLLog.severe("Attempted to register a entry with a null name: %s", value);
+            FMLLog.log.fatal("Attempted to register a entry with a null name: {}", value);
             throw new NullPointerException(String.format("Attempted to register a entry with a null name: %s", value));
         }
         add(-1, key, value);

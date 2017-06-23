@@ -222,7 +222,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         this.resourcePackMap = Maps.newHashMap();
         if (minecraft.isDemo())
         {
-            FMLLog.severe("DEMO MODE DETECTED, FML will not work. Finishing now.");
+            FMLLog.log.fatal("DEMO MODE DETECTED, FML will not work. Finishing now.");
             haltGame("FML will not run in demo mode", new RuntimeException());
             return;
         }
@@ -254,7 +254,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (CustomModLoadingErrorDisplayException custom)
         {
-            FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
+            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
             customError = custom;
         }
         catch (MultipleModsErrored multiple)
@@ -277,7 +277,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (CustomModLoadingErrorDisplayException custom)
         {
-            FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
+            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
             customError = custom;
         }
         catch (LoaderException le)
@@ -314,7 +314,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             {
                 ModMetadata optifineMetadata = MetadataCollection.from(optifineModInfoInputStream, "optifine").getMetadataForId("optifine", dummyOptifineMeta);
                 optifineContainer = new DummyModContainer(optifineMetadata);
-                FMLLog.info("Forge Mod Loader has detected optifine %s, enabling compatibility features", optifineContainer.getVersion());
+                FMLLog.log.info("Forge Mod Loader has detected optifine {}, enabling compatibility features", optifineContainer.getVersion());
             }
             finally
             {
@@ -359,7 +359,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (CustomModLoadingErrorDisplayException custom)
         {
-            FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
+            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
             customError = custom;
             SplashProgress.finish();
             return;
@@ -394,7 +394,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                 guiFactories.put(mc, guiFactory);
             } catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "A critical error occurred instantiating the gui factory for mod %s", mc.getModId());
+                FMLLog.log.error("A critical error occurred instantiating the gui factory for mod {}", mc.getModId(), e);
             }
         }
         loading = false;
@@ -684,12 +684,12 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             catch (NoSuchMethodException e)
             {
-                FMLLog.log(Level.ERROR, "The container %s (type %s) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
+                FMLLog.log.error("The container {} (type {}) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
                 return;
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "An unexpected exception occurred constructing the custom resource pack for %s", container.getName());
+                FMLLog.log.error("An unexpected exception occurred constructing the custom resource pack for {}", container.getName(), e);
                 throw Throwables.propagate(e);
             }
         }
@@ -763,7 +763,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             catch (Exception e1)
             {
-                FMLLog.warning("There appears to be a problem loading the save %s, both level files are unreadable.", comparator.getFileName());
+                FMLLog.log.warn("There appears to be a problem loading the save {}, both level files are unreadable.", comparator.getFileName());
                 return;
             }
         }

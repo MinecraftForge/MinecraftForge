@@ -136,7 +136,7 @@ public class Configuration
             {
                 File fileBak = new File(file.getAbsolutePath() + "_" +
                         new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".errored");
-                FMLLog.severe("An exception occurred while loading config file %s. This file will be renamed to %s " +
+                FMLLog.log.fatal("An exception occurred while loading config file {}. This file will be renamed to {} " +
                         "and a new config file will be generated.", file.getName(), fileBak.getName());
                 e.printStackTrace();
 
