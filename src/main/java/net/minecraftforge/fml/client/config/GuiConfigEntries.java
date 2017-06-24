@@ -1624,7 +1624,7 @@ public class GuiConfigEntries extends GuiListExtended
         public abstract boolean saveConfigElement();
 
         @Override
-        public void func_192633_a(int p_178011_1_, int p_178011_2_, int p_178011_3_, float partial){}
+        public void updatePosition(int p_178011_1_, int p_178011_2_, int p_178011_3_, float partial){}
 
         @Override
         public boolean enabled()

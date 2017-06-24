@@ -633,7 +633,7 @@ public class CraftingHelper {
             if (fPath != null && Files.exists(fPath))
             {
                 reader = Files.newBufferedReader(fPath);
-                JsonObject json = JsonUtils.func_193839_a(GSON, reader, JsonObject.class);
+                JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
                 loadFactories(json, ctx);
             }
         }
@@ -699,7 +699,7 @@ public class CraftingHelper {
                 try
                 {
                     reader = Files.newBufferedReader(fPath);
-                    JsonObject[] json = JsonUtils.func_193839_a(GSON, reader, JsonObject[].class);
+                    JsonObject[] json = JsonUtils.fromJson(GSON, reader, JsonObject[].class);
                     ctx.loadConstants(json);
                 }
                 catch (IOException e)
@@ -734,7 +734,7 @@ public class CraftingHelper {
                 try
                 {
                     reader = Files.newBufferedReader(f);
-                    JsonObject json = JsonUtils.func_193839_a(GSON, reader, JsonObject.class);
+                    JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
                     if (json.has("conditions") && !CraftingHelper.processConditions(json.getAsJsonArray("conditions"), ctx))
                         continue;
                     IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
