@@ -91,17 +91,25 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public Iterator<V> iterator() {
         return new Iterator<V>()
         {
-            Iterator<V> itr = names.values().iterator();
+            int cur = -1;
+            V next = null;
+            { next(); }
+
             @Override
             public boolean hasNext()
             {
-                return itr.hasNext();
+                return next != null;
             }
 
             @Override
             public V next()
             {
-                return itr.next();
+                V ret = next;
+                do {
+                	cur = availabilityMap.nextSetBit(cur + 1);
+                	next = ids.get(cur);
+                } while (next == null && cur != -1); // nextSetBit returns -1 when none is found
+                return ret;
             }
             //TODO add remove support?
         };
