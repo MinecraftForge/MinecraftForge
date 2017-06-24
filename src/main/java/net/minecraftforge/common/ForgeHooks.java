@@ -1276,17 +1276,18 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
     }
 
-    private static final ClassValue<String> simpleNames = new ClassValue<String>()
+    private static final ClassValue<String> registryNames = new ClassValue<String>()
     {
         @Override
+        @SuppressWarnings("unchecked")
         protected String computeValue(Class<?> type)
         {
-            return type.getSimpleName();
+            return String.valueOf(TileEntity.getKey((Class<? extends TileEntity>) type));
         }
     };
 
-    public static String getSimpleName(Class<?> type)
+    public static String getRegistryName(Class<? extends TileEntity> type)
     {
-        return simpleNames.get(type);
+        return registryNames.get(type);
     }
 }
