@@ -122,7 +122,7 @@ import javax.annotation.Nullable;
 public class ForgeEventFactory
 {
 
-    public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction, @Nullable EnumHand hand)
+    public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction, EnumHand hand)
     {
         BlockSnapshot snap = blockSnapshots.get(0);
         IBlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().offset(direction.getOpposite()));
@@ -395,9 +395,9 @@ public class ForgeEventFactory
         return event.getExtraLife();
     }
 
-    public static int onItemPickup(EntityItem entityItem, EntityPlayer entityIn, ItemStack itemstack)
+    public static int onItemPickup(EntityItem entityItem, EntityPlayer player)
     {
-        Event event = new EntityItemPickupEvent(entityIn, entityItem);
+        Event event = new EntityItemPickupEvent(player, entityItem);
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         return event.getResult() == Result.ALLOW ? 1 : 0;
     }
