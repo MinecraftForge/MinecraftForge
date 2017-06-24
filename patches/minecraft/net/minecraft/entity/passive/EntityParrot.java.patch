@@ -32,6 +32,15 @@
                      p_192006_0_.func_184148_a((EntityPlayer)null, p_192006_1_.field_70165_t, p_192006_1_.field_70163_u, p_192006_1_.field_70161_v, soundevent, p_192006_1_.func_184176_by(), 0.7F, func_192000_b(p_192006_0_.field_73012_v));
                      return true;
                  }
+@@ -246,7 +247,7 @@
+ 
+             if (!this.field_70170_p.field_72995_K)
+             {
+-                if (this.field_70146_Z.nextInt(10) == 0)
++                if (this.field_70146_Z.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_184645_1_))
+                 {
+                     this.func_193101_c(p_184645_1_);
+                     this.func_70908_e(true);
 @@ -345,8 +346,9 @@
      {
          if (p_192003_0_.nextInt(1000) == 0)
