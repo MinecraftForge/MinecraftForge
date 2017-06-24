@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -328,11 +329,10 @@ public class GameData
         {
             return new BlockDummyAir().setUnlocalizedName("air").setRegistryName(key);
         }
-        private static class BlockDummyAir extends Block //A named class so DummyBlockReplacementTest can detect if its a dummy
+        private static class BlockDummyAir extends BlockAir //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
             private BlockDummyAir()
             {
-                super(Material.AIR);
             }
         }
     }
