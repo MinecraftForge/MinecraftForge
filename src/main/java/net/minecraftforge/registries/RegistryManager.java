@@ -84,7 +84,7 @@ public class RegistryManager
         if (!overlappedTypes.isEmpty())
         {
             Class<?> foundType = overlappedTypes.iterator().next();
-            FMLLog.severe("Found existing registry of type %s named %s, you cannot create a new registry (%s) with type %s, as %s has a parent of that type", foundType, superTypes.get(foundType), name, type, type);
+            FMLLog.log.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type", foundType, superTypes.get(foundType), name, type, type);
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
         ForgeRegistry<V> reg = new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, this, allowOverrides, isModifiable, dummyFactory);

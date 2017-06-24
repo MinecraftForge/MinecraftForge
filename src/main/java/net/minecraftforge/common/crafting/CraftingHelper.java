@@ -666,7 +666,7 @@ public class CraftingHelper {
                 }
                 catch (URISyntaxException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Error finding Minecraft jar: " + e.toString());
+                    FMLLog.log.error("Error finding Minecraft jar: ", e);
                     return false;
                 }
             }
@@ -681,7 +681,7 @@ public class CraftingHelper {
                 }
                 catch (IOException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Error loading FileSystem from jar: " + e.toString());
+                    FMLLog.log.error("Error loading FileSystem from jar: ", e);
                     return false;
                 }
             }
@@ -704,7 +704,7 @@ public class CraftingHelper {
                 }
                 catch (IOException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Error loading _constants.json: " + e.toString());
+                    FMLLog.log.error("Error loading _constants.json: ", e);
                     return false;
                 }
             }
@@ -716,7 +716,7 @@ public class CraftingHelper {
             }
             catch (IOException e)
             {
-                FMLLog.log(Level.ERROR, e, "Error iterating recipes for: " + ctx.getModId());
+                FMLLog.log.error("Error iterating recipes for: {}", ctx.getModId(), e);
                 return false;
             }
 
@@ -742,12 +742,12 @@ public class CraftingHelper {
                 }
                 catch (JsonParseException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Parsing error loading recipe " + key);
+                    FMLLog.log.error("Parsing error loading recipe {}", key, e);
                     return false;
                 }
                 catch (IOException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Couldn't read recipe " + key + " from " + f);
+                    FMLLog.log.error("Couldn't read recipe {} from {}", key, f, e);
                     return false;
                 }
            }
