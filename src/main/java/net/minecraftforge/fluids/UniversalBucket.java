@@ -101,7 +101,6 @@ public class UniversalBucket extends Item
         return super.getContainerItem(itemStack);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
     {

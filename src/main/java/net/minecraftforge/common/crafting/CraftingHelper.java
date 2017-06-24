@@ -527,7 +527,7 @@ public class CraftingHelper {
 
         registerI("minecraft:item", (context, json) -> Ingredient.fromStacks(CraftingHelper.getItemStackBasic(json, context)));
         registerI("minecraft:empty", (context, json) -> Ingredient.EMPTY);
-        registerI("minecraft:item_nbt", (context, json) -> Ingredient.fromStacks(CraftingHelper.getItemStack(json, context)));
+        registerI("minecraft:item_nbt", (context, json) -> new IngredientNBT(CraftingHelper.getItemStack(json, context)));
         registerI("forge:ore_dict", (context, json) -> new OreIngredient(JsonUtils.getString(json, "ore")));
     }
 
