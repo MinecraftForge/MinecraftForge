@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import net.minecraftforge.fml.common.langsupport.IStaticContainer;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
@@ -32,6 +33,11 @@ public interface ILanguageAdapter {
     public boolean supportsStatics();
     public void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
     public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
+
+    default public IStaticContainer getStaticContainer(Class<?> clazz, ClassLoader classLoader) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException
+    {
+        return new IStaticContainer.ClassStaticContainer(clazz);
+    }
 
     public static class ScalaAdapter implements ILanguageAdapter {
         @Override
