@@ -824,7 +824,7 @@ public class Loader
     public void initializeMods()
     {
         progressBar.step("Initializing mods Phase 2");
-        CraftingHelper.loadRecipes();
+        CraftingHelper.loadRecipes(false);
         // Mod controller should be in the initialization state here
         modController.distributeStateMessage(LoaderState.INITIALIZATION);
         progressBar.step("Initializing mods Phase 3");

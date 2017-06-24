@@ -593,23 +593,24 @@ public class CraftingHelper {
         }
     }
 
-    public static void loadRecipes()
+    public static void loadRecipes(boolean revertFrozen)
     {
         //TODO: If this errors in ServerInit it freezes the client at loading world, find a way to pop that up?
         //TODO: Figure out how to remove recipes, and override them. This relies on cpw to help.
         //For now this is only done one after mod init, I want to move this to ServerInit and re-do it many times.
         init();
         ForgeRegistry<IRecipe> reg = (ForgeRegistry<IRecipe>)ForgeRegistries.RECIPES;
+        //reg.unfreeze();
         if (DEBUG_LOAD_MINECRAFT)
             reg.clear();
-        else
+        else if (revertFrozen)
             GameData.revert(RegistryManager.FROZEN, GameData.RECIPES, false);
         //ModContainer old = Loader.instance().activeModContainer();
         Loader.instance().setActiveModContainer(null);
         Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
         Loader.instance().getActiveModList().forEach((mod) -> loadRecipes(mod));
         Loader.instance().setActiveModContainer(null);
-        reg.freeze();
+        //reg.freeze();
     }
 
     private static void loadFactories(ModContainer mod)

@@ -662,10 +662,12 @@ public class GameData
     {
         List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
         Collections.sort(keys, (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString()));
+        /*
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
             if (filter.test(name))
                 ((ForgeRegistry<?>)reg).unfreeze();
         });
+        */
 
         if (filter.test(BLOCKS))
         {
@@ -686,9 +688,11 @@ public class GameData
         ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject everything else
 
 
+        /*
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
             if (filter.test(name))
                 ((ForgeRegistry<?>)reg).freeze();
         });
+        */
     }
 }
