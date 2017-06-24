@@ -146,7 +146,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                 dispatcher.rejectHandshake("Fatally missing blocks and items");
                 FMLLog.log.fatal("Failed to connect to server: there are {} missing blocks and items", locallyMissing.size());
-                locallyMissing.asMap().forEach((key, value) ->  FMLLog.log.debug("Missing %s Entries: {}", key, value));
+                locallyMissing.asMap().forEach((key, value) ->  FMLLog.log.debug("Missing {} Entries: {}", key, value));
                 return ERROR;
             }
             ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);

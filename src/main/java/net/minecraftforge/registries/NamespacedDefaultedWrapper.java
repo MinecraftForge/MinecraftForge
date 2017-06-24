@@ -39,7 +39,7 @@ class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends Regis
 
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
-            FMLLog.warning("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
+            FMLLog.log.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
     }
 
     @Override
@@ -48,6 +48,7 @@ class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends Regis
         register(-1, key, value);
     }
 
+    @Override
     public void validateKey()
     {
         this.delegate.validateKey();

@@ -112,7 +112,7 @@ public class GameData
     {
         if ( DISABLE_VANILLA_REGISTRIES)
         {
-            FMLLog.bigWarning("DISABELING VANILLA REGISTRY CREATION AS PER SYSTEM VARIABLE SETTING! forge.disableVanillaGameData");
+            FMLLog.bigWarning("DISABLING VANILLA REGISTRY CREATION AS PER SYSTEM VARIABLE SETTING! forge.disableVanillaGameData");
             return;
         }
         if (hasInit)
@@ -188,7 +188,7 @@ public class GameData
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void vanillaSnapshot()
     {
-        FMLLog.fine("Creating vanilla freeze snapshot");
+        FMLLog.log.debug("Creating vanilla freeze snapshot");
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
@@ -201,13 +201,13 @@ public class GameData
         });
         RegistryManager.VANILLA.registries.forEach(LOCK_VANILLA);
         RegistryManager.ACTIVE.registries.forEach(LOCK_VANILLA);
-        FMLLog.fine("Vanilla freeze snapshot created");
+        FMLLog.log.debug("Vanilla freeze snapshot created");
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void freezeData()
     {
-        FMLLog.fine("Freezing registries");
+        FMLLog.log.debug("Freezing registries");
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
@@ -219,7 +219,7 @@ public class GameData
             reg.freeze();
         });
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.freeze());
-        FMLLog.fine("All registries frozen");
+        FMLLog.log.debug("All registries frozen");
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -227,12 +227,12 @@ public class GameData
     {
         if (RegistryManager.FROZEN.registries.isEmpty())
         {
-            FMLLog.warning("Can't revert to frozen GameData state without freezing first.");
+            FMLLog.log.warn("Can't revert to frozen GameData state without freezing first.");
             return;
         }
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
 
-        FMLLog.fine("Reverting to frozen data state.");
+        FMLLog.log.debug("Reverting to frozen data state.");
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
@@ -243,16 +243,16 @@ public class GameData
 
         // the id mapping has reverted, ensure we sync up the object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
-        FMLLog.fine("Frozen state restored.");
+        FMLLog.log.debug("Frozen state restored.");
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void revert(RegistryManager state, ResourceLocation registry, boolean lock)
     {
-        FMLLog.fine("Reverting {} to {}", registry, state.getName());
+        FMLLog.log.debug("Reverting {} to {}", registry, state.getName());
         final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(registry);
         loadRegistry(registry, RegistryManager.FROZEN, RegistryManager.ACTIVE, clazz, lock);
-        FMLLog.fine("Reverting complete");
+        FMLLog.log.debug("Reverting complete");
     }
 
     //Lets us clear the map so we can rebuild it.
@@ -431,7 +431,7 @@ public class GameData
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Multimap<ResourceLocation, ResourceLocation> injectSnapshot(Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
-        FMLLog.info("Injecting existing registry data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
+        FMLLog.log.info("Injecting existing registry data into this {} instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
@@ -481,14 +481,14 @@ public class GameData
                 else if (isLocalWorld)
                 {
                     if (ForgeRegistry.DEBUG)
-                        FMLLog.log(Level.DEBUG, "Registry %s: Resuscitating dummy entry %s", e.getKey(), dummy);
+                        FMLLog.log.debug("Registry {}: Resuscitating dummy entry {}", e.getKey(), dummy);
                 }
                 else
                 {
                     // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
                     // in mod setup - Mark this entry as a dummy
                     int id = reg.getID(dummy);
-                    FMLLog.log(Level.WARN, "Registry $s: The ID %d is currently locally mapped - it will be replaced with a dummy for this session", e.getKey(), id);
+                    FMLLog.log.warn("Registry {}: The ID {} is currently locally mapped - it will be replaced with a dummy for this session", e.getKey(), id);
                     reg.markDummy(dummy, id);
                 }
             });
@@ -497,7 +497,7 @@ public class GameData
         int count = missing.values().stream().mapToInt(e -> e.size()).sum();
         if (count > 0)
         {
-            FMLLog.fine("There are %d mappings missing - attempting a mod remap", count);
+            FMLLog.log.debug("There are {} mappings missing - attempting a mod remap", count);
             Multimap<ResourceLocation, ResourceLocation> defaulted = ArrayListMultimap.create();
             Multimap<ResourceLocation, ResourceLocation> failed = ArrayListMultimap.create();
 
@@ -511,9 +511,9 @@ public class GameData
                 List<MissingMappings.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.DEFAULT).collect(Collectors.toList());
                 if (!lst.isEmpty())
                 {
-                    FMLLog.severe("Unidentified mapping from registry %s", name);
+                    FMLLog.log.error("Unidentified mapping from registry {}", name);
                     lst.forEach(map -> {
-                        FMLLog.severe("    %s: %d", map.key, map.id);
+                        FMLLog.log.error("    {}: {}", map.key, map.id);
                         if (!isLocalWorld)
                             defaulted.put(name, map.key);
                     });
@@ -555,7 +555,7 @@ public class GameData
                     else
                     {
                         for (int x = 0; x < 10; x++)
-                            FMLLog.severe("!!!!!!!!!! UPDATING WORLD WITHOUT DOING BACKUP !!!!!!!!!!!!!!!!");
+                            FMLLog.log.error("!!!!!!!!!! UPDATING WORLD WITHOUT DOING BACKUP !!!!!!!!!!!!!!!!");
                     }
                 }
                 catch (IOException e)
@@ -568,7 +568,7 @@ public class GameData
             if (!defaulted.isEmpty())
             {
                 if (isLocalWorld)
-                    FMLLog.severe("There are unidentified mappings in this world - we are going to attempt to process anyway");
+                    FMLLog.log.error("There are unidentified mappings in this world - we are going to attempt to process anyway");
             }
 
         }
