@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,339 @@
+@@ -241,6 +216,303 @@
          return new WorldBorder();
      }
  
@@ -99,42 +99,6 @@
 +    public String getSaveFolder()
 +    {
 +        return (dimensionId == 0 ? null : "DIM" + dimensionId);
-+    }
-+
-+    /**
-+     * A message to display to the user when they transfer to this dimension.
-+     *
-+     * @return The message to be displayed
-+     */
-+    public String getWelcomeMessage()
-+    {
-+        if (this instanceof WorldProviderEnd)
-+        {
-+            return "Entering the End";
-+        }
-+        else if (this instanceof WorldProviderHell)
-+        {
-+            return "Entering the Nether";
-+        }
-+        return null;
-+    }
-+
-+    /**
-+     * A Message to display to the user when they transfer out of this dismension.
-+     *
-+     * @return The message to be displayed
-+     */
-+    public String getDepartMessage()
-+    {
-+        if (this instanceof WorldProviderEnd)
-+        {
-+            return "Leaving the End";
-+        }
-+        else if (this instanceof WorldProviderHell)
-+        {
-+            return "Leaving the Nether";
-+        }
-+        return null;
 +    }
 +
 +    /**
