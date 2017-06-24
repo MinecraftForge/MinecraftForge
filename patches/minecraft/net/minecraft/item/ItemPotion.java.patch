@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemPotion.java
++++ ../src-work/minecraft/net/minecraft/item/ItemPotion.java
+@@ -120,7 +120,6 @@
+         return super.func_77636_d(p_77636_1_) || !PotionUtils.func_185189_a(p_77636_1_).isEmpty();
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_150895_a(CreativeTabs p_150895_1_, NonNullList<ItemStack> p_150895_2_)
+     {
+         if (this.func_194125_a(p_150895_1_))

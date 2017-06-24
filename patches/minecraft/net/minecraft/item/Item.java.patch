@@ -60,8 +60,19 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -411,6 +418,9 @@
-     @SideOnly(Side.CLIENT)
+@@ -399,7 +406,6 @@
+         return 0;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_150895_a(CreativeTabs p_150895_1_, NonNullList<ItemStack> p_150895_2_)
+     {
+         if (this.func_194125_a(p_150895_1_))
+@@ -408,15 +414,16 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
      protected boolean func_194125_a(CreativeTabs p_194125_1_)
      {
 +        for (CreativeTabs tab : this.getCreativeTabs())
@@ -70,7 +81,13 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -438,11 +448,632 @@
+ 
+     @Nullable
+-    @SideOnly(Side.CLIENT)
+     public CreativeTabs func_77640_w()
+     {
+         return this.field_77701_a;
+@@ -438,11 +445,632 @@
          return false;
      }
  
@@ -703,7 +720,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -1002,6 +1633,8 @@
+@@ -1002,6 +1630,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -712,7 +729,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1037,6 +1670,7 @@
+@@ -1037,6 +1667,7 @@
              return this.field_78008_j;
          }
  
@@ -720,7 +737,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1060,5 +1694,21 @@
+@@ -1060,5 +1691,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
