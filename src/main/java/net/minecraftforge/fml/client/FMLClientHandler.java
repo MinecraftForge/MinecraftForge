@@ -56,6 +56,7 @@ import net.minecraft.client.resources.LegacyV2Adapter;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.client.resources.data.MetadataSerializer;
 import net.minecraft.client.resources.data.PackMetadataSection;
+import net.minecraft.client.util.RecipeBookClient;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
@@ -1095,5 +1096,11 @@ public class FMLClientHandler implements IFMLSidedHandler
     public boolean isDisplayVSyncForced()
     {
         return SplashProgress.isDisplayVSyncForced;
+    }
+
+    @Override
+    public void resetClientRecipeBook()
+    {
+        RecipeBookClient.rebuildTable();
     }
 }

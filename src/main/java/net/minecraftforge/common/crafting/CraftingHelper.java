@@ -67,6 +67,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -611,6 +612,7 @@ public class CraftingHelper {
         Loader.instance().getActiveModList().forEach((mod) -> loadRecipes(mod));
         Loader.instance().setActiveModContainer(null);
         //reg.freeze();
+        FMLCommonHandler.instance().resetClientRecipeBook();
     }
 
     private static void loadFactories(ModContainer mod)
