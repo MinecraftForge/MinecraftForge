@@ -99,6 +99,11 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             this.mappings = ImmutableList.copyOf(missed);
         }
 
+        public void setModContainer(ModContainer mod)
+        {
+            this.activeMod = mod;
+        }
+
         public ResourceLocation getName()
         {
             return this.name;
