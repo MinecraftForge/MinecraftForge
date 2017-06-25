@@ -62,7 +62,7 @@
              }
  
              if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && itemstack.func_77960_j() == 1 && !((ItemStack)this.field_145957_n.get(1)).func_190926_b() && ((ItemStack)this.field_145957_n.get(1)).func_77973_b() == Items.field_151133_ar)
-@@ -315,8 +315,13 @@
+@@ -315,6 +315,11 @@
          }
          else
          {
@@ -72,11 +72,8 @@
 +                return burnTime;
 +            }
              Item item = p_145952_0_.func_77973_b();
--
-+            
+ 
              if (item == Item.func_150898_a(Blocks.field_150376_bx))
-             {
-                 return 150;
 @@ -530,4 +535,22 @@
      {
          this.field_145957_n.clear();
