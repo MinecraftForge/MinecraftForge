@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockStone.java
++++ ../src-work/minecraft/net/minecraft/block/BlockStone.java
+@@ -50,7 +50,6 @@
+         return ((BlockStone.EnumType)p_180651_1_.func_177229_b(field_176247_a)).func_176642_a();
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         for (BlockStone.EnumType blockstone$enumtype : BlockStone.EnumType.values())
