@@ -63,7 +63,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     public boolean canFillFluidType(FluidStack fluid)
     {
-        if (fluid.getFluid() == FluidRegistry.WATER || fluid.getFluid() == FluidRegistry.LAVA || FluidDictionary.getNames(fluid.getFluid()).contains("milk"))
+        if (fluid.getFluid() == FluidRegistry.WATER || fluid.getFluid() == FluidRegistry.LAVA || FluidDictionary.hasName(fluid.getFluid(), "milk"))
         {
             return true;
         }

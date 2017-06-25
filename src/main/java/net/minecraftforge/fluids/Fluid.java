@@ -35,7 +35,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.item.EnumRarity;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -144,13 +144,8 @@ public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
         }
         else
         {
-<<<<<<< HEAD
             FMLLog.log.warn("A mod has attempted to assign Block {} to the Fluid '{}' but this Fluid has already been linked to the Block {}. "
                     + "You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.", block, this.getRegistryName(), this.block);
-=======
-            FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + this.getRegistryName() + "' but this Fluid has already been linked to the Block "
-                    + this.block + ". You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.");
->>>>>>> Completely rewrite how fluids are registered
         }
         return this;
     }

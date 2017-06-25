@@ -70,10 +70,5 @@ public class ForgeRegistries
     {
     	FluidRegistry.registerFluids();
     }
-    
-    public static void initForgeRegistries()
-    {
-    	FluidRegistry.registerFluids();
-    }
 
 }

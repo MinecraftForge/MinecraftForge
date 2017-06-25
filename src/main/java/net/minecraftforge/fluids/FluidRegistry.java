@@ -48,6 +48,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
 
@@ -128,8 +129,8 @@ public abstract class FluidRegistry
     public static void registerFluids()
     {
         if (!init)
-	{
-            GameData.getFluidRegistry().registerAll(WATER, LAVA);
+        {
+            GameRegistry.findRegistry(Fluid.class).registerAll(WATER, LAVA);
             FluidDictionary.registerFluid(WATER, "water");
             FluidDictionary.registerFluid(LAVA, "lava");
             init = true;
