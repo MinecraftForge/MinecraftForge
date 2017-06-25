@@ -76,7 +76,7 @@ public class GuiEditArrayEntries extends GuiListExtended
                 try
                 {
                     listEntries.add(clazz.getConstructor(GuiEditArray.class, GuiEditArrayEntries.class, IConfigElement.class, Object.class)
-                            .newInstance(this.owningGui, this, configElement, value.toString()));
+                            .newInstance(this.owningGui, this, configElement, value));
                 }
                 catch (Throwable e)
                 {
