@@ -5,7 +5,7 @@
      }
  
 +    /* ================================== Forge Start =====================================*/
-+    public boolean isHostileTo(EntityLivingBase subject)
++    public boolean isHostileTo(@javax.annotation.Nullable EntityLivingBase subject)
 +    {
 +        return this.func_175531_cl()==99&& (subject instanceof EntityPlayer || subject instanceof EntityWolf);
 +    }

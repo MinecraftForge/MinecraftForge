@@ -5,7 +5,7 @@
      }
  
 +    /* ================================== Forge Start =====================================*/
-+    public boolean isHostileTo(net.minecraft.entity.EntityLivingBase subject)
++    public boolean isHostileTo(@javax.annotation.Nullable net.minecraft.entity.EntityLivingBase subject)
 +    {
 +        return subject instanceof net.minecraft.entity.player.EntityPlayer || subject instanceof net.minecraft.entity.passive.EntityVillager || subject instanceof EntityIronGolem;
 +    }

@@ -588,7 +588,7 @@
 +    public int getSpawnDimension() { return spawnDimension != null ? spawnDimension : 0; }
 +    public void setSpawnDimension(@Nullable Integer dimension) { this.spawnDimension = dimension; }
 +
-+    public boolean isHostileTo(EntityLivingBase subject)
++    public boolean isHostileTo(@javax.annotation.Nullable EntityLivingBase subject)
 +    {
 +        return subject instanceof net.minecraft.entity.monster.IMob;
 +    }
