@@ -51,7 +51,7 @@ public interface IStaticContainer
         public IPropertyWrapper getProperty(String name)
         {
             buildPropertyMap();
-            return null;
+            return properties.get(name);
         }
 
         @Nonnull
