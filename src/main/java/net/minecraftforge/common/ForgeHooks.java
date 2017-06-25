@@ -929,8 +929,6 @@ public class ForgeHooks
      * Default implementation of IRecipe.func_179532_b {getRemainingItems} because
      * this is just copy pasted over a lot of recipes.
      *
-     * Another use case for java 8 but sadly we can't use it!
-     *
      * @param inv Crafting inventory
      * @return Crafting inventory contents after the recipe.
      */

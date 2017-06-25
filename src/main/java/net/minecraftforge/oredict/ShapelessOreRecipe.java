@@ -133,13 +133,6 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
 
     @Override
     @Nonnull
-    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv)
-    {
-        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
-    }
-
-    @Override
-    @Nonnull
     public String getGroup()
     {
         return this.group == null ? "" : this.group.toString();

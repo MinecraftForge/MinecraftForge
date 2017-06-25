@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/IRecipe.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/IRecipe.java
-@@ -4,35 +4,30 @@
+@@ -4,35 +4,33 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.NonNullList;
  import net.minecraft.world.World;
@@ -19,7 +19,11 @@
  
      ItemStack func_77571_b();
  
-     NonNullList<ItemStack> func_179532_b(InventoryCrafting p_179532_1_);
+-    NonNullList<ItemStack> func_179532_b(InventoryCrafting p_179532_1_);
++    default NonNullList<ItemStack> func_179532_b(InventoryCrafting p_179532_1_)
++    {
++        return net.minecraftforge.common.ForgeHooks.defaultRecipeGetRemainingItems(p_179532_1_);
++    }
  
 -    @SideOnly(Side.CLIENT)
 -default NonNullList<Ingredient> func_192400_c()
