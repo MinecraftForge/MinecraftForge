@@ -334,96 +334,111 @@ public class CoreModManager {
 
         for (File coreMod : coreModList)
         {
-            FMLLog.log.debug("Examining for coremod candidacy {}", coreMod.getName());
-            JarFile jar = null;
-            Attributes mfAttributes;
-            String fmlCorePlugin;
-            try
-            {
-                jar = new JarFile(coreMod);
-                if (jar.getManifest() == null)
-                {
-                    // Not a coremod and no access transformer list
-                    continue;
-                }
-                ModAccessTransformer.addJar(jar);
-                mfAttributes = jar.getManifest().getMainAttributes();
-                String cascadedTweaker = mfAttributes.getValue("TweakClass");
-                if (cascadedTweaker != null)
-                {
-                    FMLLog.log.info("Loading tweaker {} from {}", cascadedTweaker, coreMod.getName());
-                    Integer sortOrder = Ints.tryParse(Strings.nullToEmpty(mfAttributes.getValue("TweakOrder")));
-                    sortOrder = (sortOrder == null ? Integer.valueOf(0) : sortOrder);
-                    handleCascadingTweak(coreMod, jar, cascadedTweaker, classLoader, sortOrder);
-                    ignoredModFiles.add(coreMod.getName());
-                    continue;
-                }
-                List<String> modTypes = mfAttributes.containsKey(MODTYPE) ? Arrays.asList(mfAttributes.getValue(MODTYPE).split(",")) : ImmutableList.of("FML");
-
-                if (!modTypes.contains("FML"))
-                {
-                    FMLLog.log.debug("Adding {} to the list of things to skip. It is not an FML mod, it has types {}", coreMod.getName(), modTypes);
-                    ignoredModFiles.add(coreMod.getName());
-                    continue;
-                }
-                String modSide = mfAttributes.containsKey(MODSIDE) ? mfAttributes.getValue(MODSIDE) : "BOTH";
-                if (! ("BOTH".equals(modSide) || FMLLaunchHandler.side.name().equals(modSide)))
-                {
-                    FMLLog.log.debug("Mod {} has ModSide meta-inf value {}, and we're {} It will be ignored", coreMod.getName(), modSide, FMLLaunchHandler.side.name());
-                    ignoredModFiles.add(coreMod.getName());
-                    continue;
-                }
-                ModListHelper.additionalMods.putAll(extractContainedDepJars(jar, coreMods, versionedModDir));
-                fmlCorePlugin = mfAttributes.getValue("FMLCorePlugin");
-                if (fmlCorePlugin == null)
-                {
-                    // Not a coremod
-                    FMLLog.log.debug("Not found coremod data in {}", coreMod.getName());
-                    continue;
-                }
-            }
-            catch (IOException ioe)
-            {
-                FMLLog.log.error("Unable to read the jar file {} - ignoring", coreMod.getName(), ioe);
-                continue;
-            }
-            finally
-            {
-                if (jar != null)
-                {
-                    try
-                    {
-                        jar.close();
-                    }
-                    catch (IOException e)
-                    {
-                        // Noise
-                    }
-                }
-            }
-            // Support things that are mod jars, but not FML mod jars
-            try
-            {
-                classLoader.addURL(coreMod.toURI().toURL());
-                if (!mfAttributes.containsKey(COREMODCONTAINSFMLMOD))
-                {
-                    FMLLog.log.trace("Adding {} to the list of known coremods, it will not be examined again", coreMod.getName());
-                    ignoredModFiles.add(coreMod.getName());
-                }
-                else
-                {
-                    FMLLog.log.trace("Found FMLCorePluginContainsFMLMod marker in {}, it will be examined later for regular @Mod instances",
-                            coreMod.getName());
-                    candidateModFiles.add(coreMod.getName());
-                }
-            }
-            catch (MalformedURLException e)
-            {
-                FMLLog.log.error("Unable to convert file into a URL. weird", e);
-                continue;
-            }
-            loadCoreMod(classLoader, fmlCorePlugin, coreMod);
+            discoverCoreMod(coreMod, coreMods, versionedModDir, classLoader, false);
         }
+    }
+
+    private static void discoverCoreMod(File coreMod, File coreMods, File versionedModDir, LaunchClassLoader classLoader, boolean recursing)
+    {
+        FMLLog.log.debug("Examining for coremod candidacy {}", coreMod.getName());
+        JarFile jar = null;
+        Attributes mfAttributes;
+        String fmlCorePlugin;
+        try
+        {
+            jar = new JarFile(coreMod);
+            if (jar.getManifest() == null)
+            {
+                // Not a coremod and no access transformer list
+                return;
+            }
+            ModAccessTransformer.addJar(jar);
+            mfAttributes = jar.getManifest().getMainAttributes();
+            String cascadedTweaker = mfAttributes.getValue("TweakClass");
+            if (cascadedTweaker != null)
+            {
+                FMLLog.log.info("Loading tweaker {} from {}", cascadedTweaker, coreMod.getName());
+                Integer sortOrder = Ints.tryParse(Strings.nullToEmpty(mfAttributes.getValue("TweakOrder")));
+                sortOrder = (sortOrder == null ? Integer.valueOf(0) : sortOrder);
+                handleCascadingTweak(coreMod, jar, cascadedTweaker, classLoader, sortOrder);
+                ignoredModFiles.add(coreMod.getName());
+                return;
+            }
+            List<String> modTypes = mfAttributes.containsKey(MODTYPE) ? Arrays.asList(mfAttributes.getValue(MODTYPE).split(",")) : ImmutableList.of("FML");
+
+            if (!modTypes.contains("FML"))
+            {
+                FMLLog.log.debug("Adding {} to the list of things to skip. It is not an FML mod, it has types {}", coreMod.getName(), modTypes);
+                ignoredModFiles.add(coreMod.getName());
+                return;
+            }
+            String modSide = mfAttributes.containsKey(MODSIDE) ? mfAttributes.getValue(MODSIDE) : "BOTH";
+            if (! ("BOTH".equals(modSide) || FMLLaunchHandler.side.name().equals(modSide)))
+            {
+                FMLLog.log.debug("Mod {} has ModSide meta-inf value {}, and we're {} It will be ignored", coreMod.getName(), modSide, FMLLaunchHandler.side.name());
+                ignoredModFiles.add(coreMod.getName());
+                return;
+            }
+            // Only allow a single level of recursion
+            if (!recursing)
+            {
+                Map<String, File> extractedDependencies = extractContainedDepJars(jar, coreMods, versionedModDir);
+                // Extracted files might contain a coremod, inspect them
+                for (File dependency : extractedDependencies.values())
+                {
+                    discoverCoreMod(dependency, coreMods, versionedModDir, classLoader, true);
+                }
+                ModListHelper.additionalMods.putAll(extractedDependencies);
+            }
+            fmlCorePlugin = mfAttributes.getValue("FMLCorePlugin");
+            if (fmlCorePlugin == null)
+            {
+                // Not a coremod
+                FMLLog.log.debug("Not found coremod data in {}", coreMod.getName());
+                return;
+            }
+        }
+        catch (IOException ioe)
+        {
+            FMLLog.log.error("Unable to read the jar file {} - ignoring", coreMod.getName(), ioe);
+            return;
+        }
+        finally
+        {
+            if (jar != null)
+            {
+                try
+                {
+                    jar.close();
+                }
+                catch (IOException e)
+                {
+                    // Noise
+                }
+            }
+        }
+        // Support things that are mod jars, but not FML mod jars
+        try
+        {
+            classLoader.addURL(coreMod.toURI().toURL());
+            if (!mfAttributes.containsKey(COREMODCONTAINSFMLMOD))
+            {
+                FMLLog.log.trace("Adding {} to the list of known coremods, it will not be examined again", coreMod.getName());
+                ignoredModFiles.add(coreMod.getName());
+            }
+            else
+            {
+                FMLLog.log.trace("Found FMLCorePluginContainsFMLMod marker in {}, it will be examined later for regular @Mod instances",
+                                 coreMod.getName());
+                candidateModFiles.add(coreMod.getName());
+            }
+        }
+        catch (MalformedURLException e)
+        {
+            FMLLog.log.error("Unable to convert file into a URL. weird", e);
+            return;
+        }
+        loadCoreMod(classLoader, fmlCorePlugin, coreMod);
     }
 
     private static Map<String,File> extractContainedDepJars(JarFile jar, File baseModsDir, File versionedModsDir) throws IOException
