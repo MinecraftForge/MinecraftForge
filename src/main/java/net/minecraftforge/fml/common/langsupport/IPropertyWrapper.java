@@ -54,6 +54,10 @@ public interface IPropertyWrapper
                 field.setAccessible(true);
                 removedAccessRestrictions = true;
             }
+            if (ignoreFinal)
+            {
+                removeFinal();
+            }
             if (reflectionFactory == null)
             {
                 Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory");
