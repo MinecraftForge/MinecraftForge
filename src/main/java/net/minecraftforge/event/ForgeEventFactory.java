@@ -169,18 +169,18 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
-    public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
+    public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner)
     {
         if (entity == null)
             return Result.DEFAULT;
-        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z);
+        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z, isSpawner);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
     }
 
     public static boolean canEntitySpawnSpawner(EntityLiving entity, World world, float x, float y, float z)
     {
-        Result result = canEntitySpawn(entity, world, x, y, z);
+        Result result = canEntitySpawn(entity, world, x, y, z, true);
         if (result == Result.DEFAULT)
         {
             return entity.getCanSpawnHere() && entity.isNotColliding(); // vanilla logic

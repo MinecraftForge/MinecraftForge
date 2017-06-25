@@ -19,8 +19,6 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.world.WorldEntitySpawner;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -72,10 +70,25 @@ public class LivingSpawnEvent extends LivingEvent
     @HasResult
     public static class CheckSpawn extends LivingSpawnEvent
     {
-        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z)
+        private final boolean isSpawner;
+
+        /**
+         * CheckSpawn is fired when an Entity is about to be spawned.
+         * @param entity the spawning entity
+         * @param world the world to spawn in
+         * @param x x coordinate
+         * @param y y coordinate
+         * @param z z coordinate
+         * @param isSpawner true if this spawn is done by a MobSpawner,
+         *                  false if it this spawn is coming from a WorldSpawner
+         */
+        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner)
         {
             super(entity, world, x, y, z);
+            this.isSpawner = isSpawner;
         }
+
+        public boolean isSpawner() { return isSpawner; }
     }
 
     /**
