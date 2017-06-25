@@ -27,7 +27,15 @@
      }
  
      public int func_149679_a(int p_149679_1_, Random p_149679_2_)
-@@ -181,4 +181,19 @@
+@@ -78,7 +78,6 @@
+         return new ItemStack(this, 1, p_185473_3_.func_177230_c().func_176201_c(p_185473_3_));
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         for (int i = 1; i < 3; ++i)
+@@ -181,4 +180,19 @@
              }
          }
      }
