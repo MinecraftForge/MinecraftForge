@@ -169,6 +169,12 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
+    @Deprecated
+    public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
+    {
+        return canEntitySpawn(entity, world, x, y, z, true);
+    }
+
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner)
     {
         if (entity == null)
