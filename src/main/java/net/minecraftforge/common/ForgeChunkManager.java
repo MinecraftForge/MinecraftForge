@@ -17,11 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/**
- * This software is provided under the terms of the Minecraft Forge Public
- * License v1.0.
- */
-
 package net.minecraftforge.common;
 
 import java.io.File;
@@ -31,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -58,7 +54,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 import org.apache.logging.log4j.Level;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
@@ -134,14 +130,7 @@ public class ForgeChunkManager
         final ImmutableSetMultimap<ChunkPos, Ticket> persistentChunksFor = getPersistentChunksFor(world);
         final ImmutableSet.Builder<Chunk> builder = ImmutableSet.builder();
         world.profiler.startSection("forcedChunkLoading");
-        builder.addAll(Iterators.transform(persistentChunksFor.keys().iterator(), new Function<ChunkPos, Chunk>() {
-            @Nullable
-            @Override
-            public Chunk apply(@Nullable ChunkPos input)
-            {
-                return input == null ? null : world.getChunkFromChunkCoords(input.x, input.z);
-            }
-        }));
+        builder.addAll(persistentChunksFor.keys().stream().filter(Objects::nonNull).map(input -> world.getChunkFromChunkCoords(input.x, input.z)).iterator());
         world.profiler.endStartSection("regularChunkLoading");
         builder.addAll(chunkIterator);
         world.profiler.endSection();

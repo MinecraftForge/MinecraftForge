@@ -23,7 +23,7 @@ import java.util.Collection;
 
 import net.minecraft.block.state.IBlockState;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableMap;
 
 public interface IExtendedBlockState extends IBlockState

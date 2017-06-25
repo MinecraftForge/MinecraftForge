@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.client;
 
-import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;

@@ -23,15 +23,21 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.handshake.FMLHandshakeMessage.ServerHello;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
 
 /**
  * Packet handshake sequence manager- client side (responding to remote server)
@@ -114,34 +120,33 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
             FMLHandshakeMessage.RegistryData pkt = (FMLHandshakeMessage.RegistryData)msg;
-            PersistentRegistryManager.GameDataSnapshot snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
+            Map<ResourceLocation, ForgeRegistry.Snapshot> snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
             if (snap == null)
             {
-                snap = new PersistentRegistryManager.GameDataSnapshot();
+                snap = Maps.newHashMap();
                 ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(snap);
             }
 
-            PersistentRegistryManager.GameDataSnapshot.Entry entry = new PersistentRegistryManager.GameDataSnapshot.Entry();
+            ForgeRegistry.Snapshot entry = new ForgeRegistry.Snapshot();
             entry.ids.putAll(pkt.getIdMap());
-            entry.substitutions.addAll(pkt.getSubstitutions());
             entry.dummied.addAll(pkt.getDummied());
-            snap.entries.put(pkt.getName(), entry);
+            snap.put(pkt.getName(), entry);
 
             if (pkt.hasMore())
             {
-                FMLLog.log.debug("Received Mod Registry mapping for {}: {} IDs {} subs {} dummied", pkt.getName(), entry.ids.size(), entry.substitutions.size(), entry.dummied.size());
+                FMLLog.log.debug("Received Mod Registry mapping for {}: {} IDs {} overrides {} dummied", pkt.getName(), entry.ids.size(), entry.overrides.size(), entry.dummied.size());
                 return WAITINGSERVERCOMPLETE;
             }
 
-            ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).remove();
+            ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(null);
 
-            List<String> locallyMissing = PersistentRegistryManager.injectSnapshot(snap, false, false);
+            Multimap<ResourceLocation, ResourceLocation> locallyMissing = GameData.injectSnapshot(snap, false, false);
             if (!locallyMissing.isEmpty())
             {
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                 dispatcher.rejectHandshake("Fatally missing blocks and items");
                 FMLLog.log.fatal("Failed to connect to server: there are {} missing blocks and items", locallyMissing.size());
-                FMLLog.log.debug("Missing list: {}", locallyMissing);
+                locallyMissing.asMap().forEach((key, value) ->  FMLLog.log.debug("Missing {} Entries: {}", key, value));
                 return ERROR;
             }
             ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
@@ -177,7 +182,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         {
             if (msg instanceof FMLHandshakeMessage.HandshakeReset)
             {
-                PersistentRegistryManager.revertToFrozen();
+                GameData.revertToFrozen();
                 return HELLO;
             }
             return this;

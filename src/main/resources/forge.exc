@@ -25,7 +25,7 @@ net/minecraft/world/chunk/storage/AnvilChunkLoader.loadEntities(Lnet/minecraft/w
 net/minecraft/world/gen/ChunkProviderServer.loadChunk(IILjava/lang/Runnable;)Lnet/minecraft/world/chunk/Chunk;=|p_186028_1_,p_186028_2_,runnable
 
 net/minecraft/block/BlockFire.tryCatchFire(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ILjava/util/Random;ILnet/minecraft/util/EnumFacing;)V=|p_176536_1_,p_176536_2_,p_176536_3_,p_176536_4_,p_176536_5_,face
-net/minecraft/block/BlockSkull.getDrops(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;I)Ljava/util/List;=|p_180663_1_,p_180663_2_,p_180663_3_,fortune
+net/minecraft/block/BlockSkull.getDrops(Lnet/minecraft/util/NonNullList;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;I)V=|drops,p_180663_1_,p_180663_2_,p_180663_3_,fortune
 net/minecraft/item/ItemDye.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/EntityPlayer;)Z=|p_179234_0_,p_179234_1_,p_179234_2_,player
 net/minecraft/item/ItemDye.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/EnumHand;)Z=|p_179234_0_,p_179234_1_,p_179234_2_,player,hand
 net/minecraft/server/management/ItemInWorldManager.removeBlock(Lnet/minecraft/util/math/BlockPos;Z)Z=|p_180235_1_,canHarvest

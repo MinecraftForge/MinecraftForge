@@ -30,7 +30,7 @@
          this.func_190733_a(p_70037_1_.func_74762_e("Profession"));
 +        if (p_70037_1_.func_74764_b("ProfessionName"))
 +        {
-+            net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p = net.minecraftforge.fml.common.registry.VillagerRegistry.instance().getRegistry().getValue(new net.minecraft.util.ResourceLocation(p_70037_1_.func_74779_i("ProfessionName")));
++            net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p = net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new net.minecraft.util.ResourceLocation(p_70037_1_.func_74779_i("ProfessionName")));
 +            if (p == null) p = net.minecraftforge.fml.common.registry.VillagerRegistry.FARMER;
 +            this.setForgeProfession(p);
 +        }

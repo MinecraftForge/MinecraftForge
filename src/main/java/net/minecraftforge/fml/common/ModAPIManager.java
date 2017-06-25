@@ -20,16 +20,17 @@
 package net.minecraftforge.fml.common;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.minecraftforge.fml.common.asm.transformers.ModAPITransformer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
-import net.minecraftforge.fml.common.functions.ModIdFunction;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionParser;
@@ -195,7 +196,7 @@ public class ModAPIManager {
                 Set<ModCandidate> candidates = dataTable.getCandidatesFor(pkg);
                 for (ModCandidate candidate : candidates)
                 {
-                    List<String> candidateIds = Lists.transform(candidate.getContainedMods(), new ModIdFunction());
+                    List<String> candidateIds = candidate.getContainedMods().stream().map(ModContainer::getModId).collect(Collectors.toCollection(ArrayList::new));
                     if (!candidateIds.contains(container.ownerMod.getLabel()) && !container.currentReferents.containsAll(candidateIds))
                     {
                         FMLLog.log.info("Found mod(s) {} containing declared API package {} (owned by {}) without associated API reference",candidateIds, pkg, container.ownerMod);

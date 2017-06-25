@@ -771,4 +771,7 @@ public class FMLCommonHandler
     }
 
     public boolean isDisplayVSyncForced() { return sidedDelegate.isDisplayVSyncForced(); }
+    public void resetClientRecipeBook() {
+        this.sidedDelegate.resetClientRecipeBook();
+    }
 }

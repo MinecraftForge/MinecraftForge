@@ -31,12 +31,10 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 
-import javax.annotation.Nonnull;
-
 public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T>
 {
     @Override
-    public final void render(@Nonnull T te, double x, double y, double z, float partialTicks, int destroyStage, float partial)
+    public final void render(T te, double x, double y, double z, float partialTicks, int destroyStage, float partial)
     {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -66,5 +64,5 @@ public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRe
     }
 
     @Override
-    public abstract void renderTileEntityFast(@Nonnull T te, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer);
+    public abstract void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer);
 }

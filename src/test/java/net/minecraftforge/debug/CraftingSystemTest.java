@@ -25,7 +25,7 @@ public class CraftingSystemTest
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
-        FMLLog.info("Registering Test Recipes:");
+        FMLLog.log.info("Registering Test Recipes:");
     }
 
     public static class IngredientFactory implements IIngredientFactory

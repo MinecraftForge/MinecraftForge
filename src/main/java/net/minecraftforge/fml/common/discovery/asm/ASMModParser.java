@@ -131,11 +131,7 @@ public class ASMModParser
 
     public void validate()
     {
-//        if (classVersion > 50.0)
-//        {
-//
-//            throw new LoaderException(new RuntimeException("Mod compiled for Java 7 detected"));
-//        }
+
     }
 
     public boolean isBaseMod(List<String> rememberedTypes)

@@ -29,7 +29,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -65,7 +65,7 @@ public class ExtendedBlockState extends BlockStateContainer
         ImmutableMap.Builder<IUnlistedProperty<?>, Optional<?>> builder = ImmutableMap.builder();
         for(IUnlistedProperty<?> p : unlistedProperties)
         {
-            builder.put(p, Optional.absent());
+            builder.put(p, Optional.empty());
         }
         return builder.build();
     }
@@ -111,7 +111,7 @@ public class ExtendedBlockState extends BlockStateContainer
                     }
                     Map<IProperty<?>, Comparable<?>> map = Maps.newHashMap(getProperties());
                     map.put(property, value);
-                    if (Iterables.all(unlistedProperties.values(), Predicates.<Optional<?>>equalTo(Optional.absent())))
+                    if (Iterables.all(unlistedProperties.values(), Predicates.<Optional<?>>equalTo(Optional.empty())))
                     { // no dynamic properties present, looking up in the normal table
                         return normalMap.get(map);
                     }
@@ -134,8 +134,8 @@ public class ExtendedBlockState extends BlockStateContainer
                 throw new IllegalArgumentException("Cannot set unlisted property " + property + " to " + value + " on block " + Block.REGISTRY.getNameForObject(getBlock()) + ", it is not an allowed value");
             }
             Map<IUnlistedProperty<?>, Optional<?>> newMap = new HashMap<IUnlistedProperty<?>, Optional<?>>(unlistedProperties);
-            newMap.put(property, Optional.fromNullable(value));
-            if(Iterables.all(newMap.values(), Predicates.<Optional<?>>equalTo(Optional.absent())))
+            newMap.put(property, Optional.ofNullable(value));
+            if(Iterables.all(newMap.values(), Predicates.<Optional<?>>equalTo(Optional.empty())))
             { // no dynamic properties, lookup normal state
                 return (IExtendedBlockState) normalMap.get(getProperties());
             }
@@ -155,7 +155,7 @@ public class ExtendedBlockState extends BlockStateContainer
             {
                 throw new IllegalArgumentException("Cannot get unlisted property " + property + " as it does not exist in " + getBlock().getBlockState());
             }
-            return property.getType().cast(this.unlistedProperties.get(property).orNull());
+            return property.getType().cast(this.unlistedProperties.get(property).orElse(null));
         }
 
         @Override

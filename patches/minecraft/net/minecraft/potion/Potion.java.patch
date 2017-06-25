@@ -5,10 +5,10 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class Potion
-+public class Potion extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Potion>
++public class Potion extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Potion>
  {
 -    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = new RegistryNamespaced<ResourceLocation, Potion>();
-+    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = net.minecraftforge.fml.common.registry.GameData.getPotionRegistry();
++    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = net.minecraftforge.registries.GameData.getWrapper(Potion.class);
      private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.<IAttribute, AttributeModifier>newHashMap();
      private final boolean field_76418_K;
      private final int field_76414_N;

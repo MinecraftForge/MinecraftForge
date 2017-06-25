@@ -45,13 +45,8 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
-import net.minecraftforge.fml.common.functions.ArtifactVersionNameFunction;
-import net.minecraftforge.fml.common.functions.ModIdFunction;
 import net.minecraftforge.fml.common.registry.*;
-import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 import net.minecraftforge.fml.common.toposort.ModSorter;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.common.toposort.TopologicalSort;
@@ -60,12 +55,14 @@ import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.relauncher.ModListHelper;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.ObjectHolderRegistry;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
@@ -175,7 +172,6 @@ public class Loader
     private File forcedModFile;
     private ModDiscoverer discoverer;
     private ProgressBar progressBar;
-    public final boolean java8;
 
     public static Loader instance()
     {
@@ -202,14 +198,6 @@ public class Loader
 
     private Loader()
     {
-        String[] ver = System.getProperty("java.version").split("\\.");
-        int major = Integer.parseInt(ver[1]);
-        java8 = major > 7;
-        if (!java8)
-        {
-            FMLLog.log.fatal("The game is not running with Java 8. Forge recommends Java 8 for maximum compatibility with mods");
-        }
-
         modClassLoader = new ModClassLoader(getClass().getClassLoader());
         if (mccversion !=null && !mccversion.equals(MC_VERSION))
         {
@@ -258,7 +246,7 @@ public class Loader
                     wrongMinecraftExceptions.add(ret);
                     continue;
                 }
-                Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new ArtifactVersionNameFunction());
+                Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), ArtifactVersion::getLabel);
                 Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
 
                 Set<String> missingMods = Sets.difference(names.keySet(), modVersions.keySet());
@@ -414,7 +402,7 @@ public class Loader
 
         mods.addAll(discoverer.identifyMods());
         identifyDuplicates(mods);
-        namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
+        namedMods = Maps.uniqueIndex(mods, ModContainer::getModId);
         FMLLog.log.info("Forge Mod Loader has identified {} mod{} to load", mods.size(), mods.size() != 1 ? "s" : "");
         return discoverer;
     }
@@ -531,7 +519,7 @@ public class Loader
     {
         modController = new LoadController(this);
         mods = Lists.newArrayList(containers);
-        namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
+        namedMods = Maps.uniqueIndex(mods, ModContainer::getModId);
         modController.transition(LoaderState.LOADING, false);
         modController.transition(LoaderState.CONSTRUCTING, false);
         ObjectHolderRegistry.INSTANCE.findObjectHolders(new ASMDataTable());
@@ -556,7 +544,6 @@ public class Loader
         ModAPIManager.INSTANCE.manageAPI(modClassLoader, discoverer);
         disableRequestedMods();
         modController.distributeStateMessage(FMLLoadEvent.class);
-        checkJavaCompatibility();
         sortModList();
         ModAPIManager.INSTANCE.cleanupAPIContainers(modController.getActiveModList());
         ModAPIManager.INSTANCE.cleanupAPIContainers(mods);
@@ -614,24 +601,6 @@ public class Loader
         modController.transition(LoaderState.PREINITIALIZATION, false);
     }
 
-
-    private void checkJavaCompatibility()
-    {
-        if (java8) return;
-        List<ModContainer> j8mods = Lists.newArrayList();
-        for (ModContainer mc : getActiveModList())
-        {
-            if (mc.getClassVersion() >= 52)
-            {
-                j8mods.add(mc);
-            }
-        }
-        if (!j8mods.isEmpty())
-        {
-            throw new Java8VersionException(j8mods);
-        }
-    }
-
     public void preinitializeMods()
     {
         if (!modController.isInState(LoaderState.PREINITIALIZATION))
@@ -639,13 +608,13 @@ public class Loader
             FMLLog.log.warn("There were errors previously. Not beginning mod initialization phase");
             return;
         }
-        PersistentRegistryManager.fireCreateRegistryEvents();
+        GameData.fireCreateRegistryEvents();
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
-        PersistentRegistryManager.fireRegistryEvents();
-        FMLCommonHandler.instance().fireSidedRegistryEvents();
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
+        GameData.fireRegistryEvents();
+        FMLCommonHandler.instance().fireSidedRegistryEvents();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         ItemStackHolderInjector.INSTANCE.inject();
         modController.transition(LoaderState.INITIALIZATION, false);
@@ -681,14 +650,7 @@ public class Loader
         modStates.putAll(sysPropertyStateList);
         FMLLog.log.debug("After merging, found state information for {} mods", modStates.size());
 
-        Map<String, Boolean> isEnabled = Maps.transformValues(modStates, new Function<String, Boolean>()
-        {
-            @Override
-            public Boolean apply(String input)
-            {
-                return Boolean.parseBoolean(input);
-            }
-        });
+        Map<String, Boolean> isEnabled = Maps.transformValues(modStates, Boolean::parseBoolean);
 
         for (Map.Entry<String, Boolean> entry : isEnabled.entrySet())
         {
@@ -825,7 +787,7 @@ public class Loader
     public void initializeMods()
     {
         progressBar.step("Initializing mods Phase 2");
-        CraftingHelper.loadRecipes();
+        CraftingHelper.loadRecipes(false);
         // Mod controller should be in the initialization state here
         modController.distributeStateMessage(LoaderState.INITIALIZATION);
         progressBar.step("Initializing mods Phase 3");
@@ -836,7 +798,7 @@ public class Loader
         progressBar.step("Finishing up");
         modController.transition(LoaderState.AVAILABLE, false);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
-        PersistentRegistryManager.freezeData();
+        GameData.freezeData();
         FMLLog.log.info("Forge Mod Loader has successfully loaded {} mod{}", mods.size(), mods.size() == 1 ? "" : "s");
         progressBar.step("Completing Minecraft initialization");
     }
@@ -938,7 +900,7 @@ public class Loader
 
     public void serverStopped()
     {
-        PersistentRegistryManager.revertToFrozen();
+        GameData.revertToFrozen();
         modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
         modController.transition(LoaderState.SERVER_STOPPED, true);
         modController.transition(LoaderState.AVAILABLE, true);
@@ -1004,85 +966,11 @@ public class Loader
         return true;
     }
 
-    /**
-     * Fire a FMLMissingMappingsEvent to let mods determine how blocks/items defined in the world
-     * save, but missing from the runtime, are to be handled.
-     *
-     * @param missingBlocks Map containing the missing block names with their associated id. Remapped blocks will be removed from it.
-     * @param missingItems Map containing the missing block names with their associated id. Remapped items will be removed from it.
-     * @param isLocalWorld Whether this is executing for a world load (local/server) or a client.
-     * @param remapBlocks Returns a map containing the remapped block names and an array containing the original and new id for the block.
-     * @param remapItems Returns a map containing the remapped item names and an array containing the original and new id for the item.
-     * @return List with the names of the failed remappings.
-     */
-    public List<String> fireMissingMappingEvent(Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
-    {
-        if (missingBlocks.isEmpty() && missingItems.isEmpty()) // nothing to do
-        {
-            return ImmutableList.of();
-        }
-
-        FMLLog.log.debug("There are {} mappings missing - attempting a mod remap", missingBlocks.size() + missingItems.size());
-        ArrayListMultimap<String, MissingMapping> missingMappings = ArrayListMultimap.create();
-
-        for (Map.Entry<ResourceLocation, Integer> mapping : missingBlocks.entrySet())
-        {
-            MissingMapping m = new MissingMapping(GameRegistry.Type.BLOCK, mapping.getKey(), mapping.getValue());
-            missingMappings.put(m.resourceLocation.getResourceDomain(), m);
-        }
-        for (Map.Entry<ResourceLocation, Integer> mapping : missingItems.entrySet())
-        {
-            MissingMapping m = new MissingMapping(GameRegistry.Type.ITEM, mapping.getKey(), mapping.getValue());
-            missingMappings.put(m.resourceLocation.getResourceDomain(), m);
-        }
-
-        FMLMissingMappingsEvent missingEvent = new FMLMissingMappingsEvent(missingMappings);
-        modController.propogateStateMessage(missingEvent);
-
-        if (isLocalWorld) // local world, warn about entries still being set to the default action
-        {
-            boolean didWarn = false;
-
-            for (MissingMapping mapping : missingMappings.values())
-            {
-                if (mapping.getAction() == FMLMissingMappingsEvent.Action.DEFAULT)
-                {
-                    if (!didWarn)
-                    {
-                        FMLLog.log.fatal("There are unidentified mappings in this world - we are going to attempt to process anyway");
-                        didWarn = true;
-                    }
-
-                    FMLLog.log.fatal("Unidentified {}: {}, id {}", mapping.type == Type.BLOCK ? "block" : "item", mapping.name, mapping.id);
-                }
-            }
-        }
-        else // remote world, fail on entries with the default action
-        {
-            List<String> missedMapping = new ArrayList<String>();
-
-            for (MissingMapping mapping : missingMappings.values())
-            {
-                if (mapping.getAction() == FMLMissingMappingsEvent.Action.DEFAULT)
-                {
-                    missedMapping.add(mapping.name);
-                }
-            }
-
-            if (!missedMapping.isEmpty())
-            {
-                return ImmutableList.copyOf(missedMapping);
-            }
-        }
-
-        return PersistentRegistryManager.processIdRematches(missingMappings.values(), isLocalWorld, missingBlocks, missingItems, remapBlocks, remapItems);
-    }
-
-    public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, boolean isFreezing)
+    public void fireRemapEvent(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, boolean isFreezing)
     {
         if (modController!=null)
         {
-            modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
+            modController.propogateStateMessage(new FMLModIdMappingEvent(remaps, isFreezing));
         }
     }
 

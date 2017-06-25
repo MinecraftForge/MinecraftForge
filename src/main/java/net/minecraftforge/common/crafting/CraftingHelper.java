@@ -67,15 +67,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.RegistryManager;
 
 public class CraftingHelper {
 
@@ -525,7 +528,7 @@ public class CraftingHelper {
 
         registerI("minecraft:item", (context, json) -> Ingredient.fromStacks(CraftingHelper.getItemStackBasic(json, context)));
         registerI("minecraft:empty", (context, json) -> Ingredient.EMPTY);
-        registerI("minecraft:item_nbt", (context, json) -> Ingredient.fromStacks(CraftingHelper.getItemStack(json, context)));
+        registerI("minecraft:item_nbt", (context, json) -> new IngredientNBT(CraftingHelper.getItemStack(json, context)));
         registerI("forge:ore_dict", (context, json) -> new OreIngredient(JsonUtils.getString(json, "ore")));
     }
 
@@ -591,26 +594,25 @@ public class CraftingHelper {
         }
     }
 
-    public static void loadRecipes()
+    public static void loadRecipes(boolean revertFrozen)
     {
         //TODO: If this errors in ServerInit it freezes the client at loading world, find a way to pop that up?
         //TODO: Figure out how to remove recipes, and override them. This relies on cpw to help.
         //For now this is only done one after mod init, I want to move this to ServerInit and re-do it many times.
         init();
+        ForgeRegistry<IRecipe> reg = (ForgeRegistry<IRecipe>)ForgeRegistries.RECIPES;
+        //reg.unfreeze();
         if (DEBUG_LOAD_MINECRAFT)
-        {
-            Iterator<IRecipe> itr = GameData.getRecipeRegistry().iterator();
-            while(itr.hasNext())
-            {
-                itr.next();
-                itr.remove();
-            }
-        }
+            reg.clear();
+        else if (revertFrozen)
+            GameData.revert(RegistryManager.FROZEN, GameData.RECIPES, false);
         //ModContainer old = Loader.instance().activeModContainer();
         Loader.instance().setActiveModContainer(null);
         Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
         Loader.instance().getActiveModList().forEach((mod) -> loadRecipes(mod));
         Loader.instance().setActiveModContainer(null);
+        //reg.freeze();
+        FMLCommonHandler.instance().resetClientRecipeBook();
     }
 
     private static void loadFactories(ModContainer mod)
@@ -633,7 +635,7 @@ public class CraftingHelper {
             if (fPath != null && Files.exists(fPath))
             {
                 reader = Files.newBufferedReader(fPath);
-                JsonObject json = JsonUtils.func_193839_a(GSON, reader, JsonObject.class);
+                JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
                 loadFactories(json, ctx);
             }
         }
@@ -666,7 +668,7 @@ public class CraftingHelper {
                 }
                 catch (URISyntaxException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Error finding Minecraft jar: " + e.toString());
+                    FMLLog.log.error("Error finding Minecraft jar: ", e);
                     return false;
                 }
             }
@@ -681,7 +683,7 @@ public class CraftingHelper {
                 }
                 catch (IOException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Error loading FileSystem from jar: " + e.toString());
+                    FMLLog.log.error("Error loading FileSystem from jar: ", e);
                     return false;
                 }
             }
@@ -699,12 +701,12 @@ public class CraftingHelper {
                 try
                 {
                     reader = Files.newBufferedReader(fPath);
-                    JsonObject[] json = JsonUtils.func_193839_a(GSON, reader, JsonObject[].class);
+                    JsonObject[] json = JsonUtils.fromJson(GSON, reader, JsonObject[].class);
                     ctx.loadConstants(json);
                 }
                 catch (IOException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Error loading _constants.json: " + e.toString());
+                    FMLLog.log.error("Error loading _constants.json: ", e);
                     return false;
                 }
             }
@@ -716,7 +718,7 @@ public class CraftingHelper {
             }
             catch (IOException e)
             {
-                FMLLog.log(Level.ERROR, e, "Error iterating recipes for: " + ctx.getModId());
+                FMLLog.log.error("Error iterating recipes for: {}", ctx.getModId(), e);
                 return false;
             }
 
@@ -734,20 +736,20 @@ public class CraftingHelper {
                 try
                 {
                     reader = Files.newBufferedReader(f);
-                    JsonObject json = JsonUtils.func_193839_a(GSON, reader, JsonObject.class);
-                    if (json.has("conditions") && !CraftingHelper.processConditions(json.getAsJsonArray("conditions"), ctx))
+                    JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
+                    if (json.has("conditions") && !CraftingHelper.processConditions(JsonUtils.getJsonArray(json, "conditions"), ctx))
                         continue;
                     IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
                     ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
                 }
                 catch (JsonParseException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Parsing error loading recipe " + key);
+                    FMLLog.log.error("Parsing error loading recipe {}", key, e);
                     return false;
                 }
                 catch (IOException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Couldn't read recipe " + key + " from " + f);
+                    FMLLog.log.error("Couldn't read recipe {} from {}", key, f, e);
                     return false;
                 }
            }
