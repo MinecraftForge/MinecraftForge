@@ -13,7 +13,7 @@
      private Block field_179550_j;
      private boolean field_179551_k;
  
-+    private net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate;
++    private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +    private NBTTagCompound capNBT;
 +

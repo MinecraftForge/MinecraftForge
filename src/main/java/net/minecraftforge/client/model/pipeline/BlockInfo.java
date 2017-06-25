@@ -63,15 +63,9 @@ public class BlockInfo
     public void updateShift()
     {
         Vec3d offset = state.getOffset(world, blockPos);
-        shx = (float) offset.xCoord;
-        shy = (float) offset.yCoord;
-        shz = (float) offset.zCoord;
-    }
-
-    @Deprecated
-    public void updateShift(boolean ignoreY)
-    {
-        updateShift();
+        shx = (float) offset.x;
+        shy = (float) offset.y;
+        shz = (float) offset.z;
     }
 
     public void setWorld(IBlockAccess world)

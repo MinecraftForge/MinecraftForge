@@ -15,7 +15,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.GameData;
 
 import java.util.Random;
 
@@ -27,10 +28,10 @@ public class PotionRegistryDebug
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        Potion forge = new PotionForge(new ResourceLocation(ForgeVersion.MOD_ID, "forge"), false, 0xff00ff); // test automatic id distribution
-        Potion forgy = new PotionForge(new ResourceLocation(ForgeVersion.MOD_ID, "forgy"), true, 0x00ff00); // test that ids above 127 work
-        GameData.getPotionRegistry().register(-1, new ResourceLocation(ForgeVersion.MOD_ID, "forge"), forge); //TODo: Generic this out in GameRegistry, 'RegistryEntry' base type?
-        GameData.getPotionRegistry().register(200, new ResourceLocation(ForgeVersion.MOD_ID, "forgy"), forgy);
+        Potion forge = new PotionForge(new ResourceLocation(ForgeVersion.MOD_ID, "forge"), false, 0xff00ff).setRegistryName(new ResourceLocation(MODID, "forge")); // test automatic id distribution
+        Potion forgy = new PotionForge(new ResourceLocation(ForgeVersion.MOD_ID, "forgy"), true, 0x00ff00).setRegistryName(new ResourceLocation(MODID, "forgy")); // test that ids above 127 work
+        ForgeRegistries.POTIONS.register(forge);
+        //((ForgeRegistry)ForgeRegistries.POTIONS).register(200, forgy.getRegistryName(), forgy);
 
         Random rand = new Random();
         TIntSet taken = new TIntHashSet(100);

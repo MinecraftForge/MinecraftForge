@@ -22,12 +22,8 @@ package net.minecraftforge.fml.common;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -43,12 +39,16 @@ import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
-import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.RegistryManager;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -120,14 +120,10 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
 
         NBTTagCompound registries = new NBTTagCompound();
         fmlData.setTag("Registries", registries);
-        FMLLog.fine("Gathering id map for writing to world save %s", info.getWorldName());
-        PersistentRegistryManager.GameDataSnapshot dataSnapshot = PersistentRegistryManager.takeSnapshot();
+        FMLLog.log.debug("Gathering id map for writing to world save {}", info.getWorldName());
 
-        for (Map.Entry<ResourceLocation, PersistentRegistryManager.GameDataSnapshot.Entry> e : dataSnapshot.entries.entrySet())
+        for (Map.Entry<ResourceLocation, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
         {
-            if (!e.getValue().saveToDisc) //Skip registries that don't need to persist, Currently Recipes.
-                continue;
-
             NBTTagCompound data = new NBTTagCompound();
             registries.setTag(e.getKey().toString(), data);
 
@@ -151,14 +147,15 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
             }
             data.setTag("aliases", aliases);
 
-            NBTTagList subs = new NBTTagList();
-            for (ResourceLocation entry : e.getValue().substitutions)
+            NBTTagList overrides = new NBTTagList();
+            for (Entry<ResourceLocation, String> entry : e.getValue().overrides.entrySet())
             {
                 NBTTagCompound tag = new NBTTagCompound();
-                tag.setString("K", entry.toString());
-                subs.appendTag(tag);
+                tag.setString("K", entry.getKey().toString());
+                tag.setString("V", entry.getValue().toString());
+                aliases.appendTag(tag);
             }
-            data.setTag("substitutions", subs);
+            data.setTag("overrides", overrides);
 
             int[] blocked = new int[e.getValue().blocked.size()];
             int idx = 0;
@@ -193,124 +190,45 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
                 ModContainer container = Loader.instance().getIndexedModList().get(modId);
                 if (container == null)
                 {
-                    FMLLog.log("fml.ModTracker", Level.ERROR, "This world was saved with mod %s which appears to be missing, things may not work well", modId);
+                    LogManager.getLogger("fml.ModTracker").error("This world was saved with mod {} which appears to be missing, things may not work well", modId);
                     continue;
                 }
                 if (!modVersion.equals(container.getVersion()))
                 {
-                    FMLLog.log("fml.ModTracker", Level.INFO, "This world was saved with mod %s version %s and it is now at version %s, things may not work well", modId, modVersion, container.getVersion());
+                    LogManager.getLogger("fml.ModTracker").info("This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, container.getVersion());
                 }
             }
         }
 
-        List<String> failedElements = null;
+        Multimap<ResourceLocation, ResourceLocation> failedElements = null;
 
-        if (tag.hasKey("ModItemData")) // Pre 1.7
+        if (tag.hasKey("ModItemData") || tag.hasKey("ItemData")) // Pre 1.7
         {
             StartupQuery.notify("This save predates 1.7.10, it can no longer be loaded here. Please load in 1.7.10 or 1.8 first");
             StartupQuery.abort();
         }
-        else if (tag.hasKey("ItemData")) // 1.7
-        {
-            if (!tag.hasKey("BlockedItemIds")) // no blocked id info -> old 1.7 save
-            {
-                StartupQuery.notify("This save predates 1.7.10, it can no longer be loaded here. Please load in 1.7.10 or 1.8 first");
-                StartupQuery.abort();
-            }
-            PersistentRegistryManager.GameDataSnapshot snapshot = new PersistentRegistryManager.GameDataSnapshot();
-            PersistentRegistryManager.GameDataSnapshot.Entry blocks = new PersistentRegistryManager.GameDataSnapshot.Entry();
-            PersistentRegistryManager.GameDataSnapshot.Entry items = new PersistentRegistryManager.GameDataSnapshot.Entry();
-            snapshot.entries.put(PersistentRegistryManager.BLOCKS, blocks);
-            snapshot.entries.put(PersistentRegistryManager.ITEMS, items);
-
-            NBTTagList list = tag.getTagList("ItemData", 10);
-            for (int i = 0; i < list.tagCount(); i++)
-            {
-                NBTTagCompound e = list.getCompoundTagAt(i);
-                String name = e.getString("K");
-
-                if (name.charAt(0) == '\u0001')
-                    blocks.ids.put(new ResourceLocation(name.substring(1)), e.getInteger("V"));
-                else if (name.charAt(0) == '\u0002')
-                    items.ids.put(new ResourceLocation(name.substring(1)), e.getInteger("V"));
-            }
-
-            Set<Integer> blockedIds = new HashSet<Integer>();
-            for (int id : tag.getIntArray("BlockedItemIds"))
-            {
-                blockedIds.add(id);
-            }
-            blocks.blocked.addAll(blockedIds);
-            items.blocked.addAll(blockedIds);
-
-            list = tag.getTagList("BlockAliases", 10);
-            for (int i = 0; i < list.tagCount(); i++)
-            {
-                NBTTagCompound dataTag = list.getCompoundTagAt(i);
-                blocks.aliases.put(new ResourceLocation(dataTag.getString("K")), new ResourceLocation(dataTag.getString("V")));
-            }
-
-            if (tag.hasKey("BlockSubstitutions", 9))
-            {
-                list = tag.getTagList("BlockSubstitutions", 10);
-                for (int i = 0; i < list.tagCount(); i++)
-                {
-                    NBTTagCompound dataTag = list.getCompoundTagAt(i);
-                    blocks.substitutions.add(new ResourceLocation(dataTag.getString("K")));
-                }
-            }
-
-            list = tag.getTagList("ItemAliases", 10);
-            for (int i = 0; i < list.tagCount(); i++)
-            {
-                NBTTagCompound dataTag = list.getCompoundTagAt(i);
-                items.aliases.put(new ResourceLocation(dataTag.getString("K")), new ResourceLocation(dataTag.getString("V")));
-            }
-
-            if (tag.hasKey("ItemSubstitutions", 9))
-            {
-                list = tag.getTagList("ItemSubstitutions", 10);
-                for (int i = 0; i < list.tagCount(); i++)
-                {
-                    NBTTagCompound dataTag = list.getCompoundTagAt(i);
-                    items.substitutions.add(new ResourceLocation(dataTag.getString("K")));
-                }
-            }
-            failedElements = PersistentRegistryManager.injectSnapshot(snapshot, true, true);
-        }
         else if (tag.hasKey("Registries")) // 1.8, genericed out the 'registries' list
         {
-            PersistentRegistryManager.GameDataSnapshot snapshot = new PersistentRegistryManager.GameDataSnapshot();
+            Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = Maps.newHashMap();
             NBTTagCompound regs = tag.getCompoundTag("Registries");
             for (String key : regs.getKeySet())
             {
-                PersistentRegistryManager.GameDataSnapshot.Entry entry = new PersistentRegistryManager.GameDataSnapshot.Entry();
-                ResourceLocation entryLoc;
-                if ("fml:blocks".equals(key)) entryLoc = PersistentRegistryManager.BLOCKS;
-                else if ("fml:items".equals(key)) entryLoc = PersistentRegistryManager.ITEMS;
-                else if ("fmlgr:villagerprofessions".equals(key)) entryLoc = VillagerRegistry.PROFESSIONS;
-                else entryLoc = new ResourceLocation(key);
-                snapshot.entries.put(entryLoc, entry);
+                ForgeRegistry.Snapshot entry = new ForgeRegistry.Snapshot();
+                NBTTagCompound ent = regs.getCompoundTag(key);
+                snapshot.put(new ResourceLocation(key), entry);
 
-                NBTTagList list = regs.getCompoundTag(key).getTagList("ids", 10);
+                NBTTagList list = ent.getTagList("ids", 10);
                 for (int x = 0; x < list.tagCount(); x++)
                 {
                     NBTTagCompound e = list.getCompoundTagAt(x);
                     entry.ids.put(new ResourceLocation(e.getString("K")), e.getInteger("V"));
                 }
 
-                list = regs.getCompoundTag(key).getTagList("aliases", 10);
+                list = ent.getTagList("aliases", 10);
                 for (int x = 0; x < list.tagCount(); x++)
                 {
                     NBTTagCompound e = list.getCompoundTagAt(x);
                     entry.aliases.put(new ResourceLocation(e.getString("K")), new ResourceLocation(e.getString("V")));
-                }
-
-                list = regs.getCompoundTag(key).getTagList("substitutions", 10);
-                for (int x = 0; x < list.tagCount(); x++)
-                {
-                    NBTTagCompound e = list.getCompoundTagAt(x);
-                    entry.substitutions.add(new ResourceLocation(e.getString("K")));
                 }
 
                 int[] blocked = regs.getCompoundTag(key).getIntArray("blocked");
@@ -329,19 +247,23 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
                     }
                 }
             }
-            failedElements = PersistentRegistryManager.injectSnapshot(snapshot, true, true);
+            failedElements = GameData.injectSnapshot(snapshot, true, true);
         }
 
         if (failedElements != null && !failedElements.isEmpty())
         {
-            String text = "Forge Mod Loader could not load this save.\n\n" +
-            "There are "+failedElements.size()+" unassigned blocks and items in this save.\n" +
-                    "You will not be able to load until they are present again.\n\n" +
-                    "Missing Blocks/Items:\n";
+            StringBuilder buf = new StringBuilder();
+            buf.append("Forge Mod Loader could not load this save.\n\n")
+               .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
+               .append("You will not be able to load until they are present again.\n\n");
 
-            for (String s : failedElements) text += s + "\n";
+            failedElements.asMap().forEach((name, entries) ->
+            {
+                buf.append("Missing ").append(name).append(":\n");
+                entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
+            });
 
-            StartupQuery.notify(text);
+            StartupQuery.notify(buf.toString());
             StartupQuery.abort();
         }
     }

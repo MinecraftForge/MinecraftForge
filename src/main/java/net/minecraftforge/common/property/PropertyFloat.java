@@ -38,21 +38,25 @@ public class PropertyFloat implements IUnlistedProperty<Float>
         this.validator = validator;
     }
 
+    @Override
     public String getName()
     {
         return name;
     }
 
+    @Override
     public boolean isValid(Float value)
     {
         return validator.apply(value);
     }
 
+    @Override
     public Class<Float> getType()
     {
         return Float.class;
     }
 
+    @Override
     public String valueToString(Float value)
     {
         return value.toString();

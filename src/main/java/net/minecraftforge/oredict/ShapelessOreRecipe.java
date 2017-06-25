@@ -34,7 +34,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 
@@ -90,7 +90,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1){ return output.copy(); }
 
     @Override
-    public boolean matches(InventoryCrafting var1, World world)
+    public boolean matches(@Nonnull InventoryCrafting var1, @Nonnull World world)
     {
         NonNullList<Ingredient> required = NonNullList.create();
         required.addAll(input);
@@ -124,25 +124,29 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         return required.isEmpty();
     }
 
-
-    public NonNullList<Ingredient> func_192400_c()
+    @Override
+    @Nonnull
+    public NonNullList<Ingredient> getIngredients()
     {
         return this.input;
     }
 
     @Override
     @Nonnull
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
+    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv)
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
 
-    public String func_193358_e()
+    @Override
+    @Nonnull
+    public String getGroup()
     {
         return this.group == null ? "" : this.group.toString();
     }
 
-    public boolean func_194133_a(int p_194133_1_, int p_194133_2_)
+    @Override
+    public boolean canFit(int p_194133_1_, int p_194133_2_)
     {
         return p_194133_1_ * p_194133_2_ >= this.input.size();
     }
@@ -158,7 +162,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         if (ings.isEmpty())
             throw new JsonParseException("No ingredients for shapeless recipe");
 
-        ItemStack itemstack = ShapedRecipes.func_192405_a(JsonUtils.getJsonObject(json, "result"), true);
+        ItemStack itemstack = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
         return new ShapelessOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), ings, itemstack);
     }
 }

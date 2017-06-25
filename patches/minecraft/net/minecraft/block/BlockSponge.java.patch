@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSponge.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSponge.java
+@@ -107,7 +107,6 @@
+         return i > 0;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         p_149666_2_.add(new ItemStack(this, 1, 0));

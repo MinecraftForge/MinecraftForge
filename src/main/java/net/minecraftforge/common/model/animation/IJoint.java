@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.model.animation;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.TRSRTransformation;

@@ -29,7 +29,7 @@
 +            chunk = net.minecraftforge.common.ForgeChunkManager.fetchDormantChunk(pos, this.field_73251_h);
 +            if (chunk != null || !(this.field_73247_e instanceof net.minecraft.world.chunk.storage.AnvilChunkLoader))
              {
-+                if (!loadingChunks.add(pos)) net.minecraftforge.fml.common.FMLLog.bigWarning("There is an attempt to load a chunk (%d,%d) in dimension %d that is already being loaded. This will cause weird chunk breakages.", p_186028_1_, p_186028_2_, this.field_73251_h.field_73011_w.getDimension());
++                if (!loadingChunks.add(pos)) net.minecraftforge.fml.common.FMLLog.bigWarning("There is an attempt to load a chunk ({},{}) in dimension {} that is already being loaded. This will cause weird chunk breakages.", p_186028_1_, p_186028_2_, this.field_73251_h.field_73011_w.getDimension());
 +                if (chunk == null) chunk = this.func_73239_e(p_186028_1_, p_186028_2_);
 +
 +                if (chunk != null)

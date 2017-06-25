@@ -17,27 +17,25 @@
      }
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
-@@ -126,6 +119,25 @@
+@@ -126,6 +119,23 @@
          return BlockFaceShape.UNDEFINED;
      }
  
 +    @Override
-+    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
 +        TileEntity te = world.func_175625_s(pos);
 +
-+        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
 +        if (te instanceof TileEntityBanner)
 +        {
 +            TileEntityBanner tileentitybanner = (TileEntityBanner)te;
 +            ItemStack itemstack = tileentitybanner.func_190615_l();
-+            ret.add(itemstack);
++            drops.add(itemstack);
 +        }
 +        else
 +        {
-+            ret.add(new ItemStack(Items.field_179564_cE, 1, 0));
++            drops.add(new ItemStack(Items.field_179564_cE, 1, 0));
 +        }
-+        return ret;
 +    }
 +
      public static class BlockBannerHanging extends BlockBanner

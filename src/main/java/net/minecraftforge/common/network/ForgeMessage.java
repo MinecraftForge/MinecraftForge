@@ -110,7 +110,7 @@ public abstract class ForgeMessage {
             }
             else
             {
-                FMLLog.getLogger().log(Level.INFO, "Legacy server message contains no default fluid list - there may be problems with fluids");
+                FMLLog.log.info("Legacy server message contains no default fluid list - there may be problems with fluids");
                 defaultFluids.clear();
             }
         }

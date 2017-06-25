@@ -40,16 +40,16 @@ public class GuiDupesFound extends GuiErrorBase
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - dupes.dupes.size() * 10, 10);
-        this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader has found a problem with your minecraft installation", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, "Forge Mod Loader has found a problem with your minecraft installation", this.width / 2, offset, 0xFFFFFF);
         offset+=10;
-        this.drawCenteredString(this.fontRendererObj, "You have mod sources that are duplicate within your system", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, "You have mod sources that are duplicate within your system", this.width / 2, offset, 0xFFFFFF);
         offset+=10;
-        this.drawCenteredString(this.fontRendererObj, "Mod Id : File name", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, "Mod Id : File name", this.width / 2, offset, 0xFFFFFF);
         offset+=5;
         for (Entry<ModContainer, File> mc : dupes.dupes.entries())
         {
             offset+=10;
-            this.drawCenteredString(this.fontRendererObj, String.format("%s : %s", mc.getKey().getModId(), mc.getValue().getName()), this.width / 2, offset, 0xEEEEEE);
+            this.drawCenteredString(this.fontRenderer, String.format("%s : %s", mc.getKey().getModId(), mc.getValue().getName()), this.width / 2, offset, 0xEEEEEE);
         }
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

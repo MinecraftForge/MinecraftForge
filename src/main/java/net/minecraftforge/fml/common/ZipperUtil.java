@@ -102,10 +102,10 @@ public class ZipperUtil {
         }
         catch (IOException e)
         {
-            FMLLog.log(Level.WARN, e, "World backup failed.");
+            FMLLog.log.warn("World backup failed.", e);
             throw e;
         }
 
-        FMLLog.info("World backup created at %s.", zip.getCanonicalPath());
+        FMLLog.log.info("World backup created at {}.", zip.getCanonicalPath());
     }
 }

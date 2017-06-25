@@ -376,9 +376,9 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (densityDir > 0) return vec;
         Vec3d vec_flow = this.getFlowVector(world, pos);
         return vec.addVector(
-                vec_flow.xCoord * (quantaPerBlock * 4),
-                vec_flow.yCoord * (quantaPerBlock * 4),
-                vec_flow.zCoord * (quantaPerBlock * 4));
+                vec_flow.x * (quantaPerBlock * 4),
+                vec_flow.y * (quantaPerBlock * 4),
+                vec_flow.z * (quantaPerBlock * 4));
     }
 
     @Override
@@ -563,7 +563,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return -1000.0;
         }
         Vec3d vec = ((BlockFluidBase)state.getBlock()).getFlowVector(world, pos);
-        return vec.xCoord == 0.0D && vec.zCoord == 0.0D ? -1000.0D : Math.atan2(vec.zCoord, vec.xCoord) - Math.PI / 2D;
+        return vec.x == 0.0D && vec.z == 0.0D ? -1000.0D : Math.atan2(vec.z, vec.x) - Math.PI / 2D;
     }
 
     public final int getQuantaValueBelow(IBlockAccess world, BlockPos pos, int belowThis)
@@ -731,7 +731,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     private boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing face)
     {
-        return world.getBlockState(pos).func_193401_d(world, pos, face) == BlockFaceShape.SOLID;
+        return world.getBlockState(pos).getBlockFaceShape(world, pos, face) == BlockFaceShape.SOLID;
     }
 
     /* IFluidBlock */

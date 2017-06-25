@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fml.common.event;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
+import java.util.function.Function;
+import java.util.Optional;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -33,7 +33,6 @@ import net.minecraftforge.fml.common.Mod.Instance;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
-import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nonnull;
 
@@ -63,7 +62,7 @@ public class FMLInterModComms {
         {
             this.activeContainer = activeContainer;
             this.currentList = null;
-            FMLLog.finer("Attempting to deliver %d IMC messages to mod %s", modMessages.get(activeContainer.getModId()).size(), activeContainer.getModId());
+            FMLLog.log.trace("Attempting to deliver {} IMC messages to mod {}", modMessages.get(activeContainer.getModId()).size(), activeContainer.getModId());
         }
 
         private ImmutableList<IMCMessage> currentList;
@@ -186,14 +185,14 @@ public class FMLInterModComms {
         @SuppressWarnings("unchecked")
         public <T,V> Optional<Function<T,V>> getFunctionValue(Class<T> functionFrom, Class<V> functionTo) {
             if (!isFunction) {
-                return Optional.absent();
+                return Optional.empty();
             }
             try {
                 Function<T,V> f = Class.forName((String) value).asSubclass(Function.class).newInstance();
                 return Optional.of(f);
             } catch (Exception e) {
-                FMLLog.getLogger().log(Level.INFO, "An error occurred instantiating the IMC function. key: {} value: {}, caller: {}", key,value,sender);
-                return Optional.absent();
+                FMLLog.log.info("An error occurred instantiating the IMC function. key: {} value: {}, caller: {}", key,value,sender);
+                return Optional.empty();
             }
         }
 

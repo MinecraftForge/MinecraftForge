@@ -11,10 +11,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -32,13 +32,22 @@ public class CustomSpriteTest
     static final String NAME = "Custom sprite test";
     private static Logger logger;
 
+
+    @Mod.EventBusSubscriber(modid = MOD_ID)
+    public static class Registration
+    {
+        @SubscribeEvent
+        public static void registrBlocks(RegistryEvent.Register<Block> event)
+        {
+            event.getRegistry().register(new Block(Material.WOOD).setRegistryName(MOD_ID, "custom_sprite_block").setCreativeTab(CreativeTabs.MISC));
+        }
+    }
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
         MinecraftForge.EVENT_BUS.register(this);
-        Block block = new Block(Material.WOOD).setRegistryName(MOD_ID, "custom_sprite_block").setCreativeTab(CreativeTabs.MISC);
-        GameRegistry.register(block);
     }
 
     @SubscribeEvent

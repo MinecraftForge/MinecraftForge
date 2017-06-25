@@ -5,7 +5,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 @Mod(modid = NoPotionEffectRenderTest.modID, name = "No Potion Effect Render Test", version = "0.0.0", acceptableRemoteVersions = "*")
 public class NoPotionEffectRenderTest
@@ -15,8 +15,8 @@ public class NoPotionEffectRenderTest
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        TestPotion INSTANCE = new TestPotion(new ResourceLocation(modID, "test_potion"), false, 0xff00ff);
-        GameData.getPotionRegistry().register(-1, new ResourceLocation(modID, "test_potion"), INSTANCE);
+        TestPotion INSTANCE = (TestPotion)new TestPotion(new ResourceLocation(modID, "test_potion"), false, 0xff00ff).setRegistryName(new ResourceLocation(modID, "test_potion"));
+        ForgeRegistries.POTIONS.register(INSTANCE);
     }
 
     public static class TestPotion extends Potion

@@ -19,18 +19,24 @@
 
 package net.minecraftforge.common.model.animation;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.base.Supplier;
-import com.google.common.collect.*;
-import com.google.gson.*;
+import com.google.common.base.Predicate;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -45,19 +51,18 @@ import net.minecraftforge.common.util.JsonUtils;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 public final class AnimationStateMachine implements IAnimationStateMachine
 {
@@ -78,6 +83,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         .expireAfterWrite(100, TimeUnit.MILLISECONDS)
         .build(new CacheLoader<Triple<? extends IClip, Float, Float>, Pair<IModelState, Iterable<Event>>>()
         {
+            @Override
             public Pair<IModelState, Iterable<Event>> load(Triple<? extends IClip, Float, Float> key) throws Exception
             {
                 return Clips.apply(key.getLeft(), key.getMiddle(), key.getRight());
@@ -87,19 +93,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     @Deprecated
     public AnimationStateMachine(ImmutableMap<String, ITimeValue> parameters, ImmutableMap<String, IClip> clips, ImmutableList<String> states, ImmutableMap<String, String> transitions, String startState)
     {
-        this(parameters, clips, states, ImmutableMultimap.copyOf(Multimaps.newSetMultimap(Maps.transformValues(transitions, new Function<String, Collection<String>>()
-        {
-            public Collection<String> apply(String input)
-            {
-                return ImmutableSet.of(input);
-            }
-        }), new Supplier<Set<String>>()
-        {
-            public Set<String> get()
-            {
-                return Sets.newHashSet();
-            }
-        })), startState);
+        this(parameters, clips, states, ImmutableMultimap.copyOf(Multimaps.newSetMultimap(Maps.transformValues(transitions, ImmutableSet::of), Sets::newHashSet)), startState);
     }
 
     public AnimationStateMachine(ImmutableMap<String, ITimeValue> parameters, ImmutableMap<String, IClip> clips, ImmutableList<String> states, ImmutableMultimap<String, String> transitions, String startState)
@@ -144,6 +138,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         currentState = state;
     }
 
+    @Override
     public Pair<IModelState, Iterable<Event>> apply(float time)
     {
         if(lastPollTime == Float.NEGATIVE_INFINITY)
@@ -178,6 +173,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         }
         return Pair.of(pair.getLeft(), Iterables.filter(pair.getRight(), new Predicate<Event>()
         {
+            @Override
             public boolean apply(Event event)
             {
                 return !event.event().startsWith("!");
@@ -185,6 +181,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         }));
     }
 
+    @Override
     public void transition(String newState)
     {
         IClip nc = clips.get(newState);
@@ -200,11 +197,13 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         currentState = nc;
     }
 
+    @Override
     public String currentState()
     {
         return currentStateName;
     }
 
+    @Override
     public void shouldHandleSpecialEvents(boolean value)
     {
         shouldHandleSpecialEvents = true;
@@ -233,12 +232,12 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         }
         catch(IOException e)
         {
-            FMLLog.log(Level.ERROR, e, "Exception loading Animation State Machine %s, skipping", location);
+            FMLLog.log.error("Exception loading Animation State Machine {}, skipping", location, e);
             return missing;
         }
         catch(JsonParseException e)
         {
-            FMLLog.log(Level.ERROR, e, "Exception loading Animation State Machine %s, skipping", location);
+            FMLLog.log.error("Exception loading Animation State Machine {}, skipping", location, e);
             return missing;
         }
         finally
@@ -269,6 +268,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     {
         private AnimationStateMachine asm;
 
+        @Override
         public IClip apply(String name)
         {
             return asm.clips.get(name);
@@ -285,6 +285,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
             this.customParameters = customParameters;
         }
 
+        @Override
         public ITimeValue apply(String name)
         {
             if(asm.parameters.containsKey(name))
@@ -311,6 +312,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     {
         INSTANCE;
 
+        @Override
         @SuppressWarnings("unchecked")
         @Nullable
         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
