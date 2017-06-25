@@ -1,9 +1,13 @@
 package net.minecraftforge.debug;
 
+import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
+
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
@@ -35,14 +39,10 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
-
-import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
 @Mod(modid = FluidPlacementTest.MODID, name = "ForgeDebugFluidPlacement", version = FluidPlacementTest.VERSION, acceptableRemoteVersions = "*")
 public class FluidPlacementTest
@@ -68,6 +68,15 @@ public class FluidPlacementTest
     public static class Registration
     {
         @SubscribeEvent
+        public static void registrFluids(RegistryEvent.Register<Fluid> event)
+        {
+            if (!ENABLE || !ModelFluidDebug.ENABLE)
+                return;
+            event.getRegistry().registerAll(FiniteFluid.instance);
+            FluidRegistry.addBucketForFluid(FiniteFluid.instance);
+        }
+        
+        @SubscribeEvent
         public static void registrBlocks(RegistryEvent.Register<Block> event)
         {
             if (!ENABLE || !ModelFluidDebug.ENABLE)
@@ -81,8 +90,6 @@ public class FluidPlacementTest
         {
             if (!ENABLE || !ModelFluidDebug.ENABLE)
                 return;
-            FluidRegistry.registerFluid(FiniteFluid.instance);
-            FluidRegistry.addBucketForFluid(FiniteFluid.instance);
             event.getRegistry().registerAll(
                 EmptyFluidContainer.instance,
                 FluidContainer.instance,
@@ -128,7 +135,9 @@ public class FluidPlacementTest
 
         private FiniteFluid()
         {
-            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            super(new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            setUnlocalizedName(name);
+            setRegistryName(name);
         }
 
         @Override
@@ -146,8 +155,8 @@ public class FluidPlacementTest
 
     public static final class FiniteFluidBlock extends BlockFluidFinite
     {
-        public static final FiniteFluidBlock instance = new FiniteFluidBlock();
         public static final String name = "finite_fluid_block";
+        public static final FiniteFluidBlock instance = new FiniteFluidBlock();
 
         private FiniteFluidBlock()
         {

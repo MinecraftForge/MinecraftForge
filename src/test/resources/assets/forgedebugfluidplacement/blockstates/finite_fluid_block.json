@@ -8,7 +8,7 @@
     "normal": [
       {
         "custom": {
-          "fluid": "finitefluid"
+          "fluid": "forgedebugfluidplacement:finitefluid"
         }
       }
     ]

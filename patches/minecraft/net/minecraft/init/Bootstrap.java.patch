@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
 +++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
-@@ -264,6 +264,9 @@
+@@ -265,6 +265,9 @@
          };
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151129_at, ibehaviordispenseitem);
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
@@ -10,12 +10,13 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
-@@ -524,6 +527,8 @@
+@@ -524,6 +528,8 @@
                      field_179871_c.error("Errors with built-in loot tables");
                  }
              }
 +
-+            net.minecraftforge.registries.GameData.vanillaSnapshot();
++            net.minecraftforge.fml.common.registry.ForgeRegistries.initForgeRegistries();
++            net.minecraftforge.fml.common.registry.GameData.vanillaSnapshot();
          }
      }
  

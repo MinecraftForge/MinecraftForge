@@ -670,7 +670,7 @@ public class FluidUtil
             {
                 return new ItemStack(Items.LAVA_BUCKET);
             }
-            else if (fluid.getName().equals("milk"))
+            else if (FluidDictionary.hasName(fluid, "milk"))
             {
                 return new ItemStack(Items.MILK_BUCKET);
             }

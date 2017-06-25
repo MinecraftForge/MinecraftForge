@@ -34,6 +34,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -45,9 +46,10 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.PropertyFloat;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
@@ -136,7 +138,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     protected BlockRenderLayer renderLayer = BlockRenderLayer.TRANSLUCENT;
     protected int maxScaledLight = 0;
 
-    protected final String fluidName;
+    protected final ResourceLocation fluidName;
 
     /**
      * This is the fluid used in the constructor. Use this reference to configure things
@@ -148,10 +150,11 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public BlockFluidBase(Fluid fluid, Material material)
     {
         super(material);
+        Preconditions.checkNotNull(fluid.getRegistryName(), "Cannot create Block for Fluid with null registry name %s", fluid);
         this.setTickRandomly(true);
         this.disableStats();
 
-        this.fluidName = fluid.getName();
+        this.fluidName = fluid.getRegistryName();
         this.density = fluid.density;
         this.temperature = fluid.temperature;
         this.maxScaledLight = fluid.luminosity;
@@ -738,7 +741,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Override
     public Fluid getFluid()
     {
-        return FluidRegistry.getFluid(fluidName);
+        return ForgeRegistries.FLUIDS.getValue(this.fluidName);
     }
 
     @Override

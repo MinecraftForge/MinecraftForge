@@ -16,10 +16,9 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidDictionary;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
@@ -46,27 +45,34 @@ public class ModelFluidDebug
     @ObjectHolder(MilkFluidBlock.name)
     public static final Item MILK_ITEM = null;
 
-    //Used in DynBucketTest/FluidPlacementTest, TODO: Make this a full registry with @ObjectHolder?
-    public static final Fluid MILK = new Fluid("milk", new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow"));
-    public static final Fluid FLUID = new TestFluid();
-    public static final Fluid GAS = new TestGas();
+    @ObjectHolder(FluidMilk.name)
+    public static final Fluid MILK = null;
+    @ObjectHolder(TestFluid.name)
+    public static final Fluid FLUID = null;
+    @ObjectHolder(TestGas.name)
+    public static final Fluid GAS = null;
 
 
     @Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @SubscribeEvent
+        public static void registerFluids(RegistryEvent.Register<Fluid> event)
+        {
+            if(!ENABLE)
+                return;
+            
+            Fluid milk = new FluidMilk();
+            event.getRegistry().registerAll(milk, new TestGas(), new TestFluid());
+            FluidDictionary.registerFluid(milk, "milk");
+        }
+        
+        @SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
             if (!ENABLE)
                 return;
 
-            //TODO: Make FluidRegistry a full registry?
-            //Make a delegate system for FluidBlocks/Fluid Stacks?
-            //Fluids must be registered before a FluidStack can be made. Which is done in the block constructor
-            FluidRegistry.registerFluid(FLUID);
-            FluidRegistry.registerFluid(GAS);
-            FluidRegistry.registerFluid(MILK);
             event.getRegistry().registerAll(
                 new TestFluidBlock(),
                 new TestGasBlock(),
@@ -122,13 +128,27 @@ public class ModelFluidDebug
         }
     }
 
+    public static final class FluidMilk extends Fluid
+    {
+        public static final String name = "milk";
+        
+        private FluidMilk()
+        {
+            super(new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow"));
+            setUnlocalizedName(name);
+            setRegistryName(name);
+        }
+    }
+    
     public static final class TestFluid extends Fluid
     {
         public static final String name = "testfluid";
 
         private TestFluid()
         {
-            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            super(new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            setUnlocalizedName(name);
+            setRegistryName(name);
         }
 
         @Override
@@ -144,9 +164,11 @@ public class ModelFluidDebug
 
         private TestGas()
         {
-            super(name, new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow"));
+            super(new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow"));
             density = -1000;
             isGaseous = true;
+            setUnlocalizedName(name);
+            setRegistryName(name);
         }
 
         @Override
