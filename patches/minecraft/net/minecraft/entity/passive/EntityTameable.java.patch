@@ -1,0 +1,8 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityTameable.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityTameable.java
+@@ -272,4 +272,5 @@
+ 
+         super.func_70645_a(p_70645_1_);
+     }
++
+ }

@@ -375,3 +375,23 @@
      public boolean func_190631_cK()
      {
          return true;
+@@ -2861,4 +2957,19 @@
+     public void func_191987_a(BlockPos p_191987_1_, boolean p_191987_2_)
+     {
+     }
++
++    /* ================================== Forge Start =====================================*/
++    /**
++     * If this entity is hostile towards the given subject in general.
++     * This does not reflect the entity's AI behaviour exactly nor does it respect things like HurtByTarget or Scoreboard Teams.
++     * This is meant to give you an idea what this entity might do and should be more specific than checks like 'entity instanceof IMob'
++     *
++     * @return If this entity is hostile towards the given entity
++     */
++    public boolean isHostileTo(EntityLivingBase subject)
++    {
++        return this instanceof net.minecraft.entity.monster.IMob && subject instanceof net.minecraft.entity.player.EntityPlayer;
++    }
++    /* ================================== Forge End =====================================*/
++
+ }
