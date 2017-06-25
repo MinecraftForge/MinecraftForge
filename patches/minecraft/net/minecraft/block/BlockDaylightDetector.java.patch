@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDaylightDetector.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDaylightDetector.java
+@@ -163,7 +163,6 @@
+         return new BlockStateContainer(this, new IProperty[] {field_176436_a});
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         if (!this.field_176435_b)
