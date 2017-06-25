@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/IBakedModel.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/IBakedModel.java
-@@ -21,7 +21,16 @@
+@@ -21,7 +21,18 @@
  
      TextureAtlasSprite func_177554_e();
  
@@ -9,6 +9,8 @@
 +    default ItemCameraTransforms func_177552_f() { return ItemCameraTransforms.field_178357_a; }
  
      ItemOverrideList func_188617_f();
++
++    default TextureAtlasSprite getParticleTexture(IBlockState state) { return func_177554_e(); }
 +
 +    /*
 +     * Returns the pair of the model for the given perspective, and the matrix
