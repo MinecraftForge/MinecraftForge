@@ -28,7 +28,7 @@ public class NeighborNotifyEventTest
     @SubscribeEvent
     public void onNeighborNotify(NeighborNotifyEvent event)
     {
-        logger.info(event.getPos().toString() + " with face information: " + event.getNotifiedSides());
+        logger.info("{} with face information: {}", event.getPos().toString(), event.getNotifiedSides());
         event.setCanceled(true);
     }
 }

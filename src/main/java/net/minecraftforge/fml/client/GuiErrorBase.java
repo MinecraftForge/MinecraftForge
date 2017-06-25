@@ -65,7 +65,7 @@ public class GuiErrorBase extends GuiErrorScreen
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "Problem opening mods folder");
+                FMLLog.log.error("Problem opening mods folder", e);
             }
         }
         else if (button.id == 11)
@@ -76,7 +76,7 @@ public class GuiErrorBase extends GuiErrorScreen
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "Problem opening log file " + clientLog);
+                FMLLog.log.error("Problem opening log file {}", clientLog, e);
             }
         }
     }
@@ -86,7 +86,7 @@ public class GuiErrorBase extends GuiErrorScreen
     {
         for(GuiButton button : buttonList)
         {
-            button.func_191745_a(this.mc, mouseX, mouseY, partialTicks);
+            button.drawButton(this.mc, mouseX, mouseY, partialTicks);
         }
     }
 }

@@ -63,7 +63,7 @@ public class NBTShareTagItemTest
         @Override
         public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
         {
-            if (!this.func_194125_a(tab))
+            if (!this.isInCreativeTab(tab))
                 return;
             ItemStack creativeMenuItem = new ItemStack(this);
             NBTTagCompound creativeMenuNBT = new NBTTagCompound();

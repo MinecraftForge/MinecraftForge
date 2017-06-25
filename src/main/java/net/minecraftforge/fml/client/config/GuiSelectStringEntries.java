@@ -54,7 +54,7 @@ public class GuiSelectStringEntries extends GuiListExtended
         this.mc = mc;
         this.configElement = configElement;
         this.selectableValues = selectableValues;
-        this.func_193651_b(true);
+        this.setShowSelectionBox(true);
 
         listEntries = new ArrayList<IGuiSelectStringListEntry>();
 
@@ -65,8 +65,8 @@ public class GuiSelectStringEntries extends GuiListExtended
         for (Entry<Object, String> entry : sortedList)
         {
             listEntries.add(new ListEntry(this, entry));
-            if (mc.fontRendererObj.getStringWidth(entry.getValue()) > maxEntryWidth)
-                maxEntryWidth = mc.fontRendererObj.getStringWidth(entry.getValue());
+            if (mc.fontRenderer.getStringWidth(entry.getValue()) > maxEntryWidth)
+                maxEntryWidth = mc.fontRenderer.getStringWidth(entry.getValue());
 
             if (owningScreen.currentValue.equals(entry.getKey()))
             {
@@ -173,9 +173,9 @@ public class GuiSelectStringEntries extends GuiListExtended
         }
 
         @Override
-        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
-            owningList.mc.fontRendererObj.drawString(value.getValue(), x + 1, y, slotIndex == owningList.selectedIndex ? 16777215 : 14737632);
+            owningList.mc.fontRenderer.drawString(value.getValue(), x + 1, y, slotIndex == owningList.selectedIndex ? 16777215 : 14737632);
         }
 
         @Override

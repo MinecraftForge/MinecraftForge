@@ -122,6 +122,7 @@ public class ExtendedBlockState extends BlockStateContainer
             }
         }
 
+        @Override
         public <V> IExtendedBlockState withProperty(IUnlistedProperty<V> property, V value)
         {
             if(!this.unlistedProperties.containsKey(property))
@@ -141,11 +142,13 @@ public class ExtendedBlockState extends BlockStateContainer
             return new ExtendedStateImplementation(getBlock(), getProperties(), ImmutableMap.copyOf(newMap), propertyValueTable).setMap(this.normalMap);
         }
 
+        @Override
         public Collection<IUnlistedProperty<?>> getUnlistedNames()
         {
             return Collections.unmodifiableCollection(unlistedProperties.keySet());
         }
 
+        @Override
         public <V>V getValue(IUnlistedProperty<V> property)
         {
             if(!this.unlistedProperties.containsKey(property))
@@ -155,6 +158,7 @@ public class ExtendedBlockState extends BlockStateContainer
             return property.getType().cast(this.unlistedProperties.get(property).orNull());
         }
 
+        @Override
         public ImmutableMap<IUnlistedProperty<?>, Optional<?>> getUnlistedProperties()
         {
             return unlistedProperties;
@@ -173,6 +177,7 @@ public class ExtendedBlockState extends BlockStateContainer
             return this;
         }
 
+        @Override
         public IBlockState getClean()
         {
             return this.normalMap.get(getProperties());

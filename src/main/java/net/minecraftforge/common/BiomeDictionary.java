@@ -249,7 +249,7 @@ public class BiomeDictionary
      */
     public static void makeBestGuess(Biome biome)
     {
-        if (biome.theBiomeDecorator.treesPerChunk >= 3)
+        if (biome.decorator.treesPerChunk >= 3)
         {
             if (biome.isHighHumidity() && biome.getTemperature() >= 0.9F)
             {
@@ -293,11 +293,11 @@ public class BiomeDictionary
             BiomeDictionary.addTypes(biome, COLD);
         }
 
-        if (biome.theBiomeDecorator.treesPerChunk > 0 && biome.theBiomeDecorator.treesPerChunk < 3)
+        if (biome.decorator.treesPerChunk > 0 && biome.decorator.treesPerChunk < 3)
         {
             BiomeDictionary.addTypes(biome, SPARSE);
         }
-        else if (biome.theBiomeDecorator.treesPerChunk >= 10)
+        else if (biome.decorator.treesPerChunk >= 10)
         {
             BiomeDictionary.addTypes(biome, DENSE);
         }
@@ -373,7 +373,7 @@ public class BiomeDictionary
         if (!hasAnyType(biome))
         {
             makeBestGuess(biome);
-            FMLLog.warning("No types have been added to Biome %s, types have been assigned on a best-effort guess: %s", biome.getRegistryName(), getTypes(biome));
+            FMLLog.log.warn("No types have been added to Biome {}, types have been assigned on a best-effort guess: {}", biome.getRegistryName(), getTypes(biome));
         }
     }
 

@@ -139,7 +139,7 @@ public class B3DModel
         {
             if(texture > textures.size())
             {
-                logger.error(String.format("texture %s is out of range", texture));
+                logger.error("texture {} is out of range", texture);
                 return null;
             }
             else if(texture == -1) return Texture.White;
@@ -152,7 +152,7 @@ public class B3DModel
         {
             if(brush > brushes.size())
             {
-                logger.error(String.format("brush %s is out of range", brush));
+                logger.error("brush {} is out of range", brush);
                 return null;
             }
             else if(brush == -1) return null;
@@ -165,7 +165,7 @@ public class B3DModel
         {
             if(vertex > vertices.size())
             {
-                logger.error(String.format("vertex %s is out of range", vertex));
+                logger.error("vertex {} is out of range", vertex);
                 return null;
             }
             return vertices.get(vertex);
@@ -408,17 +408,17 @@ public class B3DModel
                 {
                     if(pos != null)
                     {
-                        if(oldKey.getPos() != null) logger.error("Duplicate keys: %s and %s (ignored)", oldKey, key);
+                        if(oldKey.getPos() != null) logger.error("Duplicate keys: {} and {} (ignored)", oldKey, key);
                         else key = new Key(oldKey.getPos(), key.getScale(), key.getRot());
                     }
                     if(scale != null)
                     {
-                        if(oldKey.getScale() != null) logger.error("Duplicate keys: %s and %s (ignored)", oldKey, key);
+                        if(oldKey.getScale() != null) logger.error("Duplicate keys: {} and {} (ignored)", oldKey, key);
                         else key = new Key(key.getPos(), oldKey.getScale(), key.getRot());
                     }
                     if(rot != null)
                     {
-                        if(oldKey.getRot() != null) logger.error("Duplicate keys: %s and %s (ignored)", oldKey, key);
+                        if(oldKey.getRot() != null) logger.error("Duplicate keys: {} and {} (ignored)", oldKey, key);
                         else key = new Key(key.getPos(), key.getScale(), oldKey.getRot());
                     }
                 }
@@ -997,11 +997,13 @@ public class B3DModel
     {
         private Node<Pivot> parent;
 
+        @Override
         public void setParent(Node<Pivot> parent)
         {
             this.parent = parent;
         }
 
+        @Override
         public Node<Pivot> getParent()
         {
             return parent;
@@ -1064,6 +1066,7 @@ public class B3DModel
             return String.format("Mesh [pivot=%s, brush=%s, data=...]", super.toString(), brush);
         }
 
+        @Override
         @SuppressWarnings("unchecked")
         public void setParent(Node<Mesh> parent)
         {
@@ -1089,6 +1092,7 @@ public class B3DModel
             weightMap = builder.build();
         }
 
+        @Override
         public Node<Mesh> getParent()
         {
             return parent;
@@ -1116,11 +1120,13 @@ public class B3DModel
             return String.format("Bone [data=%s]", data);
         }*/
 
+        @Override
         public void setParent(Node<Bone> parent)
         {
             this.parent = parent;
         }
 
+        @Override
         public Node<Bone> getParent()
         {
             return parent;

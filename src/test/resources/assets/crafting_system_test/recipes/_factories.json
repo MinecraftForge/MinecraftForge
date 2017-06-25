@@ -4,5 +4,8 @@
   },
   "recipes": {
     "free": "net.minecraftforge.debug.CraftingSystemTest$RecipeFactory"
+  },
+  "conditions": {
+    "true": "net.minecraftforge.debug.CraftingSystemTest$ConditionFactory"
   }
 }

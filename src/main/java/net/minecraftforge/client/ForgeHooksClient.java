@@ -512,7 +512,7 @@ public class ForgeHooksClient
                 glEnableVertexAttribArray(attr.getIndex());
                 glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
             default:
-                FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
+                FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
     }
 
@@ -542,7 +542,7 @@ public class ForgeHooksClient
             case GENERIC:
                 glDisableVertexAttribArray(attr.getIndex());
             default:
-                FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
+                FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
     }
 
@@ -597,10 +597,10 @@ public class ForgeHooksClient
         Class<? extends TileEntity> tileClass = tileItemMap.get(Pair.of(item, metadata));
         if (tileClass != null)
         {
-            TileEntitySpecialRenderer<?> r = TileEntityRendererDispatcher.instance.getSpecialRendererByClass(tileClass);
+            TileEntitySpecialRenderer<?> r = TileEntityRendererDispatcher.instance.getRenderer(tileClass);
             if (r != null)
             {
-                r.func_192841_a(null, 0, 0, 0, 0, -1, 0.0F);
+                r.render(null, 0, 0, 0, 0, -1, 0.0F);
             }
         }
     }

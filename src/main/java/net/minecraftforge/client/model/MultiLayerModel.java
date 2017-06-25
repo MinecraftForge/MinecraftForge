@@ -134,7 +134,7 @@ public final class MultiLayerModel implements IModelCustomData
         {
             return new ModelResourceLocation(e.getAsString());
         }
-        FMLLog.severe("Expect ModelResourceLocation, got: ", json);
+        FMLLog.log.fatal("Expect ModelResourceLocation, got: {}", json);
         return new ModelResourceLocation("builtin/missing", "missing");
     }
 
@@ -247,8 +247,10 @@ public final class MultiLayerModel implements IModelCustomData
     {
         INSTANCE;
 
+        @Override
         public void onResourceManagerReload(IResourceManager resourceManager) {}
 
+        @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
             return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
@@ -257,6 +259,7 @@ public final class MultiLayerModel implements IModelCustomData
                 modelLocation.getResourcePath().equals("models/item/multi-layer"));
         }
 
+        @Override
         public IModel loadModel(ResourceLocation modelLocation)
         {
             return MultiLayerModel.INSTANCE;

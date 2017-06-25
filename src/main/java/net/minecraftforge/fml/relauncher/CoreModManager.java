@@ -46,6 +46,7 @@ import com.google.common.io.Files;
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.asm.ASMTransformerWrapper;
 import net.minecraftforge.fml.common.asm.transformers.ModAccessTransformer;
 import net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker;
@@ -57,7 +58,6 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -125,11 +125,11 @@ public class CoreModManager {
         @Override
         public void injectIntoClassLoader(LaunchClassLoader classLoader)
         {
-            FMLRelaunchLog.fine("Injecting coremod %s {%s} class transformers", name, coreModInstance.getClass().getName());
+            FMLLog.log.debug("Injecting coremod {} \\{{}\\} class transformers", name, coreModInstance.getClass().getName());
             List<String> ts = Lists.newArrayList();
             if (coreModInstance.getASMTransformerClass() != null) for (String transformer : coreModInstance.getASMTransformerClass())
             {
-                FMLRelaunchLog.finer("Registering transformer %s", transformer);
+                FMLLog.log.trace("Registering transformer {}", transformer);
                 classLoader.registerTransformer(ASMTransformerWrapper.getTransformerWrapper(classLoader, transformer, name));
                 ts.add(transformer);
             }
@@ -140,14 +140,14 @@ public class CoreModManager {
                 else loc = location.getName();
                 transformers.put(name + " (" + loc + ")", ts);
             }
-            FMLRelaunchLog.fine("Injection complete");
+            FMLLog.log.debug("Injection complete");
 
-            FMLRelaunchLog.fine("Running coremod plugin for %s {%s}", name, coreModInstance.getClass().getName());
+            FMLLog.log.debug("Running coremod plugin for {} \\{{}\\}", name, coreModInstance.getClass().getName());
             Map<String, Object> data = new HashMap<String, Object>();
             data.put("mcLocation", mcDir);
             data.put("coremodList", loadPlugins);
             data.put("runtimeDeobfuscationEnabled", !deobfuscatedEnvironment);
-            FMLRelaunchLog.fine("Running coremod plugin %s", name);
+            FMLLog.log.debug("Running coremod plugin {}", name);
             data.put("coremodLocation", location);
             coreModInstance.injectData(data);
             String setupClass = coreModInstance.getSetupClass();
@@ -170,7 +170,7 @@ public class CoreModManager {
                     throw new RuntimeException(e);
                 }
             }
-            FMLRelaunchLog.fine("Coremod plugin class %s run successfully", coreModInstance.getClass().getSimpleName());
+            FMLLog.log.debug("Coremod plugin class {} run successfully", coreModInstance.getClass().getSimpleName());
 
             String modContainer = coreModInstance.getModContainerClass();
             if (modContainer != null)
@@ -203,7 +203,7 @@ public class CoreModManager {
             byte[] bs = classLoader.getClassBytes("net.minecraft.world.World");
             if (bs != null)
             {
-                FMLRelaunchLog.info("Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation");
+                FMLLog.log.info("Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation");
                 deobfuscatedEnvironment = true;
             }
         }
@@ -214,7 +214,7 @@ public class CoreModManager {
 
         if (!deobfuscatedEnvironment)
         {
-            FMLRelaunchLog.fine("Enabling runtime deobfuscation");
+            FMLLog.log.debug("Enabling runtime deobfuscation");
         }
 
         tweaker.injectCascadingTweak("net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker");
@@ -224,7 +224,7 @@ public class CoreModManager {
         }
         catch (Exception e)
         {
-            FMLRelaunchLog.log(Level.ERROR, e, "The patch transformer failed to load! This is critical, loading cannot continue!");
+            FMLLog.log.error("The patch transformer failed to load! This is critical, loading cannot continue!", e);
             throw Throwables.propagate(e);
         }
 
@@ -239,7 +239,7 @@ public class CoreModManager {
             throw new RuntimeException("A fatal error has occurred - no valid fml load plugin was found - this is a completely corrupt FML installation.");
         }
 
-        FMLRelaunchLog.fine("All fundamental core mods are successfully located");
+        FMLLog.log.debug("All fundamental core mods are successfully located");
         // Now that we have the root plugins loaded - lets see what else might
         // be around
         String commandLineCoremods = System.getProperty("fml.coreMods.load", "");
@@ -249,7 +249,7 @@ public class CoreModManager {
             {
                 continue;
             }
-            FMLRelaunchLog.info("Found a command line coremod : %s", coreModClassName);
+            FMLLog.log.info("Found a command line coremod : {}", coreModClassName);
             loadCoreMod(classLoader, coreModClassName, null);
         }
         discoverCoreMods(mcDir, classLoader);
@@ -259,7 +259,7 @@ public class CoreModManager {
     private static void discoverCoreMods(File mcDir, LaunchClassLoader classLoader)
     {
         ModListHelper.parseModList(mcDir);
-        FMLRelaunchLog.fine("Discovering coremods");
+        FMLLog.log.debug("Discovering coremods");
         File coreMods = setupCoreModDir(mcDir);
         FilenameFilter ff = new FilenameFilter() {
             @Override
@@ -278,10 +278,10 @@ public class CoreModManager {
         File[] derplist = coreMods.listFiles(derpfilter);
         if (derplist != null && derplist.length > 0)
         {
-            FMLRelaunchLog.severe("FML has detected several badly downloaded jar files,  which have been named as zip files. You probably need to download them again, or they may not work properly");
+            FMLLog.log.fatal("FML has detected several badly downloaded jar files,  which have been named as zip files. You probably need to download them again, or they may not work properly");
             for (File f : derplist)
             {
-                FMLRelaunchLog.severe("Problem file : %s", f.getName());
+                FMLLog.log.fatal("Problem file : {}", f.getName());
             }
         }
         FileFilter derpdirfilter = new FileFilter() {
@@ -295,13 +295,13 @@ public class CoreModManager {
         File[] derpdirlist = coreMods.listFiles(derpdirfilter);
         if (derpdirlist != null && derpdirlist.length > 0)
         {
-            FMLRelaunchLog.log.getLogger().log(Level.FATAL, "There appear to be jars extracted into the mods directory. This is VERY BAD and will almost NEVER WORK WELL");
-            FMLRelaunchLog.log.getLogger().log(Level.FATAL, "You should place original jars only in the mods directory. NEVER extract them to the mods directory.");
-            FMLRelaunchLog.log.getLogger().log(Level.FATAL, "The directories below appear to be extracted jar files. Fix this before you continue.");
+            FMLLog.log.fatal("There appear to be jars extracted into the mods directory. This is VERY BAD and will almost NEVER WORK WELL");
+            FMLLog.log.fatal("You should place original jars only in the mods directory. NEVER extract them to the mods directory.");
+            FMLLog.log.fatal("The directories below appear to be extracted jar files. Fix this before you continue.");
 
             for (File f : derpdirlist)
             {
-                FMLRelaunchLog.log.getLogger().log(Level.FATAL, "Directory {} contains {}", f.getName(), Arrays.asList(new File(f,"META-INF").list()));
+                FMLLog.log.fatal("Directory {} contains {}", f.getName(), Arrays.asList(new File(f,"META-INF").list()));
             }
 
             RuntimeException re = new RuntimeException("Extracted mod jars found, loading will NOT continue");
@@ -334,7 +334,7 @@ public class CoreModManager {
 
         for (File coreMod : coreModList)
         {
-            FMLRelaunchLog.fine("Examining for coremod candidacy %s", coreMod.getName());
+            FMLLog.log.debug("Examining for coremod candidacy {}", coreMod.getName());
             JarFile jar = null;
             Attributes mfAttributes;
             String fmlCorePlugin;
@@ -351,7 +351,7 @@ public class CoreModManager {
                 String cascadedTweaker = mfAttributes.getValue("TweakClass");
                 if (cascadedTweaker != null)
                 {
-                    FMLRelaunchLog.info("Loading tweaker %s from %s", cascadedTweaker, coreMod.getName());
+                    FMLLog.log.info("Loading tweaker {} from {}", cascadedTweaker, coreMod.getName());
                     Integer sortOrder = Ints.tryParse(Strings.nullToEmpty(mfAttributes.getValue("TweakOrder")));
                     sortOrder = (sortOrder == null ? Integer.valueOf(0) : sortOrder);
                     handleCascadingTweak(coreMod, jar, cascadedTweaker, classLoader, sortOrder);
@@ -362,14 +362,14 @@ public class CoreModManager {
 
                 if (!modTypes.contains("FML"))
                 {
-                    FMLRelaunchLog.fine("Adding %s to the list of things to skip. It is not an FML mod,  it has types %s", coreMod.getName(), modTypes);
+                    FMLLog.log.debug("Adding {} to the list of things to skip. It is not an FML mod, it has types {}", coreMod.getName(), modTypes);
                     ignoredModFiles.add(coreMod.getName());
                     continue;
                 }
                 String modSide = mfAttributes.containsKey(MODSIDE) ? mfAttributes.getValue(MODSIDE) : "BOTH";
                 if (! ("BOTH".equals(modSide) || FMLLaunchHandler.side.name().equals(modSide)))
                 {
-                    FMLRelaunchLog.fine("Mod %s has ModSide meta-inf value %s, and we're %s. It will be ignored", coreMod.getName(), modSide, FMLLaunchHandler.side.name());
+                    FMLLog.log.debug("Mod {} has ModSide meta-inf value {}, and we're {} It will be ignored", coreMod.getName(), modSide, FMLLaunchHandler.side.name());
                     ignoredModFiles.add(coreMod.getName());
                     continue;
                 }
@@ -378,13 +378,13 @@ public class CoreModManager {
                 if (fmlCorePlugin == null)
                 {
                     // Not a coremod
-                    FMLRelaunchLog.fine("Not found coremod data in %s", coreMod.getName());
+                    FMLLog.log.debug("Not found coremod data in {}", coreMod.getName());
                     continue;
                 }
             }
             catch (IOException ioe)
             {
-                FMLRelaunchLog.log(Level.ERROR, ioe, "Unable to read the jar file %s - ignoring", coreMod.getName());
+                FMLLog.log.error("Unable to read the jar file {} - ignoring", coreMod.getName(), ioe);
                 continue;
             }
             finally
@@ -407,19 +407,19 @@ public class CoreModManager {
                 classLoader.addURL(coreMod.toURI().toURL());
                 if (!mfAttributes.containsKey(COREMODCONTAINSFMLMOD))
                 {
-                    FMLRelaunchLog.finer("Adding %s to the list of known coremods, it will not be examined again", coreMod.getName());
+                    FMLLog.log.trace("Adding {} to the list of known coremods, it will not be examined again", coreMod.getName());
                     ignoredModFiles.add(coreMod.getName());
                 }
                 else
                 {
-                    FMLRelaunchLog.finer("Found FMLCorePluginContainsFMLMod marker in %s, it will be examined later for regular @Mod instances",
+                    FMLLog.log.trace("Found FMLCorePluginContainsFMLMod marker in {}, it will be examined later for regular @Mod instances",
                             coreMod.getName());
                     candidateModFiles.add(coreMod.getName());
                 }
             }
             catch (MalformedURLException e)
             {
-                FMLRelaunchLog.log(Level.ERROR, e, "Unable to convert file into a URL. weird");
+                FMLLog.log.error("Unable to convert file into a URL. weird", e);
                 continue;
             }
             loadCoreMod(classLoader, fmlCorePlugin, coreMod);
@@ -438,31 +438,31 @@ public class CoreModManager {
             String depEndName = new File(dep).getName(); // extract last part of name
             if (skipContainedDeps.contains(dep) || skipContainedDeps.contains(depEndName))
             {
-                FMLRelaunchLog.log(Level.ERROR, "Skipping dep at request: %s", dep);
+                FMLLog.log.error("Skipping dep at request: {}", dep);
                 continue;
             }
             final JarEntry jarEntry = jar.getJarEntry(dep);
             if (jarEntry == null)
             {
-                FMLRelaunchLog.log(Level.ERROR, "Found invalid ContainsDeps declaration %s in %s", dep, jar.getName());
+                FMLLog.log.error("Found invalid ContainsDeps declaration {} in {}", dep, jar.getName());
                 continue;
             }
             File target = new File(versionedModsDir, depEndName);
             File modTarget = new File(baseModsDir, depEndName);
             if (target.exists())
             {
-                FMLRelaunchLog.log(Level.DEBUG, "Found existing ContainsDep extracted to %s, skipping extraction", target.getCanonicalPath());
+                FMLLog.log.debug("Found existing ContainsDep extracted to {}, skipping extraction", target.getCanonicalPath());
                 result.put(dep,target);
                 continue;
             }
             else if (modTarget.exists())
             {
-                FMLRelaunchLog.log(Level.DEBUG, "Found ContainsDep in main mods directory at %s, skipping extraction", modTarget.getCanonicalPath());
+                FMLLog.log.debug("Found ContainsDep in main mods directory at {}, skipping extraction", modTarget.getCanonicalPath());
                 result.put(dep, modTarget);
                 continue;
             }
 
-            FMLRelaunchLog.log(Level.DEBUG, "Extracting ContainedDep %s from %s to %s", dep, jar.getName(), target.getCanonicalPath());
+            FMLLog.log.debug("Extracting ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
             try
             {
                 Files.createParentDirs(target);
@@ -479,11 +479,11 @@ public class CoreModManager {
                     IOUtils.closeQuietly(targetOutputStream);
                     IOUtils.closeQuietly(jarInputStream);
                 }
-                FMLRelaunchLog.log(Level.DEBUG, "Extracted ContainedDep %s from %s to %s", dep, jar.getName(), target.getCanonicalPath());
+                FMLLog.log.debug("Extracted ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
                 result.put(dep,target);
             } catch (IOException e)
             {
-                FMLRelaunchLog.log(Level.ERROR, e, "An error occurred extracting dependency");
+                FMLLog.log.error("An error occurred extracting dependency", e);
             }
         }
         return result;
@@ -508,7 +508,7 @@ public class CoreModManager {
         }
         catch (Exception e)
         {
-            FMLRelaunchLog.log(Level.INFO, e, "There was a problem trying to load the mod dir tweaker %s", coreMod.getAbsolutePath());
+            FMLLog.log.info("There was a problem trying to load the mod dir tweaker {}", coreMod.getAbsolutePath(), e);
         }
     }
 
@@ -559,30 +559,30 @@ public class CoreModManager {
         String coreModName = coreModClass.substring(coreModClass.lastIndexOf('.') + 1);
         try
         {
-            FMLRelaunchLog.fine("Instantiating coremod class %s", coreModName);
+            FMLLog.log.debug("Instantiating coremod class {}", coreModName);
             classLoader.addTransformerExclusion(coreModClass);
             Class<?> coreModClazz = Class.forName(coreModClass, true, classLoader);
             Name coreModNameAnn = coreModClazz.getAnnotation(IFMLLoadingPlugin.Name.class);
             if (coreModNameAnn != null && !Strings.isNullOrEmpty(coreModNameAnn.value()))
             {
                 coreModName = coreModNameAnn.value();
-                FMLRelaunchLog.finer("coremod named %s is loading", coreModName);
+                FMLLog.log.trace("coremod named {} is loading", coreModName);
             }
             MCVersion requiredMCVersion = coreModClazz.getAnnotation(IFMLLoadingPlugin.MCVersion.class);
             if (!Arrays.asList(rootPlugins).contains(coreModClass) && (requiredMCVersion == null || Strings.isNullOrEmpty(requiredMCVersion.value())))
             {
-                FMLRelaunchLog.log(Level.WARN, "The coremod %s does not have a MCVersion annotation, it may cause issues with this version of Minecraft",
+                FMLLog.log.warn("The coremod {} does not have a MCVersion annotation, it may cause issues with this version of Minecraft",
                         coreModClass);
             }
             else if (requiredMCVersion != null && !FMLInjectionData.mccversion.equals(requiredMCVersion.value()))
             {
-                FMLRelaunchLog.log(Level.ERROR, "The coremod %s is requesting minecraft version %s and minecraft is %s. It will be ignored.", coreModClass,
+                FMLLog.log.error("The coremod {} is requesting minecraft version {} and minecraft is {}. It will be ignored.", coreModClass,
                         requiredMCVersion.value(), FMLInjectionData.mccversion);
                 return null;
             }
             else if (requiredMCVersion != null)
             {
-                FMLRelaunchLog.log(Level.DEBUG, "The coremod %s requested minecraft version %s and minecraft is %s. It will be loaded.", coreModClass,
+                FMLLog.log.debug("The coremod {} requested minecraft version {} and minecraft is {}. It will be loaded.", coreModClass,
                         requiredMCVersion.value(), FMLInjectionData.mccversion);
             }
             TransformerExclusions trExclusions = coreModClazz.getAnnotation(IFMLLoadingPlugin.TransformerExclusions.class);
@@ -606,32 +606,32 @@ public class CoreModManager {
             String accessTransformerClass = plugin.getAccessTransformerClass();
             if (accessTransformerClass != null)
             {
-                FMLRelaunchLog.log(Level.DEBUG, "Added access transformer class %s to enqueued access transformers", accessTransformerClass);
+                FMLLog.log.debug("Added access transformer class {} to enqueued access transformers", accessTransformerClass);
                 accessTransformers.add(accessTransformerClass);
             }
             FMLPluginWrapper wrap = new FMLPluginWrapper(coreModName, plugin, location, sortIndex, dependencies);
             loadPlugins.add(wrap);
-            FMLRelaunchLog.fine("Enqueued coremod %s", coreModName);
+            FMLLog.log.debug("Enqueued coremod {}", coreModName);
             return wrap;
         }
         catch (ClassNotFoundException cnfe)
         {
             if (!Lists.newArrayList(rootPlugins).contains(coreModClass))
-                FMLRelaunchLog.log(Level.ERROR, cnfe, "Coremod %s: Unable to class load the plugin %s", coreModName, coreModClass);
+                FMLLog.log.error("Coremod {}: Unable to class load the plugin {}", coreModClass, cnfe);
             else
-                FMLRelaunchLog.fine("Skipping root plugin %s", coreModClass);
+                FMLLog.log.debug("Skipping root plugin {}", coreModClass);
         }
         catch (ClassCastException cce)
         {
-            FMLRelaunchLog.log(Level.ERROR, cce, "Coremod %s: The plugin %s is not an implementor of IFMLLoadingPlugin", coreModName, coreModClass);
+            FMLLog.log.error("Coremod {}: The plugin {} is not an implementor of IFMLLoadingPlugin", coreModClass, cce);
         }
         catch (InstantiationException ie)
         {
-            FMLRelaunchLog.log(Level.ERROR, ie, "Coremod %s: The plugin class %s was not instantiable", coreModName, coreModClass);
+            FMLLog.log.error("Coremod {}: The plugin class {} was not instantiable", coreModClass, ie);
         }
         catch (IllegalAccessException iae)
         {
-            FMLRelaunchLog.log(Level.ERROR, iae, "Coremod %s: The plugin class %s was not accessible", coreModName, coreModClass);
+            FMLLog.log.error("Coremod {}: The plugin class {} was not accessible", coreModClass, iae);
         }
         return null;
     }

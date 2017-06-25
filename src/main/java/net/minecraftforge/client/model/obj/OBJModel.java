@@ -128,7 +128,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         {
             if (e.getValue().getTexture().getTextureLocation().getResourcePath().startsWith("#"))
             {
-                FMLLog.severe("OBJLoader: Unresolved texture '%s' for obj model '%s'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
+                FMLLog.log.fatal("OBJLoader: Unresolved texture '{}' for obj model '{}'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
                 builder.put(e.getKey(), missing);
             }
             else
@@ -285,7 +285,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     else if (key.equalsIgnoreCase("f")) // Face Elements: f v1[/vt1][/vn1] ...
                     {
                         if (splitData.length > 4)
-                            FMLLog.warning("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
+                            FMLLog.log.warn("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
 
                         List<Vertex> v = Lists.newArrayListWithCapacity(splitData.length);
 
@@ -368,7 +368,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                         if (!unknownObjectCommands.contains(key))
                         {
                             unknownObjectCommands.add(key);
-                            FMLLog.info("OBJLoader.Parser: command '%s' (model: '%s') is not currently supported, skipping. Line: %d '%s'", key, objFrom, lineNum, currentLine);
+                            FMLLog.log.info("OBJLoader.Parser: command '{}' (model: '{}') is not currently supported, skipping. Line: {} '{}'", key, objFrom, lineNum, currentLine);
                         }
                     }
                 }
@@ -545,7 +545,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     }
                     else
                     {
-                        FMLLog.info("OBJModel: A color has already been defined for material '%s' in '%s'. The color defined by key '%s' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
+                        FMLLog.log.info("OBJModel: A color has already been defined for material '{}' in '{}'. The color defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
                     }
                 }
                 else if (key.equalsIgnoreCase("map_Ka") || key.equalsIgnoreCase("map_Kd") || key.equalsIgnoreCase("map_Ks"))
@@ -569,7 +569,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     }
                     else
                     {
-                        FMLLog.info("OBJModel: A texture has already been defined for material '%s' in '%s'. The texture defined by key '%s' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
+                        FMLLog.log.info("OBJModel: A texture has already been defined for material '{}' in '{}'. The texture defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
                     }
                 }
                 else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr"))
@@ -585,7 +585,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     if (!unknownMaterialCommands.contains(key))
                     {
                         unknownMaterialCommands.add(key);
-                        FMLLog.info("OBJLoader.MaterialLibrary: key '%s' (model: '%s') is not currently supported, skipping", key, new ResourceLocation(domain, path));
+                        FMLLog.log.info("OBJLoader.MaterialLibrary: key '{}' (model: '{}') is not currently supported, skipping", key, new ResourceLocation(domain, path));
                     }
                 }
             }
@@ -1138,6 +1138,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             return parent;
         }
 
+        @Override
         public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
             if (parent != null) return parent.apply(part);
@@ -1256,6 +1257,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
     public enum OBJProperty implements IUnlistedProperty<OBJState>
     {
         INSTANCE;
+        @Override
         public String getName()
         {
             return "OBJProperty";
@@ -1548,6 +1550,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
         private final LoadingCache<IModelState, OBJBakedModel> cache = CacheBuilder.newBuilder().maximumSize(20).build(new CacheLoader<IModelState, OBJBakedModel>()
         {
+            @Override
             public OBJBakedModel load(IModelState state) throws Exception
             {
                 return new OBJBakedModel(model, state, format, textures);

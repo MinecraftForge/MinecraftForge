@@ -112,17 +112,20 @@ public enum B3DLoader implements ICustomModelLoader
         enabledDomains.add(domain.toLowerCase());
     }
 
+    @Override
     public void onResourceManagerReload(IResourceManager manager)
     {
         this.manager = manager;
         cache.clear();
     }
 
+    @Override
     public boolean accepts(ResourceLocation modelLocation)
     {
         return enabledDomains.contains(modelLocation.getResourceDomain()) && modelLocation.getResourcePath().endsWith(".b3d");
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public IModel loadModel(ResourceLocation modelLocation) throws Exception
     {
@@ -230,6 +233,7 @@ public enum B3DLoader implements ICustomModelLoader
             return parent;
         }
 
+        @Override
         public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
             // TODO make more use of Optional
@@ -272,6 +276,7 @@ public enum B3DLoader implements ICustomModelLoader
             .expireAfterAccess(2, TimeUnit.MINUTES)
             .build(new CacheLoader<Triple<Animation, Node<?>, Integer>, TRSRTransformation>()
             {
+                @Override
                 public TRSRTransformation load(Triple<Animation, Node<?>, Integer> key) throws Exception
                 {
                     return getNodeMatrix(key.getLeft(), key.getMiddle(), key.getRight());
@@ -352,6 +357,7 @@ public enum B3DLoader implements ICustomModelLoader
             this.node = node;
         }
 
+        @Override
         public TRSRTransformation getInvBindPose()
         {
             Matrix4f m = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
@@ -366,6 +372,7 @@ public enum B3DLoader implements ICustomModelLoader
             return pose;
         }
 
+        @Override
         public Optional<NodeJoint> getParent()
         {
             // FIXME cache?
@@ -402,21 +409,25 @@ public enum B3DLoader implements ICustomModelLoader
     public static enum B3DFrameProperty implements IUnlistedProperty<B3DState>
     {
         INSTANCE;
+        @Override
         public String getName()
         {
             return "B3DFrame";
         }
 
+        @Override
         public boolean isValid(B3DState value)
         {
             return value instanceof B3DState;
         }
 
+        @Override
         public Class<B3DState> getType()
         {
             return B3DState.class;
         }
 
+        @Override
         public String valueToString(B3DState value)
         {
             return value.toString();
@@ -480,6 +491,7 @@ public enum B3DLoader implements ICustomModelLoader
         {
             return Collections2.filter(textures.values(), new Predicate<ResourceLocation>()
             {
+                @Override
                 public boolean apply(ResourceLocation loc)
                 {
                     return !loc.getResourcePath().startsWith("#");
@@ -496,7 +508,7 @@ public enum B3DLoader implements ICustomModelLoader
             {
                 if(e.getValue().getResourcePath().startsWith("#"))
                 {
-                    FMLLog.severe("unresolved texture '%s' for b3d model '%s'", e.getValue().getResourcePath(), modelLocation);
+                    FMLLog.log.fatal("unresolved texture '{}' for b3d model '{}'", e.getValue().getResourcePath(), modelLocation);
                     builder.put(e.getKey(), missing);
                 }
                 else
@@ -551,7 +563,7 @@ public enum B3DLoader implements ICustomModelLoader
                         }
                         else
                         {
-                            FMLLog.severe("unknown mesh definition '%s' in array for b3d model '%s'", s.toString(), modelLocation);
+                            FMLLog.log.fatal("unknown mesh definition '{}' in array for b3d model '{}'", s.toString(), modelLocation);
                             return this;
                         }
                     }
@@ -559,7 +571,7 @@ public enum B3DLoader implements ICustomModelLoader
                 }
                 else
                 {
-                    FMLLog.severe("unknown mesh definition '%s' for b3d model '%s'", e.toString(), modelLocation);
+                    FMLLog.log.fatal("unknown mesh definition '{}' for b3d model '{}'", e.toString(), modelLocation);
                     return this;
                 }
             }
@@ -572,13 +584,14 @@ public enum B3DLoader implements ICustomModelLoader
                 }
                 else
                 {
-                    FMLLog.severe("unknown keyframe definition '%s' for b3d model '%s'", e.toString(), modelLocation);
+                    FMLLog.log.fatal("unknown keyframe definition '{}' for b3d model '{}'", e.toString(), modelLocation);
                     return this;
                 }
             }
             return this;
         }
 
+        @Override
         public Optional<IClip> getClip(String name)
         {
             if(name.equals("main"))
@@ -588,6 +601,7 @@ public enum B3DLoader implements ICustomModelLoader
             return Optional.absent();
         }
 
+        @Override
         public IModelState getDefaultState()
         {
             return new B3DState(model.getRoot().getAnimation(), defaultKey, defaultKey, 0);
@@ -632,8 +646,9 @@ public enum B3DLoader implements ICustomModelLoader
             this(node, state, smooth, gui3d, format, meshes, textures, CacheBuilder.newBuilder()
                 .maximumSize(128)
                 .expireAfterAccess(2, TimeUnit.MINUTES)
-                .<Integer, B3DState>build(new CacheLoader<Integer, B3DState>()
+                .build(new CacheLoader<Integer, B3DState>()
                 {
+                    @Override
                     public B3DState load(Integer frame) throws Exception
                     {
                         IModelState parent = state;
@@ -747,12 +762,14 @@ public enum B3DLoader implements ICustomModelLoader
                         .maximumSize(32)
                         .build(new CacheLoader<Node<?>, TRSRTransformation>()
                         {
+                            @Override
                             public TRSRTransformation load(Node<?> node) throws Exception
                             {
                                 return state.apply(Optional.of(new NodeJoint(node))).or(TRSRTransformation.identity());
                             }
                         });
 
+                    @Override
                     public Matrix4f apply(Node<?> node)
                     {
                         return global.compose(localCache.getUnchecked(node)).getMatrix();
@@ -831,37 +848,44 @@ public enum B3DLoader implements ICustomModelLoader
             }
         }
 
+        @Override
         public boolean isAmbientOcclusion()
         {
             return smooth;
         }
 
+        @Override
         public boolean isGui3d()
         {
             return gui3d;
         }
 
+        @Override
         public boolean isBuiltInRenderer()
         {
             return false;
         }
 
+        @Override
         public TextureAtlasSprite getParticleTexture()
         {
             // FIXME somehow specify particle texture in the model
             return textures.values().asList().get(0);
         }
 
+        @Override
         public ItemCameraTransforms getItemCameraTransforms()
         {
             return ItemCameraTransforms.DEFAULT;
         }
 
+        @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
             return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
         }
 
+        @Override
         public ItemOverrideList getOverrides()
         {
             // TODO handle items

@@ -99,7 +99,7 @@
      }
  
      @Nullable
-@@ -198,7 +215,17 @@
+@@ -198,7 +215,16 @@
          }
          else
          {
@@ -109,15 +109,14 @@
 +            }
 +            catch (Exception e)
 +            {
-+                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
-+                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                        p_75615_0_.func_74779_i("id"), entity.func_70005_c_());
++                net.minecraftforge.fml.common.FMLLog.log.error("An Entity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        p_75615_0_.func_74779_i("id"), entity.func_70005_c_(), e);
 +                entity = null;
 +            }
          }
  
          return entity;
-@@ -206,7 +233,7 @@
+@@ -206,7 +232,7 @@
  
      public static Set<ResourceLocation> func_180124_b()
      {
@@ -126,7 +125,7 @@
      }
  
      public static boolean func_180123_a(Entity p_180123_0_, ResourceLocation p_180123_1_)
-@@ -373,7 +400,7 @@
+@@ -373,7 +399,7 @@
          func_191305_a("zombie_horse", 3232308, 9945732);
          func_191305_a("zombie_pigman", 15373203, 5009705);
          func_191305_a("zombie_villager", 5651507, 7969893);
@@ -135,7 +134,7 @@
      }
  
      private static void func_191303_a(int p_191303_0_, String p_191303_1_, Class <? extends Entity > p_191303_2_, String p_191303_3_)
-@@ -394,22 +421,19 @@
+@@ -394,22 +420,19 @@
          else
          {
              ResourceLocation resourcelocation = new ResourceLocation(p_191303_1_);

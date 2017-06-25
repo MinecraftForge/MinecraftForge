@@ -40,14 +40,17 @@ public class CapabilityAnimation
     {
         CapabilityManager.INSTANCE.register(IAnimationStateMachine.class, new Capability.IStorage<IAnimationStateMachine>()
         {
+            @Override
             public NBTBase writeNBT(Capability<IAnimationStateMachine> capability, IAnimationStateMachine instance, EnumFacing side)
             {
                 return null;
             }
 
+            @Override
             public void readNBT(Capability<IAnimationStateMachine> capability, IAnimationStateMachine instance, EnumFacing side, NBTBase nbt) {}
         }, new Callable<IAnimationStateMachine>()
         {
+            @Override
             public IAnimationStateMachine call() throws Exception
             {
                 return AnimationStateMachine.getMissing();

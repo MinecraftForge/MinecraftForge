@@ -47,6 +47,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
 {
     protected static BlockRendererDispatcher blockRenderer;
 
+    @Override
     public void renderTileEntityFast(@Nonnull T te, double x, double y, double z, float partialTick, int breakStage, float partial, @Nonnull BufferBuilder renderer)
     {
         if(!te.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null))
@@ -85,5 +86,6 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
         }
     }
 
+    @Override
     public void handleEvents(T te, float time, Iterable<Event> pastEvents) {}
 }

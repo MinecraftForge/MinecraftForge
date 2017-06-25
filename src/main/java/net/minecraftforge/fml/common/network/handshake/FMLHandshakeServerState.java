@@ -57,14 +57,14 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
             // Hello packet first
             if (msg instanceof FMLHandshakeMessage.ClientHello)
             {
-                FMLLog.info("Client protocol version %x", ((FMLHandshakeMessage.ClientHello)msg).protocolVersion());
+                FMLLog.log.info("Client protocol version {}", Integer.toHexString(((FMLHandshakeMessage.ClientHello)msg).protocolVersion()));
                 return this;
             }
 
             FMLHandshakeMessage.ModList client = (FMLHandshakeMessage.ModList)msg;
             NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
             dispatcher.setModList(client.modList());
-            FMLLog.info("Client attempting to join with %d mods : %s", client.modListSize(), client.modListAsString());
+            FMLLog.log.info("Client attempting to join with {} mods : {}", client.modListSize(), client.modListAsString());
             String result = FMLNetworkHandler.checkModList(client, Side.CLIENT);
             if (result != null)
             {

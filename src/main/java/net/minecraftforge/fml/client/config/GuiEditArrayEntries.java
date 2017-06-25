@@ -60,7 +60,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         this.configElement = configElement;
         this.beforeValues = beforeValues;
         this.currentValues = currentValues;
-        this.func_193651_b(false);
+        this.setShowSelectionBox(false);
         this.isChanged = !Arrays.deepEquals(beforeValues, currentValues);
         this.isDefault = Arrays.deepEquals(currentValues, configElement.getDefaults());
         this.canAddMoreEntries = !configElement.isListLengthFixed() && (configElement.getMaxListLength() == -1 || currentValues.length < configElement.getMaxListLength());
@@ -81,7 +81,7 @@ public class GuiEditArrayEntries extends GuiListExtended
                 }
                 catch (Throwable e)
                 {
-                    FMLLog.log(Level.ERROR, e, "There was a critical error instantiating the custom IGuiEditListEntry for property %s.", configElement.getName());
+                    FMLLog.log.error("There was a critical error instantiating the custom IGuiEditListEntry for property {}.", configElement.getName(), e);
                 }
             }
         }
@@ -156,7 +156,7 @@ public class GuiEditArrayEntries extends GuiListExtended
             }
             catch (Throwable e)
             {
-                FMLLog.log(Level.ERROR, e, "There was a critical error instantiating the custom IGuiEditListEntry for property %s.", configElement.getName());
+                FMLLog.log.error("There was a critical error instantiating the custom IGuiEditListEntry for property {}.", configElement.getName(), e);
             }
         }
         else if (configElement.isList() && configElement.getType() == ConfigGuiType.BOOLEAN)
@@ -435,7 +435,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         public StringEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement, Object value)
         {
             super(owningScreen, owningEntryList, configElement);
-            this.textFieldValue = new GuiTextField(0, owningEntryList.getMC().fontRendererObj, owningEntryList.width / 4 + 1, 0, owningEntryList.controlWidth - 3, 16);
+            this.textFieldValue = new GuiTextField(0, owningEntryList.getMC().fontRenderer, owningEntryList.width / 4 + 1, 0, owningEntryList.controlWidth - 3, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(value.toString());
             this.isValidated = configElement.getValidationPattern() != null;
@@ -450,13 +450,13 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
-            super.func_192634_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
             if (configElement.isListLengthFixed() || slotIndex != owningEntryList.listEntries.size() - 1)
             {
                 this.textFieldValue.setVisible(true);
-                this.textFieldValue.yPosition = y + 1;
+                this.textFieldValue.y = y + 1;
                 this.textFieldValue.drawTextBox();
             }
             else
@@ -516,11 +516,11 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
-            super.func_192634_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
-            this.btnValue.xPosition = listWidth / 4;
-            this.btnValue.yPosition = y;
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
+            this.btnValue.x = listWidth / 4;
+            this.btnValue.y = y;
 
             String trans = I18n.format(String.valueOf(value));
             if (!trans.equals(String.valueOf(value)))
@@ -529,7 +529,7 @@ public class GuiEditArrayEntries extends GuiListExtended
                 this.btnValue.displayString = String.valueOf(value);
             btnValue.packedFGColour = value ? GuiUtils.getColorCode('2', true) : GuiUtils.getColorCode('4', true);
 
-            this.btnValue.func_191745_a(owningEntryList.getMC(), mouseX, mouseY, partial);
+            this.btnValue.drawButton(owningEntryList.getMC(), mouseX, mouseY, partial);
         }
 
         @Override
@@ -593,22 +593,22 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
             if (this.getValue() != null && this.isValidated)
-                owningEntryList.getMC().fontRendererObj.drawString(
+                owningEntryList.getMC().fontRenderer.drawString(
                         isValidValue ? TextFormatting.GREEN + VALID : TextFormatting.RED + INVALID,
-                        listWidth / 4 - owningEntryList.getMC().fontRendererObj.getStringWidth(VALID) - 2,
-                        y + slotHeight / 2 - owningEntryList.getMC().fontRendererObj.FONT_HEIGHT / 2,
+                        listWidth / 4 - owningEntryList.getMC().fontRenderer.getStringWidth(VALID) - 2,
+                        y + slotHeight / 2 - owningEntryList.getMC().fontRenderer.FONT_HEIGHT / 2,
                         16777215);
 
             int half = listWidth / 2;
             if (owningEntryList.canAddMoreEntries)
             {
                 this.btnAddNewEntryAbove.visible = true;
-                this.btnAddNewEntryAbove.xPosition = half + ((half / 2) - 44);
-                this.btnAddNewEntryAbove.yPosition = y;
-                this.btnAddNewEntryAbove.func_191745_a(owningEntryList.getMC(), mouseX, mouseY, partial);
+                this.btnAddNewEntryAbove.x = half + ((half / 2) - 44);
+                this.btnAddNewEntryAbove.y = y;
+                this.btnAddNewEntryAbove.drawButton(owningEntryList.getMC(), mouseX, mouseY, partial);
             }
             else
                 this.btnAddNewEntryAbove.visible = false;
@@ -616,9 +616,9 @@ public class GuiEditArrayEntries extends GuiListExtended
             if (!configElement.isListLengthFixed() && slotIndex != owningEntryList.listEntries.size() - 1)
             {
                 this.btnRemoveEntry.visible = true;
-                this.btnRemoveEntry.xPosition = half + ((half / 2) - 22);
-                this.btnRemoveEntry.yPosition = y;
-                this.btnRemoveEntry.func_191745_a(owningEntryList.getMC(), mouseX, mouseY, partial);
+                this.btnRemoveEntry.x = half + ((half / 2) - 22);
+                this.btnRemoveEntry.y = y;
+                this.btnRemoveEntry.drawButton(owningEntryList.getMC(), mouseX, mouseY, partial);
             }
             else
                 this.btnRemoveEntry.visible = false;

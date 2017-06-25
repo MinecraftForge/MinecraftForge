@@ -191,7 +191,7 @@
      public void func_184609_a(EnumHand p_184609_1_)
      {
 +        ItemStack stack = this.func_184586_b(p_184609_1_);
-+        if (stack != null && stack.func_77973_b() != null)
++        if (!stack.func_190926_b())
 +        {
 +            if (stack.func_77973_b().onEntitySwing(this, stack)) return;
 +        }
@@ -293,7 +293,7 @@
  
              if (itemstack == this.field_184627_bm)
              {
-+                if (this.field_184627_bm != null)
++                if (!this.field_184627_bm.func_190926_b())
 +                {
 +                    field_184628_bn = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, field_184627_bm, field_184628_bn);
 +                    if (field_184628_bn > 0)

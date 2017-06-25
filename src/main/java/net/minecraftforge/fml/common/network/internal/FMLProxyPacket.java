@@ -103,12 +103,12 @@ public class FMLProxyPacket implements Packet<INetHandler> {
                     badPackets.add(this.channel);
                     if (badPackets.size() % packetCountWarning == 0)
                     {
-                        FMLLog.severe("Detected ongoing potential memory leak. %d packets have leaked. Top offenders", badPackets.size());
+                        FMLLog.log.fatal("Detected ongoing potential memory leak. {} packets have leaked. Top offenders", badPackets.size());
                         int i = 0;
                         for (Entry<String> s  : Multisets.copyHighestCountFirst(badPackets).entrySet())
                         {
                             if (i++ > 10) break;
-                            FMLLog.severe("\t %s : %d", s.getElement(), s.getCount());
+                            FMLLog.log.fatal("\t {} : {}", s.getElement(), s.getCount());
                         }
                     }
                 }
@@ -116,12 +116,12 @@ public class FMLProxyPacket implements Packet<INetHandler> {
             }
             catch (FMLNetworkException ne)
             {
-                FMLLog.log(Level.ERROR, ne, "There was a network exception handling a packet on channel %s", channel);
+                FMLLog.log.error("There was a network exception handling a packet on channel {}", channel, ne);
                 dispatcher.rejectHandshake(ne.getMessage());
             }
             catch (Throwable t)
             {
-                FMLLog.log(Level.ERROR, t, "There was a critical exception handling a packet on channel %s", channel);
+                FMLLog.log.error("There was a critical exception handling a packet on channel {}", channel, t);
                 dispatcher.rejectHandshake("A fatal error has occurred, this connection is terminated");
             }
         }

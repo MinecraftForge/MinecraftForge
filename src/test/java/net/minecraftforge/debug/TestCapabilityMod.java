@@ -70,7 +70,7 @@ public class TestCapabilityMod
         {
             event.setCanceled(true);
             IExampleCapability inv = te.getCapability(TEST_CAP, event.getFace());
-            logger.info("Hi I'm a " + inv.getOwnerType());
+            logger.info("Hi I'm a {}", inv.getOwnerType());
         }
         if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.DIRT && event.getItemStack().hasCapability(TEST_CAP, null))
         {
@@ -92,7 +92,7 @@ public class TestCapabilityMod
         {
             IExampleCapability cap = event.getItemStack().getCapability(TEST_CAP, null);
             cap.toggleVal();
-            logger.info("Test value is now: " + (cap.getVal() ? "TRUE" : "FALSE"));
+            logger.info("Test value is now: {}", cap.getVal() ? "TRUE" : "FALSE");
         }
     }
 
@@ -240,7 +240,7 @@ public class TestCapabilityMod
         {
             List<EntityPlayer> players = event.world.playerEntities;
             int i = 0;
-            for (Village village : event.world.villageCollectionObj.getVillageList())
+            for (Village village : event.world.villageCollection.getVillageList())
             {
                 if (village.hasCapability(TEST_CAP, null))
                 {

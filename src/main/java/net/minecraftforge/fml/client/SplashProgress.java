@@ -160,7 +160,7 @@ public class SplashProgress
         }
         catch(IOException e)
         {
-            FMLLog.info("Could not load splash.properties, will create a default one");
+            FMLLog.log.info("Could not load splash.properties, will create a default one");
         }
         finally
         {
@@ -202,7 +202,7 @@ public class SplashProgress
         }
         catch(IOException e)
         {
-            FMLLog.log(Level.ERROR, e, "Could not save the splash.properties file");
+            FMLLog.log.error("Could not save the splash.properties file", e);
         }
         finally
         {
@@ -215,6 +215,7 @@ public class SplashProgress
         // getting debug info out of the way, while we still can
         FMLCommonHandler.instance().registerCrashCallable(new ICrashCallable()
         {
+            @Override
             public String call() throws Exception
             {
                 return "' Vendor: '" + glGetString(GL_VENDOR) +
@@ -223,6 +224,7 @@ public class SplashProgress
                        "'";
             }
 
+            @Override
             public String getLabel()
             {
                 return "GL info";
@@ -231,7 +233,7 @@ public class SplashProgress
         CrashReport report = CrashReport.makeCrashReport(new Throwable(), "Loading screen debug info");
         StringBuilder systemDetailsBuilder = new StringBuilder();
         report.getCategory().appendToStringBuilder(systemDetailsBuilder);
-        FMLLog.info(systemDetailsBuilder.toString());
+        FMLLog.log.info(systemDetailsBuilder.toString());
 
         try
         {
@@ -257,6 +259,7 @@ public class SplashProgress
             private final int barOffset = 55;
             private long updateTiming;
             private long framecount;
+            @Override
             public void run()
             {
                 setGL();
@@ -398,13 +401,13 @@ public class SplashProgress
                         if (!isDisplayVSyncForced)
                         {
                             isDisplayVSyncForced = true;
-                            FMLLog.log(Level.INFO, "Using alternative sync timing : %d frames of Display.update took %d nanos", TIMING_FRAME_COUNT, updateTiming);
+                            FMLLog.log.info("Using alternative sync timing : {} frames of Display.update took {} nanos", TIMING_FRAME_COUNT, updateTiming);
                         }
                         try { Thread.sleep(16); } catch (InterruptedException ie) {}
                     } else
                     {
                         if (framecount ==TIMING_FRAME_COUNT) {
-                            FMLLog.log(Level.INFO, "Using sync timing. %d frames of Display.update took %d nanos", TIMING_FRAME_COUNT, updateTiming);
+                            FMLLog.log.info("Using sync timing. {} frames of Display.update took {} nanos", TIMING_FRAME_COUNT, updateTiming);
                         }
                         Display.sync(100);
                     }
@@ -575,9 +578,10 @@ public class SplashProgress
         });
         thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler()
         {
+            @Override
             public void uncaughtException(Thread t, Throwable e)
             {
-                FMLLog.log(Level.ERROR, e, "Splash thread Exception");
+                FMLLog.log.error("Splash thread Exception", e);
                 threadError = e;
             }
         });
@@ -726,7 +730,7 @@ public class SplashProgress
         }
         catch(IOException e)
         {
-            FMLLog.log(Level.ERROR, e, "Could not save the splash.properties file");
+            FMLLog.log.error("Could not save the splash.properties file", e);
             return false;
         }
         finally

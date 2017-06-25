@@ -113,7 +113,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     private final EmbeddedChannel handshakeChannel;
     private NetHandlerPlayServer serverHandler;
     private INetHandler netHandler;
-    private Map<String,String> modList;
+    private Map<String,String> modList = Collections.emptyMap();
     private int overrideLoginDim;
 
     public NetworkDispatcher(NetworkManager manager)
@@ -159,7 +159,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         else
         {
             serverInitiateHandshake();
-            FMLLog.info("Connection received without FML marker, assuming vanilla.");
+            FMLLog.log.info("Connection received without FML marker, assuming vanilla.");
             this.completeServerSideConnection(ConnectionType.VANILLA);
             insertIntoChannel();
         }
@@ -176,11 +176,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         // Insert ourselves into the pipeline
         this.manager.channel().pipeline().addBefore("packet_handler", "fml:packet_handler", this);
         if (this.state != null) {
-            FMLLog.getLogger().log(Level.INFO, "Opening channel which already seems to have a state set. This is a vanilla connection. Handshake handler will stop now");
+            FMLLog.log.info("Opening channel which already seems to have a state set. This is a vanilla connection. Handshake handler will stop now");
             this.manager.channel().config().setAutoRead(true);
             return;
         }
-        FMLLog.getLogger().log(Level.TRACE, "Handshake channel activating");
+        FMLLog.log.trace("Handshake channel activating");
         this.state = ConnectionState.OPENING;
         // send ourselves as a user event, to kick the pipeline active
         this.handshakeChannel.pipeline().fireUserEventTriggered(this);
@@ -208,7 +208,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
                     completeServerSideConnection(ConnectionType.MODDED);
                 }
                 // FORGE: sometimes the netqueue will tick while login is occurring, causing an NPE. We shouldn't tick until the connection is complete
-                if (this.playerEntity.connection != this) return;
+                if (this.player.connection != this) return;
                 super.update();
             }
         };
@@ -243,7 +243,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     private void completeClientSideConnection(ConnectionType type)
     {
         this.connectionType = type;
-        FMLLog.info("[%s] Client side %s connection established", Thread.currentThread().getName(), this.connectionType.name().toLowerCase(Locale.ENGLISH));
+        FMLLog.log.info("[{}] Client side {} connection established", Thread.currentThread().getName(), this.connectionType.name().toLowerCase(Locale.ENGLISH));
         this.state = ConnectionState.CONNECTED;
         MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ClientConnectedToServerEvent(manager, this.connectionType.name()));
     }
@@ -251,7 +251,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     private synchronized void completeServerSideConnection(ConnectionType type)
     {
         this.connectionType = type;
-        FMLLog.info("[%s] Server side %s connection established", Thread.currentThread().getName(), this.connectionType.name().toLowerCase(Locale.ENGLISH));
+        FMLLog.log.info("[{}] Server side {} connection established", Thread.currentThread().getName(), this.connectionType.name().toLowerCase(Locale.ENGLISH));
         this.state = ConnectionState.CONNECTED;
         MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
         if (DEBUG_HANDSHAKE)
@@ -289,7 +289,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         }
         else
         {
-            FMLLog.info("Unexpected packet during modded negotiation - assuming vanilla or keepalives : %s", msg.getClass().getName());
+            FMLLog.log.info("Unexpected packet during modded negotiation - assuming vanilla or keepalives : {}", msg.getClass().getName());
         }
         return false;
     }
@@ -314,7 +314,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     {
         if (evt instanceof ConnectionType && side == Side.SERVER)
         {
-            FMLLog.info("Timeout occurred, assuming a vanilla client");
+            FMLLog.log.info("Timeout occurred, assuming a vanilla client");
             kickVanilla();
         }
     }
@@ -326,7 +326,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
     private void kickWithMessage(String message)
     {
-        FMLLog.log(Level.ERROR, "Network Disconnect: %s", message);
+        FMLLog.log.error("Network Disconnect: {}", message);
         final TextComponentString TextComponentString = new TextComponentString(message);
         if (side == Side.CLIENT)
         {
@@ -551,7 +551,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     {
         if (state == ConnectionState.CONNECTED)
         {
-            FMLLog.severe("Attempt to double complete the network connection!");
+            FMLLog.log.fatal("Attempt to double complete the network connection!");
             throw new FMLNetworkException("Attempt to double complete!");
         }
         if (side == Side.CLIENT)
@@ -571,7 +571,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
     public void abortClientHandshake(String type)
     {
-        FMLLog.log(Level.INFO, "Aborting client handshake \"%s\"", type);
+        FMLLog.log.info("Aborting client handshake \"{}\"", type);
         //FMLCommonHandler.instance().waitForPlayClient();
         completeClientSideConnection(ConnectionType.valueOf(type));
     }
@@ -585,11 +585,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
             // Mute the reset by peer exception - it's disconnection noise
             if (cause.getMessage() != null && cause.getMessage().contains("Connection reset by peer"))
             {
-                FMLLog.log(Level.DEBUG, cause, "Muted NetworkDispatcher exception");
+                FMLLog.log.debug("Muted NetworkDispatcher exception", cause);
             }
             else
             {
-                FMLLog.log(Level.ERROR, cause, "NetworkDispatcher exception");
+                FMLLog.log.error("NetworkDispatcher exception", cause);
             }
         }
         super.exceptionCaught(ctx, cause);
@@ -608,11 +608,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
     public void setOverrideDimension(int overrideDim) {
         this.overrideLoginDim = overrideDim;
-        FMLLog.fine("Received override dimension %d", overrideDim);
+        FMLLog.log.debug("Received override dimension {}", overrideDim);
     }
 
     public int getOverrideDimension(SPacketJoinGame packetIn) {
-        FMLLog.fine("Overriding dimension: using %d", this.overrideLoginDim);
+        FMLLog.log.debug("Overriding dimension: using {}", this.overrideLoginDim);
         return this.overrideLoginDim != 0 ? this.overrideLoginDim : packetIn.getDimension();
     }
 

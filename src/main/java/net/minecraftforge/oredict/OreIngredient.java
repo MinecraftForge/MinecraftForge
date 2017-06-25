@@ -18,6 +18,7 @@
  */
 package net.minecraftforge.oredict;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -42,13 +43,17 @@ public class OreIngredient extends Ingredient
     }
 
     @Override
-    public ItemStack[] func_193365_a()
+    @Nonnull
+    public ItemStack[] getMatchingStacks()
     {
         return ores.toArray(new ItemStack[ores.size()]);
     }
 
+
+    @Override
+    @Nonnull
     @SideOnly(Side.CLIENT)
-    public IntList func_194139_b()
+    public IntList getValidItemStacksPacked()
     {
         if (this.itemIds == null || this.itemIds.size() != ores.size())
         {
@@ -56,7 +61,7 @@ public class OreIngredient extends Ingredient
 
             for (ItemStack itemstack : this.ores)
             {
-                this.itemIds.add(RecipeItemHelper.func_194113_b(itemstack));
+                this.itemIds.add(RecipeItemHelper.pack(itemstack));
             }
 
             this.itemIds.sort(IntComparators.NATURAL_COMPARATOR);
@@ -66,6 +71,7 @@ public class OreIngredient extends Ingredient
     }
 
 
+    @Override
     public boolean apply(@Nullable ItemStack input)
     {
         if (input == null)
@@ -78,6 +84,7 @@ public class OreIngredient extends Ingredient
         return false;
     }
 
+    @Override
     protected void invalidate()
     {
         this.itemIds = null;

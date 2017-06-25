@@ -113,7 +113,7 @@ public class ItemTileDebug
         }
 
         @Override
-        public void func_192841_a(CustomTileEntity p_180535_1_, double x, double y, double z, float p_180535_8_, int p_180535_9_, float partial)
+        public void render(CustomTileEntity p_180535_1_, double x, double y, double z, float p_180535_8_, int p_180535_9_, float partial)
         {
             glPushMatrix();
             glTranslated(x, y, z);
