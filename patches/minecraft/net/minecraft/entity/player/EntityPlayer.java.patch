@@ -228,7 +228,7 @@
          }
          else
          {
-+            EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAction(this, p_190775_1_, p_190775_2_);
++            EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntity(this, p_190775_1_, p_190775_2_);
 +            if (cancelResult != null) return cancelResult;
              ItemStack itemstack = this.func_184586_b(p_190775_2_);
              ItemStack itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
