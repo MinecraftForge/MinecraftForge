@@ -23,5 +23,12 @@ import net.minecraft.item.ItemStack;
 
 public interface IFuelHandler
 {
+    
+    /**
+     * Gets the burn time of the given ItemStack
+     * @param fuel ItemStack to get the burn time of
+     * @return the burn time of the ItemStack, or -1 for ignored
+     */
     int getBurnTime(ItemStack fuel);
+    
 }
