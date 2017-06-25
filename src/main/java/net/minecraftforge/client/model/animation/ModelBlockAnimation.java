@@ -80,7 +80,7 @@ public class ModelBlockAnimation
         this.clips = clips;
     }
 
-    public ImmutableMap<String, MBClip> getClips()
+    public ImmutableMap<String, ? extends IClip> getClips()
     {
         return clips;
     }
