@@ -1,6 +1,6 @@
 package net.minecraftforge.debug;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.UnmodifiableIterator;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -380,7 +380,7 @@ public class ModelLoaderRegistryDebug
                         }
                     }
                 }
-                return Optional.absent();
+                return Optional.empty();
             }
         };
 

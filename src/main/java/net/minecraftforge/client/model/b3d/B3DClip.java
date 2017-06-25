@@ -49,7 +49,7 @@ public enum B3DClip implements IClip
     @Override
     public Iterable<Event> pastEvents(float lastPollTime, float time)
     {
-        return ImmutableSet.<Event>of();
+        return ImmutableSet.of();
     }
 
     protected static class NodeClip implements IJointClip

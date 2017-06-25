@@ -28,8 +28,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.IntBuffer;
 import java.util.Iterator;
@@ -67,7 +65,6 @@ import net.minecraftforge.fml.common.asm.FMLSanityChecker;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;

@@ -42,7 +42,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.Maps;
 
 /*
@@ -563,7 +563,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     {
         if(part.isPresent())
         {
-            return Optional.absent();
+            return Optional.empty();
         }
         return Optional.of(this);
     }

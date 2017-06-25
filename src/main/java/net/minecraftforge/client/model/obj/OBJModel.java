@@ -66,9 +66,9 @@ import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -78,7 +78,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class OBJModel implements IRetexturableModel, IModelCustomData
+public class OBJModel implements IModel
 {
     //private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;
@@ -95,12 +95,6 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         this.matLib = matLib;
         this.modelLocation = modelLocation;
         this.customData = customData;
-    }
-
-    @Override
-    public Collection<ResourceLocation> getDependencies()
-    {
-        return Collections.emptyList();
     }
 
     @Override
@@ -1081,7 +1075,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             for (Face f : this.faces)
             {
 //                if (minUVBounds != null && maxUVBounds != null) f.normalizeUVs(minUVBounds, maxUVBounds);
-                faceSet.add(f.bake(transform.or(TRSRTransformation.identity())));
+                faceSet.add(f.bake(transform.orElse(TRSRTransformation.identity())));
             }
             return faceSet;
         }
@@ -1142,7 +1136,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
             if (parent != null) return parent.apply(part);
-            return Optional.absent();
+            return Optional.empty();
         }
 
         public Map<String, Boolean> getVisibilityMap()
@@ -1282,7 +1276,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
     }
 
-    public class OBJBakedModel implements IPerspectiveAwareModel
+    public class OBJBakedModel implements IBakedModel
     {
         private final OBJModel model;
         private IModelState state;
@@ -1335,7 +1329,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             List<BakedQuad> quads = Lists.newArrayList();
             Collections.synchronizedSet(new LinkedHashSet<BakedQuad>());
             Set<Face> faces = Collections.synchronizedSet(new LinkedHashSet<Face>());
-            Optional<TRSRTransformation> transform = Optional.absent();
+            Optional<TRSRTransformation> transform = Optional.empty();
             for (Group g : this.model.getMatLib().getGroups().values())
             {
 //                g.minUVBounds = this.model.getMatLib().minUVBounds;
@@ -1351,7 +1345,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     OBJState state = (OBJState) modelState;
                     if (state.parent != null)
                     {
-                        transform = state.parent.apply(Optional.<IModelPart>absent());
+                        transform = state.parent.apply(Optional.empty());
                     }
                     //TODO: can this be replaced by updateStateVisibilityMap(OBJState)?
                     if (state.getGroupNamesFromMap().contains(Group.ALL))
@@ -1388,7 +1382,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                 }
                 else
                 {
-                    transform = modelState.apply(Optional.<IModelPart>absent());
+                    transform = modelState.apply(Optional.empty());
                     faces.addAll(g.applyTransform(transform));
                 }
             }
@@ -1487,12 +1481,6 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             return this.sprite;
         }
 
-        @Override
-        public ItemCameraTransforms getItemCameraTransforms()
-        {
-            return ItemCameraTransforms.DEFAULT;
-        }
-
         // FIXME: merge with getQuads
         /* @Override
         public OBJBakedModel handleBlockState(IBlockState state)
@@ -1580,7 +1568,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
+            return PerspectiveMapWrapper.handlePerspective(this, state, cameraTransformType);
         }
 
         @Override
@@ -1606,11 +1594,5 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             super(String.format("Model '%s' has UVs ('vt') out of bounds 0-1! The missing model will be used instead. Support for UV processing will be added to the OBJ loader in the future.", modelLocation));
             this.modelLocation = modelLocation;
         }
-    }
-
-    @Override
-    public IModelState getDefaultState()
-    {
-        return TRSRTransformation.identity();
     }
 }

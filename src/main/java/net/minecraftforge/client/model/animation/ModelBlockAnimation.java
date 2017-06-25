@@ -55,7 +55,7 @@ import net.minecraftforge.common.model.animation.JointClips;
 import net.minecraftforge.common.util.JsonUtils;
 import net.minecraftforge.fml.common.FMLLog;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -447,7 +447,7 @@ public class ModelBlockAnimation
         @Override
         public Optional<? extends IJoint> getParent()
         {
-            return Optional.absent();
+            return Optional.empty();
         }
 
         public String getName()

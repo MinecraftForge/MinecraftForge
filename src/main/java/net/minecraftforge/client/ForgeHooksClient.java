@@ -103,7 +103,6 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeModContainer;
@@ -120,7 +119,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
@@ -399,32 +398,21 @@ public class ForgeHooksClient
         flipX.m00 = -1;
     }
 
-    @SuppressWarnings("deprecation")
     public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType, boolean leftHandHackery)
     {
-        if(model instanceof IPerspectiveAwareModel)
-        {
-            Pair<? extends IBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
+        Pair<? extends IBakedModel, Matrix4f> pair = model.handlePerspective(cameraTransformType);
 
-            if(pair.getRight() != null)
-            {
-                Matrix4f matrix = new Matrix4f(pair.getRight());
-                if(leftHandHackery)
-                {
-                    matrix.mul(flipX, matrix);
-                    matrix.mul(matrix, flipX);
-                }
-                multiplyCurrentGlMatrix(matrix);
-            }
-            return pair.getLeft();
-        }
-        else
+        if (pair.getRight() != null)
         {
-            //if(leftHandHackery) GlStateManager.scale(-1, 1, 1);
-            ItemCameraTransforms.applyTransformSide(model.getItemCameraTransforms().getTransform(cameraTransformType), leftHandHackery);
-            //if(leftHandHackery) GlStateManager.scale(-1, 1, 1);
+            Matrix4f matrix = new Matrix4f(pair.getRight());
+            if (leftHandHackery)
+            {
+                matrix.mul(flipX, matrix);
+                matrix.mul(matrix, flipX);
+            }
+            multiplyCurrentGlMatrix(matrix);
         }
-        return model;
+        return pair.getLeft();
     }
 
     private static final FloatBuffer matrixBuf = BufferUtils.createFloatBuffer(16);
@@ -608,13 +596,13 @@ public class ForgeHooksClient
     @SuppressWarnings("deprecation")
     public static Optional<TRSRTransformation> applyTransform(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform, Optional<? extends IModelPart> part)
     {
-        if(part.isPresent()) return Optional.absent();
+        if(part.isPresent()) return Optional.empty();
         return Optional.of(TRSRTransformation.blockCenterToCorner(new TRSRTransformation(transform)));
     }
 
     public static Optional<TRSRTransformation> applyTransform(Matrix4f matrix, Optional<? extends IModelPart> part)
     {
-        if(part.isPresent()) return Optional.absent();
+        if(part.isPresent()) return Optional.empty();
         return Optional.of(new TRSRTransformation(matrix));
     }
 
@@ -718,4 +706,12 @@ public class ForgeHooksClient
         return event;
     }
 
+    @SuppressWarnings("deprecation")
+    public static Pair<? extends IBakedModel,Matrix4f> handlePerspective(IBakedModel model, ItemCameraTransforms.TransformType type)
+    {
+        TRSRTransformation tr = new TRSRTransformation(model.getItemCameraTransforms().getTransform(type));
+        Matrix4f mat = null;
+        if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
+        return Pair.of(model, mat);
+    }
 }

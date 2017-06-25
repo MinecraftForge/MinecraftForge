@@ -61,7 +61,6 @@ import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import static net.minecraft.util.text.TextFormatting.*;
 
-import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Mouse;
 
 import com.google.common.base.Strings;

@@ -32,7 +32,6 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.patcher.ClassPatchManager;
 
-import org.apache.logging.log4j.message.Message;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;

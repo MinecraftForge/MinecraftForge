@@ -46,8 +46,6 @@ import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
-import net.minecraftforge.fml.common.functions.ArtifactVersionNameFunction;
-import net.minecraftforge.fml.common.functions.ModIdFunction;
 import net.minecraftforge.fml.common.registry.*;
 import net.minecraftforge.fml.common.toposort.ModSorter;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
@@ -64,7 +62,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
@@ -248,7 +246,7 @@ public class Loader
                     wrongMinecraftExceptions.add(ret);
                     continue;
                 }
-                Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new ArtifactVersionNameFunction());
+                Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), ArtifactVersion::getLabel);
                 Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
 
                 Set<String> missingMods = Sets.difference(names.keySet(), modVersions.keySet());
@@ -404,7 +402,7 @@ public class Loader
 
         mods.addAll(discoverer.identifyMods());
         identifyDuplicates(mods);
-        namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
+        namedMods = Maps.uniqueIndex(mods, ModContainer::getModId);
         FMLLog.log.info("Forge Mod Loader has identified {} mod{} to load", mods.size(), mods.size() != 1 ? "s" : "");
         return discoverer;
     }
@@ -521,7 +519,7 @@ public class Loader
     {
         modController = new LoadController(this);
         mods = Lists.newArrayList(containers);
-        namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
+        namedMods = Maps.uniqueIndex(mods, ModContainer::getModId);
         modController.transition(LoaderState.LOADING, false);
         modController.transition(LoaderState.CONSTRUCTING, false);
         ObjectHolderRegistry.INSTANCE.findObjectHolders(new ASMDataTable());
@@ -652,14 +650,7 @@ public class Loader
         modStates.putAll(sysPropertyStateList);
         FMLLog.log.debug("After merging, found state information for {} mods", modStates.size());
 
-        Map<String, Boolean> isEnabled = Maps.transformValues(modStates, new Function<String, Boolean>()
-        {
-            @Override
-            public Boolean apply(String input)
-            {
-                return Boolean.parseBoolean(input);
-            }
-        });
+        Map<String, Boolean> isEnabled = Maps.transformValues(modStates, Boolean::parseBoolean);
 
         for (Map.Entry<String, Boolean> entry : isEnabled.entrySet())
         {
