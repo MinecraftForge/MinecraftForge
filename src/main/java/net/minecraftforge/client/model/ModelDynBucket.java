@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
@@ -56,14 +55,14 @@ import net.minecraftforge.fluids.FluidUtil;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
+import java.util.function.Function;
+import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-public final class ModelDynBucket implements IModel, IModelCustomData, IRetexturableModel
+public final class ModelDynBucket implements IModel
 {
     public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbucket"), "inventory");
 
@@ -100,12 +99,6 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
     }
 
     @Override
-    public Collection<ResourceLocation> getDependencies()
-    {
-        return ImmutableList.of();
-    }
-
-    @Override
     public Collection<ResourceLocation> getTextures()
     {
         ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
@@ -124,7 +117,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
                                     Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
 
-        ImmutableMap<TransformType, TRSRTransformation> transformMap = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
+        ImmutableMap<TransformType, TRSRTransformation> transformMap = PerspectiveMapWrapper.getTransforms(state);
 
         // if the fluid is a gas wi manipulate the initial state to be rotated 180° to turn it upside down
         if (flipGas && fluid != null && fluid.isGaseous())
@@ -132,7 +125,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
             state = new ModelStateComposition(state, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, new Quat4f(0, 0, 1, 0), null, null)));
         }
 
-        TRSRTransformation transform = state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity());
+        TRSRTransformation transform = state.apply(Optional.empty()).orElse(TRSRTransformation.identity());
         TextureAtlasSprite fluidSprite = null;
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
@@ -162,13 +155,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
         }
 
 
-        return new BakedDynBucket(this, builder.build(), fluidSprite, format, Maps.immutableEnumMap(transformMap), Maps.<String, IBakedModel>newHashMap());
-    }
-
-    @Override
-    public IModelState getDefaultState()
-    {
-        return TRSRTransformation.identity();
+        return new BakedDynBucket(this, builder.build(), fluidSprite, format, Maps.immutableEnumMap(transformMap), Maps.newHashMap());
     }
 
     /**
@@ -255,12 +242,11 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
         public static final BakedDynBucketOverrideHandler INSTANCE = new BakedDynBucketOverrideHandler();
         private BakedDynBucketOverrideHandler()
         {
-            super(ImmutableList.<ItemOverride>of());
+            super(ImmutableList.of());
         }
 
         @Override
-        @Nonnull
-        public IBakedModel handleItemState(@Nonnull IBakedModel originalModel, @Nonnull ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
         {
             FluidStack fluidStack = FluidUtil.getFluidContained(stack);
 
@@ -280,14 +266,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
             {
                 IModel parent = model.parent.process(ImmutableMap.of("fluid", name));
                 Function<ResourceLocation, TextureAtlasSprite> textureGetter;
-                textureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
-                {
-                    @Override
-                    public TextureAtlasSprite apply(ResourceLocation location)
-                    {
-                        return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-                    }
-                };
+                textureGetter = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
 
                 IBakedModel bakedModel = parent.bake(new SimpleModelState(model.transforms), model.format, textureGetter);
                 model.cache.put(name, bakedModel);
@@ -299,7 +278,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
     }
 
     // the dynamic bucket is based on the empty bucket
-    private static final class BakedDynBucket implements IPerspectiveAwareModel
+    private static final class BakedDynBucket implements IBakedModel
     {
 
         private final ModelDynBucket parent;
@@ -331,20 +310,19 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, cameraTransformType);
+            return PerspectiveMapWrapper.handlePerspective(this, transforms, cameraTransformType);
         }
 
         @Override
-        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
             if(side == null) return quads;
             return ImmutableList.of();
         }
 
-        @Override public boolean isAmbientOcclusion() { return true;  }
-        @Override public boolean isGui3d() { return false; }
-        @Override public boolean isBuiltInRenderer() { return false; }
-        @Override public TextureAtlasSprite getParticleTexture() { return particle; }
-        @Override public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
+        public boolean isAmbientOcclusion() { return true;  }
+        public boolean isGui3d() { return false; }
+        public boolean isBuiltInRenderer() { return false; }
+        public TextureAtlasSprite getParticleTexture() { return particle; }
     }
 }

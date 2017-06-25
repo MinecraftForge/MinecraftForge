@@ -31,7 +31,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.ArrayEntry;
 import net.minecraftforge.fml.common.FMLLog;
 
-import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Keyboard;
 
 import static net.minecraftforge.fml.client.config.GuiUtils.INVALID;

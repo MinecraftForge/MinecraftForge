@@ -24,14 +24,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.resources.FolderResourcePack;
 import net.minecraftforge.fml.common.FMLContainerHolder;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
 
 import com.google.common.base.Charsets;

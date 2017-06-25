@@ -29,7 +29,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.Level;
 import org.objectweb.asm.Type;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;

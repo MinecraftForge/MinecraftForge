@@ -63,6 +63,15 @@
              }
          }
      }
+@@ -228,7 +239,7 @@
+         try
+         {
+             inputstream = p_188636_2_.func_110527_b();
+-            lvt_4_1_ = ModelBlockDefinition.func_178331_a(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
++            lvt_4_1_ = ModelBlockDefinition.parseFromReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8), p_188636_1_);
+         }
+         catch (Exception exception)
+         {
 @@ -394,6 +405,7 @@
  
      protected void func_177592_e()
