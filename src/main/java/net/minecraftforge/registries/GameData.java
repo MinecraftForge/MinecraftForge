@@ -68,6 +68,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 
@@ -273,7 +275,7 @@ public class GameData
 
         @SuppressWarnings("deprecation")
         @Override
-        public void onAdd(IForgeRegistryInternal<Block> owner, RegistryManager stage, int id, Block block)
+        public void onAdd(IForgeRegistryInternal<Block> owner, RegistryManager stage, int id, Block block, @Nullable Block oldBlock)
         {
             @SuppressWarnings("unchecked")
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
@@ -294,6 +296,16 @@ public class GameData
             {
                 if (usedMeta[meta])
                     blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta); // Put the CORRECT thing!
+            }
+
+
+            if (oldBlock != null)
+            {
+                @SuppressWarnings("unchecked")
+                BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+                Item item = blockToItem.get(oldBlock);
+                if (item != null)
+                    blockToItem.forcePut(block, item);
             }
         }
 
@@ -342,7 +354,7 @@ public class GameData
         static final ItemCallbacks INSTANCE = new ItemCallbacks();
 
         @Override
-        public void onAdd(IForgeRegistryInternal<Item> owner, RegistryManager stage, int id, Item item)
+        public void onAdd(IForgeRegistryInternal<Item> owner, RegistryManager stage, int id, Item item, @Nullable Item oldItem)
         {
             if (item instanceof ItemBlock)
             {
@@ -381,7 +393,7 @@ public class GameData
         static final EntityCallbacks INSTANCE = new EntityCallbacks();
 
         @Override
-        public void onAdd(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage, int id, EntityEntry entry)
+        public void onAdd(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage, int id, EntityEntry entry, @Nullable EntityEntry oldEntry)
         {
             if (entry.getEgg() != null)
                 EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
