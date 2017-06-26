@@ -72,7 +72,7 @@
 +    /* ================================== Forge Start =====================================*/
 +    public boolean isHostileTo(@javax.annotation.Nullable EntityLivingBase subject)
 +    {
-+        return subject instanceof EntityPlayer || subject instanceof EntityVillager || subject instanceof EntityIronGolem;
++        return subject == null || subject instanceof EntityPlayer || subject instanceof EntityVillager || subject instanceof EntityIronGolem;
 +    }
 +    /* ================================== Forge END =======================================*/
 +

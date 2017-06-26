@@ -391,7 +391,7 @@
 +     */
 +    public boolean isHostileTo(@javax.annotation.Nullable EntityLivingBase subject)
 +    {
-+        return this instanceof net.minecraft.entity.monster.IMob && subject instanceof net.minecraft.entity.player.EntityPlayer;
++        return this instanceof net.minecraft.entity.monster.IMob && ( subject == null || subject instanceof net.minecraft.entity.player.EntityPlayer);
 +    }
 +    /* ================================== Forge End =====================================*/
 +

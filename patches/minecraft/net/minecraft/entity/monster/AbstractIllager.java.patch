@@ -7,7 +7,7 @@
 +    /* ================================== Forge Start =====================================*/
 +    public boolean isHostileTo(@javax.annotation.Nullable net.minecraft.entity.EntityLivingBase subject)
 +    {
-+        return subject instanceof net.minecraft.entity.player.EntityPlayer || subject instanceof net.minecraft.entity.passive.EntityVillager || subject instanceof EntityIronGolem;
++        return subject == null || subject instanceof net.minecraft.entity.player.EntityPlayer || subject instanceof net.minecraft.entity.passive.EntityVillager || subject instanceof EntityIronGolem;
 +    }
 +    /* ================================== Forge END =======================================*/
 +

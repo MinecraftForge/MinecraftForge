@@ -16,7 +16,7 @@
 +    /* ================================== Forge Start =====================================*/
 +    public boolean isHostileTo(@javax.annotation.Nullable EntityLivingBase subject)
 +    {
-+        return subject instanceof AbstractSkeleton || (!this.func_70909_n()&&subject instanceof EntityAnimal);
++        return subject instanceof AbstractSkeleton || (!this.func_70909_n() && subject instanceof EntityAnimal);
 +    }
 +    /* ================================== Forge END =======================================*/
 +
