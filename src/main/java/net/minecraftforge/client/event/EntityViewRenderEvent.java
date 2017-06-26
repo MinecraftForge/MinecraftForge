@@ -118,15 +118,16 @@ public abstract class EntityViewRenderEvent extends Event
     }
 
     /**
-     * Abstract event for handling fog color.
+     * Event that allows any feature to customize the color of fog the player sees.
+     * NOTE: Any change made to one of the color variables will affect the result seen in-game.
      */
-    public abstract static class FogColorEvent extends EntityViewRenderEvent
+    public static class FogColors extends EntityViewRenderEvent
     {
         private float red;
         private float green;
         private float blue;
 
-        public FogColorEvent(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float red, float green, float blue)
+        public FogColors(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float red, float green, float blue)
         {
             super(renderer, entity, state, renderPartialTicks);
             this.setRed(red);
@@ -140,34 +141,6 @@ public abstract class EntityViewRenderEvent extends Event
         public void setGreen(float green) { this.green = green; }
         public float getBlue() { return blue; }
         public void setBlue(float blue) { this.blue = blue; }
-
-        /**
-         * Event that allows any feature to customize the color of fog the player sees.
-         * NOTE: Any change made to one of the color variables will affect the result seen in-game.
-         */
-        public static class Post extends FogColorEvent
-        {
-
-            public Post(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float red, float green, float blue)
-            {
-                super(renderer, entity, state, renderPartialTicks, red, green, blue);
-            }
-        }
-
-        /**
-         * This event provides control over what vanilla does to modify fog color based on what material the entity is "inside".
-         * For Example: One could use this for custom Fluids, As the Post event is fired too late.
-         * Setting the event result to {@link Result#DENY} prevents vanillas fluid color logic from firing.
-         */
-        @HasResult
-        public static class InsideMaterial extends FogColorEvent
-        {
-
-            public InsideMaterial(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float red, float green, float blue)
-            {
-                super(renderer, entity, state, renderPartialTicks, red, green, blue);
-            }
-        }
     }
     
     /** 

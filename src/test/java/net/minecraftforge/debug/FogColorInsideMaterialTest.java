@@ -6,9 +6,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraftforge.client.event.EntityViewRenderEvent.FogColorEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -16,7 +19,6 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
@@ -32,18 +34,13 @@ public class FogColorInsideMaterialTest {
     public static final Item FLUID_ITEM = null;
 
     @SubscribeEvent
-    public static void onFogColorInsideMaterial(FogColorEvent.InsideMaterial event) {
-        if (event.getState().getBlock() == FLUID_BLOCK) {
-            event.setRed(0.6F);
-            event.setGreen(0.1F);
-            event.setBlue(0.1F);
-            event.setResult(Result.DENY);
-        }
-    }
-
-    @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        Block fluid = new BlockFluidClassic(FluidRegistry.WATER, Material.WATER);
+        Block fluid = new BlockFluidClassic(FluidRegistry.WATER, Material.WATER) {
+            @Override
+            public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks) {
+                return new Vec3d(0.6F, 0.1F, 0.0F);
+            }
+        };
         fluid.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
         fluid.setUnlocalizedName(MOD_ID + ":" + "test_fluid");
         fluid.setRegistryName("test_fluid");

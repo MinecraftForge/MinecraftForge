@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLiquid.java
+@@ -452,4 +452,35 @@
+     {
+         return BlockFaceShape.UNDEFINED;
+     }
++
++    //Moved from EntityRenderer
++    @Override
++    @SideOnly (Side.CLIENT)
++    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
++    {
++        state = net.minecraft.client.renderer.ActiveRenderInfo.func_186703_a(world, entity, partialTicks);
++        if (state.func_185904_a() == Material.field_151586_h)
++        {
++            float f12 = 0.0F;
++
++            if (entity instanceof net.minecraft.entity.EntityLivingBase)
++            {
++                net.minecraft.entity.EntityLivingBase ent = (net.minecraft.entity.EntityLivingBase)entity;
++                f12 = (float)net.minecraft.enchantment.EnchantmentHelper.func_185292_c(ent) * 0.2F;
++
++                if (ent.func_70644_a(net.minecraft.init.MobEffects.field_76427_o))
++                {
++                    f12 = f12 * 0.3F + 0.6F;
++                }
++            }
++            return new Vec3d(0.02F + f12, 0.02F + f12, 0.2F + f12);
++        }
++        else if (state.func_185904_a() == Material.field_151587_i)
++        {
++            return new Vec3d(0.6F, 0.1F, 0.0F);
++        } else
++        {
++            return state.func_177230_c().getFogColor(world, pos, state, entity, originalColor, partialTicks);
++        }
++    }
+ }
