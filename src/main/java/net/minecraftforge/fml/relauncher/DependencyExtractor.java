@@ -59,7 +59,8 @@ public class DependencyExtractor
         File modListFile = new File(baseModsDir, "mod_list.json");
         JsonModList modList = prepareModList(modListFile);
         File repository = new File(modList.repositoryRoot);
-        // It looks a little weird, but it should yield the best performance
+        // It's a little weird, but it should yield the best performance
+        // The map is used like a set (similar to how HashSet is really just a wrapped HashMap)
         Map<Artifact, Artifact> artifacts = modList.modRef.stream().map(Artifact::new).collect(Collectors.toMap(a -> a, a -> a));
         extractedDeps = 0;
 
@@ -82,17 +83,7 @@ public class DependencyExtractor
             }
             finally
             {
-                if (jar != null)
-                {
-                    try
-                    {
-                        jar.close();
-                    }
-                    catch (IOException e)
-                    {
-                        // Noise
-                    }
-                }
+                IOUtils.closeQuietly(jar);
             }
         }
 
