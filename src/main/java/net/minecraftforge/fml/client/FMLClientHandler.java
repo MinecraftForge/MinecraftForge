@@ -361,6 +361,14 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
 
+        // This call is being phased out for performance reasons in 1.12,
+        // but we are keeping an option here in case something needs it for a little longer.
+        // See https://github.com/MinecraftForge/MinecraftForge/pull/4032
+        if (Boolean.parseBoolean(System.getProperty("fml.reloadResourcesOnStart", "false")))
+        {
+            client.refreshResources();
+        }
+
         RenderingRegistry.loadEntityRenderers(Minecraft.getMinecraft().getRenderManager().entityRenderMap);
         guiFactories = HashBiMap.create();
         for (ModContainer mc : Loader.instance().getActiveModList())
