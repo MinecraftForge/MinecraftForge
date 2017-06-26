@@ -1,11 +1,11 @@
 package net.minecraftforge.debug;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.ResourceLocation;
@@ -18,9 +18,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * Test for {@link TextureStitchEvent.Pre}.
@@ -37,7 +36,7 @@ public class CustomSpriteTest
     public static class Registration
     {
         @SubscribeEvent
-        public static void registrBlocks(RegistryEvent.Register<Block> event)
+        public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
             event.getRegistry().register(new Block(Material.WOOD).setRegistryName(MOD_ID, "custom_sprite_block").setCreativeTab(CreativeTabs.MISC));
         }
@@ -53,8 +52,8 @@ public class CustomSpriteTest
     @SubscribeEvent
     public void textureStitch(TextureStitchEvent.Pre event)
     {
-        DelegateSprite bottom = DelegateSprite.make("bottom", new ResourceLocation("textures/blocks/diamond_block.png"));
-        DelegateSprite top = DelegateSprite.make("top", new ResourceLocation("textures/blocks/tnt_side.png"));
+        DelegateSprite bottom = DelegateSprite.make("bottom", new ResourceLocation("blocks/diamond_block"));
+        DelegateSprite top = DelegateSprite.make("top", new ResourceLocation("blocks/tnt_side"));
 
         TextureMap textureMap = event.getMap();
         textureMap.setTextureEntry(bottom);
@@ -83,24 +82,23 @@ public class CustomSpriteTest
         }
 
         @Override
-        public boolean load(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location)
+        public Collection<ResourceLocation> getDependencies()
         {
-            BufferedImage image;
-            try
-            {
-                IResource resource = manager.getResource(delegate);
-                image = ImageIO.read(resource.getInputStream());
+            return ImmutableList.of(delegate);
+        }
+
+        @Override
+        public boolean load(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location, @Nonnull Function<ResourceLocation, TextureAtlasSprite> textureGetter)
+        {
+            final TextureAtlasSprite sprite = textureGetter.apply(delegate);
+            width = sprite.getIconWidth();
+            height = sprite.getIconHeight();
+            final int[][] oldPixels = sprite.getFrameTextureData(0);
+            final int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
+            pixels[0] = new int[width * height];
+            for (int p = 0; p < width * height; p++) {
+                pixels[0][p] = oldPixels[0][p] >> 8;
             }
-            catch (IOException ioe)
-            {
-                logger.error("Could not find resource", ioe);
-                return true;
-            }
-            this.width = image.getWidth();
-            this.height = image.getHeight();
-            int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
-            pixels[0] = new int[image.getWidth() * image.getHeight()];
-            image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels[0], 0, image.getWidth());
             this.clearFramesTextureData();
             this.framesTextureData.add(pixels);
             return false;
