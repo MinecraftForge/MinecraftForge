@@ -1,38 +1,27 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLiquid.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLiquid.java
-@@ -452,4 +452,35 @@
+@@ -452,4 +452,24 @@
      {
          return BlockFaceShape.UNDEFINED;
      }
 +
-+    //Moved from EntityRenderer
 +    @Override
 +    @SideOnly (Side.CLIENT)
 +    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
 +    {
-+        state = net.minecraft.client.renderer.ActiveRenderInfo.func_186703_a(world, entity, partialTicks);
-+        if (state.func_185904_a() == Material.field_151586_h)
-+        {
-+            float f12 = 0.0F;
++        Vec3d viewport = net.minecraft.client.renderer.ActiveRenderInfo.func_178806_a(entity, partialTicks);
 +
-+            if (entity instanceof net.minecraft.entity.EntityLivingBase)
-+            {
-+                net.minecraft.entity.EntityLivingBase ent = (net.minecraft.entity.EntityLivingBase)entity;
-+                f12 = (float)net.minecraft.enchantment.EnchantmentHelper.func_185292_c(ent) * 0.2F;
-+
-+                if (ent.func_70644_a(net.minecraft.init.MobEffects.field_76427_o))
-+                {
-+                    f12 = f12 * 0.3F + 0.6F;
-+                }
++        if (state.func_185904_a().func_76224_d()) {
++            float height = 0.0F;
++            if (state.func_177230_c() instanceof BlockLiquid) {
++                height = func_149801_b(state.func_177229_b(field_176367_b)) - 0.11111111F;
 +            }
-+            return new Vec3d(0.02F + f12, 0.02F + f12, 0.2F + f12);
++            float f1 = (float) (pos.func_177956_o() + 1) - height;
++            if (viewport.field_72448_b > (double)f1) {
++                return world.func_180495_p(pos.func_177984_a()).func_177230_c().getFogColor(world, pos, state, entity, originalColor, partialTicks);
++            }
 +        }
-+        else if (state.func_185904_a() == Material.field_151587_i)
-+        {
-+            return new Vec3d(0.6F, 0.1F, 0.0F);
-+        } else
-+        {
-+            return state.func_177230_c().getFogColor(world, pos, state, entity, originalColor, partialTicks);
-+        }
++
++        return super.getFogColor(world, pos, state, entity, originalColor, partialTicks);
 +    }
  }

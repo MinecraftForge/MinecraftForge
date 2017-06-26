@@ -167,7 +167,7 @@
          float f = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f > 0.0F)
-@@ -1749,30 +1776,13 @@
+@@ -1749,30 +1776,16 @@
              this.field_175082_R = (float)vec3d3.field_72448_b;
              this.field_175081_S = (float)vec3d3.field_72449_c;
          }
@@ -189,8 +189,11 @@
 -            this.field_175082_R = 0.02F + f12;
 -            this.field_175081_S = 0.2F + f12;
 +        else {
-+            //Forge Moved to BlockLiquid && block hook added.
-+            Vec3d inMaterialColor = iblockstate.func_177230_c().getFogColor(this.field_78531_r.field_71441_e, new BlockPos(ActiveRenderInfo.func_178806_a(entity, p_78466_1_)), iblockstate, entity, new Vec3d(field_175080_Q, field_175082_R, field_175081_S), p_78466_1_);
++            //Forge Moved to Block.
++            Vec3d viewport = ActiveRenderInfo.func_178806_a(entity, p_78466_1_);
++            BlockPos viewportPos = new BlockPos(viewport);
++            IBlockState viewportState = this.field_78531_r.field_71441_e.func_180495_p(viewportPos);
++            Vec3d inMaterialColor = viewportState.func_177230_c().getFogColor(this.field_78531_r.field_71441_e, viewportPos, viewportState, entity, new Vec3d(field_175080_Q, field_175082_R, field_175081_S), p_78466_1_);
 +            this.field_175080_Q = (float)inMaterialColor.field_72450_a;
 +            this.field_175082_R = (float)inMaterialColor.field_72448_b;
 +            this.field_175081_S = (float)inMaterialColor.field_72449_c;
@@ -204,7 +207,7 @@
  
          float f13 = this.field_78535_ad + (this.field_78539_ae - this.field_78535_ad) * p_78466_1_;
          this.field_175080_Q *= f13;
-@@ -1845,6 +1855,13 @@
+@@ -1845,6 +1858,13 @@
              this.field_175081_S = f7;
          }
  
@@ -218,7 +221,7 @@
          GlStateManager.func_179082_a(this.field_175080_Q, this.field_175082_R, this.field_175081_S, 0.0F);
      }
  
-@@ -1855,7 +1872,9 @@
+@@ -1855,7 +1875,9 @@
          GlStateManager.func_187432_a(0.0F, -1.0F, 0.0F);
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          IBlockState iblockstate = ActiveRenderInfo.func_186703_a(this.field_78531_r.field_71441_e, entity, p_78468_2_);
@@ -229,7 +232,7 @@
          if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q))
          {
              float f1 = 5.0F;
-@@ -1940,6 +1959,7 @@
+@@ -1940,6 +1962,7 @@
                  GlStateManager.func_179102_b(f * 0.05F);
                  GlStateManager.func_179153_c(Math.min(f, 192.0F) * 0.5F);
              }
