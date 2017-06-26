@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
+import javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
@@ -35,7 +34,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
-import javax.annotation.Nullable;
+import net.minecraftforge.fml.common.ModContainer;
 
 public class ASMDataTable
 {

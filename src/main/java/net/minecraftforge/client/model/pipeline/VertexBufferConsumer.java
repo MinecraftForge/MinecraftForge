@@ -44,11 +44,13 @@ public class VertexBufferConsumer implements IVertexConsumer
         quadData = new int[renderer.getVertexFormat().getNextOffset()/* / 4 * 4 */];
     }
 
+    @Override
     public VertexFormat getVertexFormat()
     {
         return renderer.getVertexFormat();
     }
 
+    @Override
     public void put(int e, float... data)
     {
         VertexFormat format = getVertexFormat();
@@ -75,8 +77,12 @@ public class VertexBufferConsumer implements IVertexConsumer
         this.offset = new BlockPos(offset);
     }
 
+    @Override
     public void setQuadTint(int tint) {}
+    @Override
     public void setQuadOrientation(EnumFacing orientation) {}
+    @Override
     public void setApplyDiffuseLighting(boolean diffuse) {}
+    @Override
     public void setTexture(TextureAtlasSprite texture ) {}
 }

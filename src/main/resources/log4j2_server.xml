@@ -9,7 +9,7 @@
         </TerminalConsole>
         <!-- Keep a console appender open so log4j2 doesn't close our main out stream if we redirect System.out to the logger -->
         <Console name="SysOut" target="SYSTEM_OUT"/>
-        <Queue name="ServerGuiConsole">
+        <Queue name="ServerGuiConsole" ignoreExceptions="true">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">

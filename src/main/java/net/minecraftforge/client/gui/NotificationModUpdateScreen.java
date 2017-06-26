@@ -82,8 +82,8 @@ public class NotificationModUpdateScreen extends GuiScreen
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.pushMatrix();
 
-        int x = modButton.xPosition;
-        int y = modButton.yPosition;
+        int x = modButton.x;
+        int y = modButton.y;
         int w = modButton.width;
         int h = modButton.height;
 

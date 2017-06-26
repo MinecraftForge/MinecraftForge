@@ -9,76 +9,75 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 @Mod(modid = MultiLayerModelDebug.MODID, name = "ForgeDebugMultiLayerModel", version = MultiLayerModelDebug.VERSION, acceptableRemoteVersions = "*")
 public class MultiLayerModelDebug
 {
+    private static final boolean ENABLED = true;
     public static final String MODID = "forgedebugmultilayermodel";
     public static final String VERSION = "0.0";
 
-    private static String blockName = "test_layer_block";
+    private static final String blockName = "test_layer_block";
     private static final ResourceLocation blockId = new ResourceLocation(MODID, blockName);
+    @ObjectHolder(blockName)
+    public static final Block TEST_BLOCK = null;
 
-    @SidedProxy
-    public static CommonProxy proxy;
-
-    public static class CommonProxy
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
-            GameRegistry.register(new Block(Material.WOOD)
-            {
+            if (!ENABLED)
+                return;
+            event.getRegistry().register(
+                new Block(Material.WOOD)
                 {
-                    setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-                    setUnlocalizedName(MODID + "." + blockName);
-                    setRegistryName(blockId);
-                }
+                    {
+                        setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+                        setUnlocalizedName(MODID + "." + blockName);
+                        setRegistryName(blockId);
+                    }
 
-                @Override
-                public boolean isOpaqueCube(IBlockState state)
-                {
-                    return false;
-                }
+                    @Override
+                    public boolean isOpaqueCube(IBlockState state)
+                    {
+                        return false;
+                    }
 
-                @Override
-                public boolean isFullCube(IBlockState state)
-                {
-                    return false;
-                }
+                    @Override
+                    public boolean isFullCube(IBlockState state)
+                    {
+                        return false;
+                    }
 
-                @Override
-                public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
-                {
-                    return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
+                    @Override
+                    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
+                    {
+                        return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
+                    }
                 }
-            });
-            GameRegistry.register(new ItemBlock(Block.REGISTRY.getObject(blockId)).setRegistryName(blockId));
+            );
         }
-    }
 
-    public static class ServerProxy extends CommonProxy
-    {
-    }
-
-    public static class ClientProxy extends CommonProxy
-    {
-        @Override
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
         {
-            super.preInit(event);
-            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(blockId), 0, new ModelResourceLocation(blockId, "inventory"));
+            event.getRegistry().register(new ItemBlock(TEST_BLOCK).setRegistryName(TEST_BLOCK.getRegistryName()));
         }
-    }
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        proxy.preInit(event);
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
+        {
+            if (!ENABLED)
+                return;
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TEST_BLOCK), 0, new ModelResourceLocation(blockId, "inventory"));
+        }
     }
 }

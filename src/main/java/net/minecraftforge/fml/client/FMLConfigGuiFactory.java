@@ -27,8 +27,6 @@ import java.util.regex.Pattern;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.ConfigGuiType;
@@ -123,10 +121,10 @@ public class FMLConfigGuiFactory implements IModGuiFactory
         }
 
         @Override
-        public void func_192634_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
             textFieldValue.setTextColor((int) (Math.random() * 0xFFFFFF));
-            super.func_192634_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
         }
     }
 
@@ -141,12 +139,6 @@ public class FMLConfigGuiFactory implements IModGuiFactory
         return new FMLConfigGuiScreen(parentScreen);
     }
 
-    @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass()
-    {
-        return null;
-    }
-
     private static final Set<RuntimeOptionCategoryElement> fmlCategories = ImmutableSet.of(new RuntimeOptionCategoryElement("HELP", "FML"));
 
     @Override
@@ -154,36 +146,4 @@ public class FMLConfigGuiFactory implements IModGuiFactory
     {
         return fmlCategories;
     }
-
-    @Override
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element)
-    {
-        return new RuntimeOptionGuiHandler() {
-            @Override
-            public void paint(int x, int y, int w, int h)
-            {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void close()
-            {
-            }
-
-            @Override
-            public void addWidgets(List<Gui> widgets, int x, int y, int w, int h)
-            {
-                widgets.add(new GuiButton(100, x+10, y+10, "HELLO"));
-            }
-
-            @Override
-            public void actionCallback(int actionId)
-            {
-                // TODO Auto-generated method stub
-
-            }
-        };
-    }
-
 }

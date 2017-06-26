@@ -11,7 +11,7 @@
      public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, IBlockState p_176208_3_, EntityPlayer p_176208_4_)
      {
          if (p_176208_4_.field_71075_bZ.field_75098_d)
-@@ -139,13 +135,18 @@
+@@ -139,13 +135,17 @@
              p_176208_3_ = p_176208_3_.func_177226_a(field_176417_b, Boolean.valueOf(true));
              p_176208_1_.func_180501_a(p_176208_2_, p_176208_3_, 4);
          }
@@ -25,13 +25,12 @@
 -        if (!p_180663_1_.field_72995_K)
 +        super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
 +    }
-+    public java.util.List<ItemStack> getDrops(IBlockAccess p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_, int fortune)
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_, int fortune)
 +    {
-+        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
          {
              if (!((Boolean)p_180663_3_.func_177229_b(field_176417_b)).booleanValue())
              {
-@@ -154,7 +155,7 @@
+@@ -154,7 +154,7 @@
                  if (tileentity instanceof TileEntitySkull)
                  {
                      TileEntitySkull tileentityskull = (TileEntitySkull)tileentity;
@@ -40,18 +39,16 @@
  
                      if (tileentityskull.func_145904_a() == 3 && tileentityskull.func_152108_a() != null)
                      {
-@@ -164,12 +165,11 @@
+@@ -164,11 +164,9 @@
                          itemstack.func_77978_p().func_74782_a("SkullOwner", nbttagcompound);
                      }
  
 -                    func_180635_a(p_180663_1_, p_180663_2_, itemstack);
-+                    ret.add(itemstack);
++                    drops.add(itemstack);
                  }
              }
 -
 -            super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
          }
-+        return ret;
      }
  
-     public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)

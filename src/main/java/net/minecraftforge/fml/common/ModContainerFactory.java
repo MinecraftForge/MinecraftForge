@@ -56,7 +56,7 @@ public class ModContainerFactory
             Constructor<? extends ModContainer> constructor = container.getConstructor(new Class<?>[] { String.class, ModCandidate.class, Map.class });
             modTypes.put(type, constructor);
         } catch (Exception e) {
-            FMLLog.log(Level.ERROR, e, "Critical error : cannot register mod container type %s, it has an invalid constructor");
+            FMLLog.log.error("Critical error : cannot register mod container type {}, it has an invalid constructor", container.getName(), e);
             Throwables.propagate(e);
         }
     }
@@ -67,17 +67,17 @@ public class ModContainerFactory
         String className = modParser.getASMType().getClassName();
         if (modParser.isBaseMod(container.getRememberedBaseMods()) && modClass.matcher(className).find())
         {
-            FMLLog.severe("Found a BaseMod type mod %s", className);
-            FMLLog.severe("This will not be loaded and will be ignored. ModLoader mechanisms are no longer available.");
+            FMLLog.log.fatal("Found a BaseMod type mod {}", className);
+            FMLLog.log.fatal("This will not be loaded and will be ignored. ModLoader mechanisms are no longer available.");
         }
         else if (modClass.matcher(className).find())
         {
-            FMLLog.fine("Identified a class %s following modloader naming convention but not directly a BaseMod or currently seen subclass", className);
+            FMLLog.log.debug("Identified a class {} following modloader naming convention but not directly a BaseMod or currently seen subclass", className);
             container.rememberModCandidateType(modParser);
         }
         else if (modParser.isBaseMod(container.getRememberedBaseMods()))
         {
-            FMLLog.fine("Found a basemod %s of non-standard naming format", className);
+            FMLLog.log.debug("Found a basemod {} of non-standard naming format", className);
             container.rememberBaseModType(className);
         }
 
@@ -85,17 +85,17 @@ public class ModContainerFactory
         {
             if (modTypes.containsKey(ann.getASMType()))
             {
-                FMLLog.fine("Identified a mod of type %s (%s) - loading", ann.getASMType(), className);
+                FMLLog.log.debug("Identified a mod of type {} ({}) - loading", ann.getASMType(), className);
                 try {
                     ModContainer ret = modTypes.get(ann.getASMType()).newInstance(className, container, ann.getValues());
                     if (!ret.shouldLoadInEnvironment())
                     {
-                        FMLLog.fine("Skipping mod %s, container opted to not load.", className);
+                        FMLLog.log.debug("Skipping mod {}, container opted to not load.", className);
                         return null;
                     }
                     return ret;
                 } catch (Exception e) {
-                    FMLLog.log(Level.ERROR, e, "Unable to construct %s container", ann.getASMType().getClassName());
+                    FMLLog.log.error("Unable to construct {} container", ann.getASMType().getClassName(), e);
                     return null;
                 }
             }

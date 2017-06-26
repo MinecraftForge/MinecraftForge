@@ -76,6 +76,7 @@ public class ForgeTestRunner extends Runner
     {
         try
         {
+            System.setProperty("forge.disableVanillaGameData", "false");
             innerRunnerClass.getMethod("run", RunNotifier.class).invoke(innerRunner, notifier);
         }
         catch (Exception e)

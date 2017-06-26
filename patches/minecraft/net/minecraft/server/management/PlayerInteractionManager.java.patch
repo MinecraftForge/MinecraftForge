@@ -204,7 +204,7 @@
          }
          else
          {
-+            EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClickAction(p_187250_1_, p_187250_4_);
++            EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187250_1_, p_187250_4_);
 +            if (cancelResult != null) return cancelResult;
              int i = p_187250_3_.func_190916_E();
              int j = p_187250_3_.func_77960_j();
