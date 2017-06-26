@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
-@@ -45,12 +45,23 @@
+@@ -45,6 +45,16 @@
  
      public TextureMap(String p_i46100_1_, @Nullable ITextureMapPopulator p_i46100_2_)
      {
@@ -17,14 +17,7 @@
          this.field_94258_i = Lists.<TextureAtlasSprite>newArrayList();
          this.field_110574_e = Maps.<String, TextureAtlasSprite>newHashMap();
          this.field_94252_e = Maps.<String, TextureAtlasSprite>newHashMap();
-         this.field_94249_f = new TextureAtlasSprite("missingno");
-         this.field_94254_c = p_i46100_1_;
-         this.field_174946_m = p_i46100_2_;
-+        this.skipFirst = skipFirst && ENABLE_SKIP;
-     }
- 
-     private void func_110569_e()
-@@ -74,6 +85,7 @@
+@@ -74,6 +84,7 @@
      public void func_174943_a(IResourceManager p_174943_1_, ITextureMapPopulator p_174943_2_)
      {
          this.field_110574_e.clear();
@@ -32,26 +25,23 @@
          p_174943_2_.func_177059_a(this);
          this.func_110569_e();
          this.func_147631_c();
-@@ -88,13 +100,58 @@
+@@ -88,13 +99,55 @@
          this.field_94258_i.clear();
          int j = Integer.MAX_VALUE;
          int k = 1 << this.field_147636_j;
 +        net.minecraftforge.fml.common.FMLLog.log.info("Max texture size: {}", i);
-+        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", skipFirst ? 0 : this.field_110574_e.size());
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", this.field_110574_e.size());
 +        loadedSprites.clear();
  
 -        for (Entry<String, TextureAtlasSprite> entry : this.field_110574_e.entrySet())
-+        if (!skipFirst)
++        for (Entry<String, TextureAtlasSprite> entry : Maps.newHashMap(this.field_110574_e).entrySet())
          {
 -            TextureAtlasSprite textureatlassprite = entry.getValue();
 -            ResourceLocation resourcelocation = this.func_184396_a(textureatlassprite);
 -            IResource iresource = null;
-+            for (Entry<String, TextureAtlasSprite> entry : Maps.newHashMap(this.field_110574_e).entrySet())
-+            {
-+                final ResourceLocation location = new ResourceLocation(entry.getKey());
-+                bar.step(location.toString());
-+                j = loadTexture(stitcher, p_110571_1_, location, entry.getValue(), bar, j, k);
-+            }
++            final ResourceLocation location = new ResourceLocation(entry.getKey());
++            bar.step(location.toString());
++            j = loadTexture(stitcher, p_110571_1_, location, entry.getValue(), bar, j, k);
 +        }
 +        finishLoading(stitcher, bar, j, k);
 +    }
@@ -95,7 +85,7 @@
              try
              {
                  PngSizeInfo pngsizeinfo = PngSizeInfo.func_188532_a(p_110571_1_.func_110536_a(resourcelocation));
-@@ -104,13 +161,13 @@
+@@ -104,13 +157,13 @@
              }
              catch (RuntimeException runtimeexception)
              {
@@ -113,7 +103,7 @@
              }
              finally
              {
-@@ -122,16 +179,28 @@
+@@ -122,16 +175,28 @@
  
              if (j1 < k)
              {
@@ -144,11 +134,10 @@
          if (i1 < this.field_147636_j)
          {
              field_147635_d.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.field_94254_c, Integer.valueOf(this.field_147636_j), Integer.valueOf(i1), Integer.valueOf(l));
-@@ -140,9 +209,12 @@
+@@ -140,9 +205,11 @@
  
          this.field_94249_f.func_147963_d(this.field_147636_j);
          stitcher.func_110934_a(this.field_94249_f);
-+        skipFirst = false;
 +        bar = net.minecraftforge.fml.common.ProgressManager.push("Texture creation", 2);
  
          try
@@ -157,7 +146,7 @@
              stitcher.func_94305_f();
          }
          catch (StitcherException stitcherexception)
-@@ -151,12 +223,16 @@
+@@ -151,12 +218,16 @@
          }
  
          field_147635_d.info("Created: {}x{} {}-atlas", Integer.valueOf(stitcher.func_110935_a()), Integer.valueOf(stitcher.func_110936_b()), this.field_94254_c);
@@ -175,21 +164,16 @@
              {
                  String s = textureatlassprite1.func_94215_i();
                  map.remove(s);
-@@ -186,6 +262,13 @@
+@@ -186,6 +257,8 @@
          {
              textureatlassprite2.func_94217_a(this.field_94249_f);
          }
-+
 +        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
-+
-+        // TextureUtil.saveGlTexture is gone, FIXME
-+        //if (!net.minecraftforge.common.ForgeModContainer.disableStitchedFileSaving)
-+        //TextureUtil.saveGlTexture(this.basePath.replaceAll("/", "_"), this.getGlTextureId(), this.mipmapLevels, stitcher.getCurrentWidth(), stitcher.getCurrentHeight());
 +        net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }
  
      private boolean func_184397_a(IResourceManager p_184397_1_, final TextureAtlasSprite p_184397_2_)
-@@ -195,7 +278,7 @@
+@@ -195,7 +268,7 @@
          label62:
          {
              boolean flag;
@@ -198,7 +182,7 @@
              try
              {
                  iresource = p_184397_1_.func_110536_a(resourcelocation);
-@@ -292,7 +375,7 @@
+@@ -292,7 +365,7 @@
          }
          else
          {
@@ -207,7 +191,7 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +401,54 @@
+@@ -318,4 +391,52 @@
      {
          return this.field_94249_f;
      }
@@ -216,8 +200,6 @@
 +    //                                           Forge Start
 +    //===================================================================================================
 +
-+    private static final boolean ENABLE_SKIP = Boolean.parseBoolean(System.getProperty("fml.skipFirstTextureLoad", "true"));
-+    private boolean skipFirst = false;
 +    private final java.util.Deque<ResourceLocation> loadingSprites = new java.util.ArrayDeque<>();
 +    private final java.util.Set<ResourceLocation> loadedSprites = new java.util.HashSet<>();
 +
