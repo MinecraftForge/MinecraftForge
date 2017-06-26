@@ -120,7 +120,7 @@ public class DependencyExtractor
     private static JsonModList prepareModList(File modListFile)
     {
         JsonModList list = new JsonModList();
-        list.repositoryRoot = "./modrepo";
+        list.repositoryRoot = "./libraries/";
         list.modRef = new ArrayList<>();
         if (!modListFile.exists())
         {
