@@ -172,7 +172,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         return config;
     }
 
-    private static void remapGeneralPropertyToClient(String key) {
+    private static void remapGeneralPropertyToClient(String key)
+    {
         ConfigCategory GENERAL = config.getCategory(CATEGORY_GENERAL);
         if (GENERAL.containsKey(key))
         {
