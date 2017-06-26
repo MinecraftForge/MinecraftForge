@@ -164,21 +164,16 @@
              {
                  String s = textureatlassprite1.func_94215_i();
                  map.remove(s);
-@@ -186,6 +257,13 @@
+@@ -186,6 +257,8 @@
          {
              textureatlassprite2.func_94217_a(this.field_94249_f);
          }
-+
 +        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
-+
-+        // TextureUtil.saveGlTexture is gone, FIXME
-+        //if (!net.minecraftforge.common.ForgeModContainer.disableStitchedFileSaving)
-+        //TextureUtil.saveGlTexture(this.basePath.replaceAll("/", "_"), this.getGlTextureId(), this.mipmapLevels, stitcher.getCurrentWidth(), stitcher.getCurrentHeight());
 +        net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }
  
      private boolean func_184397_a(IResourceManager p_184397_1_, final TextureAtlasSprite p_184397_2_)
-@@ -195,7 +273,7 @@
+@@ -195,7 +268,7 @@
          label62:
          {
              boolean flag;
@@ -187,7 +182,7 @@
              try
              {
                  iresource = p_184397_1_.func_110536_a(resourcelocation);
-@@ -292,7 +370,7 @@
+@@ -292,7 +365,7 @@
          }
          else
          {
@@ -196,7 +191,7 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +396,52 @@
+@@ -318,4 +391,52 @@
      {
          return this.field_94249_f;
      }
