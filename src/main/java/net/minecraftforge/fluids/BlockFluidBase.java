@@ -642,33 +642,6 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return !here.getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * 0.875F;
     }
 
-    /**
-     * @deprecated we now pass along up from getExtendedState
-     */
-    @Deprecated
-    public float getFluidHeightForRender(IBlockAccess world, BlockPos pos)
-    {
-        IBlockState here = world.getBlockState(pos);
-        IBlockState up = world.getBlockState(pos.down(densityDir));
-        if (here.getBlock() == this)
-        {
-            if (up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock)
-            {
-                return 1;
-            }
-
-            if (getMetaFromState(here) == getMaxRenderHeightMeta())
-            {
-                return 0.875F;
-            }
-        }
-        if (here.getBlock() instanceof BlockLiquid)
-        {
-            return Math.min(1 - BlockLiquid.getLiquidHeightPercent(here.getValue(BlockLiquid.LEVEL)), 14f / 16);
-        }
-        return !here.getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * 0.875F;
-    }
-
     public Vec3d getFlowVector(IBlockAccess world, BlockPos pos)
     {
         Vec3d vec = new Vec3d(0.0D, 0.0D, 0.0D);

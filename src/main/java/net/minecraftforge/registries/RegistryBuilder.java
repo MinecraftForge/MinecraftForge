@@ -143,10 +143,10 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         if (addCallback.size() == 1)
             return addCallback.get(0);
 
-        return (owner, stage, id, obj) ->
+        return (owner, stage, id, obj, old) ->
         {
             for (AddCallback<T> cb : this.addCallback)
-                cb.onAdd(owner, stage, id, obj);
+                cb.onAdd(owner, stage, id, obj, old);
         };
     }
 

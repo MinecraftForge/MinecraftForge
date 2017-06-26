@@ -104,15 +104,9 @@ public class ForgeGuiFactory implements IModGuiFactory
 
     @Override
     public GuiScreen createConfigGui(GuiScreen parent) { return new ForgeConfigGui(parent); }
-    
-    @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass() { return null; }
 
     @Override
     public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() { return null; }
-
-    @Override
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) { return null; }
 
     public static class ForgeConfigGui extends GuiConfig
     {

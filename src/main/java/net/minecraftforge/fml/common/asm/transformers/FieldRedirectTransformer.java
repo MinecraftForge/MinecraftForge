@@ -51,7 +51,7 @@ public class FieldRedirectTransformer implements IClassTransformer
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass)
     {
-        if (!this.clsName.equals(name))
+        if (!this.clsName.equals(transformedName))
             return basicClass;
 
         ClassNode classNode = new ClassNode();
