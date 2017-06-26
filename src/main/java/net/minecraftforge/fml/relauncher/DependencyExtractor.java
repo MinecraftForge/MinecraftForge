@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -61,7 +62,7 @@ public class DependencyExtractor
         File repository = new File(modList.repositoryRoot);
         // It's a little weird, but it should yield the best performance
         // The map is used like a set (similar to how HashSet is really just a wrapped HashMap)
-        Map<Artifact, Artifact> artifacts = modList.modRef.stream().map(Artifact::new).collect(Collectors.toMap(a -> a, a -> a));
+        Map<Artifact, Artifact> artifacts = modList.modRef.stream().map(Artifact::new).collect(Collectors.toMap(Function.identity(), Function.identity()));
         extractedDeps = 0;
 
         for (File mod : CoreModManager.listFiles((d, name) -> name.endsWith(".jar"), baseModsDir, versionedModsDir))
