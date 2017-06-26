@@ -132,23 +132,8 @@ public class ModListHelper {
 
         for (String s : modList.modRef)
         {
-            StringBuilder fileName = new StringBuilder();
-            StringBuilder genericName = new StringBuilder();
             String[] parts = s.split(":");
-            fileName.append(parts[0].replace('.', File.separatorChar));
-            genericName.append(parts[0]);
-            fileName.append(File.separatorChar);
-            fileName.append(parts[1]).append(File.separatorChar);
-            genericName.append(":").append(parts[1]);
-            fileName.append(parts[2]).append(File.separatorChar);
-            fileName.append(parts[1]).append('-').append(parts[2]);
-            if (parts.length == 4)
-            {
-                fileName.append('-').append(parts[3]);
-                genericName.append(":").append(parts[3]);
-            }
-            fileName.append(".jar");
-            tryAddFile(fileName.toString(), repoRoot, genericName.toString());
+            tryAddFile(convertArtifactToFileName(parts), repoRoot, convertArtifactToGenericName(parts));
         }
     }
     private static void tryAddFile(String modFileName, @Nullable File repoRoot, String descriptor) {
@@ -162,5 +147,33 @@ public class ModListHelper {
             FMLLog.log.debug("Adding {} ({}) to the mod list", descriptor, modFile.getAbsolutePath());
             additionalMods.put(descriptor, modFile);
         }
+    }
+
+    public static String convertArtifactToFileName(String[] parts)
+    {
+        StringBuilder fileName = new StringBuilder();
+        fileName.append(parts[0].replace('.', File.separatorChar));
+        fileName.append(File.separatorChar);
+        fileName.append(parts[1]).append(File.separatorChar);
+        fileName.append(parts[2]).append(File.separatorChar);
+        fileName.append(parts[1]).append('-').append(parts[2]);
+        if (parts.length == 4)
+        {
+            fileName.append('-').append(parts[3]);
+        }
+        fileName.append(".jar");
+        return fileName.toString();
+    }
+
+    private static String convertArtifactToGenericName(String[] parts)
+    {
+        StringBuilder genericName = new StringBuilder();
+        genericName.append(parts[0]);
+        genericName.append(":").append(parts[1]);
+        if (parts.length == 4)
+        {
+            genericName.append(":").append(parts[3]);
+        }
+        return genericName.toString();
     }
 }

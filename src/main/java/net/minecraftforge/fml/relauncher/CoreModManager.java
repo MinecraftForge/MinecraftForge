@@ -22,10 +22,8 @@ package net.minecraftforge.fml.relauncher;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,11 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Files;
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -71,8 +66,7 @@ import com.google.common.primitives.Ints;
 public class CoreModManager {
     private static final Attributes.Name COREMODCONTAINSFMLMOD = new Attributes.Name("FMLCorePluginContainsFMLMod");
     private static final Attributes.Name MODTYPE = new Attributes.Name("ModType");
-    private static final Attributes.Name MODSIDE = new Attributes.Name("ModSide");
-    private static final Attributes.Name MODCONTAINSDEPS = new Attributes.Name("ContainedDeps");
+    static final Attributes.Name MODSIDE = new Attributes.Name("ModSide");
     private static String[] rootPlugins = { "net.minecraftforge.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin" };
     private static List<String> ignoredModFiles = Lists.newArrayList();
     private static Map<String, List<String>> transformers = Maps.newHashMap();
@@ -83,7 +77,6 @@ public class CoreModManager {
     private static List<String> candidateModFiles = Lists.newArrayList();
     private static List<String> accessTransformers = Lists.newArrayList();
     private static Set<String> rootNames = Sets.newHashSet();
-    private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps","").split(","));
 
     static
     {
@@ -297,7 +290,7 @@ public class CoreModManager {
         }
     }
 
-    private static File[] listFiles(FilenameFilter filter, File ... dirs)
+    static File[] listFiles(FilenameFilter filter, File ... dirs)
     {
         File[] ret = null;
         for (File dir : dirs)
@@ -311,7 +304,7 @@ public class CoreModManager {
         }
         return ret == null ? new File[0] : ret;
     }
-    private static File[] listFiles(FileFilter filter, File ... dirs)
+    static File[] listFiles(FileFilter filter, File ... dirs)
     {
         File[] ret = null;
         for (File dir : dirs)
@@ -334,7 +327,7 @@ public class CoreModManager {
 
         findDerpMods(classLoader, modsDir, modsDirVer);
 
-        extractPackedJars(modsDir, modsDirVer);
+        DependencyExtractor.inspect(modsDir, modsDirVer);
 
         ModListHelper.parseModList(mcDir);
 
@@ -345,6 +338,7 @@ public class CoreModManager {
 
         coreModList = FileListHelper.sortFileList(coreModList);
 
+        FMLLog.log.debug("Discovering coremods");
         for (File coreMod : coreModList)
         {
             FMLLog.log.debug("Examining for coremod candidacy {}", coreMod.getName());
@@ -415,7 +409,7 @@ public class CoreModManager {
                 else
                 {
                     FMLLog.log.warn("Found FMLCorePluginContainsFMLMod marker in {}. This is not recommended, @Mods should be in a separate jar from the coremod.",
-                            coreMod.getName());
+                        coreMod.getName());
                     candidateModFiles.add(coreMod.getName());
                 }
             }
@@ -426,95 +420,6 @@ public class CoreModManager {
             }
             loadCoreMod(classLoader, fmlCorePlugin, coreMod);
         }
-    }
-
-    private static void extractPackedJars(File modsDir, File modsDirVer)
-    {
-        for (File dir : new File[]{modsDir, modsDirVer})
-        {
-            for (File file : listFiles((d, name) -> name.endsWith(".jar"), dir))
-            {
-                JarFile jar = null;
-                Attributes mfAttributes;
-                try
-                {
-                    jar = new JarFile(file);
-                    if (jar.getManifest() == null)
-                        continue;
-
-                    mfAttributes = jar.getManifest().getMainAttributes();
-                    String modSide = mfAttributes.containsKey(MODSIDE) ? mfAttributes.getValue(MODSIDE) : "BOTH";
-                    if (! ("BOTH".equals(modSide) || FMLLaunchHandler.side.name().equals(modSide)))
-                        continue;
-
-                    extractContainedDepJars(jar, dir == modsDir ? modsDir : modsDirVer, dir == modsDir ? modsDirVer : modsDir);
-                }
-                catch (IOException ioe)
-                {
-                    FMLLog.log.error("Unable to read the jar file {} - ignoring", file.getName(), ioe);
-                    continue;
-                }
-                finally
-                {
-                    closeQuietly(jar);
-                }
-            }
-        }
-    }
-
-    private static void extractContainedDepJars(JarFile jar, File ... modsDirs) throws IOException
-    {
-        if (!jar.getManifest().getMainAttributes().containsKey(MODCONTAINSDEPS)) return;
-
-        String deps = jar.getManifest().getMainAttributes().getValue(MODCONTAINSDEPS);
-        String[] depList = deps.split(" ");
-        for (String dep : depList)
-        {
-            String depEndName = new File(dep).getName(); // extract last part of name
-            if (skipContainedDeps.contains(dep) || skipContainedDeps.contains(depEndName))
-            {
-                FMLLog.log.error("Skipping dep at request: {}", dep);
-                continue;
-            }
-            final JarEntry jarEntry = jar.getJarEntry(dep);
-            if (jarEntry == null)
-            {
-                FMLLog.log.error("Found invalid ContainsDeps declaration {} in {}", dep, jar.getName());
-                continue;
-            }
-
-            boolean exit = false;
-            for (File f : modsDirs)
-            {
-                File tmp = new File(f, depEndName);
-                if (tmp.exists())
-                {
-                    FMLLog.log.debug("Found existing ContainsDep extracted to {}, skipping extraction", tmp.getCanonicalPath());
-                    exit = true;
-                    break;
-                }
-            }
-            if (exit)
-                continue;
-
-            File target = new File(modsDirs[0], depEndName);
-            FMLLog.log.debug("Extracting ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
-            try
-            {
-                Files.createParentDirs(target);
-                try (
-                    FileOutputStream targetOutputStream = new FileOutputStream(target);
-                    InputStream jarInputStream = jar.getInputStream(jarEntry);
-                ){
-                    ByteStreams.copy(jarInputStream, targetOutputStream);
-                }
-                FMLLog.log.debug("Extracted ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
-            } catch (IOException e)
-            {
-                FMLLog.log.error("An error occurred extracting dependency", e);
-            }
-        }
-        return;
     }
 
     private static Method ADDURL;
@@ -600,18 +505,18 @@ public class CoreModManager {
             if (!Arrays.asList(rootPlugins).contains(coreModClass) && (requiredMCVersion == null || Strings.isNullOrEmpty(requiredMCVersion.value())))
             {
                 FMLLog.log.warn("The coremod {} does not have a MCVersion annotation, it may cause issues with this version of Minecraft",
-                        coreModClass);
+                    coreModClass);
             }
             else if (requiredMCVersion != null && !FMLInjectionData.mccversion.equals(requiredMCVersion.value()))
             {
                 FMLLog.log.error("The coremod {} is requesting minecraft version {} and minecraft is {}. It will be ignored.", coreModClass,
-                        requiredMCVersion.value(), FMLInjectionData.mccversion);
+                    requiredMCVersion.value(), FMLInjectionData.mccversion);
                 return null;
             }
             else if (requiredMCVersion != null)
             {
                 FMLLog.log.debug("The coremod {} requested minecraft version {} and minecraft is {}. It will be loaded.", coreModClass,
-                        requiredMCVersion.value(), FMLInjectionData.mccversion);
+                    requiredMCVersion.value(), FMLInjectionData.mccversion);
             }
             TransformerExclusions trExclusions = coreModClazz.getAnnotation(IFMLLoadingPlugin.TransformerExclusions.class);
             if (trExclusions != null)
