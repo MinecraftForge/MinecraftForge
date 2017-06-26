@@ -36,7 +36,7 @@ public class DependencyExtractor
 
     public static void inspect(File baseModsDir, File versionedModsDir)
     {
-        FMLLog.log.info("Inspecting mod directory for dependency extraction candidates");
+        FMLLog.log.debug("Inspecting mod directory for dependency extraction candidates");
         File modListFile = new File(baseModsDir, "mod_list.json");
         JsonModList modList = prepareModList(modListFile);
         File repository = new File(modList.repositoryRoot);
@@ -79,18 +79,22 @@ public class DependencyExtractor
 
         if (extractedDeps > 0)
         {
-            FMLLog.log.info("Finished extracting dependencies, at least {} dependencies were added or updated", extractedDeps);
-            FMLLog.log.info("Since dependencies were extracted, the mod list has to be written to disk again");
+            FMLLog.log.debug("Finished extracting dependencies, at least {} dependencies were added or updated", extractedDeps);
+            FMLLog.log.debug("Since dependencies were extracted, the mod list has to be written to disk again");
             modList.modRef = artifacts.values().stream().map(Artifact::toGradleNotation).collect(Collectors.toList());
             try
             {
                 Files.write(GSON.toJson(modList), modListFile, Charsets.UTF_8);
-                FMLLog.log.info("Successfully updated mod list");
+                FMLLog.log.debug("Successfully updated mod list");
             }
             catch (IOException e)
             {
                 FMLLog.log.error("Failed to write updated mod list", e);
             }
+        }
+        else
+        {
+            FMLLog.log.debug("No or only erroring dependencies to be extracted found");
         }
     }
 
@@ -156,6 +160,7 @@ public class DependencyExtractor
                 continue;
             }
             File targetFile = versionedTarget;
+            boolean shouldExtract = true;
             // Hypothetically, contained deps might be some other file than a jar
             if (depEndName.endsWith(".jar"))
             {
@@ -169,6 +174,8 @@ public class DependencyExtractor
                     {
                         Artifact artifact = new Artifact(containedManifest.getMainAttributes().getValue(MAVEN_ARTIFACT));
                         if (addArtifact(artifacts, artifact, repository))
+                        shouldExtract = addArtifact(artifacts, artifact, repository);
+                        if (shouldExtract)
                         {
                             FMLLog.log.debug("Found artifact {} in {}, extracting to repository at {}", artifact, jar.getName(), repository.getCanonicalPath());
                             targetFile = artifact.toFile(repository);
@@ -183,6 +190,10 @@ public class DependencyExtractor
                 {
                     IOUtils.closeQuietly(jarInputStream);
                 }
+            }
+            if (!shouldExtract)
+            {
+                continue;
             }
 
             FMLLog.log.debug("Extracting ContainedDep {} from {} to {}", dep, jar.getName(), targetFile.getCanonicalPath());
@@ -239,7 +250,6 @@ public class DependencyExtractor
 
     private static final class Artifact
     {
-        final String gradle;
         final String[] parts;
         final String group;
         final String name;
@@ -248,7 +258,6 @@ public class DependencyExtractor
 
         Artifact(String raw)
         {
-            gradle = raw;
             parts = raw.split(":");
             group = parts[0];
             name = parts[1];
@@ -265,7 +274,18 @@ public class DependencyExtractor
 
         String toGradleNotation()
         {
-            return gradle;
+            StringBuilder builder = new StringBuilder();
+            builder.append(group);
+            builder.append(':');
+            builder.append(name);
+            builder.append(':');
+            builder.append(version);
+            if (classifier != null)
+            {
+                builder.append(':');
+                builder.append(classifier);
+            }
+            return builder.toString();
         }
 
         String toFileName()
@@ -298,7 +318,7 @@ public class DependencyExtractor
         @Override
         public String toString()
         {
-            return gradle;
+            return toGradleNotation();
         }
     }
 }
