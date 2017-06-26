@@ -49,7 +49,7 @@ public class DependencyExtractor
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Attributes.Name MOD_CONTAINS_DEPS = new Attributes.Name("ContainedDeps");
-    private static final Attributes.Name MAVEN_ARTIFACT = new Attributes.Name("MavenArtifact");
+    private static final Attributes.Name MAVEN_ARTIFACT = new Attributes.Name("Maven-Artifact");
     private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps", "").split(","));
     private static int extractedDeps = 0;
 
