@@ -3,6 +3,8 @@ package net.minecraftforge.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.item.Item;
+import net.minecraftforge.event.RegistryEvent;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Matrix4f;
@@ -45,6 +47,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+@Mod.EventBusSubscriber
 @Mod(modid="jsonmodelcapabilitytest", name="JsonModelCapabilityTest", version="0.0.0")
 public class JsonModelCapabilityTest
 {
@@ -60,11 +63,11 @@ public class JsonModelCapabilityTest
     @SidedProxy
     static ServerProxy proxy;
 
-    private Block testBlock;
+    private static Block testBlock;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event){
-        GameRegistry.register(testBlock = new Block(Material.IRON){
+        testBlock = new Block(Material.IRON){
 
             public boolean isOpaqueCube(IBlockState state) {
                 return false;
@@ -74,10 +77,19 @@ public class JsonModelCapabilityTest
                 return BlockRenderLayer.CUTOUT;
             }
 
-        }.setRegistryName("jsonmodelcapabilitytest", "testblock").setCreativeTab(CreativeTabs.DECORATIONS));
-        GameRegistry.register(new ItemBlock(testBlock).setRegistryName("jsonmodelcapabilitytest", "testblock"));
+        }.setRegistryName("jsonmodelcapabilitytest", "testblock").setCreativeTab(CreativeTabs.DECORATIONS);
         MinecraftForge.EVENT_BUS.register(this);
         proxy.preInit(event);
+    }
+
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event){
+        event.getRegistry().register(testBlock);
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event){
+        event.getRegistry().register(new ItemBlock(testBlock).setRegistryName("jsonmodelcapabilitytest", "testblock"));
     }
 
     public static class ServerProxy {
