@@ -25,6 +25,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidDictionary;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.UniversalBucket;
@@ -68,6 +69,14 @@ public class FluidPlacementTest
     public static class Registration
     {
         @SubscribeEvent
+        public static void registrFluids(RegistryEvent.Register<Fluid> event)
+        {
+            if (!ENABLE || !ModelFluidDebug.ENABLE)
+                return;
+            event.getRegistry().register(FiniteFluid.instance);
+            FluidDictionary.registerFluid(FiniteFluid.instance, FiniteFluid.name);
+        }
+        @SubscribeEvent
         public static void registrBlocks(RegistryEvent.Register<Block> event)
         {
             if (!ENABLE || !ModelFluidDebug.ENABLE)
@@ -81,13 +90,12 @@ public class FluidPlacementTest
         {
             if (!ENABLE || !ModelFluidDebug.ENABLE)
                 return;
-            FluidRegistry.registerFluid(FiniteFluid.instance);
-            FluidRegistry.addBucketForFluid(FiniteFluid.instance);
             event.getRegistry().registerAll(
                 EmptyFluidContainer.instance,
                 FluidContainer.instance,
                 new ItemBlock(FiniteFluidBlock.instance).setRegistryName(FiniteFluidBlock.instance.getRegistryName())
             );
+            FluidRegistry.addBucketForFluid(FiniteFluid.instance);
             MinecraftForge.EVENT_BUS.register(FluidContainer.instance);
         }
     }
@@ -128,7 +136,10 @@ public class FluidPlacementTest
 
         private FiniteFluid()
         {
-            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            super(new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            
+            setUnlocalizedName(name);
+            setRegistryName(name);
         }
 
         @Override

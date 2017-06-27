@@ -19,8 +19,6 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
@@ -33,18 +31,29 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.logging.log4j.Level;
+import javax.annotation.Nullable;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.stats.StatList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -59,24 +68,11 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.server.command.ForgeCommand;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import net.minecraftforge.fml.common.AutomaticEventSubscriber;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -96,8 +92,14 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-
-import javax.annotation.Nullable;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.registries.ForgeRegistry.Snapshot;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.server.command.ForgeCommand;
 
 @EventBusSubscriber(modid = "forge")
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
@@ -489,7 +491,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             RecipeSorter.sortCraftManager();
         }
-        FluidRegistry.validateFluidRegistry();
     }
 
     @Subscribe
@@ -503,7 +504,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         NBTTagCompound forgeData = new NBTTagCompound();
         NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
         forgeData.setTag("DimensionData", dimData);
-        FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
 
@@ -511,7 +511,25 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
     {
         DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
-        FluidRegistry.loadFluidDefaults(tag);
+        if (tag.hasKey("DefaultFluidList", 9)) //Load Pre-1.12 Fluids
+    	{
+            Map<ResourceLocation, Snapshot> snapshots = RegistryManager.ACTIVE.takeSnapshot(false);
+            Snapshot snapshot = snapshots.get(GameData.FLUIDS);
+            List<ResourceLocation> fluidList = Lists.newArrayList();
+            for (NBTBase nbt : tag.getTagList("DefaultFluidList", 8))
+            {
+                ResourceLocation name = new ResourceLocation(((NBTTagString)nbt).getString());
+                if(snapshot.ids.containsKey(name))
+                    fluidList.add(name);
+            }
+            for (Entry<ResourceLocation, Integer> entry : snapshot.ids.entrySet())
+            {
+                ResourceLocation key = entry.getKey();
+                int index = fluidList.indexOf(key);
+                snapshot.ids.put(key, index == -1 ? entry.getValue() + fluidList.size() : index);
+            }
+            GameData.injectSnapshot(snapshots, true, true);
+        }
     }
 
     @Subscribe

@@ -19,14 +19,30 @@
 
 package net.minecraftforge.registries;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.Validate;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -45,6 +61,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -54,24 +71,6 @@ import net.minecraftforge.fml.common.ZipperUtil;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.Validate;
-import org.apache.logging.log4j.Level;
 
 /**
  * INTERNAL ONLY
@@ -87,6 +86,7 @@ public class GameData
     public static final ResourceLocation POTIONTYPES  = new ResourceLocation("minecraft:potiontypes");
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
     public static final ResourceLocation ENTITIES     = new ResourceLocation("minecraft:entities");
+    public static final ResourceLocation FLUIDS       = new ResourceLocation("minecraft:fluids");
     public static final ResourceLocation RECIPES      = new ResourceLocation("minecraft:recipes");
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
     private static final int MAX_BLOCK_ID = 4095;
@@ -98,11 +98,13 @@ public class GameData
     private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE >> 5; // Int (SPacketEffect)
     private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
     private static final int MAX_ENTITY_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSpawnMob)
+    private static final int MAX_FLUID_ID = 4096; //There are only 4096 possible blocks
     private static final int MAX_RECIPE_ID = Integer.MAX_VALUE >> 5; // Varint CPacketRecipeInfo/SPacketRecipeBook
     private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
 
     private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
+    private static final ResourceLocation FLUID_TO_BLOCK = new ResourceLocation("minecraft:fluidtoblockmap");
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
     private static final BiConsumer<ResourceLocation, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
@@ -128,6 +130,7 @@ public class GameData
         makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).create();
         makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("water")).create();
         makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
+        makeRegistry(FLUIDS,       Fluid.class,       MAX_FLUID_ID).create();
         makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().create();
         makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
         entityRegistry = (ForgeRegistry<EntityEntry>)makeRegistry(ENTITIES, EntityEntry.class, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
@@ -176,6 +179,12 @@ public class GameData
     public static ObjectIntIdentityMap<IBlockState> getBlockStateIDMap()
     {
         return GameRegistry.findRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static BiMap<Fluid, Block> getFluidBlockMap()
+    {
+        return (BiMap<Fluid, Block>)GameRegistry.findRegistry(Fluid.class).getSlaveMap(FLUID_TO_BLOCK, BiMap.class);
     }
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
@@ -268,7 +277,31 @@ public class GameData
         }
     }
 
+    private static class FluidCallbacks implements IForgeRegistry.AddCallback<Fluid>, IForgeRegistry.ClearCallback<Fluid>, IForgeRegistry.CreateCallback<Fluid>
+    {
+        static final FluidCallbacks INSTANCE = new FluidCallbacks();
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        public void onAdd(IForgeRegistryInternal<Fluid> owner, RegistryManager stage, int id, Fluid fluid, @Nullable Fluid oldFluid)
+        {
+            if(fluid.canBePlacedInWorld())
+                owner.getSlaveMap(FLUID_TO_BLOCK, BiMap.class).put(fluid, fluid.getBlock());
+        }
 
+        @Override
+        public void onCreate(IForgeRegistryInternal<Fluid> owner, RegistryManager stage)
+        {
+            owner.setSlaveMap(FLUID_TO_BLOCK, HashBiMap.<Fluid, Block>create());
+        }
+
+        @Override
+        public void onClear(IForgeRegistryInternal<Fluid> owner, RegistryManager stage)
+        {
+            owner.getSlaveMap(FLUID_TO_BLOCK, BiMap.class).clear();
+        }
+    }
+    
     private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
@@ -681,6 +714,11 @@ public class GameData
         });
         */
 
+        if(filter.test(FLUIDS))
+        {
+            MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(FLUIDS).getRegisterEvent(FLUIDS));
+            ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject any fluids
+        }
         if (filter.test(BLOCKS))
         {
             MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(BLOCKS).getRegisterEvent(BLOCKS));
@@ -694,7 +732,7 @@ public class GameData
         for (ResourceLocation rl : keys)
         {
             if (!filter.test(rl)) continue;
-            if (rl == BLOCKS || rl == ITEMS) continue;
+            if (rl == FLUIDS || rl == BLOCKS || rl == ITEMS) continue;
             MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl));
         }
         ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject everything else

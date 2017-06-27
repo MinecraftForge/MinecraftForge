@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
 +++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
-@@ -264,6 +264,9 @@
+@@ -264,6 +264,10 @@
          };
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151129_at, ibehaviordispenseitem);
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
@@ -15,6 +15,7 @@
                  }
              }
 +
++            net.minecraftforge.fml.common.registry.ForgeRegistries.initForgeRegistries();
 +            net.minecraftforge.registries.GameData.vanillaSnapshot();
          }
      }

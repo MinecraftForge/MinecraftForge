@@ -41,6 +41,7 @@ import net.minecraftforge.debug.ModelFluidDebug.TestGas;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidDictionary;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -123,8 +124,8 @@ public class DynBucketTest
     @SubscribeEvent
     public void registrItems(RegistryEvent.Register<Item> event)
     {
-        FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestFluid.name));
-        FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestGas.name));
+        FluidRegistry.addBucketForFluid(ModelFluidDebug.FLUID);
+        FluidRegistry.addBucketForFluid(ModelFluidDebug.GAS);
 
         event.getRegistry().registerAll(
             new TestItem().setRegistryName(testItemName),
