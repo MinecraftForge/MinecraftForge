@@ -7,7 +7,7 @@
 -        ModelBakery modelbakery = new ModelBakery(p_110549_1_, this.field_174956_b, this.field_174957_c);
 +        net.minecraftforge.client.model.ModelLoader modelbakery = new net.minecraftforge.client.model.ModelLoader(p_110549_1_, this.field_174956_b, this.field_174957_c);
          this.field_174958_a = modelbakery.func_177570_a();
-         this.field_174955_d = (IBakedModel)this.field_174958_a.func_82594_a(ModelBakery.field_177604_a);
+         this.field_174955_d = this.field_174958_a.func_82594_a(ModelBakery.field_177604_a);
 +        net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.field_174958_a, modelbakery);
          this.field_174957_c.func_178124_c();
      }

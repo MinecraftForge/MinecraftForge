@@ -23,7 +23,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,29 +31,39 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
+import net.minecraft.command.EntitySelector;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.ShapedRecipes;
+import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.IWorldGenerator;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderException;
-import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.fml.common.IEntitySelectorFactory;
 
 import org.apache.logging.log4j.Level;
 
@@ -63,19 +72,18 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
 import javax.annotation.Nonnull;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
 public class GameRegistry
 {
     private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
     private static Map<IWorldGenerator, Integer> worldGeneratorIndex = Maps.newHashMap();
     private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
     private static List<IWorldGenerator> sortedGeneratorList;
+    private static List<IEntitySelectorFactory> entitySelectorFactories = Lists.newArrayList();
 
     /**
      * Register a world generator - something that inserts new block types into the world
@@ -92,6 +100,49 @@ public class GameRegistry
         {
             sortedGeneratorList = null;
         }
+    }
+
+    /**
+     * Registers a entity selector factory which is used to create predicates whenever a command containing selectors is executed
+     * Any non vanilla arguments that you expect has to be registered. Otherwise Minecraft will throw an CommandException on usage.
+     *
+     * If you want to react to a command like "/kill @e[xyz=5]", you would have to register the argument "xyz" here and check for that argument in the factory.
+     * One factory can listen to any number of arguments as long as they are registered here.
+     *
+     * For inter mod compatibility you might want to use "modid:xyz" (e.g. "forge:min_health") as argument.
+     *
+     * For an example usage, see CustomEntitySelectorTest
+     * @param arguments Expected string arguments in commands
+     */
+    public static void registerEntitySelector(IEntitySelectorFactory factory, String... arguments)
+    {
+        entitySelectorFactories.add(factory);
+        for (String s : arguments)
+        {
+            EntitySelector.addArgument(s);
+        }
+    }
+
+    /**
+     * Creates a list of entity selectors using the registered factories.
+     * Should probably only be called by Forge
+     */
+    public static List<Predicate<Entity>> createEntitySelectors(Map<String, String> arguments, String mainSelector, ICommandSender sender, Vec3d position)
+    {
+        List<Predicate<Entity>> selectors = Lists.newArrayList();
+        for (IEntitySelectorFactory factory : entitySelectorFactories)
+        {
+            try
+            {
+                selectors.addAll(factory.createPredicates(arguments, mainSelector, sender, position));
+            }
+            catch (Exception e)
+            {
+                FMLLog.log.error("Exception caught during entity selector creation with {} for argument map {} of {} for {} at {}", factory,
+                        arguments, mainSelector, sender, position, e);
+            }
+        }
+        return selectors;
     }
 
     /**
@@ -138,59 +189,12 @@ public class GameRegistry
     }
 
     /**
-     * Register the previously named {@link IForgeRegistry} object with the registry system.
-     * Always ensure the object is already named using {@link IForgeRegistryEntry#setRegistryName(ResourceLocation)}
-     * or another mechanism.
-     *
-     * Note: That DOES NOT create the ItemBlock for you if this is a Block, you should register that item separately.
-     *
-     * @param object The object to register with a registry
-     * @param <K> The registry supertype
-     * @throws IllegalArgumentException if the object is not yet named (use {@link #register(IForgeRegistryEntry, ResourceLocation)} instead)
-     * @return The object
+     * This is now private, you should use either ForgeRegistries constants.
+     * Or the registry passed in during the RegistryEvent.Register<T> event.
      */
-    @SuppressWarnings("unchecked")
-    public static <K extends IForgeRegistryEntry<?>> K register(K object)
+    private static <K extends IForgeRegistryEntry<K>> K register(K object)
     {
         return (K)GameData.register_impl(object);
-    }
-
-    /**
-     * Register the unnamed {@link IForgeRegistry} object with the registry system.
-     * Always make sure you have not previously named the object.
-     *
-     * It is advised that you set the object's registry name and use {@link #register(IForgeRegistryEntry)} instead.
-     *
-     * Note: That DOES NOT create the ItemBlock for you if this is a Block, you should register that item separately.
-     *
-     * @param object The object to register
-     * @param name The name to register it with
-     * @param <K> The registry supertype
-     * @throws IllegalStateException if the object already has an existing name (use {@link #register(IForgeRegistryEntry)} instead)
-     * @return The object
-     */
-    @SuppressWarnings("unchecked")
-    public static <K extends IForgeRegistryEntry<?>> K register(K object, ResourceLocation name)
-    {
-        return (K)GameData.register_impl(object, name);
-    }
-
-
-    /**
-     * Registers a named block with the Block registry. This WILL create a new ItemBlock for you with the
-     * same name and register it with the ItemRegistry. This method is created as a convince method for
-     * modder and SHOULD NOT be used. Modders should create and register their ItemBlocks like normal items.
-     *
-     * @param block The block to register with a registry
-     * @throws IllegalArgumentException if the object is not yet named
-     * @return The block
-     */
-    @Deprecated //Modders SHOULD NOT use this, so it'll stay deprecated. Purely added to make lazy modders happy -.-
-    public static Block registerWithItem(Block block)
-    {
-        register(block);
-        register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
-        return block;
     }
 
     /**
@@ -203,43 +207,21 @@ public class GameRegistry
      */
     public static <K extends IForgeRegistryEntry<K>> IForgeRegistry<K> findRegistry(Class<K> registryType)
     {
-        return PersistentRegistryManager.findRegistryByType(registryType);
+        return RegistryManager.ACTIVE.getRegistry(registryType);
     }
 
-    /**
-     * Add a forced persistent substitution alias for the block or item to another block or item. This will have
-     * the effect of using the substituted block or item instead of the original, where ever it is
-     * referenced.
-     *
-     * @param nameToSubstitute The name to link to (this is the NEW block or item)
-     * @param type             The type (Block or Item)
-     * @param object           a NEW instance that is type compatible with the existing instance
-     * @throws ExistingSubstitutionException     if someone else has already registered an alias either from or to one of the names
-     * @throws IncompatibleSubstitutionException if the substitution is incompatible
-     */
-    public static void addSubstitutionAlias(String nameToSubstitute, GameRegistry.Type type, Object object) throws ExistingSubstitutionException
+    public static void addShapedRecipe(ResourceLocation name, ResourceLocation group, @Nonnull ItemStack output, Object... params)
     {
-        GameData.getMain().registerSubstitutionAlias(nameToSubstitute, type, object);
+        ShapedPrimer primer = CraftingHelper.parseShaped(params);
+        register(new ShapedRecipes(group == null ? "" : group.toString(), primer.width, primer.height, primer.input, output).setRegistryName(name));
     }
 
-    public static void addRecipe(@Nonnull ItemStack output, Object... params)
+    public static void addShapelessRecipe(ResourceLocation name, ResourceLocation group, @Nonnull ItemStack output, Ingredient... params)
     {
-        addShapedRecipe(output, params);
-    }
-
-    public static IRecipe addShapedRecipe(@Nonnull ItemStack output, Object... params)
-    {
-        return CraftingManager.getInstance().addRecipe(output, params);
-    }
-
-    public static void addShapelessRecipe(@Nonnull ItemStack output, Object... params)
-    {
-        CraftingManager.getInstance().addShapelessRecipe(output, params);
-    }
-
-    public static void addRecipe(IRecipe recipe)
-    {
-        CraftingManager.getInstance().getRecipeList().add(recipe);
+        NonNullList<Ingredient> lst = NonNullList.create();
+        for (Ingredient i : params)
+            lst.add(i);
+        register(new ShapelessRecipes(group == null ? "" : group.toString(), output, lst).setRegistryName(name));
     }
 
     public static void addSmelting(Block input, @Nonnull ItemStack output, float xp)
@@ -257,26 +239,9 @@ public class GameRegistry
         FurnaceRecipes.instance().addSmeltingRecipe(input, output, xp);
     }
 
-    public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
+    public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String key)
     {
-        GameData.getTileEntityRegistry().putObject(new ResourceLocation(id), tileEntityClass);
-    }
-
-    /**
-     * Register a tile entity, with alternative TileEntity identifiers. Use with caution!
-     * This method allows for you to "rename" the 'id' of the tile entity.
-     *
-     * @param tileEntityClass The tileEntity class to register
-     * @param id              The primary ID, this will be the ID that the tileentity saves as
-     * @param alternatives    A list of alternative IDs that will also map to this class. These will never save, but they will load
-     */
-    public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
-    {
-        GameRegistry.registerTileEntity(tileEntityClass, id);
-        for (String s : alternatives)
-        {
-            GameData.getTileEntityRegistry().addLegacyName(new ResourceLocation(s), new ResourceLocation(id));
-        }
+        TileEntity.register(key, tileEntityClass);
     }
 
     public static void registerFuelHandler(IFuelHandler handler)
@@ -292,12 +257,6 @@ public class GameRegistry
             fuelValue = Math.max(fuelValue, handler.getBurnTime(itemStack));
         }
         return fuelValue;
-    }
-
-    public enum Type
-    {
-        BLOCK,
-        ITEM;
     }
 
     /**
@@ -371,10 +330,10 @@ public class GameRegistry
         {
             throw new IllegalArgumentException("The itemName cannot be null");
         }
-        Item item = GameData.getItemRegistry().getObject(new ResourceLocation(itemName));
+        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
         if (item == null)
         {
-            FMLLog.getLogger().log(Level.TRACE, "Unable to find item with name {}", itemName);
+            FMLLog.log.trace("Unable to find item with name {}", itemName);
             return ItemStack.EMPTY;
         }
         ItemStack is = new ItemStack(item, stackSize, meta);
@@ -386,12 +345,13 @@ public class GameRegistry
                 nbttag = JsonToNBT.getTagFromJson(nbtString);
             } catch (NBTException e)
             {
-                FMLLog.getLogger().log(Level.WARN, "Encountered an exception parsing ItemStack NBT string {}", nbtString, e);
-                throw Throwables.propagate(e);
+                FMLLog.log.warn("Encountered an exception parsing ItemStack NBT string {}", nbtString, e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
             if (!(nbttag instanceof NBTTagCompound))
             {
-                FMLLog.getLogger().log(Level.WARN, "Unexpected NBT string - multiple values {}", nbtString);
+                FMLLog.log.warn("Unexpected NBT string - multiple values {}", nbtString);
                 throw new RuntimeException("Invalid NBT JSON");
             }
             else

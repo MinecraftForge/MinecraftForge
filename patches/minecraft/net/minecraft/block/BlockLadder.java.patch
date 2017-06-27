@@ -1,30 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLadder.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLadder.java
-@@ -61,7 +61,10 @@
- 
-     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
-     {
--        return p_176196_1_.func_180495_p(p_176196_2_.func_177976_e()).func_185915_l() ? true : (p_176196_1_.func_180495_p(p_176196_2_.func_177974_f()).func_185915_l() ? true : (p_176196_1_.func_180495_p(p_176196_2_.func_177978_c()).func_185915_l() ? true : p_176196_1_.func_180495_p(p_176196_2_.func_177968_d()).func_185915_l()));
-+        return p_176196_1_.func_180495_p(p_176196_2_.func_177976_e()).isSideSolid(p_176196_1_, p_176196_2_.func_177976_e(), EnumFacing.EAST) ||
-+               p_176196_1_.func_180495_p(p_176196_2_.func_177974_f()).isSideSolid(p_176196_1_, p_176196_2_.func_177974_f(), EnumFacing.WEST) ||
-+               p_176196_1_.func_180495_p(p_176196_2_.func_177978_c()).isSideSolid(p_176196_1_, p_176196_2_.func_177978_c(), EnumFacing.SOUTH) ||
-+               p_176196_1_.func_180495_p(p_176196_2_.func_177968_d()).isSideSolid(p_176196_1_, p_176196_2_.func_177968_d(), EnumFacing.NORTH);
-     }
- 
-     public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
-@@ -99,7 +102,7 @@
- 
-     protected boolean func_176381_b(World p_176381_1_, BlockPos p_176381_2_, EnumFacing p_176381_3_)
-     {
--        return p_176381_1_.func_180495_p(p_176381_2_.func_177972_a(p_176381_3_.func_176734_d())).func_185915_l();
-+        return p_176381_1_.func_180495_p(p_176381_2_.func_177972_a(p_176381_3_.func_176734_d())).isSideSolid(p_176381_1_, p_176381_2_.func_177972_a(p_176381_3_.func_176734_d()), p_176381_3_);
-     }
- 
-     public IBlockState func_176203_a(int p_176203_1_)
-@@ -139,4 +142,6 @@
-     {
+@@ -158,6 +158,8 @@
          return new BlockStateContainer(this, new IProperty[] {field_176382_a});
      }
-+
+ 
 +    @Override public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) { return true; }
- }
++
+     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
+     {
+         return BlockFaceShape.UNDEFINED;

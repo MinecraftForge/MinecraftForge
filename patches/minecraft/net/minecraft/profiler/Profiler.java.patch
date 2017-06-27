@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/profiler/Profiler.java
++++ ../src-work/minecraft/net/minecraft/profiler/Profiler.java
+@@ -177,4 +177,15 @@
+                 return (this.field_76331_c.hashCode() & 11184810) + 4473924;
+             }
+         }
++
++    /**
++     * Forge: Fix for MC-117087, World.updateEntities is wasting time calling Class.getSimpleName() when the profiler is not active
++     */
++    public void startSection(Class<?> profiledClass)
++    {
++        if (this.field_76327_a)
++        {
++            func_76320_a(profiledClass.getSimpleName());
++        }
++    }
+ }

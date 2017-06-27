@@ -1,13 +1,14 @@
 package net.minecraftforge.fml.test.simplenet;
 
-import static org.junit.Assert.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-
 import org.junit.Test;
 
-public class SimpleNetTester {
+import static org.junit.Assert.assertTrue;
+
+public class SimpleNetTester
+{
 
     @Test
     public void test()

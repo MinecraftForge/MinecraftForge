@@ -29,12 +29,15 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
 import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelBlock;
@@ -47,22 +50,17 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.BakeItemLayerModelEvent;
 import net.minecraftforge.client.event.ClientAttachCapabilitiesEvent;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityDispatcher;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
+import java.util.function.Function;
+import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public final class ItemLayerModel implements IRetexturableModel, ICapabilityProvider
+public final class ItemLayerModel implements IModel, ICapabilityProvider
 {
-    public static final ItemLayerModel INSTANCE = new ItemLayerModel(ImmutableList.<ResourceLocation>of());
+    public static final ItemLayerModel INSTANCE = new ItemLayerModel(ImmutableList.of());
 
     private final ImmutableList<ResourceLocation> textures;
     private final ItemOverrideList overrides;
@@ -131,11 +129,6 @@ public final class ItemLayerModel implements IRetexturableModel, ICapabilityProv
         return textures;
     }
 
-    public IModelState getDefaultState()
-    {
-        return TRSRTransformation.identity();
-    }
-
     public ItemLayerModel retexture(ImmutableMap<String, String> textures)
     {
         ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
@@ -153,10 +146,11 @@ public final class ItemLayerModel implements IRetexturableModel, ICapabilityProv
         return new ItemLayerModel(builder.build(), overrides, capabilities.serializeNBT());
     }
 
+    @Override
     public IBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-        Optional<TRSRTransformation> transform = state.apply(Optional.<IModelPart>absent());
+        Optional<TRSRTransformation> transform = state.apply(Optional.empty());
         BakeItemLayerModelEvent event = new BakeItemLayerModelEvent.Pre(this, state, format, bakedTextureGetter, builder, transform);
         MinecraftForge.EVENT_BUS.post(event);
         builder = event.getBuilder();
@@ -167,7 +161,7 @@ public final class ItemLayerModel implements IRetexturableModel, ICapabilityProv
             builder.addAll(getQuadsForSprite(i, sprite, format, transform));
         }
         TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
-        ImmutableMap<TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
+        ImmutableMap<TransformType, TRSRTransformation> map = PerspectiveMapWrapper.getTransforms(state);
         BakeItemLayerModelEvent.Post pevent = new BakeItemLayerModelEvent.Post(this, state, format, bakedTextureGetter, builder, transform, particle, map);
         MinecraftForge.EVENT_BUS.post(pevent);
         return new BakedItemModel(pevent.getBuilder().build(), pevent.getParticle(), pevent.getMap(), overrides, null);
@@ -187,7 +181,7 @@ public final class ItemLayerModel implements IRetexturableModel, ICapabilityProv
         return capabilities == null ? null : capabilities.getCapability(capability, facing);
     }
 
-    private static final class BakedItemModel implements IPerspectiveAwareModel
+    private static final class BakedItemModel implements IBakedModel
     {
         private final ImmutableList<BakedQuad> quads;
         private final TextureAtlasSprite particle;
@@ -226,17 +220,17 @@ public final class ItemLayerModel implements IRetexturableModel, ICapabilityProv
         public boolean isGui3d() { return false; }
         public boolean isBuiltInRenderer() { return false; }
         public TextureAtlasSprite getParticleTexture() { return particle; }
-        public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
         public ItemOverrideList getOverrides() { return overrides; }
-        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
             if(side == null) return quads;
             return ImmutableList.of();
         }
 
+        @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
         {
-            Pair<? extends IBakedModel, Matrix4f> pair = IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, type);
+            Pair<? extends IBakedModel, Matrix4f> pair = PerspectiveMapWrapper.handlePerspective(this, transforms, type);
             if(type == TransformType.GUI && !isCulled && pair.getRight() == null)
             {
                 return Pair.of(otherModel, null);
@@ -478,8 +472,10 @@ public final class ItemLayerModel implements IRetexturableModel, ICapabilityProv
     {
         INSTANCE;
 
+        @Override
         public void onResourceManagerReload(IResourceManager resourceManager) {}
 
+        @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
             return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
@@ -488,6 +484,7 @@ public final class ItemLayerModel implements IRetexturableModel, ICapabilityProv
                 modelLocation.getResourcePath().equals("models/item/item-layer"));
         }
 
+        @Override
         public IModel loadModel(ResourceLocation modelLocation)
         {
             return ItemLayerModel.INSTANCE;

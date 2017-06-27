@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
-@@ -40,6 +40,11 @@
+@@ -38,6 +38,11 @@
      private String field_145802_g;
      public float field_70290_d;
  
@@ -12,7 +12,7 @@
      public EntityItem(World p_i1709_1_, double p_i1709_2_, double p_i1709_4_, double p_i1709_6_)
      {
          super(p_i1709_1_);
-@@ -57,6 +62,7 @@
+@@ -55,6 +60,7 @@
      {
          this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);
          this.func_92058_a(p_i1710_8_);
@@ -20,7 +20,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -80,6 +86,7 @@
+@@ -78,6 +84,7 @@
  
      public void func_70071_h_()
      {
@@ -28,7 +28,7 @@
          if (this.func_92059_d().func_190926_b())
          {
              this.func_70106_y();
-@@ -169,8 +176,16 @@
+@@ -167,8 +174,16 @@
                  }
              }
  
@@ -46,7 +46,7 @@
                  this.func_70106_y();
              }
          }
-@@ -227,6 +242,10 @@
+@@ -225,6 +240,10 @@
                      {
                          return false;
                      }
@@ -57,7 +57,15 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -316,6 +335,7 @@
+@@ -282,6 +301,7 @@
+ 
+     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
+     {
++        if (this.field_70170_p.field_72995_K || this.field_70128_L) return false; //Forge: Fixes MC-53850
+         if (this.func_180431_b(p_70097_1_))
+         {
+             return false;
+@@ -314,6 +334,7 @@
          p_70014_1_.func_74777_a("Health", (short)this.field_70291_e);
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
          p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -65,7 +73,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -360,17 +380,22 @@
+@@ -358,18 +379,24 @@
          {
              this.func_70106_y();
          }
@@ -82,22 +90,16 @@
              int i = itemstack.func_190916_E();
  
 -            if (this.field_145804_b == 0 && (this.field_145802_g == null || 6000 - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && p_70100_1_.field_71071_by.func_70441_a(itemstack))
-+            int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_70100_1_, itemstack);
++            int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_70100_1_);
 +            if (hook < 0) return;
 +
 +            if (this.field_145804_b <= 0 && (this.field_145802_g == null || lifespan - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && (hook == 1 || i <= 0 || p_70100_1_.field_71071_by.func_70441_a(itemstack)))
              {
-                 if (item == Item.func_150898_a(Blocks.field_150364_r))
-                 {
-@@ -407,6 +432,7 @@
-                     }
-                 }
- 
 +                net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerItemPickupEvent(p_70100_1_, this);
                  p_70100_1_.func_71001_a(this, i);
  
                  if (itemstack.func_190926_b())
-@@ -513,6 +539,6 @@
+@@ -476,6 +503,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();

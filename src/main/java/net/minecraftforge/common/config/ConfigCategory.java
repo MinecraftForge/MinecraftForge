@@ -17,11 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/**
- * This software is provided under the terms of the Minecraft Forge Public
- * License v1.0.
- */
-
 package net.minecraftforge.common.config;
 
 import static net.minecraftforge.common.config.Configuration.COMMENT_SEPARATOR;
@@ -348,6 +343,8 @@ public class ConfigCategory implements Map<String, Property>
                 char type = prop.getType().getID();
                 write(out, pad1, String.valueOf(type), ":", propName, "=", prop.getString());
             }
+            
+            prop.resetChangedState();
         }
 
         if (children.size() > 0)

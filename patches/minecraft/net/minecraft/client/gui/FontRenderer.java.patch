@@ -32,7 +32,7 @@
      private float func_181559_a(char p_181559_1_, boolean p_181559_2_)
      {
 +        if (p_181559_1_ == 160) return 4.0F; // forge: display nbsp as space. MC-2595
-         if (p_181559_1_ == 32)
+         if (p_181559_1_ == ' ')
          {
              return 4.0F;
 @@ -203,7 +204,7 @@

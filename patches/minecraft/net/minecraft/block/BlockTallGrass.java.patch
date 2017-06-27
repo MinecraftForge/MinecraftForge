@@ -27,16 +27,15 @@
      }
  
      public int func_149679_a(int p_149679_1_, Random p_149679_2_)
-@@ -62,7 +62,7 @@
+@@ -78,7 +78,6 @@
+         return new ItemStack(this, 1, p_185473_3_.func_177230_c().func_176201_c(p_185473_3_));
+     }
  
-     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_)
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
      {
--        if (!p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
-+        if (false && !p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ) // Forge: Noop Taken care of by IShearable
-         {
-             p_180657_2_.func_71029_a(StatList.func_188055_a(this));
-             func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Blocks.field_150329_H, 1, ((BlockTallGrass.EnumType)p_180657_4_.func_177229_b(field_176497_a)).func_177044_a()));
-@@ -181,4 +181,21 @@
+         for (int i = 1; i < 3; ++i)
+@@ -181,4 +180,19 @@
              }
          }
      }
@@ -48,13 +47,11 @@
 +        return NonNullList.func_191197_a(1, new ItemStack(Blocks.field_150329_H, 1, ((BlockTallGrass.EnumType)world.func_180495_p(pos).func_177229_b(field_176497_a)).func_177044_a()));
 +    }
 +    @Override
-+    public NonNullList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        if (RANDOM.nextInt(8) != 0) return NonNullList.func_191196_a();
++        if (RANDOM.nextInt(8) != 0) return;
 +        ItemStack seed = net.minecraftforge.common.ForgeHooks.getGrassSeed(RANDOM, fortune);
 +        if (!seed.func_190926_b())
-+            return NonNullList.func_191197_a(1, seed);
-+        else
-+            return NonNullList.func_191196_a();
++            drops.add(seed);
 +    }
  }

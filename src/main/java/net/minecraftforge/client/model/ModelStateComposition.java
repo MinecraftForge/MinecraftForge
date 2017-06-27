@@ -24,7 +24,7 @@ import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 public class ModelStateComposition implements IModelState
 {
@@ -37,6 +37,7 @@ public class ModelStateComposition implements IModelState
         this.second = second;
     }
 
+    @Override
     public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
     {
         Optional<TRSRTransformation> f = first.apply(part), s = second.apply(part);
@@ -44,7 +45,10 @@ public class ModelStateComposition implements IModelState
         {
             return Optional.of(f.get().compose(s.get()));
         }
-        return f.or(s);
+        if (f.isPresent()) {
+            return f;
+        }
+        return s;
     }
 
     @Override

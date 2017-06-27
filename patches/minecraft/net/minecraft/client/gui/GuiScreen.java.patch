@@ -1,28 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiScreen.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreen.java
-@@ -63,6 +63,7 @@
-     private long field_146288_g;
+@@ -61,6 +61,7 @@
      private int field_146298_h;
      private URI field_175286_t;
+     private boolean field_193977_u;
 +    protected boolean keyHandled, mouseHandled; // Forge: allow canceling key and mouse Post events from handleMouseInput and handleKeyboardInput
  
      public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
      {
-@@ -147,7 +148,10 @@
-             }
-         }
+@@ -131,7 +132,10 @@
  
--        this.func_146283_a(list, p_146285_2_, p_146285_3_);
+     protected void func_146285_a(ItemStack p_146285_1_, int p_146285_2_, int p_146285_3_)
+     {
+-        this.func_146283_a(this.func_191927_a(p_146285_1_), p_146285_2_, p_146285_3_);
 +        FontRenderer font = p_146285_1_.func_77973_b().getFontRenderer(p_146285_1_);
 +        net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_146285_1_);
-+        this.drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
++        this.drawHoveringText(this.func_191927_a(p_146285_1_), p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
 +        net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
      }
  
-     protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
-@@ -157,7 +161,13 @@
+     public List<String> func_191927_a(ItemStack p_191927_1_)
+@@ -170,7 +174,13 @@
  
-     protected void func_146283_a(List<String> p_146283_1_, int p_146283_2_, int p_146283_3_)
+     public void func_146283_a(List<String> p_146283_1_, int p_146283_2_, int p_146283_3_)
      {
 -        if (!p_146283_1_.isEmpty())
 +        drawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_, field_146289_q);
@@ -35,7 +35,13 @@
          {
              GlStateManager.func_179101_C();
              RenderHelper.func_74518_a();
-@@ -418,6 +428,7 @@
+@@ -403,10 +413,13 @@
+ 
+     public void func_175281_b(String p_175281_1_, boolean p_175281_2_)
+     {
++        p_175281_1_ = net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(p_175281_1_);
++        if (p_175281_1_.isEmpty()) return;
+         if (p_175281_2_)
          {
              this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_175281_1_);
          }
@@ -43,7 +49,7 @@
  
          this.field_146297_k.field_71439_g.func_71165_d(p_175281_1_);
      }
-@@ -432,9 +443,15 @@
+@@ -421,9 +434,15 @@
  
                  if (guibutton.func_146116_c(this.field_146297_k, p_73864_1_, p_73864_2_))
                  {
@@ -59,7 +65,7 @@
                  }
              }
          }
-@@ -464,8 +481,12 @@
+@@ -453,8 +472,12 @@
          this.field_146289_q = p_146280_1_.field_71466_p;
          this.field_146294_l = p_146280_2_;
          this.field_146295_m = p_146280_3_;
@@ -72,7 +78,7 @@
      }
  
      public void func_183500_a(int p_183500_1_, int p_183500_2_)
-@@ -484,7 +505,10 @@
+@@ -473,7 +496,10 @@
          {
              while (Mouse.next())
              {
@@ -83,7 +89,7 @@
              }
          }
  
-@@ -492,7 +516,10 @@
+@@ -481,7 +507,10 @@
          {
              while (Keyboard.next())
              {
@@ -94,7 +100,7 @@
              }
          }
      }
-@@ -554,6 +581,7 @@
+@@ -543,6 +572,7 @@
      public void func_146276_q_()
      {
          this.func_146270_b(0);

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockWoodSlab.java
++++ ../src-work/minecraft/net/minecraft/block/BlockWoodSlab.java
+@@ -66,7 +66,6 @@
+         return BlockPlanks.EnumType.func_176837_a(p_185674_1_.func_77960_j() & 7);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         for (BlockPlanks.EnumType blockplanks$enumtype : BlockPlanks.EnumType.values())

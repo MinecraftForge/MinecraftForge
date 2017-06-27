@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockAnvil.java
++++ ../src-work/minecraft/net/minecraft/block/BlockAnvil.java
+@@ -108,7 +108,6 @@
+         return enumfacing.func_176740_k() == EnumFacing.Axis.X ? field_185760_c : field_185761_d;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         p_149666_2_.add(new ItemStack(this));

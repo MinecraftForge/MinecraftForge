@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucket.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucket.java
-@@ -38,6 +38,8 @@
+@@ -40,6 +40,8 @@
          boolean flag = this.field_77876_a == Blocks.field_150350_a;
          ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
          RayTraceResult raytraceresult = this.func_77621_a(p_77659_1_, p_77659_2_, flag);
@@ -9,7 +9,7 @@
  
          if (raytraceresult == null)
          {
-@@ -181,4 +183,16 @@
+@@ -188,4 +190,16 @@
              }
          }
      }

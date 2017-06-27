@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFenceGate.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFenceGate.java
-@@ -50,7 +50,7 @@
+@@ -59,7 +59,7 @@
      {
          EnumFacing.Axis enumfacing$axis = ((EnumFacing)p_176221_1_.func_177229_b(field_185512_D)).func_176740_k();
  
@@ -9,11 +9,10 @@
          {
              p_176221_1_ = p_176221_1_.func_177226_a(field_176467_M, Boolean.valueOf(true));
          }
-@@ -175,4 +175,21 @@
-     {
+@@ -192,6 +192,23 @@
          return new BlockStateContainer(this, new IProperty[] {field_185512_D, field_176466_a, field_176465_b, field_176467_M});
      }
-+
+ 
 +    /* ======================================== FORGE START ======================================== */
 +
 +    @Override
@@ -30,4 +29,7 @@
 +    }
 +
 +    /* ======================================== FORGE END ======================================== */
- }
++
+     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
+     {
+         if (p_193383_4_ != EnumFacing.UP && p_193383_4_ != EnumFacing.DOWN)

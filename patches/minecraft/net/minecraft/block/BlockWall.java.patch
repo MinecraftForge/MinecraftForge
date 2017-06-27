@@ -1,22 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockWall.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockWall.java
-@@ -154,10 +154,10 @@
+@@ -128,7 +128,6 @@
+         return Block.func_193382_c(p_194143_0_) || p_194143_0_ == Blocks.field_180401_cv || p_194143_0_ == Blocks.field_150440_ba || p_194143_0_ == Blocks.field_150423_aK || p_194143_0_ == Blocks.field_150428_aP;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         for (BlockWall.EnumType blockwall$enumtype : BlockWall.EnumType.values())
+@@ -160,10 +159,10 @@
  
      public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
      {
--        boolean flag = this.func_176253_e(p_176221_2_, p_176221_3_.func_177978_c());
--        boolean flag1 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177974_f());
--        boolean flag2 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177968_d());
--        boolean flag3 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177976_e());
-+        boolean flag = canWallConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH);
+-        boolean flag = this.func_176253_e(p_176221_2_, p_176221_3_.func_177978_c(), EnumFacing.SOUTH);
+-        boolean flag1 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177974_f(), EnumFacing.WEST);
+-        boolean flag2 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177968_d(), EnumFacing.NORTH);
+-        boolean flag3 = this.func_176253_e(p_176221_2_, p_176221_3_.func_177976_e(), EnumFacing.EAST);
++        boolean flag =  canWallConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH);
 +        boolean flag1 = canWallConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST);
 +        boolean flag2 = canWallConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH);
 +        boolean flag3 = canWallConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST);
          boolean flag4 = flag && !flag1 && flag2 && !flag3 || !flag && flag1 && !flag2 && flag3;
          return p_176221_1_.func_177226_a(field_176256_a, Boolean.valueOf(!flag4 || !p_176221_2_.func_175623_d(p_176221_3_.func_177984_a()))).func_177226_a(field_176254_b, Boolean.valueOf(flag)).func_177226_a(field_176257_M, Boolean.valueOf(flag1)).func_177226_a(field_176258_N, Boolean.valueOf(flag2)).func_177226_a(field_176259_O, Boolean.valueOf(flag3));
      }
-@@ -167,6 +167,23 @@
-         return new BlockStateContainer(this, new IProperty[] {field_176256_a, field_176254_b, field_176257_M, field_176259_O, field_176258_N, field_176255_P});
+@@ -178,6 +177,24 @@
+         return p_193383_4_ != EnumFacing.UP && p_193383_4_ != EnumFacing.DOWN ? BlockFaceShape.MIDDLE_POLE_THICK : BlockFaceShape.CENTER_BIG;
      }
  
 +    /* ======================================== FORGE START ======================================== */
@@ -30,8 +38,9 @@
 +
 +    private boolean canWallConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
-+        Block block = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
-+        return block.canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d()) || func_176253_e(world, pos.func_177972_a(facing));
++        BlockPos other = pos.func_177972_a(facing);
++        Block block = world.func_180495_p(other).func_177230_c();
++        return block.canBeConnectedTo(world, other, facing.func_176734_d()) || func_176253_e(world, other, facing.func_176734_d());
 +    }
 +
 +    /* ======================================== FORGE END ======================================== */

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockEnchantmentTable.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockEnchantmentTable.java
-@@ -63,7 +63,7 @@
+@@ -64,7 +64,7 @@
                      {
                          BlockPos blockpos = p_180655_3_.func_177982_a(i, k, j);
  

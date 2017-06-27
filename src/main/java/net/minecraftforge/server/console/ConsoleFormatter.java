@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import org.fusesource.jansi.Ansi;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.util.text.TextFormatting;

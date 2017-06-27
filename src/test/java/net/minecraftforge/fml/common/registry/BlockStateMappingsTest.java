@@ -1,25 +1,17 @@
 package net.minecraftforge.fml.common.registry;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirt;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.registries.GameData;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.annotation.Nonnull;
 
 import static org.junit.Assert.assertEquals;
 
@@ -36,7 +28,8 @@ public class BlockStateMappingsTest
         System.setProperty("fml.doNotBackup", "true");
         Loader.instance();
         Bootstrap.register();
-        Loader.instance().setupTestHarness(new DummyModContainer(new ModMetadata() {{
+        Loader.instance().setupTestHarness(new DummyModContainer(new ModMetadata()
+        {{
             modId = "test";
         }}));
     }

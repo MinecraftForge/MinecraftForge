@@ -64,12 +64,12 @@ import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.core.helpers.Strings;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
+import java.util.Optional;
+import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -78,7 +78,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class OBJModel implements IRetexturableModel, IModelCustomData
+public class OBJModel implements IModel
 {
     //private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;
@@ -95,12 +95,6 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         this.matLib = matLib;
         this.modelLocation = modelLocation;
         this.customData = customData;
-    }
-
-    @Override
-    public Collection<ResourceLocation> getDependencies()
-    {
-        return Collections.emptyList();
     }
 
     @Override
@@ -128,7 +122,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         {
             if (e.getValue().getTexture().getTextureLocation().getResourcePath().startsWith("#"))
             {
-                FMLLog.severe("OBJLoader: Unresolved texture '%s' for obj model '%s'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
+                FMLLog.log.fatal("OBJLoader: Unresolved texture '{}' for obj model '{}'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
                 builder.put(e.getKey(), missing);
             }
             else
@@ -285,7 +279,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     else if (key.equalsIgnoreCase("f")) // Face Elements: f v1[/vt1][/vn1] ...
                     {
                         if (splitData.length > 4)
-                            FMLLog.warning("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
+                            FMLLog.log.warn("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
 
                         List<Vertex> v = Lists.newArrayListWithCapacity(splitData.length);
 
@@ -294,8 +288,8 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                             String[] pts = splitData[i].split("/");
 
                             int vert = Integer.parseInt(pts[0]);
-                            Integer texture = pts.length < 2 || Strings.isEmpty(pts[1]) ? null : Integer.parseInt(pts[1]);
-                            Integer normal = pts.length < 3 || Strings.isEmpty(pts[2]) ? null : Integer.parseInt(pts[2]);
+                            Integer texture = pts.length < 2 || Strings.isNullOrEmpty(pts[1]) ? null : Integer.parseInt(pts[1]);
+                            Integer normal = pts.length < 3 || Strings.isNullOrEmpty(pts[2]) ? null : Integer.parseInt(pts[2]);
 
                             vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
                             Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), this.vertices.get(vert).getMaterial());
@@ -368,7 +362,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                         if (!unknownObjectCommands.contains(key))
                         {
                             unknownObjectCommands.add(key);
-                            FMLLog.info("OBJLoader.Parser: command '%s' (model: '%s') is not currently supported, skipping. Line: %d '%s'", key, objFrom, lineNum, currentLine);
+                            FMLLog.log.info("OBJLoader.Parser: command '{}' (model: '{}') is not currently supported, skipping. Line: {} '{}'", key, objFrom, lineNum, currentLine);
                         }
                     }
                 }
@@ -545,7 +539,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     }
                     else
                     {
-                        FMLLog.info("OBJModel: A color has already been defined for material '%s' in '%s'. The color defined by key '%s' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
+                        FMLLog.log.info("OBJModel: A color has already been defined for material '{}' in '{}'. The color defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
                     }
                 }
                 else if (key.equalsIgnoreCase("map_Ka") || key.equalsIgnoreCase("map_Kd") || key.equalsIgnoreCase("map_Ks"))
@@ -569,7 +563,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     }
                     else
                     {
-                        FMLLog.info("OBJModel: A texture has already been defined for material '%s' in '%s'. The texture defined by key '%s' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
+                        FMLLog.log.info("OBJModel: A texture has already been defined for material '{}' in '{}'. The texture defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
                     }
                 }
                 else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr"))
@@ -585,7 +579,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     if (!unknownMaterialCommands.contains(key))
                     {
                         unknownMaterialCommands.add(key);
-                        FMLLog.info("OBJLoader.MaterialLibrary: key '%s' (model: '%s') is not currently supported, skipping", key, new ResourceLocation(domain, path));
+                        FMLLog.log.info("OBJLoader.MaterialLibrary: key '{}' (model: '{}') is not currently supported, skipping", key, new ResourceLocation(domain, path));
                     }
                 }
             }
@@ -1081,7 +1075,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             for (Face f : this.faces)
             {
 //                if (minUVBounds != null && maxUVBounds != null) f.normalizeUVs(minUVBounds, maxUVBounds);
-                faceSet.add(f.bake(transform.or(TRSRTransformation.identity())));
+                faceSet.add(f.bake(transform.orElse(TRSRTransformation.identity())));
             }
             return faceSet;
         }
@@ -1138,10 +1132,11 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             return parent;
         }
 
+        @Override
         public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
             if (parent != null) return parent.apply(part);
-            return Optional.absent();
+            return Optional.empty();
         }
 
         public Map<String, Boolean> getVisibilityMap()
@@ -1256,6 +1251,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
     public enum OBJProperty implements IUnlistedProperty<OBJState>
     {
         INSTANCE;
+        @Override
         public String getName()
         {
             return "OBJProperty";
@@ -1280,7 +1276,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
     }
 
-    public class OBJBakedModel implements IPerspectiveAwareModel
+    public class OBJBakedModel implements IBakedModel
     {
         private final OBJModel model;
         private IModelState state;
@@ -1333,7 +1329,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             List<BakedQuad> quads = Lists.newArrayList();
             Collections.synchronizedSet(new LinkedHashSet<BakedQuad>());
             Set<Face> faces = Collections.synchronizedSet(new LinkedHashSet<Face>());
-            Optional<TRSRTransformation> transform = Optional.absent();
+            Optional<TRSRTransformation> transform = Optional.empty();
             for (Group g : this.model.getMatLib().getGroups().values())
             {
 //                g.minUVBounds = this.model.getMatLib().minUVBounds;
@@ -1349,7 +1345,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     OBJState state = (OBJState) modelState;
                     if (state.parent != null)
                     {
-                        transform = state.parent.apply(Optional.<IModelPart>absent());
+                        transform = state.parent.apply(Optional.empty());
                     }
                     //TODO: can this be replaced by updateStateVisibilityMap(OBJState)?
                     if (state.getGroupNamesFromMap().contains(Group.ALL))
@@ -1386,7 +1382,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                 }
                 else
                 {
-                    transform = modelState.apply(Optional.<IModelPart>absent());
+                    transform = modelState.apply(Optional.empty());
                     faces.addAll(g.applyTransform(transform));
                 }
             }
@@ -1485,12 +1481,6 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             return this.sprite;
         }
 
-        @Override
-        public ItemCameraTransforms getItemCameraTransforms()
-        {
-            return ItemCameraTransforms.DEFAULT;
-        }
-
         // FIXME: merge with getQuads
         /* @Override
         public OBJBakedModel handleBlockState(IBlockState state)
@@ -1548,6 +1538,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
         private final LoadingCache<IModelState, OBJBakedModel> cache = CacheBuilder.newBuilder().maximumSize(20).build(new CacheLoader<IModelState, OBJBakedModel>()
         {
+            @Override
             public OBJBakedModel load(IModelState state) throws Exception
             {
                 return new OBJBakedModel(model, state, format, textures);
@@ -1577,7 +1568,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
+            return PerspectiveMapWrapper.handlePerspective(this, state, cameraTransformType);
         }
 
         @Override
@@ -1603,11 +1594,5 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             super(String.format("Model '%s' has UVs ('vt') out of bounds 0-1! The missing model will be used instead. Support for UV processing will be added to the OBJ loader in the future.", modelLocation));
             this.modelLocation = modelLocation;
         }
-    }
-
-    @Override
-    public IModelState getDefaultState()
-    {
-        return TRSRTransformation.identity();
     }
 }

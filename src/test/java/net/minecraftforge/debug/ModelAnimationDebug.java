@@ -1,7 +1,7 @@
 package net.minecraftforge.debug;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -28,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.animation.Animation;
@@ -44,6 +45,8 @@ import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
+import net.minecraftforge.debug.ItemTileDebug.TestBlock;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -52,10 +55,12 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-import com.google.common.collect.ImmutableMap;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,39 +71,54 @@ public class ModelAnimationDebug
     public static final String MODID = "forgedebugmodelanimation";
     public static final String VERSION = "0.0";
 
-    public static String blockName = "test_animation_block";
-    public static ResourceLocation blockId = new ResourceLocation(MODID, blockName);
+    public static final String blockName = "test_animation_block";
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
+    @ObjectHolder(blockName)
+    public static final Block TEST_BLOCK = null;
+    @ObjectHolder(blockName)
+    public static final Item TEST_ITEM = null;
 
     @Instance(MODID)
     public static ModelAnimationDebug instance;
 
     @SidedProxy
     public static CommonProxy proxy;
+    private static Logger logger;
 
-    public static abstract class CommonProxy
+
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
-            GameRegistry.register(new Block(Material.WOOD)
+            GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
+            event.getRegistry().register(
+            new Block(Material.WOOD)
             {
                 {
                     setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
                     setUnlocalizedName(MODID + "." + blockName);
-                    setRegistryName(blockId);
+                    setRegistryName(new ResourceLocation(MODID, blockName));
                 }
 
                 @Override
                 public ExtendedBlockState createBlockState()
                 {
-                    return new ExtendedBlockState(this, new IProperty[]{ FACING, Properties.StaticProperty }, new IUnlistedProperty[]{ Properties.AnimationProperty });
+                    return new ExtendedBlockState(this, new IProperty[]{FACING, Properties.StaticProperty}, new IUnlistedProperty[]{Properties.AnimationProperty});
                 }
 
                 @Override
-                public boolean isOpaqueCube(IBlockState state) { return false; }
+                public boolean isOpaqueCube(IBlockState state)
+                {
+                    return false;
+                }
 
                 @Override
-                public boolean isFullCube(IBlockState state) { return false; }
+                public boolean isFullCube(IBlockState state)
+                {
+                    return false;
+                }
 
                 @Override
                 public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
@@ -107,27 +127,32 @@ public class ModelAnimationDebug
                 }
 
                 @Override
-                public IBlockState getStateFromMeta(int meta) {
+                public IBlockState getStateFromMeta(int meta)
+                {
                     return getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
                 }
 
                 @Override
-                public int getMetaFromState(IBlockState state) {
-                    return ((EnumFacing)state.getValue(FACING)).getIndex();
+                public int getMetaFromState(IBlockState state)
+                {
+                    return state.getValue(FACING).getIndex();
                 }
 
                 @Override
-                public boolean hasTileEntity(IBlockState state) {
+                public boolean hasTileEntity(IBlockState state)
+                {
                     return true;
                 }
 
                 @Override
-                public TileEntity createTileEntity(World world, IBlockState state) {
+                public TileEntity createTileEntity(World world, IBlockState state)
+                {
                     return new Chest();
                 }
 
                 @Override
-                public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+                public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
+                {
                     return state.withProperty(Properties.StaticProperty, true);
                 }
 
@@ -144,49 +169,39 @@ public class ModelAnimationDebug
                 @Override
                 public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
                 {
-                    if(world.isRemote)
+                    if (world.isRemote)
                     {
                         TileEntity te = world.getTileEntity(pos);
-                        if(te instanceof Chest)
+                        if (te instanceof Chest)
                         {
-                            ((Chest)te).click(player.isSneaking());
+                            ((Chest) te).click(player.isSneaking());
                         }
                     }
                     return true;
                 }
             });
-            GameRegistry.register(new ItemBlock(Block.REGISTRY.getObject(blockId))
+        }
+
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
+        {
+            event.getRegistry().register(
+            new ItemBlock(TEST_BLOCK)
             {
                 @Override
                 public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
                 {
                     return new ItemAnimationHolder();
                 }
-            }.setRegistryName(blockId));
-            GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
+            }.setRegistryName(TEST_BLOCK.getRegistryName())
+            );
         }
 
-        @Nullable
-        public abstract IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters);
-    }
-
-    public static class ServerProxy extends CommonProxy
-    {
-        @Nullable
-        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
         {
-            return null;
-        }
-    }
-
-    public static class ClientProxy extends CommonProxy
-    {
-        @Override
-        public void preInit(FMLPreInitializationEvent event)
-        {
-            super.preInit(event);
             B3DLoader.INSTANCE.addDomain(MODID);
-            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(blockId), 0, new ModelResourceLocation(blockId, "inventory"));
+            ModelLoader.setCustomModelResourceLocation(TEST_ITEM, 0, new ModelResourceLocation(TEST_ITEM.getRegistryName(), "inventory"));
             ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, new AnimationTESR<Chest>()
             {
                 @Override
@@ -203,24 +218,24 @@ public class ModelAnimationDebug
                 @SuppressWarnings("deprecation")
                 public Render<EntityChest> createRenderFor(RenderManager manager)
                 {
-                    /*model = ModelLoaderRegistry.getModel(new ResourceLocation(ModelLoaderRegistryDebug.MODID, "block/chest.b3d"));
-                    if(model instanceof IRetexturableModel)
-                    {
-                        model = ((IRetexturableModel)model).retexture(ImmutableMap.of("#chest", "entity/chest/normal"));
-                    }
-                    if(model instanceof IModelCustomData)
-                    {
-                        model = ((IModelCustomData)model).process(ImmutableMap.of("mesh", "[\"Base\", \"Lid\"]"));
-                    }*/
+                /*model = ModelLoaderRegistry.getModel(new ResourceLocation(ModelLoaderRegistryDebug.MODID, "block/chest.b3d"));
+                if(model instanceof IRetexturableModel)
+                {
+                    model = ((IRetexturableModel)model).retexture(ImmutableMap.of("#chest", "entity/chest/normal"));
+                }
+                if(model instanceof IModelCustomData)
+                {
+                    model = ((IModelCustomData)model).process(ImmutableMap.of("mesh", "[\"Base\", \"Lid\"]"));
+                }*/
                     ResourceLocation location = new ModelResourceLocation(new ResourceLocation(MODID, blockName), "entity");
                     return new RenderLiving<EntityChest>(manager, new net.minecraftforge.client.model.animation.AnimationModelBase<EntityChest>(location, new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()))
+                    {
+                        @Override
+                        public void handleEvents(EntityChest chest, float time, Iterable<Event> pastEvents)
                         {
-                            @Override
-                            public void handleEvents(EntityChest chest, float time, Iterable<Event> pastEvents)
-                            {
-                                chest.handleEvents(time, pastEvents);
-                            }
-                        }, 0.5f)
+                            chest.handleEvents(time, pastEvents);
+                        }
+                    }, 0.5f)
                     {
                         protected ResourceLocation getEntityTexture(EntityChest entity)
                         {
@@ -230,6 +245,18 @@ public class ModelAnimationDebug
                 }
             });
         }
+    }
+
+    public static abstract class CommonProxy
+    {
+        @Nullable
+        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters){ return null; };
+    }
+
+    public static class ServerProxy extends CommonProxy {}
+
+    public static class ClientProxy extends CommonProxy
+    {
 
         public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
         {
@@ -243,7 +270,7 @@ public class ModelAnimationDebug
         private final VariableValue cycleLength = new VariableValue(4);
 
         private final IAnimationStateMachine asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/engine.json"), ImmutableMap.<String, ITimeValue>of(
-            "cycle_length", cycleLength
+                "cycle_length", cycleLength
         ));
 
         @Override
@@ -256,7 +283,7 @@ public class ModelAnimationDebug
         @Nullable
         public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
-            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
                 return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
             }
@@ -265,7 +292,10 @@ public class ModelAnimationDebug
     }
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        logger = event.getModLog();
+    }
 
     public static class Chest extends TileEntity
     {
@@ -275,22 +305,23 @@ public class ModelAnimationDebug
         private final VariableValue clickTime = new VariableValue(Float.NEGATIVE_INFINITY);
         //private final VariableValue offset = new VariableValue(0);
 
-        public Chest() {
+        public Chest()
+        {
             /*asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/chest.json"), ImmutableMap.<String, ITimeValue>of(
                 "click_time", clickTime
             ));*/
             asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/engine.json"), ImmutableMap.<String, ITimeValue>of(
-                "cycle_length", cycleLength,
-                "click_time", clickTime
-                //"offset", offset
+                    "cycle_length", cycleLength,
+                    "click_time", clickTime
+                    //"offset", offset
             ));
         }
 
         public void handleEvents(float time, Iterable<Event> pastEvents)
         {
-            for(Event event : pastEvents)
+            for (Event event : pastEvents)
             {
-                System.out.println("Event: " + event.event() + " " + event.offset() + " " + getPos() + " " + time);
+                logger.info("Event: {} {} {} {}", event.event(), event.offset(), getPos(), time);
             }
         }
 
@@ -306,9 +337,9 @@ public class ModelAnimationDebug
 
         public void click(boolean sneaking)
         {
-            if(asm != null)
+            if (asm != null)
             {
-                if(sneaking)
+                if (sneaking)
                 {
                     cycleLength.setValue(6 - cycleLength.apply(0));
                 }
@@ -322,7 +353,7 @@ public class ModelAnimationDebug
                     clickTime.setValue(Animation.getWorldTime(getWorld()));
                     asm.transition("closing");
                 }*/
-                else if(asm.currentState().equals("default"))
+                else if (asm.currentState().equals("default"))
                 {
                     float time = Animation.getWorldTime(getWorld(), Animation.getPartialTickTime());
                     clickTime.setValue(time);
@@ -330,7 +361,7 @@ public class ModelAnimationDebug
                     //asm.transition("moving");
                     asm.transition("starting");
                 }
-                else if(asm.currentState().equals("moving"))
+                else if (asm.currentState().equals("moving"))
                 {
                     clickTime.setValue(Animation.getWorldTime(getWorld(), Animation.getPartialTickTime()));
                     asm.transition("stopping");
@@ -341,7 +372,7 @@ public class ModelAnimationDebug
         @Override
         public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
         {
-            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
                 return true;
             }
@@ -352,7 +383,7 @@ public class ModelAnimationDebug
         @Nullable
         public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
         {
-            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
                 return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
             }
@@ -370,7 +401,7 @@ public class ModelAnimationDebug
             super(world);
             setSize(1, 1);
             asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/engine.json"), ImmutableMap.<String, ITimeValue>of(
-                "cycle_length", cycleLength
+                    "cycle_length", cycleLength
             ));
         }
 
@@ -399,7 +430,7 @@ public class ModelAnimationDebug
         @Override
         public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
         {
-            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
                 return true;
             }
@@ -410,7 +441,7 @@ public class ModelAnimationDebug
         @Nullable
         public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
         {
-            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
                 return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
             }

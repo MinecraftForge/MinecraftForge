@@ -90,7 +90,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         ByteBuf payload = msg.payload().duplicate();
         if (payload.readableBytes() < 1)
         {
-            FMLLog.log(Level.ERROR, "The FMLIndexedCodec has received an empty buffer on channel %s, likely a result of a LAN server issue. Pipeline parts : %s", ctx.channel().attr(NetworkRegistry.FML_CHANNEL), ctx.pipeline().toString());
+            FMLLog.log.error("The FMLIndexedCodec has received an empty buffer on channel {}, likely a result of a LAN server issue. Pipeline parts : {}", ctx.channel().attr(NetworkRegistry.FML_CHANNEL), ctx.pipeline().toString());
         }
         byte discriminator = payload.readByte();
         Class<? extends A> clazz = discriminators.get(discriminator);
@@ -116,7 +116,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
-        FMLLog.log(Level.ERROR, cause, "FMLIndexedMessageCodec exception caught");
+        FMLLog.log.error("FMLIndexedMessageCodec exception caught", cause);
         super.exceptionCaught(ctx, cause);
     }
 }

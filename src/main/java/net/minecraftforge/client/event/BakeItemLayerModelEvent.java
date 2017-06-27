@@ -19,8 +19,6 @@
 
 package net.minecraftforge.client.event;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
@@ -34,6 +32,9 @@ import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Events fired when bake methods are called on vanilla json model hierachy item model element.

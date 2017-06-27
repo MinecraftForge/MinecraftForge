@@ -1,19 +1,19 @@
 package net.minecraftforge.debug;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWall;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -23,27 +23,29 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @Mod(modid = ForgeBlockStatesLoaderDebug.MODID, name = "ForgeBlockStatesLoader", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
-public class ForgeBlockStatesLoaderDebug {
+public class ForgeBlockStatesLoaderDebug
+{
     public static final String MODID = "forgeblockstatesloader";
     public static final String ASSETS = "forgeblockstatesloader:";
 
     @ObjectHolder(MODID)
-    public static class BLOCKS {
+    public static class BLOCKS
+    {
         public static final BlockWall custom_wall = null;
     }
 
     @ObjectHolder(MODID)
-    public static class ITEMS {
+    public static class ITEMS
+    {
         public static final ItemMultiTexture custom_wall = null;
     }
 
     @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event)
+    public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().registerAll(
             new BlockWall(Blocks.COBBLESTONE).setUnlocalizedName(MODID + ".customWall").setRegistryName(MODID, "custom_wall")
@@ -51,7 +53,7 @@ public class ForgeBlockStatesLoaderDebug {
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event)
+    public void registerItems(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().registerAll(
             new ItemMultiTexture(BLOCKS.custom_wall, BLOCKS.custom_wall, new ItemMultiTexture.Mapper()
@@ -72,23 +74,22 @@ public class ForgeBlockStatesLoaderDebug {
     {
         //blockCustom.setUnlocalizedName(MODID + ".customBlock").setRegistryName("customBlock");
         //GameRegistry.registerBlock(blockCustom);
-
-        if (event.getSide() == Side.CLIENT)
-            preInitClient(event);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SideOnly(Side.CLIENT)
-    public void preInitClient(FMLPreInitializationEvent event)
+    @SubscribeEvent
+    public void registerModels(ModelRegistryEvent event)
     {
         //ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
 
         ModelLoader.setCustomStateMapper(BLOCKS.custom_wall, new IStateMapper()
         {
             StateMap stateMap = new StateMap.Builder().withName(BlockWall.VARIANT).withSuffix("_wall").build();
+
             @Override
             public Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block)
             {
-                Map<IBlockState, ModelResourceLocation> map = (Map<IBlockState, ModelResourceLocation>) stateMap.putStateModelLocations(block);
+                Map<IBlockState, ModelResourceLocation> map = stateMap.putStateModelLocations(block);
                 Map<IBlockState, ModelResourceLocation> newMap = Maps.newHashMap();
 
                 for (Entry<IBlockState, ModelResourceLocation> e : map.entrySet())

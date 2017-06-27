@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFlower.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFlower.java
+@@ -39,7 +39,6 @@
+         return ((BlockFlower.EnumFlowerType)p_180651_1_.func_177229_b(this.func_176494_l())).func_176968_b();
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         for (BlockFlower.EnumFlowerType blockflower$enumflowertype : BlockFlower.EnumFlowerType.func_176966_a(this.func_176495_j()))
+@@ -151,7 +150,6 @@
+             return ablockflower$enumflowertype[p_176967_1_];
+         }
+ 
+-        @SideOnly(Side.CLIENT)
+         public static BlockFlower.EnumFlowerType[] func_176966_a(BlockFlower.EnumFlowerColor p_176966_0_)
+         {
+             return field_176981_k[p_176966_0_.ordinal()];

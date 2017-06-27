@@ -51,7 +51,7 @@ import net.minecraft.item.crafting.RecipesBanners.RecipeDuplicatePattern;
 import javax.annotation.Nullable;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.*;
-
+@Deprecated //DO NOT USE IN 1.12 UNTIL THIS DEPRECATION MARKER IS REMOVED THIS WILL MOST LIKELY BE DELETED YOU HAVE BEEN WARNED
 public class RecipeSorter implements Comparator<IRecipe>
 {
     public enum Category
@@ -171,8 +171,8 @@ public class RecipeSorter implements Comparator<IRecipe>
         }
         else
         {
-            if (r2.getRecipeSize() < r1.getRecipeSize()) return -1;
-            if (r2.getRecipeSize() > r1.getRecipeSize()) return  1;
+            if (r2.getIngredients().size() < r1.getIngredients().size()) return -1;
+            if (r2.getIngredients().size() > r1.getIngredients().size()) return  1;
             return getPriority(r2) - getPriority(r1); // high priority value first!
         }
     }
@@ -181,9 +181,9 @@ public class RecipeSorter implements Comparator<IRecipe>
     public static void sortCraftManager()
     {
         bake();
-        FMLLog.fine("Sorting recipes");
+        FMLLog.log.debug("Sorting recipes");
         warned.clear();
-        Collections.sort(CraftingManager.getInstance().getRecipeList(), INSTANCE);
+        //Collections.sort(CraftingManager.getInstance().getRecipeList(), INSTANCE);
     }
 
     public static void register(String name, Class<?> recipe, Category category, String dependencies)
@@ -238,7 +238,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         {
             if (!warned.contains(cls))
             {
-                FMLLog.bigWarning("Unknown recipe class! %s Modders need to register their recipe types with %s", cls.getName(), RecipeSorter.class.getName());
+                FMLLog.bigWarning("Unknown recipe class! {} Modders need to register their recipe types with {}", cls.getName(), RecipeSorter.class.getName());
                 warned.add(cls);
             }
             cls = cls.getSuperclass();
@@ -248,7 +248,7 @@ public class RecipeSorter implements Comparator<IRecipe>
                 if (ret != null)
                 {
                     priorities.put(recipe.getClass(), ret);
-                    FMLLog.fine("    Parent Found: %d - %s", ret, cls.getName());
+                    FMLLog.log.debug("    Parent Found: {} - {}", ret, cls.getName());
                     return ret;
                 }
             }
@@ -260,7 +260,7 @@ public class RecipeSorter implements Comparator<IRecipe>
     private static void bake()
     {
         if (!isDirty) return;
-        FMLLog.fine("Forge RecipeSorter Baking:");
+        FMLLog.log.debug("Forge RecipeSorter Baking:");
         DirectedGraph<SortEntry> sorter = new DirectedGraph<SortEntry>();
         sorter.addNode(before);
         sorter.addNode(after);
@@ -306,7 +306,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         int x = sorted.size();
         for (SortEntry entry : sorted)
         {
-            FMLLog.fine("  %d: %s", x, entry);
+            FMLLog.log.debug("  {}: {}", x, entry);
             priorities.put(entry.cls, x--);
         }
     }

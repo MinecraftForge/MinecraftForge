@@ -17,11 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/**
- * This software is provided under the terms of the Minecraft Forge Public
- * License v1.0.
- */
-
 package net.minecraftforge.client.gui;
 
 import java.util.ArrayList;
@@ -102,15 +97,16 @@ public class ForgeGuiFactory implements IModGuiFactory
 {
     @Override
     public void initialize(Minecraft minecraftInstance) {}
+    
 
     @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass() { return ForgeConfigGui.class; }
+    public boolean hasConfigGui() { return true; }
+
+    @Override
+    public GuiScreen createConfigGui(GuiScreen parent) { return new ForgeConfigGui(parent); }
 
     @Override
     public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() { return null; }
-
-    @Override
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) { return null; }
 
     public static class ForgeConfigGui extends GuiConfig
     {

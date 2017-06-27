@@ -1,20 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -57,10 +57,10 @@
+@@ -58,10 +58,10 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class Item
-+public class Item extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Item>
++public class Item extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Item>
  {
--    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = new RegistryNamespaced();
+-    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = new RegistryNamespaced<ResourceLocation, Item>();
 -    private static final Map<Block, Item> field_179220_a = Maps.<Block, Item>newHashMap();
-+    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = net.minecraftforge.fml.common.registry.GameData.getItemRegistry();;
-+    private static final Map<Block, Item> field_179220_a = net.minecraftforge.fml.common.registry.GameData.getBlockItemMap();
++    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = net.minecraftforge.registries.GameData.getWrapper(Item.class);
++    private static final Map<Block, Item> field_179220_a = net.minecraftforge.registries.GameData.getBlockItemMap();
      private static final IItemPropertyGetter field_185046_b = new IItemPropertyGetter()
      {
          @SideOnly(Side.CLIENT)
-@@ -202,6 +202,7 @@
+@@ -197,6 +197,7 @@
          return p_77654_1_;
      }
  
@@ -22,7 +22,7 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -223,6 +224,7 @@
+@@ -218,6 +219,7 @@
          return this;
      }
  
@@ -30,7 +30,7 @@
      public int func_77612_l()
      {
          return this.field_77699_b;
-@@ -322,6 +324,7 @@
+@@ -317,6 +319,7 @@
          return this.field_77700_c;
      }
  
@@ -38,7 +38,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -377,7 +380,7 @@
+@@ -372,7 +375,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -47,7 +47,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -395,7 +398,11 @@
+@@ -390,7 +393,11 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -60,7 +60,34 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -433,11 +440,613 @@
+@@ -399,7 +406,6 @@
+         return 0;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_150895_a(CreativeTabs p_150895_1_, NonNullList<ItemStack> p_150895_2_)
+     {
+         if (this.func_194125_a(p_150895_1_))
+@@ -408,15 +414,16 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     protected boolean func_194125_a(CreativeTabs p_194125_1_)
+     {
++        for (CreativeTabs tab : this.getCreativeTabs())
++            if (tab == p_194125_1_)
++                return true;
+         CreativeTabs creativetabs = this.func_77640_w();
+         return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
+     }
+ 
+     @Nullable
+-    @SideOnly(Side.CLIENT)
+     public CreativeTabs func_77640_w()
+     {
+         return this.field_77701_a;
+@@ -438,11 +445,632 @@
          return false;
      }
  
@@ -144,6 +171,13 @@
 +    /**
 +     * Override this method to change the NBT data being sent to the client.
 +     * You should ONLY override this when you have no other choice, as this might change behavior client side!
++     *
++     * Note that this will sometimes be applied multiple times, the following MUST be supported:
++     * Item item = stack.getItem();
++     * NBTTagCompound nbtShare1 = item.getNBTShareTag(stack);
++     * stack.setTagCompound(nbtShare1);
++     * NBTTagCompound nbtShare2 = item.getNBTShareTag(stack);
++     * assert nbtShare1.equals(nbtShare2);
 +     *
 +     * @param stack The stack to send the NBT tag for
 +     * @return The NBT tag
@@ -454,7 +488,7 @@
 +     * Queries the percentage of the 'Durability' bar that should be drawn.
 +     *
 +     * @param stack The current ItemStack
-+     * @return 1.0 for 100% 0 for 0%
++     * @return 0.0 for 100% (no damage / full bar), 1.0 for 0% (fully damaged / empty bar)
 +     */
 +    public double getDurabilityForDisplay(ItemStack stack)
 +    {
@@ -463,14 +497,14 @@
 +
 +    /**
 +     * Returns the packed int RGB value used to render the durability bar in the GUI.
-+     * Defaults to a value based on the hue scaled as the damage decreases, but can be overriden.
++     * Defaults to a value based on the hue scaled based on {@link #getDurabilityForDisplay}, but can be overriden.
 +     *
 +     * @param stack Stack to get durability from
 +     * @return A packed RGB value for the durability colour (0x00RRGGBB)
 +     */
 +    public int getRGBDurabilityForDisplay(ItemStack stack)
 +    {
-+        return MathHelper.func_181758_c(Math.max(0.0F, (float)(stack.func_77958_k() - stack.func_77952_i()) / stack.func_77958_k()) / 3.0F, 1.0F, 1.0F);
++        return MathHelper.func_181758_c(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
 +    }
 +    /**
 +     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item,
@@ -507,6 +541,18 @@
 +        {
 +            stack.field_77991_e = 0;
 +        }
++    }
++
++    /**
++     * Checked from {@link net.minecraft.client.multiplayer.PlayerControllerMP#onPlayerDestroyBlock(BlockPos pos) PlayerControllerMP.onPlayerDestroyBlock()}
++     * when a creative player left-clicks a block with this item.
++     * Also checked from {@link net.minecraftforge.common.ForgeHooks#onBlockBreakEvent(World, GameType, EntityPlayerMP, BlockPos)  ForgeHooks.onBlockBreakEvent()}
++     * to prevent sending an event.
++     * @return true if the given player can destroy specified block in creative mode with this item
++     */
++    public boolean canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player)
++    {
++        return !(this instanceof ItemSword);
 +    }
 +
 +    /**
@@ -674,7 +720,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -972,6 +1581,8 @@
+@@ -1002,6 +1630,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -683,14 +729,17 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1007,9 +1618,26 @@
+@@ -1037,6 +1667,7 @@
              return this.field_78008_j;
          }
  
 +        @Deprecated // Use getRepairItemStack below
          public Item func_150995_f()
          {
-             return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
+             if (this == WOOD)
+@@ -1060,5 +1691,21 @@
+                 return this == DIAMOND ? Items.field_151045_i : null;
+             }
          }
 +
 +        public ToolMaterial setRepairItem(ItemStack stack)

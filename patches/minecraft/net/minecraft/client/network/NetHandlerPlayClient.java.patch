@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -280,7 +280,7 @@
+@@ -293,7 +293,7 @@
      {
          PacketThreadUtil.func_180031_a(p_147282_1_, this, this.field_147299_f);
          this.field_147299_f.field_71442_b = new PlayerControllerMP(this.field_147299_f, this);
@@ -9,7 +9,7 @@
          this.field_147299_f.field_71474_y.field_74318_M = p_147282_1_.func_149192_g();
          this.field_147299_f.func_71403_a(this.field_147300_g);
          this.field_147299_f.field_71439_g.field_71093_bK = p_147282_1_.func_149194_f();
-@@ -742,7 +742,7 @@
+@@ -755,7 +755,7 @@
  
              if (tileentity != null)
              {
@@ -18,35 +18,27 @@
              }
          }
      }
-@@ -825,14 +825,16 @@
+@@ -838,7 +838,9 @@
      public void func_147251_a(SPacketChat p_147251_1_)
      {
          PacketThreadUtil.func_180031_a(p_147251_1_, this, this.field_147299_f);
-+        net.minecraft.util.text.ITextComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_179841_c(), p_147251_1_.func_148915_c());
+-        this.field_147299_f.field_71456_v.func_191742_a(p_147251_1_.func_192590_c(), p_147251_1_.func_148915_c());
++        net.minecraft.util.text.ITextComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_192590_c(), p_147251_1_.func_148915_c());
 +        if (message == null) return;
- 
-         if (p_147251_1_.func_179841_c() == 2)
-         {
--            this.field_147299_f.field_71456_v.func_175188_a(p_147251_1_.func_148915_c(), false);
-+            this.field_147299_f.field_71456_v.func_175188_a(message, false);
-         }
-         else
-         {
--            this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(p_147251_1_.func_148915_c());
-+            this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(message);
-         }
++        this.field_147299_f.field_71456_v.func_191742_a(p_147251_1_.func_192590_c(), message);
      }
  
-@@ -964,7 +966,7 @@
+     public void func_147279_a(SPacketAnimation p_147279_1_)
+@@ -969,7 +971,7 @@
  
                      if (entity1 == this.field_147299_f.field_71439_g && !flag)
                      {
--                        this.field_147299_f.field_71456_v.func_110326_a(I18n.func_135052_a("mount.onboard", new Object[] {GameSettings.func_74298_c(this.field_147299_f.field_71474_y.field_74311_E.func_151463_i())}), false);
-+                        this.field_147299_f.field_71456_v.func_110326_a(I18n.func_135052_a("mount.onboard", new Object[] {this.field_147299_f.field_71474_y.field_74311_E.getDisplayName()}), false);
+-                        this.field_147299_f.field_71456_v.func_110326_a(I18n.func_135052_a("mount.onboard", GameSettings.func_74298_c(this.field_147299_f.field_71474_y.field_74311_E.func_151463_i())), false);
++                        this.field_147299_f.field_71456_v.func_110326_a(I18n.func_135052_a("mount.onboard", this.field_147299_f.field_71474_y.field_74311_E.getDisplayName()), false);
                      }
                  }
              }
-@@ -1211,6 +1213,15 @@
+@@ -1217,6 +1219,15 @@
              {
                  tileentity.func_145839_a(p_147273_1_.func_148857_g());
              }
@@ -62,7 +54,7 @@
  
              if (flag && this.field_147299_f.field_71462_r instanceof GuiCommandBlock)
              {
-@@ -1308,15 +1319,15 @@
+@@ -1317,15 +1328,15 @@
              }
              else if (f == 101.0F)
              {
@@ -81,7 +73,7 @@
              }
          }
          else if (i == 6)
-@@ -1430,7 +1441,7 @@
+@@ -1487,7 +1498,7 @@
  
          if (entity instanceof EntityLivingBase)
          {

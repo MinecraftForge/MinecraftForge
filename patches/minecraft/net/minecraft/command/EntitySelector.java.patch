@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/command/EntitySelector.java
 +++ ../src-work/minecraft/net/minecraft/command/EntitySelector.java
-@@ -148,6 +148,7 @@
+@@ -153,6 +153,7 @@
                          list2.addAll(func_184951_f(map));
                          list2.addAll(func_180698_a(map, vec3d));
                          list2.addAll(func_179662_g(map));
-+                        list2.addAll(net.minecraftforge.event.ForgeEventFactory.gatherEntitySelectors(map, s, p_179656_0_, vec3d));
-                         list1.addAll(func_179660_a(map, p_179656_2_, list2, s, world, blockpos));
-                     }
-                 }
++                        list2.addAll(net.minecraftforge.fml.common.registry.GameRegistry.createEntitySelectors(map, s, p_179656_0_, vec3d));
+ 
+                         if ("s".equalsIgnoreCase(s))
+                         {

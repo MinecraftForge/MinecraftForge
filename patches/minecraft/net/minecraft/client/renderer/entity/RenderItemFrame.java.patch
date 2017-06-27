@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderItemFrame.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderItemFrame.java
+@@ -96,10 +96,13 @@
+         {
+             GlStateManager.func_179094_E();
+             GlStateManager.func_179140_f();
+-            boolean flag = itemstack.func_77973_b() == Items.field_151098_aY;
++            boolean flag = itemstack.func_77973_b() instanceof net.minecraft.item.ItemMap;
+             int i = flag ? p_82402_1_.func_82333_j() % 4 * 2 : p_82402_1_.func_82333_j();
+             GlStateManager.func_179114_b((float)i * 360.0F / 8.0F, 0.0F, 0.0F, 1.0F);
+ 
++            net.minecraftforge.client.event.RenderItemInFrameEvent event = new net.minecraftforge.client.event.RenderItemInFrameEvent(p_82402_1_, this);
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
++            {
+             if (flag)
+             {
+                 this.field_76990_c.field_78724_e.func_110577_a(field_110789_a);
+@@ -124,6 +127,7 @@
+                 RenderHelper.func_74518_a();
+                 GlStateManager.func_179099_b();
+             }
++            }
+ 
+             GlStateManager.func_179145_e();
+             GlStateManager.func_179121_F();

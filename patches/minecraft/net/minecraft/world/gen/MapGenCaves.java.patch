@@ -13,7 +13,7 @@
                                      }
 @@ -180,28 +178,12 @@
                                              IBlockState iblockstate1 = p_180702_5_.func_177856_a(j3, j2, i2);
-                                             IBlockState iblockstate2 = (IBlockState)Objects.firstNonNull(p_180702_5_.func_177856_a(j3, j2 + 1, i2), field_186127_b);
+                                             IBlockState iblockstate2 = (IBlockState)MoreObjects.firstNonNull(p_180702_5_.func_177856_a(j3, j2 + 1, i2), field_186127_b);
  
 -                                            if (iblockstate1.func_177230_c() == Blocks.field_150349_c || iblockstate1.func_177230_c() == Blocks.field_150391_bh)
 +                                            if (isTopBlock(p_180702_5_, j3, j2, i2, p_180702_3_, p_180702_4_))
@@ -42,7 +42,7 @@
                                          }
                                      }
                                  }
-@@ -260,4 +242,66 @@
+@@ -299,4 +281,66 @@
              }
          }
      }

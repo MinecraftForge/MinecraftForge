@@ -34,12 +34,12 @@ public class GuiCustomModLoadingErrorScreen extends GuiErrorScreen
     {
         super.initGui();
         this.buttonList.clear();
-        this.customException.initGui(this, fontRendererObj);
+        this.customException.initGui(this, fontRenderer);
     }
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        this.customException.drawScreen(this, fontRendererObj, mouseX, mouseY, partialTicks);
+        this.customException.drawScreen(this, fontRenderer, mouseX, mouseY, partialTicks);
     }
 }

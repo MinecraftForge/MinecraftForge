@@ -19,12 +19,7 @@
 
 package net.minecraftforge.client.event;
 
-import java.util.Collection;
-import java.util.List;
-
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.block.model.SimpleBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -34,6 +29,10 @@ import net.minecraftforge.client.model.ModelLoader.VanillaModelWrapper;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Events fired when certain methods are called on vanilla json model hierachy.

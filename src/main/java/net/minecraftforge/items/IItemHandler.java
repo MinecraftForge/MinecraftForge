@@ -62,7 +62,7 @@ public interface IItemHandler
      * @param slot     Slot to insert into.
      * @param stack    ItemStack to insert.
      * @param simulate If true, the insertion is only simulated
-     * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return null).
+     * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return ItemStack.EMPTY).
      *         May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
      **/
     @Nonnull
@@ -76,7 +76,7 @@ public interface IItemHandler
      * @param slot     Slot to extract from.
      * @param amount   Amount to extract (may be greater than the current stacks max limit)
      * @param simulate If true, the extraction is only simulated
-     * @return ItemStack extracted from the slot, must be null, if nothing can be extracted
+     * @return ItemStack extracted from the slot, must be ItemStack.EMPTY, if nothing can be extracted
      **/
     @Nonnull
     ItemStack extractItem(int slot, int amount, boolean simulate);

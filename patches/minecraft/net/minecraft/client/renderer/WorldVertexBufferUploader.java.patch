@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/WorldVertexBufferUploader.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/WorldVertexBufferUploader.java
-@@ -28,26 +28,8 @@
+@@ -27,26 +27,8 @@
                  int l = vertexformatelement.func_177369_e();
                  bytebuffer.position(vertexformat.func_181720_d(j));
  
@@ -29,7 +29,7 @@
              }
  
              GlStateManager.func_187439_f(p_181679_1_.func_178979_i(), 0, p_181679_1_.func_178989_h());
-@@ -59,23 +41,8 @@
+@@ -58,23 +40,8 @@
                  VertexFormatElement.EnumUsage vertexformatelement$enumusage1 = vertexformatelement1.func_177375_c();
                  int k1 = vertexformatelement1.func_177369_e();
  

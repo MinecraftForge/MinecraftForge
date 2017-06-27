@@ -26,7 +26,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -57,6 +56,7 @@ import net.minecraft.client.resources.LegacyV2Adapter;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.client.resources.data.MetadataSerializer;
 import net.minecraft.client.resources.data.PackMetadataSection;
+import net.minecraft.client.util.RecipeBookClient;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
@@ -81,8 +81,8 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
@@ -91,11 +91,11 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLContainerHolder;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFMLSidedHandler;
-import net.minecraftforge.fml.common.Java8VersionException;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.MissingModsException;
+import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -104,12 +104,11 @@ import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.GameData;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.LWJGLUtil;
@@ -117,7 +116,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
@@ -177,13 +176,13 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private boolean loading = true;
 
-    private Java8VersionException j8onlymods;
-
     private WrongMinecraftVersionException wrongMC;
 
     private CustomModLoadingErrorDisplayException customError;
 
     private DuplicateModsFoundException dupesFound;
+
+    private MultipleModsErrored multipleModsErrored;
 
     private boolean serverShouldBeKilledQuietly;
 
@@ -218,7 +217,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         this.resourcePackMap = Maps.newHashMap();
         if (minecraft.isDemo())
         {
-            FMLLog.severe("DEMO MODE DETECTED, FML will not work. Finishing now.");
+            FMLLog.log.fatal("DEMO MODE DETECTED, FML will not work. Finishing now.");
             haltGame("FML will not run in demo mode", new RuntimeException());
             return;
         }
@@ -236,10 +235,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             dupesFound = dupes;
         }
-        catch (Java8VersionException j8mods)
-        {
-            j8onlymods = j8mods;
-        }
         catch (MissingModsException missing)
         {
             modsMissing = missing;
@@ -250,8 +245,12 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (CustomModLoadingErrorDisplayException custom)
         {
-            FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
+            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
             customError = custom;
+        }
+        catch (MultipleModsErrored multiple)
+        {
+            multipleModsErrored = multiple;
         }
         catch (LoaderException le)
         {
@@ -269,7 +268,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (CustomModLoadingErrorDisplayException custom)
         {
-            FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
+            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
             customError = custom;
         }
         catch (LoaderException le)
@@ -306,7 +305,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             {
                 ModMetadata optifineMetadata = MetadataCollection.from(optifineModInfoInputStream, "optifine").getMetadataForId("optifine", dummyOptifineMeta);
                 optifineContainer = new DummyModContainer(optifineMetadata);
-                FMLLog.info("Forge Mod Loader has detected optifine %s, enabling compatibility features", optifineContainer.getVersion());
+                FMLLog.log.info("Forge Mod Loader has detected optifine {}, enabling compatibility features", optifineContainer.getVersion());
             }
             finally
             {
@@ -324,8 +323,15 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         SplashProgress.finish();
         client.displayCrashReport(new CrashReport(message, t));
-        throw Throwables.propagate(t);
+        Throwables.throwIfUnchecked(t);
+        throw new RuntimeException(t);
     }
+
+    public boolean hasError()
+    {
+        return modsMissing != null || wrongMC != null || customError != null || dupesFound != null || modSorting != null || multipleModsErrored != null;
+    }
+
     /**
      * Called a bit later on during initialization to finish loading mods
      * Also initializes key bindings
@@ -333,7 +339,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void finishMinecraftLoading()
     {
-        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null || j8onlymods!=null)
+        if (hasError())
         {
             SplashProgress.finish();
             return;
@@ -344,7 +350,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (CustomModLoadingErrorDisplayException custom)
         {
-            FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
+            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
             customError = custom;
             SplashProgress.finish();
             return;
@@ -355,8 +361,14 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
 
-        // Reload resources
-        client.refreshResources();
+        // This call is being phased out for performance reasons in 1.12,
+        // but we are keeping an option here in case something needs it for a little longer.
+        // See https://github.com/MinecraftForge/MinecraftForge/pull/4032
+        if (Boolean.parseBoolean(System.getProperty("fml.reloadResourcesOnStart", "false")))
+        {
+            client.refreshResources();
+        }
+
         RenderingRegistry.loadEntityRenderers(Minecraft.getMinecraft().getRenderManager().entityRenderMap);
         guiFactories = HashBiMap.create();
         for (ModContainer mc : Loader.instance().getActiveModList())
@@ -364,6 +376,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             String className = mc.getGuiClassName();
             if (Strings.isNullOrEmpty(className))
             {
+                if (ConfigManager.hasConfigForMod(mc.getModId()))
+                {
+                    guiFactories.put(mc, DefaultGuiFactory.forMod(mc));
+                }
                 continue;
             }
             try
@@ -375,7 +391,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                 guiFactories.put(mc, guiFactory);
             } catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "A critical error occurred instantiating the gui factory for mod %s", mc.getModId());
+                FMLLog.log.error("A critical error occurred instantiating the gui factory for mod {}", mc.getModId(), e);
             }
         }
         loading = false;
@@ -421,10 +437,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             showGuiScreen(new GuiWrongMinecraft(wrongMC));
         }
-        else if (j8onlymods != null)
-        {
-            showGuiScreen(new GuiJava8Error(j8onlymods));
-        }
         else if (modsMissing != null)
         {
             showGuiScreen(new GuiModsMissing(modsMissing));
@@ -441,17 +453,13 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             showGuiScreen(new GuiCustomModLoadingErrorScreen(customError));
         }
+        else if (multipleModsErrored != null)
+        {
+            showGuiScreen(new GuiMultipleModsErrored(multipleModsErrored));
+        }
         else
         {
             logMissingTextureErrors();
-            if (!Loader.instance().java8)
-            {
-                if ((new Date()).getTime() >= ForgeModContainer.java8Reminder + (1000 * 60 * 60 * 24))
-                {
-                    showGuiScreen(new GuiJava8Error(new Java8VersionException(Collections.<ModContainer>emptyList())));
-                    ForgeModContainer.updateNag();
-                }
-            }
         }
     }
     /**
@@ -616,6 +624,12 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     @Override
+    public boolean isDisplayCloseRequested()
+    {
+        return Display.isCreated() && Display.isCloseRequested();
+    }
+
+    @Override
     public boolean shouldServerShouldBeKilledQuietly()
     {
         return serverShouldBeKilledQuietly;
@@ -655,12 +669,12 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             catch (NoSuchMethodException e)
             {
-                FMLLog.log(Level.ERROR, "The container %s (type %s) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
+                FMLLog.log.error("The container {} (type {}) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
                 return;
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "An unexpected exception occurred constructing the custom resource pack for %s", container.getName());
+                FMLLog.log.error("An unexpected exception occurred constructing the custom resource pack for {}", container.getName(), e);
                 throw Throwables.propagate(e);
             }
         }
@@ -706,7 +720,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         // ONLY revert a non-local connection
         if (client != null && !client.isLocalChannel())
         {
-            PersistentRegistryManager.revertToFrozen();
+            GameData.revertToFrozen();
         }
     }
 
@@ -734,7 +748,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             catch (Exception e1)
             {
-                FMLLog.warning("There appears to be a problem loading the save %s, both level files are unreadable.", comparator.getFileName());
+                FMLLog.log.warn("There appears to be a problem loading the save {}, both level files are unreadable.", comparator.getFileName());
                 return;
             }
         }
@@ -962,7 +976,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         if (badType == null)
         {
             badType = Sets.newHashSet();
-            brokenTextures.put(resourceLocation.getResourceDomain(), Objects.firstNonNull(error, "Unknown error"), badType);
+            brokenTextures.put(resourceLocation.getResourceDomain(), MoreObjects.firstNonNull(error, "Unknown error"), badType);
         }
         badType.add(resourceLocation);
     }
@@ -1056,11 +1070,13 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
     // From FontRenderer.renderCharAtPos
     private static final String ALLOWED_CHARS = "\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000";
+    private static final CharMatcher DISALLOWED_CHAR_MATCHER = CharMatcher.anyOf(ALLOWED_CHARS).negate();
+
     @Override
     public String stripSpecialChars(String message)
     {
         // We can't handle many unicode points in the splash renderer
-        return CharMatcher.anyOf(ALLOWED_CHARS).retainFrom(StringUtils.stripControlCodes(message));
+        return DISALLOWED_CHAR_MATCHER.removeFrom(StringUtils.stripControlCodes(message));
     }
 
     @Override
@@ -1079,5 +1095,17 @@ public class FMLClientHandler implements IFMLSidedHandler
     public CompoundDataFixer getDataFixer()
     {
         return (CompoundDataFixer)this.client.getDataFixer();
+    }
+
+    @Override
+    public boolean isDisplayVSyncForced()
+    {
+        return SplashProgress.isDisplayVSyncForced;
+    }
+
+    @Override
+    public void resetClientRecipeBook()
+    {
+        RecipeBookClient.rebuildTable();
     }
 }

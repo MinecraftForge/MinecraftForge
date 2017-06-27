@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockQuartz.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockQuartz.java
-@@ -110,6 +110,26 @@
+@@ -61,7 +61,6 @@
+         return blockquartz$enumtype != BlockQuartz.EnumType.LINES_X && blockquartz$enumtype != BlockQuartz.EnumType.LINES_Z ? super.func_180643_i(p_180643_1_) : new ItemStack(Item.func_150898_a(this), 1, BlockQuartz.EnumType.LINES_Y.func_176796_a());
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         p_149666_2_.add(new ItemStack(this, 1, BlockQuartz.EnumType.DEFAULT.func_176796_a()));
+@@ -111,6 +110,26 @@
          return new BlockStateContainer(this, new IProperty[] {field_176335_a});
      }
  

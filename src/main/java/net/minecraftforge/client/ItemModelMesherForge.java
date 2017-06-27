@@ -45,12 +45,14 @@ public class ItemModelMesherForge extends ItemModelMesher
         super(manager);
     }
 
+    @Override
     protected IBakedModel getItemModel(Item item, int meta)
     {
         TIntObjectHashMap<IBakedModel> map = models.get(item);
         return map == null ? null : map.get(meta);
     }
 
+    @Override
     public void register(Item item, int meta, ModelResourceLocation location)
     {
         TIntObjectHashMap<ModelResourceLocation> locs = locations.get(item);
@@ -69,6 +71,7 @@ public class ItemModelMesherForge extends ItemModelMesher
         mods.put(meta, getModelManager().getModel(location));
     }
 
+    @Override
     public void rebuildCache()
     {
         final ModelManager manager = this.getModelManager();

@@ -29,7 +29,7 @@
 +            inputstream = net.minecraftforge.fml.common.FMLCommonHandler.instance().loadLanguage(table, inputstream);
 +            if (inputstream == null) return table;
  
-             for (String s : IOUtils.readLines(inputstream, Charsets.UTF_8))
+             for (String s : IOUtils.readLines(inputstream, StandardCharsets.UTF_8))
              {
 @@ -37,17 +57,18 @@
                      {

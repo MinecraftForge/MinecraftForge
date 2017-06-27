@@ -63,8 +63,8 @@
 +
 +            if (canBeRidden() && this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y > 0.01D)
              {
--                List<Entity> list = this.field_70170_p.func_175674_a(this, this.func_174813_aQ().func_72314_b(0.20000000298023224D, 0.0D, 0.20000000298023224D), EntitySelectors.<Entity>func_188442_a(this));
-+                List<Entity> list = this.field_70170_p.func_175674_a(this, box, EntitySelectors.<Entity>func_188442_a(this));
+-                List<Entity> list = this.field_70170_p.func_175674_a(this, this.func_174813_aQ().func_72314_b(0.20000000298023224D, 0.0D, 0.20000000298023224D), EntitySelectors.func_188442_a(this));
++                List<Entity> list = this.field_70170_p.func_175674_a(this, box, EntitySelectors.func_188442_a(this));
  
                  if (!list.isEmpty())
                  {

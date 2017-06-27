@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFlowerPot.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFlowerPot.java
-@@ -165,13 +165,6 @@
+@@ -166,13 +166,6 @@
  
      public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
@@ -14,20 +14,19 @@
          super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
      }
  
-@@ -392,6 +385,31 @@
-         return BlockRenderLayer.CUTOUT;
+@@ -398,6 +391,30 @@
+         return BlockFaceShape.UNDEFINED;
      }
  
 +
 +    /*============================FORGE START=====================================*/
 +    @Override
-+    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
++        super.getDrops(drops, world, pos, state, fortune);
 +        TileEntityFlowerPot te = world.func_175625_s(pos) instanceof TileEntityFlowerPot ? (TileEntityFlowerPot)world.func_175625_s(pos) : null;
 +        if (te != null && te.func_145965_a() != null)
-+            ret.add(new ItemStack(te.func_145965_a(), 1, te.func_145966_b()));
-+        return ret;
++            drops.add(new ItemStack(te.func_145965_a(), 1, te.func_145966_b()));
 +    }
 +    @Override
 +    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)

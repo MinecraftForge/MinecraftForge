@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -161,7 +161,7 @@
+@@ -162,7 +162,7 @@
                      lvt_9_1_.func_178606_a(blockpos$mutableblockpos);
                  }
  
@@ -9,7 +9,18 @@
                  {
                      TileEntity tileentity = this.field_189564_r.func_190300_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
  
-@@ -181,7 +181,9 @@
+@@ -172,17 +172,19 @@
+ 
+                         if (tileentityspecialrenderer != null)
+                         {
+-                            compiledchunk.func_178490_a(tileentity);
+ 
+                             if (tileentityspecialrenderer.func_188185_a(tileentity))
+                             {
+                                 lvt_10_1_.add(tileentity);
+                             }
++                            else compiledchunk.func_178490_a(tileentity); // FORGE: Fix MC-112730
+                         }
                      }
                  }
  
@@ -20,16 +31,16 @@
                  int j = blockrenderlayer1.ordinal();
  
                  if (block.func_176223_P().func_185901_i() != EnumBlockRenderType.INVISIBLE)
-@@ -196,6 +198,8 @@
+@@ -197,6 +199,8 @@
  
-                     aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, this.field_189564_r, vertexbuffer);
+                     aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, this.field_189564_r, bufferbuilder);
                  }
 +                }
 +                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
              }
  
              for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
-@@ -277,7 +281,9 @@
+@@ -278,7 +282,9 @@
      private void func_189563_q()
      {
          int i = 1;
@@ -40,7 +51,7 @@
      }
  
      @Nullable
-@@ -426,6 +432,26 @@
+@@ -427,6 +433,26 @@
          return this.field_178593_n && this.field_188284_q;
      }
  

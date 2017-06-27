@@ -19,12 +19,11 @@
 
 package net.minecraftforge.client.model.pipeline;
 
-import net.minecraft.block.Block.EnumOffsetType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 
 public class BlockInfo
@@ -61,22 +60,10 @@ public class BlockInfo
 
     public void updateShift()
     {
-        updateShift(false);
-    }
-
-    public void updateShift(boolean ignoreY)
-    {
-        long rand = 0;
-        if(state.getBlock().getOffsetType() != EnumOffsetType.NONE)
-        {
-            rand = MathHelper.getCoordinateRandom(blockPos.getX(), ignoreY ? 0 : blockPos.getY(), blockPos.getZ());
-            shx = ((float)((rand >> 16) & 0xF) / 0xF - .5f) * .5f;
-            shz = ((float)((rand >> 24) & 0xF) / 0xF - .5f) * .5f;
-            if(state.getBlock().getOffsetType() == EnumOffsetType.XYZ)
-            {
-                shy = ((float)((rand >> 20) & 0xF) / 0xF - 1) * .2f;
-            }
-        }
+        Vec3d offset = state.getOffset(world, blockPos);
+        shx = (float) offset.x;
+        shy = (float) offset.y;
+        shz = (float) offset.z;
     }
 
     public void setWorld(IBlockAccess world)

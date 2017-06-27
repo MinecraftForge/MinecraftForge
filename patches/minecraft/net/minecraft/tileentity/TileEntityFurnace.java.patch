@@ -10,7 +10,7 @@
 +        this.field_145956_a = p_145839_1_.func_74762_e("BurnTime");
 +        this.field_174906_k = p_145839_1_.func_74762_e("CookTime");
 +        this.field_174905_l = p_145839_1_.func_74762_e("CookTimeTotal");
-         this.field_145963_i = func_145952_a((ItemStack)this.field_145957_n.get(1));
+         this.field_145963_i = func_145952_a(this.field_145957_n.get(1));
  
          if (p_145839_1_.func_150297_b("CustomName", 8))
 @@ -135,9 +135,9 @@
@@ -37,19 +37,23 @@
                              }
                          }
                      }
-@@ -260,7 +260,10 @@
-             else
-             {
-                 ItemStack itemstack1 = (ItemStack)this.field_145957_n.get(2);
--                return itemstack1.func_190926_b() ? true : (!itemstack1.func_77969_a(itemstack) ? false : (itemstack1.func_190916_E() < this.func_70297_j_() && itemstack1.func_190916_E() < itemstack1.func_77976_d() ? true : itemstack1.func_190916_E() < itemstack.func_77976_d()));
-+                if (itemstack1.func_190926_b()) return true;
-+                if (!itemstack1.func_77969_a(itemstack)) return false;
-+                int result = itemstack1.func_190916_E() + itemstack.func_190916_E();
-+                return result <= func_70297_j_() && result <= itemstack1.func_77976_d(); // Forge fix: make furnace respect stack sizes in furnace recipes
+@@ -269,13 +269,13 @@
+                 {
+                     return false;
+                 }
+-                else if (itemstack1.func_190916_E() < this.func_70297_j_() && itemstack1.func_190916_E() < itemstack1.func_77976_d())
++                else if (itemstack1.func_190916_E() + itemstack.func_190916_E() <= this.func_70297_j_() && itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack1.func_77976_d())  // Forge fix: make furnace respect stack sizes in furnace recipes
+                 {
+                     return true;
+                 }
+                 else
+                 {
+-                    return itemstack1.func_190916_E() < itemstack.func_77976_d();
++                    return itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack.func_77976_d(); // Forge fix: make furnace respect stack sizes in furnace recipes
+                 }
              }
          }
-     }
-@@ -279,7 +282,7 @@
+@@ -295,7 +295,7 @@
              }
              else if (itemstack2.func_77973_b() == itemstack1.func_77973_b())
              {
@@ -58,45 +62,19 @@
              }
  
              if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && itemstack.func_77960_j() == 1 && !((ItemStack)this.field_145957_n.get(1)).func_190926_b() && ((ItemStack)this.field_145957_n.get(1)).func_77973_b() == Items.field_151133_ar)
-@@ -300,7 +303,36 @@
+@@ -316,6 +316,11 @@
          else
          {
              Item item = p_145952_0_.func_77973_b();
--            return item == Item.func_150898_a(Blocks.field_150376_bx) ? 150 : (item == Item.func_150898_a(Blocks.field_150325_L) ? 100 : (item == Item.func_150898_a(Blocks.field_150404_cg) ? 67 : (item == Item.func_150898_a(Blocks.field_150468_ap) ? 300 : (item == Item.func_150898_a(Blocks.field_150471_bO) ? 100 : (Block.func_149634_a(item).func_176223_P().func_185904_a() == Material.field_151575_d ? 300 : (item == Item.func_150898_a(Blocks.field_150402_ci) ? 16000 : (item instanceof ItemTool && "WOOD".equals(((ItemTool)item).func_77861_e()) ? 200 : (item instanceof ItemSword && "WOOD".equals(((ItemSword)item).func_150932_j()) ? 200 : (item instanceof ItemHoe && "WOOD".equals(((ItemHoe)item).func_77842_f()) ? 200 : (item == Items.field_151055_y ? 100 : (item != Items.field_151031_f && item != Items.field_151112_aM ? (item == Items.field_151155_ap ? 200 : (item == Items.field_151044_h ? 1600 : (item == Items.field_151129_at ? 20000 : (item != Item.func_150898_a(Blocks.field_150345_g) && item != Items.field_151054_z ? (item == Items.field_151072_bj ? 2400 : (item instanceof ItemDoor && item != Items.field_151139_aw ? 200 : (item instanceof ItemBoat ? 400 : 0))) : 100)))) : 300)))))))))));
-+
-+            if (item instanceof net.minecraft.item.ItemBlock && Block.func_149634_a(item) != Blocks.field_150350_a)
++            if (!item.getRegistryName().func_110624_b().equals("minecraft"))
 +            {
-+                Block block = Block.func_149634_a(item);
-+
-+                if (block == Blocks.field_150376_bx)
-+                {
-+                    return 150;
-+                }
-+
-+                if (block.func_176223_P().func_185904_a() == Material.field_151575_d)
-+                {
-+                    return 300;
-+                }
-+
-+                if (block == Blocks.field_150402_ci)
-+                {
-+                    return 16000;
-+                }
++                int burnTime = net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
++                if (burnTime != 0) return burnTime;
 +            }
-+
-+            if (item instanceof ItemTool && "WOOD".equals(((ItemTool)item).func_77861_e())) return 200;
-+            if (item instanceof ItemSword && "WOOD".equals(((ItemSword)item).func_150932_j())) return 200;
-+            if (item instanceof ItemHoe && "WOOD".equals(((ItemHoe)item).func_77842_f())) return 200;
-+            if (item == Items.field_151055_y) return 100;
-+            if (item == Items.field_151044_h) return 1600;
-+            if (item == Items.field_151129_at) return 20000;
-+            if (item == Item.func_150898_a(Blocks.field_150345_g)) return 100;
-+            if (item == Items.field_151072_bj) return 2400;
-+            return net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
-         }
-     }
  
-@@ -418,4 +450,22 @@
+             if (item == Item.func_150898_a(Blocks.field_150376_bx))
+             {
+@@ -530,4 +535,22 @@
      {
          this.field_145957_n.clear();
      }
