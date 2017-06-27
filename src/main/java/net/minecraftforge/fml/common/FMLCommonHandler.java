@@ -774,4 +774,8 @@ public class FMLCommonHandler
     public void resetClientRecipeBook() {
         this.sidedDelegate.resetClientRecipeBook();
     }
+
+    public void reloadSearchTrees() {
+        this.sidedDelegate.reloadSearchTrees();
+    }
 }

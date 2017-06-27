@@ -1108,4 +1108,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         RecipeBookClient.rebuildTable();
     }
+
+    @Override
+    public void reloadSearchTrees()
+    {
+        this.client.populateSearchTreeManager();
+    }
 }
