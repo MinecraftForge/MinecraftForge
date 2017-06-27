@@ -88,6 +88,15 @@ public class LivingSpawnEvent extends LivingEvent
             this.isSpawner = isSpawner;
         }
 
+        /**
+         * @deprecated Use {@link CheckSpawn#CheckSpawn(EntityLiving, World, float, float, float, boolean)} instead
+         */
+        @Deprecated
+        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z)
+        {
+            this(entity, world, x, y, z, true);
+        }
+
         public boolean isSpawner() { return isSpawner; }
     }
 
