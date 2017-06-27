@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLiquid.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLiquid.java
-@@ -452,4 +452,24 @@
+@@ -452,4 +452,29 @@
      {
          return BlockFaceShape.UNDEFINED;
      }
@@ -11,14 +11,19 @@
 +    {
 +        Vec3d viewport = net.minecraft.client.renderer.ActiveRenderInfo.func_178806_a(entity, partialTicks);
 +
-+        if (state.func_185904_a().func_76224_d()) {
++        if (state.func_185904_a().func_76224_d())
++        {
 +            float height = 0.0F;
-+            if (state.func_177230_c() instanceof BlockLiquid) {
++            if (state.func_177230_c() instanceof BlockLiquid)
++            {
 +                height = func_149801_b(state.func_177229_b(field_176367_b)) - 0.11111111F;
 +            }
 +            float f1 = (float) (pos.func_177956_o() + 1) - height;
-+            if (viewport.field_72448_b > (double)f1) {
-+                return world.func_180495_p(pos.func_177984_a()).func_177230_c().getFogColor(world, pos, state, entity, originalColor, partialTicks);
++            if (viewport.field_72448_b > (double)f1)
++            {
++                BlockPos upPos = pos.func_177984_a();
++                IBlockState upState = world.func_180495_p(upPos);
++                return upState.func_177230_c().getFogColor(world, upPos, upState, entity, originalColor, partialTicks);
 +            }
 +        }
 +
