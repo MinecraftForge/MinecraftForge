@@ -32,6 +32,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import static net.minecraft.util.text.TextFormatting.*;
@@ -78,10 +79,15 @@ public class ClientCommandHandler extends CommandHandler
                 return 0;
             }
 
-            if (icommand.checkPermission(this.getServer(), sender))
+            CommandEvent event = new CommandEvent(icommand, sender, args);
+            MinecraftForge.EVENT_BUS.post(event);
+            if (event.getResult() == Result.DEFAULT && !icommand.checkPermission(this.getServer(), sender))
             {
-                CommandEvent event = new CommandEvent(icommand, sender, args);
-                if (MinecraftForge.EVENT_BUS.post(event))
+                sender.sendMessage(format(RED, "commands.generic.permission"));
+            }
+            else
+            {
+                if (event.getResult() == Result.DENY)
                 {
                     if (event.getException() != null)
                     {
@@ -92,10 +98,6 @@ public class ClientCommandHandler extends CommandHandler
 
                 this.tryExecute(sender, args, icommand, message);
                 return 1;
-            }
-            else
-            {
-                sender.sendMessage(format(RED, "commands.generic.permission"));
             }
         }
         catch (WrongUsageException wue)

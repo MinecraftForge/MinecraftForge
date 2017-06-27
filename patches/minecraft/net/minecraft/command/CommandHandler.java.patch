@@ -1,11 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -50,6 +50,17 @@
-             }
-             else if (icommand.func_184882_a(this.func_184879_a(), p_71556_1_))
+@@ -41,15 +41,25 @@
+         try
+         {
+             int j = this.func_82370_a(icommand, astring);
+-
++            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(icommand, p_71556_1_, astring);
+             if (icommand == null)
              {
-+                net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(icommand, p_71556_1_, astring);
-+                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
+                 TextComponentTranslation textcomponenttranslation1 = new TextComponentTranslation("commands.generic.notFound", new Object[0]);
+                 textcomponenttranslation1.func_150256_b().func_150238_a(TextFormatting.RED);
+                 p_71556_1_.func_145747_a(textcomponenttranslation1);
+             }
+-            else if (icommand.func_184882_a(this.func_184879_a(), p_71556_1_))
++            else if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event) && event.getResult() != net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT || icommand.func_184882_a(this.func_184879_a(), p_71556_1_))
+             {
++                if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
 +                {
 +                    if (event.getException() != null)
 +                    {
@@ -18,7 +28,7 @@
                  if (j > -1)
                  {
                      List<Entity> list = EntitySelector.<Entity>func_179656_b(p_71556_1_, astring[j], Entity.class);
-@@ -125,7 +136,7 @@
+@@ -125,7 +135,7 @@
              TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("commands.generic.exception", new Object[0]);
              textcomponenttranslation.func_150256_b().func_150238_a(TextFormatting.RED);
              p_175786_1_.func_145747_a(textcomponenttranslation);
