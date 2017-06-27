@@ -751,7 +751,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public MissingMappings<?> getMissingEvent(ResourceLocation name, Map<ResourceLocation, Integer> map)
     {
         List<MissingMappings.Mapping<V>> lst = Lists.newArrayList();
-        map.forEach((rl, id) -> lst.add(new MissingMappings.Mapping<V>(this, rl, id)));
+        ForgeRegistry<V> pool = RegistryManager.ACTIVE.getRegistry(name);
+        map.forEach((rl, id) -> lst.add(new MissingMappings.Mapping<V>(this, pool, rl, id)));
         return new MissingMappings<V>(name, this, lst);
     }
 
