@@ -127,6 +127,7 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -1248,14 +1249,20 @@ public class ForgeHooks
     public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
     {
         boolean errored = false;
-        Loader.instance().setActiveModContainer(null);
+        setActiveModContainer(null);
         //Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
         for (ModContainer mod : Loader.instance().getActiveModList())
         {
             errored |= !loadAdvancements(map, mod);
         }
-        Loader.instance().setActiveModContainer(null);
+        setActiveModContainer(null);
         return errored;
+    }
+
+    private static void setActiveModContainer(ModContainer mod)
+    {
+        if (Loader.instance().getLoaderState() != LoaderState.NOINIT) //Unit Tests..
+            Loader.instance().setActiveModContainer(mod);
     }
 
     private static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map, ModContainer mod)
