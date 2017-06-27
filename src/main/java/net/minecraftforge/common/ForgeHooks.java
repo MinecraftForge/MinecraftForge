@@ -19,12 +19,16 @@
 
 package net.minecraftforge.common;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -37,6 +41,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -94,6 +100,7 @@ import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -118,11 +125,16 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 public class ForgeHooks
 {
@@ -1231,5 +1243,62 @@ public class ForgeHooks
     public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state, IBlockState blockState)
     {
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+    }
+
+    public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
+    {
+        boolean errored = false;
+        Loader.instance().setActiveModContainer(null);
+        //Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
+        for (ModContainer mod : Loader.instance().getActiveModList())
+        {
+            errored |= !loadAdvancements(map, mod);
+        }
+        Loader.instance().setActiveModContainer(null);
+        return errored;
+    }
+
+    private static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map, ModContainer mod)
+    {
+        return CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/advancements", null,
+            (root, file) ->
+            {
+
+                String relative = root.relativize(file).toString();
+                if (!"json".equals(FilenameUtils.getExtension(file.toString())) || relative.startsWith("_"))
+                    return true;
+
+                String name = FilenameUtils.removeExtension(relative).replaceAll("\\\\", "/");
+                ResourceLocation key = new ResourceLocation(mod.getModId(), name);
+
+                if (!map.containsKey(key))
+                {
+                    BufferedReader reader = null;
+
+                    try
+                    {
+                        reader = Files.newBufferedReader(file);
+                        Advancement.Builder builder = JsonUtils.fromJson(AdvancementManager.GSON, reader, Advancement.Builder.class);
+                        map.put(key, builder);
+                    }
+                    catch (JsonParseException jsonparseexception)
+                    {
+                        FMLLog.log.error("Parsing error loading built-in advancement " + key, (Throwable)jsonparseexception);
+                        return false;
+                    }
+                    catch (IOException ioexception)
+                    {
+                        FMLLog.log.error("Couldn't read advancement " + key + " from " + file, (Throwable)ioexception);
+                        return false;
+                    }
+                    finally
+                    {
+                        IOUtils.closeQuietly(reader);
+                    }
+                }
+
+                return true;
+            }
+        );
     }
 }
