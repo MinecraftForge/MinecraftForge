@@ -1113,5 +1113,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void reloadSearchTrees()
     {
         this.client.populateSearchTreeManager();
+        this.client.getSearchTreeManager().onResourceManagerReload(this.client.getResourceManager());
     }
 }

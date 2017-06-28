@@ -528,3 +528,13 @@
      public boolean func_189648_am()
      {
          return this.field_71439_g != null && this.field_71439_g.func_175140_cp() || this.field_71474_y.field_178879_v;
+@@ -3342,4 +3245,9 @@
+     {
+         return this.field_193035_aW;
+     }
++
++    public SearchTreeManager getSearchTreeManager()
++    {
++        return this.field_193995_ae;
++    }
+ }
