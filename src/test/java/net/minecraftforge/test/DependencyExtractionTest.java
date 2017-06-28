@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 public class DependencyExtractionTest
 {
     /**
-     * Base 64 encoded JAR file of the following structure:
+     * JAR included in test resources with following structure:
      * container.jar
      * ├─── META-INF
      * │   └    MANIFEST.MF (contains 'ContainedDeps: dependency.jar' definition)
@@ -30,20 +30,7 @@ public class DependencyExtractionTest
      *     └─── META-INF
      *         └    MANIFEST.MF (contains 'Maven-Artifact: net.minecraftforge.test:dependency:1.0:testing' definition)
      */
-    private static final String JAR_BASE64 =
-        "UEsDBAoAAAAAAG0V2koAAAAAAAAAAAAAAAAJAAAATUVUQS1JTkYvUEsDBBQAAAAIAFsP3Eo0MXNa" +
-            "OAAAADYAAAAUAAAATUVUQS1JTkYvTUFOSUZFU1QuTUbzTczLTEstLtENSy0qzszPs1Iw1DPg5XLO" +
-            "zytJzMxLTXFJLSi2UkhJLUjNS0nNS67Uy0os4uUCAFBLAwQUAAAACAACENxKhC8m9eoAAACCAQAA" +
-            "DgAAAGRlcGVuZGVuY3kuamFyC/BmZuFiAIGnYre8GJAAJxD7uoY46nr6uemDlIkABTgYqvjveP2t" +
-            "e3U6CMgLB2IRZGW+jn6ebq7BIXq+bqKnDbkOKPCwXoj9wBfnkHk9x7Yhu/zi+pQMHSmuvbVvfz04" +
-            "qhJjeHW+xOTdE24fTvP14T8i77xz2ZonLFJ6Yk8mrrpmJ9W0zpXVfInDJ+/XF/N1zs7iD/BmZJJn" +
-            "wOVYFShLAEQgu4mLQQEswMggwfB53uI7Yu8uMcLoGj1RSVEgDTEalwdhRoPMUcfhXWRbHj9eWLHw" +
-            "/SXGOV5Mcch0gDcrG0gNExAeBNKrwToAUEsBAh8ACgAAAAAAbRXaSgAAAAAAAAAAAAAAAAkAJAAA" +
-            "AAAAAAAQAAAAAAAAAE1FVEEtSU5GLwoAIAAAAAAAAQAYABxSdDkV7tIBHFJ0ORXu0gF8LhUZFe7S" +
-            "AVBLAQIfABQAAAAIAFsP3Eo0MXNaOAAAADYAAAAUACQAAAAAAAAAIAAAACcAAABNRVRBLUlORi9N" +
-            "QU5JRkVTVC5NRgoAIAAAAAAAAQAYAJwxd1Wh79IBvJqcUKHv0gG8mpxQoe/SAVBLAQIfABQAAAAI" +
-            "AAIQ3EqELyb16gAAAIIBAAAOACQAAAAAAAAAIAAAAJEAAABkZXBlbmRlbmN5LmphcgoAIAAAAAAA" +
-            "AQAYALLOvX6h79IBG+S8fqHv0gEVEkdboe/SAVBLBQYAAAAAAwADACEBAACnAQAAAAA=";
+    private static final String INTERNAL_JAR_NAME = "/dependency_extraction.jar";
     private static final String JAR_NAME = "container.jar";
     private static final String DEPENDENCY_JAR_NAME = "dependency.jar";
     private static final String MAVEN_ARTIFACT_REF = "net.minecraftforge.test:dependency:1.0:testing";
@@ -65,8 +52,7 @@ public class DependencyExtractionTest
         versionedModsDir = new File(workingDir, "mods/version");
         versionedModsDir.mkdir();
         modJar = new File(modsDir, JAR_NAME);
-        byte[] fileData = Base64.decodeBase64(JAR_BASE64);
-        Files.write(modJar.toPath(), fileData);
+        Files.copy(DependencyExtractionTest.class.getResourceAsStream(INTERNAL_JAR_NAME), modJar.toPath());
         expectedExtraction = new File(libsDir, "net/minecraftforge/test/dependency/1.0/dependency-1.0-testing.jar").getAbsoluteFile();
     }
 
