@@ -33,8 +33,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
-import org.apache.logging.log4j.Level;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.MapMaker;
@@ -116,7 +114,7 @@ public class EventBus implements IEventExceptionHandler
                 }
                 catch (NoSuchMethodException e)
                 {
-                    FMLLog.log.error("Could not find method '{}' on class '{}'", method.getName(), cls);
+                    ; // Eat the error, this is not unexpected
                 }
             }
         }
