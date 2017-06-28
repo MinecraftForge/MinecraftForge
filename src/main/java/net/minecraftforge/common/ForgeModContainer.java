@@ -512,7 +512,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
         if (tag.hasKey("DefaultFluidList", 9)) //Load Pre-1.12 Fluids
-    	{
+        {
             Map<ResourceLocation, Snapshot> snapshots = RegistryManager.ACTIVE.takeSnapshot(false);
             Snapshot snapshot = snapshots.get(GameData.FLUIDS);
             List<ResourceLocation> fluidList = Lists.newArrayList();
