@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.ModListHelper.JsonModList;
 import org.apache.commons.io.IOUtils;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -52,14 +53,18 @@ public class DependencyExtractor
     private static final Attributes.Name MOD_CONTAINS_DEPS = new Attributes.Name("ContainedDeps");
     private static final Attributes.Name MAVEN_ARTIFACT = new Attributes.Name("Maven-Artifact");
     private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps", "").split(","));
-    private static int extractedDeps = 0;
+    public static int extractedDeps = 0;
 
-    public static void inspect(File baseModsDir, File versionedModsDir)
+    public static void inspect(File mcDir, File baseModsDir, File versionedModsDir)
     {
         FMLLog.log.debug("Inspecting mod directory for dependency extraction candidates");
         File modListFile = new File(baseModsDir, "mod_list.json");
         JsonModList modList = prepareModList(modListFile);
-        File repository = new File(modList.repositoryRoot);
+        File repository;
+        if (modList.repositoryRoot.startsWith("absolute:"))
+            repository = new File(modList.repositoryRoot.substring(9));
+        else
+            repository = new File(mcDir, modList.repositoryRoot);
         // It's a little weird, but it should yield the best performance
         // The map is used like a set (similar to how HashSet is really just a wrapped HashMap)
         Map<Artifact, Artifact> artifacts = modList.modRef.stream().map(Artifact::new).collect(Collectors.toMap(Function.identity(), Function.identity()));
@@ -109,12 +114,12 @@ public class DependencyExtractor
         }
     }
 
-    private static JsonModList prepareModList(File modListFile)
+    public static JsonModList prepareModList(@Nullable File modListFile)
     {
         JsonModList list = new JsonModList();
         list.repositoryRoot = "./libraries/";
         list.modRef = new ArrayList<>();
-        if (!modListFile.exists())
+        if (modListFile == null || !modListFile.exists())
         {
             return list;
         }
@@ -158,54 +163,8 @@ public class DependencyExtractor
                 FMLLog.log.error("Found invalid ContainsDeps declaration {} in {}", dep, jar.getName());
                 continue;
             }
-            File versionedTarget = new File(versionedModsDir, depEndName);
-            File baseDirTarget = new File(baseModsDir, depEndName);
-            if (versionedTarget.exists())
-            {
-                FMLLog.log.debug("Found existing ContainsDep extracted to {}, skipping extraction", versionedTarget.getCanonicalPath());
-                continue;
-            }
-            else if (baseDirTarget.exists())
-            {
-                FMLLog.log.debug("Found ContainsDep in main mods directory at {}, skipping extraction", baseDirTarget.getCanonicalPath());
-                continue;
-            }
-            File targetFile = versionedTarget;
-            boolean shouldExtract = true;
-            // Hypothetically, contained deps might be some other file than a jar
-            if (depEndName.endsWith(".jar"))
-            {
-                JarInputStream jarInputStream = null;
-                try
-                {
-                    // Unfortunately we need to open the jar stream twice
-                    jarInputStream = new JarInputStream(jar.getInputStream(jarEntry));
-                    Manifest containedManifest = jarInputStream.getManifest();
-                    if (containedManifest != null && containedManifest.getMainAttributes().containsKey(MAVEN_ARTIFACT))
-                    {
-                        Artifact artifact = new Artifact(containedManifest.getMainAttributes().getValue(MAVEN_ARTIFACT));
-                        if (addArtifact(artifacts, artifact, repository))
-                        shouldExtract = addArtifact(artifacts, artifact, repository);
-                        if (shouldExtract)
-                        {
-                            FMLLog.log.debug("Found artifact {} in {}, extracting to repository at {}", artifact, jar.getName(), repository.getCanonicalPath());
-                            targetFile = artifact.toFile(repository);
-                        }
-                    }
-                    else
-                    {
-                        FMLLog.log.warn("Could not find artifact information inside ContainedDep {} in {}, please report to the mod author!", dep, jar.getName());
-                    }
-                }
-                finally
-                {
-                    IOUtils.closeQuietly(jarInputStream);
-                }
-            }
-            if (!shouldExtract)
-            {
-                continue;
-            }
+            File targetFile = determineTargetFile(jar, baseModsDir, versionedModsDir, repository, artifacts, dep, depEndName);
+            if (targetFile == null) continue;
 
             FMLLog.log.debug("Extracting ContainedDep {} from {} to {}", dep, jar.getName(), targetFile.getCanonicalPath());
             try
@@ -234,6 +193,57 @@ public class DependencyExtractor
         }
     }
 
+    @Nullable
+    public static File determineTargetFile(JarFile jar, File baseModsDir, File versionedModsDir, File repository, Map<Artifact, Artifact> artifacts, String dep, String depEndName) throws IOException
+    {
+        File versionedTarget = new File(versionedModsDir, depEndName);
+        File baseDirTarget = new File(baseModsDir, depEndName);
+        if (versionedTarget.exists())
+        {
+            FMLLog.log.debug("Found existing ContainsDep extracted to {}, skipping extraction", versionedTarget.getCanonicalPath());
+            return null;
+        }
+        else if (baseDirTarget.exists())
+        {
+            FMLLog.log.debug("Found ContainsDep in main mods directory at {}, skipping extraction", baseDirTarget.getCanonicalPath());
+            return null;
+        }
+        File targetFile = versionedTarget;
+        // Hypothetically, contained deps might be some other file than a jar
+        if (depEndName.endsWith(".jar"))
+        {
+            JarInputStream jarInputStream = null;
+            try
+            {
+                // Unfortunately we need to open the jar stream twice
+                jarInputStream = new JarInputStream(jar.getInputStream(jar.getEntry(dep)));
+                Manifest manifest = jarInputStream.getManifest();
+                if (manifest != null && manifest.getMainAttributes().containsKey(MAVEN_ARTIFACT))
+                {
+                    Artifact artifact = new Artifact(manifest.getMainAttributes().getValue(MAVEN_ARTIFACT));
+                    if (addArtifact(artifacts, artifact, repository))
+                    {
+                        FMLLog.log.debug("Found artifact {} in {}, extracting to repository at {}", artifact, jar.getName(), repository.getCanonicalPath());
+                        targetFile = artifact.toFile(repository);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    FMLLog.log.warn("Could not find artifact information inside ContainedDep {} in {}, please report to the mod author!", dep, jar.getName());
+                }
+            }
+            finally
+            {
+                IOUtils.closeQuietly(jarInputStream);
+            }
+        }
+        return targetFile;
+    }
+
     private static boolean addArtifact(Map<Artifact, Artifact> artifacts, Artifact artifact, File repository)
     {
         Artifact existing = artifacts.get(artifact);
@@ -259,7 +269,7 @@ public class DependencyExtractor
         return true;
     }
 
-    private static final class Artifact
+    public static final class Artifact
     {
         final String[] parts;
         final String group;
@@ -267,7 +277,7 @@ public class DependencyExtractor
         String version;
         final String classifier;
 
-        Artifact(String raw)
+        public Artifact(String raw)
         {
             parts = raw.split(":");
             group = parts[0];
@@ -283,7 +293,7 @@ public class DependencyExtractor
             }
         }
 
-        String toGradleNotation()
+        public String toGradleNotation()
         {
             StringBuilder builder = new StringBuilder();
             builder.append(group);
@@ -299,14 +309,22 @@ public class DependencyExtractor
             return builder.toString();
         }
 
-        String toFileName()
+        public String toFileName()
         {
             return ModListHelper.convertArtifactToFileName(parts);
         }
 
-        File toFile(File relativeTo)
+        public File toFile(File relativeTo)
         {
             return new File(relativeTo, toFileName());
+        }
+
+        public boolean equalsAll(Artifact artifact)
+        {
+            return Objects.equals(group, artifact.group) &&
+                Objects.equals(name, artifact.name) &&
+                Objects.equals(version, artifact.version) &&
+                Objects.equals(classifier, artifact.classifier);
         }
 
         @Override
