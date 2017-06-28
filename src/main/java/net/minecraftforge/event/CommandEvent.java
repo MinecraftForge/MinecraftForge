@@ -69,4 +69,21 @@ public class CommandEvent extends Event
     public void setParameters(String[] parameters) { this.parameters = parameters; }
     public Throwable getException() { return exception; }
     public void setException(Throwable exception) { this.exception = exception; }
+
+    /**
+     * {@link CommandEvent} now {@link HasResult}, use {@link Event#setResult(Result)}.
+     */
+    @Deprecated
+    @Override
+    public void setCanceled(boolean cancel)
+    {
+        if(cancel)
+        {
+            this.setResult(Result.DENY);
+        }
+        else 
+        {
+            this.setResult(Result.DEFAULT);
+        }
+    }
 }

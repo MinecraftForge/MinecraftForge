@@ -25,6 +25,10 @@ public class CommandEventRewriteTest
             {
                 event.setResult(Result.ALLOW);
             }
+            else if (event.getCommand().getName().equals("tell"))
+            {
+                event.setCanceled(true);
+            }
         }
     }
 }
