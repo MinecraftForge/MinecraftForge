@@ -231,14 +231,7 @@ public class ForgeGuiFactory implements IModGuiFactory
                     props.add(ForgeModContainer.getConfig().get(VERSION_CHECK_CAT, mod.getModId(), true)); //Get or make the value in the config
                 }
                 props.addAll(values.values()); // Add any left overs from the config
-                Collections.sort(props, new Comparator<Property>()
-                {
-                    @Override
-                    public int compare(Property o1, Property o2)
-                    {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                });
+                props.sort(Comparator.comparing(Property::getName));
 
                 List<IConfigElement> list = new ArrayList<IConfigElement>();
                 list.add(new ConfigElement(global));

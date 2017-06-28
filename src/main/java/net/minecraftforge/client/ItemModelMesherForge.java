@@ -88,14 +88,10 @@ public class ItemModelMesherForge extends ItemModelMesher
                 models.put(e.getKey(), mods);
             }
             final TIntObjectHashMap<IBakedModel> map = mods;
-            e.getValue().forEachEntry(new TIntObjectProcedure<ModelResourceLocation>()
+            e.getValue().forEachEntry((meta, location) ->
             {
-                @Override
-                public boolean execute(int meta, ModelResourceLocation location)
-                {
-                    map.put(meta, manager.getModel(location));
-                    return true;
-                }
+                map.put(meta, manager.getModel(location));
+                return true;
             });
         }
     }

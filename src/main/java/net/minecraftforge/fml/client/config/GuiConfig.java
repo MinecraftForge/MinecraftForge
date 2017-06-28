@@ -127,15 +127,7 @@ public class GuiConfig extends GuiScreen
                 toReturn.add(ConfigElement.from(clazz));
             }
         }
-        Collections.sort(toReturn, new Comparator<IConfigElement>(){
-
-            @Override
-            public int compare(IConfigElement e1, IConfigElement e2)
-            {
-                return I18n.format(e1.getLanguageKey()).compareTo(I18n.format(e2.getLanguageKey()));
-            }
-            
-        });
+        toReturn.sort(Comparator.comparing(e -> I18n.format(e.getLanguageKey())));
         return toReturn;
     }
 

@@ -50,13 +50,6 @@ public class CapabilityEnergy
                 ((EnergyStorage)instance).energy = ((NBTTagInt)nbt).getInt();
             }
         },
-        new Callable<IEnergyStorage>()
-        {
-            @Override
-            public IEnergyStorage call() throws Exception
-            {
-                return new EnergyStorage(1000);
-            }
-        });
+        () -> new EnergyStorage(1000));
     }
 }

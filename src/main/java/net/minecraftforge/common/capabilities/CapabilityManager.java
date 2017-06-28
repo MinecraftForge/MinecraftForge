@@ -57,16 +57,12 @@ public enum CapabilityManager
     public <T> void register(Class<T> type, Capability.IStorage<T> storage, final Class<? extends T> implementation)
     {
         Preconditions.checkArgument(implementation != null, "Attempted to register a capability with no default implementation");
-        register(type, storage, new Callable<T>()
+        register(type, storage, () ->
         {
-            @Override
-            public T call() throws Exception
-            {
-                try {
-                    return implementation.newInstance();
-                } catch (InstantiationException | IllegalAccessException e) {
-                    throw Throwables.propagate(e);
-                }
+            try {
+                return implementation.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw Throwables.propagate(e);
             }
         });
     }

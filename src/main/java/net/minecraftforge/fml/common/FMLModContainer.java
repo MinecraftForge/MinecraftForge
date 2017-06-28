@@ -441,22 +441,8 @@ public class FMLModContainer implements ModContainer
     {
         SetMultimap<String, ASMData> annotations = asmDataTable.getAnnotationsFor(this);
 
-        parseSimpleFieldAnnotation(annotations, Instance.class.getName(), new Function<ModContainer, Object>()
-        {
-            @Override
-            public Object apply(ModContainer mc)
-            {
-                return mc.getMod();
-            }
-        });
-        parseSimpleFieldAnnotation(annotations, Metadata.class.getName(), new Function<ModContainer, Object>()
-        {
-            @Override
-            public Object apply(ModContainer mc)
-            {
-                return mc.getMetadata();
-            }
-        });
+        parseSimpleFieldAnnotation(annotations, Instance.class.getName(), ModContainer::getMod);
+        parseSimpleFieldAnnotation(annotations, Metadata.class.getName(), ModContainer::getMetadata);
     }
 
     private void parseSimpleFieldAnnotation(SetMultimap<String, ASMData> annotations, String annotationClassName, Function<ModContainer, Object> retriever) throws IllegalAccessException

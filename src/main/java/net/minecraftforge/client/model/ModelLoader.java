@@ -1145,14 +1145,7 @@ public final class ModelLoader extends ModelBakery
      * Helper method for registering all itemstacks for given item to map to universal bucket model.
      */
     public static void setBucketModelDefinition(Item item) {
-        ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
-        {
-            @Override
-            public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-            {
-                return ModelDynBucket.LOCATION;
-            }
-        });
+        ModelLoader.setCustomMeshDefinition(item, stack -> ModelDynBucket.LOCATION);
         ModelBakery.registerItemVariants(item, ModelDynBucket.LOCATION);
     }
 

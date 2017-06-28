@@ -60,13 +60,7 @@ public class TopologicalSort
             }
 
             orderedNodes.add(node);
-            graph.put(node, new TreeSet<T>(new Comparator<T>()
-            {
-                @Override
-                public int compare(T o1, T o2) {
-                    return orderedNodes.indexOf(o1)-orderedNodes.indexOf(o2);
-                }
-            }));
+            graph.put(node, new TreeSet<T>(Comparator.comparingInt(o -> orderedNodes.indexOf(o))));
             return true;
         }
 

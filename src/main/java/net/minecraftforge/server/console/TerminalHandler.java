@@ -74,15 +74,7 @@ public final class TerminalHandler
         }
         else
         {
-            TerminalConsoleAppender.setFormatter(new Function<String, String>() {
-
-                @Override
-                public String apply(String text)
-                {
-                    return TextFormatting.getTextWithoutFormattingCodes(text);
-                }
-
-            });
+            TerminalConsoleAppender.setFormatter(TextFormatting::getTextWithoutFormattingCodes);
             return false;
         }
     }

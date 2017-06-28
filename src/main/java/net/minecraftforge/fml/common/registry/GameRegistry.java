@@ -177,14 +177,7 @@ public class GameRegistry
     private static void computeSortedGeneratorList()
     {
         ArrayList<IWorldGenerator> list = Lists.newArrayList(worldGenerators);
-        Collections.sort(list, new Comparator<IWorldGenerator>()
-        {
-            @Override
-            public int compare(IWorldGenerator o1, IWorldGenerator o2)
-            {
-                return Ints.compare(worldGeneratorIndex.get(o1), worldGeneratorIndex.get(o2));
-            }
-        });
+        list.sort(Comparator.comparingInt(o -> worldGeneratorIndex.get(o)));
         sortedGeneratorList = ImmutableList.copyOf(list);
     }
 
