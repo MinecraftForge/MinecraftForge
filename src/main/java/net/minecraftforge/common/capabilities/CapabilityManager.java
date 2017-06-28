@@ -114,12 +114,7 @@ public enum CapabilityManager
             }
             final String capabilityName = type.getInternalName().replace('/', '.').intern();
 
-            List<Function<Capability<?>, Object>> list = callbacks.get(capabilityName);
-            if (list == null)
-            {
-                list = Lists.newArrayList();
-                callbacks.put(capabilityName, list);
-            }
+            List<Function<Capability<?>, Object>> list = callbacks.computeIfAbsent(capabilityName, k -> Lists.newArrayList());
 
             if (entry.getObjectName().indexOf('(') > 0)
             {

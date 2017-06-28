@@ -469,20 +469,20 @@ public class GameData
         final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps = Maps.newHashMap();
         final LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing = Maps.newLinkedHashMap();
         // Load the snapshot into the "STAGING" registry
-        snapshot.entrySet().forEach(e ->
+        snapshot.forEach((key, value) ->
         {
-            final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(e.getKey());
-            remaps.put(e.getKey(), Maps.newLinkedHashMap());
-            missing.put(e.getKey(), Maps.newHashMap());
-            loadPersistentDataToStagingRegistry(RegistryManager.ACTIVE, STAGING, remaps.get(e.getKey()), missing.get(e.getKey()), e.getKey(), e.getValue(), clazz);
+            final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(key);
+            remaps.put(key, Maps.newLinkedHashMap());
+            missing.put(key, Maps.newHashMap());
+            loadPersistentDataToStagingRegistry(RegistryManager.ACTIVE, STAGING, remaps.get(key), missing.get(key), key, value, clazz);
         });
 
-        snapshot.entrySet().forEach(e ->
+        snapshot.forEach((key, value) ->
         {
-            snapshot.get(e.getKey()).dummied.forEach(dummy ->
+            value.dummied.forEach(dummy ->
             {
-                Map<ResourceLocation, Integer> m = missing.get(e.getKey());
-                ForgeRegistry<?> reg = STAGING.getRegistry(e.getKey());
+                Map<ResourceLocation, Integer> m = missing.get(key);
+                ForgeRegistry<?> reg = STAGING.getRegistry(key);
 
                 // Currently missing locally, we just inject and carry on
                 if (m.containsKey(dummy))
@@ -493,20 +493,20 @@ public class GameData
                 else if (isLocalWorld)
                 {
                     if (ForgeRegistry.DEBUG)
-                        FMLLog.log.debug("Registry {}: Resuscitating dummy entry {}", e.getKey(), dummy);
+                        FMLLog.log.debug("Registry {}: Resuscitating dummy entry {}", key, dummy);
                 }
                 else
                 {
                     // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
                     // in mod setup - Mark this entry as a dummy
                     int id = reg.getID(dummy);
-                    FMLLog.log.warn("Registry {}: The ID {} is currently locally mapped - it will be replaced with a dummy for this session", e.getKey(), id);
+                    FMLLog.log.warn("Registry {}: The ID {} is currently locally mapped - it will be replaced with a dummy for this session", key, id);
                     reg.markDummy(dummy, id);
                 }
             });
         });
 
-        int count = missing.values().stream().mapToInt(e -> e.size()).sum();
+        int count = missing.values().stream().mapToInt(Map::size).sum();
         if (count > 0)
         {
             FMLLog.log.debug("There are {} mappings missing - attempting a mod remap", count);
@@ -635,10 +635,10 @@ public class GameData
         if (active == null)
             return; // We've already asked the user if they wish to continue. So if the reg isnt found just assume the user knows and accepted it.
         ForgeRegistry<T> _new = to.getRegistry(name, RegistryManager.ACTIVE);
-        snap.aliases.forEach((f, t) -> _new.addAlias(f, t));
-        snap.blocked.forEach(id -> _new.block(id));
+        snap.aliases.forEach(_new::addAlias);
+        snap.blocked.forEach(_new::block);
         // Load current dummies BEFORE the snapshot is loaded so that add() will remove from the list.
-        snap.dummied.forEach(key -> _new.addDummy(key));
+        snap.dummied.forEach(_new::addDummy);
         _new.loadIds(snap.ids, snap.overrides, missing, remaps, active, name);
     }
 

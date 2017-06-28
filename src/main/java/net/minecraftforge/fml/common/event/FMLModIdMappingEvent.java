@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.common.event;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import com.google.common.collect.ImmutableList;
@@ -71,8 +71,8 @@ public class FMLModIdMappingEvent extends FMLEvent
         remaps.forEach((name, rm) ->
         {
             List<ModRemapping> tmp = Lists.newArrayList();
-            rm.entrySet().forEach(e -> tmp.add(new ModRemapping(name, e.getKey(), e.getValue()[0], e.getValue()[1])));
-            Collections.sort(tmp, (o1, o2) -> (o1.newId < o2.newId) ? -1 : ((o1.newId == o2.newId) ? 0 : 1));
+            rm.forEach((key, value) -> tmp.add(new ModRemapping(name, key, value[0], value[1])));
+            tmp.sort(Comparator.comparingInt(o -> o.newId));
             this.remaps.put(name, ImmutableList.copyOf(tmp));
         });
         this.keys = ImmutableSet.copyOf(this.remaps.keySet());

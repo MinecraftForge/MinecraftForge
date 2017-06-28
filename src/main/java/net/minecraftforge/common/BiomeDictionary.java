@@ -360,13 +360,7 @@ public class BiomeDictionary
     //Internal implementation
     private static BiomeInfo getBiomeInfo(Biome biome)
     {
-        BiomeInfo info = biomeInfoMap.get(biome.getRegistryName());
-        if (info == null)
-        {
-            info = new BiomeInfo();
-            biomeInfoMap.put(biome.getRegistryName(), info);
-        }
-        return info;
+        return biomeInfoMap.computeIfAbsent(biome.getRegistryName(), k -> new BiomeInfo());
     }
 
     /**

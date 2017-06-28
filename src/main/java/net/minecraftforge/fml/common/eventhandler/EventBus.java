@@ -150,12 +150,7 @@ public class EventBus implements IEventExceptionHandler
 
             event.getListenerList().register(busID, asm.getPriority(), listener);
 
-            ArrayList<IEventListener> others = listeners.get(target);
-            if (others == null)
-            {
-                others = new ArrayList<IEventListener>();
-                listeners.put(target, others);
-            }
+            ArrayList<IEventListener> others = listeners.computeIfAbsent(target, k -> new ArrayList<>());
             others.add(listener);
         }
         catch (Exception e)

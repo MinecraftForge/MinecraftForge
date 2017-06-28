@@ -67,14 +67,6 @@ public class FakePlayerFactory
 
     public static void unloadWorld(WorldServer world)
     {
-        Iterator<Entry<GameProfile, FakePlayer>> itr = fakePlayers.entrySet().iterator();
-        while (itr.hasNext())
-        {
-            Entry<GameProfile, FakePlayer> entry = itr.next();
-            if (entry.getValue().world == world)
-            {
-                itr.remove();
-            }
-        }
+        fakePlayers.entrySet().removeIf(entry -> entry.getValue().world == world);
     }
 }

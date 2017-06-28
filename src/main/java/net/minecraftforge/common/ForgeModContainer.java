@@ -401,14 +401,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         for (ASMData asm : evt.getASMHarvestedData().getAll(ICrashCallable.class.getName().replace('.', '/')))
             all.add(asm.getClassName());
 
-        Iterator<String> itr = all.iterator();
-        while (itr.hasNext())
-        {
-            String cls = itr.next();
-            if (!cls.startsWith("net/minecraft/") &&
-                !cls.startsWith("net/minecraftforge/"))
-                itr.remove();
-        }
+        all.removeIf(cls -> !cls.startsWith("net/minecraft/") && !cls.startsWith("net/minecraftforge/"));
 
         log.debug("Preloading CrashReport Classes");
         Collections.sort(all); //Sort it because I like pretty output ;)

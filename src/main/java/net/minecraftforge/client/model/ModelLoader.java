@@ -645,13 +645,7 @@ public final class ModelLoader extends ModelBakery
             //Remove any faces that use a null texture, this is for performance reasons, also allows some cool layering stuff.
             for (BlockPart part : newModel.getElements())
             {
-                Iterator<Entry<EnumFacing, BlockPartFace>> itr = part.mapFaces.entrySet().iterator();
-                while (itr.hasNext())
-                {
-                    Entry<EnumFacing, BlockPartFace> entry = itr.next();
-                    if (removed.contains(entry.getValue().texture))
-                        itr.remove();
-                }
+                part.mapFaces.entrySet().removeIf(entry -> removed.contains(entry.getValue().texture));
             }
 
             return new VanillaModelWrapper(location, newModel, uvlock, animation);

@@ -469,7 +469,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.min = from.min;
         */
         this.aliases.clear();
-        from.aliases.forEach((f, t) -> this.addAlias(f, t));
+        from.aliases.forEach(this::addAlias);
 
         this.ids.clear();
         this.names.clear();
@@ -517,7 +517,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         //Needs to be below add so that dummies are persisted
         this.dummies.clear();
-        from.dummies.forEach(dummy -> this.addDummy(dummy));
+        from.dummies.forEach(this::addDummy);
 
         if (errored)
             throw new RuntimeException("One of more entry values did not copy to the correct id. Check log for details!");
@@ -718,9 +718,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     {
         Snapshot ret = new Snapshot();
         this.ids.forEach((id, value) -> ret.ids.put(getKey(value), id));
-        this.aliases.forEach((from, to) -> ret.aliases.put(from, to));
-        this.blocked.forEach(id -> ret.blocked.add(id));
-        this.dummies.forEach(name -> ret.dummied.add(name));
+        ret.aliases.putAll(this.aliases);
+        ret.blocked.addAll(this.blocked);
+        ret.dummied.addAll(this.dummies);
         ret.overrides.putAll(getOverrideOwners());
         return ret;
     }

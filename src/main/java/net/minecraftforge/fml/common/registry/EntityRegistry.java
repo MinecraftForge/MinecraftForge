@@ -284,16 +284,7 @@ public class EntityRegistry
     {
         for (Biome biome : biomes)
         {
-            Iterator<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature).iterator();
-
-            while (spawns.hasNext())
-            {
-                SpawnListEntry entry = spawns.next();
-                if (entry.entityClass == entityClass)
-                {
-                    spawns.remove();
-                }
-            }
+            biome.getSpawnableList(typeOfCreature).removeIf(entry -> entry.entityClass == entityClass);
         }
     }
 

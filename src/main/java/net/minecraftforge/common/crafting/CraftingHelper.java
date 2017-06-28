@@ -435,7 +435,7 @@ public class CraftingHelper {
                     throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");
                 children.add(CraftingHelper.getCondition(j.getAsJsonObject(), context));
             }
-            return () -> children.stream().anyMatch(c -> c.getAsBoolean());
+            return () -> children.stream().anyMatch(BooleanSupplier::getAsBoolean);
         });
         registerC("forge:and", (context, json) -> {
             JsonArray values = JsonUtils.getJsonArray(json, "values");
@@ -610,8 +610,8 @@ public class CraftingHelper {
             GameData.revert(RegistryManager.FROZEN, GameData.RECIPES, false);
         //ModContainer old = Loader.instance().activeModContainer();
         Loader.instance().setActiveModContainer(null);
-        Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
-        Loader.instance().getActiveModList().forEach((mod) -> loadRecipes(mod));
+        Loader.instance().getActiveModList().forEach(CraftingHelper::loadFactories);
+        Loader.instance().getActiveModList().forEach(CraftingHelper::loadRecipes);
         Loader.instance().setActiveModContainer(null);
         //reg.freeze();
         FMLCommonHandler.instance().resetClientRecipeBook();
