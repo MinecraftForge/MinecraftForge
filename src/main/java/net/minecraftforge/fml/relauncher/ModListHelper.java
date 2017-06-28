@@ -124,28 +124,8 @@ public class ModListHelper {
         {
             parseListFile(modList.parentList);
         }
-        File repoRoot;
-        try
-        {
-            // We need to be able to distinguish absolute from relative files for dependency extraction
-            if (modList.version == 1)
-            {
-                repoRoot = new File(modList.repositoryRoot);
-            }
-            else
-            {
-                if (listFile.startsWith("absolute:"))
-                    repoRoot = new File(modList.repositoryRoot.substring(9));
-                else
-                    repoRoot = new File(mcDirectory, modList.repositoryRoot);
-            }
-            repoRoot = repoRoot.getCanonicalFile();
-        }
-        catch (IOException e)
-        {
-            FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Unable to canonicalize path {} relative to {}", listFile, mcDirectory.getAbsolutePath()), e);
-            return;
-        }
+        File repoRoot = getRepoRoot(mcDirectory, modList);
+        if (repoRoot == null) return;
         if (!repoRoot.exists())
         {
             FMLLog.log.info("Failed to find the specified repository root {}", modList.repositoryRoot);
@@ -158,6 +138,34 @@ public class ModListHelper {
             tryAddFile(convertArtifactToFileName(parts), repoRoot, convertArtifactToGenericName(parts));
         }
     }
+
+    public static File getRepoRoot(File mcDirectory, JsonModList modList)
+    {
+        File repoRoot;
+        try
+        {
+            // We need to be able to distinguish absolute from relative files for dependency extraction
+            if (modList.version == 1)
+            {
+                repoRoot = new File(modList.repositoryRoot);
+            }
+            else
+            {
+                if (modList.repositoryRoot.startsWith("absolute:"))
+                    repoRoot = new File(modList.repositoryRoot.substring(9));
+                else
+                    repoRoot = new File(mcDirectory, modList.repositoryRoot);
+            }
+            repoRoot = repoRoot.getCanonicalFile();
+        }
+        catch (IOException e)
+        {
+            FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Unable to canonicalize path {} relative to {}", modList.repositoryRoot, mcDirectory.getAbsolutePath()), e);
+            return null;
+        }
+        return repoRoot;
+    }
+
     private static void tryAddFile(String modFileName, @Nullable File repoRoot, String descriptor) {
         File modFile = repoRoot != null ? new File(repoRoot,modFileName) : new File(mcDirectory, modFileName);
         if (!modFile.exists())

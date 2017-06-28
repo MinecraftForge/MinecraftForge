@@ -60,11 +60,7 @@ public class DependencyExtractor
         FMLLog.log.debug("Inspecting mod directory for dependency extraction candidates");
         File modListFile = new File(baseModsDir, "mod_list.json");
         JsonModList modList = prepareModList(modListFile);
-        File repository;
-        if (modList.repositoryRoot.startsWith("absolute:"))
-            repository = new File(modList.repositoryRoot.substring(9));
-        else
-            repository = new File(mcDir, modList.repositoryRoot);
+        File repository = ModListHelper.getRepoRoot(mcDir, modList);
         // It's a little weird, but it should yield the best performance
         // The map is used like a set (similar to how HashSet is really just a wrapped HashMap)
         Map<Artifact, Artifact> artifacts = modList.modRef.stream().map(Artifact::new).collect(Collectors.toMap(Function.identity(), Function.identity()));
