@@ -35,7 +35,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -75,51 +74,36 @@ public class ExtendedBlockState extends BlockStateContainer
     protected StateImplementation createState(@Nonnull Block block, @Nonnull  ImmutableMap<IProperty<?>, Comparable<?>> properties, @Nullable ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties)
     {
         if (unlistedProperties == null || unlistedProperties.isEmpty()) return super.createState(block, properties, unlistedProperties);
-        return new ExtendedStateImplementation(block, properties, unlistedProperties, null);
+        return new ExtendedStateImplementation(block, properties, unlistedProperties, null, null);
     }
 
     protected static class ExtendedStateImplementation extends StateImplementation implements IExtendedBlockState
     {
         private final ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties;
-        private Map<Map<IProperty<?>, Comparable<?>>, BlockStateContainer.StateImplementation> normalMap;
+        private IBlockState cleanState;
 
-        protected ExtendedStateImplementation(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties, @Nullable ImmutableTable<IProperty<?>, Comparable<?>, IBlockState> table)
+        protected ExtendedStateImplementation(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties, @Nullable ImmutableTable<IProperty<?>, Comparable<?>, IBlockState> table, IBlockState clean)
         {
-            super(block, properties);
+            super(block, properties, table);
             this.unlistedProperties = unlistedProperties;
-            this.propertyValueTable = table;
+            this.cleanState = clean == null ? this : clean;
         }
 
         @Override
         @Nonnull
         public <T extends Comparable<T>, V extends T> IBlockState withProperty(@Nonnull IProperty<T> property, @Nonnull V value)
         {
-            if (!this.getProperties().containsKey(property))
-            {
-                throw new IllegalArgumentException("Cannot set property " + property + " as it does not exist in " + getBlock().getBlockState());
+            IBlockState clean = super.withProperty(property, value);
+            if (clean == this.cleanState) {
+                return this;
             }
-            else
-            {
-                if (!property.getAllowedValues().contains(value))
-                {
-                    throw new IllegalArgumentException("Cannot set property " + property + " to " + value + " on block " + Block.REGISTRY.getNameForObject(getBlock()) + ", it is not an allowed value");
-                } else
-                {
-                    if (this.getProperties().get(property) == value)
-                    {
-                        return this;
-                    }
-                    Map<IProperty<?>, Comparable<?>> map = Maps.newHashMap(getProperties());
-                    map.put(property, value);
-                    if (Iterables.all(unlistedProperties.values(), Predicates.<Optional<?>>equalTo(Optional.absent())))
-                    { // no dynamic properties present, looking up in the normal table
-                        return normalMap.get(map);
-                    }
-                    ImmutableTable<IProperty<?>, Comparable<?>, IBlockState> table = propertyValueTable;
-                    table = ((StateImplementation) table.get(property, value)).getPropertyValueTable();
-                    return new ExtendedStateImplementation(getBlock(), ImmutableMap.copyOf(map), unlistedProperties, table).setMap(this.normalMap);
-                }
+
+            if (Iterables.all(unlistedProperties.values(), Predicates.<Optional<?>>equalTo(Optional.absent())))
+            { // no dynamic properties present, looking up in the normal table
+                return clean;
             }
+
+            return new ExtendedStateImplementation(getBlock(), clean.getProperties(), unlistedProperties, ((StateImplementation)clean).getPropertyValueTable(), this.cleanState);
         }
 
         public <V> IExtendedBlockState withProperty(IUnlistedProperty<V> property, V value)
@@ -136,9 +120,9 @@ public class ExtendedBlockState extends BlockStateContainer
             newMap.put(property, Optional.fromNullable(value));
             if(Iterables.all(newMap.values(), Predicates.<Optional<?>>equalTo(Optional.absent())))
             { // no dynamic properties, lookup normal state
-                return (IExtendedBlockState) normalMap.get(getProperties());
+                return (IExtendedBlockState)cleanState;
             }
-            return new ExtendedStateImplementation(getBlock(), getProperties(), ImmutableMap.copyOf(newMap), propertyValueTable).setMap(this.normalMap);
+            return new ExtendedStateImplementation(getBlock(), getProperties(), ImmutableMap.copyOf(newMap), propertyValueTable, this.cleanState);
         }
 
         public Collection<IUnlistedProperty<?>> getUnlistedNames()
@@ -161,21 +145,9 @@ public class ExtendedBlockState extends BlockStateContainer
         }
 
         @Override
-        public void buildPropertyValueTable(Map<Map<IProperty<?>, Comparable<?>>, BlockStateContainer.StateImplementation> map)
-        {
-            this.normalMap = map;
-            super.buildPropertyValueTable(map);
-        }
-
-        private ExtendedStateImplementation setMap(Map<Map<IProperty<?>, Comparable<?>>, BlockStateContainer.StateImplementation> map)
-        {
-            this.normalMap = map;
-            return this;
-        }
-
         public IBlockState getClean()
         {
-            return this.normalMap.get(getProperties());
+            return cleanState;
         }
     }
 }
