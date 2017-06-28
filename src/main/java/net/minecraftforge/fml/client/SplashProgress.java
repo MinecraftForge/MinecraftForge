@@ -651,7 +651,6 @@ public class SplashProgress
             checkThreadState();
             done = true;
             thread.join();
-            glFlush();              // process any remaining commands in the buffer before final releaseContext
             d.releaseContext();
             Display.getDrawable().makeCurrent();
             fontTexture.delete();
