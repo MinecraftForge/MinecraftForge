@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -187,7 +187,9 @@
+@@ -27,6 +27,7 @@
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import net.minecraftforge.client.overlay.IArmorOverlayHandler;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -187,7 +188,9 @@
  
      public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
      {
@@ -11,7 +19,7 @@
      }
  
      public ActionResult<ItemStack> func_77659_a(World p_77659_1_, EntityPlayer p_77659_2_, EnumHand p_77659_3_)
-@@ -221,6 +223,19 @@
+@@ -221,6 +224,21 @@
          return multimap;
      }
  
@@ -28,10 +36,12 @@
 +        return this.field_77878_bZ == ItemArmor.ArmorMaterial.LEATHER || func_82814_b(stack) != 0x00FFFFFF;
 +    }
 +
++
++
      public static enum ArmorMaterial
      {
          LEATHER("leather", 5, new int[]{1, 2, 3, 1}, 15, SoundEvents.field_187728_s, 0.0F),
-@@ -235,6 +250,8 @@
+@@ -235,6 +253,8 @@
          private final int field_78055_h;
          private final SoundEvent field_185020_j;
          private final float field_189417_k;
@@ -40,7 +50,7 @@
  
          private ArmorMaterial(String p_i47117_3_, int p_i47117_4_, int[] p_i47117_5_, int p_i47117_6_, SoundEvent p_i47117_7_, float p_i47117_8_)
          {
-@@ -266,6 +283,7 @@
+@@ -266,6 +286,7 @@
              return this.field_185020_j;
          }
  
@@ -48,7 +58,7 @@
          public Item func_151685_b()
          {
              if (this == LEATHER)
-@@ -300,5 +318,21 @@
+@@ -300,5 +321,107 @@
          {
              return this.field_189417_k;
          }
@@ -69,4 +79,90 @@
 +            return repairMaterial;
 +        }
      }
++
++    /**
++     * Holds onto either a reference to IArmorOverlayHandler.VANILLA, or a wrapper if IArmorOverlayHandlers are subscribed
++     * */
++    private net.minecraftforge.client.overlay.IArmorOverlayHandler overlayHandler = net.minecraftforge.client.overlay.IArmorOverlayHandler.VANILLA;
++
++    /**
++     * Holds onto either a reference to IArmorOverlayColor.VANILLA, or a wrapper if IArmorOverlayColors are subscribed
++     * */
++    private net.minecraftforge.client.overlay.IArmorOverlayColor overlayColor = net.minecraftforge.client.overlay.IArmorOverlayColor.VANILLA;
++
++    /**
++     * Returns the IArmorOverlayHandler for the ItemStack's effect overlay.
++     * */
++    @javax.annotation.Nonnull
++    public final net.minecraftforge.client.overlay.IArmorOverlayHandler getArmorOverlayHandler()
++    {
++        return overlayHandler;
++    }
++
++    /**
++     * Returns the IArmorOverlayColor for the ItemStack's effect overlay.
++     * */
++    @javax.annotation.Nonnull
++    public final net.minecraftforge.client.overlay.IArmorOverlayColor getArmorOverlayColor()
++    {
++        return overlayColor;
++    }
++
++    /**
++     * Adds an IArmorOverlay handler to the list of subscribers. Note that this works as first come, first serve.
++     * */
++    public final void subscribeArmorOverlayHandler(net.minecraftforge.client.overlay.IArmorOverlayHandler toSubscribe)
++    {
++        if(overlayHandler instanceof net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper)
++        {
++            if (toSubscribe instanceof net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper)
++            {
++                net.minecraftforge.fml.common.FMLLog.bigWarning("Attempted to subscribe an ArmorOverlayHandler subscription wrapper when one already existed! Skipping.");
++            }
++            else
++            {
++                ((net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper) overlayHandler).addSubscription(toSubscribe);
++            }
++        }
++        else
++        {
++            if (toSubscribe instanceof net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper)
++            {   //Should only happen on substitution
++                overlayHandler = toSubscribe;
++            }
++            else
++            {
++                overlayHandler = new net.minecraftforge.client.overlay.IArmorOverlayHandler.SubscriptionWrapper(toSubscribe);
++            }
++        }
++    }
++
++    /**
++     * Adds an IArmorOverlay handler to the list of subscribers. Note that this works as first come, first serve.
++     * */
++    public final void subscribeArmorOverlayColor(net.minecraftforge.client.overlay.IArmorOverlayColor toSubscribe)
++    {
++        if(overlayColor instanceof net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)
++        {
++            if (toSubscribe instanceof net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)
++            {
++                net.minecraftforge.fml.common.FMLLog.bigWarning("Attempted to subscribe an ArmorOverlayColor subscription wrapper when one already existed! Skipping.");
++            }
++            else
++            {
++                ((net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper) overlayColor).addSubscription(toSubscribe);
++            }
++        }
++        else
++        {
++            if (toSubscribe instanceof net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)
++            {   //Should only happen on substitution
++                overlayColor = toSubscribe;
++            }
++            else
++            {
++                overlayColor = new net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper(toSubscribe);
++            }
++        }
++    }
  }
