@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
 
 public class ModListHelper {
     public static class JsonModList {
+        public int version = 1;
         public String repositoryRoot;
         public List<String> modRef;
         public String parentList;
@@ -45,7 +46,7 @@ public class ModListHelper {
     private static File mcDirectory;
     private static Set<File> visitedFiles = Sets.newHashSet();
     public static final Map<String,File> additionalMods = Maps.newLinkedHashMap();
-    static void parseModList(File minecraftDirectory)
+    public static void parseModList(File minecraftDirectory)
     {
         FMLLog.log.debug("Attempting to load commandline specified mods, relative to {}", minecraftDirectory.getAbsolutePath());
         mcDirectory = minecraftDirectory;
@@ -123,7 +124,28 @@ public class ModListHelper {
         {
             parseListFile(modList.parentList);
         }
-        File repoRoot = new File(modList.repositoryRoot);
+        File repoRoot;
+        try
+        {
+            // We need to be able to distinguish absolute from relative files for dependency extraction
+            if (modList.version == 1)
+            {
+                repoRoot = new File(modList.repositoryRoot);
+            }
+            else
+            {
+                if (listFile.startsWith("absolute:"))
+                    repoRoot = new File(modList.repositoryRoot.substring(9));
+                else
+                    repoRoot = new File(mcDirectory, modList.repositoryRoot);
+            }
+            repoRoot = repoRoot.getCanonicalFile();
+        }
+        catch (IOException e)
+        {
+            FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Unable to canonicalize path {} relative to {}", listFile, mcDirectory.getAbsolutePath()), e);
+            return;
+        }
         if (!repoRoot.exists())
         {
             FMLLog.log.info("Failed to find the specified repository root {}", modList.repositoryRoot);

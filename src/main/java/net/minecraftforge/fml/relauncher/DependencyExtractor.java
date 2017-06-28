@@ -119,6 +119,8 @@ public class DependencyExtractor
         JsonModList list = new JsonModList();
         list.repositoryRoot = "./libraries/";
         list.modRef = new ArrayList<>();
+        // Treat path as relative to the MC dir
+        list.version = 2;
         if (modListFile == null || !modListFile.exists())
         {
             return list;
