@@ -8,7 +8,7 @@
 -import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class ShapedRecipes implements IRecipe
-+public class ShapedRecipes extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++public class ShapedRecipes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
  {
      public final int field_77576_b;
      public final int field_77577_c;

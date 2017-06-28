@@ -36,11 +36,11 @@ public class ConfigTest
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-        logger.debug("Old: " + CONFIG_TYPES.bool);
+        logger.debug("Old: {}", CONFIG_TYPES.bool);
         CONFIG_TYPES.bool = !CONFIG_TYPES.bool;
-        logger.debug("New: " + CONFIG_TYPES.bool);
+        logger.debug("New: {}", CONFIG_TYPES.bool);
         ConfigManager.sync(MODID, Type.INSTANCE);
-        logger.debug("After sync: " + CONFIG_TYPES.bool);
+        logger.debug("After sync: {}", CONFIG_TYPES.bool);
     }
 
     @SubscribeEvent

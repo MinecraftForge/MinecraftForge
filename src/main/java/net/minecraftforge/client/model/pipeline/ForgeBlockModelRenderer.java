@@ -52,10 +52,10 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
     };
 
-    private final ThreadLocal<VertexBufferConsumer> wrFlat = new ThreadLocal<VertexBufferConsumer>();
-    private final ThreadLocal<VertexBufferConsumer> wrSmooth = new ThreadLocal<VertexBufferConsumer>();
-    private final ThreadLocal<BufferBuilder> lastRendererFlat = new ThreadLocal<BufferBuilder>();
-    private final ThreadLocal<BufferBuilder> lastRendererSmooth = new ThreadLocal<BufferBuilder>();
+    private final ThreadLocal<VertexBufferConsumer> wrFlat = new ThreadLocal<>();
+    private final ThreadLocal<VertexBufferConsumer> wrSmooth = new ThreadLocal<>();
+    private final ThreadLocal<BufferBuilder> lastRendererFlat = new ThreadLocal<>();
+    private final ThreadLocal<BufferBuilder> lastRendererSmooth = new ThreadLocal<>();
 
     private final BlockColors colors;
 

@@ -71,11 +71,15 @@ public class ProgressManager
         {
             long newTime = System.nanoTime();
             if (bar.timeEachStep)
-                FMLLog.fine("Bar Step: %s - %s took %.3fs", bar.getTitle(), bar.getMessage(), ((float)(newTime - bar.lastTime) / 1000000 / 1000));
+            {
+                String timeString = String.format("%.3f", ((float) (newTime - bar.lastTime) / 1000000 / 1000));
+                FMLLog.log.debug("Bar Step: {} - {} took {}s", bar.getTitle(), bar.getMessage(), timeString);
+            }
+            String timeString = String.format("%.3f", ((float) (newTime - bar.startTime) / 1000000 / 1000));
             if (bar.getSteps() == 1)
-                FMLLog.fine("Bar Finished: %s - %s took %.3fs", bar.getTitle(), bar.getMessage(), ((float)(newTime - bar.startTime) / 1000000 / 1000));
+                FMLLog.log.debug("Bar Finished: {} - {} took {}s", bar.getTitle(), bar.getMessage(), timeString);
             else
-                FMLLog.fine("Bar Finished: %s took %.3fs", bar.getTitle(), ((float)(newTime - bar.startTime) / 1000000 / 1000));
+                FMLLog.log.debug("Bar Finished: {} took {}s", bar.getTitle(), timeString);
         }
         FMLCommonHandler.instance().processWindowMessages();
     }
@@ -120,7 +124,7 @@ public class ProgressManager
             if (timeEachStep && step != 0)
             {
                 long newTime = System.nanoTime();
-                FMLLog.fine("Bar Step: %s - %s took %.3fs", getTitle(), getMessage(), ((float)(newTime - lastTime) / 1000000 / 1000));
+                FMLLog.log.debug(String.format("Bar Step: %s - %s took %.3fs", getTitle(), getMessage(), ((float)(newTime - lastTime) / 1000000 / 1000)));
                 lastTime = newTime;
             }
             step++;

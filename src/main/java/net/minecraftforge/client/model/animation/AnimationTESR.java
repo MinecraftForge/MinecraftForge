@@ -38,8 +38,6 @@ import net.minecraftforge.common.property.Properties;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-
 /**
  * Generic TileEntitySpecialRenderer that works with the Forge model system and animations.
  */
@@ -47,8 +45,9 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
 {
     protected static BlockRendererDispatcher blockRenderer;
 
-    public void renderTileEntityFast(@Nonnull T te, double x, double y, double z, float partialTick, int breakStage, float partial, @Nonnull BufferBuilder renderer)
-    {
+    @Override
+    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, float partial, BufferBuilder renderer)
+   {
         if(!te.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null))
         {
             return;
@@ -85,5 +84,6 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
         }
     }
 
+    @Override
     public void handleEvents(T te, float time, Iterable<Event> pastEvents) {}
 }

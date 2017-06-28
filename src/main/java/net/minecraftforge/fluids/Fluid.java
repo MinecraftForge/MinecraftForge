@@ -148,8 +148,8 @@ public class Fluid
         }
         else
         {
-            FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to the Block "
-                    + this.block + ". You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.");
+            FMLLog.log.warn("A mod has attempted to assign Block {} to the Fluid '{}' but this Fluid has already been linked to the Block {}. "
+                    + "You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.", block, fluidName, this.block);
         }
         return this;
     }

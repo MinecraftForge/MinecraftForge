@@ -34,9 +34,8 @@
          GlStateManager.func_179096_D();
          GlStateManager.func_179128_n(5888);
          this.func_71361_d("Startup");
--        this.field_147128_au = new TextureMap("textures");
 +        bar.step("Loading Texture Map");
-+        this.field_147128_au = new TextureMap("textures", true);
+         this.field_147128_au = new TextureMap("textures");
          this.field_147128_au.func_147633_a(this.field_71474_y.field_151442_I);
          this.field_71446_o.func_110580_a(TextureMap.field_110575_b, this.field_147128_au);
          this.field_71446_o.func_110577_a(TextureMap.field_110575_b);
@@ -87,15 +86,6 @@
          if (this.field_71474_y.field_74353_u && !this.field_71431_Q)
          {
              this.func_71352_k();
-@@ -581,7 +591,7 @@
-         {
-             return (List)p_193990_0_.func_192711_b().stream().flatMap((p_193993_0_) -> {
-                 return p_193993_0_.func_77571_b().func_82840_a((EntityPlayer)null, ITooltipFlag.TooltipFlags.NORMAL).stream();
--            }).map(TextFormatting::func_110646_a).map(String::trim).filter((p_193994_0_) -> {
-+            }).map(TextFormatting::getTextWithoutFormattingCodes).map(String::trim).filter((p_193994_0_) -> {
-                 return !p_193994_0_.isEmpty();
-             }).collect(Collectors.toList());
-         }, (p_193991_0_) ->
 @@ -748,21 +758,23 @@
          File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
          Bootstrap.func_179870_a(p_71377_1_.func_71502_e());
@@ -538,3 +528,13 @@
      public boolean func_189648_am()
      {
          return this.field_71439_g != null && this.field_71439_g.func_175140_cp() || this.field_71474_y.field_178879_v;
+@@ -3342,4 +3245,9 @@
+     {
+         return this.field_193035_aW;
+     }
++
++    public SearchTreeManager getSearchTreeManager()
++    {
++        return this.field_193995_ae;
++    }
+ }

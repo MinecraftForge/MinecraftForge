@@ -53,7 +53,7 @@
 +                net.minecraft.block.state.IBlockState state = worldIn.func_180495_p(blockpos);
 +                if (state.func_177230_c().isReplaceableOreGen(state, worldIn, blockpos, net.minecraft.block.state.pattern.BlockMatcher.func_177642_a(Blocks.field_150348_b)))
 +                {
-+                    worldIn.func_180501_a(blockpos, Blocks.field_150412_bA.func_176223_P(), 2);
++                    worldIn.func_180501_a(blockpos, Blocks.field_150412_bA.func_176223_P(), 16 | 2);
 +                }
 +            }
 +            return true;

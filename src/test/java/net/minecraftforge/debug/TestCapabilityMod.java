@@ -3,7 +3,6 @@ package net.minecraftforge.debug;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -70,7 +69,7 @@ public class TestCapabilityMod
         {
             event.setCanceled(true);
             IExampleCapability inv = te.getCapability(TEST_CAP, event.getFace());
-            logger.info("Hi I'm a " + inv.getOwnerType());
+            logger.info("Hi I'm a {}", inv.getOwnerType());
         }
         if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.DIRT && event.getItemStack().hasCapability(TEST_CAP, null))
         {
@@ -92,7 +91,7 @@ public class TestCapabilityMod
         {
             IExampleCapability cap = event.getItemStack().getCapability(TEST_CAP, null);
             cap.toggleVal();
-            logger.info("Test value is now: " + (cap.getVal() ? "TRUE" : "FALSE"));
+            logger.info("Test value is now: {}", cap.getVal() ? "TRUE" : "FALSE");
         }
     }
 
@@ -189,26 +188,6 @@ public class TestCapabilityMod
         }
     }
 
-    // these can be removed if we remove these legacy events
-    @SubscribeEvent
-    public void onItemLoadLegacy(AttachCapabilitiesEvent<Item> event)
-    {
-        if (event.getObject() == Items.APPLE)
-        {
-            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<Item>(event.getObject()));
-        }
-    }
-
-    @SubscribeEvent
-    public void onItemLoadLegacy(AttachCapabilitiesEvent.Item event)
-    {
-        if (event.getObject() == Items.ARROW)
-        {
-            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<Item>(event.getObject()));
-        }
-    }
-
-
     @SuppressWarnings("rawtypes")
     @SubscribeEvent
     public void attachEvent(AttachCapabilitiesEvent event) //Test Raw type gets everything still.
@@ -240,7 +219,7 @@ public class TestCapabilityMod
         {
             List<EntityPlayer> players = event.world.playerEntities;
             int i = 0;
-            for (Village village : event.world.villageCollectionObj.getVillageList())
+            for (Village village : event.world.villageCollection.getVillageList())
             {
                 if (village.hasCapability(TEST_CAP, null))
                 {

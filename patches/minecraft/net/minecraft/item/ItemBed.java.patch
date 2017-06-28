@@ -9,3 +9,11 @@
                      p_180614_2_.func_184133_a((EntityPlayer)null, p_180614_3_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                      TileEntity tileentity = p_180614_2_.func_175625_s(blockpos);
  
+@@ -113,7 +113,6 @@
+         return super.func_77658_a() + "." + EnumDyeColor.func_176764_b(p_77667_1_.func_77960_j()).func_176762_d();
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_150895_a(CreativeTabs p_150895_1_, NonNullList<ItemStack> p_150895_2_)
+     {
+         if (this.func_194125_a(p_150895_1_))

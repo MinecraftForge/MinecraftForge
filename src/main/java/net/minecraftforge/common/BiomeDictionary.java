@@ -20,6 +20,7 @@
 package net.minecraftforge.common;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -36,6 +37,8 @@ import com.google.common.collect.ImmutableList;
 
 public class BiomeDictionary
 {
+    private static final boolean DEBUG = false;
+
     public static final class Type
     {
 
@@ -173,6 +176,7 @@ public class BiomeDictionary
         Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot add types to unregistered biome %s", biome);
 
         Collection<Type> supertypes = listSupertypes(types);
+        Collections.addAll(supertypes, types);
 
         for (Type type : supertypes)
         {
@@ -249,7 +253,7 @@ public class BiomeDictionary
      */
     public static void makeBestGuess(Biome biome)
     {
-        if (biome.theBiomeDecorator.treesPerChunk >= 3)
+        if (biome.decorator.treesPerChunk >= 3)
         {
             if (biome.isHighHumidity() && biome.getTemperature() >= 0.9F)
             {
@@ -293,11 +297,11 @@ public class BiomeDictionary
             BiomeDictionary.addTypes(biome, COLD);
         }
 
-        if (biome.theBiomeDecorator.treesPerChunk > 0 && biome.theBiomeDecorator.treesPerChunk < 3)
+        if (biome.decorator.treesPerChunk > 0 && biome.decorator.treesPerChunk < 3)
         {
             BiomeDictionary.addTypes(biome, SPARSE);
         }
-        else if (biome.theBiomeDecorator.treesPerChunk >= 10)
+        else if (biome.decorator.treesPerChunk >= 10)
         {
             BiomeDictionary.addTypes(biome, DENSE);
         }
@@ -373,7 +377,7 @@ public class BiomeDictionary
         if (!hasAnyType(biome))
         {
             makeBestGuess(biome);
-            FMLLog.warning("No types have been added to Biome %s, types have been assigned on a best-effort guess: %s", biome.getRegistryName(), getTypes(biome));
+            FMLLog.log.warn("No types have been added to Biome {}, types have been assigned on a best-effort guess: {}", biome.getRegistryName(), getTypes(biome));
         }
     }
 
@@ -389,7 +393,7 @@ public class BiomeDictionary
 
             for (Type sType : Type.byName.values())
             {
-                if (type.subTypes.contains(type) && supertypes.add(sType))
+                if (sType.subTypes.contains(type) && supertypes.add(sType))
                     next.add(sType);
             }
         }
@@ -461,5 +465,17 @@ public class BiomeDictionary
         addTypes(Biomes.MUTATED_MESA,                     HOT,      DRY,        SPARSE,   SAVANNA,  MOUNTAIN, RARE);
         addTypes(Biomes.MUTATED_MESA_ROCK,                HOT,      DRY,        SPARSE,   HILLS,    RARE          );
         addTypes(Biomes.MUTATED_MESA_CLEAR_ROCK,          HOT,      DRY,        SPARSE,   SAVANNA,  MOUNTAIN, RARE);
+
+
+        if (DEBUG)
+        {
+            FMLLog.log.debug("BiomeDictionary:");
+            for (Type type : Type.byName.values())
+            {
+                StringBuilder buf = new StringBuilder();
+                buf.append("    ").append(type.name).append(": ").append(type.biomes.stream().map(Biome::getBiomeName).collect(Collectors.joining(", ")));
+                FMLLog.log.debug(buf.toString());
+            }
+        }
     }
 }

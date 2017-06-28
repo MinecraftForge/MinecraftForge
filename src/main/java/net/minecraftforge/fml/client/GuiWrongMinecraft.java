@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.client;
 
-import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
@@ -39,13 +38,13 @@ public class GuiWrongMinecraft extends GuiErrorBase
     {
         this.drawDefaultBackground();
         int offset = 75;
-        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.wrongminecraft", Loader.instance().getMinecraftModContainer().getVersion()), this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.mod.wrongminecraft", Loader.instance().getMinecraftModContainer().getVersion()), this.width / 2, offset, 0xFFFFFF);
         offset+=15;
-        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.wrongminecraft.requirement", TextFormatting.BOLD + wrongMC.mod.getName() + TextFormatting.RESET, wrongMC.mod.getModId(), wrongMC.mod.acceptableMinecraftVersionRange().toStringFriendly()), this.width / 2, offset, 0xEEEEEE);
+        this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.mod.wrongminecraft.requirement", TextFormatting.BOLD + wrongMC.mod.getName() + TextFormatting.RESET, wrongMC.mod.getModId(), wrongMC.mod.acceptableMinecraftVersionRange().toStringFriendly()), this.width / 2, offset, 0xEEEEEE);
         offset+=15;
-        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.wrongminecraft.fix", wrongMC.mod.getName()),this.width/2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.mod.wrongminecraft.fix", wrongMC.mod.getName()),this.width/2, offset, 0xFFFFFF);
         offset+=20;
-        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.clientLog.getName()), this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.clientLog.getName()), this.width / 2, offset, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }
