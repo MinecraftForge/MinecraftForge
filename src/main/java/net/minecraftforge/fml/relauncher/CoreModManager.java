@@ -312,10 +312,10 @@ public class CoreModManager {
                 Object crashreport = crashreportclass.getMethod("a", Throwable.class, String.class).invoke(null, re, "FML has discovered extracted jar files in the mods directory.\nThis breaks mod loading functionality completely.\nRemove the directories and replace with the jar files originally provided.");
                 File crashreportfile = new File(new File(coreMods.getParentFile(),"crash-reports"),String.format("fml-crash-%1$tY-%1$tm-%1$td_%1$tH.%1$tM.%1$tS.txt",Calendar.getInstance()));
                 crashreportclass.getMethod("a",File.class).invoke(crashreport, crashreportfile);
-                System.out.println("#@!@# FML has crashed the game deliberately. Crash report saved to: #@!@# " + crashreportfile.getAbsolutePath());
+                FMLLog.log.fatal("#@!@# FML has crashed the game deliberately. Crash report saved to: #@!@# {}", crashreportfile.getAbsolutePath());
             } catch (Exception e)
             {
-                e.printStackTrace();
+                FMLLog.log.fatal("#@!@# FML has crashed while generating a crash report, please report this. #@!@#", e);
                 // NOOP - hopefully
             }
             throw re;
@@ -466,18 +466,11 @@ public class CoreModManager {
             try
             {
                 Files.createParentDirs(target);
-                FileOutputStream targetOutputStream = null;
-                InputStream jarInputStream = null;
-                try
-                {
-                    targetOutputStream = new FileOutputStream(target);
-                    jarInputStream = jar.getInputStream(jarEntry);
+                try (
+                    FileOutputStream targetOutputStream = new FileOutputStream(target);
+                    InputStream jarInputStream = jar.getInputStream(jarEntry);
+                ){
                     ByteStreams.copy(jarInputStream, targetOutputStream);
-                }
-                finally
-                {
-                    IOUtils.closeQuietly(targetOutputStream);
-                    IOUtils.closeQuietly(jarInputStream);
                 }
                 FMLLog.log.debug("Extracted ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
                 result.put(dep,target);

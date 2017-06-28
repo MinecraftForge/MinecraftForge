@@ -124,7 +124,7 @@ public class MinecraftForge
            }
            catch (Exception e)
            {
-               e.printStackTrace();
+               FMLLog.log.error("Could not find class for name '{}'.", name, e);
            }
        }
    }

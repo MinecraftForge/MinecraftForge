@@ -320,14 +320,9 @@ public class FMLModContainer implements ModContainer
                 if (propsFile.exists() && propsFile.isFile())
                 {
                     version = new Properties();
-                    FileInputStream fis = new FileInputStream(propsFile);
-                    try
+                    try (FileInputStream fis = new FileInputStream(propsFile))
                     {
                         version.load(fis);
-                    }
-                    finally
-                    {
-                        IOUtils.closeQuietly(fis);
                     }
                 }
             }

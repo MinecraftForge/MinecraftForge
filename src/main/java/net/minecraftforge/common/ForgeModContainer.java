@@ -421,7 +421,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                log.error("Could not find class for name '{}'.", name, e);
             }
         }
 

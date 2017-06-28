@@ -116,7 +116,7 @@ public class EventBus implements IEventExceptionHandler
                 }
                 catch (NoSuchMethodException e)
                 {
-                    ;
+                    FMLLog.log.error("Could not find method '{}' on class '{}'", method.getName(), cls);
                 }
             }
         }
@@ -160,7 +160,7 @@ public class EventBus implements IEventExceptionHandler
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error registering event handler: {} {} {}", owner, eventType, method, e);
         }
     }
 

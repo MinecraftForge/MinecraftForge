@@ -108,7 +108,6 @@ import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.GameData;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.LWJGLUtil;
@@ -300,16 +299,11 @@ public class FMLClientHandler implements IFMLSidedHandler
             Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
             String optifineVersion = (String) optifineConfig.getField("VERSION").get(null);
             Map<String,Object> dummyOptifineMeta = ImmutableMap.<String,Object>builder().put("name", "Optifine").put("version", optifineVersion).build();
-            InputStream optifineModInfoInputStream = getClass().getResourceAsStream("optifinemod.info");
-            try
+            try (InputStream optifineModInfoInputStream = getClass().getResourceAsStream("optifinemod.info"))
             {
                 ModMetadata optifineMetadata = MetadataCollection.from(optifineModInfoInputStream, "optifine").getMetadataForId("optifine", dummyOptifineMeta);
                 optifineContainer = new DummyModContainer(optifineMetadata);
                 FMLLog.log.info("Forge Mod Loader has detected optifine {}, enabling compatibility features", optifineContainer.getVersion());
-            }
-            finally
-            {
-                IOUtils.closeQuietly(optifineModInfoInputStream);
             }
         }
         catch (Exception e)

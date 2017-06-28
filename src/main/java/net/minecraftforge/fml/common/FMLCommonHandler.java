@@ -700,11 +700,7 @@ public class FMLCommonHandler
             task.run();
             task.get(); // Forces the exception to be thrown if any
         }
-        catch (InterruptedException e)
-        {
-            FMLLog.log.fatal("Exception caught executing FutureTask: {}", e.toString(), e);
-        }
-        catch (ExecutionException e)
+        catch (InterruptedException | ExecutionException e)
         {
             FMLLog.log.fatal("Exception caught executing FutureTask: {}", e.toString(), e);
         }

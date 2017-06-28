@@ -41,6 +41,7 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.PostConfigChangedEvent;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
@@ -344,7 +345,7 @@ public class GuiConfig extends GuiScreen
             }
             catch (Throwable e)
             {
-                e.printStackTrace();
+                FMLLog.log.error("Error performing GuiConfig action:", e);
             }
 
             if (flag)

@@ -64,9 +64,7 @@ public enum CapabilityManager
             {
                 try {
                     return implementation.newInstance();
-                } catch (InstantiationException e) {
-                    throw Throwables.propagate(e);
-                } catch (IllegalAccessException e) {
+                } catch (InstantiationException | IllegalAccessException e) {
                     throw Throwables.propagate(e);
                 }
             }

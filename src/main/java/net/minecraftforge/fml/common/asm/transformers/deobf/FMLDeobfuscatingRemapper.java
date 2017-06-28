@@ -430,7 +430,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error getting patched resource:", e);
         }
     }
     public void mergeSuperMaps(String name, @Nullable String superName, String[] interfaces)
