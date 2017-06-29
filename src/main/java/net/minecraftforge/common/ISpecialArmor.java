@@ -123,6 +123,11 @@ public interface ISpecialArmor
          */
         public static float applyArmor(EntityLivingBase entity, NonNullList<ItemStack> inventory, DamageSource source, double damage)
         {
+            if (source.isUnblockable())
+            {
+                return (float)damage;
+            }
+
             if (DEBUG)
             {
                 System.out.println("Start: " + damage);
@@ -149,7 +154,7 @@ public interface ISpecialArmor
                     totalArmor += prop.Armor;
                     totalToughness += prop.Toughness;
                 }
-                else if (stack.getItem() instanceof ItemArmor && !source.isUnblockable())
+                else if (stack.getItem() instanceof ItemArmor)
                 {
                     ItemArmor armor = (ItemArmor)stack.getItem();
                     prop = new ArmorProperties(0, 0, Integer.MAX_VALUE);
