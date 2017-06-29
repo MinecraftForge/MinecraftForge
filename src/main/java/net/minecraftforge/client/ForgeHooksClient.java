@@ -182,6 +182,10 @@ public class ForgeHooksClient
         ModelLoader.White.INSTANCE.register(map);
     }
 
+    public static void onTextureStitchedTexture(TextureMap map, String location) {
+        MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.TextureRegistered(map, location));
+    }
+
     public static void onTextureStitchedPost(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));

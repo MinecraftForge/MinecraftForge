@@ -166,7 +166,7 @@
              try
              {
                  iresource = p_184397_1_.func_110536_a(resourcelocation);
-@@ -292,7 +337,7 @@
+@@ -292,12 +337,13 @@
          }
          else
          {
@@ -175,7 +175,13 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +363,48 @@
+                 textureatlassprite = TextureAtlasSprite.func_176604_a(p_174942_1_);
+                 this.field_110574_e.put(p_174942_1_.toString(), textureatlassprite);
++                net.minecraftforge.client.ForgeHooksClient.onTextureStitchedTexture(this, p_174942_1_.toString());
+             }
+ 
+             return textureatlassprite;
+@@ -318,4 +364,49 @@
      {
          return this.field_94249_f;
      }
@@ -209,6 +215,7 @@
 +        if (!field_110574_e.containsKey(name))
 +        {
 +            field_110574_e.put(name, entry);
++            net.minecraftforge.client.ForgeHooksClient.onTextureStitchedTexture(this, name);
 +            return true;
 +        }
 +        return false;
