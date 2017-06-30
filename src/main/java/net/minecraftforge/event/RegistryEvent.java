@@ -20,6 +20,7 @@
 package net.minecraftforge.event;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
@@ -223,6 +224,24 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             {
                 return target;
             }
+        }
+    }
+
+    /**
+     * Perform additional registry related tasks
+     */
+    public static class PostRegister extends Event
+    {
+        private final Predicate<ResourceLocation> filter;
+        
+        public PostRegister(Predicate<ResourceLocation> filter)
+        {
+            this.filter = filter;
+        }
+        
+        public boolean includesRegistry(ResourceLocation name)
+        {
+            return this.filter.test(name);
         }
     }
 }

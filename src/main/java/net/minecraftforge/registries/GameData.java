@@ -698,6 +698,8 @@ public class GameData
             MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl));
         }
         ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject everything else
+        MinecraftForge.EVENT_BUS.post(new RegistryEvent.PostRegister(filter));
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders();
 
 
         /*
