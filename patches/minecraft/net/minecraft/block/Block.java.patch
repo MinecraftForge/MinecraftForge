@@ -206,7 +206,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +934,1253 @@
+@@ -908,6 +934,1254 @@
      {
      }
  
@@ -247,7 +247,8 @@
 +     * @param slipperiness the base slipperiness of this block
 +     * @see #getSlipperiness(IBlockState, IBlockAccess, BlockPos, Entity)
 +     */
-+    public void setDefaultSlipperiness(float slipperiness) {
++    public void setDefaultSlipperiness(float slipperiness)
++    {
 +        this.field_149765_K = slipperiness;
 +    }
 +
@@ -1460,7 +1461,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2474,7 @@
+@@ -1201,14 +2475,7 @@
              }
              else
              {
