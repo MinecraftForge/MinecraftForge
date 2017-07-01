@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.relauncher;
 
+import LZMA.LzmaException;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
@@ -30,21 +31,12 @@ import net.minecraftforge.fml.relauncher.ModListHelper.JsonModList;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nullable;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.io.*;
+import java.net.URLDecoder;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.function.Function;
-import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
+import java.util.jar.*;
 import java.util.stream.Collectors;
 
 public class DependencyExtractor
@@ -55,11 +47,11 @@ public class DependencyExtractor
     private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps", "").split(","));
     public static int extractedDeps = 0;
 
-    public static void inspect(File mcDir, File baseModsDir, File versionedModsDir)
+    public static void inspect(File mcDir, File baseModsDir, File versionedModsDir, String repositoryRoot)
     {
         FMLLog.log.debug("Inspecting mod directory for dependency extraction candidates");
         File modListFile = new File(baseModsDir, "mod_list.json");
-        JsonModList modList = prepareModList(modListFile);
+        JsonModList modList = prepareModList(mcDir.toPath(), repositoryRoot, modListFile);
         File repository = ModListHelper.getRepoRoot(mcDir, modList);
         // It's a little weird, but it should yield the best performance
         // The map is used like a set (similar to how HashSet is really just a wrapped HashMap)
@@ -110,10 +102,48 @@ public class DependencyExtractor
         }
     }
 
-    public static JsonModList prepareModList(@Nullable File modListFile)
+    public static JsonModList prepareModList(Path mcDir, @Nullable String repositoryRoot, @Nullable File modListFile)
     {
         JsonModList list = new JsonModList();
+        // Default option, when all else fails
         list.repositoryRoot = "./libraries/";
+        // This is mainly for testing purposes
+        if (repositoryRoot != null)
+        {
+            list.repositoryRoot = repositoryRoot;
+        }
+        else
+        {
+            String lzmaLocation = LzmaException.class.getResource("").toString();
+            int idx = lzmaLocation.indexOf('!');
+            // Only get the location from actual JAR files
+            if (lzmaLocation.startsWith("jar:file:") && idx != -1)
+            {
+                try
+                {
+                    String fileName = URLDecoder.decode(lzmaLocation.substring("jar:file:".length(), idx), "UTF-8");
+                    File lzmaFile = new File(fileName).getAbsoluteFile();
+                    // This is somewhat unreliable, but we should never be in an environment without Maven structure in the libs folder
+                    // Basically searches for the artifact part of "lzma:lzma:{version}"
+                    while (!lzmaFile.getName().equals("lzma"))
+                        lzmaFile = lzmaFile.getParentFile();
+                    // Double parent because we go artifact -> group -> libraries
+                    Path libsDir = lzmaFile.getParentFile().getParentFile().toPath();
+                    if (libsDir.startsWith(mcDir))
+                    {
+                        list.repositoryRoot = mcDir.relativize(libsDir).toString();
+                    }
+                    else
+                    {
+                        list.repositoryRoot = "absolute:" + libsDir.toAbsolutePath().toString();
+                    }
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    FMLLog.log.error("Failed to decode JAR file URL", e);
+                }
+            }
+        }
         list.modRef = new ArrayList<>();
         // Treat path as relative to the MC dir
         list.version = 2;

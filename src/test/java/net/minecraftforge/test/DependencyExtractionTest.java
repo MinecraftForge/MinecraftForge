@@ -63,7 +63,7 @@ public class DependencyExtractionTest
         expectedExtraction = new File(libsDir, "net/minecraftforge/test/dependency/1.0/dependency-1.0-testing.jar").getAbsoluteFile();
         modListFile = new File(modsDir, "mod_list.json");
         // Perform actual extraction right away to have the right state in all tests
-        DependencyExtractor.inspect(workingDir, modsDir, versionedModsDir);
+        DependencyExtractor.inspect(workingDir, modsDir, versionedModsDir, "./libraries/");
         // Required for mod list loading
         Launch.blackboard = new HashMap<>();
         Launch.blackboard.put("launchArgs", new HashMap<String, String>());

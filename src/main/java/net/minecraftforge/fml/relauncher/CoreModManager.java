@@ -327,7 +327,7 @@ public class CoreModManager {
 
         findDerpMods(classLoader, modsDir, modsDirVer);
 
-        DependencyExtractor.inspect(mcDir, modsDir, modsDirVer);
+        DependencyExtractor.inspect(mcDir, modsDir, modsDirVer, null);
 
         ModListHelper.parseModList(mcDir);
 
