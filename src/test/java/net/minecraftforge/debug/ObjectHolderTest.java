@@ -13,14 +13,15 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import net.minecraftforge.fml.common.registry.RegistryBuilder;
 
-@Mod(modid= ObjectHolderTest.MODID, name = "ObjectHolderTests", version = "1.0", acceptableRemoteVersions = "*")
+@Mod(modid = ObjectHolderTest.MODID, name = "ObjectHolderTests", version = "1.0", acceptableRemoteVersions = "*")
 public class ObjectHolderTest
 {
     public static final String MODID = "objectholdertest";
     public static IForgeRegistry registry;
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
+    public void init(FMLInitializationEvent event)
+    {
         //verifies @ObjectHolder with custom id
         assert VanillaObjectHolder.uiButtonClick != null;
         //verifies modded items work
@@ -36,8 +37,10 @@ public class ObjectHolderTest
 
     }
 
-    protected static class PotionForge extends Potion {
-        protected PotionForge(ResourceLocation location, boolean badEffect, int potionColor) {
+    protected static class PotionForge extends Potion
+    {
+        protected PotionForge(ResourceLocation location, boolean badEffect, int potionColor)
+        {
             super(badEffect, potionColor);
             setPotionName("potion." + location.getResourcePath());
             setRegistryName(location);
@@ -45,10 +48,12 @@ public class ObjectHolderTest
     }
 
     @Mod.EventBusSubscriber(modid = MODID)
-    public static class Registration {
+    public static class Registration
+    {
         @SubscribeEvent
-        public static void newRegistry(RegistryEvent.NewRegistry event) {
-            new RegistryBuilder()
+        public static void newRegistry(RegistryEvent.NewRegistry event)
+        {
+            new RegistryBuilder<ICustomRegistryEntry>()
                     .setType(ICustomRegistryEntry.class)
                     .setName(new ResourceLocation("object_holder_test_custom_registry"))
                     .setIDRange(0, 255)
@@ -56,14 +61,16 @@ public class ObjectHolderTest
         }
 
         @SubscribeEvent
-        public static void registerPotions(RegistryEvent.Register<Potion> event) {
+        public static void registerPotions(RegistryEvent.Register<Potion> event)
+        {
             event.getRegistry().register(
                     new ObjectHolderTest.PotionForge(new ResourceLocation(ObjectHolderTest.MODID, "forge_potion"), false, 0xff00ff) // test automatic id distribution
             );
         }
 
         @SubscribeEvent
-        public static void registerInterfaceRegistryForge(RegistryEvent.Register<ICustomRegistryEntry> event) {
+        public static void registerInterfaceRegistryForge(RegistryEvent.Register<ICustomRegistryEntry> event)
+        {
             event.getRegistry().register(
                     new CustomRegistryEntry().setRegistryName(new ResourceLocation(MODID, "custom_entry_by_interface"))
             );
@@ -93,13 +100,14 @@ class CustomRegistryEntry implements ICustomRegistryEntry
     }
 
     @Override
-    public Class<? super ICustomRegistryEntry> getRegistryType()
+    public Class<ICustomRegistryEntry> getRegistryType()
     {
         return ICustomRegistryEntry.class;
     }
 }
 
-interface ICustomRegistryEntry extends IForgeRegistryEntry<ICustomRegistryEntry> {
+interface ICustomRegistryEntry extends IForgeRegistryEntry<ICustomRegistryEntry>
+{
 
 }
 

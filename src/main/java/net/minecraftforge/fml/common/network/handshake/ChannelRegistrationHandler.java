@@ -59,7 +59,7 @@ public class ChannelRegistrationHandler extends SimpleChannelInboundHandler<FMLP
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
-        FMLLog.log(Level.ERROR, cause, "ChannelRegistrationHandler exception");
+        FMLLog.log.error("ChannelRegistrationHandler exception", cause);
         super.exceptionCaught(ctx, cause);
     }
 }

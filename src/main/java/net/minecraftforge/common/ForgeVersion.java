@@ -37,6 +37,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
@@ -58,7 +60,7 @@ public class ForgeVersion
     //This number is incremented every minecraft release, never reset
     public static final int minorVersion    = 20;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
-    public static final int revisionVersion = 0;
+    public static final int revisionVersion = 1;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
@@ -69,6 +71,8 @@ public class ForgeVersion
     private static Status status = PENDING;
     @SuppressWarnings("unused")
     private static String target = null;
+
+    private static final Logger log = LogManager.getLogger("ForgeVersionCheck");
 
     public static int getMajorVersion()
     {
@@ -186,7 +190,7 @@ public class ForgeVersion
             {
                 if (!ForgeModContainer.getConfig().get(ForgeModContainer.VERSION_CHECK_CAT, "Global", true).getBoolean())
                 {
-                    FMLLog.log("ForgeVersionCheck", Level.INFO, "Global Forge version check system disabled, no further processing.");
+                    log.info("Global Forge version check system disabled, no further processing.");
                     return;
                 }
 
@@ -199,7 +203,7 @@ public class ForgeVersion
                     }
                     else
                     {
-                        FMLLog.log("ForgeVersionCheck", Level.INFO, "[%s] Skipped version check", mod.getModId());
+                        log.info("[{}] Skipped version check", mod.getModId());
                     }
                 }
             }
@@ -208,7 +212,7 @@ public class ForgeVersion
             {
                 try
                 {
-                    FMLLog.log("ForgeVersionCheck", Level.INFO, "[%s] Starting version check at %s", mod.getModId(), url.toString());
+                    log.info("[{}] Starting version check at {}", mod.getModId(), url.toString());
                     Status status = PENDING;
                     ComparableVersion target = null;
 
@@ -216,7 +220,7 @@ public class ForgeVersion
                     String data = new String(ByteStreams.toByteArray(con), "UTF-8");
                     con.close();
 
-                    FMLLog.log("ForgeVersionCheck", Level.DEBUG, "[%s] Received version check data:\n%s", mod.getModId(), data);
+                    log.debug("[{}] Received version check data:\n{}", mod.getModId(), data);
 
 
                     @SuppressWarnings("unchecked")
@@ -269,7 +273,7 @@ public class ForgeVersion
                     else
                         status = BETA;
 
-                    FMLLog.log("ForgeVersionCheck", Level.INFO, "[%s] Found status: %s Target: %s", mod.getModId(), status, target);
+                    log.info("[{}] Found status: {} Target: {}", mod.getModId(), status, target);
 
                     Map<ComparableVersion, String> changes = new LinkedHashMap<ComparableVersion, String>();
                     @SuppressWarnings("unchecked")
@@ -298,7 +302,7 @@ public class ForgeVersion
                 }
                 catch (Exception e)
                 {
-                    FMLLog.log("ForgeVersionCheck", Level.DEBUG, e, "Failed to process update information");
+                    log.debug("Failed to process update information", e);
                     status = FAILED;
                 }
             }

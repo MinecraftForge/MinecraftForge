@@ -1,6 +1,5 @@
 package net.minecraftforge.debug;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
@@ -24,14 +23,20 @@ import java.util.List;
  * 3. Drink incurable_potion from Brewing creative tab
  * 4. Relog to test that changes to curative items persist, then try drinking milk and eating medicine: they should have no effect
  */
-@Mod(modid = PotionCurativeItemDebug.MOD_ID)
+@Mod(modid = PotionCurativeItemDebug.MOD_ID, name = "Potion Curative Item Debug", version = "1.0", acceptableRemoteVersions = "*")
 public class PotionCurativeItemDebug
 {
+    public static final boolean ENABLED = false;
     public static final String MOD_ID = "potion_curative_item_debug";
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt)
     {
+        if (!ENABLED)
+        {
+            return;
+        }
+
         Item medicine = new Medicine().setRegistryName(MOD_ID, "medicine");
         GameRegistry.register(medicine);
 

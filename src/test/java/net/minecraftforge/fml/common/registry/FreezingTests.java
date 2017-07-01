@@ -8,7 +8,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Created by cpw on 04/07/16.
@@ -25,8 +26,10 @@ public class FreezingTests
     private static RTest r6;
     private static PersistentRegistryManager.GameDataSnapshot ss;
 
-    static class RTest extends IForgeRegistryEntry.Impl<RTest> {
-        public RTest(String name) {
+    static class RTest extends IForgeRegistryEntry.Impl<RTest>
+    {
+        public RTest(String name)
+        {
             setRegistryName(name);
         }
     }
@@ -70,7 +73,7 @@ public class FreezingTests
         PersistentRegistryManager.findRegistryByType(RTest.class).register(r5);
         PersistentRegistryManager.findRegistryByType(RTest.class).register(r4);
         PersistentRegistryManager.findRegistryByType(RTest.class).register(r3);
-        FMLControlledNamespacedRegistry<RTest> r = (FMLControlledNamespacedRegistry)PersistentRegistryManager.findRegistry(r3);
+        FMLControlledNamespacedRegistry<RTest> r = (FMLControlledNamespacedRegistry) PersistentRegistryManager.findRegistry(r3);
         int r3id = r.getId(r3);
         PersistentRegistryManager.freezeData();
         RTest q1 = PersistentRegistryManager.PersistentRegistry.FROZEN.getRegistry(RTest.class).getValue(new ResourceLocation("test3"));

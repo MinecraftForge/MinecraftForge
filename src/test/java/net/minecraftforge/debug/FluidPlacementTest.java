@@ -9,14 +9,22 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemBucketMilk;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.BlockFluidFinite;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.Mod;
@@ -33,7 +41,7 @@ import java.util.List;
 
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
-@Mod(modid = FluidPlacementTest.MODID, name = "ForgeDebugFluidPlacement", version = FluidPlacementTest.VERSION)
+@Mod(modid = FluidPlacementTest.MODID, name = "ForgeDebugFluidPlacement", version = FluidPlacementTest.VERSION, acceptableRemoteVersions = "*")
 public class FluidPlacementTest
 {
     public static final String MODID = "forgedebugfluidplacement";
@@ -168,7 +176,7 @@ public class FluidPlacementTest
             public int fill(FluidStack resource, boolean doFill)
             {
                 if (container.getCount() != 1 || resource == null || resource.amount > Fluid.BUCKET_VOLUME || container
-                    .getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
+                        .getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
                 {
                     return 0;
                 }
@@ -219,7 +227,9 @@ public class FluidPlacementTest
         {
             container = container.copy();
             if (container.getTagCompound() != null)
+            {
                 container.setTagCompound(container.getTagCompound().getCompoundTag(FLUID_NBT_KEY));
+            }
             return super.getFluid(container);
         }
 

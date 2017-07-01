@@ -18,10 +18,8 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import java.util.Random;
-
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Random;
 
 @Mod(modid = ItemLayerModelDebug.MODID, name = "ForgeDebugItemLayerModel", version = ItemLayerModelDebug.VERSION, acceptableRemoteVersions = "*")
 public class ItemLayerModelDebug
@@ -33,7 +31,10 @@ public class ItemLayerModelDebug
     public static CommonProxy proxy;
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        proxy.preInit(event);
+    }
 
     public static class CommonProxy
     {
@@ -43,11 +44,14 @@ public class ItemLayerModelDebug
         }
     }
 
-    public static class ServerProxy extends CommonProxy {}
+    public static class ServerProxy extends CommonProxy
+    {
+    }
 
     public static class ClientProxy extends CommonProxy
     {
         private static ModelResourceLocation modelLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestItem.name, "inventory");
+
         @Override
         public void preInit(FMLPreInitializationEvent event)
         {
@@ -94,16 +98,19 @@ public class ItemLayerModelDebug
         }
 
         @Override
-        public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
+        public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState)
+        {
             // This tool is a super pickaxe if the player is wearing a helment
-            if("pickaxe".equals(toolClass) && player != null && !player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
+            if ("pickaxe".equals(toolClass) && player != null && !player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty())
+            {
                 return 5;
             }
             return super.getHarvestLevel(stack, toolClass, player, blockState);
         }
 
         @Override
-        public float getStrVsBlock(ItemStack stack, IBlockState state) {
+        public float getStrVsBlock(ItemStack stack, IBlockState state)
+        {
             return 10f;
         }
     }

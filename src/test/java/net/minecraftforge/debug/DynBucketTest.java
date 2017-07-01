@@ -20,14 +20,13 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
@@ -57,6 +56,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,6 +71,7 @@ public class DynBucketTest
     private static final ResourceLocation testItemName = new ResourceLocation(MODID, "testitem");
 
     private static final boolean ENABLE = true;
+    private static Logger logger;
 
     static
     {
@@ -101,7 +102,9 @@ public class DynBucketTest
         void setupModels()
         {
             if (!ENABLE || !ModelFluidDebug.ENABLE)
+            {
                 return;
+            }
 
             ModelLoader.setBucketModelDefinition(dynBucket);
 
@@ -125,8 +128,11 @@ public class DynBucketTest
     public void preInit(FMLPreInitializationEvent event)
     {
         if (!ENABLE || !ModelFluidDebug.ENABLE)
+        {
             return;
+        }
 
+        logger = event.getModLog();
         GameRegistry.register(new TestItem(), testItemName);
         Block tank = new BlockSimpleTank();
         GameRegistry.register(tank, simpleTankName);
@@ -173,13 +179,16 @@ public class DynBucketTest
         }
     }
 
-    public static class TestItem extends Item {
+    public static class TestItem extends Item
+    {
         @Override
         public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand)
         {
             ItemStack itemStackIn = playerIn.getHeldItem(hand);
-            if(worldIn.isRemote)
+            if (worldIn.isRemote)
+            {
                 return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStackIn);
+            }
 
             ItemStackHandler handler = new ItemStackHandler(5);
             ItemStackHandler handler2 = new ItemStackHandler(5);
@@ -197,16 +206,19 @@ public class DynBucketTest
             handler2.setStackInSlot(3, new ItemStack(Blocks.LOG));
             handler2.setStackInSlot(4, new ItemStack(Blocks.DIAMOND_BLOCK));
 
-            for (int i = 0; i < handler.getSlots(); i++) {
-                System.out.println("Expected 1: " + handler.getStackInSlot(i));
+            for (int i = 0; i < handler.getSlots(); i++)
+            {
+                logger.info("Expected 1: {}", handler.getStackInSlot(i));
             }
 
-            for (int i = 0; i < handler2.getSlots(); i++) {
-                System.out.println("Expected 2: " + handler2.getStackInSlot(i));
+            for (int i = 0; i < handler2.getSlots(); i++)
+            {
+                logger.info("Expected 2: {}", handler2.getStackInSlot(i));
             }
 
-            for (int i = 0; i < joined.getSlots(); i++) {
-                System.out.println("Joined: " + joined.getStackInSlot(i));
+            for (int i = 0; i < joined.getSlots(); i++)
+            {
+                logger.info("Joined: {}", joined.getStackInSlot(i));
             }
 
             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
@@ -230,7 +242,9 @@ public class DynBucketTest
             {
                 ItemStack bucket = new ItemStack(this, 1, i);
                 if (FluidUtil.getFluidContained(bucket) != null)
+                {
                     subItems.add(bucket);
+                }
             }
         }
     }
@@ -269,7 +283,8 @@ public class DynBucketTest
         {
             ItemStack heldItem = playerIn.getHeldItem(hand);
             IFluidHandler tank = FluidUtil.getFluidHandler(worldIn, pos, side.getOpposite());
-            if (tank == null) {
+            if (tank == null)
+            {
                 return false;
             }
 
@@ -280,7 +295,7 @@ public class DynBucketTest
             }
 
             // do the thing with the tank and the buckets
-            if (FluidUtil.interactWithFluidHandler(heldItem, tank, playerIn).isSuccess())
+            if (FluidUtil.interactWithFluidHandler(playerIn, hand, worldIn, pos, side))
             {
                 return true;
             }
@@ -302,7 +317,8 @@ public class DynBucketTest
                 if (tankProperties.length > 0 && tankProperties[0] != null && tankProperties[0].getContents() != null)
                 {
                     text = tankProperties[0].getContents().amount + "x " + tankProperties[0].getContents().getLocalizedName();
-                } else
+                }
+                else
                 {
                     text = "empty";
                 }
@@ -331,14 +347,16 @@ public class DynBucketTest
         }
 
         @Override
-        public SPacketUpdateTileEntity getUpdatePacket() {
+        public SPacketUpdateTileEntity getUpdatePacket()
+        {
             NBTTagCompound tag = new NBTTagCompound();
             tag = writeToNBT(tag);
             return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
         }
 
         @Override
-        public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
+        {
             super.onDataPacket(net, pkt);
             readFromNBT(pkt.getNbtCompound());
         }

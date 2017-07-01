@@ -27,9 +27,11 @@ import static org.junit.Assert.assertNotEquals;
 public class ItemBlockSubstitutionRemoveRestoreTest
 {
     private ResourceLocation myDirt = new ResourceLocation("minecraft:dirt");
+
     private static class ItemMyDirt extends ItemMultiTexture
     {
-        public ItemMyDirt() {
+        public ItemMyDirt()
+        {
             super(Blocks.DIRT, Blocks.DIRT, new Mapper()
             {
                 @Nonnull
@@ -40,15 +42,18 @@ public class ItemBlockSubstitutionRemoveRestoreTest
             });
         }
     }
+
     private static ItemMyDirt myDirtInstance;
     private static Item originalDirt;
+
     @BeforeClass
     public static void setup()
     {
         Loader.instance();
         Bootstrap.register();
         myDirtInstance = new ItemMyDirt();
-        Loader.instance().setupTestHarness(new DummyModContainer(new ModMetadata() {{
+        Loader.instance().setupTestHarness(new DummyModContainer(new ModMetadata()
+        {{
             modId = "test";
         }}));
         originalDirt = new ItemStack(Blocks.DIRT).getItem();
@@ -61,10 +66,10 @@ public class ItemBlockSubstitutionRemoveRestoreTest
         PersistentRegistryManager.freezeData();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
 
-        final FMLControlledNamespacedRegistry<Item> itemRegistry = (FMLControlledNamespacedRegistry<Item>)PersistentRegistryManager.findRegistryByType(Item.class);
+        final FMLControlledNamespacedRegistry<Item> itemRegistry = (FMLControlledNamespacedRegistry<Item>) PersistentRegistryManager.findRegistryByType(Item.class);
 
         // TEST 1: Does my substitute take effect? The substitute should be found in the registry
-        ItemBlock dirtitem = (ItemBlock)itemRegistry.getValue(myDirt);
+        ItemBlock dirtitem = (ItemBlock) itemRegistry.getValue(myDirt);
         assertEquals("ItemBlock points at my block", myDirtInstance, dirtitem);
 
         // TEST 2: Does the substitute get removed when told by remote operation? The substitute should NOT be found in the registry
@@ -73,14 +78,14 @@ public class ItemBlockSubstitutionRemoveRestoreTest
         PersistentRegistryManager.injectSnapshot(snapshot, false, false);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
 
-        dirtitem = (ItemBlock)itemRegistry.getValue(myDirt);
+        dirtitem = (ItemBlock) itemRegistry.getValue(myDirt);
         assertEquals("ItemBlock points at vanilla block", originalDirt, dirtitem);
         assertNotEquals("ItemBlock points at my block", myDirtInstance, dirtitem);
 
         // TEST 3: Does the substitute get restored when reverting to frozen state? The substitute should be found in the registry again
         PersistentRegistryManager.revertToFrozen();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
-        dirtitem = (ItemBlock)itemRegistry.getValue(myDirt);
+        dirtitem = (ItemBlock) itemRegistry.getValue(myDirt);
         assertEquals("ItemBlock points at my block", myDirtInstance, dirtitem);
     }
 }

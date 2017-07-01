@@ -115,6 +115,10 @@ public class SplashProgress
     private static int memoryLowColor;
     private static float memoryColorPercent;
     private static long memoryColorChangeTime;
+    static boolean isDisplayVSyncForced = false;
+    private static final int TIMING_FRAME_COUNT = 200;
+    private static final int TIMING_FRAME_THRESHOLD = TIMING_FRAME_COUNT * 5 * 1000000; // 5 ms per frame, scaled to nanos
+
     static final Semaphore mutex = new Semaphore(1);
 
     private static String getString(String name, String def)
@@ -156,7 +160,7 @@ public class SplashProgress
         }
         catch(IOException e)
         {
-            FMLLog.info("Could not load splash.properties, will create a default one");
+            FMLLog.log.info("Could not load splash.properties, will create a default one");
         }
         finally
         {
@@ -184,7 +188,7 @@ public class SplashProgress
         memoryLowColor =     getHex("memoryLow",     0xE42F2F);
 
         final ResourceLocation fontLoc = new ResourceLocation(getString("fontTexture", "textures/font/ascii.png"));
-        final ResourceLocation logoLoc = new ResourceLocation(getString("logoTexture", "textures/gui/title/mojang.png"));
+        final ResourceLocation logoLoc = new ResourceLocation("textures/gui/title/mojang.png");
         final ResourceLocation forgeLoc = new ResourceLocation(getString("forgeTexture", "fml:textures/gui/forge.png"));
         final ResourceLocation forgeFallbackLoc = new ResourceLocation("fml:textures/gui/forge.png");
 
@@ -198,7 +202,7 @@ public class SplashProgress
         }
         catch(IOException e)
         {
-            FMLLog.log(Level.ERROR, e, "Could not save the splash.properties file");
+            FMLLog.log.error("Could not save the splash.properties file", e);
         }
         finally
         {
@@ -224,13 +228,10 @@ public class SplashProgress
                 return "GL info";
             }
         });
-        CrashReport report = CrashReport.makeCrashReport(new Throwable()
-        {
-            @Override public String getMessage(){ return "This is just a prompt for computer specs to be printed. THIS IS NOT A ERROR"; }
-            @Override public void printStackTrace(final PrintWriter s){ s.println(getMessage()); }
-            @Override public void printStackTrace(final PrintStream s) { s.println(getMessage()); }
-        }, "Loading screen debug info");
-        System.out.println(report.getCompleteReport());
+        CrashReport report = CrashReport.makeCrashReport(new Throwable(), "Loading screen debug info");
+        StringBuilder systemDetailsBuilder = new StringBuilder();
+        report.getCategory().appendToStringBuilder(systemDetailsBuilder);
+        FMLLog.log.info(systemDetailsBuilder.toString());
 
         try
         {
@@ -254,7 +255,8 @@ public class SplashProgress
             private final int barHeight = 20;
             private final int textHeight2 = 20;
             private final int barOffset = 55;
-
+            private long updateTiming;
+            private long framecount;
             public void run()
             {
                 setGL();
@@ -266,6 +268,7 @@ public class SplashProgress
                 glDisable(GL_TEXTURE_2D);
                 while(!done)
                 {
+                    framecount++;
                     ProgressBar first = null, penult = null, last = null;
                     Iterator<ProgressBar> i = ProgressManager.barIterator();
                     while(i.hasNext())
@@ -337,7 +340,7 @@ public class SplashProgress
                     angle += 1;
 
                     // forge logo
-                    setColor(backgroundColor);
+                    glColor4f(1, 1, 1, 1);
                     float fw = (float)forgeTexture.getWidth() / 2;
                     float fh = (float)forgeTexture.getHeight() / 2;
                     if(rotate)
@@ -371,16 +374,40 @@ public class SplashProgress
                     // is trying to impose a framerate or other thing is occurring. Without the mutex, the main
                     // thread would delay waiting for the same global display lock
                     mutex.acquireUninterruptibly();
+                    long updateStart = System.nanoTime();
                     Display.update();
                     // As soon as we're done, we release the mutex. The other thread can now ping the processmessages
                     // call as often as it wants until we get get back here again
+                    long dur = System.nanoTime() - updateStart;
+                    if (framecount < TIMING_FRAME_COUNT) {
+                        updateTiming += dur;
+                    }
                     mutex.release();
                     if(pause)
                     {
                         clearGL();
                         setGL();
                     }
-                    Display.sync(100);
+                    // Such a hack - if the time taken is greater than 10 milliseconds, we're gonna guess that we're on a
+                    // system where vsync is forced through the swapBuffers call - so we have to force a sleep and let the
+                    // loading thread have a turn - some badly designed mods access Keyboard and therefore GlobalLock.lock
+                    // during splash screen, and mutex against the above Display.update call as a result.
+                    // 4 milliseconds is a guess - but it should be enough to trigger in most circumstances. (Maybe if
+                    // 240FPS is possible, this won't fire?)
+                    if (framecount >= TIMING_FRAME_COUNT && updateTiming > TIMING_FRAME_THRESHOLD) {
+                        if (!isDisplayVSyncForced)
+                        {
+                            isDisplayVSyncForced = true;
+                            FMLLog.log.info("Using alternative sync timing : {} frames of Display.update took {} nanos", TIMING_FRAME_COUNT, updateTiming);
+                        }
+                        try { Thread.sleep(16); } catch (InterruptedException ie) {}
+                    } else
+                    {
+                        if (framecount ==TIMING_FRAME_COUNT) {
+                            FMLLog.log.info("Using sync timing. {} frames of Display.update took {} nanos", TIMING_FRAME_COUNT, updateTiming);
+                        }
+                        Display.sync(100);
+                    }
                 }
                 clearGL();
             }
@@ -464,7 +491,7 @@ public class SplashProgress
                     memoryColorChangeTime = time;
                     memoryColorPercent = usedMemoryPercent;
                 }
-                
+
                 int memoryBarColor;
                 if (memoryColorPercent < 0.75f)
                 {
@@ -550,7 +577,7 @@ public class SplashProgress
         {
             public void uncaughtException(Thread t, Throwable e)
             {
-                FMLLog.log(Level.ERROR, e, "Splash thread Exception");
+                FMLLog.log.error("Splash thread Exception", e);
                 threadError = e;
             }
         });
@@ -699,7 +726,7 @@ public class SplashProgress
         }
         catch(IOException e)
         {
-            FMLLog.log(Level.ERROR, e, "Could not save the splash.properties file");
+            FMLLog.log.error("Could not save the splash.properties file", e);
             return false;
         }
         finally
@@ -923,9 +950,9 @@ public class SplashProgress
         }
     }
 
-    private static InputStream open(ResourceLocation loc, @Nullable ResourceLocation fallback, boolean allowRP) throws IOException
+    private static InputStream open(ResourceLocation loc, @Nullable ResourceLocation fallback, boolean allowResourcePack) throws IOException
     {
-        if (!allowRP)
+        if (!allowResourcePack)
             return mcPack.getInputStream(loc);
 
         if(miscPack.resourceExists(loc))

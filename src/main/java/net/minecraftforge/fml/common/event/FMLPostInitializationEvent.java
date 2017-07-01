@@ -81,7 +81,7 @@ public class FMLPostInitializationEvent extends FMLStateEvent
             }
             catch (Exception e)
             {
-                FMLLog.getLogger().log(Level.INFO, "An error occurred trying to build a soft depend proxy",e);
+                FMLLog.log.info("An error occurred trying to build a soft depend proxy", e);
                 return Optional.absent();
             }
         }
