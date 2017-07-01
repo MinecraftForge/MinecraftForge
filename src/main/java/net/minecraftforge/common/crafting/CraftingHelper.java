@@ -218,7 +218,13 @@ public class CraftingHelper {
             // Lets hope this works? Needs test
             try
             {
-                NBTTagCompound nbt = JsonToNBT.getTagFromJson(GSON.toJson(json.get("nbt")));
+                JsonElement element = json.get("nbt");
+                NBTTagCompound nbt;
+                if(element.isJsonObject())
+                    nbt = JsonToNBT.getTagFromJson(GSON.toJson(element));
+                else
+                    nbt = JsonToNBT.getTagFromJson(element.getAsString());
+
                 NBTTagCompound tmp = new NBTTagCompound();
                 if (nbt.hasKey("ForgeCaps"))
                 {
