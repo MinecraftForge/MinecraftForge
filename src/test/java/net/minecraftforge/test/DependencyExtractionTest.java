@@ -20,9 +20,11 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class DependencyExtractionTest
 {
