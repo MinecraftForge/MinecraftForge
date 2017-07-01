@@ -301,7 +301,8 @@
      {
 +        net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_70999_1_, p_70999_2_, p_70999_3_);
          this.func_70105_a(0.6F, 1.8F);
-         IBlockState iblockstate = this.field_70170_p.func_180495_p(this.field_71081_bT);
+-        IBlockState iblockstate = this.field_70170_p.func_180495_p(this.field_71081_bT);
++        IBlockState iblockstate = this.field_71081_bT != null ? this.field_70170_p.func_180495_p(this.field_71081_bT) : null;
  
 -        if (this.field_71081_bT != null && iblockstate.func_177230_c() == Blocks.field_150324_C)
 +        if (this.field_71081_bT != null && iblockstate.func_177230_c().isBed(iblockstate, field_70170_p, field_71081_bT, this))
