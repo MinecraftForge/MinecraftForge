@@ -431,7 +431,7 @@ public class LightingEngine
 
             final MutableBlockPos nPos = this.neighborsPos[index];
 
-            final Chunk nChunk = this.posToChunk(nPos);
+            final Chunk nChunk = this.neighborsChunk[index];
 
             if (nChunk == null)
             {
