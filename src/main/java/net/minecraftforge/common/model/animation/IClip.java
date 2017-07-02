@@ -29,5 +29,5 @@ public interface IClip
 {
     IJointClip apply(IJoint joint);
 
-    Iterable<Event> pastEvents(float lastPollTime, float time);
+    Iterable<Event> pastEvents(double lastPollTime, double time);
 }

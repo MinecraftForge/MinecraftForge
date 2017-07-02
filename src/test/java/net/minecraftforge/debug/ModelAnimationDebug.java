@@ -205,7 +205,7 @@ public class ModelAnimationDebug
             ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, new AnimationTESR<Chest>()
             {
                 @Override
-                public void handleEvents(Chest chest, float time, Iterable<Event> pastEvents)
+                public void handleEvents(Chest chest, double time, Iterable<Event> pastEvents)
                 {
                     chest.handleEvents(time, pastEvents);
                 }
@@ -231,7 +231,7 @@ public class ModelAnimationDebug
                     return new RenderLiving<EntityChest>(manager, new net.minecraftforge.client.model.animation.AnimationModelBase<EntityChest>(location, new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()))
                     {
                         @Override
-                        public void handleEvents(EntityChest chest, float time, Iterable<Event> pastEvents)
+                        public void handleEvents(EntityChest chest, double time, Iterable<Event> pastEvents)
                         {
                             chest.handleEvents(time, pastEvents);
                         }
@@ -317,7 +317,7 @@ public class ModelAnimationDebug
             ));
         }
 
-        public void handleEvents(float time, Iterable<Event> pastEvents)
+        public void handleEvents(double time, Iterable<Event> pastEvents)
         {
             for (Event event : pastEvents)
             {
@@ -355,7 +355,7 @@ public class ModelAnimationDebug
                 }*/
                 else if (asm.currentState().equals("default"))
                 {
-                    float time = Animation.getWorldTime(getWorld(), Animation.getPartialTickTime());
+                    double time = Animation.getWorldTime(getWorld(), Animation.getPartialTickTime());
                     clickTime.setValue(time);
                     //offset.setValue(time);
                     //asm.transition("moving");
@@ -405,7 +405,7 @@ public class ModelAnimationDebug
             ));
         }
 
-        public void handleEvents(float time, Iterable<Event> pastEvents)
+        public void handleEvents(double time, Iterable<Event> pastEvents)
         {
             // TODO Auto-generated method stub
         }

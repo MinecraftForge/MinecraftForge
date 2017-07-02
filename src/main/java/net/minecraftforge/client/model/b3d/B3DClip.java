@@ -47,7 +47,7 @@ public enum B3DClip implements IClip
     }
 
     @Override
-    public Iterable<Event> pastEvents(float lastPollTime, float time)
+    public Iterable<Event> pastEvents(double lastPollTime, double time)
     {
         return ImmutableSet.of();
     }
@@ -62,7 +62,7 @@ public enum B3DClip implements IClip
         }
 
         @Override
-        public TRSRTransformation apply(float time)
+        public TRSRTransformation apply(double time)
         {
             TRSRTransformation ret = TRSRTransformation.identity();
             if(node.getAnimation() == null)
@@ -71,7 +71,7 @@ public enum B3DClip implements IClip
             }
             int start = Math.max(1, (int)Math.round(Math.floor(time)));
             int end = Math.min(start + 1, (int)Math.round(Math.ceil(time)));
-            float progress = time - (float)Math.floor(time);
+            double progress = time - Math.floor(time);
             Key keyStart = node.getAnimation().getKeys().get(start, node);
             Key keyEnd = node.getAnimation().getKeys().get(end, node);
             TRSRTransformation startTr = keyStart == null ? null : new TRSRTransformation(keyStart.getPos(), keyStart.getRot(),keyStart.getScale(), null);
@@ -94,7 +94,7 @@ public enum B3DClip implements IClip
             }
             else
             {
-                ret = ret.compose(startTr.slerp(endTr, progress));
+                ret = ret.compose(startTr.slerp(endTr, (float)progress));
             }
             return ret;
         }

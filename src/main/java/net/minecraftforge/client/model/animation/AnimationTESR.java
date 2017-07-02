@@ -65,7 +65,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
             IExtendedBlockState exState = (IExtendedBlockState)state;
             if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
             {
-                float time = Animation.getWorldTime(getWorld(), partialTick);
+                double time = Animation.getWorldTime(getWorld(), partialTick);
                 IAnimationStateMachine capability = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
                 if (capability != null)
                 {
@@ -85,5 +85,5 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
     }
 
     @Override
-    public void handleEvents(T te, float time, Iterable<Event> pastEvents) {}
+    public void handleEvents(T te, double time, Iterable<Event> pastEvents) {}
 }

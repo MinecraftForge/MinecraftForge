@@ -26,5 +26,5 @@ package net.minecraftforge.common.animation;
  */
 public interface IEventHandler<T>
 {
-    void handleEvents(T instance, float time, Iterable<Event> pastEvents);
+    void handleEvents(T instance, double time, Iterable<Event> pastEvents);
 }

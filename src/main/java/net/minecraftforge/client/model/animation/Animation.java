@@ -30,7 +30,7 @@ public enum Animation
     /**
      * Get the global world time for the current tick, in seconds.
      */
-    public static float getWorldTime(World world)
+    public static double getWorldTime(World world)
     {
         return getWorldTime(world, 0);
     }
@@ -38,9 +38,9 @@ public enum Animation
     /**
      * Get the global world time for the current tick + partial tick progress, in seconds.
      */
-    public static float getWorldTime(World world, float tickProgress)
+    public static double getWorldTime(World world, float tickProgress)
     {
-        return (world.getTotalWorldTime() + tickProgress) / 20;
+        return ((double)world.getTotalWorldTime() + tickProgress) / 20;
     }
 
     /**

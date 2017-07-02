@@ -47,7 +47,7 @@ public final class TimeValues
         INSTANCE;
 
         @Override
-        public float apply(float input)
+        public double apply(double input)
         {
             return input;
         }
@@ -61,15 +61,15 @@ public final class TimeValues
 
     public static final class ConstValue implements ITimeValue
     {
-        private final float output;
+        private final double output;
 
-        public ConstValue(float output)
+        public ConstValue(double output)
         {
             this.output = output;
         }
 
         @Override
-        public float apply(float input)
+        public double apply(double input)
         {
             return output;
         }
@@ -99,20 +99,20 @@ public final class TimeValues
      */
     public static final class VariableValue implements ITimeValue
     {
-        private float output;
+        private double output;
 
-        public VariableValue(float initialValue)
+        public VariableValue(double initialValue)
         {
             this.output = initialValue;
         }
 
-        public void setValue(float newValue)
+        public void setValue(double newValue)
         {
             this.output = newValue;
         }
 
         @Override
-        public float apply(float input)
+        public double apply(double input)
         {
             return output;
         }
@@ -151,12 +151,12 @@ public final class TimeValues
         }
 
         @Override
-        public float apply(float input)
+        public double apply(double input)
         {
-            float ret = input;
+            double ret = input;
             for(int i = 0; i < operators.length(); i++)
             {
-                float arg = args.get(i).apply(input);
+                double arg = args.get(i).apply(input);
                 switch(operators.charAt(i))
                 {
                     case '+': ret += arg; break;
@@ -165,10 +165,10 @@ public final class TimeValues
                     case '/': ret /= arg; break;
                     case 'm': ret = Math.min(ret, arg); break;
                     case 'M': ret = Math.max(ret, arg); break;
-                    case 'r': ret = (float)Math.floor(ret / arg) * arg; break;
-                    case 'R': ret = (float)Math.ceil(ret / arg) * arg; break;
+                    case 'r': ret = Math.floor(ret / arg) * arg; break;
+                    case 'R': ret = Math.ceil(ret / arg) * arg; break;
                     case 'f': ret -= Math.floor(ret / arg) * arg; break;
-                    case 'F': ret = (float)Math.ceil(ret / arg) * arg - ret; break;
+                    case 'F': ret = Math.ceil(ret / arg) * arg - ret; break;
                 }
             }
             return ret;
@@ -207,7 +207,7 @@ public final class TimeValues
         }
 
         @Override
-        public float apply(float input)
+        public double apply(double input)
         {
             return g.apply(f.apply(input));
         }
@@ -266,7 +266,7 @@ public final class TimeValues
         }
 
         @Override
-        public float apply(float input)
+        public double apply(double input)
         {
             resolve();
             return parameter.apply(input);
@@ -357,7 +357,7 @@ public final class TimeValues
                     switch(in.peek())
                     {
                     case NUMBER:
-                        return new ConstValue((float)in.nextDouble());
+                        return new ConstValue(in.nextDouble());
                     case BEGIN_ARRAY:
                         in.beginArray();
                         String type = in.nextString();

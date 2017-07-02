@@ -131,5 +131,5 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
     }
 
     @Override
-    public void handleEvents(T instance, float time, Iterable<Event> pastEvents) {}
+    public void handleEvents(T instance, double time, Iterable<Event> pastEvents) {}
 }

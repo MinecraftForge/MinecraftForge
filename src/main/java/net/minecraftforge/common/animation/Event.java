@@ -28,9 +28,9 @@ import com.google.common.base.MoreObjects;
 public final class Event implements Comparable<Event>
 {
     private final String event;
-    private final float offset;
+    private final double offset;
 
-    public Event(String event, float offset)
+    public Event(String event, double offset)
     {
         this.event = event;
         this.offset = offset;
@@ -47,7 +47,7 @@ public final class Event implements Comparable<Event>
     /**
      * @return how long ago the event happened, relative to the next event / first query time
      */
-    public float offset()
+    public double offset()
     {
         return offset;
     }
@@ -55,7 +55,7 @@ public final class Event implements Comparable<Event>
     @Override
     public int compareTo(Event event)
     {
-        return new Float(offset).compareTo(event.offset);
+        return new Double(offset).compareTo(event.offset);
     }
 
     @Override
