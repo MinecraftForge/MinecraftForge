@@ -127,7 +127,7 @@ public class EventBus implements IEventExceptionHandler
             Constructor<?> ctr = eventType.getConstructor();
             ctr.setAccessible(true);
             Event event = (Event)ctr.newInstance();
-            final ASMEventHandler asm = new ASMEventHandler(target, method, owner, IGenericEvent.class.isAssignableFrom(eventType));
+            final LambdaEventHandler asm = new LambdaEventHandler(target, method, owner, IGenericEvent.class.isAssignableFrom(eventType));
 
             IEventListener listener = asm;
             if (IContextSetter.class.isAssignableFrom(eventType))
@@ -151,7 +151,7 @@ public class EventBus implements IEventExceptionHandler
             ArrayList<IEventListener> others = listeners.computeIfAbsent(target, k -> new ArrayList<>());
             others.add(listener);
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             FMLLog.log.error("Error registering event handler: {} {} {}", owner, eventType, method, e);
         }
