@@ -238,7 +238,7 @@
                          {
 -                            f6 = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos).func_177230_c().field_149765_K * 0.91F;
 +                            IBlockState underState = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
-+                            f6 = underState.func_177230_c().getSlipperiness(underState, this.field_70170_p, blockpos$pooledmutableblockpos, this)* 0.91F;
++                            f6 = underState.func_177230_c().getSlipperiness(underState, this.field_70170_p, blockpos$pooledmutableblockpos, this) * 0.91F;
                          }
  
                          float f7 = 0.16277136F / (f6 * f6 * f6);
