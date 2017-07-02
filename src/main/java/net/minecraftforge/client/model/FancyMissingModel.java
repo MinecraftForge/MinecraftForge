@@ -85,7 +85,7 @@ final class FancyMissingModel implements IModel
         return new BakedModel(bigMissing, smallMissing, fontCache.getUnchecked(format), message, bakedTextureGetter.apply(font2));
     }
 
-    private static final class BakedModel implements IBakedModel
+    static final class BakedModel implements IBakedModel
     {
         private final SimpleModelFontRenderer fontRenderer;
         private final String message;
