@@ -1,15 +1,16 @@
 package net.minecraftforge.fml.test;
 
-import static org.junit.Assert.*;
+import com.google.common.base.Strings;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-
 import org.junit.Test;
 
-import com.google.common.base.Strings;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-public class TestNetStuff {
+public class TestNetStuff
+{
 
     @Test
     public void testByteBufUtilsByteCount()
@@ -33,39 +34,39 @@ public class TestNetStuff {
     {
         ByteBuf buf = Unpooled.buffer(5, 5);
         ByteBufUtils.writeVarInt(buf, 1, 1);
-        assertArrayEquals("1 as byte[] is [1]", new byte[] { 1, 0, 0, 0, 0 }, buf.array());
+        assertArrayEquals("1 as byte[] is [1]", new byte[]{1, 0, 0, 0, 0}, buf.array());
 
         buf.clear();
         ByteBufUtils.writeVarInt(buf, 127, 1);
-        assertArrayEquals("127 as byte[] is [127]", new byte[] { 127, 0, 0, 0, 0 }, buf.array());
+        assertArrayEquals("127 as byte[] is [127]", new byte[]{127, 0, 0, 0, 0}, buf.array());
 
         buf.clear();
         ByteBufUtils.writeVarInt(buf, 128, 2);
-        assertArrayEquals("128 as byte[] is [-128, 1]", new byte[] { -128, 1, 0, 0, 0 }, buf.array());
+        assertArrayEquals("128 as byte[] is [-128, 1]", new byte[]{-128, 1, 0, 0, 0}, buf.array());
 
         buf.clear();
         ByteBufUtils.writeVarInt(buf, 16383, 2);
-        assertArrayEquals("16383 as byte[] is [-1, 127]", new byte[] { -1, 127, 0, 0, 0 }, buf.array());
+        assertArrayEquals("16383 as byte[] is [-1, 127]", new byte[]{-1, 127, 0, 0, 0}, buf.array());
 
         buf.clear();
         ByteBufUtils.writeVarInt(buf, 16384, 3);
-        assertArrayEquals("16384 as byte[] is [-1, -128, 1]", new byte[] { -128, -128, 1, 0, 0 }, buf.array());
+        assertArrayEquals("16384 as byte[] is [-1, -128, 1]", new byte[]{-128, -128, 1, 0, 0}, buf.array());
 
         buf.clear();
         ByteBufUtils.writeVarInt(buf, 2097151, 3);
-        assertArrayEquals("2097151 as byte[] is [-1, -1, 127]", new byte[] { -1, -1, 127, 0, 0 }, buf.array());
+        assertArrayEquals("2097151 as byte[] is [-1, -1, 127]", new byte[]{-1, -1, 127, 0, 0}, buf.array());
 
         buf.clear();
         ByteBufUtils.writeVarInt(buf, 2097152, 4);
-        assertArrayEquals("16384 as byte[] is [-128, -128, 1]", new byte[] { -128, -128, -128, 1, 0 }, buf.array());
+        assertArrayEquals("16384 as byte[] is [-128, -128, 1]", new byte[]{-128, -128, -128, 1, 0}, buf.array());
 
         buf.clear();
         ByteBufUtils.writeVarInt(buf, 268435455, 4);
-        assertArrayEquals("268435455 as byte[] is [-1, -1, -1, 127]", new byte[] { -1, -1, -1, 127, 0 }, buf.array());
+        assertArrayEquals("268435455 as byte[] is [-1, -1, -1, 127]", new byte[]{-1, -1, -1, 127, 0}, buf.array());
 
         buf.clear();
         ByteBufUtils.writeVarInt(buf, 268435456, 5);
-        assertArrayEquals("268435456 as byte[] is [-1, -128, 1]", new byte[] { -128, -128, -128, -128, 1 }, buf.array());
+        assertArrayEquals("268435456 as byte[] is [-1, -128, 1]", new byte[]{-128, -128, -128, -128, 1}, buf.array());
     }
 
     @Test
@@ -111,24 +112,24 @@ public class TestNetStuff {
     @Test
     public void testByteBufUtilsStrings()
     {
-        String test = new String("test");
+        String test = "test";
         ByteBuf buf = Unpooled.buffer(20, 20);
         ByteBufUtils.writeUTF8String(buf, test);
-        assertArrayEquals("String bytes", new byte[] { 4, 116, 101, 115, 116, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, buf.array());
+        assertArrayEquals("String bytes", new byte[]{4, 116, 101, 115, 116, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, buf.array());
 
         String repeat = Strings.repeat("test", 100);
         buf = Unpooled.buffer(420, 420);
         ByteBufUtils.writeUTF8String(buf, repeat);
-        assertArrayEquals("String repeat bytes", new byte[] {-112, 3, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, buf.array());
+        assertArrayEquals("String repeat bytes", new byte[]{-112, 3, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, buf.array());
     }
 
 
     @Test
     public void testVarShort()
     {
-        ByteBuf buf = Unpooled.buffer(3,3);
+        ByteBuf buf = Unpooled.buffer(3, 3);
         ByteBufUtils.writeVarShort(buf, 32766);
-        assertArrayEquals("Two byte short written", new byte[] { 127, -2, 0}, buf.array());
+        assertArrayEquals("Two byte short written", new byte[]{127, -2, 0}, buf.array());
         assertEquals("Two byte short written", 2, buf.readableBytes());
 
         buf.clear();
@@ -136,7 +137,7 @@ public class TestNetStuff {
         buf.clear();
 
         buf.writeShort(32766);
-        assertArrayEquals("Two byte short written", new byte[] { 127, -2, 0}, buf.array());
+        assertArrayEquals("Two byte short written", new byte[]{127, -2, 0}, buf.array());
         int val = ByteBufUtils.readVarShort(buf);
 
         assertEquals("Two byte short read correctly", 32766, val);
@@ -146,7 +147,7 @@ public class TestNetStuff {
         buf.clear();
 
         ByteBufUtils.writeVarShort(buf, 32768);
-        assertArrayEquals("Three byte short written", new byte[] { -128, 0, 1}, buf.array());
+        assertArrayEquals("Three byte short written", new byte[]{-128, 0, 1}, buf.array());
         assertEquals("Three byte short written", 3, buf.readableBytes());
 
         buf.clear();
@@ -162,7 +163,7 @@ public class TestNetStuff {
         buf.clear();
 
         ByteBufUtils.writeVarShort(buf, 8388607);
-        assertArrayEquals("Three byte short written", new byte[] { -1, -1, -1}, buf.array());
+        assertArrayEquals("Three byte short written", new byte[]{-1, -1, -1}, buf.array());
         assertEquals("Three byte short written", 3, buf.readableBytes());
 
         buf.clear();

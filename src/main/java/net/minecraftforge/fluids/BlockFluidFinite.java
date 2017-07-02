@@ -273,6 +273,7 @@ public class BlockFluidFinite extends BlockFluidBase
 
         if (doPlace)
         {
+            FluidUtil.destroyBlockOnFluidPlacement(world, pos);
             world.setBlockState(pos, getDefaultState().withProperty(LEVEL, quanta - 1), 11);
         }
 

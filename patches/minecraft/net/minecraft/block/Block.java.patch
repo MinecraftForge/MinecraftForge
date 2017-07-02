@@ -1,22 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -50,11 +50,12 @@
+@@ -52,11 +52,12 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class Block
-+public class Block extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Block>
++public class Block extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Block>
  {
      private static final ResourceLocation field_176230_a = new ResourceLocation("air");
--    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = new RegistryNamespacedDefaultedByKey(field_176230_a);
--    public static final ObjectIntIdentityMap<IBlockState> field_176229_d = new ObjectIntIdentityMap();
-+    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = net.minecraftforge.fml.common.registry.GameData.getBlockRegistry();
+-    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(field_176230_a);
+-    public static final ObjectIntIdentityMap<IBlockState> field_176229_d = new ObjectIntIdentityMap<IBlockState>();
++    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = net.minecraftforge.registries.GameData.getWrapperDefaulted(Block.class);
 +    @Deprecated //Modders: DO NOT use this! Use GameRegistry
-+    public static final ObjectIntIdentityMap<IBlockState> field_176229_d = net.minecraftforge.fml.common.registry.GameData.getBlockStateIDMap();
++    public static final ObjectIntIdentityMap<IBlockState> field_176229_d = net.minecraftforge.registries.GameData.getBlockStateIDMap();
      public static final AxisAlignedBB field_185505_j = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
      @Nullable
      public static final AxisAlignedBB field_185506_k = null;
-@@ -73,6 +74,7 @@
+@@ -75,6 +76,7 @@
      public float field_149763_I;
      protected final Material field_149764_J;
      protected final MapColor field_181083_K;
@@ -24,7 +24,7 @@
      public float field_149765_K;
      protected final BlockStateContainer field_176227_L;
      private IBlockState field_176228_M;
-@@ -307,7 +309,7 @@
+@@ -319,7 +321,7 @@
  
      public boolean func_176200_f(IBlockAccess p_176200_1_, BlockPos p_176200_2_)
      {
@@ -33,7 +33,7 @@
      }
  
      public Block func_149711_c(float p_149711_1_)
-@@ -345,9 +347,10 @@
+@@ -357,9 +359,10 @@
          return this.field_149789_z;
      }
  
@@ -45,7 +45,7 @@
      }
  
      @Deprecated
-@@ -360,13 +363,13 @@
+@@ -372,13 +375,13 @@
      @SideOnly(Side.CLIENT)
      public int func_185484_c(IBlockState p_185484_1_, IBlockAccess p_185484_2_, BlockPos p_185484_3_)
      {
@@ -61,7 +61,7 @@
          }
          else
          {
-@@ -430,7 +433,7 @@
+@@ -442,7 +445,7 @@
                  }
          }
  
@@ -69,8 +69,8 @@
 +        return !p_176225_2_.func_180495_p(p_176225_3_.func_177972_a(p_176225_4_)).doesSideBlockRendering(p_176225_2_, p_176225_3_.func_177972_a(p_176225_4_), p_176225_4_.func_176734_d());
      }
  
-     public boolean func_176212_b(IBlockAccess p_176212_1_, BlockPos p_176212_2_, EnumFacing p_176212_3_)
-@@ -521,6 +524,10 @@
+     @Deprecated
+@@ -534,6 +537,10 @@
  
      public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
@@ -81,17 +81,25 @@
      }
  
      public int func_149745_a(Random p_149745_1_)
-@@ -536,8 +543,7 @@
+@@ -549,16 +556,7 @@
      @Deprecated
      public float func_180647_a(IBlockState p_180647_1_, EntityPlayer p_180647_2_, World p_180647_3_, BlockPos p_180647_4_)
      {
 -        float f = p_180647_1_.func_185887_b(p_180647_3_, p_180647_4_);
--        return f < 0.0F ? 0.0F : (!p_180647_2_.func_184823_b(p_180647_1_) ? p_180647_2_.func_184813_a(p_180647_1_) / f / 100.0F : p_180647_2_.func_184813_a(p_180647_1_) / f / 30.0F);
+-
+-        if (f < 0.0F)
+-        {
+-            return 0.0F;
+-        }
+-        else
+-        {
+-            return !p_180647_2_.func_184823_b(p_180647_1_) ? p_180647_2_.func_184813_a(p_180647_1_) / f / 100.0F : p_180647_2_.func_184813_a(p_180647_1_) / f / 30.0F;
+-        }
 +        return net.minecraftforge.common.ForgeHooks.blockStrength(p_180647_1_, p_180647_2_, p_180647_3_, p_180647_4_);
      }
  
      public final void func_176226_b(World p_176226_1_, BlockPos p_176226_2_, IBlockState p_176226_3_, int p_176226_4_)
-@@ -547,20 +553,17 @@
+@@ -568,20 +566,16 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -99,12 +107,11 @@
 +        if (!p_180653_1_.field_72995_K && !p_180653_1_.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
          {
 -            int i = this.func_149679_a(p_180653_5_, p_180653_1_.field_73012_v);
-+            List<ItemStack> items = NonNullList.func_191196_a();
-+            items.addAll(getDrops(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_));
-+            p_180653_4_ = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_, p_180653_4_, false, harvesters.get());
++            List<ItemStack> drops = getDrops(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_); // use the old method until it gets removed, for backward compatibility
++            p_180653_4_ = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_, p_180653_4_, false, harvesters.get());
  
 -            for (int j = 0; j < i; ++j)
-+            for (ItemStack item : items)
++            for (ItemStack drop : drops)
              {
                  if (p_180653_1_.field_73012_v.nextFloat() <= p_180653_4_)
                  {
@@ -114,11 +121,11 @@
 -                    {
 -                        func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(item, 1, this.func_180651_a(p_180653_3_)));
 -                    }
-+                    func_180635_a(p_180653_1_, p_180653_2_, item);
++                    func_180635_a(p_180653_1_, p_180653_2_, drop);
                  }
              }
          }
-@@ -568,8 +571,13 @@
+@@ -589,8 +583,13 @@
  
      public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_)
      {
@@ -133,7 +140,15 @@
              float f = 0.5F;
              double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -636,7 +644,7 @@
+@@ -619,6 +618,7 @@
+         return 0;
+     }
+ 
++    @Deprecated //Forge: State sensitive version
+     public float func_149638_a(Entity p_149638_1_)
+     {
+         return this.field_149781_w / 5.0F;
+@@ -657,7 +657,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -142,7 +157,7 @@
      }
  
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)
-@@ -648,6 +656,8 @@
+@@ -669,6 +669,8 @@
      {
      }
  
@@ -151,7 +166,7 @@
      public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
      {
          return this.func_176203_a(p_180642_7_);
-@@ -689,21 +699,35 @@
+@@ -710,21 +712,35 @@
          p_180657_2_.func_71029_a(StatList.func_188055_a(this));
          p_180657_2_.func_71020_j(0.005F);
  
@@ -190,7 +205,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -789,6 +813,7 @@
+@@ -810,12 +826,12 @@
          p_176216_2_.field_70181_x = 0.0D;
      }
  
@@ -198,7 +213,21 @@
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
          return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
-@@ -893,6 +918,7 @@
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         p_149666_2_.add(new ItemStack(this));
+@@ -831,7 +847,6 @@
+     {
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public CreativeTabs func_149708_J()
+     {
+         return this.field_149772_a;
+@@ -921,6 +936,7 @@
          }
      }
  
@@ -206,7 +235,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -908,6 +934,1254 @@
+@@ -936,6 +952,1292 @@
      {
      }
  
@@ -322,6 +351,7 @@
 +     * @param side The side to check
 +     * @return True if the block is solid on the specified side.
 +     */
++    @Deprecated //Use IBlockState.getBlockFaceShape
 +    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side)
 +    {
 +        if (base_state.func_185896_q() && side == EnumFacing.UP) // Short circuit to vanilla function if its true
@@ -495,14 +525,12 @@
 +     */
 +    public boolean isFireSource(World world, BlockPos pos, EnumFacing side)
 +    {
-+        if (this == net.minecraft.init.Blocks.field_150424_aL && side == EnumFacing.UP)
-+        {
++        if (side != EnumFacing.UP)
++            return false;
++        if (this == Blocks.field_150424_aL || this == Blocks.field_189877_df)
 +            return true;
-+        }
-+        if ((world.field_73011_w instanceof net.minecraft.world.WorldProviderEnd) && this == net.minecraft.init.Blocks.field_150357_h && side == EnumFacing.UP)
-+        {
++        if ((world.field_73011_w instanceof net.minecraft.world.WorldProviderEnd) && this == Blocks.field_150357_h)
 +            return true;
-+        }
 +        return false;
 +    }
 +
@@ -555,30 +583,38 @@
 +    }
 +
 +    /**
-+     * This returns a complete list of items dropped from this block.
++     * @deprecated use {@link #getDrops(NonNullList, IBlockAccess, BlockPos, IBlockState, int)}
++     */
++    @Deprecated
++    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        NonNullList<ItemStack> ret = NonNullList.func_191196_a();
++        getDrops(ret, world, pos, state, fortune);
++        return ret;
++    }
++
++    /**
++     * This gets a complete list of items dropped from this block.
 +     *
++     * @param drops add all items this block drops to this drops list
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param state Current state
 +     * @param fortune Breakers fortune level
-+     * @return A ArrayList containing all items this block drops
 +     */
-+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
-+
 +        Random rand = world instanceof World ? ((World)world).field_73012_v : RANDOM;
 +
 +        int count = quantityDropped(state, fortune, rand);
-+        for(int i = 0; i < count; i++)
++        for (int i = 0; i < count; i++)
 +        {
 +            Item item = this.func_180660_a(state, rand, fortune);
 +            if (item != Items.field_190931_a)
 +            {
-+                ret.add(new ItemStack(item, 1, this.func_180651_a(state)));
++                drops.add(new ItemStack(item, 1, this.func_180651_a(state)));
 +            }
 +        }
-+        return ret;
 +    }
 +
 +    /**
@@ -766,7 +802,7 @@
 +    }
 +
 +    /**
-+     * Location sensitive version of getExplosionRestance
++     * Location sensitive version of getExplosionResistance
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
@@ -774,7 +810,7 @@
 +     * @param explosion The explosion
 +     * @return The amount of the explosion absorbed.
 +     */
-+    public float getExplosionResistance(World world, BlockPos pos, Entity exploder, Explosion explosion)
++    public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
 +    {
 +        return func_149638_a(exploder);
 +    }
@@ -820,13 +856,13 @@
 +     */
 +    public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        if (state.isSideSolid(world, pos, EnumFacing.UP))
++        if (state.func_193401_d(world, pos, EnumFacing.UP) == BlockFaceShape.SOLID)
 +        {
-+            return true;
++            return this != Blocks.field_185775_db && this != Blocks.field_150428_aP;
 +        }
 +        else
 +        {
-+            return this instanceof BlockFence || this == net.minecraft.init.Blocks.field_150359_w || this == net.minecraft.init.Blocks.field_150463_bK || this == net.minecraft.init.Blocks.field_150399_cn;
++            return this instanceof BlockFence || this == Blocks.field_150359_w || this == Blocks.field_150463_bK || this == Blocks.field_150399_cn;
 +        }
 +    }
 +
@@ -1365,21 +1401,15 @@
 +        return func_180664_k() == layer;
 +    }
 +    // For Internal use only to capture droped items inside getDrops
-+    protected static ThreadLocal<Boolean> captureDrops = new ThreadLocal<Boolean>()
-+    {
-+        @Override protected Boolean initialValue() { return false; }
-+    };
-+    protected static ThreadLocal<List<ItemStack>> capturedDrops = new ThreadLocal<List<ItemStack>>()
-+    {
-+        @Override protected List<ItemStack> initialValue() { return new java.util.ArrayList<ItemStack>(); }
-+    };
-+    protected List<ItemStack> captureDrops(boolean start)
++    protected static ThreadLocal<Boolean> captureDrops = ThreadLocal.withInitial(() -> false);
++    protected static ThreadLocal<NonNullList<ItemStack>> capturedDrops = ThreadLocal.withInitial(NonNullList::func_191196_a);
++    protected NonNullList<ItemStack> captureDrops(boolean start)
 +    {
 +        if (start)
 +        {
 +            captureDrops.set(true);
 +            capturedDrops.get().clear();
-+            return java.util.Collections.emptyList();
++            return NonNullList.func_191196_a();
 +        }
 +        else
 +        {
@@ -1412,6 +1442,43 @@
 +    public float[] getBeaconColorMultiplier(IBlockState state, World world, BlockPos pos, BlockPos beaconPos)
 +    {
 +        return null;
++    }
++
++    /**
++     * Use this to change the fog color used when the entity is "inside" a material.
++     * Vec3d is used here as "r/g/b" 0 - 1 values.
++     *
++     * @param world         The world.
++     * @param pos           The position at the entity viewport.
++     * @param state         The state at the entity viewport.
++     * @param entity        the entity
++     * @param originalColor The current fog color, You are not expected to use this, Return as the default if applicable.
++     * @return The new fog color.
++     */
++    @SideOnly (Side.CLIENT)
++    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
++    {
++        if (state.func_185904_a() == Material.field_151586_h)
++        {
++            float f12 = 0.0F;
++
++            if (entity instanceof net.minecraft.entity.EntityLivingBase)
++            {
++                net.minecraft.entity.EntityLivingBase ent = (net.minecraft.entity.EntityLivingBase)entity;
++                f12 = (float)net.minecraft.enchantment.EnchantmentHelper.func_185292_c(ent) * 0.2F;
++
++                if (ent.func_70644_a(net.minecraft.init.MobEffects.field_76427_o))
++                {
++                    f12 = f12 * 0.3F + 0.6F;
++                }
++            }
++            return new Vec3d(0.02F + f12, 0.02F + f12, 0.2F + f12);
++        }
++        else if (state.func_185904_a() == Material.field_151587_i)
++        {
++            return new Vec3d(0.6F, 0.1F, 0.0F);
++        }
++        return originalColor;
 +    }
 +
 +    /**
@@ -1461,19 +1528,19 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1201,14 +2475,7 @@
+@@ -1247,14 +2549,7 @@
              }
              else
              {
--                UnmodifiableIterator lvt_18_2_ = block16.func_176194_O().func_177619_a().iterator();
+-                UnmodifiableIterator unmodifiableiterator = block16.func_176194_O().func_177619_a().iterator();
 -
--                while (lvt_18_2_.hasNext())
+-                while (unmodifiableiterator.hasNext())
 -                {
--                    IBlockState iblockstate = (IBlockState)lvt_18_2_.next();
+-                    IBlockState iblockstate = (IBlockState)unmodifiableiterator.next();
 -                    int k = field_149771_c.func_148757_b(block16) << 4 | block16.func_176201_c(iblockstate);
 -                    field_176229_d.func_148746_a(iblockstate, k);
 -                }
-+//                Handled in GameData.BlockCallbacks - leaving tripwire as it seems to be special cased
++//              Handled in GameData.BlockCallbacks - leaving tripwire as it seems to be special cased
              }
          }
      }

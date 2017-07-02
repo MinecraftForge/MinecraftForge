@@ -20,6 +20,7 @@
 package net.minecraftforge.common.model;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -38,6 +39,7 @@ public enum Models
         {
             return ((HiddenModelPart) part).getPath().iterator();
         }
-        return Iterators.emptyIterator();
+        ImmutableSet<String> ret = ImmutableSet.of();
+        return ret.iterator();
     }
 }

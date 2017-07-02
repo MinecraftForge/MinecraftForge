@@ -77,6 +77,7 @@ public abstract class EnhancedRuntimeException extends RuntimeException
         });
         super.printStackTrace(s);
     }
+    @Override
     public void printStackTrace(final PrintStream s)
     {
         printStackTrace(new WrappedPrintStream()

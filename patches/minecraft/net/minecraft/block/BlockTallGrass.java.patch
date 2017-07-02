@@ -27,7 +27,15 @@
      }
  
      public int func_149679_a(int p_149679_1_, Random p_149679_2_)
-@@ -181,4 +181,21 @@
+@@ -78,7 +78,6 @@
+         return new ItemStack(this, 1, p_185473_3_.func_177230_c().func_176201_c(p_185473_3_));
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         for (int i = 1; i < 3; ++i)
+@@ -181,4 +180,19 @@
              }
          }
      }
@@ -39,13 +47,11 @@
 +        return NonNullList.func_191197_a(1, new ItemStack(Blocks.field_150329_H, 1, ((BlockTallGrass.EnumType)world.func_180495_p(pos).func_177229_b(field_176497_a)).func_177044_a()));
 +    }
 +    @Override
-+    public NonNullList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        if (RANDOM.nextInt(8) != 0) return NonNullList.func_191196_a();
++        if (RANDOM.nextInt(8) != 0) return;
 +        ItemStack seed = net.minecraftforge.common.ForgeHooks.getGrassSeed(RANDOM, fortune);
 +        if (!seed.func_190926_b())
-+            return NonNullList.func_191197_a(1, seed);
-+        else
-+            return NonNullList.func_191196_a();
++            drops.add(seed);
 +    }
  }

@@ -38,7 +38,7 @@ public class ItemHandlerHelper
     public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, boolean simulate)
     {
         if (dest == null || stack.isEmpty())
-            return ItemStack.EMPTY;
+            return stack;
 
         for (int i = 0; i < dest.getSlots(); i++)
         {

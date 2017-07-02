@@ -1,15 +1,6 @@
 package net.minecraftforge.debug;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.vecmath.AxisAngle4d;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector4f;
-
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.UnmodifiableIterator;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -26,7 +17,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -37,6 +27,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -48,78 +39,125 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import org.apache.logging.log4j.Logger;
 
-import com.google.common.collect.Lists;
+import javax.vecmath.AxisAngle4d;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector4f;
+import java.util.ArrayList;
+import java.util.List;
 
 @Mod(modid = ModelLoaderRegistryDebug.MODID, name = "ForgeDebugModelLoaderRegistry", version = ModelLoaderRegistryDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelLoaderRegistryDebug
 {
+    public static final boolean ENABLED = false;
     public static final String MODID = "forgedebugmodelloaderregistry";
     public static final String VERSION = "1.0";
+    private static Logger logger;
+
+    @ObjectHolder(CustomModelBlock.name)
+    public static final Block CUSTOM_MODEL_BLOCK = null;
+    @ObjectHolder(OBJTesseractBlock.name)
+    public static final Block TESSERACT_BLOCK = null;
+    @ObjectHolder(OBJVertexColoring1.name)
+    public static final Block VERTEX_COLOR_1 = null;
+    @ObjectHolder(OBJVertexColoring2.name)
+    public static final Block VERTEX_COLOR_2 = null;
+    @ObjectHolder(OBJDirectionBlock.name)
+    public static final Block DIRECTION = null;
+    @ObjectHolder(OBJDirectionEye.name)
+    public static final Block DIRECTION_EYE = null;
+    @ObjectHolder(OBJDynamicEye.name)
+    public static final Block DYNAMIC_EYE = null;
+    @ObjectHolder(OBJCustomDataBlock.name)
+    public static final Block CUSTOM_DATA = null;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        List<Block> blocks = Lists.newArrayList();
-        blocks.add(CustomModelBlock.instance);
-        blocks.add(OBJTesseractBlock.instance);
-        blocks.add(OBJVertexColoring1.instance);
-        //blocks.add(OBJDirectionEye.instance);
-        blocks.add(OBJVertexColoring2.instance);
-        blocks.add(OBJDirectionBlock.instance);
-        blocks.add(OBJCustomDataBlock.instance);
-        //blocks.add(OBJDynamicEye.instance);
-        for(Block block : blocks)
-        {
-            GameRegistry.register(block);
-            GameRegistry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
-        }
-        GameRegistry.registerTileEntity(OBJTesseractTileEntity.class, OBJTesseractBlock.name);
-        GameRegistry.registerTileEntity(OBJVertexColoring2TileEntity.class, OBJVertexColoring2.name);
-        //GameRegistry.registerTileEntity(OBJDynamicEyeTileEntity.class, OBJDynamicEye.name);
-        if (event.getSide() == Side.CLIENT)
-            clientPreInit();
+        if (!ENABLED)
+            return;
+
+        logger = event.getModLog();
     }
 
-    private void clientPreInit()
+
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        B3DLoader.INSTANCE.addDomain(MODID.toLowerCase());
-        Item item = Item.getItemFromBlock(CustomModelBlock.instance);
-        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + CustomModelBlock.name, "inventory"));
+        @SubscribeEvent
+        public static void registerBlocks(RegistryEvent.Register<Block> event)
+        {
+            if (!ENABLED)
+                return;
+            event.getRegistry().registerAll(
+                new CustomModelBlock(),
+                new OBJTesseractBlock(),
+                new OBJVertexColoring1(),
+                new OBJVertexColoring2(),
+                new OBJDirectionBlock(),
+                //new OBJDirectionEye(),
+                //new OBJDynamicEye(),
+                new OBJCustomDataBlock()
+            );
+            GameRegistry.registerTileEntity(OBJTesseractTileEntity.class, OBJTesseractBlock.name);
+            GameRegistry.registerTileEntity(OBJVertexColoring2TileEntity.class, OBJVertexColoring2.name);
+            //GameRegistry.registerTileEntity(OBJDynamicEyeTileEntity.class, OBJDynamicEye.name);
+        }
 
-        OBJLoader.INSTANCE.addDomain(MODID.toLowerCase());
-        Item item2 = Item.getItemFromBlock(OBJTesseractBlock.instance);
-        ModelLoader.setCustomModelResourceLocation(item2, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJTesseractBlock.name, "inventory"));
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
+        {
+            if (!ENABLED)
+                return;
+            Block[] blocks = {
+                CUSTOM_MODEL_BLOCK,
+                TESSERACT_BLOCK,
+                VERTEX_COLOR_1,
+                VERTEX_COLOR_2,
+                DIRECTION,
+                //DIRECTION_EYE,
+                //DYNAMIC_EYE,
+                CUSTOM_DATA
+            };
+            for (Block block : blocks)
+                event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+        }
 
-        Item item3 = Item.getItemFromBlock(OBJVertexColoring1.instance);
-        ModelLoader.setCustomModelResourceLocation(item3, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJVertexColoring1.name, "inventory"));
-
-        //Item item4 = Item.getItemFromBlock(OBJDirectionEye.instance);
-        //ModelLoader.setCustomModelResourceLocation(item4, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJDirectionEye.name, "inventory"));
-
-        Item item5 = Item.getItemFromBlock(OBJVertexColoring2.instance);
-        ModelLoader.setCustomModelResourceLocation(item5, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJVertexColoring2.name, "inventory"));
-
-        Item item6 = Item.getItemFromBlock(OBJDirectionBlock.instance);
-        ModelLoader.setCustomModelResourceLocation(item6, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJDirectionBlock.name, "inventory"));
-
-        Item item7 = Item.getItemFromBlock(OBJCustomDataBlock.instance);
-        ModelLoader.setCustomModelResourceLocation(item7, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJCustomDataBlock.name, "inventory"));
-
-        //Item item8 = Item.getItemFromBlock(OBJDynamicEye.instance);
-        //ModelLoader.setCustomModelResourceLocation(item8, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJDynamicEye.name, "inventory"));
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
+        {
+            if (!ENABLED)
+                return;
+            B3DLoader.INSTANCE.addDomain(MODID.toLowerCase());
+            OBJLoader.INSTANCE.addDomain(MODID.toLowerCase());
+            Block[] blocks = {
+                CUSTOM_MODEL_BLOCK,
+                TESSERACT_BLOCK,
+                VERTEX_COLOR_1,
+                VERTEX_COLOR_2,
+                DIRECTION,
+                //DIRECTION_EYE,
+                //DYNAMIC_EYE,
+                CUSTOM_DATA
+            };
+            for (Block block : blocks)
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(block.getRegistryName(), "inventory"));
+        }
     }
 
     public static class CustomModelBlock extends Block
     {
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
-        public static final CustomModelBlock instance = new CustomModelBlock();
         public static final String name = "custom_model_block";
         private int counter = 1;
 
@@ -133,13 +171,22 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean isOpaqueCube(IBlockState state) { return false; }
+        public boolean isOpaqueCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean isFullCube(IBlockState state) { return false; }
+        public boolean isFullCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean causesSuffocation(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
         public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
@@ -156,7 +203,7 @@ public class ModelLoaderRegistryDebug
         @Override
         public int getMetaFromState(IBlockState state)
         {
-            return ((EnumFacing) state.getValue(FACING)).getIndex();
+            return state.getValue(FACING).getIndex();
         }
 
         @Override
@@ -170,11 +217,17 @@ public class ModelLoaderRegistryDebug
         @Override
         public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
-            if(world.isRemote)
+            if (world.isRemote)
             {
-                System.out.println("click " + counter);
-                if(player.isSneaking()) counter--;
-                else counter++;
+                logger.info("click {}", counter);
+                if (player.isSneaking())
+                {
+                    counter--;
+                }
+                else
+                {
+                    counter++;
+                }
                 //if(counter >= model.getNode().getKeys().size()) counter = 0;
                 world.markBlockRangeForRenderUpdate(pos, pos);
             }
@@ -189,16 +242,16 @@ public class ModelLoaderRegistryDebug
 
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
         {
-            if (MathHelper.abs((float)entityIn.posX - (float)clickedBlock.getX()) < 2.0F && MathHelper.abs((float)entityIn.posZ - (float)clickedBlock.getZ()) < 2.0F)
+            if (MathHelper.abs((float) entityIn.posX - (float) clickedBlock.getX()) < 2.0F && MathHelper.abs((float) entityIn.posZ - (float) clickedBlock.getZ()) < 2.0F)
             {
-                double d0 = entityIn.posY + (double)entityIn.getEyeHeight();
+                double d0 = entityIn.posY + (double) entityIn.getEyeHeight();
 
-                if (d0 - (double)clickedBlock.getY() > 2.0D)
+                if (d0 - (double) clickedBlock.getY() > 2.0D)
                 {
                     return EnumFacing.UP;
                 }
 
-                if ((double)clickedBlock.getY() - d0 > 0.0D)
+                if ((double) clickedBlock.getY() - d0 > 0.0D)
                 {
                     return EnumFacing.DOWN;
                 }
@@ -207,6 +260,7 @@ public class ModelLoaderRegistryDebug
             return entityIn.getHorizontalFacing().getOpposite();
         }
     }
+
     /**
      * This block is intended to demonstrate how to change the visibility of a group(s)
      * from within the block's class.
@@ -220,7 +274,6 @@ public class ModelLoaderRegistryDebug
      */
     public static class OBJTesseractBlock extends Block implements ITileEntityProvider
     {
-        public static final OBJTesseractBlock instance = new OBJTesseractBlock();
         public static final String name = "obj_tesseract_block";
 
         private OBJTesseractBlock()
@@ -238,18 +291,30 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean isOpaqueCube(IBlockState state) { return false; }
+        public boolean isOpaqueCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean isFullCube(IBlockState state) { return false; }
+        public boolean isFullCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean causesSuffocation(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
         public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
-            if (world.getTileEntity(pos) == null) world.setTileEntity(pos, new OBJTesseractTileEntity());
+            if (world.getTileEntity(pos) == null)
+            {
+                world.setTileEntity(pos, new OBJTesseractTileEntity());
+            }
             OBJTesseractTileEntity tileEntity = (OBJTesseractTileEntity) world.getTileEntity(pos);
 
             if (player.isSneaking())
@@ -285,7 +350,7 @@ public class ModelLoaderRegistryDebug
         @Override
         public BlockStateContainer createBlockState()
         {
-            return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[] {Properties.AnimationProperty});
+            return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{Properties.AnimationProperty});
         }
     }
 
@@ -301,21 +366,21 @@ public class ModelLoaderRegistryDebug
             @Override
             public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
             {
-                if(part.isPresent())
+                if (part.isPresent())
                 {
                     // This whole thing is subject to change, but should do for now.
                     UnmodifiableIterator<String> parts = Models.getParts(part.get());
-                    if(parts.hasNext())
+                    if (parts.hasNext())
                     {
                         String name = parts.next();
                         // only interested in the root level
-                        if(!parts.hasNext() && hidden.contains(name))
+                        if (!parts.hasNext() && hidden.contains(name))
                         {
                             return value;
                         }
                     }
                 }
-                return Optional.absent();
+                return Optional.empty();
             }
         };
 
@@ -329,7 +394,10 @@ public class ModelLoaderRegistryDebug
             this.counter++;
             this.hidden.add(Integer.toString(this.counter));
             TextComponentString text = new TextComponentString("" + this.counter);
-            if (this.world.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
+            if (this.world.isRemote)
+            {
+                Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
+            }
         }
 
         public void decrement()
@@ -342,7 +410,10 @@ public class ModelLoaderRegistryDebug
             this.hidden.remove(Integer.toString(this.counter));
             this.counter--;
             TextComponentString text = new TextComponentString("" + this.counter);
-            if (this.world.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
+            if (this.world.isRemote)
+            {
+                Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
+            }
         }
 
         public void setMax(int max)
@@ -363,7 +434,6 @@ public class ModelLoaderRegistryDebug
      */
     public static class OBJVertexColoring1 extends Block
     {
-        public static final OBJVertexColoring1 instance = new OBJVertexColoring1();
         public static final String name = "obj_vertex_coloring1";
 
         private OBJVertexColoring1()
@@ -375,13 +445,22 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean isOpaqueCube(IBlockState state) { return false; }
+        public boolean isOpaqueCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean isFullCube(IBlockState state) { return false; }
+        public boolean isFullCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean causesSuffocation(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state)
+        {
+            return false;
+        }
     }
 
     /**
@@ -395,7 +474,6 @@ public class ModelLoaderRegistryDebug
     public static class OBJDirectionEye extends Block
     {
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
-        public static final OBJDirectionEye instance = new OBJDirectionEye();
         public static final String name = "obj_direction_eye";
 
         private OBJDirectionEye()
@@ -422,7 +500,7 @@ public class ModelLoaderRegistryDebug
         @Override
         public int getMetaFromState(IBlockState state)
         {
-            return ((EnumFacing) state.getValue(FACING)).getIndex();
+            return state.getValue(FACING).getIndex();
         }
 
         @Override
@@ -432,26 +510,35 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean isOpaqueCube(IBlockState state) { return false; }
+        public boolean isOpaqueCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean isFullCube(IBlockState state) { return false; }
+        public boolean isFullCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean causesSuffocation(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state)
+        {
+            return false;
+        }
 
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
         {
-            if (MathHelper.abs((float)entityIn.posX - (float)clickedBlock.getX()) < 2.0F && MathHelper.abs((float)entityIn.posZ - (float)clickedBlock.getZ()) < 2.0F)
+            if (MathHelper.abs((float) entityIn.posX - (float) clickedBlock.getX()) < 2.0F && MathHelper.abs((float) entityIn.posZ - (float) clickedBlock.getZ()) < 2.0F)
             {
-                double d0 = entityIn.posY + (double)entityIn.getEyeHeight();
+                double d0 = entityIn.posY + (double) entityIn.getEyeHeight();
 
-                if (d0 - (double)clickedBlock.getY() > 2.0D)
+                if (d0 - (double) clickedBlock.getY() > 2.0D)
                 {
                     return EnumFacing.DOWN;
                 }
 
-                if ((double)clickedBlock.getY() - d0 > 0.0D)
+                if ((double) clickedBlock.getY() - d0 > 0.0D)
                 {
                     return EnumFacing.UP;
                 }
@@ -470,7 +557,6 @@ public class ModelLoaderRegistryDebug
      */
     public static class OBJVertexColoring2 extends Block implements ITileEntityProvider
     {
-        public static final OBJVertexColoring2 instance = new OBJVertexColoring2();
         public static final String name = "obj_vertex_coloring2";
 
         private OBJVertexColoring2()
@@ -507,13 +593,15 @@ public class ModelLoaderRegistryDebug
         private boolean hasFilledList = false;
         private boolean shouldIncrement = true;
 
-        public OBJVertexColoring2TileEntity() {}
+        public OBJVertexColoring2TileEntity()
+        {
+        }
 
         public void cycleColors()
         {
             if (this.world.isRemote)
             {
-                FMLLog.info("%b", shouldIncrement);
+                logger.info(shouldIncrement);
                 /*
                 IBakedModel bakedModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(this.world.getBlockState(this.pos), this.world, this.pos);
                 if (bakedModel != null && bakedModel instanceof OBJBakedModel)
@@ -572,7 +660,6 @@ public class ModelLoaderRegistryDebug
     public static class OBJDirectionBlock extends Block
     {
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
-        public static final OBJDirectionBlock instance = new OBJDirectionBlock();
         public static final String name = "obj_direction_block";
 
         private OBJDirectionBlock()
@@ -585,13 +672,22 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean isOpaqueCube(IBlockState state) { return false; }
+        public boolean isOpaqueCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean isFullCube(IBlockState state) { return false; }
+        public boolean isFullCube(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
-        public boolean causesSuffocation(IBlockState state) { return false; }
+        public boolean causesSuffocation(IBlockState state)
+        {
+            return false;
+        }
 
         @Override
         public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
@@ -608,7 +704,7 @@ public class ModelLoaderRegistryDebug
         @Override
         public int getMetaFromState(IBlockState state)
         {
-            return ((EnumFacing) state.getValue(FACING)).getIndex();
+            return state.getValue(FACING).getIndex();
         }
 
         @Override
@@ -619,16 +715,16 @@ public class ModelLoaderRegistryDebug
 
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
         {
-            if (MathHelper.abs((float)entityIn.posX - (float)clickedBlock.getX()) < 2.0F && MathHelper.abs((float)entityIn.posZ - (float)clickedBlock.getZ()) < 2.0F)
+            if (MathHelper.abs((float) entityIn.posX - (float) clickedBlock.getX()) < 2.0F && MathHelper.abs((float) entityIn.posZ - (float) clickedBlock.getZ()) < 2.0F)
             {
-                double d0 = entityIn.posY + (double)entityIn.getEyeHeight();
+                double d0 = entityIn.posY + (double) entityIn.getEyeHeight();
 
-                if (d0 - (double)clickedBlock.getY() > 2.0D)
+                if (d0 - (double) clickedBlock.getY() > 2.0D)
                 {
                     return EnumFacing.UP;
                 }
 
-                if ((double)clickedBlock.getY() - d0 > 0.0D)
+                if ((double) clickedBlock.getY() - d0 > 0.0D)
                 {
                     return EnumFacing.DOWN;
                 }
@@ -650,7 +746,6 @@ public class ModelLoaderRegistryDebug
         public static final PropertyBool SOUTH = PropertyBool.create("south");
         public static final PropertyBool WEST = PropertyBool.create("west");
         public static final PropertyBool EAST = PropertyBool.create("east");
-        public static final OBJCustomDataBlock instance = new OBJCustomDataBlock();
         public static final String name = "obj_custom_data_block";
 
         private OBJCustomDataBlock()
@@ -695,7 +790,7 @@ public class ModelLoaderRegistryDebug
         @Override
         public BlockStateContainer createBlockState()
         {
-            return new BlockStateContainer(this, new IProperty[]{NORTH, SOUTH, WEST, EAST});
+            return new BlockStateContainer(this, NORTH, SOUTH, WEST, EAST);
         }
     }
 
@@ -707,8 +802,8 @@ public class ModelLoaderRegistryDebug
      */
     public static class OBJDynamicEye extends Block implements ITileEntityProvider
     {
-        public static final OBJDynamicEye instance = new OBJDynamicEye();
         public static final String name = "obj_dynamic_eye";
+
         private OBJDynamicEye()
         {
             super(Material.IRON);
@@ -758,7 +853,7 @@ public class ModelLoaderRegistryDebug
         @Override
         public BlockStateContainer createBlockState()
         {
-            return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[] {Properties.AnimationProperty});
+            return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{Properties.AnimationProperty});
         }
     }
 
@@ -778,7 +873,7 @@ public class ModelLoaderRegistryDebug
                 playerLoc.setY(player.posY + player.getEyeHeight());
                 playerLoc.setZ(player.posZ);
                 Vector3d lookVec = new Vector3d(playerLoc.getX() - teLoc.getX(), playerLoc.getY() - teLoc.getY(), playerLoc.getZ() - teLoc.getZ());
-                double angleYaw = Math.atan2(lookVec.getZ(), lookVec.getX()) - Math.PI/2d;
+                double angleYaw = Math.atan2(lookVec.getZ(), lookVec.getX()) - Math.PI / 2d;
                 double anglePitch = Math.atan2(lookVec.getY(), Math.sqrt(lookVec.getX() * lookVec.getX() + lookVec.getZ() * lookVec.getZ()));
                 AxisAngle4d yaw = new AxisAngle4d(0, 1, 0, -angleYaw);
                 AxisAngle4d pitch = new AxisAngle4d(1, 0, 0, -anglePitch);

@@ -20,4 +20,4 @@
 +        p_189539_5_ = e.getVanillaNoteId();
          float f = (float)Math.pow(2.0D, (double)(p_189539_5_ - 12) / 12.0D);
          p_189539_2_.func_184133_a((EntityPlayer)null, p_189539_3_, this.func_185576_e(p_189539_4_), SoundCategory.RECORDS, 3.0F, f);
-         p_189539_2_.func_175688_a(EnumParticleTypes.NOTE, (double)p_189539_3_.func_177958_n() + 0.5D, (double)p_189539_3_.func_177956_o() + 1.2D, (double)p_189539_3_.func_177952_p() + 0.5D, (double)p_189539_5_ / 24.0D, 0.0D, 0.0D, new int[0]);
+         p_189539_2_.func_175688_a(EnumParticleTypes.NOTE, (double)p_189539_3_.func_177958_n() + 0.5D, (double)p_189539_3_.func_177956_o() + 1.2D, (double)p_189539_3_.func_177952_p() + 0.5D, (double)p_189539_5_ / 24.0D, 0.0D, 0.0D);

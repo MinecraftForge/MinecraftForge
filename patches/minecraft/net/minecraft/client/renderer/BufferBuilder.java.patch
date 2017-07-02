@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/BufferBuilder.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/BufferBuilder.java
+@@ -123,6 +123,8 @@
+ 
+             bitset.set(i1);
+         }
++        this.field_178999_b.limit(this.field_178999_b.capacity());
++        this.field_178999_b.position(this.func_181664_j());
+     }
+ 
+     public BufferBuilder.State func_181672_a()
+@@ -506,15 +508,15 @@
+                 break;
+             case USHORT:
+             case SHORT:
+-                this.field_179001_a.putShort(i, (short)((int)p_181663_1_ * 32767 & 65535));
+-                this.field_179001_a.putShort(i + 2, (short)((int)p_181663_2_ * 32767 & 65535));
+-                this.field_179001_a.putShort(i + 4, (short)((int)p_181663_3_ * 32767 & 65535));
++                this.field_179001_a.putShort(i, (short)((int)(p_181663_1_ * 32767) & 65535));
++                this.field_179001_a.putShort(i + 2, (short)((int)(p_181663_2_ * 32767) & 65535));
++                this.field_179001_a.putShort(i + 4, (short)((int)(p_181663_3_ * 32767) & 65535));
+                 break;
+             case UBYTE:
+             case BYTE:
+-                this.field_179001_a.put(i, (byte)((int)p_181663_1_ * 127 & 255));
+-                this.field_179001_a.put(i + 1, (byte)((int)p_181663_2_ * 127 & 255));
+-                this.field_179001_a.put(i + 2, (byte)((int)p_181663_3_ * 127 & 255));
++                this.field_179001_a.put(i, (byte)((int)(p_181663_1_ * 127) & 255));
++                this.field_179001_a.put(i + 1, (byte)((int)(p_181663_2_ * 127) & 255));
++                this.field_179001_a.put(i + 2, (byte)((int)(p_181663_3_ * 127) & 255));
+         }
+ 
+         this.func_181667_k();
+@@ -605,4 +607,19 @@
+             return this.field_179018_e;
+         }
+     }
++
++
++    //For some unknown reason Mojang changed the vanilla function to hardcode alpha as 255.... So lets re-add the parameter -.-
++    public void putColorRGBA(int index, int red, int green, int blue, int alpha)
++    {
++        if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN)
++            this.field_178999_b.put(index, alpha << 24 | blue << 16 | green << 8 | red);
++        else
++            this.field_178999_b.put(index, red << 24 | green << 16 | blue << 8 | alpha);
++    }
++
++    public boolean isColorDisabled()
++    {
++        return this.field_78939_q;
++    }
+ }

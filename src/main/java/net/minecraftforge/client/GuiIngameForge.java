@@ -116,13 +116,13 @@ public class GuiIngameForge extends GuiIngame
 
         if (pre(ALL)) return;
 
-        fontrenderer = mc.fontRendererObj;
+        fontrenderer = mc.fontRenderer;
         mc.entityRenderer.setupOverlayRendering();
         GlStateManager.enableBlend();
 
         if (Minecraft.isFancyGraphicsEnabled())
         {
-            renderVignette(mc.player.getBrightness(partialTicks), res);
+            renderVignette(mc.player.getBrightness(), res);
         }
         else
         {
@@ -181,7 +181,7 @@ public class GuiIngameForge extends GuiIngame
         ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(mc.player.getName());
         if (scoreplayerteam != null)
         {
-            int slot = scoreplayerteam.getChatFormat().getColorIndex();
+            int slot = scoreplayerteam.getColor().getColorIndex();
             if (slot >= 0) objective = scoreboard.getObjectiveInDisplaySlot(3 + slot);
         }
         ScoreObjective scoreobjective1 = objective != null ? objective : scoreboard.getObjectiveInDisplaySlot(1);
@@ -621,7 +621,7 @@ public class GuiIngameForge extends GuiIngame
         {
             mc.mcProfiler.startSection("toolHighlight");
 
-            if (this.remainingHighlightTicks > 0 && this.highlightingItemStack != null)
+            if (this.remainingHighlightTicks > 0 && !this.highlightingItemStack.isEmpty())
             {
                 String name = this.highlightingItemStack.getDisplayName();
                 if (this.highlightingItemStack.hasDisplayName())

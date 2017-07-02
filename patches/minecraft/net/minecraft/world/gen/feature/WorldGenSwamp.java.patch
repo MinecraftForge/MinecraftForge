@@ -56,43 +56,34 @@
                                      BlockPos blockpos2 = blockpos$mutableblockpos1.func_177968_d();
  
 -                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos3).func_185904_a() == Material.field_151579_a)
-+                                    if (p_180709_2_.nextInt(4) == 0 && isAir(p_180709_1_, blockpos3))
++                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_175623_d(blockpos3))
                                      {
                                          this.func_181647_a(p_180709_1_, blockpos3, BlockVine.field_176278_M);
                                      }
  
 -                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos4).func_185904_a() == Material.field_151579_a)
-+                                    if (p_180709_2_.nextInt(4) == 0 && isAir(p_180709_1_, blockpos4))
++                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_175623_d(blockpos4))
                                      {
                                          this.func_181647_a(p_180709_1_, blockpos4, BlockVine.field_176280_O);
                                      }
  
 -                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos1).func_185904_a() == Material.field_151579_a)
-+                                    if (p_180709_2_.nextInt(4) == 0 && isAir(p_180709_1_, blockpos1))
++                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_175623_d(blockpos1))
                                      {
                                          this.func_181647_a(p_180709_1_, blockpos1, BlockVine.field_176279_N);
                                      }
  
 -                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_180495_p(blockpos2).func_185904_a() == Material.field_151579_a)
-+                                    if (p_180709_2_.nextInt(4) == 0 && isAir(p_180709_1_, blockpos2))
++                                    if (p_180709_2_.nextInt(4) == 0 && p_180709_1_.func_175623_d(blockpos2))
                                      {
                                          this.func_181647_a(p_180709_1_, blockpos2, BlockVine.field_176273_b);
                                      }
-@@ -193,10 +197,16 @@
+@@ -193,7 +197,7 @@
          this.func_175903_a(p_181647_1_, p_181647_2_, iblockstate);
          int i = 4;
  
--        for (p_181647_2_ = p_181647_2_.func_177977_b(); p_181647_1_.func_180495_p(p_181647_2_).func_185904_a() == Material.field_151579_a && i > 0; --i)
-+        for (p_181647_2_ = p_181647_2_.func_177977_b(); isAir(p_181647_1_, p_181647_2_) && i > 0; --i)
+-        for (BlockPos blockpos = p_181647_2_.func_177977_b(); p_181647_1_.func_180495_p(blockpos).func_185904_a() == Material.field_151579_a && i > 0; --i)
++        for (BlockPos blockpos = p_181647_2_.func_177977_b(); p_181647_1_.func_175623_d(blockpos) && i > 0; --i)
          {
-             this.func_175903_a(p_181647_1_, p_181647_2_, iblockstate);
-             p_181647_2_ = p_181647_2_.func_177977_b();
-         }
-     }
-+
-+    private boolean isAir(World world, BlockPos pos)
-+    {
-+        IBlockState state = world.func_180495_p(pos);
-+        return state.func_177230_c().isAir(state, world, pos);
-+    }
- }
+             this.func_175903_a(p_181647_1_, blockpos, iblockstate);
+             blockpos = blockpos.func_177977_b();

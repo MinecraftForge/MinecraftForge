@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
-@@ -168,12 +168,12 @@
+@@ -175,12 +175,12 @@
      {
-         if (this.field_143029_e == null)
+         if (this.field_143029_e == null && p_143027_1_ != null)
          {
 -            this.field_143029_e = (MapGenStructureData)p_143027_1_.func_72943_a(MapGenStructureData.class, this.func_143025_a());
 +            this.field_143029_e = (MapGenStructureData)p_143027_1_.getPerWorldStorage().func_75742_a(MapGenStructureData.class, this.func_143025_a());

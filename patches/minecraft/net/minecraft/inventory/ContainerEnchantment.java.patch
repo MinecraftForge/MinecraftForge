@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerEnchantment.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerEnchantment.java
-@@ -70,9 +70,12 @@
+@@ -73,9 +73,12 @@
          });
          this.func_75146_a(new Slot(this.field_75168_e, 1, 35, 47)
          {
@@ -14,7 +14,7 @@
              }
          });
  
-@@ -157,6 +160,7 @@
+@@ -160,6 +163,7 @@
                  if (!this.field_75172_h.field_72995_K)
                  {
                      int l = 0;
@@ -22,7 +22,7 @@
  
                      for (int j = -1; j <= 1; ++j)
                      {
-@@ -164,37 +168,14 @@
+@@ -167,37 +171,14 @@
                          {
                              if ((j != 0 || k != 0) && this.field_75172_h.func_175623_d(this.field_178150_j.func_177982_a(k, 0, j)) && this.field_75172_h.func_175623_d(this.field_178150_j.func_177982_a(k, 1, j)))
                              {
@@ -66,7 +66,7 @@
                                  }
                              }
                          }
-@@ -204,7 +185,7 @@
+@@ -207,7 +188,7 @@
  
                      for (int i1 = 0; i1 < 3; ++i1)
                      {
@@ -75,7 +75,7 @@
                          this.field_185001_h[i1] = -1;
                          this.field_185002_i[i1] = -1;
  
-@@ -212,6 +193,7 @@
+@@ -215,6 +196,7 @@
                          {
                              this.field_75167_g[i1] = 0;
                          }

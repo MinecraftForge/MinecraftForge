@@ -42,6 +42,7 @@ public class JsonUtils
     {
         INSTANCE;
 
+        @Override
         public ImmutableList<?> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException
         {
             final Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
@@ -50,6 +51,7 @@ public class JsonUtils
             return ImmutableList.copyOf(list);
         }
 
+        @Override
         public JsonElement serialize(ImmutableList<?> src, Type type, JsonSerializationContext context)
         {
             final Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
@@ -68,6 +70,7 @@ public class JsonUtils
     {
         INSTANCE;
 
+        @Override
         public ImmutableMap<String, ?> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException
         {
             final Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
@@ -76,6 +79,7 @@ public class JsonUtils
             return ImmutableMap.copyOf(map);
         }
 
+        @Override
         public JsonElement serialize(ImmutableMap<String, ?> src, Type type, JsonSerializationContext context)
         {
             final Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();

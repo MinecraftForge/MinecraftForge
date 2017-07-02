@@ -13,7 +13,7 @@
 +                        java.util.ArrayList<ChunkPos> shuffled = com.google.common.collect.Lists.newArrayList(this.field_77193_b);
 +                        java.util.Collections.shuffle(shuffled);
                          BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-                         label411:
+                         label134:
  
 -                        for (ChunkPos chunkpos1 : this.field_77193_b)
 +                        for (ChunkPos chunkpos1 : shuffled)
@@ -24,8 +24,8 @@
  
                                                  try
                                                  {
--                                                    entityliving = (EntityLiving)biome$spawnlistentry.field_76300_b.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_77192_1_});
-+                                                    entityliving = (EntityLiving)biome$spawnlistentry.newInstance(p_77192_1_);
+-                                                    entityliving = biome$spawnlistentry.field_76300_b.getConstructor(World.class).newInstance(p_77192_1_);
++                                                    entityliving = biome$spawnlistentry.newInstance(p_77192_1_);
                                                  }
                                                  catch (Exception exception)
                                                  {
@@ -48,9 +48,9 @@
 -                                                    if (j2 >= entityliving.func_70641_bl())
 +                                                    if (j2 >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(entityliving))
                                                      {
-                                                         continue label411;
+                                                         continue label134;
                                                      }
-@@ -213,8 +217,9 @@
+@@ -228,8 +232,9 @@
              else
              {
                  BlockPos blockpos = p_180267_2_.func_177977_b();
@@ -61,12 +61,12 @@
                  {
                      return false;
                  }
-@@ -258,7 +263,7 @@
+@@ -273,7 +278,7 @@
  
                              try
                              {
--                                entityliving = (EntityLiving)biome$spawnlistentry.field_76300_b.getConstructor(new Class[] {World.class}).newInstance(new Object[] {p_77191_0_});
-+                                entityliving = (EntityLiving)biome$spawnlistentry.newInstance(p_77191_0_);
+-                                entityliving = biome$spawnlistentry.field_76300_b.getConstructor(World.class).newInstance(p_77191_0_);
++                                entityliving = biome$spawnlistentry.newInstance(p_77191_0_);
                              }
                              catch (Exception exception)
                              {

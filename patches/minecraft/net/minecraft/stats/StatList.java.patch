@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -163,12 +163,12 @@
+@@ -162,7 +162,7 @@
              }
          }
  
@@ -9,13 +9,7 @@
      }
  
      private static void func_151181_c()
-     {
--        for (Block block : Block.field_149771_c)
-+        for (Block block : net.minecraftforge.fml.common.registry.GameData.getBlockRegistry().typeSafeIterable())
-         {
-             Item item = Item.func_150898_a(block);
- 
-@@ -185,12 +185,12 @@
+@@ -184,7 +184,7 @@
              }
          }
  
@@ -24,13 +18,7 @@
      }
  
      private static void func_75925_c()
-     {
--        for (Item item : Item.field_150901_e)
-+        for (Item item : net.minecraftforge.fml.common.registry.GameData.getItemRegistry().typeSafeIterable())
-         {
-             if (item != null)
-             {
-@@ -209,12 +209,12 @@
+@@ -208,7 +208,7 @@
              }
          }
  
@@ -39,13 +27,7 @@
      }
  
      private static void func_151179_e()
-     {
--        for (Item item : Item.field_150901_e)
-+        for (Item item : net.minecraftforge.fml.common.registry.GameData.getItemRegistry().typeSafeIterable())
-         {
-             if (item != null)
-             {
-@@ -228,12 +228,12 @@
+@@ -227,7 +227,7 @@
              }
          }
  
@@ -54,13 +36,7 @@
      }
  
      private static void func_188054_f()
-     {
--        for (Item item : Item.field_150901_e)
-+        for (Item item : net.minecraftforge.fml.common.registry.GameData.getItemRegistry().typeSafeIterable())
-         {
-             if (item != null)
-             {
-@@ -248,7 +248,7 @@
+@@ -247,7 +247,7 @@
              }
          }
  
@@ -69,7 +45,7 @@
      }
  
      private static String func_180204_a(Item p_180204_0_)
-@@ -257,28 +257,35 @@
+@@ -256,28 +256,35 @@
          return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
      }
  
@@ -123,9 +99,9 @@
  
          if (p_151180_0_[i] != null && p_151180_0_[j] == null)
          {
-@@ -310,4 +317,37 @@
+@@ -309,4 +316,36 @@
      {
-         return (StatBase)field_188093_a.get(p_151177_0_);
+         return field_188093_a.get(p_151177_0_);
      }
 +
 +    @Deprecated //MODDER DO NOT CALL THIS ITS JUST A EVENT CALLBACK FOR FORGE
@@ -135,7 +111,6 @@
 +        field_188094_c.clear();
 +        field_188095_d.clear();
 +        field_188096_e.clear();
-+        AchievementList.field_187981_e.clear();
 +
 +        for (StatBase[] sb : new StatBase[][]{field_188065_ae,  field_188066_af, field_75929_E, field_75930_F, field_188067_ai, field_188068_aj})
 +        {

@@ -27,7 +27,7 @@
              }
          }
      }
-@@ -110,24 +112,29 @@
+@@ -110,20 +112,23 @@
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
          super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
@@ -35,9 +35,8 @@
  
 -        if (!p_180653_1_.field_72995_K)
 +    @Override
-+    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
          {
              Item item = this.func_176481_j();
  
@@ -52,12 +51,7 @@
 +                    if (RANDOM.nextInt(15) <= i)
                      {
 -                        func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(item));
-+                        ret.add(new ItemStack(item));
++                        drops.add(new ItemStack(item));
                      }
                  }
              }
-         }
-+        return ret;
-     }
- 
-     @Nullable

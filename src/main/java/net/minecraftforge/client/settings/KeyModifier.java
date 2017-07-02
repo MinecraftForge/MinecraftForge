@@ -182,11 +182,7 @@ public enum KeyModifier {
         {
             return valueOf(stringValue);
         }
-        catch (NullPointerException ignored)
-        {
-            return NONE;
-        }
-        catch (IllegalArgumentException ignored)
+        catch (NullPointerException | IllegalArgumentException ignored)
         {
             return NONE;
         }

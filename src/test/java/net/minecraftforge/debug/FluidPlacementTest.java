@@ -1,29 +1,40 @@
 package net.minecraftforge.debug;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemBucketMilk;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.BlockFluidFinite;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -33,7 +44,7 @@ import java.util.List;
 
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
-@Mod(modid = FluidPlacementTest.MODID, name = "ForgeDebugFluidPlacement", version = FluidPlacementTest.VERSION)
+@Mod(modid = FluidPlacementTest.MODID, name = "ForgeDebugFluidPlacement", version = FluidPlacementTest.VERSION, acceptableRemoteVersions = "*")
 public class FluidPlacementTest
 {
     public static final String MODID = "forgedebugfluidplacement";
@@ -47,52 +58,61 @@ public class FluidPlacementTest
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        if (ENABLE && ModelFluidDebug.ENABLE)
-        {
-            proxy.preInit(event);
-        }
+        if (!ENABLE || !ModelFluidDebug.ENABLE)
+            return;
+        proxy.preInit();
     }
 
-    public static class CommonProxy
+
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registrBlocks(RegistryEvent.Register<Block> event)
         {
+            if (!ENABLE || !ModelFluidDebug.ENABLE)
+                return;
+            event.getRegistry().registerAll(
+                FiniteFluidBlock.instance
+            );
+        }
+        @SubscribeEvent
+        public static void registrItems(RegistryEvent.Register<Item> event)
+        {
+            if (!ENABLE || !ModelFluidDebug.ENABLE)
+                return;
             FluidRegistry.registerFluid(FiniteFluid.instance);
             FluidRegistry.addBucketForFluid(FiniteFluid.instance);
-            GameRegistry.register(EmptyFluidContainer.instance);
-            GameRegistry.register(FluidContainer.instance);
-            GameRegistry.register(FiniteFluidBlock.instance);
-            GameRegistry.register(new ItemBlock(FiniteFluidBlock.instance).setRegistryName(FiniteFluidBlock.instance.getRegistryName()));
+            event.getRegistry().registerAll(
+                EmptyFluidContainer.instance,
+                FluidContainer.instance,
+                new ItemBlock(FiniteFluidBlock.instance).setRegistryName(FiniteFluidBlock.instance.getRegistryName())
+            );
             MinecraftForge.EVENT_BUS.register(FluidContainer.instance);
         }
     }
 
-    public static class ServerProxy extends CommonProxy
-    {
+    public static class CommonProxy {
+        public void preInit(){}
     }
+    public static class ServerProxy extends CommonProxy{}
 
     public static class ClientProxy extends CommonProxy
     {
         private static ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + FiniteFluidBlock.name, "normal");
 
         @Override
-        public void preInit(FMLPreInitializationEvent event)
+        public void preInit()
         {
-            super.preInit(event);
             Item fluid = Item.getItemFromBlock(FiniteFluidBlock.instance);
             ModelLoader.setCustomModelResourceLocation(EmptyFluidContainer.instance, 0, new ModelResourceLocation("forge:bucket", "inventory"));
             ModelLoader.setBucketModelDefinition(FluidContainer.instance);
             // no need to pass the locations here, since they'll be loaded by the block model logic.
             ModelBakery.registerItemVariants(fluid);
-            ModelLoader.setCustomMeshDefinition(fluid, new ItemMeshDefinition()
-            {
-                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-                {
-                    return fluidLocation;
-                }
-            });
+            ModelLoader.setCustomMeshDefinition(fluid, stack -> fluidLocation);
             ModelLoader.setCustomStateMapper(FiniteFluidBlock.instance, new StateMapperBase()
             {
+                @Override
                 protected ModelResourceLocation getModelResourceLocation(IBlockState state)
                 {
                     return fluidLocation;
@@ -168,7 +188,7 @@ public class FluidPlacementTest
             public int fill(FluidStack resource, boolean doFill)
             {
                 if (container.getCount() != 1 || resource == null || resource.amount > Fluid.BUCKET_VOLUME || container
-                    .getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
+                        .getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
                 {
                     return 0;
                 }
@@ -219,13 +239,15 @@ public class FluidPlacementTest
         {
             container = container.copy();
             if (container.getTagCompound() != null)
+            {
                 container.setTagCompound(container.getTagCompound().getCompoundTag(FLUID_NBT_KEY));
+            }
             return super.getFluid(container);
         }
 
         @Override
         @SideOnly(Side.CLIENT)
-        public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+        public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced)
         {
             FluidStack fluid = getFluid(stack);
             if (fluid != null)
@@ -235,9 +257,11 @@ public class FluidPlacementTest
         }
 
         @Override
-        public void getSubItems(@Nonnull Item itemIn, @Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
+        public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
         {
-            Fluid[] fluids = new Fluid[]{FluidRegistry.WATER, FluidRegistry.LAVA, FiniteFluid.instance, ModelFluidDebug.TestFluid.instance};
+            if (!this.isInCreativeTab(tab))
+                return;
+            Fluid[] fluids = new Fluid[]{FluidRegistry.WATER, FluidRegistry.LAVA, FiniteFluid.instance, ModelFluidDebug.FLUID};
             // add 16 variable fillings
             for (Fluid fluid : fluids)
             {

@@ -1,22 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPane.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
-@@ -111,7 +111,10 @@
- 
-     public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
-     {
--        return p_176221_1_.func_177226_a(field_176241_b, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177978_c()).func_177230_c()))).func_177226_a(field_176243_N, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177968_d()).func_177230_c()))).func_177226_a(field_176244_O, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177976_e()).func_177230_c()))).func_177226_a(field_176242_M, Boolean.valueOf(this.func_150098_a(p_176221_2_.func_180495_p(p_176221_3_.func_177974_f()).func_177230_c())));
-+        return p_176221_1_.func_177226_a(field_176241_b, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH))
-+                .func_177226_a(field_176243_N, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH))
-+                .func_177226_a(field_176244_O, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST))
-+                .func_177226_a(field_176242_M, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST));
-     }
- 
-     public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
-@@ -188,4 +191,21 @@
-     {
+@@ -197,6 +197,24 @@
          return new BlockStateContainer(this, new IProperty[] {field_176241_b, field_176242_M, field_176244_O, field_176243_N});
      }
-+
+ 
 +    /* ======================================== FORGE START ======================================== */
 +
 +    @Override
@@ -28,9 +15,13 @@
 +
 +    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)
 +    {
-+        IBlockState state = world.func_180495_p(pos.func_177972_a(dir));
-+        return state.func_177230_c().canBeConnectedTo(world, pos.func_177972_a(dir), dir.func_176734_d()) || func_150098_a(state.func_177230_c()) || state.isSideSolid(world, pos.func_177972_a(dir), dir.func_176734_d());
++        BlockPos other = pos.func_177972_a(dir);
++        IBlockState state = world.func_180495_p(other);
++        return state.func_177230_c().canBeConnectedTo(world, other, dir.func_176734_d()) || func_193393_b(world, state, other, dir.func_176734_d());
 +    }
 +
 +    /* ======================================== FORGE END ======================================== */
- }
++
+     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
+     {
+         return p_193383_4_ != EnumFacing.UP && p_193383_4_ != EnumFacing.DOWN ? BlockFaceShape.MIDDLE_POLE_THIN : BlockFaceShape.CENTER_SMALL;

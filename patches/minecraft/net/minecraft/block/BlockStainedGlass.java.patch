@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockStainedGlass.java
++++ ../src-work/minecraft/net/minecraft/block/BlockStainedGlass.java
+@@ -34,7 +34,6 @@
+         return ((EnumDyeColor)p_180651_1_.func_177229_b(field_176547_a)).func_176765_a();
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         for (EnumDyeColor enumdyecolor : EnumDyeColor.values())

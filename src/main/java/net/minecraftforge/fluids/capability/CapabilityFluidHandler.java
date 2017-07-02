@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fluids.capability;
 
-import java.util.concurrent.Callable;
-
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -44,22 +42,9 @@ public class CapabilityFluidHandler
 
     public static void register()
     {
-        CapabilityManager.INSTANCE.register(IFluidHandler.class, new DefaultFluidHandlerStorage<IFluidHandler>(), new Callable<IFluidHandler>()
-        {
-            @Override
-            public IFluidHandler call() throws Exception
-            {
-                return new FluidTank(Fluid.BUCKET_VOLUME);
-            }
-        });
+        CapabilityManager.INSTANCE.register(IFluidHandler.class, new DefaultFluidHandlerStorage<>(), () -> new FluidTank(Fluid.BUCKET_VOLUME));
 
-        CapabilityManager.INSTANCE.register(IFluidHandlerItem.class, new DefaultFluidHandlerStorage<IFluidHandlerItem>(), new Callable<IFluidHandlerItem>() {
-            @Override
-            public IFluidHandlerItem call() throws Exception
-            {
-                return new FluidHandlerItemStack(new ItemStack(Items.BUCKET), Fluid.BUCKET_VOLUME);
-            }
-        });
+        CapabilityManager.INSTANCE.register(IFluidHandlerItem.class, new DefaultFluidHandlerStorage<>(), () -> new FluidHandlerItemStack(new ItemStack(Items.BUCKET), Fluid.BUCKET_VOLUME));
     }
 
     private static class DefaultFluidHandlerStorage<T extends IFluidHandler> implements Capability.IStorage<T> {

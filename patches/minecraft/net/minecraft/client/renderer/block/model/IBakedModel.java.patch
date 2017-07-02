@@ -1,10 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/IBakedModel.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/IBakedModel.java
-@@ -21,6 +21,7 @@
+@@ -21,7 +21,16 @@
  
      TextureAtlasSprite func_177554_e();
  
+-    ItemCameraTransforms func_177552_f();
 +    @Deprecated
-     ItemCameraTransforms func_177552_f();
++    default ItemCameraTransforms func_177552_f() { return ItemCameraTransforms.field_178357_a; }
  
      ItemOverrideList func_188617_f();
++
++    /*
++     * Returns the pair of the model for the given perspective, and the matrix
++     * that should be applied to the GL state before rendering it (matrix may be null).
++     */
++    default org.apache.commons.lang3.tuple.Pair<? extends IBakedModel, javax.vecmath.Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
++        return net.minecraftforge.client.ForgeHooksClient.handlePerspective(this, cameraTransformType);
++    }
+ }

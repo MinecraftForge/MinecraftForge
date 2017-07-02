@@ -9,7 +9,7 @@
      public GuiButton(int p_i1020_1_, int p_i1020_2_, int p_i1020_3_, String p_i1020_4_)
      {
 @@ -75,6 +76,11 @@
-             this.func_146119_b(p_146112_1_, p_146112_2_, p_146112_3_);
+             this.func_146119_b(p_191745_1_, p_191745_2_, p_191745_3_);
              int j = 14737632;
  
 +            if (packedFGColour != 0)

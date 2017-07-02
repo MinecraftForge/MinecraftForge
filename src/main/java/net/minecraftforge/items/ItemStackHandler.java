@@ -118,6 +118,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount()- limit) : ItemStack.EMPTY;
     }
 
+    @Override
     @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {

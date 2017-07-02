@@ -29,7 +29,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.Level;
 import org.objectweb.asm.Type;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -57,18 +57,12 @@ public enum CapabilityManager
     public <T> void register(Class<T> type, Capability.IStorage<T> storage, final Class<? extends T> implementation)
     {
         Preconditions.checkArgument(implementation != null, "Attempted to register a capability with no default implementation");
-        register(type, storage, new Callable<T>()
+        register(type, storage, () ->
         {
-            @Override
-            public T call() throws Exception
-            {
-                try {
-                    return implementation.newInstance();
-                } catch (InstantiationException e) {
-                    throw Throwables.propagate(e);
-                } catch (IllegalAccessException e) {
-                    throw Throwables.propagate(e);
-                }
+            try {
+                return implementation.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw Throwables.propagate(e);
             }
         });
     }
@@ -115,17 +109,12 @@ public enum CapabilityManager
             Type type = (Type)entry.getAnnotationInfo().get("value");
             if (type == null)
             {
-                FMLLog.log(Level.WARN, "Unable to inject capability at %s.%s (Invalid Annotation)", targetClass, targetName);
+                FMLLog.log.warn("Unable to inject capability at {}.{} (Invalid Annotation)", targetClass, targetName);
                 continue;
             }
             final String capabilityName = type.getInternalName().replace('/', '.').intern();
 
-            List<Function<Capability<?>, Object>> list = callbacks.get(capabilityName);
-            if (list == null)
-            {
-                list = Lists.newArrayList();
-                callbacks.put(capabilityName, list);
-            }
+            List<Function<Capability<?>, Object>> list = callbacks.computeIfAbsent(capabilityName, k -> Lists.newArrayList());
 
             if (entry.getObjectName().indexOf('(') > 0)
             {
@@ -142,7 +131,7 @@ public enum CapabilityManager
                                 {
                                     if ((mtd.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
                                     {
-                                        FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Non-Static)", capabilityName, targetClass, targetName);
+                                        FMLLog.log.warn("Unable to inject capability {} at {}.{} (Non-Static)", capabilityName, targetClass, targetName);
                                         return null;
                                     }
 
@@ -151,11 +140,11 @@ public enum CapabilityManager
                                     return null;
                                 }
                             }
-                            FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Method Not Found)", capabilityName, targetClass, targetName);
+                            FMLLog.log.warn("Unable to inject capability {} at {}.{} (Method Not Found)", capabilityName, targetClass, targetName);
                         }
                         catch (Exception e)
                         {
-                            FMLLog.log(Level.WARN, e, "Unable to inject capability %s at %s.%s", capabilityName, targetClass, targetName);
+                            FMLLog.log.warn("Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName, e);
                         }
                         return null;
                     }
@@ -173,14 +162,14 @@ public enum CapabilityManager
                             Field field = Class.forName(targetClass).getDeclaredField(targetName);
                             if ((field.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
                             {
-                                FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Non-Static)", capabilityName, targetClass, targetName);
+                                FMLLog.log.warn("Unable to inject capability {} at {}.{} (Non-Static)", capabilityName, targetClass, targetName);
                                 return null;
                             }
                             EnumHelper.setFailsafeFieldValue(field, null, input);
                         }
                         catch (Exception e)
                         {
-                            FMLLog.log(Level.WARN, e, "Unable to inject capability %s at %s.%s", capabilityName, targetClass, targetName);
+                            FMLLog.log.warn("Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName, e);
                         }
                         return null;
                     }

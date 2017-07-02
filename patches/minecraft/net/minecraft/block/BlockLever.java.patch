@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLever.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLever.java
-@@ -296,6 +296,12 @@
-         return new BlockStateContainer(this, new IProperty[] {field_176360_a, field_176359_b});
+@@ -309,6 +309,12 @@
+         return BlockFaceShape.UNDEFINED;
      }
  
 +

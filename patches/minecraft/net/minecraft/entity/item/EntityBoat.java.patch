@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityBoat.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityBoat.java
-@@ -476,7 +476,7 @@
+@@ -508,7 +508,7 @@
  
                                  if (!list.isEmpty())
                                  {

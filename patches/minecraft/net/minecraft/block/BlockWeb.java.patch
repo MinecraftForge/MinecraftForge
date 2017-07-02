@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockWeb.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockWeb.java
-@@ -20,7 +20,7 @@
+@@ -22,7 +22,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,14 +9,16 @@
  {
      public BlockWeb()
      {
-@@ -77,4 +77,10 @@
-             super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
+@@ -80,6 +80,12 @@
          }
      }
-+
+ 
 +    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos) { return true; }
 +    @Override
 +    public java.util.List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
 +        return com.google.common.collect.Lists.newArrayList(new ItemStack(Item.func_150898_a(this)));
 +    }
- }
++
+     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
+     {
+         return BlockFaceShape.UNDEFINED;

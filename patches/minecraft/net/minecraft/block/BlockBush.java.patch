@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockBush.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockBush.java
-@@ -15,7 +15,7 @@
+@@ -17,7 +17,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,7 +9,7 @@
  {
      protected static final AxisAlignedBB field_185515_b = new AxisAlignedBB(0.30000001192092896D, 0.0D, 0.30000001192092896D, 0.699999988079071D, 0.6000000238418579D, 0.699999988079071D);
  
-@@ -38,7 +38,8 @@
+@@ -40,7 +40,8 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -19,7 +19,7 @@
      }
  
      protected boolean func_185514_i(IBlockState p_185514_1_)
-@@ -68,6 +69,11 @@
+@@ -70,6 +71,11 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
@@ -31,7 +31,7 @@
          return this.func_185514_i(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()));
      }
  
-@@ -92,6 +98,35 @@
+@@ -94,6 +100,35 @@
          return false;
      }
  

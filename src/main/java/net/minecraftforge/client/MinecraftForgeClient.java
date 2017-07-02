@@ -17,11 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/**
- * This software is provided under the terms of the Minecraft Forge Public
- * License v1.0.
- */
-
 package net.minecraftforge.client;
 
 import java.util.BitSet;
@@ -104,6 +99,7 @@ public class MinecraftForgeClient
         .expireAfterAccess(1, TimeUnit.SECONDS)
         .build(new CacheLoader<Pair<World, BlockPos>, ChunkCache>()
         {
+            @Override
             public ChunkCache load(Pair<World, BlockPos> key) throws Exception
             {
                 return new ChunkCache(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);

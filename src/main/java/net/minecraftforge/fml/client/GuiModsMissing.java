@@ -40,10 +40,10 @@ public class GuiModsMissing extends GuiErrorBase
         this.drawDefaultBackground();
         int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
         String modMissingDependenciesText = I18n.format("fml.messages.mod.missing.dependencies", TextFormatting.BOLD + modsMissing.getModName() + TextFormatting.RESET);
-        this.drawCenteredString(this.fontRendererObj, modMissingDependenciesText, this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, modMissingDependenciesText, this.width / 2, offset, 0xFFFFFF);
         offset+=10;
         String fixMissingDependenciesText = I18n.format("fml.messages.mod.missing.dependencies.fix", modsMissing.getModName());
-        this.drawCenteredString(this.fontRendererObj, fixMissingDependenciesText, this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, fixMissingDependenciesText, this.width / 2, offset, 0xFFFFFF);
         offset+=5;
         for (ArtifactVersion v : modsMissing.missingMods)
         {
@@ -54,15 +54,15 @@ public class GuiModsMissing extends GuiErrorBase
                 if (dav.getRange() != null)
                 {
                     String message = String.format(TextFormatting.BOLD +  "%s " + TextFormatting.RESET + "%s", v.getLabel(), dav.getRange().toStringFriendly());
-                    this.drawCenteredString(this.fontRendererObj, message, this.width / 2, offset, 0xEEEEEE);
+                    this.drawCenteredString(this.fontRenderer, message, this.width / 2, offset, 0xEEEEEE);
                     continue;
                 }
             }
-            this.drawCenteredString(this.fontRendererObj, String.format(TextFormatting.BOLD + "%s" + TextFormatting.RESET + " : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
+            this.drawCenteredString(this.fontRenderer, String.format(TextFormatting.BOLD + "%s" + TextFormatting.RESET + " : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }
         offset+=20;
         String seeLogText = I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.clientLog.getName());
-        this.drawCenteredString(this.fontRendererObj, seeLogText, this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, seeLogText, this.width / 2, offset, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

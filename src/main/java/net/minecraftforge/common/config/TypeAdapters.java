@@ -98,6 +98,7 @@ class TypeAdapters
         }
     };
     static ITypeAdapter Bool = new ITypeAdapter() {
+        @Override
         public Object getValue(Property prop) {
             return Boolean.valueOf(prop.getBoolean());
         }
@@ -467,6 +468,7 @@ class TypeAdapters
     };
     static ITypeAdapter chr = new ITypeAdapter() {
         
+        @Override
         public Object getValue(Property prop) {
             return (char)prop.getInt();
         }
@@ -500,6 +502,7 @@ class TypeAdapters
             return ret;
         }
         
+        @Override
         public Object getValue(Property prop) {
             int[] v = prop.getIntList();
             char[] ret = new char[v.length];
@@ -532,6 +535,7 @@ class TypeAdapters
     };
     static ITypeAdapter Chr = new ITypeAdapter() {
         
+        @Override
         public Object getValue(Property prop) {
             return Character.valueOf((char)prop.getInt());
         }
@@ -565,6 +569,7 @@ class TypeAdapters
             return ret;
         }
         
+        @Override
         public Object getValue(Property prop) {
             int[] v = prop.getIntList();
             Character[] ret = new Character[v.length];

@@ -26,7 +26,7 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableMap;
 
 /*
@@ -53,11 +53,12 @@ public class MapModelState implements IModelState
         this.map = ImmutableMap.copyOf(map);
         this.def = def;
     }
-	
+
+    @Override
     public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
     {
         if(!part.isPresent() || !map.containsKey(part.get())) return def.apply(part);
-        return map.get(part.get()).apply(Optional.<IModelPart>absent());
+        return map.get(part.get()).apply(Optional.empty());
     }
 
     public IModelState getState(Object obj)

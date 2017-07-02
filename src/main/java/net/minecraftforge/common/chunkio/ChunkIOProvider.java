@@ -26,6 +26,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkDataEvent;
+import net.minecraftforge.fml.common.FMLLog;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -69,7 +70,7 @@ class ChunkIOProvider implements Runnable
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                FMLLog.log.error("Failed to load chunk async.", e);
             }
 
             if (data != null)
@@ -101,8 +102,8 @@ class ChunkIOProvider implements Runnable
         this.provider.chunkGenerator.recreateStructures(this.chunk, this.chunkInfo.x, this.chunkInfo.z);
 
         provider.id2ChunkMap.put(ChunkPos.asLong(this.chunkInfo.x, this.chunkInfo.z), this.chunk);
-        this.chunk.onChunkLoad();
-        this.chunk.populateChunk(provider, provider.chunkGenerator);
+        this.chunk.onLoad();
+        this.chunk.populate(provider, provider.chunkGenerator);
 
         this.runCallbacks();
     }

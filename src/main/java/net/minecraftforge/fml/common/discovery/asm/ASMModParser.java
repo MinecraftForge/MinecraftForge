@@ -35,6 +35,7 @@ import org.apache.logging.log4j.Level;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -64,7 +65,7 @@ public class ASMModParser
         }
         catch (Exception ex)
         {
-            FMLLog.log(Level.ERROR, ex, "Unable to read a class file correctly");
+            FMLLog.log.error("Unable to read a class file correctly", ex);
             throw new LoaderException(ex);
         }
     }
@@ -98,7 +99,7 @@ public class ASMModParser
     @Override
     public String toString()
     {
-        return Objects.toStringHelper("ASMAnnotationDiscoverer")
+        return MoreObjects.toStringHelper("ASMAnnotationDiscoverer")
                 .add("className", asmType.getClassName())
                 .add("classVersion", classVersion)
                 .add("superName", asmSuperType.getClassName())
@@ -130,11 +131,7 @@ public class ASMModParser
 
     public void validate()
     {
-//        if (classVersion > 50.0)
-//        {
-//
-//            throw new LoaderException(new RuntimeException("Mod compiled for Java 7 detected"));
-//        }
+
     }
 
     public boolean isBaseMod(List<String> rememberedTypes)
