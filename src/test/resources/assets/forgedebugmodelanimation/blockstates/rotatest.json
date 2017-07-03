@@ -1,0 +1,13 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "forgedebugmodelanimation:rotatest"
+  },
+  "variants": {
+    "normal": [{}],
+    "static": {
+      "true": {},
+      "false": {}
+    }
+  }
+}

@@ -22,9 +22,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -66,7 +64,9 @@ public class ModelAnimationDebug
     public static final String VERSION = "0.0";
 
     public static String blockName = "test_animation_block";
+    public static String blockSpinName = "rotatest";
     public static ResourceLocation blockId = new ResourceLocation(MODID, blockName);
+    public static ResourceLocation blockSpinId = new ResourceLocation(MODID, blockSpinName);
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
     @Instance(MODID)
@@ -166,6 +166,55 @@ public class ModelAnimationDebug
                     return true;
                 }
             });
+            GameRegistry.register(new Block(Material.WOOD) {
+                {
+                    setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+                    setUnlocalizedName(MODID + "." + blockSpinName);
+                    setRegistryName(blockSpinId);
+                }
+
+                @Override
+                public ExtendedBlockState createBlockState()
+                {
+                    return new ExtendedBlockState(this, new IProperty[]{ Properties.StaticProperty }, new IUnlistedProperty[]{ Properties.AnimationProperty });
+                }
+
+                @Override
+                public boolean isOpaqueCube(IBlockState state) { return false; }
+
+                @Override
+                public boolean isFullCube(IBlockState state) { return false; }
+
+                @Override
+                public boolean hasTileEntity(IBlockState state) {
+                    return true;
+                }
+
+                @Override
+                public EnumBlockRenderType getRenderType(IBlockState state) {
+                    return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+                }
+                @Override
+                public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+                    return state.withProperty(Properties.StaticProperty, false);
+                }
+
+                @Override
+                public int getMetaFromState(IBlockState state) {
+                    return 0;
+                }
+
+                @Override
+                public IBlockState getStateFromMeta(int meta) {
+                    return getDefaultState();
+                }
+
+                @Override
+                public TileEntity createTileEntity(World world, IBlockState state) {
+                    return new Spin();
+                }
+
+            });
             GameRegistry.register(new ItemBlock(Block.REGISTRY.getObject(blockId))
             {
                 @Override
@@ -175,6 +224,7 @@ public class ModelAnimationDebug
                 }
             }.setRegistryName(blockId));
             GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
+            GameRegistry.registerTileEntity(Spin.class, MODID + ":" + "tile_" + blockSpinName);
         }
 
         @Nullable
@@ -187,6 +237,50 @@ public class ModelAnimationDebug
         public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
         {
             return null;
+        }
+    }
+
+    public static class Spin extends TileEntity implements ITickable, ICapabilityProvider {
+
+        @Nullable
+        private final IAnimationStateMachine asm;
+        private final VariableValue cycle = new VariableValue(0);
+
+        public Spin() {
+            asm = proxy.load(new ResourceLocation(MODID, "asms/block/rotatest.json"), ImmutableMap.<String, ITimeValue>of("cycle", cycle));
+
+        }
+
+        int tickcounter;
+
+        @Override
+        public void update() {
+            tickcounter++;
+            if (world.isRemote) {
+                cycle.setValue(tickcounter/40.0F);
+            }
+        }
+
+        @Override
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side) {
+            return capability == CapabilityAnimation.ANIMATION_CAPABILITY || super.hasCapability(capability, side);
+        }
+
+        @Override
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
+        {
+            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            {
+                return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
+            }
+            return super.getCapability(capability, side);
+        }
+
+        @Override
+        public boolean hasFastRenderer()
+        {
+            return true;
         }
     }
 
@@ -206,6 +300,7 @@ public class ModelAnimationDebug
                     chest.handleEvents(time, pastEvents);
                 }
             });
+            ClientRegistry.bindTileEntitySpecialRenderer(Spin.class, new AnimationTESR<Spin>());
             String entityName = MODID + ":entity_chest";
             //EntityRegistry.registerGlobalEntityID(EntityChest.class, entityName, EntityRegistry.findGlobalUniqueEntityId());
             EntityRegistry.registerModEntity(new ResourceLocation(entityName), EntityChest.class, entityName, 0, ModelAnimationDebug.instance, 64, 20, true, 0xFFAAAA00, 0xFFDDDD00);
