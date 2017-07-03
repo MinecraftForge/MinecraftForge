@@ -104,7 +104,7 @@ public class ConfigManager
 
     public static void loadData(ASMDataTable data)
     {
-        FMLLog.fine("Loading @Config anotation data");
+        FMLLog.log.debug("Loading @Config anotation data");
         for (ASMData target : data.getAll(Config.class.getName()))
         {
             String modid = (String)target.getAnnotationInfo().get("modid");
@@ -150,7 +150,7 @@ public class ConfigManager
      */
     public static void sync(String modid, Config.Type type)
     {
-        FMLLog.fine("Attempting to inject @Config classes into %s for type %s", modid, type);
+        FMLLog.log.debug("Attempting to inject @Config classes into {} for type {}", modid, type);
         ClassLoader mcl = Loader.instance().getModClassLoader();
         File configDir = Loader.instance().getConfigDir();
         Multimap<Config.Type, ASMData> map = asm_data.get(modid);
@@ -194,7 +194,7 @@ public class ConfigManager
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "An error occurred trying to load a config for %s into %s", modid, targ.getClassName());
+                FMLLog.log.error("An error occurred trying to load a config for {} into {}", targ.getClassName(), e);
                 throw new LoaderException(e);
             }
         }
@@ -202,7 +202,12 @@ public class ConfigManager
 
     public static Class<?>[] getModConfigClasses(String modid)
     {
-        return MOD_CONFIG_CLASSES.get(modid).toArray(new Class<?>[0]);
+        return (MOD_CONFIG_CLASSES.containsKey(modid) ? MOD_CONFIG_CLASSES.get(modid).toArray(new Class<?>[0]) : new Class<?>[0]);
+    }
+
+    public static boolean hasConfigForMod(String modid)
+    {
+        return asm_data.containsKey(modid);
     }
 
     // =======================================================

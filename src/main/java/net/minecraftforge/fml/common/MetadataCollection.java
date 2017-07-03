@@ -83,7 +83,7 @@ public class MetadataCollection
         }
         catch (JsonParseException e)
         {
-            FMLLog.log(Level.ERROR, e, "The mcmod.info file in %s cannot be parsed as valid JSON. It will be ignored", sourceName);
+            FMLLog.log.error("The mcmod.info file in {} cannot be parsed as valid JSON. It will be ignored", sourceName, e);
             return new MetadataCollection();
         }
         catch (Exception e)

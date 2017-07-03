@@ -62,7 +62,7 @@ public class OpenGuiHandler extends SimpleChannelInboundHandler<FMLMessage.OpenG
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
-        FMLLog.log(Level.ERROR, cause, "OpenGuiHandler exception");
+        FMLLog.log.error("OpenGuiHandler exception", cause);
         super.exceptionCaught(ctx, cause);
     }
 

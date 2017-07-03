@@ -63,7 +63,7 @@ public class FMLInterModComms {
         {
             this.activeContainer = activeContainer;
             this.currentList = null;
-            FMLLog.finer("Attempting to deliver %d IMC messages to mod %s", modMessages.get(activeContainer.getModId()).size(), activeContainer.getModId());
+            FMLLog.log.trace("Attempting to deliver {} IMC messages to mod {}", modMessages.get(activeContainer.getModId()).size(), activeContainer.getModId());
         }
 
         private ImmutableList<IMCMessage> currentList;
@@ -192,7 +192,7 @@ public class FMLInterModComms {
                 Function<T,V> f = Class.forName((String) value).asSubclass(Function.class).newInstance();
                 return Optional.of(f);
             } catch (Exception e) {
-                FMLLog.getLogger().log(Level.INFO, "An error occurred instantiating the IMC function. key: {} value: {}, caller: {}", key,value,sender);
+                FMLLog.log.info("An error occurred instantiating the IMC function. key: {} value: {}, caller: {}", key,value,sender);
                 return Optional.absent();
             }
         }

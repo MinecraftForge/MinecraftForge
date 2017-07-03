@@ -173,6 +173,7 @@ public class BiomeDictionary
         Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot add types to unregistered biome %s", biome);
 
         Collection<Type> supertypes = listSupertypes(types);
+        Collections.addAll(supertypes, types);
 
         for (Type type : supertypes)
         {
@@ -373,7 +374,7 @@ public class BiomeDictionary
         if (!hasAnyType(biome))
         {
             makeBestGuess(biome);
-            FMLLog.warning("No types have been added to Biome %s, types have been assigned on a best-effort guess: %s", biome.getRegistryName(), getTypes(biome));
+            FMLLog.log.warn("No types have been added to Biome {}, types have been assigned on a best-effort guess: {}", biome.getRegistryName(), getTypes(biome));
         }
     }
 
@@ -389,7 +390,7 @@ public class BiomeDictionary
 
             for (Type sType : Type.byName.values())
             {
-                if (type.subTypes.contains(type) && supertypes.add(sType))
+                if (sType.subTypes.contains(type) && supertypes.add(sType))
                     next.add(sType);
             }
         }

@@ -181,7 +181,7 @@ public class RecipeSorter implements Comparator<IRecipe>
     public static void sortCraftManager()
     {
         bake();
-        FMLLog.fine("Sorting recipes");
+        FMLLog.log.debug("Sorting recipes");
         warned.clear();
         Collections.sort(CraftingManager.getInstance().getRecipeList(), INSTANCE);
     }
@@ -238,7 +238,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         {
             if (!warned.contains(cls))
             {
-                FMLLog.bigWarning("Unknown recipe class! %s Modders need to register their recipe types with %s", cls.getName(), RecipeSorter.class.getName());
+                FMLLog.bigWarning("Unknown recipe class! {} Modders need to register their recipe types with {}", cls.getName(), RecipeSorter.class.getName());
                 warned.add(cls);
             }
             cls = cls.getSuperclass();
@@ -248,7 +248,7 @@ public class RecipeSorter implements Comparator<IRecipe>
                 if (ret != null)
                 {
                     priorities.put(recipe.getClass(), ret);
-                    FMLLog.fine("    Parent Found: %d - %s", ret, cls.getName());
+                    FMLLog.log.debug("    Parent Found: {} - {}", ret, cls.getName());
                     return ret;
                 }
             }
@@ -260,7 +260,7 @@ public class RecipeSorter implements Comparator<IRecipe>
     private static void bake()
     {
         if (!isDirty) return;
-        FMLLog.fine("Forge RecipeSorter Baking:");
+        FMLLog.log.debug("Forge RecipeSorter Baking:");
         DirectedGraph<SortEntry> sorter = new DirectedGraph<SortEntry>();
         sorter.addNode(before);
         sorter.addNode(after);
@@ -306,7 +306,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         int x = sorted.size();
         for (SortEntry entry : sorted)
         {
-            FMLLog.fine("  %d: %s", x, entry);
+            FMLLog.log.debug("  {}: {}", x, entry);
             priorities.put(entry.cls, x--);
         }
     }

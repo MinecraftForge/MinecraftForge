@@ -58,6 +58,7 @@ import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.CompoundDataFixer;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -185,10 +186,13 @@ public class FMLCommonHandler
     /**
      * Get the forge mod loader logging instance (goes to the forgemodloader log file)
      * @return The log instance for the FML log file
+     *
+     * @deprecated Not used in FML, Mods use your own logger, see {@link FMLPreInitializationEvent#getModLog()}
      */
+    @Deprecated
     public Logger getFMLLogger()
     {
-        return FMLLog.getLogger();
+        return FMLLog.log;
     }
 
     public Side getSide()
@@ -211,7 +215,7 @@ public class FMLCommonHandler
      */
     public void raiseException(Throwable exception, String message, boolean stopGame)
     {
-        FMLLog.log(Level.ERROR, exception, "Something raised an exception. The message was '%s'. 'stopGame' is %b", message, stopGame);
+        FMLLog.log.error("Something raised an exception. The message was '{}'. 'stopGame' is {}", stopGame, exception);
         if (stopGame)
         {
             getSidedDelegate().haltGame(message,exception);
@@ -438,6 +442,11 @@ public class FMLCommonHandler
         if (!confirmed) StartupQuery.abort();
     }
 
+    public boolean isDisplayCloseRequested()
+    {
+        return sidedDelegate != null && sidedDelegate.isDisplayCloseRequested();
+    }
+
     public boolean shouldServerBeKilledQuietly()
     {
         if (sidedDelegate == null)
@@ -472,19 +481,19 @@ public class FMLCommonHandler
         {
             try
             {
-                FMLLog.info("Waiting for the server to terminate/save.");
+                FMLLog.log.info("Waiting for the server to terminate/save.");
                 if (!latch.await(10, TimeUnit.SECONDS))
                 {
-                    FMLLog.warning("The server didn't stop within 10 seconds, exiting anyway.");
+                    FMLLog.log.warn("The server didn't stop within 10 seconds, exiting anyway.");
                 }
                 else
                 {
-                    FMLLog.info("Server terminated.");
+                    FMLLog.log.info("Server terminated.");
                 }
             }
             catch (InterruptedException e)
             {
-                FMLLog.warning("Interrupted wait, exiting.");
+                FMLLog.log.warn("Interrupted wait, exiting.");
             }
         }
 
@@ -618,7 +627,7 @@ public class FMLCommonHandler
         if (!shouldAllowPlayerLogins())
         {
             TextComponentString text = new TextComponentString("Server is still starting! Please wait before reconnecting.");
-            FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
+            FMLLog.log.info("Disconnecting Player: {}", text.getUnformattedText());
             manager.sendPacket(new SPacketDisconnect(text));
             manager.closeChannel(text);
             return false;
@@ -628,7 +637,7 @@ public class FMLCommonHandler
         {
             manager.setConnectionState(EnumConnectionState.LOGIN);
             TextComponentString text = new TextComponentString("This server requires FML/Forge to be installed. Contact your server admin for more details.");
-            FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
+            FMLLog.log.info("Disconnecting Player: {}", text.getUnformattedText());
             manager.sendPacket(new SPacketDisconnect(text));
             manager.closeChannel(text);
             return false;
@@ -653,18 +662,18 @@ public class FMLCommonHandler
      */
     public void exitJava(int exitCode, boolean hardExit)
     {
-        FMLLog.log(Level.INFO, "Java has been asked to exit (code %d) by %s.", exitCode, Thread.currentThread().getStackTrace()[1]);
+        FMLLog.log.info("Java has been asked to exit (code {}) by {}.", exitCode, Thread.currentThread().getStackTrace()[1]);
         if (hardExit)
         {
-            FMLLog.log(Level.INFO, "This is an abortive exit and could cause world corruption or other things");
+            FMLLog.log.info("This is an abortive exit and could cause world corruption or other things");
         }
         if (Boolean.parseBoolean(System.getProperty("fml.debugExit", "false")))
         {
-            FMLLog.log(Level.INFO, new Throwable(), "Exit trace");
+            FMLLog.log.info("Exit trace", new Throwable());
         }
         else
         {
-            FMLLog.log(Level.INFO, "If this was an unexpected exit, use -Dfml.debugExit=true as a JVM argument to find out where it was called");
+            FMLLog.log.info("If this was an unexpected exit, use -Dfml.debugExit=true as a JVM argument to find out where it was called");
         }
         if (hardExit)
         {
@@ -690,11 +699,11 @@ public class FMLCommonHandler
         }
         catch (InterruptedException e)
         {
-            FMLLog.log(Level.FATAL, e, "Exception caught executing FutureTask: " + e.toString());
+            FMLLog.log.fatal("Exception caught executing FutureTask: {}", e.toString(), e);
         }
         catch (ExecutionException e)
         {
-            FMLLog.log(Level.FATAL, e, "Exception caught executing FutureTask: " + e.toString());
+            FMLLog.log.fatal("Exception caught executing FutureTask: {}", e.toString(), e);
         }
     }
 

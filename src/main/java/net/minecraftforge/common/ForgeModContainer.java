@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.nbt.NBTBase;
@@ -116,7 +118,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
+    public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
+
+    static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -231,7 +236,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         if (removeErroringEntities)
         {
-            FMLLog.warning("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
+            FMLLog.log.warn("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringTileEntities", false);
@@ -242,7 +247,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         if (removeErroringTileEntities)
         {
-            FMLLog.warning("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
+            FMLLog.log.warn("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
@@ -279,6 +284,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Log cascading chunk generation issues during terrain population.");
         logCascadingWorldGeneration = prop.getBoolean();
         prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 0,
+                "The time in ticks the server will wait when a dimension was queued to unload. " +
+                        "This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.");
+        dimensionUnloadQueueDelay = prop.getInt(0);
+        prop.setLanguageKey("forge.configgui.dimensionUnloadQueueDelay");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
@@ -411,11 +423,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 itr.remove();
         }
 
-        FMLLog.log(ForgeVersion.MOD_ID, Level.DEBUG, "Preloading CrashReport Classes");
+        log.debug("Preloading CrashReport Classes");
         Collections.sort(all); //Sort it because I like pretty output ;)
         for (String name : all)
         {
-            FMLLog.log(ForgeVersion.MOD_ID, Level.DEBUG, "\t" + name);
+            log.debug("\t{}", name);
             try
             {
                 Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());

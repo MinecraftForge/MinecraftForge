@@ -59,7 +59,7 @@ public interface IForgeRegistryEntry<V>
     @Nullable
     ResourceLocation getRegistryName();
 
-    Class<? super V> getRegistryType();
+    Class<V> getRegistryType();
 
     // Default implementation, modders who make extra items SHOULD extend this instead of Object.
     // We have to do this until we get default implementations in Java 8.
@@ -82,7 +82,7 @@ public interface IForgeRegistryEntry<V>
             String prefix = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? "minecraft" : mc.getModId().toLowerCase();
             if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
             {
-                FMLLog.bigWarning("Dangerous alternative prefix `%s` for name `%s`, expected `%s` invalid registry invocation/invalid name?", oldPrefix, name, prefix);
+                FMLLog.bigWarning("Dangerous alternative prefix `{}` for name `{}`, expected `{}` invalid registry invocation/invalid name?", oldPrefix, name, prefix);
                 prefix = oldPrefix;
             }
             this.registryName = new ResourceLocation(prefix, name);
@@ -100,6 +100,6 @@ public interface IForgeRegistryEntry<V>
         }
 
         @Override
-        public final Class<? super T> getRegistryType() { return token.getRawType(); };
+        public final Class<T> getRegistryType() { return (Class<T>) token.getRawType(); };
     }
 }

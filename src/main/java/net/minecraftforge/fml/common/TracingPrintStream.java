@@ -40,12 +40,12 @@ public class TracingPrintStream extends PrintStream {
 
     @Override
     public void println(Object o) {
-        logger.info(getPrefix() + o);
+        logger.info("{}{}", getPrefix(), o);
     }
 
     @Override
     public void println(String s) {
-        logger.info(getPrefix() + s);
+        logger.info("{}{}", getPrefix(), s);
     }
 
     private String getPrefix() {

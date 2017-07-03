@@ -59,7 +59,8 @@ public class ClientCommandHandler extends CommandHandler
     {
         message = message.trim();
 
-        if (message.startsWith("/"))
+        boolean usedSlash = message.startsWith("/");
+        if (usedSlash)
         {
             message = message.substring(1);
         }
@@ -72,7 +73,7 @@ public class ClientCommandHandler extends CommandHandler
 
         try
         {
-            if (icommand == null)
+            if (icommand == null || (!usedSlash && icommand instanceof IClientCommand && !((IClientCommand)icommand).allowUsageWithoutPrefix(sender, message)))
             {
                 return 0;
             }

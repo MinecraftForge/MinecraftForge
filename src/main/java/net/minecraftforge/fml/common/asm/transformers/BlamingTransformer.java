@@ -58,7 +58,7 @@ public class BlamingTransformer implements IClassTransformer
     {
         naughtyClasses.add(cls);
         naughtyMods.add(modId);
-        FMLLog.severe("Unsupported class format in mod %s: class %s", modId, cls);
+        FMLLog.log.fatal("Unsupported class format in mod {}: class {}", modId, cls);
     }
 
     public static class VersionVisitor extends ClassVisitor

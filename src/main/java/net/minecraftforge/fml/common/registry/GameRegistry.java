@@ -32,7 +32,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
+import net.minecraft.command.EntitySelector;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -45,6 +49,7 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -55,6 +60,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.IEntitySelectorFactory;
 
 import org.apache.logging.log4j.Level;
 
@@ -76,6 +82,7 @@ public class GameRegistry
     private static Map<IWorldGenerator, Integer> worldGeneratorIndex = Maps.newHashMap();
     private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
     private static List<IWorldGenerator> sortedGeneratorList;
+    private static List<IEntitySelectorFactory> entitySelectorFactories = Lists.newArrayList();
 
     /**
      * Register a world generator - something that inserts new block types into the world
@@ -92,6 +99,49 @@ public class GameRegistry
         {
             sortedGeneratorList = null;
         }
+    }
+
+    /**
+     * Registers a entity selector factory which is used to create predicates whenever a command containing selectors is executed
+     * Any non vanilla arguments that you expect has to be registered. Otherwise Minecraft will throw an CommandException on usage.
+     *
+     * If you want to react to a command like "/kill @e[xyz=5]", you would have to register the argument "xyz" here and check for that argument in the factory.
+     * One factory can listen to any number of arguments as long as they are registered here.
+     *
+     * For inter mod compatibility you might want to use "modid:xyz" (e.g. "forge:min_health") as argument.
+     *
+     * For an example usage, see CustomEntitySelectorTest
+     * @param arguments Expected string arguments in commands
+     */
+    public static void registerEntitySelector(IEntitySelectorFactory factory, String... arguments)
+    {
+        entitySelectorFactories.add(factory);
+        for (String s : arguments)
+        {
+            EntitySelector.addArgument(s);
+        }
+    }
+
+    /**
+     * Creates a list of entity selectors using the registered factories.
+     * Should probably only be called by Forge
+     */
+    public static List<Predicate<Entity>> createEntitySelectors(Map<String, String> arguments, String mainSelector, ICommandSender sender, Vec3d position)
+    {
+        List<Predicate<Entity>> selectors = Lists.newArrayList();
+        for (IEntitySelectorFactory factory : entitySelectorFactories)
+        {
+            try
+            {
+                selectors.addAll(factory.createPredicates(arguments, mainSelector, sender, position));
+            }
+            catch (Exception e)
+            {
+                FMLLog.log.error("Exception caught during entity selector creation with {} for argument map {} of {} for {} at {}", factory,
+                        arguments, mainSelector, sender, position, e);
+            }
+        }
+        return selectors;
     }
 
     /**
@@ -374,7 +424,7 @@ public class GameRegistry
         Item item = GameData.getItemRegistry().getObject(new ResourceLocation(itemName));
         if (item == null)
         {
-            FMLLog.getLogger().log(Level.TRACE, "Unable to find item with name {}", itemName);
+            FMLLog.log.trace("Unable to find item with name {}", itemName);
             return ItemStack.EMPTY;
         }
         ItemStack is = new ItemStack(item, stackSize, meta);
@@ -386,12 +436,12 @@ public class GameRegistry
                 nbttag = JsonToNBT.getTagFromJson(nbtString);
             } catch (NBTException e)
             {
-                FMLLog.getLogger().log(Level.WARN, "Encountered an exception parsing ItemStack NBT string {}", nbtString, e);
+                FMLLog.log.warn("Encountered an exception parsing ItemStack NBT string {}", nbtString, e);
                 throw Throwables.propagate(e);
             }
             if (!(nbttag instanceof NBTTagCompound))
             {
-                FMLLog.getLogger().log(Level.WARN, "Unexpected NBT string - multiple values {}", nbtString);
+                FMLLog.log.warn("Unexpected NBT string - multiple values {}", nbtString);
                 throw new RuntimeException("Invalid NBT JSON");
             }
             else

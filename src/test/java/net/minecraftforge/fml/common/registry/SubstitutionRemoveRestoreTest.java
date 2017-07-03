@@ -24,7 +24,8 @@ import static org.junit.Assert.assertNotEquals;
 public class SubstitutionRemoveRestoreTest
 {
     private ResourceLocation myDirt = new ResourceLocation("minecraft:dirt");
-    private BlockDirt toSub = new BlockDirt() {
+    private BlockDirt toSub = new BlockDirt()
+    {
 
     };
 
@@ -33,7 +34,8 @@ public class SubstitutionRemoveRestoreTest
     {
         Loader.instance();
         Bootstrap.register();
-        Loader.instance().setupTestHarness(new DummyModContainer(new ModMetadata() {{
+        Loader.instance().setupTestHarness(new DummyModContainer(new ModMetadata()
+        {{
             modId = "test";
         }}));
     }
@@ -45,8 +47,8 @@ public class SubstitutionRemoveRestoreTest
         PersistentRegistryManager.freezeData();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
 
-        final FMLControlledNamespacedRegistry<Block> blockRegistry = (FMLControlledNamespacedRegistry<Block>)PersistentRegistryManager.findRegistryByType(Block.class);
-        final FMLControlledNamespacedRegistry<Item> itemRegistry = (FMLControlledNamespacedRegistry<Item>)PersistentRegistryManager.findRegistryByType(Item.class);
+        final FMLControlledNamespacedRegistry<Block> blockRegistry = (FMLControlledNamespacedRegistry<Block>) PersistentRegistryManager.findRegistryByType(Block.class);
+        final FMLControlledNamespacedRegistry<Item> itemRegistry = (FMLControlledNamespacedRegistry<Item>) PersistentRegistryManager.findRegistryByType(Item.class);
 
         // TEST 1: Does my substitute take effect? The substitute should be found in the registry
         Block fnd = blockRegistry.getValue(myDirt);
@@ -55,7 +57,7 @@ public class SubstitutionRemoveRestoreTest
         assertEquals("Got my dirt substitute - Blocks and registry", currDirt, fnd);
         assertEquals("Got my dirt substitute - registry", toSub, fnd);
 
-        ItemBlock dirtitem = (ItemBlock)itemRegistry.getValue(myDirt);
+        ItemBlock dirtitem = (ItemBlock) itemRegistry.getValue(myDirt);
         assertEquals("ItemBlock points at my block", toSub, dirtitem.block);
 
         // TEST 2: Does the substitute get removed when told by remote operation? The substitute should NOT be found in the registry
@@ -69,7 +71,7 @@ public class SubstitutionRemoveRestoreTest
         assertEquals("Got my dirt substitute - Blocks and registry", currDirt, fnd);
         assertNotEquals("Got my dirt substitute - registry", toSub, fnd);
 
-        dirtitem = (ItemBlock)itemRegistry.getValue(myDirt);
+        dirtitem = (ItemBlock) itemRegistry.getValue(myDirt);
         assertEquals("ItemBlock points at vanilla block", currDirt, dirtitem.block);
         assertNotEquals("ItemBlock points at my block", toSub, dirtitem.block);
 
@@ -82,7 +84,7 @@ public class SubstitutionRemoveRestoreTest
         assertEquals("Got my dirt substitute - Blocks and registry", currDirt, fnd);
         assertEquals("Got my dirt substitute - registry", toSub, fnd);
 
-        dirtitem = (ItemBlock)itemRegistry.getValue(myDirt);
+        dirtitem = (ItemBlock) itemRegistry.getValue(myDirt);
         assertEquals("ItemBlock points at my block", toSub, dirtitem.block);
     }
 }

@@ -137,7 +137,7 @@ public class PersistentRegistryManager
             if (!overlappedTypes.isEmpty())
             {
                 Class<?> foundType = overlappedTypes.iterator().next();
-                FMLLog.severe("Found existing registry of type %1s named %2s, you cannot create a new registry (%3s) with type %4s, as %4s has a parent of that type", foundType, registrySuperTypes.get(foundType), registryName, type);
+                FMLLog.log.fatal("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type", foundType, registrySuperTypes.get(foundType), registryName, type, type);
                 throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
             }
             FMLControlledNamespacedRegistry<T> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(defaultObjectKey, minId, maxId, type, registries, addCallback, clearCallback, createCallback, substitutionCallback);
@@ -225,7 +225,7 @@ public class PersistentRegistryManager
         final FMLControlledNamespacedRegistry<V> registry = PersistentRegistry.ACTIVE.getRegistry(registryType);
         if (registry == null)
         {
-            FMLLog.getLogger().log(Level.ERROR, "Unable to locate registry for registered object of type {}", entry.getClass().getName());
+            FMLLog.log.error("Unable to locate registry for registered object of type {}", entry.getClass().getName());
             throw new IllegalArgumentException("Unable to locate registry for registered object");
         }
         return registry;
@@ -236,10 +236,13 @@ public class PersistentRegistryManager
         return PersistentRegistry.ACTIVE.getRegistry(registryType);
     }
 
+    public static ResourceLocation getRegistryRegistryName(IForgeRegistry<?> registry) {
+        return PersistentRegistry.ACTIVE.registries.inverse().get(registry);
+    }
 
     public static List<String> injectSnapshot(GameDataSnapshot snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
-        FMLLog.info("Injecting existing block and item data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
+        FMLLog.log.info("Injecting existing block and item data into this {} instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps = Maps.newHashMap();
         final LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing = Maps.newLinkedHashMap();
 
@@ -298,7 +301,7 @@ public class PersistentRegistryManager
                 // Carry on, we resuscitated the block
                 if (FMLControlledNamespacedRegistry.DEBUG)
                 {
-                    FMLLog.log(Level.DEBUG, "Registry: Resuscitating dummy block %s", dummy);
+                    FMLLog.log.debug("Registry: Resuscitating dummy block {}", dummy);
                 }
             }
             else
@@ -306,7 +309,7 @@ public class PersistentRegistryManager
                 Integer id = PersistentRegistry.STAGING.getRegistry(BLOCKS, Block.class).getId(dummy);
                 // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
                 // in mod setup - Mark this entry as a dummy
-                FMLLog.log(Level.WARN, "The ID %d is currently locally mapped - it will be replaced with air for this session", id);
+                FMLLog.log.warn("The ID {} is currently locally mapped - it will be replaced with air for this session", id);
                 PersistentRegistry.STAGING.getRegistry(BLOCKS, Block.class).markDummy(dummy, id, new BlockDummyAir());
             }
         }
@@ -327,7 +330,7 @@ public class PersistentRegistryManager
             {
                 ResourceLocation rl = missingBlock.getKey();
                 Integer id = missingBlock.getValue();
-                FMLLog.log(Level.DEBUG, "Replacing id %s named as %s with air block. If the mod becomes available again later, it can reload here", id, rl);
+                FMLLog.log.debug("Replacing id {} named as {} with air block. If the mod becomes available again later, it can reload here", id, rl);
                 // Mark this entry as a dummy
                 PersistentRegistry.STAGING.getRegistry(BLOCKS, Block.class).markDummy(rl, id, new BlockDummyAir());
             }
@@ -473,12 +476,12 @@ public class PersistentRegistryManager
     {
         if (!PersistentRegistry.FROZEN.isPopulated())
         {
-            FMLLog.warning("Can't revert to frozen GameData state without freezing first.");
+            FMLLog.log.warn("Can't revert to frozen GameData state without freezing first.");
             return;
         }
         else
         {
-            FMLLog.fine("Reverting to frozen data state.");
+            FMLLog.log.debug("Reverting to frozen data state.");
         }
         for (Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>> r : PersistentRegistry.ACTIVE.registries.entrySet())
         {
@@ -490,12 +493,12 @@ public class PersistentRegistryManager
 
         // the id mapping has reverted, ensure we sync up the object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
-        FMLLog.fine("Frozen state restored.");
+        FMLLog.log.debug("Frozen state restored.");
     }
 
     public static void freezeData()
     {
-        FMLLog.fine("Freezing block and item id maps");
+        FMLLog.log.debug("Freezing block and item id maps");
         for (Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>> r : PersistentRegistry.ACTIVE.registries.entrySet())
         {
             // This has to be performed prior to invoking the method so the compiler can precompute the type bounds for the method
@@ -507,7 +510,7 @@ public class PersistentRegistryManager
 
     public static void freezeVanilla()
     {
-        FMLLog.fine("Creating vanilla freeze snapshot");
+        FMLLog.log.debug("Creating vanilla freeze snapshot");
         for (Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>> r : PersistentRegistry.ACTIVE.registries.entrySet())
         {
             // This has to be performed prior to invoking the method so the compiler can precompute the type bounds for the method
@@ -515,7 +518,7 @@ public class PersistentRegistryManager
             loadRegistry(r.getKey(), PersistentRegistry.ACTIVE, PersistentRegistry.VANILLA, registrySuperType);
         }
         forAllRegistries(PersistentRegistry.VANILLA, ValidateRegistryFunction.OPERATION);
-        FMLLog.fine("Vanilla freeze snapshot created");
+        FMLLog.log.debug("Vanilla freeze snapshot created");
     }
 
     public static List<String> processIdRematches(Iterable<FMLMissingMappingsEvent.MissingMapping> missedMappings, boolean isLocalWorld, Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
@@ -541,7 +544,7 @@ public class PersistentRegistryManager
                 {
                     currId = staging.getRegistry(BLOCKS, Block.class).getId((Block)remap.getTarget());
                     newName = active.getRegistry(BLOCKS, Block.class).getNameForObject((Block)remap.getTarget());
-                    FMLLog.fine("The Block %s is being remapped to %s.", remap.name, newName);
+                    FMLLog.log.debug("The Block {} is being remapped to {}.", remap.name, newName);
 
                     missingBlocks.remove(new ResourceLocation(remap.name));
                     newId = staging.getRegistry(BLOCKS, Block.class).add(remap.id, newName, (Block)remap.getTarget());
@@ -551,7 +554,7 @@ public class PersistentRegistryManager
                 {
                     currId = staging.getRegistry(ITEMS, Item.class).getId((Item)remap.getTarget());
                     newName = active.getRegistry(ITEMS, Item.class).getNameForObject((Item)remap.getTarget());
-                    FMLLog.fine("The Item %s is being remapped to %s.", remap.name, newName);
+                    FMLLog.log.debug("The Item {} is being remapped to {}.", remap.name, newName);
 
                     missingItems.remove(new ResourceLocation(remap.name));
                     newId = staging.getRegistry(ITEMS, Item.class).add(remap.id, newName, (Item)remap.getTarget());
@@ -570,7 +573,7 @@ public class PersistentRegistryManager
 
                 if (currId != newId)
                 {
-                    FMLLog.info("Fixed %s id mismatch %s: %d (init) -> %d (map).", remap.type == GameRegistry.Type.BLOCK ? "block" : "item", newName, currId, newId);
+                    FMLLog.log.info("Fixed {} id mismatch {}: {} (init) -> {} (map).", remap.type == GameRegistry.Type.BLOCK ? "block" : "item", newName, currId, newId);
                     (remap.type == GameRegistry.Type.BLOCK ? remapBlocks : remapItems).put(newName, new Integer[] {currId, newId});
                 }
             }
@@ -578,7 +581,7 @@ public class PersistentRegistryManager
             {
                 // Pulled out specifically so the block doesn't get reassigned a new ID just because it's
                 // Item block has gone away
-                FMLLog.fine("The ItemBlock %s is no longer present in the game. The residual block will remain", remap.name);
+                FMLLog.log.debug("The ItemBlock {} is no longer present in the game. The residual block will remain", remap.name);
             }
             else
             {
@@ -637,7 +640,7 @@ public class PersistentRegistryManager
                 else
                 {
                     for (int x = 0; x < 10; x++)
-                        FMLLog.severe("!!!!!!!!!! UPDATING WORLD WITHOUT DOING BACKUP !!!!!!!!!!!!!!!!");
+                        FMLLog.log.fatal("!!!!!!!!!! UPDATING WORLD WITHOUT DOING BACKUP !!!!!!!!!!!!!!!!");
                 }
             } catch (IOException e)
             {
@@ -649,17 +652,17 @@ public class PersistentRegistryManager
         }
         if (!failed.isEmpty())
         {
-            FMLLog.severe("This world contains blocks and items that refuse to be remapped. The world will not be loaded");
+            FMLLog.log.fatal("This world contains blocks and items that refuse to be remapped. The world will not be loaded");
             return failed;
         }
         if (!warned.isEmpty())
         {
-            FMLLog.warning("This world contains block and item mappings that may cause world breakage");
+            FMLLog.log.warn("This world contains block and item mappings that may cause world breakage");
             return failed;
         }
         else if (!ignored.isEmpty())
         {
-            FMLLog.fine("There were %d missing mappings that have been ignored", ignored.size());
+            FMLLog.log.debug("There were {} missing mappings that have been ignored", ignored.size());
         }
         return failed;
     }
