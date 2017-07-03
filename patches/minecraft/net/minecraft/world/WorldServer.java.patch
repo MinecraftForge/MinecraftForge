@@ -62,7 +62,16 @@
              }
  
              this.func_73053_d();
-@@ -200,7 +210,7 @@
+@@ -187,8 +197,6 @@
+             this.field_175742_R.func_77192_a(this, this.field_72985_G, this.field_72992_H, this.field_72986_A.func_82573_f() % 400L == 0L);
+         }
+ 
+-        this.field_72984_F.func_76318_c("chunkSource");
+-        this.field_73020_y.func_73156_b();
+         int j = this.func_72967_a(1.0F);
+ 
+         if (j != this.func_175657_ab())
+@@ -200,7 +208,7 @@
  
          if (this.func_82736_K().func_82766_b("doDaylightCycle"))
          {
@@ -71,7 +80,7 @@
          }
  
          this.field_72984_F.func_76318_c("tickPending");
-@@ -214,6 +224,10 @@
+@@ -214,6 +222,12 @@
          this.field_175740_d.func_75528_a();
          this.field_72984_F.func_76318_c("portalForcer");
          this.field_85177_Q.func_85189_a(this.func_82737_E());
@@ -79,6 +88,8 @@
 +        {
 +            tele.func_85189_a(func_82737_E());
 +        }
++        this.field_72984_F.func_76318_c("chunkSource");
++        this.field_73020_y.func_73156_b();
          this.field_72984_F.func_76319_b();
          this.func_147488_Z();
      }
