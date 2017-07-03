@@ -705,9 +705,16 @@ public class ForgeEventFactory
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e);
         return e.getLevel();
     }
-    
+
     public static boolean onEntityDestroyBlock(EntityLivingBase entity, BlockPos pos, IBlockState state)
     {
         return !MinecraftForge.EVENT_BUS.post(new LivingDestroyBlockEvent(entity, pos, state));
+    }
+
+    public static Result canCreatureTypeSpawnAtPos(EntityLiving.SpawnPlacementType type, World world, BlockPos pos, IBlockState state)
+    {
+        WorldEvent.CreatureTypeSpawnEvent event = new WorldEvent.CreatureTypeSpawnEvent(type, world, pos, state);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
     }
 }
