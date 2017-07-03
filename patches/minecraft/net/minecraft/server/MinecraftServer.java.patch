@@ -253,22 +253,16 @@
          this.field_175590_aa.start();
      }
  
-@@ -774,7 +777,13 @@
+@@ -774,7 +777,7 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
      {
 -        return p_71218_1_ == -1 ? this.field_71305_c[1] : (p_71218_1_ == 1 ? this.field_71305_c[2] : this.field_71305_c[0]);
-+        WorldServer ret = net.minecraftforge.common.DimensionManager.getWorld(p_71218_1_);
-+        if (ret == null)
-+        {
-+            net.minecraftforge.common.DimensionManager.initDimension(p_71218_1_);
-+            ret = net.minecraftforge.common.DimensionManager.getWorld(p_71218_1_);
-+        }
-+        return ret;
++        return net.minecraftforge.common.DimensionManager.getWorld(p_71218_1_, true);
      }
  
      public String func_71249_w()
-@@ -804,7 +813,7 @@
+@@ -804,7 +807,7 @@
  
      public String getServerModName()
      {
