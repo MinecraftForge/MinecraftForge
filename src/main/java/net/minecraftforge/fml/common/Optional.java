@@ -56,6 +56,7 @@ public final class Optional {
      * @author cpw
      *
      */
+    @Repeatable(InterfaceList.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     public @interface Interface {
