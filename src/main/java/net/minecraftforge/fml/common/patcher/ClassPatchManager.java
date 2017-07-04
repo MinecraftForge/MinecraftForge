@@ -183,7 +183,8 @@ public class ClassPatchManager {
         catch (Exception e)
         {
             FMLLog.log.error("Error occurred reading binary patches. Expect severe problems!", e);
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
 
         patches = ArrayListMultimap.create();

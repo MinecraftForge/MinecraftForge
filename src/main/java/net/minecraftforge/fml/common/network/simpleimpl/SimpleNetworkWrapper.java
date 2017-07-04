@@ -27,7 +27,6 @@ import java.util.EnumMap;
 import com.google.common.base.Throwables;
 
 import net.minecraft.util.IThreadListener;
-import org.apache.logging.log4j.Level;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
@@ -129,7 +128,8 @@ public class SimpleNetworkWrapper {
         {
             // How is this possible?
             FMLLog.log.fatal("What? Netty isn't installed, what magic is this?", e);
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
     public SimpleNetworkWrapper(String channelName)
@@ -147,7 +147,8 @@ public class SimpleNetworkWrapper {
         catch (Exception e)
         {
             FMLLog.log.fatal("It appears we somehow have a not-standard pipeline. Huh", e);
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
     /**
@@ -169,9 +170,11 @@ public class SimpleNetworkWrapper {
         try
         {
             return handler.newInstance();
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
     

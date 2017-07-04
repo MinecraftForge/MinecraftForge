@@ -31,8 +31,6 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.FileListHelper;
 
-import org.apache.logging.log4j.Level;
-
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -154,7 +152,8 @@ public class ModDiscoverer
             }
             catch (Throwable t)
             {
-                Throwables.propagate(t);
+                Throwables.throwIfUnchecked(t);
+                throw new RuntimeException(t);
             }
         }
 

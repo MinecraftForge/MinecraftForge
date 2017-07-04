@@ -34,7 +34,6 @@ import net.minecraftforge.fml.common.ModContainerFactory;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -124,7 +123,8 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                 }
                 catch (Exception e)
                 {
-                    throw Throwables.propagate(e);
+                    Throwables.throwIfUnchecked(e);
+                    throw new RuntimeException(e);
                 }
                 finally
                 {

@@ -669,7 +669,8 @@ public class FMLClientHandler implements IFMLSidedHandler
             catch (Exception e)
             {
                 FMLLog.log.error("An unexpected exception occurred constructing the custom resource pack for {}", container.getName(), e);
-                throw Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
         }
     }

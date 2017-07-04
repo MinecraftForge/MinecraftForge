@@ -27,8 +27,6 @@ import java.util.Map;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 
-import org.apache.logging.log4j.Level;
-
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -88,7 +86,8 @@ public class MetadataCollection
         }
         catch (Exception e)
         {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
 

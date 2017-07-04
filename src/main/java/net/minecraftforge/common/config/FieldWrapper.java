@@ -86,7 +86,8 @@ public abstract class FieldWrapper implements IFieldWrapper
             }
             catch (Exception e)
             {
-                Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
 
             ParameterizedType type = (ParameterizedType) field.getGenericType();
@@ -202,9 +203,9 @@ public abstract class FieldWrapper implements IFieldWrapper
             }
             catch (Exception e)
             {
-                Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
-            return null;
         }
 
         @Override
@@ -220,7 +221,8 @@ public abstract class FieldWrapper implements IFieldWrapper
             }
             catch (Exception e)
             {
-                Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
         }
 
@@ -273,9 +275,9 @@ public abstract class FieldWrapper implements IFieldWrapper
             }
             catch (Exception e)
             {
-                Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
-            return null;
         }
 
         @Override
@@ -289,7 +291,8 @@ public abstract class FieldWrapper implements IFieldWrapper
             }
             catch (Exception e)
             {
-                Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
         }
 

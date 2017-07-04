@@ -55,7 +55,6 @@ import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -330,7 +329,7 @@ public class FMLModContainer implements ModContainer
         }
         catch (Exception e)
         {
-            Throwables.propagateIfPossible(e);
+            Throwables.throwIfUnchecked(e);
             modLog.trace("Failed to find a usable version.properties file");
             return null;
         }
@@ -496,7 +495,7 @@ public class FMLModContainer implements ModContainer
                 }
                 catch (Exception e)
                 {
-                    Throwables.propagateIfPossible(e);
+                    Throwables.throwIfUnchecked(e);
                     modLog.warn("Attempting to load @{} in class {} for {} and failing", annotationName, targets.getClassName(), mc.getModId(), e);
                 }
             }
