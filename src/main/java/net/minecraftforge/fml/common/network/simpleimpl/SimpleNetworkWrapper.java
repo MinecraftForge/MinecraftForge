@@ -171,9 +171,8 @@ public class SimpleNetworkWrapper {
         {
             return handler.newInstance();
         }
-        catch (Exception e)
+        catch (ReflectiveOperationException e)
         {
-            Throwables.throwIfUnchecked(e);
             throw new RuntimeException(e);
         }
     }

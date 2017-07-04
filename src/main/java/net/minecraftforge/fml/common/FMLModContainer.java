@@ -20,6 +20,7 @@ package net.minecraftforge.fml.common;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -64,7 +65,6 @@ import java.util.zip.ZipFile;
 
 import java.util.function.Function;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -327,9 +327,8 @@ public class FMLModContainer implements ModContainer
             }
             return version;
         }
-        catch (Exception e)
+        catch (IOException e)
         {
-            Throwables.throwIfUnchecked(e);
             modLog.trace("Failed to find a usable version.properties file");
             return null;
         }
@@ -493,9 +492,8 @@ public class FMLModContainer implements ModContainer
                     isStatic = Modifier.isStatic(f.getModifiers());
                     injectedMod = retriever.apply(mc);
                 }
-                catch (Exception e)
+                catch (ReflectiveOperationException e)
                 {
-                    Throwables.throwIfUnchecked(e);
                     modLog.warn("Attempting to load @{} in class {} for {} and failing", annotationName, targets.getClassName(), mc.getModId(), e);
                 }
             }

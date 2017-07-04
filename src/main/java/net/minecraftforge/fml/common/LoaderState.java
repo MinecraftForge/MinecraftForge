@@ -31,8 +31,6 @@ import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.event.FMLStateEvent;
 
-import com.google.common.base.Throwables;
-
 /**
  * The state enum used to help track state progression for the loader
  * @author cpw
@@ -89,9 +87,8 @@ public enum LoaderState
         {
             return eventClass.getConstructor(Object[].class).newInstance((Object)eventData);
         }
-        catch (Exception e)
+        catch (ReflectiveOperationException e)
         {
-            Throwables.throwIfUnchecked(e);
             throw new RuntimeException(e);
         }
     }

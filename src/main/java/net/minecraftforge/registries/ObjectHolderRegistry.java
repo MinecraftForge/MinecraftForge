@@ -33,7 +33,6 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -105,10 +104,9 @@ public enum ObjectHolderRegistry
                 clazz = Class.forName(className, extractFromValue, getClass().getClassLoader());
                 classCache.put(className, clazz);
             }
-            catch (Exception ex)
+            catch (ClassNotFoundException ex)
             {
                 // unpossible?
-                Throwables.throwIfUnchecked(ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -133,10 +131,9 @@ public enum ObjectHolderRegistry
                 Field f = clazz.getDeclaredField(annotationTarget);
                 addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value), extractFromValue));
             }
-            catch (Exception ex)
+            catch (NoSuchFieldException ex)
             {
                 // unpossible?
-                Throwables.throwIfUnchecked(ex);
                 throw new RuntimeException(ex);
             }
         }

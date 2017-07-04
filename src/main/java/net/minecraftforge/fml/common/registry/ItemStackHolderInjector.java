@@ -28,7 +28,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -77,10 +76,9 @@ public enum ItemStackHolderInjector
                 clazz = Class.forName(className, true, getClass().getClassLoader());
                 classCache.put(className, clazz);
             }
-            catch (Exception ex)
+            catch (ClassNotFoundException ex)
             {
                 // unpossible?
-                Throwables.throwIfUnchecked(ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -89,10 +87,9 @@ public enum ItemStackHolderInjector
             Field f = clazz.getField(annotationTarget);
             itemStackHolders.add(new ItemStackHolderRef(f, value, meta, nbt));
         }
-        catch (Exception ex)
+        catch (NoSuchFieldException ex)
         {
             // unpossible?
-            Throwables.throwIfUnchecked(ex);
             throw new RuntimeException(ex);
         }
     }

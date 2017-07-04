@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.Set;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import net.minecraftforge.common.config.Config.RangeDouble;
@@ -84,9 +83,8 @@ public abstract class FieldWrapper implements IFieldWrapper
                 throw new IllegalArgumentException(String.format("The map '%s' of class '%s' must have the key type String!", field.getName(),
                         field.getDeclaringClass().getCanonicalName()), cce);
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             }
 
@@ -201,9 +199,8 @@ public abstract class FieldWrapper implements IFieldWrapper
                 Enum enu = (Enum) field.get(instance);
                 return enu.name();
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             }
         }
@@ -219,9 +216,8 @@ public abstract class FieldWrapper implements IFieldWrapper
             {
                 field.set(instance, enu);
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             }
         }
@@ -273,9 +269,8 @@ public abstract class FieldWrapper implements IFieldWrapper
             {
                 return field.get(instance);
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             }
         }
@@ -289,9 +284,8 @@ public abstract class FieldWrapper implements IFieldWrapper
             {
                 field.set(instance, value);
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             }
         }

@@ -28,7 +28,6 @@ import java.util.Set;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -305,10 +304,9 @@ public class ConfigManager
                 {
                     newInstance = f.get(instance);
                 }
-                catch (Exception e)
+                catch (IllegalAccessException e)
                 {
                     //This should never happen. Previous checks should eliminate this.
-                    Throwables.throwIfUnchecked(e);
                     throw new RuntimeException(e);
                 }
 
