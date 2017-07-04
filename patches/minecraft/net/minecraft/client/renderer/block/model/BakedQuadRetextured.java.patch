@@ -9,7 +9,7 @@
          this.field_178218_d = p_i46217_2_;
          this.func_178217_e();
      }
-@@ -21,9 +21,10 @@
+@@ -21,9 +21,16 @@
      {
          for (int i = 0; i < 4; ++i)
          {
@@ -22,4 +22,10 @@
 +            this.field_178215_a[j + uvIndex + 1] = Float.floatToRawIntBits(this.field_178218_d.func_94207_b((double)this.field_187509_d.func_188536_b(Float.intBitsToFloat(this.field_178215_a[j + uvIndex + 1]))));
          }
      }
++
++    @Override
++    public TextureAtlasSprite func_187508_a()
++    {
++        return field_178218_d;
++    }
  }
