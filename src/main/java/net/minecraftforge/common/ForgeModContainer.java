@@ -119,6 +119,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
     public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
+    public static List<String> oreRegistryPriorityModIds = new ArrayList<>();
 
     static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
@@ -291,6 +292,14 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                         "This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.");
         dimensionUnloadQueueDelay = prop.getInt(0);
         prop.setLanguageKey("forge.configgui.dimensionUnloadQueueDelay");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "oreRegistryPriorityModIds", new String[] {"minecraft"},
+                "This list sets which mods get chosen first when deciding which ItemStack to choose when unifying ore with the OreRegistry.");
+        String[] priorityModIds = prop.getStringList();
+        oreRegistryPriorityModIds.clear();
+        Collections.addAll(oreRegistryPriorityModIds, priorityModIds);
+        prop.setLanguageKey("forge.configgui.oreRegistryPriorityModIds");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);

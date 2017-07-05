@@ -1,0 +1,15 @@
+{
+  "type": "forge:shapeless",
+  "group": "shapeless_ore_to_ore",
+  "ingredients": [
+    {
+      "type": "forge:ore_registry",
+      "material": "redstone",
+      "shape": "dust"
+    }
+  ],
+  "result": {
+    "material": "diamond",
+    "shape": "gem"
+  }
+}

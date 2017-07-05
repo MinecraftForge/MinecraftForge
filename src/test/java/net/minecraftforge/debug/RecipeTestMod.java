@@ -11,7 +11,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oreregistry.ShapedForgeRecipe;
 
 @Mod(modid = "recipetest", version = "1.0", acceptableRemoteVersions = "*")
 public class RecipeTestMod
@@ -26,7 +26,7 @@ public class RecipeTestMod
     public void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
         ResourceLocation location1 = new ResourceLocation("recipetest", "dirt");
-        ShapedOreRecipe recipe1 = new ShapedOreRecipe(location1, new ItemStack(Blocks.DIAMOND_BLOCK), "DDD", 'D', new ItemStack(Blocks.DIRT));
+        ShapedForgeRecipe recipe1 = new ShapedForgeRecipe(location1, new ItemStack(Blocks.DIAMOND_BLOCK), "DDD", 'D', new ItemStack(Blocks.DIRT));
         recipe1.setRegistryName(location1);
         event.getRegistry().register(recipe1);
 

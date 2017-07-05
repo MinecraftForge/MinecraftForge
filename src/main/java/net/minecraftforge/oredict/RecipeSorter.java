@@ -47,6 +47,8 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.item.crafting.ShieldRecipes;
 import net.minecraft.item.crafting.RecipesBanners.RecipeAddPattern;
 import net.minecraft.item.crafting.RecipesBanners.RecipeDuplicatePattern;
+import net.minecraftforge.oreregistry.ShapedForgeRecipe;
+import net.minecraftforge.oreregistry.ShapelessForgeRecipe;
 
 import javax.annotation.Nullable;
 
@@ -157,6 +159,8 @@ public class RecipeSorter implements Comparator<IRecipe>
 
         register("forge:shapedore",     ShapedOreRecipe.class,    SHAPED,    "after:minecraft:shaped before:minecraft:shapeless");
         register("forge:shapelessore",  ShapelessOreRecipe.class, SHAPELESS, "after:minecraft:shapeless");
+        register("forge:shaped",     ShapedForgeRecipe.class,     SHAPED,    "after:minecraft:shaped before:minecraft:shapeless");
+        register("forge:shapeless",  ShapelessForgeRecipe.class,  SHAPELESS, "after:minecraft:shapeless");
     }
 
     @Override

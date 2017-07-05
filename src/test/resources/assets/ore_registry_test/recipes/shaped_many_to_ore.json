@@ -1,0 +1,21 @@
+{
+  "type": "forge:shaped",
+  "group": "shaped_many_to_ore",
+  "pattern": [
+    "YXY"
+  ],
+  "key": {
+    "X": {
+      "item": "#diamond"
+    },
+    "Y": {
+      "item": "minecraft:planks",
+      "data": 0
+    }
+  },
+  "result": {
+    "material": "emerald",
+    "shape": "block",
+    "count": 2
+  }
+}

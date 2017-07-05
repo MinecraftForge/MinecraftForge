@@ -1,0 +1,23 @@
+{
+  "type": "forge:shapeless",
+  "group": "shapeless_many_to_ore",
+  "ingredients": [
+    {
+      "item": "minecraft:planks",
+      "data": 0
+    },
+    {
+      "type": "forge:ore_registry",
+      "material": "lapis",
+      "shape": "block"
+    },
+    {
+      "item": "#diamond"
+    }
+  ],
+  "result": {
+    "material": "emerald",
+    "shape": "block",
+    "count": 2
+  }
+}
