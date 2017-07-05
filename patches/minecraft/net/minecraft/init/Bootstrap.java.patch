@@ -10,7 +10,15 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
-@@ -524,6 +527,8 @@
+@@ -489,6 +492,7 @@
+         if (!field_151355_a)
+         {
+             field_151355_a = true;
++            if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
+             func_179868_d();
+             SoundEvent.func_187504_b();
+             Block.func_149671_p();
+@@ -524,6 +528,8 @@
                      field_179871_c.error("Errors with built-in loot tables");
                  }
              }
