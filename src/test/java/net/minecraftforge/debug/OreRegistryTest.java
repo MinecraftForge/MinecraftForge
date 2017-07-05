@@ -97,7 +97,7 @@ public class OreRegistryTest
         IForgeRegistry<IRecipe> registry = event.getRegistry();
 
         BasicOre diamond = OreRegistry.addOre(DIAMOND, GEM, new ItemStack(DIAMOND_2));
-        // convert legacy diamond ore into unified diamond ore
+        // convert legacy diamond into unified diamond
         ShapelessForgeRecipe legacyConversion = new ShapelessForgeRecipe(null, diamond, diamond);
         legacyConversion.setRegistryName("any_diamond_to_unified_diamond");
         registry.register(legacyConversion);

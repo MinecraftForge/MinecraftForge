@@ -87,7 +87,7 @@ public class ShapelessForgeRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
             }
         }
     }
-    public ShapelessForgeRecipe(ResourceLocation group, @Nonnull Supplier<ItemStack> result, NonNullList<Ingredient> input)
+    public ShapelessForgeRecipe(@Nullable ResourceLocation group, @Nonnull Supplier<ItemStack> result, @Nonnull NonNullList<Ingredient> input)
     {
         this.group = group;
         this.result = result;
