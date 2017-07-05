@@ -26,7 +26,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -59,6 +58,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -272,6 +272,7 @@ public class GameData
     private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
+        Field regName;
 
         @SuppressWarnings("deprecation")
         @Override
@@ -339,7 +340,32 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            return new BlockDummyAir().setUnlocalizedName("air").setRegistryName(key);
+            if (regName == null)
+            {
+                try
+                {
+                    regName = IForgeRegistryEntry.Impl.class.getDeclaredField("registryName");
+                    regName.setAccessible(true);
+                }
+                catch (NoSuchFieldException | SecurityException e)
+                {
+                    FMLLog.log.error("Could not get `registryName` field from IForgeRegistryEntry.Impl");
+                    FMLLog.log.throwing(Level.ERROR, e);
+                    throw new RuntimeException(e);
+                }
+            }
+            Block ret = new BlockDummyAir().setUnlocalizedName("air");
+            try
+            {
+                regName.set(ret, key);
+            }
+            catch (IllegalArgumentException | IllegalAccessException e)
+            {
+                FMLLog.log.error("Could not set `registryName` field in IForgeRegistryEntry.Impl to `{}`", key.toString());
+                FMLLog.log.throwing(Level.ERROR, e);
+                throw new RuntimeException(e);
+            }
+            return ret;
         }
         private static class BlockDummyAir extends BlockAir //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
