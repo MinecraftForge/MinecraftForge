@@ -655,7 +655,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                     continue;
                 }
 
-                if (primaryName.equals(owner))
+                if (primaryName.equals(owner.owner))
                     continue;
 
                 int realId = add(newId, value, owner.owner);
