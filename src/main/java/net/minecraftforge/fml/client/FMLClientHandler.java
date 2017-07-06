@@ -304,8 +304,6 @@ public class FMLClientHandler implements IFMLSidedHandler
                 sharedModList.put(sharedModId, sharedModDescriptor);
             }
         }
-
-        cloudRenderer = new CloudRenderer(resourceManager);
     }
 
     private void detectOptifine()
@@ -481,6 +479,8 @@ public class FMLClientHandler implements IFMLSidedHandler
                 }
             }
         }
+
+        cloudRenderer = new CloudRenderer();
     }
     /**
      * Get the server instance

@@ -38,6 +38,7 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
@@ -52,29 +53,32 @@ public class CloudRenderer implements IResourceManagerReloadListener
 
     // Building constants.
     private static final VertexFormat FORMAT = DefaultVertexFormats.POSITION_TEX_COLOR;
+    private static final int TOP_SECTIONS = 12;	// Number of slices a top face will span.
     private static final int HEIGHT = 4;
-    private static final int FULL_WIDTH = 64;
-    private static final int START = -FULL_WIDTH / 2;
-    private static final int END = FULL_WIDTH / 2;
-    private static final int SECTION_WIDTH = 8;
     private static final float INSET = 0.001F;
     private static final float ALPHA = 0.8F;
 
+    // Debug
+    private static final boolean WIREFRAME = false;
+
+    // Instance fields
     private final Minecraft mc = Minecraft.getMinecraft();
     private final ResourceLocation texture = new ResourceLocation("textures/environment/clouds.png");
 
     private int displayList = -1;
     private net.minecraft.client.renderer.vertex.VertexBuffer vbo;
     private int cloudMode = -1;
+    private int renderDistance = -1;
 
     private DynamicTexture COLOR_TEX = null;
 
     private int texW;
     private int texH;
 
-    public CloudRenderer(IReloadableResourceManager resourceManager)
+    public CloudRenderer()
     {
-        resourceManager.registerReloadListener(this);
+        // Resource manager should always be reloadable.
+        ((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(this);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -82,6 +86,12 @@ public class CloudRenderer implements IResourceManagerReloadListener
     private int getScale()
     {
         return cloudMode == 2 ? 12 : 8;
+    }
+
+    private float ceilToScale(float value)
+    {
+        float scale = getScale();
+        return MathHelper.ceil(value / scale) * scale;
     }
 
     private void vertices(VertexBuffer buffer)
@@ -93,31 +103,34 @@ public class CloudRenderer implements IResourceManagerReloadListener
 
         float bCol = fancy ? 0.7F : 1F;
 
-        buffer.begin(GL11.GL_QUADS, FORMAT);
+        float sectEnd = ceilToScale(renderDistance * 16);
+        float sectStart = -sectEnd;
 
-        // Create 1200 quads (with SECTION_WIDTH 8). SECTION_WIDTH defines width of slices and vertical faces.
-        // With the minimum number (built above), the clouds nearest the player will still be fully fogged.
-        float sectStart = START * scale;
-        float sectEnd = END * scale;
-        float sectStep = SECTION_WIDTH * scale;
+        float sectStep = ceilToScale(sectEnd * 2 / TOP_SECTIONS);
         float sectPx = PX_SIZE / scale;
 
-        float sectX0 = sectStart;
-        float sectX1;
+        buffer.begin(GL11.GL_QUADS, FORMAT);
 
-        for (sectX1 = sectStart + sectStep; sectX1 <= sectEnd; sectX1 += sectStep)
+        float sectX0 = sectStart;
+        float sectX1 = sectX0;
+
+        while (sectX1 < sectEnd)
         {
-            if (Float.isNaN(sectX0))
-            {
-                sectX0 = sectX1;
-                continue;
-            }
+            sectX1 += sectStep;
+
+            if (sectX1 > sectEnd)
+                sectX1 = sectEnd;
 
             float sectZ0 = sectStart;
-            float sectZ1;
+            float sectZ1 = sectZ0;
 
-            for (sectZ1 = sectStart + sectStep; sectZ1 <= sectEnd; sectZ1 += sectStep)
+            while (sectZ1 < sectEnd)
             {
+                sectZ1 += sectStep;
+
+                if (sectZ1 > sectEnd)
+                    sectZ1 = sectEnd;
+
                 float u0 = sectX0 * sectPx;
                 float u1 = sectX1 * sectPx;
                 float v0 = sectZ0 * sectPx;
@@ -266,24 +279,21 @@ public class CloudRenderer implements IResourceManagerReloadListener
                     && mc.world != null
                     && mc.world.provider.isSurfaceWorld();
 
-            if (newEnabled)
-            {
-                if (isBuilt() && mc.gameSettings.shouldRenderClouds() != cloudMode)
-                {
-                    dispose();
-                }
-
-                if (!isBuilt())
-                {
-                    build();
-                }
-            }
-            else if (isBuilt())
+            if (isBuilt()
+                        && (!newEnabled
+                        || mc.gameSettings.shouldRenderClouds() != cloudMode
+                        || mc.gameSettings.renderDistanceChunks != renderDistance))
             {
                 dispose();
             }
 
             cloudMode = mc.gameSettings.shouldRenderClouds();
+            renderDistance = mc.gameSettings.renderDistanceChunks;
+
+            if (newEnabled && !isBuilt())
+            {
+                build();
+            }
         }
     }
 
@@ -303,10 +313,10 @@ public class CloudRenderer implements IResourceManagerReloadListener
                 + 0.33;
         double z = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
 
-        if (cloudMode == 2)
-            z += 0.33 * getScale();
-
         int scale = getScale();
+
+        if (cloudMode == 2)
+            z += 0.33 * scale;
 
         // Integer UVs to translate the texture matrix by.
         int offU = fullCoord(x, scale);
@@ -413,6 +423,24 @@ public class CloudRenderer implements IResourceManagerReloadListener
                 GlStateManager.colorMask(true, false, false, true);
                 break;
             }
+        }
+
+        // Wireframe for debug.
+        if (WIREFRAME)
+        {
+            GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+            GlStateManager.glLineWidth(2.0F);
+            GlStateManager.disableTexture2D();
+            GlStateManager.depthMask(false);
+            GlStateManager.disableFog();
+            if (OpenGlHelper.useVbo())
+                vbo.drawArrays(GL11.GL_QUADS);
+            else
+                GlStateManager.callList(displayList);
+            GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+            GlStateManager.depthMask(true);
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableFog();
         }
 
         if (OpenGlHelper.useVbo())
