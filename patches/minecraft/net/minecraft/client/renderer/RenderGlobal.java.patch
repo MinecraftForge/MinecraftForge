@@ -111,12 +111,7 @@
  
      public void func_180447_b(float p_180447_1_, int p_180447_2_, double p_180447_3_, double p_180447_5_, double p_180447_7_)
      {
-+        net.minecraftforge.client.IRenderHandler renderer = this.field_72777_q.field_71441_e.field_73011_w.getCloudRenderer();
-+        if (renderer != null)
-+        {
-+            renderer.render(p_180447_1_, this.field_72777_q.field_71441_e, field_72777_q);
-+            return;
-+        }
++        if (net.minecraftforge.fml.client.FMLClientHandler.instance().renderClouds(this.field_72773_u, p_180447_1_)) return;
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
