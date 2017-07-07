@@ -533,18 +533,7 @@ public class FMLModContainer implements ModContainer
             Class<?> clazz = Class.forName(className, true, modClassLoader);
 
             Certificate[] certificates = clazz.getProtectionDomain().getCodeSource().getCertificates();
-            int len = 0;
-            if (certificates != null)
-            {
-                len = certificates.length;
-            }
-            Builder<String> certBuilder = ImmutableList.builder();
-            for (int i = 0; i < len; i++)
-            {
-                certBuilder.add(CertificateHelper.getFingerprint(certificates[i]));
-            }
-
-            ImmutableList<String> certList = certBuilder.build();
+            ImmutableList<String> certList = CertificateHelper.getFingerprints(certificates);
             sourceFingerprints = ImmutableSet.copyOf(certList);
 
             String expectedFingerprint = (String)descriptor.get("certificateFingerprint");

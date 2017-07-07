@@ -29,6 +29,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -46,6 +47,7 @@ import com.google.common.io.Files;
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.common.CertificateHelper;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.asm.ASMTransformerWrapper;
 import net.minecraftforge.fml.common.asm.transformers.ModAccessTransformer;
@@ -410,9 +412,9 @@ public class CoreModManager {
                     FMLLog.log.trace("Adding {} to the list of known coremods, it will not be examined again", coreMod.getName());
                     ignoredModFiles.add(coreMod.getName());
                 }
-                else
+                else //TODO in 1.13: remove support for embedded mods
                 {
-                    FMLLog.log.trace("Found FMLCorePluginContainsFMLMod marker in {}, it will be examined later for regular @Mod instances",
+                    FMLLog.bigWarning("Found FMLCorePluginContainsFMLMod marker in {}. This is not supported and will be removed in 1.13",
                             coreMod.getName());
                     candidateModFiles.add(coreMod.getName());
                 }
@@ -594,6 +596,32 @@ public class CoreModManager {
             }
             SortingIndex index = coreModClazz.getAnnotation(IFMLLoadingPlugin.SortingIndex.class);
             int sortIndex = index != null ? index.value() : 0;
+
+            Certificate[] certificates = coreModClazz.getProtectionDomain().getCodeSource().getCertificates();
+            ImmutableList<String> certList = CertificateHelper.getFingerprints(certificates);
+            if (certList.isEmpty())
+            {
+                if (deobfuscatedEnvironment && Arrays.asList(rootPlugins).contains(coreModClass)) //This is probably a forge/mod dev environment - ignore missing forge certificates
+                {
+                    FMLLog.log.info("Ignoring missing certificate for coremod {} ({}), we are in deobf and it's a forge core plugin", coreModName, coreModClass);
+                }
+                else if (deobfuscatedEnvironment && location == null) // This is probably a mod dev workspace, don't crash in 1.13
+                {
+                    FMLLog.log.info("The coremod {} ({}) is not signed, but this is a probably dev workspace - ignoring", coreModName, coreModClass);
+                }
+                else // TODO This is a probably a normal minecraft workspace - crash if no signature data is found in 1.13
+                {
+                    FMLLog.bigWarning("The coremod {} ({}) is not signed! Coremods should be to be signed, and this will required in 1.13", coreModName, coreModClass);
+                }
+            }
+            else
+            {
+                FMLLog.log.debug("Found signing certificates for coremod {} ({})", coreModName, coreModClass);
+                for (String cert : certList)
+                {
+                    FMLLog.log.debug("Found certificate {}", cert);
+                }
+            }
 
             IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) coreModClazz.newInstance();
             String accessTransformerClass = plugin.getAccessTransformerClass();
