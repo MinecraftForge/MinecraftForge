@@ -611,7 +611,7 @@ public class CoreModManager {
                 }
                 else // TODO This is a probably a normal minecraft workspace - crash if no signature data is found in 1.13
                 {
-                    FMLLog.bigWarning("The coremod {} ({}) is not signed! Coremods should be to be signed, and this will required in 1.13", coreModName, coreModClass);
+                    FMLLog.bigWarning("The coremod {} ({}) is not signed! Coremods should be signed, and this will be required in 1.13", coreModName, coreModClass);
                 }
             }
             else
