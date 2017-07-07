@@ -251,7 +251,7 @@ public class FMLServerHandler implements IFMLSidedHandler
                     throw new FileNotFoundException(source.toURI().resolve(langFile).getPath());
                 stream = new FileInputStream(f);
             }
-            else
+            else if (source.exists()) //Fake sources.. Yay coremods -.-
             {
                 zip = new ZipFile(source);
                 ZipEntry entry = zip.getEntry(langFile);
@@ -259,11 +259,12 @@ public class FMLServerHandler implements IFMLSidedHandler
                 if (entry == null) throw new FileNotFoundException(langFile);
                 stream = zip.getInputStream(entry);
             }
-            LanguageMap.inject(stream);
+            if (stream != null)
+                LanguageMap.inject(stream);
         }
         catch (FileNotFoundException e)
         {
-            FMLLog.log.warn("Missing English translation for {}: {}", container.getModId(), e.getMessage(), e);
+            FMLLog.log.warn("Missing English translation for {}: {}", container.getModId(), e.getMessage());
         }
         catch (IOException e)
         {
