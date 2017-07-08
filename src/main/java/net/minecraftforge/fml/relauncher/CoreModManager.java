@@ -412,9 +412,9 @@ public class CoreModManager {
                     FMLLog.log.trace("Adding {} to the list of known coremods, it will not be examined again", coreMod.getName());
                     ignoredModFiles.add(coreMod.getName());
                 }
-                else //TODO in 1.13: remove support for embedded mods
+                else
                 {
-                    FMLLog.bigWarning("Found FMLCorePluginContainsFMLMod marker in {}. This is not supported and will be removed in 1.13",
+                    FMLLog.log.warn("Found FMLCorePluginContainsFMLMod marker in {}. This is not recommended, mods should be in an other jar as the coremod.",
                             coreMod.getName());
                     candidateModFiles.add(coreMod.getName());
                 }
@@ -605,13 +605,13 @@ public class CoreModManager {
                 {
                     FMLLog.log.info("Ignoring missing certificate for coremod {} ({}), we are in deobf and it's a forge core plugin", coreModName, coreModClass);
                 }
-                else if (deobfuscatedEnvironment && location == null) // This is probably a mod dev workspace, don't crash in 1.13
+                else if (deobfuscatedEnvironment && location == null) // This is probably a mod dev workspace
                 {
-                    FMLLog.log.info("The coremod {} ({}) is not signed, but this is a probably dev workspace - ignoring", coreModName, coreModClass);
+                    FMLLog.log.info("Ignoring missing certificate for coremod {} ({}), as this is a probably dev workspace", coreModName, coreModClass);
                 }
-                else // TODO This is a probably a normal minecraft workspace - crash if no signature data is found in 1.13
+                else // This is a probably a normal minecraft workspace - log at warn
                 {
-                    FMLLog.bigWarning("The coremod {} ({}) is not signed! Coremods should be signed, and this will be required in 1.13", coreModName, coreModClass);
+                    FMLLog.log.warn("The coremod {} ({}) is not signed!", coreModName, coreModClass);
                 }
             }
             else
