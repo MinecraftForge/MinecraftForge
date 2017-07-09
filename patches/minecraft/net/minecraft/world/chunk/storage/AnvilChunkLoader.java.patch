@@ -107,7 +107,15 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -305,11 +366,19 @@
+@@ -295,6 +356,7 @@
+         }
+ 
+         p_75820_3_.func_74782_a("Sections", nbttaglist);
++        net.minecraftforge.common.lighting.LightingHooks.writeNeighborLightChecksToNBT(p_75820_1_, p_75820_3_);
+         p_75820_3_.func_74773_a("Biomes", p_75820_1_.func_76605_m());
+         p_75820_1_.func_177409_g(false);
+         NBTTagList nbttaglist1 = new NBTTagList();
+@@ -305,11 +367,19 @@
              {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
@@ -127,7 +135,7 @@
              }
          }
  
-@@ -318,8 +387,16 @@
+@@ -318,8 +388,16 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -144,7 +152,14 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -388,6 +465,12 @@
+@@ -382,12 +460,19 @@
+         }
+ 
+         chunk.func_76602_a(aextendedblockstorage);
++        net.minecraftforge.common.lighting.LightingHooks.readNeighborLightChecksFromNBT(chunk, p_75823_2_);
+ 
+         if (p_75823_2_.func_150297_b("Biomes", 7))
+         {
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -157,7 +172,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
-@@ -431,8 +514,6 @@
+@@ -431,8 +516,6 @@
                  p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
              }
          }
