@@ -20,11 +20,9 @@
 package net.minecraftforge.client.model;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -207,7 +205,7 @@ public class ForgeBlockStateV1 extends Marker
                 }
 
                 if (!v.submodels.isEmpty())
-                    ret.variants.putAll(e.getKey(), getSubmodelPermutations(v, v.submodels));   // Do permutations of submodel variants.
+                    ret.variants.putAll(e.getKey(), getSubmodelPermutations(v, v.submodels)); // Do permutations of submodel variants.
                 else
                     ret.variants.put(e.getKey(), v);
             }
@@ -246,45 +244,27 @@ public class ForgeBlockStateV1 extends Marker
 
         }
 
-        private List<ForgeBlockStateV1.Variant> getSubmodelPermutations(ForgeBlockStateV1.Variant baseVar, List<String> sorted, Map<String, List<ForgeBlockStateV1.Variant>> map, int depth, Map<String, ForgeBlockStateV1.Variant> parts, List<ForgeBlockStateV1.Variant> ret)
+        private List<ForgeBlockStateV1.Variant> getSubmodelPermutations(ForgeBlockStateV1.Variant base, Map<String, List<ForgeBlockStateV1.Variant>> variants)
         {
-            if (depth >= sorted.size())
-            {
-                ForgeBlockStateV1.Variant add = new Variant(baseVar); // Create a duplicate variant object so modifying it doesn't modify baseVar.
-                for (Entry<String, ForgeBlockStateV1.Variant> part : parts.entrySet())    // Put all the parts with single variants for this permutation.
-                    add.submodels.put(part.getKey(), Collections.singletonList(part.getValue()));
-                ret.add(add);
-                return ret;
-            }
+            // Turn a map(subname -> list(submodel)) list(list(subname, submodel)) where the pairs are grouped by the subname
+            List<List<Pair<String, Variant>>> submodelsGroupedByName = variants.entrySet().stream()
+                    .filter(kv -> kv.getValue() != null)
+                    .map(e -> e.getValue().stream()
+                            .map(var -> Pair.of(e.getKey(), var))
+                            .collect(Collectors.toList())
+                    )
+                    .collect(Collectors.toList());
+            return Lists.cartesianProduct(submodelsGroupedByName).stream() // list(list(subname, submodel)) where each inner list is a unique association between each submodel name and one of its values
+                    .map(subs ->
+                    {
+                        Variant ret = new Variant(base);
+                        Map<String, List<Variant>> subMap = subs.stream()
+                                .collect(Collectors.toMap(Pair::getKey, kv -> Collections.singletonList(kv.getValue())));
+                        ret.submodels.putAll(subMap);
+                        return ret;
+                    })
+                    .collect(Collectors.toList());
 
-            String name = sorted.get(depth);
-            List<ForgeBlockStateV1.Variant> vars = map.get(sorted.get(depth));
-
-            if (vars != null)
-            {
-                for (ForgeBlockStateV1.Variant v : vars)
-                {
-                    if (v != null)
-                    {   // We put this part variant in the permutation's map to add further in recursion, and then remove it afterward just in case.
-                        parts.put(name, v);
-                        getSubmodelPermutations(baseVar, sorted, map, depth + 1, parts, ret);
-                        parts.remove(name);
-                    }
-                }
-            }
-            else
-            {
-                getSubmodelPermutations(baseVar, sorted, map, depth + 1, parts, ret);
-            }
-
-            return ret;
-        }
-
-        private List<ForgeBlockStateV1.Variant> getSubmodelPermutations(ForgeBlockStateV1.Variant baseVar, Map<String, List<ForgeBlockStateV1.Variant>> variants)
-        {
-            List<String> sorted = Lists.newArrayList(variants.keySet());
-            Collections.sort(sorted);   // Sort to get consistent results.
-            return getSubmodelPermutations(baseVar, sorted, variants, 0, new HashMap<>(), new ArrayList<>());
         }
     }
 
