@@ -36,11 +36,6 @@ public abstract class AbstractBrewingRecipe<T> implements IBrewingRecipe
         this.input = input;
         this.ingredient = ingredient;
         this.output = output;
-
-        if (this.getInput().getMaxStackSize() != 1)
-        {
-            throw new IllegalArgumentException("Inputs must have a max size of 1 just like water bottles. Brewing Stands override the input with the output when the brewing is done, items that stack would end up getting lost.");
-        }
     }
 
     @Override
