@@ -81,7 +81,8 @@ public class RandomVariantFragmentTest
     }
 
     @SubscribeEvent
-    public static void registerModels(ModelRegistryEvent e) {
+    public static void registerModels(ModelRegistryEvent e)
+    {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RVFT_BLOCK), 0, new ModelResourceLocation(RVFT_BLOCK.getRegistryName(), "inventory"));
     }
 }

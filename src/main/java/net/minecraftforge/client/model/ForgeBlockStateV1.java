@@ -217,14 +217,14 @@ public class ForgeBlockStateV1 extends Marker
 
         private Multimap<String, ForgeBlockStateV1.Variant> getPermutations(Map<String, Multimap<String, ForgeBlockStateV1.Variant>> base)
         {
-            // Turn a map(prop -> map(val -> variantfrags)) into a list(list((prop,val1), (prop,val2), ...)) where the pairs are grouped by prop
+            // Turn a map(prop -> map(val -> variantfrags)) into a list(list((prop,val1), (prop,val2), ...)) where the state fragments are grouped by prop
             List<List<Pair<String, String>>> variantIDs = base.entrySet().stream()
                     .map(e -> e.getValue().keySet().stream()
                             .map(value -> Pair.of(e.getKey(), value))
                             .collect(Collectors.toList())
                     )
                     .collect(Collectors.toList());
-            return Lists.cartesianProduct(variantIDs).stream() // Product is a list(list((prop,val), (prop2, val), ...)) where each inner list IDs a unique variant
+            return Lists.cartesianProduct(variantIDs).stream() // Product is a list(list((prop,val), (prop2, val), ...)) where each inner list of frags IDs a unique full state
                     .map(variantID ->
                             {
                                 List<List<Variant>> variantFragsGroupedByStateFrag = variantID.stream()
