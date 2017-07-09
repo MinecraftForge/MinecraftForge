@@ -40,13 +40,11 @@ public final class Optional {
 
     /**
      * Mark a list of interfaces as removable
-     * @deprecated Internal use only; use {@link Interface} multiple times for each interface instead.
      * @author cpw
      *
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    @Deprecated
     public @interface InterfaceList {
         /**
          * Mark a list of interfaces for optional removal.
