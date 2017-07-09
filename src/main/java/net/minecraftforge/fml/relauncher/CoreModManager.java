@@ -414,7 +414,7 @@ public class CoreModManager {
                 }
                 else
                 {
-                    FMLLog.log.warn("Found FMLCorePluginContainsFMLMod marker in {}. This is not recommended, mods should be in an other jar as the coremod.",
+                    FMLLog.log.warn("Found FMLCorePluginContainsFMLMod marker in {}. This is not recommended, @Mods should be in a separate jar from the coremod.",
                             coreMod.getName());
                     candidateModFiles.add(coreMod.getName());
                 }
