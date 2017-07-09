@@ -5,7 +5,8 @@
     "a=true,b=true -> 75% [ladder + carpet + slab] + 25% [glass + carpet + slab]",
     "a=true,b=false -> 37.5% [ladder + torch] + 37.5% [ladder + lily] + 12.5% [glass + torch] + 12.5% [glass + lily]",
     "a=false,b=true -> 100% [carpet + slab]",
-    "a=false,b=false -> 50% [torch] + 50% [lily]"
+    "a=false,b=false -> 50% [torch] + 50% [lily]",
+    "where carpet = 50% [blue carpet] + 50% [red carpet]"
   ],
   "variants": {
     "inventory": [{ "model": "minecraft:grass_normal" }],
@@ -25,9 +26,14 @@
     "b": {
       "true": {
         "submodel": {
-          "carpet": {
-            "model": "minecraft:carpet_blue"
-          },
+          "carpet": [
+            {
+              "model": "minecraft:carpet_blue"
+            },
+            {
+              "model": "minecraft:carpet_red"
+            }
+          ],
           "slab": {
             "textures": {
               "top": "minecraft:blocks/grass_top"
