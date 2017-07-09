@@ -213,6 +213,9 @@ public class ForgeBlockStateV1 extends Marker
             return ret;
         }
 
+        /**
+         * Flatten all the possible combinations of variant choices into a map(full state -> list(possible variants)).
+         */
         private Multimap<String, ForgeBlockStateV1.Variant> getPermutations(Map<String, Multimap<String, ForgeBlockStateV1.Variant>> base)
         {
             // Turn a map(prop -> map(val -> variantfrags)) into a list(list((prop,val1), (prop,val2), ...)) where the state fragments are grouped by prop
@@ -244,6 +247,9 @@ public class ForgeBlockStateV1 extends Marker
 
         }
 
+        /**
+         * Flatten all possible combinations of submodel choices into a sequence, and then take each combination to the base variant plus those submodels.
+         */
         private List<ForgeBlockStateV1.Variant> getSubmodelPermutations(ForgeBlockStateV1.Variant base, Map<String, List<ForgeBlockStateV1.Variant>> variants)
         {
             // Turn a map(subname -> list(submodel)) list(list(subname, submodel)) where the pairs are grouped by the subname
