@@ -1,0 +1,49 @@
+{
+  "forge_marker": 1,
+  "__comment": [
+    "Expected behavior:",
+    "a=true,b=true -> 75% [ladder + carpet + slab] + 25% [glass + carpet + slab]",
+    "a=true,b=false -> 37.5% [ladder + torch] + 37.5% [ladder + lily] + 12.5% [glass + torch] + 12.5% [glass + lily]",
+    "a=false,b=true -> 100% [carpet + slab]",
+    "a=false,b=false -> 50% [torch] + 50% [lily]"
+  ],
+  "variants": {
+    "inventory": [{ "model": "minecraft:grass_normal" }],
+    "a": {
+      "true": [
+        {
+          "weight": 3,
+          "model": "minecraft:ladder"
+        },
+        {
+          "__comment": "Implicit weight: 1",
+          "model": "minecraft:glass"
+        }
+      ],
+      "false": {}
+    },
+    "b": {
+      "true": {
+        "submodel": {
+          "carpet": {
+            "model": "minecraft:carpet_blue"
+          },
+          "slab": {
+            "textures": {
+              "top": "minecraft:blocks/grass_top"
+            },
+            "model": "minecraft:upper_slab_stone"
+          }
+        }
+      },
+      "false": [
+        {
+          "submodel": "minecraft:normal_torch"
+        },
+        {
+          "submodel": "minecraft:waterlily"
+        }
+      ]
+    }
+  }
+}
