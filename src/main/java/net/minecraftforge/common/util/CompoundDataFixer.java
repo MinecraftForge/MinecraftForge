@@ -108,13 +108,7 @@ public class CompoundDataFixer extends DataFixer
 
     private List<IDataWalker> getWalkers(IFixType type)
     {
-        List<IDataWalker> ret = walkers.get(type);
-        if (ret == null)
-        {
-            ret = Lists.newArrayList();
-            walkers.put(type, ret);
-        }
-        return ret;
+        return walkers.computeIfAbsent(type, k -> Lists.newArrayList());
     }
 
     @Override

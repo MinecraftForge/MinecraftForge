@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemCoal.java
++++ ../src-work/minecraft/net/minecraft/item/ItemCoal.java
+@@ -19,7 +19,6 @@
+         return p_77667_1_.func_77960_j() == 1 ? "item.charcoal" : "item.coal";
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_150895_a(CreativeTabs p_150895_1_, NonNullList<ItemStack> p_150895_2_)
+     {
+         if (this.func_194125_a(p_150895_1_))

@@ -1,21 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -110,6 +110,14 @@
-                 this.func_184430_d(i);
-             }
-         }
-+
-+        for (ItemStack is : field_70460_b) // FORGE: Tick armor on animation ticks
-+        {
-+            if (!is.func_190926_b())
-+            {
-+                is.func_77973_b().onArmorTick(field_70458_d.field_70170_p, field_70458_d, is);
-+            }
-+        }
-     }
- 
-     public void func_184430_d(int p_184430_1_)
-@@ -293,7 +301,8 @@
+@@ -293,7 +293,8 @@
  
          if (itemstack.func_190926_b())
          {
@@ -25,3 +10,17 @@
  
              if (p_191973_2_.func_77942_o())
              {
+@@ -364,6 +365,13 @@
+                 }
+             }
+         }
++        for (ItemStack is : field_70460_b) // FORGE: Tick armor on animation ticks
++        {
++            if (!is.func_190926_b())
++            {
++                is.func_77973_b().onArmorTick(field_70458_d.field_70170_p, field_70458_d, is);
++            }
++        }
+     }
+ 
+     public boolean func_70441_a(ItemStack p_70441_1_)

@@ -112,7 +112,7 @@ public class FMLNetworkHandler
         }
         else
         {
-            FMLLog.fine("Invalid attempt to open a local GUI on a dedicated server. This is likely a bug. GUI ID: %s,%d", mc.getModId(), modGuiId);
+            FMLLog.log.debug("Invalid attempt to open a local GUI on a dedicated server. This is likely a bug. GUI ID: {},{}", mc.getModId(), modGuiId);
         }
 
     }
@@ -158,7 +158,7 @@ public class FMLNetworkHandler
         }
         else
         {
-            FMLLog.info("Rejecting connection %s: %s", side, rejects);
+            FMLLog.log.info("Rejecting connection {}: {}", side, rejects);
             return String.format("Mod rejections %s",rejects);
         }
     }

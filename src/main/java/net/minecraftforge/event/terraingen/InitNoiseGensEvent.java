@@ -72,6 +72,7 @@ public class InitNoiseGensEvent<T extends InitNoiseGensEvent.Context> extends Wo
         public void getScale   (NoiseGeneratorOctaves value) { this.scale    = value; }
         public void getDepth   (NoiseGeneratorOctaves value) { this.depth    = value; }
 
+        @Override
         public Context clone(){ return new Context(lperlin1, lperlin2, perlin, scale, depth); }
     }
 
@@ -87,6 +88,7 @@ public class InitNoiseGensEvent<T extends InitNoiseGensEvent.Context> extends Wo
             this.height = height;
             this.forest = forest;
         }
+        @Override
         public ContextOverworld clone() { return new ContextOverworld(getLPerlin1(), getLPerlin2(), getPerlin(), height, getScale(), getDepth(), forest); }
         public NoiseGeneratorPerlin  getHeight()   { return height;   }
         public NoiseGeneratorOctaves getForest()   { return forest;   }
@@ -104,6 +106,7 @@ public class InitNoiseGensEvent<T extends InitNoiseGensEvent.Context> extends Wo
             super(lperlin1, lperlin2, perlin, scale, depth);
             this.island = island;
         }
+        @Override
         public ContextEnd clone() { return new ContextEnd(getLPerlin1(), getLPerlin2(), getPerlin(), getScale(), getDepth(), island); }
         public NoiseGeneratorSimplex getIsland() { return island;   }
         public void getIsland  (NoiseGeneratorSimplex value) { this.island = value; }
@@ -122,6 +125,7 @@ public class InitNoiseGensEvent<T extends InitNoiseGensEvent.Context> extends Wo
             this.perlin2 = perlin2;
             this.perlin3 = perlin3;
         }
+        @Override
         public ContextHell clone() { return new ContextHell(getLPerlin1(), getLPerlin2(), getPerlin(), perlin2, perlin3, getScale(), getDepth()); }
         public NoiseGeneratorOctaves getPerlin2() { return perlin2;  }
         public NoiseGeneratorOctaves getPerlin3() { return perlin3;  }

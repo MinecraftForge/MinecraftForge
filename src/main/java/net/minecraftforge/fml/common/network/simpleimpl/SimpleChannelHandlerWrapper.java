@@ -64,7 +64,7 @@ public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMe
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
-        FMLLog.log(Level.ERROR, cause, "SimpleChannelHandlerWrapper exception");
+        FMLLog.log.error("SimpleChannelHandlerWrapper exception", cause);
         super.exceptionCaught(ctx, cause);
     }
 }

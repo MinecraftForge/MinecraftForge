@@ -204,18 +204,19 @@ public class ModelLoaderRegistry
         }
         catch(Exception e)
         {
-            FMLLog.getLogger().error(error, e);
+            FMLLog.log.error(error, e);
             return getMissingModel(location, e);
         }
     }
 
     public static IModel getMissingModel()
     {
-        if(ModelLoader.VanillaLoader.INSTANCE.getLoader() == null)
+        final ModelLoader loader = VanillaLoader.INSTANCE.getLoader();
+        if(loader == null)
         {
             throw new IllegalStateException("Using ModelLoaderRegistry too early.");
         }
-        return ModelLoader.VanillaLoader.INSTANCE.getLoader().getMissingModel();
+        return loader.getMissingModel();
     }
 
     static IModel getMissingModel(ResourceLocation location, Throwable cause)

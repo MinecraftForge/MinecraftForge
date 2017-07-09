@@ -21,7 +21,7 @@
 +        this(new ItemStack[size]);
 +    }
 +
-     private Ingredient(ItemStack... p_i47503_1_)
+     protected Ingredient(ItemStack... p_i47503_1_)
      {
          this.field_193371_b = p_i47503_1_;
 +        Ingredient.INSTANCES.add(this);

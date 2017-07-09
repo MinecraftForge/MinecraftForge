@@ -27,7 +27,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.registries.IForgeRegistryEntry.Impl;
 
 public class EntityEntry extends Impl<EntityEntry>
 {
@@ -79,7 +80,7 @@ public class EntityEntry extends Impl<EntityEntry>
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error creating entity.", e);
             return null;
         }
     }

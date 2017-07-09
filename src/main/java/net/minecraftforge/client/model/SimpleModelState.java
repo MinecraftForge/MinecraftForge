@@ -23,7 +23,7 @@ import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableMap;
 
 /*
@@ -36,7 +36,7 @@ public final class SimpleModelState implements IModelState
 
     public SimpleModelState(ImmutableMap<? extends IModelPart, TRSRTransformation> map)
     {
-        this(map, Optional.<TRSRTransformation>absent());
+        this(map, Optional.empty());
     }
 
     public SimpleModelState(ImmutableMap<? extends IModelPart, TRSRTransformation> map, Optional<TRSRTransformation> def)
@@ -45,6 +45,7 @@ public final class SimpleModelState implements IModelState
         this.def = def;
     }
 
+    @Override
     public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
     {
         if(!part.isPresent())
@@ -53,8 +54,8 @@ public final class SimpleModelState implements IModelState
         }
         if(!map.containsKey(part.get()))
         {
-            return Optional.absent();
+            return Optional.empty();
         }
-        return Optional.fromNullable(map.get(part.get()));
+        return Optional.ofNullable(map.get(part.get()));
     }
 }

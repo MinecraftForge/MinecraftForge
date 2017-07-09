@@ -19,23 +19,37 @@
 
 package net.minecraftforge.oredict;
 
-import java.util.HashMap;
 import net.minecraft.block.Block;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.common.crafting.JsonContext;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
-public class ShapedOreRecipe implements IRecipe
+public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
     //Added in for future ease of change, but hard coded for now.
     public static final int MAX_CRAFT_GRID_WIDTH = 3;
@@ -51,106 +65,15 @@ public class ShapedOreRecipe implements IRecipe
 
     public ShapedOreRecipe(ResourceLocation group, Block     result, Object... recipe){ this(group, new ItemStack(result), recipe); }
     public ShapedOreRecipe(ResourceLocation group, Item      result, Object... recipe){ this(group, new ItemStack(result), recipe); }
-    public ShapedOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe)
+    public ShapedOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe) { this(group, result, CraftingHelper.parseShaped(recipe)); }
+    public ShapedOreRecipe(ResourceLocation group, @Nonnull ItemStack result, ShapedPrimer primer)
     {
         this.group = group;
         output = result.copy();
-
-        String shape = "";
-        int idx = 0;
-
-        if (recipe[idx] instanceof Boolean)
-        {
-            mirrored = (Boolean)recipe[idx];
-            if (recipe[idx+1] instanceof Object[])
-            {
-                recipe = (Object[])recipe[idx+1];
-            }
-            else
-            {
-                idx = 1;
-            }
-        }
-
-        if (recipe[idx] instanceof String[])
-        {
-            String[] parts = ((String[])recipe[idx++]);
-
-            for (String s : parts)
-            {
-                width = s.length();
-                shape += s;
-            }
-
-            height = parts.length;
-        }
-        else
-        {
-            while (recipe[idx] instanceof String)
-            {
-                String s = (String)recipe[idx++];
-                shape += s;
-                width = s.length();
-                height++;
-            }
-        }
-
-        if (width * height != shape.length())
-        {
-            String ret = "Invalid shaped ore recipe: ";
-            for (Object tmp :  recipe)
-            {
-                ret += tmp + ", ";
-            }
-            ret += output;
-            throw new RuntimeException(ret);
-        }
-
-        HashMap<Character, Ingredient> itemMap = Maps.newHashMap();
-
-        for (; idx < recipe.length; idx += 2)
-        {
-            Character chr = (Character)recipe[idx];
-            Object in = recipe[idx + 1];
-
-            if (in instanceof ItemStack)
-            {
-                itemMap.put(chr, Ingredient.func_193369_a(((ItemStack)in).copy()));
-            }
-            else if (in instanceof Item)
-            {
-                itemMap.put(chr, Ingredient.func_193367_a((Item)in));
-            }
-            else if (in instanceof Block)
-            {
-                itemMap.put(chr, Ingredient.func_193369_a(new ItemStack((Block)in, 1, OreDictionary.WILDCARD_VALUE)));
-            }
-            else if (in instanceof String)
-            {
-                itemMap.put(chr, new OreIngredient((String)in));
-            }
-            else if (in instanceof Ingredient)
-            {
-                itemMap.put(chr, (Ingredient)in);
-            }
-            else
-            {
-                String ret = "Invalid shaped ore recipe: ";
-                for (Object tmp :  recipe)
-                {
-                    ret += tmp + ", ";
-                }
-                ret += output;
-                throw new RuntimeException(ret);
-            }
-        }
-
-        this.input = NonNullList.withSize(width * height, Ingredient.field_193370_a);
-        int x = 0;
-        for (char chr : shape.toCharArray())
-        {
-            input.add(x++, itemMap.get(chr));
-        }
+        this.width = primer.width;
+        this.height = primer.height;
+        this.input = primer.input;
+        this.mirrored = primer.mirrored;
     }
 
     @Override
@@ -162,7 +85,7 @@ public class ShapedOreRecipe implements IRecipe
     public ItemStack getRecipeOutput(){ return output; }
 
     @Override
-    public boolean matches(InventoryCrafting inv, World world)
+    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world)
     {
         for (int x = 0; x <= MAX_CRAFT_GRID_WIDTH - width; x++)
         {
@@ -183,6 +106,9 @@ public class ShapedOreRecipe implements IRecipe
         return false;
     }
 
+    /**
+     * Based on {@link net.minecraft.item.crafting.ShapedRecipes#checkMatch(InventoryCrafting, int, int, boolean)}
+     */
     protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++)
@@ -191,7 +117,7 @@ public class ShapedOreRecipe implements IRecipe
             {
                 int subX = x - startX;
                 int subY = y - startY;
-                Ingredient target = null;
+                Ingredient target = Ingredient.EMPTY;
 
                 if (subX >= 0 && subY >= 0 && subX < width && subY < height)
                 {
@@ -221,15 +147,11 @@ public class ShapedOreRecipe implements IRecipe
         return this;
     }
 
-    public NonNullList<Ingredient> func_192400_c()
+    @Override
+    @Nonnull
+    public NonNullList<Ingredient> getIngredients()
     {
         return this.input;
-    }
-
-    @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
-    {
-        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
 
     public int getWidth()
@@ -242,13 +164,78 @@ public class ShapedOreRecipe implements IRecipe
         return height;
     }
 
-    public String func_193358_e()
+    @Override
+    @Nonnull
+    public String getGroup()
     {
-        return this.group.toString();
+        return this.group == null ? "" : this.group.toString();
     }
 
-    public boolean func_194133_a(int p_194133_1_, int p_194133_2_)
+    @Override
+    public boolean canFit(int p_194133_1_, int p_194133_2_)
     {
         return p_194133_1_ >= this.width && p_194133_2_ >= this.height;
+    }
+
+    public static ShapedOreRecipe factory(JsonContext context, JsonObject json)
+    {
+        String group = JsonUtils.getString(json, "group", "");
+        //if (!group.isEmpty() && group.indexOf(':') == -1)
+        //    group = context.getModId() + ":" + group;
+
+        Map<Character, Ingredient> ingMap = Maps.newHashMap();
+        for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, "key").entrySet())
+        {
+            if (entry.getKey().length() != 1)
+                throw new JsonSyntaxException("Invalid key entry: '" + entry.getKey() + "' is an invalid symbol (must be 1 character only).");
+            if (" ".equals(entry.getKey()))
+                throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
+
+            ingMap.put(entry.getKey().toCharArray()[0], CraftingHelper.getIngredient(entry.getValue(), context));
+        }
+
+        ingMap.put(' ', Ingredient.EMPTY);
+
+        JsonArray patternJ = JsonUtils.getJsonArray(json, "pattern");
+
+        if (patternJ.size() == 0)
+            throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
+
+        String[] pattern = new String[patternJ.size()];
+        for (int x = 0; x < pattern.length; ++x)
+        {
+            String line = JsonUtils.getString(patternJ.get(x), "pattern[" + x + "]");
+            if (x > 0 && pattern[0].length() != line.length())
+                throw new JsonSyntaxException("Invalid pattern: each row must  be the same width");
+            pattern[x] = line;
+        }
+
+        ShapedPrimer primer = new ShapedPrimer();
+        primer.width = pattern[0].length();
+        primer.height = pattern.length;
+        primer.mirrored = JsonUtils.getBoolean(json, "mirrored", true);
+        primer.input = NonNullList.withSize(primer.width * primer.height, Ingredient.EMPTY);
+
+        Set<Character> keys = Sets.newHashSet(ingMap.keySet());
+        keys.remove(' ');
+
+        int x = 0;
+        for (String line : pattern)
+        {
+            for (char chr : line.toCharArray())
+            {
+                Ingredient ing = ingMap.get(chr);
+                if (ing == null)
+                    throw new JsonSyntaxException("Pattern references symbol '" + chr + "' but it's not defined in the key");
+                primer.input.set(x++, ing);
+                keys.remove(chr);
+            }
+        }
+
+        if (!keys.isEmpty())
+            throw new JsonSyntaxException("Key defines symbols that aren't used in pattern: " + keys);
+
+        ItemStack result = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
+        return new ShapedOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), result, primer);
     }
 }

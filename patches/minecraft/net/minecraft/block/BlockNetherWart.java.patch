@@ -32,14 +32,13 @@
          {
              int i = 1;
  
-@@ -106,6 +109,26 @@
+@@ -106,6 +109,23 @@
          return ((Integer)p_176201_1_.func_177229_b(field_176486_a)).intValue();
      }
  
 +    @Override
-+    public java.util.List<ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
 +        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
 +        int count = 1;
 +
@@ -50,10 +49,8 @@
 +
 +        for (int i = 0; i < count; i++)
 +        {
-+            ret.add(new ItemStack(Items.field_151075_bm));
++            drops.add(new ItemStack(Items.field_151075_bm));
 +        }
-+
-+        return ret;
 +    }
 +
      protected BlockStateContainer func_180661_e()

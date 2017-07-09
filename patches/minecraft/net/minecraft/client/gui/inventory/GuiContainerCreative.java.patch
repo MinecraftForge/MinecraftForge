@@ -161,17 +161,19 @@
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          GlStateManager.func_179140_f();
          this.func_191948_b(p_73863_1_, p_73863_2_);
-@@ -662,7 +728,9 @@
+@@ -662,7 +728,10 @@
                  }
              }
  
+-            this.func_146283_a(list, p_146285_2_, p_146285_3_);
++            net.minecraft.client.gui.FontRenderer font = p_146285_1_.func_77973_b().getFontRenderer(p_146285_1_);
 +            net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_146285_1_);
-             this.func_146283_a(list, p_146285_2_, p_146285_3_);
++            this.drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
 +            net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
          }
          else
          {
-@@ -676,16 +744,35 @@
+@@ -676,16 +745,35 @@
          RenderHelper.func_74520_c();
          CreativeTabs creativetabs = CreativeTabs.field_78032_a[field_147058_w];
  
@@ -208,7 +210,7 @@
          this.field_146297_k.func_110434_K().func_110577_a(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativetabs.func_78015_f()));
          this.func_73729_b(this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
          this.field_147062_A.func_146194_f();
-@@ -700,6 +787,14 @@
+@@ -700,6 +788,14 @@
              this.func_73729_b(i, j + (int)((float)(k - j - 17) * this.field_147067_x), 232 + (this.func_147055_p() ? 0 : 12), 0, 12, 15);
          }
  
@@ -223,7 +225,7 @@
          this.func_147051_a(creativetabs);
  
          if (creativetabs == CreativeTabs.field_78036_m)
-@@ -710,6 +805,14 @@
+@@ -710,6 +806,14 @@
  
      protected boolean func_147049_a(CreativeTabs p_147049_1_, int p_147049_2_, int p_147049_3_)
      {
@@ -238,7 +240,7 @@
          int i = p_147049_1_.func_78020_k();
          int j = 28 * i;
          int k = 0;
-@@ -806,6 +909,8 @@
+@@ -806,6 +910,8 @@
          }
  
          GlStateManager.func_179140_f();
@@ -247,7 +249,7 @@
          this.func_73729_b(l, i1, j, k, 28, 32);
          this.field_73735_i = 100.0F;
          this.field_146296_j.field_77023_b = 100.0F;
-@@ -827,6 +932,15 @@
+@@ -827,6 +933,15 @@
          {
              this.field_146297_k.func_147108_a(new GuiStats(this, this.field_146297_k.field_71439_g.func_146107_m()));
          }
@@ -263,7 +265,7 @@
      }
  
      public int func_147056_g()
-@@ -1031,6 +1145,38 @@
+@@ -1031,6 +1146,38 @@
          {
              return this.field_148332_b.func_82869_a(p_82869_1_);
          }

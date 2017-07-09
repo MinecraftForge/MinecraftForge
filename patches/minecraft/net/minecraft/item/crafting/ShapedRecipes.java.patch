@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
-@@ -39,7 +39,6 @@
+@@ -19,10 +19,8 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class ShapedRecipes implements IRecipe
++public class ShapedRecipes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
+ {
+     public final int field_77576_b;
+     public final int field_77577_c;
+@@ -39,7 +37,6 @@
          this.field_77575_e = p_i47501_5_;
      }
  
@@ -8,7 +20,7 @@
      public String func_193358_e()
      {
          return this.field_194137_e;
-@@ -57,23 +56,17 @@
+@@ -57,23 +54,17 @@
          for (int i = 0; i < nonnulllist.size(); ++i)
          {
              ItemStack itemstack = p_179532_1_.func_70301_a(i);
@@ -33,3 +45,17 @@
      public boolean func_194133_a(int p_194133_1_, int p_194133_2_)
      {
          return p_194133_1_ >= this.field_77576_b && p_194133_2_ >= this.field_77577_c;
+@@ -241,13 +232,11 @@
+         return i;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public int func_192403_f()
+     {
+         return this.field_77576_b;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public int func_192404_g()
+     {
+         return this.field_77577_c;

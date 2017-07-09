@@ -9,15 +9,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
-import net.minecraftforge.fml.common.registry.RegistryBuilder;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryBuilder;
 
 @Mod(modid = ObjectHolderTest.MODID, name = "ObjectHolderTests", version = "1.0", acceptableRemoteVersions = "*")
 public class ObjectHolderTest
 {
     public static final String MODID = "objectholdertest";
-    public static IForgeRegistry registry;
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
@@ -64,7 +62,7 @@ public class ObjectHolderTest
         public static void registerPotions(RegistryEvent.Register<Potion> event)
         {
             event.getRegistry().register(
-                    new ObjectHolderTest.PotionForge(new ResourceLocation(ObjectHolderTest.MODID, "forge_potion"), false, 0xff00ff) // test automatic id distribution
+                new ObjectHolderTest.PotionForge(new ResourceLocation(ObjectHolderTest.MODID, "forge_potion"), false, 0xff00ff) // test automatic id distribution
             );
         }
 
@@ -72,68 +70,65 @@ public class ObjectHolderTest
         public static void registerInterfaceRegistryForge(RegistryEvent.Register<ICustomRegistryEntry> event)
         {
             event.getRegistry().register(
-                    new CustomRegistryEntry().setRegistryName(new ResourceLocation(MODID, "custom_entry_by_interface"))
+                new CustomRegistryEntry().setRegistryName(new ResourceLocation(MODID, "custom_entry_by_interface"))
             );
 
             event.getRegistry().register(
-                    new CustomRegistryEntry().setRegistryName(new ResourceLocation(MODID, "custom_entry"))
+                new CustomRegistryEntry().setRegistryName(new ResourceLocation(MODID, "custom_entry"))
             );
         }
     }
-}
+    interface ICustomRegistryEntry extends IForgeRegistryEntry<ICustomRegistryEntry>{}
 
-class CustomRegistryEntry implements ICustomRegistryEntry
-{
-    private ResourceLocation name;
 
-    @Override
-    public ICustomRegistryEntry setRegistryName(ResourceLocation name)
+    static class CustomRegistryEntry implements ICustomRegistryEntry
     {
-        this.name = name;
-        return this;
+        private ResourceLocation name;
+
+        @Override
+        public ICustomRegistryEntry setRegistryName(ResourceLocation name)
+        {
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public ResourceLocation getRegistryName()
+        {
+            return name;
+        }
+
+        @Override
+        public Class<ICustomRegistryEntry> getRegistryType()
+        {
+            return ICustomRegistryEntry.class;
+        }
     }
 
-    @Override
-    public ResourceLocation getRegistryName()
+    @GameRegistry.ObjectHolder("minecraft")
+    static class VanillaObjectHolder
     {
-        return name;
+        //Tests importing vanilla objects that need the @ObjectHolder annotation to get a valid ResourceLocation
+        @GameRegistry.ObjectHolder("ui.button.click")
+        public static final SoundEvent uiButtonClick = null;
+        public static final Block air = null;
+        public static final Block nonExistentBlock = null;
     }
 
-    @Override
-    public Class<ICustomRegistryEntry> getRegistryType()
+    @GameRegistry.ObjectHolder(ObjectHolderTest.MODID)
+    static class ForgeObjectHolder
     {
-        return ICustomRegistryEntry.class;
+        //Tests using subclasses for injections
+        public static final ObjectHolderTest.PotionForge forge_potion = null;
     }
-}
 
-interface ICustomRegistryEntry extends IForgeRegistryEntry<ICustomRegistryEntry>
-{
+    @GameRegistry.ObjectHolder(ObjectHolderTest.MODID)
+    static class CustomRegistryObjectHolder
+    {
+        //Tests whether custom registries can be used
+        public static final ICustomRegistryEntry custom_entry = null;
 
-}
-
-@GameRegistry.ObjectHolder("minecraft")
-class VanillaObjectHolder
-{
-    //Tests importing vanilla objects that need the @ObjectHolder annotation to get a valid ResourceLocation
-    @GameRegistry.ObjectHolder("ui.button.click")
-    public static final SoundEvent uiButtonClick = null;
-    public static final Block air = null;
-    public static final Block nonExistentBlock = null;
-}
-
-@GameRegistry.ObjectHolder(ObjectHolderTest.MODID)
-class ForgeObjectHolder
-{
-    //Tests using subclasses for injections
-    public static final ObjectHolderTest.PotionForge forge_potion = null;
-}
-
-@GameRegistry.ObjectHolder(ObjectHolderTest.MODID)
-class CustomRegistryObjectHolder
-{
-    //Tests whether custom registries can be used
-    public static final ICustomRegistryEntry custom_entry = null;
-
-    //Tests whether interfaces can be used
-    public static final ICustomRegistryEntry custom_entry_by_interface = null;
+        //Tests whether interfaces can be used
+        public static final ICustomRegistryEntry custom_entry_by_interface = null;
+    }
 }

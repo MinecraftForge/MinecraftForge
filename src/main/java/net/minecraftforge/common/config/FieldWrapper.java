@@ -293,6 +293,7 @@ public abstract class FieldWrapper implements IFieldWrapper
             }
         }
 
+        @Override
         public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart)
         {
             super.setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart);

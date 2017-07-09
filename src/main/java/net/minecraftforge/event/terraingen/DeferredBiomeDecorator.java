@@ -39,7 +39,7 @@ public class DeferredBiomeDecorator extends BiomeDecorator {
     {
         fireCreateEventAndReplace(biome);
         // On first call to decorate, we fire and substitute ourselves, if we haven't already done so
-        biome.theBiomeDecorator.decorate(par1World, par2Random, biome, pos);
+        biome.decorator.decorate(par1World, par2Random, biome, pos);
     }
     public void fireCreateEventAndReplace(Biome biome)
     {
@@ -49,17 +49,17 @@ public class DeferredBiomeDecorator extends BiomeDecorator {
         wrapped.clayPerChunk = clayPerChunk;
         wrapped.deadBushPerChunk = deadBushPerChunk;
         wrapped.flowersPerChunk = flowersPerChunk;
-        wrapped.generateLakes = generateLakes;
+        wrapped.generateFalls = generateFalls;
         wrapped.grassPerChunk = grassPerChunk;
         wrapped.mushroomsPerChunk = mushroomsPerChunk;
         wrapped.reedsPerChunk = reedsPerChunk;
-        wrapped.sandPerChunk = sandPerChunk;
-        wrapped.sandPerChunk2 = sandPerChunk2;
+        wrapped.gravelPatchesPerChunk = gravelPatchesPerChunk;
+        wrapped.sandPatchesPerChunk = sandPatchesPerChunk;
         wrapped.treesPerChunk = treesPerChunk;
         wrapped.waterlilyPerChunk = waterlilyPerChunk;
 
         BiomeEvent.CreateDecorator event = new BiomeEvent.CreateDecorator(biome, wrapped);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
-        biome.theBiomeDecorator = event.getNewBiomeDecorator();
+        biome.decorator = event.getNewBiomeDecorator();
     }
 }

@@ -60,13 +60,7 @@ public class TopologicalSort
             }
 
             orderedNodes.add(node);
-            graph.put(node, new TreeSet<T>(new Comparator<T>()
-            {
-                @Override
-                public int compare(T o1, T o2) {
-                    return orderedNodes.indexOf(o1)-orderedNodes.indexOf(o2);
-                }
-            }));
+            graph.put(node, new TreeSet<T>(Comparator.comparingInt(o -> orderedNodes.indexOf(o))));
             return true;
         }
 
@@ -187,13 +181,13 @@ public class TopologicalSort
                 return;
             }
 
-            FMLLog.severe("Mod Sorting failed.");
-            FMLLog.severe("Visiting node %s", node);
-            FMLLog.severe("Current sorted list : %s", sortedResult);
-            FMLLog.severe("Visited set for this node : %s", visitedNodes);
-            FMLLog.severe("Explored node set : %s", expandedNodes);
+            FMLLog.log.fatal("Mod Sorting failed.");
+            FMLLog.log.fatal("Visiting node {}", node);
+            FMLLog.log.fatal("Current sorted list : {}", sortedResult);
+            FMLLog.log.fatal("Visited set for this node : {}", visitedNodes);
+            FMLLog.log.fatal("Explored node set : {}", expandedNodes);
             SetView<T> cycleList = Sets.difference(visitedNodes, expandedNodes);
-            FMLLog.severe("Likely cycle is in : %s", cycleList);
+            FMLLog.log.fatal("Likely cycle is in : {}", cycleList);
             throw new ModSortingException("There was a cycle detected in the input graph, sorting is not possible", node, cycleList);
         }
 

@@ -17,11 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/**
- * This software is provided under the terms of the Minecraft Forge Public
- * License v1.0.
- */
-
 package net.minecraftforge.common;
 
 import net.minecraft.util.ResourceLocation;
@@ -36,14 +31,16 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.minecraft.crash.ICrashReportDetail;
+import net.minecraft.item.Item;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -58,6 +55,8 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -77,18 +76,19 @@ import com.google.common.eventbus.Subscribe;
 import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.common.AutomaticEventSubscriber;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.WorldAccessContainer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -99,6 +99,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nullable;
 
+@EventBusSubscriber(modid = "forge")
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static final String VERSION_CHECK_CAT = "version_checking";
@@ -114,11 +115,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
     public static boolean zoomInMissingModelTextInGui = false;
-    public static long java8Reminder = 0;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
     public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
+
+    static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -197,6 +199,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         if (config.getCategory(CATEGORY_GENERAL).containsKey("defaultSpawnFuzz")) config.getCategory(CATEGORY_GENERAL).remove("defaultSpawnFuzz");
         if (config.getCategory(CATEGORY_GENERAL).containsKey("spawnHasFuzz")) config.getCategory(CATEGORY_GENERAL).remove("spawnHasFuzz");
         if (config.getCategory(CATEGORY_GENERAL).containsKey("disableStitchedFileSaving")) config.getCategory(CATEGORY_GENERAL).remove("disableStitchedFileSaving");
+        if (config.getCategory(CATEGORY_CLIENT).containsKey("java8Reminder")) config.getCategory(CATEGORY_CLIENT).remove("java8Reminder");
 
         prop = config.get(CATEGORY_GENERAL, "disableVersionCheck", false);
         prop.setComment("Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.");
@@ -233,7 +236,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         if (removeErroringEntities)
         {
-            FMLLog.warning("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
+            FMLLog.log.warn("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringTileEntities", false);
@@ -244,7 +247,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         if (removeErroringTileEntities)
         {
-            FMLLog.warning("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
+            FMLLog.log.warn("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
@@ -313,12 +316,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.setLanguageKey("forge.configgui.zoomInMissingModelTextInGui");
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", 0,
-                "The timestamp of the last reminder to update to Java 8 in number of milliseconds since January 1, 1970, 00:00:00 GMT. Nag will show only once every 24 hours. To disable it set this to some really high number.");
-        java8Reminder = prop.getLong(0);
-        prop.setLanguageKey("forge.configgui.java8Reminder");
-        propOrder.add(prop.getName());
-
         prop = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", false,
                 "Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.");
         disableStairSlabCulling = prop.getBoolean(false);
@@ -338,13 +335,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             config.save();
         }
-    }
-
-    public static void updateNag()
-    {
-        Property prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder);
-        prop.set((new Date()).getTime());
-        config.save();
     }
 
     /**
@@ -376,12 +366,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         }
     }
 
-    @Subscribe
-    public void missingMapping(FMLMissingMappingsEvent event)
+    @SubscribeEvent
+    public void missingMapping(RegistryEvent.MissingMappings<Item> event)
     {
-        for (FMLMissingMappingsEvent.MissingMapping entry : event.getAll())
+        for (MissingMappings.Mapping<Item> entry : event.getAllMappings())
         {
-            if (entry.name.equals("minecraft:totem")) //This item changed from 1.11 -> 1.11.2
+            if (entry.key.toString().equals("minecraft:totem")) //This item changed from 1.11 -> 1.11.2
             {
                 ResourceLocation newTotem = new ResourceLocation("minecraft:totem_of_undying");
                 entry.remap(ForgeRegistries.ITEMS.getValue(newTotem));
@@ -411,33 +401,27 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         for (ASMData asm : evt.getASMHarvestedData().getAll(ICrashCallable.class.getName().replace('.', '/')))
             all.add(asm.getClassName());
 
-        Iterator<String> itr = all.iterator();
-        while (itr.hasNext())
-        {
-            String cls = itr.next();
-            if (!cls.startsWith("net/minecraft/") &&
-                !cls.startsWith("net/minecraftforge/"))
-                itr.remove();
-        }
+        all.removeIf(cls -> !cls.startsWith("net/minecraft/") && !cls.startsWith("net/minecraftforge/"));
 
-        FMLLog.log(ForgeVersion.MOD_ID, Level.DEBUG, "Preloading CrashReport Classes");
+        log.debug("Preloading CrashReport Classes");
         Collections.sort(all); //Sort it because I like pretty output ;)
         for (String name : all)
         {
-            FMLLog.log(ForgeVersion.MOD_ID, Level.DEBUG, "\t" + name);
+            log.debug("\t{}", name);
             try
             {
                 Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                log.error("Could not find class for name '{}'.", name, e);
             }
         }
 
         NetworkRegistry.INSTANCE.register(this, this.getClass(), "*", evt.getASMHarvestedData());
         ForgeNetworkHandler.registerChannel(this, evt.getSide());
         ConfigManager.sync(this.getModId(), Config.Type.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Subscribe
@@ -455,13 +439,17 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             ForgeVersion.startVersionCheck();
         }
+    }
 
+    @SubscribeEvent
+    public void registrItems(RegistryEvent.Register<Item> event)
+    {
         // Add and register the forge universal bucket, if it's enabled
         if(FluidRegistry.isUniversalBucketEnabled())
         {
             universalBucket = new UniversalBucket();
             universalBucket.setUnlocalizedName("forge.bucketFilled");
-            GameRegistry.register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
+            event.getRegistry().register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
     }
@@ -477,9 +465,9 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         for (Biome biome : ForgeRegistries.BIOMES.getValues())
         {
-            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
+            if (biome.decorator instanceof DeferredBiomeDecorator)
             {
-                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator)biome.theBiomeDecorator;
+                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator)biome.decorator;
                 decorator.fireCreateEventAndReplace(biome);
             }
 
@@ -525,6 +513,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         OreDictionary.rebakeMap();
         StatList.reinit();
         Ingredient.invalidateAll();
+        FMLCommonHandler.instance().reloadSearchTrees();
     }
 
 
