@@ -15,57 +15,61 @@
      private HorseArmorType(int p_i46800_3_, String p_i46800_4_, String p_i46800_5_)
      {
          this.field_188588_g = p_i46800_3_;
-@@ -55,34 +63,42 @@
+@@ -55,16 +63,41 @@
          return this.field_188586_e;
      }
  
-+    /**Exists only for vanilla compat purposes. Modders should never call this. Use getByName instead.*/
++    @Deprecated
      public static HorseArmorType func_188575_a(int p_188575_0_)
      {
          return values()[p_188575_0_];
      }
--
--    public static HorseArmorType func_188580_a(ItemStack p_188580_0_)
 +    
 +    public static HorseArmorType getByName(String name)
-     {
--        return p_188580_0_.func_190926_b() ? NONE : func_188576_a(p_188580_0_.func_77973_b());
++    {
 +        HorseArmorType type = HorseArmorType.valueOf(name);
 +        return type != null ? type : NONE;
-     }
++    }
  
--    public static HorseArmorType func_188576_a(Item p_188576_0_)
-+    public static HorseArmorType func_188580_a(ItemStack p_188580_0_)
+     public static HorseArmorType func_188580_a(ItemStack p_188580_0_)
      {
--        if (p_188576_0_ == Items.field_151138_bX)
+-        return p_188580_0_.func_190926_b() ? NONE : func_188576_a(p_188580_0_.func_77973_b());
 +        if(p_188580_0_.func_190926_b())
-         {
++        {
 +            return NONE;
 +        }
 +        else if (p_188580_0_.func_77973_b() == Items.field_151138_bX)
 +        {
-             return IRON;
-         }
--        else if (p_188576_0_ == Items.field_151136_bY)
++            return IRON;
++        }
 +        else if (p_188580_0_.func_77973_b() == Items.field_151136_bY)
-         {
-             return GOLD;
-         }
--        else
++        {
++            return GOLD;
++        }
 +        else if (p_188580_0_.func_77973_b() == Items.field_151125_bZ)
-         {
--            return p_188576_0_ == Items.field_151125_bZ ? DIAMOND : NONE;
++        {
 +            return DIAMOND;
-         }
++        }
 +        else
 +            return p_188580_0_.func_77973_b().isValidHorseArmor(p_188580_0_) ? p_188580_0_.func_77973_b().getHorseArmorType(p_188580_0_) : NONE;
      }
--
--    public static boolean func_188577_b(Item p_188577_0_)
+ 
++    @Deprecated
+     public static HorseArmorType func_188576_a(Item p_188576_0_)
+     {
+         if (p_188576_0_ == Items.field_151138_bX)
+@@ -81,8 +114,14 @@
+         }
+     }
+ 
++    @Deprecated
+     public static boolean func_188577_b(Item p_188577_0_)
+     {
+         return func_188576_a(p_188577_0_) != NONE;
+     }
 +    
 +    public static boolean isHorseArmor(ItemStack stack)
-     {
--        return func_188576_a(p_188577_0_) != NONE;
++    {
 +        return func_188580_a(stack) != NONE;
-     }
++    }
  }
