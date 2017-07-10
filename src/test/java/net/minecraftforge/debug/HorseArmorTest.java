@@ -8,12 +8,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 @Mod(modid = HorseArmorTest.MODID, name = "HorseArmorTest", version = "1.0")
 public class HorseArmorTest 
@@ -21,53 +24,38 @@ public class HorseArmorTest
     public static final String MODID = "horse_armor_test";
     public static final boolean ENABLED = false;
     
-    @SidedProxy
-    public static CommonProxy proxy;
-    
     public static HorseArmorType testArmorType;
-    public static ItemTestHorseArmor testArmorItem = new ItemTestHorseArmor();
+    @ObjectHolder(MODID + ":test_armor")
+    public static final ItemTestHorseArmor TEST_ARMOR = null;
     
     
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        if(ENABLED)
-        {
-            proxy.preInit(event);
-        }
+        if(ENABLED) 
+        	testArmorType = EnumHelper.addHorseArmor("test", MODID + ":textures/entity/horse/armor/test.png", "tst", 15);
     }
     
-    public static abstract class CommonProxy 
+    @EventBusSubscriber(modid = MODID)
+    public static class RegistryHandler
     {
-        public void preInit(FMLPreInitializationEvent event)
+    	@SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
         {
-            testArmorType = EnumHelper.addHorseArmor("test", MODID + ":textures/entity/horse/armor/test.png", "tst", 15);
-            testArmorItem.setRegistryName(MODID, "test_armor");
-            testArmorItem.setUnlocalizedName(MODID + ".testArmor");
-            GameRegistry.register(testArmorItem);
+        	if(ENABLED) 
+        		event.getRegistry().register(new ItemTestHorseArmor().setRegistryName(MODID, "test_armor").setUnlocalizedName(MODID + ".testArmor"));
+        } 
+        
+    	@SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event) 
+        {
+        	if(ENABLED) 
+        		ModelLoader.setCustomModelResourceLocation(TEST_ARMOR, 0, new ModelResourceLocation(TEST_ARMOR.getRegistryName(), "inventory"));
         }
     }
-    
-    public static class ClientProxy extends CommonProxy 
-    {
-        @Override
-        public void preInit(FMLPreInitializationEvent event) 
-        {
-            super.preInit(event);
-            ModelLoader.setCustomModelResourceLocation(testArmorItem, 0, new ModelResourceLocation(testArmorItem.getRegistryName(), "inventory"));
-        }
-    }
-    
-    public static class ServerProxy extends CommonProxy {}
     
     private static class ItemTestHorseArmor extends Item
-    {
-        @Override
-        public boolean isValidHorseArmor(ItemStack stack) 
-        {
-            return true;
-        }
-        
+    {   
         @Override
         public HorseArmorType getHorseArmorType(ItemStack stack) 
         {

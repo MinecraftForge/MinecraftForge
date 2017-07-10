@@ -44,15 +44,16 @@
      }
  
      public void func_76316_a(IInventory p_76316_1_)
-@@ -207,6 +212,7 @@
+@@ -207,6 +212,8 @@
              this.field_70180_af.func_187230_e();
              this.func_110230_cF();
          }
-+        this.field_110296_bG.func_70301_a(1).func_77973_b().onHorseArmorTick(field_70170_p, this, this.field_110296_bG.func_70301_a(1));
++        ItemStack armor = this.field_110296_bG.func_70301_a(1);
++        armor.func_77973_b().onHorseArmorTick(field_70170_p, this, armor);
      }
  
      protected SoundEvent func_184639_G()
-@@ -381,7 +387,7 @@
+@@ -381,7 +388,7 @@
  
      public boolean func_190682_f(ItemStack p_190682_1_)
      {
