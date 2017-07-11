@@ -72,11 +72,15 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -238,6 +271,11 @@
+@@ -234,10 +267,15 @@
+                     if (chunk != null && chunk.field_189550_d)
+                     {
+                         chunk.func_76623_d();
++                        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkPos.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
+                         this.func_73242_b(chunk);
                          this.func_73243_a(chunk);
                          this.field_73244_f.remove(olong);
                          ++i;
-+                        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkPos.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
 +                        if (field_73244_f.size() == 0 && net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this.field_73251_h).size() == 0 && !this.field_73251_h.field_73011_w.func_186058_p().shouldLoadSpawn()){
 +                            net.minecraftforge.common.DimensionManager.unloadWorld(this.field_73251_h.field_73011_w.getDimension());
 +                            break;
