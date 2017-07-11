@@ -10,14 +10,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 
 @Mod(modid = OnItemUseFirstTest.MODID, name = "OnItemUseFirstTest", version = "0.0.0", acceptableRemoteVersions = "*")
+@Mod.EventBusSubscriber
 public class OnItemUseFirstTest
 {
     public static final boolean ENABLE = true;
@@ -27,10 +28,10 @@ public class OnItemUseFirstTest
 
     public static abstract class CommonProxy
     {
-        public void preInit(FMLPreInitializationEvent event)
+        public void registerItem(RegistryEvent.Register<Item> event)
         {
-            ItemTest.instance = new ItemTest();
-            GameRegistry.register(ItemTest.instance, new ResourceLocation("onitemusefirsttest", "test_item"));
+            ItemTest.instance = new ItemTest().setCreativeTab(CreativeTabs.MISC);
+            event.getRegistry().register(ItemTest.instance);
         }
     }
 
@@ -41,56 +42,59 @@ public class OnItemUseFirstTest
     public static final class ClientProxy extends CommonProxy
     {
         @Override
-        public void preInit(FMLPreInitializationEvent event)
+        public void registerItem(RegistryEvent.Register<Item> event)
         {
-            super.preInit(event);
-            ModelLoader.setCustomModelResourceLocation(ItemTest.instance, 0, new ModelResourceLocation(new ResourceLocation(MODID, "test_item"), "inventory"));
-            ModelLoader.setCustomModelResourceLocation(ItemTest.instance, 1, new ModelResourceLocation(new ResourceLocation(MODID, "test_item"), "inventory"));
+            super.registerItem(event);
+            for (int i = 0; i < EnumActionResult.values().length; i++)
+            {
+                ModelLoader.setCustomModelResourceLocation(ItemTest.instance, i, new ModelResourceLocation(new ResourceLocation(MODID, "test_item"), "inventory"));
+            }
         }
     }
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event)
+    @SubscribeEvent
+    public static void registerItem(RegistryEvent.Register<Item> event)
     {
         if (ENABLE)
         {
-            proxy.preInit(event);
+            proxy.registerItem(event);
         }
     }
 
     public static class ItemTest extends Item
     {
         static Item instance;
+        public ItemTest()
+        {
+            setRegistryName(MODID, "test_item");
+            setHasSubtypes(true);
+        }
         @Nonnull
         @Override
         public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
         {
             ItemStack stack = player.getHeldItem(hand);
-            player.sendMessage(new TextComponentString("Called onItemUseFirst in thread " + Thread.currentThread().getName() + " with meta " + stack.getMetadata() + " in hand " + hand.name()));
-            if (stack.getMetadata() == 1 && world.isRemote)
-            {
-                return EnumActionResult.PASS;
-            }
-            return EnumActionResult.SUCCESS;
-        }
-
-        @Override
-        public CreativeTabs getCreativeTab()
-        {
-            return CreativeTabs.MISC;
+            EnumActionResult ret = EnumActionResult.values()[stack.getMetadata()];
+            player.sendMessage(new TextComponentString("Called onItemUseFirst in thread " + Thread.currentThread().getName() + ", returns " + ret + " in hand " + hand.name()));
+            return ret;
         }
 
         @Override
         public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
         {
-            subItems.add(new ItemStack(this, 1, 0));
-            subItems.add(new ItemStack(this, 1, 1));
+            if (isInCreativeTab(tab))
+            {
+                for (int i = 0; i < EnumActionResult.values().length; i++)
+                {
+                    subItems.add(new ItemStack(this, 1, i));
+                }
+            }
         }
 
         @Override
         public String getItemStackDisplayName(ItemStack stack)
         {
-            return "OnItemUseFirst Test Item: " + stack.getMetadata();
+            return "OnItemUseFirst Returns: " + EnumActionResult.values()[stack.getMetadata()];
         }
     }
 }
