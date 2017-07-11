@@ -43,7 +43,7 @@
 +    @Override
 +    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        super.getDrops(drops, world, pos, state, fortune);
++        super.getDrops(drops, world, pos, state, 0);
 +        int age = func_185527_x(state);
 +        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
 +
@@ -63,7 +63,8 @@
 +
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, 0);
+-        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, 0);
++        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
  
 -        if (!p_180653_1_.field_72995_K)
 +        if (false && !p_180653_1_.field_72995_K) // Forge: NOP all this.
