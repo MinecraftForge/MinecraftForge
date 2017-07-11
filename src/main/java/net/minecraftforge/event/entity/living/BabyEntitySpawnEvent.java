@@ -62,12 +62,12 @@ public class BabyEntitySpawnEvent extends Event
         //causedByPlayer calculated here to simplify the patch.
         EntityPlayer causedByPlayer = null;
         if (parentA instanceof EntityAnimal) {
-            causedByPlayer = ((EntityAnimal)parentA).func_191993_do();
+            causedByPlayer = ((EntityAnimal)parentA).getLoveCause();
         }
 
         if (causedByPlayer == null && parentB instanceof EntityAnimal)
         {
-            causedByPlayer = ((EntityAnimal)parentB).func_191993_do();
+            causedByPlayer = ((EntityAnimal)parentB).getLoveCause();
         }
 
         this.parentA = parentA;

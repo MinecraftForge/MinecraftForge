@@ -14,7 +14,7 @@
          }
      }
 +
-+    public com.google.common.base.Optional<net.minecraftforge.common.model.TRSRTransformation> apply(com.google.common.base.Optional<? extends net.minecraftforge.common.model.IModelPart> part) { return net.minecraftforge.client.ForgeHooksClient.applyTransform(getMatrix(), part); }
++    public java.util.Optional<net.minecraftforge.common.model.TRSRTransformation> apply(java.util.Optional<? extends net.minecraftforge.common.model.IModelPart> part) { return net.minecraftforge.client.ForgeHooksClient.applyTransform(getMatrix(), part); }
 +    public javax.vecmath.Matrix4f getMatrix() { return net.minecraftforge.client.ForgeHooksClient.getMatrix(this); }
 +    public EnumFacing rotate(EnumFacing facing) { return func_177523_a(facing); }
 +    public int rotate(EnumFacing facing, int vertexIndex) { return func_177520_a(facing, vertexIndex); }

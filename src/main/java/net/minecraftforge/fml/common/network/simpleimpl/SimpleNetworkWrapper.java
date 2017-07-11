@@ -128,7 +128,7 @@ public class SimpleNetworkWrapper {
         catch (Exception e)
         {
             // How is this possible?
-            FMLLog.log(Level.FATAL, e, "What? Netty isn't installed, what magic is this?");
+            FMLLog.log.fatal("What? Netty isn't installed, what magic is this?", e);
             throw Throwables.propagate(e);
         }
     }
@@ -146,7 +146,7 @@ public class SimpleNetworkWrapper {
         }
         catch (Exception e)
         {
-            FMLLog.log(Level.FATAL, e, "It appears we somehow have a not-standard pipeline. Huh");
+            FMLLog.log.fatal("It appears we somehow have a not-standard pipeline. Huh", e);
             throw Throwables.propagate(e);
         }
     }

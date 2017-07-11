@@ -61,7 +61,6 @@ import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import static net.minecraft.util.text.TextFormatting.*;
 
-import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Mouse;
 
 import com.google.common.base.Strings;
@@ -198,7 +197,7 @@ public class GuiModList extends GuiScreen
     {
         super.mouseClicked(x, y, button);
         search.mouseClicked(x, y, button);
-        if (button == 1 && x >= search.xPosition && x < search.xPosition + search.width && y >= search.yPosition && y < search.yPosition + search.height) {
+        if (button == 1 && x >= search.x && x < search.x + search.width && y >= search.y && y < search.y + search.height) {
             search.setText("");
         }
     }
@@ -282,20 +281,12 @@ public class GuiModList extends GuiScreen
                         try
                         {
                             IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
-                            GuiScreen newScreen = null;
-                            try
-                            {
-                                newScreen = guiFactory.createConfigGui(this);
-                            }
-                            catch (AbstractMethodError error)
-                            {
-                                newScreen = guiFactory.mainConfigGuiClass().getConstructor(GuiScreen.class).newInstance(this);
-                            }
+                            GuiScreen newScreen = guiFactory.createConfigGui(this);
                             this.mc.displayGuiScreen(newScreen);
                         }
                         catch (Exception e)
                         {
-                            FMLLog.log(Level.ERROR, e, "There was a critical issue trying to build the config GUI for %s", selectedMod.getModId());
+                            FMLLog.log.error("There was a critical issue trying to build the config GUI for {}", selectedMod.getModId(), e);
                         }
                         return;
                     }
@@ -307,7 +298,7 @@ public class GuiModList extends GuiScreen
 
     public int drawLine(String line, int offset, int shifty)
     {
-        this.fontRendererObj.drawString(line, offset, shifty, 0xd7edea);
+        this.fontRenderer.drawString(line, offset, shifty, 0xd7edea);
         return shifty + 10;
     }
 
@@ -319,7 +310,7 @@ public class GuiModList extends GuiScreen
             this.modInfo.drawScreen(mouseX, mouseY, partialTicks);
 
         int left = ((this.width - this.listWidth - 38) / 2) + this.listWidth + 30;
-        this.drawCenteredString(this.fontRendererObj, "Mod List", left, 16, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, "Mod List", left, 16, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         String text = I18n.format("fml.menu.mods.search");
@@ -347,7 +338,7 @@ public class GuiModList extends GuiScreen
 
     FontRenderer getFontRenderer()
     {
-        return fontRendererObj;
+        return fontRenderer;
     }
 
     public void selectModIndex(int index)
@@ -426,14 +417,7 @@ public class GuiModList extends GuiScreen
             configModButton.enabled = false;
             if (guiFactory != null)
             {
-                try
-                {
-                    configModButton.enabled = guiFactory.hasConfigGui();
-                }
-                catch(AbstractMethodError error)
-                {
-                    configModButton.enabled = guiFactory.mainConfigGuiClass() != null;
-                }
+                configModButton.enabled = guiFactory.hasConfigGui();
             }
             lines.add(selectedMod.getMetadata().name);
             lines.add(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()));
@@ -527,7 +511,11 @@ public class GuiModList extends GuiScreen
                 }
 
                 ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
-                ret.addAll(GuiUtilRenderComponents.splitText(chat, this.listWidth-8, GuiModList.this.fontRendererObj, false, true));
+                int maxTextLength = this.listWidth - 8;
+                if (maxTextLength >= 0)
+                {
+                    ret.addAll(GuiUtilRenderComponents.splitText(chat, maxTextLength, GuiModList.this.fontRenderer, false, true));
+                }
             }
             return ret;
         }
@@ -556,6 +544,7 @@ public class GuiModList extends GuiScreen
         }
 
 
+        @Override
         protected void drawHeader(int entryRight, int relativeY, Tessellator tess)
         {
             int top = relativeY;
@@ -581,7 +570,7 @@ public class GuiModList extends GuiScreen
                 if (line != null)
                 {
                     GlStateManager.enableBlend();
-                    GuiModList.this.fontRendererObj.drawStringWithShadow(line.getFormattedText(), this.left + 4, top, 0xFFFFFF);
+                    GuiModList.this.fontRenderer.drawStringWithShadow(line.getFormattedText(), this.left + 4, top, 0xFFFFFF);
                     GlStateManager.disableAlpha();
                     GlStateManager.disableBlend();
                 }
@@ -610,7 +599,7 @@ public class GuiModList extends GuiScreen
                 for (ITextComponent part : line) {
                     if (!(part instanceof TextComponentString))
                         continue;
-                    k += GuiModList.this.fontRendererObj.getStringWidth(((TextComponentString)part).getText());
+                    k += GuiModList.this.fontRenderer.getStringWidth(((TextComponentString)part).getText());
                     if (k >= x)
                     {
                         GuiModList.this.handleComponentClick(part);

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedSandstone.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedSandstone.java
+@@ -28,7 +28,6 @@
+         return ((BlockRedSandstone.EnumType)p_180651_1_.func_177229_b(field_176336_a)).func_176827_a();
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         for (BlockRedSandstone.EnumType blockredsandstone$enumtype : BlockRedSandstone.EnumType.values())

@@ -42,7 +42,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.Maps;
 
 /*
@@ -528,6 +528,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
         return new net.minecraft.client.renderer.block.model.ItemTransformVec3f(toLwjgl(toXYZDegrees(getLeftRot())), toLwjgl(getTranslation()), toLwjgl(getScale()));
     }
 
+    @Override
     public Matrix4f getMatrix()
     {
         return (Matrix4f)matrix.clone();
@@ -557,15 +558,17 @@ public final class TRSRTransformation implements IModelState, ITransformation
         return (Quat4f)rightRot.clone();
     }
 
+    @Override
     public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
     {
         if(part.isPresent())
         {
-            return Optional.absent();
+            return Optional.empty();
         }
         return Optional.of(this);
     }
 
+    @Override
     public EnumFacing rotate(EnumFacing facing)
     {
         return rotate(matrix, facing);
@@ -597,6 +600,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
         return true;
     }
 
+    @Override
     public int rotate(EnumFacing facing, int vertexIndex)
     {
         // FIXME check if this is good enough

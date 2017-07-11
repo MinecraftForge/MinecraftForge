@@ -82,7 +82,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just after initializing {@link GuiScreen#mc}, {@link GuiScreen#fontRendererObj},
+         * This event fires just after initializing {@link GuiScreen#mc}, {@link GuiScreen#fontRenderer},
          * {@link GuiScreen#width}, and {@link GuiScreen#height}.<br/><br/>
          * 
          * If canceled the following lines are skipped in {@link GuiScreen#setWorldAndResolution(Minecraft, int, int)}:<br/>

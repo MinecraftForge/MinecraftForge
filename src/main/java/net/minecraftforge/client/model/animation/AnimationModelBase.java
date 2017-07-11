@@ -130,5 +130,6 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         RenderHelper.enableStandardItemLighting();
     }
 
+    @Override
     public void handleEvents(T instance, float time, Iterable<Event> pastEvents) {}
 }

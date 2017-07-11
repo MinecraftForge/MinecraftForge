@@ -20,7 +20,7 @@
       "url" : "http://repo.maven.apache.org/maven2"
     },
     {
-      "name": "org.ow2.asm:asm-debug-all:5.1",
+      "name": "org.ow2.asm:asm-debug-all:5.2",
       "children" : ["sources"],
       "url" : "http://repo.maven.apache.org/maven2"
     },

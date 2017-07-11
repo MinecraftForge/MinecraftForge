@@ -57,8 +57,18 @@
      }
  
      public String func_151466_e()
-@@ -154,6 +154,137 @@
-         return this.field_151471_f.equals(p_compareTo_1_.field_151471_f) ? I18n.func_135052_a(this.field_74515_c).compareTo(I18n.func_135052_a(p_compareTo_1_.field_74515_c)) : ((Integer)field_193627_d.get(this.field_151471_f)).compareTo(field_193627_d.get(p_compareTo_1_.field_151471_f));
+@@ -151,9 +151,146 @@
+ 
+     public int compareTo(KeyBinding p_compareTo_1_)
+     {
+-        return this.field_151471_f.equals(p_compareTo_1_.field_151471_f) ? I18n.func_135052_a(this.field_74515_c).compareTo(I18n.func_135052_a(p_compareTo_1_.field_74515_c)) : ((Integer)field_193627_d.get(this.field_151471_f)).compareTo(field_193627_d.get(p_compareTo_1_.field_151471_f));
++        if (this.field_151471_f.equals(p_compareTo_1_.field_151471_f)) return I18n.func_135052_a(this.field_74515_c).compareTo(I18n.func_135052_a(p_compareTo_1_.field_74515_c));
++        Integer tCat = field_193627_d.get(this.field_151471_f);
++        Integer oCat = field_193627_d.get(p_compareTo_1_.field_151471_f);
++        if (tCat == null && oCat != null) return 1;
++        if (tCat != null && oCat == null) return -1;
++        if (tCat == null && oCat == null) return I18n.func_135052_a(this.field_151471_f).compareTo(I18n.func_135052_a(p_compareTo_1_.field_151471_f));
++        return  tCat.compareTo(oCat);
      }
  
 +    /****************** Forge Start *****************************/
@@ -195,7 +205,7 @@
      public static Supplier<String> func_193626_b(String p_193626_0_)
      {
          KeyBinding keybinding = field_74516_a.get(p_193626_0_);
-@@ -162,7 +293,7 @@
+@@ -162,7 +299,7 @@
              return p_193626_0_;
          } : () ->
          {

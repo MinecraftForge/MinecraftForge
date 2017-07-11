@@ -104,16 +104,11 @@ public class ConfigManager
 
     public static void loadData(ASMDataTable data)
     {
-        FMLLog.fine("Loading @Config anotation data");
+        FMLLog.log.debug("Loading @Config anotation data");
         for (ASMData target : data.getAll(Config.class.getName()))
         {
             String modid = (String)target.getAnnotationInfo().get("modid");
-            Multimap<Config.Type, ASMData> map = asm_data.get(modid);
-            if (map == null)
-            {
-                map = ArrayListMultimap.create();
-                asm_data.put(modid, map);
-            }
+            Multimap<Config.Type, ASMData> map = asm_data.computeIfAbsent(modid, k -> ArrayListMultimap.create());
 
             EnumHolder tholder = (EnumHolder)target.getAnnotationInfo().get("type");
             Config.Type type = tholder == null ? Config.Type.INSTANCE : Config.Type.valueOf(tholder.getValue());
@@ -150,7 +145,7 @@ public class ConfigManager
      */
     public static void sync(String modid, Config.Type type)
     {
-        FMLLog.fine("Attempting to inject @Config classes into %s for type %s", modid, type);
+        FMLLog.log.debug("Attempting to inject @Config classes into {} for type {}", modid, type);
         ClassLoader mcl = Loader.instance().getModClassLoader();
         File configDir = Loader.instance().getConfigDir();
         Multimap<Config.Type, ASMData> map = asm_data.get(modid);
@@ -164,9 +159,8 @@ public class ConfigManager
             {
                 Class<?> cls = Class.forName(targ.getClassName(), true, mcl);
 
-                if (MOD_CONFIG_CLASSES.get(modid) == null)
-                    MOD_CONFIG_CLASSES.put(modid, Sets.<Class<?>>newHashSet());
-                MOD_CONFIG_CLASSES.get(modid).add(cls);
+                Set<Class<?>> modConfigClasses = MOD_CONFIG_CLASSES.computeIfAbsent(modid, k -> Sets.<Class<?>>newHashSet());
+                modConfigClasses.add(cls);
 
                 String name = (String)targ.getAnnotationInfo().get("name");
                 if (name == null)
@@ -194,7 +188,7 @@ public class ConfigManager
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "An error occurred trying to load a config for %s into %s", modid, targ.getClassName());
+                FMLLog.log.error("An error occurred trying to load a config for {} into {}", targ.getClassName(), e);
                 throw new LoaderException(e);
             }
         }

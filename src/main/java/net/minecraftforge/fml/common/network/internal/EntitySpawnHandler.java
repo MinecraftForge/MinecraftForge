@@ -56,13 +56,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
         }
         else
         {
-            thread.addScheduledTask(new Runnable()
-            {
-                public void run()
-                {
-                    EntitySpawnHandler.this.process(msg);
-                }
-            });
+            thread.addScheduledTask(() -> EntitySpawnHandler.this.process(msg));
         }
     }
 
@@ -140,7 +134,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
             wc.addEntityToWorld(spawnMsg.entityId, entity);
         } catch (Exception e)
         {
-            FMLLog.log(Level.ERROR, e, "A severe problem occurred during the spawning of an entity at ( " + spawnMsg.rawX + "," + spawnMsg.rawY + ", " + spawnMsg.rawZ +")");
+            FMLLog.log.error("A severe problem occurred during the spawning of an entity at ({}, {}, {})", spawnMsg.rawX, spawnMsg.rawY, spawnMsg.rawZ, e);
             throw Throwables.propagate(e);
         }
     }
@@ -148,7 +142,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
-        FMLLog.log(Level.ERROR, cause, "EntitySpawnHandler exception");
+        FMLLog.log.error("EntitySpawnHandler exception", cause);
         super.exceptionCaught(ctx, cause);
     }
 }

@@ -30,6 +30,7 @@ public final class JointClips
     {
         INSTANCE;
 
+        @Override
         public TRSRTransformation apply(float time)
         {
             return TRSRTransformation.identity();
@@ -47,6 +48,7 @@ public final class JointClips
             this.clip = clip;
         }
 
+        @Override
         public TRSRTransformation apply(float time)
         {
             return clip.apply(child).apply(time);

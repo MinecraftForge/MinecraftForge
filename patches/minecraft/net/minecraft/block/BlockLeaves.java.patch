@@ -75,7 +75,7 @@
      }
  
      protected void func_176234_a(World p_176234_1_, BlockPos p_176234_2_, IBlockState p_176234_3_, int p_176234_4_)
-@@ -274,6 +241,53 @@
+@@ -274,6 +241,51 @@
  
      public abstract BlockPlanks.EnumType func_176233_b(int p_176233_1_);
  
@@ -92,9 +92,8 @@
 +    }
 +
 +    @Override
-+    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
 +        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
 +        int chance = this.func_176232_d(state);
 +
@@ -108,7 +107,7 @@
 +        {
 +            ItemStack drop = new ItemStack(func_180660_a(state, rand, fortune), 1, func_180651_a(state));
 +            if (!drop.func_190926_b())
-+                ret.add(drop);
++                drops.add(drop);
 +        }
 +
 +        chance = 200;
@@ -121,8 +120,7 @@
 +        this.captureDrops(true);
 +        if (world instanceof World)
 +            this.func_176234_a((World)world, pos, state, chance); // Dammet mojang
-+        ret.addAll(this.captureDrops(false));
-+        return ret;
++        drops.addAll(this.captureDrops(false));
 +    }
 +
 +
