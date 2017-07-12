@@ -18,14 +18,11 @@
              this.field_175027_c.func_178267_a(p_175020_4_, ibakedmodel1, p_175020_1_, p_175020_2_, Tessellator.func_178181_a().func_178180_c(), true);
          }
      }
-@@ -75,7 +75,9 @@
+@@ -75,6 +75,7 @@
                  switch (enumblockrendertype)
                  {
                      case MODEL:
--                        return this.field_175027_c.func_178267_a(p_175018_3_, this.func_184389_a(p_175018_1_), p_175018_1_, p_175018_2_, p_175018_4_, true);
-+                        IBakedModel model = this.func_184389_a(p_175018_1_);
 +                        p_175018_1_ = p_175018_1_.func_177230_c().getExtendedState(p_175018_1_, p_175018_3_, p_175018_2_);
-+                        return this.field_175027_c.func_178267_a(p_175018_3_, model, p_175018_1_, p_175018_2_, p_175018_4_, true);
+                         return this.field_175027_c.func_178267_a(p_175018_3_, this.func_184389_a(p_175018_1_), p_175018_1_, p_175018_2_, p_175018_4_, true);
                      case ENTITYBLOCK_ANIMATED:
                          return false;
-                     case LIQUID:
