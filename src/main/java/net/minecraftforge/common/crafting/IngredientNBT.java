@@ -26,7 +26,7 @@ import net.minecraft.item.crafting.Ingredient;
 public class IngredientNBT extends Ingredient
 {
     private final ItemStack stack;
-    protected IngredientNBT(ItemStack stack)
+    public IngredientNBT(ItemStack stack)
     {
         super(stack);
         this.stack = stack;
