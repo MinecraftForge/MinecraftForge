@@ -40,7 +40,7 @@ import java.util.Set;
 public class AutomaticEventSubscriber
 {
     private static final EnumSet<Side> DEFAULT = EnumSet.allOf(Side.class);
-    public static void inject(ModContainer mod, ASMDataTable data, Side side)
+    public static void inject(ModContainer mod, ASMDataTable data, Side side, ILanguageAdapter langAdapter)
     {
         FMLLog.log.debug("Attempting to inject @EventBusSubscriber classes into the eventbus for {}", mod.getModId());
         SetMultimap<String, ASMData> modData = data.getAnnotationsFor(mod);
@@ -79,7 +79,7 @@ public class AutomaticEventSubscriber
                     }
                     FMLLog.log.debug("Registering @EventBusSubscriber for {} for mod {}", targ.getClassName(), mod.getModId());
                     Class<?> subscriptionTarget = Class.forName(targ.getClassName(), true, mcl);
-                    MinecraftForge.EVENT_BUS.register(subscriptionTarget);
+                    MinecraftForge.EVENT_BUS.register(langAdapter.getStaticContainer(subscriptionTarget, mcl).getInstance());
                     FMLLog.log.debug("Injected @EventBusSubscriber class {}", targ.getClassName());
                 }
             }

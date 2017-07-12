@@ -19,15 +19,12 @@
 
 package net.minecraftforge.registries;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.Level;
+import net.minecraftforge.fml.common.langsupport.IPropertyWrapper;
 
 import com.google.common.base.Throwables;
 
@@ -43,13 +40,13 @@ import javax.annotation.Nullable;
 @SuppressWarnings("rawtypes")
 class ObjectHolderRef
 {
-    private Field field;
+    private IPropertyWrapper field;
     private ResourceLocation injectedObject;
     private boolean isValid;
     private ForgeRegistry<?> registry;
 
     @SuppressWarnings("unchecked")
-    ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
+    ObjectHolderRef(IPropertyWrapper field, ResourceLocation injectedObject, boolean extractFromExistingValues)
     {
         registry = getRegistryForType(field);
 
@@ -59,7 +56,7 @@ class ObjectHolderRef
         {
             try
             {
-                Object existing = field.get(null);
+                Object existing = field.get(true);
                 // nothing is ever allowed to replace AIR
                 if (existing == null || existing == registry.getDefault())
                 {
@@ -88,20 +85,11 @@ class ObjectHolderRef
         {
             throw new IllegalStateException(String.format("The ObjectHolder annotation cannot apply to a field that does not map to a registry. Ensure the registry was created during the RegistryEvent.NewRegistry event. (found : %s at %s.%s)", field.getType().getName(), field.getClass().getName(), field.getName()));
         }
-        try
-        {
-            FinalFieldHelper.makeWritable(field);
-        }
-        catch (Exception e)
-        {
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
-        }
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
-    private ForgeRegistry<?> getRegistryForType(Field field)
+    private ForgeRegistry<?> getRegistryForType(IPropertyWrapper field)
     {
         Queue<Class<?>> typesToExamine = new LinkedList<Class<?>>();
         typesToExamine.add(field.getType());
@@ -148,41 +136,11 @@ class ObjectHolderRef
         }
         try
         {
-            FinalFieldHelper.setField(field, null, thing);
+            field.set(thing, true, true);
         }
         catch (Exception e)
         {
             FMLLog.log.warn("Unable to set {} with value {} ({})", this.field, thing, this.injectedObject, e);
-        }
-    }
-
-    private static class FinalFieldHelper
-    {
-        private static Field modifiersField;
-        private static Object reflectionFactory;
-        private static Method newFieldAccessor;
-        private static Method fieldAccessorSet;
-        static Field makeWritable(Field f) throws Exception
-        {
-            f.setAccessible(true);
-            if (modifiersField == null)
-            {
-                Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory");
-                reflectionFactory = getReflectionFactory.invoke(null);
-                newFieldAccessor = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newFieldAccessor", Field.class, boolean.class);
-                fieldAccessorSet = Class.forName("sun.reflect.FieldAccessor").getDeclaredMethod("set", Object.class, Object.class);
-                modifiersField = Field.class.getDeclaredField("modifiers");
-                modifiersField.setAccessible(true);
-            }
-            modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-            return f;
-        }
-
-
-        static void setField(Field field, @Nullable Object instance, Object thing) throws Exception
-        {
-            Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, field, false);
-            fieldAccessorSet.invoke(fieldAccessor, instance, thing);
         }
     }
 }
