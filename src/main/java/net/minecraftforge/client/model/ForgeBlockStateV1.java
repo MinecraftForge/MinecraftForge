@@ -133,7 +133,7 @@ public class ForgeBlockStateV1 extends Marker
                     if (!baseVars.isEmpty())
                     {
                         for (ForgeBlockStateV1.Variant baseVar : baseVars)
-                            addVars.add(new Variant(specVar).sync(baseVar));
+                            addVars.add(new Variant(specVar).syncCombiningWeight(baseVar));
                     }
                     else
                         addVars.add(specVar);
@@ -266,6 +266,9 @@ public class ForgeBlockStateV1 extends Marker
                         Variant ret = new Variant(base);
                         Map<String, List<Variant>> subMap = subs.stream()
                                 .collect(Collectors.toMap(Pair::getKey, kv -> Collections.singletonList(kv.getValue())));
+                        ret.weight = Optional.of(subs.stream()
+                                .mapToInt(kv -> kv.getValue().getWeight().orElse(1))
+                                .reduce(1, (l, r) -> l * r));
                         ret.submodels.putAll(subMap);
                         return ret;
                     })
