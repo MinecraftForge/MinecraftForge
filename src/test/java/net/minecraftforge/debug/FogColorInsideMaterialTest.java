@@ -9,6 +9,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -34,6 +35,8 @@ public class FogColorInsideMaterialTest
     @ObjectHolder ("test_fluid")
     public static final Item FLUID_ITEM = null;
 
+    private static final ResourceLocation testFluidRegistryName = new ResourceLocation(MOD_ID, "test_fluid");
+
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
@@ -46,21 +49,21 @@ public class FogColorInsideMaterialTest
             }
         };
         fluid.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-        fluid.setUnlocalizedName(MOD_ID + ":" + "test_fluid");
-        fluid.setRegistryName("test_fluid");
+        fluid.setUnlocalizedName(testFluidRegistryName.toString());
+        fluid.setRegistryName(testFluidRegistryName);
         event.getRegistry().register(fluid);
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(new ItemBlock(FLUID_BLOCK).setRegistryName(FLUID_BLOCK.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(FLUID_BLOCK).setRegistryName(testFluidRegistryName));
     }
 
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event)
     {
-        ModelResourceLocation fluidLocation = new ModelResourceLocation(MOD_ID.toLowerCase() + ":test_fluid", "fluid");
+        ModelResourceLocation fluidLocation = new ModelResourceLocation(testFluidRegistryName, "fluid");
         ModelLoader.registerItemVariants(FLUID_ITEM);
         ModelLoader.setCustomMeshDefinition(FLUID_ITEM, stack -> fluidLocation);
         ModelLoader.setCustomStateMapper(FLUID_BLOCK, new StateMapperBase()
