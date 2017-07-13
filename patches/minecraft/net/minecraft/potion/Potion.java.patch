@@ -20,7 +20,7 @@
      public boolean func_76398_f()
      {
          return this.field_76418_K;
-@@ -293,7 +292,86 @@
+@@ -293,7 +292,88 @@
          return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
      }
  
@@ -90,11 +90,13 @@
 +    }
 +    
 +    /**
-+     * Return an index that will override the potion's default sort order. This is useful for potions with colors 
-+     * that change since, without this, the effect order would shift in the inventory GUI when stacked with others.
++     * An index that, if different than that of a compared potion effect's potion, will override the default sort order.
++     * If the values are the same, the Vanilla logic alone will be responsible for sort order. Overriding this method is 
++     * useful for potions with changing liquid colors since, without this, the potion effect order would shift in the 
++     * inventory GUI when stacked with others due to Vanilla using liquid color as part of PotionEffect's compareTo logic.
 +     * 
 +     * @param The PotionEffect instance containing the potion
-+     * @return An index to override the default sort order
++     * @return An index to use to sort potion effects if the value is different than that of the other effect's potion
 +     */
 +    public int getSortIndex(PotionEffect potionEffect)
 +    {
