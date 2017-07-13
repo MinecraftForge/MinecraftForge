@@ -50,6 +50,7 @@ import java.util.regex.Pattern;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
+import com.google.common.primitives.Floats;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
@@ -75,7 +76,7 @@ public class Configuration
     private static final String CONFIG_VERSION_MARKER = "~CONFIG_VERSION";
     private static final Pattern CONFIG_START = Pattern.compile("START: \"([^\\\"]+)\"");
     private static final Pattern CONFIG_END = Pattern.compile("END: \"([^\\\"]+)\"");
-    public static final CharMatcher allowedProperties = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
+    public static final CharMatcher allowedProperties = CharMatcher.javaLetterOrDigit().or(CharMatcher.anyOf(ALLOWED_CHARS));
     private static Configuration PARENT = null;
 
     File file;
@@ -132,8 +133,7 @@ public class Configuration
                 File fileBak = new File(file.getAbsolutePath() + "_" +
                         new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".errored");
                 FMLLog.log.fatal("An exception occurred while loading config file {}. This file will be renamed to {} " +
-                        "and a new config file will be generated.", file.getName(), fileBak.getName());
-                e.printStackTrace();
+                        "and a new config file will be generated.", file.getName(), fileBak.getName(), e);
 
                 file.renameTo(fileBak);
                 load();
@@ -1047,7 +1047,7 @@ public class Configuration
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error while loading config.", e);
         }
         finally
         {
@@ -1108,7 +1108,7 @@ public class Configuration
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error while saving config.", e);
         }
     }
 
@@ -1712,11 +1712,12 @@ public class Configuration
         prop.setMaxValue(maxValue);
         try
         {
-            return Float.parseFloat(prop.getString()) < minValue ? minValue : (Float.parseFloat(prop.getString()) > maxValue ? maxValue : Float.parseFloat(prop.getString()));
+            float parseFloat = Float.parseFloat(prop.getString());
+            return Floats.constrainToRange(parseFloat, minValue, maxValue);
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Failed to get float for {}/{}", name, category, e);
         }
         return defaultValue;
     }

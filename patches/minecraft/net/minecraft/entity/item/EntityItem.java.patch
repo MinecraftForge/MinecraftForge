@@ -90,7 +90,7 @@
              int i = itemstack.func_190916_E();
  
 -            if (this.field_145804_b == 0 && (this.field_145802_g == null || 6000 - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && p_70100_1_.field_71071_by.func_70441_a(itemstack))
-+            int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_70100_1_, itemstack);
++            int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_70100_1_);
 +            if (hook < 0) return;
 +
 +            if (this.field_145804_b <= 0 && (this.field_145802_g == null || lifespan - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && (hook == 1 || i <= 0 || p_70100_1_.field_71071_by.func_70441_a(itemstack)))

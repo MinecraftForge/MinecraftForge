@@ -318,14 +318,6 @@ public class PlayerInteractEvent extends PlayerEvent
         {
             super(player, EnumHand.MAIN_HAND, new BlockPos(player), null);
         }
-
-        // TODO: remove
-        /** @deprecated use {@link LeftClickEmpty(EntityPlayer)} */
-        @Deprecated
-        public LeftClickEmpty(EntityPlayer player, @Nonnull ItemStack stack)
-        {
-            this(player);
-        }
     }
 
     /**

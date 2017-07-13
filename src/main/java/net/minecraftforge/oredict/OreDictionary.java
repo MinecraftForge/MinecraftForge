@@ -709,12 +709,7 @@ public class OreDictionary
                 {
                     hash |= ((ore.getItemDamage() + 1) << 16); // +1 so meta 0 is significant
                 }
-                List<Integer> ids = stackToId.get(hash);
-                if (ids == null)
-                {
-                    ids = Lists.newArrayList();
-                    stackToId.put(hash, ids);
-                }
+                List<Integer> ids = stackToId.computeIfAbsent(hash, k -> Lists.newArrayList());
                 ids.add(id);
                 //System.out.println(id + " " + getOreName(id) + " " + Integer.toHexString(hash) + " " + ore);
             }

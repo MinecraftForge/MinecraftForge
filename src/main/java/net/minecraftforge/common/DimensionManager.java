@@ -234,7 +234,7 @@ public class DimensionManager
         }
         catch (Exception e)
         {
-            System.err.println("Cannot Hotload Dim: " + e.getMessage());
+            FMLLog.log.error("Cannot Hotload Dim: {}", dim, e);
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
         MinecraftServer mcServer = overworld.getMinecraftServer();
@@ -348,7 +348,7 @@ public class DimensionManager
             }
             catch (MinecraftException e)
             {
-                e.printStackTrace();
+                FMLLog.log.error("Caught an exception while saving all chunks:", e);
             }
             finally
             {

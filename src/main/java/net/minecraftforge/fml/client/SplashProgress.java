@@ -148,20 +148,14 @@ public class SplashProgress
         if (!parent.exists())
             parent.mkdirs();
 
-        FileReader r = null;
         config = new Properties();
-        try
+        try (FileReader r = new FileReader(configFile))
         {
-            r = new FileReader(configFile);
             config.load(r);
         }
         catch(IOException e)
         {
             FMLLog.log.info("Could not load splash.properties, will create a default one");
-        }
-        finally
-        {
-            IOUtils.closeQuietly(r);
         }
 
         //Some system do not support this and have weird effects so we need to detect and disable by default.
@@ -191,19 +185,13 @@ public class SplashProgress
 
         File miscPackFile = new File(Minecraft.getMinecraft().mcDataDir, getString("resourcePackPath", "resources"));
 
-        FileWriter w = null;
-        try
+        try (FileWriter w = new FileWriter(configFile))
         {
-            w = new FileWriter(configFile);
             config.store(w, "Splash screen properties");
         }
         catch(IOException e)
         {
             FMLLog.log.error("Could not save the splash.properties file", e);
-        }
-        finally
-        {
-            IOUtils.closeQuietly(w);
         }
 
         miscPack = createResourcePack(miscPackFile);
@@ -240,7 +228,7 @@ public class SplashProgress
         }
         catch (LWJGLException e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error starting SplashProgress:", e);
             disableSplash(e);
         }
 
@@ -537,7 +525,7 @@ public class SplashProgress
                 }
                 catch (LWJGLException e)
                 {
-                    e.printStackTrace();
+                    FMLLog.log.error("Error setting GL context:", e);
                     throw new RuntimeException(e);
                 }
                 glClearColor((float)((backgroundColor >> 16) & 0xFF) / 0xFF, (float)((backgroundColor >> 8) & 0xFF) / 0xFF, (float)(backgroundColor & 0xFF) / 0xFF, 1);
@@ -564,7 +552,7 @@ public class SplashProgress
                 }
                 catch (LWJGLException e)
                 {
-                    e.printStackTrace();
+                    FMLLog.log.error("Error releasing GL context:", e);
                     throw new RuntimeException(e);
                 }
                 finally
@@ -629,7 +617,7 @@ public class SplashProgress
         }
         catch (LWJGLException e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error setting GL context:", e);
             throw new RuntimeException(e);
         }
     }
@@ -650,7 +638,7 @@ public class SplashProgress
         }
         catch (LWJGLException e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error releasing GL context:", e);
             throw new RuntimeException(e);
         }
         lock.unlock();
@@ -672,7 +660,7 @@ public class SplashProgress
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error finishing SplashProgress:", e);
             disableSplash(e);
         }
     }
@@ -719,20 +707,14 @@ public class SplashProgress
         enabled = false;
         config.setProperty("enabled", "false");
 
-        FileWriter w = null;
-        try
+        try (FileWriter w = new FileWriter(configFile))
         {
-            w = new FileWriter(configFile);
             config.store(w, "Splash screen properties");
         }
         catch(IOException e)
         {
             FMLLog.log.error("Could not save the splash.properties file", e);
             return false;
-        }
-        finally
-        {
-            IOUtils.closeQuietly(w);
         }
         return true;
     }
@@ -837,7 +819,7 @@ public class SplashProgress
             }
             catch(IOException e)
             {
-                e.printStackTrace();
+                FMLLog.log.error("Error reading texture from file: {}", location, e);
                 throw new RuntimeException(e);
             }
             finally

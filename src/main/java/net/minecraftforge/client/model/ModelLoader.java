@@ -63,7 +63,6 @@ import net.minecraft.client.renderer.block.model.multipart.Multipart;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
 import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
-import net.minecraft.client.renderer.texture.ITextureMapPopulator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -126,8 +125,8 @@ import javax.annotation.Nullable;
 
 public final class ModelLoader extends ModelBakery
 {
-    private static boolean firstLoad = Boolean.parseBoolean(System.getProperty("fml.skipFirstModelBake", "true"));
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
+    // TODO: nothing adds to missingVariants, remove it?
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
     private IModel missingModel = null;
@@ -149,6 +148,7 @@ public final class ModelLoader extends ModelBakery
         ModelLoaderRegistry.clearModelCache(manager);
     }
 
+    @Nonnull
     @Override
     public IRegistry<ModelResourceLocation, IBakedModel> setupModelRegistry()
     {
@@ -171,16 +171,6 @@ public final class ModelLoader extends ModelBakery
         Map<IModel, IBakedModel> bakedModels = Maps.newHashMap();
         HashMultimap<IModel, ModelResourceLocation> models = HashMultimap.create();
         Multimaps.invertFrom(Multimaps.forMap(stateModels), models);
-
-        if (firstLoad)
-        {
-            firstLoad = false;
-            for (ModelResourceLocation mrl : stateModels.keySet())
-            {
-                bakedRegistry.putObject(mrl, missingBaked);
-            }
-            return bakedRegistry;
-        }
 
         ProgressBar bakeBar = ProgressManager.push("ModelLoader: baking", models.keySet().size());
 
@@ -655,13 +645,7 @@ public final class ModelLoader extends ModelBakery
             //Remove any faces that use a null texture, this is for performance reasons, also allows some cool layering stuff.
             for (BlockPart part : newModel.getElements())
             {
-                Iterator<Entry<EnumFacing, BlockPartFace>> itr = part.mapFaces.entrySet().iterator();
-                while (itr.hasNext())
-                {
-                    Entry<EnumFacing, BlockPartFace> entry = itr.next();
-                    if (removed.contains(entry.getValue().texture))
-                        itr.remove();
-                }
+                part.mapFaces.entrySet().removeIf(entry -> removed.contains(entry.getValue().texture));
             }
 
             return new VanillaModelWrapper(location, newModel, uvlock, animation);
@@ -949,7 +933,7 @@ public final class ModelLoader extends ModelBakery
         }
 
         @Override
-        public boolean load(IResourceManager manager, ResourceLocation location)
+        public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter)
         {
             BufferedImage image = new BufferedImage(this.getIconWidth(), this.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = image.createGraphics();
@@ -1016,7 +1000,7 @@ public final class ModelLoader extends ModelBakery
             {
                 ModelResourceLocation location = (ModelResourceLocation)entry.getKey();
                 IBakedModel model = modelRegistry.getObject(location);
-                if(model == null || model == missingModel)
+                if(model == null || model == missingModel || model instanceof FancyMissingModel.BakedModel)
                 {
                     String domain = entry.getKey().getResourceDomain();
                     Integer errorCountBox = modelErrors.get(domain);
@@ -1155,14 +1139,7 @@ public final class ModelLoader extends ModelBakery
      * Helper method for registering all itemstacks for given item to map to universal bucket model.
      */
     public static void setBucketModelDefinition(Item item) {
-        ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
-        {
-            @Override
-            public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-            {
-                return ModelDynBucket.LOCATION;
-            }
-        });
+        ModelLoader.setCustomMeshDefinition(item, stack -> ModelDynBucket.LOCATION);
         ModelBakery.registerItemVariants(item, ModelDynBucket.LOCATION);
     }
 

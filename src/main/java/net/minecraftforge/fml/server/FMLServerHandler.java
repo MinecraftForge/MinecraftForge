@@ -36,7 +36,6 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.common.util.CompoundDataFixer;
-import net.minecraftforge.common.util.Java6Utils;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFMLSidedHandler;
@@ -252,7 +251,7 @@ public class FMLServerHandler implements IFMLSidedHandler
                     throw new FileNotFoundException(source.toURI().resolve(langFile).getPath());
                 stream = new FileInputStream(f);
             }
-            else
+            else if (source.exists()) //Fake sources.. Yay coremods -.-
             {
                 zip = new ZipFile(source);
                 ZipEntry entry = zip.getEntry(langFile);
@@ -260,11 +259,12 @@ public class FMLServerHandler implements IFMLSidedHandler
                 if (entry == null) throw new FileNotFoundException(langFile);
                 stream = zip.getInputStream(entry);
             }
-            LanguageMap.inject(stream);
+            if (stream != null)
+                LanguageMap.inject(stream);
         }
         catch (FileNotFoundException e)
         {
-            FMLLog.log.warn("Missing English translation for {}: {}", container.getModId(), e.getMessage(), e);
+            FMLLog.log.warn("Missing English translation for {}: {}", container.getModId(), e.getMessage());
         }
         catch (IOException e)
         {
@@ -277,7 +277,7 @@ public class FMLServerHandler implements IFMLSidedHandler
         finally
         {
             IOUtils.closeQuietly(stream);
-            Java6Utils.closeZipQuietly(zip);
+            IOUtils.closeQuietly(zip);
         }
     }
 

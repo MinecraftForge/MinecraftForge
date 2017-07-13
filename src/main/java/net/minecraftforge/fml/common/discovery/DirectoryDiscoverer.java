@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common.discovery;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -34,9 +35,7 @@ import net.minecraftforge.fml.common.ModContainerFactory;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import javax.annotation.Nullable;
@@ -122,9 +121,9 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                     FMLLog.log.error("There was a problem reading the file {} - probably this is a corrupt file", file.getPath(), e);
                     throw e;
                 }
-                catch (Exception e)
+                catch (IOException e)
                 {
-                    throw Throwables.propagate(e);
+                    throw new RuntimeException(e);
                 }
                 finally
                 {

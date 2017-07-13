@@ -138,14 +138,7 @@ public final class MultiLayerModel implements IModel
             this.models = models;
             this.cameraTransforms = cameraTransforms;
             this.missing = missing;
-            if(models.containsKey(Optional.empty()))
-            {
-                base = models.get(Optional.empty());
-            }
-            else
-            {
-                base = missing;
-            }
+            base = models.getOrDefault(Optional.empty(), missing);
             ImmutableMap.Builder<Optional<EnumFacing>, ImmutableList<BakedQuad>> quadBuilder = ImmutableMap.builder();
             quadBuilder.put(Optional.empty(), buildQuads(models, Optional.empty()));
             for(EnumFacing side: EnumFacing.values())
@@ -174,13 +167,9 @@ public final class MultiLayerModel implements IModel
             {
                 return quads.get(Optional.ofNullable(side));
             }
-            else if(!models.containsKey(Optional.of(layer)))
-            {
-                model = missing;
-            }
             else
             {
-                model = models.get(Optional.of(layer));
+                model = models.getOrDefault(Optional.of(layer), missing);
             }
             // assumes that child model will handle this state properly. FIXME?
             return model.getQuads(state, side, rand);

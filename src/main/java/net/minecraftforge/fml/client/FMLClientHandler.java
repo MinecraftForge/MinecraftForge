@@ -108,7 +108,6 @@ import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.GameData;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.LWJGLUtil;
@@ -300,16 +299,11 @@ public class FMLClientHandler implements IFMLSidedHandler
             Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
             String optifineVersion = (String) optifineConfig.getField("VERSION").get(null);
             Map<String,Object> dummyOptifineMeta = ImmutableMap.<String,Object>builder().put("name", "Optifine").put("version", optifineVersion).build();
-            InputStream optifineModInfoInputStream = getClass().getResourceAsStream("optifinemod.info");
-            try
+            try (InputStream optifineModInfoInputStream = getClass().getResourceAsStream("optifinemod.info"))
             {
                 ModMetadata optifineMetadata = MetadataCollection.from(optifineModInfoInputStream, "optifine").getMetadataForId("optifine", dummyOptifineMeta);
                 optifineContainer = new DummyModContainer(optifineMetadata);
                 FMLLog.log.info("Forge Mod Loader has detected optifine {}, enabling compatibility features", optifineContainer.getVersion());
-            }
-            finally
-            {
-                IOUtils.closeQuietly(optifineModInfoInputStream);
             }
         }
         catch (Exception e)
@@ -361,8 +355,14 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
 
-        // Reload resources
-        client.refreshResources();
+        // This call is being phased out for performance reasons in 1.12,
+        // but we are keeping an option here in case something needs it for a little longer.
+        // See https://github.com/MinecraftForge/MinecraftForge/pull/4032
+        if (Boolean.parseBoolean(System.getProperty("fml.reloadResourcesOnStart", "false")))
+        {
+            client.refreshResources();
+        }
+
         RenderingRegistry.loadEntityRenderers(Minecraft.getMinecraft().getRenderManager().entityRenderMap);
         guiFactories = HashBiMap.create();
         for (ModContainer mc : Loader.instance().getActiveModList())
@@ -664,12 +664,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             catch (NoSuchMethodException e)
             {
                 FMLLog.log.error("The container {} (type {}) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
-                return;
             }
             catch (Exception e)
             {
-                FMLLog.log.error("An unexpected exception occurred constructing the custom resource pack for {}", container.getName(), e);
-                throw Throwables.propagate(e);
+                throw new RuntimeException("An unexpected exception occurred constructing the custom resource pack for " + container.getName(), e);
             }
         }
     }
@@ -1101,5 +1099,12 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void resetClientRecipeBook()
     {
         RecipeBookClient.rebuildTable();
+    }
+
+    @Override
+    public void reloadSearchTrees()
+    {
+        this.client.populateSearchTreeManager();
+        this.client.getSearchTreeManager().onResourceManagerReload(this.client.getResourceManager());
     }
 }

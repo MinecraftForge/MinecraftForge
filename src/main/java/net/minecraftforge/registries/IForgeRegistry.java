@@ -67,7 +67,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      */
     interface AddCallback<V extends IForgeRegistryEntry<V>>
     {
-        void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V obj);
+        void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V obj, @Nullable V oldObj);
     }
 
     /**

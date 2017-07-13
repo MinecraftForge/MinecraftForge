@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
@@ -84,7 +84,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             File mapData = new File(deobfFileName);
             LZMAInputSupplier zis = new LZMAInputSupplier(new FileInputStream(mapData));
-            CharSource srgSource = zis.asCharSource(Charsets.UTF_8);
+            CharSource srgSource = zis.asCharSource(StandardCharsets.UTF_8);
             List<String> srgList = srgSource.readLines();
             rawMethodMaps = Maps.newHashMap();
             rawFieldMaps = Maps.newHashMap();
@@ -130,13 +130,13 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 // get as a resource
                 InputStream classData = getClass().getResourceAsStream(deobfFileName);
                 LZMAInputSupplier zis = new LZMAInputSupplier(classData);
-                CharSource srgSource = zis.asCharSource(Charsets.UTF_8);
+                CharSource srgSource = zis.asCharSource(StandardCharsets.UTF_8);
                 srgList = srgSource.readLines();
                 FMLLog.log.debug("Loading deobfuscation resource {} with {} records", deobfFileName, srgList.size());
             }
             else
             {
-                srgList = Files.readLines(new File(gradleStartProp), Charsets.UTF_8);
+                srgList = Files.readLines(new File(gradleStartProp), StandardCharsets.UTF_8);
                 FMLLog.log.debug("Loading deobfuscation resource {} with {} records", gradleStartProp, srgList.size());
             }
 
@@ -430,7 +430,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error getting patched resource:", e);
         }
     }
     public void mergeSuperMaps(String name, @Nullable String superName, String[] interfaces)
@@ -494,12 +494,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             return fType;
         }
-        Map<String,String> newClassMap = fieldDescriptions.get(newType);
-        if (newClassMap == null)
-        {
-            newClassMap = Maps.newHashMap();
-            fieldDescriptions.put(newType, newClassMap);
-        }
+        Map<String, String> newClassMap = fieldDescriptions.computeIfAbsent(newType, k -> Maps.newHashMap());
         newClassMap.put(newName, fType);
         return fType;
     }

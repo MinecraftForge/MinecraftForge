@@ -86,4 +86,6 @@ public interface IFMLSidedHandler
     boolean isDisplayVSyncForced();
 
     default void resetClientRecipeBook(){}
+
+    default void reloadSearchTrees(){}
 }

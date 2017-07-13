@@ -22,6 +22,7 @@ package net.minecraftforge.client.model.obj;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,7 +44,6 @@ import javax.vecmath.Vector4f;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -65,7 +65,6 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.base.Charsets;
 import java.util.function.Function;
 import com.google.common.base.Objects;
 import java.util.Optional;
@@ -206,7 +205,7 @@ public class OBJModel implements IModel
         {
             this.manager = manager;
             this.objFrom = from.getResourceLocation();
-            this.objStream = new InputStreamReader(from.getInputStream(), Charsets.UTF_8);
+            this.objStream = new InputStreamReader(from.getInputStream(), StandardCharsets.UTF_8);
             this.objReader = new BufferedReader(objStream);
         }
 
@@ -499,7 +498,7 @@ public class OBJModel implements IModel
             String domain = from.getResourceDomain();
             if (!path.contains("/"))
                 path = from.getResourcePath().substring(0, from.getResourcePath().lastIndexOf("/") + 1) + path;
-            mtlStream = new InputStreamReader(manager.getResource(new ResourceLocation(domain, path)).getInputStream(), Charsets.UTF_8);
+            mtlStream = new InputStreamReader(manager.getResource(new ResourceLocation(domain, path)).getInputStream(), StandardCharsets.UTF_8);
             mtlReader = new BufferedReader(mtlStream);
 
             String currentLine = "";

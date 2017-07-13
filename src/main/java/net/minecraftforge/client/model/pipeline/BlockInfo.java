@@ -19,12 +19,10 @@
 
 package net.minecraftforge.client.model.pipeline;
 
-import net.minecraft.block.Block.EnumOffsetType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 

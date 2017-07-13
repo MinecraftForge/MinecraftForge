@@ -26,7 +26,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -59,6 +58,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -67,6 +67,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
@@ -124,9 +126,9 @@ public class GameData
         makeRegistry(POTIONS,      Potion.class,      MAX_POTION_ID).create();
         makeRegistry(BIOMES,       Biome.class,       MAX_BIOME_ID).create();
         makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).create();
-        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("water")).create();
+        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).create();
         makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
-        makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().create();
+        makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().allowModification().create();
         makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
         entityRegistry = (ForgeRegistry<EntityEntry>)makeRegistry(ENTITIES, EntityEntry.class, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
     }
@@ -270,10 +272,11 @@ public class GameData
     private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
+        Field regName;
 
         @SuppressWarnings("deprecation")
         @Override
-        public void onAdd(IForgeRegistryInternal<Block> owner, RegistryManager stage, int id, Block block)
+        public void onAdd(IForgeRegistryInternal<Block> owner, RegistryManager stage, int id, Block block, @Nullable Block oldBlock)
         {
             @SuppressWarnings("unchecked")
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
@@ -294,6 +297,16 @@ public class GameData
             {
                 if (usedMeta[meta])
                     blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta); // Put the CORRECT thing!
+            }
+
+
+            if (oldBlock != null)
+            {
+                @SuppressWarnings("unchecked")
+                BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+                Item item = blockToItem.get(oldBlock);
+                if (item != null)
+                    blockToItem.forcePut(block, item);
             }
         }
 
@@ -327,7 +340,32 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            return new BlockDummyAir().setUnlocalizedName("air").setRegistryName(key);
+            if (regName == null)
+            {
+                try
+                {
+                    regName = IForgeRegistryEntry.Impl.class.getDeclaredField("registryName");
+                    regName.setAccessible(true);
+                }
+                catch (NoSuchFieldException | SecurityException e)
+                {
+                    FMLLog.log.error("Could not get `registryName` field from IForgeRegistryEntry.Impl");
+                    FMLLog.log.throwing(Level.ERROR, e);
+                    throw new RuntimeException(e);
+                }
+            }
+            Block ret = new BlockDummyAir().setUnlocalizedName("air");
+            try
+            {
+                regName.set(ret, key);
+            }
+            catch (IllegalArgumentException | IllegalAccessException e)
+            {
+                FMLLog.log.error("Could not set `registryName` field in IForgeRegistryEntry.Impl to `{}`", key.toString());
+                FMLLog.log.throwing(Level.ERROR, e);
+                throw new RuntimeException(e);
+            }
+            return ret;
         }
         private static class BlockDummyAir extends BlockAir //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
@@ -342,7 +380,7 @@ public class GameData
         static final ItemCallbacks INSTANCE = new ItemCallbacks();
 
         @Override
-        public void onAdd(IForgeRegistryInternal<Item> owner, RegistryManager stage, int id, Item item)
+        public void onAdd(IForgeRegistryInternal<Item> owner, RegistryManager stage, int id, Item item, @Nullable Item oldItem)
         {
             if (item instanceof ItemBlock)
             {
@@ -381,7 +419,7 @@ public class GameData
         static final EntityCallbacks INSTANCE = new EntityCallbacks();
 
         @Override
-        public void onAdd(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage, int id, EntityEntry entry)
+        public void onAdd(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage, int id, EntityEntry entry, @Nullable EntityEntry oldEntry)
         {
             if (entry.getEgg() != null)
                 EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
@@ -457,20 +495,20 @@ public class GameData
         final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps = Maps.newHashMap();
         final LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing = Maps.newLinkedHashMap();
         // Load the snapshot into the "STAGING" registry
-        snapshot.entrySet().forEach(e ->
+        snapshot.forEach((key, value) ->
         {
-            final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(e.getKey());
-            remaps.put(e.getKey(), Maps.newLinkedHashMap());
-            missing.put(e.getKey(), Maps.newHashMap());
-            loadPersistentDataToStagingRegistry(RegistryManager.ACTIVE, STAGING, remaps.get(e.getKey()), missing.get(e.getKey()), e.getKey(), e.getValue(), clazz);
+            final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(key);
+            remaps.put(key, Maps.newLinkedHashMap());
+            missing.put(key, Maps.newHashMap());
+            loadPersistentDataToStagingRegistry(RegistryManager.ACTIVE, STAGING, remaps.get(key), missing.get(key), key, value, clazz);
         });
 
-        snapshot.entrySet().forEach(e ->
+        snapshot.forEach((key, value) ->
         {
-            snapshot.get(e.getKey()).dummied.forEach(dummy ->
+            value.dummied.forEach(dummy ->
             {
-                Map<ResourceLocation, Integer> m = missing.get(e.getKey());
-                ForgeRegistry<?> reg = STAGING.getRegistry(e.getKey());
+                Map<ResourceLocation, Integer> m = missing.get(key);
+                ForgeRegistry<?> reg = STAGING.getRegistry(key);
 
                 // Currently missing locally, we just inject and carry on
                 if (m.containsKey(dummy))
@@ -481,20 +519,20 @@ public class GameData
                 else if (isLocalWorld)
                 {
                     if (ForgeRegistry.DEBUG)
-                        FMLLog.log.debug("Registry {}: Resuscitating dummy entry {}", e.getKey(), dummy);
+                        FMLLog.log.debug("Registry {}: Resuscitating dummy entry {}", key, dummy);
                 }
                 else
                 {
                     // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
                     // in mod setup - Mark this entry as a dummy
                     int id = reg.getID(dummy);
-                    FMLLog.log.warn("Registry {}: The ID {} is currently locally mapped - it will be replaced with a dummy for this session", e.getKey(), id);
+                    FMLLog.log.warn("Registry {}: The ID {} is currently locally mapped - it will be replaced with a dummy for this session", key, id);
                     reg.markDummy(dummy, id);
                 }
             });
         });
 
-        int count = missing.values().stream().mapToInt(e -> e.size()).sum();
+        int count = missing.values().stream().mapToInt(Map::size).sum();
         if (count > 0)
         {
             FMLLog.log.debug("There are {} mappings missing - attempting a mod remap", count);
@@ -623,10 +661,10 @@ public class GameData
         if (active == null)
             return; // We've already asked the user if they wish to continue. So if the reg isnt found just assume the user knows and accepted it.
         ForgeRegistry<T> _new = to.getRegistry(name, RegistryManager.ACTIVE);
-        snap.aliases.forEach((f, t) -> _new.addAlias(f, t));
-        snap.blocked.forEach(id -> _new.block(id));
+        snap.aliases.forEach(_new::addAlias);
+        snap.blocked.forEach(_new::block);
         // Load current dummies BEFORE the snapshot is loaded so that add() will remove from the list.
-        snap.dummied.forEach(key -> _new.addDummy(key));
+        snap.dummied.forEach(_new::addDummy);
         _new.loadIds(snap.ids, snap.overrides, missing, remaps, active, name);
     }
 

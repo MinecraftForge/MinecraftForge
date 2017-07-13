@@ -28,8 +28,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 
-import javax.annotation.Nonnull;
-
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
  * is created. Allowing for the attachment of arbitrary capability providers.
@@ -40,20 +38,13 @@ import javax.annotation.Nonnull;
 public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
 {
     private final T obj;
-    final Map<ResourceLocation, ICapabilityProvider> caps;// package-private for ForgeEventFactory
-    private final Map<ResourceLocation, ICapabilityProvider> view;
+    private final Map<ResourceLocation, ICapabilityProvider> caps = Maps.newLinkedHashMap();
+    private final Map<ResourceLocation, ICapabilityProvider> view = Collections.unmodifiableMap(caps);
 
     public AttachCapabilitiesEvent(Class<T> type, T obj)
     {
-        this(type, obj, Maps.<ResourceLocation, ICapabilityProvider>newLinkedHashMap());
-    }
-    // package-private for ForgeEventFactory
-    AttachCapabilitiesEvent(Class<T> type, T obj, Map<ResourceLocation, ICapabilityProvider> caps)
-    {
         super(type);
         this.obj = obj;
-        this.caps = caps;
-        this.view = Collections.unmodifiableMap(caps);
     }
 
     /**
@@ -85,23 +76,5 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
     public Map<ResourceLocation, ICapabilityProvider> getCapabilities()
     {
         return view;
-    }
-
-    /**
-     * A version of the parent event which is only fired for ItemStacks.
-     */
-    public static class Item extends AttachCapabilitiesEvent<net.minecraft.item.Item>
-    {
-        private final net.minecraft.item.ItemStack stack;
-        public Item(net.minecraft.item.Item item, @Nonnull  net.minecraft.item.ItemStack stack)
-        {
-            super(net.minecraft.item.Item.class, item);
-            this.stack = stack;
-        }
-        @Nonnull
-        public net.minecraft.item.ItemStack getItemStack()
-        {
-            return this.stack;
-        }
     }
 }
