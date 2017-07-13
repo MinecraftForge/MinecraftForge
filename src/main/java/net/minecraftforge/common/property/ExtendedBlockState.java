@@ -133,13 +133,14 @@ public class ExtendedBlockState extends BlockStateContainer
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public <V>V getValue(IUnlistedProperty<V> property)
         {
             if(!this.unlistedProperties.containsKey(property))
             {
                 throw new IllegalArgumentException("Cannot get unlisted property " + property + " as it does not exist in " + getBlock().getBlockState());
             }
-            return property.getType().cast(this.unlistedProperties.get(property).orElse(null));
+            return (V) this.unlistedProperties.get(property).orElse(null);
         }
 
         public ImmutableMap<IUnlistedProperty<?>, Optional<?>> getUnlistedProperties()

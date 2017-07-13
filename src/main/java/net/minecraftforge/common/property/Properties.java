@@ -39,10 +39,6 @@ public class Properties
         public String getName() { return "forge_animation"; }
         @Override
         public boolean isValid(IModelState state) { return true; }
-        @Override
-        public Class<IModelState> getType() { return IModelState.class; }
-        @Override
-        public String valueToString(IModelState state) { return state.toString(); }
     };
 
     public static <V extends Comparable<V>> IUnlistedProperty<V> toUnlisted(IProperty<V> property)
@@ -69,18 +65,6 @@ public class Properties
         public boolean isValid(V value)
         {
             return parent.getAllowedValues().contains(value);
-        }
-
-        @Override
-        public Class<V> getType()
-        {
-            return parent.getValueClass();
-        }
-
-        @Override
-        public String valueToString(V value)
-        {
-            return parent.getName(value);
         }
     }
 }

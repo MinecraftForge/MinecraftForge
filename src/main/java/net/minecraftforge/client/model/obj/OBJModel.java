@@ -1261,18 +1261,6 @@ public class OBJModel implements IModel
         {
             return value instanceof OBJState;
         }
-
-        @Override
-        public Class<OBJState> getType()
-        {
-            return OBJState.class;
-        }
-
-        @Override
-        public String valueToString(OBJState value)
-        {
-            return value.toString();
-        }
     }
 
     public class OBJBakedModel implements IBakedModel

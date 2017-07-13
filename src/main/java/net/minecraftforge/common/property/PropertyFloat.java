@@ -49,16 +49,4 @@ public class PropertyFloat implements IUnlistedProperty<Float>
     {
         return validator.apply(value);
     }
-
-    @Override
-    public Class<Float> getType()
-    {
-        return Float.class;
-    }
-
-    @Override
-    public String valueToString(Float value)
-    {
-        return value.toString();
-    }
 }
