@@ -602,7 +602,7 @@ public class Loader
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
-        GameData.fireRegistryEvents();
+        GameData.fireRegistryEvents(rl -> !rl.equals(GameData.RECIPES));
         FMLCommonHandler.instance().fireSidedRegistryEvents();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         ItemStackHolderInjector.INSTANCE.inject();

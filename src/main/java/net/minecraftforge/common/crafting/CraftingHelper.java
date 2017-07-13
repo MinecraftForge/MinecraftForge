@@ -613,6 +613,9 @@ public class CraftingHelper {
         Loader.instance().getActiveModList().forEach(CraftingHelper::loadFactories);
         Loader.instance().getActiveModList().forEach(CraftingHelper::loadRecipes);
         Loader.instance().setActiveModContainer(null);
+
+        GameData.fireRegistryEvents(rl -> rl.equals(GameData.RECIPES));
+
         //reg.freeze();
         FMLCommonHandler.instance().resetClientRecipeBook();
     }
