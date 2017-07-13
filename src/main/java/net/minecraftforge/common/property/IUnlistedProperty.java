@@ -26,12 +26,14 @@ public interface IUnlistedProperty<V>
     boolean isValid(V value);
 
     @Deprecated
-    default Class<V> getType() {
+    default Class<V> getType()
+    {
         return (Class<V>) Object.class;
     }
 
     @Deprecated
-    default String valueToString(V value) {
+    default String valueToString(V value)
+    {
         return value.toString();
     }
 }
