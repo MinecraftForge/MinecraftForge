@@ -93,10 +93,10 @@
 +     * Return an index that will override the potion's default sort order. This is useful for potions with colors 
 +     * that change since, without this, the effect order would shift in the inventory GUI when stacked with others.
 +     * 
++     * @param The PotionEffect instance containing the potion
 +     * @return An index to override the default sort order
 +     */
-+    @SideOnly(Side.CLIENT)
-+    public int getSortIndex()
++    public int getSortIndex(PotionEffect potionEffect)
 +    {
 +    	return 0;
 +    }
