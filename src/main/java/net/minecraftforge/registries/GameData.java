@@ -222,6 +222,10 @@ public class GameData
             reg.freeze();
         });
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.freeze());
+
+        // the id mapping is fanilized, no ids actually changed but this is a good place to tell everyone to 'bake' their stuff.
+        Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
+
         FMLLog.log.debug("All registries frozen");
     }
 
