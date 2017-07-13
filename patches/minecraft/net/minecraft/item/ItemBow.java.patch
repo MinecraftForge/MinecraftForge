@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
+@@ -79,7 +79,7 @@
+ 
+     protected boolean func_185058_h_(ItemStack p_185058_1_)
+     {
+-        return p_185058_1_.func_77973_b() instanceof ItemArrow;
++        return p_185058_1_.func_77973_b().isValidArrow(p_185058_1_);
+     }
+ 
+     public void func_77615_a(ItemStack p_77615_1_, World p_77615_2_, EntityLivingBase p_77615_3_, int p_77615_4_)
 @@ -90,6 +90,10 @@
              boolean flag = entityplayer.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
              ItemStack itemstack = this.func_185060_a(entityplayer);
