@@ -41,8 +41,6 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
 
-import com.google.common.base.Throwables;
-
 public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.EntityMessage> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, final EntityMessage msg) throws Exception
@@ -133,9 +131,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
         }
         catch (Exception e)
         {
-            FMLLog.log.error("A severe problem occurred during the spawning of an entity at ({}, {}, {})", spawnMsg.rawX, spawnMsg.rawY, spawnMsg.rawZ, e);
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("A severe problem occurred during the spawning of an entity at (" + spawnMsg.rawX + ", " + spawnMsg.rawY + ", " + spawnMsg.rawZ + ")", e);
         }
     }
 

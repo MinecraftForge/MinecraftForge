@@ -24,8 +24,6 @@ import io.netty.channel.ChannelFutureListener;
 import java.lang.reflect.Method;
 import java.util.EnumMap;
 
-import com.google.common.base.Throwables;
-
 import net.minecraft.util.IThreadListener;
 
 import io.netty.channel.ChannelHandler;
@@ -34,7 +32,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
@@ -127,9 +124,7 @@ public class SimpleNetworkWrapper {
         catch (Exception e)
         {
             // How is this possible?
-            FMLLog.log.fatal("What? Netty isn't installed, what magic is this?", e);
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("What? Netty isn't installed, what magic is this?", e);
         }
     }
     public SimpleNetworkWrapper(String channelName)
@@ -146,9 +141,7 @@ public class SimpleNetworkWrapper {
         }
         catch (Exception e)
         {
-            FMLLog.log.fatal("It appears we somehow have a not-standard pipeline. Huh", e);
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("It appears we somehow have a not-standard pipeline. Huh", e);
         }
     }
     /**

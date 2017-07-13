@@ -58,7 +58,6 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -222,9 +221,7 @@ public class CoreModManager {
         }
         catch (Exception e)
         {
-            FMLLog.log.error("The patch transformer failed to load! This is critical, loading cannot continue!", e);
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("The patch transformer failed to load! This is critical, loading cannot continue!", e);
         }
 
         loadPlugins = new ArrayList<FMLPluginWrapper>();

@@ -40,7 +40,6 @@ import net.minecraftforge.fml.repackage.com.nothome.delta.GDiffPatcher;
 import LZMA.LzmaInputStream;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
@@ -182,9 +181,7 @@ public class ClassPatchManager {
         }
         catch (Exception e)
         {
-            FMLLog.log.error("Error occurred reading binary patches. Expect severe problems!", e);
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error occurred reading binary patches. Expect severe problems!", e);
         }
 
         patches = ArrayListMultimap.create();

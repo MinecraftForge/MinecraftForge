@@ -30,7 +30,6 @@ import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 
 import org.objectweb.asm.Type;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import javax.annotation.Nullable;
@@ -58,9 +57,7 @@ public class ModContainerFactory
         }
         catch (Exception e)
         {
-            FMLLog.log.error("Critical error : cannot register mod container type {}, it has an invalid constructor", container.getName(), e);
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("Critical error : cannot register mod container type " + container.getName() + ", it has an invalid constructor", e);
         }
     }
 
