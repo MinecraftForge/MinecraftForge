@@ -19,15 +19,13 @@
 
 package net.minecraftforge.common.network;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.logging.log4j.Level;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
@@ -54,7 +52,7 @@ public abstract class ForgeMessage {
         void toBytes(ByteBuf bytes)
         {
             bytes.writeInt(this.dimensionId);
-            byte[] data = this.providerId.getBytes(Charsets.UTF_8);
+            byte[] data = this.providerId.getBytes(StandardCharsets.UTF_8);
             bytes.writeShort(data.length);
             bytes.writeBytes(data);
         }
@@ -65,7 +63,7 @@ public abstract class ForgeMessage {
             dimensionId = bytes.readInt();
             byte[] data = new byte[bytes.readShort()];
             bytes.readBytes(data);
-            providerId = new String(data, Charsets.UTF_8);
+            providerId = new String(data, StandardCharsets.UTF_8);
         }
     }
 

@@ -36,6 +36,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -54,7 +55,6 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
@@ -124,7 +124,7 @@ public class AccessTransformer implements IClassTransformer
         {
             rulesResource = Resources.getResource(rulesFile);
         }
-        processATFile(Resources.asCharSource(rulesResource, Charsets.UTF_8));
+        processATFile(Resources.asCharSource(rulesResource, StandardCharsets.UTF_8));
         FMLLog.log.debug("Loaded {} rules from AccessTransformer config file {}", modifiers.size(), rulesFile);
     }
     protected void processATFile(CharSource rulesResource) throws IOException

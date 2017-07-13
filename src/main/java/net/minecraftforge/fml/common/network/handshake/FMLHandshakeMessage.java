@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common.network.handshake;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.registries.ForgeRegistry;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -47,7 +47,7 @@ public abstract class FMLHandshakeMessage {
     public static FMLProxyPacket makeCustomChannelRegistration(Set<String> channels)
     {
         String salutation = Joiner.on('\0').join(Iterables.concat(Arrays.asList("FML|HS","FML", "FML|MP"),channels));
-        FMLProxyPacket proxy = new FMLProxyPacket(new PacketBuffer(Unpooled.wrappedBuffer(salutation.getBytes(Charsets.UTF_8))), "REGISTER");
+        FMLProxyPacket proxy = new FMLProxyPacket(new PacketBuffer(Unpooled.wrappedBuffer(salutation.getBytes(StandardCharsets.UTF_8))), "REGISTER");
         return proxy;
     }
     public static class ServerHello extends FMLHandshakeMessage {
