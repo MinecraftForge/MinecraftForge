@@ -20,7 +20,7 @@
      public boolean func_76398_f()
      {
          return this.field_76418_K;
-@@ -293,7 +292,74 @@
+@@ -293,7 +292,86 @@
          return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
      }
  
@@ -87,6 +87,18 @@
 +        java.util.ArrayList<net.minecraft.item.ItemStack> ret = new java.util.ArrayList<net.minecraft.item.ItemStack>();
 +        ret.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.field_151117_aB));
 +        return ret;
++    }
++    
++    /**
++     * Return an index that will override the potion's default sort order. This is useful for potions with colors 
++     * that change since, without this, the effect order would shift in the inventory GUI when stacked with others.
++     * 
++     * @return An index to override the default sort order
++     */
++    @SideOnly(Side.CLIENT)
++    public int getSortIndex()
++    {
++    	return 0;
 +    }
 +
 +    /* ======================================== FORGE END =====================================*/
