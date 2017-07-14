@@ -47,25 +47,23 @@
          this.func_191937_d(p_73863_1_, p_73863_2_, i, j);
      }
  
-@@ -163,7 +180,7 @@
+@@ -163,6 +180,7 @@
  
              for (GuiAdvancementTab guiadvancementtab : this.field_191947_i.values())
              {
--                guiadvancementtab.func_191798_a(p_191934_1_, p_191934_2_, guiadvancementtab == this.field_191940_s);
-+                if(guiadvancementtab.getPage() == tabPage) guiadvancementtab.func_191798_a(p_191934_1_, p_191934_2_, guiadvancementtab == this.field_191940_s);
++                if(guiadvancementtab.getPage() == tabPage)
+                 guiadvancementtab.func_191798_a(p_191934_1_, p_191934_2_, guiadvancementtab == this.field_191940_s);
              }
  
-             GlStateManager.func_179091_B();
-@@ -172,7 +189,7 @@
+@@ -172,6 +190,7 @@
  
              for (GuiAdvancementTab guiadvancementtab1 : this.field_191947_i.values())
              {
--                guiadvancementtab1.func_191796_a(p_191934_1_, p_191934_2_, this.field_146296_j);
-+                if(guiadvancementtab1.getPage() == tabPage) guiadvancementtab1.func_191796_a(p_191934_1_, p_191934_2_, this.field_146296_j);
++                if(guiadvancementtab1.getPage() == tabPage)
+                 guiadvancementtab1.func_191796_a(p_191934_1_, p_191934_2_, this.field_146296_j);
              }
  
-             GlStateManager.func_179084_k();
-@@ -199,7 +216,7 @@
+@@ -199,7 +218,7 @@
          {
              for (GuiAdvancementTab guiadvancementtab : this.field_191947_i.values())
              {
@@ -74,7 +72,7 @@
                  {
                      this.func_146279_a(guiadvancementtab.func_191795_d(), p_191937_1_, p_191937_2_);
                  }
-@@ -273,4 +290,13 @@
+@@ -273,4 +292,13 @@
  
          return this.field_191947_i.get(p_191935_1_);
      }
