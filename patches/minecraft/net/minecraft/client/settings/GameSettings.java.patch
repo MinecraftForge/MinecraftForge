@@ -8,14 +8,7 @@
          this.field_74324_K = (KeyBinding[])ArrayUtils.addAll(new KeyBinding[] {this.field_74312_F, this.field_74313_G, this.field_74351_w, this.field_74370_x, this.field_74368_y, this.field_74366_z, this.field_74314_A, this.field_74311_E, this.field_151444_V, this.field_74316_C, this.field_151445_Q, this.field_74310_D, this.field_74321_H, this.field_74322_I, this.field_74323_J, this.field_151447_Z, this.field_151457_aa, this.field_151458_ab, this.field_152395_am, this.field_178883_an, this.field_186718_X, this.field_193629_ap, this.field_193630_aq, this.field_194146_ao}, this.field_151456_ac);
          this.field_74318_M = EnumDifficulty.NORMAL;
          this.field_74332_R = "";
-@@ -182,12 +183,13 @@
-             GameSettings.Options.RENDER_DISTANCE.func_148263_a(16.0F);
-         }
- 
--        this.field_151451_c = p_i46326_1_.func_147111_S() ? 12 : 8;
-+        this.pendingRenderDistance = this.field_151451_c = p_i46326_1_.func_147111_S() ? 12 : 8;
-         this.func_74300_a();
-     }
+@@ -188,6 +189,7 @@
  
      public GameSettings()
      {
@@ -23,7 +16,7 @@
          this.field_74324_K = (KeyBinding[])ArrayUtils.addAll(new KeyBinding[] {this.field_74312_F, this.field_74313_G, this.field_74351_w, this.field_74370_x, this.field_74368_y, this.field_74366_z, this.field_74314_A, this.field_74311_E, this.field_151444_V, this.field_74316_C, this.field_151445_Q, this.field_74310_D, this.field_74321_H, this.field_74322_I, this.field_74323_J, this.field_151447_Z, this.field_151457_aa, this.field_151458_ab, this.field_152395_am, this.field_178883_an, this.field_186718_X, this.field_193629_ap, this.field_193630_aq, this.field_194146_ao}, this.field_151456_ac);
          this.field_74318_M = EnumDifficulty.NORMAL;
          this.field_74332_R = "";
-@@ -299,14 +301,13 @@
+@@ -299,14 +301,14 @@
                  this.field_74317_L.func_147117_R().func_147633_a(this.field_151442_I);
                  this.field_74317_L.func_110434_K().func_110577_a(TextureMap.field_110575_b);
                  this.field_74317_L.func_147117_R().func_174937_a(false, this.field_151442_I > 0);
@@ -37,10 +30,11 @@
 -            this.field_151451_c = (int)p_74304_2_;
 -            this.field_74317_L.field_71438_f.func_174979_m();
 +            this.pendingRenderDistance = (int)p_74304_2_; // Forge: another laggy slider fix
++            this.renderDistanceChanged = true;
          }
      }
  
-@@ -315,6 +316,7 @@
+@@ -315,6 +317,7 @@
          if (p_74306_1_ == GameSettings.Options.RENDER_DISTANCE)
          {
              this.func_74304_a(p_74306_1_, MathHelper.func_76131_a((float)(this.field_151451_c + p_74306_2_), p_74306_1_.func_186707_e(), p_74306_1_.func_148267_f()));
@@ -48,25 +42,16 @@
          }
  
          if (p_74306_1_ == GameSettings.Options.MAIN_HAND)
-@@ -523,7 +525,7 @@
+@@ -523,7 +526,7 @@
          }
          else
          {
 -            return p_74296_1_ == GameSettings.Options.RENDER_DISTANCE ? (float)this.field_151451_c : 0.0F;
-+            return p_74296_1_ == GameSettings.Options.RENDER_DISTANCE ? (float)this.pendingRenderDistance : 0.0F;
++            return p_74296_1_ == GameSettings.Options.RENDER_DISTANCE ? (this.renderDistanceChanged ? (float)this.pendingRenderDistance : (float)this.field_151451_c) : 0.0F;
          }
      }
  
-@@ -783,7 +785,7 @@
- 
-                     if ("renderDistance".equals(s1))
-                     {
--                        this.field_151451_c = Integer.parseInt(s2);
-+                        this.pendingRenderDistance = this.field_151451_c = Integer.parseInt(s2);
-                     }
- 
-                     if ("guiScale".equals(s1))
-@@ -1068,7 +1070,12 @@
+@@ -1068,7 +1071,12 @@
                      {
                          if (s1.equals("key_" + keybinding.func_151464_g()))
                          {
@@ -80,7 +65,7 @@
                          }
                      }
  
-@@ -1132,6 +1139,7 @@
+@@ -1132,6 +1140,7 @@
  
      public void func_74303_b()
      {
@@ -88,7 +73,7 @@
          PrintWriter printwriter = null;
  
          try
-@@ -1206,7 +1214,8 @@
+@@ -1206,7 +1215,8 @@
  
              for (KeyBinding keybinding : this.field_74324_K)
              {
@@ -98,7 +83,7 @@
              }
  
              for (SoundCategory soundcategory : SoundCategory.values())
-@@ -1440,4 +1449,43 @@
+@@ -1440,4 +1450,45 @@
              return p_148264_1_;
          }
      }
@@ -124,6 +109,7 @@
 +
 +    // FORGE: fix for MC-64581 very laggy mipmap slider
 +    private boolean needsResourceRefresh = false;
++    private boolean renderDistanceChanged = false;
 +    private int pendingRenderDistance;
 +
 +    // TODO: give this a better name
@@ -134,10 +120,11 @@
 +            this.field_74317_L.func_175603_A();
 +            this.needsResourceRefresh = false;
 +        }
-+        if (this.field_151451_c != this.pendingRenderDistance)
++        if (this.renderDistanceChanged)
 +        {
 +            this.field_151451_c = this.pendingRenderDistance;
 +            this.field_74317_L.field_71438_f.func_174979_m();
++            this.renderDistanceChanged = false;
 +        }
 +    }
 +    /* ****** Forge End ********** */
