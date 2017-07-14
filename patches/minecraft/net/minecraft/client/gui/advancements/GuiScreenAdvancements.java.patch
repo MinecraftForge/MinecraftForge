@@ -1,23 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/advancements/GuiScreenAdvancements.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/advancements/GuiScreenAdvancements.java
-@@ -6,6 +6,7 @@
- import javax.annotation.Nullable;
- import net.minecraft.advancements.Advancement;
- import net.minecraft.advancements.AdvancementProgress;
-+import net.minecraft.client.gui.GuiButton;
- import net.minecraft.client.gui.GuiScreen;
- import net.minecraft.client.multiplayer.ClientAdvancementManager;
- import net.minecraft.client.network.NetHandlerPlayClient;
-@@ -29,6 +30,8 @@
+@@ -29,6 +29,7 @@
      private int field_191941_t;
      private int field_191942_u;
      private boolean field_191944_v;
-+    private static int tabPage;
-+    private static int maxPages;
++    private static int tabPage, maxPages;
  
      public GuiScreenAdvancements(ClientAdvancementManager p_i47383_1_)
      {
-@@ -49,6 +52,14 @@
+@@ -49,6 +50,14 @@
          {
              this.field_191946_h.func_194230_a(this.field_191940_s == null ? null : this.field_191940_s.func_193935_c(), true);
          }
@@ -25,14 +16,14 @@
 +        {
 +            int guiLeft = (this.field_146294_l - 252) / 2;
 +            int guiTop = (this.field_146295_m - 140) / 2;
-+            this.field_146292_n.add(new GuiButton(101, guiLeft, guiTop - 50, 20, 20, "<"));
-+            this.field_146292_n.add(new GuiButton(102, guiLeft + 252 - 20, guiTop - 50, 20, 20, ">"));
++            this.field_146292_n.add(new net.minecraft.client.gui.GuiButton(101, guiLeft, guiTop - 50, 20, 20, "<"));
++            this.field_146292_n.add(new net.minecraft.client.gui.GuiButton(102, guiLeft + 252 - 20, guiTop - 50, 20, 20, ">"));
 +            maxPages = this.field_191947_i.size() / AdvancementTabType.field_192659_e;
 +        }
      }
  
      public void func_146281_b()
-@@ -71,7 +82,7 @@
+@@ -71,7 +80,7 @@
  
              for (GuiAdvancementTab guiadvancementtab : this.field_191947_i.values())
              {
@@ -41,7 +32,7 @@
                  {
                      this.field_191946_h.func_194230_a(guiadvancementtab.func_193935_c(), true);
                      break;
-@@ -122,6 +133,14 @@
+@@ -122,6 +131,14 @@
          this.func_146276_q_();
          this.func_191936_c(p_73863_1_, p_73863_2_, i, j);
          this.func_191934_b(i, j);
@@ -56,27 +47,25 @@
          this.func_191937_d(p_73863_1_, p_73863_2_, i, j);
      }
  
-@@ -163,7 +182,8 @@
+@@ -163,7 +180,7 @@
  
              for (GuiAdvancementTab guiadvancementtab : this.field_191947_i.values())
              {
 -                guiadvancementtab.func_191798_a(p_191934_1_, p_191934_2_, guiadvancementtab == this.field_191940_s);
-+                if(guiadvancementtab.getPage() == tabPage)
-+                    guiadvancementtab.func_191798_a(p_191934_1_, p_191934_2_, guiadvancementtab == this.field_191940_s);
++                if(guiadvancementtab.getPage() == tabPage) guiadvancementtab.func_191798_a(p_191934_1_, p_191934_2_, guiadvancementtab == this.field_191940_s);
              }
  
              GlStateManager.func_179091_B();
-@@ -172,7 +192,8 @@
+@@ -172,7 +189,7 @@
  
              for (GuiAdvancementTab guiadvancementtab1 : this.field_191947_i.values())
              {
 -                guiadvancementtab1.func_191796_a(p_191934_1_, p_191934_2_, this.field_146296_j);
-+                if(guiadvancementtab1.getPage() == tabPage)
-+                    guiadvancementtab1.func_191796_a(p_191934_1_, p_191934_2_, this.field_146296_j);
++                if(guiadvancementtab1.getPage() == tabPage) guiadvancementtab1.func_191796_a(p_191934_1_, p_191934_2_, this.field_146296_j);
              }
  
              GlStateManager.func_179084_k();
-@@ -199,7 +220,7 @@
+@@ -199,7 +216,7 @@
          {
              for (GuiAdvancementTab guiadvancementtab : this.field_191947_i.values())
              {
@@ -85,12 +74,13 @@
                  {
                      this.func_146279_a(guiadvancementtab.func_191795_d(), p_191937_1_, p_191937_2_);
                  }
-@@ -273,4 +294,12 @@
+@@ -273,4 +290,13 @@
  
          return this.field_191947_i.get(p_191935_1_);
      }
 +
-+    protected void func_146284_a(GuiButton button) throws IOException
++    @Override
++    protected void func_146284_a(net.minecraft.client.gui.GuiButton button) throws IOException
 +    {
 +        if(button.field_146127_k == 101)
 +            tabPage = Math.max(tabPage - 1, 0);
