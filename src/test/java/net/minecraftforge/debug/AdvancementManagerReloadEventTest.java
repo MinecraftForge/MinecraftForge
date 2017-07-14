@@ -34,7 +34,8 @@ public class AdvancementManagerReloadEventTest
     @SubscribeEvent
     public static void onAdvReload(AdvancementManagerReloadEvent event)
     {
-        if (ENABLED) {
+        if (ENABLED)
+        {
             final Advancement.Builder woodUnlockTNT = new Advancement(
                     ID_WOOD_UNLOCK_TNT,
                     event.getAdvManager().getAdvancement(new ResourceLocation("recipes/root")),
