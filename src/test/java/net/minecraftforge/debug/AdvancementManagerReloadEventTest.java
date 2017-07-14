@@ -38,7 +38,7 @@ public class AdvancementManagerReloadEventTest
         {
             final Advancement.Builder woodUnlockTNT = new Advancement(
                     ID_WOOD_UNLOCK_TNT,
-                    event.getAdvManager().getAdvancement(new ResourceLocation("recipes/root")),
+                    event.getAdvMap().get(new ResourceLocation("recipes/root")).build(new ResourceLocation("recipes/root")),
                     null,
                     new AdvancementRewards(0, new ResourceLocation[0],
                                            new ResourceLocation[] { new ResourceLocation("tnt") }, FunctionObject.CacheableFunction.EMPTY),

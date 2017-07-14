@@ -38,7 +38,7 @@ public class AdvancementManagerReloadEvent extends Event
     }
 
     /**
-     * 
+     * <strong>NOTE: Do not use {@code event.getAdvManager().getAdvancement(rl)}; use {@code event.getAdvMap().get(rl).build(rl)} instead</strong>
      * @return the advancement manager
      */
     public AdvancementManager getAdvManager()
