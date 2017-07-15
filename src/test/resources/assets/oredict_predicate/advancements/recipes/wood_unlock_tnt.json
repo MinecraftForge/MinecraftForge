@@ -11,7 +11,11 @@
           { "ore": "plankWood" }
         ]
       }
+    },
+    "mod_enabled": {
+      "trigger": "oredict_predicate:is_enabled",
+      "conditions": {}
     }
   },
-  "requirements": [["has_wood"]]
+  "requirements": [["has_wood"], ["mod_enabled"]]
 }

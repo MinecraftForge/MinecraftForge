@@ -14,9 +14,7 @@ import net.minecraft.util.JsonUtils;
 import net.minecraftforge.oredict.OreDictionary;
 
 /**
- * 
- * @author Landmaster
- *
+ * An {@link ItemPredicate} that matches oredicts.
  */
 public class OredictItemPredicate extends ItemPredicate
 {
