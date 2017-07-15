@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:recipes/root",
   "rewards": {
-   	"recipes": [ "minecraft:tnt" ]
+    "recipes": [ "minecraft:tnt" ]
   },
   "criteria": {
     "has_wood": {
