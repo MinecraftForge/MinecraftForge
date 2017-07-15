@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/advancements/critereon/EnchantedItemTrigger.java
++++ ../src-work/minecraft/net/minecraft/advancements/critereon/EnchantedItemTrigger.java
+@@ -59,7 +59,7 @@
+ 
+     public EnchantedItemTrigger.Instance func_192166_a(JsonObject p_192166_1_, JsonDeserializationContext p_192166_2_)
+     {
+-        ItemPredicate itempredicate = ItemPredicate.func_192492_a(p_192166_1_.get("item"));
++        ItemPredicate itempredicate = p_192166_1_.has("ore") ? net.minecraftforge.advancements.critereon.OredictItemPredicate.deserializeOredictPredicate(p_192166_1_.get("ore")) : ItemPredicate.func_192492_a(p_192166_1_.get("item"));
+         MinMaxBounds minmaxbounds = MinMaxBounds.func_192515_a(p_192166_1_.get("levels"));
+         return new EnchantedItemTrigger.Instance(itempredicate, minmaxbounds);
+     }

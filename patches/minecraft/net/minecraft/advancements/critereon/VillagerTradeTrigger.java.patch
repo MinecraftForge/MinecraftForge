@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/advancements/critereon/VillagerTradeTrigger.java
++++ ../src-work/minecraft/net/minecraft/advancements/critereon/VillagerTradeTrigger.java
+@@ -61,7 +61,7 @@
+     public VillagerTradeTrigger.Instance func_192166_a(JsonObject p_192166_1_, JsonDeserializationContext p_192166_2_)
+     {
+         EntityPredicate entitypredicate = EntityPredicate.func_192481_a(p_192166_1_.get("villager"));
+-        ItemPredicate itempredicate = ItemPredicate.func_192492_a(p_192166_1_.get("item"));
++        ItemPredicate itempredicate = p_192166_1_.has("ore") ? net.minecraftforge.advancements.critereon.OredictItemPredicate.deserializeOredictPredicate(p_192166_1_.get("ore")) : ItemPredicate.func_192492_a(p_192166_1_.get("item"));
+         return new VillagerTradeTrigger.Instance(entitypredicate, itempredicate);
+     }
+ 

@@ -1,0 +1,17 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+   	"recipes": [ "minecraft:tnt" ]
+  },
+  "criteria": {
+    "has_wood": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "ores": [
+          { "ore": "plankWood" }
+        ]
+      }
+    }
+  },
+  "requirements": [["has_wood"]]
+}

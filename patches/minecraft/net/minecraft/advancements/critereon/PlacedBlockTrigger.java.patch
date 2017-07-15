@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/advancements/critereon/PlacedBlockTrigger.java
++++ ../src-work/minecraft/net/minecraft/advancements/critereon/PlacedBlockTrigger.java
+@@ -123,7 +123,7 @@
+         }
+ 
+         LocationPredicate locationpredicate = LocationPredicate.func_193454_a(p_192166_1_.get("location"));
+-        ItemPredicate itempredicate = ItemPredicate.func_192492_a(p_192166_1_.get("item"));
++        ItemPredicate itempredicate = p_192166_1_.has("ore") ? net.minecraftforge.advancements.critereon.OredictItemPredicate.deserializeOredictPredicate(p_192166_1_.get("ore")) : ItemPredicate.func_192492_a(p_192166_1_.get("item"));
+         return new PlacedBlockTrigger.Instance(block, map, locationpredicate, itempredicate);
+     }
+ 

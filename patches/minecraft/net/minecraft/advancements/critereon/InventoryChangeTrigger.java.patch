@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/advancements/critereon/InventoryChangeTrigger.java
++++ ../src-work/minecraft/net/minecraft/advancements/critereon/InventoryChangeTrigger.java
+@@ -67,6 +67,7 @@
+         MinMaxBounds minmaxbounds1 = MinMaxBounds.func_192515_a(jsonobject.get("full"));
+         MinMaxBounds minmaxbounds2 = MinMaxBounds.func_192515_a(jsonobject.get("empty"));
+         ItemPredicate[] aitempredicate = ItemPredicate.func_192494_b(p_192166_1_.get("items"));
++        aitempredicate = org.apache.commons.lang3.ArrayUtils.addAll(aitempredicate, net.minecraftforge.advancements.critereon.OredictItemPredicate.deserializeOredictPredicateArray(p_192166_1_.get("ores")));
+         return new InventoryChangeTrigger.Instance(minmaxbounds, minmaxbounds1, minmaxbounds2, aitempredicate);
+     }
+ 
