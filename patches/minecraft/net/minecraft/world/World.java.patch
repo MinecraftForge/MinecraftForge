@@ -753,11 +753,13 @@
          }
      }
  
-@@ -2926,7 +3120,7 @@
+@@ -2925,8 +3119,8 @@
+     public boolean func_190527_a(Block p_190527_1_, BlockPos p_190527_2_, boolean p_190527_3_, EnumFacing p_190527_4_, @Nullable Entity p_190527_5_)
      {
          IBlockState iblockstate = this.func_180495_p(p_190527_2_);
-         AxisAlignedBB axisalignedbb = p_190527_3_ ? null : p_190527_1_.func_176223_P().func_185890_d(this, p_190527_2_);
+-        AxisAlignedBB axisalignedbb = p_190527_3_ ? null : p_190527_1_.func_176223_P().func_185890_d(this, p_190527_2_);
 -        return axisalignedbb != Block.field_185506_k && !this.func_72917_a(axisalignedbb.func_186670_a(p_190527_2_), p_190527_5_) ? false : (iblockstate.func_185904_a() == Material.field_151594_q && p_190527_1_ == Blocks.field_150467_bQ ? true : iblockstate.func_185904_a().func_76222_j() && p_190527_1_.func_176198_a(this, p_190527_2_, p_190527_4_));
++        AxisAlignedBB axisalignedbb = p_190527_3_ ? null : iblockstate.func_185890_d(this, p_190527_2_); //Forge: Fix MC-116877 Collision checking during Block placement only uses default state
 +        return axisalignedbb != Block.field_185506_k && !this.func_72917_a(axisalignedbb.func_186670_a(p_190527_2_), p_190527_5_) ? false : (iblockstate.func_185904_a() == Material.field_151594_q && p_190527_1_ == Blocks.field_150467_bQ ? true : iblockstate.func_177230_c().func_176200_f(this, p_190527_2_) && p_190527_1_.func_176198_a(this, p_190527_2_, p_190527_4_));
      }
  
