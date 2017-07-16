@@ -77,7 +77,8 @@ public class OredictItemPredicateTest
         private final Map<PlayerAdvancements, Listeners> listeners = new HashMap<>();
 
         @Override
-        public ResourceLocation getId() {
+        public ResourceLocation getId()
+        {
             return ID;
         }
 
