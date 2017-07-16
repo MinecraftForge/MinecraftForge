@@ -38,7 +38,8 @@ public class OredictItemPredicateTest
             final Method tmp = CriteriaTriggers.class.getDeclaredMethod("register"/* func_192118_a */, ICriterionTrigger.class);
             tmp.setAccessible(true);
             ctRegister = MethodHandles.lookup().unreflect(tmp);
-        } catch (Throwable e)
+        }
+        catch (Throwable e)
         {
             throw new RuntimeException(e);
         }
@@ -50,7 +51,8 @@ public class OredictItemPredicateTest
         try
         {
             ENABLED_TRIGGER = (EnabledTrigger)(ICriterionTrigger)ctRegister.invokeExact((ICriterionTrigger)new EnabledTrigger());
-        } catch (Throwable e)
+        }
+        catch (Throwable e)
         {
             throw new RuntimeException(e);
         }
