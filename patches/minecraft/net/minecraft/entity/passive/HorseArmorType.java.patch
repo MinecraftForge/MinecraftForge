@@ -5,7 +5,7 @@
      }
  
 +    //Allows for textures located outside the vanilla horse armor folder
-+    private  HorseArmorType(String textureLocation, String hash, int armorStrengthIn) 
++    private HorseArmorType(String textureLocation, String hash, int armorStrengthIn)
 +    {
 +        this.field_188588_g = armorStrengthIn;
 +        this.field_188586_e = textureLocation;
