@@ -33,14 +33,18 @@ public class BlockExplodeEventTest
         World world = event.getWorld();
         Explosion explosion = event.getExplosion();
 
-        if (block instanceof BlockSand) {
+        if (block instanceof BlockSand)
+        {
             // If sand is exploded, have a chance to drop 2 glass instead of the usual 1 sand
-            if (world.rand.nextFloat() <= 1.0F / explosion.getSize()) {
+            if (world.rand.nextFloat() <= 1.0F / explosion.getSize())
+            {
                 Block.spawnAsEntity(world, pos, new ItemStack(Item.getItemFromBlock(Blocks.GLASS), 2));
             }
             block.onBlockExploded(world, pos, explosion);
             event.setCanceled(true);
-        } else if (block instanceof BlockSandStone) {
+        }
+        else if (block instanceof BlockSandStone)
+        {
             // If sandstone is exploded, change it to sand but don't actually remove or drop it
             world.setBlockState(pos, Blocks.SAND.getDefaultState());
             event.setCanceled(true);

@@ -163,19 +163,24 @@ public class BlockEvent extends Event
 
     /**
      * Called when a block is destroyed by an explosion.
+     *
      * Canceling this event will prevent the block from being destroyed.
      */
     @Cancelable
     public static class ExplodeEvent extends BlockEvent
     {
-        @Nonnull private final Explosion explosion;
+        private final Explosion explosion;
 
-        public ExplodeEvent(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Explosion explosion) {
+        public ExplodeEvent(World world, BlockPos pos, IBlockState state, Explosion explosion)
+        {
             super(world, pos, state);
             this.explosion = explosion;
         }
 
-        @Nonnull public Explosion getExplosion() { return explosion; }
+        public Explosion getExplosion()
+        {
+            return explosion;
+        }
     }
 
     /**
