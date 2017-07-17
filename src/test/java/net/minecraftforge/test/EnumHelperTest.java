@@ -3,6 +3,7 @@ package net.minecraftforge.test;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.init.Bootstrap;
 import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.BiomeDictionary;
@@ -89,6 +90,10 @@ public class EnumHelperTest
                     if (returnType == EnumEnchantmentType.class && declaredConstructor.getParameterTypes().length == 2)
                     {
                         filter = true; //We don't want people using this method.
+                    }
+                    if(returnType == HorseArmorType.class && (declaredConstructor.getParameterTypes().length == 3 || declaredConstructor.getParameterTypes()[2] == int.class))
+                    {
+                       filter = true; //We don't want people using either of these methods.
                     }
 
                     if (!filter)
