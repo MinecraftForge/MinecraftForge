@@ -33,24 +33,24 @@ public class HorseArmorTest
     public void preInit(FMLPreInitializationEvent event)
     {
         if(ENABLED) 
-        	testArmorType = EnumHelper.addHorseArmor("test", MODID + ":textures/entity/horse/armor/test.png", "tst", 15);
+            testArmorType = EnumHelper.addHorseArmor("test", MODID + ":textures/entity/horse/armor/test.png", "tst", 15);
     }
     
     @EventBusSubscriber(modid = MODID)
     public static class RegistryHandler
     {
-    	@SubscribeEvent
+        @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event)
         {
-        	if(ENABLED) 
-        		event.getRegistry().register(new ItemTestHorseArmor().setRegistryName(MODID, "test_armor").setUnlocalizedName(MODID + ".testArmor"));
+            if(ENABLED) 
+                event.getRegistry().register(new ItemTestHorseArmor().setRegistryName(MODID, "test_armor").setUnlocalizedName(MODID + ".testArmor"));
         } 
         
-    	@SubscribeEvent
+        @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event) 
         {
-        	if(ENABLED) 
-        		ModelLoader.setCustomModelResourceLocation(TEST_ARMOR, 0, new ModelResourceLocation(TEST_ARMOR.getRegistryName(), "inventory"));
+            if(ENABLED) 
+                ModelLoader.setCustomModelResourceLocation(TEST_ARMOR, 0, new ModelResourceLocation(TEST_ARMOR.getRegistryName(), "inventory"));
         }
     }
     
