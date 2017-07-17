@@ -509,6 +509,11 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Detonate(world, explosion, list));
     }
 
+    public static boolean onExplosionDestroyBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Explosion explosion)
+    {
+        return MinecraftForge.EVENT_BUS.post(new BlockEvent.ExplodeEvent(world, pos, state, explosion));
+    }
+
     public static boolean onCreateWorldSpawn(World world, WorldSettings settings)
     {
         return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));

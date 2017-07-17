@@ -30,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -157,6 +158,28 @@ public class BlockEvent extends Event
         public void setExpToDrop(int exp)
         {
             this.exp = exp;
+        }
+    }
+
+    /**
+     * Called when a block is destroyed by an explosion.
+     *
+     * Canceling this event will prevent the block from being destroyed.
+     */
+    @Cancelable
+    public static class ExplodeEvent extends BlockEvent
+    {
+        private final Explosion explosion;
+
+        public ExplodeEvent(World world, BlockPos pos, IBlockState state, Explosion explosion)
+        {
+            super(world, pos, state);
+            this.explosion = explosion;
+        }
+
+        public Explosion getExplosion()
+        {
+            return explosion;
         }
     }
 
