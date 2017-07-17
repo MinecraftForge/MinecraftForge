@@ -1,0 +1,2 @@
+localization_fallback_test.test_string=Test String en_US.lang
+localization_fallback_test.test_string_only_en_us=Test String only in en_US.lang
