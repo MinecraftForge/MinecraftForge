@@ -15,7 +15,7 @@
      private HorseArmorType(int p_i46800_3_, String p_i46800_4_, String p_i46800_5_)
      {
          this.field_188588_g = p_i46800_3_;
-@@ -55,16 +63,24 @@
+@@ -55,16 +63,28 @@
          return this.field_188586_e;
      }
  
@@ -34,14 +34,18 @@
      public static HorseArmorType func_188580_a(ItemStack p_188580_0_)
      {
 -        return p_188580_0_.func_190926_b() ? NONE : func_188576_a(p_188580_0_.func_77973_b());
-+        return p_188580_0_.func_77973_b().getHorseArmorType(p_188580_0_);
++        if(p_188580_0_.func_77973_b() instanceof net.minecraftforge.common.IHorseArmor)
++        {
++            return ((net.minecraftforge.common.IHorseArmor) p_188580_0_.func_77973_b()).getHorseArmorType(p_188580_0_);
++        }
++        return p_188580_0_.func_77973_b() == Items.field_151138_bX ? net.minecraft.entity.passive.HorseArmorType.IRON : p_188580_0_.func_77973_b() == Items.field_151136_bY ? net.minecraft.entity.passive.HorseArmorType.GOLD : p_188580_0_.func_77973_b() == Items.field_151125_bZ ? net.minecraft.entity.passive.HorseArmorType.DIAMOND : net.minecraft.entity.passive.HorseArmorType.NONE;
      }
  
 +    @Deprecated
      public static HorseArmorType func_188576_a(Item p_188576_0_)
      {
          if (p_188576_0_ == Items.field_151138_bX)
-@@ -81,8 +97,14 @@
+@@ -81,8 +101,14 @@
          }
      }
  

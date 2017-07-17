@@ -10,6 +10,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.IHorseArmor;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -54,7 +55,7 @@ public class HorseArmorTest
         }
     }
     
-    private static class ItemTestHorseArmor extends Item
+    private static class ItemTestHorseArmor extends Item implements IHorseArmor
     {   
         @Override
         public HorseArmorType getHorseArmorType(ItemStack stack) 

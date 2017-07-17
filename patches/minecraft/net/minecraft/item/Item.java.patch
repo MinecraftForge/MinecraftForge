@@ -87,7 +87,7 @@
      public CreativeTabs func_77640_w()
      {
          return this.field_77701_a;
-@@ -438,11 +445,658 @@
+@@ -438,11 +445,642 @@
          return false;
      }
  
@@ -714,22 +714,6 @@
 +        }
 +        return builder.build();
 +    }
-+    
-+    /** 
-+     * @param stack - The armor stack
-+     * @return The HorseArmorType of the armor stack 
-+     */
-+    public net.minecraft.entity.passive.HorseArmorType getHorseArmorType(ItemStack stack)
-+    {
-+        return stack.func_77973_b() == Items.field_151138_bX ? net.minecraft.entity.passive.HorseArmorType.IRON : stack.func_77973_b() == Items.field_151136_bY ? net.minecraft.entity.passive.HorseArmorType.GOLD : stack.func_77973_b() == Items.field_151125_bZ ? net.minecraft.entity.passive.HorseArmorType.DIAMOND : net.minecraft.entity.passive.HorseArmorType.NONE;
-+    }
-+    
-+    /**
-+     * @param world - The world the horse is in
-+     * @param horse - The horse wearing the armor
-+     * @param itemStack - the armor itemstack
-+     */
-+    public void onHorseArmorTick(World world, net.minecraft.entity.passive.EntityHorse horse, ItemStack itemStack) {}
 +
 +    /**
 +     * @return the fuel burn time for this itemStack in a furnace.
@@ -746,7 +730,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -1002,6 +1656,8 @@
+@@ -1002,6 +1640,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -755,7 +739,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1037,6 +1693,7 @@
+@@ -1037,6 +1677,7 @@
              return this.field_78008_j;
          }
  
@@ -763,7 +747,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1060,5 +1717,21 @@
+@@ -1060,5 +1701,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }

@@ -49,7 +49,7 @@
              this.func_110230_cF();
          }
 +        ItemStack armor = this.field_110296_bG.func_70301_a(1);
-+        armor.func_77973_b().onHorseArmorTick(field_70170_p, this, armor);
++        if(armor.func_77973_b() instanceof net.minecraftforge.common.IHorseArmor) ((net.minecraftforge.common.IHorseArmor) armor.func_77973_b()).onHorseArmorTick(field_70170_p, this, armor);
      }
  
      protected SoundEvent func_184639_G()
