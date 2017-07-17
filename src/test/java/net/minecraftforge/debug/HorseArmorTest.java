@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@Mod(modid = HorseArmorTest.MODID, name = "HorseArmorTest", version = "1.0")
+@Mod(modid = HorseArmorTest.MODID, name = "HorseArmorTest", version = "1.0", acceptableRemoteVersions = "*")
 public class HorseArmorTest 
 {
     public static final String MODID = "horse_armor_test";
