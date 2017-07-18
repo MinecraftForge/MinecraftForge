@@ -85,12 +85,6 @@ public class ZipperUtil {
         backupWorld(dirName);
     }
 
-    @Deprecated
-    public static void backupWorld(String dirName, String saveName) throws IOException
-    {
-        backupWorld(dirName);
-    }
-
     public static void backupWorld(String dirName) throws IOException
     {
         File dstFolder = FMLCommonHandler.instance().getSavesDirectory();
