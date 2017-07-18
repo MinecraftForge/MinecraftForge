@@ -128,16 +128,6 @@ public abstract class GuiScrollingList
      */
     protected void drawScreen(int mouseX, int mouseY) { func_27257_b(mouseX, mouseY); }
 
-    @Deprecated // Unused, Remove in 1.9.3?
-    public int func_27256_c(int x, int y)
-    {
-        int left = this.left + 1;
-        int right = this.left + this.listWidth - 7;
-        int relativeY = y - this.top - this.headerHeight + (int)this.scrollDistance - 4;
-        int entryIndex = relativeY / this.slotHeight;
-        return x >= left && x <= right && entryIndex >= 0 && relativeY >= 0 && entryIndex < this.getSize() ? entryIndex : -1;
-    }
-
     // FIXME: is this correct/still needed?
     public void registerScrollButtons(List<GuiButton> buttons, int upActionID, int downActionID)
     {
