@@ -66,7 +66,7 @@
          if (!p_75822_4_.func_150297_b("Level", 10))
          {
              field_151505_a.error("Chunk file at {},{} is missing level data, skipping", new Object[] {Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_)});
-@@ -103,16 +143,36 @@
+@@ -103,10 +143,29 @@
                      field_151505_a.error("Chunk file at {},{} is in the wrong location; relocating. (Expected {}, {}, got {}, {})", new Object[] {Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(chunk.field_76635_g), Integer.valueOf(chunk.field_76647_h)});
                      nbttagcompound.func_74768_a("xPos", p_75822_2_);
                      nbttagcompound.func_74768_a("zPos", p_75822_3_);
@@ -97,14 +97,7 @@
              }
          }
      }
- 
-     public void func_75816_a(World p_75816_1_, Chunk p_75816_2_) throws MinecraftException, IOException
-     {
-+        p_75816_1_.lightingEngine.procLightUpdates();
-         p_75816_1_.func_72906_B();
- 
-         try
-@@ -121,7 +181,9 @@
+@@ -121,7 +180,9 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
              nbttagcompound.func_74768_a("DataVersion", 922);
@@ -114,7 +107,7 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -305,11 +367,20 @@
+@@ -305,11 +366,20 @@
              {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
@@ -135,7 +128,7 @@
              }
          }
  
-@@ -318,8 +389,17 @@
+@@ -318,8 +388,17 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -153,7 +146,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -388,6 +468,12 @@
+@@ -388,6 +467,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -166,7 +159,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
-@@ -431,8 +517,6 @@
+@@ -431,8 +516,6 @@
                  p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
              }
          }
