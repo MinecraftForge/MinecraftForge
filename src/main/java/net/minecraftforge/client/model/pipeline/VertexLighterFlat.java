@@ -30,6 +30,7 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.client.ForgeHooksClient;
 
 import com.google.common.base.Objects;
 
@@ -237,6 +238,8 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
         boolean full = blockInfo.getState().isFullCube();
 
+        final BlockPos posIn = pos;
+
         if((full || y < -e1) && normal[1] < -e2) pos = pos.down();
         if((full || y >  e1) && normal[1] >  e2) pos = pos.up();
         if((full || z < -e1) && normal[2] < -e2) pos = pos.north();
@@ -245,6 +248,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         if((full || x >  e1) && normal[0] >  e2) pos = pos.east();
 
         int brightness = blockInfo.getState().getPackedLightmapCoords(blockInfo.getWorld(), pos);
+
+        if (!posIn.equals(pos))
+            brightness = ForgeHooksClient.combinePackedLightmapCoords(brightness, ForgeHooksClient.getBasePackedLightmapCoords(this.blockInfo.getWorld(), posIn));
 
         lightmap[0] = ((float)((brightness >> 0x04) & 0xF) * 0x20) / 0xFFFF;
         lightmap[1] = ((float)((brightness >> 0x14) & 0xF) * 0x20) / 0xFFFF;

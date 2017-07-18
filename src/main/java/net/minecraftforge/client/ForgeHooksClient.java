@@ -714,4 +714,14 @@ public class ForgeHooksClient
         if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
         return Pair.of(model, mat);
     }
+
+    public static int getBasePackedLightmapCoords(IBlockAccess worldIn, BlockPos pos)
+    {
+        return worldIn.getCombinedLight(pos, -1);
+    }
+
+    public static int combinePackedLightmapCoords(int light1, int light2)
+    {
+        return Math.max(light1 >> 20 & 15, light2 >> 20 & 15) << 20 | Math.max(light1 >> 4 & 15, light2 >> 4 & 15) << 4;
+    }
 }

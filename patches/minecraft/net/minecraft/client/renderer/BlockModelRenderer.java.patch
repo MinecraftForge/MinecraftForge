@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
-@@ -128,7 +128,14 @@
+@@ -89,6 +89,7 @@
+     {
+         boolean flag = false;
+         BitSet bitset = new BitSet(3);
++        final int lightIn = net.minecraftforge.client.ForgeHooksClient.getBasePackedLightmapCoords(p_187497_1_, p_187497_4_);
+ 
+         for (EnumFacing enumfacing : EnumFacing.values())
+         {
+@@ -97,6 +98,7 @@
+             if (!list.isEmpty() && (!p_187497_6_ || p_187497_3_.func_185894_c(p_187497_1_, p_187497_4_, enumfacing)))
+             {
+                 int i = p_187497_3_.func_185889_a(p_187497_1_, p_187497_4_.func_177972_a(enumfacing));
++                i = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(i, lightIn);
+                 this.func_187496_a(p_187497_1_, p_187497_3_, p_187497_4_, i, false, p_187497_5_, list, bitset);
+                 flag = true;
+             }
+@@ -128,7 +130,14 @@
              p_187492_8_.func_187491_a(p_187492_1_, p_187492_2_, p_187492_3_, bakedquad.func_178210_d(), p_187492_6_, p_187492_7_);
              p_187492_4_.func_178981_a(bakedquad.func_178209_a());
              p_187492_4_.func_178962_a(p_187492_8_.field_178207_c[0], p_187492_8_.field_178207_c[1], p_187492_8_.field_178207_c[2], p_187492_8_.field_178207_c[3]);
@@ -16,7 +32,23 @@
              if (bakedquad.func_178212_b())
              {
                  int k = this.field_187499_a.func_186724_a(p_187492_2_, p_187492_1_, p_187492_3_, bakedquad.func_178211_c());
-@@ -262,11 +269,26 @@
+@@ -235,6 +244,7 @@
+         double d1 = (double)p_187496_3_.func_177956_o() + vec3d.field_72448_b;
+         double d2 = (double)p_187496_3_.func_177952_p() + vec3d.field_72449_c;
+         int i = 0;
++        final int baseBrightness = p_187496_5_ ? net.minecraftforge.client.ForgeHooksClient.getBasePackedLightmapCoords(p_187496_1_, p_187496_3_) : 0;
+ 
+         for (int j = p_187496_7_.size(); i < j; ++i)
+         {
+@@ -245,6 +255,7 @@
+                 this.func_187494_a(p_187496_2_, bakedquad.func_178209_a(), bakedquad.func_178210_d(), (float[])null, p_187496_8_);
+                 BlockPos blockpos = p_187496_8_.get(0) ? p_187496_3_.func_177972_a(bakedquad.func_178210_d()) : p_187496_3_;
+                 p_187496_4_ = p_187496_2_.func_185889_a(p_187496_1_, blockpos);
++                p_187496_4_ = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(p_187496_4_, baseBrightness);
+             }
+ 
+             p_187496_6_.func_178981_a(bakedquad.func_178209_a());
+@@ -262,11 +273,26 @@
                  float f = (float)(k >> 16 & 255) / 255.0F;
                  float f1 = (float)(k >> 8 & 255) / 255.0F;
                  float f2 = (float)(k & 255) / 255.0F;
@@ -43,3 +75,62 @@
  
              p_187496_6_.func_178987_a(d0, d1, d2);
          }
+@@ -345,6 +371,7 @@
+ 
+         public void func_187491_a(IBlockAccess p_187491_1_, IBlockState p_187491_2_, BlockPos p_187491_3_, EnumFacing p_187491_4_, float[] p_187491_5_, BitSet p_187491_6_)
+         {
++            final int lightIn = net.minecraftforge.client.ForgeHooksClient.getBasePackedLightmapCoords(p_187491_1_, p_187491_3_);
+             BlockPos blockpos = p_187491_6_.get(0) ? p_187491_3_.func_177972_a(p_187491_4_) : p_187491_3_;
+             BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.func_185346_s();
+             BlockModelRenderer.EnumNeighborInfo blockmodelrenderer$enumneighborinfo = BlockModelRenderer.EnumNeighborInfo.func_178273_a(p_187491_4_);
+@@ -356,6 +383,10 @@
+             int j = p_187491_2_.func_185889_a(p_187491_1_, blockpos$pooledmutableblockpos2);
+             int k = p_187491_2_.func_185889_a(p_187491_1_, blockpos$pooledmutableblockpos3);
+             int l = p_187491_2_.func_185889_a(p_187491_1_, blockpos$pooledmutableblockpos4);
++            i = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(i, lightIn);
++            j = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(j, lightIn);
++            k = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(k, lightIn);
++            l = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(l, lightIn);
+             float f = p_187491_1_.func_180495_p(blockpos$pooledmutableblockpos1).func_185892_j();
+             float f1 = p_187491_1_.func_180495_p(blockpos$pooledmutableblockpos2).func_185892_j();
+             float f2 = p_187491_1_.func_180495_p(blockpos$pooledmutableblockpos3).func_185892_j();
+@@ -377,6 +408,7 @@
+                 BlockPos blockpos1 = blockpos$pooledmutableblockpos.func_189533_g(blockpos$pooledmutableblockpos1).func_189536_c(blockmodelrenderer$enumneighborinfo.field_178276_g[2]);
+                 f4 = p_187491_1_.func_180495_p(blockpos1).func_185892_j();
+                 i1 = p_187491_2_.func_185889_a(p_187491_1_, blockpos1);
++                i1 = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(i1, lightIn);
+             }
+ 
+             float f5;
+@@ -392,6 +424,7 @@
+                 BlockPos blockpos2 = blockpos$pooledmutableblockpos.func_189533_g(blockpos$pooledmutableblockpos1).func_189536_c(blockmodelrenderer$enumneighborinfo.field_178276_g[3]);
+                 f5 = p_187491_1_.func_180495_p(blockpos2).func_185892_j();
+                 j1 = p_187491_2_.func_185889_a(p_187491_1_, blockpos2);
++                j1 = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(j1, lightIn);
+             }
+ 
+             float f6;
+@@ -407,6 +440,7 @@
+                 BlockPos blockpos3 = blockpos$pooledmutableblockpos.func_189533_g(blockpos$pooledmutableblockpos2).func_189536_c(blockmodelrenderer$enumneighborinfo.field_178276_g[2]);
+                 f6 = p_187491_1_.func_180495_p(blockpos3).func_185892_j();
+                 k1 = p_187491_2_.func_185889_a(p_187491_1_, blockpos3);
++                k1 = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(k1, lightIn);
+             }
+ 
+             float f7;
+@@ -422,6 +456,7 @@
+                 BlockPos blockpos4 = blockpos$pooledmutableblockpos.func_189533_g(blockpos$pooledmutableblockpos2).func_189536_c(blockmodelrenderer$enumneighborinfo.field_178276_g[3]);
+                 f7 = p_187491_1_.func_180495_p(blockpos4).func_185892_j();
+                 l1 = p_187491_2_.func_185889_a(p_187491_1_, blockpos4);
++                l1 = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(l1, lightIn);
+             }
+ 
+             int i3 = p_187491_2_.func_185889_a(p_187491_1_, p_187491_3_);
+@@ -429,6 +464,7 @@
+             if (p_187491_6_.get(0) || !p_187491_1_.func_180495_p(p_187491_3_.func_177972_a(p_187491_4_)).func_185914_p())
+             {
+                 i3 = p_187491_2_.func_185889_a(p_187491_1_, p_187491_3_.func_177972_a(p_187491_4_));
++                i3 = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(i3, lightIn);
+             }
+ 
+             float f8 = p_187491_6_.get(0) ? p_187491_1_.func_180495_p(blockpos).func_185892_j() : p_187491_1_.func_180495_p(p_187491_3_).func_185892_j();

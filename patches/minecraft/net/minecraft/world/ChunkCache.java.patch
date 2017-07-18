@@ -9,7 +9,7 @@
      }
  
      @Nullable
-@@ -69,6 +69,7 @@
+@@ -69,14 +69,15 @@
      {
          int i = (p_190300_1_.func_177958_n() >> 4) - this.field_72818_a;
          int j = (p_190300_1_.func_177952_p() >> 4) - this.field_72816_b;
@@ -17,6 +17,16 @@
          return this.field_72817_c[i][j].func_177424_a(p_190300_1_, p_190300_2_);
      }
  
+     @SideOnly(Side.CLIENT)
+     public int func_175626_b(BlockPos p_175626_1_, int p_175626_2_)
+     {
+-        int i = this.func_175629_a(EnumSkyBlock.SKY, p_175626_1_);
+-        int j = this.func_175629_a(EnumSkyBlock.BLOCK, p_175626_1_);
++        int i = p_175626_2_ == -1 ? this.func_175628_b(EnumSkyBlock.SKY, p_175626_1_) : this.func_175629_a(EnumSkyBlock.SKY, p_175626_1_);
++        int j = p_175626_2_ == -1 ? this.func_175628_b(EnumSkyBlock.BLOCK, p_175626_1_) : this.func_175629_a(EnumSkyBlock.BLOCK, p_175626_1_);
+ 
+         if (j < p_175626_2_)
+         {
 @@ -112,6 +113,7 @@
      {
          int i = (p_180494_1_.func_177958_n() >> 4) - this.field_72818_a;
@@ -25,7 +35,19 @@
          return this.field_72817_c[i][j].func_177411_a(p_180494_1_, this.field_72815_e.func_72959_q());
      }
  
-@@ -149,6 +151,7 @@
+@@ -127,6 +129,11 @@
+             if (this.func_180495_p(p_175629_2_).func_185916_f())
+             {
+                 int l = 0;
++                int i = (p_175629_2_.func_177958_n() >> 4) - this.field_72818_a;
++                int j = (p_175629_2_.func_177952_p() >> 4) - this.field_72816_b;
++                if (!withinBounds(i, j)) l = p_175629_1_.field_77198_c;
++                else l = this.field_72817_c[i][j].func_177413_a(p_175629_1_, p_175629_2_);
++                if (l >= 14) return l;
+ 
+                 for (EnumFacing enumfacing : EnumFacing.values())
+                 {
+@@ -149,6 +156,7 @@
              {
                  int i = (p_175629_2_.func_177958_n() >> 4) - this.field_72818_a;
                  int j = (p_175629_2_.func_177952_p() >> 4) - this.field_72816_b;
@@ -33,7 +55,7 @@
                  return this.field_72817_c[i][j].func_177413_a(p_175629_1_, p_175629_2_);
              }
          }
-@@ -160,7 +163,8 @@
+@@ -160,7 +168,8 @@
  
      public boolean func_175623_d(BlockPos p_175623_1_)
      {
@@ -43,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -170,6 +174,7 @@
+@@ -170,6 +179,7 @@
          {
              int i = (p_175628_2_.func_177958_n() >> 4) - this.field_72818_a;
              int j = (p_175628_2_.func_177952_p() >> 4) - this.field_72816_b;
@@ -51,7 +73,7 @@
              return this.field_72817_c[i][j].func_177413_a(p_175628_1_, p_175628_2_);
          }
          else
-@@ -188,4 +193,21 @@
+@@ -188,4 +198,21 @@
      {
          return this.field_72815_e.func_175624_G();
      }
