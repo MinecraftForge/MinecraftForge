@@ -78,12 +78,6 @@ public abstract class GuiScrollingList
         this.screenHeight = screenHeight;
     }
 
-    @Deprecated // Unused, remove in 1.9.3?
-    public void func_27258_a(boolean p_27258_1_)
-    {
-        this.highlightSelected = p_27258_1_;
-    }
-
     @Deprecated protected void func_27259_a(boolean hasFooter, int footerHeight){ setHeaderInfo(hasFooter, footerHeight); }
     protected void setHeaderInfo(boolean hasHeader, int headerHeight)
     {
