@@ -78,12 +78,6 @@ public abstract class GuiScrollingList
         this.screenHeight = screenHeight;
     }
 
-    @Deprecated // Unused, remove in 1.9.3?
-    public void func_27258_a(boolean p_27258_1_)
-    {
-        this.highlightSelected = p_27258_1_;
-    }
-
     @Deprecated protected void func_27259_a(boolean hasFooter, int footerHeight){ setHeaderInfo(hasFooter, footerHeight); }
     protected void setHeaderInfo(boolean hasHeader, int headerHeight)
     {
@@ -127,16 +121,6 @@ public abstract class GuiScrollingList
      * is rendered outside of the view box. Do not mess with SCISSOR unless you support this.
      */
     protected void drawScreen(int mouseX, int mouseY) { func_27257_b(mouseX, mouseY); }
-
-    @Deprecated // Unused, Remove in 1.9.3?
-    public int func_27256_c(int x, int y)
-    {
-        int left = this.left + 1;
-        int right = this.left + this.listWidth - 7;
-        int relativeY = y - this.top - this.headerHeight + (int)this.scrollDistance - 4;
-        int entryIndex = relativeY / this.slotHeight;
-        return x >= left && x <= right && entryIndex >= 0 && relativeY >= 0 && entryIndex < this.getSize() ? entryIndex : -1;
-    }
 
     // FIXME: is this correct/still needed?
     public void registerScrollButtons(List<GuiButton> buttons, int upActionID, int downActionID)
