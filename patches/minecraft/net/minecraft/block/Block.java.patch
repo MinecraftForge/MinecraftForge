@@ -811,7 +811,7 @@
 +     */
 +    public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        if (state.func_193401_d(world, pos, EnumFacing.UP) == BlockFaceShape.SOLID)
++        if (state.func_185896_q() || state.func_193401_d(world, pos, EnumFacing.UP) == BlockFaceShape.SOLID)
 +        {
 +            return this != Blocks.field_185775_db && this != Blocks.field_150428_aP;
 +        }
