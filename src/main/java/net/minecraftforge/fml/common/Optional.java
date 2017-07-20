@@ -29,8 +29,9 @@ import java.lang.annotation.Target;
  * if the modid specified is missing.
  *
  * @author cpw
- *
+ * @deprecated see {@link OptionalInterface} and {@link OptionalMethod}
  */
+@Deprecated
 public final class Optional {
     /**
      * Not constructable
@@ -40,8 +41,9 @@ public final class Optional {
     /**
      * Mark a list of interfaces as removable
      * @author cpw
-     *
+     * @deprecated use {@link OptionalInterface}, as it is repeatable
      */
+    @Deprecated
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     public @interface InterfaceList {
@@ -54,8 +56,9 @@ public final class Optional {
     /**
      * Used to remove optional interfaces
      * @author cpw
-     *
+     * @deprecated use {@link OptionalInterface}
      */
+    @Deprecated
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     public @interface Interface {
@@ -81,8 +84,9 @@ public final class Optional {
     /**
      * Used to remove optional methods
      * @author cpw
-     *
+     * @deprecated use {@link OptionalMethod}
      */
+    @Deprecated
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface Method {

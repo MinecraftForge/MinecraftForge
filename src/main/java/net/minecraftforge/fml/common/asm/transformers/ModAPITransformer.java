@@ -154,12 +154,20 @@ public class ModAPITransformer implements IClassTransformer {
     public void initTable(ASMDataTable dataTable)
     {
         optionals = ArrayListMultimap.create();
-        Set<ASMData> interfaceLists = dataTable.getAll("net.minecraftforge.fml.common.Optional$InterfaceList");
+        Set<ASMData> interfaceLists = dataTable.getAll("net.minecraftforge.fml.common.OptionalInterface$OptionalInterfaceList");
         addData(unpackInterfaces(interfaceLists));
-        Set<ASMData> interfaces = dataTable.getAll("net.minecraftforge.fml.common.Optional$Interface");
+        Set<ASMData> interfaces = dataTable.getAll("net.minecraftforge.fml.common.OptionalInterface");
         addData(interfaces);
-        Set<ASMData> methods = dataTable.getAll("net.minecraftforge.fml.common.Optional$Method");
+        Set<ASMData> methods = dataTable.getAll("net.minecraftforge.fml.common.OptionalMethod");
         addData(methods);
+
+        // TODO: remove
+        Set<ASMData> interfaceListsO = dataTable.getAll("net.minecraftforge.fml.common.Optional$InterfaceList");
+        addData(unpackInterfaces(interfaceListsO));
+        Set<ASMData> interfacesO = dataTable.getAll("net.minecraftforge.fml.common.Optional$Interface");
+        addData(interfacesO);
+        Set<ASMData> methodsO = dataTable.getAll("net.minecraftforge.fml.common.Optional$Method");
+        addData(methodsO);
     }
 
     private Set<ASMData> unpackInterfaces(Set<ASMData> packedInterfaces)
