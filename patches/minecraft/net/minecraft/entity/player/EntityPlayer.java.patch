@@ -197,9 +197,21 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -1004,12 +1072,14 @@
+@@ -974,7 +1042,7 @@
      {
-         if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b() == Items.field_185159_cQ)
+         super.func_190629_c(p_190629_1_);
+ 
+-        if (p_190629_1_.func_184614_ca().func_77973_b() instanceof ItemAxe)
++        if (p_190629_1_.func_184614_ca().func_77973_b().canDisableShield(p_190629_1_.func_184614_ca(), this.func_184607_cu(), this, p_190629_1_))
+         {
+             this.func_190777_m(true);
+         }
+@@ -1002,14 +1070,16 @@
+ 
+     protected void func_184590_k(float p_184590_1_)
+     {
+-        if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b() == Items.field_185159_cQ)
++        if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b().isShield(this.field_184627_bm, this))
          {
 +            ItemStack copyBeforeUse = this.field_184627_bm.func_77946_l();
              int i = 1 + MathHelper.func_76141_d(p_184590_1_);
@@ -274,6 +286,15 @@
                                  this.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
                              }
                          }
+@@ -1384,7 +1466,7 @@
+ 
+         if (this.field_70146_Z.nextFloat() < f)
+         {
+-            this.func_184811_cZ().func_185145_a(Items.field_185159_cQ, 100);
++            this.func_184811_cZ().func_185145_a(this.func_184607_cu().func_77973_b(), 100);
+             this.func_184602_cy();
+             this.field_70170_p.func_72960_a(this, (byte)30);
+         }
 @@ -1442,6 +1524,8 @@
  
      public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
