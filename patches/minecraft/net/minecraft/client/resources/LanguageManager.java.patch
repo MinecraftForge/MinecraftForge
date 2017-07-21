@@ -4,7 +4,7 @@
              list.add(this.field_135048_c);
          }
  
-+        list = net.minecraftforge.common.ForgeHooks.expandLanguageFallbacks(list);
++        list = net.minecraftforge.client.ForgeHooksClient.expandLanguageFallbacks(list);
          field_135049_a.func_135022_a(p_110549_1_, list);
          LanguageMap.func_135063_a(field_135049_a.field_135032_a);
      }

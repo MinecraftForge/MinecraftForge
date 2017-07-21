@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
@@ -1311,51 +1312,5 @@ public class ForgeHooks
             },
             true
         );
-    }
-
-    private static final ResourceBundle.Control RESOURCE_CONTROL_HELPER = new ResourceBundle.Control() {};
-
-    /**
-     * Takes a list of locales with fallbacks like ["en_us", "es_es"] and expands it to include more fallbacks, ["en", "en_us", "es", "es_es"].
-     * The list is ordered least specific to most specific.
-     * When there is a duplicate the one from the more specific locale is kept, so ["en_us", "en_gb"] becomes ["en_us", "en", "en_gb"]
-     */
-    public static List<String> expandLanguageFallbacks(List<String> localeStrings)
-    {
-        List<String> expandedFallbacks = new ArrayList<>();
-        for (String localeString : localeStrings)
-        {
-            Locale locale = stringToLocale(localeString);
-            List<Locale> candidates = RESOURCE_CONTROL_HELPER.getCandidateLocales("", locale);
-            candidates = Lists.reverse(candidates);
-            for (Locale candidate : candidates)
-            {
-                if (!candidate.equals(Locale.ROOT))
-                {
-                    String candidateLocaleString = candidate.toString().toLowerCase(Locale.ENGLISH);
-                    expandedFallbacks.remove(candidateLocaleString);
-                    expandedFallbacks.add(candidateLocaleString);
-                }
-            }
-        }
-        return expandedFallbacks;
-    }
-
-    private static Locale stringToLocale(String localeString)
-    {
-        if (localeString.length() >= 5)
-        {
-            String language = localeString.substring(0, 2);
-            String country = localeString.substring(3, 5).toUpperCase(Locale.ENGLISH);
-            if (localeString.length() > 5)
-            {
-                localeString = language + "_" + country + localeString.substring(5);
-            }
-            else
-            {
-                localeString = language + "_" + country;
-            }
-        }
-        return LocaleUtils.toLocale(localeString);
     }
 }
