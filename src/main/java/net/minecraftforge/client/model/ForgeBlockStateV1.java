@@ -20,15 +20,16 @@
 package net.minecraftforge.client.model;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 import javax.vecmath.AxisAngle4d;
@@ -46,19 +47,19 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.FMLLog;
 
-import java.util.Objects;
-import java.util.Optional;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class ForgeBlockStateV1 extends Marker
 {
@@ -83,8 +84,8 @@ public class ForgeBlockStateV1 extends Marker
                     throw new RuntimeException("\"defaults\" variant cannot contain a simple \"submodel\" definition.");
             }
 
-            Map<String, Map<String, ForgeBlockStateV1.Variant>> condensed = Maps.newHashMap();    // map(property name -> map(property value -> variant))
-            Multimap<String, ForgeBlockStateV1.Variant> specified = HashMultimap.create();    // Multimap containing all the states specified with "property=value".
+            Map<String, Multimap<String, ForgeBlockStateV1.Variant>> condensed = Maps.newHashMap(); // map(property name -> map(property value -> variant fragment))
+            Multimap<String, ForgeBlockStateV1.Variant> specified = HashMultimap.create(); // Multimap containing all the states specified with "property=value".
 
             for (Entry<String, JsonElement> e : JsonUtils.getJsonObject(json, "variants").entrySet())
             {
@@ -99,23 +100,23 @@ public class ForgeBlockStateV1 extends Marker
                 }
                 else
                 {
-                    JsonObject obj = e.getValue().getAsJsonObject();
-                    if(obj.entrySet().iterator().next().getValue().isJsonObject())
+                    Multimap<String, ForgeBlockStateV1.Variant> subs = HashMultimap.create();
+                    condensed.put(e.getKey(), subs);
+                    for (Entry<String, JsonElement> se : e.getValue().getAsJsonObject().entrySet())
                     {
-                        // first value is a json object, so we know it's not a fully-defined variant
-                        Map<String, ForgeBlockStateV1.Variant> subs = Maps.newHashMap();
-                        condensed.put(e.getKey(), subs);
-                        for (Entry<String, JsonElement> se : e.getValue().getAsJsonObject().entrySet())
+                        if (se.getValue().isJsonArray())
+                        {
+                            for (JsonElement var : se.getValue().getAsJsonArray())
+                            {
+                                Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey() + "=" + se.getKey();
+                                subs.put(se.getKey(), context.deserialize(var, Variant.class));
+                            }
+                        }
+                        else
                         {
                             Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey() + "=" + se.getKey();
                             subs.put(se.getKey(), context.deserialize(se.getValue(), Variant.class));
                         }
-                    }
-                    else
-                    {
-                        // fully-defined variant
-                        Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey();
-                        specified.put(e.getKey(), context.deserialize(e.getValue(), Variant.class));
                     }
                 }
             }
@@ -132,7 +133,7 @@ public class ForgeBlockStateV1 extends Marker
                     if (!baseVars.isEmpty())
                     {
                         for (ForgeBlockStateV1.Variant baseVar : baseVars)
-                            addVars.add(new Variant(specVar).sync(baseVar));
+                            addVars.add(new Variant(specVar).syncCombiningWeight(baseVar));
                     }
                     else
                         addVars.add(specVar);
@@ -204,7 +205,7 @@ public class ForgeBlockStateV1 extends Marker
                 }
 
                 if (!v.submodels.isEmpty())
-                    ret.variants.putAll(e.getKey(), getSubmodelPermutations(v, v.submodels));   // Do permutations of submodel variants.
+                    ret.variants.putAll(e.getKey(), getSubmodelPermutations(v, v.submodels)); // Do permutations of submodel variants.
                 else
                     ret.variants.put(e.getKey(), v);
             }
@@ -212,72 +213,67 @@ public class ForgeBlockStateV1 extends Marker
             return ret;
         }
 
-        private Multimap<String, ForgeBlockStateV1.Variant> getPermutations(List<String> sorted, Map<String, Map<String, ForgeBlockStateV1.Variant>> base, int depth, String prefix, Multimap<String, ForgeBlockStateV1.Variant> ret, @Nullable ForgeBlockStateV1.Variant parent)
+        /**
+         * Flatten all the possible combinations of variant choices into a map(full state -> list(possible variants)).
+         */
+        private Multimap<String, ForgeBlockStateV1.Variant> getPermutations(Map<String, Multimap<String, ForgeBlockStateV1.Variant>> base)
         {
-            if (depth == sorted.size())
-            {
-                if(parent != null)
-                    ret.put(prefix, parent);
-                return ret;
-            }
+            // Turn a map(prop -> map(val -> variantfrags)) into a list(list((prop,val1), (prop,val2), ...)) where the state fragments are grouped by prop
+            List<List<Pair<String, String>>> variantIDs = base.entrySet().stream()
+                    .map(e -> e.getValue().keySet().stream()
+                            .map(value -> Pair.of(e.getKey(), value))
+                            .collect(Collectors.toList())
+                    )
+                    .collect(Collectors.toList());
+            return Lists.cartesianProduct(variantIDs).stream() // Product is a list(list((prop,val), (prop2, val), ...)) where each inner list of frags IDs a unique full state
+                    .map(variantID ->
+                            {
+                                List<List<Variant>> variantFragsGroupedByStateFrag = variantID.stream()
+                                        .map(stateFrag -> Lists.newArrayList(base.get(stateFrag.getKey()).get(stateFrag.getValue()))) // Take each state fragment into all the variant frags it is linked to
+                                        .collect(Collectors.toList());
+                                Stream<Variant> variants = Lists.cartesianProduct(variantFragsGroupedByStateFrag).stream() // Each inner list of the product is a bunch of frags that define a real variant
+                                        .map(variantFrags -> variantFrags.stream()
+                                                .reduce(new Variant(), (l, r) -> new Variant(l).syncCombiningWeight(r)) // Fold the frags together, and we're almost done!
+                                        );
+                                List<Pair<String, String>> variantIDMut = Lists.newArrayList(variantID);
+                                Collections.sort(variantIDMut);
+                                String variantName = variantIDMut.stream()
+                                        .map(pair -> pair.getKey() + "=" + pair.getValue())
+                                        .collect(Collectors.joining(",")); // Turn the variant ID into a String
+                                return Pair.of(variantName, variants);
+                            }
+                    )
+                    .collect(Multimaps.flatteningToMultimap(Pair::getKey, Pair::getValue, HashMultimap::create));
 
-            String name = sorted.get(depth);
-            for (Entry<String, ForgeBlockStateV1.Variant> e : base.get(name).entrySet())
-            {
-                ForgeBlockStateV1.Variant newHead = parent == null ? new Variant(e.getValue()) : new Variant(parent).sync(e.getValue());
-
-                getPermutations(sorted, base, depth + 1, prefix + (depth == 0 ? "" : ",") + name + "=" + e.getKey(), ret, newHead);
-            }
-
-            return ret;
         }
 
-        private Multimap<String, ForgeBlockStateV1.Variant> getPermutations(Map<String, Map<String, ForgeBlockStateV1.Variant>> base)
+        /**
+         * Flatten all possible combinations of submodel choices into a sequence, and then take each combination to the base variant plus those submodels.
+         */
+        private List<ForgeBlockStateV1.Variant> getSubmodelPermutations(ForgeBlockStateV1.Variant base, Map<String, List<ForgeBlockStateV1.Variant>> variants)
         {
-            List<String> sorted = Lists.newArrayList(base.keySet());
-            Collections.sort(sorted);   // Sort to get consistent results.
-            return getPermutations(sorted, base, 0, "", HashMultimap.create(), null);
-        }
+            // Turn a map(subname -> list(submodel)) list(list(subname, submodel)) where the pairs are grouped by the subname
+            List<List<Pair<String, Variant>>> submodelsGroupedByName = variants.entrySet().stream()
+                    .filter(kv -> kv.getValue() != null)
+                    .map(e -> e.getValue().stream()
+                            .map(var -> Pair.of(e.getKey(), var))
+                            .collect(Collectors.toList())
+                    )
+                    .collect(Collectors.toList());
+            return Lists.cartesianProduct(submodelsGroupedByName).stream() // list(list(subname, submodel)) where each inner list is a unique association between each submodel name and one of its values
+                    .map(subs ->
+                    {
+                        Variant ret = new Variant(base);
+                        Map<String, List<Variant>> subMap = subs.stream()
+                                .collect(Collectors.toMap(Pair::getKey, kv -> Collections.singletonList(kv.getValue())));
+                        ret.weight = Optional.of(subs.stream()
+                                .mapToInt(kv -> kv.getValue().getWeight().orElse(1))
+                                .reduce(1, (l, r) -> l * r));
+                        ret.submodels.putAll(subMap);
+                        return ret;
+                    })
+                    .collect(Collectors.toList());
 
-        private List<ForgeBlockStateV1.Variant> getSubmodelPermutations(ForgeBlockStateV1.Variant baseVar, List<String> sorted, Map<String, List<ForgeBlockStateV1.Variant>> map, int depth, Map<String, ForgeBlockStateV1.Variant> parts, List<ForgeBlockStateV1.Variant> ret)
-        {
-            if (depth >= sorted.size())
-            {
-                ForgeBlockStateV1.Variant add = new Variant(baseVar); // Create a duplicate variant object so modifying it doesn't modify baseVar.
-                for (Entry<String, ForgeBlockStateV1.Variant> part : parts.entrySet())    // Put all the parts with single variants for this permutation.
-                    add.submodels.put(part.getKey(), Collections.singletonList(part.getValue()));
-                ret.add(add);
-                return ret;
-            }
-
-            String name = sorted.get(depth);
-            List<ForgeBlockStateV1.Variant> vars = map.get(sorted.get(depth));
-
-            if (vars != null)
-            {
-                for (ForgeBlockStateV1.Variant v : vars)
-                {
-                    if (v != null)
-                    {   // We put this part variant in the permutation's map to add further in recursion, and then remove it afterward just in case.
-                        parts.put(name, v);
-                        getSubmodelPermutations(baseVar, sorted, map, depth + 1, parts, ret);
-                        parts.remove(name);
-                    }
-                }
-            }
-            else
-            {
-                getSubmodelPermutations(baseVar, sorted, map, depth + 1, parts, ret);
-            }
-
-            return ret;
-        }
-
-        private List<ForgeBlockStateV1.Variant> getSubmodelPermutations(ForgeBlockStateV1.Variant baseVar, Map<String, List<ForgeBlockStateV1.Variant>> variants)
-        {
-            List<String> sorted = Lists.newArrayList(variants.keySet());
-            Collections.sort(sorted);   // Sort to get consistent results.
-            return getSubmodelPermutations(baseVar, sorted, variants, 0, new HashMap<>(), new ArrayList<>());
         }
     }
 
@@ -355,6 +351,12 @@ public class ForgeBlockStateV1 extends Marker
             }
 
             return this;
+        }
+
+        ForgeBlockStateV1.Variant syncCombiningWeight(ForgeBlockStateV1.Variant parent)
+        {
+            weight = Optional.of(weight.orElse(1) * parent.weight.orElse(1));
+            return sync(parent);
         }
 
         /**

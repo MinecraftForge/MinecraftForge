@@ -1,0 +1,76 @@
+{
+  "forge_marker": 1,
+  "__comment": [
+    "Expected behavior:",
+    "a=true,b=true -> 3/4 [ladder + carpet + slab] + 1/4 [glass + carpet + slab]",
+    "a=true,b=false -> 3/8 [ladder + torch] + 3/8 [ladder + lily] + 1/8 [glass + torch] + 1/8 [glass + lily]",
+    "a=false,b=true -> 3/4 [carpet + slab + allium] + 1/4 [carpet]",
+    "a=false,b=false -> 1/2 [torch] + 1/2 [lily]",
+    "where carpet = 2/3 [blue carpet] + 1/3 [red carpet]"
+  ],
+  "variants": {
+    "inventory": [{ "model": "minecraft:grass_normal" }],
+    "a": {
+      "true": [
+        {
+          "weight": 3,
+          "model": "minecraft:ladder"
+        },
+        {
+          "__comment": "Implicit weight: 1",
+          "model": "minecraft:glass"
+        }
+      ],
+      "false": {}
+    },
+    "b": {
+      "true": {
+        "submodel": {
+          "carpet": [
+            {
+              "weight": 2,
+              "model": "minecraft:carpet_blue"
+            },
+            {
+              "weight": 1,
+              "model": "minecraft:carpet_red"
+            }
+          ],
+          "slab": {
+            "textures": {
+              "top": "minecraft:blocks/grass_top"
+            },
+            "model": "minecraft:upper_slab_stone"
+          }
+        }
+      },
+      "false": [
+        {
+          "submodel": "minecraft:normal_torch"
+        },
+        {
+          "submodel": "minecraft:waterlily"
+        }
+      ]
+    },
+    "a=false,b=true": [
+      {
+        "__comment": "Should merge into the permutation based variant",
+        "weight": 3,
+        "submodel": {
+          "flower": {
+            "model": "minecraft:allium"
+          }
+        }
+      },
+      {
+        "submodel": {
+          "slab": {
+            "__comment": "Remove the slab",
+            "model": "minecraft:builtin/generated"
+          }
+        }
+      }
+    ]
+  }
+}
