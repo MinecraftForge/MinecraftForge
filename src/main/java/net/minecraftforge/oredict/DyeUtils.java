@@ -19,12 +19,18 @@
 
 package net.minecraftforge.oredict;
 
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.OptionalInt;
 
+/**
+ * Utility class for working with ore dictionary dyes.
+ * To check if an item is a dye, use {@code DyeUtils.metaFromStack(stack).isPresent()}.
+ */
 public class DyeUtils
 {
     private static final String[] dyeOredicts = new String[]
@@ -47,6 +53,11 @@ public class DyeUtils
         "dyeBlack"
     };
 
+    /**
+     * Get the dye metadata from the stack, which can be passed into {@link EnumDyeColor#byMetadata(int)}.
+     * @param stack the item stack
+     * @return an {@link OptionalInt} holding the dye metadata for a dye, or an empty {@link OptionalInt} otherwise
+     */
     public static OptionalInt metaFromStack(ItemStack stack)
     {
         return Arrays.stream(OreDictionary.getOreIDs(stack))
@@ -54,5 +65,27 @@ public class DyeUtils
                 .mapToInt(name -> ArrayUtils.indexOf(dyeOredicts, name))
                 .filter(id -> id >= 0)
                 .findFirst();
+    }
+
+    /**
+     * Get the dye damage from the stack, which can be passed into {@link EnumDyeColor#byDyeDamage(int)}.
+     * @param stack the item stack
+     * @return an {@link OptionalInt} holding the dye damage for a dye, or an empty {@link OptionalInt} otherwise
+     */
+    public static OptionalInt dyeDamageFromStack(ItemStack stack)
+    {
+        final OptionalInt meta = metaFromStack(stack);
+        return meta.isPresent() ? OptionalInt.of(0xF - meta.getAsInt()) : OptionalInt.empty();
+    }
+
+    /**
+     * Get a dye's color.
+     * @param stack the item stack
+     * @return an {@link Optional} holding the dye color if present, or an empty {@link Optional} otherwise
+     */
+    public static Optional<EnumDyeColor> colorFromStack(ItemStack stack)
+    {
+        final OptionalInt meta = metaFromStack(stack);
+        return meta.isPresent() ? Optional.of(EnumDyeColor.byMetadata(meta.getAsInt())) : Optional.empty();
     }
 }
