@@ -60,6 +60,7 @@ public class DyeUtils
      */
     public static OptionalInt metaFromStack(ItemStack stack)
     {
+        if (stack.isEmpty()) return OptionalInt.empty();
         return Arrays.stream(OreDictionary.getOreIDs(stack))
                 .mapToObj(OreDictionary::getOreName)
                 .mapToInt(name -> ArrayUtils.indexOf(dyeOredicts, name))
