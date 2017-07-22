@@ -14,6 +14,32 @@
          {
              public boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_)
              {
+@@ -32,7 +30,7 @@
+                         }
+                         else
+                         {
+-                            if (itemstack.func_77973_b() != Items.field_151100_aR)
++                            if (!net.minecraftforge.oredict.DyeUtils.metaFromStack(itemstack).isPresent())
+                             {
+                                 return false;
+                             }
+@@ -65,14 +63,14 @@
+                         {
+                             itemstack = itemstack2;
+                         }
+-                        else if (itemstack2.func_77973_b() == Items.field_151100_aR)
++                        else if (net.minecraftforge.oredict.DyeUtils.metaFromStack(itemstack2).isPresent())
+                         {
+                             itemstack1 = itemstack2;
+                         }
+                     }
+                 }
+ 
+-                ItemStack itemstack3 = BlockShulkerBox.func_190953_b(EnumDyeColor.func_176766_a(itemstack1.func_77960_j()));
++                ItemStack itemstack3 = BlockShulkerBox.func_190953_b(EnumDyeColor.func_176764_b(net.minecraftforge.oredict.DyeUtils.metaFromStack(itemstack1).getAsInt()));
+ 
+                 if (itemstack.func_77942_o())
+                 {
 @@ -109,7 +107,6 @@
                  return true;
              }
