@@ -28,7 +28,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.ModListHelper.JsonModList;
-import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -43,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.function.Function;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -55,7 +55,8 @@ public class DependencyExtractor
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Attributes.Name MOD_CONTAINS_DEPS = new Attributes.Name("ContainedDeps");
-    private static final Attributes.Name MAVEN_ARTIFACT = new Attributes.Name("Maven-Artifact");
+    private static final String MAVEN_ARTIFACT_NAME = "Maven-Artifact";
+    private static final Attributes.Name MAVEN_ARTIFACT = new Attributes.Name(MAVEN_ARTIFACT_NAME);
     private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps", "").split(","));
     public static int extractedDeps = 0;
 
@@ -72,10 +73,8 @@ public class DependencyExtractor
 
         for (File mod : CoreModManager.listFiles((d, name) -> name.endsWith(".jar"), baseModsDir, versionedModsDir))
         {
-            JarFile jar = null;
-            try
+            try (JarFile jar = new JarFile(mod))
             {
-                jar = new JarFile(mod);
                 if (jar.getManifest() == null)
                 {
                     // Not an extraction candidate
@@ -86,10 +85,6 @@ public class DependencyExtractor
             catch (IOException ioe)
             {
                 FMLLog.log.error("Unable to read the jar file {} - ignoring", mod.getName(), ioe);
-            }
-            finally
-            {
-                IOUtils.closeQuietly(jar);
             }
         }
 
@@ -137,8 +132,13 @@ public class DependencyExtractor
                     File lzmaFile = new File(fileName).getAbsoluteFile();
                     // This is somewhat unreliable, but we should never be in an environment without Maven structure in the libs folder
                     // Basically searches for the artifact part of "lzma:lzma:{version}"
-                    while (!lzmaFile.getName().equals("lzma"))
+                    // Limit the depth in order to not search indefinitely, maximum depth of 3 because that'd result in the Gradle Maven Cache base directory in a dev environment
+                    int depth = 0;
+                    while (!lzmaFile.getName().equals("lzma") && depth < 3)
+                    {
                         lzmaFile = lzmaFile.getParentFile();
+                        depth++;
+                    }
                     // Double parent because we go artifact -> group -> libraries
                     Path libsDir = lzmaFile.getParentFile().getParentFile().toPath();
                     if (libsDir.startsWith(mcDir))
@@ -171,11 +171,11 @@ public class DependencyExtractor
         }
         catch (IOException e)
         {
-            FMLLog.log.warn(FMLLog.log.getMessageFactory().newMessage("Failed to read mod list json file {}, overriding with empty one", modListFile), e);
+            FMLLog.log.warn("Failed to read mod list json file {}, overriding with empty one", modListFile, e);
         }
         catch (JsonSyntaxException e)
         {
-            FMLLog.log.warn(FMLLog.log.getMessageFactory().newMessage("Failed to parse existing mod list json file {}, overriding with empty one", modListFile), e);
+            FMLLog.log.warn("Failed to parse existing mod list json file {}, overriding with empty one", modListFile, e);
         }
         return list;
     }
@@ -210,18 +210,10 @@ public class DependencyExtractor
             try
             {
                 Files.createParentDirs(targetFile);
-                FileOutputStream targetOutputStream = null;
-                InputStream jarInputStream = null;
-                try
+                try (FileOutputStream targetOutputStream = new FileOutputStream(targetFile);
+                     InputStream jarInputStream = jar.getInputStream(jarEntry))
                 {
-                    targetOutputStream = new FileOutputStream(targetFile);
-                    jarInputStream = jar.getInputStream(jarEntry);
                     ByteStreams.copy(jarInputStream, targetOutputStream);
-                }
-                finally
-                {
-                    IOUtils.closeQuietly(targetOutputStream);
-                    IOUtils.closeQuietly(jarInputStream);
                 }
                 extractedDeps++;
                 FMLLog.log.debug("Extracted ContainedDep {} from {} to {}", dep, jar.getName(), targetFile.getCanonicalPath());
@@ -249,37 +241,54 @@ public class DependencyExtractor
             return null;
         }
         File targetFile = versionedTarget;
-        // Hypothetically, contained deps might be some other file than a jar
-        if (depEndName.endsWith(".jar"))
+        String artifactData = null;
+        JarEntry metaEntry = jar.getJarEntry(dep + ".meta");
+        // Prioritize a separate metadata file, which basically gets interpreted like an external manifest, useful for binaries you have no control over
+        if (metaEntry != null)
         {
-            JarInputStream jarInputStream = null;
-            try
+            try (InputStream metaStream = jar.getInputStream(metaEntry))
+            {
+                Properties metadata = new Properties();
+                metadata.load(metaStream);
+                if (metadata.containsKey(MAVEN_ARTIFACT_NAME))
+                {
+                    artifactData = metadata.getProperty(MAVEN_ARTIFACT_NAME);
+                }
+            }
+            catch (IOException e)
+            {
+                FMLLog.log.warn("Could not load metadata file for ContainedDep {} in {}, please report to the mod author!", dep, jar.getName());
+            }
+        }
+        // Hypothetically, we might not always be dealing with JARs, so better make sure
+        if (artifactData == null && depEndName.endsWith(".jar"))
+        {
+            try (JarInputStream jarInputStream = new JarInputStream(jar.getInputStream(jar.getEntry(dep)));)
             {
                 // Unfortunately we need to open the jar stream twice
-                jarInputStream = new JarInputStream(jar.getInputStream(jar.getEntry(dep)));
                 Manifest manifest = jarInputStream.getManifest();
                 if (manifest != null && manifest.getMainAttributes().containsKey(MAVEN_ARTIFACT))
                 {
-                    Artifact artifact = new Artifact(manifest.getMainAttributes().getValue(MAVEN_ARTIFACT));
-                    if (addArtifact(artifacts, artifact, repository))
-                    {
-                        FMLLog.log.debug("Found artifact {} in {}, extracting to repository at {}", artifact, jar.getName(), repository.getCanonicalPath());
-                        targetFile = artifact.toFile(repository);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    FMLLog.log.warn("Could not find artifact information inside ContainedDep {} in {}, please report to the mod author!", dep, jar.getName());
+                    artifactData = manifest.getMainAttributes().getValue(MAVEN_ARTIFACT);
                 }
             }
-            finally
+        }
+        if (artifactData != null)
+        {
+            Artifact artifact = new Artifact(artifactData);
+            if (addArtifact(artifacts, artifact, repository))
             {
-                IOUtils.closeQuietly(jarInputStream);
+                FMLLog.log.debug("Found artifact {} in {}, extracting to repository at {}", artifact, jar.getName(), repository.getCanonicalPath());
+                targetFile = artifact.toFile(repository);
             }
+            else
+            {
+                return null;
+            }
+        }
+        else
+        {
+            FMLLog.log.warn("Could not find artifact information inside ContainedDep {} in {}, please report to the mod author!", dep, jar.getName());
         }
         return targetFile;
     }
