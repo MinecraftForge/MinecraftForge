@@ -225,7 +225,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
             int dimension = playerNBT.getInteger("Dimension");
             if (DimensionManager.isDimensionRegistered(dimension))
             {
-                return dimension;
+                return DimensionManager.getIdForClient(dimension);
             }
         }
         return 0;
