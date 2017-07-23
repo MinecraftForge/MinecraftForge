@@ -86,7 +86,6 @@ public class ServerOnlyDimensionTest
                         }
                     };
                     server.getPlayerList().transferPlayerToDimension(player, DIMENSION_ID, teleporter);
-                    player.changeDimension(DIMENSION_ID);
                 }
             }
         });
