@@ -29,7 +29,6 @@ import java.util.OptionalInt;
 
 /**
  * Utility class for working with ore dictionary dyes.
- * To check if an item is a dye, use {@code DyeUtils.metaFromStack(stack).isPresent()}.
  */
 public class DyeUtils
 {
@@ -52,6 +51,16 @@ public class DyeUtils
         "dyeRed",
         "dyeBlack"
     };
+
+    /**
+     * Check if an item stack is a dye.
+     * @param stack the item stack
+     * @return whether the stack is a dye
+     */
+    public static boolean isDye(ItemStack stack)
+    {
+        return metaFromStack(stack).isPresent();
+    }
 
     /**
      * Get the dye metadata from the stack, which can be passed into {@link EnumDyeColor#byMetadata(int)}.

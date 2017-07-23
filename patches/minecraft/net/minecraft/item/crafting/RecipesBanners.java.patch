@@ -45,7 +45,7 @@
                                  if (!itemstack.func_190926_b() && itemstack.func_77973_b() != Items.field_179564_cE)
                                  {
 -                                    if (itemstack.func_77973_b() == Items.field_151100_aR)
-+                                    if (net.minecraftforge.oredict.DyeUtils.metaFromStack(itemstack).isPresent())
++                                    if (net.minecraftforge.oredict.DyeUtils.isDye(itemstack))
                                      {
                                          if (flag2)
                                          {
@@ -54,7 +54,7 @@
                                  if (!itemstack1.func_190926_b() && itemstack1.func_77973_b() != Items.field_179564_cE)
                                  {
 -                                    if (itemstack1.func_77973_b() != Items.field_151100_aR)
-+                                    if (!net.minecraftforge.oredict.DyeUtils.metaFromStack(itemstack1).isPresent())
++                                    if (!net.minecraftforge.oredict.DyeUtils.isDye(itemstack1))
                                      {
                                          flag = false;
                                          break;

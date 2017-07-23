@@ -19,7 +19,7 @@
                          else
                          {
 -                            if (itemstack.func_77973_b() != Items.field_151100_aR)
-+                            if (!net.minecraftforge.oredict.DyeUtils.metaFromStack(itemstack).isPresent())
++                            if (!net.minecraftforge.oredict.DyeUtils.isDye(itemstack))
                              {
                                  return false;
                              }
@@ -28,7 +28,7 @@
                              itemstack = itemstack2;
                          }
 -                        else if (itemstack2.func_77973_b() == Items.field_151100_aR)
-+                        else if (net.minecraftforge.oredict.DyeUtils.metaFromStack(itemstack2).isPresent())
++                        else if (net.minecraftforge.oredict.DyeUtils.isDye(itemstack2))
                          {
                              itemstack1 = itemstack2;
                          }
@@ -36,7 +36,7 @@
                  }
  
 -                ItemStack itemstack3 = BlockShulkerBox.func_190953_b(EnumDyeColor.func_176766_a(itemstack1.func_77960_j()));
-+                ItemStack itemstack3 = BlockShulkerBox.func_190953_b(EnumDyeColor.func_176764_b(net.minecraftforge.oredict.DyeUtils.metaFromStack(itemstack1).getAsInt()));
++                ItemStack itemstack3 = BlockShulkerBox.func_190953_b(net.minecraftforge.oredict.DyeUtils.colorFromStack(itemstack1).get());
  
                  if (itemstack.func_77942_o())
                  {
