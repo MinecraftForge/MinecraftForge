@@ -60,6 +60,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -196,6 +197,24 @@ public class ModelAnimationDebug
             }.setRegistryName(TEST_BLOCK.getRegistryName())
             );
         }
+    }
+
+    public static abstract class CommonProxy
+    {
+        @Nullable
+        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters){ return null; };
+    }
+
+    public static class ServerProxy extends CommonProxy {}
+
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class ClientProxy extends CommonProxy
+    {
+
+        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
+        {
+            return ModelLoaderRegistry.loadASM(location, parameters);
+        }
 
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
@@ -245,24 +264,6 @@ public class ModelAnimationDebug
                 }
             });
         }
-    }
-
-    public static abstract class CommonProxy
-    {
-        @Nullable
-        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters){ return null; };
-    }
-
-    public static class ServerProxy extends CommonProxy {}
-
-    public static class ClientProxy extends CommonProxy
-    {
-
-        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
-        {
-            return ModelLoaderRegistry.loadASM(location, parameters);
-        }
-
     }
 
     private static class ItemAnimationHolder implements ICapabilityProvider

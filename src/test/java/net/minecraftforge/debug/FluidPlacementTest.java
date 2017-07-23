@@ -80,7 +80,11 @@ public class FluidPlacementTest
             );
             MinecraftForge.EVENT_BUS.register(FluidContainer.instance);
         }
+    }
 
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class ClientEventHandler
+    {
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
