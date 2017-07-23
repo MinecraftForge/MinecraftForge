@@ -7,8 +7,11 @@
     "has_wood": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
-        "ores": [
-          { "ore": "plankWood" }
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "plankWood"
+          }
         ]
       }
     },

@@ -19,32 +19,31 @@
 
 package net.minecraftforge.advancements.critereon;
 
-
 import com.google.gson.JsonObject;
-import net.minecraft.util.JsonUtils;
-import org.apache.commons.lang3.ArrayUtils;
-
+import gnu.trove.map.hash.THashMap;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.util.ResourceLocation;
 
-/**
- * An {@link ItemPredicate} that matches oredicts.
- */
-public class OredictItemPredicate extends ItemPredicate
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Function;
+
+public class ItemPredicates
 {
-    private final String ore;
+    private static final Map<ResourceLocation, Function<JsonObject, ItemPredicate>> predicates = new THashMap<>();
 
-    public OredictItemPredicate(String ore)
+    static
     {
-        this.ore = ore;
+        register(new ResourceLocation("forge:ore_dict"), OredictItemPredicate::new);
     }
 
-    public OredictItemPredicate(JsonObject jsonObject) { this(JsonUtils.getString(jsonObject, "ore")); }
-
-    @Override
-    public boolean test(ItemStack stack)
+    public static void register(ResourceLocation rl, Function<JsonObject, ItemPredicate> jsonToPredicate)
     {
-        return !stack.isEmpty() && ArrayUtils.contains(OreDictionary.getOreIDs(stack), OreDictionary.getOreID(ore));
+        predicates.put(rl, jsonToPredicate);
+    }
+
+    public static Map<ResourceLocation, Function<JsonObject, ItemPredicate>> getPredicates()
+    {
+        return Collections.unmodifiableMap(predicates);
     }
 }
