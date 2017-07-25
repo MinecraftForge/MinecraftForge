@@ -89,3 +89,12 @@
      }
  
      public boolean func_70613_aW()
+@@ -890,7 +911,7 @@
+         {
+             ItemStack itemstack = this.func_184582_a(EntityEquipmentSlot.CHEST);
+ 
+-            if (itemstack.func_77973_b() == Items.field_185160_cR && ItemElytra.func_185069_d(itemstack))
++            if (itemstack.func_77973_b() instanceof ItemElytra && ItemElytra.func_185069_d(itemstack))
+             {
+                 this.field_71174_a.func_147297_a(new CPacketEntityAction(this, CPacketEntityAction.Action.START_FALL_FLYING));
+             }

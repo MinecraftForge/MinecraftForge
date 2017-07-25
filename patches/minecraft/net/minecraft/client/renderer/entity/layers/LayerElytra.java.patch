@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/layers/LayerElytra.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/layers/LayerElytra.java
+@@ -29,7 +29,7 @@
+     {
+         ItemStack itemstack = p_177141_1_.func_184582_a(EntityEquipmentSlot.CHEST);
+ 
+-        if (itemstack.func_77973_b() == Items.field_185160_cR)
++        if (itemstack.func_77973_b() instanceof net.minecraft.item.ItemElytra)
+         {
+             GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+             GlStateManager.func_179147_l();
