@@ -39,7 +39,7 @@
      public NonNullList<Ingredient> func_192400_c()
      {
          return this.field_77579_b;
-@@ -137,7 +129,6 @@
+@@ -137,9 +129,36 @@
          return nonnulllist;
      }
  
@@ -47,3 +47,33 @@
      public boolean func_194133_a(int p_194133_1_, int p_194133_2_)
      {
          return p_194133_1_ * p_194133_2_ >= this.field_77579_b.size();
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    public JsonObject toJson()
++    {
++        JsonObject json = new JsonObject();
++        json.addProperty("type", "minecraft:crafting_shapeless");
++        json.addProperty("group", this.func_193358_e());
++        JsonArray ingredients = new JsonArray();
++        for (Ingredient ingredient : this.field_77579_b)
++            ingredients.add(ingredient.toJson());
++        json.add("ingredients", ingredients);
++        JsonObject result = new JsonObject();
++        ItemStack output = this.func_77571_b();
++        result.addProperty("item", output.func_77973_b().getRegistryName().toString());
++        net.minecraft.nbt.NBTTagCompound tmp = new net.minecraft.nbt.NBTTagCompound();
++        output.func_77955_b(tmp);
++        result.addProperty("count", tmp.func_74771_c("Count"));
++        result.addProperty("data", tmp.func_74771_c("Damage"));
++        net.minecraft.nbt.NBTTagCompound compound = tmp.func_74764_b("tag") ? tmp.func_74775_l("tag") : new net.minecraft.nbt.NBTTagCompound();
++        if (tmp.func_74764_b("ForgeCaps"))
++            compound.func_74782_a("ForgeCaps", tmp.func_74775_l("ForgeCaps"));
++        if (compound.func_186856_d() > 0)
++            result.add("nbt", net.minecraftforge.common.crafting.CraftingHelper.getJsonFromTagCompound(compound));
++        json.add("result", result);
++        return json;
++    }
++
++    /* ======================================== FORGE END =====================================*/
+ }

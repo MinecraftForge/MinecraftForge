@@ -23,7 +23,6 @@ import java.util.Iterator;
 import net.minecraft.block.Block;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -31,7 +30,6 @@ import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -142,6 +140,14 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     public boolean canFit(int p_194133_1_, int p_194133_2_)
     {
         return p_194133_1_ * p_194133_2_ >= this.input.size();
+    }
+
+    @Override
+    public JsonObject toJson()
+    {
+        JsonObject json = new JsonObject();
+        
+        return json;
     }
 
     public static ShapelessOreRecipe factory(JsonContext context, JsonObject json)

@@ -20,6 +20,9 @@ package net.minecraftforge.common.crafting;
 
 import javax.annotation.Nullable;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 
@@ -38,5 +41,15 @@ public class IngredientNBT extends Ingredient
         if (input == null)
             return false;
         return ItemStack.areItemStacksEqualUsingNBTShareTag(this.stack, input);
+    }
+    
+    @Override
+    public JsonElement toJson()
+    {
+        JsonObject json = CraftingHelper.serializeItem(this.stack);
+        
+        json.addProperty("type", "minecraft:item_nbt");
+        
+        return json;
     }
 }

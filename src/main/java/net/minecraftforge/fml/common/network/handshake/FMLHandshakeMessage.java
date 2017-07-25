@@ -36,12 +36,14 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.ForgeRegistry;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import net.minecraftforge.registries.RegistryManager;
 
 public abstract class FMLHandshakeMessage {
     public static FMLProxyPacket makeCustomChannelRegistration(Set<String> channels)
@@ -192,6 +194,7 @@ public abstract class FMLHandshakeMessage {
         private Map<ResourceLocation, Integer> ids;
         private Set<ResourceLocation> dummied;
         private Map<ResourceLocation, String> overrides;
+        private ByteBuf extra;
 
         @Override
         public void fromBytes(ByteBuf buffer)
@@ -222,6 +225,8 @@ public abstract class FMLHandshakeMessage {
             {
                 overrides.put(new ResourceLocation(ByteBufUtils.readUTF8String(buffer)), ByteBufUtils.readUTF8String(buffer));
             }
+            
+            this.extra = buffer.copy();
         }
 
         @Override
@@ -249,6 +254,7 @@ public abstract class FMLHandshakeMessage {
                 ByteBufUtils.writeUTF8String(buffer, entry.getKey().toString());
                 ByteBufUtils.writeUTF8String(buffer, entry.getValue().toString());
             }
+            RegistryManager.ACTIVE.getRegistry(this.name).syncCallback(RegistryManager.ACTIVE, new PacketBuffer(buffer), Side.SERVER, false);
         }
 
         public Map<ResourceLocation, Integer> getIdMap()
@@ -269,6 +275,11 @@ public abstract class FMLHandshakeMessage {
         public boolean hasMore()
         {
             return this.hasMore;
+        }
+        
+        public ByteBuf getExtra()
+        {
+            return this.extra;
         }
 
         @Override

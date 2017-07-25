@@ -38,6 +38,7 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.RegistryManager;
 
 /**
  * Packet handshake sequence manager- client side (responding to remote server)
@@ -126,6 +127,8 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
                 snap = Maps.newHashMap();
                 ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(snap);
             }
+            
+            RegistryManager.ACTIVE.getRegistry(pkt.getName()).syncCallback(RegistryManager.ACTIVE, pkt.getExtra(), Side.CLIENT, true);
 
             ForgeRegistry.Snapshot entry = new ForgeRegistry.Snapshot();
             entry.ids.putAll(pkt.getIdMap());

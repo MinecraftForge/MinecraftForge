@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/IRecipe.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/IRecipe.java
-@@ -4,35 +4,33 @@
+@@ -4,36 +4,45 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.NonNullList;
  import net.minecraft.world.World;
@@ -44,3 +44,15 @@
      {
          return "";
      }
++
++    /* ======================================== FORGE START =====================================*/
++    default com.google.gson.JsonObject toJson()
++    {
++        com.google.gson.JsonObject json = new com.google.gson.JsonObject();
++        json.addProperty("type", "minecraft:builtin");
++        json.addProperty("class", this.getClass().getName());
++        return json;
++    }
++
++    /* ======================================== FORGE END   =====================================*/
+ }

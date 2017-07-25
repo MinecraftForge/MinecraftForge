@@ -29,7 +29,6 @@ import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -40,7 +39,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -175,6 +173,14 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
     public boolean canFit(int p_194133_1_, int p_194133_2_)
     {
         return p_194133_1_ >= this.width && p_194133_2_ >= this.height;
+    }
+    
+    @Override
+    public JsonObject toJson()
+    {
+        JsonObject json = new JsonObject();
+        
+        return json;
     }
 
     public static ShapedOreRecipe factory(JsonContext context, JsonObject json)

@@ -21,6 +21,8 @@ package net.minecraftforge.oredict;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.gson.JsonObject;
+
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -34,6 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class OreIngredient extends Ingredient
 {
+    private final String ore;
     private NonNullList<ItemStack> ores;
     private IntList itemIds = null;
     private ItemStack[] array = null;
@@ -41,6 +44,7 @@ public class OreIngredient extends Ingredient
     public OreIngredient(String ore)
     {
         super(0);
+        this.ore = ore;
         ores = OreDictionary.getOres(ore);
     }
 
@@ -112,5 +116,16 @@ public class OreIngredient extends Ingredient
     protected void invalidate()
     {
         this.itemIds = null;
+    }
+
+    @Override
+    public JsonObject toJson()
+    {
+        JsonObject json = new JsonObject();
+        
+        json.addProperty("type", "forge:ore_dict");
+        json.addProperty("ore", this.ore);
+        
+        return json;
     }
 }
