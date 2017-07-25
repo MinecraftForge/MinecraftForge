@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
 
 @EventBusSubscriber
 @Mod (modid = FogColorInsideMaterialTest.MOD_ID, name = "FogColor inside material debug.", version = "1.0", acceptableRemoteVersions = "*")
@@ -60,20 +61,24 @@ public class FogColorInsideMaterialTest
         event.getRegistry().register(new ItemBlock(FLUID_BLOCK).setRegistryName(testFluidRegistryName));
     }
 
-    @SubscribeEvent
-    public static void registerModels(ModelRegistryEvent event)
+    @EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
+    public static class ClientEventHandler
     {
-        ModelResourceLocation fluidLocation = new ModelResourceLocation(testFluidRegistryName, "fluid");
-        ModelLoader.registerItemVariants(FLUID_ITEM);
-        ModelLoader.setCustomMeshDefinition(FLUID_ITEM, stack -> fluidLocation);
-        ModelLoader.setCustomStateMapper(FLUID_BLOCK, new StateMapperBase()
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
         {
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state)
+            ModelResourceLocation fluidLocation = new ModelResourceLocation(testFluidRegistryName, "fluid");
+            ModelLoader.registerItemVariants(FLUID_ITEM);
+            ModelLoader.setCustomMeshDefinition(FLUID_ITEM, stack -> fluidLocation);
+            ModelLoader.setCustomStateMapper(FLUID_BLOCK, new StateMapperBase()
             {
-                return fluidLocation;
-            }
-        });
+                @Override
+                protected ModelResourceLocation getModelResourceLocation(IBlockState state)
+                {
+                    return fluidLocation;
+                }
+            });
+        }
     }
 
 }

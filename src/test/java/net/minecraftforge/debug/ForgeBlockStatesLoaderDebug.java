@@ -77,32 +77,36 @@ public class ForgeBlockStatesLoaderDebug
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
-    public void registerModels(ModelRegistryEvent event)
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class ClientEventHandler
     {
-        //ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
-
-        ModelLoader.setCustomStateMapper(BLOCKS.custom_wall, new IStateMapper()
+        @SubscribeEvent
+        public void registerModels(ModelRegistryEvent event)
         {
-            StateMap stateMap = new StateMap.Builder().withName(BlockWall.VARIANT).withSuffix("_wall").build();
+            //ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
 
-            @Override
-            public Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block)
+            ModelLoader.setCustomStateMapper(BLOCKS.custom_wall, new IStateMapper()
             {
-                Map<IBlockState, ModelResourceLocation> map = stateMap.putStateModelLocations(block);
-                Map<IBlockState, ModelResourceLocation> newMap = Maps.newHashMap();
+                StateMap stateMap = new StateMap.Builder().withName(BlockWall.VARIANT).withSuffix("_wall").build();
 
-                for (Entry<IBlockState, ModelResourceLocation> e : map.entrySet())
+                @Override
+                public Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block)
                 {
-                    ModelResourceLocation loc = e.getValue();
-                    newMap.put(e.getKey(), new ModelResourceLocation(ASSETS + loc.getResourcePath(), loc.getVariant()));
-                }
+                    Map<IBlockState, ModelResourceLocation> map = stateMap.putStateModelLocations(block);
+                    Map<IBlockState, ModelResourceLocation> newMap = Maps.newHashMap();
 
-                return newMap;
-            }
-        });
-        ModelLoader.setCustomModelResourceLocation(ITEMS.custom_wall, 0, new ModelResourceLocation(ASSETS + "cobblestone_wall", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(ITEMS.custom_wall, 1, new ModelResourceLocation(ASSETS + "mossy_cobblestone_wall", "inventory"));
+                    for (Entry<IBlockState, ModelResourceLocation> e : map.entrySet())
+                    {
+                        ModelResourceLocation loc = e.getValue();
+                        newMap.put(e.getKey(), new ModelResourceLocation(ASSETS + loc.getResourcePath(), loc.getVariant()));
+                    }
+
+                    return newMap;
+                }
+            });
+            ModelLoader.setCustomModelResourceLocation(ITEMS.custom_wall, 0, new ModelResourceLocation(ASSETS + "cobblestone_wall", "inventory"));
+            ModelLoader.setCustomModelResourceLocation(ITEMS.custom_wall, 1, new ModelResourceLocation(ASSETS + "mossy_cobblestone_wall", "inventory"));
+        }
     }
 
     // this block is never actually used, it's only needed for the error message on load to see the variant it maps to
