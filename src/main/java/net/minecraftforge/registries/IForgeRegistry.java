@@ -28,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.netty.buffer.ByteBuf;
 /**
  * Main interface for the registry system. Use this to query the registry system.
  *
@@ -85,6 +86,17 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     interface CreateCallback<V extends IForgeRegistryEntry<V>>
     {
         void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage);
+    }
+
+    /**
+     * Callback fired when a registry reads or writes data to or from a RegistryData packet. 
+     * onWrite is called before the packet is sent to the client and onRead is called before the client checks if the registry entries are available
+     */
+    interface SyncCallback<V extends IForgeRegistryEntry<V>>
+    {
+        void onWrite(IForgeRegistryInternal<V> owner, RegistryManager stage, ByteBuf buffer);
+
+        void onRead(IForgeRegistryInternal<V> owner, RegistryManager stage, ByteBuf buffer);
     }
 
     /**

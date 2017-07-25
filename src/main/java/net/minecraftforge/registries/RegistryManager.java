@@ -75,7 +75,7 @@ public class RegistryManager
     }
 
     <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(ResourceLocation name, Class<V> type, ResourceLocation defaultKey, int min, int max,
-            @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable CreateCallback<V> create,
+            @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable CreateCallback<V> create, @Nullable SyncCallback<V> sync,
             boolean persisted, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory)
     {
         Set<Class<?>> parents = Sets.newHashSet();
@@ -87,7 +87,7 @@ public class RegistryManager
             FMLLog.log.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type", foundType, superTypes.get(foundType), name, type, type);
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
-        ForgeRegistry<V> reg = new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, this, allowOverrides, isModifiable, dummyFactory);
+        ForgeRegistry<V> reg = new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, sync, this, allowOverrides, isModifiable, dummyFactory);
         registries.put(name, reg);
         superTypes.put(type, name);
         if (persisted)

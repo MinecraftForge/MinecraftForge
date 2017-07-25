@@ -23,6 +23,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.*;
 
@@ -38,6 +39,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private List<AddCallback<T>> addCallback = Lists.newArrayList();
     private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
+    private List<SyncCallback<T>> syncCallback = Lists.newArrayList();
     private boolean saveToDisc = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
@@ -82,6 +84,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             this.add((ClearCallback<T>)inst);
         if (inst instanceof CreateCallback)
             this.add((CreateCallback<T>)inst);
+        if (inst instanceof SyncCallback)
+            this.add((SyncCallback<T>)inst);
         if (inst instanceof DummyFactory)
             this.set((DummyFactory<T>)inst);
         return this;
@@ -102,6 +106,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public RegistryBuilder<T> add(CreateCallback<T> create)
     {
         this.createCallback.add(create);
+        return this;
+    }
+
+    public RegistryBuilder<T> add(SyncCallback<T> sync)
+    {
+        this.syncCallback.add(sync);
         return this;
     }
 
@@ -132,7 +142,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public IForgeRegistry<T> create()
     {
         return RegistryManager.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                getAdd(), getClear(), getCreate(), saveToDisc, allowOverrides, allowModifications, dummyFactory);
+                getAdd(), getClear(), getCreate(), getSync(), saveToDisc, allowOverrides, allowModifications, dummyFactory);
     }
 
     @Nullable
@@ -177,6 +187,32 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         {
             for (CreateCallback<T> cb : this.createCallback)
                 cb.onCreate(owner, stage);
+        };
+    }
+
+    @Nullable
+    private SyncCallback<T> getSync()
+    {
+        if (syncCallback.isEmpty())
+            return null;
+        if (syncCallback.size() == 1)
+            return syncCallback.get(0);
+
+        return new SyncCallback<T>()
+        {
+            @Override
+            public void onWrite(IForgeRegistryInternal<T> owner, RegistryManager stage, ByteBuf buffer)
+            {
+                for (SyncCallback<T> sb : RegistryBuilder.this.syncCallback)
+                    sb.onWrite(owner, stage, buffer);
+            }
+
+            @Override
+            public void onRead(IForgeRegistryInternal<T> owner, RegistryManager stage, ByteBuf buffer)
+            {
+                for (SyncCallback<T> sb : RegistryBuilder.this.syncCallback)
+                    sb.onRead(owner, stage, buffer);
+            }
         };
     }
 }
