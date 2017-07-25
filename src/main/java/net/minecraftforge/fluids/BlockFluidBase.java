@@ -37,6 +37,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -136,6 +137,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     protected int maxScaledLight = 0;
 
     protected final String fluidName;
+    protected ResourceLocation overlayTexture;
 
     /**
      * This is the fluid used in the constructor. Use this reference to configure things
@@ -156,6 +158,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         this.maxScaledLight = fluid.luminosity;
         this.tickRate = fluid.viscosity / 200;
         this.densityDir = fluid.density > 0 ? -1 : 1;
+        this.overlayTexture = fluid.getOverlay();
         fluid.setBlock(this);
 
         this.definedFluid = fluid;

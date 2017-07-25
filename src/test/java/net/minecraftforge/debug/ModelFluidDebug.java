@@ -35,7 +35,7 @@ public class ModelFluidDebug
     @SidedProxy
     public static CommonProxy proxy;
 
-    public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow"));
+    public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow"), new ResourceLocation(ForgeVersion.MOD_ID, "textures/blocks/milk_overlay.png"));
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -135,7 +135,7 @@ public class ModelFluidDebug
 
         private TestFluid()
         {
-            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"), new ResourceLocation("textures/misc/underwater.png"));
         }
 
         @Override
@@ -152,7 +152,7 @@ public class ModelFluidDebug
 
         private TestGas()
         {
-            super(name, new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow"));
+            super(name, new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow"), new ResourceLocation(ForgeVersion.MOD_ID, "textures/blocks/testgas_overlay.png"));
             density = -1000;
             isGaseous = true;
         }

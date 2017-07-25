@@ -42,7 +42,7 @@
              EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
-@@ -452,11 +455,13 @@
+@@ -452,24 +455,29 @@
                  if (iblockstate1.func_191058_s())
                  {
                      iblockstate = iblockstate1;
@@ -56,8 +56,10 @@
                  this.func_178108_a(p_78447_1_, this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
              }
          }
-@@ -465,11 +470,13 @@
+ 
+         if (!this.field_78455_a.field_71439_g.func_175149_v())
          {
++            if (forgeFluidOverlay(p_78447_1_))
              if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
              {
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_))
@@ -70,7 +72,24 @@
                  this.func_78442_d(p_78447_1_);
              }
          }
-@@ -591,8 +598,8 @@
+@@ -506,10 +514,14 @@
+ 
+     private void func_78448_c(float p_78448_1_)
+     {
+-        this.field_78455_a.func_110434_K().func_110577_a(field_110929_d);
++        renderWaterOverlayTexture(p_78448_1_, field_110929_d);
++    }
++    private void renderWaterOverlayTexture(float partialTicks, ResourceLocation texture)
++    {
++        this.field_78455_a.func_110434_K().func_110577_a(texture);
+         Tessellator tessellator = Tessellator.func_178181_a();
+         VertexBuffer vertexbuffer = tessellator.func_178180_c();
+-        float f = this.field_78455_a.field_71439_g.func_70013_c(p_78448_1_);
++        float f = this.field_78455_a.field_71439_g.func_70013_c(partialTicks);
+         GlStateManager.func_179131_c(f, f, f, 0.5F);
+         GlStateManager.func_179147_l();
+         GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+@@ -591,8 +603,8 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);
@@ -81,3 +100,23 @@
          }
  
          if (this.field_187469_f < 0.1F)
+@@ -617,4 +629,19 @@
+             this.field_187471_h = 0.0F;
+         }
+     }
++
++    private boolean forgeFluidOverlay(float partialTicks)
++    {
++        Block viewBlock = ActiveRenderInfo.func_186703_a(this.field_78455_a.field_71441_e, this.field_78455_a.func_175606_aa(), partialTicks).func_177230_c();
++        if (viewBlock instanceof net.minecraftforge.fluids.IFluidBlock)
++        {
++            ResourceLocation overlay = ((net.minecraftforge.fluids.IFluidBlock)viewBlock).getFluid().getOverlay();
++            if (overlay != null && !net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, partialTicks))
++            {
++                this.renderWaterOverlayTexture(partialTicks, overlay);
++            }
++            return false;
++        }
++        return true;
++    }
+ }

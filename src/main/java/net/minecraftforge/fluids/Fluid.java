@@ -64,6 +64,7 @@ public class Fluid
 
     protected final ResourceLocation still;
     protected final ResourceLocation flowing;
+    protected final ResourceLocation overlay;
 
     private SoundEvent fillSound;
     private SoundEvent emptySound;
@@ -126,12 +127,26 @@ public class Fluid
      */
     protected Block block = null;
 
+    /**
+     * @deprecated please specify an overlay texture that will be rendered on the screen when a player is submerged in your fluid. 
+     */
+    @Deprecated
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing)
     {
         this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
         this.unlocalizedName = fluidName;
         this.still = still;
         this.flowing = flowing;
+        this.overlay = new ResourceLocation("textures/misc/underwater.png");
+    }
+    
+    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, ResourceLocation overlay)
+    {
+        this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
+        this.unlocalizedName = fluidName;
+        this.still = still;
+        this.flowing = flowing;
+        this.overlay = overlay;
     }
 
     public Fluid setUnlocalizedName(String unlocalizedName)
@@ -322,6 +337,11 @@ public class Fluid
     public ResourceLocation getFlowing()
     {
         return flowing;
+    }
+
+    public ResourceLocation getOverlay()
+    {
+        return overlay;
     }
 
     public SoundEvent getFillSound()
