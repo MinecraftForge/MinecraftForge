@@ -59,3 +59,64 @@
      public int func_192404_g()
      {
          return this.field_77577_c;
+@@ -382,4 +371,60 @@
+             return new ItemStack(item, j, i);
+         }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    public JsonObject toJson()
++    {
++        JsonObject json = new JsonObject();
++        json.addProperty("type", "minecraft:crafting_shaped");
++        json.addProperty("group", this.func_193358_e());
++        char[][] rows = new char[this.field_77577_c][this.field_77576_b];
++        int x = 0;
++        int y = 0;
++        Map<Ingredient, Character> ingredients = Maps.newHashMap();
++        JsonObject key = new JsonObject();
++        char c = Character.MIN_VALUE;
++        for (Ingredient ingredient : this.field_77574_d)
++        {
++            if (ingredient.func_193365_a().length > 0)
++            {
++                if (c == ' ')
++                    c++;
++                char k = c;
++                ingredients.computeIfAbsent(ingredient, (ing) -> 
++                {
++                    key.add(String.valueOf(k), ingredient.toJson());
++                    return k;
++                });
++                c++;
++            }
++            rows[y][x++] = ingredient.func_193365_a().length > 0 ? ingredients.get(ingredient) : ' ';
++            if (x == this.field_77576_b)
++            {
++                y++;
++                x = 0;
++            }
++        }
++        JsonArray pattern = new JsonArray();
++        for (char[] row : rows)
++            pattern.add(String.copyValueOf(row));
++        json.add("pattern", pattern);
++        json.add("key", key);
++        JsonObject result = new JsonObject();
++        ItemStack output = this.func_77571_b();
++        result.addProperty("item", output.func_77973_b().getRegistryName().toString());
++        net.minecraft.nbt.NBTTagCompound tmp = new net.minecraft.nbt.NBTTagCompound();
++        output.func_77955_b(tmp);
++        result.addProperty("count", tmp.func_74771_c("Count"));
++        result.addProperty("data", tmp.func_74771_c("Damage"));
++        net.minecraft.nbt.NBTTagCompound compound = tmp.func_74764_b("tag") ? tmp.func_74775_l("tag") : new net.minecraft.nbt.NBTTagCompound();
++        if (tmp.func_74764_b("ForgeCaps"))
++            compound.func_74782_a("ForgeCaps", tmp.func_74775_l("ForgeCaps"));
++        if (compound.func_186856_d() > 0)
++            result.add("nbt", net.minecraftforge.common.crafting.CraftingHelper.getJsonFromTagCompound(compound));
++        json.add("result", result);
++        return json;
++    }
++
++    /* ======================================== FORGE END =====================================*/
+ }

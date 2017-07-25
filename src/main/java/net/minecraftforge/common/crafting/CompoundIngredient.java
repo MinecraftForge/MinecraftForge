@@ -8,6 +8,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
@@ -80,5 +82,14 @@ public class CompoundIngredient extends Ingredient
         this.itemIds = null;
         this.stacks = null;
         //Shouldn't need to invalidate children as this is only called form invalidateAll..
+    }
+    
+    @Override
+    public JsonElement toJson()
+    {
+        JsonArray json = new JsonArray();
+        for (Ingredient ingredient : this.children)
+            json.add(ingredient.toJson());
+        return json;
     }
 }

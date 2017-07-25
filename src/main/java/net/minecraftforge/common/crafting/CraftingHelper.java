@@ -21,13 +21,13 @@ package net.minecraftforge.common.crafting;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,10 +39,10 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -54,8 +54,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -64,15 +68,22 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
@@ -89,6 +100,7 @@ public class CraftingHelper {
     private static Map<ResourceLocation, IConditionFactory> conditions = Maps.newHashMap();
     private static Map<ResourceLocation, IIngredientFactory> ingredients = Maps.newHashMap();
     private static Map<ResourceLocation, IRecipeFactory> recipes = Maps.newHashMap();
+    private static Map<String, JsonObject[]> constants = Maps.newHashMap();
 
     static {
         init();
@@ -263,7 +275,74 @@ public class CraftingHelper {
 
         return new ItemStack(item, 1, JsonUtils.getInt(json, "data", 0));
     }
+    
+    public static JsonObject serializeItemBasic(ItemStack stack)
+    {
+        JsonObject json = new JsonObject();
+        
+        json.addProperty("item", stack.getItem().getRegistryName().toString());
+        json.addProperty("count", stack.getCount());
+        json.addProperty("data", stack.getMetadata());
+        
+        return json;
+    }
+    
+    public static JsonObject serializeItem(ItemStack stack)
+    {
+        JsonObject json = serializeItemBasic(stack);
 
+        NBTTagCompound tmp = new NBTTagCompound();
+        stack.writeToNBT(tmp);
+        NBTTagCompound compound = tmp.hasKey("tag") ? tmp.getCompoundTag("tag") : new NBTTagCompound();
+        if (tmp.hasKey("ForgeCaps"))
+            compound.setTag("ForgeCaps", tmp.getCompoundTag("ForgeCaps"));
+        if (compound.getSize() > 0)
+            json.add("nbt", CraftingHelper.getJsonFromTagCompound(compound));
+        
+        return json;
+    }
+
+    public static JsonObject getJsonFromTagCompound(NBTTagCompound compound)
+    {
+        JsonObject json = new JsonObject();
+        for (String key : compound.getKeySet())
+        {
+            NBTBase nbt = compound.getTag(key);
+            switch (nbt.getId())
+            {
+            case 1: json.addProperty(key, ((NBTPrimitive)nbt).getByte()); break;
+            case 2: json.addProperty(key, ((NBTPrimitive)nbt).getShort()); break;
+            case 3: json.addProperty(key, ((NBTPrimitive)nbt).getInt()); break;
+            case 4: json.addProperty(key, ((NBTPrimitive)nbt).getLong()); break;
+            case 5: json.addProperty(key, ((NBTPrimitive)nbt).getFloat()); break;
+            case 6: json.addProperty(key, ((NBTPrimitive)nbt).getDouble()); break;
+            case 8: json.addProperty(key, ((NBTTagString)nbt).getString()); break;
+            case 9: json.add(key, getJsonFromTagList((NBTTagList)nbt));
+            case 10: json.add(key, getJsonFromTagCompound((NBTTagCompound)nbt)); break;
+            }
+        }
+        return json;
+    }
+    
+    public static JsonArray getJsonFromTagList(NBTTagList list)
+    {
+        JsonArray json = new JsonArray();
+        for (NBTBase nbt : list)
+            switch (nbt.getId())
+            {
+            case 1: json.add(((NBTPrimitive)nbt).getByte()); break;
+            case 2: json.add(((NBTPrimitive)nbt).getShort()); break;
+            case 3: json.add(((NBTPrimitive)nbt).getInt()); break;
+            case 4: json.add(((NBTPrimitive)nbt).getLong()); break;
+            case 5: json.add(((NBTPrimitive)nbt).getFloat()); break;
+            case 6: json.add(((NBTPrimitive)nbt).getDouble()); break;
+            case 8: json.add(((NBTTagString)nbt).getString()); break;
+            case 9: json.add(getJsonFromTagList((NBTTagList)nbt));
+            case 10: json.add(getJsonFromTagCompound((NBTTagCompound)nbt)); break;
+            }
+        return json;
+    }
+    
     public static class ShapedPrimer {
         public int height, width;
         public boolean mirrored = true;
@@ -401,6 +480,34 @@ public class CraftingHelper {
         if (type.isEmpty())
             throw new JsonSyntaxException("Recipe type can not be an empty string");
 
+        if("minecraft:builtin".equals(type))
+        {
+            String classs = JsonUtils.getString(json, "class");
+            if (classs.isEmpty())
+                throw new JsonSyntaxException("Builtin recipe class can not be an empty string");
+            
+            try
+            {
+                Class<?> c = Class.forName(classs);
+                if (!IRecipe.class.isAssignableFrom(c))
+                    throw new JsonSyntaxException(classs + " does not implement IRecipe");
+                
+                return (IRecipe)c.newInstance();
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new JsonSyntaxException("Could not find class: " + classs);
+            }
+            catch (InstantiationException e)
+            {
+                throw new JsonSyntaxException("Could not find constructor: " + classs + "()");
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new JsonSyntaxException("Could not access constructor: " + classs + "()");
+            }
+        }
+        
         IRecipeFactory factory = recipes.get(new ResourceLocation(type));
         if (factory == null)
             throw new JsonSyntaxException("Unknown recipe type: " + type);
@@ -583,6 +690,7 @@ public class CraftingHelper {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T getClassInstance(String clsName, Class<T> expected)
     {
         try
@@ -602,28 +710,45 @@ public class CraftingHelper {
         }
     }
 
-    public static void loadRecipes(boolean revertFrozen)
+    public static void reload(WorldServer world)
     {
         //TODO: If this errors in ServerInit it freezes the client at loading world, find a way to pop that up?
         //TODO: Figure out how to remove recipes, and override them. This relies on cpw to help.
         //For now this is only done one after mod init, I want to move this to ServerInit and re-do it many times.
         init();
-        ForgeRegistry<IRecipe> reg = (ForgeRegistry<IRecipe>)ForgeRegistries.RECIPES;
-        //reg.unfreeze();
-        if (DEBUG_LOAD_MINECRAFT)
-            reg.clear();
-        else if (revertFrozen)
-            GameData.revert(RegistryManager.FROZEN, GameData.RECIPES, false);
-        //ModContainer old = Loader.instance().activeModContainer();
-        Loader.instance().setActiveModContainer(null);
-        Loader.instance().getActiveModList().forEach(CraftingHelper::loadFactories);
-        Loader.instance().getActiveModList().forEach(CraftingHelper::loadRecipes);
-        Loader.instance().setActiveModContainer(null);
+        if (world.playerEntities.isEmpty())
+        {
+            ForgeRegistry<IRecipe> reg = (ForgeRegistry<IRecipe>)ForgeRegistries.RECIPES;
+            boolean frozen = reg.isLocked();
+            GameData.revert(RegistryManager.VANILLA, GameData.RECIPES, false);
+            //ModContainer old = Loader.instance().activeModContainer();
+            Loader.instance().setActiveModContainer(null);
+            Loader.instance().getActiveModList().forEach(CraftingHelper::loadFactories);
+            Loader.instance().getActiveModList().forEach((mod) -> CraftingHelper.loadRecipes(mod.getSource(), "assets/" + mod.getModId() + "/recipes", mod.getModId()));
+            File customRecipesSource = new File(new File(world.getSaveHandler().getWorldDirectory(), "data"), "recipes");
+            customRecipesSource.mkdirs();
+            for (File source : customRecipesSource.listFiles())
+                if (source.isDirectory())
+                {
+                    String modid = FilenameUtils.getName(source.toString());
+                    CraftingHelper.loadRecipes(customRecipesSource, modid, modid);
+                }
+            Loader.instance().setActiveModContainer(null);
 
-        GameData.fireRegistryEvents(rl -> rl.equals(GameData.RECIPES));
+            GameData.fireRegistryEvents(rl -> rl.equals(GameData.RECIPES));
 
-        //reg.freeze();
-        FMLCommonHandler.instance().resetClientRecipeBook();
+            if (frozen)
+                reg.freeze();
+            
+            FMLCommonHandler.instance().resetClientRecipeBook();
+        }
+        else
+        {
+            for (EntityPlayer player : world.playerEntities)
+                if (player.canUseCommand(3, "reload"))
+                    player.sendMessage(new TextComponentString("All players must be logged off before reloading recipes"));
+            FMLLog.log.info("All players must be logged off before reloading recipes");
+        }
     }
 
     private static void loadFactories(ModContainer mod)
@@ -661,11 +786,11 @@ public class CraftingHelper {
         }
     }
 
-    private static boolean loadRecipes(ModContainer mod)
+    private static boolean loadRecipes(File source, String base, String modid)
     {
-        JsonContext ctx = new JsonContext(mod.getModId());
+        JsonContext ctx = new JsonContext(modid);
 
-        return findFiles(mod, "assets/" + mod.getModId() + "/recipes",
+        return findFiles(source, modid, base,
             root ->
             {
                 Path fPath = root.resolve("_constants.json");
@@ -677,6 +802,7 @@ public class CraftingHelper {
                         reader = Files.newBufferedReader(fPath);
                         JsonObject[] json = JsonUtils.fromJson(GSON, reader, JsonObject[].class);
                         ctx.loadConstants(json);
+                        constants.put(ctx.getModId(), json);
                     }
                     catch (IOException e)
                     {
@@ -692,14 +818,14 @@ public class CraftingHelper {
             },
             (root, file) ->
             {
-                Loader.instance().setActiveModContainer(mod);
+                Loader.instance().setActiveModContainer(Loader.instance().getIndexedModList().get(modid));
 
                 String relative = root.relativize(file).toString();
                 if (!"json".equals(FilenameUtils.getExtension(file.toString())) || relative.startsWith("_"))
                     return true;
 
                 String name = FilenameUtils.removeExtension(relative).replaceAll("\\\\", "/");
-                ResourceLocation key = new ResourceLocation(ctx.getModId(), name);
+                ResourceLocation key = new ResourceLocation(modid, name);
 
                 BufferedReader reader = null;
                 try
@@ -709,7 +835,7 @@ public class CraftingHelper {
                     if (json.has("conditions") && !CraftingHelper.processConditions(JsonUtils.getJsonArray(json, "conditions"), ctx))
                         return true;
                     IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
-                    ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
+                    ForgeRegistries.RECIPES.register(recipe.setRegistryName(Loader.instance().activeModContainer() == null ? new ResourceLocation("minecraft", "custom/" + modid + "/" + name) : key));
                 }
                 catch (JsonParseException e)
                 {
@@ -731,18 +857,17 @@ public class CraftingHelper {
     }
 
 
-    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor)
+    public static boolean findFiles(File source, String modid, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor)
     {
-        return findFiles(mod, base, preprocessor, processor, false);
+        return findFiles(source, modid, base, preprocessor, processor, false);
     }
-    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot)
+    public static boolean findFiles(File source, String modid, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot)
     {
         FileSystem fs = null;
         try
         {
-            File source = mod.getSource();
 
-            if ("minecraft".equals(mod.getModId()))
+            if ("minecraft".equals(modid))
             {
                 if (!DEBUG_LOAD_MINECRAFT)
                     return true;
@@ -797,9 +922,10 @@ public class CraftingHelper {
                 }
                 catch (IOException e)
                 {
-                    FMLLog.log.error("Error iterating filesystem for: {}", mod.getModId(), e);
+                    FMLLog.log.error("Error iterating filesystem for: {}", modid, e);
                     return false;
                 }
+                
 
                 while (itr != null && itr.hasNext())
                 {
@@ -814,6 +940,73 @@ public class CraftingHelper {
         finally
         {
             IOUtils.closeQuietly(fs);
+        }
+    }
+    
+    public static void readRecipes(ByteBuf buffer)
+    {
+        ForgeRegistry<IRecipe> reg = (ForgeRegistry<IRecipe>)ForgeRegistries.RECIPES;
+
+        boolean frozen = reg.isLocked();
+        reg.unfreeze();
+        
+        reg.clear();
+        constants.clear();
+        int mods = buffer.readInt();
+        for (int i = 0; i < mods; i++)
+        {
+            String modid = ByteBufUtils.readUTF8String(buffer);
+            JsonObject[] constants = new JsonObject[buffer.readInt()];
+            for (int j = 0; j < constants.length; j++)
+            {
+                String s = ByteBufUtils.readUTF8String(buffer);
+                constants[j] = Streams.parse(new JsonReader(new StringReader(s))).getAsJsonObject();
+            }
+            CraftingHelper.constants.put(modid, constants);
+        }
+        int size = buffer.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            ResourceLocation registry_name = new ResourceLocation(ByteBufUtils.readUTF8String(buffer));
+            JsonContext context = new JsonContext(registry_name.getResourceDomain());
+            JsonObject[] constants = CraftingHelper.constants.get(context.getModId());
+            context.loadConstants(constants == null ? new JsonObject[0] : constants);
+            ForgeRegistries.RECIPES.register(CraftingHelper.getRecipe(GSON.fromJson(ByteBufUtils.readUTF8String(buffer), JsonObject.class), context).setRegistryName(registry_name));
+        }
+        
+        if (frozen)
+            reg.freeze();
+    }
+    
+    public static void writeRecipes(ByteBuf buffer)
+    {
+        Set<String> modids = Sets.newHashSet();
+        Map<String, JsonObject[]> constantsMap = Maps.newHashMap();
+        Loader.instance().getActiveModList().forEach((mod) ->
+        {
+            String modid = mod.getModId();
+            JsonObject[] constants = CraftingHelper.constants.get(modid);
+            
+            if (constants != null && constants.length > 0)
+            {
+                modids.add(modid);
+                constantsMap.put(modid, constants == null ? new JsonObject[0] : constants);
+            }
+        });
+        buffer.writeInt(modids.size());
+        for (String modid : modids)
+        {
+            ByteBufUtils.writeUTF8String(buffer, modid);
+            JsonObject[] constants = constantsMap.get(modid);
+            buffer.writeInt(constants.length);
+            for (JsonObject constant : constants)
+                ByteBufUtils.writeUTF8String(buffer, GSON.toJson(constant));
+        }
+        buffer.writeInt(ForgeRegistries.RECIPES.getValues().size());
+        for (IRecipe recipe : ForgeRegistries.RECIPES)
+        {
+            ByteBufUtils.writeUTF8String(buffer, recipe.getRegistryName().toString());
+            ByteBufUtils.writeUTF8String(buffer, GSON.toJson(recipe.toJson()));
         }
     }
 }

@@ -31,7 +31,7 @@
      public ItemStack[] func_193365_a()
      {
          return this.field_193371_b;
-@@ -110,4 +116,16 @@
+@@ -110,4 +116,37 @@
  
          return this.field_194140_c;
      }
@@ -47,4 +47,25 @@
 +    {
 +        this.field_194140_c = null;
 +    }
++
++    /* ======================================== FORGE START =====================================*/
++    public com.google.gson.JsonElement toJson()
++    {
++        if (this.field_193371_b.length > 0)
++        {
++            if (this.field_193371_b.length == 1)
++            {
++                com.google.gson.JsonObject json = net.minecraftforge.common.crafting.CraftingHelper.serializeItem(this.field_193371_b[0]);
++                json.addProperty("type", "minecraft:item");
++                return json;
++            }
++            com.google.gson.JsonArray json = new com.google.gson.JsonArray();
++            for (ItemStack stack : this.field_193371_b)
++                json.add(net.minecraftforge.common.crafting.CraftingHelper.serializeItemBasic(stack));
++            return json;
++        }
++        return field_193370_a.toJson();
++    }
++
++    /* ======================================== FORGE END   =====================================*/
  }

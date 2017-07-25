@@ -28,6 +28,9 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.relauncher.Side;
+
 /**
  * Main interface for the registry system. Use this to query the registry system.
  *
@@ -85,6 +88,14 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     interface CreateCallback<V extends IForgeRegistryEntry<V>>
     {
         void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage);
+    }
+
+    /**
+     * Callback fired when the registry attempting to sync between the client and server.
+     */
+    interface SyncCallback<V extends IForgeRegistryEntry<V>>
+    {
+        void onSync(IForgeRegistryInternal<V> owner, RegistryManager stage, ByteBuf buffer, Side side, boolean reading);
     }
 
     /**

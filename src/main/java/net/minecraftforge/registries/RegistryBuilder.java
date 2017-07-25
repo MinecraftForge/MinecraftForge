@@ -23,7 +23,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry.*;
 
 import javax.annotation.Nullable;
@@ -38,6 +40,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private List<AddCallback<T>> addCallback = Lists.newArrayList();
     private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
+    private List<SyncCallback<T>> syncCallback = Lists.newArrayList();
     private boolean saveToDisc = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
@@ -82,6 +85,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             this.add((ClearCallback<T>)inst);
         if (inst instanceof CreateCallback)
             this.add((CreateCallback<T>)inst);
+        if (inst instanceof SyncCallback)
+            this.add((SyncCallback<T>)inst);
         if (inst instanceof DummyFactory)
             this.set((DummyFactory<T>)inst);
         return this;
@@ -102,6 +107,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public RegistryBuilder<T> add(CreateCallback<T> create)
     {
         this.createCallback.add(create);
+        return this;
+    }
+
+    public RegistryBuilder<T> add(SyncCallback<T> sync)
+    {
+        this.syncCallback.add(sync);
         return this;
     }
 
@@ -132,7 +143,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public IForgeRegistry<T> create()
     {
         return RegistryManager.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                getAdd(), getClear(), getCreate(), saveToDisc, allowOverrides, allowModifications, dummyFactory);
+                getAdd(), getClear(), getCreate(), getSync(), saveToDisc, allowOverrides, allowModifications, dummyFactory);
     }
 
     @Nullable
@@ -177,6 +188,20 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         {
             for (CreateCallback<T> cb : this.createCallback)
                 cb.onCreate(owner, stage);
+        };
+    }
+    
+    private SyncCallback<T> getSync()
+    {
+        if (syncCallback.isEmpty())
+            return null;
+        if (syncCallback.size() == 1)
+            return syncCallback.get(0);
+
+        return (owner, stage, buffer, side, reading) ->
+        {
+            for (SyncCallback<T> sb : this.syncCallback)
+                sb.onSync(owner, stage, buffer, side, reading);
         };
     }
 }

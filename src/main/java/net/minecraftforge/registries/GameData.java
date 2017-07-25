@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.state.IBlockState;
@@ -42,6 +43,7 @@ import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
@@ -57,6 +59,7 @@ import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfessio
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 
+import net.minecraftforge.fml.relauncher.Side;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -128,7 +131,7 @@ public class GameData
         makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).create();
         makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).create();
         makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
-        makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().allowModification().create();
+        makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).addCallback(RecipeCallbacks.INSTANCE).disableSaving().allowModification().create();
         makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
         entityRegistry = (ForgeRegistry<EntityEntry>)makeRegistry(ENTITIES, EntityEntry.class, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
     }
@@ -258,7 +261,7 @@ public class GameData
     {
         FMLLog.log.debug("Reverting {} to {}", registry, state.getName());
         final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(registry);
-        loadRegistry(registry, RegistryManager.FROZEN, RegistryManager.ACTIVE, clazz, lock);
+        loadRegistry(registry, state, RegistryManager.ACTIVE, clazz, lock);
         FMLLog.log.debug("Reverting complete");
     }
 
@@ -432,6 +435,24 @@ public class GameData
         {
             if (entry.getEgg() != null)
                 EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
+        }
+    }
+
+    private static class RecipeCallbacks implements IForgeRegistry.SyncCallback<IRecipe>
+    {
+        static final RecipeCallbacks INSTANCE = new RecipeCallbacks();
+        
+        @Override
+        public void onSync(IForgeRegistryInternal<IRecipe> owner, RegistryManager stage, ByteBuf buffer, Side side, boolean reading)
+        {
+            if(reading && side == Side.CLIENT)
+            {
+                CraftingHelper.readRecipes(buffer);
+            }
+            else if(!reading && side == Side.SERVER)
+            {
+                CraftingHelper.writeRecipes(buffer);
+            }
         }
     }
 

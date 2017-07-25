@@ -1267,7 +1267,7 @@ public class ForgeHooks
 
     private static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map, ModContainer mod)
     {
-        return CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/advancements", null,
+        return CraftingHelper.findFiles(mod.getSource(), mod.getModId(), "assets/" + mod.getModId() + "/advancements", null,
             (root, file) ->
             {
 
