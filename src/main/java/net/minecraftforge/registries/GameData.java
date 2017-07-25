@@ -258,7 +258,7 @@ public class GameData
     {
         FMLLog.log.debug("Reverting {} to {}", registry, state.getName());
         final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(registry);
-        loadRegistry(registry, RegistryManager.FROZEN, RegistryManager.ACTIVE, clazz, lock);
+        loadRegistry(registry, state, RegistryManager.ACTIVE, clazz, lock);
         FMLLog.log.debug("Reverting complete");
     }
 
