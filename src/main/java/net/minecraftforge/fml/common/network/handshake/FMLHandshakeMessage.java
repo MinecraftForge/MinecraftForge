@@ -261,6 +261,11 @@ public abstract class FMLHandshakeMessage {
             return dummied;
         }
 
+        public Map<ResourceLocation, String> getOverrides()
+        {
+            return overrides;
+        }
+
         public ResourceLocation getName()
         {
             return this.name;
