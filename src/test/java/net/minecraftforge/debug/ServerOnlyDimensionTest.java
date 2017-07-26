@@ -32,7 +32,7 @@ public class ServerOnlyDimensionTest
             return;
         }
 
-        DimensionType dimensionType = DimensionType.register("forge_serveronlytest", "_serveronlytest", 100, ServerOnlyOverworldClone.class, false);
+        DimensionType dimensionType = DimensionType.register("forge_serveronlytest", "_serveronlytest", DIMENSION_ID, ServerOnlyOverworldClone.class, false);
         DimensionManager.registerDimension(DIMENSION_ID, dimensionType, 0);
     }
 
