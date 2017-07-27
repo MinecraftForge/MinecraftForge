@@ -218,7 +218,13 @@ public class CraftingHelper {
             // Lets hope this works? Needs test
             try
             {
-                NBTTagCompound nbt = JsonToNBT.getTagFromJson(GSON.toJson(json.get("nbt")));
+                JsonElement element = json.get("nbt");
+                NBTTagCompound nbt;
+                if(element.isJsonObject())
+                    nbt = JsonToNBT.getTagFromJson(GSON.toJson(element));
+                else
+                    nbt = JsonToNBT.getTagFromJson(element.getAsString());
+
                 NBTTagCompound tmp = new NBTTagCompound();
                 if (nbt.hasKey("ForgeCaps"))
                 {
@@ -727,13 +733,20 @@ public class CraftingHelper {
 
     public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor)
     {
+        return findFiles(mod, base, preprocessor, processor, false);
+    }
+    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot)
+    {
         FileSystem fs = null;
         try
         {
             File source = mod.getSource();
 
-            if ("minecraft".equals(mod.getModId()) && DEBUG_LOAD_MINECRAFT)
+            if ("minecraft".equals(mod.getModId()))
             {
+                if (!DEBUG_LOAD_MINECRAFT)
+                    return true;
+
                 try
                 {
                     URI tmp = CraftingManager.class.getResource("/assets/.mcassetsroot").toURI();
@@ -766,7 +779,7 @@ public class CraftingHelper {
             }
 
             if (root == null || !Files.exists(root))
-                return false;
+                return defaultUnfoundRoot;
 
             if (preprocessor != null)
             {

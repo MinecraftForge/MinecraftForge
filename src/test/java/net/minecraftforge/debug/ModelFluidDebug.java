@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = ModelFluidDebug.MODID, name = "ForgeDebugModelFluid", version = ModelFluidDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelFluidDebug
@@ -85,7 +86,11 @@ public class ModelFluidDebug
                 new ItemBlock(MILK_BLOCK).setRegistryName(MILK_BLOCK.getRegistryName())
             );
         }
+    }
 
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class ClientEventHandler
+    {
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
