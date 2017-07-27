@@ -33,6 +33,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -163,25 +164,29 @@ public class ModelParticleTextureTest
         event.getRegistry().register(new ItemBlock(TEST_BLOCK).setRegistryName(TEST_BLOCK.getRegistryName()));
     }
 
-    @SubscribeEvent
-    public static void handleModel(ModelRegistryEvent event)
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
+    public static final class ClientEventHandler
     {
-        ModelLoader.setCustomStateMapper(TEST_BLOCK, new StateMapperBase()
+        @SubscribeEvent
+        public static void handleModel(ModelRegistryEvent event)
         {
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state)
+            ModelLoader.setCustomStateMapper(TEST_BLOCK, new StateMapperBase()
             {
-                return TestBlockModel.LOCATION;
-            }
-        });
-    }
+                @Override
+                protected ModelResourceLocation getModelResourceLocation(IBlockState state)
+                {
+                    return TestBlockModel.LOCATION;
+                }
+            });
+        }
 
-    @SubscribeEvent
-    public static void onModelBake(ModelBakeEvent event)
-    {
-        if (event.getModelRegistry().getObject(TestBlockModel.LOCATION) != null)
+        @SubscribeEvent
+        public static void onModelBake(ModelBakeEvent event)
         {
-            event.getModelRegistry().putObject(TestBlockModel.LOCATION, new TestBlockModel());
+            if (event.getModelRegistry().getObject(TestBlockModel.LOCATION) != null)
+            {
+                event.getModelRegistry().putObject(TestBlockModel.LOCATION, new TestBlockModel());
+            }
         }
     }
 }
