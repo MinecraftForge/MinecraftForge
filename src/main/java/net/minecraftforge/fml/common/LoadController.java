@@ -319,35 +319,35 @@ public class LoadController
             for (ModState state : modStates.get(mc.getModId()))
                 ret.append(state.getMarker());
 
-            ret.append("\t").append(mc.getModId()).append("{").append(mc.getVersion()).append("} [").append(mc.getName()).append("] (").append(mc.getSource().getName()).append(") ");
+            ret.append("\t").append(mc.getModId()).append("{").append(mc.getVersion()).append("} [").append(mc.getName()).append("] (").append(mc.getSource().getName());
 
-            boolean needsParens = false;
+            boolean checksumMessage = false;
             try (FileInputStream input = new FileInputStream(mc.getSource()))
             {
-                ret.append("(MD5 Checksum: ").append(DigestUtils.md5Hex(input));
-                needsParens = true;
+                ret.append(" - MD5 Checksum: ").append(DigestUtils.md5Hex(input));
+                checksumMessage = true;
             }
             catch (IOException e)
             {
                 if (mc.getSource().isFile())
                 {
-                    ret.append("(Failed to compute checksum");
-                    needsParens = true;
+                    ret.append(" - Failed to compute checksum: ").append(e.getMessage());
+                    checksumMessage = true;
                 }
             }
             if (mc.getSigningCertificate() != null)
             {
-                if (needsParens)
+                if (checksumMessage)
                 {
                     ret.append(", ");
                 }
+                else
+                {
+                    ret.append(" - ");
+                }
                 ret.append("Certificate fingerprint: ").append(CertificateHelper.getFingerprint(mc.getSigningCertificate()));
-                needsParens = true;
             }
-            if (needsParens)
-            {
-                ret.append(") ");
-            }
+            ret.append(") ");
         }
     }
 
