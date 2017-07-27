@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.common;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLStateEvent;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.ThreadContext;
 
@@ -317,6 +320,34 @@ public class LoadController
                 ret.append(state.getMarker());
 
             ret.append("\t").append(mc.getModId()).append("{").append(mc.getVersion()).append("} [").append(mc.getName()).append("] (").append(mc.getSource().getName()).append(") ");
+
+            boolean needsParens = false;
+            try (FileInputStream input = new FileInputStream(mc.getSource()))
+            {
+                ret.append("(MD5 Checksum: ").append(DigestUtils.md5Hex(input));
+                needsParens = true;
+            }
+            catch (IOException e)
+            {
+                if (mc.getSource().isFile())
+                {
+                    ret.append("(Failed to compute checksum");
+                    needsParens = true;
+                }
+            }
+            if (mc.getSigningCertificate() != null)
+            {
+                if (needsParens)
+                {
+                    ret.append(", ");
+                }
+                ret.append("Certificate fingerprint: ").append(CertificateHelper.getFingerprint(mc.getSigningCertificate()));
+                needsParens = true;
+            }
+            if (needsParens)
+            {
+                ret.append(") ");
+            }
         }
     }
 
