@@ -20,10 +20,10 @@ package net.minecraftforge.common.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -31,7 +31,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 
-public class ChunkedTileEntityList implements Collection<TileEntity>
+public class ChunkedTileEntityList implements List<TileEntity>
 {
 	
 	private static ChunkPos getChunkPos(TileEntity te)
@@ -75,6 +75,7 @@ public class ChunkedTileEntityList implements Collection<TileEntity>
 		return content.entrySet();
 	}
 	
+	@Override
 	public boolean containsAll(Collection<?> tileEntities)
 	{
 		for (Iterator<?> iterator = tileEntities.iterator(); iterator.hasNext();) {
@@ -84,6 +85,7 @@ public class ChunkedTileEntityList implements Collection<TileEntity>
 		return true;
 	}
 	
+	@Override
 	public boolean contains(Object te)
 	{
 		if(!(te instanceof TileEntity))
@@ -126,6 +128,17 @@ public class ChunkedTileEntityList implements Collection<TileEntity>
 			return list.add(te);
 	}
 	
+	@Override
+	public void add(int index, TileEntity te) {
+		add(te);
+	}
+	
+	@Override
+	public boolean addAll(int index, Collection<? extends TileEntity> tileEntities) {
+		return addAll(tileEntities);
+	}
+	
+	@Override
 	public boolean removeAll(Collection<?> tileEntities)
 	{
 		boolean removedAll = true;
@@ -136,6 +149,7 @@ public class ChunkedTileEntityList implements Collection<TileEntity>
 		return removedAll;
 	}
 	
+	@Override
 	public boolean remove(Object te)
 	{
 		if(!(te instanceof TileEntity))
@@ -184,6 +198,7 @@ public class ChunkedTileEntityList implements Collection<TileEntity>
 		return content.size();
 	}
 	
+	@Override
 	public void clear()
 	{
 		content.clear();
@@ -194,11 +209,13 @@ public class ChunkedTileEntityList implements Collection<TileEntity>
 	{
 		return content.toString();
 	}
-
+	
+	@Override
 	public boolean isEmpty() {
 		return totalCount() > 0;
 	}
 	
+	@Override
 	public Iterator<TileEntity> iterator()
 	{
 		return new Iterator<TileEntity>() {
@@ -279,6 +296,48 @@ public class ChunkedTileEntityList implements Collection<TileEntity>
 			}
 		}
 		return paramArrayOfT;
+	}
+	
+	//Not supported methods
+
+	@Override
+	public TileEntity get(int index) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ListIterator<TileEntity> listIterator() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ListIterator<TileEntity> listIterator(int index) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public TileEntity remove(int index) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public TileEntity set(int index, TileEntity element) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<TileEntity> subList(int fromIndex, int toIndex) {
+		throw new UnsupportedOperationException();
 	}
 	
 }
