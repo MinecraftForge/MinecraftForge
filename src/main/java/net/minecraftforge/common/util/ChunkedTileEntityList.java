@@ -30,7 +30,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 
-public class ChunkedTileEntityList
+public class ChunkedTileEntityList implements Collection<TileEntity>
 {
 	
 	private static ChunkPos getChunkPos(TileEntity te)
@@ -74,18 +74,20 @@ public class ChunkedTileEntityList
 		return content.entrySet();
 	}
 	
-	public boolean containsAll(Collection<TileEntity> tileEntities)
+	public boolean containsAll(Collection<?> tileEntities)
 	{
-		for (Iterator<TileEntity> iterator = tileEntities.iterator(); iterator.hasNext();) {
+		for (Iterator<?> iterator = tileEntities.iterator(); iterator.hasNext();) {
 			if(!contains(iterator.next()))
 				return false;
 		}
 		return true;
 	}
 	
-	public boolean contains(TileEntity te)
+	public boolean contains(Object te)
 	{
-		List<TileEntity> list = getChunkTEList(getChunkPos(te));
+		if(!(te instanceof TileEntity))
+			return false;
+		List<TileEntity> list = getChunkTEList(getChunkPos((TileEntity) te));
 		if(list != null)
 			return list.contains(te);
 		return false;
@@ -98,13 +100,16 @@ public class ChunkedTileEntityList
 		}
 	}
 	
-	public void add(Collection<TileEntity> tileEntities)
+	@Override
+	public boolean addAll(Collection<? extends TileEntity> tileEntities)
 	{
-		for (Iterator<TileEntity> iterator = tileEntities.iterator(); iterator.hasNext();) {
+		for (Iterator<? extends TileEntity> iterator = tileEntities.iterator(); iterator.hasNext();) {
 			add(iterator.next());
 		}
+		return true;
 	}
 	
+	@Override
 	public boolean add(TileEntity te)
 	{
 		ChunkPos pos = getChunkPos(te);
@@ -120,16 +125,21 @@ public class ChunkedTileEntityList
 			return list.add(te);
 	}
 	
-	public void removeAll(Collection<TileEntity> tileEntities)
+	public boolean removeAll(Collection<?> tileEntities)
 	{
-		for (Iterator<TileEntity> iterator = tileEntities.iterator(); iterator.hasNext();) {
-			remove(iterator.next());
+		boolean removedAll = true;
+		for (Iterator<?> iterator = tileEntities.iterator(); iterator.hasNext();) {
+			if(!remove(iterator.next()))
+				removedAll = false;
 		}
+		return removedAll;
 	}
 	
-	public boolean remove(TileEntity te)
+	public boolean remove(Object te)
 	{
-		ChunkPos pos = getChunkPos(te);
+		if(!(te instanceof TileEntity))
+			return false;
+		ChunkPos pos = getChunkPos((TileEntity) te);
 		List<TileEntity> values = getChunkTEList(pos);
 		if(values != null)
 			if(values.remove(te))
@@ -226,6 +236,48 @@ public class ChunkedTileEntityList
 				currentList.remove(index-1);
 			}
 		};
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> paramCollection) {
+		boolean changed = false;
+		for (List<TileEntity> values : content.values()) {
+			if(values.retainAll(paramCollection))
+				changed = true;
+		}
+		return changed;
+	}
+
+	@Override
+	public int size() {
+		return totalCount();
+	}
+
+	@Override
+	public Object[] toArray() {
+		Object[] array = new Object[totalCount()];
+		int i = 0;
+		for (List<TileEntity> values : content.values()) {
+			for (int j = 0; j < values.size(); j++) {
+				array[i] = values.get(j);
+				i++;
+			}
+		}
+		return array;
+	}
+
+	@Override
+	public <T> T[] toArray(T[] paramArrayOfT) {
+		if(paramArrayOfT.length < totalCount())
+			paramArrayOfT = (T[]) java.lang.reflect.Array.newInstance(paramArrayOfT.getClass().getComponentType(), totalCount());
+		int i = 0;
+		for (List<TileEntity> values : content.values()) {
+			for (int j = 0; j < values.size(); j++) {
+				paramArrayOfT[i] = (T) values.get(j);
+				i++;
+			}
+		}
+		return paramArrayOfT;
 	}
 	
 }
