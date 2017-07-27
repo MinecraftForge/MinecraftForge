@@ -28,7 +28,8 @@ public class TileEntityLoadingTest
     static final boolean DEBUG = false;
 
     private static Logger logger;
-    @ObjectHolder(TestBlock.NAME)
+
+    @ObjectHolder(MODID + ":" + TestBlock.NAME)
     private static final Block TEST_BLOCK = null;
 
     @Mod.EventBusSubscriber(modid = MODID)

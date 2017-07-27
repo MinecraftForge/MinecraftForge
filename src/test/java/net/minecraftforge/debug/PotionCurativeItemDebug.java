@@ -29,7 +29,8 @@ public class PotionCurativeItemDebug
 {
     public static final boolean ENABLED = false;
     public static final String MODID = "potion_curative_item_debug";
-    @ObjectHolder("medicine")
+
+    @ObjectHolder(MODID + ":medicine")
     public static final Item MEDICINE = null;
     private static Potion INCURABLE_POTION;
 
