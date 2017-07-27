@@ -15,6 +15,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = BlockstateRetextureTest.MODID, name = "BlockstateRetextureTest", version = BlockstateRetextureTest.VERSION, acceptableRemoteVersions = "*")
 public class BlockstateRetextureTest
@@ -34,8 +35,8 @@ public class BlockstateRetextureTest
         return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
     };
 
-    @Mod.EventBusSubscriber(modid = MODID)
-    public static class Events
+    @Mod.EventBusSubscriber(modid = MODID, value = Side.CLIENT)
+    public static class ClientEvents
     {
         @SubscribeEvent
         public static void onModelBakeEvent(ModelBakeEvent event)
