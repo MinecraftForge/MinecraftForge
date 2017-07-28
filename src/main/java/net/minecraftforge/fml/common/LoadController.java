@@ -19,30 +19,6 @@
 
 package net.minecraftforge.fml.common;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import net.minecraftforge.fml.common.LoaderState.ModState;
-import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
-import net.minecraftforge.fml.common.event.FMLEvent;
-import net.minecraftforge.fml.common.event.FMLLoadEvent;
-import net.minecraftforge.fml.common.event.FMLModDisabledEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLStateEvent;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.ThreadContext;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
@@ -55,10 +31,29 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.common.eventbus.SubscriberExceptionHandler;
 import com.google.common.eventbus.SubscriberExceptionContext;
+import com.google.common.eventbus.SubscriberExceptionHandler;
+import net.minecraftforge.fml.common.LoaderState.ModState;
+import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
+import net.minecraftforge.fml.common.event.FMLEvent;
+import net.minecraftforge.fml.common.event.FMLLoadEvent;
+import net.minecraftforge.fml.common.event.FMLModDisabledEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLStateEvent;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.ThreadContext;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class LoadController
 {
@@ -313,42 +308,73 @@ public class LoadController
         for (ModState state : ModState.values())
             ret.append(" '").append(state.getMarker()).append("' = ").append(state.toString());
 
-        for (ModContainer mc : loader.getModList())
+        class ModData
+        {
+            private String state;
+            private String id;
+            private String version;
+            private String source;
+            private String signature;
+
+            private ModData(String state, String id, String version, String source, String signature)
+            {
+                this.state = state;
+                this.id = id;
+                this.version = version;
+                this.source = source;
+                this.signature = signature;
+            }
+
+            private String format(String format)
+            {
+                return String.format(format, state, id, version, source, signature);
+            }
+        }
+
+        List<ModData> data = loader.getModList().stream().map(mc -> new ModData(
+            modStates.get(mc.getModId()).stream().map(ModState::getMarker).reduce("", (a, b) -> a + b),
+            mc.getModId(),
+            mc.getVersion(),
+            mc.getSource().getName(),
+            mc.getSigningCertificate() != null ? CertificateHelper.getFingerprint(mc.getSigningCertificate()) : "None"
+        )).collect(Collectors.toList());
+
+        ModData header = new ModData("State", "ID", "Version", "Source", "Signature");
+        ModData widths = data.stream().reduce(header, (acc, m) -> new ModData(
+            acc.state.length() > m.state.length() ? acc.state : m.state,
+            acc.id.length() > m.id.length() ? acc.id : m.id,
+            acc.version.length() > m.version.length() ? acc.version : m.version,
+            acc.source.length() > m.source.length() ? acc.source : m.source,
+            acc.signature.length() > m.signature.length() ? acc.signature : m.signature
+        ));
+
+        String baseFormat = "| %%-%ds | %%-%ds | %%-%ds | %%-%ds |";
+        if (widths.signature.length() > header.signature.length())
+        {
+            baseFormat += " %%-%ds |";
+        }
+        String format = String.format(baseFormat,
+            widths.state.length(),
+            widths.id.length(),
+            widths.version.length(),
+            widths.source.length());
+        String separator = String.format(format,
+            StringUtils.leftPad("", widths.state.length(), '-'),
+            StringUtils.leftPad("", widths.state.length(), '-'),
+            StringUtils.leftPad("", widths.version.length(), '-'),
+            StringUtils.leftPad("", widths.source.length(), '-'),
+            StringUtils.leftPad("", widths.signature.length(), '-'));
+        ret.append("\n");
+        ret.append("\n\t");
+        ret.append(header.format(format));
+        ret.append("\n\t");
+        ret.append(separator);
+        for (ModData mod : data)
         {
             ret.append("\n\t");
-            for (ModState state : modStates.get(mc.getModId()))
-                ret.append(state.getMarker());
-
-            ret.append("\t").append(mc.getModId()).append("{").append(mc.getVersion()).append("} [").append(mc.getName()).append("] (").append(mc.getSource().getName());
-
-            boolean checksumMessage = false;
-            try (FileInputStream input = new FileInputStream(mc.getSource()))
-            {
-                ret.append(" - MD5 Checksum: ").append(DigestUtils.md5Hex(input));
-                checksumMessage = true;
-            }
-            catch (IOException e)
-            {
-                if (mc.getSource().isFile())
-                {
-                    ret.append(" - Failed to compute checksum: ").append(e.getMessage());
-                    checksumMessage = true;
-                }
-            }
-            if (mc.getSigningCertificate() != null)
-            {
-                if (checksumMessage)
-                {
-                    ret.append(", ");
-                }
-                else
-                {
-                    ret.append(" - ");
-                }
-                ret.append("Certificate fingerprint: ").append(CertificateHelper.getFingerprint(mc.getSigningCertificate()));
-            }
-            ret.append(") ");
+            ret.append(mod.format(format));
         }
+        ret.append("\n");
     }
 
     public List<ModContainer> getActiveModList()
