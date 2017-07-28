@@ -69,6 +69,7 @@ import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -117,6 +118,10 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -1274,5 +1279,52 @@ public class ForgeHooks
     public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state, IBlockState blockState)
     {
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+    }
+
+    public static ActionResult<ItemStack> placeMilkBucket(World world, EntityPlayer player, EnumHand hand, RayTraceResult rayTraceResult)
+    {
+        if (FluidRegistry.isFluidRegistered("milk") && FluidRegistry.getFluid("milk").canBePlacedInWorld())
+        {
+            ItemStack itemstack = player.getHeldItem(hand);
+
+            if (rayTraceResult == null)
+            {
+                return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
+            }
+            else if (rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK)
+            {
+                return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
+            }
+            else
+            {
+                BlockPos blockpos = rayTraceResult.getBlockPos();
+
+                if (!world.isBlockModifiable(player, blockpos))
+                {
+                    return new ActionResult(EnumActionResult.FAIL, itemstack);
+                }
+                else
+                {
+                    boolean flag1 = world.getBlockState(blockpos).getBlock().isReplaceable(world, blockpos);
+                    BlockPos blockpos1 = flag1 && rayTraceResult.sideHit == EnumFacing.UP ? blockpos : blockpos.offset(rayTraceResult.sideHit);
+
+                    if (!player.canPlayerEdit(blockpos1, rayTraceResult.sideHit, itemstack))
+                    {
+                        return new ActionResult(EnumActionResult.FAIL, itemstack);
+                    }
+                    else if (FluidUtil.tryPlaceFluid(player, world, blockpos1, itemstack, new FluidStack(FluidRegistry.getFluid("milk"), Fluid.BUCKET_VOLUME)).isSuccess())
+                    {
+                        player.addStat(StatList.getObjectUseStats(Items.MILK_BUCKET));
+                        return !player.capabilities.isCreativeMode ? new ActionResult(EnumActionResult.SUCCESS, new ItemStack(Items.BUCKET)) : new ActionResult(EnumActionResult.SUCCESS, itemstack);
+                    }
+                    else
+                    {
+                        return new ActionResult(EnumActionResult.FAIL, itemstack);
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 }
