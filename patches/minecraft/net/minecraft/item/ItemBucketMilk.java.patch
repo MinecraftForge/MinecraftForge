@@ -20,7 +20,7 @@
          return p_77654_1_.func_190926_b() ? new ItemStack(Items.field_151133_ar) : p_77654_1_;
      }
  
-@@ -52,6 +48,11 @@
+@@ -52,8 +48,17 @@
          return EnumAction.DRINK;
      }
  
@@ -31,4 +31,10 @@
 +
      public ActionResult<ItemStack> func_77659_a(World p_77659_1_, EntityPlayer p_77659_2_, EnumHand p_77659_3_)
      {
++        if (p_77659_2_.func_70093_af()) {
++            ActionResult<ItemStack> ret = net.minecraftforge.common.ForgeHooks.placeMilkBucket(p_77659_1_, p_77659_2_, p_77659_3_, this.func_77621_a(p_77659_1_, p_77659_2_, false));
++            if (ret != null) return ret;
++        }
          p_77659_2_.func_184598_c(p_77659_3_);
+         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, p_77659_2_.func_184586_b(p_77659_3_));
+     }
