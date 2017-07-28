@@ -240,15 +240,17 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2097,6 +2121,7 @@
+@@ -2096,7 +2120,9 @@
+ 
                  if (!ItemStack.func_77989_b(itemstack1, itemstack))
                  {
++                    if (!ItemStack.areItemStacksEqualUsingNBTShareTag(itemstack1, itemstack))
                      ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
 +                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, entityequipmentslot, itemstack, itemstack1));
  
                      if (!itemstack.func_190926_b())
                      {
-@@ -2575,6 +2600,40 @@
+@@ -2575,6 +2601,40 @@
          this.field_70752_e = true;
      }
  
@@ -289,7 +291,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2595,12 +2654,19 @@
+@@ -2595,12 +2655,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -310,7 +312,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2618,8 +2684,10 @@
+@@ -2618,8 +2685,10 @@
  
          if (!itemstack.func_190926_b() && !this.func_184587_cr())
          {
@@ -322,7 +324,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2700,7 +2768,9 @@
+@@ -2700,7 +2769,9 @@
          if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
          {
              this.func_184584_a(this.field_184627_bm, 16);
@@ -333,7 +335,7 @@
              this.func_184602_cy();
          }
      }
-@@ -2724,7 +2794,8 @@
+@@ -2724,7 +2795,8 @@
      {
          if (!this.field_184627_bm.func_190926_b())
          {
@@ -343,7 +345,7 @@
          }
  
          this.func_184602_cy();
-@@ -2852,6 +2923,31 @@
+@@ -2852,6 +2924,31 @@
          return true;
      }
  
