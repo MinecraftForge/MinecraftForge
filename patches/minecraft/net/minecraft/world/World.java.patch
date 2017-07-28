@@ -20,8 +20,8 @@
      protected final List<Entity> field_72997_g = Lists.<Entity>newArrayList();
 -    public final List<TileEntity> field_147482_g = Lists.<TileEntity>newArrayList();
 -    public final List<TileEntity> field_175730_i = Lists.<TileEntity>newArrayList();
-+    public final net.minecraftforge.common.util.ChunkedTileEntityList field_147482_g = new net.minecraftforge.common.util.ChunkedTileEntityList();
-+    public final net.minecraftforge.common.util.ChunkedTileEntityList field_175730_i = new net.minecraftforge.common.util.ChunkedTileEntityList();
++    public final List<TileEntity> field_147482_g = new net.minecraftforge.common.util.ChunkedTileEntityList();
++    public final List<TileEntity> field_175730_i = new net.minecraftforge.common.util.ChunkedTileEntityList();
      private final List<TileEntity> field_147484_a = Lists.<TileEntity>newArrayList();
      private final List<TileEntity> field_147483_b = Lists.<TileEntity>newArrayList();
 +    public Collection<net.minecraft.util.math.ChunkPos> tileEntitiesChunkToBeRemoved = new java.util.ArrayDeque<>();
@@ -475,8 +475,8 @@
 +        if (!this.tileEntitiesChunkToBeRemoved.isEmpty())
 +        {
 +            for (net.minecraft.util.math.ChunkPos pos : tileEntitiesChunkToBeRemoved) {
-+    			field_175730_i.removeChunk(this, pos, false);
-+    			field_147482_g.removeChunk(this, pos, true);
++    			((net.minecraftforge.common.util.ChunkedTileEntityList) field_175730_i).removeChunk(this, pos, false);
++    			((net.minecraftforge.common.util.ChunkedTileEntityList) field_147482_g).removeChunk(this, pos, true);
 +    		}
  
 +    		tileEntitiesChunkToBeRemoved.clear();
