@@ -341,11 +341,11 @@ public class LoadController
 
         ModData header = new ModData("State", "ID", "Version", "Source", "Signature");
         ModData widths = data.stream().reduce(header, (acc, m) -> new ModData(
-            acc.state.length() > m.state.length() ? acc.state : m.state,
-            acc.id.length() > m.id.length() ? acc.id : m.id,
-            acc.version.length() > m.version.length() ? acc.version : m.version,
-            acc.source.length() > m.source.length() ? acc.source : m.source,
-            acc.signature.length() > m.signature.length() ? acc.signature : m.signature
+            m.state.length() > acc.state.length() ? m.state : acc.state,
+            m.id.length() > acc.id.length() ? m.id : acc.id,
+            m.version.length() > acc.version.length() ? m.version : acc.version,
+            m.source.length() > acc.source.length() ? m.source : acc.source,
+            m.signature.length() > acc.signature.length() ? m.signature : acc.signature
         ));
 
         String baseFormat = "| %%-%ds | %%-%ds | %%-%ds | %%-%ds |";
@@ -357,7 +357,8 @@ public class LoadController
             widths.state.length(),
             widths.id.length(),
             widths.version.length(),
-            widths.source.length());
+            widths.source.length(),
+            widths.signature.length());
         String separator = String.format(format,
             StringUtils.leftPad("", widths.state.length(), '-'),
             StringUtils.leftPad("", widths.state.length(), '-'),
