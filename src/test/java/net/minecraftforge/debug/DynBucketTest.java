@@ -75,7 +75,7 @@ public class DynBucketTest
     private static final ResourceLocation simpleTankName = new ResourceLocation(MODID, "simpletank");
     private static final ResourceLocation testItemName = new ResourceLocation(MODID, "testitem");
 
-    private static final boolean ENABLE = true;
+    private static final boolean ENABLE = false;
     private static Logger logger;
 
     @ObjectHolder("testitem")
@@ -96,14 +96,14 @@ public class DynBucketTest
     }
 
     @SubscribeEvent
-    public void registrBlocks(RegistryEvent.Register<Block> event)
+    public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().register(new BlockSimpleTank().setRegistryName(simpleTankName));
         GameRegistry.registerTileEntity(TileSimpleTank.class, "simpletank");
     }
 
     @SubscribeEvent
-    public void registrItems(RegistryEvent.Register<Item> event)
+    public void registerItems(RegistryEvent.Register<Item> event)
     {
         FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestFluid.name));
         FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestGas.name));
@@ -116,7 +116,7 @@ public class DynBucketTest
     }
 
     @SubscribeEvent
-    public void registrRecipes(RegistryEvent.Register<IRecipe> event)
+    public void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
         ItemStack filledBucket = FluidUtil.getFilledBucket(new FluidStack(ModelFluidDebug.FLUID, Fluid.BUCKET_VOLUME));
         GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "diamond_to_fluid"), null, filledBucket, Ingredient.fromItem(Items.DIAMOND));
@@ -128,7 +128,7 @@ public class DynBucketTest
     {
         logger = event.getModLog();
 
-        if (!ENABLE || !ModelFluidDebug.ENABLE)
+        if (ENABLE && ModelFluidDebug.ENABLE)
         {
             MinecraftForge.EVENT_BUS.register(this);
         }
@@ -168,6 +168,8 @@ public class DynBucketTest
         @SubscribeEvent
         public static void setupModels(ModelRegistryEvent event)
         {
+            if (!ENABLE || !ModelFluidDebug.ENABLE) return;
+
             ModelLoader.setBucketModelDefinition(DYN_BOTTLE);
 
             final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbottle"), "inventory");
