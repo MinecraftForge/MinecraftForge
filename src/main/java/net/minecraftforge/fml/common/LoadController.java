@@ -361,7 +361,7 @@ public class LoadController
             widths.signature.length());
         String separator = String.format(format,
             StringUtils.leftPad("", widths.state.length(), '-'),
-            StringUtils.leftPad("", widths.state.length(), '-'),
+            StringUtils.leftPad("", widths.id.length(), '-'),
             StringUtils.leftPad("", widths.version.length(), '-'),
             StringUtils.leftPad("", widths.source.length(), '-'),
             StringUtils.leftPad("", widths.signature.length(), '-'));
