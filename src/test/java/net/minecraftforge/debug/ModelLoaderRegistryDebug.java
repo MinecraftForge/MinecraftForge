@@ -56,8 +56,6 @@ import javax.vecmath.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.minecraftforge.debug.ModelLoaderRegistryDebug.ObjectHolders.*;
-
 @Mod(modid = ModelLoaderRegistryDebug.MODID, name = "ForgeDebugModelLoaderRegistry", version = ModelLoaderRegistryDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelLoaderRegistryDebug
 {
@@ -66,26 +64,22 @@ public class ModelLoaderRegistryDebug
     public static final String VERSION = "1.0";
     private static Logger logger;
 
-    @ObjectHolder(MODID)
-    public static final class ObjectHolders
-    {
-        @ObjectHolder(CustomModelBlock.name)
-        public static final Block CUSTOM_MODEL_BLOCK = null;
-        @ObjectHolder(OBJTesseractBlock.name)
-        public static final Block TESSERACT_BLOCK = null;
-        @ObjectHolder(OBJVertexColoring1.name)
-        public static final Block VERTEX_COLOR_1 = null;
-        @ObjectHolder(OBJVertexColoring2.name)
-        public static final Block VERTEX_COLOR_2 = null;
-        @ObjectHolder(OBJDirectionBlock.name)
-        public static final Block DIRECTION = null;
-        @ObjectHolder(OBJDirectionEye.name)
-        public static final Block DIRECTION_EYE = null;
-        @ObjectHolder(OBJDynamicEye.name)
-        public static final Block DYNAMIC_EYE = null;
-        @ObjectHolder(OBJCustomDataBlock.name)
-        public static final Block CUSTOM_DATA = null;
-    }
+    @ObjectHolder(CustomModelBlock.name)
+    public static final Block CUSTOM_MODEL_BLOCK = null;
+    @ObjectHolder(OBJTesseractBlock.name)
+    public static final Block TESSERACT_BLOCK = null;
+    @ObjectHolder(OBJVertexColoring1.name)
+    public static final Block VERTEX_COLOR_1 = null;
+    @ObjectHolder(OBJVertexColoring2.name)
+    public static final Block VERTEX_COLOR_2 = null;
+    @ObjectHolder(OBJDirectionBlock.name)
+    public static final Block DIRECTION = null;
+    @ObjectHolder(OBJDirectionEye.name)
+    public static final Block DIRECTION_EYE = null;
+    @ObjectHolder(OBJDynamicEye.name)
+    public static final Block DYNAMIC_EYE = null;
+    @ObjectHolder(OBJCustomDataBlock.name)
+    public static final Block CUSTOM_DATA = null;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -144,8 +138,8 @@ public class ModelLoaderRegistryDebug
         {
             if (!ENABLED)
                 return;
-            B3DLoader.INSTANCE.addDomain(MODID);
-            OBJLoader.INSTANCE.addDomain(MODID);
+            B3DLoader.INSTANCE.addDomain(MODID.toLowerCase());
+            OBJLoader.INSTANCE.addDomain(MODID.toLowerCase());
             Block[] blocks = {
                 CUSTOM_MODEL_BLOCK,
                 TESSERACT_BLOCK,
