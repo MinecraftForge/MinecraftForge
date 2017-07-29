@@ -21,12 +21,12 @@ package net.minecraftforge.common.util;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.ChunkPos;
@@ -41,6 +41,8 @@ public class ChunkedTileEntityList implements List<TileEntity>
     }
 
     private LinkedHashMap<ChunkPos, List<TileEntity>> content;
+    private int totalCount = 0;
+    private int modCount = 0;
 
     public ChunkedTileEntityList()
     {
@@ -50,30 +52,20 @@ public class ChunkedTileEntityList implements List<TileEntity>
     public ChunkedTileEntityList(ChunkedTileEntityList list)
     {
         this();
-        for (Entry<ChunkPos, List<TileEntity>> entry : list.entrySet())
+        for (Entry<ChunkPos, List<TileEntity>> entry : list.content.entrySet())
         {
             content.put(entry.getKey(), new ArrayList<>(entry.getValue()));
         }
+        updateTotalCount();
     }
 
-    public List<TileEntity> getChunkTEList(ChunkPos key)
+    private void updateTotalCount()
     {
-        return content.get(key);
-    }
-
-    public Set<ChunkPos> keySet()
-    {
-        return content.keySet();
-    }
-
-    public Collection<List<TileEntity>> values()
-    {
-        return content.values();
-    }
-
-    public Set<Entry<ChunkPos, List<TileEntity>>> entrySet()
-    {
-        return content.entrySet();
+        totalCount = 0;
+        for (List<TileEntity> values : content.values())
+        {
+            totalCount += values.size();
+        }
     }
 
     @Override
@@ -92,7 +84,7 @@ public class ChunkedTileEntityList implements List<TileEntity>
     {
         if (!(te instanceof TileEntity))
             return false;
-        List<TileEntity> list = getChunkTEList(getChunkPos((TileEntity) te));
+        List<TileEntity> list = content.get(getChunkPos((TileEntity) te));
         if (list != null)
             return list.contains(te);
         return false;
@@ -120,7 +112,9 @@ public class ChunkedTileEntityList implements List<TileEntity>
     public boolean add(TileEntity te)
     {
         ChunkPos pos = getChunkPos(te);
-        List<TileEntity> list = getChunkTEList(pos);
+        List<TileEntity> list = content.get(pos);
+        totalCount++;
+        modCount++;
         if (list == null)
         {
             list = new ArrayList<>();
@@ -133,15 +127,36 @@ public class ChunkedTileEntityList implements List<TileEntity>
     }
 
     @Override
+    @Deprecated
     public void add(int index, TileEntity te)
     {
-        add(te);
+        ChunkPos pos = getChunkPos(te);
+        List<TileEntity> list = content.get(pos);
+        totalCount++;
+        modCount++;
+        if (list == null)
+        {
+            list = new ArrayList<>();
+            list.add(te);
+            content.put(pos, list);
+        }
+        else
+        {
+            if (index >= list.size())
+                list.add(te);
+            else
+                list.add(index, te);
+        }
+
     }
 
     @Override
+    @Deprecated
     public boolean addAll(int index, Collection<? extends TileEntity> tileEntities)
     {
-        return addAll(tileEntities);
+        for (TileEntity te : tileEntities)
+            this.add(index++, te);
+        return true;
     }
 
     @Override
@@ -162,10 +177,12 @@ public class ChunkedTileEntityList implements List<TileEntity>
         if (!(te instanceof TileEntity))
             return false;
         ChunkPos pos = getChunkPos((TileEntity) te);
-        List<TileEntity> values = getChunkTEList(pos);
+        List<TileEntity> values = content.get(pos);
         if (values != null)
             if (values.remove(te))
             {
+                totalCount--;
+                modCount++;
                 if (values.isEmpty())
                     removeChunk(pos);
                 return true;
@@ -175,30 +192,26 @@ public class ChunkedTileEntityList implements List<TileEntity>
 
     private boolean removeChunk(ChunkPos key)
     {
-        return content.remove(key) != null;
+        List<TileEntity> removed = content.remove(key);
+        if (removed == null)
+            return false;
+
+        totalCount -= removed.size();
+        modCount++;
+        return true;
     }
 
     public boolean removeChunk(World world, ChunkPos pos, boolean notify)
     {
         if (notify)
         {
-            for (TileEntity te : getChunkTEList(pos))
+            for (TileEntity te : content.get(pos))
             {
                 te.onChunkUnload();
             }
         }
 
         return removeChunk(pos);
-    }
-
-    public int totalCount()
-    {
-        int size = 0;
-        for (List<TileEntity> values : content.values())
-        {
-            size += values.size();
-        }
-        return size;
     }
 
     public int chunkCount()
@@ -209,6 +222,8 @@ public class ChunkedTileEntityList implements List<TileEntity>
     @Override
     public void clear()
     {
+        totalCount = 0;
+        modCount++;
         content.clear();
     }
 
@@ -230,8 +245,9 @@ public class ChunkedTileEntityList implements List<TileEntity>
         return new Iterator<TileEntity>() {
 
             int index = 0;
+            int expModCount = ChunkedTileEntityList.this.modCount;
 
-            Iterator<List<TileEntity>> iterator = values().iterator();
+            Iterator<List<TileEntity>> iterator = content.values().iterator();
 
             List<TileEntity> currentList;
 
@@ -255,6 +271,7 @@ public class ChunkedTileEntityList implements List<TileEntity>
             @Override
             public TileEntity next()
             {
+                this.checkCoModifications();
                 TileEntity value = currentList.get(index);
                 index++;
                 return value;
@@ -263,7 +280,15 @@ public class ChunkedTileEntityList implements List<TileEntity>
             @Override
             public void remove()
             {
+                this.checkCoModifications();
+                ChunkedTileEntityList.this.totalCount--;
                 currentList.remove(index - 1);
+            }
+
+            protected void checkCoModifications()
+            {
+                if (this.expModCount != ChunkedTileEntityList.this.modCount)
+                    throw new ConcurrentModificationException();
             }
         };
     }
@@ -272,10 +297,24 @@ public class ChunkedTileEntityList implements List<TileEntity>
     public boolean retainAll(Collection<?> paramCollection)
     {
         boolean changed = false;
-        for (List<TileEntity> values : content.values())
+        totalCount = 0;
+        for (Iterator<List<TileEntity>> iterator = content.values().iterator(); iterator.hasNext();)
         {
-            if (values.retainAll(paramCollection))
+            List<TileEntity> value = iterator.next();
+            if (value.retainAll(paramCollection))
+            {
                 changed = true;
+
+                modCount++;
+
+                if (value.isEmpty())
+                {
+                    iterator.remove();
+                    continue;
+                }
+            }
+
+            totalCount += value.size();
         }
         return changed;
     }
@@ -283,13 +322,13 @@ public class ChunkedTileEntityList implements List<TileEntity>
     @Override
     public int size()
     {
-        return totalCount();
+        return totalCount;
     }
 
     @Override
     public Object[] toArray()
     {
-        Object[] array = new Object[totalCount()];
+        Object[] array = new Object[totalCount];
         int i = 0;
         for (List<TileEntity> values : content.values())
         {
@@ -305,8 +344,8 @@ public class ChunkedTileEntityList implements List<TileEntity>
     @Override
     public <T> T[] toArray(T[] paramArrayOfT)
     {
-        if (paramArrayOfT.length < totalCount())
-            paramArrayOfT = (T[]) Array.newInstance(paramArrayOfT.getClass().getComponentType(), totalCount());
+        if (paramArrayOfT.length < totalCount)
+            paramArrayOfT = (T[]) Array.newInstance(paramArrayOfT.getClass().getComponentType(), totalCount);
         int i = 0;
         for (List<TileEntity> values : content.values())
         {
@@ -316,54 +355,151 @@ public class ChunkedTileEntityList implements List<TileEntity>
         return paramArrayOfT;
     }
 
-    // Not supported methods
-
     @Override
+    @Deprecated
     public TileEntity get(int index)
     {
-        throw new UnsupportedOperationException();
+        this.checkIndex_returnIsCeil(index, false);
+
+        Iterator<List<TileEntity>> itr = ChunkedTileEntityList.this.content.values().iterator();
+        List<TileEntity> c;
+        int offset = 0;
+
+        while (itr.hasNext())
+        {
+            c = itr.next();
+            if (c.size() + offset > index)
+                return c.get(index - offset);
+            else
+                offset += c.size();
+        }
+        // should never happen.
+        throw new ConcurrentModificationException();
     }
 
     @Override
+    @Deprecated
     public int indexOf(Object o)
     {
-        throw new UnsupportedOperationException();
+        if (o instanceof TileEntity)
+        {
+            TileEntity te = (TileEntity) o;
+            ChunkPos p = ChunkedTileEntityList.getChunkPos(te);
+            int offset = 0;
+
+            for (Entry<ChunkPos, List<TileEntity>> e : this.content.entrySet())
+            {
+                if (e.getKey().equals(p))
+                {
+                    int i = e.getValue().indexOf(o);
+                    if (i < 0)
+                        return i;
+                    else
+                        return offset + i;
+                }
+                offset += e.getValue().size();
+            }
+        }
+        return -1;
     }
 
     @Override
+    @Deprecated
     public int lastIndexOf(Object o)
     {
-        throw new UnsupportedOperationException();
+        if (o instanceof TileEntity)
+        {
+            TileEntity te = (TileEntity) o;
+            ChunkPos p = ChunkedTileEntityList.getChunkPos(te);
+            int offset = 0;
+
+            for (Entry<ChunkPos, List<TileEntity>> e : this.content.entrySet())
+            {
+                if (e.getKey().equals(p))
+                {
+                    int i = e.getValue().lastIndexOf(o);
+                    if (i < 0)
+                        return i;
+                    else
+                        return offset + i;
+                }
+                offset += e.getValue().size();
+            }
+        }
+        return -1;
     }
 
     @Override
+    @Deprecated
     public ListIterator<TileEntity> listIterator()
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public ListIterator<TileEntity> listIterator(int index)
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public TileEntity remove(int index)
     {
-        throw new UnsupportedOperationException();
-    }
+        this.checkIndex_returnIsCeil(index, false);
 
+        Iterator<List<TileEntity>> itr = ChunkedTileEntityList.this.content.values().iterator();
+        List<TileEntity> c;
+        int offset = 0;
+
+        while (itr.hasNext())
+        {
+            c = itr.next();
+            if (c.size() + offset > index)
+            {
+                this.totalCount--;
+                this.modCount++;
+                return c.remove(index - offset);
+            }
+            else
+                offset += c.size();
+        }
+        // should never happen.
+        throw new ConcurrentModificationException();
+    }
+    
+    /**
+     * This will remove the TileEntity at the given index. and adds the given
+     * element at the end of the right chunkList.
+     * 
+     * @return The TileEntity previous at the given index.
+     */
     @Override
+    @Deprecated
     public TileEntity set(int index, TileEntity element)
     {
-        throw new UnsupportedOperationException();
+        TileEntity removed = remove(index);
+        add(element);
+        return removed;
     }
 
     @Override
+    @Deprecated
     public List<TileEntity> subList(int fromIndex, int toIndex)
     {
         throw new UnsupportedOperationException();
     }
 
+    protected boolean checkIndex_returnIsCeil(int index, boolean isAdding)
+    {
+        int size = this.size();
+        if (isAdding && index == size)
+            return true;
+
+        if (index < 0 || index > this.size())
+            throw new IndexOutOfBoundsException();
+
+        return false;
+    }
 }
