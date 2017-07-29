@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.common;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLStateEvent;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.ThreadContext;
 
@@ -310,14 +313,74 @@ public class LoadController
         for (ModState state : ModState.values())
             ret.append(" '").append(state.getMarker()).append("' = ").append(state.toString());
 
-        for (ModContainer mc : loader.getModList())
+        class ModData
+        {
+            private String state;
+            private String id;
+            private String version;
+            private String source;
+            private String signature;
+
+            private ModData(String state, String id, String version, String source, String signature)
+            {
+                this.state = state;
+                this.id = id;
+                this.version = version;
+                this.source = source;
+                this.signature = signature;
+            }
+
+            private String format(String format)
+            {
+                return String.format(format, state, id, version, source, signature);
+            }
+        }
+
+        List<ModData> data = loader.getModList().stream().map(mc -> new ModData(
+            modStates.get(mc.getModId()).stream().map(ModState::getMarker).reduce("", (a, b) -> a + b),
+            mc.getModId(),
+            mc.getVersion(),
+            mc.getSource().getName(),
+            mc.getSigningCertificate() != null ? CertificateHelper.getFingerprint(mc.getSigningCertificate()) : "None"
+        )).collect(Collectors.toList());
+
+        ModData header = new ModData("State", "ID", "Version", "Source", "Signature");
+        ModData widths = data.stream().reduce(header, (acc, m) -> new ModData(
+            m.state.length() > acc.state.length() ? m.state : acc.state,
+            m.id.length() > acc.id.length() ? m.id : acc.id,
+            m.version.length() > acc.version.length() ? m.version : acc.version,
+            m.source.length() > acc.source.length() ? m.source : acc.source,
+            m.signature.length() > acc.signature.length() ? m.signature : acc.signature
+        ));
+
+        String baseFormat = "| %%-%ds | %%-%ds | %%-%ds | %%-%ds |";
+        if (widths.signature.length() > header.signature.length())
+        {
+            baseFormat += " %%-%ds |";
+        }
+        String format = String.format(baseFormat,
+            widths.state.length(),
+            widths.id.length(),
+            widths.version.length(),
+            widths.source.length(),
+            widths.signature.length());
+        String separator = String.format(format,
+            StringUtils.leftPad("", widths.state.length(), '-'),
+            StringUtils.leftPad("", widths.id.length(), '-'),
+            StringUtils.leftPad("", widths.version.length(), '-'),
+            StringUtils.leftPad("", widths.source.length(), '-'),
+            StringUtils.leftPad("", widths.signature.length(), '-'));
+        ret.append("\n");
+        ret.append("\n\t");
+        ret.append(header.format(format));
+        ret.append("\n\t");
+        ret.append(separator);
+        for (ModData mod : data)
         {
             ret.append("\n\t");
-            for (ModState state : modStates.get(mc.getModId()))
-                ret.append(state.getMarker());
-
-            ret.append("\t").append(mc.getModId()).append("{").append(mc.getVersion()).append("} [").append(mc.getName()).append("] (").append(mc.getSource().getName()).append(") ");
+            ret.append(mod.format(format));
         }
+        ret.append("\n");
     }
 
     public List<ModContainer> getActiveModList()
