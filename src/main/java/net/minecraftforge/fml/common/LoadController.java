@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.common;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -313,30 +311,7 @@ public class LoadController
         for (ModState state : ModState.values())
             ret.append(" '").append(state.getMarker()).append("' = ").append(state.toString());
 
-        class ModData
-        {
-            private String state;
-            private String id;
-            private String version;
-            private String source;
-            private String signature;
-
-            private ModData(String state, String id, String version, String source, String signature)
-            {
-                this.state = state;
-                this.id = id;
-                this.version = version;
-                this.source = source;
-                this.signature = signature;
-            }
-
-            private String format(String format)
-            {
-                return String.format(format, state, id, version, source, signature);
-            }
-        }
-
-        List<ModData> data = loader.getModList().stream().map(mc -> new ModData(
+        List<ModStateData> data = loader.getModList().stream().map(mc -> new ModStateData(
             modStates.get(mc.getModId()).stream().map(ModState::getMarker).reduce("", (a, b) -> a + b),
             mc.getModId(),
             mc.getVersion(),
@@ -344,8 +319,8 @@ public class LoadController
             mc.getSigningCertificate() != null ? CertificateHelper.getFingerprint(mc.getSigningCertificate()) : "None"
         )).collect(Collectors.toList());
 
-        ModData header = new ModData("State", "ID", "Version", "Source", "Signature");
-        ModData widths = data.stream().reduce(header, (acc, m) -> new ModData(
+        ModStateData header = new ModStateData("State", "ID", "Version", "Source", "Signature");
+        ModStateData widths = data.stream().reduce(header, (acc, m) -> new ModStateData(
             m.state.length() > acc.state.length() ? m.state : acc.state,
             m.id.length() > acc.id.length() ? m.id : acc.id,
             m.version.length() > acc.version.length() ? m.version : acc.version,
@@ -375,7 +350,7 @@ public class LoadController
         ret.append(header.format(format));
         ret.append("\n\t");
         ret.append(separator);
-        for (ModData mod : data)
+        for (ModStateData mod : data)
         {
             ret.append("\n\t");
             ret.append(mod.format(format));
@@ -467,5 +442,28 @@ public class LoadController
     LoaderState getState()
     {
         return state;
+    }
+
+    private static class ModStateData
+    {
+        private String state;
+        private String id;
+        private String version;
+        private String source;
+        private String signature;
+
+        private ModStateData(String state, String id, String version, String source, String signature)
+        {
+            this.state = state;
+            this.id = id;
+            this.version = version;
+            this.source = source;
+            this.signature = signature;
+        }
+
+        private String format(String format)
+        {
+            return String.format(format, state, id, version, source, signature);
+        }
     }
 }
