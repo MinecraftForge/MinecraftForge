@@ -29,6 +29,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -116,10 +119,15 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLLog;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 
 import java.util.Optional;
+import java.util.ResourceBundle;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
@@ -713,5 +721,45 @@ public class ForgeHooksClient
         Matrix4f mat = null;
         if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
         return Pair.of(model, mat);
+    }
+
+    private static final ResourceBundle.Control RESOURCE_CONTROL_HELPER = new ResourceBundle.Control() {};
+
+    /**
+     * Takes a list of locales with fallbacks like ["en_us", "es_es"] and expands it to include more fallbacks, ["en", "en_us", "es", "es_es"].
+     * The list is ordered least specific to most specific.
+     * When there is a duplicate the one from the more specific locale is kept, so ["en_us", "en_gb"] becomes ["en_us", "en", "en_gb"]
+     */
+    public static List<String> expandLanguageFallbacks(List<String> localeStrings)
+    {
+        List<String> expandedFallbacks = new ArrayList<>();
+        for (String localeString : localeStrings)
+        {
+            Locale locale = stringToLocale(localeString);
+            List<Locale> candidates = RESOURCE_CONTROL_HELPER.getCandidateLocales("", locale);
+            candidates = Lists.reverse(candidates);
+            for (Locale candidate : candidates)
+            {
+                if (!candidate.equals(Locale.ROOT))
+                {
+                    String candidateLocaleString = candidate.toString().toLowerCase(Locale.ROOT);
+                    expandedFallbacks.remove(candidateLocaleString);
+                    expandedFallbacks.add(candidateLocaleString);
+                }
+            }
+        }
+        return expandedFallbacks;
+    }
+
+    private static Locale stringToLocale(String localeString)
+    {
+        String[] split = localeString.split("_");
+        if (split.length >= 2)
+        {
+            // country code must by upper-cased to be parsed as a Locale
+            split[1] = split[1].toUpperCase(Locale.ROOT);
+            localeString = Joiner.on("_").join(split);
+        }
+        return LocaleUtils.toLocale(localeString);
     }
 }
