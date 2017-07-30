@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderItemFrame.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderItemFrame.java
+@@ -49,7 +49,7 @@
+         ModelManager modelmanager = blockrendererdispatcher.func_175023_a().func_178126_b();
+         IBakedModel ibakedmodel;
+ 
+-        if (p_76986_1_.func_82335_i().func_77973_b() == Items.field_151098_aY)
++        if (p_76986_1_.func_82335_i().func_77973_b() instanceof net.minecraft.item.ItemMap)
+         {
+             ibakedmodel = modelmanager.func_174953_a(this.field_177073_g);
+         }
 @@ -96,10 +96,13 @@
          {
              GlStateManager.func_179094_E();
