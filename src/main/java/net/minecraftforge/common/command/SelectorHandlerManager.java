@@ -37,10 +37,12 @@ import net.minecraftforge.fml.common.Loader;
 
 /**
  * Allows registration of custom selector types by assigning a {@link SelectorHandler} to a prefix
- * To check whether a new prefix conflicts with any registered prefix, the methods {@link #getShadowed(String)} and {@link #getShadowing(String)} can be used
  * This class handles calls to the {@link EntitySelector} methods {@link EntitySelector#matchEntities matchEntities},
  * {@link EntitySelector#matchesMultiplePlayers matchesMultiplePlayers} and {@link EntitySelector#isSelector isSelector}.<br>
- * The calls are delegated to the handler with the longest matching prefix
+ * The calls are delegated to the handler with the longest matching prefix.<br>
+ * <br>
+ * <b>Note:</b> If you register a {@link SelectorHandler} to a broader domain (not just a single selector), you should take care of possible shadowing conflicts yourself.
+ * For this you can use the information provided by {@link #selectorHandlers} and {@link #registeringMods}.
  */
 public class SelectorHandlerManager
 {
@@ -49,8 +51,8 @@ public class SelectorHandlerManager
     }
 
     //the ordering is reversed such that longer prefixes appear before their shorter substrings
-    private static final NavigableMap<String, SelectorHandler> selectorHandlers = new TreeMap<String, SelectorHandler>(Collections.<String> reverseOrder());
-    private static final NavigableMap<String, String> registeringMods = new TreeMap<String, String>(Collections.<String> reverseOrder());
+    public static final NavigableMap<String, SelectorHandler> selectorHandlers = new TreeMap<String, SelectorHandler>(Collections.<String> reverseOrder());
+    public static final NavigableMap<String, String> registeringMods = new TreeMap<String, String>(Collections.<String> reverseOrder());
 
     private static final SelectorHandler vanillaHandler = new SelectorHandler()
     {
@@ -83,58 +85,10 @@ public class SelectorHandlerManager
     }
 
     /**
-     * Returns a collection of all registered prefixes more specific than {@code prefix}
+     * Registers a new {@link SelectorHandler} for {@code prefix}.<br>
      *
-     * @return A {@link Map} mapping the prefixes to the mod ids registering them
-     */
-    public static Map<String, String> getShadowing(final String prefix)
-    {
-        final Map<String, String> ret = new HashMap<String, String>();
-
-        for (final Entry<String, String> other : registeringMods.descendingMap().tailMap(prefix, false).entrySet())
-        {
-            if (other.getKey().startsWith(prefix))
-            {
-                ret.put(other.getKey(), other.getValue());
-            }
-            else
-            {
-                return ret;
-            }
-        }
-
-        return ret;
-    }
-
-    /**
-     * Returns a collection of all registered prefixes at most as specific as {@code prefix}
-     *
-     * @return A {@link Map} mapping the prefixes to the mod ids registering them
-     */
-    public static Map<String, String> getShadowed(final String prefix)
-    {
-        if (prefix.isEmpty())
-        {
-            return Collections.emptyMap();
-        }
-
-        final Map<String, String> ret = new HashMap<String, String>();
-
-        for (final Entry<String, String> other : registeringMods.subMap(prefix, true, prefix.substring(0, 1), true).entrySet())
-        {
-            if (prefix.startsWith(other.getKey()))
-            {
-                ret.put(other.getKey(), other.getValue());
-            }
-        }
-
-        return ret;
-    }
-
-    /**
-     * Registers a new {@link SelectorHandler} for {@code prefix}.
-     *
-     * @param prefix A non-empty string
+     * @param prefix The domain the specified {@code handler} is registered for.
+     * If you want to register just a single selector, {@code prefix} has the form '@{selectorName}'
      */
     public static void register(final String prefix, final SelectorHandler handler)
     {
