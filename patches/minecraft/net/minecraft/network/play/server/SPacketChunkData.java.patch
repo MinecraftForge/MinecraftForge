@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketChunkData.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketChunkData.java
+@@ -32,6 +32,7 @@
+ 
+     public SPacketChunkData(Chunk p_i47124_1_, int p_i47124_2_)
+     {
++        p_i47124_1_.func_177412_p().lightingEngine.procLightUpdates();
+         this.field_149284_a = p_i47124_1_.field_76635_g;
+         this.field_149282_b = p_i47124_1_.field_76647_h;
+         this.field_149279_g = p_i47124_2_ == 65535;
