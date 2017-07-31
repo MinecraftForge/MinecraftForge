@@ -322,10 +322,11 @@
          }
  
          this.field_147127_av.func_147690_c();
-@@ -2488,6 +2550,16 @@
+@@ -2488,6 +2550,17 @@
          EntityPlayerSP entityplayersp = this.field_71439_g;
          this.field_71439_g = this.field_71442_b.func_192830_a(this.field_71441_e, this.field_71439_g == null ? new StatisticsManager() : this.field_71439_g.func_146107_m(), this.field_71439_g == null ? new RecipeBook() : this.field_71439_g.func_192035_E());
          this.field_71439_g.func_184212_Q().func_187218_a(entityplayersp.func_184212_Q().func_187231_c());
++        // Forge - Fix MC-88179 attributes not being copied to new player
 +        for (net.minecraft.entity.ai.attributes.IAttributeInstance oldInst : entityplayersp.func_110140_aT().func_111146_a())
 +        {
 +            net.minecraft.entity.ai.attributes.IAttribute attrib = oldInst.func_111123_a();
@@ -339,7 +340,7 @@
          this.field_71439_g.field_71093_bK = p_71354_1_;
          this.field_175622_Z = this.field_71439_g;
          this.field_71439_g.func_70065_x();
-@@ -2535,159 +2607,8 @@
+@@ -2535,159 +2608,8 @@
      {
          if (this.field_71476_x != null && this.field_71476_x.field_72313_a != RayTraceResult.Type.MISS)
          {
@@ -501,7 +502,7 @@
          }
      }
  
-@@ -3009,18 +2930,8 @@
+@@ -3009,18 +2931,8 @@
  
      public static int func_71369_N()
      {
@@ -522,7 +523,7 @@
      }
  
      public boolean func_70002_Q()
-@@ -3181,11 +3092,11 @@
+@@ -3181,11 +3093,11 @@
              {
                  if (Keyboard.getEventKeyState())
                  {
@@ -536,7 +537,7 @@
                      {
                          this.field_71456_v.func_146158_b().func_146227_a(ScreenShotHelper.func_148260_a(this.field_71412_D, this.field_71443_c, this.field_71440_d, this.field_147124_at));
                      }
-@@ -3199,6 +3110,7 @@
+@@ -3199,6 +3111,7 @@
                          }
                      }
                  }
@@ -544,7 +545,7 @@
              }
          }
      }
-@@ -3328,6 +3240,12 @@
+@@ -3328,6 +3241,12 @@
          return this.field_184127_aH;
      }
  
@@ -557,7 +558,7 @@
      public boolean func_189648_am()
      {
          return this.field_71439_g != null && this.field_71439_g.func_175140_cp() || this.field_71474_y.field_178879_v;
-@@ -3342,4 +3260,9 @@
+@@ -3342,4 +3261,9 @@
      {
          return this.field_193035_aW;
      }
