@@ -4,7 +4,7 @@
  
              if (!flag1 && advancementprogress.func_192105_a())
              {
-+                if (net.minecraftforge.common.ForgeHooks.onAdvancementPre(this.field_192762_j, p_192750_1_)) {
++                if (net.minecraftforge.common.ForgeHooks.onAdvancementGrantPre(this.field_192762_j, p_192750_1_)) {
 +                    advancementprogress.func_192101_b(p_192750_2_);
 +                    this.func_193764_b(p_192750_1_);
 +                    this.field_192761_i.remove(p_192750_1_);
@@ -18,7 +18,7 @@
                      this.field_192756_d.func_184103_al().func_148539_a(new TextComponentTranslation("chat.type.advancement." + p_192750_1_.func_192068_c().func_192291_d().func_192307_a(), new Object[] {this.field_192762_j.func_145748_c_(), p_192750_1_.func_193123_j()}));
                  }
 +
-+                net.minecraftforge.common.ForgeHooks.onAdvancementPost(this.field_192762_j, p_192750_1_);
++                net.minecraftforge.common.ForgeHooks.onAdvancementGrantPost(this.field_192762_j, p_192750_1_);
              }
          }
  
