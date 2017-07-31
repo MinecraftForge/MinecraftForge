@@ -1000,7 +1000,7 @@ public final class ModelLoader extends ModelBakery
             {
                 ModelResourceLocation location = (ModelResourceLocation)entry.getKey();
                 IBakedModel model = modelRegistry.getObject(location);
-                if(model == null || model == missingModel)
+                if(model == null || model == missingModel || model instanceof FancyMissingModel.BakedModel)
                 {
                     String domain = entry.getKey().getResourceDomain();
                     Integer errorCountBox = modelErrors.get(domain);

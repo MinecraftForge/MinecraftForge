@@ -31,9 +31,16 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
+
+import javax.annotation.Nullable;
 
 public class JsonUtils
 {
@@ -85,6 +92,24 @@ public class JsonUtils
             final Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
             final Type parameterizedType = mapOf(typeArguments[1]).getType();
             return context.serialize(src, parameterizedType);
+        }
+    }
+
+    @Nullable
+    public static NBTTagCompound readNBT(JsonObject json, String key)
+    {
+        if (net.minecraft.util.JsonUtils.hasField(json, key))
+        {
+            try
+            {
+                return JsonToNBT.getTagFromJson(net.minecraft.util.JsonUtils.getString(json, key));
+            } catch (NBTException e)
+            {
+                throw new JsonSyntaxException("Malformed NBT tag", e);
+            }
+        } else
+        {
+            return null;
         }
     }
 

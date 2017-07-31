@@ -35,7 +35,6 @@ import net.minecraftforge.fml.relauncher.FMLSecurityManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -128,7 +127,7 @@ public class FMLTweaker implements ITweaker {
         catch (URISyntaxException e)
         {
             LogManager.getLogger("FMLTWEAK").log(Level.ERROR, "Missing URI information for FML tweak");
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 

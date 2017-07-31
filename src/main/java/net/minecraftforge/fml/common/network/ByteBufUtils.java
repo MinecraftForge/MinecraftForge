@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.common.network;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -35,9 +36,6 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 
 import org.apache.commons.lang3.Validate;
-
-import com.google.common.base.Charsets;
-import com.google.common.base.Throwables;
 
 import io.netty.buffer.ByteBuf;
 
@@ -151,7 +149,7 @@ public class ByteBufUtils {
     public static String readUTF8String(ByteBuf from)
     {
         int len = readVarInt(from,2);
-        String str = from.toString(from.readerIndex(), len, Charsets.UTF_8);
+        String str = from.toString(from.readerIndex(), len, StandardCharsets.UTF_8);
         from.readerIndex(from.readerIndex() + len);
         return str;
     }
@@ -164,7 +162,7 @@ public class ByteBufUtils {
      */
     public static void writeUTF8String(ByteBuf to, String string)
     {
-        byte[] utf8Bytes = string.getBytes(Charsets.UTF_8);
+        byte[] utf8Bytes = string.getBytes(StandardCharsets.UTF_8);
         Validate.isTrue(varIntByteCount(utf8Bytes.length) < 3, "The string is too long for this encoding.");
         writeVarInt(to, utf8Bytes.length, 2);
         to.writeBytes(utf8Bytes);
@@ -194,10 +192,11 @@ public class ByteBufUtils {
         try
         {
             return pb.readItemStack();
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             // Unpossible?
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 

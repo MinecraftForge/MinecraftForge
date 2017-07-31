@@ -28,10 +28,8 @@ import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 
-import org.apache.logging.log4j.Level;
 import org.objectweb.asm.Type;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import javax.annotation.Nullable;
@@ -52,12 +50,14 @@ public class ModContainerFactory
 
     public void registerContainerType(Type type, Class<? extends ModContainer> container)
     {
-        try {
+        try
+        {
             Constructor<? extends ModContainer> constructor = container.getConstructor(new Class<?>[] { String.class, ModCandidate.class, Map.class });
             modTypes.put(type, constructor);
-        } catch (Exception e) {
-            FMLLog.log.error("Critical error : cannot register mod container type {}, it has an invalid constructor", container.getName(), e);
-            Throwables.propagate(e);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Critical error : cannot register mod container type " + container.getName() + ", it has an invalid constructor", e);
         }
     }
 

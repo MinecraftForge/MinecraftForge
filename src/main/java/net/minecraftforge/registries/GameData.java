@@ -26,7 +26,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -59,6 +58,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -126,7 +126,7 @@ public class GameData
         makeRegistry(POTIONS,      Potion.class,      MAX_POTION_ID).create();
         makeRegistry(BIOMES,       Biome.class,       MAX_BIOME_ID).create();
         makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).create();
-        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("water")).create();
+        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).create();
         makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
         makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().allowModification().create();
         makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
@@ -222,6 +222,10 @@ public class GameData
             reg.freeze();
         });
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.freeze());
+
+        // the id mapping is fanilized, no ids actually changed but this is a good place to tell everyone to 'bake' their stuff.
+        Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
+
         FMLLog.log.debug("All registries frozen");
     }
 
@@ -272,6 +276,7 @@ public class GameData
     private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
+        Field regName;
 
         @SuppressWarnings("deprecation")
         @Override
@@ -279,6 +284,12 @@ public class GameData
         {
             @SuppressWarnings("unchecked")
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
+
+            if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
+            {
+                for (int meta = 0; meta < 15; meta++)
+                    blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta);
+            }
 
             //So, due to blocks having more in-world states then metadata allows, we have to turn the map into a semi-milti-bimap.
             //We can do this however because the implementation of the map is last set wins. So we can add all states, then fix the meta bimap.
@@ -297,7 +308,6 @@ public class GameData
                 if (usedMeta[meta])
                     blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta); // Put the CORRECT thing!
             }
-
 
             if (oldBlock != null)
             {
@@ -339,7 +349,32 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            return new BlockDummyAir().setUnlocalizedName("air").setRegistryName(key);
+            if (regName == null)
+            {
+                try
+                {
+                    regName = IForgeRegistryEntry.Impl.class.getDeclaredField("registryName");
+                    regName.setAccessible(true);
+                }
+                catch (NoSuchFieldException | SecurityException e)
+                {
+                    FMLLog.log.error("Could not get `registryName` field from IForgeRegistryEntry.Impl");
+                    FMLLog.log.throwing(Level.ERROR, e);
+                    throw new RuntimeException(e);
+                }
+            }
+            Block ret = new BlockDummyAir().setUnlocalizedName("air");
+            try
+            {
+                regName.set(ret, key);
+            }
+            catch (IllegalArgumentException | IllegalAccessException e)
+            {
+                FMLLog.log.error("Could not set `registryName` field in IForgeRegistryEntry.Impl to `{}`", key.toString());
+                FMLLog.log.throwing(Level.ERROR, e);
+                throw new RuntimeException(e);
+            }
+            return ret;
         }
         private static class BlockDummyAir extends BlockAir //A named class so DummyBlockReplacementTest can detect if its a dummy
         {

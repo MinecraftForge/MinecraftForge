@@ -1528,10 +1528,25 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1247,14 +2549,7 @@
+@@ -1232,31 +2534,6 @@
+                 block15.field_149783_u = flag;
              }
-             else
-             {
+         }
+-
+-        Set<Block> set = Sets.newHashSet(field_149771_c.func_82594_a(new ResourceLocation("tripwire")));
+-
+-        for (Block block16 : field_149771_c)
+-        {
+-            if (set.contains(block16))
+-            {
+-                for (int i = 0; i < 15; ++i)
+-                {
+-                    int j = field_149771_c.func_148757_b(block16) << 4 | i;
+-                    field_176229_d.func_148746_a(block16.func_176203_a(i), j);
+-                }
+-            }
+-            else
+-            {
 -                UnmodifiableIterator unmodifiableiterator = block16.func_176194_O().func_177619_a().iterator();
 -
 -                while (unmodifiableiterator.hasNext())
@@ -1540,7 +1555,8 @@
 -                    int k = field_149771_c.func_148757_b(block16) << 4 | block16.func_176201_c(iblockstate);
 -                    field_176229_d.func_148746_a(iblockstate, k);
 -                }
-+//              Handled in GameData.BlockCallbacks - leaving tripwire as it seems to be special cased
-             }
-         }
+-            }
+-        }
      }
+ 
+     private static void func_176215_a(int p_176215_0_, ResourceLocation p_176215_1_, Block p_176215_2_)
