@@ -20,6 +20,7 @@
 package net.minecraftforge.oredict;
 
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -78,6 +79,17 @@ public class DyeUtils
     }
 
     /**
+     * Similar to {@link #metaFromStack(ItemStack)}, except that it returns the raw integer (with a {@code -1} sentinel);
+     * this follows vanilla conventions.
+     * @param stack the item stack
+     * @return the dye metadata for a dye, or {@code -1} otherwise
+     */
+    public static int rawMetaFromStack(ItemStack stack)
+    {
+        return metaFromStack(stack).orElse(-1);
+    }
+
+    /**
      * Get the dye damage from the stack, which can be passed into {@link EnumDyeColor#byDyeDamage(int)}.
      * @param stack the item stack
      * @return an {@link OptionalInt} holding the dye damage for a dye, or an empty {@link OptionalInt} otherwise
@@ -86,6 +98,17 @@ public class DyeUtils
     {
         final OptionalInt meta = metaFromStack(stack);
         return meta.isPresent() ? OptionalInt.of(0xF - meta.getAsInt()) : OptionalInt.empty();
+    }
+
+    /**
+     * Similar to {@link #dyeDamageFromStack(ItemStack)}, except that it returns the raw integer (with a {@code -1} sentinel);
+     * this follows vanilla conventions.
+     * @param stack the item stack
+     * @return the dye damage for a dye, or {@code -1} otherwise
+     */
+    public static int rawDyeDamageFromStack(ItemStack stack)
+    {
+        return dyeDamageFromStack(stack).orElse(-1);
     }
 
     /**

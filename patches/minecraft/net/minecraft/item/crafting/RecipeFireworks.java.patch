@@ -29,7 +29,7 @@
 +                        if (net.minecraftforge.oredict.DyeUtils.isDye(itemstack2))
                          {
 -                            list.add(Integer.valueOf(ItemDye.field_150922_c[itemstack2.func_77960_j() & 15]));
-+                            list.add(Integer.valueOf(ItemDye.field_150922_c[net.minecraftforge.oredict.DyeUtils.dyeDamageFromStack(itemstack2).getAsInt() & 15]));
++                            list.add(Integer.valueOf(ItemDye.field_150922_c[net.minecraftforge.oredict.DyeUtils.rawDyeDamageFromStack(itemstack2) & 15]));
                          }
                          else if (itemstack2.func_77973_b() == Items.field_151114_aO)
                          {
@@ -41,7 +41,7 @@
 +                        if (net.minecraftforge.oredict.DyeUtils.isDye(itemstack1))
                          {
 -                            list1.add(Integer.valueOf(ItemDye.field_150922_c[itemstack1.func_77960_j() & 15]));
-+                            list1.add(Integer.valueOf(ItemDye.field_150922_c[net.minecraftforge.oredict.DyeUtils.dyeDamageFromStack(itemstack1).getAsInt() & 15]));
++                            list1.add(Integer.valueOf(ItemDye.field_150922_c[net.minecraftforge.oredict.DyeUtils.rawDyeDamageFromStack(itemstack1) & 15]));
                          }
                          else if (itemstack1.func_77973_b() == Items.field_151154_bQ)
                          {

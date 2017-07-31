@@ -19,11 +19,11 @@
                          ItemStack itemstack2 = p_77572_1_.func_70301_a(j);
  
 -                        if (itemstack2.func_77973_b() == Items.field_151100_aR)
-+                        final java.util.OptionalInt color = net.minecraftforge.oredict.DyeUtils.dyeDamageFromStack(itemstack2);
-+                        if (color.isPresent())
++                        int color = net.minecraftforge.oredict.DyeUtils.rawDyeDamageFromStack(itemstack2);
++                        if (color != -1)
                          {
 -                            k = itemstack2.func_77960_j();
-+                            k = color.getAsInt();
++                            k = color;
                              break;
                          }
                      }
