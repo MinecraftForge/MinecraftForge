@@ -705,7 +705,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         //It was blocked before so we need to unset the blocking map
         this.availabilityMap.clear(id);
 
-        int realId = this.add(id, dummy);
+        int realId = this.add(id, dummy, dummy.getRegistryName().getResourceDomain());
         if (realId != id)
             FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), key, id, realId);
         this.dummies.add(key);
