@@ -4,16 +4,24 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.MapItemRenderer;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemMap;
+import net.minecraft.item.ItemMapBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketMaps;
+import net.minecraft.stats.StatList;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -36,6 +44,10 @@ public class MapDataTest
 {
     @GameRegistry.ObjectHolder("mapdatatest:custom_map")
     public static final Item CUSTOM_MAP = null;
+
+    @GameRegistry.ObjectHolder("mapdatatest:empty_custom_map")
+    public static final Item EMPTY_CUSTOM_MAP = null;
+
     private static SimpleNetworkWrapper packetHandler;
 
     @Mod.EventHandler
@@ -47,19 +59,55 @@ public class MapDataTest
     }
 
     @SubscribeEvent
-    public void registerItems(RegistryEvent.Register<Item> evt)
+    public void registerModels(ModelRegistryEvent evt)
     {
-        evt.getRegistry().register(new CustomMap().setRegistryName("mapdatatest", "custom_map"));
+        ModelLoader.setCustomModelResourceLocation(EMPTY_CUSTOM_MAP, 0, new ModelResourceLocation("map", "inventory"));
+        ModelLoader.setCustomMeshDefinition(CUSTOM_MAP, s -> new ModelResourceLocation("filled_map", "inventory"));
     }
 
-    public static class CustomMap extends ItemMap {
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register<Item> evt)
+    {
+        evt.getRegistry().register(new EmptyCustomMap().setUnlocalizedName("emptyCustomMap").setRegistryName("mapdatatest", "empty_custom_map"));
+        evt.getRegistry().register(new CustomMap().setUnlocalizedName("customMap").setRegistryName("mapdatatest", "custom_map"));
+    }
+
+    public static class EmptyCustomMap extends ItemMapBase
+    {
+        // copy of super, setting up our own map
+        @Override
+        public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
+        {
+            ItemStack itemstack = CustomMap.setupNewMap(worldIn, playerIn.posX, playerIn.posZ, (byte) 0, true, false);
+            ItemStack itemstack1 = playerIn.getHeldItem(handIn);
+            itemstack1.shrink(1);
+
+            if (itemstack1.isEmpty())
+            {
+                return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);
+            } else
+            {
+                if (!playerIn.inventory.addItemStackToInventory(itemstack.copy()))
+                {
+                    playerIn.dropItem(itemstack, false);
+                }
+
+                playerIn.addStat(StatList.getObjectUseStats(this));
+                return new ActionResult<>(EnumActionResult.SUCCESS, itemstack1);
+            }
+        }
+    }
+
+    public static class CustomMap extends ItemMap
+    {
         private static final String PREFIX = "custommap";
 
         // copy of super with own map prefix
-        public static ItemStack setupNewMap(World worldIn, double worldX, double worldZ, byte scale, boolean trackingPosition, boolean unlimitedTracking) {
+        public static ItemStack setupNewMap(World worldIn, double worldX, double worldZ, byte scale, boolean trackingPosition, boolean unlimitedTracking)
+        {
             ItemStack itemstack = new ItemStack(CUSTOM_MAP, 1, worldIn.getUniqueDataId(PREFIX));
             String s = PREFIX + "_" + itemstack.getMetadata();
-            MapData mapdata = new MapData(s);
+            MapData mapdata = new CustomMapData(s);
             worldIn.setData(s, mapdata);
             mapdata.scale = scale;
             mapdata.calculateMapCenter(worldX, worldZ, mapdata.scale);
@@ -73,7 +121,8 @@ public class MapDataTest
         // copy of super with own map prefix and type
         @Nullable
         @SideOnly(Side.CLIENT)
-        public static CustomMapData loadMapData(int mapId, World worldIn) {
+        public static CustomMapData loadMapData(int mapId, World worldIn)
+        {
             String s = PREFIX + "_" + mapId;
             return (CustomMapData) worldIn.loadData(CustomMapData.class, s);
         }
@@ -81,11 +130,13 @@ public class MapDataTest
         // copy of super with own map prefix and type
         @Nullable
         @Override
-        public CustomMapData getMapData(ItemStack stack, World worldIn) {
+        public CustomMapData getMapData(ItemStack stack, World worldIn)
+        {
             String s = PREFIX + "_" + stack.getMetadata();
             CustomMapData mapdata = (CustomMapData) worldIn.loadData(CustomMapData.class, s);
 
-            if (mapdata == null && !worldIn.isRemote) {
+            if (mapdata == null && !worldIn.isRemote)
+            {
                 stack.setItemDamage(worldIn.getUniqueDataId(PREFIX));
                 s = PREFIX + "_" + stack.getMetadata();
                 mapdata = new CustomMapData(s);
