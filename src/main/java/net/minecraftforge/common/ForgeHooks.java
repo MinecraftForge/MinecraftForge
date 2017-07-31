@@ -95,10 +95,7 @@ import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.DifficultyChangeEvent;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.ThrowableImpactEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -995,6 +992,12 @@ public class ForgeHooks
         {
             return eyes < pos.getY() + 1 + filled;
         }
+    }
+
+    public static boolean onApplicationClosed(boolean isClient)
+    {
+        ApplicationCloseEvent evt = new ApplicationCloseEvent(isClient);
+        return MinecraftForge.EVENT_BUS.post(evt);
     }
 
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
