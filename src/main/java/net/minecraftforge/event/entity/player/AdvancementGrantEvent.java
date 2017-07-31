@@ -24,13 +24,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
- * When the player receives an advancement.
+ * When an advancement is granted to a player.
  */
-public class AdvancementEvent extends PlayerEvent
+public class AdvancementGrantEvent extends PlayerEvent
 {
     private final Advancement advancement;
 
-    public AdvancementEvent(EntityPlayer player, Advancement advancement)
+    public AdvancementGrantEvent(EntityPlayer player, Advancement advancement)
     {
         super(player);
         this.advancement = advancement;
@@ -42,7 +42,7 @@ public class AdvancementEvent extends PlayerEvent
     }
 
     @Cancelable
-    public static class Pre extends AdvancementEvent
+    public static class Pre extends AdvancementGrantEvent
     {
         public Pre(EntityPlayer player, Advancement advancement)
         {
@@ -50,7 +50,7 @@ public class AdvancementEvent extends PlayerEvent
         }
     }
 
-    public static class Post extends AdvancementEvent
+    public static class Post extends AdvancementGrantEvent
     {
         public Post(EntityPlayer player, Advancement advancement)
         {

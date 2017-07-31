@@ -118,7 +118,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.event.entity.player.AdvancementGrantEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -1311,13 +1311,13 @@ public class ForgeHooks
         );
     }
 
-    public static boolean onAdvancementPre(EntityPlayerMP player, Advancement advancement)
+    public static boolean onAdvancementGrantPre(EntityPlayerMP player, Advancement advancement)
     {
-        return MinecraftForge.EVENT_BUS.post(new AdvancementEvent.Pre(player, advancement));
+        return MinecraftForge.EVENT_BUS.post(new AdvancementGrantEvent.Pre(player, advancement));
     }
 
-    public static void onAdvancementPost(EntityPlayerMP player, Advancement advancement)
+    public static void onAdvancementGrantPost(EntityPlayerMP player, Advancement advancement)
     {
-        MinecraftForge.EVENT_BUS.post(new AdvancementEvent.Post(player, advancement));
+        MinecraftForge.EVENT_BUS.post(new AdvancementGrantEvent.Post(player, advancement));
     }
 }
