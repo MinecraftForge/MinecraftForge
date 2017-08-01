@@ -37,22 +37,18 @@
      }
  
      @Deprecated
-@@ -372,13 +374,13 @@
+@@ -372,9 +374,9 @@
      @SideOnly(Side.CLIENT)
      public int func_185484_c(IBlockState p_185484_1_, IBlockAccess p_185484_2_, BlockPos p_185484_3_)
      {
 -        int i = p_185484_2_.func_175626_b(p_185484_3_, p_185484_1_.func_185906_d());
-+        int i = p_185484_2_.func_175626_b(p_185484_3_, p_185484_1_.getLightValue(p_185484_2_, p_185484_3_));
++        int i = p_185484_2_.func_175626_b(p_185484_3_, 0);
  
-         if (i == 0 && p_185484_1_.func_177230_c() instanceof BlockSlab)
+-        if (i == 0 && p_185484_1_.func_177230_c() instanceof BlockSlab)
++        if (false) //Slabs already use neighbor brightness.
          {
              p_185484_3_ = p_185484_3_.func_177977_b();
              p_185484_1_ = p_185484_2_.func_180495_p(p_185484_3_);
--            return p_185484_2_.func_175626_b(p_185484_3_, p_185484_1_.func_185906_d());
-+            return p_185484_2_.func_175626_b(p_185484_3_, p_185484_1_.getLightValue(p_185484_2_, p_185484_3_));
-         }
-         else
-         {
 @@ -442,7 +444,7 @@
                  }
          }

@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/BlockFluidRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/BlockFluidRenderer.java
+@@ -73,6 +73,7 @@
+             double d1 = (double)p_178270_3_.func_177956_o();
+             double d2 = (double)p_178270_3_.func_177952_p();
+             float f11 = 0.001F;
++            final int lightIn = net.minecraftforge.client.ForgeHooksClient.getBasePackedLightmapCoords(p_178270_1_, p_178270_3_);
+ 
+             if (flag1)
+             {
+@@ -145,6 +146,7 @@
+                 float f37 = atextureatlassprite[0].func_94206_g();
+                 float f38 = atextureatlassprite[0].func_94210_h();
+                 int l1 = p_178270_2_.func_185889_a(p_178270_1_, p_178270_3_.func_177977_b());
++                l1 = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(l1, lightIn);
+                 int i2 = l1 >> 16 & 65535;
+                 int j2 = l1 & 65535;
+                 p_178270_4_.func_181662_b(d0, d1, d2 + 1.0D).func_181666_a(0.5F, 0.5F, 0.5F, 1.0F).func_187315_a((double)f35, (double)f38).func_187314_a(i2, j2).func_181675_d();
+@@ -245,6 +247,7 @@
+                     float f29 = textureatlassprite1.func_94207_b((double)((1.0F - f40) * 16.0F * 0.5F));
+                     float f30 = textureatlassprite1.func_94207_b(8.0D);
+                     int j = p_178270_2_.func_185889_a(p_178270_1_, blockpos);
++                    j = net.minecraftforge.client.ForgeHooksClient.combinePackedLightmapCoords(j, lightIn);
+                     int k = j >> 16 & 65535;
+                     int l = j & 65535;
+                     float f31 = i1 < 2 ? 0.8F : 0.6F;
