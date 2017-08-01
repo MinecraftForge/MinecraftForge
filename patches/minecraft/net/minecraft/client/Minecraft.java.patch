@@ -215,15 +215,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1788,6 +1817,7 @@
-                     this.field_71457_ai = 0;
-                     this.field_71441_e.func_72897_h(this.field_71439_g);
-                 }
-+                net.minecraftforge.fml.common.FMLCommonHandler.instance().fireMouseInput();
-             }
- 
-             this.field_71424_I.func_76318_c("gameRenderer");
-@@ -1877,6 +1907,7 @@
+@@ -1877,6 +1906,7 @@
          }
  
          this.field_71424_I.func_76319_b();
@@ -231,7 +223,7 @@
          this.field_71423_H = func_71386_F();
      }
  
-@@ -1982,6 +2013,7 @@
+@@ -1982,6 +2012,7 @@
                      }
                  }
              }
@@ -239,7 +231,7 @@
          }
  
          this.func_184117_aA();
-@@ -2239,6 +2271,8 @@
+@@ -2239,6 +2270,8 @@
      {
          while (Mouse.next())
          {
@@ -247,6 +239,14 @@
 +
              int i = Mouse.getEventButton();
              KeyBinding.func_74510_a(i - 100, Mouse.getEventButtonState());
+ 
+@@ -2294,6 +2327,7 @@
+                     this.field_71462_r.func_146274_d();
+                 }
+             }
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().fireMouseInput();
+         }
+     }
  
 @@ -2304,6 +2338,7 @@
  
