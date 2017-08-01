@@ -1247,6 +1247,21 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
     }
 
+    private static final ClassValue<String> registryNames = new ClassValue<String>()
+    {
+        @Override
+        @SuppressWarnings("unchecked")
+        protected String computeValue(Class<?> type)
+        {
+            return String.valueOf(TileEntity.getKey((Class<? extends TileEntity>) type));
+        }
+    };
+
+    public static String getRegistryName(Class<? extends TileEntity> type)
+    {
+        return registryNames.get(type);
+    }
+
     public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
     {
         boolean errored = false;
