@@ -18,6 +18,15 @@
                      }
                  }
  
+@@ -255,7 +255,7 @@
+             itemstack.func_111282_a(p_184645_1_, this, p_184645_2_);
+             return true;
+         }
+-        else if (!this.func_190669_a(itemstack, this.getClass()) && this.func_70089_S() && !this.func_70940_q() && !this.func_70631_g_())
++        else if (!this.func_190669_a(itemstack, this.getClass()) && this.func_70089_S() && !this.func_70940_q() && !this.func_70631_g_() && !p_184645_1_.func_70093_af())
+         {
+             if (this.field_70963_i == null)
+             {
 @@ -327,6 +327,7 @@
      {
          super.func_70014_b(p_70014_1_);
