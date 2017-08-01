@@ -43,6 +43,8 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation.EnumHolder;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class ConfigManager
 {
     private static Map<String, Multimap<Config.Type, ASMData>> asm_data = Maps.newHashMap();
@@ -246,7 +248,7 @@ public class ConfigManager
 
                     for (String key : wrapper.getKeys())
                     {
-                        String suffix = key.replaceFirst(wrapper.getCategory() + ".", "");
+                        String suffix = StringUtils.replaceOnce(key, wrapper.getCategory() + ".", "");
 
                         boolean existed = exists(cfg, wrapper.getCategory(), suffix);
                         if (!existed || loading) //Creates keys in category specified by the wrapper if new ones are programaticaly added
