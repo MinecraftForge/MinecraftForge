@@ -9,3 +9,17 @@
                  {
                      this.func_193101_c(p_184645_1_);
                      this.field_70699_by.func_75499_g();
+@@ -615,6 +615,13 @@
+         return !this.func_70919_bu() && super.func_184652_a(p_184652_1_);
+     }
+ 
++    /* ================================== Forge Start =====================================*/
++    public boolean isHostileTo(@javax.annotation.Nullable EntityLivingBase subject)
++    {
++        return subject instanceof AbstractSkeleton || (!this.func_70909_n() && subject instanceof EntityAnimal);
++    }
++    /* ================================== Forge END =======================================*/
++
+     class AIAvoidEntity<T extends Entity> extends EntityAIAvoidEntity<T>
+     {
+         private final EntityWolf field_190856_d;

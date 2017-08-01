@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityRabbit.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityRabbit.java
+@@ -489,6 +489,13 @@
+         }
+     }
+ 
++    /* ================================== Forge Start =====================================*/
++    public boolean isHostileTo(@javax.annotation.Nullable EntityLivingBase subject)
++    {
++        return this.func_175531_cl()==99 && (subject == null || subject instanceof EntityPlayer || subject instanceof EntityWolf);
++    }
++    /* ================================== Forge END =======================================*/
++
+     static class AIAvoidEntity<T extends Entity> extends EntityAIAvoidEntity<T>
+         {
+             private final EntityRabbit field_179511_d;

@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/AbstractIllager.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/AbstractIllager.java
+@@ -57,6 +57,13 @@
+         return AbstractIllager.IllagerArmPose.CROSSED;
+     }
+ 
++    /* ================================== Forge Start =====================================*/
++    public boolean isHostileTo(@javax.annotation.Nullable net.minecraft.entity.EntityLivingBase subject)
++    {
++        return subject == null || subject instanceof net.minecraft.entity.player.EntityPlayer || subject instanceof net.minecraft.entity.passive.EntityVillager || subject instanceof EntityIronGolem;
++    }
++    /* ================================== Forge END =======================================*/
++
+     @SideOnly(Side.CLIENT)
+     public static enum IllagerArmPose
+     {

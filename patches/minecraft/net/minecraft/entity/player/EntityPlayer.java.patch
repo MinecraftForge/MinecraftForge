@@ -445,7 +445,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2421,6 +2528,168 @@
+@@ -2421,6 +2528,172 @@
          return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }
  
@@ -609,6 +609,10 @@
 +    public int getSpawnDimension() { return spawnDimension != null ? spawnDimension : 0; }
 +    public void setSpawnDimension(@Nullable Integer dimension) { this.spawnDimension = dimension; }
 +
++    public boolean isHostileTo(@javax.annotation.Nullable EntityLivingBase subject)
++    {
++        return subject instanceof net.minecraft.entity.monster.IMob;
++    }
 +    /* ======================================== FORGE END  =====================================*/
 +
      public static enum EnumChatVisibility

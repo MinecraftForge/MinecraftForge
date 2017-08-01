@@ -65,3 +65,17 @@
          }
  
          if (p_180482_2_ instanceof EntityZombie.GroupData)
+@@ -555,6 +567,13 @@
+         return new ItemStack(Items.field_151144_bL, 1, 2);
+     }
+ 
++    /* ================================== Forge Start =====================================*/
++    public boolean isHostileTo(@javax.annotation.Nullable EntityLivingBase subject)
++    {
++        return subject == null || subject instanceof EntityPlayer || subject instanceof EntityVillager || subject instanceof EntityIronGolem;
++    }
++    /* ================================== Forge END =======================================*/
++
+     class GroupData implements IEntityLivingData
+     {
+         public boolean field_142048_a;
