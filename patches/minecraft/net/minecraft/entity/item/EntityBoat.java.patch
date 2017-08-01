@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityBoat.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityBoat.java
-@@ -368,6 +368,7 @@
-             this.func_70107_b(d0, d1, d2);
-             this.func_70101_b(this.field_70177_z, this.field_70125_A);
-         }
-+        else if (field_184476_at > 0) { field_184476_at = 0; field_70165_t = field_70281_h; field_70163_u = field_184477_av; field_70161_v = field_184478_aw; field_70177_z = (float)field_70273_g; field_70125_A = (float)field_184479_ay; } // Forge: Fix MC-119811 by instantly completing lerp
-     }
- 
-     public void func_184445_a(boolean p_184445_1_, boolean p_184445_2_)
-@@ -508,7 +509,7 @@
+@@ -508,7 +508,7 @@
  
                                  if (!list.isEmpty())
                                  {
