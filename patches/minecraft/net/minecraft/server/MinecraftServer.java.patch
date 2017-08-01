@@ -259,7 +259,21 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -1594,4 +1638,9 @@
+@@ -1374,11 +1418,13 @@
+     {
+         if (this.func_152345_ab())
+         {
++            if (net.minecraftforge.common.ForgeHooks.reloadPre(this.field_71305_c[0])) return;
+             this.func_184103_al().func_72389_g();
+             this.field_71305_c[0].func_184146_ak().func_186522_a();
+             this.func_191949_aK().func_192779_a();
+             this.func_193030_aL().func_193059_f();
+             this.func_184103_al().func_193244_w();
++            net.minecraftforge.common.ForgeHooks.reloadPost(this.field_71305_c[0]);
+         }
+         else
+         {
+@@ -1594,4 +1640,9 @@
      {
          return this.field_175590_aa;
      }
