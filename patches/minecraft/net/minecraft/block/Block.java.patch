@@ -227,7 +227,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -936,6 +951,1255 @@
+@@ -936,6 +951,1250 @@
      {
      }
  
@@ -237,7 +237,7 @@
 +    private ThreadLocal<IBlockState> silk_check_state = new ThreadLocal();
 +    protected static java.util.Random RANDOM = new java.util.Random(); // Useful for random things without a seed.
 +    /**
-+     * Get a light value for the block at the specified coordinates, normal ranges are between 0 and 15
++     * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
 +     *
 +     * @param state Block state
 +     * @param world The current world
@@ -246,11 +246,6 @@
 +     */
 +    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        IBlockState other = world.func_180495_p(pos);
-+        if (other.func_177230_c() != this)
-+        {
-+            return other.getLightValue(world, pos);
-+        }
 +        return state.func_185906_d();
 +    }
 +
@@ -1483,7 +1478,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1232,31 +2496,6 @@
+@@ -1232,31 +2491,6 @@
                  block15.field_149783_u = flag;
              }
          }
