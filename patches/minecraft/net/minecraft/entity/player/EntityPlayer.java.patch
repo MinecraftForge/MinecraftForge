@@ -273,7 +273,20 @@
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
-@@ -1332,10 +1412,12 @@
+@@ -1203,9 +1283,11 @@
+                     boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(MobEffects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof EntityLivingBase;
+                     flag2 = flag2 && !this.func_70051_ag();
+ 
++                    net.minecraftforge.event.entity.player.CriticalHitEvent hitResult = net.minecraftforge.common.ForgeHooks.getCriticalHit(this, p_71059_1_, flag2, flag2 ? 1.5F : 1.0F);
++                    flag2 = hitResult != null;
+                     if (flag2)
+                     {
+-                        f *= 1.5F;
++                        f *= hitResult.getDamageModifier();
+                     }
+ 
+                     f = f + f1;
+@@ -1332,10 +1414,12 @@
  
                          if (!itemstack1.func_190926_b() && entity instanceof EntityLivingBase)
                          {
@@ -286,7 +299,7 @@
                                  this.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
                              }
                          }
-@@ -1384,7 +1466,7 @@
+@@ -1384,7 +1468,7 @@
  
          if (this.field_70146_Z.nextFloat() < f)
          {
@@ -295,7 +308,7 @@
              this.func_184602_cy();
              this.field_70170_p.func_72960_a(this, (byte)30);
          }
-@@ -1442,6 +1524,8 @@
+@@ -1442,6 +1526,8 @@
  
      public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
      {
@@ -304,7 +317,7 @@
          EnumFacing enumfacing = (EnumFacing)this.field_70170_p.func_180495_p(p_180469_1_).func_177229_b(BlockHorizontal.field_185512_D);
  
          if (!this.field_70170_p.field_72995_K)
-@@ -1484,8 +1568,9 @@
+@@ -1484,8 +1570,9 @@
          this.func_192030_dh();
          this.func_70105_a(0.2F, 0.2F);
  
@@ -316,7 +329,7 @@
              float f1 = 0.5F + (float)enumfacing.func_82601_c() * 0.4F;
              float f = 0.5F + (float)enumfacing.func_82599_e() * 0.4F;
              this.func_175139_a(enumfacing);
-@@ -1532,13 +1617,14 @@
+@@ -1532,13 +1619,14 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
@@ -334,7 +347,7 @@
  
              if (blockpos == null)
              {
-@@ -1547,6 +1633,10 @@
+@@ -1547,6 +1635,10 @@
  
              this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
          }
@@ -345,7 +358,7 @@
  
          this.field_71083_bS = false;
  
-@@ -1565,15 +1655,16 @@
+@@ -1565,15 +1657,16 @@
  
      private boolean func_175143_p()
      {
@@ -365,7 +378,7 @@
          {
              if (!p_180467_2_)
              {
-@@ -1588,16 +1679,17 @@
+@@ -1588,16 +1681,17 @@
          }
          else
          {
@@ -386,7 +399,7 @@
  
              switch (enumfacing)
              {
-@@ -1637,16 +1729,24 @@
+@@ -1637,16 +1731,24 @@
  
      public BlockPos func_180470_cg()
      {
@@ -413,7 +426,7 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
-@@ -1839,6 +1939,10 @@
+@@ -1839,6 +1941,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -424,7 +437,7 @@
      }
  
      protected void func_71061_d_()
-@@ -2176,7 +2280,10 @@
+@@ -2176,7 +2282,10 @@
  
      public ITextComponent func_145748_c_()
      {
@@ -436,7 +449,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2185,7 +2292,7 @@
+@@ -2185,7 +2294,7 @@
  
      public float func_70047_e()
      {
@@ -445,7 +458,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2421,6 +2528,168 @@
+@@ -2421,6 +2530,168 @@
          return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }
  
