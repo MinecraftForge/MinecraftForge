@@ -16,7 +16,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Most of the real work is in the advancements directory of this mod.
