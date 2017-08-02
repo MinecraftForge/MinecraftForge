@@ -90,10 +90,10 @@
 +    }
 +    
 +    /**
-+     * Used as a last resort for determining potion effect sort order in the gui.
-+     * This can be used to preserve a potion effect's sort order if it has a liquid color that is subject to change.
-+     * @param The PotionEffect instance containing the potion
-+     * @return An index to use to sort potion effects if the value is different than that of the other effect's potion
++     * Used as a last resort for determining {@code PotionEffect} sort order in GUIs.
++     * Defaults to the {@code PotionEffect}'s liquid color.
++     * @param potionEffect the {@code PotionEffect} instance containing the potion
++     * @return a value used to sort {@code PotionEffect}s in GUIs 
 +     */
 +    public int getGuiSortColor(PotionEffect potionEffect)
 +    {
