@@ -126,7 +126,7 @@
       "serverreq":true
     },
     {
-      "name": "net.sf.jopt-simple:jopt-simple:4.6",
+      "name": "net.sf.jopt-simple:jopt-simple:5.0.3",
       "serverreq":true
     },
     {

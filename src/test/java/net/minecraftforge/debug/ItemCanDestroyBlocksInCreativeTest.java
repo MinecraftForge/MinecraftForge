@@ -20,7 +20,7 @@ public class ItemCanDestroyBlocksInCreativeTest
     public static class Registration
     {
         @SubscribeEvent
-        public static void registrItems(RegistryEvent.Register<Item> event)
+        public static void registerItems(RegistryEvent.Register<Item> event)
         {
             if (!ENABLE)
                 return;

@@ -162,7 +162,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
                     }
                     else
                     {
-                        System.out.println("Unknown special event \"" + event.event() + "\", ignoring");
+                        FMLLog.log.error("Unknown special event \"{}\", ignoring.", event.event());
                     }
                 }
             }
@@ -230,12 +230,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
             //System.out.println(location + ": " + json);
             return asm;
         }
-        catch(IOException e)
-        {
-            FMLLog.log.error("Exception loading Animation State Machine {}, skipping", location, e);
-            return missing;
-        }
-        catch(JsonParseException e)
+        catch(IOException | JsonParseException e)
         {
             FMLLog.log.error("Exception loading Animation State Machine {}, skipping", location, e);
             return missing;

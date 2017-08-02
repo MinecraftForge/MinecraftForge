@@ -569,17 +569,6 @@ public class Loader
         modController.transition(LoaderState.CONSTRUCTING, false);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, discoverer.getASMTable(), reverseDependencies);
 
-        List<ModContainer> mods = Lists.newArrayList();
-        mods.addAll(getActiveModList());
-        Collections.sort(mods, new Comparator<ModContainer>()
-        {
-            @Override
-            public int compare(ModContainer o1, ModContainer o2)
-            {
-                return o1.getModId().compareTo(o2.getModId());
-            }
-        });
-
         FMLLog.log.debug("Mod signature data");
         FMLLog.log.debug(" \tValid Signatures:");
         for (ModContainer mod : getActiveModList())
@@ -613,7 +602,7 @@ public class Loader
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
-        GameData.fireRegistryEvents();
+        GameData.fireRegistryEvents(rl -> !rl.equals(GameData.RECIPES));
         FMLCommonHandler.instance().fireSidedRegistryEvents();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         ItemStackHolderInjector.INSTANCE.inject();

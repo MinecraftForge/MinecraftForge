@@ -32,6 +32,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.RegistryBuilder;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -58,6 +60,11 @@ public class ItemTileDebug
         {
             event.getRegistry().register(new ItemBlock(TEST_BLOCK).setRegistryName(TEST_BLOCK.getRegistryName()));
         }
+    }
+
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class BakeEventHandler
+    {
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
@@ -66,52 +73,41 @@ public class ItemTileDebug
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(MODID, TestBlock.name));
             ForgeHooksClient.registerTESRItemStack(item, 0, CustomTileEntity.class);
             ModelLoader.setCustomModelResourceLocation(item, 0, itemLocation);
-            MinecraftForge.EVENT_BUS.register(BakeEventHandler.instance);
             ClientRegistry.bindTileEntitySpecialRenderer(CustomTileEntity.class, TestTESR.instance);
-
-        }
-    }
-
-    public static class BakeEventHandler
-    {
-        public static final BakeEventHandler instance = new BakeEventHandler();
-
-        private BakeEventHandler()
-        {
         }
 
         @SubscribeEvent
-        public void onModelBakeEvent(ModelBakeEvent event)
+        public static void onModelBakeEvent(ModelBakeEvent event)
         {
             event.getModelManager().getBlockModelShapes().registerBuiltInBlocks(TEST_BLOCK);
         }
-    }
 
-    public static class TestTESR extends TileEntitySpecialRenderer<CustomTileEntity>
-    {
-        private static final TestTESR instance = new TestTESR();
-
-        private TestTESR()
+        public static class TestTESR extends TileEntitySpecialRenderer<CustomTileEntity>
         {
-        }
+            private static final TestTESR instance = new TestTESR();
 
-        @Override
-        public void render(CustomTileEntity p_180535_1_, double x, double y, double z, float p_180535_8_, int p_180535_9_, float partial)
-        {
-            glPushMatrix();
-            glTranslated(x, y, z);
-            GlStateManager.disableTexture2D();
-            GlStateManager.disableLighting();
-            glColor4f(.2f, 1, .1f, 1);
-            glBegin(GL_QUADS);
-            glVertex3f(0, .5f, 0);
-            glVertex3f(0, .5f, 1);
-            glVertex3f(1, .5f, 1);
-            glVertex3f(1, .5f, 0);
-            glEnd();
-            glPopMatrix();
-            GlStateManager.enableTexture2D();
-            GlStateManager.enableLighting();
+            private TestTESR()
+            {
+            }
+
+            @Override
+            public void render(CustomTileEntity p_180535_1_, double x, double y, double z, float p_180535_8_, int p_180535_9_, float partial)
+            {
+                glPushMatrix();
+                glTranslated(x, y, z);
+                GlStateManager.disableTexture2D();
+                GlStateManager.disableLighting();
+                glColor4f(.2f, 1, .1f, 1);
+                glBegin(GL_QUADS);
+                glVertex3f(0, .5f, 0);
+                glVertex3f(0, .5f, 1);
+                glVertex3f(1, .5f, 1);
+                glVertex3f(1, .5f, 0);
+                glEnd();
+                glPopMatrix();
+                GlStateManager.enableTexture2D();
+                GlStateManager.enableLighting();
+            }
         }
     }
 

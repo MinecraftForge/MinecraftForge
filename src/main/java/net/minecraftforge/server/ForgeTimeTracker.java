@@ -83,12 +83,7 @@ public class ForgeTimeTracker {
             // race, exit
             return;
         }
-        int[] timings = tileEntityTimings.get(tileEntity);
-        if (timings == null)
-        {
-            timings = new int[101];
-            tileEntityTimings.put(tileEntity, timings);
-        }
+        int[] timings = tileEntityTimings.computeIfAbsent(tileEntity, k -> new int[101]);
         int idx = timings[100] = (timings[100] + 1) % 100;
         timings[idx] = (int) (nanoTime - timing);
     }

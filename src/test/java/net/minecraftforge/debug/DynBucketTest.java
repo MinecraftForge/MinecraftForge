@@ -60,6 +60,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -75,7 +76,7 @@ public class DynBucketTest
     private static final ResourceLocation simpleTankName = new ResourceLocation(MODID, "simpletank");
     private static final ResourceLocation testItemName = new ResourceLocation(MODID, "testitem");
 
-    private static final boolean ENABLE = true;
+    private static final boolean ENABLE = false;
     private static Logger logger;
 
     @ObjectHolder("testitem")
@@ -96,33 +97,14 @@ public class DynBucketTest
     }
 
     @SubscribeEvent
-    public void setupModels(ModelRegistryEvent event)
-    {
-        ModelLoader.setBucketModelDefinition(DYN_BOTTLE);
-
-        final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbottle"), "inventory");
-        ModelLoader.setCustomMeshDefinition(DYN_BOTTLE, new ItemMeshDefinition()
-        {
-            @Override
-            public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-            {
-                return bottle;
-            }
-        });
-        ModelBakery.registerItemVariants(DYN_BOTTLE, bottle);
-        ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(simpleTankName), 0, new ModelResourceLocation(simpleTankName, "normal"));
-        ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(testItemName), 0, new ModelResourceLocation(new ResourceLocation("minecraft", "stick"), "inventory"));
-    }
-
-    @SubscribeEvent
-    public void registrBlocks(RegistryEvent.Register<Block> event)
+    public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().register(new BlockSimpleTank().setRegistryName(simpleTankName));
         GameRegistry.registerTileEntity(TileSimpleTank.class, "simpletank");
     }
 
     @SubscribeEvent
-    public void registrItems(RegistryEvent.Register<Item> event)
+    public void registerItems(RegistryEvent.Register<Item> event)
     {
         FluidRegistry.addBucketForFluid(ModelFluidDebug.FLUID);
         FluidRegistry.addBucketForFluid(ModelFluidDebug.GAS);
@@ -135,7 +117,7 @@ public class DynBucketTest
     }
 
     @SubscribeEvent
-    public void registrRecipes(RegistryEvent.Register<IRecipe> event)
+    public void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
         ItemStack filledBucket = FluidUtil.getFilledBucket(new FluidStack(ModelFluidDebug.FLUID, Fluid.BUCKET_VOLUME));
         GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "diamond_to_fluid"), null, filledBucket, Ingredient.fromItem(Items.DIAMOND));
@@ -147,7 +129,7 @@ public class DynBucketTest
     {
         logger = event.getModLog();
 
-        if (!ENABLE || !ModelFluidDebug.ENABLE)
+        if (ENABLE && ModelFluidDebug.ENABLE)
         {
             MinecraftForge.EVENT_BUS.register(this);
         }
@@ -178,6 +160,31 @@ public class DynBucketTest
                     }
                 }
             }
+        }
+    }
+
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class ClientEventHandler
+    {
+        @SubscribeEvent
+        public static void setupModels(ModelRegistryEvent event)
+        {
+            if (!ENABLE || !ModelFluidDebug.ENABLE) return;
+
+            ModelLoader.setBucketModelDefinition(DYN_BOTTLE);
+
+            final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbottle"), "inventory");
+            ModelLoader.setCustomMeshDefinition(DYN_BOTTLE, new ItemMeshDefinition()
+            {
+                @Override
+                public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
+                {
+                    return bottle;
+                }
+            });
+            ModelBakery.registerItemVariants(DYN_BOTTLE, bottle);
+            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(simpleTankName), 0, new ModelResourceLocation(simpleTankName, "normal"));
+            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(testItemName), 0, new ModelResourceLocation(new ResourceLocation("minecraft", "stick"), "inventory"));
         }
     }
 

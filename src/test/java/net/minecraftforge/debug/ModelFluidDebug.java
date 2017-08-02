@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = ModelFluidDebug.MODID, name = "ForgeDebugModelFluid", version = ModelFluidDebug.VERSION, acceptableRemoteVersions = "*")
 public class ModelFluidDebug
@@ -30,10 +31,10 @@ public class ModelFluidDebug
     public static final String MODID = "forgedebugmodelfluid";
     public static final String VERSION = "1.0";
 
-    public static final boolean ENABLE = true;
-    private static ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "fluid");
-    private static ModelResourceLocation gasLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "gas");
-    private static ModelResourceLocation milkLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "milk");
+    public static final boolean ENABLE = false;
+    private static ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID + ":" + TestFluidBlock.name, "fluid");
+    private static ModelResourceLocation gasLocation = new ModelResourceLocation(MODID + ":" + TestFluidBlock.name, "gas");
+    private static ModelResourceLocation milkLocation = new ModelResourceLocation(MODID + ":" + TestFluidBlock.name, "milk");
     @ObjectHolder(TestFluidBlock.name)
     public static final Block FLUID_BLOCK = null;
     @ObjectHolder(TestFluidBlock.name)
@@ -96,7 +97,11 @@ public class ModelFluidDebug
                 new ItemBlock(MILK_BLOCK).setRegistryName(MILK_BLOCK.getRegistryName())
             );
         }
+    }
 
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class ClientEventHandler
+    {
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {

@@ -33,7 +33,6 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -83,6 +82,11 @@ public enum ObjectHolderRegistry
         }
         scanTarget(classModIds, classCache, "net.minecraft.init.Blocks", null, "minecraft", true, true);
         scanTarget(classModIds, classCache, "net.minecraft.init.Items", null, "minecraft", true, true);
+        scanTarget(classModIds, classCache, "net.minecraft.init.MobEffects", null, "minecraft", true, true);
+        scanTarget(classModIds, classCache, "net.minecraft.init.Biomes", null, "minecraft", true, true);
+        scanTarget(classModIds, classCache, "net.minecraft.init.Enchantments", null, "minecraft", true, true);
+        scanTarget(classModIds, classCache, "net.minecraft.init.SoundEvents", null, "minecraft", true, true);
+        scanTarget(classModIds, classCache, "net.minecraft.init.PotionTypes", null, "minecraft", true, true);
         FMLLog.log.info("Found {} ObjectHolder annotations", objectHolders.size());
     }
 
@@ -100,10 +104,9 @@ public enum ObjectHolderRegistry
                 clazz = Class.forName(className, extractFromValue, getClass().getClassLoader());
                 classCache.put(className, clazz);
             }
-            catch (Exception ex)
+            catch (ClassNotFoundException ex)
             {
                 // unpossible?
-                Throwables.throwIfUnchecked(ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -128,10 +131,9 @@ public enum ObjectHolderRegistry
                 Field f = clazz.getDeclaredField(annotationTarget);
                 addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value), extractFromValue));
             }
-            catch (Exception ex)
+            catch (NoSuchFieldException ex)
             {
                 // unpossible?
-                Throwables.throwIfUnchecked(ex);
                 throw new RuntimeException(ex);
             }
         }

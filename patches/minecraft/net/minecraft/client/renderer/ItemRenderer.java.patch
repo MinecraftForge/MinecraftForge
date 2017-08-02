@@ -70,14 +70,23 @@
                  this.func_78442_d();
              }
          }
-@@ -592,8 +599,8 @@
+@@ -592,8 +599,17 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);
 -            this.field_187469_f += MathHelper.func_76131_a((Objects.equals(this.field_187467_d, itemstack) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
 -            this.field_187471_h += MathHelper.func_76131_a((float)(Objects.equals(this.field_187468_e, itemstack1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
-+            this.field_187469_f += MathHelper.func_76131_a((!net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack, entityplayersp.field_71071_by.field_70461_c) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
-+            this.field_187471_h += MathHelper.func_76131_a((float)(!net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1, -1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
++
++            boolean requipM = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack, entityplayersp.field_71071_by.field_70461_c);
++            boolean requipO = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1, -1);
++
++            if (!requipM && !Objects.equals(this.field_187467_d, itemstack))
++                this.field_187467_d = itemstack;
++            if (!requipM && !Objects.equals(this.field_187468_e, itemstack1))
++                this.field_187468_e = itemstack1;
++
++            this.field_187469_f += MathHelper.func_76131_a((!requipM ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
++            this.field_187471_h += MathHelper.func_76131_a((float)(!requipO ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
          }
  
          if (this.field_187469_f < 0.1F)

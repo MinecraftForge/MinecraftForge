@@ -120,6 +120,7 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -127,6 +128,7 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -1245,17 +1247,50 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
     }
 
+    private static final ClassValue<String> registryNames = new ClassValue<String>()
+    {
+        @Override
+        @SuppressWarnings("unchecked")
+        protected String computeValue(Class<?> type)
+        {
+            return String.valueOf(TileEntity.getKey((Class<? extends TileEntity>) type));
+        }
+    };
+
+    public static String getRegistryName(Class<? extends TileEntity> type)
+    {
+        return registryNames.get(type);
+    }
+
     public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
     {
         boolean errored = false;
-        Loader.instance().setActiveModContainer(null);
+        setActiveModContainer(null);
         //Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
         for (ModContainer mod : Loader.instance().getActiveModList())
         {
             errored |= !loadAdvancements(map, mod);
         }
-        Loader.instance().setActiveModContainer(null);
+        setActiveModContainer(null);
         return errored;
+    }
+
+    @Nullable
+    public static CriticalHitEvent getCriticalHit(EntityPlayer player, Entity target, boolean vanillaCritical, float damageModifier)
+    {
+        CriticalHitEvent hitResult = new CriticalHitEvent(player, target, damageModifier, vanillaCritical);
+        MinecraftForge.EVENT_BUS.post(hitResult);
+        if (hitResult.getResult() == Event.Result.ALLOW || (vanillaCritical && hitResult.getResult() == Event.Result.DEFAULT))
+        {
+            return hitResult;
+        }
+        return null;
+    }
+
+    private static void setActiveModContainer(ModContainer mod)
+    {
+        if (Loader.instance().getLoaderState() != LoaderState.NOINIT) //Unit Tests..
+            Loader.instance().setActiveModContainer(mod);
     }
 
     private static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map, ModContainer mod)
@@ -1298,7 +1333,8 @@ public class ForgeHooks
                 }
 
                 return true;
-            }
+            },
+            true
         );
     }
 }

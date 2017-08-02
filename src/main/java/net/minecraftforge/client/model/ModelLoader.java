@@ -646,13 +646,7 @@ public final class ModelLoader extends ModelBakery
             //Remove any faces that use a null texture, this is for performance reasons, also allows some cool layering stuff.
             for (BlockPart part : newModel.getElements())
             {
-                Iterator<Entry<EnumFacing, BlockPartFace>> itr = part.mapFaces.entrySet().iterator();
-                while (itr.hasNext())
-                {
-                    Entry<EnumFacing, BlockPartFace> entry = itr.next();
-                    if (removed.contains(entry.getValue().texture))
-                        itr.remove();
-                }
+                part.mapFaces.entrySet().removeIf(entry -> removed.contains(entry.getValue().texture));
             }
 
             return new VanillaModelWrapper(location, newModel, uvlock, animation);
@@ -1007,7 +1001,7 @@ public final class ModelLoader extends ModelBakery
             {
                 ModelResourceLocation location = (ModelResourceLocation)entry.getKey();
                 IBakedModel model = modelRegistry.getObject(location);
-                if(model == null || model == missingModel)
+                if(model == null || model == missingModel || model instanceof FancyMissingModel.BakedModel)
                 {
                     String domain = entry.getKey().getResourceDomain();
                     Integer errorCountBox = modelErrors.get(domain);
@@ -1146,14 +1140,7 @@ public final class ModelLoader extends ModelBakery
      * Helper method for registering all itemstacks for given item to map to universal bucket model.
      */
     public static void setBucketModelDefinition(Item item) {
-        ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
-        {
-            @Override
-            public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)
-            {
-                return ModelDynBucket.LOCATION;
-            }
-        });
+        ModelLoader.setCustomMeshDefinition(item, stack -> ModelDynBucket.LOCATION);
         ModelBakery.registerItemVariants(item, ModelDynBucket.LOCATION);
     }
 

@@ -21,13 +21,9 @@ package net.minecraftforge.fml.relauncher;
 
 import java.io.File;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.launcher.FMLTweaker;
-
-import com.google.common.base.Throwables;
 
 public class FMLLaunchHandler
 {
@@ -101,8 +97,7 @@ public class FMLLaunchHandler
         }
         catch (Throwable t)
         {
-            FMLLog.log.error("An error occurred trying to configure the minecraft home at {} for Forge Mod Loader", minecraftHome.getAbsolutePath(), t);
-            throw Throwables.propagate(t);
+            throw new RuntimeException("An error occurred trying to configure the Minecraft home at " + minecraftHome.getAbsolutePath() + " for Forge Mod Loader", t);
         }
     }
 

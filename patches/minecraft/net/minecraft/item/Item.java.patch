@@ -87,7 +87,7 @@
      public CreativeTabs func_77640_w()
      {
          return this.field_77701_a;
-@@ -438,11 +445,632 @@
+@@ -438,11 +445,666 @@
          return false;
      }
  
@@ -714,13 +714,47 @@
 +        }
 +        return builder.build();
 +    }
++    
++    /**
++     * Can this Item disable a shield
++     * @param stack The ItemStack
++     * @param shield The shield in question
++     * @param entity The EntityLivingBase holding the shield
++     * @param attacker The EntityLivingBase holding the ItemStack
++     * @retrun True if this ItemStack can disable the shield in question.
++     */
++    public boolean canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker)
++    {
++        return this instanceof ItemAxe;
++    }
++    
++    /**
++     * Is this Item a shield
++     * @param stack The ItemStack
++     * @param entity The Entity holding the ItemStack
++     * @return True if the ItemStack is considered a shield
++     */
++    public boolean isShield(ItemStack stack, @Nullable EntityLivingBase entity)
++    {
++        return stack.func_77973_b() == Items.field_185159_cQ;
++    }
++
++    /**
++     * @return the fuel burn time for this itemStack in a furnace.
++     * Return 0 to make it not act as a fuel.
++     * Return -1 to let the default vanilla logic decide.
++     */
++    public int getItemBurnTime(ItemStack itemStack)
++    {
++        return -1;
++    }
 +
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -1002,6 +1630,8 @@
+@@ -1002,6 +1664,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -729,7 +763,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1037,6 +1667,7 @@
+@@ -1037,6 +1701,7 @@
              return this.field_78008_j;
          }
  
@@ -737,7 +771,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1060,5 +1691,21 @@
+@@ -1060,5 +1725,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }

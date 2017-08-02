@@ -218,7 +218,13 @@ public class CraftingHelper {
             // Lets hope this works? Needs test
             try
             {
-                NBTTagCompound nbt = JsonToNBT.getTagFromJson(GSON.toJson(json.get("nbt")));
+                JsonElement element = json.get("nbt");
+                NBTTagCompound nbt;
+                if(element.isJsonObject())
+                    nbt = JsonToNBT.getTagFromJson(GSON.toJson(element));
+                else
+                    nbt = JsonToNBT.getTagFromJson(element.getAsString());
+
                 NBTTagCompound tmp = new NBTTagCompound();
                 if (nbt.hasKey("ForgeCaps"))
                 {
@@ -435,7 +441,7 @@ public class CraftingHelper {
                     throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");
                 children.add(CraftingHelper.getCondition(j.getAsJsonObject(), context));
             }
-            return () -> children.stream().anyMatch(c -> c.getAsBoolean());
+            return () -> children.stream().anyMatch(BooleanSupplier::getAsBoolean);
         });
         registerC("forge:and", (context, json) -> {
             JsonArray values = JsonUtils.getJsonArray(json, "values");
@@ -610,9 +616,12 @@ public class CraftingHelper {
             GameData.revert(RegistryManager.FROZEN, GameData.RECIPES, false);
         //ModContainer old = Loader.instance().activeModContainer();
         Loader.instance().setActiveModContainer(null);
-        Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
-        Loader.instance().getActiveModList().forEach((mod) -> loadRecipes(mod));
+        Loader.instance().getActiveModList().forEach(CraftingHelper::loadFactories);
+        Loader.instance().getActiveModList().forEach(CraftingHelper::loadRecipes);
         Loader.instance().setActiveModContainer(null);
+
+        GameData.fireRegistryEvents(rl -> rl.equals(GameData.RECIPES));
+
         //reg.freeze();
         FMLCommonHandler.instance().resetClientRecipeBook();
     }
@@ -724,13 +733,20 @@ public class CraftingHelper {
 
     public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor)
     {
+        return findFiles(mod, base, preprocessor, processor, false);
+    }
+    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot)
+    {
         FileSystem fs = null;
         try
         {
             File source = mod.getSource();
 
-            if ("minecraft".equals(mod.getModId()) && DEBUG_LOAD_MINECRAFT)
+            if ("minecraft".equals(mod.getModId()))
             {
+                if (!DEBUG_LOAD_MINECRAFT)
+                    return true;
+
                 try
                 {
                     URI tmp = CraftingManager.class.getResource("/assets/.mcassetsroot").toURI();
@@ -763,7 +779,7 @@ public class CraftingHelper {
             }
 
             if (root == null || !Files.exists(root))
-                return false;
+                return defaultUnfoundRoot;
 
             if (preprocessor != null)
             {

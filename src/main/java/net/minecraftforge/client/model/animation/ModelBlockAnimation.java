@@ -575,12 +575,7 @@ public class ModelBlockAnimation
             //String json = mbaGson.toJson(mba);
             return mba;
         }
-        catch(IOException e)
-        {
-            FMLLog.log.error("Exception loading vanilla model animation {}, skipping", armatureLocation, e);
-            return defaultModelBlockAnimation;
-        }
-        catch(JsonParseException e)
+        catch(IOException | JsonParseException e)
         {
             FMLLog.log.error("Exception loading vanilla model animation {}, skipping", armatureLocation, e);
             return defaultModelBlockAnimation;

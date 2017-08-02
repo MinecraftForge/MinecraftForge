@@ -159,14 +159,16 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
         public static class Mapping<T extends IForgeRegistryEntry<T>>
         {
             public final IForgeRegistry<T> registry;
+            private final IForgeRegistry<T> pool;
             public final ResourceLocation key;
             public final int id;
             private Action action = Action.DEFAULT;
             private T target;
 
-            public Mapping(IForgeRegistry<T> registry, ResourceLocation key, int id)
+            public Mapping(IForgeRegistry<T> registry, IForgeRegistry<T> pool, ResourceLocation key, int id)
             {
                 this.registry = registry;
+                this.pool = pool;
                 this.key = key;
                 this.id = id;
             }
@@ -206,7 +208,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             public void remap(T target)
             {
                 Validate.notNull(target, "Remap target can not be null");
-                Validate.isTrue(registry.getKey(target) != null, String.format("The specified entry %s hasn't been registered in registry yet.", target));
+                Validate.isTrue(pool.getKey(target) != null, String.format("The specified entry %s hasn't been registered in registry yet.", target));
                 action = Action.REMAP;
                 this.target = target;
             }

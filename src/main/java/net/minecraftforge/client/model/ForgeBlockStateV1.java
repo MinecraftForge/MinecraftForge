@@ -46,6 +46,7 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.FMLLog;
 
+import java.util.Objects;
 import java.util.Optional;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -169,15 +170,7 @@ public class ForgeBlockStateV1 extends Marker
                     }
                 }
 
-                Iterator<List<Variant>> iter = v.submodels.values().iterator();
-
-                while (iter.hasNext())
-                {
-                    List<Variant> submodel = iter.next();
-
-                    if (submodel == null)
-                        iter.remove();
-                }
+                v.submodels.values().removeIf(Objects::isNull);
 
                 if (v.textures != null)
                 {
