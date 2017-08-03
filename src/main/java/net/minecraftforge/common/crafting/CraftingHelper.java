@@ -806,7 +806,7 @@ public class CraftingHelper {
                 while (itr != null && itr.hasNext())
                 {
                     Boolean ret = processor.apply(root, itr.next());
-                    success &= ret == null ? false : ret;
+                    success &= ret != null && ret;
                 }
             }
 
