@@ -788,6 +788,8 @@ public class CraftingHelper {
                     return false;
             }
 
+            boolean success = true;
+
             if (processor != null)
             {
                 Iterator<Path> itr = null;
@@ -803,13 +805,12 @@ public class CraftingHelper {
 
                 while (itr != null && itr.hasNext())
                 {
-                    Boolean cont = processor.apply(root, itr.next());
-                    if (cont == null || !cont.booleanValue())
-                        return false;
+                    Boolean ret = processor.apply(root, itr.next());
+                    success &= ret == null ? false : ret;
                 }
             }
 
-            return true;
+            return success;
         }
         finally
         {
