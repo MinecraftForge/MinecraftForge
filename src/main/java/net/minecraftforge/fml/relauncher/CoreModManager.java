@@ -29,6 +29,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -46,6 +47,7 @@ import com.google.common.io.Files;
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.common.CertificateHelper;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.asm.ASMTransformerWrapper;
 import net.minecraftforge.fml.common.asm.transformers.ModAccessTransformer;
@@ -57,10 +59,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
-import org.apache.commons.io.IOUtils;
-
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -224,8 +223,7 @@ public class CoreModManager {
         }
         catch (Exception e)
         {
-            FMLLog.log.error("The patch transformer failed to load! This is critical, loading cannot continue!", e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException("The patch transformer failed to load! This is critical, loading cannot continue!", e);
         }
 
         loadPlugins = new ArrayList<FMLPluginWrapper>();
@@ -412,7 +410,7 @@ public class CoreModManager {
                 }
                 else
                 {
-                    FMLLog.log.trace("Found FMLCorePluginContainsFMLMod marker in {}, it will be examined later for regular @Mod instances",
+                    FMLLog.log.warn("Found FMLCorePluginContainsFMLMod marker in {}. This is not recommended, @Mods should be in a separate jar from the coremod.",
                             coreMod.getName());
                     candidateModFiles.add(coreMod.getName());
                 }
@@ -594,6 +592,32 @@ public class CoreModManager {
             }
             SortingIndex index = coreModClazz.getAnnotation(IFMLLoadingPlugin.SortingIndex.class);
             int sortIndex = index != null ? index.value() : 0;
+
+            Certificate[] certificates = coreModClazz.getProtectionDomain().getCodeSource().getCertificates();
+            ImmutableList<String> certList = CertificateHelper.getFingerprints(certificates);
+            if (certList.isEmpty())
+            {
+                if (deobfuscatedEnvironment && Arrays.asList(rootPlugins).contains(coreModClass)) //This is probably a forge/mod dev environment - ignore missing forge certificates
+                {
+                    FMLLog.log.info("Ignoring missing certificate for coremod {} ({}), we are in deobf and it's a forge core plugin", coreModName, coreModClass);
+                }
+                else if (deobfuscatedEnvironment && location == null) // This is probably a mod dev workspace
+                {
+                    FMLLog.log.info("Ignoring missing certificate for coremod {} ({}), as this is a probably dev workspace", coreModName, coreModClass);
+                }
+                else // This is a probably a normal minecraft workspace - log at warn
+                {
+                    FMLLog.log.warn("The coremod {} ({}) is not signed!", coreModName, coreModClass);
+                }
+            }
+            else
+            {
+                FMLLog.log.debug("Found signing certificates for coremod {} ({})", coreModName, coreModClass);
+                for (String cert : certList)
+                {
+                    FMLLog.log.debug("Found certificate {}", cert);
+                }
+            }
 
             IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) coreModClazz.newInstance();
             String accessTransformerClass = plugin.getAccessTransformerClass();

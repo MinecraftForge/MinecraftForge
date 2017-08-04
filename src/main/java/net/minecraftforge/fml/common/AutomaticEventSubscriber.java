@@ -78,7 +78,7 @@ public class AutomaticEventSubscriber
                         continue; //We're not injecting this guy
                     }
                     FMLLog.log.debug("Registering @EventBusSubscriber for {} for mod {}", targ.getClassName(), mod.getModId());
-                    Class<?> subscriptionTarget = Class.forName(targ.getClassName(), true, mcl);
+                    Class<?> subscriptionTarget = Class.forName(targ.getClassName(), false, mcl);
                     MinecraftForge.EVENT_BUS.register(subscriptionTarget);
                     FMLLog.log.debug("Injected @EventBusSubscriber class {}", targ.getClassName());
                 }

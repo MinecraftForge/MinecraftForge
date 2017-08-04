@@ -45,6 +45,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -92,7 +94,11 @@ public class ModelBakeEventDebug
         {
             event.getRegistry().register(new ItemBlock(CUSTOM_BLOCK).setRegistryName(CUSTOM_BLOCK.getRegistryName()));
         }
+    }
 
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class BakeEventHandler
+    {
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
@@ -105,26 +111,117 @@ public class ModelBakeEventDebug
                     return blockLocation;
                 }
             });
-            MinecraftForge.EVENT_BUS.register(BakeEventHandler.instance);
-        }
-    }
-
-    public static class BakeEventHandler
-    {
-        public static final BakeEventHandler instance = new BakeEventHandler();
-
-        private BakeEventHandler()
-        {
         }
 
         @SubscribeEvent
-        public void onModelBakeEvent(ModelBakeEvent event)
+        public static void onModelBakeEvent(ModelBakeEvent event)
         {
             TextureAtlasSprite base = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/slime");
             TextureAtlasSprite overlay = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/redstone_block");
             IBakedModel customModel = new CustomModel(base, overlay);
             event.getModelRegistry().putObject(blockLocation, customModel);
             event.getModelRegistry().putObject(itemLocation, customModel);
+        }
+
+        public static class CustomModel implements IBakedModel
+        {
+            private final TextureAtlasSprite base, overlay;
+            //private boolean hasStateSet = false;
+
+            public CustomModel(TextureAtlasSprite base, TextureAtlasSprite overlay)
+            {
+                this.base = base;
+                this.overlay = overlay;
+            }
+
+            // TODO update to builder
+            private int[] vertexToInts(float x, float y, float z, int color, TextureAtlasSprite texture, float u, float v)
+            {
+                return new int[]{
+                    Float.floatToRawIntBits(x),
+                    Float.floatToRawIntBits(y),
+                    Float.floatToRawIntBits(z),
+                    color,
+                    Float.floatToRawIntBits(texture.getInterpolatedU(u)),
+                    Float.floatToRawIntBits(texture.getInterpolatedV(v)),
+                    0
+                };
+            }
+
+            private BakedQuad createSidedBakedQuad(float x1, float x2, float z1, float z2, float y, TextureAtlasSprite texture, EnumFacing side)
+            {
+                Vec3d v1 = rotate(new Vec3d(x1 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
+                Vec3d v2 = rotate(new Vec3d(x1 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
+                Vec3d v3 = rotate(new Vec3d(x2 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
+                Vec3d v4 = rotate(new Vec3d(x2 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
+                return new BakedQuad(Ints.concat(
+                    vertexToInts((float) v1.x, (float) v1.y, (float) v1.z, -1, texture, 0, 0),
+                    vertexToInts((float) v2.x, (float) v2.y, (float) v2.z, -1, texture, 0, 16),
+                    vertexToInts((float) v3.x, (float) v3.y, (float) v3.z, -1, texture, 16, 16),
+                    vertexToInts((float) v4.x, (float) v4.y, (float) v4.z, -1, texture, 16, 0)
+                ), -1, side, texture, true, DefaultVertexFormats.BLOCK);
+            }
+
+            @Override
+            public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+            {
+                if (side != null)
+                {
+                    return ImmutableList.of();
+                }
+                IExtendedBlockState exState = (IExtendedBlockState) state;
+                int len = cubeSize * 5 + 1;
+                List<BakedQuad> ret = new ArrayList<BakedQuad>();
+                for (EnumFacing f : EnumFacing.values())
+                {
+                    ret.add(createSidedBakedQuad(0, 1, 0, 1, 1, base, f));
+                    if (state != null)
+                    {
+                        for (int i = 0; i < cubeSize; i++)
+                        {
+                            for (int j = 0; j < cubeSize; j++)
+                            {
+                                Integer value = exState.getValue(properties[f.ordinal()]);
+                                if (value != null && (value & (1 << (i * cubeSize + j))) != 0)
+                                {
+                                    ret.add(createSidedBakedQuad((float) (1 + i * 5) / len, (float) (5 + i * 5) / len, (float) (1 + j * 5) / len, (float) (5 + j * 5) / len, 1.0001f, overlay, f));
+                                }
+                            }
+                        }
+                    }
+                }
+                return ret;
+            }
+
+            @Override
+            public boolean isGui3d()
+            {
+                return true;
+            }
+
+            @Override
+            public boolean isAmbientOcclusion()
+            {
+                return true;
+            }
+
+            @Override
+            public boolean isBuiltInRenderer()
+            {
+                return false;
+            }
+
+            @Override
+            public TextureAtlasSprite getParticleTexture()
+            {
+                return this.base;
+            }
+
+            @Override
+            public ItemOverrideList getOverrides()
+            {
+                return ItemOverrideList.NONE;
+            }
         }
     }
 
@@ -230,107 +327,6 @@ public class ModelBakeEventDebug
         public void setState(IExtendedBlockState state)
         {
             this.state = state;
-        }
-    }
-
-    public static class CustomModel implements IBakedModel
-    {
-        private final TextureAtlasSprite base, overlay;
-        //private boolean hasStateSet = false;
-
-        public CustomModel(TextureAtlasSprite base, TextureAtlasSprite overlay)
-        {
-            this.base = base;
-            this.overlay = overlay;
-        }
-
-        // TODO update to builder
-        private int[] vertexToInts(float x, float y, float z, int color, TextureAtlasSprite texture, float u, float v)
-        {
-            return new int[]{
-                    Float.floatToRawIntBits(x),
-                    Float.floatToRawIntBits(y),
-                    Float.floatToRawIntBits(z),
-                    color,
-                    Float.floatToRawIntBits(texture.getInterpolatedU(u)),
-                    Float.floatToRawIntBits(texture.getInterpolatedV(v)),
-                    0
-            };
-        }
-
-        private BakedQuad createSidedBakedQuad(float x1, float x2, float z1, float z2, float y, TextureAtlasSprite texture, EnumFacing side)
-        {
-            Vec3d v1 = rotate(new Vec3d(x1 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
-            Vec3d v2 = rotate(new Vec3d(x1 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
-            Vec3d v3 = rotate(new Vec3d(x2 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
-            Vec3d v4 = rotate(new Vec3d(x2 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
-            return new BakedQuad(Ints.concat(
-                    vertexToInts((float) v1.x, (float) v1.y, (float) v1.z, -1, texture, 0, 0),
-                    vertexToInts((float) v2.x, (float) v2.y, (float) v2.z, -1, texture, 0, 16),
-                    vertexToInts((float) v3.x, (float) v3.y, (float) v3.z, -1, texture, 16, 16),
-                    vertexToInts((float) v4.x, (float) v4.y, (float) v4.z, -1, texture, 16, 0)
-            ), -1, side, texture, true, DefaultVertexFormats.BLOCK);
-        }
-
-        @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
-        {
-            if (side != null)
-            {
-                return ImmutableList.of();
-            }
-            IExtendedBlockState exState = (IExtendedBlockState) state;
-            int len = cubeSize * 5 + 1;
-            List<BakedQuad> ret = new ArrayList<BakedQuad>();
-            for (EnumFacing f : EnumFacing.values())
-            {
-                ret.add(createSidedBakedQuad(0, 1, 0, 1, 1, base, f));
-                if (state != null)
-                {
-                    for (int i = 0; i < cubeSize; i++)
-                    {
-                        for (int j = 0; j < cubeSize; j++)
-                        {
-                            Integer value = exState.getValue(properties[f.ordinal()]);
-                            if (value != null && (value & (1 << (i * cubeSize + j))) != 0)
-                            {
-                                ret.add(createSidedBakedQuad((float) (1 + i * 5) / len, (float) (5 + i * 5) / len, (float) (1 + j * 5) / len, (float) (5 + j * 5) / len, 1.0001f, overlay, f));
-                            }
-                        }
-                    }
-                }
-            }
-            return ret;
-        }
-
-        @Override
-        public boolean isGui3d()
-        {
-            return true;
-        }
-
-        @Override
-        public boolean isAmbientOcclusion()
-        {
-            return true;
-        }
-
-        @Override
-        public boolean isBuiltInRenderer()
-        {
-            return false;
-        }
-
-        @Override
-        public TextureAtlasSprite getParticleTexture()
-        {
-            return this.base;
-        }
-
-        @Override
-        public ItemOverrideList getOverrides()
-        {
-            return ItemOverrideList.NONE;
         }
     }
 

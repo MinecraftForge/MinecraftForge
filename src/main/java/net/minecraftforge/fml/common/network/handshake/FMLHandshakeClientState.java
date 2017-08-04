@@ -130,6 +130,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
             ForgeRegistry.Snapshot entry = new ForgeRegistry.Snapshot();
             entry.ids.putAll(pkt.getIdMap());
             entry.dummied.addAll(pkt.getDummied());
+            entry.overrides.putAll(pkt.getOverrides());
             snap.put(pkt.getName(), entry);
 
             if (pkt.hasMore())

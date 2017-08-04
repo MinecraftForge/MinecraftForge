@@ -233,9 +233,9 @@ public class BlockFluidFinite extends BlockFluidBase
                 {
                     IBlockState state = world.getBlockState(other);
                     world.setBlockState(other, myState.withProperty(LEVEL, amtToInput - 1), 3);
-                    world.setBlockState(other, state, 3);
+                    world.setBlockState(pos, state, 3);
                     world.scheduleUpdate(other, this,  tickRate);
-                    world.scheduleUpdate(other, state.getBlock(), state.getBlock().tickRate(world));
+                    world.scheduleUpdate(pos, state.getBlock(), state.getBlock().tickRate(world));
                     return 0;
                 }
             }

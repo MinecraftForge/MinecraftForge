@@ -1,14 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -135,7 +135,7 @@
-     {
-         if (this.field_149764_J == Material.field_151573_f)
-         {
--            return false;
-+            return false; //Allow items to interact with the door
-         }
-         else
-         {
 @@ -203,7 +203,7 @@
                  flag1 = true;
              }

@@ -39,6 +39,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 
 /**
@@ -83,18 +84,44 @@ public @interface Mod
      * By default, you will have a resource domain that matches the modid. All these uses require that constraints are imposed on the format of the modid.
      */
     String modid();
+
     /**
      * A user friendly name for the mod
      */
     String name() default "";
+
     /**
-     * A version string for this mod
+     * A version string for this mod.
+     *
+     * The version string here should be just numbers separated by dots,
+     * to make specifying {@link #dependencies()} simple for other mods.
      */
     String version() default "";
+
     /**
-     * A simple dependency string for this mod (see modloader's "priorities" string specification)
+     * A dependency string for this mod, which specifies which mod(s) it depends on in order to run.
+     *
+     * A dependency string can start with the following four prefixes:
+     *     before, after, required-before, required-after
+     * Then ":" and the mod id.
+     *
+     * Optionally, a version range can be specified for the mod by adding "@" and then the version range.
+     * The version range format is described in the javadoc here: {@link VersionRange#createFromVersionSpec(java.lang.String)}
+     *
+     * If a "required" mod is missing, or a mod exists with a version outside the specified range,
+     * the game will not start and an error screen will tell the player which versions are required.
+     *
+     * Example:
+     *     Our example mod is a dedicated addon to mod1 and has optional integration with mod2.
+     *     It uses new features that were introduced in forge version 14.21.1.2395 and mod2 version 4.7.0
+     *
+     *     the dependencies string = "after:forge@[14.21.1.2395,);required-after:mod1;after:mod2@[4.7.0,);"
+     *
+     *     This will stop the game and display an error message if any of these is true:
+     *         The installed forge is too old, mod1 is missing, or an old version of mod2 is present.
      */
     String dependencies() default "";
+
     /**
      * Whether to use the mcmod.info metadata by default for this mod.
      * If true, settings in the mcmod.info file will override settings in these annotations.
