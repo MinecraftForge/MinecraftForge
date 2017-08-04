@@ -87,7 +87,7 @@
      public CreativeTabs func_77640_w()
      {
          return this.field_77701_a;
-@@ -438,11 +445,658 @@
+@@ -438,11 +445,657 @@
          return false;
      }
  
@@ -354,8 +354,7 @@
 +
 +    /**
 +     * Determines if the specific ItemStack can be placed in the specified armor slot.
-+     * @deprecated Override {@link #getEquipmentSlot(ItemStack)} to set the armor slot, and use
-+     * {@code armorType == EntityLiving.getSlotForItemStack(stack)} to check the armor slot.
++     * @deprecated Use {@code armorType == EntityLiving.getSlotForItemStack(stack)} instead.
 +     *
 +     * @param stack The ItemStack
 +     * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
@@ -746,7 +745,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -1002,6 +1656,8 @@
+@@ -1002,6 +1655,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -755,7 +754,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1037,6 +1693,7 @@
+@@ -1037,6 +1692,7 @@
              return this.field_78008_j;
          }
  
@@ -763,7 +762,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1060,5 +1717,21 @@
+@@ -1060,5 +1716,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
