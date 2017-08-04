@@ -19,7 +19,6 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -50,7 +49,7 @@ public class PlayerArmorInvWrapper extends RangedWrapper
             }
         }
         // check if it's valid for the armor slot
-        if (equ != null && slot < 4 && !stack.isEmpty() && equ == EntityLiving.getSlotForItemStack(stack))
+        if (equ != null && slot < 4 && !stack.isEmpty() && stack.getItem().isValidArmor(stack, equ, getInventoryPlayer().player))
         {
             return super.insertItem(slot, stack, simulate);
         }
