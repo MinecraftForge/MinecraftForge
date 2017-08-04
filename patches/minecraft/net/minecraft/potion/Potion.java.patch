@@ -90,14 +90,14 @@
 +    }
 +    
 +    /**
-+     * Used as a last resort for determining {@code PotionEffect} sort order in GUIs.
++     * Used for determining {@code PotionEffect} sort order in GUIs.
 +     * Defaults to the {@code PotionEffect}'s liquid color.
 +     * @param potionEffect the {@code PotionEffect} instance containing the potion
 +     * @return a value used to sort {@code PotionEffect}s in GUIs 
 +     */
 +    public int getGuiSortColor(PotionEffect potionEffect)
 +    {
-+        return this.field_76414_N;
++        return this.func_76401_j();
 +    }
 +
 +    /* ======================================== FORGE END =====================================*/
