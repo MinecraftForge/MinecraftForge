@@ -1334,7 +1334,7 @@ public class ForgeHooks
 
                 return true;
             },
-            true
+            true, true
         );
     }
 }
