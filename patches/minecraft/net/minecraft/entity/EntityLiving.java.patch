@@ -39,11 +39,3 @@
      public float func_70603_bj()
      {
          return 1.0F;
-@@ -991,6 +1003,7 @@
- 
-     public static EntityEquipmentSlot func_184640_d(ItemStack p_184640_0_)
-     {
-+        final EntityEquipmentSlot slot = p_184640_0_.func_77973_b().getEquipmentSlot(p_184640_0_); if (slot != null) return slot; // FORGE: Allow modders to set a non-default equipment slot for a stack; e.g. a non-armor chestplate-slot item
-         if (p_184640_0_.func_77973_b() != Item.func_150898_a(Blocks.field_150423_aK) && p_184640_0_.func_77973_b() != Items.field_151144_bL)
-         {
-             if (p_184640_0_.func_77973_b() instanceof ItemArmor)
