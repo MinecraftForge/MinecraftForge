@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityMob.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityMob.java
+@@ -92,7 +92,7 @@
+ 
+         if (p_70652_1_ instanceof EntityLivingBase)
+         {
+-            f += EnchantmentHelper.func_152377_a(this.func_184614_ca(), ((EntityLivingBase)p_70652_1_).func_70668_bt());
++            f += EnchantmentHelper.getModifierForCreature(this.func_184614_ca(), p_70652_1_);
+             i += EnchantmentHelper.func_77501_a(this);
+         }
+ 
 @@ -120,13 +120,13 @@
                  ItemStack itemstack = this.func_184614_ca();
                  ItemStack itemstack1 = entityplayer.func_184587_cr() ? entityplayer.func_184607_cu() : ItemStack.field_190927_a;
