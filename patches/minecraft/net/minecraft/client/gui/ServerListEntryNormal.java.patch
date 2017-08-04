@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/ServerListEntryNormal.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/ServerListEntryNormal.java
 @@ -83,7 +83,7 @@
-         boolean flag1 = this.field_148301_e.field_82821_f < 335;
+         boolean flag1 = this.field_148301_e.field_82821_f < 338;
          boolean flag2 = flag || flag1;
          this.field_148300_d.field_71466_p.func_78276_b(this.field_148301_e.field_78847_a, p_192634_2_ + 32 + 3, p_192634_3_ + 1, 16777215);
 -        List<String> list = this.field_148300_d.field_71466_p.func_78271_c(this.field_148301_e.field_78843_d, p_192634_4_ - 32 - 2);

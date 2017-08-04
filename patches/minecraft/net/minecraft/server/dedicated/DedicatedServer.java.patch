@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -59,6 +59,7 @@
+@@ -62,6 +62,7 @@
      private boolean field_71338_p;
      private GameType field_71337_q;
      private boolean field_71335_s;
@@ -8,7 +8,7 @@
  
      public DedicatedServer(File p_i47086_1_, DataFixer p_i47086_2_, YggdrasilAuthenticationService p_i47086_3_, MinecraftSessionService p_i47086_4_, GameProfileRepository p_i47086_5_, PlayerProfileCache p_i47086_6_)
      {
-@@ -92,6 +93,7 @@
+@@ -95,6 +96,7 @@
          {
              public void run()
              {
@@ -16,7 +16,7 @@
                  BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
                  String s4;
  
-@@ -117,6 +119,8 @@
+@@ -120,6 +122,8 @@
              field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
          }
  
@@ -25,7 +25,7 @@
          field_155771_h.info("Loading properties");
          this.field_71340_o = new PropertyManager(new File("server.properties"));
          this.field_154332_n = new ServerEula(new File("eula.txt"));
-@@ -209,6 +213,7 @@
+@@ -212,6 +216,7 @@
              }
              else
              {
@@ -33,7 +33,7 @@
                  this.func_184105_a(new DedicatedPlayerList(this));
                  long j = System.nanoTime();
  
-@@ -257,6 +262,7 @@
+@@ -260,6 +265,7 @@
                  TileEntitySkull.func_184293_a(this.func_152358_ax());
                  TileEntitySkull.func_184294_a(this.func_147130_as());
                  PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -41,16 +41,17 @@
                  field_155771_h.info("Preparing level \"{}\"", (Object)this.func_71270_I());
                  this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
                  long i1 = System.nanoTime() - j;
-@@ -292,7 +298,7 @@
-                     thread1.start();
+@@ -296,7 +302,8 @@
                  }
  
+                 Items.field_190931_a.func_150895_a(CreativeTabs.field_78027_g, NonNullList.func_191196_a());
 -                return true;
++                // <3 you Grum for this, saves us ~30 patch files! --^
 +                return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
              }
          }
      }
-@@ -511,7 +517,7 @@
+@@ -515,7 +522,7 @@
  
      public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_)
      {
@@ -59,7 +60,7 @@
          {
              return false;
          }
-@@ -580,6 +586,9 @@
+@@ -584,6 +591,9 @@
          return this.field_71340_o.func_73669_a("network-compression-threshold", super.func_175577_aI());
      }
  

@@ -153,14 +153,14 @@
          this.field_71100_bB.func_75112_a(p_70037_1_);
          this.field_71075_bZ.func_75095_b(p_70037_1_);
  
-@@ -887,6 +932,7 @@
-     {
-         super.func_70014_b(p_70014_1_);
-         p_70014_1_.func_74768_a("DataVersion", 1139);
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(p_70014_1_);
-         p_70014_1_.func_74782_a("Inventory", this.field_71071_by.func_70442_a(new NBTTagList()));
-         p_70014_1_.func_74768_a("SelectedItemSlot", this.field_71071_by.field_70461_c);
-         p_70014_1_.func_74757_a("Sleeping", this.field_71083_bS);
+@@ -896,6 +941,7 @@
+         p_70014_1_.func_74768_a("XpTotal", this.field_71067_cb);
+         p_70014_1_.func_74768_a("XpSeed", this.field_175152_f);
+         p_70014_1_.func_74768_a("Score", this.func_71037_bA());
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(p_70014_1_); //Moved down so it doesn't keep missing every MC update.
+ 
+         if (this.field_71077_c != null)
+         {
 @@ -905,6 +951,27 @@
              p_70014_1_.func_74757_a("SpawnForced", this.field_82248_d);
          }
