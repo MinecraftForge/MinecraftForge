@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -143,12 +143,14 @@
+@@ -143,10 +143,15 @@
          return field_77520_b.field_77497_a;
      }
  
@@ -11,15 +11,13 @@
 +    @Deprecated
      public static float func_152377_a(ItemStack p_152377_0_, EnumCreatureAttribute p_152377_1_)
      {
--        field_77521_c.field_77495_a = 0.0F;
+         field_77521_c.field_77495_a = 0.0F;
 -        field_77521_c.field_77494_b = p_152377_1_;
--        func_77518_a(field_77521_c, p_152377_0_);
--        return field_77521_c.field_77495_a;
-+        return 0.0F;
++        field_77521_c.attribute = p_152377_1_;
+         func_77518_a(field_77521_c, p_152377_0_);
+         return field_77521_c.field_77495_a;
      }
- 
-     public static float func_191527_a(EntityLivingBase p_191527_0_)
-@@ -302,7 +304,7 @@
+@@ -302,7 +307,7 @@
      public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
      {
          Item item = p_77514_3_.func_77973_b();
@@ -28,7 +26,7 @@
  
          if (i <= 0)
          {
-@@ -357,7 +359,7 @@
+@@ -357,7 +362,7 @@
      {
          List<EnchantmentData> list = Lists.<EnchantmentData>newArrayList();
          Item item = p_77513_1_.func_77973_b();
@@ -37,7 +35,7 @@
  
          if (i <= 0)
          {
-@@ -413,7 +415,7 @@
+@@ -413,7 +418,7 @@
  
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {
@@ -46,7 +44,7 @@
              {
                  for (int i = enchantment.func_77325_b(); i > enchantment.func_77319_d() - 1; --i)
                  {
-@@ -429,6 +431,19 @@
+@@ -429,6 +434,19 @@
          return list;
      }
  
@@ -66,21 +64,22 @@
      static final class DamageIterator implements EnchantmentHelper.IModifier
          {
              public EntityLivingBase field_151366_a;
-@@ -482,7 +497,7 @@
+@@ -482,7 +500,8 @@
      static final class ModifierLiving implements EnchantmentHelper.IModifier
          {
              public float field_77495_a;
 -            public EnumCreatureAttribute field_77494_b;
 +            public @javax.annotation.Nullable Entity entity;
++            public @javax.annotation.Nullable EnumCreatureAttribute attribute;
  
              private ModifierLiving()
              {
-@@ -490,7 +505,7 @@
+@@ -490,7 +509,7 @@
  
              public void func_77493_a(Enchantment p_77493_1_, int p_77493_2_)
              {
 -                this.field_77495_a += p_77493_1_.func_152376_a(p_77493_2_, this.field_77494_b);
-+                this.field_77495_a += p_77493_1_.calcDamageByEntity(p_77493_2_, this.entity);
++                this.field_77495_a += attribute == null? p_77493_1_.calcDamageByEntity(p_77493_2_, this.entity):p_77493_1_.func_152376_a(p_77493_2_,attribute);//Check attribute instead of entity if set for compatibility
              }
          }
  }
