@@ -352,17 +352,21 @@
 +    }
 +
 +    /**
-+     * <em><strong>MODDERS</strong>: Override this to set a non-default {@link EntityEquipmentSlot}
-+     * for an itemstack, but <strong>do not use this to get the {@link EntityEquipmentSlot} for an
++     * Override this to set a non-default armor slot
++     * for an itemstack, but <em>do not use this to get the armor slot of an
 +     * itemstack: for that, use
-+     * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)}.</strong></em>
++     * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)}.</em>
 +     *
-+     * @param stack the {@link ItemStack}
-+     * @return the {@link EntityEquipmentSlot} for the itemstack, or {@code null} to let
++     * @param stack the itemstack
++     * @return the armor slot of the itemstack, or {@code null} to let
 +     * the default vanilla logic as per
-+     * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)} decide
++     * {@code EntityLiving.getSlotForItemStack(stack)} decide
 +     */
-+    public @Nullable EntityEquipmentSlot getEquipmentSlot(ItemStack stack) { return null; }
++    @Nullable
++    public EntityEquipmentSlot getEquipmentSlot(ItemStack stack)
++    {
++        return null; 
++    }
 +
 +    /**
 +     * Allow or forbid the specific book/item combination as an anvil enchant
@@ -753,7 +757,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -999,6 +1680,8 @@
+@@ -999,6 +1684,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -762,7 +766,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1034,6 +1717,7 @@
+@@ -1034,6 +1721,7 @@
              return this.field_78008_j;
          }
  
@@ -770,7 +774,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1057,5 +1741,21 @@
+@@ -1057,5 +1745,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
