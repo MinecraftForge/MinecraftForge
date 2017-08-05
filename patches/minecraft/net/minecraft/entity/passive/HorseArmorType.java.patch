@@ -45,11 +45,11 @@
 +    
 +    /********* FORGE *********/
 +    //Allows for textures located outside the vanilla horse armor folder
-+    private HorseArmorType(String textureLocation, String hash, int armorStrengthIn)
++    private HorseArmorType(String textureLocation, int armorStrengthIn)
 +    {
 +        this.field_188588_g = armorStrengthIn;
 +        this.field_188586_e = textureLocation;
-+        this.field_188587_f = hash; 
++        this.field_188587_f = net.minecraftforge.client.ForgeHooksClient.generateHorseArmorHash();
 +    }
 +    
 +    public static HorseArmorType getByName(String name)

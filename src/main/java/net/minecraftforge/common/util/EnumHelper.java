@@ -75,7 +75,7 @@ public class EnumHelper
         {SleepResult.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
         {EnumRarity.class, TextFormatting.class, String.class},
-        {HorseArmorType.class, String.class, String.class, int.class} 
+        {HorseArmorType.class, String.class, int.class}
     };
 
     @Nullable
@@ -147,14 +147,13 @@ public class EnumHelper
      * 
      * @param name - The name the new enum constant should have
      * @param textureLocation - The path to the texture for this armor type. Formatted as domain:path.
-     * @param hash - A short unique 3 letter name for the armor type 
      * @param armorStrength - How much protection this armor type should give
      * @return The created HorseArmorType enum constant
      */
     @Nullable 
-    public static HorseArmorType addHorseArmor(String name, String textureLocation, String hash, int armorStrength)
+    public static HorseArmorType addHorseArmor(String name, String textureLocation, int armorStrength)
     {
-        return addEnum(HorseArmorType.class, name, textureLocation, hash, armorStrength);
+        return addEnum(HorseArmorType.class, name, textureLocation, armorStrength);
     }
 
     private static void setup()

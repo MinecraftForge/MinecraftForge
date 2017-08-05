@@ -33,8 +33,8 @@ public class HorseArmorTest
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        if(ENABLED) 
-            testArmorType = EnumHelper.addHorseArmor("test", MODID + ":textures/entity/horse/armor/test.png", "tst", 15);
+        if(ENABLED)
+            testArmorType = EnumHelper.addHorseArmor("test", MODID + ":textures/entity/horse/armor/test.png", 15);
     }
     
     @EventBusSubscriber(modid = MODID)
