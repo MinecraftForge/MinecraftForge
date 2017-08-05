@@ -337,13 +337,13 @@
 +
 +    /**
 +     * Determines if the specific ItemStack can be placed in the specified armor slot.
-+     * @deprecated Override {@link #getEquipmentSlot(ItemStack)} to set the armor slot, and use
-+     * {@code armorType == EntityLiving.getSlotForItemStack(stack)} to check the armor slot.
 +     *
 +     * @param stack The ItemStack
 +     * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
 +     * @param entity The entity trying to equip the armor
 +     * @return True if the given ItemStack can be inserted in the slot
++     * @deprecated Override {@link #getEquipmentSlot(ItemStack)} to set the armor slot, and use
++     * {@code armorType == EntityLiving.getSlotForItemStack(stack)} to check the armor slot.
 +     */
 +    @Deprecated
 +    public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
