@@ -232,7 +232,27 @@
      }
  
      protected void func_70629_bd()
-@@ -2054,6 +2077,7 @@
+@@ -1874,7 +1897,8 @@
+ 
+                         if (this.field_70122_E)
+                         {
+-                            f6 = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos).func_177230_c().field_149765_K * 0.91F;
++                            IBlockState underState = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
++                            f6 = underState.func_177230_c().getSlipperiness(underState, this.field_70170_p, blockpos$pooledmutableblockpos, this) * 0.91F;
+                         }
+ 
+                         float f7 = 0.16277136F / (f6 * f6 * f6);
+@@ -1894,7 +1918,8 @@
+ 
+                         if (this.field_70122_E)
+                         {
+-                            f6 = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos.func_189532_c(this.field_70165_t, this.func_174813_aQ().field_72338_b - 1.0D, this.field_70161_v)).func_177230_c().field_149765_K * 0.91F;
++                            IBlockState underState = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos.func_189532_c(this.field_70165_t, this.func_174813_aQ().field_72338_b - 1.0D, this.field_70161_v));
++                            f6 = underState.func_177230_c().getSlipperiness(underState, this.field_70170_p, blockpos$pooledmutableblockpos, this) * 0.91F;
+                         }
+ 
+                         if (this.func_70617_f_())
+@@ -2054,6 +2079,7 @@
  
      public void func_70071_h_()
      {
@@ -240,15 +260,17 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2097,6 +2121,7 @@
+@@ -2096,7 +2122,9 @@
+ 
                  if (!ItemStack.func_77989_b(itemstack1, itemstack))
                  {
++                    if (!ItemStack.areItemStacksEqualUsingNBTShareTag(itemstack1, itemstack))
                      ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
 +                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, entityequipmentslot, itemstack, itemstack1));
  
                      if (!itemstack.func_190926_b())
                      {
-@@ -2575,6 +2600,40 @@
+@@ -2575,6 +2603,40 @@
          this.field_70752_e = true;
      }
  
@@ -289,7 +311,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2595,12 +2654,19 @@
+@@ -2595,12 +2657,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -310,7 +332,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2618,8 +2684,10 @@
+@@ -2618,8 +2687,10 @@
  
          if (!itemstack.func_190926_b() && !this.func_184587_cr())
          {
@@ -322,7 +344,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2700,7 +2768,9 @@
+@@ -2700,7 +2771,9 @@
          if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
          {
              this.func_184584_a(this.field_184627_bm, 16);
@@ -333,7 +355,7 @@
              this.func_184602_cy();
          }
      }
-@@ -2724,7 +2794,8 @@
+@@ -2724,7 +2797,8 @@
      {
          if (!this.field_184627_bm.func_190926_b())
          {
@@ -343,7 +365,7 @@
          }
  
          this.func_184602_cy();
-@@ -2852,6 +2923,31 @@
+@@ -2852,6 +2926,31 @@
          return true;
      }
  

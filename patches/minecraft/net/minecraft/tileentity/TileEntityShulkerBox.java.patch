@@ -5,7 +5,7 @@
      public boolean func_180462_a(int p_180462_1_, ItemStack p_180462_2_, EnumFacing p_180462_3_)
      {
 -        return !(Block.func_149634_a(p_180462_2_.func_77973_b()) instanceof BlockShulkerBox);
-+        return p_180462_2_.func_77973_b().canBePutIntoItemInventory(p_180462_2_, new net.minecraftforge.items.PortableInventoryLocation.BlockInventory(this, this, null));
++        return p_180462_2_.func_77973_b().canBePutIntoItemInventory(p_180462_2_, "minecraft:shulker_box,block");
      }
  
      public boolean func_180461_b(int p_180461_1_, ItemStack p_180461_2_, EnumFacing p_180461_3_)

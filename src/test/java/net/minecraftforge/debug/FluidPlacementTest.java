@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -52,23 +53,11 @@ public class FluidPlacementTest
 
     public static final boolean ENABLE = true;
 
-    @SidedProxy
-    public static CommonProxy proxy;
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        if (!ENABLE || !ModelFluidDebug.ENABLE)
-            return;
-        proxy.preInit();
-    }
-
-
     @Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @SubscribeEvent
-        public static void registrBlocks(RegistryEvent.Register<Block> event)
+        public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
             if (!ENABLE || !ModelFluidDebug.ENABLE)
                 return;
@@ -76,8 +65,9 @@ public class FluidPlacementTest
                 FiniteFluidBlock.instance
             );
         }
+
         @SubscribeEvent
-        public static void registrItems(RegistryEvent.Register<Item> event)
+        public static void registerItems(RegistryEvent.Register<Item> event)
         {
             if (!ENABLE || !ModelFluidDebug.ENABLE)
                 return;
@@ -92,18 +82,16 @@ public class FluidPlacementTest
         }
     }
 
-    public static class CommonProxy {
-        public void preInit(){}
-    }
-    public static class ServerProxy extends CommonProxy{}
-
-    public static class ClientProxy extends CommonProxy
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class ClientEventHandler
     {
-        private static ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + FiniteFluidBlock.name, "normal");
-
-        @Override
-        public void preInit()
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
         {
+            if (!ENABLE || !ModelFluidDebug.ENABLE)
+                return;
+            ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + FiniteFluidBlock.name, "normal");
+
             Item fluid = Item.getItemFromBlock(FiniteFluidBlock.instance);
             ModelLoader.setCustomModelResourceLocation(EmptyFluidContainer.instance, 0, new ModelResourceLocation("forge:bucket", "inventory"));
             ModelLoader.setBucketModelDefinition(FluidContainer.instance);

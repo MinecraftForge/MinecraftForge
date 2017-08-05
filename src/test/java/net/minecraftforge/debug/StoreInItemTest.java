@@ -11,7 +11,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.items.PortableInventoryLocation;
 
 @Mod(modid = StoreInItemTest.MODID, name = "StoreInItemTest", version = "0.0.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
@@ -75,7 +74,7 @@ public class StoreInItemTest
         }
 
         @Override
-        public boolean canBePutIntoItemInventory(ItemStack stack, PortableInventoryLocation location)
+        public boolean canBePutIntoItemInventory(ItemStack stack, String location)
         {
             return stack.getMetadata()==0;
         }

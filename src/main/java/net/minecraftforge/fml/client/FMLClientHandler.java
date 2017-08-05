@@ -664,12 +664,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             catch (NoSuchMethodException e)
             {
                 FMLLog.log.error("The container {} (type {}) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
-                return;
             }
             catch (Exception e)
             {
-                FMLLog.log.error("An unexpected exception occurred constructing the custom resource pack for {}", container.getName(), e);
-                throw Throwables.propagate(e);
+                throw new RuntimeException("An unexpected exception occurred constructing the custom resource pack for " + container.getName(), e);
             }
         }
     }
