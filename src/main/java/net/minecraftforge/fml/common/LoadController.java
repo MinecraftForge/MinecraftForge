@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.common.util.TextTable;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.event.FMLEvent;
@@ -37,7 +38,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLStateEvent;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.ThreadContext;
 
@@ -311,50 +311,27 @@ public class LoadController
         for (ModState state : ModState.values())
             ret.append(" '").append(state.getMarker()).append("' = ").append(state.toString());
 
-        List<ModStateData> data = loader.getModList().stream().map(mc -> new ModStateData(
-            modStates.get(mc.getModId()).stream().map(ModState::getMarker).reduce("", (a, b) -> a + b),
-            mc.getModId(),
-            mc.getVersion(),
-            mc.getSource().getName(),
-            mc.getSigningCertificate() != null ? CertificateHelper.getFingerprint(mc.getSigningCertificate()) : "None"
-        )).collect(Collectors.toList());
-
-        ModStateData header = new ModStateData("State", "ID", "Version", "Source", "Signature");
-        ModStateData widths = data.stream().reduce(header, (acc, m) -> new ModStateData(
-            m.state.length() > acc.state.length() ? m.state : acc.state,
-            m.id.length() > acc.id.length() ? m.id : acc.id,
-            m.version.length() > acc.version.length() ? m.version : acc.version,
-            m.source.length() > acc.source.length() ? m.source : acc.source,
-            m.signature.length() > acc.signature.length() ? m.signature : acc.signature
-        ));
-
-        String baseFormat = "| %%-%ds | %%-%ds | %%-%ds | %%-%ds |";
-        if (widths.signature.length() > header.signature.length())
+        TextTable table = new TextTable(Lists.newArrayList(
+            TextTable.column("State"),
+            TextTable.column("ID"),
+            TextTable.column("Version"),
+            TextTable.column("Source"),
+            TextTable.column("Signature"))
+        );
+        for (ModContainer mc : loader.getModList())
         {
-            baseFormat += " %%-%ds |";
+            table.add(
+                modStates.get(mc.getModId()).stream().map(ModState::getMarker).reduce("", (a, b) -> a + b),
+                mc.getModId(),
+                mc.getVersion(),
+                mc.getSource().getName(),
+                mc.getSigningCertificate() != null ? CertificateHelper.getFingerprint(mc.getSigningCertificate()) : "None"
+            );
         }
-        String format = String.format(baseFormat,
-            widths.state.length(),
-            widths.id.length(),
-            widths.version.length(),
-            widths.source.length(),
-            widths.signature.length());
-        String separator = String.format(format,
-            StringUtils.leftPad("", widths.state.length(), '-'),
-            StringUtils.leftPad("", widths.id.length(), '-'),
-            StringUtils.leftPad("", widths.version.length(), '-'),
-            StringUtils.leftPad("", widths.source.length(), '-'),
-            StringUtils.leftPad("", widths.signature.length(), '-'));
+
         ret.append("\n");
         ret.append("\n\t");
-        ret.append(header.format(format));
-        ret.append("\n\t");
-        ret.append(separator);
-        for (ModStateData mod : data)
-        {
-            ret.append("\n\t");
-            ret.append(mod.format(format));
-        }
+        table.append(ret, "\n\t");
         ret.append("\n");
     }
 
