@@ -83,7 +83,7 @@
                      }
  
 +                    float[] colors = {f8, f9, f10};
-+                    world.field_73011_w.getLightmapColors(f, f2, f3, colors);
++                    world.field_73011_w.getLightmapColors(p_78472_1_, f, f2, f3, colors);
 +                    f8 = colors[0]; f9 = colors[1]; f10 = colors[2];
 +
                      if (this.field_78531_r.field_71439_g.func_70644_a(MobEffects.field_76439_r))
