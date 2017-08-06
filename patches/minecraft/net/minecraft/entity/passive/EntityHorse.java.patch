@@ -39,7 +39,7 @@
      {
 -        return HorseArmorType.func_188575_a(((Integer)this.field_70180_af.func_187225_a(field_184791_bI)).intValue());
 +        HorseArmorType armor = HorseArmorType.getByName(this.field_70180_af.func_187225_a(HORSE_ARMOR_STRING)); //First check the Forge armor DataParameter
-+        if(armor == HorseArmorType.NONE) armor = HorseArmorType.func_188575_a(this.field_70180_af.func_187225_a(field_184791_bI)); //If the Forge armor DataParameter returns NONE, fallback to the vanilla armor DataParameter. This is necessary to prevent issues with Forge clients connected to vanilla servers.
++        if (armor == HorseArmorType.NONE) armor = HorseArmorType.func_188575_a(this.field_70180_af.func_187225_a(field_184791_bI)); //If the Forge armor DataParameter returns NONE, fallback to the vanilla armor DataParameter. This is necessary to prevent issues with Forge clients connected to vanilla servers.
 +        return armor;
      }
  
@@ -49,7 +49,7 @@
              this.func_110230_cF();
          }
 +        ItemStack armor = this.field_110296_bG.func_70301_a(1);
-+        if(armor.func_77973_b() instanceof net.minecraftforge.common.IHorseArmor) ((net.minecraftforge.common.IHorseArmor) armor.func_77973_b()).onHorseArmorTick(field_70170_p, this, armor);
++        if (armor.func_77973_b() instanceof net.minecraftforge.common.IHorseArmor) ((net.minecraftforge.common.IHorseArmor) armor.func_77973_b()).onHorseArmorTick(field_70170_p, this, armor);
      }
  
      protected SoundEvent func_184639_G()

@@ -91,7 +91,7 @@ public class EnumHelperTest
                     {
                         filter = true; //We don't want people using this method.
                     }
-                    if(returnType == HorseArmorType.class && (declaredConstructor.getParameterTypes().length == 3 || declaredConstructor.getParameterTypes()[2] == int.class))
+                    if (returnType == HorseArmorType.class && (declaredConstructor.getParameterTypes().length == 3 || declaredConstructor.getParameterTypes()[2] == int.class))
                     {
                        filter = true; //We don't want people using either of these methods.
                     }
