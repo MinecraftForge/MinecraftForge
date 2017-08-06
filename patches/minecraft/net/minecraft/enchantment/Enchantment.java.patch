@@ -12,18 +12,15 @@
      private final EntityEquipmentSlot[] field_185263_a;
      private final Enchantment.Rarity field_77333_a;
      @Nullable
-@@ -94,6 +94,10 @@
+@@ -94,6 +94,7 @@
          return 0;
      }
  
-+    /**
-+     * Consider using Forge's entity sensitive version
-+     */
-+    @Deprecated
++    @Deprecated //Consider using Forge's entity sensitive version
      public float func_152376_a(int p_152376_1_, EnumCreatureAttribute p_152376_2_)
      {
          return 0.0F;
-@@ -134,7 +138,7 @@
+@@ -134,7 +135,7 @@
  
      public boolean func_92089_a(ItemStack p_92089_1_)
      {
@@ -32,10 +29,21 @@
      }
  
      public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_)
-@@ -155,6 +159,26 @@
+@@ -155,6 +156,7 @@
          return false;
      }
  
++
+     public static void func_185257_f()
+     {
+         EntityEquipmentSlot[] aentityequipmentslot = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
+@@ -209,4 +211,41 @@
+             return this.field_185275_e;
+         }
+     }
++
++    /* ======================================== FORGE START ===================================== */
++
 +    /**
 +     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
 +     * applies for <i>all possible</i> enchantments.
@@ -56,23 +64,18 @@
 +        return true;
 +    }
 +
-     public static void func_185257_f()
-     {
-         EntityEquipmentSlot[] aentityequipmentslot = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
-@@ -209,4 +233,16 @@
-             return this.field_185275_e;
-         }
-     }
-+
-+    /* ======================================== FORGE START =====================================*/
-+
 +    /**
-+     * Calculate the damage this enchantment adds to an attack on the given entity
++     * Calculate the damage this enchantment adds to an attack on the given entity.
++     *
++     * @param level  the level of this enchantment on the item doing the attack
++     * @param entity the entity being attacked
++     * @return the additional damage to do
 +     */
 +    public float calcDamageByEntity(int level, @javax.annotation.Nullable Entity entity)
 +    {
-+        return func_152376_a(level,entity instanceof EntityLivingBase?((EntityLivingBase) entity).func_70668_bt():EnumCreatureAttribute.UNDEFINED);
++        return func_152376_a(level,
++                entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).func_70668_bt() : EnumCreatureAttribute.UNDEFINED);
 +    }
 +
-+    /* ======================================== FORGE END   =====================================*/
++    /* ======================================== FORGE END   ===================================== */
  }

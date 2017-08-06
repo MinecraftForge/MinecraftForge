@@ -1,14 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -143,10 +143,15 @@
+@@ -143,10 +143,12 @@
          return field_77520_b.field_77497_a;
      }
  
-+    /**
-+     * Does nothing
-+     * Use {@link EnchantmentHelper#getModifierForCreature(ItemStack, Entity)} instead
-+     */
-+    @Deprecated
++
++    @Deprecated //Use #getModifierForCreature(ItemStack, Entity) instead
      public static float func_152377_a(ItemStack p_152377_0_, EnumCreatureAttribute p_152377_1_)
      {
          field_77521_c.field_77495_a = 0.0F;
@@ -17,7 +14,7 @@
          func_77518_a(field_77521_c, p_152377_0_);
          return field_77521_c.field_77495_a;
      }
-@@ -302,7 +307,7 @@
+@@ -302,7 +304,7 @@
      public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
      {
          Item item = p_77514_3_.func_77973_b();
@@ -26,7 +23,7 @@
  
          if (i <= 0)
          {
-@@ -357,7 +362,7 @@
+@@ -357,7 +359,7 @@
      {
          List<EnchantmentData> list = Lists.<EnchantmentData>newArrayList();
          Item item = p_77513_1_.func_77973_b();
@@ -35,7 +32,7 @@
  
          if (i <= 0)
          {
-@@ -413,7 +418,7 @@
+@@ -413,7 +415,7 @@
  
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {
@@ -44,12 +41,19 @@
              {
                  for (int i = enchantment.func_77325_b(); i > enchantment.func_77319_d() - 1; --i)
                  {
-@@ -429,6 +434,19 @@
+@@ -429,6 +431,26 @@
          return list;
      }
  
 +    /* ======================================== FORGE START =====================================*/
 +
++    /**
++     * Calculate the damage the enchantments of the given ItemStack add to the attack on the given entity.
++     *
++     * @param stack the itemstack used for attacking
++     * @param entity the entity being attacked
++     * @return the additional damage to do
++     */
 +    public static float getModifierForCreature(ItemStack stack, @javax.annotation.Nullable Entity entity)
 +    {
 +        field_77521_c.field_77495_a = 0.0F;
@@ -64,7 +68,7 @@
      static final class DamageIterator implements EnchantmentHelper.IModifier
          {
              public EntityLivingBase field_151366_a;
-@@ -482,7 +500,8 @@
+@@ -482,7 +504,8 @@
      static final class ModifierLiving implements EnchantmentHelper.IModifier
          {
              public float field_77495_a;
@@ -74,7 +78,7 @@
  
              private ModifierLiving()
              {
-@@ -490,7 +509,7 @@
+@@ -490,7 +513,7 @@
  
              public void func_77493_a(Enchantment p_77493_1_, int p_77493_2_)
              {
