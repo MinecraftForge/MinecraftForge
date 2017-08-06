@@ -24,7 +24,7 @@
 +    public boolean restoringBlockSnapshots = false;
 +    public boolean captureBlockSnapshots = false;
 +    public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot>();
-+    private java.util.Set<net.minecraft.util.math.ChunkPos> tileEntitiesChunkToBeRemoved = new java.util.HashSet<>();
++    private it.unimi.dsi.fastutil.longs.LongCollection tileEntitiesChunkToBeRemoved = new it.unimi.dsi.fastutil.longs.LongOpenHashSet();
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +    private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
 +
@@ -895,7 +895,7 @@
                      }
                  }
              }
-@@ -3658,6 +3859,140 @@
+@@ -3658,6 +3859,145 @@
          return j2 >= -128 && j2 <= 128 && k2 >= -128 && k2 <= 128;
      }
  
@@ -976,7 +976,11 @@
 +
 +    public void markTileEntitiesInChunkForRemoval(Chunk chunk)
 +    {
-+        this.tileEntitiesChunkToBeRemoved.add(chunk.func_76632_l());
++        if (!chunk.func_177434_r().isEmpty())
++        {
++            long pos = net.minecraft.util.math.ChunkPos.func_77272_a(chunk.field_76635_g, chunk.field_76647_h);
++            this.tileEntitiesChunkToBeRemoved.add(pos);
++        }
 +    }
 +
 +    private void removeTileEntitiesForRemovedChunks()
@@ -985,7 +989,8 @@
 +        {
 +            java.util.function.Predicate<TileEntity> isInChunk = (tileEntity) ->
 +            {
-+                net.minecraft.util.math.ChunkPos tileChunkPos = new net.minecraft.util.math.ChunkPos(tileEntity.func_174877_v());
++                BlockPos tilePos = tileEntity.func_174877_v();
++                long tileChunkPos = net.minecraft.util.math.ChunkPos.func_77272_a(tilePos.func_177958_n() >> 4, tilePos.func_177952_p() >> 4);
 +                boolean inChunk = this.tileEntitiesChunkToBeRemoved.contains(tileChunkPos);
 +                if (inChunk)
 +                {
