@@ -895,7 +895,7 @@
                      }
                  }
              }
-@@ -3658,6 +3859,145 @@
+@@ -3658,6 +3859,149 @@
          return j2 >= -128 && j2 <= 128 && k2 >= -128 && k2 <= 128;
      }
  
@@ -991,7 +991,11 @@
 +            {
 +                BlockPos tilePos = tileEntity.func_174877_v();
 +                long tileChunkPos = net.minecraft.util.math.ChunkPos.func_77272_a(tilePos.func_177958_n() >> 4, tilePos.func_177952_p() >> 4);
-+                boolean inChunk = this.tileEntitiesChunkToBeRemoved.contains(tileChunkPos);
++                return this.tileEntitiesChunkToBeRemoved.contains(tileChunkPos);
++            };
++            java.util.function.Predicate<TileEntity> isInChunkDoUnload = (tileEntity) ->
++            {
++                boolean inChunk = isInChunk.test(tileEntity);
 +                if (inChunk)
 +                {
 +                    tileEntity.onChunkUnload();
@@ -999,7 +1003,7 @@
 +                return inChunk;
 +            };
 +            this.field_175730_i.removeIf(isInChunk);
-+            this.field_147482_g.removeIf(isInChunk);
++            this.field_147482_g.removeIf(isInChunkDoUnload);
 +            this.tileEntitiesChunkToBeRemoved.clear();
 +        }
 +    }
