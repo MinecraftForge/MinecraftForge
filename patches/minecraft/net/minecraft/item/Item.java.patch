@@ -1,59 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -1,26 +1,8 @@
- package net.minecraft.item;
- 
- import com.google.common.collect.HashMultimap;
--import com.google.common.collect.Maps;
- import com.google.common.collect.Multimap;
--import java.util.List;
--import java.util.Map;
--import java.util.Random;
--import java.util.UUID;
--import javax.annotation.Nullable;
--import net.minecraft.block.Block;
--import net.minecraft.block.BlockDirt;
--import net.minecraft.block.BlockDoublePlant;
--import net.minecraft.block.BlockFlower;
--import net.minecraft.block.BlockPlanks;
--import net.minecraft.block.BlockPrismarine;
--import net.minecraft.block.BlockRedSandstone;
--import net.minecraft.block.BlockSand;
--import net.minecraft.block.BlockSandStone;
--import net.minecraft.block.BlockSilverfish;
--import net.minecraft.block.BlockStone;
--import net.minecraft.block.BlockStoneBrick;
--import net.minecraft.block.BlockWall;
-+import net.minecraft.block.*;
- import net.minecraft.block.state.IBlockState;
- import net.minecraft.client.util.ITooltipFlag;
- import net.minecraft.creativetab.CreativeTabs;
-@@ -39,13 +21,7 @@
- import net.minecraft.inventory.EntityEquipmentSlot;
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.potion.PotionEffect;
--import net.minecraft.util.ActionResult;
--import net.minecraft.util.EnumActionResult;
--import net.minecraft.util.EnumFacing;
--import net.minecraft.util.EnumHand;
--import net.minecraft.util.EnumHandSide;
--import net.minecraft.util.NonNullList;
--import net.minecraft.util.ResourceLocation;
-+import net.minecraft.util.*;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.MathHelper;
- import net.minecraft.util.math.RayTraceResult;
-@@ -58,10 +34,16 @@
+@@ -58,10 +58,10 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class Item
-+import javax.annotation.Nullable;
-+import java.util.List;
-+import java.util.Map;
-+import java.util.Random;
-+import java.util.UUID;
-+
 +public class Item extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Item>
  {
 -    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = new RegistryNamespaced<ResourceLocation, Item>();
@@ -63,7 +14,7 @@
      private static final IItemPropertyGetter field_185046_b = new IItemPropertyGetter()
      {
          @SideOnly(Side.CLIENT)
-@@ -197,6 +179,7 @@
+@@ -197,6 +197,7 @@
          return p_77654_1_;
      }
  
@@ -71,7 +22,7 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -218,6 +201,7 @@
+@@ -218,6 +219,7 @@
          return this;
      }
  
@@ -79,7 +30,7 @@
      public int func_77612_l()
      {
          return this.field_77699_b;
-@@ -317,6 +301,7 @@
+@@ -317,6 +319,7 @@
          return this.field_77700_c;
      }
  
@@ -87,7 +38,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -372,7 +357,7 @@
+@@ -372,7 +375,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -96,7 +47,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -390,7 +375,11 @@
+@@ -390,7 +393,11 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -109,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -409,6 +398,9 @@
+@@ -409,6 +416,9 @@
  
      protected boolean func_194125_a(CreativeTabs p_194125_1_)
      {
@@ -119,7 +70,7 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -435,11 +427,689 @@
+@@ -435,11 +445,689 @@
          return false;
      }
  
@@ -809,7 +760,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -999,6 +1669,8 @@
+@@ -999,6 +1687,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -818,7 +769,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1034,6 +1706,7 @@
+@@ -1034,6 +1724,7 @@
              return this.field_78008_j;
          }
  
@@ -826,7 +777,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1057,5 +1730,21 @@
+@@ -1057,5 +1748,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
