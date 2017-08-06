@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/HorseArmorType.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/HorseArmorType.java
-@@ -55,6 +55,7 @@
+@@ -37,7 +37,6 @@
+         return this.ordinal();
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public String func_188573_b()
+     {
+         return this.field_188587_f;
+@@ -55,6 +54,7 @@
          return this.field_188586_e;
      }
  
@@ -8,7 +16,7 @@
      public static HorseArmorType func_188575_a(int p_188575_0_)
      {
          return values()[p_188575_0_];
-@@ -62,9 +63,14 @@
+@@ -62,9 +62,14 @@
  
      public static HorseArmorType func_188580_a(ItemStack p_188580_0_)
      {
@@ -24,7 +32,7 @@
      public static HorseArmorType func_188576_a(Item p_188576_0_)
      {
          if (p_188576_0_ == Items.field_151138_bX)
-@@ -81,8 +87,29 @@
+@@ -81,8 +86,29 @@
          }
      }
  

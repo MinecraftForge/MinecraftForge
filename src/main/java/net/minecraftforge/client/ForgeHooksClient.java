@@ -73,6 +73,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -743,8 +744,8 @@ public class ForgeHooksClient
             }
         }
         String result = String.valueOf(hashChars);
-        //Make sure we don't return a hash used by vanilla. We can't compare to HorseArmorType#getHash() because that method does not exist on the DS
-        if (result.equals("meo") || result.equals("goo") || result.equals("dio")) result = generateHorseArmorHash();
+        //Make sure we don't return a hash used by vanilla
+        if (result.equals(HorseArmorType.IRON.getHash()) || result.equals(HorseArmorType.GOLD.getHash()) || result.equals(HorseArmorType.DIAMOND.getHash())) result = generateHorseArmorHash();
         return result;
     }
 }
