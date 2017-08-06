@@ -31,15 +31,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.apache.logging.log4j.Level;
+import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import net.minecraftforge.fml.common.versioning.VersionRange;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.InjectedModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -60,6 +62,7 @@ public class ForgeVersion
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
+    // Update version compatibility list below if there is SRG compatibility between this version and some previous versions
     public static final String mcVersion = "1.12.1";
     // This is the MCP data version we're using
     public static final String mcpVersion = "9.41";
@@ -67,6 +70,12 @@ public class ForgeVersion
     private static Status status = PENDING;
     @SuppressWarnings("unused")
     private static String target = null;
+
+    /*
+     * Version compatibility. Add new version strings for each version we're SRG compatible with.
+     * Reset the list to empty only when incompatible changes occur.
+     */
+    private static String[] extraCompatibleVersions = { "1.12" };
 
     private static final Logger log = LogManager.getLogger("ForgeVersionCheck");
 
@@ -105,6 +114,15 @@ public class ForgeVersion
     public static String getVersion()
     {
         return String.format("%d.%d.%d.%d", majorVersion, minorVersion, revisionVersion, buildVersion);
+    }
+
+    // We add in the current version (we're compatible with it) and test additional versions for compatibility
+    private static List<DefaultArtifactVersion> COMPATIBLE_VERSIONS = Stream.concat(Stream.of(mcVersion), Stream.of(extraCompatibleVersions))
+            .map(s -> new DefaultArtifactVersion("dummy", s)).collect(Collectors.toList());
+
+    // Tests the mod supplied version range for compatibility with our version compatibility list
+    public static boolean testMinecraftVersionCompatibility(VersionRange modVersion) {
+        return COMPATIBLE_VERSIONS.stream().anyMatch(modVersion::containsVersion);
     }
 
     public static enum Status

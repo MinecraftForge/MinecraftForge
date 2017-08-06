@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +34,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -62,7 +62,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.CharMatcher;
-import java.util.function.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
@@ -238,9 +237,9 @@ public class Loader
             ArrayListMultimap<String, String> reqList = ArrayListMultimap.create();
             for (ModContainer mod : getActiveModList())
             {
-                if (!mod.acceptableMinecraftVersionRange().containsVersion(minecraft.getProcessedVersion()))
+                if (!ForgeVersion.testMinecraftVersionCompatibility(mod.acceptableMinecraftVersionRange()))
                 {
-                    FMLLog.log.fatal("The mod {} does not wish to run in Minecraft version {}. You will have to remove it to play.", mod.getModId(), getMCVersionString());
+                    FMLLog.log.fatal("The mod {} does not wish to run in Minecraft version {}. It is compatible with {}. You will have to remove it to play.", mod.getModId(), getMCVersionString(), mod.acceptableMinecraftVersionRange());
                     WrongMinecraftVersionException ret = new WrongMinecraftVersionException(mod, getMCVersionString());
                     FMLLog.log.fatal(ret.getMessage());
                     wrongMinecraftExceptions.add(ret);
