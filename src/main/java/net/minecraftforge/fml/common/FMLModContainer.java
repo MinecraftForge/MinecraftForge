@@ -67,6 +67,7 @@ import java.util.function.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ListMultimap;
@@ -255,7 +256,16 @@ public class FMLModContainer implements ModContainer
         }
 
         String mcVersionString = (String)descriptor.get("acceptedMinecraftVersions");
-
+        if ("[1.8.8]".equals(mcVersionString)) mcVersionString = "[1.8.8,1.8.9]"; // MC 1.8.8 and 1.8.9 is forward SRG compatible so accept these versions by default.
+        if ("[1.9.4]".equals(mcVersionString) ||
+            "[1.9,1.9.4]".equals(mcVersionString) ||
+            "[1.9.4,1.10)".equals(mcVersionString) ||
+            "[1.10]".equals(mcVersionString))
+                mcVersionString = "[1.9.4,1.10.2]";
+        if ("[1.11]".equals(mcVersionString))
+            mcVersionString = "[1.11,1.11.2]";
+        if ("[1.12]".equals(mcVersionString))
+            mcVersionString = "[1.12,1.12.1]";
         if (!Strings.isNullOrEmpty(mcVersionString))
         {
             minecraftAccepted = VersionParser.parseRange(mcVersionString);
