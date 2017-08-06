@@ -83,7 +83,7 @@
              public void func_77493_a(Enchantment p_77493_1_, int p_77493_2_)
              {
 -                this.field_77495_a += p_77493_1_.func_152376_a(p_77493_2_, this.field_77494_b);
-+                this.field_77495_a += attribute == null? p_77493_1_.calcDamageByEntity(p_77493_2_, this.entity):p_77493_1_.func_152376_a(p_77493_2_,attribute);//Check attribute instead of entity if set for compatibility
++                this.field_77495_a += attribute == null ? p_77493_1_.calcDamageByEntity(p_77493_2_, this.entity) : p_77493_1_.func_152376_a(p_77493_2_,attribute);//Check attribute instead of entity if set for compatibility
              }
          }
  }
