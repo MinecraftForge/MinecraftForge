@@ -168,7 +168,7 @@ public class ASMTransformerWrapper
 
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
-            writer.visit(Opcodes.V1_6, Opcodes.ACC_PUBLIC, name, null, wrapper.getInternalName(), null);
+            writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, name, null, wrapper.getInternalName(), null);
 
             Method m = Method.getMethod("void <init> ()");
             GeneratorAdapter mg = new GeneratorAdapter(Opcodes.ACC_PUBLIC, m, null, null, writer);

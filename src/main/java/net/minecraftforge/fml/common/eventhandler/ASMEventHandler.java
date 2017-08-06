@@ -124,7 +124,7 @@ public class ASMEventHandler implements IEventListener
         System.out.println("Event:    " + eventType);
         */
 
-        cw.visit(V1_6, ACC_PUBLIC | ACC_SUPER, desc, null, "java/lang/Object", new String[]{ HANDLER_DESC });
+        cw.visit(V1_8, ACC_PUBLIC | ACC_SUPER, desc, null, "java/lang/Object", new String[]{ HANDLER_DESC });
 
         cw.visitSource(".dynamic", null);
         {
