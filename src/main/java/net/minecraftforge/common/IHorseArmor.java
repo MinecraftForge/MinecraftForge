@@ -21,5 +21,5 @@ public interface IHorseArmor
      * @param horse the horse wearing this armor
      * @param armor the armor itemstack
      */
-    public void onHorseArmorTick(World world, EntityHorse horse, ItemStack armor);
+    public default void onHorseArmorTick(World world, EntityHorse horse, ItemStack armor) {}
 }
