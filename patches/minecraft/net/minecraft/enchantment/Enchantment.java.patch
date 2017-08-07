@@ -29,15 +29,7 @@
      }
  
      public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_)
-@@ -155,6 +156,7 @@
-         return false;
-     }
- 
-+
-     public static void func_185257_f()
-     {
-         EntityEquipmentSlot[] aentityequipmentslot = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
-@@ -209,4 +211,41 @@
+@@ -209,4 +210,41 @@
              return this.field_185275_e;
          }
      }
