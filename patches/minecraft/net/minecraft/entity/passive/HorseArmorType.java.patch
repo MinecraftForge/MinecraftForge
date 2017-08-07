@@ -12,7 +12,7 @@
          return this.field_188586_e;
      }
  
-+    @Deprecated
++    @Deprecated /**Forge: Use getByName. Ordinals of mod-added enum constants are dependent on load order, unlike names.**/
      public static HorseArmorType func_188575_a(int p_188575_0_)
      {
          return values()[p_188575_0_];

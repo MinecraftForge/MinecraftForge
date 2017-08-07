@@ -8,15 +8,18 @@ import net.minecraft.world.World;
 public interface IHorseArmor 
 {
     /** 
-     * @param stack - The armor stack
-     * @return The HorseArmorType of the armor stack 
+     * Returns an enum constant of type {@code HorseArmorType}.
+     * The returned enum constant will be used to determine the armor value and texture of this item when equipped.
+     * @param stack the armor stack
+     * @return an enum constant of type {@code HorseArmorType}
      */
     public HorseArmorType getHorseArmorType(ItemStack stack);
     
     /**
-     * @param world - The world the horse is in
-     * @param horse - The horse wearing the armor
-     * @param itemStack - the armor itemstack
+     * Called every tick from {@link EntityHorse#onUpdate()} on the item in the armor slot.
+     * @param world the world the horse is in
+     * @param horse the horse wearing this armor
+     * @param armor the armor itemstack
      */
-    public void onHorseArmorTick(World world, EntityHorse horse, ItemStack itemStack);
+    public void onHorseArmorTick(World world, EntityHorse horse, ItemStack armor);
 }

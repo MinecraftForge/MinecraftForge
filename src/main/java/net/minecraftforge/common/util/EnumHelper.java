@@ -143,12 +143,13 @@ public class EnumHelper
     {
         return addEnum(EnumRarity.class, name, color, displayName);
     }
+
     /**
      * 
-     * @param name - The name the new enum constant should have
-     * @param textureLocation - The path to the texture for this armor type. Formatted as domain:path.
-     * @param armorStrength - How much protection this armor type should give
-     * @return The created HorseArmorType enum constant
+     * @param name the name of the new {@code HorseArmorType}
+     * @param textureLocation the path to the texture for this armor type. It must follow the format domain:path and be relative to the assets folder.
+     * @param armorStrength how much protection this armor type should give
+     * @return the new {@code HorseArmorType}, or null if it could not be created
      */
     @Nullable 
     public static HorseArmorType addHorseArmor(String name, String textureLocation, int armorStrength)
