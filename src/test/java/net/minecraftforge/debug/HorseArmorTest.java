@@ -18,15 +18,17 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
 
+@EventBusSubscriber
 @Mod(modid = HorseArmorTest.MODID, name = "HorseArmorTest", version = "1.0", acceptableRemoteVersions = "*")
 public class HorseArmorTest 
 {
     public static final String MODID = "horse_armor_test";
-    public static final boolean ENABLED = false;
+    public static final boolean ENABLED = true;
     
     public static HorseArmorType testArmorType;
-    @ObjectHolder(MODID + ":test_armor")
+    @ObjectHolder("test_armor")
     public static final ItemTestHorseArmor TEST_ARMOR = null;
     
     
@@ -37,16 +39,16 @@ public class HorseArmorTest
             testArmorType = EnumHelper.addHorseArmor("test", MODID + ":textures/entity/horse/armor/test.png", 15);
     }
     
-    @EventBusSubscriber(modid = MODID)
-    public static class RegistryHandler
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        @SubscribeEvent
-        public static void registerItems(RegistryEvent.Register<Item> event)
-        {
-            if(ENABLED) 
-                event.getRegistry().register(new ItemTestHorseArmor().setRegistryName(MODID, "test_armor").setUnlocalizedName(MODID + ".testArmor"));
-        } 
-        
+        if(ENABLED)
+            event.getRegistry().register(new ItemTestHorseArmor().setRegistryName(MODID, "test_armor").setUnlocalizedName(MODID + ".testArmor"));
+    }
+
+    @EventBusSubscriber(modid = MODID, value = Side.CLIENT)
+    public static class ClientEventHandler
+    {
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event) 
         {
@@ -54,7 +56,7 @@ public class HorseArmorTest
                 ModelLoader.setCustomModelResourceLocation(TEST_ARMOR, 0, new ModelResourceLocation(TEST_ARMOR.getRegistryName(), "inventory"));
         }
     }
-    
+
     private static class ItemTestHorseArmor extends Item implements IHorseArmor
     {   
         @Override
