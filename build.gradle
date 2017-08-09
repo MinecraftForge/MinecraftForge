@@ -68,6 +68,7 @@ extractForgeResources { exclude "**/log4j2.xml" }
 
 genGradleProjects { 
     addTestCompileDep "junit:junit:4.12"
+    addTestCompileDep "org.hamcrest:hamcrest-core:1.3"
     filter { dep -> !dep.contains("scala") }
 }
 
