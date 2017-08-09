@@ -66,7 +66,10 @@ version = getVersionFromJava(file("src/main/java/net/minecraftforge/common/Forge
 extractForgeSources { exclude "**/SideOnly.java", "**/Side.java" }
 extractForgeResources { exclude "**/log4j2.xml" }
 
-genGradleProjects { addTestCompileDep "junit:junit:4.12" }
+genGradleProjects { 
+    addTestCompileDep "junit:junit:4.12"
+    filter { dep -> !dep.contains("scala") }
+}
 
 processJson {
     releaseJson = "jsons/${minecraft.version}-rel.json"
