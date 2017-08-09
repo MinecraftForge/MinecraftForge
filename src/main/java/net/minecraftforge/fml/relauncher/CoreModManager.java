@@ -310,7 +310,7 @@ public class CoreModManager {
             else
                 ret = ObjectArrays.concat(ret, dir.listFiles(filter), File.class);
         }
-        return ret;
+        return ret == null ? new File[0] : ret;
     }
     private static File[] listFiles(FileFilter filter, File ... dirs)
     {
@@ -324,7 +324,7 @@ public class CoreModManager {
             else
                 ret = ObjectArrays.concat(ret, dir.listFiles(filter), File.class);
         }
-        return ret;
+        return ret == null ? new File[0] : ret;
     }
 
     private static void discoverCoreMods(File mcDir, LaunchClassLoader classLoader)
