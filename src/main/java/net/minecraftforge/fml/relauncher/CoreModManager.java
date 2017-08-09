@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.relauncher;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
@@ -41,8 +42,6 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import org.apache.commons.compress.utils.IOUtils;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
@@ -402,7 +401,7 @@ public class CoreModManager {
             }
             finally
             {
-                IOUtils.closeQuietly(jar);
+                closeQuietly(jar);
             }
             // Support things that are mod jars, but not FML mod jars
             try
@@ -457,7 +456,7 @@ public class CoreModManager {
                 }
                 finally
                 {
-                    IOUtils.closeQuietly(jar);
+                    closeQuietly(jar);
                 }
             }
         }
@@ -786,6 +785,13 @@ public class CoreModManager {
             }
             builder.append("Contact their authors BEFORE contacting forge\n\n");
         }
+    }
+
+    private  static void closeQuietly(Closeable closeable) {
+        try {
+            if (closeable != null)
+                closeable.close();
+        } catch (final IOException ioe){}
     }
 
 }
