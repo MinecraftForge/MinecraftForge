@@ -88,8 +88,11 @@ public class FMLLaunchHandler
         FMLLog.log.info("Forge Mod Loader version {}.{}.{}.{} for Minecraft {} loading", FMLInjectionData.major, FMLInjectionData.minor,
                 FMLInjectionData.rev, FMLInjectionData.build, FMLInjectionData.mccversion);
         FMLLog.log.info("Java is {}, version {}, running on {}:{}:{}, installed at {}", System.getProperty("java.vm.name"), System.getProperty("java.version"), System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"), System.getProperty("java.home"));
-        FMLLog.log.debug("Java classpath at launch is {}", System.getProperty("java.class.path"));
-        FMLLog.log.debug("Java library path at launch is {}", System.getProperty("java.library.path"));
+        FMLLog.log.debug("Java classpath at launch is:");
+        for (String path : System.getProperty("java.class.path").split(File.pathSeparator))
+            FMLLog.log.debug("    {}", path);
+        FMLLog.log.debug("Java library path at launch is:");
+        for (String path : System.getProperty("java.library.path").split(File.pathSeparator))
 
         try
         {
