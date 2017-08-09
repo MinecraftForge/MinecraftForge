@@ -93,6 +93,7 @@ public class FMLLaunchHandler
             FMLLog.log.debug("    {}", path);
         FMLLog.log.debug("Java library path at launch is:");
         for (String path : System.getProperty("java.library.path").split(File.pathSeparator))
+            FMLLog.log.debug("    {}", path);
 
         try
         {
