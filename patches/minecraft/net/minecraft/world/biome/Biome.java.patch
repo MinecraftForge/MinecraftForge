@@ -167,7 +167,7 @@
              public Class <? extends EntityLiving > field_76300_b;
              public int field_76301_c;
              public int field_76299_d;
-+            private final java.lang.reflect.Constructor<?> ctr;
++            private final java.lang.reflect.Constructor<? extends EntityLiving> ctr;
  
              public SpawnListEntry(Class <? extends EntityLiving > p_i1970_1_, int p_i1970_2_, int p_i1970_3_, int p_i1970_4_)
              {
@@ -193,7 +193,7 @@
 +
 +            public EntityLiving newInstance(World world) throws Exception
 +            {
-+                return (EntityLiving)ctr.newInstance(world);
++                return ctr.newInstance(world);
 +            }
          }
  
