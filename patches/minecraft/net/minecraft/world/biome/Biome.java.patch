@@ -171,21 +171,19 @@
  
              public SpawnListEntry(Class <? extends EntityLiving > p_i1970_1_, int p_i1970_2_, int p_i1970_3_, int p_i1970_4_)
              {
-@@ -559,12 +642,28 @@
+@@ -559,12 +642,26 @@
                  this.field_76300_b = p_i1970_1_;
                  this.field_76301_c = p_i1970_3_;
                  this.field_76299_d = p_i1970_4_;
 +
-+                java.lang.reflect.Constructor<?> tmp = null;
 +                try
 +                {
-+                    tmp = p_i1970_1_.getConstructor(World.class);
++                    ctr = p_i1970_1_.getConstructor(World.class);
 +                }
 +                catch (NoSuchMethodException e)
 +                {
 +                    throw new RuntimeException(e);
 +                }
-+                ctr = tmp;
              }
  
              public String toString()
