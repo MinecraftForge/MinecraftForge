@@ -222,6 +222,10 @@ public class GameData
             reg.freeze();
         });
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.freeze());
+
+        // the id mapping is fanilized, no ids actually changed but this is a good place to tell everyone to 'bake' their stuff.
+        Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
+
         FMLLog.log.debug("All registries frozen");
     }
 
@@ -281,6 +285,12 @@ public class GameData
             @SuppressWarnings("unchecked")
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
 
+            if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
+            {
+                for (int meta = 0; meta < 15; meta++)
+                    blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta);
+            }
+
             //So, due to blocks having more in-world states then metadata allows, we have to turn the map into a semi-milti-bimap.
             //We can do this however because the implementation of the map is last set wins. So we can add all states, then fix the meta bimap.
             //Multiple states -> meta. But meta to CORRECT state.
@@ -298,7 +308,6 @@ public class GameData
                 if (usedMeta[meta])
                     blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta); // Put the CORRECT thing!
             }
-
 
             if (oldBlock != null)
             {

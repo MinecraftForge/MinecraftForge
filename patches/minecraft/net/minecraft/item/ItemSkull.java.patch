@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
-@@ -45,13 +45,18 @@
+@@ -43,13 +43,18 @@
          }
          else
          {
@@ -20,11 +20,3 @@
                  {
                      return EnumActionResult.FAIL;
                  }
-@@ -128,7 +133,6 @@
-         }
-     }
- 
--    @SideOnly(Side.CLIENT)
-     public void func_150895_a(CreativeTabs p_150895_1_, NonNullList<ItemStack> p_150895_2_)
-     {
-         if (this.func_194125_a(p_150895_1_))

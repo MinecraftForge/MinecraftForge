@@ -21,13 +21,9 @@ package net.minecraftforge.fml.relauncher;
 
 import java.io.File;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.launcher.FMLTweaker;
-
-import com.google.common.base.Throwables;
 
 public class FMLLaunchHandler
 {
@@ -92,8 +88,12 @@ public class FMLLaunchHandler
         FMLLog.log.info("Forge Mod Loader version {}.{}.{}.{} for Minecraft {} loading", FMLInjectionData.major, FMLInjectionData.minor,
                 FMLInjectionData.rev, FMLInjectionData.build, FMLInjectionData.mccversion);
         FMLLog.log.info("Java is {}, version {}, running on {}:{}:{}, installed at {}", System.getProperty("java.vm.name"), System.getProperty("java.version"), System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"), System.getProperty("java.home"));
-        FMLLog.log.debug("Java classpath at launch is {}", System.getProperty("java.class.path"));
-        FMLLog.log.debug("Java library path at launch is {}", System.getProperty("java.library.path"));
+        FMLLog.log.debug("Java classpath at launch is:");
+        for (String path : System.getProperty("java.class.path").split(File.pathSeparator))
+            FMLLog.log.debug("    {}", path);
+        FMLLog.log.debug("Java library path at launch is:");
+        for (String path : System.getProperty("java.library.path").split(File.pathSeparator))
+            FMLLog.log.debug("    {}", path);
 
         try
         {
@@ -101,8 +101,7 @@ public class FMLLaunchHandler
         }
         catch (Throwable t)
         {
-            FMLLog.log.error("An error occurred trying to configure the minecraft home at {} for Forge Mod Loader", minecraftHome.getAbsolutePath(), t);
-            throw Throwables.propagate(t);
+            throw new RuntimeException("An error occurred trying to configure the Minecraft home at " + minecraftHome.getAbsolutePath() + " for Forge Mod Loader", t);
         }
     }
 

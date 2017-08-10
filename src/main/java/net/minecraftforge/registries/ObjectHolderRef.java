@@ -27,9 +27,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Throwables;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -73,9 +70,8 @@ class ObjectHolderRef
                     this.injectedObject = ((IForgeRegistryEntry)existing).getRegistryName();
                 }
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             }
         }
@@ -92,9 +88,8 @@ class ObjectHolderRef
         {
             FinalFieldHelper.makeWritable(field);
         }
-        catch (Exception e)
+        catch (ReflectiveOperationException e)
         {
-            Throwables.throwIfUnchecked(e);
             throw new RuntimeException(e);
         }
     }
@@ -150,7 +145,7 @@ class ObjectHolderRef
         {
             FinalFieldHelper.setField(field, null, thing);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | ReflectiveOperationException e)
         {
             FMLLog.log.warn("Unable to set {} with value {} ({})", this.field, thing, this.injectedObject, e);
         }
@@ -162,7 +157,8 @@ class ObjectHolderRef
         private static Object reflectionFactory;
         private static Method newFieldAccessor;
         private static Method fieldAccessorSet;
-        static Field makeWritable(Field f) throws Exception
+
+        static Field makeWritable(Field f) throws ReflectiveOperationException
         {
             f.setAccessible(true);
             if (modifiersField == null)
@@ -178,8 +174,7 @@ class ObjectHolderRef
             return f;
         }
 
-
-        static void setField(Field field, @Nullable Object instance, Object thing) throws Exception
+        static void setField(Field field, @Nullable Object instance, Object thing) throws ReflectiveOperationException
         {
             Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, field, false);
             fieldAccessorSet.invoke(fieldAccessor, instance, thing);

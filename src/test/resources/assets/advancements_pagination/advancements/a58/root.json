@@ -1,0 +1,25 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:diamond"
+        },
+        "title": {
+            "translate": "test.a58"
+        },
+        "description": {
+            "translate": "advancements.adventure.root.description"
+        },
+        "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+        "show_toast": false,
+        "announce_to_chat": false
+    },
+    "criteria": {
+        "killed_something": {
+            "trigger": "minecraft:player_killed_entity"
+        },
+        "killed_by_something": {
+            "trigger": "minecraft:entity_killed_player"
+        }
+    },
+    "requirements": [["killed_something", "killed_by_something"]]
+}

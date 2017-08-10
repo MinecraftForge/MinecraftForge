@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common.asm;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.CodeSource;
 import java.security.cert.Certificate;
 import java.util.Map;
@@ -39,7 +40,6 @@ import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.IFMLCallHook;
 import net.minecraftforge.fml.relauncher.Side;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 
 import static net.minecraftforge.fml.common.FMLLog.log;
@@ -110,7 +110,7 @@ public class FMLSanityChecker implements IFMLCallHook
             {
                 String mcPath = codeSource.getLocation().getPath().substring(5);
                 mcPath = mcPath.substring(0, mcPath.lastIndexOf('!'));
-                mcPath = URLDecoder.decode(mcPath, Charsets.UTF_8.name());
+                mcPath = URLDecoder.decode(mcPath, StandardCharsets.UTF_8.name());
                 mcJarFile = new JarFile(mcPath,true);
                 mcJarFile.getManifest();
                 JarEntry cbrEntry = mcJarFile.getJarEntry("net/minecraft/client/ClientBrandRetriever.class");

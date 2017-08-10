@@ -19,9 +19,6 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
-import com.google.common.base.Throwables;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -54,10 +51,6 @@ public class EntityEntry extends Impl<EntityEntry>
         catch (NoSuchMethodException e)
         {
             throw new RuntimeException("Invalid class " + this.cls + " no constructor taking " + World.class.getName());
-        }
-        catch (SecurityException e)
-        {
-            Throwables.propagate(e);
         }
     }
 

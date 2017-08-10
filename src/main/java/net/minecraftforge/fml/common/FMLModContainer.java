@@ -20,6 +20,7 @@ package net.minecraftforge.fml.common;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -55,7 +56,6 @@ import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,7 +65,6 @@ import java.util.zip.ZipFile;
 
 import java.util.function.Function;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -257,14 +256,9 @@ public class FMLModContainer implements ModContainer
         }
 
         String mcVersionString = (String)descriptor.get("acceptedMinecraftVersions");
-        if ("[1.8.8]".equals(mcVersionString)) mcVersionString = "[1.8.8,1.8.9]"; // MC 1.8.8 and 1.8.9 is forward SRG compatible so accept these versions by default.
-        if ("[1.9.4]".equals(mcVersionString) ||
-            "[1.9,1.9.4]".equals(mcVersionString) ||
-            "[1.9.4,1.10)".equals(mcVersionString) ||
-            "[1.10]".equals(mcVersionString))
-                mcVersionString = "[1.9.4,1.10.2]";
-        if ("[1.11]".equals(mcVersionString))
-            mcVersionString = "[1.11,1.11.2]";
+        if ("[1.12]".equals(mcVersionString))
+            mcVersionString = "[1.12,1.12.1]";
+
         if (!Strings.isNullOrEmpty(mcVersionString))
         {
             minecraftAccepted = VersionParser.parseRange(mcVersionString);
@@ -328,9 +322,8 @@ public class FMLModContainer implements ModContainer
             }
             return version;
         }
-        catch (Exception e)
+        catch (IOException e)
         {
-            Throwables.propagateIfPossible(e);
             modLog.trace("Failed to find a usable version.properties file");
             return null;
         }
@@ -494,9 +487,8 @@ public class FMLModContainer implements ModContainer
                     isStatic = Modifier.isStatic(f.getModifiers());
                     injectedMod = retriever.apply(mc);
                 }
-                catch (Exception e)
+                catch (ReflectiveOperationException e)
                 {
-                    Throwables.propagateIfPossible(e);
                     modLog.warn("Attempting to load @{} in class {} for {} and failing", annotationName, targets.getClassName(), mc.getModId(), e);
                 }
             }
@@ -533,18 +525,7 @@ public class FMLModContainer implements ModContainer
             Class<?> clazz = Class.forName(className, true, modClassLoader);
 
             Certificate[] certificates = clazz.getProtectionDomain().getCodeSource().getCertificates();
-            int len = 0;
-            if (certificates != null)
-            {
-                len = certificates.length;
-            }
-            Builder<String> certBuilder = ImmutableList.builder();
-            for (int i = 0; i < len; i++)
-            {
-                certBuilder.add(CertificateHelper.getFingerprint(certificates[i]));
-            }
-
-            ImmutableList<String> certList = certBuilder.build();
+            ImmutableList<String> certList = CertificateHelper.getFingerprints(certificates);
             sourceFingerprints = ImmutableSet.copyOf(certList);
 
             String expectedFingerprint = (String)descriptor.get("certificateFingerprint");

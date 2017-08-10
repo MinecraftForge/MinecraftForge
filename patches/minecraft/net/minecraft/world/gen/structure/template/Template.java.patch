@@ -3,7 +3,7 @@
 @@ -520,6 +520,7 @@
          p_189552_1_.func_74782_a("size", this.func_186267_a(this.field_186272_c.func_177958_n(), this.field_186272_c.func_177956_o(), this.field_186272_c.func_177952_p()));
          p_189552_1_.func_74778_a("author", this.field_186273_d);
-         p_189552_1_.func_74768_a("DataVersion", 1139);
+         p_189552_1_.func_74768_a("DataVersion", 1241);
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(p_189552_1_);
          return p_189552_1_;
      }

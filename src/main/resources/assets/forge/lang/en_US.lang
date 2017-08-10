@@ -181,6 +181,10 @@ fml.messages.version.restriction.lower.exclusive=above %s
 fml.messages.version.restriction.upper.inclusive=%s or below
 fml.messages.version.restriction.upper.exclusive=below %s
 fml.messages.version.restriction.bounded=between %s and %s
+fml.messages.version.restriction.bounded.inclusive=between %s and %s (inclusive)
+fml.messages.version.restriction.bounded.exclusive=between %s and %s (exclusive)
+fml.messages.version.restriction.bounded.lowerexclusive=above %s, and %s or below
+fml.messages.version.restriction.bounded.upperexclusive=%s or above, and below %s
 
 fml.button.continue=Continue
 fml.button.open.mods.folder=Open Mods Folder
