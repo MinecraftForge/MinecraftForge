@@ -183,7 +183,7 @@
 +                }
 +                catch (NoSuchMethodException e)
 +                {
-+                    com.google.common.base.Throwables.propagate(e);
++                    throw new RuntimeException(e);
 +                }
 +                ctr = tmp;
              }
