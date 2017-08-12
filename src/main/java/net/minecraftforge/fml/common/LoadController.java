@@ -420,27 +420,4 @@ public class LoadController
     {
         return state;
     }
-
-    private static class ModStateData
-    {
-        private String state;
-        private String id;
-        private String version;
-        private String source;
-        private String signature;
-
-        private ModStateData(String state, String id, String version, String source, String signature)
-        {
-            this.state = state;
-            this.id = id;
-            this.version = version;
-            this.source = source;
-            this.signature = signature;
-        }
-
-        private String format(String format)
-        {
-            return String.format(format, state, id, version, source, signature);
-        }
-    }
 }
