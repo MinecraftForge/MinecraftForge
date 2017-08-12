@@ -19,6 +19,9 @@
 
 package net.minecraftforge.event.entity.living;
 
+import javax.annotation.Nullable;
+import net.minecraft.tileentity.MobSpawnerBaseLogic;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -71,6 +74,25 @@ public class LivingSpawnEvent extends LivingEvent
     public static class CheckSpawn extends LivingSpawnEvent
     {
         private final boolean isSpawner;
+        @Nullable private final MobSpawnerBaseLogic spawner;
+
+
+        /**
+         * CheckSpawn is fired when an Entity is about to be spawned.
+         * @param entity the spawning entity
+         * @param world the world to spawn in
+         * @param x x coordinate
+         * @param y y coordinate
+         * @param z z coordinate
+         * @param spawner position of the MobSpawner
+         *                  null if it this spawn is coming from a WorldSpawner
+         */
+        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner)
+        {
+            super(entity, world, x, y, z);
+            this.isSpawner = spawner != null;
+            this.spawner = spawner;
+        }
 
         /**
          * CheckSpawn is fired when an Entity is about to be spawned.
@@ -82,10 +104,12 @@ public class LivingSpawnEvent extends LivingEvent
          * @param isSpawner true if this spawn is done by a MobSpawner,
          *                  false if it this spawn is coming from a WorldSpawner
          */
+        @Deprecated
         public CheckSpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner)
         {
             super(entity, world, x, y, z);
             this.isSpawner = isSpawner;
+            spawner = null;
         }
 
         /**
@@ -98,6 +122,7 @@ public class LivingSpawnEvent extends LivingEvent
         }
 
         public boolean isSpawner() { return isSpawner; }
+        public @Nullable MobSpawnerBaseLogic getSpawner() { return spawner; }
     }
 
     /**
@@ -116,9 +141,27 @@ public class LivingSpawnEvent extends LivingEvent
     @Cancelable
     public static class SpecialSpawn extends LivingSpawnEvent
     {
+        private final @Nullable MobSpawnerBaseLogic spawner;
+
+        @Deprecated
         public SpecialSpawn(EntityLiving entity, World world, float x, float y, float z)
         {
             super(entity, world, x, y, z);
+            spawner = null;
+        }
+
+        /**
+         * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any
+         */
+        public SpecialSpawn(EntityLiving entity, World world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner)
+        {
+            super(entity, world, x, y, z);
+            this.spawner = spawner;
+        }
+
+        public @Nullable MobSpawnerBaseLogic getSpawner()
+        {
+            return spawner;
         }
     }
 
