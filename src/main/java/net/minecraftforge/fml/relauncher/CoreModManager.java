@@ -304,7 +304,7 @@ public class CoreModManager {
         }
         return ret == null ? new File[0] : ret;
     }
-    static File[] listFiles(FileFilter filter, File ... dirs)
+    private static File[] listFiles(FileFilter filter, File ... dirs)
     {
         File[] ret = null;
         for (File dir : dirs)

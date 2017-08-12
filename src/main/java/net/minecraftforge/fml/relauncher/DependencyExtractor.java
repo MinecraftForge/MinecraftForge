@@ -57,6 +57,8 @@ public class DependencyExtractor
     private static final Attributes.Name MOD_CONTAINS_DEPS = new Attributes.Name("ContainedDeps");
     private static final String MAVEN_ARTIFACT_NAME = "Maven-Artifact";
     private static final Attributes.Name MAVEN_ARTIFACT = new Attributes.Name(MAVEN_ARTIFACT_NAME);
+    private static final Attributes.Name MOD_SIDE = CoreModManager.MODSIDE;
+    private static final String MOD_SIDE_NAME = MOD_SIDE.toString();
     private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps", "").split(","));
     public static int extractedDeps = 0;
 
@@ -183,7 +185,8 @@ public class DependencyExtractor
     private static void extractContainedDepJars(JarFile jar, File baseModsDir, File versionedModsDir, File repository, Map<Artifact, Artifact> artifacts) throws IOException
     {
         Attributes manifest = jar.getManifest().getMainAttributes();
-        String modSide = manifest.containsKey(CoreModManager.MODSIDE) ? manifest.getValue(CoreModManager.MODSIDE) : "BOTH";
+        String modSide = manifest.containsKey(MOD_SIDE) ? manifest.getValue(MOD_SIDE) : "BOTH";
+        // Skip extraction if the JAR isn't intended for this side
         if (!("BOTH".equals(modSide) || FMLLaunchHandler.side.name().equals(modSide))) return;
         if (!manifest.containsKey(MOD_CONTAINS_DEPS)) return;
 
@@ -242,6 +245,7 @@ public class DependencyExtractor
         }
         File targetFile = versionedTarget;
         String artifactData = null;
+        String modSide = "BOTH";
         JarEntry metaEntry = jar.getJarEntry(dep + ".meta");
         // Prioritize a separate metadata file, which basically gets interpreted like an external manifest, useful for binaries you have no control over
         if (metaEntry != null)
@@ -254,6 +258,10 @@ public class DependencyExtractor
                 {
                     artifactData = metadata.getProperty(MAVEN_ARTIFACT_NAME);
                 }
+                if (metadata.containsKey(MOD_SIDE_NAME))
+                {
+                    modSide = metadata.getProperty(MOD_SIDE_NAME);
+                }
             }
             catch (IOException e)
             {
@@ -261,18 +269,28 @@ public class DependencyExtractor
             }
         }
         // Hypothetically, we might not always be dealing with JARs, so better make sure
-        if (artifactData == null && depEndName.endsWith(".jar"))
+        if (depEndName.endsWith(".jar"))
         {
             try (JarInputStream jarInputStream = new JarInputStream(jar.getInputStream(jar.getEntry(dep)));)
             {
                 // Unfortunately we need to open the jar stream twice
                 Manifest manifest = jarInputStream.getManifest();
-                if (manifest != null && manifest.getMainAttributes().containsKey(MAVEN_ARTIFACT))
+                if (manifest != null)
                 {
-                    artifactData = manifest.getMainAttributes().getValue(MAVEN_ARTIFACT);
+                    Attributes attributes = manifest.getMainAttributes();
+                    if (artifactData == null && attributes.containsKey(MAVEN_ARTIFACT))
+                    {
+                        artifactData = attributes.getValue(MAVEN_ARTIFACT);
+                    }
+                    if (modSide.equals("BOTH") && attributes.containsKey(MOD_SIDE))
+                    {
+                        modSide = attributes.getValue(MOD_SIDE);
+                    }
                 }
             }
         }
+        // Skip extraction if the file is not for this side
+        if (!("BOTH".equals(modSide) || FMLLaunchHandler.side.name().equals(modSide))) return null;
         if (artifactData != null)
         {
             Artifact artifact = new Artifact(artifactData);
