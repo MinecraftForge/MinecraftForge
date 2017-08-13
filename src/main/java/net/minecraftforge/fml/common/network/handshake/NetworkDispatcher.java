@@ -648,7 +648,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
             {
                 throw new IOException("Received FML MultiPart packet out of order, Expected " + part_expected + " Got " + part);
             }
-            int len = input.readableBytes() - 1;
+            int len = input.readableBytes();
             input.readBytes(data, offset, len);
             part_expected++;
             offset += len;
