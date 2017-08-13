@@ -128,7 +128,7 @@ public class DependencyExtractionTest
         assertTrue("Dependency extraction should have created a new mod list file", modListFile.exists());
         String json = new String(Files.readAllBytes(modListFile.toPath()), Charsets.UTF_8);
         ModListHelper.JsonModList modList = new Gson().fromJson(json, ModListHelper.JsonModList.class);
-        assertEquals("Dependency extraction should have declared the extracted mods file as parent of the base mod list", "absolute:" + extractedModsFile.getCanonicalPath(), modList.parentList);
+        assertEquals("Dependency extraction should have declared the extracted mods file as parent of the base mod list", workingDir.toPath().relativize(extractedModsFile.toPath()).toString(), modList.parentList);
     }
 
     @Test
