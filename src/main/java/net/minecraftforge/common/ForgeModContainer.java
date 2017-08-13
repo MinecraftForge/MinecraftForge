@@ -41,7 +41,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,6 +52,7 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -172,6 +172,18 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         return config;
     }
 
+    private static void remapGeneralPropertyToClient(String key)
+    {
+        ConfigCategory GENERAL = config.getCategory(CATEGORY_GENERAL);
+        if (GENERAL.containsKey(key))
+        {
+            FMLLog.log.debug("Remapping property {} from category general to client", key);
+            Property property = config.getCategory(CATEGORY_GENERAL).get(key);
+            GENERAL.remove(key);
+            config.getCategory(CATEGORY_CLIENT).put(key, property);
+        }
+    }
+
     /**
      * Synchronizes the local fields with the values in the Configuration object.
      */
@@ -200,6 +212,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         if (config.getCategory(CATEGORY_GENERAL).containsKey("defaultSpawnFuzz")) config.getCategory(CATEGORY_GENERAL).remove("defaultSpawnFuzz");
         if (config.getCategory(CATEGORY_GENERAL).containsKey("spawnHasFuzz")) config.getCategory(CATEGORY_GENERAL).remove("spawnHasFuzz");
         if (config.getCategory(CATEGORY_GENERAL).containsKey("disableStitchedFileSaving")) config.getCategory(CATEGORY_GENERAL).remove("disableStitchedFileSaving");
+
+        // remap properties wrongly listed as general properties to client properties
+        remapGeneralPropertyToClient("biomeSkyBlendRange");
+        remapGeneralPropertyToClient("forgeLightPipelineEnabled");
 
         prop = config.get(CATEGORY_GENERAL, "disableVersionCheck", false);
         prop.setComment("Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.");
@@ -256,12 +272,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         fullBoundingBoxLadders = prop.getBoolean(false);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 });
-        prop.setComment("Control the range of sky blending for colored skies in biomes.");
-        prop.setLanguageKey("forge.configgui.biomeSkyBlendRange");
-        blendRanges = prop.getIntList();
-        propOrder.add(prop.getName());
-
         prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBaseSummonChance", 0.1,
                 "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.", 0.0D, 1.0D);
         prop.setLanguageKey("forge.configgui.zombieBaseSummonChance").setRequiresWorldRestart(true);
@@ -272,12 +282,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.", 0.0D, 1.0D);
         prop.setLanguageKey("forge.configgui.zombieBabyChance").setRequiresWorldRestart(true);
         zombieBabyChance = (float) prop.getDouble(0.05);
-        propOrder.add(prop.getName());
-
-        prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", true,
-                "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
-        forgeLightPipelineEnabled = prop.getBoolean(true);
-        prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "logCascadingWorldGeneration", true,
@@ -333,6 +337,18 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "without a significant number of cores available.");
         alwaysSetupTerrainOffThread = prop.getBoolean(false);
         prop.setLanguageKey("forge.configgui.alwaysSetupTerrainOffThread");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 });
+        prop.setComment("Control the range of sky blending for colored skies in biomes.");
+        prop.setLanguageKey("forge.configgui.biomeSkyBlendRange");
+        blendRanges = prop.getIntList();
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "forgeLightPipelineEnabled", true,
+                "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
+        forgeLightPipelineEnabled = prop.getBoolean(true);
+        prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
