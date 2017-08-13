@@ -222,7 +222,16 @@ public class DependencyExtractor
                 list.modRef = new ArrayList<>();
                 list.repositoryRoot = "absolute:" + repositoryRoot.getCanonicalPath();
             }
-            list.parentList = "absolute:" + desiredModListFile.getCanonicalPath();
+            Path mcPath = mcDirectory.getCanonicalFile().toPath();
+            Path desiredPath = desiredModListFile.toPath();
+            if (desiredPath.startsWith(mcPath))
+            {
+                list.parentList = mcPath.relativize(desiredPath).toString();
+            }
+            else
+            {
+                list.parentList = "absolute:" + desiredModListFile.getCanonicalPath();
+            }
             Files.write(GSON.toJson(list), modListFile, Charsets.UTF_8);
         }
         catch (IOException e)
