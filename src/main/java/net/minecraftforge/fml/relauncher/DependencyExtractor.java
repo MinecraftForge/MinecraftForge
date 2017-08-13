@@ -61,7 +61,7 @@ public class DependencyExtractor
     private static final Attributes.Name MOD_SIDE = CoreModManager.MODSIDE;
     private static final String MOD_SIDE_NAME = MOD_SIDE.toString();
     private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps", "").split(","));
-    private static final Map<Artifact, Artifact> listArtifacts = new HashMap<>();
+    public static final Map<Artifact, Artifact> listArtifacts = new HashMap<>();
     private static final Map<Artifact, Artifact> extractedArtifacts = new HashMap<>();
     public static int extractedDeps = 0;
 

@@ -81,20 +81,20 @@ public class DependencyExtractionTest
     @Test
     public void testDependencyExtraction() throws IOException
     {
-        Map<Artifact, Artifact> artifacts = new HashMap<>();
         // Get extraction paths from the JAR
         JarFile jar = new JarFile(modJar);
-        File targetFile = DependencyExtractor.determineTargetFile(jar, modsDir, versionedModsDir, libsDir, artifacts, DEPENDENCY_JAR_NAME, DEPENDENCY_JAR_NAME);
+        DependencyExtractor.listArtifacts.clear();
+        File targetFile = DependencyExtractor.determineTargetFile(jar, modsDir, versionedModsDir, libsDir, DEPENDENCY_JAR_NAME, DEPENDENCY_JAR_NAME);
         assertNotNull("Extraction target must exist with our data", targetFile);
         assertEquals("Extraction target should properly unroll artifact notation", expectedExtraction, targetFile.getAbsoluteFile());
-        targetFile = DependencyExtractor.determineTargetFile(jar, modsDir, versionedModsDir, libsDir, artifacts, EXTERNAL_DEPENDENCY_JAR_NAME, EXTERNAL_DEPENDENCY_JAR_NAME);
+        targetFile = DependencyExtractor.determineTargetFile(jar, modsDir, versionedModsDir, libsDir, EXTERNAL_DEPENDENCY_JAR_NAME, EXTERNAL_DEPENDENCY_JAR_NAME);
         assertNotNull("Extraction target with external metadata must exist with our data", targetFile);
         assertEquals("Extraction target with external metadata should properly unroll artifact notation", expectedExternalExtraction, targetFile.getAbsoluteFile());
         IOUtils.closeQuietly(jar);
 
         // Extraction should have resulted in the two correct artifacts being read
-        assertEquals("Two artifact should be found", 2, artifacts.size());
-        for (Map.Entry<Artifact, Artifact> entry : artifacts.entrySet())
+        assertEquals("Two artifact should be found", 2, DependencyExtractor.listArtifacts.size());
+        for (Map.Entry<Artifact, Artifact> entry : DependencyExtractor.listArtifacts.entrySet())
         {
             Artifact artifact = entry.getKey();
             assertThat("Artifact map serves as set, key and value should match", entry.getValue(), new BaseMatcher<Artifact>()
