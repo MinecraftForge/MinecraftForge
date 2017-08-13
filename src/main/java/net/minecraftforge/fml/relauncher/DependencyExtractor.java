@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import net.minecraftforge.fml.relauncher.ModListHelper.JsonModList;
 
 import javax.annotation.Nullable;
@@ -39,11 +40,11 @@ import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.function.Function;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -60,6 +61,8 @@ public class DependencyExtractor
     private static final Attributes.Name MOD_SIDE = CoreModManager.MODSIDE;
     private static final String MOD_SIDE_NAME = MOD_SIDE.toString();
     private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps", "").split(","));
+    private static final Map<Artifact, Artifact> listArtifacts = new HashMap<>();
+    private static final Map<Artifact, Artifact> extractedArtifacts = new HashMap<>();
     public static int extractedDeps = 0;
 
     public static void inspect(File mcDir, File baseModsDir, File versionedModsDir, String repositoryRoot)
@@ -68,10 +71,14 @@ public class DependencyExtractor
         File modListFile = new File(baseModsDir, "mod_list.json");
         JsonModList modList = prepareModList(mcDir.toPath(), repositoryRoot, modListFile);
         File repository = ModListHelper.getRepoRoot(mcDir, modList);
+        // We need two separate maps, one to determine existing files and to put into the mod list,
+        // another to determine whether an extraction candidate is of a newer version
+        listArtifacts.clear();
+        extractedArtifacts.clear();
+        extractedDeps = 0;
         // It's a little weird, but it should yield the best performance
         // The map is used like a set (similar to how HashSet is really just a wrapped HashMap)
-        Map<Artifact, Artifact> artifacts = modList.modRef.stream().map(Artifact::new).collect(Collectors.toMap(Function.identity(), Function.identity()));
-        extractedDeps = 0;
+        modList.modRef.stream().map(Artifact::new).forEach(a -> listArtifacts.put(a, a));
 
         for (File mod : CoreModManager.listFiles((d, name) -> name.endsWith(".jar"), baseModsDir, versionedModsDir))
         {
@@ -82,7 +89,7 @@ public class DependencyExtractor
                     // Not an extraction candidate
                     continue;
                 }
-                extractContainedDepJars(jar, baseModsDir, versionedModsDir, repository, artifacts);
+                extractContainedDepJars(jar, baseModsDir, versionedModsDir, repository);
             }
             catch (IOException ioe)
             {
@@ -94,7 +101,7 @@ public class DependencyExtractor
         {
             FMLLog.log.debug("Finished extracting dependencies, at least {} dependencies were added or updated", extractedDeps);
             FMLLog.log.debug("Since dependencies were extracted, the mod list has to be written to disk again");
-            modList.modRef = artifacts.values().stream().map(Artifact::toGradleNotation).collect(Collectors.toList());
+            modList.modRef = listArtifacts.values().stream().map(Artifact::toGradleNotation).collect(Collectors.toList());
             try
             {
                 Files.write(GSON.toJson(modList), modListFile, Charsets.UTF_8);
@@ -182,7 +189,7 @@ public class DependencyExtractor
         return list;
     }
 
-    private static void extractContainedDepJars(JarFile jar, File baseModsDir, File versionedModsDir, File repository, Map<Artifact, Artifact> artifacts) throws IOException
+    private static void extractContainedDepJars(JarFile jar, File baseModsDir, File versionedModsDir, File repository) throws IOException
     {
         Attributes manifest = jar.getManifest().getMainAttributes();
         String modSide = manifest.containsKey(MOD_SIDE) ? manifest.getValue(MOD_SIDE) : "BOTH";
@@ -206,7 +213,7 @@ public class DependencyExtractor
                 FMLLog.log.error("Found invalid ContainsDeps declaration {} in {}", dep, jar.getName());
                 continue;
             }
-            File targetFile = determineTargetFile(jar, baseModsDir, versionedModsDir, repository, artifacts, dep, depEndName);
+            File targetFile = determineTargetFile(jar, baseModsDir, versionedModsDir, repository, dep, depEndName);
             if (targetFile == null) continue;
 
             FMLLog.log.debug("Extracting ContainedDep {} from {} to {}", dep, jar.getName(), targetFile.getCanonicalPath());
@@ -229,7 +236,7 @@ public class DependencyExtractor
     }
 
     @Nullable
-    public static File determineTargetFile(JarFile jar, File baseModsDir, File versionedModsDir, File repository, Map<Artifact, Artifact> artifacts, String dep, String depEndName) throws IOException
+    public static File determineTargetFile(JarFile jar, File baseModsDir, File versionedModsDir, File repository, String dep, String depEndName) throws IOException
     {
         File versionedTarget = new File(versionedModsDir, depEndName);
         File baseDirTarget = new File(baseModsDir, depEndName);
@@ -294,7 +301,7 @@ public class DependencyExtractor
         if (artifactData != null)
         {
             Artifact artifact = new Artifact(artifactData);
-            if (addArtifact(artifacts, artifact, repository))
+            if (addArtifact(artifact, repository))
             {
                 FMLLog.log.debug("Found artifact {} in {}, extracting to repository at {}", artifact, jar.getName(), repository.getCanonicalPath());
                 targetFile = artifact.toFile(repository);
@@ -311,9 +318,22 @@ public class DependencyExtractor
         return targetFile;
     }
 
-    private static boolean addArtifact(Map<Artifact, Artifact> artifacts, Artifact artifact, File repository)
+    private static boolean addArtifact(Artifact artifact, File repository)
     {
-        Artifact existing = artifacts.get(artifact);
+        Artifact existing = listArtifacts.get(artifact);
+        Artifact alreadyExtracted = extractedArtifacts.get(artifact);
+        if (alreadyExtracted != null)
+        {
+            if (artifact.getParsedVersion().compareTo(alreadyExtracted.getParsedVersion()) < 0)
+            {
+                FMLLog.log.debug("Found extracted artifact {} in repository already which has a newer version, skipping extraction of {}", alreadyExtracted, artifact);
+                return false;
+            }
+            else
+            {
+                FMLLog.log.debug("Found extracted artifact {} in repository already which has an older version, replacing it", alreadyExtracted);
+            }
+        }
         if (existing != null)
         {
             if (existing.version.equals(artifact.version))
@@ -326,12 +346,18 @@ public class DependencyExtractor
                 FMLLog.log.debug("Found extracted artifact {} in repository already, skipping extraction", artifact);
                 return false;
             }
-            FMLLog.log.warn("Replacing existing mod list entry {} with differing extracted version {}", existing, artifact.version);
+            if (alreadyExtracted == null)
+            {
+                // Only warn if we're actively replacing an artifact, not just using a newer version
+                FMLLog.log.warn("Replacing existing mod list entry {} with differing extracted version {}", existing, artifact.version);
+            }
             existing.version = artifact.version;
+            extractedArtifacts.put(artifact, artifact);
         }
         else
         {
-            artifacts.put(artifact, artifact);
+            listArtifacts.put(artifact, artifact);
+            extractedArtifacts.put(artifact, artifact);
         }
         return true;
     }
@@ -384,6 +410,11 @@ public class DependencyExtractor
         public File toFile(File relativeTo)
         {
             return new File(relativeTo, toFileName());
+        }
+
+        public ComparableVersion getParsedVersion()
+        {
+            return new ComparableVersion(version);
         }
 
         public boolean equalsAll(Artifact artifact)
