@@ -84,10 +84,7 @@ public class ModListHelper {
         File f;
         try
         {
-            if (listFile.startsWith("absolute:"))
-                f = new File(listFile.substring(9)).getCanonicalFile();
-            else
-                f = new File(mcDirectory, listFile).getCanonicalFile();
+            f = parsePath(listFile, mcDirectory);
         } catch (IOException e2)
         {
             FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Unable to canonicalize path {} relative to {}", listFile, mcDirectory.getAbsolutePath()), e2);
@@ -151,10 +148,7 @@ public class ModListHelper {
             }
             else
             {
-                if (modList.repositoryRoot.startsWith("absolute:"))
-                    repoRoot = new File(modList.repositoryRoot.substring(9));
-                else
-                    repoRoot = new File(mcDirectory, modList.repositoryRoot);
+                repoRoot = parsePath(modList.repositoryRoot, mcDirectory);
             }
             repoRoot = repoRoot.getCanonicalFile();
         }
@@ -164,6 +158,14 @@ public class ModListHelper {
             return null;
         }
         return repoRoot;
+    }
+
+    public static File parsePath(String path, File mcDirectory) throws IOException
+    {
+        if (path.startsWith("absolute:"))
+            return new File(path.substring(9)).getCanonicalFile();
+        else
+            return new File(mcDirectory, path).getCanonicalFile();
     }
 
     private static void tryAddFile(String modFileName, @Nullable File repoRoot, String descriptor) {

@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -61,24 +62,24 @@ public class DependencyExtractor
     private static final Attributes.Name MOD_SIDE = CoreModManager.MODSIDE;
     private static final String MOD_SIDE_NAME = MOD_SIDE.toString();
     private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps", "").split(","));
-    public static final Map<Artifact, Artifact> listArtifacts = new HashMap<>();
-    private static final Map<Artifact, Artifact> extractedArtifacts = new HashMap<>();
+    /**
+     * It's a little weird, but it should yield the best performance
+     * The map is used like a set (similar to how HashSet is really just a wrapped HashMap)
+     */
+    public static final Map<Artifact, Artifact> extractedArtifacts = new HashMap<>();
     public static int extractedDeps = 0;
 
     public static void inspect(File mcDir, File baseModsDir, File versionedModsDir, String repositoryRoot)
     {
         FMLLog.log.debug("Inspecting mod directory for dependency extraction candidates");
         File modListFile = new File(baseModsDir, "mod_list.json");
-        JsonModList modList = prepareModList(mcDir.toPath(), repositoryRoot, modListFile);
+        File desiredModListFile = new File(baseModsDir, "extracted_mods.json");
+        JsonModList modList = prepareModList(mcDir.toPath(), repositoryRoot, desiredModListFile);
         File repository = ModListHelper.getRepoRoot(mcDir, modList);
-        // We need two separate maps, one to determine existing files and to put into the mod list,
-        // another to determine whether an extraction candidate is of a newer version
-        listArtifacts.clear();
+        // Completely wipe the list of extracted artifacts, always override the list
         extractedArtifacts.clear();
         extractedDeps = 0;
-        // It's a little weird, but it should yield the best performance
-        // The map is used like a set (similar to how HashSet is really just a wrapped HashMap)
-        modList.modRef.stream().map(Artifact::new).forEach(a -> listArtifacts.put(a, a));
+        Map<Artifact, Artifact> oldArtifacts = modList.modRef.stream().map(Artifact::new).collect(Collectors.toMap(Function.identity(), Function.identity()));
 
         for (File mod : CoreModManager.listFiles((d, name) -> name.endsWith(".jar"), baseModsDir, versionedModsDir))
         {
@@ -97,14 +98,17 @@ public class DependencyExtractor
             }
         }
 
-        if (extractedDeps > 0)
+        // If any dependencies were extracted or the count in artifacts changed compared to the previous state, save the list file
+        if (extractedDeps > 0 || oldArtifacts.size() != extractedArtifacts.size())
         {
             FMLLog.log.debug("Finished extracting dependencies, at least {} dependencies were added or updated", extractedDeps);
-            FMLLog.log.debug("Since dependencies were extracted, the mod list has to be written to disk again");
-            modList.modRef = listArtifacts.values().stream().map(Artifact::toGradleNotation).collect(Collectors.toList());
+            FMLLog.log.debug("Since dependencies were extracted, the list of extracted mods has to be written to disk again");
+            modList.modRef = extractedArtifacts.values().stream().map(Artifact::toGradleNotation).collect(Collectors.toList());
+            // We need to make our file a parent of the base one
+            updateBaseModListFile(mcDir, modListFile, desiredModListFile, repository);
             try
             {
-                Files.write(GSON.toJson(modList), modListFile, Charsets.UTF_8);
+                Files.write(GSON.toJson(modList), desiredModListFile, Charsets.UTF_8);
                 FMLLog.log.debug("Successfully updated mod list");
             }
             catch (IOException e)
@@ -118,7 +122,7 @@ public class DependencyExtractor
         }
     }
 
-    public static JsonModList prepareModList(Path mcDir, @Nullable String repositoryRoot, @Nullable File modListFile)
+    public static JsonModList prepareModList(Path mcDir, @Nullable String repositoryRoot, File desiredModListFile)
     {
         JsonModList list = new JsonModList();
         // Default option, when all else fails
@@ -168,25 +172,67 @@ public class DependencyExtractor
         list.modRef = new ArrayList<>();
         // Treat path as relative to the MC dir
         list.version = 2;
-        if (modListFile == null || !modListFile.exists())
+        if (!desiredModListFile.exists())
         {
             return list;
         }
         String json;
         try
         {
-            json = Files.asCharSource(modListFile, Charsets.UTF_8).read();
+            json = Files.asCharSource(desiredModListFile, Charsets.UTF_8).read();
             list = GSON.fromJson(json, JsonModList.class);
         }
         catch (IOException e)
         {
-            FMLLog.log.warn("Failed to read mod list json file {}, overriding with empty one", modListFile, e);
+            FMLLog.log.warn("Failed to read extracted mod list json file {}, overriding with empty one", desiredModListFile, e);
         }
         catch (JsonSyntaxException e)
         {
-            FMLLog.log.warn("Failed to parse existing mod list json file {}, overriding with empty one", modListFile, e);
+            FMLLog.log.warn("Failed to parse existing extracted mod list json file {}, overriding with empty one", desiredModListFile, e);
         }
         return list;
+    }
+
+    private static void updateBaseModListFile(File mcDirectory, File modListFile, File desiredModListFile, File repositoryRoot)
+    {
+        try
+        {
+            JsonModList list;
+            if (modListFile.exists())
+            {
+                // Simply update the existing file if it exists
+                String json = Files.asCharSource(modListFile, Charsets.UTF_8).read();
+                list = GSON.fromJson(json, JsonModList.class);
+                if (list.parentList != null)
+                {
+                    // If there already is a parent file and it is not ours, we have to recurse upwards
+                    File parent = ModListHelper.parsePath(list.parentList, mcDirectory);
+                    if (!parent.equals(desiredModListFile))
+                    {
+                        updateBaseModListFile(mcDirectory, parent, desiredModListFile, repositoryRoot);
+                    }
+                    return;
+                }
+            }
+            else
+            {
+                // Default to an empty mod list file
+                list = new JsonModList();
+                list.version = 2;
+                list.modRef = new ArrayList<>();
+                list.repositoryRoot = "absolute:" + repositoryRoot.getCanonicalPath();
+            }
+            list.parentList = "absolute:" + desiredModListFile.getCanonicalPath();
+            Files.write(GSON.toJson(list), modListFile, Charsets.UTF_8);
+        }
+        catch (IOException e)
+        {
+            FMLLog.log.warn("Failed to write base mod list json file {}", modListFile, e);
+        }
+        catch (JsonSyntaxException e)
+        {
+            FMLLog.log.warn("Failed to parse existing base mod list json file {}", modListFile, e);
+        }
     }
 
     private static void extractContainedDepJars(JarFile jar, File baseModsDir, File versionedModsDir, File repository) throws IOException
@@ -320,43 +366,23 @@ public class DependencyExtractor
 
     private static boolean addArtifact(Artifact artifact, File repository)
     {
-        Artifact existing = listArtifacts.get(artifact);
-        Artifact alreadyExtracted = extractedArtifacts.get(artifact);
-        if (alreadyExtracted != null)
-        {
-            if (artifact.getParsedVersion().compareTo(alreadyExtracted.getParsedVersion()) < 0)
-            {
-                FMLLog.log.debug("Found extracted artifact {} in repository already which has a newer version, skipping extraction of {}", alreadyExtracted, artifact);
-                return false;
-            }
-            else
-            {
-                FMLLog.log.debug("Found extracted artifact {} in repository already which has an older version, replacing it", alreadyExtracted);
-            }
-        }
+        Artifact existing = extractedArtifacts.get(artifact);
         if (existing != null)
         {
-            if (existing.version.equals(artifact.version))
+            if (existing.getParsedVersion().compareTo(artifact.getParsedVersion()) < 0)
             {
-                if (!artifact.toFile(repository).exists())
-                {
-                    return true;
-                }
-                // Don't need to extract existing artifacts
-                FMLLog.log.debug("Found extracted artifact {} in repository already, skipping extraction", artifact);
+                FMLLog.log.debug("Found extracted artifact {} in repository already which has an older version, replacing it", existing);
+                existing.version = artifact.version;
+            }
+            else if (existing.toFile(repository).exists())
+            {
+                // Don't need to extract if newer or equal artifact was already extracted
+                FMLLog.log.debug("Found extracted artifact {} in repository already with equal or newer version, skipping extraction", existing);
                 return false;
             }
-            if (alreadyExtracted == null)
-            {
-                // Only warn if we're actively replacing an artifact, not just using a newer version
-                FMLLog.log.warn("Replacing existing mod list entry {} with differing extracted version {}", existing, artifact.version);
-            }
-            existing.version = artifact.version;
-            extractedArtifacts.put(artifact, artifact);
         }
         else
         {
-            listArtifacts.put(artifact, artifact);
             extractedArtifacts.put(artifact, artifact);
         }
         return true;

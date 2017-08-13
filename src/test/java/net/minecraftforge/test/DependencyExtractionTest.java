@@ -10,8 +10,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -55,9 +55,10 @@ public class DependencyExtractionTest
     private static File expectedExtraction;
     private static File expectedExternalExtraction;
     private static File modListFile;
+    private static File extractedModsFile;
 
-    @BeforeClass
-    public static void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
         workingDir = Files.createTempDirectory("temp").toFile();
         libsDir = new File(workingDir, "libraries/");
@@ -70,6 +71,7 @@ public class DependencyExtractionTest
         Files.copy(DependencyExtractionTest.class.getResourceAsStream(INTERNAL_JAR_NAME), modJar.toPath());
         expectedExtraction = new File(libsDir, "net/minecraftforge/test/dependency/1.0/dependency-1.0-testing.jar").getAbsoluteFile();
         expectedExternalExtraction = new File(libsDir, "net/minecraftforge/test/dependency-with-meta/1.0/dependency-with-meta-1.0.jar").getAbsoluteFile();
+        extractedModsFile = new File(modsDir, "extracted_mods.json");
         modListFile = new File(modsDir, "mod_list.json");
         // Perform actual extraction right away to have the right state in all tests
         DependencyExtractor.inspect(workingDir, modsDir, versionedModsDir, "./libraries/");
@@ -83,7 +85,7 @@ public class DependencyExtractionTest
     {
         // Get extraction paths from the JAR
         JarFile jar = new JarFile(modJar);
-        DependencyExtractor.listArtifacts.clear();
+        DependencyExtractor.extractedArtifacts.clear();
         File targetFile = DependencyExtractor.determineTargetFile(jar, modsDir, versionedModsDir, libsDir, DEPENDENCY_JAR_NAME, DEPENDENCY_JAR_NAME);
         assertNotNull("Extraction target must exist with our data", targetFile);
         assertEquals("Extraction target should properly unroll artifact notation", expectedExtraction, targetFile.getAbsoluteFile());
@@ -93,8 +95,8 @@ public class DependencyExtractionTest
         IOUtils.closeQuietly(jar);
 
         // Extraction should have resulted in the two correct artifacts being read
-        assertEquals("Two artifact should be found", 2, DependencyExtractor.listArtifacts.size());
-        for (Map.Entry<Artifact, Artifact> entry : DependencyExtractor.listArtifacts.entrySet())
+        assertEquals("Two artifact should be found", 2, DependencyExtractor.extractedArtifacts.size());
+        for (Map.Entry<Artifact, Artifact> entry : DependencyExtractor.extractedArtifacts.entrySet())
         {
             Artifact artifact = entry.getKey();
             assertThat("Artifact map serves as set, key and value should match", entry.getValue(), new BaseMatcher<Artifact>()
@@ -112,7 +114,7 @@ public class DependencyExtractionTest
                 }
             });
             assertTrue("Artifact should match expected value: Got '" + artifact.toGradleNotation() + "' expected '" + MAVEN_ARTIFACT_REF + "' or '" + EXTERNAL_MAVEN_ARTIFACT_REF + "'",
-                       MAVEN_ARTIFACT_REF.equals(artifact.toGradleNotation()) || EXTERNAL_MAVEN_ARTIFACT_REF.equals(artifact.toGradleNotation()));
+                MAVEN_ARTIFACT_REF.equals(artifact.toGradleNotation()) || EXTERNAL_MAVEN_ARTIFACT_REF.equals(artifact.toGradleNotation()));
         }
 
         assertEquals("Exactly two dependencies should have been extracted, a normal one and one with external metadata", 2, DependencyExtractor.extractedDeps);
@@ -121,12 +123,21 @@ public class DependencyExtractionTest
     }
 
     @Test
-    public void testModListLoading() throws Exception
+    public void testModListParenting() throws Exception
     {
         assertTrue("Dependency extraction should have created a new mod list file", modListFile.exists());
+        String json = new String(Files.readAllBytes(modListFile.toPath()), Charsets.UTF_8);
+        ModListHelper.JsonModList modList = new Gson().fromJson(json, ModListHelper.JsonModList.class);
+        assertEquals("Dependency extraction should have declared the extracted mods file as parent of the base mod list", "absolute:" + extractedModsFile.getCanonicalPath(), modList.parentList);
+    }
+
+    @Test
+    public void testModListLoading() throws Exception
+    {
+        assertTrue("Dependency extraction should have created a new mod list file for the extracted mods", extractedModsFile.exists());
 
         // Ensure the file was correctly written
-        String json = new String(Files.readAllBytes(modListFile.toPath()), Charsets.UTF_8);
+        String json = new String(Files.readAllBytes(extractedModsFile.toPath()), Charsets.UTF_8);
         ModListHelper.JsonModList modList = new Gson().fromJson(json, ModListHelper.JsonModList.class);
         assertEquals("Mod list file version should allow absolute and relative paths", 2, modList.version);
         assertEquals("Repository root should be relative to MC directory", "./libraries/", modList.repositoryRoot);
@@ -146,8 +157,8 @@ public class DependencyExtractionTest
         assertEquals("Artifact with external metadata should point at correct file", expectedExternalExtraction, loadedMod.getAbsoluteFile());
     }
 
-    @AfterClass
-    public static void cleanUp() throws Exception
+    @After
+    public void cleanUp() throws Exception
     {
         FileUtils.deleteDirectory(workingDir);
     }
