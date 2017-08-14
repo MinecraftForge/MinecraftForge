@@ -36,12 +36,9 @@ import com.google.common.cache.LoadingCache;
 
 public class LightUtil
 {
-    private static final float s2 = (float)Math.pow(2, .5);
-
     public static float diffuseLight(float x, float y, float z)
     {
-        float y1 = y + 3 - 2 * s2;
-        return (x * x * 0.6f + (y1 * y1 * (3 + 2 * s2)) / 8 + z * z * 0.8f);
+        return x * x * 0.6f + y * y * ((3f + y) / 4f) + z * z * 0.8f;
     }
 
     public static float diffuseLight(EnumFacing side)
