@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = BlockstateRetextureTest.MODID, name = "BlockstateRetextureTest", version = BlockstateRetextureTest.VERSION, acceptableRemoteVersions = "*")
+@Mod(modid = BlockstateRetextureTest.MODID, name = "BlockstateRetextureTest", version = BlockstateRetextureTest.VERSION, acceptableRemoteVersions = "*", clientSideOnly = true)
 public class BlockstateRetextureTest
 {
     public static final String MODID = "forge_blockstate_retexture_test";

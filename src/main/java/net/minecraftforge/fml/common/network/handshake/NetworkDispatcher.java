@@ -68,8 +68,6 @@ import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.ForgeRegistry;
 
-import org.apache.logging.log4j.Level;
-
 // TODO build test suites to validate the behaviour of this stuff and make it less annoyingly magical
 public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> implements ChannelOutboundHandler {
     private static boolean DEBUG_HANDSHAKE = Boolean.parseBoolean(System.getProperty("fml.debugNetworkHandshake", "false"));
@@ -77,7 +75,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         OPENING, AWAITING_HANDSHAKE, HANDSHAKING, HANDSHAKECOMPLETE, FINALIZING, CONNECTED
     }
 
-    private static enum ConnectionType {
+    public static enum ConnectionType {
         MODDED, BUKKIT, VANILLA
     }
 
@@ -666,5 +664,10 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         {
             return this.data_buf;
         }
+    }
+
+    public ConnectionType getConnectionType()
+    {
+        return this.connectionType;
     }
 }

@@ -65,6 +65,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final CreateCallback<V> create;
     private final AddCallback<V> add;
     private final ClearCallback<V> clear;
+    private final MissingFactory<V> missing;
     private final BitSet availabilityMap;
     private final Set<ResourceLocation> dummies = Sets.newHashSet();
     private final Set<Integer> blocked = Sets.newHashSet();
@@ -80,7 +81,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private V defaultValue = null;
     boolean isFrozen = false;
 
-    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory)
+    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing)
     {
         this.stage = stage;
         this.superType = superType;
@@ -91,6 +92,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.create = create;
         this.add = add;
         this.clear = clear;
+        this.missing = missing;
         this.isDelegated = IForgeRegistryEntry.Impl.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
         this.allowOverrides = allowOverrides;
         this.isModifiable = isModifiable;
@@ -251,7 +253,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     ForgeRegistry<V> copy(RegistryManager stage)
     {
-        return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, stage, allowOverrides, isModifiable, dummyFactory);
+        return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, stage, allowOverrides, isModifiable, dummyFactory, missing);
     }
 
     int add(int id, V value)
@@ -756,7 +758,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return new MissingMappings<V>(name, this, lst);
     }
 
-    void processMissingEvent(ResourceLocation name, ForgeRegistry<V> pool, List<MissingMappings.Mapping<V>> mappings, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed)
+    void processMissingEvent(ResourceLocation name, ForgeRegistry<V> pool, List<MissingMappings.Mapping<V>> mappings, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
     {
         FMLLog.log.debug("Processing missing event for {}:", name);
         int ignored = 0;
@@ -791,7 +793,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 // block item missing, warn as requested and block the id
                 if (action == MissingMappings.Action.DEFAULT)
                 {
-                    defaulted.add(remap.key);
+                    V m = this.missing == null ? null : this.missing.createMissing(remap.key, injectNetworkDummies);
+                    if (m == null)
+                        defaulted.add(remap.key);
+                    else
+                        this.add(remap.id, m, remap.key.getResourceDomain());
                 }
                 else if (action == MissingMappings.Action.IGNORE)
                 {
