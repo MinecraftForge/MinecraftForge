@@ -17,54 +17,57 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.oredict;
-
-import java.util.Iterator;
-import net.minecraft.block.Block;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.JsonContext;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+package net.minecraftforge.oreregistry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import net.minecraft.block.Block;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.JsonUtils;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.JsonContext;
+import net.minecraftforge.common.util.RecipeUtil;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
-/**
- * @deprecated use {@link net.minecraftforge.oreregistry.ShapelessForgeRecipe}
- */
-@Deprecated
-public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
+public class ShapelessForgeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
     @Nonnull
-    protected ItemStack output = ItemStack.EMPTY;
-    protected NonNullList<Ingredient> input = NonNullList.create();
-    protected ResourceLocation group;
+    protected final Supplier<ItemStack> result;
+    @Nonnull
+    protected final NonNullList<Ingredient> input;
+    @Nullable
+    protected final ResourceLocation group;
 
-    public ShapelessOreRecipe(ResourceLocation group, Block result, Object... recipe){ this(group, new ItemStack(result), recipe); }
-    public ShapelessOreRecipe(ResourceLocation group, Item  result, Object... recipe){ this(group, new ItemStack(result), recipe); }
-    public ShapelessOreRecipe(ResourceLocation group, NonNullList<Ingredient> input, @Nonnull ItemStack result)
+    public ShapelessForgeRecipe(@Nullable ResourceLocation group, Block result, Object... recipe)
     {
-        this.group = group;
-        output = result.copy();
-        this.input = input;
+        this(group, RecipeUtil.CheckedItemStackSupplier.create(result), recipe);
     }
-    public ShapelessOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe)
+    public ShapelessForgeRecipe(@Nullable ResourceLocation group, Item  result, Object... recipe)
+    {
+        this(group, RecipeUtil.CheckedItemStackSupplier.create(result), recipe);
+    }
+    public ShapelessForgeRecipe(@Nullable ResourceLocation group, @Nonnull ItemStack result, Object... recipe)
+    {
+        this(group, RecipeUtil.CheckedItemStackSupplier.create(result), recipe);
+    }
+    public ShapelessForgeRecipe(@Nullable ResourceLocation group, @Nonnull Supplier<ItemStack> result, Object... recipe)
     {
         this.group = group;
-        output = result.copy();
+        this.result = result;
+        this.input = NonNullList.create();
         for (Object in : recipe)
         {
             Ingredient ing = CraftingHelper.getIngredient(in);
@@ -79,19 +82,25 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
                 {
                     ret += tmp + ", ";
                 }
-                ret += output;
+                ret += result.get();
                 throw new RuntimeException(ret);
             }
         }
     }
+    public ShapelessForgeRecipe(@Nullable ResourceLocation group, @Nonnull Supplier<ItemStack> result, @Nonnull NonNullList<Ingredient> input)
+    {
+        this.group = group;
+        this.result = result;
+        this.input = input;
+    }
 
     @Override
     @Nonnull
-    public ItemStack getRecipeOutput(){ return output; }
+    public ItemStack getRecipeOutput(){ return this.result.get(); }
 
     @Override
     @Nonnull
-    public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1){ return output.copy(); }
+    public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1){ return this.result.get(); }
 
     @Override
     public boolean matches(@Nonnull InventoryCrafting var1, @Nonnull World world)
@@ -148,7 +157,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         return p_194133_1_ * p_194133_2_ >= this.input.size();
     }
 
-    public static ShapelessOreRecipe factory(JsonContext context, JsonObject json)
+    public static ShapelessForgeRecipe factory(JsonContext context, JsonObject json)
     {
         String group = JsonUtils.getString(json, "group", "");
 
@@ -159,7 +168,8 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         if (ings.isEmpty())
             throw new JsonParseException("No ingredients for shapeless recipe");
 
-        ItemStack itemstack = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
-        return new ShapelessOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), ings, itemstack);
+        JsonObject jsonObject = JsonUtils.getJsonObject(json, "result");
+        Supplier<ItemStack> result = CraftingHelper.getItemStackSupplier(jsonObject, context);
+        return new ShapelessForgeRecipe(group.isEmpty() ? null : new ResourceLocation(group), result, ings);
     }
 }

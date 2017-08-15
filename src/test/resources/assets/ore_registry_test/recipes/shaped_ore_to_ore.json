@@ -1,0 +1,19 @@
+{
+  "type": "forge:shaped",
+  "group": "shaped_many_to_ore",
+  "pattern": [
+    "XX",
+    "XX"
+  ],
+  "key": {
+    "X": {
+      "type": "forge:ore_registry",
+      "material": "redstone",
+      "shape": "block"
+    }
+  },
+  "result": {
+    "material": "diamond",
+    "shape": "gem"
+  }
+}

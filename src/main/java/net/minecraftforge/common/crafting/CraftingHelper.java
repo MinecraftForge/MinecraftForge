@@ -27,7 +27,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,12 +36,21 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.minecraftforge.common.util.RecipeUtil;
+import net.minecraftforge.oreregistry.BasicOre;
+import net.minecraftforge.oreregistry.BasicOreIngredient;
+import net.minecraftforge.oreregistry.OreMaterial;
+import net.minecraftforge.oreregistry.OreRegistry;
+import net.minecraftforge.oreregistry.OreShape;
+import net.minecraftforge.oreregistry.ShapedForgeRecipe;
+import net.minecraftforge.oreregistry.ShapelessForgeRecipe;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -126,6 +134,8 @@ public class CraftingHelper {
             return Ingredient.fromStacks(new ItemStack((Block)obj, 1, OreDictionary.WILDCARD_VALUE));
         else if (obj instanceof String)
             return new OreIngredient((String)obj);
+        else if (obj instanceof BasicOre)
+            return new BasicOreIngredient((BasicOre) obj);
         else if (obj instanceof JsonElement)
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 
@@ -199,6 +209,40 @@ public class CraftingHelper {
             throw new JsonSyntaxException("Unknown ingredient type: " + type);
 
         return factory.parse(context, obj);
+    }
+
+    public static Supplier<ItemStack> getItemStackSupplier(JsonObject json, JsonContext context)
+    {
+        BasicOre basicOre = getBasicOre(json, context);
+        if (basicOre != null)
+        {
+            final int count = JsonUtils.getInt(json, "count", 1);
+            return () ->
+            {
+                ItemStack output = basicOre.get();
+                output.setCount(count);
+                return output;
+            };
+        }
+        ItemStack result = getItemStack(json, context);
+        return RecipeUtil.CheckedItemStackSupplier.create(result);
+    }
+
+    @Nullable
+    public static BasicOre getBasicOre(JsonObject json, JsonContext context)
+    {
+        if (json.has("material") && json.has("shape"))
+        {
+            String materialUid = JsonUtils.getString(json, "material");
+            String shapeUid = JsonUtils.getString(json, "shape");
+            OreMaterial material = OreRegistry.getMaterial(materialUid);
+            OreShape shape = OreRegistry.getShape(shapeUid);
+            if (material != null && shape != null)
+            {
+                return OreRegistry.getOre(material, shape);
+            }
+        }
+        return null;
     }
 
     public static ItemStack getItemStack(JsonObject json, JsonContext context)
@@ -533,11 +577,14 @@ public class CraftingHelper {
         });
         registerR("forge:ore_shaped", ShapedOreRecipe::factory);
         registerR("forge:ore_shapeless", ShapelessOreRecipe::factory);
+        registerR("forge:shaped", ShapedForgeRecipe::factory);
+        registerR("forge:shapeless", ShapelessForgeRecipe::factory);
 
         registerI("minecraft:item", (context, json) -> Ingredient.fromStacks(CraftingHelper.getItemStackBasic(json, context)));
         registerI("minecraft:empty", (context, json) -> Ingredient.EMPTY);
         registerI("minecraft:item_nbt", (context, json) -> new IngredientNBT(CraftingHelper.getItemStack(json, context)));
         registerI("forge:ore_dict", (context, json) -> new OreIngredient(JsonUtils.getString(json, "ore")));
+        registerI("forge:ore_registry", (context, json) -> new BasicOreIngredient(getBasicOre(json, context)));
     }
 
     private static void registerC(String name, IConditionFactory fac) {
