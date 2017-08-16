@@ -222,7 +222,12 @@ public class OreDictionary
 
         // wood-related things
         replacements.put(new ItemStack(Items.STICK), "stickWood");
-        replacements.put(new ItemStack(Blocks.PLANKS), "plankWood");
+        replacements.put(new ItemStack(Blocks.PLANKS, 1, 0), "plankWood");
+        replacements.put(new ItemStack(Blocks.PLANKS, 1, 1), "plankWood");
+        replacements.put(new ItemStack(Blocks.PLANKS, 1, 2), "plankWood");
+        replacements.put(new ItemStack(Blocks.PLANKS, 1, 3), "plankWood");
+        replacements.put(new ItemStack(Blocks.PLANKS, 1, 4), "plankWood");
+        replacements.put(new ItemStack(Blocks.PLANKS, 1, 5), "plankWood");
         replacements.put(new ItemStack(Blocks.PLANKS, 1, WILDCARD_VALUE), "plankWood");
         replacements.put(new ItemStack(Blocks.WOODEN_SLAB, 1, WILDCARD_VALUE), "slabWood");
 
