@@ -335,8 +335,8 @@ public class OreDictionary
             new ItemStack(Blocks.SPRUCE_FENCE),
             new ItemStack(Blocks.SPRUCE_FENCE_GATE),
             new ItemStack(Blocks.SPRUCE_STAIRS),
-            new ItemStack(Blocks.BIRCH_STAIRS),
             new ItemStack(Blocks.BIRCH_FENCE_GATE),
+            new ItemStack(Blocks.BIRCH_FENCE),
             new ItemStack(Blocks.BIRCH_STAIRS),
             new ItemStack(Blocks.JUNGLE_FENCE),
             new ItemStack(Blocks.JUNGLE_FENCE_GATE),
@@ -351,7 +351,17 @@ public class OreDictionary
             new ItemStack(Blocks.GLASS_PANE),
             new ItemStack(Blocks.BONE_BLOCK), // Bone Block, to prevent conversion of dyes into bone meal.
             new ItemStack(Items.BOAT),
+            new ItemStack(Items.SPRUCE_BOAT),
+            new ItemStack(Items.BIRCH_BOAT),
+            new ItemStack(Items.JUNGLE_BOAT),
+            new ItemStack(Items.ACACIA_BOAT),
+            new ItemStack(Items.DARK_OAK_BOAT),
             new ItemStack(Items.OAK_DOOR),
+            new ItemStack(Items.SPRUCE_DOOR),
+            new ItemStack(Items.BIRCH_DOOR),
+            new ItemStack(Items.JUNGLE_DOOR),
+            new ItemStack(Items.ACACIA_DOOR),
+            new ItemStack(Items.DARK_OAK_DOOR),
             ItemStack.EMPTY //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
