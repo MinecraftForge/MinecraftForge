@@ -584,9 +584,9 @@ public class ForgeHooksClient
         v1.cross(v2, v1);
         v1.normalize();
 
-        int x = ((byte)(v1.x * 127)) & 0xFF;
-        int y = ((byte)(v1.y * 127)) & 0xFF;
-        int z = ((byte)(v1.z * 127)) & 0xFF;
+        int x = ((byte) Math.round(v1.x * 127)) & 0xFF;
+        int y = ((byte) Math.round(v1.y * 127)) & 0xFF;
+        int z = ((byte) Math.round(v1.z * 127)) & 0xFF;
         for(int i = 0; i < 4; i++)
         {
             faceData[i * 7 + 6] = x | (y << 0x08) | (z << 0x10);
