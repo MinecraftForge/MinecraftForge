@@ -575,11 +575,11 @@ public class ForgeHooksClient
      */
     public static void fillNormal(int[] faceData, EnumFacing facing)
     {
-        Vector3f v1 = new Vector3f(faceData[3 * 7 + 0], faceData[3 * 7 + 1], faceData[3 * 7 + 2]);
-        Vector3f t = new Vector3f(faceData[1 * 7 + 0], faceData[1 * 7 + 1], faceData[1 * 7 + 2]);
-        Vector3f v2 = new Vector3f(faceData[2 * 7 + 0], faceData[2 * 7 + 1], faceData[2 * 7 + 2]);
+        Vector3f v1 = getVertexPos(faceData, 3);
+        Vector3f t = getVertexPos(faceData, 1);
+        Vector3f v2 = getVertexPos(faceData, 2);
         v1.sub(t);
-        t.set(faceData[0 * 7 + 0], faceData[0 * 7 + 1], faceData[0 * 7 + 2]);
+        t.set(getVertexPos(faceData, 0));
         v2.sub(t);
         v1.cross(v2, v1);
         v1.normalize();
@@ -591,6 +591,17 @@ public class ForgeHooksClient
         {
             faceData[i * 7 + 6] = x | (y << 0x08) | (z << 0x10);
         }
+    }
+
+    private static Vector3f getVertexPos(int[] data, int vertex)
+    {
+        int idx = vertex * 7;
+
+        float x = Float.intBitsToFloat(data[idx]);
+        float y = Float.intBitsToFloat(data[idx + 1]);
+        float z = Float.intBitsToFloat(data[idx + 2]);
+
+        return new Vector3f(x, y, z);
     }
 
     @SuppressWarnings("deprecation")
