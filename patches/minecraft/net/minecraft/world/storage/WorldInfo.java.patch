@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
-@@ -63,8 +63,9 @@
+@@ -22,7 +22,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class WorldInfo
++public class WorldInfo implements net.minecraftforge.common.capabilities.ICapabilityProvider
+ {
+     private String field_186349_b;
+     private int field_186350_c;
+@@ -63,8 +63,10 @@
      private double field_176153_H = 0.2D;
      private int field_176154_I = 5;
      private int field_176155_J = 15;
@@ -8,10 +17,11 @@
 +    private final Map<Integer, NBTTagCompound> field_186348_N = Maps.newHashMap();
      private GameRules field_82577_x = new GameRules();
 +    private java.util.Map<String, net.minecraft.nbt.NBTBase> additionalProperties;
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
  
      protected WorldInfo()
      {
-@@ -251,7 +252,7 @@
+@@ -251,9 +253,15 @@
  
              for (String s : nbttagcompound1.func_150296_c())
              {
@@ -19,8 +29,32 @@
 +                this.field_186348_N.put(Integer.parseInt(s), nbttagcompound1.func_74775_l(s));
              }
          }
++
++        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
++        if (p_i2157_1_.func_150297_b("capabilities", 10) && this.capabilities != null)
++        {
++            capabilities.deserializeNBT(p_i2157_1_.func_74775_l("capabilities"));
++        }
      }
-@@ -366,6 +367,7 @@
+ 
+     public WorldInfo(WorldSettings p_i2158_1_, String p_i2158_2_)
+@@ -262,6 +270,7 @@
+         this.field_76106_k = p_i2158_2_;
+         this.field_176158_z = field_176156_a;
+         this.field_76109_u = false;
++        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
+     }
+ 
+     public void func_176127_a(WorldSettings p_176127_1_)
+@@ -312,6 +321,7 @@
+         this.field_176153_H = p_i2159_1_.field_176153_H;
+         this.field_176155_J = p_i2159_1_.field_176155_J;
+         this.field_176154_I = p_i2159_1_.field_176154_I;
++        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(p_i2159_1_);
+     }
+ 
+     public NBTTagCompound func_76082_a(@Nullable NBTTagCompound p_76082_1_)
+@@ -366,6 +376,7 @@
          p_76064_1_.func_74780_a("BorderSizeLerpTarget", this.field_176148_F);
          p_76064_1_.func_74780_a("BorderWarningBlocks", (double)this.field_176154_I);
          p_76064_1_.func_74780_a("BorderWarningTime", (double)this.field_176155_J);
@@ -28,7 +62,7 @@
  
          if (this.field_176158_z != null)
          {
-@@ -376,9 +378,10 @@
+@@ -376,9 +387,10 @@
          p_76064_1_.func_74782_a("GameRules", this.field_82577_x.func_82770_a());
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
  
@@ -41,7 +75,19 @@
          }
  
          p_76064_1_.func_74782_a("DimensionData", nbttagcompound1);
-@@ -708,6 +711,7 @@
+@@ -387,6 +399,11 @@
+         {
+             p_76064_1_.func_74782_a("Player", p_76064_2_);
+         }
++
++        if (this.capabilities != null)
++        {
++            p_76064_1_.func_74782_a("capabilities", capabilities.serializeNBT());
++        }
+     }
+ 
+     public long func_76063_b()
+@@ -708,6 +725,7 @@
  
      public void func_176144_a(EnumDifficulty p_176144_1_)
      {
@@ -49,7 +95,7 @@
          this.field_176158_z = p_176144_1_;
      }
  
-@@ -805,18 +809,49 @@
+@@ -805,18 +823,49 @@
              }
          });
      }
@@ -101,3 +147,20 @@
      @SideOnly(Side.CLIENT)
      public int func_186344_K()
      {
+@@ -834,4 +883,16 @@
+     {
+         return this.field_186349_b;
+     }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
++    }
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
+ }
