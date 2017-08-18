@@ -60,6 +60,7 @@ import javax.annotation.Nonnull;
 
 public class OreDictionary
 {
+    private static final boolean DEBUG = false;
     private static boolean hasInit = false;
     private static List<String>          idToName = new ArrayList<String>();
     private static Map<String, Integer>  nameToId = new HashMap<String, Integer>(128);
@@ -347,7 +348,7 @@ public class OreDictionary
             new ItemStack(Blocks.DARK_OAK_FENCE),
             new ItemStack(Blocks.DARK_OAK_FENCE_GATE),
             new ItemStack(Blocks.DARK_OAK_STAIRS),
-            new ItemStack(Blocks.WOODEN_SLAB),
+            new ItemStack(Blocks.WOODEN_SLAB, 1, WILDCARD_VALUE),
             new ItemStack(Blocks.GLASS_PANE),
             new ItemStack(Blocks.BONE_BLOCK), // Bone Block, to prevent conversion of dyes into bone meal.
             new ItemStack(Items.BOAT),
@@ -365,6 +366,7 @@ public class OreDictionary
             ItemStack.EMPTY //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
+        FMLLog.log.info("Starts to replace vanilla recipe ingredients with ore ingredients.");
         int replaced = 0;
         // Search vanilla recipes for recipes to replace
         for(IRecipe obj : CraftingManager.REGISTRY)
@@ -372,11 +374,12 @@ public class OreDictionary
             if(obj.getClass() == ShapedRecipes.class || obj.getClass() == ShapelessRecipes.class)
             {
                 ItemStack output = obj.getRecipeOutput();
-                if (!output.isEmpty() && containsMatch(false, exclusions, output))
+                if (!output.isEmpty() && containsMatch(false, new ItemStack[]{ output }, exclusions))
                 {
                     continue;
                 }
 
+                Set<Ingredient> replacedIngs = new HashSet<>();
                 NonNullList<Ingredient> lst = obj.getIngredients();
                 for (int x = 0; x < lst.size(); x++)
                 {
@@ -420,6 +423,11 @@ public class OreDictionary
                         //Replace!
                         lst.set(x, new OreIngredient(oreName));
                         replaced++;
+                        if(DEBUG && replacedIngs.add(ing))
+                        {
+                            String recipeName = obj.getRegistryName().getResourcePath();
+                            FMLLog.log.debug("Replaced {} of the recipe \'{}\' with \"{}\".", ing.getMatchingStacks(), recipeName, oreName);
+                        }
                     }
                 }
             }
