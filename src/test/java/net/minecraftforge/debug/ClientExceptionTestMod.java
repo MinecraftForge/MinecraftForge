@@ -10,7 +10,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod(modid = "clientexceptiontest", version = "0", name = "Client Exception Test")
-public class ClientExceptionTestMod {
+public class ClientExceptionTestMod
+{
 
     // Disabled so other test mods can still work.
     public static boolean ENABLE_PREINIT = false, ENABLE_INIT = true;
@@ -18,7 +19,8 @@ public class ClientExceptionTestMod {
 
     @Mod.EventHandler
     @SideOnly(Side.CLIENT)
-    public void onPreInit(FMLPreInitializationEvent e) {
+    public void onPreInit(FMLPreInitializationEvent e)
+    {
         if (ENABLE_PREINIT)
         {
             throw new CustomModLoadingErrorDisplayException("Custom Test Exception", new RuntimeException("Thrown in Pre-Init"))
@@ -27,7 +29,8 @@ public class ClientExceptionTestMod {
                 public void initGui(GuiErrorScreen parent, FontRenderer fontRenderer) {}
 
                 @Override
-                public void drawScreen(GuiErrorScreen parent, FontRenderer fontRenderer, int mouseRelX, int mouseRelY, float tickTime) {
+                public void drawScreen(GuiErrorScreen parent, FontRenderer fontRenderer, int mouseRelX, int mouseRelY, float tickTime)
+                {
                     parent.drawCenteredString(parent.mc.fontRenderer, "Custom Test Exception", parent.width / 2, 90, 16777215);
                     parent.drawCenteredString(parent.mc.fontRenderer, LOREM_IPSUM, parent.width / 2, 110, 16777215);
                 }
@@ -37,7 +40,8 @@ public class ClientExceptionTestMod {
 
     @Mod.EventHandler
     @SideOnly(Side.CLIENT)
-    public void onInit(FMLInitializationEvent e) {
+    public void onInit(FMLInitializationEvent e)
+    {
         if (ENABLE_INIT)
         {
             throw new CustomModLoadingErrorDisplayException("Custom Test Exception", new RuntimeException("Thrown in Initialization"))
@@ -46,7 +50,8 @@ public class ClientExceptionTestMod {
                 public void initGui(GuiErrorScreen parent, FontRenderer fontRenderer) {}
 
                 @Override
-                public void drawScreen(GuiErrorScreen parent, FontRenderer fontRenderer, int mouseRelX, int mouseRelY, float tickTime) {
+                public void drawScreen(GuiErrorScreen parent, FontRenderer fontRenderer, int mouseRelX, int mouseRelY, float tickTime)
+                {
                     parent.drawCenteredString(parent.mc.fontRenderer, "Custom Test Exception", parent.width / 2, 90, 16777215);
                     parent.drawCenteredString(parent.mc.fontRenderer, LOREM_IPSUM, parent.width / 2, 110, 16777215);
                 }
