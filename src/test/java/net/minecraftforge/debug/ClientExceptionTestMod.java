@@ -14,7 +14,7 @@ public class ClientExceptionTestMod
 {
 
     // Disabled so other test mods can still work.
-    public static boolean ENABLE_PREINIT = false, ENABLE_INIT = true;
+    public static boolean ENABLE_PREINIT = false, ENABLE_INIT = false;
     private static String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
     @Mod.EventHandler
