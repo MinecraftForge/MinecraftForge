@@ -19,7 +19,6 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
