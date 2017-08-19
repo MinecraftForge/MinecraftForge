@@ -267,11 +267,14 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (LoaderException le)
         {
-            if(le.getCause() instanceof CustomModLoadingErrorDisplayException){
+            if (le.getCause() instanceof CustomModLoadingErrorDisplayException)
+            {
                 CustomModLoadingErrorDisplayException custom = (CustomModLoadingErrorDisplayException) le.getCause();
                 FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
                 customError = custom;
-            } else {
+            }
+            else
+            {
                 haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
                 return;
             }
@@ -346,11 +349,14 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (LoaderException le)
         {
-            if(le.getCause() instanceof CustomModLoadingErrorDisplayException){
+            if (le.getCause() instanceof CustomModLoadingErrorDisplayException)
+            {
                 CustomModLoadingErrorDisplayException custom = (CustomModLoadingErrorDisplayException) le.getCause();
                 FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
                 customError = custom;
-            } else {
+            }
+            else
+            {
                 haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
                 return;
             }
@@ -391,7 +397,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         loading = false;
         client.gameSettings.loadOptions(); //Reload options to load any mod added keybindings.
-        if(customError == null)
+        if (customError == null)
             Loader.instance().loadingComplete();
         SplashProgress.finish();
     }

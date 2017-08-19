@@ -24,7 +24,6 @@ public class GuiCustomModLoadingErrorScreen extends GuiErrorBase
     private CustomModLoadingErrorDisplayException customException;
     public GuiCustomModLoadingErrorScreen(CustomModLoadingErrorDisplayException customException)
     {
-        super();
         this.customException = customException;
     }
     @Override
