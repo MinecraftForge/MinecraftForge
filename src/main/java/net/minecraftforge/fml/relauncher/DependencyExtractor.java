@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
 
 public class DependencyExtractor
 {
+    public static final String EXTRACTED_MODS_LIST = "extracted_mods.json";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Attributes.Name MOD_CONTAINS_DEPS = new Attributes.Name("ContainedDeps");
     private static final String MAVEN_ARTIFACT_NAME = "Maven-Artifact";
@@ -72,8 +73,7 @@ public class DependencyExtractor
     public static void inspect(File mcDir, File baseModsDir, File versionedModsDir, String repositoryRoot)
     {
         FMLLog.log.debug("Inspecting mod directory for dependency extraction candidates");
-        File modListFile = new File(baseModsDir, "mod_list.json");
-        File desiredModListFile = new File(baseModsDir, "extracted_mods.json");
+        File desiredModListFile = new File(versionedModsDir, EXTRACTED_MODS_LIST);
         JsonModList modList = prepareModList(mcDir.toPath(), repositoryRoot, desiredModListFile);
         File repository = ModListHelper.getRepoRoot(mcDir, modList);
         // Completely wipe the list of extracted artifacts, always override the list
@@ -104,10 +104,9 @@ public class DependencyExtractor
             FMLLog.log.debug("Finished extracting dependencies, at least {} dependencies were added or updated", extractedDeps);
             FMLLog.log.debug("Since dependencies were extracted, the list of extracted mods has to be written to disk again");
             modList.modRef = extractedArtifacts.values().stream().map(Artifact::toGradleNotation).collect(Collectors.toList());
-            // We need to make our file a parent of the base one
-            updateBaseModListFile(mcDir, modListFile, desiredModListFile, repository);
             try
             {
+                versionedModsDir.mkdirs();
                 Files.write(GSON.toJson(modList), desiredModListFile, Charsets.UTF_8);
                 FMLLog.log.debug("Successfully updated mod list");
             }
@@ -191,57 +190,6 @@ public class DependencyExtractor
             FMLLog.log.warn("Failed to parse existing extracted mod list json file {}, overriding with empty one", desiredModListFile, e);
         }
         return list;
-    }
-
-    private static void updateBaseModListFile(File mcDirectory, File modListFile, File desiredModListFile, File repositoryRoot)
-    {
-        try
-        {
-            JsonModList list;
-            if (modListFile.exists())
-            {
-                // Simply update the existing file if it exists
-                String json = Files.asCharSource(modListFile, Charsets.UTF_8).read();
-                list = GSON.fromJson(json, JsonModList.class);
-                if (list.parentList != null)
-                {
-                    // If there already is a parent file and it is not ours, we have to recurse upwards
-                    File parent = ModListHelper.parsePath(list.parentList, mcDirectory);
-                    if (!parent.equals(desiredModListFile))
-                    {
-                        updateBaseModListFile(mcDirectory, parent, desiredModListFile, repositoryRoot);
-                    }
-                    return;
-                }
-            }
-            else
-            {
-                // Default to an empty mod list file
-                list = new JsonModList();
-                list.version = 2;
-                list.modRef = new ArrayList<>();
-                list.repositoryRoot = "absolute:" + repositoryRoot.getCanonicalPath();
-            }
-            Path mcPath = mcDirectory.getCanonicalFile().toPath();
-            Path desiredPath = desiredModListFile.toPath();
-            if (desiredPath.startsWith(mcPath))
-            {
-                list.parentList = mcPath.relativize(desiredPath).toString();
-            }
-            else
-            {
-                list.parentList = "absolute:" + desiredModListFile.getCanonicalPath();
-            }
-            Files.write(GSON.toJson(list), modListFile, Charsets.UTF_8);
-        }
-        catch (IOException e)
-        {
-            FMLLog.log.warn("Failed to write base mod list json file {}", modListFile, e);
-        }
-        catch (JsonSyntaxException e)
-        {
-            FMLLog.log.warn("Failed to parse existing base mod list json file {}", modListFile, e);
-        }
     }
 
     private static void extractContainedDepJars(JarFile jar, File baseModsDir, File versionedModsDir, File repository) throws IOException

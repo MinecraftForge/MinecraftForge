@@ -70,7 +70,8 @@ public class ModListHelper {
         String[] extras = new String[]
         {
             "mods/mod_list.json",
-            "mods/" + FMLInjectionData.mccversion + "/mod_list.json"
+            "mods/" + FMLInjectionData.mccversion + "/mod_list.json",
+            "mods/" + FMLInjectionData.mccversion + "/" + DependencyExtractor.EXTRACTED_MODS_LIST
         };
 
         for (String extra : extras)

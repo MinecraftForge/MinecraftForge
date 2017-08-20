@@ -3,6 +3,8 @@ package net.minecraftforge.test;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.fml.common.registry.ForgeTestRunner;
 import net.minecraftforge.fml.relauncher.DependencyExtractor;
 import net.minecraftforge.fml.relauncher.DependencyExtractor.Artifact;
 import net.minecraftforge.fml.relauncher.ModListHelper;
@@ -13,6 +15,7 @@ import org.hamcrest.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +57,6 @@ public class DependencyExtractionTest
     private static File modJar;
     private static File expectedExtraction;
     private static File expectedExternalExtraction;
-    private static File modListFile;
     private static File extractedModsFile;
 
     @Before
@@ -65,14 +67,13 @@ public class DependencyExtractionTest
         libsDir.mkdir();
         modsDir = new File(workingDir, "mods/");
         modsDir.mkdir();
-        versionedModsDir = new File(workingDir, "mods/version");
+        versionedModsDir = new File(workingDir, "mods/null"); // A little dirty, but no need to change the visibility on FMLInjectionData.mcversion
         versionedModsDir.mkdir();
         modJar = new File(modsDir, JAR_NAME);
         Files.copy(DependencyExtractionTest.class.getResourceAsStream(INTERNAL_JAR_NAME), modJar.toPath());
         expectedExtraction = new File(libsDir, "net/minecraftforge/test/dependency/1.0/dependency-1.0-testing.jar").getAbsoluteFile();
         expectedExternalExtraction = new File(libsDir, "net/minecraftforge/test/dependency-with-meta/1.0/dependency-with-meta-1.0.jar").getAbsoluteFile();
-        extractedModsFile = new File(modsDir, "extracted_mods.json");
-        modListFile = new File(modsDir, "mod_list.json");
+        extractedModsFile = new File(versionedModsDir, "extracted_mods.json");
         // Perform actual extraction right away to have the right state in all tests
         DependencyExtractor.inspect(workingDir, modsDir, versionedModsDir, "./libraries/");
         // Required for mod list loading
@@ -120,15 +121,6 @@ public class DependencyExtractionTest
         assertEquals("Exactly two dependencies should have been extracted, a normal one and one with external metadata", 2, DependencyExtractor.extractedDeps);
         assertTrue("Dependency should have been extracted to expected location: " + expectedExtraction.getPath(), expectedExtraction.exists());
         assertTrue("Dependency with external metadata should have been extracted to expected location: " + expectedExternalExtraction.getPath(), expectedExternalExtraction.exists());
-    }
-
-    @Test
-    public void testModListParenting() throws Exception
-    {
-        assertTrue("Dependency extraction should have created a new mod list file", modListFile.exists());
-        String json = new String(Files.readAllBytes(modListFile.toPath()), Charsets.UTF_8);
-        ModListHelper.JsonModList modList = new Gson().fromJson(json, ModListHelper.JsonModList.class);
-        assertEquals("Dependency extraction should have declared the extracted mods file as parent of the base mod list", workingDir.toPath().relativize(extractedModsFile.toPath()).toString(), modList.parentList);
     }
 
     @Test
