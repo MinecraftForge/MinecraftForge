@@ -70,7 +70,7 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -435,11 +445,683 @@
+@@ -435,11 +445,704 @@
          return false;
      }
  
@@ -680,6 +680,27 @@
 +    }
 +
 +    /**
++     * Called to get the Mod ID of the mod that *created* the ItemStack,
++     * instead of the real Mod ID that *registered* it.
++     *
++     * For example the Forge Universal Bucket creates a subitem for each modded fluid,
++     * and it returns the modded fluid's Mod ID here.
++     *
++     * Mods that register subitems for other mods can override this.
++     * Informational mods can call it to show the mod that created the item.
++     *
++     * @param itemStack the ItemStack to check
++     * @return the Mod ID for the ItemStack, or
++     *         null when there is no specially associated mod and {@link #getRegistryName()} would return null.
++     */
++    @Nullable
++    public String getCreatorModId(ItemStack itemStack)
++    {
++        ResourceLocation registryName = getRegistryName();
++        return registryName == null ? null : registryName.func_110624_b();
++    }
++
++    /**
 +     * Called from ItemStack.setItem, will hold extra data for the life of this ItemStack.
 +     * Can be retrieved from stack.getCapabilities()
 +     * The NBT can be null if this is not called from readNBT or if the item the stack is
@@ -754,7 +775,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -999,6 +1681,8 @@
+@@ -999,6 +1702,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -763,7 +784,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1034,6 +1718,7 @@
+@@ -1034,6 +1739,7 @@
              return this.field_78008_j;
          }
  
@@ -771,7 +792,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1057,5 +1742,21 @@
+@@ -1057,5 +1763,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
