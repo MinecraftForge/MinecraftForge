@@ -728,7 +728,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 FMLLog.log.debug("Registry {} remove: {} {}", this.superType.getSimpleName(), key, oldid);
         }
 
-        int realId = this.add(id, dummy);
+        int realId = this.add(id, dummy, dummy.getRegistryName().getResourceDomain());
         if (realId != id)
             FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), key, id, realId);
         this.dummies.add(key);
