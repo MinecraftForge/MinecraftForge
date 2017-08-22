@@ -19,11 +19,6 @@
 
 package net.minecraftforge.client.model;
 
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.List;
-
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
@@ -46,8 +41,14 @@ import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
-import java.util.function.Function;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -190,7 +191,8 @@ public final class ItemLayerModel implements IModel
         int uMax = sprite.getIconWidth();
         int vMax = sprite.getIconHeight();
 
-        BitSet faces = new BitSet((uMax + 1) * (vMax + 1) * 4);
+        FaceData faceData = new FaceData(uMax, vMax);
+
         for(int f = 0; f < sprite.getFrameCount(); f++)
         {
             int[] pixels = sprite.getFrameTextureData(f)[0];
@@ -205,26 +207,26 @@ public final class ItemLayerModel implements IModel
                     boolean t = isTransparent(pixels, uMax, vMax, u, v);
                     if(ptu && !t) // left - transparent, right - opaque
                     {
-                        addSideQuad(builder, faces, format, transform, EnumFacing.WEST, tint, sprite, uMax, vMax, u, v);
+                        faceData.set(EnumFacing.WEST, u, v);
                     }
                     if(!ptu && t) // left - opaque, right - transparent
                     {
-                        addSideQuad(builder, faces, format, transform, EnumFacing.EAST, tint, sprite, uMax, vMax, u, v);
+                        faceData.set(EnumFacing.EAST, u-1, v);
                     }
                     if(ptv[u] && !t) // up - transparent, down - opaque
                     {
-                        addSideQuad(builder, faces, format, transform, EnumFacing.UP, tint, sprite, uMax, vMax, u, v);
+                        faceData.set(EnumFacing.UP, u, v);
                     }
                     if(!ptv[u] && t) // up - opaque, down - transparent
                     {
-                        addSideQuad(builder, faces, format, transform, EnumFacing.DOWN, tint, sprite, uMax, vMax, u, v);
+                        faceData.set(EnumFacing.DOWN, u, v-1);
                     }
                     ptu = t;
                     ptv[u] = t;
                 }
                 if(!ptu) // last - opaque
                 {
-                    addSideQuad(builder, faces, format, transform, EnumFacing.EAST, tint, sprite, uMax, vMax, uMax, v);
+                    faceData.set(EnumFacing.EAST, uMax-1, v);
                 }
             }
             // last line
@@ -232,10 +234,75 @@ public final class ItemLayerModel implements IModel
             {
                 if(!ptv[u])
                 {
-                    addSideQuad(builder, faces, format, transform, EnumFacing.DOWN, tint, sprite, uMax, vMax, u, vMax);
+                    faceData.set(EnumFacing.DOWN, u, vMax-1);
                 }
             }
         }
+
+        // horizontal quads
+        for (EnumFacing facing : Arrays.asList(EnumFacing.UP, EnumFacing.DOWN))
+        {
+            for (int v = 0; v < vMax; v++)
+            {
+                int uStart = 0;
+                boolean building = false;
+                for (int u = 0; u < uMax; u++)
+                {
+                    boolean face = faceData.get(facing, u, v);
+                    if (building && !face) // finish current quad
+                    {
+                        // make quad [uStart, u]
+                        int off = facing == EnumFacing.DOWN ? 1 : 0;
+                        builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, u-uStart));
+                        building = false;
+                    }
+                    else if (!building && face) // start new quad
+                    {
+                        building = true;
+                        uStart = u;
+                    }
+                }
+                if (building) // quad extends to far edge
+                {
+                    // make quad [uStart, uMax]
+                    int off = facing == EnumFacing.DOWN ? 1 : 0;
+                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, uMax-uStart));
+                }
+            }
+        }
+
+        // vertical quads
+        for (EnumFacing facing : Arrays.asList(EnumFacing.WEST, EnumFacing.EAST))
+        {
+            for (int u = 0; u < uMax; u++)
+            {
+                int vStart = 0;
+                boolean building = false;
+                for (int v = 0; v < vMax; v++)
+                {
+                    boolean face = faceData.get(facing, u, v);
+                    if (building && !face) // finish current quad
+                    {
+                        // make quad [vStart, v]
+                        int off = facing == EnumFacing.EAST ? 1 : 0;
+                        builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, v-vStart));
+                        building = false;
+                    }
+                    else if (!building && face) // start new quad
+                    {
+                        building = true;
+                        vStart = v;
+                    }
+                }
+                if (building) // quad extends to far edge
+                {
+                    // make quad [vStart, vMax]
+                    int off = facing == EnumFacing.EAST ? 1 : 0;
+                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, vMax-vStart));
+                }
+            }
+        }
+
         // front
         builder.add(buildQuad(format, transform, EnumFacing.NORTH, sprite, tint,
             0, 0, 7.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
@@ -250,7 +317,40 @@ public final class ItemLayerModel implements IModel
             1, 1, 8.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
             0, 1, 8.5f / 16f, sprite.getMinU(), sprite.getMinV()
         ));
+
         return builder.build();
+    }
+
+    private static class FaceData
+    {
+        private final EnumMap<EnumFacing, BitSet> data = new EnumMap<>(EnumFacing.class);
+
+        private final int vMax;
+
+        FaceData(int uMax, int vMax)
+        {
+            this.vMax = vMax;
+
+            data.put(EnumFacing.WEST, new BitSet(uMax * vMax));
+            data.put(EnumFacing.EAST, new BitSet(uMax * vMax));
+            data.put(EnumFacing.UP,   new BitSet(uMax * vMax));
+            data.put(EnumFacing.DOWN, new BitSet(uMax * vMax));
+        }
+
+        public void set(EnumFacing facing, int u, int v)
+        {
+            data.get(facing).set(getIndex(u, v));
+        }
+
+        public boolean get(EnumFacing facing, int u, int v)
+        {
+            return data.get(facing).get(getIndex(u, v));
+        }
+
+        private int getIndex(int u, int v)
+        {
+            return v*vMax + u;
+        }
     }
 
     private static boolean isTransparent(int[] pixels, int uMax, int vMax, int u, int v)
@@ -258,19 +358,7 @@ public final class ItemLayerModel implements IModel
         return (pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF) == 0;
     }
 
-    private static void addSideQuad(ImmutableList.Builder<BakedQuad> builder, BitSet faces, VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int uMax, int vMax, int u, int v)
-    {
-        int si = side.ordinal();
-        if(si > 4) si -= 2;
-        int index = (vMax + 1) * ((uMax + 1) * si + u) + v;
-        if(!faces.get(index))
-        {
-            faces.set(index);
-            builder.add(buildSideQuad(format, transform, side, tint, sprite, u, v));
-        }
-    }
-
-    private static BakedQuad buildSideQuad(VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v)
+    private static BakedQuad buildSideQuad(VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v, int size)
     {
         final float eps0 = 30e-5f;
         final float eps1 = 45e-5f;
@@ -286,13 +374,13 @@ public final class ItemLayerModel implements IModel
             z1 = 8.5f / 16f + eps1;
             z2 = 7.5f / 16f - eps1;
         case EAST:
-            y1 = (v + 1f) / sprite.getIconHeight();
+            y1 = (float) (v + size) / sprite.getIconHeight();
             break;
         case DOWN:
             z1 = 8.5f / 16f + eps1;
             z2 = 7.5f / 16f - eps1;
         case UP:
-            x1 = (u + 1f) / sprite.getIconWidth();
+            x1 = (float) (u + size) / sprite.getIconWidth();
             break;
         default:
             throw new IllegalArgumentException("can't handle z-oriented side");
