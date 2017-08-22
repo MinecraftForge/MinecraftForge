@@ -95,7 +95,17 @@
                      this.field_78776_a.func_147118_V().func_147682_a(new PositionedSoundRecord(soundtype.func_185846_f(), SoundCategory.NEUTRAL, (soundtype.func_185843_a() + 1.0F) / 8.0F, soundtype.func_185847_b() * 0.5F, p_180512_1_));
                  }
  
-@@ -350,7 +361,7 @@
+@@ -326,7 +337,8 @@
+ 
+     public float func_78757_d()
+     {
+-        return this.field_78779_k.func_77145_d() ? 5.0F : 4.5F;
++        float attrib = (float) field_78776_a.field_71439_g.func_110148_a(EntityPlayer.REACH_DISTANCE).func_111126_e();
++        return this.field_78779_k.func_77145_d() ? attrib : attrib - 0.5F;
+     }
+ 
+     public void func_78765_e()
+@@ -350,7 +362,7 @@
  
          if (!this.field_85183_f.func_190926_b() && !itemstack.func_190926_b())
          {
@@ -104,7 +114,7 @@
          }
  
          return p_178893_1_.equals(this.field_178895_c) && flag;
-@@ -382,13 +393,34 @@
+@@ -382,13 +394,34 @@
          }
          else
          {
@@ -141,7 +151,7 @@
                  }
  
                  if (!flag && itemstack.func_77973_b() instanceof ItemBlock)
-@@ -404,7 +436,7 @@
+@@ -404,7 +437,7 @@
  
              this.field_78774_b.func_147297_a(new CPacketPlayerTryUseItemOnBlock(p_187099_3_, p_187099_4_, p_187099_6_, f, f1, f2));
  
@@ -150,7 +160,7 @@
              {
                  if (itemstack.func_190926_b())
                  {
-@@ -430,14 +462,20 @@
+@@ -430,14 +463,20 @@
                      {
                          int i = itemstack.func_77960_j();
                          int j = itemstack.func_190916_E();
@@ -172,7 +182,7 @@
                      }
                  }
              }
-@@ -466,6 +504,8 @@
+@@ -466,6 +505,8 @@
              }
              else
              {
@@ -181,7 +191,7 @@
                  int i = itemstack.func_190916_E();
                  ActionResult<ItemStack> actionresult = itemstack.func_77957_a(p_187101_2_, p_187101_1_, p_187101_3_);
                  ItemStack itemstack1 = actionresult.func_188398_b();
-@@ -473,6 +513,10 @@
+@@ -473,6 +514,10 @@
                  if (itemstack1 != itemstack || itemstack1.func_190916_E() != i)
                  {
                      p_187101_1_.func_184611_a(p_187101_3_, itemstack1);
@@ -192,7 +202,7 @@
                  }
  
                  return actionresult.func_188397_a();
-@@ -509,6 +553,9 @@
+@@ -509,6 +554,9 @@
          this.func_78750_j();
          Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
          this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_4_, vec3d));

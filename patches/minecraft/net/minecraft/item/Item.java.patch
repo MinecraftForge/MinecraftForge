@@ -47,20 +47,18 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -390,7 +393,11 @@
+@@ -389,8 +392,8 @@
+         float f5 = MathHelper.func_76126_a(-f * 0.017453292F);
          float f6 = f3 * f4;
          float f7 = f2 * f4;
-         double d3 = 5.0D;
+-        double d3 = 5.0D;
 -        Vec3d vec3d1 = vec3d.func_72441_c((double)f6 * 5.0D, (double)f5 * 5.0D, (double)f7 * 5.0D);
-+        if (p_77621_2_ instanceof net.minecraft.entity.player.EntityPlayerMP)
-+        {
-+            d3 = ((net.minecraft.entity.player.EntityPlayerMP)p_77621_2_).field_71134_c.getBlockReachDistance();
-+        }
++        double d3 = p_77621_2_.func_110148_a(EntityPlayer.REACH_DISTANCE).func_111126_e();
 +        Vec3d vec3d1 = vec3d.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -409,6 +416,9 @@
+@@ -409,6 +412,9 @@
  
      protected boolean func_194125_a(CreativeTabs p_194125_1_)
      {
@@ -70,7 +68,7 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -435,11 +445,666 @@
+@@ -435,11 +441,666 @@
          return false;
      }
  
@@ -737,7 +735,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -999,6 +1664,8 @@
+@@ -999,6 +1660,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -746,7 +744,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1034,6 +1701,7 @@
+@@ -1034,6 +1697,7 @@
              return this.field_78008_j;
          }
  
@@ -754,7 +752,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1057,5 +1725,21 @@
+@@ -1057,5 +1721,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
