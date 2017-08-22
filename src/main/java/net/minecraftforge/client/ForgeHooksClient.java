@@ -653,25 +653,29 @@ public class ForgeHooksClient
         TRSRTransformation global = new TRSRTransformation(rotation.getMatrix());
         Matrix4f uv = global.getUVLockTransform(originalSide).getMatrix();
         Vector4f vec = new Vector4f(0, 0, 0, 1);
-        vec.x = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0)) / 16;
-        vec.y = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0)) / 16;
+        float u0 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0));
+        float v0 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0));
+        vec.x = u0 / 16;
+        vec.y = v0 / 16;
         uv.transform(vec);
         float uMin = 16 * vec.x; // / vec.w;
         float vMin = 16 * vec.y; // / vec.w;
-        vec.x = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(2)) / 16;
-        vec.y = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(2)) / 16;
+        float u1 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(2));
+        float v1 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(2));
+        vec.x = u1 / 16;
+        vec.y = v1 / 16;
         vec.z = 0;
         vec.w = 1;
         uv.transform(vec);
         float uMax = 16 * vec.x; // / vec.w;
         float vMax = 16 * vec.y; // / vec.w;
-        if(uMin > uMax)
+        if (uMin > uMax && u0 < u1 || uMin < uMax && u0 > u1)
         {
             float t = uMin;
             uMin = uMax;
             uMax = t;
         }
-        if(vMin > vMax)
+        if (vMin > vMax && v0 < v1 || vMin < vMax && v0 > v1)
         {
             float t = vMin;
             vMin = vMax;
