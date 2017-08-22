@@ -65,6 +65,7 @@ public abstract class FMLHandshakeMessage {
         @Override
         public void toBytes(ByteBuf buffer)
         {
+            System.out.println("SEND");
             buffer.writeByte(NetworkRegistry.FML_PROTOCOL);
             buffer.writeInt(overrideDimension);
         }
@@ -72,6 +73,7 @@ public abstract class FMLHandshakeMessage {
         @Override
         public void fromBytes(ByteBuf buffer)
         {
+            System.out.println("READ");
             serverProtocolVersion = buffer.readByte();
             // Extended dimension support during login
             if (serverProtocolVersion > 1)
