@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 
 import net.minecraftforge.common.config.Config.RangeDouble;
 import net.minecraftforge.common.config.Config.RangeInt;
+import org.apache.commons.lang3.StringUtils;
 
 import static net.minecraftforge.common.config.ConfigManager.*;
 
@@ -131,13 +132,13 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public Object getValue(String key)
         {
-            return theMap.get(key.replaceFirst(category + "." + name + ".", ""));
+            return theMap.get(StringUtils.replaceOnce(key, category + "." + name + ".", ""));
         }
 
         @Override
         public void setValue(String key, Object value)
         {
-            String suffix = key.replaceFirst(category + "." + name + ".", "");
+            String suffix = StringUtils.replaceOnce(key, category + "." + name + ".", "");
             theMap.put(suffix, value);
         }
 
