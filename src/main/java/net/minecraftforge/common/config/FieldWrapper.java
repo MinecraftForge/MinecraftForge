@@ -158,7 +158,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart)
         {
-            ConfigCategory confCat = cfg.getCategory(category);
+            ConfigCategory confCat = cfg.getCategory(getCategory());
             confCat.setComment(desc);
             confCat.setLanguageKey(langKey);
             confCat.setRequiresMcRestart(reqMCRestart);
