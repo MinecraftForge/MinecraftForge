@@ -99,7 +99,6 @@ public class BlockInfo
 
     public void updateLightMatrix()
     {
-        boolean full = false;
         for(int x = 0; x <= 2; x++)
         {
             for(int y = 0; y <= 2; y++)
@@ -114,16 +113,12 @@ public class BlockInfo
                     s[x][y][z] = (brightness >> 0x14) & 0xF;
                     b[x][y][z] = (brightness >> 0x04) & 0xF;
                     ao[x][y][z] = state.getAmbientOcclusionLightValue();
-                    if(x == 1 && y == 1 && z == 1)
-                    {
-                        full = state.isFullCube();
-                    }
                 }
             }
         }
-        if(!full)
+        for(EnumFacing side : EnumFacing.values())
         {
-            for(EnumFacing side : EnumFacing.values())
+            if(!state.getBlock().doesSideBlockRendering(state, world, blockPos, side))
             {
                 int x = side.getFrontOffsetX() + 1;
                 int y = side.getFrontOffsetY() + 1;
