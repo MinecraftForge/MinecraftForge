@@ -56,6 +56,9 @@ public final class ItemLayerModel implements IModel
 {
     public static final ItemLayerModel INSTANCE = new ItemLayerModel(ImmutableList.of());
 
+    private static final EnumFacing[] HORIZONTALS = {EnumFacing.UP, EnumFacing.DOWN};
+    private static final EnumFacing[] VERTICALS = {EnumFacing.WEST, EnumFacing.EAST};
+
     private final ImmutableList<ResourceLocation> textures;
     private final ItemOverrideList overrides;
 
@@ -240,7 +243,7 @@ public final class ItemLayerModel implements IModel
         }
 
         // horizontal quads
-        for (EnumFacing facing : Arrays.asList(EnumFacing.UP, EnumFacing.DOWN))
+        for (EnumFacing facing : HORIZONTALS)
         {
             for (int v = 0; v < vMax; v++)
             {
@@ -272,7 +275,7 @@ public final class ItemLayerModel implements IModel
         }
 
         // vertical quads
-        for (EnumFacing facing : Arrays.asList(EnumFacing.WEST, EnumFacing.EAST))
+        for (EnumFacing facing : VERTICALS)
         {
             for (int u = 0; u < uMax; u++)
             {
@@ -349,7 +352,7 @@ public final class ItemLayerModel implements IModel
 
         private int getIndex(int u, int v)
         {
-            return v*vMax + u;
+            return v * vMax + u;
         }
     }
 
