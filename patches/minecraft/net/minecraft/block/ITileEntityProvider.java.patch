@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/ITileEntityProvider.java
++++ ../src-work/minecraft/net/minecraft/block/ITileEntityProvider.java
+@@ -4,6 +4,7 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.world.World;
+ 
++@Deprecated // Use Block#hasTileEntity and Block#createTileEntity(World world, IBlockState state)
+ public interface ITileEntityProvider
+ {
+     @Nullable
