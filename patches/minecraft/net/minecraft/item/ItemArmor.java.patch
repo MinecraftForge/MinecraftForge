@@ -58,7 +58,7 @@
          public Item func_151685_b()
          {
              if (this == LEATHER)
-@@ -300,5 +321,107 @@
+@@ -300,5 +321,65 @@
          {
              return this.field_189417_k;
          }
@@ -86,26 +86,12 @@
 +    private net.minecraftforge.client.overlay.IArmorOverlayHandler overlayHandler = net.minecraftforge.client.overlay.IArmorOverlayHandler.VANILLA;
 +
 +    /**
-+     * Holds onto either a reference to IArmorOverlayColor.VANILLA, or a wrapper if IArmorOverlayColors are subscribed
-+     * */
-+    private net.minecraftforge.client.overlay.IArmorOverlayColor overlayColor = net.minecraftforge.client.overlay.IArmorOverlayColor.VANILLA;
-+
-+    /**
 +     * Returns the IArmorOverlayHandler for the ItemStack's effect overlay.
 +     * */
 +    @javax.annotation.Nonnull
 +    public final net.minecraftforge.client.overlay.IArmorOverlayHandler getArmorOverlayHandler()
 +    {
 +        return overlayHandler;
-+    }
-+
-+    /**
-+     * Returns the IArmorOverlayColor for the ItemStack's effect overlay.
-+     * */
-+    @javax.annotation.Nonnull
-+    public final net.minecraftforge.client.overlay.IArmorOverlayColor getArmorOverlayColor()
-+    {
-+        return overlayColor;
 +    }
 +
 +    /**
@@ -137,32 +123,4 @@
 +        }
 +    }
 +
-+    /**
-+     * Adds an IArmorOverlay handler to the list of subscribers. Note that this works as first come, first serve.
-+     * */
-+    public final void subscribeArmorOverlayColor(net.minecraftforge.client.overlay.IArmorOverlayColor toSubscribe)
-+    {
-+        if(overlayColor instanceof net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)
-+        {
-+            if (toSubscribe instanceof net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)
-+            {
-+                net.minecraftforge.fml.common.FMLLog.bigWarning("Attempted to subscribe an ArmorOverlayColor subscription wrapper when one already existed! Skipping.");
-+            }
-+            else
-+            {
-+                ((net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper) overlayColor).addSubscription(toSubscribe);
-+            }
-+        }
-+        else
-+        {
-+            if (toSubscribe instanceof net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper)
-+            {   //Should only happen on substitution
-+                overlayColor = toSubscribe;
-+            }
-+            else
-+            {
-+                overlayColor = new net.minecraftforge.client.overlay.IArmorOverlayColor.SubscriptionWrapper(toSubscribe);
-+            }
-+        }
-+    }
  }
