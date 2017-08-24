@@ -106,6 +106,7 @@ import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.AdvancementRegisterEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -1276,6 +1277,8 @@ public class ForgeHooks
         boolean errored = false;
         setActiveModContainer(null);
         //Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
+	AdvancementRegisterEvent ev = new AdvancementRegisterEvent(map);
+	MinecraftForge.EVENT_BUS.post(ev);
         for (ModContainer mod : Loader.instance().getActiveModList())
         {
             errored |= !loadAdvancements(map, mod);
