@@ -28,11 +28,19 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 
 /**
- * Handler for the appearance of the effect overlays on armor models. {@link IArmorOverlayColor} is for the coloring.
+ * Interface for controlling armor's effect overlay.
+ * These need to be registered using ItemOverlayHandler.registerOverlayHanadler().
  * */
 public interface IArmorOverlayHandler
 {
+    /**
+     * Vanilla's default armor glint color value. Uses half the alpha value than the Item color.
+     * */
+    int defaultOverlayColor = 0xAA8040CC;
 
+    /**
+     * Vanilla's default/fallback overlay.
+     * */
     IArmorOverlayHandler VANILLA = new Vanilla();
 
     /**
@@ -80,6 +88,28 @@ public interface IArmorOverlayHandler
     void manageSecondPassVectors(ItemStack armorStack, EntityLivingBase wearer,  EntityEquipmentSlot slot, float time, final float[] scaleVector, final float[] rotationVector, final float[] translationVector);
 
     /**
+     * Used for coloring the first overlay pass.
+     *
+     * @param stack the ItemStack
+     * @param wearer the Entity in question
+     * @param slot the slot the armor is in
+     *
+     * @return a hex int (ARGB) used for coloring the effect
+     * */
+    int getFirstPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot);
+
+    /**
+     * Used for coloring the second overlay pass.
+     *
+     * @param stack the ItemStack
+     * @param wearer the Entity in question
+     * @param slot the slot the armor is in
+     *
+     * @return a hex int (ARGB) used for coloring the effect
+     * */
+    int getSecondPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot);
+
+    /**
      * Checks for the first applicable handler when multiple are subscribed to an item.
      *
      * @return true to override vanilla/other subscribers' handlers
@@ -120,6 +150,18 @@ public interface IArmorOverlayHandler
             rotationVector[0] = -30F;
 
             translationVector[1] = time * 0.06006F;
+        }
+
+        @Override
+        public int getFirstPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
+        {
+            return defaultOverlayColor;
+        }
+
+        @Override
+        public int getSecondPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
+        {
+            return defaultOverlayColor;
         }
 
         @Override
@@ -165,6 +207,18 @@ public interface IArmorOverlayHandler
         public void manageSecondPassVectors(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot, float time, float[] scaleVector, float[] rotationVector, float[] translationVector)
         {
             cached.manageSecondPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
+        }
+
+        @Override
+        public int getFirstPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
+        {
+            return cached.getFirstPassColor(stack, wearer, slot);
+        }
+
+        @Override
+        public int getSecondPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
+        {
+            return cached.getSecondPassColor(stack, wearer, slot);
         }
 
         @Override

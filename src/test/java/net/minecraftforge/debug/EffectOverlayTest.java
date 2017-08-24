@@ -39,35 +39,11 @@ public class EffectOverlayTest
     public void peri(FMLInitializationEvent event)
     {
         Items.LEATHER_CHESTPLATE.subscribeStackOverlayHandler(testStackHandler);
-        Items.LEATHER_CHESTPLATE.subscribeStackOverlayColor(testStackColor);
-        Items.LEATHER_CHESTPLATE.subscribeArmorOverlayColor(testArmorColor);
         Items.LEATHER_CHESTPLATE.subscribeArmorOverlayHandler(testArmorHandler);
-
-        Items.LEATHER_BOOTS.subscribeArmorOverlayColor(testArmorColor);
-        Items.LEATHER_BOOTS.subscribeStackOverlayColor(testStackColor);
 
         Items.LEATHER_HELMET.subscribeArmorOverlayHandler(testArmorHandler);
         Items.LEATHER_HELMET.subscribeStackOverlayHandler(testStackHandler);
     }
-
-    private static IStackOverlayColor testStackColor = new IStackOverlayColor() {
-
-        @Override
-        public int getFirstPassColor(ItemStack stack) {
-            return 0xFF113311;
-        }
-
-        @Override
-        public int getSecondPassColor(ItemStack stack) {
-            return 0xFFCC1100;
-        }
-
-        @Override
-        public boolean useForStack(ItemStack stack)
-        {
-            return true;
-        }
-    };
 
     private static final IStackOverlayHandler testStackHandler = new IStackOverlayHandler()
     {
@@ -104,33 +80,21 @@ public class EffectOverlayTest
         }
 
         @Override
+        public int getFirstPassColor(ItemStack stack) {
+            return 0xFF113311;
+        }
+
+        @Override
+        public int getSecondPassColor(ItemStack stack) {
+            return 0xFFCC1100;
+        }
+
+        @Override
         public boolean useForStack(ItemStack stack)
         {
             return true;
         }
 
-    };
-
-    private static final IArmorOverlayColor testArmorColor = new IArmorOverlayColor()
-    {
-
-        @Override
-        public int getFirstPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
-        {
-            return 0xFF119999;
-        }
-
-        @Override
-        public int getSecondPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
-        {
-            return 0xCCFF0000;
-        }
-
-        @Override
-        public boolean useForStack(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
-        {
-            return true;
-        }
     };
 
     private static final IArmorOverlayHandler testArmorHandler = new IArmorOverlayHandler()
@@ -164,11 +128,22 @@ public class EffectOverlayTest
         }
 
         @Override
+        public int getFirstPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
+        {
+            return 0xFF119999;
+        }
+
+        @Override
+        public int getSecondPassColor(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
+        {
+            return 0xCCFF0000;
+        }
+
+        @Override
         public boolean useForStack(ItemStack stack, EntityLivingBase wearer, EntityEquipmentSlot slot)
         {
             return true;
         }
-
 
     };
 

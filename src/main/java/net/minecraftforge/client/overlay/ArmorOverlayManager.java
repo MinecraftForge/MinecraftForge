@@ -57,18 +57,17 @@ public class ArmorOverlayManager
      * */
     public static boolean applyForgeOverlay(TextureManager textureManager, ItemStack stack, EntityLivingBase wearer, float partialTicks, EntityEquipmentSlot slot, ModelBase model, float swing, float swingScale, float headYaw, float headPitch, float scale)
     {
-        IArmorOverlayHandler currentHandler = ((ItemArmor)stack.getItem()).getArmorOverlayHandler();
-        IArmorOverlayColor currentColor = ((ItemArmor)stack.getItem()).getArmorOverlayColor();
+        IArmorOverlayHandler current = ((ItemArmor)stack.getItem()).getArmorOverlayHandler();
         final float time = wearer.ticksExisted + partialTicks;
-        textureManager.bindTexture(currentHandler.getOverlayTexture(stack, wearer, slot));
+        textureManager.bindTexture(current.getOverlayTexture(stack, wearer, slot));
         GlStateManager.enableBlend();
         GlStateManager.depthFunc(514);
         GlStateManager.depthMask(false);
         GlStateManager.disableLighting();
 
-        //----------------FIRST PASS
+        //----------------First Pass
 
-        int color = currentColor.getFirstPassColor(stack, wearer, slot);
+        int color = current.getFirstPassColor(stack, wearer, slot);
         if(((color >> 16 & 255) | (color >> 8 & 255) | (color & 255)) >= 0xA1)
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
         else
@@ -79,7 +78,7 @@ public class ArmorOverlayManager
         GlStateManager.matrixMode(5890);
         GlStateManager.loadIdentity();
 
-        currentHandler.manageFirstPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
+        current.manageFirstPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
 
         GlStateManager.scale(scaleVector[0], scaleVector[1], scaleVector[2]);
         GlStateManager.rotate(rotationVector[0], rotationVector[1], rotationVector[2], rotationVector[3]);
@@ -90,7 +89,7 @@ public class ArmorOverlayManager
 
         //----------------Second Pass
 
-        color = currentColor.getSecondPassColor(stack, wearer, slot);
+        color = current.getSecondPassColor(stack, wearer, slot);
         if(((color >> 16 & 255) | (color >> 8 & 255) | (color & 255)) >= 0xA1)
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
         else
@@ -101,7 +100,7 @@ public class ArmorOverlayManager
         GlStateManager.matrixMode(5890);
         GlStateManager.loadIdentity();
 
-        currentHandler.manageSecondPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
+        current.manageSecondPassVectors(stack, wearer, slot, time, scaleVector, rotationVector, translationVector);
 
         GlStateManager.scale(scaleVector[0], scaleVector[1], scaleVector[2]);
         GlStateManager.rotate(rotationVector[0], rotationVector[1], rotationVector[2], rotationVector[3]);
@@ -110,7 +109,7 @@ public class ArmorOverlayManager
         GlStateManager.matrixMode(5888);
         model.render(wearer, swing, swingScale, time, headYaw, headPitch, scale);
 
-        //----------------Fin
+        //----------------Reset GLState
 
         GlStateManager.matrixMode(5890);
         GlStateManager.loadIdentity();

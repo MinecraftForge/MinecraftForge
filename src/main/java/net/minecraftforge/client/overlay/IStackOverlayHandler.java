@@ -31,6 +31,10 @@ import net.minecraftforge.fml.common.LoaderState;
  * */
 public interface IStackOverlayHandler
 {
+    /**
+     * Vanilla's default Item effect color value.
+     * */
+    int defaultOverlayColor = 0xFF8040CC;
 
     /**
      * Vanilla's default/fallback overlay.
@@ -66,7 +70,6 @@ public interface IStackOverlayHandler
      * */
     void manageSecondPassVectors(ItemStack stack, long time, final float[] scaleVector, final float[] rotationVector, final float[] translationVector);
 
-
     /**
      * Used for setting the effect texture.
      *
@@ -75,6 +78,24 @@ public interface IStackOverlayHandler
      * @return the ResourceLocation of the effect texture.
      * */
     ResourceLocation getOverlayTexture(ItemStack stack);
+
+    /**
+     * Used for coloring the first effect pass.
+     *
+     * @param stack the ItemStack
+     *
+     * @return a hex int (ARGB) used for coloring the effect
+     * */
+    int getFirstPassColor(ItemStack stack);
+
+    /**
+     * Used for coloring the second effect pass.
+     *
+     * @param stack the ItemStack
+     *
+     * @return a hex int (ARGB) used for coloring the effect
+     * */
+    int getSecondPassColor(ItemStack stack);
 
     /**
      * Checks for the first applicable handler when multiple are subscribed to an item.
@@ -117,6 +138,18 @@ public interface IStackOverlayHandler
         }
 
         @Override
+        public int getFirstPassColor(ItemStack stack)
+        {
+            return defaultOverlayColor;
+        }
+
+        @Override
+        public int getSecondPassColor(ItemStack stack)
+        {
+            return defaultOverlayColor;
+        }
+
+        @Override
         public boolean useForStack(ItemStack stack)
         {
             return true;
@@ -128,7 +161,7 @@ public interface IStackOverlayHandler
     {
         IStackOverlayHandler[] subscribers;
 
-        IStackOverlayHandler cached;
+        private static IStackOverlayHandler cached;
 
         public SubscriptionWrapper(IStackOverlayHandler toSubscribe)
         {
@@ -168,6 +201,19 @@ public interface IStackOverlayHandler
                     return cached.getOverlayTexture(stack);
             return (cached = VANILLA).getOverlayTexture(stack);
         }
+
+        @Override
+        public int getFirstPassColor(ItemStack stack)
+        {
+            return cached.getFirstPassColor(stack);
+        }
+
+        @Override
+        public int getSecondPassColor(ItemStack stack)
+        {
+            return cached.getSecondPassColor(stack);
+        }
+
 
         @Override
         public boolean useForStack(ItemStack stack)

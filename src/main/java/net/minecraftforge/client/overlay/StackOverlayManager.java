@@ -64,17 +64,16 @@ public final class StackOverlayManager
     public static boolean applyForgeOverlay(TextureManager textureManager, ItemStack stack, IBakedModel model)
     {
         long time = Minecraft.getSystemTime();
-        IStackOverlayHandler currentHandler = stack.getItem().getStackOverlayHandler();
-        IStackOverlayColor currentColor = stack.getItem().getStackOverlayColor();
+        IStackOverlayHandler current = stack.getItem().getStackOverlayHandler();
 
         GlStateManager.depthFunc(514);
         GlStateManager.disableLighting();
         GlStateManager.matrixMode(5890);
-        textureManager.bindTexture(currentHandler.getOverlayTexture(stack));
+        textureManager.bindTexture(current.getOverlayTexture(stack));
 
-        //----------------FIRST PASS
+        //----------------First Pass
 
-        int color = currentColor.getFirstPassColor(stack);
+        int color = current.getFirstPassColor(stack);
 
         if(((color >> 16 & 255) | (color >> 8 & 255) | (color & 255)) >= 0xA1)
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
@@ -82,7 +81,7 @@ public final class StackOverlayManager
             GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_COLOR, GlStateManager.DestFactor.ONE_MINUS_DST_COLOR);
         GlStateManager.pushMatrix();
 
-        currentHandler.manageFirstPassVectors(stack, time, scaleVector, rotationVector, translationVector);
+        current.manageFirstPassVectors(stack, time, scaleVector, rotationVector, translationVector);
 
         GlStateManager.scale(scaleVector[0], scaleVector[1], scaleVector[2]);
         GlStateManager.rotate(rotationVector[0], rotationVector[1], rotationVector[2], rotationVector[3]);
@@ -91,9 +90,9 @@ public final class StackOverlayManager
         renderModelStreamlined(model, color);
         GlStateManager.popMatrix();
 
-        //----------------SECOND PASS
+        //----------------Second Pass
 
-        color = currentColor.getSecondPassColor(stack);
+        color = current.getSecondPassColor(stack);
 
         if(((color >> 16 & 255) | (color >> 8 & 255) | (color & 255)) >= 0xA1)
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
@@ -101,7 +100,7 @@ public final class StackOverlayManager
             GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_COLOR, GlStateManager.DestFactor.ONE_MINUS_DST_COLOR);
         GlStateManager.pushMatrix();
 
-        currentHandler.manageSecondPassVectors(stack, time, scaleVector, rotationVector, translationVector);
+        current.manageSecondPassVectors(stack, time, scaleVector, rotationVector, translationVector);
 
         GlStateManager.scale(scaleVector[0], scaleVector[1], scaleVector[2]);
         GlStateManager.rotate(rotationVector[0], rotationVector[1], rotationVector[2], rotationVector[3]);
@@ -110,7 +109,7 @@ public final class StackOverlayManager
         renderModelStreamlined(model, color);
         GlStateManager.popMatrix();
 
-        //----------------FIN
+        //----------------Reset GLState
 
         GlStateManager.matrixMode(5888);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
