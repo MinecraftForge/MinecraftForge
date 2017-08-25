@@ -60,3 +60,104 @@
                  {
                      this.field_147369_b.field_71135_a.func_147359_a(new SPacketConfirmTransaction(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
                      this.field_147369_b.field_71137_h = true;
+@@ -1167,36 +1175,36 @@
+         }
+     }
+ 
+-    public void func_191985_a(CPacketRecipePlacement p_191985_1_)
++    public void handleRecipePlacement(CPacketRecipePlacement p_191985_1_)
+     {
+         PacketThreadUtil.func_180031_a(p_191985_1_, this, this.field_147369_b.func_71121_q());
+         this.field_147369_b.func_143004_u();
+ 
+-        if (this.field_147369_b.field_71070_bA.field_75152_c == p_191985_1_.func_192613_a() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b))
++        if (this.field_147369_b.field_71070_bA.field_75152_c == p_191985_1_.getContainerId() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b))
+         {
+-            this.field_147369_b.field_71135_a.func_147359_a(new SPacketConfirmTransaction(p_191985_1_.func_192613_a(), p_191985_1_.func_192614_b(), true));
++            this.field_147369_b.field_71135_a.func_147359_a(new SPacketConfirmTransaction(p_191985_1_.getContainerId(), p_191985_1_.getUid(), true));
+ 
+-            if (!p_191985_1_.func_192610_d().isEmpty())
++            if (!p_191985_1_.getMoveItemsFromGrid().isEmpty())
+             {
+-                for (CPacketRecipePlacement.ItemMove cpacketrecipeplacement$itemmove : p_191985_1_.func_192610_d())
++                for (CPacketRecipePlacement.ItemMove cpacketrecipeplacement$itemmove : p_191985_1_.getMoveItemsFromGrid())
+                 {
+-                    ItemStack itemstack = this.field_147369_b.field_71070_bA.func_75139_a(cpacketrecipeplacement$itemmove.field_192674_b).func_75211_c();
++                    ItemStack itemstack = this.field_147369_b.field_71070_bA.func_75139_a(cpacketrecipeplacement$itemmove.srcSlot).func_75211_c();
+ 
+-                    if (this.func_193074_a(cpacketrecipeplacement$itemmove.field_192673_a, itemstack))
++                    if (this.checkIfMoveItemMatch(cpacketrecipeplacement$itemmove.stack, itemstack))
+                     {
+-                        int i = cpacketrecipeplacement$itemmove.field_192673_a.func_190916_E();
++                        int i = cpacketrecipeplacement$itemmove.stack.func_190916_E();
+ 
+-                        if (cpacketrecipeplacement$itemmove.field_192675_c == -1)
++                        if (cpacketrecipeplacement$itemmove.destSlot == -1)
+                         {
+-                            this.field_147369_b.func_71019_a(cpacketrecipeplacement$itemmove.field_192673_a, true);
++                            this.field_147369_b.func_71019_a(cpacketrecipeplacement$itemmove.stack, true);
+                         }
+                         else
+                         {
+-                            ItemStack itemstack1 = this.field_147369_b.field_71071_by.func_70301_a(cpacketrecipeplacement$itemmove.field_192675_c);
++                            ItemStack itemstack1 = this.field_147369_b.field_71071_by.func_70301_a(cpacketrecipeplacement$itemmove.destSlot);
+ 
+                             if (itemstack1.func_190926_b())
+                             {
+-                                this.field_147369_b.field_71071_by.func_70299_a(cpacketrecipeplacement$itemmove.field_192675_c, cpacketrecipeplacement$itemmove.field_192673_a);
++                                this.field_147369_b.field_71071_by.func_70299_a(cpacketrecipeplacement$itemmove.destSlot, cpacketrecipeplacement$itemmove.stack);
+                             }
+                             else
+                             {
+@@ -1206,7 +1214,7 @@
+ 
+                         if (itemstack.func_190916_E() == i)
+                         {
+-                            this.field_147369_b.field_71070_bA.func_75141_a(cpacketrecipeplacement$itemmove.field_192674_b, ItemStack.field_190927_a);
++                            this.field_147369_b.field_71070_bA.func_75141_a(cpacketrecipeplacement$itemmove.srcSlot, ItemStack.field_190927_a);
+                         }
+                         else
+                         {
+@@ -1216,26 +1224,26 @@
+                 }
+             }
+ 
+-            if (!p_191985_1_.func_192615_c().isEmpty())
++            if (!p_191985_1_.getMoveItemsToGrid().isEmpty())
+             {
+-                for (CPacketRecipePlacement.ItemMove cpacketrecipeplacement$itemmove1 : p_191985_1_.func_192615_c())
++                for (CPacketRecipePlacement.ItemMove cpacketrecipeplacement$itemmove1 : p_191985_1_.getMoveItemsToGrid())
+                 {
+-                    ItemStack itemstack2 = this.field_147369_b.field_71071_by.func_70301_a(cpacketrecipeplacement$itemmove1.field_192675_c);
++                    ItemStack itemstack2 = this.field_147369_b.field_71071_by.func_70301_a(cpacketrecipeplacement$itemmove1.destSlot);
+ 
+-                    if (this.func_193074_a(cpacketrecipeplacement$itemmove1.field_192673_a, itemstack2))
++                    if (this.checkIfMoveItemMatch(cpacketrecipeplacement$itemmove1.stack, itemstack2))
+                     {
+-                        int j = cpacketrecipeplacement$itemmove1.field_192673_a.func_190916_E();
++                        int j = cpacketrecipeplacement$itemmove1.stack.func_190916_E();
+ 
+                         if (itemstack2.func_190916_E() == j)
+                         {
+-                            this.field_147369_b.field_71071_by.func_70304_b(cpacketrecipeplacement$itemmove1.field_192675_c);
++                            this.field_147369_b.field_71071_by.func_70304_b(cpacketrecipeplacement$itemmove1.destSlot);
+                         }
+                         else
+                         {
+                             itemstack2.func_190918_g(j);
+                         }
+ 
+-                        this.field_147369_b.field_71070_bA.func_192388_b(cpacketrecipeplacement$itemmove1.field_192674_b, cpacketrecipeplacement$itemmove1.field_192673_a);
++                        this.field_147369_b.field_71070_bA.addItem(cpacketrecipeplacement$itemmove1.srcSlot, cpacketrecipeplacement$itemmove1.stack);
+                     }
+                 }
+             }
+@@ -1244,7 +1252,7 @@
+         }
+     }
+ 
+-    private boolean func_193074_a(ItemStack p_193074_1_, ItemStack p_193074_2_)
++    private boolean checkIfMoveItemMatch(ItemStack p_193074_1_, ItemStack p_193074_2_)
+     {
+         ItemStack itemstack = p_193074_2_.func_77946_l();
+ 

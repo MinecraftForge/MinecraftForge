@@ -1,5 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Container.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Container.java
+@@ -517,17 +517,17 @@
+         this.func_75139_a(p_75141_1_).func_75215_d(p_75141_2_);
+     }
+ 
+-    public void func_192388_b(int p_192388_1_, ItemStack p_192388_2_)
++    public void addItem(int slotIn, ItemStack stack)
+     {
+-        ItemStack itemstack = this.func_75139_a(p_192388_1_).func_75211_c();
++        ItemStack itemstack = this.func_75139_a(slotIn).func_75211_c();
+ 
+         if (itemstack.func_190926_b())
+         {
+-            this.func_75141_a(p_192388_1_, p_192388_2_);
++            this.func_75141_a(slotIn, stack);
+         }
+-        else if (itemstack.func_77977_a().equals(p_192388_2_.func_77977_a()) && itemstack.func_190916_E() < itemstack.func_77976_d())
++        else if (itemstack.func_77977_a().equals(stack.func_77977_a()) && itemstack.func_190916_E() < itemstack.func_77976_d())
+         {
+-            itemstack.func_190917_f(p_192388_2_.func_190916_E());
++            itemstack.func_190917_f(stack.func_190916_E());
+         }
+     }
+ 
 @@ -603,18 +603,19 @@
                  if (!itemstack.func_190926_b() && itemstack.func_77973_b() == p_75135_1_.func_77973_b() && (!p_75135_1_.func_77981_g() || p_75135_1_.func_77960_j() == itemstack.func_77960_j()) && ItemStack.func_77970_a(p_75135_1_, itemstack))
                  {

@@ -1,0 +1,200 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/recipebook/GuiRecipeBook.java
++++ ../src-work/minecraft/net/minecraft/client/gui/recipebook/GuiRecipeBook.java
+@@ -55,12 +55,12 @@
+     private int field_191903_n;
+     private int field_191904_o;
+     private int field_191905_p;
+-    private static final Logger field_193959_i = LogManager.getLogger();
++    private static final Logger LOGGER = LogManager.getLogger();
+     private final GhostRecipe field_191915_z = new GhostRecipe();
+     private final List<GuiButtonRecipeTab> field_193018_j = Lists.newArrayList(new GuiButtonRecipeTab(0, CreativeTabs.field_78027_g), new GuiButtonRecipeTab(0, CreativeTabs.field_78040_i), new GuiButtonRecipeTab(0, CreativeTabs.field_78030_b), new GuiButtonRecipeTab(0, CreativeTabs.field_78026_f), new GuiButtonRecipeTab(0, CreativeTabs.field_78028_d));
+     private GuiButtonRecipeTab field_191913_x;
+     private GuiButtonToggle field_193960_m;
+-    private Container field_191908_s;
++    private Container container;
+     private InventoryCrafting field_193961_o;
+     private Minecraft field_191888_F;
+     private GuiTextField field_193962_q;
+@@ -70,12 +70,12 @@
+     private RecipeItemHelper field_193965_u = new RecipeItemHelper();
+     private int field_193966_v;
+ 
+-    public void func_191856_a(int p_191856_1_, int p_191856_2_, Minecraft p_191856_3_, boolean p_191856_4_, Container p_191856_5_, InventoryCrafting p_191856_6_)
++    public void init(int p_191856_1_, int p_191856_2_, Minecraft p_191856_3_, boolean p_191856_4_, Container p_191856_5_, InventoryCrafting p_191856_6_)
+     {
+         this.field_191888_F = p_191856_3_;
+         this.field_191904_o = p_191856_1_;
+         this.field_191905_p = p_191856_2_;
+-        this.field_191908_s = p_191856_5_;
++        this.container = p_191856_5_;
+         this.field_193961_o = p_191856_6_;
+         this.field_193964_s = p_191856_3_.field_71439_g.func_192035_E();
+         this.field_193966_v = p_191856_3_.field_71439_g.field_71071_by.func_194015_p();
+@@ -334,7 +334,7 @@
+ 
+                 if (irecipe != null && recipelist != null)
+                 {
+-                    this.func_193945_a(irecipe, recipelist);
++                    this.setContainerRecipe(irecipe, recipelist);
+ 
+                     if (!this.func_191880_f() && p_191862_3_ == 0)
+                     {
+@@ -486,44 +486,44 @@
+         }
+     }
+ 
+-    private void func_193945_a(IRecipe p_193945_1_, RecipeList p_193945_2_)
++    private void setContainerRecipe(IRecipe recipe, RecipeList recipes)
+     {
+-        boolean flag = p_193945_2_.func_194213_a(p_193945_1_);
++        boolean flag = recipes.func_194213_a(recipe);
+         InventoryCraftResult inventorycraftresult = null;
+ 
+-        if (this.field_191908_s instanceof ContainerWorkbench)
++        if (this.container instanceof ContainerWorkbench)
+         {
+-            inventorycraftresult = ((ContainerWorkbench)this.field_191908_s).field_75160_f;
++            inventorycraftresult = ((ContainerWorkbench)this.container).field_75160_f;
+         }
+-        else if (this.field_191908_s instanceof ContainerPlayer)
++        else if (this.container instanceof ContainerPlayer)
+         {
+-            inventorycraftresult = ((ContainerPlayer)this.field_191908_s).field_75179_f;
++            inventorycraftresult = ((ContainerPlayer)this.container).field_75179_f;
+         }
+ 
+         if (inventorycraftresult != null)
+         {
+-            if (!flag && this.field_191915_z.func_192686_c() == p_193945_1_)
++            if (!flag && this.field_191915_z.func_192686_c() == recipe)
+             {
+                 return;
+             }
+ 
+-            if (!this.func_193941_i() && !this.field_191888_F.field_71439_g.func_184812_l_())
++            if (!this.testClearCraftingGrid() && !this.field_191888_F.field_71439_g.func_184812_l_())
+             {
+                 return;
+             }
+ 
+             if (flag)
+             {
+-                this.func_193950_a(p_193945_1_, this.field_191908_s.field_75151_b, this.field_191908_s.field_75152_c, inventorycraftresult);
++                this.handleRecipeClicked(recipe, this.container.field_75151_b, this.container.field_75152_c, inventorycraftresult);
+             }
+             else
+             {
+-                List<CPacketRecipePlacement.ItemMove> list2 = this.func_193954_a(inventorycraftresult);
+-                this.func_193951_a(p_193945_1_, this.field_191908_s.field_75151_b);
++                List<CPacketRecipePlacement.ItemMove> list2 = this.clearCraftingGrid(inventorycraftresult);
++                this.func_193951_a(recipe, this.container.field_75151_b);
+ 
+                 if (!list2.isEmpty())
+                 {
+-                    this.field_191888_F.field_71442_b.func_192831_a(this.field_191908_s.field_75152_c, list2, Lists.newArrayList(), this.field_191888_F.field_71439_g);
++                    this.field_191888_F.field_71442_b.handleRecipePlacement(this.container.field_75152_c, list2, Lists.newArrayList(), this.field_191888_F.field_71439_g);
+ 
+                     if (this.field_193964_s.func_192815_c())
+                     {
+@@ -539,7 +539,7 @@
+         }
+     }
+ 
+-    private void func_193950_a(IRecipe p_193950_1_, List<Slot> p_193950_2_, int p_193950_3_, InventoryCraftResult p_193950_4_)
++    private void handleRecipeClicked(IRecipe p_193950_1_, List<Slot> p_193950_2_, int p_193950_3_, InventoryCraftResult p_193950_4_)
+     {
+         boolean flag = p_193950_1_.func_77569_a(this.field_193961_o, this.field_191888_F.field_71441_e);
+         int i = this.field_193965_u.func_194114_b(p_193950_1_, (IntList)null);
+@@ -564,7 +564,7 @@
+             }
+         }
+ 
+-        int i1 = this.func_193943_a(i, flag);
++        int i1 = this.getStackSize(i, flag);
+         IntList intlist = new IntArrayList();
+ 
+         if (this.field_193965_u.func_194118_a(p_193950_1_, intlist, i1))
+@@ -585,16 +585,16 @@
+ 
+             if (this.field_193965_u.func_194118_a(p_193950_1_, intlist, j1))
+             {
+-                List<CPacketRecipePlacement.ItemMove> list2 = this.func_193954_a(p_193950_4_);
++                List<CPacketRecipePlacement.ItemMove> list2 = this.clearCraftingGrid(p_193950_4_);
+                 List<CPacketRecipePlacement.ItemMove> list3 = Lists.<CPacketRecipePlacement.ItemMove>newArrayList();
+-                this.func_193013_a(p_193950_1_, p_193950_2_, j1, intlist, list3);
+-                this.field_191888_F.field_71442_b.func_192831_a(p_193950_3_, list2, list3, this.field_191888_F.field_71439_g);
++                this.placeRecipe(p_193950_1_, p_193950_2_, j1, intlist, list3);
++                this.field_191888_F.field_71442_b.handleRecipePlacement(p_193950_3_, list2, list3, this.field_191888_F.field_71439_g);
+                 this.field_191888_F.field_71439_g.field_71071_by.func_70296_d();
+             }
+         }
+     }
+ 
+-    private List<CPacketRecipePlacement.ItemMove> func_193954_a(InventoryCraftResult p_193954_1_)
++    private List<CPacketRecipePlacement.ItemMove> clearCraftingGrid(InventoryCraftResult p_193954_1_)
+     {
+         this.field_191915_z.func_192682_a();
+         InventoryPlayer inventoryplayer = this.field_191888_F.field_71439_g.field_71071_by;
+@@ -624,7 +624,7 @@
+                     }
+                     else
+                     {
+-                        field_193959_i.error("Can't find any space for item in inventory");
++                        LOGGER.error("Can't find any space for item in inventory");
+                     }
+ 
+                     this.field_193961_o.func_70298_a(i, 1);
+@@ -639,7 +639,7 @@
+         return list2;
+     }
+ 
+-    private int func_193943_a(int p_193943_1_, boolean p_193943_2_)
++    private int getStackSize(int p_193943_1_, boolean p_193943_2_)
+     {
+         int i = 1;
+ 
+@@ -670,7 +670,7 @@
+         return i;
+     }
+ 
+-    private void func_193013_a(IRecipe p_193013_1_, List<Slot> p_193013_2_, int p_193013_3_, IntList p_193013_4_, List<CPacketRecipePlacement.ItemMove> p_193013_5_)
++    private void placeRecipe(IRecipe p_193013_1_, List<Slot> p_193013_2_, int p_193013_3_, IntList p_193013_4_, List<CPacketRecipePlacement.ItemMove> p_193013_5_)
+     {
+         int i = this.field_193961_o.func_174922_i();
+         int j = this.field_193961_o.func_174923_h();
+@@ -706,7 +706,7 @@
+                 {
+                     for (int i1 = 0; i1 < p_193013_3_; ++i1)
+                     {
+-                        CPacketRecipePlacement.ItemMove cpacketrecipeplacement$itemmove = this.func_193946_a(j1, slot, itemstack);
++                        CPacketRecipePlacement.ItemMove cpacketrecipeplacement$itemmove = this.findSpot(j1, slot, itemstack);
+ 
+                         if (cpacketrecipeplacement$itemmove != null)
+                         {
+@@ -726,7 +726,7 @@
+     }
+ 
+     @Nullable
+-    private CPacketRecipePlacement.ItemMove func_193946_a(int p_193946_1_, Slot p_193946_2_, ItemStack p_193946_3_)
++    private CPacketRecipePlacement.ItemMove findSpot(int p_193946_1_, Slot p_193946_2_, ItemStack p_193946_3_)
+     {
+         InventoryPlayer inventoryplayer = this.field_191888_F.field_71439_g.field_71071_by;
+         int i = inventoryplayer.func_194014_c(p_193946_3_);
+@@ -741,7 +741,7 @@
+ 
+             if (itemstack.func_190926_b())
+             {
+-                field_193959_i.error("Matched: " + p_193946_3_.func_77977_a() + " with empty item.");
++                LOGGER.error("Matched: " + p_193946_3_.func_77977_a() + " with empty item.");
+                 return null;
+             }
+             else
+@@ -771,7 +771,7 @@
+         }
+     }
+ 
+-    private boolean func_193941_i()
++    private boolean testClearCraftingGrid()
+     {
+         InventoryPlayer inventoryplayer = this.field_191888_F.field_71439_g.field_71071_by;
+ 

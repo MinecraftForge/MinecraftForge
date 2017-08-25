@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiCrafting.java
++++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiCrafting.java
+@@ -40,7 +40,7 @@
+     {
+         super.func_73866_w_();
+         this.field_193112_y = this.field_146294_l < 379;
+-        this.field_192050_x.func_191856_a(this.field_146294_l, this.field_146295_m, this.field_146297_k, this.field_193112_y, this.field_147002_h, ((ContainerWorkbench)this.field_147002_h).field_75162_e);
++        this.field_192050_x.init(this.field_146294_l, this.field_146295_m, this.field_146297_k, this.field_193112_y, this.field_147002_h, ((ContainerWorkbench)this.field_147002_h).field_75162_e);
+         this.field_147003_i = this.field_192050_x.func_193011_a(this.field_193112_y, this.field_146294_l, this.field_146999_f);
+         this.field_192049_w = new GuiButtonImage(10, this.field_147003_i + 5, this.field_146295_m / 2 - 49, 20, 18, 0, 168, 19, field_147019_u);
+         this.field_146292_n.add(this.field_192049_w);

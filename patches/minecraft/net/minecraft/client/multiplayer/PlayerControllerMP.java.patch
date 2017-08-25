@@ -202,3 +202,12 @@
          return this.field_78779_k == GameType.SPECTATOR ? EnumActionResult.PASS : p_187102_2_.func_184199_a(p_187102_1_, vec3d, p_187102_4_);
      }
  
+@@ -520,7 +567,7 @@
+         return itemstack;
+     }
+ 
+-    public void func_192831_a(int p_192831_1_, List<CPacketRecipePlacement.ItemMove> p_192831_2_, List<CPacketRecipePlacement.ItemMove> p_192831_3_, EntityPlayer p_192831_4_)
++    public void handleRecipePlacement(int p_192831_1_, List<CPacketRecipePlacement.ItemMove> p_192831_2_, List<CPacketRecipePlacement.ItemMove> p_192831_3_, EntityPlayer p_192831_4_)
+     {
+         short short1 = p_192831_4_.field_71070_bA.func_75136_a(p_192831_4_.field_71071_by);
+         this.field_78774_b.func_147297_a(new CPacketRecipePlacement(p_192831_1_, p_192831_2_, p_192831_3_, short1));
