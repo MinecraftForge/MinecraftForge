@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/MapDecoration.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/MapDecoration.java
-@@ -121,6 +121,13 @@
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.storage;
+ 
+ import net.minecraft.util.math.MathHelper;
++import net.minecraftforge.fml.common.FMLCommonHandler;
++import net.minecraftforge.fml.common.FMLLog;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -121,6 +123,13 @@
              this.field_191177_m = p_i47344_4_;
          }
  
@@ -14,10 +23,10 @@
          public byte func_191163_a()
          {
              return this.field_191175_k;
-@@ -146,5 +153,6 @@
+@@ -146,5 +155,6 @@
          {
              return values()[MathHelper.func_76125_a(p_191159_0_, 0, values().length - 1)];
          }
-+        public static MapDecoration.Type byName(String name) { for (MapDecoration.Type type : values()) { if (type.name().equals(name.toUpperCase())) return type; } return null; }
++        public static MapDecoration.Type byName(String name) { for (MapDecoration.Type type : values()) { if (type.name().equals(name.toUpperCase())) return type; } FMLLog.warning("Tried to get an unknown MapDecoration.Type, returned default value! (" + name + ")"); return TARGET_X; }
      }
  }
