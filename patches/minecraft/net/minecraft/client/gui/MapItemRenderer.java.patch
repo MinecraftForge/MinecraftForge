@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/MapItemRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/gui/MapItemRenderer.java
+@@ -132,13 +132,13 @@
+             tessellator.func_78381_a();
+             GlStateManager.func_179141_d();
+             GlStateManager.func_179084_k();
+-            MapItemRenderer.this.field_148251_b.func_110577_a(MapItemRenderer.field_148253_a);
+             int k = 0;
+ 
+             for (MapDecoration mapdecoration : this.field_148242_b.field_76203_h.values())
+             {
+                 if (!p_148237_1_ || mapdecoration.func_191180_f())
+                 {
++                    MapItemRenderer.this.field_148251_b.func_110577_a(customMapDecorationsTextures.getOrDefault(mapdecoration.func_191179_b(), MapItemRenderer.field_148253_a));
+                     GlStateManager.func_179094_E();
+                     GlStateManager.func_179109_b(0.0F + (float)mapdecoration.func_176112_b() / 2.0F + 64.0F, 0.0F + (float)mapdecoration.func_176113_c() / 2.0F + 64.0F, -0.02F);
+                     GlStateManager.func_179114_b((float)(mapdecoration.func_176111_d() * 360) / 16.0F, 0.0F, 0.0F, 1.0F);
+@@ -167,4 +167,6 @@
+             GlStateManager.func_179121_F();
+         }
+     }
++    private static final Map<MapDecoration.Type, ResourceLocation> customMapDecorationsTextures = Maps.newHashMap();
++    public static void registerCustomMapDecorationTexture(MapDecoration.Type decoration, ResourceLocation texture) { customMapDecorationsTextures.put(decoration, texture); }
+ }

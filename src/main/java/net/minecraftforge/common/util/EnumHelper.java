@@ -26,6 +26,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.world.storage.MapDecoration;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
@@ -73,7 +74,8 @@ public class EnumHelper
         {EnumSkyBlock.class, int.class},
         {SleepResult.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
-        {EnumRarity.class, TextFormatting.class, String.class}
+        {EnumRarity.class, TextFormatting.class, String.class},
+        {MapDecoration.Type.class, byte.class, boolean.class, int.class}
     };
 
     @Nullable
@@ -140,6 +142,11 @@ public class EnumHelper
     public static EnumRarity addRarity(String name, TextFormatting color, String displayName)
     {
         return addEnum(EnumRarity.class, name, color, displayName);
+    }
+    @Nullable
+    public static MapDecoration.Type addMapDecoration(String name, byte iconIndex, boolean showOnFrames, int mapColor)
+    {
+        return addEnum(MapDecoration.Type.class, name, iconIndex, showOnFrames, mapColor);
     }
 
     private static void setup()

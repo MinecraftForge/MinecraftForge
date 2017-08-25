@@ -27,7 +27,29 @@
          p_189551_1_.func_74768_a("xCenter", this.field_76201_a);
          p_189551_1_.func_74768_a("zCenter", this.field_76199_b);
          p_189551_1_.func_74774_a("scale", this.field_76197_d);
-@@ -208,9 +208,9 @@
+@@ -158,7 +158,11 @@
+ 
+                 if (!this.field_76203_h.containsKey(nbttagcompound.func_74779_i("id")))
+                 {
+-                    this.func_191095_a(MapDecoration.Type.func_191159_a(nbttagcompound.func_74771_c("type")), p_76191_1_.field_70170_p, nbttagcompound.func_74779_i("id"), nbttagcompound.func_74769_h("x"), nbttagcompound.func_74769_h("z"), nbttagcompound.func_74769_h("rot"));
++                    // Forge support for old maps
++                    MapDecoration.Type type;
++                    if (nbttagcompound.func_150297_b("type", 99)) { type = MapDecoration.Type.func_191159_a(nbttagcompound.func_74771_c("type")); } // Byte
++                    else { type = MapDecoration.Type.byName(nbttagcompound.func_74779_i("type")); } // String
++                    this.func_191095_a(type, p_76191_1_.field_70170_p, nbttagcompound.func_74779_i("id"), nbttagcompound.func_74769_h("x"), nbttagcompound.func_74769_h("z"), nbttagcompound.func_74769_h("rot"));
+                 }
+             }
+         }
+@@ -179,7 +183,7 @@
+         }
+ 
+         NBTTagCompound nbttagcompound = new NBTTagCompound();
+-        nbttagcompound.func_74774_a("type", p_191094_3_.func_191163_a());
++        nbttagcompound.func_74778_a("type", p_191094_3_.name());
+         nbttagcompound.func_74778_a("id", p_191094_2_);
+         nbttagcompound.func_74780_a("x", (double)p_191094_1_.func_177958_n());
+         nbttagcompound.func_74780_a("z", (double)p_191094_1_.func_177952_p());
+@@ -208,9 +212,9 @@
              p_191095_8_ = p_191095_8_ + (p_191095_8_ < 0.0D ? -8.0D : 8.0D);
              b2 = (byte)((int)(p_191095_8_ * 16.0D / 360.0D));
  
