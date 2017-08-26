@@ -50,6 +50,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -109,6 +110,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.LoadRenderersEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.ThrowableImpactEvent;
@@ -539,6 +541,11 @@ public class ForgeHooks
     public static void onDifficultyChange(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
     {
         MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
+    }
+
+    public static void onLoadRenderers(RenderGlobal renderGlobal)
+    {
+        MinecraftForge.EVENT_BUS.post(new LoadRenderersEvent(renderGlobal));
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
