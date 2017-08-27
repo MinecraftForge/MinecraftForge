@@ -576,7 +576,7 @@ public class ForgeHooksClient
     public static void fillNormal(int[] faceData, EnumFacing facing)
     {
         Vector3f v1 = getVertexPos(faceData, 3);
-        Vector3f t = getVertexPos(faceData, 1);
+        Vector3f t  = getVertexPos(faceData, 1);
         Vector3f v2 = getVertexPos(faceData, 2);
         v1.sub(t);
         t.set(getVertexPos(faceData, 0));
@@ -587,9 +587,12 @@ public class ForgeHooksClient
         int x = ((byte) Math.round(v1.x * 127)) & 0xFF;
         int y = ((byte) Math.round(v1.y * 127)) & 0xFF;
         int z = ((byte) Math.round(v1.z * 127)) & 0xFF;
+
+        int normal = x | (y << 0x08) | (z << 0x10);
+
         for(int i = 0; i < 4; i++)
         {
-            faceData[i * 7 + 6] = x | (y << 0x08) | (z << 0x10);
+            faceData[i * 7 + 6] = normal;
         }
     }
 
