@@ -1277,8 +1277,8 @@ public class ForgeHooks
         boolean errored = false;
         setActiveModContainer(null);
         //Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
-	AdvancementRegisterEvent ev = new AdvancementRegisterEvent(map);
-	MinecraftForge.EVENT_BUS.post(ev);
+        AdvancementRegisterEvent ev = new AdvancementRegisterEvent(map);
+        MinecraftForge.EVENT_BUS.post(ev);
         for (ModContainer mod : Loader.instance().getActiveModList())
         {
             errored |= !loadAdvancements(map, mod);

@@ -41,8 +41,9 @@ public class AdvancementRegisterEvent extends Event implements IContextSetter
 {
     public final Map<ResourceLocation, Advancement.Builder> advancements;
 
-    public AdvancementRegisterEvent(Map<ResourceLocation, Advancement.Builder> map) {
+    public AdvancementRegisterEvent(Map<ResourceLocation, Advancement.Builder> map) 
+    {
         super();
-	this.advancements = map;
+        this.advancements = map;
     }
 }
