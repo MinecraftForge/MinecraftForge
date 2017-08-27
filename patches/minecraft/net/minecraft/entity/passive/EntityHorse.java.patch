@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityHorse.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityHorse.java
+@@ -151,7 +151,7 @@
+         this.field_70180_af.func_187227_b(field_184791_bI, Integer.valueOf(horsearmortype.func_188579_a()));
+         this.func_110230_cF();
+ 
+-        if (!this.field_70170_p.field_72995_K)
++        if (this.field_70170_p != null && !this.field_70170_p.field_72995_K)
+         {
+             this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_188479_b(field_184786_bD);
+             int i = horsearmortype.func_188578_c();
