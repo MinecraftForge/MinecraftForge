@@ -726,16 +726,30 @@ public class CraftingHelper {
                     IOUtils.closeQuietly(reader);
                 }
                 return true;
-            }
+            },
+            true, true
         );
     }
 
-
+    /**
+     * @deprecated Use {@link CraftingHelper#findFiles(ModContainer, String, Function, BiFunction, boolean, boolean)} instead.
+     */
+    @Deprecated
     public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor)
     {
-        return findFiles(mod, base, preprocessor, processor, false);
+        return findFiles(mod, base, preprocessor, processor, false, false);
     }
+
+    /**
+     * @deprecated Use {@link CraftingHelper#findFiles(ModContainer, String, Function, BiFunction, boolean, boolean)} instead.
+     */
+    @Deprecated
     public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot)
+    {
+        return findFiles(mod, base, preprocessor, processor, defaultUnfoundRoot, false);
+    }
+
+    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot, boolean visitAllFiles)
     {
         FileSystem fs = null;
         try
@@ -788,6 +802,8 @@ public class CraftingHelper {
                     return false;
             }
 
+            boolean success = true;
+
             if (processor != null)
             {
                 Iterator<Path> itr = null;
@@ -804,12 +820,19 @@ public class CraftingHelper {
                 while (itr != null && itr.hasNext())
                 {
                     Boolean cont = processor.apply(root, itr.next());
-                    if (cont == null || !cont.booleanValue())
+
+                    if (visitAllFiles)
+                    {
+                        success &= cont != null && cont;
+                    }
+                    else if (cont == null || !cont)
+                    {
                         return false;
+                    }
                 }
             }
 
-            return true;
+            return success;
         }
         finally
         {

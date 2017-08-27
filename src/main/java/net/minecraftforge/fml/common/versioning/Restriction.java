@@ -215,10 +215,25 @@ public class Restriction
             if ( getLowerBound().getVersionString().equals(getUpperBound().getVersionString()) )
             {
                 return getLowerBound().getVersionString();
-            }
-            else
+            } 
+            else 
             {
-                return I18n.format("fml.messages.version.restriction.bounded", getLowerBound(), getUpperBound());
+                if (isLowerBoundInclusive() && isUpperBoundInclusive()) 
+                {
+                    return I18n.format("fml.messages.version.restriction.bounded.inclusive", getLowerBound(), getUpperBound());
+                } 
+                else if (isLowerBoundInclusive()) 
+                {
+                    return I18n.format("fml.messages.version.restriction.bounded.upperexclusive", getLowerBound(), getUpperBound());
+                } 
+                else if (isUpperBoundInclusive()) 
+                {
+                    return I18n.format("fml.messages.version.restriction.bounded.lowerexclusive", getLowerBound(), getUpperBound());
+                } 
+                else 
+                {
+                    return I18n.format("fml.messages.version.restriction.bounded.exclusive", getLowerBound(), getUpperBound());
+                }
             }
         }
         else if ( getLowerBound() != null )
