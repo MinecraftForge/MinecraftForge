@@ -89,7 +89,15 @@
      }
  
      public boolean func_70613_aW()
-@@ -859,10 +880,13 @@
+@@ -840,6 +861,7 @@
+         float f = 0.8F;
+         boolean flag2 = this.field_71158_b.field_192832_b >= 0.8F;
+         this.field_71158_b.func_78898_a();
++        net.minecraftforge.client.ForgeHooksClient.onInputUpdate(this, this.field_71158_b);
+         this.field_71159_c.func_193032_ao().func_193293_a(this.field_71158_b);
+ 
+         if (this.func_184587_cr() && !this.func_184218_aH())
+@@ -859,10 +881,13 @@
          }
  
          AxisAlignedBB axisalignedbb = this.func_174813_aQ();
