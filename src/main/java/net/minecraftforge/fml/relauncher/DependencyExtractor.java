@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -73,8 +74,11 @@ public class DependencyExtractor
     public static void inspect(File mcDir, File baseModsDir, File versionedModsDir, String repositoryRoot)
     {
         FMLLog.log.debug("Inspecting mod directory for dependency extraction candidates");
+        File baseModListFile = new File(baseModsDir, "mod_list.json");
+        File versionedModListFile = new File(versionedModsDir, "mod_list.json");
         File desiredModListFile = new File(versionedModsDir, EXTRACTED_MODS_LIST);
-        JsonModList modList = prepareModList(mcDir.toPath(), repositoryRoot, desiredModListFile);
+        // Always prioritize an existing extracted deps JSON, then the versioned mod list and only use the "normal" one when necessary
+        JsonModList modList = prepareModList(mcDir.toPath(), repositoryRoot, desiredModListFile, versionedModListFile, baseModListFile);
         File repository = ModListHelper.getRepoRoot(mcDir, modList);
         // Completely wipe the list of extracted artifacts, always override the list
         extractedArtifacts.clear();
@@ -121,7 +125,7 @@ public class DependencyExtractor
         }
     }
 
-    public static JsonModList prepareModList(Path mcDir, @Nullable String repositoryRoot, File desiredModListFile)
+    public static JsonModList prepareModList(Path mcDir, @Nullable String repositoryRoot, File desiredModListFile, File... listFiles)
     {
         JsonModList list = new JsonModList();
         // Default option, when all else fails
@@ -171,10 +175,17 @@ public class DependencyExtractor
         list.modRef = new ArrayList<>();
         // Treat path as relative to the MC dir
         list.version = 2;
+        // Prefer the root of existing files over our generated one
+        String existingRoot = getRepositoryRootFromFiles(mcDir, listFiles);
+        if (existingRoot != null)
+        {
+            list.repositoryRoot = existingRoot;
+        }
         if (!desiredModListFile.exists())
         {
             return list;
         }
+        // Always try to load the existing file
         String json;
         try
         {
@@ -190,6 +201,50 @@ public class DependencyExtractor
             FMLLog.log.warn("Failed to parse existing extracted mod list json file {}, overriding with empty one", desiredModListFile, e);
         }
         return list;
+    }
+
+    @Nullable
+    private static String getRepositoryRootFromFiles(Path mcDirectory, File... files)
+    {
+        for (File file : files)
+        {
+            if (!file.exists())
+            {
+                continue;
+            }
+            try
+            {
+                String json = Files.asCharSource(file, Charsets.UTF_8).read();
+                JsonModList list = GSON.fromJson(json, JsonModList.class);
+                return updateRepoRoot(mcDirectory, list);
+            }
+            catch (IOException e)
+            {
+                FMLLog.log.debug("Failed to read mod list json file {}, won't use its repository root", file, e);
+            }
+            catch (JsonSyntaxException e)
+            {
+                FMLLog.log.debug("Failed to parse mod list json file {}, won't use its repository root", file, e);
+            }
+        }
+        return null;
+    }
+
+    private static String updateRepoRoot(Path mcDirectory, JsonModList modList) throws IOException
+    {
+        if (modList.version != 1)
+        {
+            return modList.repositoryRoot;
+        }
+        Path path = Paths.get(modList.repositoryRoot).toAbsolutePath();
+        if (path.startsWith(mcDirectory))
+        {
+            return mcDirectory.relativize(path).toString();
+        }
+        else
+        {
+            return "absolute:" + path.toFile().getCanonicalFile();
+        }
     }
 
     private static void extractContainedDepJars(JarFile jar, File baseModsDir, File versionedModsDir, File repository) throws IOException
