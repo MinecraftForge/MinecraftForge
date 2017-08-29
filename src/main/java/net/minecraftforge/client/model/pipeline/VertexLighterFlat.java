@@ -233,18 +233,19 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     {
         float e1 = 1 - 1e-2f;
         float e2 = 0.95f;
-        BlockPos pos = blockInfo.getBlockPos();
 
-        boolean full = blockInfo.getState().isFullCube();
+        boolean full = blockInfo.isFullCube();
+        EnumFacing side = null;
 
-        if((full || y < -e1) && normal[1] < -e2) pos = pos.down();
-        if((full || y >  e1) && normal[1] >  e2) pos = pos.up();
-        if((full || z < -e1) && normal[2] < -e2) pos = pos.north();
-        if((full || z >  e1) && normal[2] >  e2) pos = pos.south();
-        if((full || x < -e1) && normal[0] < -e2) pos = pos.west();
-        if((full || x >  e1) && normal[0] >  e2) pos = pos.east();
+        if((full || y < -e1) && normal[1] < -e2) side = EnumFacing.DOWN;
+        if((full || y >  e1) && normal[1] >  e2) side = EnumFacing.UP;
+        if((full || z < -e1) && normal[2] < -e2) side = EnumFacing.NORTH;
+        if((full || z >  e1) && normal[2] >  e2) side = EnumFacing.SOUTH;
+        if((full || x < -e1) && normal[0] < -e2) side = EnumFacing.WEST;
+        if((full || x >  e1) && normal[0] >  e2) side = EnumFacing.EAST;
 
-        int brightness = blockInfo.getState().getPackedLightmapCoords(blockInfo.getWorld(), pos);
+        int i = side == null ? 0 : side.ordinal() + 1;
+        int brightness = blockInfo.getPackedLight()[i];
 
         lightmap[0] = ((float)((brightness >> 0x04) & 0xF) * 0x20) / 0xFFFF;
         lightmap[1] = ((float)((brightness >> 0x14) & 0xF) * 0x20) / 0xFFFF;
@@ -294,5 +295,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     public void updateBlockInfo()
     {
         blockInfo.updateShift();
+        blockInfo.updateFlatLighting();
     }
 }
