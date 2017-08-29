@@ -71,6 +71,7 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -93,6 +94,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
+import net.minecraftforge.client.event.FramebufferEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
@@ -727,5 +729,20 @@ public class ForgeHooksClient
         Matrix4f mat = null;
         if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
         return Pair.of(model, mat);
+    }
+
+    public static boolean onEntityOutlineRendering(float partialTicks)
+    {
+        return MinecraftForge.EVENT_BUS.post(new FramebufferEvent.RenderEntityOutline(partialTicks));
+    }
+
+    public static boolean onShaderRendering(float partialTicks, ShaderGroup shaderGroup)
+    {
+        return MinecraftForge.EVENT_BUS.post(new FramebufferEvent.RenderShaders(partialTicks, shaderGroup));
+    }
+
+    public static void onFramebufferRendering(float partialTicks)
+    {
+        MinecraftForge.EVENT_BUS.post(new FramebufferEvent.RenderBuffers(partialTicks));
     }
 }
