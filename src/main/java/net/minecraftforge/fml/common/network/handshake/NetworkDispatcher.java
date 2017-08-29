@@ -529,10 +529,12 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
             else
             {
                 List<Packet<INetHandlerPlayClient>> parts = ((FMLProxyPacket)msg).toS3FPackets();
-                for (Packet<INetHandlerPlayClient> pkt : parts)
+                int sizeMinusOne = parts.size() - 1;
+                for (int i = 0; i < sizeMinusOne; i++)
                 {
-                    ctx.write(pkt, promise);
+                    ctx.write(parts.get(i), ctx.voidPromise());
                 }
+                ctx.write(parts.get(sizeMinusOne), promise);
             }
         }
         else
