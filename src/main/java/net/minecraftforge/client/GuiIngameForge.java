@@ -247,6 +247,14 @@ public class GuiIngameForge extends GuiIngame
         post(BOSSHEALTH);
     }
 
+    @Override
+    protected void renderVignette(float lightLevel, ScaledResolution scaledRes)
+    {
+        if (pre(VIGNETTE)) return;
+        super.renderVignette(lightLevel, scaledRes);
+        post(VIGNETTE);
+    }
+
     private void renderHelmet(ScaledResolution res, float partialTicks)
     {
         if (pre(HELMET)) return;
