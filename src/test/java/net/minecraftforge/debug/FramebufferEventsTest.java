@@ -35,7 +35,7 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class FramebufferEventsTest
 {
-    public static final boolean ENABLED = true;
+    public static final boolean ENABLED = false;
 
     @SubscribeEvent
     public static void onRenderOutlines(FramebufferEvent.RenderEntityOutline event)
