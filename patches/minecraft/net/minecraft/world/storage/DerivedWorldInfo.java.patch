@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/DerivedWorldInfo.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/DerivedWorldInfo.java
-@@ -218,13 +218,25 @@
+@@ -218,13 +218,37 @@
      {
      }
  
@@ -24,5 +24,17 @@
 +    public NBTTagCompound getDimensionData(int dimensionID)
 +    {
 +        return this.field_76115_a.getDimensionData(dimensionID);
++    }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return this.field_76115_a.hasCapability(capability, facing);
++    }
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return this.field_76115_a.getCapability(capability, facing);
 +    }
  }
