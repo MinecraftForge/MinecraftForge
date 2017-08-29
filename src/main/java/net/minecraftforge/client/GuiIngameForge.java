@@ -71,6 +71,7 @@ public class GuiIngameForge extends GuiIngame
     //Flags to toggle the rendering of certain aspects of the HUD, valid conditions
     //must be met for them to render normally. If those conditions are met, but this flag
     //is false, they will not be rendered.
+    public static boolean renderVignette = true;
     public static boolean renderHelmet = true;
     public static boolean renderPortal = true;
     public static boolean renderHotbar = true;
@@ -120,7 +121,7 @@ public class GuiIngameForge extends GuiIngame
         mc.entityRenderer.setupOverlayRendering();
         GlStateManager.enableBlend();
 
-        if (Minecraft.isFancyGraphicsEnabled())
+        if (renderVignette && Minecraft.isFancyGraphicsEnabled())
         {
             renderVignette(mc.player.getBrightness(), res);
         }
@@ -250,7 +251,13 @@ public class GuiIngameForge extends GuiIngame
     @Override
     protected void renderVignette(float lightLevel, ScaledResolution scaledRes)
     {
-        if (pre(VIGNETTE)) return;
+        if (pre(VIGNETTE))
+        {
+            // Need to put this here, since Vanilla assumes this state after the vignette was rendered.
+            GlStateManager.enableDepth();
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            return;
+        }
         super.renderVignette(lightLevel, scaledRes);
         post(VIGNETTE);
     }
