@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Mod(modid = ConfigTest.MODID, name = "ConfigTest", version = "1.0", acceptableRemoteVersions = "*")
@@ -150,6 +151,9 @@ public class ConfigTest
         @RequiresMcRestart
         public static Map<String, Integer[]> theMap;
 
+        @Name("regex(test]")
+        public static Map<String, String> regexText = new HashMap<>();
+
         static
         {
             theMap = Maps.newHashMap();
@@ -161,6 +165,7 @@ public class ConfigTest
                     array[x] = i + x;
                 }
                 theMap.put("" + i, array);
+                regexText.put("" + i, "" + i);
             }
         }
     }
