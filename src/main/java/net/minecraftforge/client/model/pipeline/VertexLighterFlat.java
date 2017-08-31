@@ -237,12 +237,12 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         boolean full = blockInfo.isFullCube();
         EnumFacing side = null;
 
-        if((full || y < -e1) && normal[1] < -e2) side = EnumFacing.DOWN;
-        if((full || y >  e1) && normal[1] >  e2) side = EnumFacing.UP;
-        if((full || z < -e1) && normal[2] < -e2) side = EnumFacing.NORTH;
-        if((full || z >  e1) && normal[2] >  e2) side = EnumFacing.SOUTH;
-        if((full || x < -e1) && normal[0] < -e2) side = EnumFacing.WEST;
-        if((full || x >  e1) && normal[0] >  e2) side = EnumFacing.EAST;
+             if((full || y < -e1) && normal[1] < -e2) side = EnumFacing.DOWN;
+        else if((full || y >  e1) && normal[1] >  e2) side = EnumFacing.UP;
+        else if((full || z < -e1) && normal[2] < -e2) side = EnumFacing.NORTH;
+        else if((full || z >  e1) && normal[2] >  e2) side = EnumFacing.SOUTH;
+        else if((full || x < -e1) && normal[0] < -e2) side = EnumFacing.WEST;
+        else if((full || x >  e1) && normal[0] >  e2) side = EnumFacing.EAST;
 
         int i = side == null ? 0 : side.ordinal() + 1;
         int brightness = blockInfo.getPackedLight()[i];
