@@ -148,6 +148,7 @@ public class ConfigTest
     public static class CONFIG_MAP
     {
         @Name("map")
+        @Comment("This comment belongs to the \"map\" category, not the \"general\" category")
         @RequiresMcRestart
         public static Map<String, Integer[]> theMap;
 
