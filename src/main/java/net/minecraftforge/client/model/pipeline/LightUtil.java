@@ -112,7 +112,7 @@ public class LightUtil
             {
                 if(eMap[e] != countTo)
                 {
-                    unpack(quad.getVertexData(), data, quad.getFormat(), v, eMap[e]);
+                    unpack(quad.getVertexData(), data, formatTo, v, eMap[e]);
                     consumer.put(e, data);
                 }
                 else
