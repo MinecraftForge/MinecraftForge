@@ -26,7 +26,7 @@
 +            this.field_148281_e.field_146128_h = p_192634_2_ + 210;
              this.field_148281_e.field_146129_i = p_192634_3_;
 -            this.field_148281_e.field_146124_l = this.field_148282_b.func_151463_i() != this.field_148282_b.func_151469_h();
-+            this.field_148281_e.field_146124_l = !this.field_148282_b.isSetToDefaultValue();
++            this.field_148281_e.field_146124_l = this.field_148282_b.isSetToDefaultValue();
              this.field_148281_e.func_191745_a(GuiKeyBindingList.this.field_148189_l, p_192634_6_, p_192634_7_, p_192634_9_);
              this.field_148280_d.field_146128_h = p_192634_2_ + 105;
              this.field_148280_d.field_146129_i = p_192634_3_;

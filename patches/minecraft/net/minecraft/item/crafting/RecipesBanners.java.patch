@@ -19,7 +19,7 @@
                          ItemStack itemstack2 = p_77572_1_.func_70301_a(j);
  
 -                        if (itemstack2.func_77973_b() == Items.field_151100_aR)
-+                        int color = net.minecraftforge.oredict.DyeUtils.rawDyeDamageFromStack(itemstack2);
++                        int color = getColor(itemstack2);
 +                        if (color != -1)
                          {
 -                            k = itemstack2.func_77960_j();
@@ -45,7 +45,7 @@
                                  if (!itemstack.func_190926_b() && itemstack.func_77973_b() != Items.field_179564_cE)
                                  {
 -                                    if (itemstack.func_77973_b() == Items.field_151100_aR)
-+                                    if (net.minecraftforge.oredict.DyeUtils.isDye(itemstack))
++                                    if (isDye(itemstack))
                                      {
                                          if (flag2)
                                          {
@@ -54,11 +54,11 @@
                                  if (!itemstack1.func_190926_b() && itemstack1.func_77973_b() != Items.field_179564_cE)
                                  {
 -                                    if (itemstack1.func_77973_b() != Items.field_151100_aR)
-+                                    if (!net.minecraftforge.oredict.DyeUtils.isDye(itemstack1))
++                                    if (!isDye(itemstack1))
                                      {
                                          flag = false;
                                          break;
-@@ -237,14 +232,13 @@
+@@ -237,14 +232,45 @@
                  return true;
              }
  
@@ -67,6 +67,38 @@
              {
                  return p_194133_1_ >= 3 && p_194133_2_ >= 3;
              }
++
++            private static String[] colors = { "Black", "Red", "Green", "Brown", "Blue", "Purple", "Cyan", "LightGray", "Gray", "Pink", "Lime", "Yellow", "LightBlue", "Magenta", "Orange", "White" };
++            @SuppressWarnings("unchecked") //Why java...
++            private static java.util.List<ItemStack>[] colored = new java.util.List[colors.length];
++            private static java.util.List<ItemStack> dyes;
++            private static boolean hasInit = false;
++            private static void init()
++            {
++                if (hasInit) return;
++                for (int x = 0; x < colors.length; x++)
++                    colored[x] = net.minecraftforge.oredict.OreDictionary.getOres("dye" + colors[x]);
++                dyes = net.minecraftforge.oredict.OreDictionary.getOres("dye");
++                hasInit = true;
++            }
++            private boolean isDye(ItemStack stack)
++            {
++                init();
++                for (ItemStack ore : dyes)
++                    if (net.minecraftforge.oredict.OreDictionary.itemMatches(ore, stack, false))
++                        return true;
++                return false;
++            }
++            private int getColor(ItemStack stack)
++            {
++                init();
++                if (stack == null) return -1;
++                for (int x = 0; x < colored.length; x++)
++                    for (ItemStack ore : colored[x])
++                        if (net.minecraftforge.oredict.OreDictionary.itemMatches(ore, stack, true))
++                            return x;
++                return -1;
++            }
          }
  
 -    public static class RecipeDuplicatePattern implements IRecipe
@@ -74,7 +106,7 @@
          {
              public boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_)
              {
-@@ -344,9 +338,9 @@
+@@ -344,9 +370,9 @@
  
                      if (!itemstack.func_190926_b())
                      {
@@ -86,7 +118,7 @@
                          }
                          else if (itemstack.func_77942_o() && TileEntityBanner.func_175113_c(itemstack) > 0)
                          {
-@@ -365,7 +359,6 @@
+@@ -365,7 +391,6 @@
                  return true;
              }
  

@@ -7,7 +7,7 @@
 +    @Override
 +    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
 +    {
-+        if (pos.func_177956_o() == neighbor.func_177956_o() && world instanceof World && !((World) world).field_72995_K)
++        if (pos.func_177956_o() == neighbor.func_177956_o() && world instanceof World)
 +        {
 +            func_189540_a(world.func_180495_p(pos), (World)world, pos, world.func_180495_p(neighbor).func_177230_c(), neighbor);
 +        }

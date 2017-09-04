@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOldLeaf.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOldLeaf.java
-@@ -101,11 +101,16 @@
+@@ -47,7 +47,6 @@
+         return p_176232_1_.func_177229_b(field_176239_P) == BlockPlanks.EnumType.JUNGLE ? 40 : super.func_176232_d(p_176232_1_);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         p_149666_2_.add(new ItemStack(this, 1, BlockPlanks.EnumType.OAK.func_176839_a()));
+@@ -104,11 +103,16 @@
          if (!p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
          {
              p_180657_2_.func_71029_a(StatList.func_188055_a(this));

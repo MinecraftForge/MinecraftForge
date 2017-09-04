@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/handshake/client/C00Handshake.java
 +++ ../src-work/minecraft/net/minecraft/network/handshake/client/C00Handshake.java
-@@ -14,6 +14,7 @@
+@@ -14,32 +14,41 @@
      private String field_149598_b;
      private int field_149599_c;
      private EnumConnectionState field_149597_d;
@@ -8,13 +8,25 @@
  
      public C00Handshake()
      {
-@@ -28,18 +29,26 @@
-         this.field_149597_d = p_i47613_3_;
      }
  
-+    public C00Handshake(String address, int port, EnumConnectionState state, boolean addFMLMarker)
+     @SideOnly(Side.CLIENT)
+-    public C00Handshake(int p_i45266_1_, String p_i45266_2_, int p_i45266_3_, EnumConnectionState p_i45266_4_)
++    public C00Handshake(int version, String ip, int port, EnumConnectionState requestedState)
+     {
+-        this.field_149600_a = p_i45266_1_;
+-        this.field_149598_b = p_i45266_2_;
+-        this.field_149599_c = p_i45266_3_;
+-        this.field_149597_d = p_i45266_4_;
++        this.field_149600_a = version;
++        this.field_149598_b = ip;
++        this.field_149599_c = port;
++        this.field_149597_d = requestedState;
+     }
+ 
++    public C00Handshake(int protocol, String address, int port, EnumConnectionState state, boolean addFMLMarker)
 +    {
-+        this(address, port, state);
++        this(protocol, address, port, state);
 +        this.hasFMLMarker = addFMLMarker;
 +    }
 +

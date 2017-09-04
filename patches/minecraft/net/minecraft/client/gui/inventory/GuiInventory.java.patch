@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiInventory.java
++++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiInventory.java
+@@ -60,7 +60,7 @@
+         }
+ 
+         this.field_192046_B = this.field_146294_l < 379;
+-        this.field_192045_A.func_191856_a(this.field_146294_l, this.field_146295_m, this.field_146297_k, this.field_192046_B, this.field_147002_h, ((ContainerPlayer)this.field_147002_h).field_75181_e);
++        this.field_192045_A.init(this.field_146294_l, this.field_146295_m, this.field_146297_k, this.field_192046_B, this.field_147002_h, ((ContainerPlayer)this.field_147002_h).field_75181_e);
+         this.field_147003_i = this.field_192045_A.func_193011_a(this.field_192046_B, this.field_146294_l, this.field_146999_f);
+         this.field_192048_z = new GuiButtonImage(10, this.field_147003_i + 104, this.field_146295_m / 2 - 22, 20, 18, 178, 0, 19, field_147001_a);
+         this.field_146292_n.add(this.field_192048_z);

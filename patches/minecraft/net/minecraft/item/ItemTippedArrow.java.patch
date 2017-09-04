@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemTippedArrow.java
++++ ../src-work/minecraft/net/minecraft/item/ItemTippedArrow.java
+@@ -31,7 +31,6 @@
+         return entitytippedarrow;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_150895_a(CreativeTabs p_150895_1_, NonNullList<ItemStack> p_150895_2_)
+     {
+         if (this.func_194125_a(p_150895_1_))

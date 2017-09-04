@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/network/play/INetHandlerPlayServer.java
++++ ../src-work/minecraft/net/minecraft/network/play/INetHandlerPlayServer.java
+@@ -50,7 +50,7 @@
+ 
+     void func_147351_a(CPacketClickWindow p_147351_1_);
+ 
+-    void func_191985_a(CPacketRecipePlacement p_191985_1_);
++    void handleRecipePlacement(CPacketRecipePlacement p_191985_1_);
+ 
+     void func_147356_a(CPacketCloseWindow p_147356_1_);
+ 

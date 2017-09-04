@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/IRecipe.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/IRecipe.java
-@@ -4,21 +4,21 @@
+@@ -4,35 +4,33 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.NonNullList;
  import net.minecraft.world.World;
@@ -25,13 +25,22 @@
 +        return net.minecraftforge.common.ForgeHooks.defaultRecipeGetRemainingItems(p_179532_1_);
 +    }
  
- default NonNullList<Ingredient> func_192400_c()
+-    @SideOnly(Side.CLIENT)
+-default NonNullList<Ingredient> func_192400_c()
++    default NonNullList<Ingredient> func_192400_c()
      {
-@@ -30,7 +30,6 @@
+         return NonNullList.<Ingredient>func_191196_a();
+     }
+ 
+-default boolean func_192399_d()
++    default boolean func_192399_d()
+     {
          return false;
      }
  
 -    @SideOnly(Side.CLIENT)
- default String func_193358_e()
+-default String func_193358_e()
++    default String func_193358_e()
      {
          return "";
+     }

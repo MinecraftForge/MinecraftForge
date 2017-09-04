@@ -89,17 +89,3 @@
      }
  
      public boolean func_70613_aW()
-@@ -853,10 +874,13 @@
-         }
- 
-         AxisAlignedBB axisalignedbb = this.func_174813_aQ();
-+        net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent event = new net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent(this, axisalignedbb);
-+        if(!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) { axisalignedbb = event.getEntityBoundingBox();
-         this.func_145771_j(this.field_70165_t - (double)this.field_70130_N * 0.35D, axisalignedbb.field_72338_b + 0.5D, this.field_70161_v + (double)this.field_70130_N * 0.35D);
-         this.func_145771_j(this.field_70165_t - (double)this.field_70130_N * 0.35D, axisalignedbb.field_72338_b + 0.5D, this.field_70161_v - (double)this.field_70130_N * 0.35D);
-         this.func_145771_j(this.field_70165_t + (double)this.field_70130_N * 0.35D, axisalignedbb.field_72338_b + 0.5D, this.field_70161_v - (double)this.field_70130_N * 0.35D);
-         this.func_145771_j(this.field_70165_t + (double)this.field_70130_N * 0.35D, axisalignedbb.field_72338_b + 0.5D, this.field_70161_v + (double)this.field_70130_N * 0.35D);
-+        }
-         boolean flag4 = (float)this.func_71024_bL().func_75116_a() > 6.0F || this.field_71075_bZ.field_75101_c;
- 
-         if (this.field_70122_E && !flag1 && !flag2 && this.field_71158_b.field_192832_b >= 0.8F && !this.func_70051_ag() && flag4 && !this.func_184587_cr() && !this.func_70644_a(MobEffects.field_76440_q))

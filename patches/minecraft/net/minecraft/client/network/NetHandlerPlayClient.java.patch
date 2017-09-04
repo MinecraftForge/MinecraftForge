@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -295,7 +295,7 @@
+@@ -293,7 +293,7 @@
      {
          PacketThreadUtil.func_180031_a(p_147282_1_, this, this.field_147299_f);
          this.field_147299_f.field_71442_b = new PlayerControllerMP(this.field_147299_f, this);
@@ -9,7 +9,7 @@
          this.field_147299_f.field_71474_y.field_74318_M = p_147282_1_.func_149192_g();
          this.field_147299_f.func_71403_a(this.field_147300_g);
          this.field_147299_f.field_71439_g.field_71093_bK = p_147282_1_.func_149194_f();
-@@ -757,7 +757,7 @@
+@@ -755,7 +755,7 @@
  
              if (tileentity != null)
              {
@@ -18,7 +18,7 @@
              }
          }
      }
-@@ -840,7 +840,9 @@
+@@ -838,7 +838,9 @@
      public void func_147251_a(SPacketChat p_147251_1_)
      {
          PacketThreadUtil.func_180031_a(p_147251_1_, this, this.field_147299_f);
@@ -29,7 +29,7 @@
      }
  
      public void func_147279_a(SPacketAnimation p_147279_1_)
-@@ -971,7 +973,7 @@
+@@ -969,7 +971,7 @@
  
                      if (entity1 == this.field_147299_f.field_71439_g && !flag)
                      {
@@ -38,7 +38,7 @@
                      }
                  }
              }
-@@ -1219,6 +1221,15 @@
+@@ -1217,6 +1219,15 @@
              {
                  tileentity.func_145839_a(p_147273_1_.func_148857_g());
              }
@@ -54,7 +54,7 @@
  
              if (flag && this.field_147299_f.field_71462_r instanceof GuiCommandBlock)
              {
-@@ -1319,15 +1330,15 @@
+@@ -1317,15 +1328,15 @@
              }
              else if (f == 101.0F)
              {
@@ -73,7 +73,7 @@
              }
          }
          else if (i == 6)
-@@ -1489,7 +1500,7 @@
+@@ -1487,7 +1498,7 @@
  
          if (entity instanceof EntityLivingBase)
          {

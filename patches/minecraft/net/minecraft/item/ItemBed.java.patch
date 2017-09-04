@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBed.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBed.java
-@@ -67,7 +67,7 @@
+@@ -69,7 +69,7 @@
                      IBlockState iblockstate2 = Blocks.field_150324_C.func_176223_P().func_177226_a(BlockBed.field_176471_b, Boolean.valueOf(false)).func_177226_a(BlockBed.field_185512_D, enumfacing).func_177226_a(BlockBed.field_176472_a, BlockBed.EnumPartType.FOOT);
                      p_180614_2_.func_180501_a(p_180614_3_, iblockstate2, 10);
                      p_180614_2_.func_180501_a(blockpos, iblockstate2.func_177226_a(BlockBed.field_176472_a, BlockBed.EnumPartType.HEAD), 10);
@@ -9,3 +9,11 @@
                      p_180614_2_.func_184133_a((EntityPlayer)null, p_180614_3_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                      TileEntity tileentity = p_180614_2_.func_175625_s(blockpos);
  
+@@ -113,7 +113,6 @@
+         return super.func_77658_a() + "." + EnumDyeColor.func_176764_b(p_77667_1_.func_77960_j()).func_176762_d();
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_150895_a(CreativeTabs p_150895_1_, NonNullList<ItemStack> p_150895_2_)
+     {
+         if (this.func_194125_a(p_150895_1_))

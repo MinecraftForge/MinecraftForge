@@ -20,7 +20,7 @@
      public boolean func_76398_f()
      {
          return this.field_76418_K;
-@@ -293,7 +292,85 @@
+@@ -293,7 +292,74 @@
          return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
      }
  
@@ -87,17 +87,6 @@
 +        java.util.ArrayList<net.minecraft.item.ItemStack> ret = new java.util.ArrayList<net.minecraft.item.ItemStack>();
 +        ret.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.field_151117_aB));
 +        return ret;
-+    }
-+    
-+    /**
-+     * Used for determining {@code PotionEffect} sort order in GUIs.
-+     * Defaults to the {@code PotionEffect}'s liquid color.
-+     * @param potionEffect the {@code PotionEffect} instance containing the potion
-+     * @return a value used to sort {@code PotionEffect}s in GUIs 
-+     */
-+    public int getGuiSortColor(PotionEffect potionEffect)
-+    {
-+        return this.func_76401_j();
 +    }
 +
 +    /* ======================================== FORGE END =====================================*/

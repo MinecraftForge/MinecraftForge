@@ -20,10 +20,11 @@
      public String func_193358_e()
      {
          return this.field_194138_c;
-@@ -50,10 +47,7 @@
+@@ -44,17 +41,12 @@
+         for (int i = 0; i < nonnulllist.size(); ++i)
          {
              ItemStack itemstack = p_179532_1_.func_70301_a(i);
- 
+-
 -            if (itemstack.func_77973_b().func_77634_r())
 -            {
 -                nonnulllist.set(i, new ItemStack(itemstack.func_77973_b().func_77668_q()));
@@ -32,7 +33,13 @@
          }
  
          return nonnulllist;
-@@ -136,7 +130,6 @@
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public NonNullList<Ingredient> func_192400_c()
+     {
+         return this.field_77579_b;
+@@ -137,7 +129,6 @@
          return nonnulllist;
      }
  

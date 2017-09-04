@@ -70,7 +70,7 @@
 +
 +        if(pass > 0)
 +        {
-+            batchBuffer.func_178180_c().func_181674_a(0, 0, 0);
++            batchBuffer.func_178180_c().func_181674_a((float)field_147554_b, (float)field_147555_c, (float)field_147552_d);
 +        }
 +        batchBuffer.func_78381_a();
 +

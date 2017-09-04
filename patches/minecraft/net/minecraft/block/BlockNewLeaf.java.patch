@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNewLeaf.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNewLeaf.java
-@@ -106,4 +106,10 @@
+@@ -52,7 +52,6 @@
+         return new ItemStack(this, 1, p_185473_3_.func_177230_c().func_176201_c(p_185473_3_) & 3);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         p_149666_2_.add(new ItemStack(this, 1, 0));
+@@ -109,4 +108,10 @@
              super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
          }
      }
