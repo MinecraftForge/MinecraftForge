@@ -29,7 +29,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 
 /**
- * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
+ * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity/World/WorldInfo(Per-save))
  * is created. Allowing for the attachment of arbitrary capability providers.
  *
  * Please note that as this is fired for ALL object creations efficient code is recommended.
