@@ -38,6 +38,11 @@ public class ChunkCapabilityPollutionTest {
         int get();
 
         void set(int value);
+
+        /**
+         * Set the value without marking the chunk dirty
+         */
+        void load(int value);
     }
 
     public static class PollutionStorage implements Capability.IStorage<IPollution>
@@ -52,7 +57,8 @@ public class ChunkCapabilityPollutionTest {
         public void readNBT(Capability<IPollution> capability, IPollution instance, EnumFacing side, NBTBase nbt) {
             if (nbt instanceof NBTTagInt)
             {
-                instance.set(((NBTTagInt) nbt).getInt());
+                // The state is being loaded and not updated. We set the value silently to avoid unnecessary dirty chunks
+                instance.load(((NBTTagInt) nbt).getInt());
             }
         }
     }
@@ -68,6 +74,11 @@ public class ChunkCapabilityPollutionTest {
 
         @Override
         public void set(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public void load(int value) {
             this.value = value;
         }
     }
