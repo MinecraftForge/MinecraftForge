@@ -64,7 +64,7 @@ public class EnumHelperTest
             String name = method.getName();
             if (!name.equals("addEnum") && name.startsWith("add") && Modifier.isPublic(method.getModifiers()))
             {
-                System.out.println("  " + method);
+                //System.out.println("  " + method);
 
                 Class<?> returnType = method.getReturnType();
                 Constructor<?>[] declaredConstructors = returnType.getDeclaredConstructors();
@@ -100,7 +100,7 @@ public class EnumHelperTest
                     {
                         seenCtrs.add(declaredConstructor);
                     }
-                    System.out.println("    " + declaredConstructor.toString());
+                    //System.out.println("    " + declaredConstructor.toString());
 
                     Class<?>[] expectedParameters = declaredConstructor.getParameterTypes();
 
