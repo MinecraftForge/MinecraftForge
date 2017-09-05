@@ -26,6 +26,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = MapLocatingVillage.MODID, name = "MapLocatingVillage", version = MapLocatingVillage.VERSION, acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
@@ -52,15 +53,7 @@ public class MapLocatingVillage
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(new MineshaftMapGiver().setRegistryName(VILLAGE_MAP_GIVER_NAME));
-    }
-
-    @SubscribeEvent
-    public static void registerModels(ModelRegistryEvent event)
-    {
-        ModelResourceLocation location = new ModelResourceLocation(VILLAGE_MAP_GIVER_NAME, "inventory");
-        ModelBakery.registerItemVariants(VILLAGE_MAP_GIVER, location);
-        ModelLoader.setCustomMeshDefinition(VILLAGE_MAP_GIVER, stack -> location);
+        event.getRegistry().register(new VillageMapGiver().setRegistryName(VILLAGE_MAP_GIVER_NAME));
     }
 
     public static class CommonProxy
@@ -74,6 +67,7 @@ public class MapLocatingVillage
         public void preInit() {}
     }
 
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientProxy extends CommonProxy
     {
         @Override
@@ -81,11 +75,19 @@ public class MapLocatingVillage
         {
             MapItemRenderer.registerCustomMapDecorationTexture(VILLAGE_MAP_DECORATION, new ResourceLocation(MODID, "textures/map/map_icons.png"));
         }
+
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
+        {
+            ModelResourceLocation location = new ModelResourceLocation(VILLAGE_MAP_GIVER_NAME, "inventory");
+            ModelBakery.registerItemVariants(VILLAGE_MAP_GIVER, location);
+            ModelLoader.setCustomMeshDefinition(VILLAGE_MAP_GIVER, stack -> location);
+        }
     }
 
-    public static class MineshaftMapGiver extends Item
+    public static class VillageMapGiver extends Item
     {
-        MineshaftMapGiver()
+        VillageMapGiver()
         {
             setCreativeTab(CreativeTabs.MISC);
         }
