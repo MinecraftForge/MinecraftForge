@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Bootstrap;
+import net.minecraft.world.storage.MapDecoration;
 import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.EnumHelper;
@@ -63,7 +64,7 @@ public class EnumHelperTest
             String name = method.getName();
             if (!name.equals("addEnum") && name.startsWith("add") && Modifier.isPublic(method.getModifiers()))
             {
-                //System.out.println("  " + method);
+                System.out.println("  " + method);
 
                 Class<?> returnType = method.getReturnType();
                 Constructor<?>[] declaredConstructors = returnType.getDeclaredConstructors();
@@ -90,12 +91,16 @@ public class EnumHelperTest
                     {
                         filter = true; //We don't want people using this method.
                     }
+                    else if (returnType == MapDecoration.Type.class && (declaredConstructor.getParameterTypes().length == 3 || declaredConstructor.getParameterTypes().length == 4))
+                    {
+                        filter = true; //We don't want people using this method.
+                    }
 
                     if (!filter)
                     {
                         seenCtrs.add(declaredConstructor);
                     }
-                    //System.out.println("    " + declaredConstructor.toString());
+                    System.out.println("    " + declaredConstructor.toString());
 
                     Class<?>[] expectedParameters = declaredConstructor.getParameterTypes();
 
