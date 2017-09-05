@@ -31,18 +31,13 @@ import javax.annotation.Nullable;
 @Mod(modid = ChunkCapabilityPollutionTest.MODID, name = "Chunk Capability Test", version = "0.0.0")
 public class ChunkCapabilityPollutionTest {
     public static final String MODID = "chunkcapabilitypollutiontest";
-    public static final boolean ENABLE = false;
+    public static final boolean ENABLE = true;
 
     public interface IPollution
     {
         int get();
 
-        void set(int value);
-
-        /**
-         * Set the value without marking the chunk dirty
-         */
-        void load(int value);
+        void set(int value, boolean markDirty);
     }
 
     public static class PollutionStorage implements Capability.IStorage<IPollution>
@@ -58,7 +53,7 @@ public class ChunkCapabilityPollutionTest {
             if (nbt instanceof NBTTagInt)
             {
                 // The state is being loaded and not updated. We set the value silently to avoid unnecessary dirty chunks
-                instance.load(((NBTTagInt) nbt).getInt());
+                instance.set(((NBTTagInt) nbt).getInt(), false);
             }
         }
     }
@@ -73,12 +68,7 @@ public class ChunkCapabilityPollutionTest {
         }
 
         @Override
-        public void set(int value) {
-            this.value = value;
-        }
-
-        @Override
-        public void load(int value) {
+        public void set(int value, boolean markDirty) {
             this.value = value;
         }
     }
@@ -97,9 +87,11 @@ public class ChunkCapabilityPollutionTest {
         }
 
         @Override
-        public void set(int value) {
-            super.set(value);
-            chunk.markDirty();
+        public void set(int value, boolean markDirty) {
+            super.set(value, markDirty);
+            if (markDirty) {
+                chunk.markDirty();
+            }
         }
     }
 
@@ -161,7 +153,7 @@ public class ChunkCapabilityPollutionTest {
                 {
                     Chunk chunk = event.getWorld().getChunkFromBlockCoords(event.getPos());
                     IPollution pollution = chunk.getCapability(POLLUTION_CAPABILITY, null);
-                    pollution.set(pollution.get() + delta);
+                    pollution.set(pollution.get() + delta, true);
 
                     event.getEntityPlayer().sendStatusMessage(new TextComponentString("Chunk pollution: " + pollution.get()), true);
                 }
