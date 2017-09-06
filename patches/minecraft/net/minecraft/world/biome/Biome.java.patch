@@ -147,8 +147,8 @@
 +
 +    public void plantFlower(World world, Random rand, BlockPos pos)
 +    {
-+    	if(flowers.isEmpty()) return;
-+    	
++        if (flowers.isEmpty()) return;
++
 +        FlowerEntry flower = (FlowerEntry)WeightedRandom.func_76271_a(rand, flowers);
 +        if (flower == null || flower.state == null ||
 +            (flower.state.func_177230_c() instanceof net.minecraft.block.BlockBush &&
