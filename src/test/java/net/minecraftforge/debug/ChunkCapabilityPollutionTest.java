@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 @Mod(modid = ChunkCapabilityPollutionTest.MODID, name = "Chunk Capability Test", version = "0.0.0")
 public class ChunkCapabilityPollutionTest {
     public static final String MODID = "chunkcapabilitypollutiontest";
-    public static final boolean ENABLE = true;
+    public static final boolean ENABLE = false;
 
     public interface IPollution
     {
