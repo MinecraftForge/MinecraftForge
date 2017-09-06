@@ -66,7 +66,8 @@ public class RenderGameOverlayEvent extends Event
         DEBUG,
         POTION_ICONS,
         SUBTITLES,
-        FPS_GRAPH
+        FPS_GRAPH,
+        VIGNETTE
     }
 
     private final float partialTicks;
