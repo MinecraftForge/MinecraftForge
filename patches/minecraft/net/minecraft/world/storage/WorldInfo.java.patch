@@ -31,9 +31,9 @@
          }
 +
 +        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
-+        if (p_i2157_1_.func_150297_b("capabilities", 10) && this.capabilities != null)
++        if (p_i2157_1_.func_150297_b("ForgeCaps", 10) && this.capabilities != null)
 +        {
-+            capabilities.deserializeNBT(p_i2157_1_.func_74775_l("capabilities"));
++            capabilities.deserializeNBT(p_i2157_1_.func_74775_l("ForgeCaps"));
 +        }
      }
  
@@ -82,7 +82,7 @@
 +
 +        if (this.capabilities != null)
 +        {
-+            p_76064_1_.func_74782_a("capabilities", capabilities.serializeNBT());
++            p_76064_1_.func_74782_a("ForgeCaps", capabilities.serializeNBT());
 +        }
      }
  
