@@ -414,6 +414,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             all.add(asm.getClassName());
         for (ASMData asm : evt.getASMHarvestedData().getAll(ICrashCallable.class.getName().replace('.', '/')))
             all.add(asm.getClassName());
+        // Add table classes for mod list tabulation
+        all.add("net/minecraftforge/common/util/TextTable");
+        all.add("net/minecraftforge/common/util/TextTable$Column");
+        all.add("net/minecraftforge/common/util/TextTable$Row");
+        all.add("net/minecraftforge/common/util/TextTable$Alignment");
 
         all.removeIf(cls -> !cls.startsWith("net/minecraft/") && !cls.startsWith("net/minecraftforge/"));
 

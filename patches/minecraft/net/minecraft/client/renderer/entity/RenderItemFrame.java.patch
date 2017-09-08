@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderItemFrame.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderItemFrame.java
+@@ -49,7 +49,7 @@
+         ModelManager modelmanager = blockrendererdispatcher.func_175023_a().func_178126_b();
+         IBakedModel ibakedmodel;
+ 
+-        if (p_76986_1_.func_82335_i().func_77973_b() == Items.field_151098_aY)
++        if (p_76986_1_.func_82335_i().func_77973_b() instanceof net.minecraft.item.ItemMap)
+         {
+             ibakedmodel = modelmanager.func_174953_a(this.field_177073_g);
+         }
 @@ -96,10 +96,13 @@
          {
              GlStateManager.func_179094_E();
@@ -15,6 +24,15 @@
              if (flag)
              {
                  this.field_76990_c.field_78724_e.func_110577_a(field_110789_a);
+@@ -107,7 +110,7 @@
+                 float f = 0.0078125F;
+                 GlStateManager.func_179152_a(0.0078125F, 0.0078125F, 0.0078125F);
+                 GlStateManager.func_179109_b(-64.0F, -64.0F, 0.0F);
+-                MapData mapdata = Items.field_151098_aY.func_77873_a(itemstack, p_82402_1_.field_70170_p);
++                MapData mapdata = ((net.minecraft.item.ItemMap) itemstack.func_77973_b()).func_77873_a(itemstack, p_82402_1_.field_70170_p);
+                 GlStateManager.func_179109_b(0.0F, 0.0F, -1.0F);
+ 
+                 if (mapdata != null)
 @@ -124,6 +127,7 @@
                  RenderHelper.func_74518_a();
                  GlStateManager.func_179099_b();
