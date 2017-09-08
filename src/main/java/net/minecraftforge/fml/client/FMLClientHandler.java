@@ -265,16 +265,21 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             Loader.instance().preinitializeMods();
         }
-        catch (CustomModLoadingErrorDisplayException custom)
-        {
-            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
-            customError = custom;
-        }
         catch (LoaderException le)
         {
-            haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
-            return;
+            if (le.getCause() instanceof CustomModLoadingErrorDisplayException)
+            {
+                CustomModLoadingErrorDisplayException custom = (CustomModLoadingErrorDisplayException) le.getCause();
+                FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
+                customError = custom;
+            }
+            else
+            {
+                haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
+                return;
+            }
         }
+
         Map<String,Map<String,String>> sharedModList = (Map<String, Map<String, String>>) Launch.blackboard.get("modList");
         if (sharedModList == null)
         {
@@ -342,17 +347,19 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             Loader.instance().initializeMods();
         }
-        catch (CustomModLoadingErrorDisplayException custom)
-        {
-            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
-            customError = custom;
-            SplashProgress.finish();
-            return;
-        }
         catch (LoaderException le)
         {
-            haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
-            return;
+            if (le.getCause() instanceof CustomModLoadingErrorDisplayException)
+            {
+                CustomModLoadingErrorDisplayException custom = (CustomModLoadingErrorDisplayException) le.getCause();
+                FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
+                customError = custom;
+            }
+            else
+            {
+                haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
+                return;
+            }
         }
 
         // This call is being phased out for performance reasons in 1.12,
@@ -390,7 +397,8 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         loading = false;
         client.gameSettings.loadOptions(); //Reload options to load any mod added keybindings.
-        Loader.instance().loadingComplete();
+        if (customError == null)
+            Loader.instance().loadingComplete();
         SplashProgress.finish();
     }
 
