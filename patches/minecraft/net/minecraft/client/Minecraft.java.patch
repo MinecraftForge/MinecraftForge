@@ -219,7 +219,16 @@
              }
  
              this.field_71424_I.func_76318_c("gameRenderer");
-@@ -1819,6 +1844,7 @@
+@@ -1740,6 +1765,8 @@
+                 this.field_71460_t.func_78464_a();
+             }
+ 
++            this.field_71424_I.func_76318_c("lighting");
++            this.field_71441_e.lightingEngine.procLightUpdates();
+             this.field_71424_I.func_76318_c("levelRenderer");
+ 
+             if (!this.field_71445_n)
+@@ -1819,6 +1846,7 @@
          }
  
          this.field_71424_I.func_76319_b();
@@ -227,7 +236,7 @@
          this.field_71423_H = func_71386_F();
      }
  
-@@ -1924,6 +1950,7 @@
+@@ -1924,6 +1952,7 @@
                      }
                  }
              }
@@ -235,7 +244,7 @@
          }
  
          this.func_184117_aA();
-@@ -2170,6 +2197,8 @@
+@@ -2170,6 +2199,8 @@
      {
          while (Mouse.next())
          {
@@ -244,7 +253,7 @@
              int i = Mouse.getEventButton();
              KeyBinding.func_74510_a(i - 100, Mouse.getEventButtonState());
  
-@@ -2235,6 +2264,7 @@
+@@ -2235,6 +2266,7 @@
  
      public void func_71371_a(String p_71371_1_, String p_71371_2_, @Nullable WorldSettings p_71371_3_)
      {
@@ -252,7 +261,7 @@
          this.func_71403_a((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
-@@ -2277,6 +2307,12 @@
+@@ -2277,6 +2309,12 @@
  
          while (!this.field_71437_Z.func_71200_ad())
          {
@@ -265,7 +274,7 @@
              String s = this.field_71437_Z.func_71195_b_();
  
              if (s != null)
-@@ -2302,8 +2338,14 @@
+@@ -2302,8 +2340,14 @@
          SocketAddress socketaddress = this.field_71437_Z.func_147137_ag().func_151270_a();
          NetworkManager networkmanager = NetworkManager.func_150722_a(socketaddress);
          networkmanager.func_150719_a(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
@@ -282,7 +291,7 @@
          this.field_71453_ak = networkmanager;
      }
  
-@@ -2314,6 +2356,8 @@
+@@ -2314,6 +2358,8 @@
  
      public void func_71353_a(@Nullable WorldClient p_71353_1_, String p_71353_2_)
      {
@@ -291,7 +300,7 @@
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2326,6 +2370,18 @@
+@@ -2326,6 +2372,18 @@
              if (this.field_71437_Z != null && this.field_71437_Z.func_175578_N())
              {
                  this.field_71437_Z.func_71263_m();
@@ -310,7 +319,7 @@
              }
  
              this.field_71437_Z = null;
-@@ -2349,6 +2405,7 @@
+@@ -2349,6 +2407,7 @@
              this.field_71456_v.func_181029_i();
              this.func_71351_a((ServerData)null);
              this.field_71455_al = false;
@@ -318,7 +327,7 @@
          }
  
          this.field_147127_av.func_147690_c();
-@@ -2466,159 +2523,8 @@
+@@ -2466,159 +2525,8 @@
      {
          if (this.field_71476_x != null && this.field_71476_x.field_72313_a != RayTraceResult.Type.MISS)
          {
@@ -480,7 +489,7 @@
          }
      }
  
-@@ -2921,18 +2827,8 @@
+@@ -2921,18 +2829,8 @@
  
      public static int func_71369_N()
      {
@@ -501,7 +510,7 @@
      }
  
      public boolean func_70002_Q()
-@@ -3071,15 +2967,16 @@
+@@ -3071,15 +2969,16 @@
              {
                  if (Keyboard.getEventKeyState())
                  {
@@ -520,7 +529,7 @@
              }
          }
      }
-@@ -3199,6 +3096,12 @@
+@@ -3199,6 +3098,12 @@
          return this.field_184127_aH;
      }
  

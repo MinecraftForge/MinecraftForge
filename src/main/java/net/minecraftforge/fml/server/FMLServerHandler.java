@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -326,6 +328,13 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         // Always the server on the dedicated server, eventually add Per-World if Mojang adds world stuff.
         return getServer();
+    }
+
+    @Override
+    @Nullable
+    public IThreadListener getMinecraftThread()
+    {
+        return null;
     }
 
     @Override

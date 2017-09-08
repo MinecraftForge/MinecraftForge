@@ -60,10 +60,19 @@
          return chunk;
      }
  
-@@ -225,6 +253,11 @@
+@@ -186,6 +214,7 @@
+ 
+     public boolean func_186027_a(boolean p_186027_1_)
+     {
++        this.field_73251_h.lightingEngine.procLightUpdates();
+         int i = 0;
+         List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
+ 
+@@ -225,6 +254,12 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
++                this.field_73251_h.lightingEngine.procLightUpdates();
 +                for (ChunkPos forced : this.field_73251_h.getPersistentChunks().keySet())
 +                {
 +                    this.field_73248_b.remove(ChunkPos.func_77272_a(forced.field_77276_a, forced.field_77275_b));
@@ -72,7 +81,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -239,6 +272,11 @@
+@@ -239,6 +274,11 @@
                          this.func_73243_a(chunk);
                          this.field_73244_f.remove(olong);
                          ++i;

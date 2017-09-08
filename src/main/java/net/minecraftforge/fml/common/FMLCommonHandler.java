@@ -690,6 +690,12 @@ public class FMLCommonHandler
         return sidedDelegate.getWorldThread(net);
     }
 
+    @Nullable
+    public IThreadListener getMinecraftThread()
+    {
+        return sidedDelegate.getMinecraftThread();
+    }
+
     public static void callFuture(FutureTask<?> task)
     {
         try
