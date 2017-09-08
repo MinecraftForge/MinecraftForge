@@ -103,7 +103,7 @@ public class GuiEditArray extends GuiScreen
     @Override
     public void initGui()
     {
-        this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
+        this.entryList = createEditArrayEntries();
 
         int undoGlyphWidth = mc.fontRenderer.getStringWidth(UNDO_CHAR) * 2;
         int resetGlyphWidth = mc.fontRenderer.getStringWidth(RESET_CHAR) * 2;
@@ -136,13 +136,18 @@ public class GuiEditArray extends GuiScreen
         else if (button.id == 2001)
         {
             this.currentValues = configElement.getDefaults();
-            this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
+            this.entryList = createEditArrayEntries();
         }
         else if (button.id == 2002)
         {
             this.currentValues = Arrays.copyOf(beforeValues, beforeValues.length);
-            this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
+            this.entryList = createEditArrayEntries();
         }
+    }
+
+    protected GuiEditArrayEntries createEditArrayEntries()
+    {
+        return new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
     }
 
     @Override
