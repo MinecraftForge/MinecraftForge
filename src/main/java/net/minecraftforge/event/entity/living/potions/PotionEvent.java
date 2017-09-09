@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 /** Event for when a potion */
 @Cancelable
 public class PotionEvent extends LivingEvent {
-	private PotionEffect potionEffect;
+	protected PotionEffect potionEffect;
 
 	public PotionEvent(EntityLivingBase entity, PotionEffect effect) {
 		super(entity);
@@ -17,10 +17,6 @@ public class PotionEvent extends LivingEvent {
 
 	public PotionEffect getEffect() {
 		return this.potionEffect;
-	}
-
-	public void setEffect(PotionEffect effect) {
-		this.potionEffect = effect;
 	}
 
 }

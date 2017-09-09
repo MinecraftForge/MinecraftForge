@@ -8,4 +8,8 @@ public class PotionAppliedEvent extends PotionEvent {
 	public PotionAppliedEvent(EntityLivingBase entity, PotionEffect effect) {
 		super(entity, effect);
 	}
+
+	public void setEffect(PotionEffect effect) {
+		this.potionEffect = effect;
+	}
 }
