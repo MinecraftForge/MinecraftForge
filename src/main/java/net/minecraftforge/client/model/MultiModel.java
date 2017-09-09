@@ -291,7 +291,7 @@ public final class MultiModel implements IModel
 
         if(bakedBase == null && parts.isEmpty())
         {
-            FMLLog.log(Level.ERROR, "MultiModel %s is empty (no base model or parts were provided/resolved)", location);
+            FMLLog.log.error("MultiModel {} is empty (no base model or parts were provided/resolved)", location);
             IModel missing = ModelLoaderRegistry.getMissingModel();
             return missing.bake(missing.getDefaultState(), format, bakedTextureGetter);
         }

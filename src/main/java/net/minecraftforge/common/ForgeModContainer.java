@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.nbt.NBTBase;
@@ -118,6 +120,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
     public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
+
+    static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -232,7 +236,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         if (removeErroringEntities)
         {
-            FMLLog.warning("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
+            FMLLog.log.warn("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringTileEntities", false);
@@ -243,7 +247,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         if (removeErroringTileEntities)
         {
-            FMLLog.warning("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
+            FMLLog.log.warn("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
@@ -419,11 +423,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 itr.remove();
         }
 
-        FMLLog.log(ForgeVersion.MOD_ID, Level.DEBUG, "Preloading CrashReport Classes");
+        log.debug("Preloading CrashReport Classes");
         Collections.sort(all); //Sort it because I like pretty output ;)
         for (String name : all)
         {
-            FMLLog.log(ForgeVersion.MOD_ID, Level.DEBUG, "\t" + name);
+            log.debug("\t{}", name);
             try
             {
                 Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());

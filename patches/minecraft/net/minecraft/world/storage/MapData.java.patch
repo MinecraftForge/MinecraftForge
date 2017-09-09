@@ -9,26 +9,16 @@
      public boolean field_186210_e;
      public boolean field_191096_f;
      public byte field_76197_d;
-@@ -46,7 +46,17 @@
+@@ -46,7 +46,7 @@
  
      public void func_76184_a(NBTTagCompound p_76184_1_)
      {
 -        this.field_76200_c = p_76184_1_.func_74771_c("dimension");
-+        net.minecraft.nbt.NBTBase dimension = p_76184_1_.func_74781_a("dimension");
-+
-+        if (dimension instanceof net.minecraft.nbt.NBTTagByte)
-+        {
-+            this.field_76200_c = ((net.minecraft.nbt.NBTTagByte)dimension).func_150290_f();
-+        }
-+        else
-+        {
-+            this.field_76200_c = ((net.minecraft.nbt.NBTTagInt)dimension).func_150287_d();
-+        }
-+
++        this.field_76200_c = p_76184_1_.func_74762_e("dimension");
          this.field_76201_a = p_76184_1_.func_74762_e("xCenter");
          this.field_76199_b = p_76184_1_.func_74762_e("zCenter");
          this.field_76197_d = p_76184_1_.func_74771_c("scale");
-@@ -98,7 +108,7 @@
+@@ -98,7 +98,7 @@
  
      public NBTTagCompound func_189551_b(NBTTagCompound p_189551_1_)
      {
@@ -37,7 +27,7 @@
          p_189551_1_.func_74768_a("xCenter", this.field_76201_a);
          p_189551_1_.func_74768_a("zCenter", this.field_76199_b);
          p_189551_1_.func_74774_a("scale", this.field_76197_d);
-@@ -209,9 +219,9 @@
+@@ -209,9 +209,9 @@
              p_191095_8_ = p_191095_8_ + (p_191095_8_ < 0.0D ? -8.0D : 8.0D);
              b2 = (byte)((int)(p_191095_8_ * 16.0D / 360.0D));
  

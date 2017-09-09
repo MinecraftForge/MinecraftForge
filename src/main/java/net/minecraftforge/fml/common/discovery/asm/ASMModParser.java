@@ -64,7 +64,7 @@ public class ASMModParser
         }
         catch (Exception ex)
         {
-            FMLLog.log(Level.ERROR, ex, "Unable to read a class file correctly");
+            FMLLog.log.error("Unable to read a class file correctly", ex);
             throw new LoaderException(ex);
         }
     }

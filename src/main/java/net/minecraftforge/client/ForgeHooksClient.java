@@ -512,7 +512,7 @@ public class ForgeHooksClient
                 glEnableVertexAttribArray(attr.getIndex());
                 glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
             default:
-                FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
+                FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
     }
 
@@ -542,7 +542,7 @@ public class ForgeHooksClient
             case GENERIC:
                 glDisableVertexAttribArray(attr.getIndex());
             default:
-                FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
+                FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
     }
 
