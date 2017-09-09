@@ -33,6 +33,7 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 import java.util.regex.Pattern;
 
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
@@ -40,7 +41,6 @@ import net.minecraftforge.fml.repackage.com.nothome.delta.GDiffPatcher;
 import LZMA.LzmaInputStream;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
@@ -171,7 +171,10 @@ public class ClassPatchManager {
             InputStream binpatchesCompressed = getClass().getResourceAsStream("/binpatches.pack.lzma");
             if (binpatchesCompressed==null)
             {
-                FMLLog.log.error("The binary patch set is missing. Either you are in a development environment, or things are not going to work!");
+                if (!((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")))
+                {
+                    FMLLog.log.fatal("The binary patch set is missing, things are not going to work!");
+                }
                 return;
             }
             LzmaInputStream binpatchesDecompressed = new LzmaInputStream(binpatchesCompressed);
@@ -182,8 +185,7 @@ public class ClassPatchManager {
         }
         catch (Exception e)
         {
-            FMLLog.log.error("Error occurred reading binary patches. Expect severe problems!", e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException("Error occurred reading binary patches. Expect severe problems!", e);
         }
 
         patches = ArrayListMultimap.create();

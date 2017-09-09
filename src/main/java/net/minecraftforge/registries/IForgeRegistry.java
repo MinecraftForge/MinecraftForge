@@ -94,4 +94,12 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     {
         V createDummy(ResourceLocation key);
     }
+
+    /**
+     *
+     */
+    interface MissingFactory<V extends IForgeRegistryEntry<V>>
+    {
+        V createMissing(ResourceLocation key, boolean isNetwork);
+    }
 }

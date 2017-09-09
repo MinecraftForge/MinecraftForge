@@ -26,20 +26,16 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.logging.log4j.Level;
 import org.objectweb.asm.Type;
 
 import java.util.function.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
-
-import javax.annotation.Nullable;
 
 public enum CapabilityManager
 {
@@ -62,7 +58,7 @@ public enum CapabilityManager
             try {
                 return implementation.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
         });
     }

@@ -38,10 +38,6 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.Side;
 
-import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Throwables;
-
 public abstract class FMLMessage {
     public static class CompleteHandshake extends FMLMessage {
         Side target;
@@ -181,10 +177,11 @@ public abstract class FMLMessage {
             try
             {
                 entity.getDataManager().writeEntries(pb);
-            } catch (IOException e)
+            }
+            catch (IOException e)
             {
                 FMLLog.log.fatal("Encountered fatal exception trying to send entity spawn data watchers", e);
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
             buf.writeBytes(tmpBuf);
 
@@ -233,10 +230,11 @@ public abstract class FMLMessage {
             try
             {
                 dataWatcherList = EntityDataManager.readEntries(new PacketBuffer(dat));
-            } catch (IOException e)
+            }
+            catch (IOException e)
             {
                 FMLLog.log.fatal("There was a critical error decoding the datawatcher stream for a mod entity.", e);
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
 
             throwerId = dat.readInt();

@@ -11,11 +11,11 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.Set;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import net.minecraftforge.common.config.Config.RangeDouble;
 import net.minecraftforge.common.config.Config.RangeInt;
+import org.apache.commons.lang3.StringUtils;
 
 import static net.minecraftforge.common.config.ConfigManager.*;
 
@@ -84,9 +84,9 @@ public abstract class FieldWrapper implements IFieldWrapper
                 throw new IllegalArgumentException(String.format("The map '%s' of class '%s' must have the key type String!", field.getName(),
                         field.getDeclaringClass().getCanonicalName()), cce);
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
 
             ParameterizedType type = (ParameterizedType) field.getGenericType();
@@ -132,13 +132,13 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public Object getValue(String key)
         {
-            return theMap.get(key.replaceFirst(category + "." + name + ".", ""));
+            return theMap.get(StringUtils.replaceOnce(key, category + "." + name + ".", ""));
         }
 
         @Override
         public void setValue(String key, Object value)
         {
-            String suffix = key.replaceFirst(category + "." + name + ".", "");
+            String suffix = StringUtils.replaceOnce(key, category + "." + name + ".", "");
             theMap.put(suffix, value);
         }
 
@@ -159,7 +159,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart)
         {
-            ConfigCategory confCat = cfg.getCategory(category);
+            ConfigCategory confCat = cfg.getCategory(getCategory());
             confCat.setComment(desc);
             confCat.setLanguageKey(langKey);
             confCat.setRequiresMcRestart(reqMCRestart);
@@ -200,11 +200,10 @@ public abstract class FieldWrapper implements IFieldWrapper
                 Enum enu = (Enum) field.get(instance);
                 return enu.name();
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
-            return null;
         }
 
         @Override
@@ -218,9 +217,9 @@ public abstract class FieldWrapper implements IFieldWrapper
             {
                 field.set(instance, enu);
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
         }
 
@@ -271,11 +270,10 @@ public abstract class FieldWrapper implements IFieldWrapper
             {
                 return field.get(instance);
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
-            return null;
         }
 
         @Override
@@ -287,9 +285,9 @@ public abstract class FieldWrapper implements IFieldWrapper
             {
                 field.set(instance, value);
             }
-            catch (Exception e)
+            catch (IllegalAccessException e)
             {
-                Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
         }
 

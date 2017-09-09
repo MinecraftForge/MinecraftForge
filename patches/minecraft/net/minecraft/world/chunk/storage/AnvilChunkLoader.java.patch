@@ -1,27 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -49,9 +49,43 @@
+@@ -49,9 +49,30 @@
          this.field_193416_e = p_i46673_2_;
      }
  
++    @Deprecated // TODO: remove (1.13)
 +    public boolean chunkExists(World world, int x, int z)
 +    {
-+        ChunkPos chunkcoordintpair = new ChunkPos(x, z);
-+
-+        if (this.field_193415_c.contains(chunkcoordintpair))
-+        {
-+            for(ChunkPos pendingChunkCoord : this.field_75828_a.keySet())
-+            {
-+                if (pendingChunkCoord.equals(chunkcoordintpair))
-+                {
-+                    return true;
-+                }
-+            }
-+        }
-+
-+        return RegionFileCache.func_76550_a(this.field_75825_d, x, z).chunkExists(x & 31, z & 31);
++        return func_191063_a(x, z);
 +    }
-+
 +
      @Nullable
      public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
@@ -44,7 +31,7 @@
          ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
          NBTTagCompound nbttagcompound = this.field_75828_a.get(chunkpos);
  
-@@ -67,7 +101,7 @@
+@@ -67,7 +88,7 @@
              nbttagcompound = this.field_193416_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
          }
  
@@ -53,7 +40,7 @@
      }
  
      public boolean func_191063_a(int p_191063_1_, int p_191063_2_)
-@@ -80,6 +114,12 @@
+@@ -80,6 +101,12 @@
      @Nullable
      protected Chunk func_75822_a(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
      {
@@ -66,7 +53,7 @@
          if (!p_75822_4_.func_150297_b("Level", 10))
          {
              field_151505_a.error("Chunk file at {},{} is missing level data, skipping", Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_));
-@@ -103,10 +143,29 @@
+@@ -103,10 +130,29 @@
                      field_151505_a.error("Chunk file at {},{} is in the wrong location; relocating. (Expected {}, {}, got {}, {})", Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(chunk.field_76635_g), Integer.valueOf(chunk.field_76647_h));
                      nbttagcompound.func_74768_a("xPos", p_75822_2_);
                      nbttagcompound.func_74768_a("zPos", p_75822_3_);
@@ -97,10 +84,10 @@
              }
          }
      }
-@@ -121,7 +180,10 @@
+@@ -121,7 +167,9 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
-             nbttagcompound.func_74768_a("DataVersion", 1139);
+             nbttagcompound.func_74768_a("DataVersion", 1241);
 +            net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(nbttagcompound);
              this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
 +            net.minecraftforge.common.ForgeChunkManager.storeChunkNBT(p_75816_2_, nbttagcompound1);
@@ -108,7 +95,7 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -305,11 +367,19 @@
+@@ -305,11 +354,19 @@
              {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
@@ -128,7 +115,7 @@
              }
          }
  
-@@ -318,8 +388,16 @@
+@@ -318,8 +375,16 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -145,7 +132,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -388,6 +466,12 @@
+@@ -388,6 +453,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -158,7 +145,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
-@@ -431,8 +515,6 @@
+@@ -431,8 +502,6 @@
                  p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
              }
          }

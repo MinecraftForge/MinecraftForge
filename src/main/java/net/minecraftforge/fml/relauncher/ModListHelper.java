@@ -21,14 +21,13 @@ package net.minecraftforge.fml.relauncher;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.FMLLog;
 
-import org.apache.logging.log4j.Level;
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
@@ -105,7 +104,7 @@ public class ModListHelper {
         }
         String json;
         try {
-            json = Files.asCharSource(f, Charsets.UTF_8).read();
+            json = Files.asCharSource(f, StandardCharsets.UTF_8).read();
         } catch (IOException e1) {
             FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Failed to read modList json file {}.", listFile), e1);
             return;
