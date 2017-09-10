@@ -157,7 +157,7 @@
          {
              if (this.field_150816_i.containsKey(p_177426_1_))
              {
-@@ -854,14 +854,17 @@
+@@ -854,8 +854,9 @@
  
          for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.field_76645_j)
          {
@@ -168,15 +168,7 @@
      }
  
      public void func_76623_d()
-     {
-         this.field_76636_d = false;
- 
-+        this.field_76637_e.markTileEntitiesInChunkForRemoval(this);
-+        if (false) // Forge: remove all TEs in a chunk at once instead of marking each one for removal
-         for (TileEntity tileentity : this.field_150816_i.values())
-         {
-             this.field_76637_e.func_147457_a(tileentity);
-@@ -871,6 +874,7 @@
+@@ -871,6 +872,7 @@
          {
              this.field_76637_e.func_175681_c(classinheritancemultimap);
          }
@@ -184,7 +176,7 @@
      }
  
      public void func_76630_e()
-@@ -880,8 +884,8 @@
+@@ -880,8 +882,8 @@
  
      public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, Predicate <? super Entity > p_177414_4_)
      {
@@ -195,7 +187,7 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -918,8 +922,8 @@
+@@ -918,8 +920,8 @@
  
      public <T extends Entity> void func_177430_a(Class <? extends T > p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, Predicate <? super T > p_177430_4_)
      {
@@ -206,7 +198,7 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -997,6 +1001,8 @@
+@@ -997,6 +999,8 @@
  
      protected void func_186034_a(IChunkGenerator p_186034_1_)
      {
@@ -215,7 +207,7 @@
          if (this.func_177419_t())
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
-@@ -1008,8 +1014,10 @@
+@@ -1008,8 +1012,10 @@
          {
              this.func_150809_p();
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
@@ -226,7 +218,7 @@
      }
  
      public BlockPos func_177440_h(BlockPos p_177440_1_)
-@@ -1064,7 +1072,7 @@
+@@ -1064,7 +1070,7 @@
          {
              BlockPos blockpos = this.field_177447_w.poll();
  
@@ -235,7 +227,7 @@
              {
                  TileEntity tileentity = this.func_177422_i(blockpos);
                  this.field_76637_e.func_175690_a(blockpos, tileentity);
-@@ -1128,6 +1136,13 @@
+@@ -1128,6 +1134,13 @@
      @SideOnly(Side.CLIENT)
      public void func_186033_a(PacketBuffer p_186033_1_, int p_186033_2_, boolean p_186033_3_)
      {
@@ -249,7 +241,7 @@
          boolean flag = this.field_76637_e.field_73011_w.func_191066_m();
  
          for (int i = 0; i < this.field_76652_q.length; ++i)
-@@ -1176,10 +1191,16 @@
+@@ -1176,10 +1189,16 @@
          this.field_76646_k = true;
          this.func_76590_a();
  
@@ -266,7 +258,7 @@
      }
  
      public Biome func_177411_a(BlockPos p_177411_1_, BiomeProvider p_177411_2_)
-@@ -1244,13 +1265,13 @@
+@@ -1244,13 +1263,13 @@
                      BlockPos blockpos1 = blockpos.func_177982_a(k, (j << 4) + i1, l);
                      boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
@@ -282,7 +274,7 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1381,7 +1402,7 @@
+@@ -1381,7 +1400,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -291,7 +283,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1489,4 +1510,34 @@
+@@ -1489,4 +1508,34 @@
          QUEUED,
          CHECK;
      }

@@ -563,6 +563,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             Integer id = this.ids.inverse().remove(value);
             if (id == null)
                 throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
+
+            if (DEBUG)
+                FMLLog.log.trace("Registry {} remove: {} {}", this.superType.getSimpleName(), key, id);
         }
 
         return value;
@@ -702,10 +705,28 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         V dummy = this.dummyFactory.createDummy(key);
         if (DEBUG)
-            FMLLog.log.trace("Registry Dummy Add: {} {} -> {}", key, id, dummy);
+            FMLLog.log.debug("Registry Dummy Add: {} {} -> {}", key, id, dummy);
 
         //It was blocked before so we need to unset the blocking map
         this.availabilityMap.clear(id);
+        if (this.containsKey(key))
+        {
+            //If the entry already exists, we need to delete it so we can add a dummy...
+            V value = this.names.remove(key);
+            if (value == null)
+                throw new IllegalStateException("ContainsKey for " + key + " was true, but removing by name returned no value.. This should never happen unless hackery!");
+
+
+            Integer oldid = this.ids.inverse().remove(value);
+            if (oldid == null)
+                throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
+
+            if (oldid != id)
+                FMLLog.log.debug("Registry {}: Dummy ID mismatch {} {} -> {}", this.superType.getSimpleName(), key, oldid, id);
+
+            if (DEBUG)
+                FMLLog.log.debug("Registry {} remove: {} {}", this.superType.getSimpleName(), key, oldid);
+        }
 
         int realId = this.add(id, dummy);
         if (realId != id)

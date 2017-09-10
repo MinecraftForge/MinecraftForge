@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
+import net.minecraft.block.BlockObserver;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -308,6 +309,8 @@ public class GameData
 
             for (int meta = 0; meta < 16; meta++)
             {
+                if (block.getClass() == BlockObserver.class)
+                    continue; //Observers are bad and have non-cyclical states. So we HAVE to use the vanilla logic above.
                 if (usedMeta[meta])
                     blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta); // Put the CORRECT thing!
             }
@@ -544,7 +547,7 @@ public class GameData
                     // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
                     // in mod setup - Mark this entry as a dummy
                     int id = reg.getID(dummy);
-                    FMLLog.log.warn("Registry {}: The ID {} is currently locally mapped - it will be replaced with a dummy for this session", key, id);
+                    FMLLog.log.warn("Registry {}: The ID {} @ {} is currently locally mapped - it will be replaced with a dummy for this session", dummy, key, id);
                     reg.markDummy(dummy, id);
                 }
             });
