@@ -25,7 +25,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class HorseArmorTest 
 {
     public static final String MODID = "horse_armor_test";
-    public static final boolean ENABLED = true;
+    public static final boolean ENABLED = false;
     
     public static HorseArmorType testArmorType;
     @ObjectHolder("test_armor")
