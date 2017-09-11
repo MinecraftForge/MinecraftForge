@@ -71,36 +71,15 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
         float e1 = 1 + 1e-4f;
         if(ax > 2 - 1e-4f && ay <= e1 && az <= e1)
         {
-            if(x < 0)
-            {
-                x = -2 + 1e-4f;
-            }
-            else
-            {
-                x = 2 - 1e-4f;
-            }
+            x = x < 0 ? -2 + 1e-4f : 2 - 1e-4f;
         }
         else if(ay > 2 - 1e-4f && az <= e1 && ax <= e1)
         {
-            if(y < 0)
-            {
-                y = -2 + 1e-4f;
-            }
-            else
-            {
-                y = 2 - 1e-4f;
-            }
+            y = y < 0 ? -2 + 1e-4f : 2 - 1e-4f;
         }
         else if(az > 2 - 1e-4f && ax <= e1 && ay <= e1)
         {
-            if(z < 0)
-            {
-                z = -2 + 1e-4f;
-            }
-            else
-            {
-                z = 2 - 1e-4f;
-            }
+            z = z < 0 ? -2 + 1e-4f : 2 - 1e-4f;
         }
         ax = x > 0 ? x : -x;
         ay = y > 0 ? y : -y;
