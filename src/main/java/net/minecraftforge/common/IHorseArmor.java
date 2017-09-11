@@ -13,7 +13,7 @@ public interface IHorseArmor
      * @param stack the armor stack
      * @return an enum constant of type {@code HorseArmorType}
      */
-    public HorseArmorType getHorseArmorType(ItemStack stack);
+    HorseArmorType getHorseArmorType(ItemStack stack);
     
     /**
      * Called every tick from {@link EntityHorse#onUpdate()} on the item in the armor slot.
@@ -21,5 +21,5 @@ public interface IHorseArmor
      * @param horse the horse wearing this armor
      * @param armor the armor itemstack
      */
-    public default void onHorseArmorTick(World world, EntityHorse horse, ItemStack armor) {}
+    default void onHorseArmorTick(World world, EntityHorse horse, ItemStack armor) {}
 }
