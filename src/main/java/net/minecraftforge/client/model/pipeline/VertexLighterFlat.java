@@ -231,8 +231,8 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z)
     {
-        float e1 = 1 - 1e-2f;
-        float e2 = 0.95f;
+        final float e1 = 1f - 1e-2f;
+        final float e2 = 0.95f;
 
         boolean full = blockInfo.isFullCube();
         EnumFacing side = null;
