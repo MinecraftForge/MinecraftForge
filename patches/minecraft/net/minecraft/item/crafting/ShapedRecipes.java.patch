@@ -8,7 +8,7 @@
 -import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class ShapedRecipes implements IRecipe
-+public class ShapedRecipes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++public class ShapedRecipes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements net.minecraftforge.common.crafting.IShapedRecipe
  {
      public final int field_77576_b;
      public final int field_77577_c;
@@ -40,3 +40,20 @@
      public boolean func_194133_a(int p_194133_1_, int p_194133_2_)
      {
          return p_194133_1_ >= this.field_77576_b && p_194133_2_ >= this.field_77577_c;
+@@ -379,4 +372,16 @@
+             return new ItemStack(item, j, i);
+         }
+     }
++
++    //================================================ FORGE START ================================================
++    @Override
++    public int getRecipeWidth()
++    {
++        return this.func_192403_f();
++    }
++    @Override
++    public int getRecipeHeight()
++    {
++        return this.func_192404_g();
++    }
+ }
