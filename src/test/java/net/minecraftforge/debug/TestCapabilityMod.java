@@ -42,6 +42,7 @@ public class TestCapabilityMod
     @CapabilityInject(IExampleCapability.class)
     private static final Capability<IExampleCapability> TEST_CAP = null;
 
+    static final boolean ENABLED = false;
     private static Logger logger;
 
     @Mod.EventHandler
@@ -58,7 +59,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent.LeftClickBlock event)
     {
-        if (event.getItemStack().getItem() != Items.STICK)
+        if (!ENABLED || event.getItemStack().getItem() != Items.STICK)
         {
             return;
         }
@@ -82,7 +83,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onInteractItem(PlayerInteractEvent.RightClickItem event)
     {
-        if (!event.getEntityPlayer().isSneaking())
+        if (!ENABLED || !event.getEntityPlayer().isSneaking())
         {
             return;
         }
@@ -215,7 +216,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent event)
     {
-        if (!event.world.isRemote)
+        if (!ENABLED || !event.world.isRemote)
         {
             List<EntityPlayer> players = event.world.playerEntities;
             int i = 0;
