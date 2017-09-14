@@ -28,7 +28,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -145,7 +145,7 @@ public class BlockSnapshot
         World world = this.world != null ? this.world.get() : null;
         if (world == null)
         {
-            world = DimensionManager.getWorld(getDimId());
+            world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(getDimId());
             this.world = new WeakReference<World>(world);
         }
         return world;
