@@ -20,8 +20,8 @@
 package net.minecraftforge.common.util;
 
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 
-import com.google.common.base.Objects;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -115,15 +115,13 @@ public class BlockSnapshot
 
     public static BlockSnapshot readFromNBT(NBTTagCompound tag)
     {
-        NBTTagCompound nbt = tag.getBoolean("hasTE") ? tag.getCompoundTag("tileEntity") : null;
-
         return new BlockSnapshot(
                 tag.getInteger("dimension"),
                 new BlockPos(tag.getInteger("posX"), tag.getInteger("posY"), tag.getInteger("posZ")),
                 new ResourceLocation(tag.getString("blockMod"), tag.getString("blockName")),
                 tag.getInteger("metadata"),
                 tag.getInteger("flag"),
-                nbt);
+                tag.getBoolean("hasTE") ? tag.getCompoundTag("tileEntity") : null);
     }
 
     @Nullable
@@ -185,6 +183,7 @@ public class BlockSnapshot
     {
         IBlockState current = getCurrentBlock();
         IBlockState replaced = getReplacedBlock();
+
         if (current.getBlock() != replaced.getBlock() || current.getBlock().getMetaFromState(current) != replaced.getBlock().getMetaFromState(replaced))
         {
             if (force)
@@ -199,6 +198,7 @@ public class BlockSnapshot
 
         world.setBlockState(pos, replaced, notifyNeighbors ? 3 : 2);
         world.notifyBlockUpdate(pos, current, replaced, notifyNeighbors ? 3 : 2);
+
         TileEntity te = null;
         if (getNbt() != null)
         {
@@ -264,11 +264,11 @@ public class BlockSnapshot
         {
             return false;
         }
-        if (!Objects.equal(this.getNbt(), other.getNbt()))
+        if (!this.getRegistryName().equals(other.getRegistryName()))
         {
             return false;
         }
-        if (!Objects.equal(this.getRegistryName(), other.getRegistryName()))
+        if (!Objects.equals(this.getNbt(), other.getNbt()))
         {
             return false;
         }
@@ -282,8 +282,8 @@ public class BlockSnapshot
         hash = 73 * hash + this.getMeta();
         hash = 73 * hash + this.getDimId();
         hash = 73 * hash + this.getPos().hashCode();
-        hash = 73 * hash + (this.getNbt() != null ? this.getNbt().hashCode() : 0);
-        hash = 73 * hash + (this.getRegistryName() != null ? this.getRegistryName().hashCode() : 0);
+        hash = 73 * hash + this.getRegistryName().hashCode();
+        hash = 73 * hash + Objects.hashCode(this.getNbt());
         return hash;
     }
 
