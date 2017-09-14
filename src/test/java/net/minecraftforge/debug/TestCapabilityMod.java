@@ -216,7 +216,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent event)
     {
-        if (!ENABLED || !event.world.isRemote)
+        if (ENABLED && !event.world.isRemote)
         {
             List<EntityPlayer> players = event.world.playerEntities;
             int i = 0;
