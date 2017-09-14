@@ -44,8 +44,8 @@
                  JsonObject jsonobject = new JsonObject();
 +                if (p_serialize_1_.entryName != null && !p_serialize_1_.entryName.startsWith("custom#"))
 +                    jsonobject.addProperty("entryName", p_serialize_1_.entryName);
-                 jsonobject.addProperty("weight", (Number)Integer.valueOf(p_serialize_1_.field_186364_c));
-                 jsonobject.addProperty("quality", (Number)Integer.valueOf(p_serialize_1_.field_186365_d));
+                 jsonobject.addProperty("weight", Integer.valueOf(p_serialize_1_.field_186364_c));
+                 jsonobject.addProperty("quality", Integer.valueOf(p_serialize_1_.field_186365_d));
  
 @@ -86,6 +95,9 @@
                      jsonobject.add("conditions", p_serialize_3_.serialize(p_serialize_1_.field_186366_e));

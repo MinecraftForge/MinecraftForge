@@ -9,15 +9,15 @@
              }
  
              public int func_75219_a()
-@@ -232,6 +232,7 @@
+@@ -229,6 +229,7 @@
  
-                 if (potiontype != PotionTypes.field_185230_b && potiontype != PotionTypes.field_185229_a)
+                 if (p_190901_1_ instanceof EntityPlayerMP)
                  {
 +                    net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(p_190901_1_, p_190901_2_);
-                     this.field_75244_a.func_71029_a(AchievementList.field_187970_B);
+                     CriteriaTriggers.field_192130_j.func_192173_a((EntityPlayerMP)p_190901_1_, potiontype);
                  }
  
-@@ -241,8 +242,7 @@
+@@ -238,8 +239,7 @@
  
              public static boolean func_75243_a_(ItemStack p_75243_0_)
              {

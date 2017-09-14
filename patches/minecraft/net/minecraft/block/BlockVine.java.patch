@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockVine.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
-@@ -27,7 +27,7 @@
+@@ -28,7 +28,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,7 +9,7 @@
  {
      public static final PropertyBool field_176277_a = PropertyBool.func_177716_a("up");
      public static final PropertyBool field_176273_b = PropertyBool.func_177716_a("north");
-@@ -459,4 +459,14 @@
+@@ -459,7 +459,17 @@
  
          return i;
      }
@@ -22,5 +22,8 @@
 +        return java.util.Arrays.asList(new ItemStack(this, 1));
 +    }
 +    /*************************FORGE END***********************************/
+ 
 +
- }
+     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
+     {
+         return BlockFaceShape.UNDEFINED;

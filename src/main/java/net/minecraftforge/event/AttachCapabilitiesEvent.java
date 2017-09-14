@@ -28,8 +28,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 
-import javax.annotation.Nonnull;
-
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
  * is created. Allowing for the attachment of arbitrary capability providers.
@@ -40,26 +38,13 @@ import javax.annotation.Nonnull;
 public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
 {
     private final T obj;
-    final Map<ResourceLocation, ICapabilityProvider> caps;// package-private for ForgeEventFactory
-    private final Map<ResourceLocation, ICapabilityProvider> view;
+    private final Map<ResourceLocation, ICapabilityProvider> caps = Maps.newLinkedHashMap();
+    private final Map<ResourceLocation, ICapabilityProvider> view = Collections.unmodifiableMap(caps);
 
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public AttachCapabilitiesEvent(T obj)
-    {
-        this((Class<T>)Object.class, obj);
-    }
     public AttachCapabilitiesEvent(Class<T> type, T obj)
-    {
-        this(type, obj, Maps.<ResourceLocation, ICapabilityProvider>newLinkedHashMap());
-    }
-    // package-private for ForgeEventFactory
-    AttachCapabilitiesEvent(Class<T> type, T obj, Map<ResourceLocation, ICapabilityProvider> caps)
     {
         super(type);
         this.obj = obj;
-        this.caps = caps;
-        this.view = Collections.unmodifiableMap(caps);
     }
 
     /**
@@ -91,85 +76,5 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
     public Map<ResourceLocation, ICapabilityProvider> getCapabilities()
     {
         return view;
-    }
-
-
-    /**
-     * A version of the parent event which is only fired for Tile Entities.
-     */
-    @Deprecated
-    public static class TileEntity extends AttachCapabilitiesEvent<net.minecraft.tileentity.TileEntity>
-    {
-        private final net.minecraft.tileentity.TileEntity te;
-        public TileEntity(net.minecraft.tileentity.TileEntity te)
-        {
-            super(net.minecraft.tileentity.TileEntity.class, te);
-            this.te = te;
-        }
-        public net.minecraft.tileentity.TileEntity getTileEntity()
-        {
-            return this.te;
-        }
-    }
-
-    /**
-     * A version of the parent event which is only fired for Entities.
-     */
-    @Deprecated
-    public static class Entity extends AttachCapabilitiesEvent<net.minecraft.entity.Entity>
-    {
-        private final net.minecraft.entity.Entity entity;
-        public Entity(net.minecraft.entity.Entity entity)
-        {
-            super(net.minecraft.entity.Entity.class, entity);
-            this.entity = entity;
-        }
-        public net.minecraft.entity.Entity getEntity()
-        {
-            return this.entity;
-        }
-    }
-
-    /**
-     * A version of the parent event which is only fired for ItemStacks.
-     */
-    @Deprecated
-    public static class Item extends AttachCapabilitiesEvent<net.minecraft.item.Item>
-    {
-        private final net.minecraft.item.ItemStack stack;
-        private final net.minecraft.item.Item item;
-        public Item(net.minecraft.item.Item item, @Nonnull  net.minecraft.item.ItemStack stack)
-        {
-            super(net.minecraft.item.Item.class, item);
-            this.item = item;
-            this.stack = stack;
-        }
-        public net.minecraft.item.Item getItem()
-        {
-            return this.item;
-        }
-        @Nonnull
-        public net.minecraft.item.ItemStack getItemStack()
-        {
-            return this.stack;
-        }
-    }
-
-    /**
-     * A version of the parent event which is only fired for Worlds.
-     */
-    @Deprecated
-    public static class World extends AttachCapabilitiesEvent<net.minecraft.world.World>
-    {
-        private final net.minecraft.world.World world;
-        public World(net.minecraft.world.World world)
-        {
-            super(net.minecraft.world.World.class, world);
-            this.world = world;
-        }
-        public net.minecraft.world.World getWorld()
-        {
-            return this.world;
-        }
     }
 }

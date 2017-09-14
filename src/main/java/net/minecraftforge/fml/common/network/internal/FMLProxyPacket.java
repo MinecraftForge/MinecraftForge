@@ -40,9 +40,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.helpers.Integers;
-
 import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
@@ -58,7 +55,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
     private INetHandler netHandler;
     private NetworkDispatcher dispatcher;
     private static Multiset<String> badPackets = ConcurrentHashMultiset.create();
-    private static int packetCountWarning = Integers.parseInt(System.getProperty("fml.badPacketCounter", "100"), 100);
+    private static int packetCountWarning = Integer.parseInt(System.getProperty("fml.badPacketCounter", "100"));
 
     public FMLProxyPacket(SPacketCustomPayload original)
     {
@@ -104,12 +101,12 @@ public class FMLProxyPacket implements Packet<INetHandler> {
                     badPackets.add(this.channel);
                     if (badPackets.size() % packetCountWarning == 0)
                     {
-                        FMLLog.severe("Detected ongoing potential memory leak. %d packets have leaked. Top offenders", badPackets.size());
+                        FMLLog.log.fatal("Detected ongoing potential memory leak. {} packets have leaked. Top offenders", badPackets.size());
                         int i = 0;
                         for (Entry<String> s  : Multisets.copyHighestCountFirst(badPackets).entrySet())
                         {
                             if (i++ > 10) break;
-                            FMLLog.severe("\t %s : %d", s.getElement(), s.getCount());
+                            FMLLog.log.fatal("\t {} : {}", s.getElement(), s.getCount());
                         }
                     }
                 }
@@ -117,12 +114,12 @@ public class FMLProxyPacket implements Packet<INetHandler> {
             }
             catch (FMLNetworkException ne)
             {
-                FMLLog.log(Level.ERROR, ne, "There was a network exception handling a packet on channel %s", channel);
+                FMLLog.log.error("There was a network exception handling a packet on channel {}", channel, ne);
                 dispatcher.rejectHandshake(ne.getMessage());
             }
             catch (Throwable t)
             {
-                FMLLog.log(Level.ERROR, t, "There was a critical exception handling a packet on channel %s", channel);
+                FMLLog.log.error("There was a critical exception handling a packet on channel {}", channel, t);
                 dispatcher.rejectHandshake("A fatal error has occurred, this connection is terminated");
             }
         }

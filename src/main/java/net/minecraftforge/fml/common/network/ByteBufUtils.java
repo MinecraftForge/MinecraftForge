@@ -20,17 +20,29 @@
 package net.minecraftforge.fml.common.network;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import org.apache.commons.lang3.Validate;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryManager;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Throwables;
+import org.apache.commons.lang3.Validate;
 
 import io.netty.buffer.ByteBuf;
 
 import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Utilities for interacting with {@link ByteBuf}.
@@ -137,7 +149,7 @@ public class ByteBufUtils {
     public static String readUTF8String(ByteBuf from)
     {
         int len = readVarInt(from,2);
-        String str = from.toString(from.readerIndex(), len, Charsets.UTF_8);
+        String str = from.toString(from.readerIndex(), len, StandardCharsets.UTF_8);
         from.readerIndex(from.readerIndex() + len);
         return str;
     }
@@ -150,7 +162,7 @@ public class ByteBufUtils {
      */
     public static void writeUTF8String(ByteBuf to, String string)
     {
-        byte[] utf8Bytes = string.getBytes(Charsets.UTF_8);
+        byte[] utf8Bytes = string.getBytes(StandardCharsets.UTF_8);
         Validate.isTrue(varIntByteCount(utf8Bytes.length) < 3, "The string is too long for this encoding.");
         writeVarInt(to, utf8Bytes.length, 2);
         to.writeBytes(utf8Bytes);
@@ -180,10 +192,11 @@ public class ByteBufUtils {
         try
         {
             return pb.readItemStack();
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             // Unpossible?
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -215,7 +228,109 @@ public class ByteBufUtils {
         } catch (IOException e)
         {
             // Unpossible?
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Write a registry entry to the stream. The serialized format is not specified and must not be relied upon.
+     * Do not use this to write to a file, it is used for client-server communication only.
+     * @param out the buffer to write to
+     * @param entry the registry entry
+     */
+    public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntry(@Nonnull ByteBuf out, @Nonnull T entry)
+    {
+        ForgeRegistry<T> registry = (ForgeRegistry<T>)GameRegistry.findRegistry(entry.getRegistryType());
+        writeUTF8String(out, RegistryManager.ACTIVE.getName(registry).toString());
+        writeVarInt(out, registry.getID(entry), 5);
+    }
+
+    /**
+     * Read a registry entry from the stream. The same format as in {@link #writeRegistryEntry(ByteBuf, IForgeRegistryEntry)} is used.
+     * @param in the buffer to read from
+     * @param registry the registry the entry belongs to
+     * @return the read registry entry
+     */
+    @Nonnull
+    public static <T extends IForgeRegistryEntry<T>> T readRegistryEntry(@Nonnull ByteBuf in, @Nonnull IForgeRegistry<T> registry)
+    {
+        String registryName = readUTF8String(in);
+        int id = readVarInt(in, 5);
+        ResourceLocation expectedRegistryName = RegistryManager.ACTIVE.getName(registry);
+
+        if (!expectedRegistryName.toString().equals(registryName))
+            throw new IllegalArgumentException("Registry mismatch: " + registryName + " != " + expectedRegistryName);
+
+        T thing = ((ForgeRegistry<T>)registry).getRaw(id);
+        if (thing == null)
+            throw new IllegalArgumentException("Unknown ID " + id + " for registry " + expectedRegistryName + " received.");
+
+        return thing;
+    }
+
+    /**
+     * Write multiple registry entries from the same registry to the stream. The serialized format may be more compact than using
+     * {@link #writeRegistryEntry(ByteBuf, IForgeRegistryEntry)} multiple times.
+     * @param out the buffer to write to
+     * @param entries the entries to write
+     */
+    public static <T extends IForgeRegistryEntry<T>> void writeRegistryEntries(@Nonnull ByteBuf out, @Nonnull Collection<T> entries)
+    {
+        writeVarInt(out, entries.size(), 5);
+
+        Iterator<T> it = entries.iterator();
+        if (it.hasNext())
+        {
+            T first = it.next();
+            ForgeRegistry<T> registry = (ForgeRegistry<T>)GameRegistry.findRegistry(first.getRegistryType());
+            writeUTF8String(out, RegistryManager.ACTIVE.getName(registry).toString());
+            writeVarInt(out, registry.getID(first), 5);
+
+            while (it.hasNext())
+            {
+                int id = registry.getID(it.next());
+                if (id == -1)
+                    throw new IllegalArgumentException("Unregistered IForgeRegistryEntry in collection " + entries + ".");
+                writeVarInt(out, id, 5);
+            }
+        }
+    }
+
+    /**
+     * Read multiple registry entries from the same registries from the stream. The list of entries must have been written by
+     * {@link #writeRegistryEntries(ByteBuf, Collection)}.
+     * @param in the buffer to read from
+     * @param registry the registry the entries belong to
+     * @return the immutable list of entries
+     */
+    @Nonnull
+    public static <T extends IForgeRegistryEntry<T>> List<T> readRegistryEntries(@Nonnull ByteBuf in, @Nonnull IForgeRegistry<T> registry)
+    {
+        int size = readVarInt(in, 5);
+        if (size == 0)
+        {
+            return ImmutableList.of();
+        }
+        else
+        {
+            String registryName = readUTF8String(in);
+            ResourceLocation expectedRegistryName = RegistryManager.ACTIVE.getName(registry);
+            if (!expectedRegistryName.toString().equals(registryName))
+            {
+                throw new IllegalArgumentException("Registry mismatch: " + registryName + " != " + expectedRegistryName);
+            }
+
+            ImmutableList.Builder<T> b = ImmutableList.builder();
+            for (int i = 0; i < size; i++)
+            {
+                int id = readVarInt(in, 5);
+                T thing = ((ForgeRegistry<T>)registry).getRaw(id);
+                if (thing == null)
+                    throw new IllegalArgumentException("Unknown ID " + id + " for registry " + expectedRegistryName + " received.");
+
+                b.add(thing);
+            }
+            return b.build();
         }
     }
 

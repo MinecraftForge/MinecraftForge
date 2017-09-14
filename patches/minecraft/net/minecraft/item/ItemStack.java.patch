@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -47,7 +47,7 @@
+@@ -50,7 +50,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,19 +9,19 @@
  {
      public static final ItemStack field_190927_a = new ItemStack((Item)null);
      public static final DecimalFormat field_111284_a = new DecimalFormat("#.##");
-@@ -63,6 +63,10 @@
+@@ -66,6 +66,10 @@
      private Block field_179550_j;
      private boolean field_179551_k;
  
-+    private net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate;
++    private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +    private NBTTagCompound capNBT;
 +
      public ItemStack(Block p_i1876_1_)
      {
-         this((Block)p_i1876_1_, 1);
-@@ -88,8 +92,10 @@
-         this((Item)p_i1880_1_, p_i1880_2_, 0);
+         this(p_i1876_1_, 1);
+@@ -91,8 +95,10 @@
+         this(p_i1880_1_, p_i1880_2_, 0);
      }
  
 -    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_)
@@ -32,7 +32,7 @@
          this.field_151002_e = p_i1881_1_;
          this.field_77991_e = p_i1881_3_;
          this.field_77994_a = p_i1881_2_;
-@@ -100,6 +106,7 @@
+@@ -103,6 +109,7 @@
          }
  
          this.func_190923_F();
@@ -40,15 +40,17 @@
      }
  
      private void func_190923_F()
-@@ -109,6 +116,7 @@
+@@ -112,7 +119,8 @@
  
      public ItemStack(NBTTagCompound p_i47263_1_)
      {
+-        this.field_151002_e = Item.func_111206_d(p_i47263_1_.func_74779_i("id"));
 +        this.capNBT = p_i47263_1_.func_74764_b("ForgeCaps") ? p_i47263_1_.func_74775_l("ForgeCaps") : null;
-         this.field_151002_e = Item.func_111206_d(p_i47263_1_.func_74779_i("id"));
++        this.field_151002_e = p_i47263_1_.func_150297_b("id", 8) ? Item.func_111206_d(p_i47263_1_.func_74779_i("id")) : Item.func_150898_a(Blocks.field_150350_a); //Forge fix tons of NumberFormatExceptions that are caused by deserializing EMPTY ItemStacks.
          this.field_77994_a = p_i47263_1_.func_74771_c("Count");
          this.field_77991_e = Math.max(0, p_i47263_1_.func_74765_d("Damage"));
-@@ -124,11 +132,12 @@
+ 
+@@ -127,6 +135,7 @@
          }
  
          this.func_190923_F();
@@ -56,13 +58,16 @@
      }
  
      public boolean func_190926_b()
-     {
--        return this == field_190927_a ? true : (this.field_151002_e != null && this.field_151002_e != Item.func_150898_a(Blocks.field_150350_a) ? (this.field_77994_a <= 0 ? true : this.field_77991_e < -32768 || this.field_77991_e > 65535) : true);
-+        return this == field_190927_a ? true : (getItemRaw() != null && getItemRaw() != Item.func_150898_a(Blocks.field_150350_a) ? (this.field_77994_a <= 0 ? true : this.field_77991_e < -32768 || this.field_77991_e > 65535) : true);
-     }
- 
-     public static void func_189868_a(DataFixer p_189868_0_)
-@@ -148,11 +157,12 @@
+@@ -135,7 +144,7 @@
+         {
+             return true;
+         }
+-        else if (this.field_151002_e != null && this.field_151002_e != Item.func_150898_a(Blocks.field_150350_a))
++        else if (this.getItemRaw() != null && this.getItemRaw() != Item.func_150898_a(Blocks.field_150350_a))
+         {
+             if (this.field_77994_a <= 0)
+             {
+@@ -169,11 +178,12 @@
  
      public Item func_77973_b()
      {
@@ -76,7 +81,7 @@
          EnumActionResult enumactionresult = this.func_77973_b().func_180614_a(p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_, p_179546_8_);
  
          if (enumactionresult == EnumActionResult.SUCCESS)
-@@ -163,6 +173,19 @@
+@@ -184,6 +194,19 @@
          return enumactionresult;
      }
  
@@ -96,7 +101,7 @@
      public float func_150997_a(IBlockState p_150997_1_)
      {
          return this.func_77973_b().func_150893_a(this, p_150997_1_);
-@@ -190,12 +213,18 @@
+@@ -211,12 +234,18 @@
              p_77955_1_.func_74782_a("tag", this.field_77990_d);
          }
  
@@ -116,16 +121,16 @@
      }
  
      public boolean func_77985_e()
-@@ -205,7 +234,7 @@
- 
-     public boolean func_77984_f()
-     {
--        return this.field_190928_g ? false : (this.field_151002_e.func_77612_l() <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable"));
-+        return this.field_190928_g ? false : (this.field_151002_e.getMaxDamage(this) <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable"));
-     }
- 
-     public boolean func_77981_g()
-@@ -215,32 +244,27 @@
+@@ -230,7 +259,7 @@
+         {
+             return false;
+         }
+-        else if (this.field_151002_e.func_77612_l() <= 0)
++        else if (this.field_151002_e.getMaxDamage(this) <= 0)
+         {
+             return false;
+         }
+@@ -247,32 +276,27 @@
  
      public boolean func_77951_h()
      {
@@ -162,9 +167,9 @@
 +        return this.func_77973_b().getMaxDamage(this);
      }
  
-     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -272,8 +296,8 @@
-                 }
+     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable EntityPlayerMP p_96631_3_)
+@@ -309,8 +333,8 @@
+                 CriteriaTriggers.field_193132_s.func_193158_a(p_96631_3_, this, this.field_77991_e + p_96631_1_);
              }
  
 -            this.field_77991_e += p_96631_1_;
@@ -174,7 +179,7 @@
          }
      }
  
-@@ -322,7 +346,7 @@
+@@ -359,7 +383,7 @@
  
      public boolean func_150998_b(IBlockState p_150998_1_)
      {
@@ -183,34 +188,34 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_)
-@@ -332,7 +356,7 @@
+@@ -369,7 +393,7 @@
  
      public ItemStack func_77946_l()
      {
 -        ItemStack itemstack = new ItemStack(this.field_151002_e, this.field_77994_a, this.field_77991_e);
 +        ItemStack itemstack = new ItemStack(this.field_151002_e, this.field_77994_a, this.field_77991_e, this.capabilities != null ? this.capabilities.serializeNBT() : null);
+         itemstack.func_190915_d(this.func_190921_D());
  
          if (this.field_77990_d != null)
+@@ -394,7 +418,7 @@
+             }
+             else
+             {
+-                return p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d);
++                return (p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) && p_77970_0_.areCapsCompatible(p_77970_1_);
+             }
+         }
+         else
+@@ -435,7 +459,7 @@
+         }
+         else
          {
-@@ -344,7 +368,7 @@
- 
-     public static boolean func_77970_a(ItemStack p_77970_0_, ItemStack p_77970_1_)
-     {
--        return p_77970_0_.func_190926_b() && p_77970_1_.func_190926_b() ? true : (!p_77970_0_.func_190926_b() && !p_77970_1_.func_190926_b() ? (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null ? false : p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) : false);
-+        return p_77970_0_.func_190926_b() && p_77970_1_.func_190926_b() ? true : (!p_77970_0_.func_190926_b() && !p_77970_1_.func_190926_b() ? (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null ? false : (p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) && p_77970_0_.areCapsCompatible(p_77970_1_)) : false);
+-            return this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d);
++            return (this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d)) && this.areCapsCompatible(p_77959_1_);
+         }
      }
  
-     public static boolean func_77989_b(ItemStack p_77989_0_, ItemStack p_77989_1_)
-@@ -354,7 +378,7 @@
- 
-     private boolean func_77959_d(ItemStack p_77959_1_)
-     {
--        return this.field_77994_a != p_77959_1_.field_77994_a ? false : (this.func_77973_b() != p_77959_1_.func_77973_b() ? false : (this.field_77991_e != p_77959_1_.field_77991_e ? false : (this.field_77990_d == null && p_77959_1_.field_77990_d != null ? false : this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d))));
-+        return this.field_77994_a != p_77959_1_.field_77994_a ? false : (this.func_77973_b() != p_77959_1_.func_77973_b() ? false : (this.field_77991_e != p_77959_1_.field_77991_e ? false : (this.field_77990_d == null && p_77959_1_.field_77990_d != null ? false : (this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d)) && this.areCapsCompatible(p_77959_1_))));
-     }
- 
-     public static boolean func_179545_c(ItemStack p_179545_0_, ItemStack p_179545_1_)
-@@ -758,6 +782,7 @@
+@@ -862,6 +886,7 @@
              }
          }
  
@@ -218,7 +223,7 @@
          return list;
      }
  
-@@ -869,7 +894,7 @@
+@@ -987,7 +1012,7 @@
          }
          else
          {
@@ -227,10 +232,11 @@
          }
  
          return multimap;
-@@ -982,6 +1007,53 @@
-         }
+@@ -1130,4 +1155,113 @@
+     {
+         this.func_190917_f(-p_190918_1_);
      }
- 
++
 +    @Override
 +    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
@@ -278,14 +284,6 @@
 +        }
 +    }
 +
-     @SideOnly(Side.CLIENT)
-     public int func_190921_D()
-     {
-@@ -1013,4 +1085,28 @@
-     {
-         this.func_190917_f(-p_190918_1_);
-     }
-+
 +    /**
 +     * Set up forge's ItemStack additions.
 +     */
@@ -296,7 +294,7 @@
 +        {
 +            this.delegate = item.delegate;
 +            net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
-+            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(item, this, provider);
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this, provider);
 +            if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
 +        }
 +    }
@@ -308,5 +306,43 @@
 +    private Item getItemRaw()
 +    {
 +        return this.field_151002_e;
++    }
++
++    /**
++     * Modeled after ItemStack.areItemStacksEqual
++     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++     */
++    public static boolean areItemStacksEqualUsingNBTShareTag(ItemStack stackA, ItemStack stackB)
++    {
++        if (stackA.func_190926_b())
++            return stackB.func_190926_b();
++        else
++            return !stackB.func_190926_b() && stackA.isItemStackEqualUsingNBTShareTag(stackB);
++    }
++
++    /**
++     * Modeled after ItemStack.isItemStackEqual
++     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++     */
++    private boolean isItemStackEqualUsingNBTShareTag(ItemStack other)
++    {
++        return this.field_77994_a == other.field_77994_a && this.func_77973_b() == other.func_77973_b() && this.field_77991_e == other.field_77991_e && areItemStackShareTagsEqual(this, other);
++    }
++
++    /**
++     * Modeled after ItemStack.areItemStackTagsEqual
++     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++     */
++    public static boolean areItemStackShareTagsEqual(ItemStack stackA, ItemStack stackB)
++    {
++        NBTTagCompound shareTagA = stackA.func_77973_b().getNBTShareTag(stackA);
++        NBTTagCompound shareTagB = stackB.func_77973_b().getNBTShareTag(stackB);
++        if (shareTagA == null)
++            return shareTagB == null;
++        else
++            return shareTagB != null && shareTagA.equals(shareTagB);
 +    }
  }

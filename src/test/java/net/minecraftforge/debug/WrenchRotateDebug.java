@@ -2,7 +2,6 @@ package net.minecraftforge.debug;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -15,58 +14,37 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@Mod(modid = WrenchRotateDebug.modID, name = "Wrench Rotate Debug", version = "0.0.0")
+@Mod(modid = WrenchRotateDebug.modID, name = "Wrench Rotate Debug", version = "0.0.0", acceptableRemoteVersions = "*")
 public class WrenchRotateDebug
 {
     public static final String modID = "wrenchrotatedebug";
     private static final ResourceLocation testWrenchName = new ResourceLocation(modID, "test_wrench");
+    @ObjectHolder("test_wrench")
+    public static final Item TEST_WRENCH = null;
 
-    @SidedProxy
-    public static CommonProxy proxy;
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event)
+    @Mod.EventBusSubscriber(modid = modID)
+    public static class Registration
     {
-        TestWrench wrench = new TestWrench();
-        wrench.setRegistryName(testWrenchName);
-
-        GameRegistry.register(wrench);
-        proxy.setupModel(wrench);
-    }
-
-    public static class CommonProxy
-    {
-        void setupModel(TestWrench wrench)
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
         {
+            event.getRegistry().register(new TestWrench().setRegistryName(testWrenchName));
         }
-    }
 
-    public static class ServerProxy extends CommonProxy
-    {
-    }
-
-    public static class ClientProxy extends CommonProxy
-    {
-        @SuppressWarnings("unused")
-        @Override
-        void setupModel(TestWrench wrench)
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
         {
             final ModelResourceLocation wrenchName = new ModelResourceLocation(testWrenchName, "inventory");
-            ModelBakery.registerItemVariants(wrench, wrenchName);
-            ModelLoader.setCustomMeshDefinition(wrench, new ItemMeshDefinition()
-            {
-                @Override
-                public ModelResourceLocation getModelLocation(ItemStack stack)
-                {
-                    return wrenchName;
-                }
-            });
+            ModelBakery.registerItemVariants(TEST_WRENCH, wrenchName);
+            ModelLoader.setCustomMeshDefinition(TEST_WRENCH, is -> wrenchName);
         }
     }
 

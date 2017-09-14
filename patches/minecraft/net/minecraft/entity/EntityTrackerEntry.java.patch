@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
-@@ -450,6 +450,7 @@
+@@ -158,13 +158,13 @@
+ 
+             if (itemstack.func_77973_b() instanceof ItemMap)
+             {
+-                MapData mapdata = Items.field_151098_aY.func_77873_a(itemstack, this.field_73132_a.field_70170_p);
++                MapData mapdata = ((ItemMap) itemstack.func_77973_b()).func_77873_a(itemstack, this.field_73132_a.field_70170_p);
+ 
+                 for (EntityPlayer entityplayer : p_73122_1_)
+                 {
+                     EntityPlayerMP entityplayermp = (EntityPlayerMP)entityplayer;
+                     mapdata.func_76191_a(entityplayermp, itemstack);
+-                    Packet<?> packet = Items.field_151098_aY.func_150911_c(itemstack, this.field_73132_a.field_70170_p, entityplayermp);
++                    Packet<?> packet = ((ItemMap) itemstack.func_77973_b()).func_150911_c(itemstack, this.field_73132_a.field_70170_p, entityplayermp);
+ 
+                     if (packet != null)
+                     {
+@@ -457,6 +457,7 @@
  
                      this.field_73132_a.func_184178_b(p_73117_1_);
                      p_73117_1_.func_184848_d(this.field_73132_a);
@@ -8,7 +24,7 @@
                  }
              }
              else if (this.field_73134_o.contains(p_73117_1_))
-@@ -457,6 +458,7 @@
+@@ -464,6 +465,7 @@
                  this.field_73134_o.remove(p_73117_1_);
                  this.field_73132_a.func_184203_c(p_73117_1_);
                  p_73117_1_.func_152339_d(this.field_73132_a);
@@ -16,7 +32,7 @@
              }
          }
      }
-@@ -489,6 +491,9 @@
+@@ -496,6 +498,9 @@
              field_151262_p.warn("Fetching addPacket for removed entity");
          }
  

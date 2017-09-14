@@ -24,7 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.registry.RegistryDelegate;
+import net.minecraftforge.registries.IRegistryDelegate;
 
 import javax.annotation.Nullable;
 
@@ -40,7 +40,7 @@ public class FluidStack
 {
     public int amount;
     public NBTTagCompound tag;
-    private RegistryDelegate<Fluid> fluidDelegate;
+    private IRegistryDelegate<Fluid> fluidDelegate;
 
     public FluidStack(Fluid fluid, int amount)
     {
@@ -51,7 +51,7 @@ public class FluidStack
         }
         else if (!FluidRegistry.isFluidRegistered(fluid))
         {
-            FMLLog.bigWarning("Failed attempt to create a FluidStack for an unregistered Fluid %s (type %s)", fluid.getName(), fluid.getClass().getName());
+            FMLLog.bigWarning("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", fluid.getName(), fluid.getClass().getName());
             throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
         }
         this.fluidDelegate = FluidRegistry.makeDelegate(fluid);

@@ -9,6 +9,7 @@ import net.minecraft.init.Biomes;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeTestRunner;
 import org.junit.BeforeClass;
@@ -26,12 +27,13 @@ public class BiomeSpawnableListTest
     @BeforeClass
     public static void setUp() throws Exception
     {
+        Loader.instance();
         Bootstrap.register();
         creatureTypeHorse = EnumHelper.addCreatureType("biomespawnablelisttest:horse", AbstractHorse.class, 20, Material.AIR, true, true);
     }
 
     private boolean spawnableListContainsEntry(Class<? extends EntityLiving> entityClass, int weightedProb, int minGroupCount, int maxGroupCount,
-            EnumCreatureType creatureType, Biome biome)
+                                               EnumCreatureType creatureType, Biome biome)
     {
         boolean found = false;
 

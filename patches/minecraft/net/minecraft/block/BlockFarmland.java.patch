@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
-@@ -70,7 +70,7 @@
+@@ -71,7 +71,7 @@
  
      public void func_180658_a(World p_180658_1_, BlockPos p_180658_2_, Entity p_180658_3_, float p_180658_4_)
      {
@@ -9,7 +9,7 @@
          {
              this.func_190970_b(p_180658_1_, p_180658_2_);
          }
-@@ -93,7 +93,7 @@
+@@ -94,7 +94,7 @@
      private boolean func_176529_d(World p_176529_1_, BlockPos p_176529_2_)
      {
          Block block = p_176529_1_.func_180495_p(p_176529_2_.func_177984_a()).func_177230_c();

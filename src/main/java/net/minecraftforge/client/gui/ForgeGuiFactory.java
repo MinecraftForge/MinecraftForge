@@ -17,11 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/**
- * This software is provided under the terms of the Minecraft Forge Public
- * License v1.0.
- */
-
 package net.minecraftforge.client.gui;
 
 import java.util.ArrayList;
@@ -102,15 +97,16 @@ public class ForgeGuiFactory implements IModGuiFactory
 {
     @Override
     public void initialize(Minecraft minecraftInstance) {}
+    
 
     @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass() { return ForgeConfigGui.class; }
+    public boolean hasConfigGui() { return true; }
+
+    @Override
+    public GuiScreen createConfigGui(GuiScreen parent) { return new ForgeConfigGui(parent); }
 
     @Override
     public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() { return null; }
-
-    @Override
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) { return null; }
 
     public static class ForgeConfigGui extends GuiConfig
     {
@@ -235,14 +231,7 @@ public class ForgeGuiFactory implements IModGuiFactory
                     props.add(ForgeModContainer.getConfig().get(VERSION_CHECK_CAT, mod.getModId(), true)); //Get or make the value in the config
                 }
                 props.addAll(values.values()); // Add any left overs from the config
-                Collections.sort(props, new Comparator<Property>()
-                {
-                    @Override
-                    public int compare(Property o1, Property o2)
-                    {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                });
+                props.sort(Comparator.comparing(Property::getName));
 
                 List<IConfigElement> list = new ArrayList<IConfigElement>();
                 list.add(new ConfigElement(global));

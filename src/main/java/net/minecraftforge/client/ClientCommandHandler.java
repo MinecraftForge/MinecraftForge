@@ -34,6 +34,8 @@ import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.FMLLog;
+
 import static net.minecraft.util.text.TextFormatting.*;
 
 /**
@@ -59,7 +61,8 @@ public class ClientCommandHandler extends CommandHandler
     {
         message = message.trim();
 
-        if (message.startsWith("/"))
+        boolean usedSlash = message.startsWith("/");
+        if (usedSlash)
         {
             message = message.substring(1);
         }
@@ -72,7 +75,7 @@ public class ClientCommandHandler extends CommandHandler
 
         try
         {
-            if (icommand == null)
+            if (icommand == null || (!usedSlash && icommand instanceof IClientCommand && !((IClientCommand)icommand).allowUsageWithoutPrefix(sender, message)))
             {
                 return 0;
             }
@@ -108,7 +111,7 @@ public class ClientCommandHandler extends CommandHandler
         catch (Throwable t)
         {
             sender.sendMessage(format(RED, "commands.generic.exception"));
-            t.printStackTrace();
+            FMLLog.log.error("Command '{}' threw an exception:", message, t);
         }
 
         return -1;

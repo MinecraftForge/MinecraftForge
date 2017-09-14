@@ -20,7 +20,6 @@
 package net.minecraftforge.event.terraingen;
 
 import net.minecraft.world.biome.BiomeProvider;
-import net.minecraft.world.gen.ChunkProviderSettings;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;

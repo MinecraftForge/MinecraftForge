@@ -34,6 +34,6 @@
 +
 +    public net.minecraftforge.client.model.IModel process(net.minecraftforge.client.model.IModel base)
 +    {
-+        return net.minecraftforge.client.model.ModelProcessingHelper.uvlock(base, func_188049_c());
++        return base.uvlock(func_188049_c());
 +    }
  }

@@ -22,14 +22,14 @@ package net.minecraftforge.fml.common.asm.transformers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
+import net.minecraftforge.fml.common.FMLLog;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
@@ -54,7 +54,7 @@ public class ModAccessTransformer extends AccessTransformer {
             int added = getModifiers().size() - old_count;
             if (added > 0)
             {
-                FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer mod jar file %s\n", added, e.getKey());
+                FMLLog.log.debug("Loaded {} rules from AccessTransformer mod jar file {}\n", added, e.getKey());
             }
         }
     }
@@ -70,7 +70,7 @@ public class ModAccessTransformer extends AccessTransformer {
             if (jarEntry != null)
             {
                 embedded.put(String.format("%s!META-INF/%s", jar.getName(), at),
-                        new JarByteSource(jar,jarEntry).asCharSource(Charsets.UTF_8).read());
+                        new JarByteSource(jar,jarEntry).asCharSource(StandardCharsets.UTF_8).read());
             }
         }
     }

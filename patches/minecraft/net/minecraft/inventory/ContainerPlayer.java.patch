@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
-@@ -44,7 +44,7 @@
+@@ -43,7 +43,7 @@
                  }
                  public boolean func_75214_a(ItemStack p_75214_1_)
                  {

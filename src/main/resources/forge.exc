@@ -25,8 +25,9 @@ net/minecraft/world/chunk/storage/AnvilChunkLoader.loadEntities(Lnet/minecraft/w
 net/minecraft/world/gen/ChunkProviderServer.loadChunk(IILjava/lang/Runnable;)Lnet/minecraft/world/chunk/Chunk;=|p_186028_1_,p_186028_2_,runnable
 
 net/minecraft/block/BlockFire.tryCatchFire(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ILjava/util/Random;ILnet/minecraft/util/EnumFacing;)V=|p_176536_1_,p_176536_2_,p_176536_3_,p_176536_4_,p_176536_5_,face
-net/minecraft/block/BlockSkull.getDrops(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;I)Ljava/util/List;=|p_180663_1_,p_180663_2_,p_180663_3_,fortune
+net/minecraft/block/BlockSkull.getDrops(Lnet/minecraft/util/NonNullList;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;I)V=|drops,p_180663_1_,p_180663_2_,p_180663_3_,fortune
 net/minecraft/item/ItemDye.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/EntityPlayer;)Z=|p_179234_0_,p_179234_1_,p_179234_2_,player
+net/minecraft/item/ItemDye.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/EnumHand;)Z=|p_179234_0_,p_179234_1_,p_179234_2_,player,hand
 net/minecraft/server/management/ItemInWorldManager.removeBlock(Lnet/minecraft/util/math/BlockPos;Z)Z=|p_180235_1_,canHarvest
 net/minecraft/client/gui/GuiScreen.drawHoveringText(Ljava/util/List;IILnet/minecraft/client/gui/FontRenderer;)V=|p_146283_1_,p_146283_2_,p_146283_3_,font
 net/minecraft/block/state/BlockState.<init>(Lnet/minecraft/block/Block;[Lnet/minecraft/block/properties/IProperty;Lcom/google/common/collect/ImmutableMap;)V=|p_i45663_1_,p_i45663_2_,unlistedProperties
@@ -49,6 +50,7 @@ net/minecraft/item/ItemStack.<init>(Lnet/minecraft/item/Item;IILnet/minecraft/nb
 net/minecraft/block/BlockRedstoneWire.canConnectTo(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/EnumFacing;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)Z=|p_176343_0_,p_176343_1_,world,pos
 net/minecraft/client/renderer/block/model/BakedQuad.<init>([IILnet/minecraft/util/EnumFacing;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,applyDiffuseLighting,format
 net/minecraft/client/renderer/texture/TextureMap.<init>(Ljava/lang/String;Lnet/minecraft/client/renderer/texture/ITextureMapPopulator;Z)V=|p_i46100_1_,p_i46100_2_,skipFirst
+net/minecraft/client/renderer/texture/TextureMap.loadTexture(Lnet/minecraft/client/renderer/texture/Stitcher;Lnet/minecraft/client/resources/IResourceManager;Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraftforge/fml/common/ProgressManager$ProgressBar;II)I=|stitcher,p_110571_1_,location,textureatlassprite,bar,j,k
 
 net/minecraft/world/storage/loot/LootPool.<init>([Lnet/minecraft/world/storage/loot/LootEntry;[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Lnet/minecraft/world/storage/loot/RandomValueRange;Lnet/minecraft/world/storage/loot/RandomValueRange;Ljava/lang/String;)V=|p_i46643_1_,p_i46643_2_,p_i46643_3_,p_i46643_4_
 net/minecraft/world/storage/loot/LootEntry.<init>(II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46642_1_,p_i46642_2_,p_i46642_3_,entryName
@@ -57,3 +59,5 @@ net/minecraft/world/storage/loot/LootEntryTable.<init>(Lnet/minecraft/util/Resou
 net/minecraft/world/storage/loot/LootEntryEmpty.<init>(II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46645_1_,p_i46645_2_,p_i46645_3_,entryName
 
 net/minecraft/world/chunk/BlockStateContainer.setBits(IZ)V=|p_186012_1_,forceBits
+net/minecraft/village/Village.getPlayerReputation(Ljava/util/UUID;)I=|p_82684_1_
+net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_82688_1_,p_82688_2_

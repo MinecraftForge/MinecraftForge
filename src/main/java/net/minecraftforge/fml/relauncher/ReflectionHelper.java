@@ -181,29 +181,6 @@ public class ReflectionHelper
     }
 
     /**
-     * @deprecated use {@link #findMethod(Class, String, String, Class[])}
-     */
-    @Deprecated
-    public static <E> Method findMethod(Class<? super E> clazz, E instance, String[] methodNames, Class<?>... methodTypes)
-    {
-        Throwable failed = null;
-        for (String methodName : methodNames)
-        {
-            try
-            {
-                Method m = clazz.getDeclaredMethod(methodName, methodTypes);
-                m.setAccessible(true);
-                return m;
-            }
-            catch (Exception e)
-            {
-                failed = e;
-            }
-        }
-        throw new UnableToFindMethodException(failed);
-    }
-
-    /**
      * Finds a method with the specified name and parameters in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>

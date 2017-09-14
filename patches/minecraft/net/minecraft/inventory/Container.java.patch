@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Container.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Container.java
-@@ -578,18 +578,19 @@
+@@ -81,9 +81,11 @@
+ 
+             if (!ItemStack.func_77989_b(itemstack1, itemstack))
+             {
++                boolean clientStackChanged = !ItemStack.areItemStacksEqualUsingNBTShareTag(itemstack1, itemstack);
+                 itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
+                 this.field_75153_a.set(i, itemstack1);
+ 
++                if (clientStackChanged)
+                 for (int j = 0; j < this.field_75149_d.size(); ++j)
+                 {
+                     ((IContainerListener)this.field_75149_d.get(j)).func_71111_a(this, i, itemstack1);
+@@ -589,18 +591,19 @@
                  if (!itemstack.func_190926_b() && itemstack.func_77973_b() == p_75135_1_.func_77973_b() && (!p_75135_1_.func_77981_g() || p_75135_1_.func_77960_j() == itemstack.func_77960_j()) && ItemStack.func_77970_a(p_75135_1_, itemstack))
                  {
                      int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
@@ -24,7 +36,7 @@
                          slot.func_75218_e();
                          flag = true;
                      }
-@@ -708,7 +709,7 @@
+@@ -738,7 +741,7 @@
                  p_94525_2_.func_190920_e(1);
                  break;
              case 2:

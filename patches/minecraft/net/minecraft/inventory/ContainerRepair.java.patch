@@ -6,10 +6,10 @@
  
 +                float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_190901_1_, p_190901_2_, ContainerRepair.this.field_82853_g.func_70301_a(0), ContainerRepair.this.field_82853_g.func_70301_a(1));
 +
-                 ItemStack itemstack = ContainerRepair.this.field_82853_g.func_70301_a(0);
+                 ContainerRepair.this.field_82853_g.func_70299_a(0, ItemStack.field_190927_a);
  
-                 if (itemstack.func_190916_E() != 1 && !p_190901_1_.field_71075_bZ.field_75098_d && !(itemstack.func_77973_b() instanceof ItemNameTag))
-@@ -103,7 +105,7 @@
+                 if (ContainerRepair.this.field_82856_l > 0)
+@@ -94,7 +96,7 @@
                  ContainerRepair.this.field_82854_e = 0;
                  IBlockState iblockstate = p_i45807_2_.func_180495_p(p_i45807_3_);
  
@@ -18,7 +18,7 @@
                  {
                      int l = ((Integer)iblockstate.func_177229_b(BlockAnvil.field_176505_b)).intValue();
                      ++l;
-@@ -178,10 +180,12 @@
+@@ -163,10 +165,12 @@
              Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
              j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
              this.field_82856_l = 0;
@@ -26,13 +26,13 @@
  
              if (!itemstack2.func_190926_b())
              {
--                boolean flag = itemstack2.func_77973_b() == Items.field_151134_bR && !Items.field_151134_bR.func_92110_g(itemstack2).func_82582_d();
+-                boolean flag = itemstack2.func_77973_b() == Items.field_151134_bR && !ItemEnchantedBook.func_92110_g(itemstack2).func_82582_d();
 +                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, j)) return;
-+                flag = itemstack2.func_77973_b() == Items.field_151134_bR && !Items.field_151134_bR.func_92110_g(itemstack2).func_82582_d();
++                flag = itemstack2.func_77973_b() == Items.field_151134_bR && !ItemEnchantedBook.func_92110_g(itemstack2).func_82582_d();
  
                  if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
                  {
-@@ -327,6 +331,7 @@
+@@ -317,6 +321,7 @@
                  i += k;
                  itemstack1.func_151001_c(this.field_82857_m);
              }

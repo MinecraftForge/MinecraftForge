@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -617,7 +617,10 @@
+@@ -663,7 +663,10 @@
                  double d2 = this.field_147369_b.field_70161_v - ((double)blockpos.func_177952_p() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -12,7 +12,7 @@
                  {
                      return;
                  }
-@@ -675,7 +678,9 @@
+@@ -721,7 +724,9 @@
  
          if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || enumfacing != EnumFacing.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z())
          {
@@ -23,7 +23,7 @@
              {
                  this.field_147369_b.field_71134_c.func_187251_a(this.field_147369_b, worldserver, itemstack, enumhand, blockpos, enumfacing, p_184337_1_.func_187026_d(), p_184337_1_.func_187025_e(), p_184337_1_.func_187020_f());
              }
-@@ -879,7 +884,9 @@
+@@ -925,7 +930,9 @@
              }
              else
              {
@@ -34,15 +34,15 @@
                  this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
              }
  
-@@ -1012,6 +1019,7 @@
+@@ -1058,6 +1065,7 @@
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT_AT)
                  {
                      EnumHand enumhand1 = p_147340_1_.func_186994_b();
-+                    if(net.minecraftforge.common.ForgeHooks.onInteractEntityAt(field_147369_b, entity, p_147340_1_.func_179712_b(), enumhand1)) return;
++                    if(net.minecraftforge.common.ForgeHooks.onInteractEntityAt(field_147369_b, entity, p_147340_1_.func_179712_b(), enumhand1) != null) return;
                      entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), enumhand1);
                  }
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.ATTACK)
-@@ -1051,7 +1059,7 @@
+@@ -1098,7 +1106,7 @@
                          return;
                      }
  
@@ -51,3 +51,12 @@
  
                      if (this.field_147367_d.func_71199_h())
                      {
+@@ -1141,7 +1149,7 @@
+             {
+                 ItemStack itemstack2 = this.field_147369_b.field_71070_bA.func_184996_a(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(), p_147351_1_.func_186993_f(), this.field_147369_b);
+ 
+-                if (ItemStack.func_77989_b(p_147351_1_.func_149546_g(), itemstack2))
++                if (ItemStack.areItemStacksEqualUsingNBTShareTag(p_147351_1_.func_149546_g(), itemstack2))
+                 {
+                     this.field_147369_b.field_71135_a.func_147359_a(new SPacketConfirmTransaction(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
+                     this.field_147369_b.field_71137_h = true;

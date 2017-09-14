@@ -22,7 +22,7 @@ package net.minecraftforge.fml.common.asm.transformers;
 import org.objectweb.asm.*;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.FMLSecurityManager.ExitTrappedException;
 
 public class TerminalTransformer implements IClassTransformer
@@ -81,11 +81,11 @@ public class TerminalTransformer implements IClassTransformer
                     {
                         if (warn)
                         {
-                            FMLRelaunchLog.warning("=============================================================");
-                            FMLRelaunchLog.warning("MOD HAS DIRECT REFERENCE System.exit() THIS IS NOT ALLOWED REROUTING TO FML!");
-                            FMLRelaunchLog.warning("Offender: %s.%s%s", ExitVisitor.this.clsName, mName, mDesc);
-                            FMLRelaunchLog.warning("Use FMLCommonHandler.exitJava instead");
-                            FMLRelaunchLog.warning("=============================================================");
+                            FMLLog.log.warn("=============================================================");
+                            FMLLog.log.warn("MOD HAS DIRECT REFERENCE System.exit() THIS IS NOT ALLOWED REROUTING TO FML!");
+                            FMLLog.log.warn("Offender: {}.{}{}", ExitVisitor.this.clsName, mName, mDesc);
+                            FMLLog.log.warn("Use FMLCommonHandler.exitJava instead");
+                            FMLLog.log.warn("=============================================================");
                         }
                         owner = ExitVisitor.callbackOwner;
                         name = "systemExitCalled";
@@ -94,11 +94,11 @@ public class TerminalTransformer implements IClassTransformer
                     {
                         if (warn)
                         {
-                            FMLRelaunchLog.warning("=============================================================");
-                            FMLRelaunchLog.warning("MOD HAS DIRECT REFERENCE Runtime.exit() THIS IS NOT ALLOWED REROUTING TO FML!");
-                            FMLRelaunchLog.warning("Offender: %s.%s%s", ExitVisitor.this.clsName, mName, mDesc);
-                            FMLRelaunchLog.warning("Use FMLCommonHandler.exitJava instead");
-                            FMLRelaunchLog.warning("=============================================================");
+                            FMLLog.log.warn("=============================================================");
+                            FMLLog.log.warn("MOD HAS DIRECT REFERENCE Runtime.exit() THIS IS NOT ALLOWED REROUTING TO FML!");
+                            FMLLog.log.warn("Offender: {}.{}{}", ExitVisitor.this.clsName, mName, mDesc);
+                            FMLLog.log.warn("Use FMLCommonHandler.exitJava instead");
+                            FMLLog.log.warn("=============================================================");
                         }
                         opcode = Opcodes.INVOKESTATIC;
                         owner = ExitVisitor.callbackOwner;
@@ -109,11 +109,11 @@ public class TerminalTransformer implements IClassTransformer
                     {
                         if (warn)
                         {
-                            FMLRelaunchLog.warning("=============================================================");
-                            FMLRelaunchLog.warning("MOD HAS DIRECT REFERENCE Runtime.halt() THIS IS NOT ALLOWED REROUTING TO FML!");
-                            FMLRelaunchLog.warning("Offendor: %s.%s%s", ExitVisitor.this.clsName, mName, mDesc);
-                            FMLRelaunchLog.warning("Use FMLCommonHandler.exitJava instead");
-                            FMLRelaunchLog.warning("=============================================================");
+                            FMLLog.log.warn("=============================================================");
+                            FMLLog.log.warn("MOD HAS DIRECT REFERENCE Runtime.halt() THIS IS NOT ALLOWED REROUTING TO FML!");
+                            FMLLog.log.warn("Offendor: {}.{}{}", ExitVisitor.this.clsName, mName, mDesc);
+                            FMLLog.log.warn("Use FMLCommonHandler.exitJava instead");
+                            FMLLog.log.warn("=============================================================");
                         }
                         opcode = Opcodes.INVOKESTATIC;
                         owner = ExitVisitor.callbackOwner;

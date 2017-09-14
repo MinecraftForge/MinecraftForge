@@ -14,7 +14,7 @@
  
      public void func_76986_a(T p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_)
      {
-+        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T>(p_76986_1_, this, p_76986_2_, p_76986_4_, p_76986_6_))) return;
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T>(p_76986_1_, this, p_76986_9_, p_76986_2_, p_76986_4_, p_76986_6_))) return;
          GlStateManager.func_179094_E();
          GlStateManager.func_179129_p();
          this.field_77045_g.field_78095_p = this.func_77040_d(p_76986_1_, p_76986_9_);
@@ -33,15 +33,23 @@
              {
                  EntityLivingBase entitylivingbase = (EntityLivingBase)p_76986_1_.func_184187_bx();
                  f = this.func_77034_a(entitylivingbase.field_70760_ar, entitylivingbase.field_70761_aq, p_76986_9_);
-@@ -192,6 +197,7 @@
+@@ -133,6 +138,7 @@
+                 {
+                     f5 = 1.0F;
+                 }
++                f2 = f1 - f; // Forge: Fix MC-1207
+             }
+ 
+             GlStateManager.func_179141_d();
+@@ -194,6 +200,7 @@
          GlStateManager.func_179089_o();
          GlStateManager.func_179121_F();
          super.func_76986_a(p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T>(p_76986_1_, this, p_76986_2_, p_76986_4_, p_76986_6_));
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T>(p_76986_1_, this, p_76986_9_, p_76986_2_, p_76986_4_, p_76986_6_));
      }
  
      public float func_188322_c(T p_188322_1_, float p_188322_2_)
-@@ -447,10 +453,11 @@
+@@ -454,10 +461,11 @@
  
      public void func_177067_a(T p_177067_1_, double p_177067_2_, double p_177067_4_, double p_177067_6_)
      {
@@ -54,7 +62,7 @@
  
              if (d0 < (double)(f * f))
              {
-@@ -459,6 +466,7 @@
+@@ -466,6 +474,7 @@
                  this.func_188296_a(p_177067_1_, p_177067_2_, p_177067_4_, p_177067_6_, s, d0);
              }
          }

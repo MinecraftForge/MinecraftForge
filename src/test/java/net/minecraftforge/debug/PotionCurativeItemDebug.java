@@ -1,6 +1,5 @@
 package net.minecraftforge.debug;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
@@ -9,9 +8,10 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
 import net.minecraft.world.World;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,27 +24,43 @@ import java.util.List;
  * 3. Drink incurable_potion from Brewing creative tab
  * 4. Relog to test that changes to curative items persist, then try drinking milk and eating medicine: they should have no effect
  */
-@Mod(modid = PotionCurativeItemDebug.MOD_ID)
+@Mod(modid = PotionCurativeItemDebug.MODID, name = "Potion Curative Item Debug", version = "1.0", acceptableRemoteVersions = "*")
 public class PotionCurativeItemDebug
 {
-    public static final String MOD_ID = "potion_curative_item_debug";
+    public static final boolean ENABLED = false;
+    public static final String MODID = "potion_curative_item_debug";
+    @ObjectHolder("medicine")
+    public static final Item MEDICINE = null;
+    private static Potion INCURABLE_POTION;
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent evt)
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        Item medicine = new Medicine().setRegistryName(MOD_ID, "medicine");
-        GameRegistry.register(medicine);
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
+        {
+            if (!ENABLED) return;
+            event.getRegistry().register(new Medicine().setRegistryName(MODID, "medicine"));
+        }
+        @SubscribeEvent
+        public static void registerPotions(RegistryEvent.Register<Potion> event)
+        {
+            if (!ENABLED) return;
+            INCURABLE_POTION = new IncurablePotion().setRegistryName(MODID, "incurable_potion");
+            event.getRegistry().register(INCURABLE_POTION);
+        }
+        @SubscribeEvent
+        public static void registerPotionTypes(RegistryEvent.Register<PotionType> event)
+        {
+            if (!ENABLED) return;
+            // Register PotionType that can be cured with medicine
+            PotionEffect curable = new PotionEffect(INCURABLE_POTION, 1200);
+            curable.setCurativeItems(Collections.singletonList(new ItemStack(MEDICINE)));
+            event.getRegistry().register(new PotionType(curable).setRegistryName(MODID, "curable_potion_type"));
 
-        Potion incurablePotion = new IncurablePotion().setRegistryName(MOD_ID, "incurable_potion");
-        GameRegistry.register(incurablePotion);
-
-        // Register PotionType that can be cured with medicine
-        PotionEffect curable = new PotionEffect(incurablePotion, 1200);
-        curable.setCurativeItems(Collections.singletonList(new ItemStack(medicine)));
-        GameRegistry.register(new PotionType(curable).setRegistryName(MOD_ID, "curable_potion_type"));
-
-        // Register PotionType that can't be cured
-        GameRegistry.register(new PotionType(new PotionEffect(incurablePotion, 1200)).setRegistryName(MOD_ID, "incurable_potion_type"));
+            // Register PotionType that can't be cured
+            event.getRegistry().register(new PotionType(new PotionEffect(INCURABLE_POTION, 1200)).setRegistryName(MODID, "incurable_potion_type"));
+        }
     }
 
     private static class IncurablePotion extends Potion

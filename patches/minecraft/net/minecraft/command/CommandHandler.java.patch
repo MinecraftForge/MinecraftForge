@@ -18,12 +18,3 @@
                  if (j > -1)
                  {
                      List<Entity> list = EntitySelector.<Entity>func_179656_b(p_71556_1_, astring[j], Entity.class);
-@@ -125,7 +136,7 @@
-             TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("commands.generic.exception", new Object[0]);
-             textcomponenttranslation.func_150256_b().func_150238_a(TextFormatting.RED);
-             p_175786_1_.func_145747_a(textcomponenttranslation);
--            field_147175_a.warn("Couldn\'t process command: \'{}\'", new Object[] {p_175786_4_});
-+            field_147175_a.warn("Couldn\'t process command: \'" + p_175786_4_ + "\'", var9);
-         }
- 
-         return false;

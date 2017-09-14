@@ -1,50 +1,50 @@
 --- ../src-base/minecraft/net/minecraft/client/settings/KeyBinding.java
 +++ ../src-work/minecraft/net/minecraft/client/settings/KeyBinding.java
-@@ -14,7 +14,7 @@
+@@ -15,7 +15,7 @@
  public class KeyBinding implements Comparable<KeyBinding>
  {
-     private static final List<KeyBinding> field_74516_a = Lists.<KeyBinding>newArrayList();
--    private static final IntHashMap<KeyBinding> field_74514_b = new IntHashMap();
+     private static final Map<String, KeyBinding> field_74516_a = Maps.<String, KeyBinding>newHashMap();
+-    private static final IntHashMap<KeyBinding> field_74514_b = new IntHashMap<KeyBinding>();
 +    private static final net.minecraftforge.client.settings.KeyBindingMap field_74514_b = new net.minecraftforge.client.settings.KeyBindingMap();
      private static final Set<String> field_151473_c = Sets.<String>newHashSet();
+     private static final Map<String, Integer> field_193627_d = Maps.<String, Integer>newHashMap();
      private final String field_74515_c;
-     private final int field_151472_e;
-@@ -27,7 +27,7 @@
+@@ -29,7 +29,7 @@
      {
          if (p_74507_0_ != 0)
          {
--            KeyBinding keybinding = (KeyBinding)field_74514_b.func_76041_a(p_74507_0_);
+-            KeyBinding keybinding = field_74514_b.func_76041_a(p_74507_0_);
 +            KeyBinding keybinding = field_74514_b.lookupActive(p_74507_0_);
  
              if (keybinding != null)
              {
-@@ -40,7 +40,7 @@
+@@ -42,7 +42,7 @@
      {
          if (p_74510_0_ != 0)
          {
--            KeyBinding keybinding = (KeyBinding)field_74514_b.func_76041_a(p_74510_0_);
+-            KeyBinding keybinding = field_74514_b.func_76041_a(p_74510_0_);
 +            for (KeyBinding keybinding : field_74514_b.lookupAll(p_74510_0_))
  
              if (keybinding != null)
              {
-@@ -74,11 +74,11 @@
+@@ -76,11 +76,11 @@
  
      public static void func_74508_b()
      {
 -        field_74514_b.func_76046_c();
 +        field_74514_b.clearMap();
  
-         for (KeyBinding keybinding : field_74516_a)
+         for (KeyBinding keybinding : field_74516_a.values())
          {
 -            field_74514_b.func_76038_a(keybinding.field_74512_d, keybinding);
 +            field_74514_b.addKey(keybinding.field_74512_d, keybinding);
          }
      }
  
-@@ -94,13 +94,13 @@
+@@ -96,13 +96,13 @@
          this.field_151472_e = p_i45001_2_;
          this.field_151471_f = p_i45001_3_;
-         field_74516_a.add(this);
+         field_74516_a.put(p_i45001_1_, this);
 -        field_74514_b.func_76038_a(p_i45001_2_, this);
 +        field_74514_b.addKey(p_i45001_2_, this);
          field_151473_c.add(p_i45001_3_);
@@ -57,11 +57,20 @@
      }
  
      public String func_151466_e()
-@@ -158,4 +158,135 @@
+@@ -151,9 +151,146 @@
  
-         return i;
+     public int compareTo(KeyBinding p_compareTo_1_)
+     {
+-        return this.field_151471_f.equals(p_compareTo_1_.field_151471_f) ? I18n.func_135052_a(this.field_74515_c).compareTo(I18n.func_135052_a(p_compareTo_1_.field_74515_c)) : ((Integer)field_193627_d.get(this.field_151471_f)).compareTo(field_193627_d.get(p_compareTo_1_.field_151471_f));
++        if (this.field_151471_f.equals(p_compareTo_1_.field_151471_f)) return I18n.func_135052_a(this.field_74515_c).compareTo(I18n.func_135052_a(p_compareTo_1_.field_74515_c));
++        Integer tCat = field_193627_d.get(this.field_151471_f);
++        Integer oCat = field_193627_d.get(p_compareTo_1_.field_151471_f);
++        if (tCat == null && oCat != null) return 1;
++        if (tCat != null && oCat == null) return -1;
++        if (tCat == null && oCat == null) return I18n.func_135052_a(this.field_151471_f).compareTo(I18n.func_135052_a(p_compareTo_1_.field_151471_f));
++        return  tCat.compareTo(oCat);
      }
-+
+ 
 +    /****************** Forge Start *****************************/
 +    private net.minecraftforge.client.settings.KeyModifier keyModifierDefault = net.minecraftforge.client.settings.KeyModifier.NONE;
 +    private net.minecraftforge.client.settings.KeyModifier keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
@@ -91,7 +100,7 @@
 +        {
 +            this.keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
 +        }
-+        field_74516_a.add(this);
++        field_74516_a.put(description, this);
 +        field_74514_b.addKey(keyCode, this);
 +        field_151473_c.add(category);
 +    }
@@ -146,7 +155,7 @@
 +        return func_151463_i() == func_151469_h() && getKeyModifier() == getKeyModifierDefault();
 +    }
 +
-+	/**
++    /**
 +     * Returns true when the other keyBinding conflicts with this one
 +     */
 +    public boolean conflicts(KeyBinding other)
@@ -192,4 +201,16 @@
 +        return getKeyModifier().getLocalizedComboName(func_151463_i());
 +    }
 +    /****************** Forge End *****************************/
- }
++
+     public static Supplier<String> func_193626_b(String p_193626_0_)
+     {
+         KeyBinding keybinding = field_74516_a.get(p_193626_0_);
+@@ -162,7 +299,7 @@
+             return p_193626_0_;
+         } : () ->
+         {
+-            return GameSettings.func_74298_c(keybinding.func_151463_i());
++            return keybinding.getDisplayName();
+         };
+     }
+ 

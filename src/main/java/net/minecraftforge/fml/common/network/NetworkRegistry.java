@@ -226,7 +226,7 @@ public enum NetworkRegistry
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
         if (mc == null)
         {
-            FMLLog.log(Level.ERROR, "Mod of type %s attempted to register a gui network handler during a construction phase", mod.getClass().getName());
+            FMLLog.log.error("Mod of type {} attempted to register a gui network handler during a construction phase", mod.getClass().getName());
             throw new RuntimeException("Invalid attempt to create a GUI during mod construction. Use an EventHandler instead");
         }
         serverGuiHandlers.put(mc, handler);

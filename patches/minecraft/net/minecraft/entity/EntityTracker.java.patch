@@ -34,4 +34,4 @@
 +
      public void func_151248_b(Entity p_151248_1_, Packet<?> p_151248_2_)
      {
-         EntityTrackerEntry entitytrackerentry = (EntityTrackerEntry)this.field_72794_c.func_76041_a(p_151248_1_.func_145782_y());
+         EntityTrackerEntry entitytrackerentry = this.field_72794_c.func_76041_a(p_151248_1_.func_145782_y());

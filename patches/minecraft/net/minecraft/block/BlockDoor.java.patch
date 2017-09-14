@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -107,7 +107,7 @@
-     {
-         if (this.field_149764_J == Material.field_151573_f)
-         {
--            return false;
-+            return false; //Allow items to interact with the door
-         }
-         else
-         {
-@@ -175,7 +175,7 @@
+@@ -203,7 +203,7 @@
                  flag1 = true;
              }
  
@@ -18,12 +9,19 @@
              {
                  p_189540_2_.func_175698_g(p_189540_3_);
                  flag1 = true;
-@@ -219,7 +219,7 @@
+@@ -247,13 +247,13 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return p_176196_2_.func_177956_o() >= 255 ? false : p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
-+        return p_176196_2_.func_177956_o() >= p_176196_1_.func_72800_K() - 1 ? false : p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).isSideSolid(p_176196_1_,  p_176196_2_.func_177977_b(), EnumFacing.UP) && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
+-        if (p_176196_2_.func_177956_o() >= 255)
++        if (p_176196_2_.func_177956_o() >= p_176196_1_.func_72800_K() - 1)
+         {
+             return false;
+         }
+         else
+         {
+-            return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
++            return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_193401_d(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP) == BlockFaceShape.SOLID && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
+         }
      }
  
-     public EnumPushReaction func_149656_h(IBlockState p_149656_1_)

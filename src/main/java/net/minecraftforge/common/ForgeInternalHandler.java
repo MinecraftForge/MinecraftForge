@@ -44,7 +44,7 @@ public class ForgeInternalHandler
         Entity entity = event.getEntity();
         if (entity.getClass().equals(EntityItem.class))
         {
-            ItemStack stack = ((EntityItem)entity).getEntityItem();
+            ItemStack stack = ((EntityItem)entity).getItem();
             Item item = stack.getItem();
             if (item.hasCustomEntity(stack))
             {

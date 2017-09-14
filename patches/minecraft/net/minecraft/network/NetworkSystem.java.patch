@@ -1,11 +1,36 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkSystem.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkSystem.java
-@@ -111,7 +111,7 @@
+@@ -49,21 +49,21 @@
+     {
+         protected NioEventLoopGroup func_179280_b()
+         {
+-            return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).build());
++            return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER).build());
+         }
+     };
+     public static final LazyLoadBase<EpollEventLoopGroup> field_181141_b = new LazyLoadBase<EpollEventLoopGroup>()
+     {
+         protected EpollEventLoopGroup func_179280_b()
+         {
+-            return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).build());
++            return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER).build());
+         }
+     };
+     public static final LazyLoadBase<LocalEventLoopGroup> field_180232_b = new LazyLoadBase<LocalEventLoopGroup>()
+     {
+         protected LocalEventLoopGroup func_179280_b()
+         {
+-            return new LocalEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Local Server IO #%d").setDaemon(true).build());
++            return new LocalEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Local Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.CLIENT).build());
+         }
+     };
+     private final MinecraftServer field_151273_d;
+@@ -110,7 +110,7 @@
                          ;
                      }
  
--                    p_initChannel_1_.pipeline().addLast((String)"timeout", (ChannelHandler)(new ReadTimeoutHandler(30))).addLast((String)"legacy_query", (ChannelHandler)(new LegacyPingHandler(NetworkSystem.this))).addLast((String)"splitter", (ChannelHandler)(new NettyVarint21FrameDecoder())).addLast((String)"decoder", (ChannelHandler)(new NettyPacketDecoder(EnumPacketDirection.SERVERBOUND))).addLast((String)"prepender", (ChannelHandler)(new NettyVarint21FrameEncoder())).addLast((String)"encoder", (ChannelHandler)(new NettyPacketEncoder(EnumPacketDirection.CLIENTBOUND)));
-+                    p_initChannel_1_.pipeline().addLast((String)"timeout", (ChannelHandler)(new ReadTimeoutHandler(net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.READ_TIMEOUT))).addLast((String)"legacy_query", (ChannelHandler)(new LegacyPingHandler(NetworkSystem.this))).addLast((String)"splitter", (ChannelHandler)(new NettyVarint21FrameDecoder())).addLast((String)"decoder", (ChannelHandler)(new NettyPacketDecoder(EnumPacketDirection.SERVERBOUND))).addLast((String)"prepender", (ChannelHandler)(new NettyVarint21FrameEncoder())).addLast((String)"encoder", (ChannelHandler)(new NettyPacketEncoder(EnumPacketDirection.CLIENTBOUND)));
+-                    p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyPingHandler(NetworkSystem.this)).addLast("splitter", new NettyVarint21FrameDecoder()).addLast("decoder", new NettyPacketDecoder(EnumPacketDirection.SERVERBOUND)).addLast("prepender", new NettyVarint21FrameEncoder()).addLast("encoder", new NettyPacketEncoder(EnumPacketDirection.CLIENTBOUND));
++                    p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.READ_TIMEOUT)).addLast("legacy_query", new LegacyPingHandler(NetworkSystem.this)).addLast("splitter", new NettyVarint21FrameDecoder()).addLast("decoder", new NettyPacketDecoder(EnumPacketDirection.SERVERBOUND)).addLast("prepender", new NettyVarint21FrameEncoder()).addLast("encoder", new NettyPacketEncoder(EnumPacketDirection.CLIENTBOUND));
                      NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
                      NetworkSystem.this.field_151272_f.add(networkmanager);
-                     p_initChannel_1_.pipeline().addLast((String)"packet_handler", (ChannelHandler)networkmanager);
+                     p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);

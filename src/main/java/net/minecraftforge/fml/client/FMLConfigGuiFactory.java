@@ -27,28 +27,28 @@ import java.util.regex.Pattern;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.GuiEditArray;
+import net.minecraftforge.fml.client.config.GuiEditArrayEntries;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
 import net.minecraftforge.fml.client.config.DummyConfigElement.DummyListElement;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.NumberSliderEntry;
 
-public class FMLConfigGuiFactory implements IModGuiFactory 
+public class FMLConfigGuiFactory implements IModGuiFactory
 {
-    public static class FMLConfigGuiScreen extends GuiConfig 
+    public static class FMLConfigGuiScreen extends GuiConfig
     {
 
         public FMLConfigGuiScreen(GuiScreen parent)
         {
             super(parent, getConfigElements(), "FML", false, false, I18n.format("fml.config.sample.title"));
         }
-        
+
         private static List<IConfigElement> getConfigElements()
         {
             List<IConfigElement> list = new ArrayList<IConfigElement>();
@@ -56,13 +56,13 @@ public class FMLConfigGuiFactory implements IModGuiFactory
             List<IConfigElement> stringsList = new ArrayList<IConfigElement>();
             List<IConfigElement> numbersList = new ArrayList<IConfigElement>();
             Pattern commaDelimitedPattern = Pattern.compile("([A-Za-z]+((,){1}( )*|$))+?");
-            
+
             // Top Level Settings
             list.add(new DummyConfigElement("imABoolean", true, ConfigGuiType.BOOLEAN, "fml.config.sample.imABoolean").setRequiresMcRestart(true));
             list.add(new DummyConfigElement("imAnInteger", 42, ConfigGuiType.INTEGER, "fml.config.sample.imAnInteger", -1, 256).setRequiresMcRestart(true));
             list.add(new DummyConfigElement("imADouble", 42.4242D, ConfigGuiType.DOUBLE, "fml.config.sample.imADouble", -1.0D, 256.256D).setRequiresMcRestart(true));
             list.add(new DummyConfigElement("imAString", "http://www.montypython.net/scripts/string.php", ConfigGuiType.STRING, "fml.config.sample.imAString").setRequiresMcRestart(true));
-            
+
             // Lists category
             listsList.add(new DummyListElement("booleanList", new Boolean[] {true, false, true, false, true, false, true, false}, ConfigGuiType.BOOLEAN, "fml.config.sample.booleanList"));
             listsList.add(new DummyListElement("booleanListFixed", new Boolean[] {true, false, true, false, true, false, true, false}, ConfigGuiType.BOOLEAN, "fml.config.sample.booleanListFixed", true));
@@ -79,18 +79,19 @@ public class FMLConfigGuiFactory implements IModGuiFactory
             listsList.add(new DummyListElement("stringListFixed", new String[] {"A", "fixed", "length", "array", "of", "string", "values"}, ConfigGuiType.STRING, "fml.config.sample.stringListFixed", true));
             listsList.add(new DummyListElement("stringListMax", new String[] {"An", "array", "of", "string", "values", "with", "a", "max", "length", "of", "15"}, ConfigGuiType.STRING, "fml.config.sample.stringListMax", 15));
             listsList.add(new DummyListElement("stringListPattern", new String[] {"Valid", "Not Valid", "Is, Valid", "Comma, Separated, Value"}, ConfigGuiType.STRING, "fml.config.sample.stringListPattern", commaDelimitedPattern));
-            
+            listsList.add(new DummyListElement("stringListCustom", new Object[0], ConfigGuiType.STRING, "fml.config.sample.stringListCustom").setArrayEntryClass(CustomArrayEntry.class));
+
             list.add(new DummyCategoryElement("lists", "fml.config.sample.ctgy.lists", listsList));
-            
+
             // Strings category
             stringsList.add(new DummyConfigElement("basicString", "Just a regular String value, anything goes.", ConfigGuiType.STRING, "fml.config.sample.basicString"));
             stringsList.add(new DummyConfigElement("cycleString", "this", ConfigGuiType.STRING, "fml.config.sample.cycleString", new String[] {"this", "property", "cycles", "through", "a", "list", "of", "valid", "choices"}));
             stringsList.add(new DummyConfigElement("patternString", "only, comma, separated, words, can, be, entered, in, this, box", ConfigGuiType.STRING, "fml.config.sample.patternString", commaDelimitedPattern));
             stringsList.add(new DummyConfigElement("chatColorPicker", "c", ConfigGuiType.COLOR, "fml.config.sample.chatColorPicker", new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"}));
             stringsList.add(new DummyConfigElement("modIDSelector", "FML", ConfigGuiType.MOD_ID, "fml.config.sample.modIDSelector"));
-            
+
             list.add(new DummyCategoryElement("strings", "fml.config.sample.ctgy.strings", stringsList));
-            
+
             // Numbers category
             numbersList.add((new DummyConfigElement("basicInteger", 42, ConfigGuiType.INTEGER, "fml.config.sample.basicInteger")));
             numbersList.add((new DummyConfigElement("boundedInteger", 42, ConfigGuiType.INTEGER, "fml.config.sample.boundedInteger", -1, 256)));
@@ -100,8 +101,30 @@ public class FMLConfigGuiFactory implements IModGuiFactory
             numbersList.add(new DummyConfigElement("sliderDouble", 42.4242D, ConfigGuiType.DOUBLE, "fml.config.sample.sliderDouble", -1.0D, 256.256D).setCustomListEntryClass(NumberSliderEntry.class));
 
             list.add(new DummyCategoryElement("numbers", "fml.config.sample.ctgy.numbers", numbersList));
-            
+
             return list;
+        }
+    }
+
+
+    @Override
+    public boolean hasConfigGui()
+    {
+        return true;
+    }
+
+    public static class CustomArrayEntry extends GuiEditArrayEntries.StringEntry
+    {
+        public CustomArrayEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement, Object value)
+        {
+            super(owningScreen, owningEntryList, configElement, value);
+        }
+
+        @Override
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
+        {
+            textFieldValue.setTextColor((int) (Math.random() * 0xFFFFFF));
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
         }
     }
 
@@ -111,9 +134,9 @@ public class FMLConfigGuiFactory implements IModGuiFactory
     }
 
     @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass()
+    public GuiScreen createConfigGui(GuiScreen parentScreen)
     {
-        return FMLConfigGuiScreen.class;
+        return new FMLConfigGuiScreen(parentScreen);
     }
 
     private static final Set<RuntimeOptionCategoryElement> fmlCategories = ImmutableSet.of(new RuntimeOptionCategoryElement("HELP", "FML"));
@@ -123,36 +146,4 @@ public class FMLConfigGuiFactory implements IModGuiFactory
     {
         return fmlCategories;
     }
-
-    @Override
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element)
-    {
-        return new RuntimeOptionGuiHandler() {
-            @Override
-            public void paint(int x, int y, int w, int h)
-            {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void close()
-            {
-            }
-
-            @Override
-            public void addWidgets(List<Gui> widgets, int x, int y, int w, int h)
-            {
-                widgets.add(new GuiButton(100, x+10, y+10, "HELLO"));
-            }
-
-            @Override
-            public void actionCallback(int actionId)
-            {
-                // TODO Auto-generated method stub
-
-            }
-        };
-    }
-
 }

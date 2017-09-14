@@ -47,8 +47,8 @@
 +        @Deprecated // Use getRepairItemStack below
          public Item func_151685_b()
          {
-             return this == LEATHER ? Items.field_151116_aA : (this == CHAIN ? Items.field_151042_j : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
-@@ -281,5 +299,21 @@
+             if (this == LEATHER)
+@@ -300,5 +318,21 @@
          {
              return this.field_189417_k;
          }

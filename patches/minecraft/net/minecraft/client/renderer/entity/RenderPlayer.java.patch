@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
-@@ -55,6 +55,7 @@
+@@ -56,6 +56,7 @@
  
      public void func_76986_a(AbstractClientPlayer p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_)
      {
@@ -8,7 +8,7 @@
          if (!p_76986_1_.func_175144_cb() || this.field_76990_c.field_78734_h == p_76986_1_)
          {
              double d0 = p_76986_4_;
-@@ -69,6 +70,7 @@
+@@ -70,6 +71,7 @@
              super.func_76986_a(p_76986_1_, p_76986_2_, d0, p_76986_6_, p_76986_8_, p_76986_9_);
              GlStateManager.func_187440_b(GlStateManager.Profile.PLAYER_SKIN);
          }
@@ -16,7 +16,7 @@
      }
  
      private void func_177137_d(AbstractClientPlayer p_177137_1_)
-@@ -127,6 +129,11 @@
+@@ -128,6 +130,11 @@
                      {
                          modelbiped$armpose1 = ModelBiped.ArmPose.BLOCK;
                      }

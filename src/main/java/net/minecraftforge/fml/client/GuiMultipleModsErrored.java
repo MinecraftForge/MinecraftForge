@@ -30,7 +30,9 @@ import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import org.lwjgl.input.Mouse;
 
+import java.io.IOException;
 import java.util.List;
 
 public class GuiMultipleModsErrored extends GuiErrorBase
@@ -62,7 +64,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     {
         this.drawDefaultBackground();
         this.list.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.messages.mod.missing.multiple", missingModsExceptions.size() + wrongMinecraftExceptions.size()), this.width/2, 10, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.mod.missing.multiple", missingModsExceptions.size() + wrongMinecraftExceptions.size()), this.width/2, 10, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -71,6 +73,15 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     {
         this.list.actionPerformed(button);
         super.actionPerformed(button);
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException
+    {
+        super.handleMouseInput();
+        int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+        this.list.handleMouseInput(mouseX, mouseY);
     }
 
     private class GuiList extends GuiScrollingList
@@ -112,7 +123,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
         protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess)
         {
             int offset = slotTop;
-            FontRenderer renderer = GuiMultipleModsErrored.this.fontRendererObj;
+            FontRenderer renderer = GuiMultipleModsErrored.this.fontRenderer;
             if (!wrongMinecraftExceptions.isEmpty())
             {
                 renderer.drawString(TextFormatting.UNDERLINE + I18n.format("fml.messages.mod.wrongminecraft", Loader.instance().getMinecraftModContainer().getVersion()), this.left, offset, 0xFFFFFF);

@@ -1,5 +1,15 @@
 package net.minecraftforge.test;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Throwables;
+import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.init.Bootstrap;
+import net.minecraftforge.client.EnumHelperClient;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.util.EnumHelper;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -9,18 +19,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.init.Bootstrap;
-import net.minecraftforge.client.EnumHelperClient;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.util.EnumHelper;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Throwables;
 
 public class EnumHelperTest
 {
@@ -79,8 +77,8 @@ public class EnumHelperTest
                 actualParameters = Arrays.copyOfRange(actualParameters, 1, actualParameters.length); //Trim off name
                 String info =
                         "  Method: " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "\n" +
-                        "  Class: " + returnType.getName() + "\n" +
-                        "  Actual:   " + COMMA.join(actualParameters);
+                                "  Class: " + returnType.getName() + "\n" +
+                                "  Actual:   " + COMMA.join(actualParameters);
 
                 boolean found = false; // There can sometimes be multiple constructors.
 
@@ -89,10 +87,14 @@ public class EnumHelperTest
                     boolean filter = declaredConstructor.isSynthetic();
 
                     if (returnType == EnumEnchantmentType.class && declaredConstructor.getParameterTypes().length == 2)
-                            filter = true; //We don't want people using this method.
+                    {
+                        filter = true; //We don't want people using this method.
+                    }
 
                     if (!filter)
+                    {
                         seenCtrs.add(declaredConstructor);
+                    }
                     //System.out.println("    " + declaredConstructor.toString());
 
                     Class<?>[] expectedParameters = declaredConstructor.getParameterTypes();
@@ -109,7 +111,7 @@ public class EnumHelperTest
 
                     info += "\n  Expected: " + COMMA.join(expectedParameters);
 
-                    if (Arrays.equals(actualParameters,  expectedParameters))
+                    if (Arrays.equals(actualParameters, expectedParameters))
                     {
                         matchedCtrs.add(declaredConstructor);
                         found = true;
@@ -118,7 +120,7 @@ public class EnumHelperTest
 
                 if (!found)
                 {
-                    System.out.println("Pamaters did not Match:");
+                    System.out.println("Parameters did not Match:");
                     System.out.println(info);
                     failed = true;
                 }

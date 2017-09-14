@@ -7,5 +7,5 @@
 -                if (p_184881_3_.length >= 7 && block.func_149716_u())
 +                if (p_184881_3_.length >= 7 && block.hasTileEntity(iblockstate))
                  {
-                     String s = func_147178_a(p_184881_2_, p_184881_3_, 6).func_150260_c();
+                     String s = func_180529_a(p_184881_3_, 6);
  

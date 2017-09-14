@@ -1,20 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/loot/LootTableManager.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/loot/LootTableManager.java
-@@ -104,7 +104,7 @@
+@@ -111,7 +111,7 @@
  
-                     try
-                     {
--                        return (LootTable)LootTableManager.field_186526_b.fromJson(s, LootTable.class);
-+                        return net.minecraftforge.common.ForgeHooks.loadLootTable(LootTableManager.field_186526_b, p_186517_1_, s, true);
-                     }
-                     catch (JsonParseException jsonparseexception)
-                     {
-@@ -145,7 +145,7 @@
+                         try
+                         {
+-                            return (LootTable)JsonUtils.func_188178_a(LootTableManager.field_186526_b, s, LootTable.class);
++                            return net.minecraftforge.common.ForgeHooks.loadLootTable(LootTableManager.field_186526_b, p_186517_1_, s, true, LootTableManager.this);
+                         }
+                         catch (IllegalArgumentException | JsonParseException jsonparseexception)
+                         {
+@@ -153,7 +153,7 @@
  
                  try
                  {
--                    return (LootTable)LootTableManager.field_186526_b.fromJson(s, LootTable.class);
-+                    return net.minecraftforge.common.ForgeHooks.loadLootTable(LootTableManager.field_186526_b, p_186518_1_, s, false);
+-                    return (LootTable)JsonUtils.func_188178_a(LootTableManager.field_186526_b, s, LootTable.class);
++                    return net.minecraftforge.common.ForgeHooks.loadLootTable(LootTableManager.field_186526_b, p_186518_1_, s, false, LootTableManager.this);
                  }
                  catch (JsonParseException jsonparseexception)
                  {
