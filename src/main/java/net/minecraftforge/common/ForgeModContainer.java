@@ -117,6 +117,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
     public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
+    public static boolean fixCascadingWorldGenInNether = false;
 
     static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
@@ -286,6 +287,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Log cascading chunk generation issues during terrain population.");
         logCascadingWorldGeneration = prop.getBoolean();
         prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "fixCascadingWorldGenInNether", false,
+                "Adds missing offset to a Nether worldgen feature, fixing cascading chunk generation there (MC-117810). " +
+                        "Will cause slight deviation in the resulting terrain, don't enable if you're picky about your hidden lava blocks.");
+        fixCascadingWorldGenInNether = prop.getBoolean();
+        prop.setLanguageKey("forge.configgui.fixCascadingWorldGenInNether");
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 0,
