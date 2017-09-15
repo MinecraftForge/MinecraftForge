@@ -69,6 +69,8 @@ forge.configgui.playerTicketCount.tooltip=The number of tickets a player can be 
 forge.configgui.playerTicketCount=Player Ticket Limit
 forge.configgui.logCascadingWorldGeneration=Log Cascading World Gen
 forge.configgui.logCascadingWorldGeneration.tooltip=Log cascading chunk generation issues during terrain population.
+forge.configgui.fixCascadingWorldGenInNether=Fix Cascading World Gen in Nether
+forge.configgui.fixCascadingWorldGenInNether.tooltip=Adds missing offset to a Nether worldgen feature, fixing cascading chunk generation there (MC-117810). Will cause slight deviation in the resulting terrain, don't enable if you're picky about your hidden lava blocks.
 
 fml.config.sample.basicDouble.tooltip=A double property with no defined bounds.
 fml.config.sample.basicDouble=Unbounded Double
