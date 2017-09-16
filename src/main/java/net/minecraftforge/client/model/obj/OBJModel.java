@@ -252,7 +252,14 @@ public class OBJModel implements IModel
                     }
                     else if (key.equalsIgnoreCase("usemtl"))
                     {
-                        material = this.materialLibrary.materials.get(data);
+                        if (this.materialLibrary.materials.containsKey(data))
+                        {
+                            material = this.materialLibrary.materials.get(data);
+                        }
+                        else
+                        {
+                            FMLLog.log.warn("OBJModel.Parser: (Model: '{}', Line: {}) material '{}' referenced but was not found", objFrom, lineNum, data);
+                        }
                         usemtlCounter++;
                     }
                     else if (key.equalsIgnoreCase("v")) // Vertices: x y z [w] - w Defaults to 1.0
