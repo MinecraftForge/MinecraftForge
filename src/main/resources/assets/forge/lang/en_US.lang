@@ -1,6 +1,11 @@
-commands.forge.usage=Use /forge <subcommand>. Subcommands are tps, track
+commands.forge.usage=Use /forge <subcommand>. Subcommands are tps, track, gen
 commands.forge.usage.tracking=Use /forge track <type> <duration>. Valid types are te (Tile Entities). Duration is < 60.
 commands.forge.tps.summary=%s : Mean tick time: %d ms. Mean TPS: %d
+commands.forge.gen.usage=Use /forge gen <x> <y> <z> <chunkCount> [dimension] [interval]
+commands.forge.gen.dim_fail=Failed to load world for dimension %d, Task terminated.
+commands.forge.gen.progress=Generation Progress: %d/%d
+commands.forge.gen.complete=Finished generating %d new chunks (out of %d) for dimension %d.
+commands.forge.gen.start=Starting to generate %d chunks in a spiral around %d, %d in dimension %d.
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 commands.tree_base.invalid_cmd=Invalid subcommand '%s'!
@@ -69,6 +74,8 @@ forge.configgui.playerTicketCount.tooltip=The number of tickets a player can be 
 forge.configgui.playerTicketCount=Player Ticket Limit
 forge.configgui.logCascadingWorldGeneration=Log Cascading World Gen
 forge.configgui.logCascadingWorldGeneration.tooltip=Log cascading chunk generation issues during terrain population.
+forge.configgui.fixVanillaCascading=Fix Vanilla Cascading
+forge.configgui.fixVanillaCascading.tooltip=Fix various bugs in vanilla world gen that causes extra chunks to load. This WILL change your worldgen from vanilla. Do not report differences if this is enabled.
 
 fml.config.sample.basicDouble.tooltip=A double property with no defined bounds.
 fml.config.sample.basicDouble=Unbounded Double

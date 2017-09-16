@@ -20,14 +20,21 @@
 package net.minecraftforge.server.command;
 
 import java.text.DecimalFormat;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.WorldWorkerManager;
 import net.minecraftforge.server.ForgeTimeTracker;
 
 public class ForgeCommand extends CommandBase {
@@ -64,20 +71,45 @@ public class ForgeCommand extends CommandBase {
         }
         else if ("tps".equals(args[0]))
         {
-            displayTPS(server, sender,args);
+            displayTPS(server, sender, args);
         }
-        else if ("tpslog".equals(args[0]))
+        /*else if ("tpslog".equals(args[0]))
         {
-            doTPSLog(server, sender,args);
+            doTPSLog(server, sender, args);
         }
+        */
         else if ("track".equals(args[0]))
         {
             handleTracking(server, sender, args);
+        }
+        else if ("gen".equals(args[0]))
+        {
+            handleGen(server, sender, args);
         }
         else
         {
             throw new WrongUsageException("commands.forge.usage");
         }
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    {
+        if (args.length <= 1)
+            return getListOfStringsMatchingLastWord(args, new String[] {"help", "tps", "track", "gen"});
+
+        switch (args[0].toLowerCase(Locale.ENGLISH))
+        {
+            case "gen":
+                if (args.length > 1 && args.length <= 4)
+                    return getTabCompletionCoordinate(args, 1, targetPos);
+                if (args.length == 5) //Chunk Count? No completion
+                    return Collections.emptyList();
+                if (args.length == 6) // Dimension, Add support for names? Get list of ids? Meh
+                    return Collections.emptyList();
+                break;
+        }
+        return Collections.emptyList();
     }
 
     private void handleTracking(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
@@ -138,6 +170,23 @@ public class ForgeCommand extends CommandBase {
             double worldTPS = Math.min(1000.0/worldTickTime, 20);
             sender.sendMessage(new TextComponentTranslation("commands.forge.tps.summary",String.format("Dim %d", dim), timeFormatter.format(worldTickTime), timeFormatter.format(worldTPS)));
         }
+    }
+
+    private void handleGen(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    {
+        // gen x y z chunkCount [dim] [shape?]
+        if (args.length < 5)
+            throw new WrongUsageException("commands.forge.gen.usage");
+
+        BlockPos blockpos = parseBlockPos(sender, args, 1, false);
+        int count = parseInt(args[4], 10);
+        int dim = args.length >= 6 ? parseInt(args[5]) : sender.getEntityWorld().provider.getDimension();
+        int interval = args.length >= 7 ? parseInt(args[6]) : -1;
+        BlockPos chunkpos = new BlockPos(blockpos.getX() >> 4, 0, blockpos.getZ() >> 4);
+
+        ChunkGenWorker worker = new ChunkGenWorker(sender, chunkpos, count, dim, interval);
+        sender.sendMessage(worker.getStartMessage());
+        WorldWorkerManager.addWorker(worker);
     }
 
     private static long mean(long[] values)
