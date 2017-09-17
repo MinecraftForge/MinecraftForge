@@ -709,25 +709,25 @@ public class Loader
             List<String> depparts = Lists.newArrayList(DEPENDENCYPARTSPLITTER.split(dep));
             if (depparts.size() != 2)
             {
-                parseFailure(dep, "Dependecy string needs 2 parts");
+                onParseFailure(dep, "Dependecy string needs 2 parts");
             }
             String target = depparts.get(1);
             boolean targetIsAll = target.startsWith("*");
 
             if (targetIsAll && target.length() > 1)
             {
-                parseFailure(dep, "Cannot have an \"all\" relationship with anything except pure *");
+                onParseFailure(dep, "Cannot have an \"all\" relationship with anything except pure *");
             }
 
             if (targetIsAll && target.indexOf('@') > -1)
             {
-                parseFailure(dep, "You cannot have a versioned dependency on everything");
+                onParseFailure(dep, "You cannot have a versioned dependency on everything");
             }
 
             List<String> instructions = Lists.newArrayList(DEPENDENCYINSTRUCTIONSSPLITTER.split(depparts.get(0)));
             if (!DEPENDENCYINSTRUCTIONS.containsAll(instructions))
             {
-                parseFailure(dep, String.format("Found invalid instructions. Only %s are allowed.", DEPENDENCYINSTRUCTIONS.toString().replace('[', ' ').replace(']', ' ').trim()));
+                onParseFailure(dep, String.format("Found invalid instructions. Only %s are allowed.", DEPENDENCYINSTRUCTIONS.toString().replace('[', ' ').replace(']', ' ').trim()));
             }
             boolean hasSide = false;
             boolean hasRequired = false;
@@ -740,7 +740,7 @@ public class Loader
                 }
                 else if (hasSide && ("client".equals(instruction) || "server".equals(instruction)))
                 {
-                    parseFailure(dep, "Side or other instructions after Side have already been defined");
+                    onParseFailure(dep, "Side or other instructions after Side have already been defined");
                 }
                 else
                 {
@@ -759,12 +759,12 @@ public class Loader
                         }
                         else
                         {
-                            parseFailure(dep, "You can't require everything");
+                            onParseFailure(dep, "You can't require everything");
                         }
                     }
                     else if (hasRequired && "required".equals(instruction))
                     {
-                        parseFailure(dep, "Required or other instructions after Required have already been defined");
+                        onParseFailure(dep, "Required or other instructions after Required have already been defined");
                     }
                     else
                     {
@@ -790,7 +790,7 @@ public class Loader
                         }
                         else
                         {
-                            parseFailure(dep, "Order instruction has already been defined");
+                            onParseFailure(dep, "Order instruction has already been defined");
                         }
                     }
                 }
@@ -798,7 +798,8 @@ public class Loader
         }
     }
     
-    private static void parseFailure(String dependencyString, String cause){
+    private static void onParseFailure(String dependencyString, String cause)
+    {
         FMLLog.log.warn("Unable to parse dependency string {}, cause - \"{}\"", dependencyString, cause);
         throw new LoaderException(String.format("Unable to parse dependency string %s, cause - \"%s\"", dependencyString, cause));
     }
