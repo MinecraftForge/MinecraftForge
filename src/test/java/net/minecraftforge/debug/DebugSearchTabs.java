@@ -13,8 +13,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class DebugSearchTabs
 {
     public static final String MODID = "debugsearchtab";
+    static final boolean ENABLED = false;
 
-    public static final CreativeTabs SEARCH_TAB = new CreativeTabs(1, "searchtab")
+    public static final CreativeTabs SEARCH_TAB = !ENABLED ? null : new CreativeTabs(1, "searchtab")
     {
         @SideOnly(Side.CLIENT)
         public ItemStack getTabIconItem()
@@ -23,8 +24,8 @@ public class DebugSearchTabs
         }
         
         @Override
-        public boolean hasSearchBar() {
-        	
+        public boolean hasSearchBar()
+        {
         	return true;
         }
         

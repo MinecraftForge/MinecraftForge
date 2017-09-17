@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 public class WorldCapabilityRainTimerTest
 {
     public static final String MODID = "worldperiodicrainchecktest";
+    static final boolean ENABLED = false;
 
     @CapabilityInject(IRainTimer.class)
     public static final Capability<IRainTimer> TIMER_CAP = null;
@@ -53,7 +54,7 @@ public class WorldCapabilityRainTimerTest
         @SubscribeEvent
         public void onTick(TickEvent.WorldTickEvent event)
         {
-            if (event.world.isRemote)
+            if (!ENABLED || event.world.isRemote)
             {
                 return;
             }
