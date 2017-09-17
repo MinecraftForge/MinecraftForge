@@ -258,7 +258,7 @@ public class OBJModel implements IModel
                         }
                         else
                         {
-                            FMLLog.log.warn("OBJModel.Parser: (Model: '{}', Line: {}) material '{}' referenced but was not found", objFrom, lineNum, data);
+                            FMLLog.log.error("OBJModel.Parser: (Model: '{}', Line: {}) material '{}' referenced but was not found", objFrom, lineNum, data);
                         }
                         usemtlCounter++;
                     }
