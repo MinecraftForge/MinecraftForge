@@ -212,13 +212,28 @@ public class Restriction
         }
         else if ( getLowerBound() != null && getUpperBound() != null )
         {
-            if ( getLowerBound().equals(getUpperBound()) )
+            if ( getLowerBound().getVersionString().equals(getUpperBound().getVersionString()) )
             {
-                return getLowerBound().toString();
-            }
-            else
+                return getLowerBound().getVersionString();
+            } 
+            else 
             {
-                return I18n.format("fml.messages.version.restriction.bounded", getLowerBound(), getUpperBound());
+                if (isLowerBoundInclusive() && isUpperBoundInclusive()) 
+                {
+                    return I18n.format("fml.messages.version.restriction.bounded.inclusive", getLowerBound(), getUpperBound());
+                } 
+                else if (isLowerBoundInclusive()) 
+                {
+                    return I18n.format("fml.messages.version.restriction.bounded.upperexclusive", getLowerBound(), getUpperBound());
+                } 
+                else if (isUpperBoundInclusive()) 
+                {
+                    return I18n.format("fml.messages.version.restriction.bounded.lowerexclusive", getLowerBound(), getUpperBound());
+                } 
+                else 
+                {
+                    return I18n.format("fml.messages.version.restriction.bounded.exclusive", getLowerBound(), getUpperBound());
+                }
             }
         }
         else if ( getLowerBound() != null )

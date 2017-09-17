@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTallGrass.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTallGrass.java
-@@ -24,7 +24,7 @@
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -22,7 +22,7 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
  
 -public class BlockTallGrass extends BlockBush implements IGrowable
 +public class BlockTallGrass extends BlockBush implements IGrowable, net.minecraftforge.common.IShearable
  {
      public static final PropertyEnum<BlockTallGrass.EnumType> field_176497_a = PropertyEnum.<BlockTallGrass.EnumType>func_177709_a("type", BlockTallGrass.EnumType.class);
      protected static final AxisAlignedBB field_185522_c = new AxisAlignedBB(0.09999999403953552D, 0.0D, 0.09999999403953552D, 0.8999999761581421D, 0.800000011920929D, 0.8999999761581421D);
-@@ -42,7 +42,7 @@
+@@ -40,7 +40,7 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
@@ -18,7 +18,7 @@
      }
  
      public boolean func_176200_f(IBlockAccess p_176200_1_, BlockPos p_176200_2_)
-@@ -52,7 +52,7 @@
+@@ -50,7 +50,7 @@
  
      public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
      {
@@ -27,16 +27,7 @@
      }
  
      public int func_149679_a(int p_149679_1_, Random p_149679_2_)
-@@ -62,7 +62,7 @@
- 
-     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_)
-     {
--        if (!p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
-+        if (false && !p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ) // Forge: Noop Taken care of by IShearable
-         {
-             p_180657_2_.func_71029_a(StatList.func_188055_a(this));
-             func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Blocks.field_150329_H, 1, ((BlockTallGrass.EnumType)p_180657_4_.func_177229_b(field_176497_a)).func_177044_a()));
-@@ -181,4 +181,21 @@
+@@ -178,4 +178,19 @@
              }
          }
      }
@@ -48,13 +39,11 @@
 +        return NonNullList.func_191197_a(1, new ItemStack(Blocks.field_150329_H, 1, ((BlockTallGrass.EnumType)world.func_180495_p(pos).func_177229_b(field_176497_a)).func_177044_a()));
 +    }
 +    @Override
-+    public NonNullList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        if (RANDOM.nextInt(8) != 0) return NonNullList.func_191196_a();
++        if (RANDOM.nextInt(8) != 0) return;
 +        ItemStack seed = net.minecraftforge.common.ForgeHooks.getGrassSeed(RANDOM, fortune);
 +        if (!seed.func_190926_b())
-+            return NonNullList.func_191197_a(1, seed);
-+        else
-+            return NonNullList.func_191196_a();
++            drops.add(seed);
 +    }
  }

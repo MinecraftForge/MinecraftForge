@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIMate.java
 +++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIMate.java
-@@ -93,6 +93,18 @@
+@@ -92,6 +92,18 @@
      {
          EntityAgeable entityageable = this.field_75390_d.func_90011_a(this.field_75391_e);
  
@@ -18,4 +18,4 @@
 +
          if (entityageable != null)
          {
-             EntityPlayer entityplayer = this.field_75390_d.func_146083_cb();
+             EntityPlayerMP entityplayermp = this.field_75390_d.func_191993_do();

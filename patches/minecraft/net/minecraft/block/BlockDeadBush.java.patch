@@ -9,15 +9,6 @@
  {
      protected static final AxisAlignedBB field_185516_a = new AxisAlignedBB(0.09999999403953552D, 0.0D, 0.09999999403953552D, 0.8999999761581421D, 0.800000011920929D, 0.8999999761581421D);
  
-@@ -58,7 +58,7 @@
- 
-     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_)
-     {
--        if (!p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
-+        if (false && !p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
-         {
-             p_180657_2_.func_71029_a(StatList.func_188055_a(this));
-             func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Blocks.field_150330_I, 1, 0));
 @@ -68,4 +68,11 @@
              super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
          }

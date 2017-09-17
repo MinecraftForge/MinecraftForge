@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
-@@ -212,6 +212,7 @@
+@@ -211,6 +211,7 @@
              {
                  this.func_175069_a(new ResourceLocation("shaders/post/invert.json"));
              }
@@ -8,16 +8,16 @@
          }
      }
  
-@@ -413,7 +414,7 @@
+@@ -412,7 +413,7 @@
  
                          if (d3 < d2 || d2 == 0.0D)
                          {
 -                            if (entity1.func_184208_bv() == entity.func_184208_bv())
-+                            if (entity1.func_184208_bv() == entity.func_184208_bv() && !entity.canRiderInteract())
++                            if (entity1.func_184208_bv() == entity.func_184208_bv() && !entity1.canRiderInteract())
                              {
                                  if (d2 == 0.0D)
                                  {
-@@ -506,7 +507,7 @@
+@@ -505,7 +506,7 @@
                  f = f * 60.0F / 70.0F;
              }
  
@@ -26,7 +26,7 @@
          }
      }
  
-@@ -570,14 +571,8 @@
+@@ -569,14 +570,8 @@
              {
                  BlockPos blockpos = new BlockPos(entity);
                  IBlockState iblockstate = this.field_78531_r.field_71441_e.func_180495_p(blockpos);
@@ -42,7 +42,7 @@
                  GlStateManager.func_179114_b(entity.field_70126_B + (entity.field_70177_z - entity.field_70126_B) * p_78467_1_ + 180.0F, 0.0F, -1.0F, 0.0F);
                  GlStateManager.func_179114_b(entity.field_70127_C + (entity.field_70125_A - entity.field_70127_C) * p_78467_1_, -1.0F, 0.0F, 0.0F);
              }
-@@ -644,17 +639,20 @@
+@@ -643,17 +638,20 @@
  
          if (!this.field_78531_r.field_71474_y.field_74325_U)
          {
@@ -70,7 +70,7 @@
          }
  
          GlStateManager.func_179109_b(0.0F, -f, 0.0F);
-@@ -772,6 +770,7 @@
+@@ -771,6 +769,7 @@
  
              boolean flag = this.field_78531_r.func_175606_aa() instanceof EntityLivingBase && ((EntityLivingBase)this.field_78531_r.func_175606_aa()).func_70608_bn();
  
@@ -78,16 +78,43 @@
              if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && !this.field_78531_r.field_71442_b.func_78747_a())
              {
                  this.func_180436_i();
-@@ -1109,7 +1108,7 @@
+@@ -875,6 +874,15 @@
+                         f10 = 0.25F + f7 * 0.75F;
+                     }
+ 
++                    float[] colors = {f8, f9, f10};
++                    world.field_73011_w.getLightmapColors(p_78472_1_, f, f2, f3, colors);
++                    f8 = colors[0]; f9 = colors[1]; f10 = colors[2];
++
++                    // Forge: fix MC-58177
++                    f8 = MathHelper.func_76131_a(f8, 0f, 1f);
++                    f9 = MathHelper.func_76131_a(f9, 0f, 1f);
++                    f10 = MathHelper.func_76131_a(f10, 0f, 1f);
++
+                     if (this.field_78531_r.field_71439_g.func_70644_a(MobEffects.field_76439_r))
+                     {
+                         float f15 = this.func_180438_a(this.field_78531_r.field_71439_g, p_78472_1_);
+@@ -1101,6 +1109,10 @@
+                 GlStateManager.func_179096_D();
+                 this.func_78478_c();
+                 this.field_78510_Z = System.nanoTime();
++                // Forge: Fix MC-112292
++                net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher.field_147556_a.field_147553_e = this.field_78531_r.func_110434_K();
++                // Forge: also fix rendering text before entering world (not part of MC-112292, but the same reason)
++                net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher.field_147556_a.field_147557_n = this.field_78531_r.field_71466_p;
+             }
+ 
+             if (this.field_78531_r.field_71462_r != null)
+@@ -1109,7 +1121,7 @@
  
                  try
                  {
--                    this.field_78531_r.field_71462_r.func_73863_a(k1, l1, p_181560_1_);
-+                    net.minecraftforge.client.ForgeHooksClient.drawScreen(this.field_78531_r.field_71462_r, k1, l1, p_181560_1_);
+-                    this.field_78531_r.field_71462_r.func_73863_a(k1, l1, this.field_78531_r.func_193989_ak());
++                    net.minecraftforge.client.ForgeHooksClient.drawScreen(this.field_78531_r.field_71462_r, k1, l1, this.field_78531_r.func_193989_ak());
                  }
                  catch (Throwable throwable)
                  {
-@@ -1204,7 +1203,7 @@
+@@ -1204,7 +1216,7 @@
  
                      if (this.field_78531_r.field_71442_b.func_178889_l() == GameType.SPECTATOR)
                      {
@@ -96,7 +123,7 @@
                      }
                      else
                      {
-@@ -1329,7 +1328,9 @@
+@@ -1329,7 +1341,9 @@
              GlStateManager.func_179094_E();
              RenderHelper.func_74519_b();
              this.field_78531_r.field_71424_I.func_76318_c("entities");
@@ -106,7 +133,7 @@
              RenderHelper.func_74518_a();
              this.func_175072_h();
          }
-@@ -1342,6 +1343,7 @@
+@@ -1342,6 +1356,7 @@
              EntityPlayer entityplayer = (EntityPlayer)entity;
              GlStateManager.func_179118_c();
              this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -114,7 +141,7 @@
              renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_175068_2_);
              GlStateManager.func_179141_d();
          }
-@@ -1388,6 +1390,17 @@
+@@ -1388,6 +1403,17 @@
          GlStateManager.func_179103_j(7425);
          this.field_78531_r.field_71424_I.func_76318_c("translucent");
          renderglobal.func_174977_a(BlockRenderLayer.TRANSLUCENT, (double)p_175068_2_, p_175068_1_, entity);
@@ -132,7 +159,7 @@
          GlStateManager.func_179103_j(7424);
          GlStateManager.func_179132_a(true);
          GlStateManager.func_179089_o();
-@@ -1400,6 +1413,9 @@
+@@ -1400,6 +1426,9 @@
              this.func_180437_a(renderglobal, p_175068_2_, p_175068_1_, d0, d1, d2);
          }
  
@@ -142,7 +169,7 @@
          this.field_78531_r.field_71424_I.func_76318_c("hand");
  
          if (this.field_175074_C)
-@@ -1515,6 +1531,13 @@
+@@ -1515,6 +1544,13 @@
  
      protected void func_78474_d(float p_78474_1_)
      {
@@ -156,6 +183,46 @@
          float f = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f > 0.0F)
+@@ -1749,30 +1785,17 @@
+             this.field_175082_R = (float)vec3d3.field_72448_b;
+             this.field_175081_S = (float)vec3d3.field_72449_c;
+         }
+-        else if (iblockstate.func_185904_a() == Material.field_151586_h)
++        else
+         {
+-            float f12 = 0.0F;
+-
+-            if (entity instanceof EntityLivingBase)
+-            {
+-                f12 = (float)EnchantmentHelper.func_185292_c((EntityLivingBase)entity) * 0.2F;
+-
+-                if (((EntityLivingBase)entity).func_70644_a(MobEffects.field_76427_o))
+-                {
+-                    f12 = f12 * 0.3F + 0.6F;
+-                }
+-            }
+-
+-            this.field_175080_Q = 0.02F + f12;
+-            this.field_175082_R = 0.02F + f12;
+-            this.field_175081_S = 0.2F + f12;
++            //Forge Moved to Block.
++            Vec3d viewport = ActiveRenderInfo.func_178806_a(entity, p_78466_1_);
++            BlockPos viewportPos = new BlockPos(viewport);
++            IBlockState viewportState = this.field_78531_r.field_71441_e.func_180495_p(viewportPos);
++            Vec3d inMaterialColor = viewportState.func_177230_c().getFogColor(this.field_78531_r.field_71441_e, viewportPos, viewportState, entity, new Vec3d(field_175080_Q, field_175082_R, field_175081_S), p_78466_1_);
++            this.field_175080_Q = (float)inMaterialColor.field_72450_a;
++            this.field_175082_R = (float)inMaterialColor.field_72448_b;
++            this.field_175081_S = (float)inMaterialColor.field_72449_c;
+         }
+-        else if (iblockstate.func_185904_a() == Material.field_151587_i)
+-        {
+-            this.field_175080_Q = 0.6F;
+-            this.field_175082_R = 0.1F;
+-            this.field_175081_S = 0.0F;
+-        }
+ 
+         float f13 = this.field_78535_ad + (this.field_78539_ae - this.field_78535_ad) * p_78466_1_;
+         this.field_175080_Q *= f13;
 @@ -1845,6 +1868,13 @@
              this.field_175081_S = f7;
          }

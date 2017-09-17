@@ -23,15 +23,22 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.handshake.FMLHandshakeMessage.ServerHello;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
 
 /**
  * Packet handshake sequence manager- client side (responding to remote server)
@@ -49,30 +56,39 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
     START
     {
         @Override
-        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
+            cons.accept(HELLO);
             NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
             dispatcher.clientListenForServerHandshake();
-            return HELLO;
         }
     },
     HELLO
     {
         @Override
-        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
+            boolean isVanilla = msg == null;
+            if (isVanilla)
+            {
+                cons.accept(DONE);
+            }
+            else
+            {
+                cons.accept(WAITINGSERVERDATA);
+            }
             // write our custom packet registration, always
             ctx.writeAndFlush(FMLHandshakeMessage.makeCustomChannelRegistration(NetworkRegistry.INSTANCE.channelNamesFor(Side.CLIENT)));
-            if (msg == null)
+            if (isVanilla)
             {
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                 dispatcher.abortClientHandshake("VANILLA");
                 // VANILLA login
-                return DONE;
+                return;
             }
 
             ServerHello serverHelloPacket = (FMLHandshakeMessage.ServerHello)msg;
-            FMLLog.info("Server protocol version %x", serverHelloPacket.protocolVersion());
+            FMLLog.log.info("Server protocol version {}", Integer.toHexString(serverHelloPacket.protocolVersion()));
             if (serverHelloPacket.protocolVersion() > 1)
             {
                 // Server sent us an extra dimension for the logging in player - stash it for retrieval later
@@ -81,114 +97,115 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
             }
             ctx.writeAndFlush(new FMLHandshakeMessage.ClientHello()).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             ctx.writeAndFlush(new FMLHandshakeMessage.ModList(Loader.instance().getActiveModList())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-            return WAITINGSERVERDATA;
         }
     },
 
     WAITINGSERVERDATA
     {
         @Override
-        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
             String result = FMLNetworkHandler.checkModList((FMLHandshakeMessage.ModList) msg, Side.SERVER);
             if (result != null)
             {
+                cons.accept(ERROR);
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                 dispatcher.rejectHandshake(result);
-                return ERROR;
+                return;
             }
-            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
             {
-                return WAITINGSERVERCOMPLETE;
+                cons.accept(WAITINGSERVERCOMPLETE);
             }
             else
             {
-                return PENDINGCOMPLETE;
+                cons.accept(PENDINGCOMPLETE);
             }
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+
         }
     },
     WAITINGSERVERCOMPLETE
     {
         @Override
-        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
             FMLHandshakeMessage.RegistryData pkt = (FMLHandshakeMessage.RegistryData)msg;
-            PersistentRegistryManager.GameDataSnapshot snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
+            Map<ResourceLocation, ForgeRegistry.Snapshot> snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
             if (snap == null)
             {
-                snap = new PersistentRegistryManager.GameDataSnapshot();
+                snap = Maps.newHashMap();
                 ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(snap);
             }
 
-            PersistentRegistryManager.GameDataSnapshot.Entry entry = new PersistentRegistryManager.GameDataSnapshot.Entry();
+            ForgeRegistry.Snapshot entry = new ForgeRegistry.Snapshot();
             entry.ids.putAll(pkt.getIdMap());
-            entry.substitutions.addAll(pkt.getSubstitutions());
             entry.dummied.addAll(pkt.getDummied());
-            snap.entries.put(pkt.getName(), entry);
+            entry.overrides.putAll(pkt.getOverrides());
+            snap.put(pkt.getName(), entry);
 
             if (pkt.hasMore())
             {
-                FMLLog.fine("Received Mod Registry mapping for %s: %d IDs %d subs %d dummied", pkt.getName(), entry.ids.size(), entry.substitutions.size(), entry.dummied.size());
-                return WAITINGSERVERCOMPLETE;
+                cons.accept(WAITINGSERVERCOMPLETE);
+                FMLLog.log.debug("Received Mod Registry mapping for {}: {} IDs {} overrides {} dummied", pkt.getName(), entry.ids.size(), entry.overrides.size(), entry.dummied.size());
+                return;
             }
 
-            ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).remove();
+            ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(null);
 
-            List<String> locallyMissing = PersistentRegistryManager.injectSnapshot(snap, false, false);
+            Multimap<ResourceLocation, ResourceLocation> locallyMissing = GameData.injectSnapshot(snap, false, false);
             if (!locallyMissing.isEmpty())
             {
+                cons.accept(ERROR);
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                dispatcher.rejectHandshake("Fatally missing blocks and items");
-                FMLLog.severe("Failed to connect to server: there are %d missing blocks and items", locallyMissing.size());
-                FMLLog.fine("Missing list: %s", locallyMissing);
-                return ERROR;
+                dispatcher.rejectHandshake("Fatally missing registry entries");
+                FMLLog.log.fatal("Failed to connect to server: there are {} missing registry items", locallyMissing.size());
+                locallyMissing.asMap().forEach((key, value) ->  FMLLog.log.debug("Missing {} Entries: {}", key, value));
+                return;
             }
+            cons.accept(PENDINGCOMPLETE);
             ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-            return PENDINGCOMPLETE;
         }
     },
     PENDINGCOMPLETE
     {
         @Override
-        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
+            cons.accept(COMPLETE);
             ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-            return COMPLETE;
         }
     },
     COMPLETE
     {
         @Override
-        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
+            cons.accept(DONE);
             NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
             dispatcher.completeClientHandshake();
             FMLMessage.CompleteHandshake complete = new FMLMessage.CompleteHandshake(Side.CLIENT);
             ctx.fireChannelRead(complete);
             ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-            return DONE;
         }
     },
     DONE
     {
         @Override
-        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
             if (msg instanceof FMLHandshakeMessage.HandshakeReset)
             {
-                PersistentRegistryManager.revertToFrozen();
-                return HELLO;
+                cons.accept(HELLO);
+                GameData.revertToFrozen();
             }
-            return this;
         }
     },
     ERROR
     {
         @Override
-        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
-            return this;
         }
     };
 }

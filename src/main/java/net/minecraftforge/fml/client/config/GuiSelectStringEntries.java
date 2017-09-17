@@ -65,8 +65,8 @@ public class GuiSelectStringEntries extends GuiListExtended
         for (Entry<Object, String> entry : sortedList)
         {
             listEntries.add(new ListEntry(this, entry));
-            if (mc.fontRendererObj.getStringWidth(entry.getValue()) > maxEntryWidth)
-                maxEntryWidth = mc.fontRendererObj.getStringWidth(entry.getValue());
+            if (mc.fontRenderer.getStringWidth(entry.getValue()) > maxEntryWidth)
+                maxEntryWidth = mc.fontRenderer.getStringWidth(entry.getValue());
 
             if (owningScreen.currentValue.equals(entry.getKey()))
             {
@@ -173,9 +173,9 @@ public class GuiSelectStringEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
-            owningList.mc.fontRendererObj.drawString(value.getValue(), x + 1, y, slotIndex == owningList.selectedIndex ? 16777215 : 14737632);
+            owningList.mc.fontRenderer.drawString(value.getValue(), x + 1, y, slotIndex == owningList.selectedIndex ? 16777215 : 14737632);
         }
 
         @Override
@@ -195,7 +195,7 @@ public class GuiSelectStringEntries extends GuiListExtended
         }
 
         @Override
-        public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
+        public void updatePosition(int p_192633_1_, int p_192633_2_, int p_192633_3_, float p_192633_4_){}
     }
 
     public static interface IGuiSelectStringListEntry extends GuiListExtended.IGuiListEntry

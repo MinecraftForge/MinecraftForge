@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common.discovery;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -34,9 +35,7 @@ import net.minecraftforge.fml.common.ModContainerFactory;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import javax.annotation.Nullable;
@@ -59,7 +58,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
     {
         this.table = table;
         List<ModContainer> found = Lists.newArrayList();
-        FMLLog.fine("Examining directory %s for potential mods", candidate.getModContainer().getName());
+        FMLLog.log.debug("Examining directory {} for potential mods", candidate.getModContainer().getName());
         exploreFileSystem("", candidate.getModContainer(), found, candidate, null);
         for (ModContainer mc : found)
         {
@@ -84,12 +83,12 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                 {
                     IOUtils.closeQuietly(fis);
                 }
-                FMLLog.fine("Found an mcmod.info file in directory %s", modDir.getName());
+                FMLLog.log.debug("Found an mcmod.info file in directory {}", modDir.getName());
             }
             catch (Exception e)
             {
                 mc = MetadataCollection.from(null,"");
-                FMLLog.fine("No mcmod.info file found in directory %s", modDir.getName());
+                FMLLog.log.debug("No mcmod.info file found in directory {}", modDir.getName());
             }
         }
 
@@ -101,7 +100,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
         {
             if (file.isDirectory())
             {
-                FMLLog.finer("Recursing into package %s", path + file.getName());
+                FMLLog.log.trace("Recursing into package {}", path + file.getName());
                 exploreFileSystem(path + file.getName() + "/", file, harvestedMods, candidate, mc);
                 continue;
             }
@@ -119,12 +118,12 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                 }
                 catch (LoaderException e)
                 {
-                    FMLLog.log(Level.ERROR, e, "There was a problem reading the file %s - probably this is a corrupt file", file.getPath());
+                    FMLLog.log.error("There was a problem reading the file {} - probably this is a corrupt file", file.getPath(), e);
                     throw e;
                 }
-                catch (Exception e)
+                catch (IOException e)
                 {
-                    throw Throwables.propagate(e);
+                    throw new RuntimeException(e);
                 }
                 finally
                 {

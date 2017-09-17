@@ -45,13 +45,7 @@ public class ModFixs
 
     public List<IFixableData> getFixes(IFixType type)
     {
-        List<IFixableData> ret = this.fixes.get(type);
-        if (ret == null)
-        {
-            ret = Lists.newArrayList();
-            this.fixes.put(type, ret);
-        }
-        return ret;
+        return this.fixes.computeIfAbsent(type, k -> Lists.newArrayList());
     }
 
     public void registerFix(IFixType type, IFixableData fixer)

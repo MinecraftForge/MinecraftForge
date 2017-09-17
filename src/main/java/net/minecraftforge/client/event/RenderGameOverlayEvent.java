@@ -21,10 +21,9 @@ package net.minecraftforge.client.event;
 
 import java.util.ArrayList;
 
-import net.minecraft.world.BossInfoLerping;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-
+import net.minecraft.client.gui.BossInfoClient;
 import net.minecraft.client.gui.ScaledResolution;
 
 @Cancelable
@@ -67,7 +66,8 @@ public class RenderGameOverlayEvent extends Event
         DEBUG,
         POTION_ICONS,
         SUBTITLES,
-        FPS_GRAPH
+        FPS_GRAPH,
+        VIGNETTE
     }
 
     private final float partialTicks;
@@ -107,11 +107,11 @@ public class RenderGameOverlayEvent extends Event
 
     public static class BossInfo extends Pre
     {
-        private final BossInfoLerping bossInfo;
+        private final BossInfoClient bossInfo;
         private final int x;
         private final int y;
         private int increment;
-        public BossInfo(RenderGameOverlayEvent parent, ElementType type, BossInfoLerping bossInfo, int x, int y, int increment)
+        public BossInfo(RenderGameOverlayEvent parent, ElementType type, BossInfoClient bossInfo, int x, int y, int increment)
         {
             super(parent, type);
             this.bossInfo = bossInfo;
@@ -121,9 +121,9 @@ public class RenderGameOverlayEvent extends Event
         }
 
         /**
-         * @return The {@link BossInfoLerping} currently being rendered
+         * @return The {@link BossInfoClient} currently being rendered
          */
-        public BossInfoLerping getBossInfo()
+        public BossInfoClient getBossInfo()
         {
             return bossInfo;
         }

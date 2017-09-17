@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCocoa.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCocoa.java
-@@ -43,13 +43,14 @@
+@@ -44,13 +44,14 @@
          {
              this.func_176500_f(p_180650_1_, p_180650_2_, p_180650_3_);
          }
@@ -17,7 +17,7 @@
              }
          }
      }
-@@ -131,7 +132,14 @@
+@@ -132,7 +133,14 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -26,21 +26,19 @@
 +    }
 +
 +    @Override
-+    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        java.util.List<ItemStack> dropped = super.getDrops(world, pos, state, fortune);
++        super.getDrops(drops, world, pos, state, fortune);
 +        int i = ((Integer)state.func_177229_b(field_176501_a)).intValue();
          int j = 1;
  
          if (i >= 2)
-@@ -141,8 +149,9 @@
+@@ -142,7 +150,7 @@
  
          for (int k = 0; k < j; ++k)
          {
 -            func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(Items.field_151100_aR, 1, EnumDyeColor.BROWN.func_176767_b()));
-+            dropped.add(new ItemStack(Items.field_151100_aR, 1, EnumDyeColor.BROWN.func_176767_b()));
++            drops.add(new ItemStack(Items.field_151100_aR, 1, EnumDyeColor.BROWN.func_176767_b()));
          }
-+        return dropped;
      }
  
-     public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)

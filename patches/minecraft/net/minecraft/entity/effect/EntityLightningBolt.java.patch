@@ -3,7 +3,7 @@
 @@ -104,7 +104,8 @@
                  for (int i = 0; i < list.size(); ++i)
                  {
-                     Entity entity = (Entity)list.get(i);
+                     Entity entity = list.get(i);
 -                    entity.func_70077_a(this);
 +                    if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
 +                        entity.func_70077_a(this);

@@ -105,6 +105,7 @@ public class UnpackedBakedQuad extends BakedQuad
             unpackedData = new float[4][format.getElementCount()][4];
         }
 
+        @Override
         public VertexFormat getVertexFormat()
         {
             return format;
@@ -114,26 +115,32 @@ public class UnpackedBakedQuad extends BakedQuad
         {
             this.contractUVs = value;
         }
+        @Override
         public void setQuadTint(int tint)
         {
             this.tint = tint;
         }
 
+        @Override
         public void setQuadOrientation(EnumFacing orientation)
         {
             this.orientation = orientation;
         }
 
+        // FIXME: move (or at least add) into constructor
+        @Override
         public void setTexture(TextureAtlasSprite texture)
         {
             this.texture = texture;
         }
 
+        @Override
         public void setApplyDiffuseLighting(boolean diffuse)
         {
             this.applyDiffuseLighting = diffuse;
         }
 
+        @Override
         public void put(int element, float... data)
         {
             for(int i = 0; i < 4; i++)
@@ -166,6 +173,10 @@ public class UnpackedBakedQuad extends BakedQuad
             if(!full)
             {
                 throw new IllegalStateException("not enough data");
+            }
+            if(texture == null)
+            {
+                throw new IllegalStateException("texture not set");
             }
             if(contractUVs)
             {

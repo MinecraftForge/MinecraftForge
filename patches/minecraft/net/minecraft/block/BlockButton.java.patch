@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockButton.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockButton.java
-@@ -90,7 +90,7 @@
-     protected static boolean func_181088_a(World p_181088_0_, BlockPos p_181088_1_, EnumFacing p_181088_2_)
-     {
-         BlockPos blockpos = p_181088_1_.func_177972_a(p_181088_2_);
--        return p_181088_2_ == EnumFacing.DOWN ? p_181088_0_.func_180495_p(blockpos).func_185896_q() : p_181088_0_.func_180495_p(blockpos).func_185915_l();
-+        return p_181088_0_.func_180495_p(blockpos).isSideSolid(p_181088_0_, blockpos, p_181088_2_.func_176734_d());
-     }
+@@ -98,7 +98,7 @@
  
-     public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
+         if (p_181088_2_ == EnumFacing.UP)
+         {
+-            return block == Blocks.field_150438_bZ || !func_193384_b(block) && flag;
++            return iblockstate.func_185896_q() || !func_193384_b(block) && flag;
+         }
+         else
+         {

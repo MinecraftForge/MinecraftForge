@@ -8,12 +8,12 @@
 +        this(p_i45663_1_, p_i45663_2_, null);
 +    }
 +
-+    protected StateImplementation createState(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties, @Nullable ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, com.google.common.base.Optional<?>> unlistedProperties)
++    protected StateImplementation createState(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties, @Nullable ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, java.util.Optional<?>> unlistedProperties)
 +    {
 +        return new StateImplementation(block, properties);
 +    }
 +
-+    protected BlockStateContainer(Block blockIn, IProperty<?>[] properties, ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, com.google.common.base.Optional<?>> unlistedProperties)
++    protected BlockStateContainer(Block blockIn, IProperty<?>[] properties, ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, java.util.Optional<?>> unlistedProperties)
 +    {
 +        this.field_177627_c = blockIn;
          Map < String, IProperty<? >> map = Maps. < String, IProperty<? >> newHashMap();
@@ -49,9 +49,9 @@
              public Collection < IProperty<? >> func_177227_a()
              {
                  return Collections. < IProperty<? >> unmodifiableCollection(this.field_177237_b.keySet());
-@@ -468,5 +485,86 @@
+@@ -473,5 +490,86 @@
              {
-                 return this.field_177239_a.func_176214_u(this);
+                 return this.field_177239_a.func_193383_a(p_193401_1_, this, p_193401_2_, p_193401_3_);
              }
 +
 +            //Forge Start

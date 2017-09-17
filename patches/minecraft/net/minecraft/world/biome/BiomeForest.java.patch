@@ -1,6 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeForest.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeForest.java
-@@ -74,6 +74,8 @@
+@@ -46,6 +46,17 @@
+         {
+             this.field_76760_I.field_76832_z = -999;
+         }
++
++        if (this.field_150632_aF == BiomeForest.Type.FLOWER) //Needs to be done here so we have access to this.type
++        {
++            this.flowers.clear();
++            for (BlockFlower.EnumFlowerType type : BlockFlower.EnumFlowerType.values())
++            {
++                if (type.func_176964_a() == BlockFlower.EnumFlowerColor.YELLOW) continue;
++                if (type == BlockFlower.EnumFlowerType.BLUE_ORCHID) type = BlockFlower.EnumFlowerType.POPPY;
++                addFlower(net.minecraft.init.Blocks.field_150328_O.func_176223_P().func_177226_a(net.minecraft.init.Blocks.field_150328_O.func_176494_l(), type), 10);
++            }
++        }
+     }
+ 
+     public WorldGenAbstractTree func_150567_a(Random p_150567_1_)
+@@ -85,6 +96,8 @@
              this.func_185379_b(p_180624_1_, p_180624_2_, p_180624_3_);
          }
  
@@ -9,7 +27,7 @@
          int i = p_180624_2_.nextInt(5) - 3;
  
          if (this.field_150632_aF == BiomeForest.Type.FLOWER)
-@@ -82,11 +84,13 @@
+@@ -93,11 +106,13 @@
          }
  
          this.func_185378_a(p_180624_1_, p_180624_2_, p_180624_3_, i);
@@ -23,7 +41,7 @@
          for (int i = 0; i < 4; ++i)
          {
              for (int j = 0; j < 4; ++j)
-@@ -95,12 +99,12 @@
+@@ -106,12 +121,12 @@
                  int l = j * 4 + 1 + 8 + p_185379_2_.nextInt(3);
                  BlockPos blockpos = p_185379_1_.func_175645_m(p_185379_3_.func_177982_a(k, 0, l));
  
@@ -38,26 +56,3 @@
                  {
                      WorldGenAbstractTree worldgenabstracttree = this.func_150567_a(p_185379_2_);
                      worldgenabstracttree.func_175904_e();
-@@ -147,6 +151,22 @@
-         }
-     }
- 
-+    @Override
-+    public void addDefaultFlowers()
-+    {
-+        if (field_150632_aF != BiomeForest.Type.FLOWER)
-+        {
-+            super.addDefaultFlowers();
-+            return;
-+        }
-+        for (BlockFlower.EnumFlowerType type : BlockFlower.EnumFlowerType.values())
-+        {
-+            if (type.func_176964_a() == BlockFlower.EnumFlowerColor.YELLOW) continue;
-+            if (type == BlockFlower.EnumFlowerType.BLUE_ORCHID) type = BlockFlower.EnumFlowerType.POPPY;
-+            addFlower(net.minecraft.init.Blocks.field_150328_O.func_176223_P().func_177226_a(net.minecraft.init.Blocks.field_150328_O.func_176494_l(), type), 10);
-+        }
-+    }
-+
-     public Class <? extends Biome > func_150562_l()
-     {
-         return BiomeForest.class;

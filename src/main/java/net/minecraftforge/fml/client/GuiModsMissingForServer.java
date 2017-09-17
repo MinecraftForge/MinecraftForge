@@ -53,16 +53,16 @@ public class GuiModsMissingForServer extends GuiScreen
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
-        this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
-        this.drawCenteredString(this.fontRendererObj, "The mods and versions listed below could not be found", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, "The mods and versions listed below could not be found", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
-        this.drawCenteredString(this.fontRendererObj, "They are required to play on this server", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, "They are required to play on this server", this.width / 2, offset, 0xFFFFFF);
         offset += 5;
         for (ArtifactVersion v : modsMissing.missingMods)
         {
             offset += 10;
-            this.drawCenteredString(this.fontRendererObj, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
+            this.drawCenteredString(this.fontRenderer, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

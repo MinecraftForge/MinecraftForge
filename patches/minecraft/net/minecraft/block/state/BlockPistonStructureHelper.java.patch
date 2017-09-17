@@ -13,8 +13,8 @@
                      iblockstate = this.field_177261_a.func_180495_p(blockpos);
                      block = iblockstate.func_177230_c();
  
--                    if (iblockstate.func_185904_a() == Material.field_151579_a || !BlockPistonBase.func_185646_a(iblockstate, this.field_177261_a, blockpos, this.field_177257_d, false) || blockpos.equals(this.field_177259_b))
-+                    if (iblockstate.func_177230_c().isAir(iblockstate, this.field_177261_a, blockpos) || !BlockPistonBase.func_185646_a(iblockstate, this.field_177261_a, blockpos, this.field_177257_d, false) || blockpos.equals(this.field_177259_b))
+-                    if (iblockstate.func_185904_a() == Material.field_151579_a || !BlockPistonBase.func_185646_a(iblockstate, this.field_177261_a, blockpos, this.field_177257_d, false, this.field_177257_d.func_176734_d()) || blockpos.equals(this.field_177259_b))
++                    if (iblockstate.func_177230_c().isAir(iblockstate, this.field_177261_a, blockpos) || !BlockPistonBase.func_185646_a(iblockstate, this.field_177261_a, blockpos, this.field_177257_d, false, this.field_177257_d.func_176734_d()) || blockpos.equals(this.field_177259_b))
                      {
                          break;
                      }

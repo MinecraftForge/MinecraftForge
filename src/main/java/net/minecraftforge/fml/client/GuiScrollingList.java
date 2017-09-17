@@ -19,20 +19,19 @@
 
 package net.minecraftforge.fml.client;
 
-import java.io.IOException;
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import java.io.IOException;
+import java.util.List;
 
 public abstract class GuiScrollingList
 {
@@ -277,7 +276,7 @@ public abstract class GuiScrollingList
         this.applyScrollLimits();
 
         Tessellator tess = Tessellator.getInstance();
-        VertexBuffer worldr = tess.getBuffer();
+        BufferBuilder worldr = tess.getBuffer();
 
         ScaledResolution res = new ScaledResolution(client);
         double scaleW = client.displayWidth / res.getScaledWidth_double();
@@ -404,12 +403,12 @@ public abstract class GuiScrollingList
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer VertexBuffer = tessellator.getBuffer();
-        VertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        VertexBuffer.pos(right, top, 0.0D).color(r1, g1, b1, a1).endVertex();
-        VertexBuffer.pos(left,  top, 0.0D).color(r1, g1, b1, a1).endVertex();
-        VertexBuffer.pos(left,  bottom, 0.0D).color(r2, g2, b2, a2).endVertex();
-        VertexBuffer.pos(right, bottom, 0.0D).color(r2, g2, b2, a2).endVertex();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        buffer.pos(right, top, 0.0D).color(r1, g1, b1, a1).endVertex();
+        buffer.pos(left,  top, 0.0D).color(r1, g1, b1, a1).endVertex();
+        buffer.pos(left,  bottom, 0.0D).color(r2, g2, b2, a2).endVertex();
+        buffer.pos(right, bottom, 0.0D).color(r2, g2, b2, a2).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.disableBlend();

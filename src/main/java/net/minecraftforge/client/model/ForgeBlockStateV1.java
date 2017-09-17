@@ -46,7 +46,8 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.FMLLog;
 
-import com.google.common.base.Optional;
+import java.util.Objects;
+import java.util.Optional;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -93,7 +94,7 @@ public class ForgeBlockStateV1 extends Marker
                     for (JsonElement a : e.getValue().getAsJsonArray())
                     {
                         Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey();
-                        specified.put(e.getKey(), (ForgeBlockStateV1.Variant)context.deserialize(a, ForgeBlockStateV1.Variant.class));
+                        specified.put(e.getKey(), context.deserialize(a, Variant.class));
                     }
                 }
                 else
@@ -107,14 +108,14 @@ public class ForgeBlockStateV1 extends Marker
                         for (Entry<String, JsonElement> se : e.getValue().getAsJsonObject().entrySet())
                         {
                             Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey() + "=" + se.getKey();
-                            subs.put(se.getKey(), (ForgeBlockStateV1.Variant)context.deserialize(se.getValue(), ForgeBlockStateV1.Variant.class));
+                            subs.put(se.getKey(), context.deserialize(se.getValue(), Variant.class));
                         }
                     }
                     else
                     {
                         // fully-defined variant
                         Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey();
-                        specified.put(e.getKey(), (ForgeBlockStateV1.Variant)context.deserialize(e.getValue(), ForgeBlockStateV1.Variant.class));
+                        specified.put(e.getKey(), context.deserialize(e.getValue(), Variant.class));
                     }
                 }
             }
@@ -169,15 +170,7 @@ public class ForgeBlockStateV1 extends Marker
                     }
                 }
 
-                Iterator<List<Variant>> iter = v.submodels.values().iterator();
-
-                while (iter.hasNext())
-                {
-                    List<Variant> submodel = iter.next();
-
-                    if (submodel == null)
-                        iter.remove();
-                }
+                v.submodels.values().removeIf(Objects::isNull);
 
                 if (v.textures != null)
                 {
@@ -188,9 +181,9 @@ public class ForgeBlockStateV1 extends Marker
                             String value = v.textures.get(tex.getValue().substring(1));
                             if (value == null)
                             {
-                                FMLLog.severe("Could not resolve texture name \"" + tex.getValue() + "\" for permutation \"" + e.getKey() + "\"");
+                                FMLLog.log.fatal("Could not resolve texture name \"{}\" for permutation \"{}\"", tex.getValue(), e.getKey());
                                 for (Entry<String, String> t: v.textures.entrySet())
-                                    FMLLog.severe(t.getKey() + "=" + t.getValue());
+                                    FMLLog.log.fatal("{}={}", t.getKey(), t.getValue());
                                 throw new JsonParseException("Could not resolve texture name \"" + tex.getValue() + "\" for permutation \"" + e.getKey() + "\"");
                             }
                             v.textures.put(tex.getKey(), value);
@@ -243,7 +236,7 @@ public class ForgeBlockStateV1 extends Marker
         {
             List<String> sorted = Lists.newArrayList(base.keySet());
             Collections.sort(sorted);   // Sort to get consistent results.
-            return getPermutations(sorted, base, 0, "", HashMultimap.<String, ForgeBlockStateV1.Variant>create(), null);
+            return getPermutations(sorted, base, 0, "", HashMultimap.create(), null);
         }
 
         private List<ForgeBlockStateV1.Variant> getSubmodelPermutations(ForgeBlockStateV1.Variant baseVar, List<String> sorted, Map<String, List<ForgeBlockStateV1.Variant>> map, int depth, Map<String, ForgeBlockStateV1.Variant> parts, List<ForgeBlockStateV1.Variant> ret)
@@ -284,7 +277,7 @@ public class ForgeBlockStateV1 extends Marker
         {
             List<String> sorted = Lists.newArrayList(variants.keySet());
             Collections.sort(sorted);   // Sort to get consistent results.
-            return getSubmodelPermutations(baseVar, sorted, variants, 0, new HashMap<String, ForgeBlockStateV1.Variant>(), new ArrayList<ForgeBlockStateV1.Variant>());
+            return getSubmodelPermutations(baseVar, sorted, variants, 0, new HashMap<>(), new ArrayList<>());
         }
     }
 
@@ -292,13 +285,14 @@ public class ForgeBlockStateV1 extends Marker
     {
         public static final Object SET_VALUE = new Object();
 
+        @Nullable
         private ResourceLocation model = null;
         private boolean modelSet = false;
-        private Optional<IModelState> state = Optional.absent();
-        private Optional<Boolean> uvLock = Optional.absent();
-        private Optional<Boolean> smooth = Optional.absent();
-        private Optional<Boolean> gui3d = Optional.absent();
-        private Optional<Integer> weight = Optional.absent();
+        private Optional<IModelState> state = Optional.empty();
+        private Optional<Boolean> uvLock = Optional.empty();
+        private Optional<Boolean> smooth = Optional.empty();
+        private Optional<Boolean> gui3d = Optional.empty();
+        private Optional<Integer> weight = Optional.empty();
         private Map<String, String> textures = Maps.newHashMap();
         private Map<String, List<ForgeBlockStateV1.Variant>> submodels = Maps.newHashMap();
         private Map<String, Object> simpleSubmodels = Maps.newHashMap(); // Makeshift Set to allow us to "remove" (replace value with null) singleParts when needed.
@@ -393,7 +387,7 @@ public class ForgeBlockStateV1 extends Marker
 
         protected SubModel asGenericSubModel()
         {
-            return new SubModel(state.or(TRSRTransformation.identity()), uvLock.or(false), smooth.or(true), gui3d.or(true), getTextures(), model, getCustomData());
+            return new SubModel(state.orElse(TRSRTransformation.identity()), uvLock.orElse(false), smooth.orElse(true), gui3d.orElse(true), getTextures(), model, getCustomData());
         }
 
         /**
@@ -503,7 +497,7 @@ public class ForgeBlockStateV1 extends Marker
                 {   // Load rotation values.
                     int x = JsonUtils.getInt(json, "x", 0);
                     int y = JsonUtils.getInt(json, "y", 0);
-                    ret.state = Optional.<IModelState>of(new TRSRTransformation(ModelRotation.getModelRotation(x, y)));
+                    ret.state = Optional.of(new TRSRTransformation(ModelRotation.getModelRotation(x, y)));
                     if (!ret.state.isPresent())
                         throw new JsonParseException("Invalid BlockModelRotation x: " + x + " y: " + y);
                 }
@@ -517,7 +511,7 @@ public class ForgeBlockStateV1 extends Marker
                         // TODO: vanilla now includes from parent, deprecate?
                         if (transform.equals("identity"))
                         {
-                            ret.state = Optional.<IModelState>of(TRSRTransformation.identity());
+                            ret.state = Optional.of(TRSRTransformation.identity());
                         }
                         // block/block
                         else if (transform.equals("forge:default-block"))
@@ -531,7 +525,7 @@ public class ForgeBlockStateV1 extends Marker
                             builder.put(TransformType.THIRD_PERSON_LEFT_HAND,  leftify(thirdperson));
                             builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
                             builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 225, 0, 0.4f));
-                            ret.state = Optional.<IModelState>of(new SimpleModelState(builder.build()));
+                            ret.state = Optional.of(new SimpleModelState(builder.build()));
                         }
                         // item/generated
                         else if (transform.equals("forge:default-item"))
@@ -545,12 +539,13 @@ public class ForgeBlockStateV1 extends Marker
                             builder.put(TransformType.THIRD_PERSON_LEFT_HAND, leftify(thirdperson));
                             builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, firstperson);
                             builder.put(TransformType.FIRST_PERSON_LEFT_HAND, leftify(firstperson));
-                            ret.state = Optional.<IModelState>of(new SimpleModelState(builder.build()));
+                            builder.put(TransformType.FIXED, get(0, 0, 0, 0, 180, 0, 1));
+                            ret.state = Optional.of(new SimpleModelState(builder.build()));
                         }
                         // item/handheld
                         else if (transform.equals("forge:default-tool"))
                         {
-                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(
+                            ret.state = Optional.of(new SimpleModelState(ImmutableMap.of(
                                 TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 4, 0.5f,         0, -90, 55, 0.85f),
                                 TransformType.THIRD_PERSON_LEFT_HAND,  get(0, 4, 0.5f,         0, 90, -55, 0.85f),
                                 TransformType.FIRST_PERSON_RIGHT_HAND, get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f),
@@ -566,7 +561,7 @@ public class ForgeBlockStateV1 extends Marker
                         try
                         {
                             TRSRTransformation base = context.deserialize(json.get("transform"), TRSRTransformation.class);
-                            ret.state = Optional.<IModelState>of(TRSRTransformation.blockCenterToCorner(base));
+                            ret.state = Optional.of(TRSRTransformation.blockCenterToCorner(base));
                         }
                         catch (JsonParseException e)
                         {
@@ -718,7 +713,7 @@ public class ForgeBlockStateV1 extends Marker
                             {   // Multiple variants of the submodel.
                                 submodelVariants = Lists.newArrayList();
                                 for (JsonElement e : varEl.getAsJsonArray())
-                                    submodelVariants.add((ForgeBlockStateV1.Variant)context.deserialize(e, ForgeBlockStateV1.Variant.class));
+                                    submodelVariants.add(context.deserialize(e, Variant.class));
                             }
                             else if (varEl.isJsonNull())
                             {
@@ -726,7 +721,7 @@ public class ForgeBlockStateV1 extends Marker
                             }
                             else
                             {
-                                submodelVariants = Collections.singletonList((ForgeBlockStateV1.Variant)context.deserialize(varEl, ForgeBlockStateV1.Variant.class));
+                                submodelVariants = Collections.singletonList(context.deserialize(varEl, Variant.class));
                             }
 
                             if (submodelVariants != null)   // Throw an error if there are submodels inside a submodel.
@@ -757,6 +752,7 @@ public class ForgeBlockStateV1 extends Marker
             }
         }
 
+        @Nullable
         public ResourceLocation getModel() { return model; }
         public boolean isModelSet() { return modelSet; }
         public Optional<IModelState> getState() { return state; }
@@ -771,6 +767,7 @@ public class ForgeBlockStateV1 extends Marker
     {
         public static final TRSRDeserializer INSTANCE = new TRSRDeserializer();
 
+        @Override
         public TRSRTransformation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
         {
             if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString())

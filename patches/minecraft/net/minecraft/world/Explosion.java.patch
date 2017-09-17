@@ -12,7 +12,7 @@
          this.field_77282_d = p_i45754_7_;
          this.field_77286_a = p_i45754_10_;
          this.field_82755_b = p_i45754_11_;
-+        this.position = new Vec3d(field_77284_b, field_77285_c, field_77282_d);
++        this.position = new Vec3d(this.field_77284_b, this.field_77285_c, this.field_77282_d);
      }
  
      public void func_77278_a()
@@ -43,7 +43,7 @@
                  }
              }
          }
-@@ -266,4 +268,6 @@
+@@ -277,4 +279,6 @@
      {
          return this.field_77281_g;
      }

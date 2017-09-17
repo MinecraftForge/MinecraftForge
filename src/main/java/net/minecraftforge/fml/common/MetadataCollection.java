@@ -27,9 +27,6 @@ import java.util.Map;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 
-import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -83,15 +80,10 @@ public class MetadataCollection
         }
         catch (JsonParseException e)
         {
-            FMLLog.log(Level.ERROR, e, "The mcmod.info file in %s cannot be parsed as valid JSON. It will be ignored", sourceName);
+            FMLLog.log.error("The mcmod.info file in {} cannot be parsed as valid JSON. It will be ignored", sourceName, e);
             return new MetadataCollection();
         }
-        catch (Exception e)
-        {
-            throw Throwables.propagate(e);
-        }
     }
-
 
     private void parseModMetadataList()
     {

@@ -11,54 +11,42 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-import java.util.Random;
-
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Random;
 
 @Mod(modid = ItemLayerModelDebug.MODID, name = "ForgeDebugItemLayerModel", version = ItemLayerModelDebug.VERSION, acceptableRemoteVersions = "*")
 public class ItemLayerModelDebug
 {
     public static final String MODID = "forgedebugitemlayermodel";
     public static final String VERSION = "1.0";
+    @ObjectHolder("test_item")
+    public static final Item TEST_ITEM = null;
 
-    @SidedProxy
-    public static CommonProxy proxy;
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
-
-    public static class CommonProxy
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registrItems(RegistryEvent.Register<Item> event)
         {
-            GameRegistry.register(TestItem.instance);
+            event.getRegistry().register(new TestItem());
         }
-    }
 
-    public static class ServerProxy extends CommonProxy {}
-
-    public static class ClientProxy extends CommonProxy
-    {
-        private static ModelResourceLocation modelLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestItem.name, "inventory");
-        @Override
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
         {
-            super.preInit(event);
-            ModelLoader.setCustomModelResourceLocation(TestItem.instance, 0, modelLocation);
+            ModelLoader.setCustomModelResourceLocation(TEST_ITEM, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + TestItem.name, "inventory"));
         }
     }
 
     public static final class TestItem extends Item
     {
-        public static final TestItem instance = new TestItem();
         public static final String name = "test_item";
 
         private TestItem()
@@ -94,16 +82,19 @@ public class ItemLayerModelDebug
         }
 
         @Override
-        public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
+        public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState)
+        {
             // This tool is a super pickaxe if the player is wearing a helment
-            if("pickaxe".equals(toolClass) && player != null && !player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
+            if ("pickaxe".equals(toolClass) && player != null && !player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty())
+            {
                 return 5;
             }
             return super.getHarvestLevel(stack, toolClass, player, blockState);
         }
 
         @Override
-        public float getStrVsBlock(ItemStack stack, IBlockState state) {
+        public float getStrVsBlock(ItemStack stack, IBlockState state)
+        {
             return 10f;
         }
     }

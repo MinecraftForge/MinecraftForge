@@ -20,7 +20,7 @@
 package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -94,6 +94,7 @@ public class LightUtil
         .maximumSize(10)
         .build(new CacheLoader<Pair<VertexFormat, VertexFormat>, int[]>()
         {
+            @Override
             public int[] load(Pair<VertexFormat, VertexFormat> pair)
             {
                 return mapFormats(pair.getLeft(), pair.getRight());
@@ -193,15 +194,15 @@ public class LightUtil
                 }
                 else if(type == VertexFormatElement.EnumType.BYTE)
                 {
-                    to[i] = ((float)(byte)bits) / mask * 2;
+                    to[i] = ((float)(byte)bits) / (mask >> 1);
                 }
                 else if(type == VertexFormatElement.EnumType.SHORT)
                 {
-                    to[i] = ((float)(short)bits) / mask * 2;
+                    to[i] = ((float)(short)bits) / (mask >> 1);
                 }
                 else if(type == VertexFormatElement.EnumType.INT)
                 {
-                    to[i] = ((float)(bits & 0xFFFFFFFFL)) / 0xFFFFFFFFL * 2;
+                    to[i] = (float)((double)(bits & 0xFFFFFFFFL) / (0xFFFFFFFFL >> 1));
                 }
             }
             else
@@ -238,11 +239,11 @@ public class LightUtil
                     type == VertexFormatElement.EnumType.UINT
                 )
                 {
-                    bits = (int)(f * mask);
+                    bits = Math.round(f * mask);
                 }
                 else
                 {
-                    bits = (int)(f * mask / 2);
+                    bits = Math.round(f * (mask >> 1));
                 }
                 to[index] &= ~(mask << (offset * 8));
                 to[index] |= (((bits & mask) << (offset * 8)));
@@ -257,7 +258,7 @@ public class LightUtil
         if(tessellator == null)
         {
             Tessellator tes = Tessellator.getInstance();
-            VertexBuffer wr = tes.getBuffer();
+            BufferBuilder wr = tes.getBuffer();
             tessellator = new VertexBufferConsumer(wr);
         }
         return tessellator;
@@ -274,7 +275,7 @@ public class LightUtil
     }
 
     // renders quad in any Vertex Format, but is slower
-    public static void renderQuadColorSlow(VertexBuffer wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColorSlow(BufferBuilder wr, BakedQuad quad, int auxColor)
     {
         ItemConsumer cons;
         if(wr == Tessellator.getInstance().getBuffer())
@@ -294,7 +295,7 @@ public class LightUtil
         quad.pipe(cons);
     }
 
-    public static void renderQuadColor(VertexBuffer wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColor(BufferBuilder wr, BakedQuad quad, int auxColor)
     {
         wr.addVertexData(quad.getVertexData());
         ForgeHooksClient.putQuadColor(wr, quad, auxColor);
@@ -317,6 +318,7 @@ public class LightUtil
             System.arraycopy(auxColor, 0, this.auxColor, 0, this.auxColor.length);
         }
 
+        @Override
         public void put(int element, float... data)
         {
             if(getVertexFormat().getElement(element).getUsage() == EnumUsage.COLOR)

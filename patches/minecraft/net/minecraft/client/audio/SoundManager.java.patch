@@ -24,7 +24,7 @@
              this.field_148629_h.clear();
              this.field_148626_m.clear();
              this.field_148625_l.clear();
-@@ -338,6 +341,9 @@
+@@ -346,6 +349,9 @@
      {
          if (this.field_148617_f)
          {
@@ -34,7 +34,7 @@
              SoundEventAccessor soundeventaccessor = p_148611_1_.func_184366_a(this.field_148622_c);
              ResourceLocation resourcelocation = p_148611_1_.func_147650_b();
  
-@@ -400,10 +406,12 @@
+@@ -408,10 +414,12 @@
                              if (sound.func_188723_h())
                              {
                                  this.field_148620_e.newStreamingSource(false, s, func_148612_a(resourcelocation1), resourcelocation1.toString(), flag, p_148611_1_.func_147649_g(), p_148611_1_.func_147654_h(), p_148611_1_.func_147651_i(), p_148611_1_.func_147656_j().func_148586_a(), f);
@@ -46,4 +46,4 @@
 +                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlaySoundSourceEvent(this, p_148611_1_, s));
                              }
  
-                             field_148621_b.debug(field_148623_a, "Playing sound {} for event {} as channel {}", new Object[] {sound.func_188719_a(), resourcelocation, s});
+                             field_148621_b.debug(field_148623_a, "Playing sound {} for event {} as channel {}", sound.func_188719_a(), resourcelocation, s);

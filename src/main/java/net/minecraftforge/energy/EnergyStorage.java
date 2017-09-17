@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.energy;
 
 /**
@@ -15,19 +34,25 @@ public class EnergyStorage implements IEnergyStorage
 
     public EnergyStorage(int capacity)
     {
-        this(capacity, capacity, capacity);
+        this(capacity, capacity, capacity, 0);
     }
 
     public EnergyStorage(int capacity, int maxTransfer)
     {
-        this(capacity, maxTransfer, maxTransfer);
+        this(capacity, maxTransfer, maxTransfer, 0);
     }
 
     public EnergyStorage(int capacity, int maxReceive, int maxExtract)
     {
+        this(capacity, maxReceive, maxExtract, 0);
+    }
+
+    public EnergyStorage(int capacity, int maxReceive, int maxExtract, int energy)
+    {
         this.capacity = capacity;
         this.maxReceive = maxReceive;
         this.maxExtract = maxExtract;
+        this.energy = Math.max(0 , Math.min(capacity, energy));
     }
 
     @Override
