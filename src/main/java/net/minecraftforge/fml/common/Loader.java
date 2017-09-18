@@ -125,6 +125,8 @@ import javax.annotation.Nullable;
 public class Loader
 {
     public static final String MC_VERSION = net.minecraftforge.common.ForgeVersion.mcVersion;
+    private static final ImmutableList<String> DEPENDENCYINSTRUCTIONS = ImmutableList.of("client", "server", "required", "before", "after");
+    private static final Splitter DEPENDENCYINSTRUCTIONSSPLITTER = Splitter.on("-").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYPARTSPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYSPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
     /**
@@ -695,77 +697,111 @@ public class Loader
         return modClassLoader;
     }
 
-    public void computeDependencies(String dependencyString, Set<ArtifactVersion> requirements, List<ArtifactVersion> dependencies, List<ArtifactVersion> dependants)
+    public static void computeDependencies(String dependencyString, Set<ArtifactVersion> requirements, List<ArtifactVersion> dependencies, List<ArtifactVersion> dependants)
     {
         if (dependencyString == null || dependencyString.length() == 0)
         {
             return;
         }
 
-        boolean parseFailure = false;
-
         for (String dep : DEPENDENCYSPLITTER.split(dependencyString))
         {
             List<String> depparts = Lists.newArrayList(DEPENDENCYPARTSPLITTER.split(dep));
-            // Need two parts to the string
             if (depparts.size() != 2)
             {
-                parseFailure = true;
-                continue;
+                onParseFailure(dep, "Dependecy string needs 2 parts");
             }
-            String instruction = depparts.get(0);
             String target = depparts.get(1);
             boolean targetIsAll = target.startsWith("*");
 
-            // Cannot have an "all" relationship with anything except pure *
             if (targetIsAll && target.length() > 1)
             {
-                parseFailure = true;
-                continue;
+                onParseFailure(dep, "Cannot have an \"all\" relationship with anything except pure *");
             }
 
-            // If this is a required element, add it to the required list
-            if ("required-before".equals(instruction) || "required-after".equals(instruction))
+            if (targetIsAll && target.indexOf('@') > -1)
             {
-                // You can't require everything
-                if (!targetIsAll)
+                onParseFailure(dep, "You cannot have a versioned dependency on everything");
+            }
+
+            List<String> instructions = Lists.newArrayList(DEPENDENCYINSTRUCTIONSSPLITTER.split(depparts.get(0)));
+            if (!DEPENDENCYINSTRUCTIONS.containsAll(instructions))
+            {
+                onParseFailure(dep, String.format("Found invalid instructions. Only %s are allowed.", DEPENDENCYINSTRUCTIONS.toString().replace('[', ' ').replace(']', ' ').trim()));
+            }
+            boolean hasSide = false;
+            boolean hasRequired = false;
+            boolean hasOrder = false;
+            for (String instruction : instructions)
+            {
+                if (!hasSide && (("client".equals(instruction) && FMLCommonHandler.instance().getSide() != Side.CLIENT) || ("server".equals(instruction) && FMLCommonHandler.instance().getSide() != Side.SERVER)))
                 {
-                    requirements.add(VersionParser.parseVersionReference(target));
+                    break;
+                }
+                else if (hasSide && ("client".equals(instruction) || "server".equals(instruction)))
+                {
+                    onParseFailure(dep, "Side or other instructions after Side have already been defined");
                 }
                 else
                 {
-                    parseFailure = true;
-                    continue;
+                    hasSide = true;
+                }
+
+                if (hasSide)
+                {
+                    // If this is a required element, add it to the required list
+                    if (!hasRequired && "required".equals(instruction))
+                    {
+                        if (!targetIsAll)
+                        {
+                            requirements.add(VersionParser.parseVersionReference(target));
+                            hasRequired = true;
+                        }
+                        else
+                        {
+                            onParseFailure(dep, "You can't require everything");
+                        }
+                    }
+                    else if (hasRequired && "required".equals(instruction))
+                    {
+                        onParseFailure(dep, "Required or other instructions after Required have already been defined");
+                    }
+                    else
+                    {
+                        hasRequired = true;
+                    }
+
+                    if (hasRequired)
+                    {
+                        if (!hasOrder)
+                        {
+                            // before elements are things we are loaded before (so they are our dependants)
+                            if ("before".equals(instruction))
+                            {
+                                dependants.add(VersionParser.parseVersionReference(target));
+                                hasOrder = true;
+                            }
+                            // after elements are things that load before we do (so they are out dependencies)
+                            else if ("after".equals(instruction))
+                            {
+                                dependencies.add(VersionParser.parseVersionReference(target));
+                                hasOrder = true;
+                            }
+                        }
+                        else
+                        {
+                            onParseFailure(dep, "Order instruction has already been defined");
+                        }
+                    }
                 }
             }
-
-            // You cannot have a versioned dependency on everything
-            if (targetIsAll && target.indexOf('@') > -1)
-            {
-                parseFailure = true;
-                continue;
-            }
-            // before elements are things we are loaded before (so they are our dependants)
-            if ("required-before".equals(instruction) || "before".equals(instruction))
-            {
-                dependants.add(VersionParser.parseVersionReference(target));
-            }
-            // after elements are things that load before we do (so they are out dependencies)
-            else if ("required-after".equals(instruction) || "after".equals(instruction))
-            {
-                dependencies.add(VersionParser.parseVersionReference(target));
-            }
-            else
-            {
-                parseFailure = true;
-            }
         }
-
-        if (parseFailure)
-        {
-            FMLLog.log.warn("Unable to parse dependency string {}", dependencyString);
-            throw new LoaderException(String.format("Unable to parse dependency string %s", dependencyString));
-        }
+    }
+    
+    private static void onParseFailure(String dependencyString, String cause)
+    {
+        FMLLog.log.warn("Unable to parse dependency string {}, cause - \"{}\"", dependencyString, cause);
+        throw new LoaderException(String.format("Unable to parse dependency string %s, cause - \"%s\"", dependencyString, cause));
     }
 
     public Map<String,ModContainer> getIndexedModList()
