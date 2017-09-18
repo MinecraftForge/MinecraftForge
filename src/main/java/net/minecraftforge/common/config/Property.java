@@ -709,7 +709,7 @@ public class Property
      */
     public int getInt()
     {
-        return getInt(Integer.parseInt(defaultValue));
+        return getInteger(Integer.parseInt(defaultValue));
     }
 
     /**
@@ -721,6 +721,39 @@ public class Property
      * @return The value
      */
     public int getInt(int _default)
+    {
+       return getInteger(_default);
+    }
+
+    /**
+     * Checks if the current value stored in this property can be converted to an integer.
+     * @return True if the type of the Property is an Integer
+     */
+    public boolean isIntValue()
+    {
+        return isIntValue();
+    }
+	
+    /**
+     * Returns the value in this property as an integer,
+     * if the value is not a valid integer, it will return the initially provided default.
+     *
+     * @return The value
+     */
+    public int getInteger()
+    {
+        return getInteger(Integer.parseInt(defaultValue));
+    }
+
+    /**
+     * Returns the value in this property as an integer,
+     * if the value is not a valid integer, it will return the
+     * provided default.
+     *
+     * @param _default The default to provide if the current value is not a valid integer
+     * @return The value
+     */
+    public int getInteger(int _default)
     {
         try
         {
@@ -736,7 +769,7 @@ public class Property
      * Checks if the current value stored in this property can be converted to an integer.
      * @return True if the type of the Property is an Integer
      */
-    public boolean isIntValue()
+    public boolean isIntegerValue()
     {
         try
         {
@@ -911,6 +944,26 @@ public class Property
      */
     public int[] getIntList()
     {
+        return getIntegerList();
+    }
+
+    /**
+     * Checks if all of the current values stored in this property can be converted to an integer.
+     * @return True if the type of the Property is an Integer List
+     */
+    public boolean isIntList()
+    {
+        return isIntegerList();
+    }
+	
+	/**
+     * Returns the integer value of all values that can
+     * be parsed in the list.
+     *
+     * @return Array of length 0 if none of the values could be parsed.
+     */
+    public int[] getIntegerList()
+    {
         ArrayList<Integer> nums = new ArrayList<Integer>();
 
         for (String value : values)
@@ -936,7 +989,7 @@ public class Property
      * Checks if all of the current values stored in this property can be converted to an integer.
      * @return True if the type of the Property is an Integer List
      */
-    public boolean isIntList()
+    public boolean isIntegerList()
     {
         if (isList && type == Type.INTEGER)
             for (String value : values)
