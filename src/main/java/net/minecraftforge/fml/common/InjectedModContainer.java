@@ -93,6 +93,12 @@ public class InjectedModContainer implements ModContainer
     }
 
     @Override
+    public Set<ArtifactVersion> getSoftRequirements()
+    {
+        return wrappedContainer.getSoftRequirements();
+    }
+
+    @Override
     public List<ArtifactVersion> getDependencies()
     {
         return wrappedContainer.getDependencies();

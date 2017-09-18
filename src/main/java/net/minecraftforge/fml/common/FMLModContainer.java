@@ -51,6 +51,7 @@ import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import net.minecraftforge.fml.common.versioning.DependencyParser;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
@@ -67,14 +68,11 @@ import java.util.function.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -212,21 +210,20 @@ public class FMLModContainer implements ModContainer
 
         if (overridesMetadata || !modMetadata.useDependencyInformation)
         {
-            Set<ArtifactVersion> requirements = Sets.newHashSet();
-            List<ArtifactVersion> dependencies = Lists.newArrayList();
-            List<ArtifactVersion> dependants = Lists.newArrayList();
             annotationDependencies = (String)descriptor.get("dependencies");
-            Loader.instance().computeDependencies(annotationDependencies, requirements, dependencies, dependants);
-            dependants.addAll(Loader.instance().getInjectedBefore(getModId()));
-            dependencies.addAll(Loader.instance().getInjectedAfter(getModId()));
-            modMetadata.requiredMods = requirements;
-            modMetadata.dependencies = dependencies;
-            modMetadata.dependants = dependants;
-            modLog.trace("Parsed dependency info : {} {} {}", requirements, dependencies, dependants);
+            DependencyParser dependencyParser = new DependencyParser(() -> FMLCommonHandler.instance().getSide());
+            DependencyParser.DependencyInfo info = dependencyParser.parseDependencies(annotationDependencies);
+            info.dependants.addAll(Loader.instance().getInjectedBefore(getModId()));
+            info.dependencies.addAll(Loader.instance().getInjectedAfter(getModId()));
+            modMetadata.requiredMods = info.requirements;
+            modMetadata.softRequiredMods = info.softRequirements;
+            modMetadata.dependencies = info.dependencies;
+            modMetadata.dependants = info.dependants;
+            modLog.trace("Parsed dependency info : Requirements: {} SoftRequirements:{} After:{} Before:{}", info.requirements, info.softRequirements, info.dependencies, info.dependants);
         }
         else
         {
-            modLog.trace("Using mcmod dependency info : {} {} {}", modMetadata.requiredMods, modMetadata.dependencies, modMetadata.dependants);
+            modLog.trace("Using mcmod dependency info : {} {} {} {}", modMetadata.requiredMods, modMetadata.softRequiredMods, modMetadata.dependencies, modMetadata.dependants);
         }
         if (Strings.isNullOrEmpty(modMetadata.name))
         {
@@ -339,6 +336,12 @@ public class FMLModContainer implements ModContainer
     public Set<ArtifactVersion> getRequirements()
     {
         return modMetadata.requiredMods;
+    }
+
+    @Override
+    public Set<ArtifactVersion> getSoftRequirements()
+    {
+        return modMetadata.softRequiredMods;
     }
 
     @Override

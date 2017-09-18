@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common;
 import java.io.File;
 import java.net.URL;
 import java.security.cert.Certificate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -89,18 +90,26 @@ public interface ModContainer
     void setEnabledState(boolean enabled);
 
     /**
-     * A list of the modids that this mod requires loaded prior to loading
+     * A list of the ArtifactVersions that this mod requires to be present.
      */
     Set<ArtifactVersion> getRequirements();
 
     /**
-     * A list of modids that should be loaded prior to this one. The special
+     * A list of the ArtifactVersions that this mod requires *if* those mods are present.
+     */
+    default Set<ArtifactVersion> getSoftRequirements()
+    {
+        return Collections.emptySet();
+    }
+
+    /**
+     * A list of ArtifactVersions that should be loaded prior to this one. The special
      * value <strong>*</strong> indicates to load <em>after</em> any other mod.
      */
     List<ArtifactVersion> getDependencies();
 
     /**
-     * A list of modids that should be loaded <em>after</em> this one. The
+     * A list of ArtifactVersionss that should be loaded <em>after</em> this one. The
      * special value <strong>*</strong> indicates to load <em>before</em> any
      * other mod.
      */
