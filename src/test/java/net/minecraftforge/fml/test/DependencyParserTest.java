@@ -114,22 +114,12 @@ public class DependencyParserTest
     {
         for (DependencyParser parser : parsers)
         {
-            {
-                DependencyParser.DependencyInfo info = parser.parseDependencies("required:supermod3000@[1.2,)");
-                assertContainsSameToString(info.requirements, Sets.newHashSet("supermod3000@[1.2,)"));
-                assertTrue(info.dependants.isEmpty());
-                assertTrue(info.dependencies.isEmpty());
-                assertTrue(info.softRequirements.isEmpty());
-            }
-
-            {
-                String dependencyString = "after:supermod2000@[1.3,);required-before:yetanothermod;softdepmod@[1.0,2.0);required:modw";
-                DependencyParser.DependencyInfo info = parser.parseDependencies(dependencyString);
-                assertContainsSameToString(info.requirements, Sets.newHashSet("yetanothermod", "modw"));
-                assertContainsSameToString(info.softRequirements, Sets.newHashSet("softdepmod@[1.0,2.0)"));
-                assertContainsSameToString(info.dependencies, Sets.newHashSet("supermod2000@[1.3,)"));
-                assertContainsSameToString(info.dependants, Sets.newHashSet("yetanothermod"));
-            }
+            String dependencyString = "after:supermod2000@[1.3,);required-before:yetanothermod;softdepmod@[1.0,2.0);required:modw";
+            DependencyParser.DependencyInfo info = parser.parseDependencies(dependencyString);
+            assertContainsSameToString(info.requirements, Sets.newHashSet("yetanothermod", "modw"));
+            assertContainsSameToString(info.softRequirements, Sets.newHashSet("softdepmod@[1.0,2.0)"));
+            assertContainsSameToString(info.dependencies, Sets.newHashSet("supermod2000@[1.3,)"));
+            assertContainsSameToString(info.dependants, Sets.newHashSet("yetanothermod"));
         }
     }
 
