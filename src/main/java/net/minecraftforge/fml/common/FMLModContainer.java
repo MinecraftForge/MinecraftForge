@@ -138,19 +138,18 @@ public class FMLModContainer implements ModContainer
         String modid = (String)this.descriptor.get("modid");
         if (Strings.isNullOrEmpty(modid))
         {
-            throw new IllegalArgumentException("Modid cannot be null or empty");
+            throw new IllegalArgumentException("The modId is null or empty");
         }
         if (modid.length() > 64)
         {
-            FMLLog.bigWarning("The modid {} is longer than the recommended maximum of 64 characters. Truncation is enforced in 1.11", modid);
-            throw new IllegalArgumentException(String.format("The modid %s is longer than the recommended maximum of 64 characters. Truncation is enforced in 1.11", modid));
+            throw new IllegalArgumentException(String.format("The modId %s is longer than the maximum of 64 characters.", modid));
         }
         if (!modid.equals(modid.toLowerCase(Locale.ENGLISH)))
         {
-            FMLLog.bigWarning("The modid {} is not the same as it's lowercase version. Lowercasing is enforced in 1.11", modid);
-            throw new IllegalArgumentException(String.format("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11", modid));
+            throw new IllegalArgumentException(String.format("The modId %s must be all lowercase.", modid));
         }
     }
+
     private ILanguageAdapter getLanguageAdapter()
     {
         if (languageAdapter == null)
@@ -211,7 +210,7 @@ public class FMLModContainer implements ModContainer
         if (overridesMetadata || !modMetadata.useDependencyInformation)
         {
             annotationDependencies = (String)descriptor.get("dependencies");
-            DependencyParser dependencyParser = new DependencyParser(() -> FMLCommonHandler.instance().getSide());
+            DependencyParser dependencyParser = new DependencyParser(FMLCommonHandler.instance().getSide());
             DependencyParser.DependencyInfo info = dependencyParser.parseDependencies(annotationDependencies);
             info.dependants.addAll(Loader.instance().getInjectedBefore(getModId()));
             info.dependencies.addAll(Loader.instance().getInjectedAfter(getModId()));

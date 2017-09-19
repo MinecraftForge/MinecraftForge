@@ -27,8 +27,8 @@ public class DependencyParserTest
     @BeforeClass
     public static void beforeClass()
     {
-        clientDependencyParser = new DependencyParser(() -> Side.CLIENT);
-        serverDependencyParser = new DependencyParser(() -> Side.SERVER);
+        clientDependencyParser = new DependencyParser(Side.CLIENT);
+        serverDependencyParser = new DependencyParser(Side.SERVER);
         parsers = ImmutableList.of(clientDependencyParser, serverDependencyParser);
     }
 
@@ -123,10 +123,10 @@ public class DependencyParserTest
             }
 
             {
-                String dependencyString = "after:supermod2000@[1.3,);required-before:yetanothermod;softDepMod@[1.0,2.0);required:modW";
+                String dependencyString = "after:supermod2000@[1.3,);required-before:yetanothermod;softdepmod@[1.0,2.0);required:modw";
                 DependencyParser.DependencyInfo info = parser.parseDependencies(dependencyString);
-                assertContainsSameToString(info.requirements, Sets.newHashSet("yetanothermod", "modW"));
-                assertContainsSameToString(info.softRequirements, Sets.newHashSet("softDepMod@[1.0,2.0)"));
+                assertContainsSameToString(info.requirements, Sets.newHashSet("yetanothermod", "modw"));
+                assertContainsSameToString(info.softRequirements, Sets.newHashSet("softdepmod@[1.0,2.0)"));
                 assertContainsSameToString(info.dependencies, Sets.newHashSet("supermod2000@[1.3,)"));
                 assertContainsSameToString(info.dependants, Sets.newHashSet("yetanothermod"));
             }
@@ -136,7 +136,7 @@ public class DependencyParserTest
     @Test
     public void testParsingSided()
     {
-        String mod = "testMod@[1.0,2.0)";
+        String mod = "testmod@[1.0,2.0)";
         {
             DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("client:" + mod);
             assertTrue(info.requirements.isEmpty());
@@ -146,7 +146,7 @@ public class DependencyParserTest
         }
 
         {
-            DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("server:testMod@[1.0,2.0);server-required:testMod2;server-after:testMod3;server-before:testMod4");
+            DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("server:testmod@[1.0,2.0);server-required:testmod2;server-after:testmod3;server-before:testmod4");
             assertTrue(info.requirements.isEmpty());
             assertTrue(info.softRequirements.isEmpty());
             assertTrue(info.dependants.isEmpty());
@@ -154,7 +154,7 @@ public class DependencyParserTest
         }
 
         {
-            DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("client:testMod@[1.0,2.0);server-required:testMod2;server-after:testMod3;server-before:testMod4");
+            DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("client:testmod@[1.0,2.0);server-required:testmod2;server-after:testmod3;server-before:testmod4");
             assertTrue(info.requirements.isEmpty());
             assertContainsSameToString(info.softRequirements, Sets.newHashSet(mod));
             assertTrue(info.dependants.isEmpty());
@@ -170,7 +170,7 @@ public class DependencyParserTest
         }
 
         {
-            DependencyParser.DependencyInfo info = serverDependencyParser.parseDependencies("client:testMod@[1.0,2.0);client-required:testMod2;client-after:testMod3;client-before:testMod4");
+            DependencyParser.DependencyInfo info = serverDependencyParser.parseDependencies("client:testmod@[1.0,2.0);client-required:testmod2;client-after:testmod3;client-before:testmod4");
             assertTrue(info.requirements.isEmpty());
             assertTrue(info.softRequirements.isEmpty());
             assertTrue(info.dependants.isEmpty());
@@ -178,7 +178,7 @@ public class DependencyParserTest
         }
 
         {
-            DependencyParser.DependencyInfo info = serverDependencyParser.parseDependencies("server:testMod@[1.0,2.0);client-required:testMod2;client-after:testMod3;client-before:testMod4");
+            DependencyParser.DependencyInfo info = serverDependencyParser.parseDependencies("server:testmod@[1.0,2.0);client-required:testmod2;client-after:testmod3;client-before:testmod4");
             assertTrue(info.requirements.isEmpty());
             assertContainsSameToString(info.softRequirements, Sets.newHashSet(mod));
             assertTrue(info.dependants.isEmpty());
@@ -196,6 +196,12 @@ public class DependencyParserTest
     public void testParsingInvalidDependencyVersion()
     {
         clientDependencyParser.parseDependencies("amod@[10");
+    }
+
+    @Test(expected = LoaderException.class)
+    public void testParsingUppercaseModId()
+    {
+        clientDependencyParser.parseDependencies("Forge@[1.0]");
     }
 
     @Test(expected = LoaderException.class)

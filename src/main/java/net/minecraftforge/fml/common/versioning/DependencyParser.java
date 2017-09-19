@@ -23,10 +23,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.relauncher.Side;
@@ -46,11 +47,11 @@ public final class DependencyParser
     private static final Splitter DEPENDENCY_PART_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCY_SPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
 
-    private final Supplier<Side> sideSupplier;
+    private final Side side;
 
-    public DependencyParser(Supplier<Side> sideSupplier)
+    public DependencyParser(Side side)
     {
-        this.sideSupplier = sideSupplier;
+        this.side = side;
     }
 
     public DependencyInfo parseDependencies(String dependencyString)
@@ -151,7 +152,7 @@ public final class DependencyParser
             }
         }
 
-        if (depSide != null && depSide != sideSupplier.get())
+        if (depSide != null && depSide != this.side)
         {
             return;
         }
@@ -164,6 +165,12 @@ public final class DependencyParser
         catch (RuntimeException e)
         {
             throw new DependencyParserException(dep, "Could not parse version string.", e);
+        }
+
+        if (!targetIsAll)
+        {
+            String modId = artifactVersion.getLabel();
+            sanityCheckModId(dep, modId);
         }
 
         if (!depRequired && depOrder == null && !targetIsBounded)
@@ -187,6 +194,23 @@ public final class DependencyParser
         else if (!depRequired && depOrder == null)
         {
             info.softRequirements.add(artifactVersion);
+        }
+    }
+
+    /** Based on {@link net.minecraftforge.fml.common.FMLModContainer#sanityCheckModId()} */
+    private void sanityCheckModId(String dep, String modId)
+    {
+        if (Strings.isNullOrEmpty(modId))
+        {
+            throw new DependencyParserException(dep, "The modId is null or empty");
+        }
+        if (modId.length() > 64)
+        {
+            throw new DependencyParserException(dep, String.format("The modId %s is longer than the maximum of 64 characters.", modId));
+        }
+        if (!modId.equals(modId.toLowerCase(Locale.ENGLISH)))
+        {
+            throw new DependencyParserException(dep, String.format("The modId %s must be all lowercase.", modId));
         }
     }
 
