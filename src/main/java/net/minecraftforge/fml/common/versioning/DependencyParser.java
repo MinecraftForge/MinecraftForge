@@ -167,11 +167,12 @@ public final class DependencyParser
             throw new DependencyParserException(dep, "Could not parse version string.", e);
         }
 
-        if (!targetIsAll)
-        {
-            String modId = artifactVersion.getLabel();
-            sanityCheckModId(dep, modId);
-        }
+        // TODO: enable this in 1.13
+//        if (!targetIsAll)
+//        {
+//            String modId = artifactVersion.getLabel();
+//            sanityCheckModId(dep, modId);
+//        }
 
         if (!depRequired && depOrder == null && !targetIsBounded)
         {
@@ -198,7 +199,7 @@ public final class DependencyParser
     }
 
     /** Based on {@link net.minecraftforge.fml.common.FMLModContainer#sanityCheckModId()} */
-    private void sanityCheckModId(String dep, String modId)
+    private static void sanityCheckModId(String dep, String modId)
     {
         if (Strings.isNullOrEmpty(modId))
         {

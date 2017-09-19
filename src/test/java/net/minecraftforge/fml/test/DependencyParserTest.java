@@ -198,11 +198,12 @@ public class DependencyParserTest
         clientDependencyParser.parseDependencies("amod@[10");
     }
 
-    @Test(expected = LoaderException.class)
-    public void testParsingUppercaseModId()
-    {
-        clientDependencyParser.parseDependencies("Forge@[1.0]");
-    }
+    // TODO: enable this in 1.13
+//    @Test(expected = LoaderException.class)
+//    public void testParsingUppercaseModId()
+//    {
+//        clientDependencyParser.parseDependencies("Forge@[1.0]");
+//    }
 
     @Test(expected = LoaderException.class)
     public void testParsingSoftDepWithNoVersion()
