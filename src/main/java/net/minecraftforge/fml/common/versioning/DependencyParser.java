@@ -31,6 +31,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class DependencyParser
 {
@@ -42,6 +44,7 @@ public final class DependencyParser
         public final List<ArtifactVersion> dependants = new ArrayList<>();
     }
 
+    private static final Logger LOGGER = LogManager.getLogger("FML");
     private static final ImmutableList<String> DEPENDENCY_INSTRUCTIONS = ImmutableList.of("client", "server", "required", "before", "after");
     private static final Splitter DEPENDENCY_INSTRUCTIONS_SPLITTER = Splitter.on("-").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCY_PART_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
@@ -167,12 +170,11 @@ public final class DependencyParser
             throw new DependencyParserException(dep, "Could not parse version string.", e);
         }
 
-        // TODO: enable this in 1.13
-//        if (!targetIsAll)
-//        {
-//            String modId = artifactVersion.getLabel();
-//            sanityCheckModId(dep, modId);
-//        }
+        if (!targetIsAll)
+        {
+            String modId = artifactVersion.getLabel();
+            sanityCheckModId(dep, modId);
+        }
 
         if (!depRequired && depOrder == null && !targetIsBounded)
         {
@@ -198,20 +200,21 @@ public final class DependencyParser
         }
     }
 
+    // TODO 1.13: throw these exceptions instead of logging them
     /** Based on {@link net.minecraftforge.fml.common.FMLModContainer#sanityCheckModId()} */
     private static void sanityCheckModId(String dep, String modId)
     {
         if (Strings.isNullOrEmpty(modId))
         {
-            throw new DependencyParserException(dep, "The modId is null or empty");
+            LOGGER.error(new DependencyParserException(dep, "The modId is null or empty").getMessage());
         }
-        if (modId.length() > 64)
+        else if (modId.length() > 64)
         {
-            throw new DependencyParserException(dep, String.format("The modId %s is longer than the maximum of 64 characters.", modId));
+            LOGGER.error(new DependencyParserException(dep, String.format("The modId '%s' is longer than the maximum of 64 characters.", modId)).getMessage());
         }
-        if (!modId.equals(modId.toLowerCase(Locale.ENGLISH)))
+        else if (!modId.equals(modId.toLowerCase(Locale.ENGLISH)))
         {
-            throw new DependencyParserException(dep, String.format("The modId %s must be all lowercase.", modId));
+            LOGGER.error(new DependencyParserException(dep, String.format("The modId '%s' must be all lowercase.", modId)).getMessage());
         }
     }
 
@@ -227,9 +230,9 @@ public final class DependencyParser
             super(formatMessage(dependencyString, explanation), cause);
         }
 
-        private static String formatMessage(String dependencyString, String explanation)
+        public static String formatMessage(String dependencyString, String explanation)
         {
-            return String.format("Unable to parse dependency string %s, cause - \"%s\"", dependencyString, explanation);
+            return String.format("Unable to parse dependency string '%s'. %s", dependencyString, explanation);
         }
     }
 }

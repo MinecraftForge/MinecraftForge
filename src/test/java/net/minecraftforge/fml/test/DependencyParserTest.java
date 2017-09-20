@@ -201,6 +201,42 @@ public class DependencyParserTest
         clientDependencyParser.parseDependencies("amod");
     }
 
+    @Test
+    public void testParsingDepAfterAll()
+    {
+        clientDependencyParser.parseDependencies("after:*");
+    }
+
+    @Test
+    public void testParsingDepBeforeAll()
+    {
+        clientDependencyParser.parseDependencies("before:*");
+    }
+
+    @Test(expected = LoaderException.class)
+    public void testParsingDepOnAll()
+    {
+        clientDependencyParser.parseDependencies("*");
+    }
+
+    @Test(expected = LoaderException.class)
+    public void testParsingSidedDepOnAll()
+    {
+        clientDependencyParser.parseDependencies("client:*");
+    }
+
+    @Test(expected = LoaderException.class)
+    public void testParsingRequireAll()
+    {
+        clientDependencyParser.parseDependencies("required:*");
+    }
+
+    @Test(expected = LoaderException.class)
+    public void testParsingVersionedAll()
+    {
+        clientDependencyParser.parseDependencies("*@[1.0]");
+    }
+
     public static void assertContainsSameToString(Collection<?> c1, Collection<String> expected)
     {
         Collection<String> transformedToString = Collections2.transform(c1, Functions.toStringFunction());
