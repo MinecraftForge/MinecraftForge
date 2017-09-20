@@ -77,6 +77,24 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             return registry;
         }
 
+        /** @see IForgeRegistry#register(IForgeRegistryEntry) */
+        public void register(final T value)
+        {
+            this.registry.register(value);
+        }
+
+        /** @see IForgeRegistry#registerAll(IForgeRegistryEntry[]) */
+        public void register(final T... values)
+        {
+            this.registry.registerAll(values);
+        }
+
+        /** @see IForgeRegistry#register(IForgeRegistryEntry) */
+        public void register(final Iterable<T> values)
+        {
+            values.forEach(this.registry::register);
+        }
+
         public ResourceLocation getName()
         {
             return name;
