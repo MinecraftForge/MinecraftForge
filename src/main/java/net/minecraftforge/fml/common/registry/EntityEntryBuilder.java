@@ -141,7 +141,8 @@ public final class EntityEntryBuilder<E extends Entity>
     @Nonnull
     public final EntityEntryBuilder<E> id(@Nonnull final String id, final int network)
     {
-        return this.id(new ResourceLocation(checkNotNull(id, "id")), network);
+        checkNotNull(id, "id");
+        return this.id(new ResourceLocation(id.indexOf(':') == -1 ? this.mod.getModId() + ':' + id : id), network);
     }
 
     /**
