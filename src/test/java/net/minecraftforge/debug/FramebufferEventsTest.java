@@ -53,7 +53,7 @@ public class FramebufferEventsTest
     @SubscribeEvent
     public static void onRenderShaders(FramebufferEvent.RenderShaders event)
     {
-        if (!ENABLED)
+        if (!ENABLED || !event.isVanillaEnabled())
             return;
         // Go into spectator mode and "possess" a spider, then behold 5 mighty red rectangles!
         renderRectangle(0xFFFF0000);

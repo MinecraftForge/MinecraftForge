@@ -94,23 +94,22 @@
                      if (this.field_78531_r.field_71439_g.func_70644_a(MobEffects.field_76439_r))
                      {
                          float f15 = this.func_180438_a(this.field_78531_r.field_71439_g, p_78472_1_);
-@@ -1065,16 +1073,19 @@
+@@ -1065,8 +1073,10 @@
  
                  if (OpenGlHelper.field_148824_g)
                  {
 +                    if (!net.minecraftforge.client.ForgeHooksClient.onEntityOutlineRendering(p_181560_1_))
                      this.field_78531_r.field_71438_f.func_174975_c();
  
++                    if (!net.minecraftforge.client.ForgeHooksClient.onShaderRendering(p_181560_1_, this.field_147707_d, this.field_175083_ad))
                      if (this.field_147707_d != null && this.field_175083_ad)
                      {
-+                        if (!net.minecraftforge.client.ForgeHooksClient.onShaderRendering(p_181560_1_, this.field_147707_d)) {
                          GlStateManager.func_179128_n(5890);
-                         GlStateManager.func_179094_E();
-                         GlStateManager.func_179096_D();
+@@ -1075,6 +1085,7 @@
                          this.field_147707_d.func_148018_a(p_181560_1_);
                          GlStateManager.func_179121_F();
                      }
-+                    }net.minecraftforge.client.ForgeHooksClient.onFramebufferRendering(p_181560_1_);
++                    net.minecraftforge.client.ForgeHooksClient.onFramebufferRendering(p_181560_1_);
  
                      this.field_78531_r.func_147110_a().func_147610_a(true);
                  }

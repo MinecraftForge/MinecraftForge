@@ -736,9 +736,9 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(new FramebufferEvent.RenderEntityOutline(partialTicks));
     }
 
-    public static boolean onShaderRendering(float partialTicks, ShaderGroup shaderGroup)
+    public static boolean onShaderRendering(float partialTicks, ShaderGroup shaderGroup, boolean useShader)
     {
-        return MinecraftForge.EVENT_BUS.post(new FramebufferEvent.RenderShaders(partialTicks, shaderGroup));
+        return MinecraftForge.EVENT_BUS.post(new FramebufferEvent.RenderShaders(partialTicks, shaderGroup, useShader));
     }
 
     public static void onFramebufferRendering(float partialTicks)
