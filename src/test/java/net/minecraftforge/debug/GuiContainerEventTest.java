@@ -34,6 +34,7 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod (modid = "guicontainereventtest", name = "GuiContainer Event Tests!", version = "1.0", acceptableRemoteVersions = "*")
 public class GuiContainerEventTest
 {
+    static final boolean ENABLED = false;
 
     @ObjectHolder("minecraft:stone")
     public static final Item STONE_ITEM = null;
@@ -41,6 +42,8 @@ public class GuiContainerEventTest
     @SubscribeEvent
     public static void onForegroundRender(GuiContainerEvent.DrawForeground event)
     {
+        if (!ENABLED) return;
+
         for (Slot slot : event.getGuiContainer().inventorySlots.inventorySlots)
         {
             if (slot.getStack().getItem() == STONE_ITEM)

@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod.EventBusSubscriber
 public class BigNetworkMessageTest
 {
-    static final boolean ENABLED = true;
+    static final boolean ENABLED = false;
     static final String MOD_ID = "big_packet_test";
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(MOD_ID);
 

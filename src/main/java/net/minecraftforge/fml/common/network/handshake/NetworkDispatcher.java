@@ -157,8 +157,8 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         {
             serverInitiateHandshake();
             FMLLog.log.info("Connection received without FML marker, assuming vanilla.");
-            this.completeServerSideConnection(ConnectionType.VANILLA);
             insertIntoChannel();
+            this.completeServerSideConnection(ConnectionType.VANILLA);
         }
     }
 
