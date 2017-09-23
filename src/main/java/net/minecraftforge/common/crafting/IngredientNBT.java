@@ -37,6 +37,7 @@ public class IngredientNBT extends Ingredient
     {
         if (input == null)
             return false;
-        return ItemStack.areItemStacksEqualUsingNBTShareTag(this.stack, input);
+        //Can't use areItemStacksEqualUsingNBTShareTag because it compares stack size as well
+        return this.stack.getItem() == input.getItem() && this.stack.getItemDamage() == input.getItemDamage() && ItemStack.areItemStackShareTagsEqual(this.stack, input);
     }
 }
