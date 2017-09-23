@@ -11,7 +11,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -25,7 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 @Mod(modid = ForgeBlockStatesLoaderDebug.MODID, name = "ForgeBlockStatesLoader", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
 public class ForgeBlockStatesLoaderDebug
 {
     public static final String MODID = "forgeblockstatesloader";
@@ -44,25 +45,25 @@ public class ForgeBlockStatesLoaderDebug
     }
 
     @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event)
+    public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().registerAll(
-                new BlockWall(Blocks.COBBLESTONE).setUnlocalizedName(MODID + ".customWall").setRegistryName(MODID, "custom_wall")
+            new BlockWall(Blocks.COBBLESTONE).setUnlocalizedName(MODID + ".customWall").setRegistryName(MODID, "custom_wall")
         );
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event)
+    public void registerItems(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().registerAll(
-                new ItemMultiTexture(BLOCKS.custom_wall, BLOCKS.custom_wall, new ItemMultiTexture.Mapper()
+            new ItemMultiTexture(BLOCKS.custom_wall, BLOCKS.custom_wall, new ItemMultiTexture.Mapper()
+            {
+                @Override
+                public String apply(ItemStack stack)
                 {
-                    @Override
-                    public String apply(ItemStack stack)
-                    {
-                        return BlockWall.EnumType.byMetadata(stack.getMetadata()).getUnlocalizedName();
-                    }
-                }).setRegistryName(BLOCKS.custom_wall.getRegistryName())
+                    return BlockWall.EnumType.byMetadata(stack.getMetadata()).getUnlocalizedName();
+                }
+            }).setRegistryName(BLOCKS.custom_wall.getRegistryName())
         );
     }
 
@@ -73,39 +74,39 @@ public class ForgeBlockStatesLoaderDebug
     {
         //blockCustom.setUnlocalizedName(MODID + ".customBlock").setRegistryName("customBlock");
         //GameRegistry.registerBlock(blockCustom);
-
-        if (event.getSide() == Side.CLIENT)
-        {
-            preInitClient(event);
-        }
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SideOnly(Side.CLIENT)
-    public void preInitClient(FMLPreInitializationEvent event)
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class ClientEventHandler
     {
-        //ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
-
-        ModelLoader.setCustomStateMapper(BLOCKS.custom_wall, new IStateMapper()
+        @SubscribeEvent
+        public void registerModels(ModelRegistryEvent event)
         {
-            StateMap stateMap = new StateMap.Builder().withName(BlockWall.VARIANT).withSuffix("_wall").build();
+            //ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
 
-            @Override
-            public Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block)
+            ModelLoader.setCustomStateMapper(BLOCKS.custom_wall, new IStateMapper()
             {
-                Map<IBlockState, ModelResourceLocation> map = stateMap.putStateModelLocations(block);
-                Map<IBlockState, ModelResourceLocation> newMap = Maps.newHashMap();
+                StateMap stateMap = new StateMap.Builder().withName(BlockWall.VARIANT).withSuffix("_wall").build();
 
-                for (Entry<IBlockState, ModelResourceLocation> e : map.entrySet())
+                @Override
+                public Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block)
                 {
-                    ModelResourceLocation loc = e.getValue();
-                    newMap.put(e.getKey(), new ModelResourceLocation(ASSETS + loc.getResourcePath(), loc.getVariant()));
-                }
+                    Map<IBlockState, ModelResourceLocation> map = stateMap.putStateModelLocations(block);
+                    Map<IBlockState, ModelResourceLocation> newMap = Maps.newHashMap();
 
-                return newMap;
-            }
-        });
-        ModelLoader.setCustomModelResourceLocation(ITEMS.custom_wall, 0, new ModelResourceLocation(ASSETS + "cobblestone_wall", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(ITEMS.custom_wall, 1, new ModelResourceLocation(ASSETS + "mossy_cobblestone_wall", "inventory"));
+                    for (Entry<IBlockState, ModelResourceLocation> e : map.entrySet())
+                    {
+                        ModelResourceLocation loc = e.getValue();
+                        newMap.put(e.getKey(), new ModelResourceLocation(ASSETS + loc.getResourcePath(), loc.getVariant()));
+                    }
+
+                    return newMap;
+                }
+            });
+            ModelLoader.setCustomModelResourceLocation(ITEMS.custom_wall, 0, new ModelResourceLocation(ASSETS + "cobblestone_wall", "inventory"));
+            ModelLoader.setCustomModelResourceLocation(ITEMS.custom_wall, 1, new ModelResourceLocation(ASSETS + "mossy_cobblestone_wall", "inventory"));
+        }
     }
 
     // this block is never actually used, it's only needed for the error message on load to see the variant it maps to

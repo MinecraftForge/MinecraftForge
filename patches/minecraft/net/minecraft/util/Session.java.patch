@@ -13,7 +13,7 @@
 +        {
 +            p_i1098_1_ = "MissingName";
 +            p_i1098_2_ = p_i1098_3_ = "NotValid";
-+            org.apache.logging.log4j.Logger logger = net.minecraftforge.fml.common.FMLLog.getLogger();
++            org.apache.logging.log4j.Logger logger = net.minecraftforge.fml.common.FMLLog.log;
 +            logger.log(org.apache.logging.log4j.Level.WARN, "=========================================================");
 +            logger.log(org.apache.logging.log4j.Level.WARN, "WARNING!! the username was not set for this session, typically");
 +            logger.log(org.apache.logging.log4j.Level.WARN, "this means you installed Forge incorrectly. We have set your");

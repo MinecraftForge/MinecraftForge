@@ -1,11 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
+@@ -216,7 +216,7 @@
+         bufferbuilder.func_181662_b(135.0D, -7.0D, 0.0D).func_187315_a(1.0D, 0.0D).func_181675_d();
+         bufferbuilder.func_181662_b(-7.0D, -7.0D, 0.0D).func_187315_a(0.0D, 0.0D).func_181675_d();
+         tessellator.func_78381_a();
+-        MapData mapdata = Items.field_151098_aY.func_77873_a(p_187461_1_, this.field_78455_a.field_71441_e);
++        MapData mapdata = ((net.minecraft.item.ItemMap) p_187461_1_.func_77973_b()).func_77873_a(p_187461_1_, this.field_78455_a.field_71441_e);
+ 
+         if (mapdata != null)
+         {
 @@ -312,7 +312,7 @@
          {
              ItemStack itemstack = abstractclientplayer.func_184607_cu();
  
 -            if (itemstack.func_77973_b() == Items.field_151031_f)
-+            if (itemstack != null && itemstack.func_77973_b() == Items.field_151031_f) //Forge: Data watcher can desync and cause this to NPE...
++            if (!itemstack.func_190926_b() && itemstack.func_77973_b() == Items.field_151031_f) //Forge: Data watcher can desync and cause this to NPE...
              {
                  EnumHand enumhand1 = abstractclientplayer.func_184600_cs();
                  flag = enumhand1 == EnumHand.MAIN_HAND;
@@ -70,14 +79,23 @@
                  this.func_78442_d();
              }
          }
-@@ -592,8 +599,8 @@
+@@ -592,8 +599,17 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);
 -            this.field_187469_f += MathHelper.func_76131_a((Objects.equals(this.field_187467_d, itemstack) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
 -            this.field_187471_h += MathHelper.func_76131_a((float)(Objects.equals(this.field_187468_e, itemstack1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
-+            this.field_187469_f += MathHelper.func_76131_a((!net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack, entityplayersp.field_71071_by.field_70461_c) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
-+            this.field_187471_h += MathHelper.func_76131_a((float)(!net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1, -1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
++
++            boolean requipM = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack, entityplayersp.field_71071_by.field_70461_c);
++            boolean requipO = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1, -1);
++
++            if (!requipM && !Objects.equals(this.field_187467_d, itemstack))
++                this.field_187467_d = itemstack;
++            if (!requipM && !Objects.equals(this.field_187468_e, itemstack1))
++                this.field_187468_e = itemstack1;
++
++            this.field_187469_f += MathHelper.func_76131_a((!requipM ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
++            this.field_187471_h += MathHelper.func_76131_a((float)(!requipO ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
          }
  
          if (this.field_187469_f < 0.1F)

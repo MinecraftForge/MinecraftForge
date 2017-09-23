@@ -29,7 +29,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBucket;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -37,6 +39,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -46,7 +49,6 @@ import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.InvWrapper;
 
 public class FluidUtil
 {
@@ -69,70 +71,50 @@ public class FluidUtil
      */
     public static boolean interactWithFluidHandler(@Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull World world, @Nonnull BlockPos pos, @Nullable EnumFacing side)
     {
-        Preconditions.checkNotNull(player);
-        Preconditions.checkNotNull(hand);
         Preconditions.checkNotNull(world);
         Preconditions.checkNotNull(pos);
 
-        ItemStack heldItem = player.getHeldItem(hand);
-        if (!heldItem.isEmpty())
-        {
-            IFluidHandler blockFluidHandler = getFluidHandler(world, pos, side);
-            if (blockFluidHandler != null)
-            {
-                IItemHandler playerInventory = player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                if (playerInventory != null)
-                {
-                    FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, blockFluidHandler, playerInventory, Integer.MAX_VALUE, player);
-                    if (!fluidActionResult.isSuccess())
-                    {
-                        fluidActionResult = tryEmptyContainerAndStow(heldItem, blockFluidHandler, playerInventory, Integer.MAX_VALUE, player);
-                    }
-
-                    if (fluidActionResult.isSuccess())
-                    {
-                        player.setHeldItem(hand, fluidActionResult.getResult());
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        IFluidHandler blockFluidHandler = getFluidHandler(world, pos, side);
+        return blockFluidHandler != null && interactWithFluidHandler(player, hand, blockFluidHandler);
     }
 
     /**
      * Used to handle the common case of a player holding a fluid item and right-clicking on a fluid handler.
-     * First it tries to fill the container item from the fluid handler,
-     * if that action fails then it tries to drain the container item into the fluid handler.
+     * First it tries to fill the item from the handler,
+     * if that action fails then it tries to drain the item into the handler.
+     * Automatically updates the item in the player's hand and stashes any extra items created.
      *
-     * @param stack        The filled or empty fluid container.
-     *                     Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
-     * @param fluidHandler The fluid handler to interact with.
-     * @param player       The player doing the interaction between the item and fluid handler.
-     * @return a {@link FluidActionResult} holding the result and resulting container.
-     *
-     * @deprecated Use {@link #interactWithFluidHandler(EntityPlayer, EnumHand, World, BlockPos, EnumFacing)} which is easier to use.
+     * @param player  The player doing the interaction between the item and fluid handler.
+     * @param hand    The player's hand that is holding an item that should interact with the fluid handler.
+     * @param handler The fluid handler.
+     * @return true if the interaction succeeded and updated the item held by the player, false otherwise.
      */
-    @Deprecated
-    @Nonnull
-    public static FluidActionResult interactWithFluidHandler(@Nonnull ItemStack stack, IFluidHandler fluidHandler, EntityPlayer player)
+    public static boolean interactWithFluidHandler(@Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull IFluidHandler handler)
     {
-        if (stack.isEmpty() || fluidHandler == null || player == null)
-        {
-            return FluidActionResult.FAILURE;
-        }
+        Preconditions.checkNotNull(player);
+        Preconditions.checkNotNull(hand);
+        Preconditions.checkNotNull(handler);
 
-        IItemHandler playerInventory = new InvWrapper(player.inventory);
+        ItemStack heldItem = player.getHeldItem(hand);
+        if (!heldItem.isEmpty())
+        {
+            IItemHandler playerInventory = player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            if (playerInventory != null)
+            {
+                FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player);
+                if (!fluidActionResult.isSuccess())
+                {
+                    fluidActionResult = tryEmptyContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player);
+                }
 
-        FluidActionResult fillResult = tryFillContainerAndStow(stack, fluidHandler, playerInventory, Integer.MAX_VALUE, player);
-        if (fillResult.isSuccess())
-        {
-            return fillResult;
+                if (fluidActionResult.isSuccess())
+                {
+                    player.setHeldItem(hand, fluidActionResult.getResult());
+                    return true;
+                }
+            }
         }
-        else
-        {
-            return tryEmptyContainerAndStow(stack, fluidHandler, playerInventory, Integer.MAX_VALUE, player);
-        }
+        return false;
     }
 
     /**
@@ -680,5 +662,48 @@ public class FluidUtil
                 world.destroyBlock(pos, true);
             }
         }
+    }
+
+    /**
+     * @param fluidStack contents used to fill the bucket.
+     *                   FluidStack is used instead of Fluid to preserve fluid NBT, the amount is ignored.
+     * @return a filled vanilla bucket or filled universal bucket.
+     *         Returns empty itemStack if none of the enabled buckets can hold the fluid.
+     */
+    @Nonnull
+    public static ItemStack getFilledBucket(@Nonnull FluidStack fluidStack)
+    {
+        Fluid fluid = fluidStack.getFluid();
+
+        if (fluidStack.tag == null || fluidStack.tag.hasNoTags())
+        {
+            if (fluid == FluidRegistry.WATER)
+            {
+                return new ItemStack(Items.WATER_BUCKET);
+            }
+            else if (fluid == FluidRegistry.LAVA)
+            {
+                return new ItemStack(Items.LAVA_BUCKET);
+            }
+            else if (fluid.getName().equals("milk"))
+            {
+                return new ItemStack(Items.MILK_BUCKET);
+            }
+        }
+
+        if (FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.getBucketFluids().contains(fluid))
+        {
+            UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
+            ItemStack filledBucket = new ItemStack(bucket);
+            FluidStack fluidContents = new FluidStack(fluidStack, bucket.getCapacity());
+
+            NBTTagCompound tag = new NBTTagCompound();
+            fluidContents.writeToNBT(tag);
+            filledBucket.setTagCompound(tag);
+
+            return filledBucket;
+        }
+
+        return ItemStack.EMPTY;
     }
 }

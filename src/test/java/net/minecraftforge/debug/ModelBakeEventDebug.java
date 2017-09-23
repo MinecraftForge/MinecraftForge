@@ -2,6 +2,8 @@ package net.minecraftforge.debug;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -31,18 +33,20 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -56,6 +60,13 @@ public class ModelBakeEventDebug
     public static final int cubeSize = 3;
 
     private static ResourceLocation blockName = new ResourceLocation(MODID, CustomModelBlock.name);
+    private static ModelResourceLocation blockLocation = new ModelResourceLocation(blockName, "normal");
+    private static ModelResourceLocation itemLocation = new ModelResourceLocation(blockName, "inventory");
+
+    @ObjectHolder(CustomModelBlock.name)
+    public static final Block CUSTOM_BLOCK = null;
+    @ObjectHolder(CustomModelBlock.name)
+    public static final Block CUSTOM_ITEM = null;
 
     @SuppressWarnings("unchecked")
     public static final IUnlistedProperty<Integer>[] properties = new IUnlistedProperty[6];
@@ -68,73 +79,154 @@ public class ModelBakeEventDebug
         }
     }
 
-    @SidedProxy
-    public static CommonProxy proxy;
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        proxy.preInit(event);
-    }
-
-    public static class CommonProxy
-    {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
-            GameRegistry.register(CustomModelBlock.instance);
-            GameRegistry.register(new ItemBlock(CustomModelBlock.instance).setRegistryName(CustomModelBlock.instance.getRegistryName()));
+            event.getRegistry().register(new CustomModelBlock());
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
+        }
+
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
+        {
+            event.getRegistry().register(new ItemBlock(CUSTOM_BLOCK).setRegistryName(CUSTOM_BLOCK.getRegistryName()));
         }
     }
 
-    public static class ServerProxy extends CommonProxy
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class BakeEventHandler
     {
-    }
-
-    public static class ClientProxy extends CommonProxy
-    {
-        private static ModelResourceLocation blockLocation = new ModelResourceLocation(blockName, "normal");
-        private static ModelResourceLocation itemLocation = new ModelResourceLocation(blockName, "inventory");
-
-        @Override
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
         {
-            super.preInit(event);
-            Item item = Item.getItemFromBlock(CustomModelBlock.instance);
+            Item item = Item.getItemFromBlock(CUSTOM_BLOCK);
             ModelLoader.setCustomModelResourceLocation(item, 0, itemLocation);
-            ModelLoader.setCustomStateMapper(CustomModelBlock.instance, new StateMapperBase()
+            ModelLoader.setCustomStateMapper(CUSTOM_BLOCK, new StateMapperBase()
             {
                 protected ModelResourceLocation getModelResourceLocation(IBlockState p_178132_1_)
                 {
                     return blockLocation;
                 }
             });
-            MinecraftForge.EVENT_BUS.register(BakeEventHandler.instance);
-        }
-    }
-
-    public static class BakeEventHandler
-    {
-        public static final BakeEventHandler instance = new BakeEventHandler();
-
-        private BakeEventHandler()
-        {
         }
 
         @SubscribeEvent
-        public void onModelBakeEvent(ModelBakeEvent event)
+        public static void onModelBakeEvent(ModelBakeEvent event)
         {
             TextureAtlasSprite base = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/slime");
             TextureAtlasSprite overlay = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/redstone_block");
             IBakedModel customModel = new CustomModel(base, overlay);
-            event.getModelRegistry().putObject(ClientProxy.blockLocation, customModel);
-            event.getModelRegistry().putObject(ClientProxy.itemLocation, customModel);
+            event.getModelRegistry().putObject(blockLocation, customModel);
+            event.getModelRegistry().putObject(itemLocation, customModel);
+        }
+
+        public static class CustomModel implements IBakedModel
+        {
+            private final TextureAtlasSprite base, overlay;
+            //private boolean hasStateSet = false;
+
+            public CustomModel(TextureAtlasSprite base, TextureAtlasSprite overlay)
+            {
+                this.base = base;
+                this.overlay = overlay;
+            }
+
+            // TODO update to builder
+            private int[] vertexToInts(float x, float y, float z, int color, TextureAtlasSprite texture, float u, float v)
+            {
+                return new int[]{
+                    Float.floatToRawIntBits(x),
+                    Float.floatToRawIntBits(y),
+                    Float.floatToRawIntBits(z),
+                    color,
+                    Float.floatToRawIntBits(texture.getInterpolatedU(u)),
+                    Float.floatToRawIntBits(texture.getInterpolatedV(v)),
+                    0
+                };
+            }
+
+            private BakedQuad createSidedBakedQuad(float x1, float x2, float z1, float z2, float y, TextureAtlasSprite texture, EnumFacing side)
+            {
+                Vec3d v1 = rotate(new Vec3d(x1 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
+                Vec3d v2 = rotate(new Vec3d(x1 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
+                Vec3d v3 = rotate(new Vec3d(x2 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
+                Vec3d v4 = rotate(new Vec3d(x2 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
+                return new BakedQuad(Ints.concat(
+                    vertexToInts((float) v1.x, (float) v1.y, (float) v1.z, -1, texture, 0, 0),
+                    vertexToInts((float) v2.x, (float) v2.y, (float) v2.z, -1, texture, 0, 16),
+                    vertexToInts((float) v3.x, (float) v3.y, (float) v3.z, -1, texture, 16, 16),
+                    vertexToInts((float) v4.x, (float) v4.y, (float) v4.z, -1, texture, 16, 0)
+                ), -1, side, texture, true, DefaultVertexFormats.BLOCK);
+            }
+
+            @Override
+            public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+            {
+                if (side != null)
+                {
+                    return ImmutableList.of();
+                }
+                IExtendedBlockState exState = (IExtendedBlockState) state;
+                int len = cubeSize * 5 + 1;
+                List<BakedQuad> ret = new ArrayList<BakedQuad>();
+                for (EnumFacing f : EnumFacing.values())
+                {
+                    ret.add(createSidedBakedQuad(0, 1, 0, 1, 1, base, f));
+                    if (state != null)
+                    {
+                        for (int i = 0; i < cubeSize; i++)
+                        {
+                            for (int j = 0; j < cubeSize; j++)
+                            {
+                                Integer value = exState.getValue(properties[f.ordinal()]);
+                                if (value != null && (value & (1 << (i * cubeSize + j))) != 0)
+                                {
+                                    ret.add(createSidedBakedQuad((float) (1 + i * 5) / len, (float) (5 + i * 5) / len, (float) (1 + j * 5) / len, (float) (5 + j * 5) / len, 1.0001f, overlay, f));
+                                }
+                            }
+                        }
+                    }
+                }
+                return ret;
+            }
+
+            @Override
+            public boolean isGui3d()
+            {
+                return true;
+            }
+
+            @Override
+            public boolean isAmbientOcclusion()
+            {
+                return true;
+            }
+
+            @Override
+            public boolean isBuiltInRenderer()
+            {
+                return false;
+            }
+
+            @Override
+            public TextureAtlasSprite getParticleTexture()
+            {
+                return this.base;
+            }
+
+            @Override
+            public ItemOverrideList getOverrides()
+            {
+                return ItemOverrideList.NONE;
+            }
         }
     }
 
     public static class CustomModelBlock extends BlockContainer
     {
-        public static final CustomModelBlock instance = new CustomModelBlock();
         public static final String name = "custom_model_block";
 
         private CustomModelBlock()
@@ -235,113 +327,6 @@ public class ModelBakeEventDebug
         public void setState(IExtendedBlockState state)
         {
             this.state = state;
-        }
-    }
-
-    public static class CustomModel implements IBakedModel
-    {
-        private final TextureAtlasSprite base, overlay;
-        //private boolean hasStateSet = false;
-
-        public CustomModel(TextureAtlasSprite base, TextureAtlasSprite overlay)
-        {
-            this.base = base;
-            this.overlay = overlay;
-        }
-
-        // TODO update to builder
-        private int[] vertexToInts(float x, float y, float z, int color, TextureAtlasSprite texture, float u, float v)
-        {
-            return new int[]{
-                    Float.floatToRawIntBits(x),
-                    Float.floatToRawIntBits(y),
-                    Float.floatToRawIntBits(z),
-                    color,
-                    Float.floatToRawIntBits(texture.getInterpolatedU(u)),
-                    Float.floatToRawIntBits(texture.getInterpolatedV(v)),
-                    0
-            };
-        }
-
-        private BakedQuad createSidedBakedQuad(float x1, float x2, float z1, float z2, float y, TextureAtlasSprite texture, EnumFacing side)
-        {
-            Vec3d v1 = rotate(new Vec3d(x1 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
-            Vec3d v2 = rotate(new Vec3d(x1 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
-            Vec3d v3 = rotate(new Vec3d(x2 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
-            Vec3d v4 = rotate(new Vec3d(x2 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
-            return new BakedQuad(Ints.concat(
-                    vertexToInts((float) v1.x, (float) v1.y, (float) v1.z, -1, texture, 0, 0),
-                    vertexToInts((float) v2.x, (float) v2.y, (float) v2.z, -1, texture, 0, 16),
-                    vertexToInts((float) v3.x, (float) v3.y, (float) v3.z, -1, texture, 16, 16),
-                    vertexToInts((float) v4.x, (float) v4.y, (float) v4.z, -1, texture, 16, 0)
-            ), -1, side, texture, true, DefaultVertexFormats.BLOCK);
-        }
-
-        @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
-        {
-            if (side != null)
-            {
-                return ImmutableList.of();
-            }
-            IExtendedBlockState exState = (IExtendedBlockState) state;
-            int len = cubeSize * 5 + 1;
-            List<BakedQuad> ret = new ArrayList<BakedQuad>();
-            for (EnumFacing f : EnumFacing.values())
-            {
-                ret.add(createSidedBakedQuad(0, 1, 0, 1, 1, base, f));
-                if (state != null)
-                {
-                    for (int i = 0; i < cubeSize; i++)
-                    {
-                        for (int j = 0; j < cubeSize; j++)
-                        {
-                            Integer value = exState.getValue(properties[f.ordinal()]);
-                            if (value != null && (value & (1 << (i * cubeSize + j))) != 0)
-                            {
-                                ret.add(createSidedBakedQuad((float) (1 + i * 5) / len, (float) (5 + i * 5) / len, (float) (1 + j * 5) / len, (float) (5 + j * 5) / len, 1.0001f, overlay, f));
-                            }
-                        }
-                    }
-                }
-            }
-            return ret;
-        }
-
-        @Override
-        public boolean isGui3d()
-        {
-            return true;
-        }
-
-        @Override
-        public boolean isAmbientOcclusion()
-        {
-            return true;
-        }
-
-        @Override
-        public boolean isBuiltInRenderer()
-        {
-            return false;
-        }
-
-        @Override
-        public TextureAtlasSprite getParticleTexture()
-        {
-            return this.base;
-        }
-
-        @Override
-        public ItemCameraTransforms getItemCameraTransforms()
-        {
-            return ItemCameraTransforms.DEFAULT;
-        }
-
-        @Override
-        public ItemOverrideList getOverrides()
-        {
-            return ItemOverrideList.NONE;
         }
     }
 

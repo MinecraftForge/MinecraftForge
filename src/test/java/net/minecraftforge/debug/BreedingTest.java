@@ -11,11 +11,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class BreedingTest
 {
     public static final String MODID = "breedingtest";
+    static final boolean ENABLED = false;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        MinecraftForge.EVENT_BUS.register(this);
+        if (ENABLED)
+        {
+            MinecraftForge.EVENT_BUS.register(this);
+        }
     }
 
     @SubscribeEvent

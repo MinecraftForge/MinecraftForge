@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,339 @@
+@@ -241,6 +216,317 @@
          return new WorldBorder();
      }
  
@@ -99,42 +99,6 @@
 +    public String getSaveFolder()
 +    {
 +        return (dimensionId == 0 ? null : "DIM" + dimensionId);
-+    }
-+
-+    /**
-+     * A message to display to the user when they transfer to this dimension.
-+     *
-+     * @return The message to be displayed
-+     */
-+    public String getWelcomeMessage()
-+    {
-+        if (this instanceof WorldProviderEnd)
-+        {
-+            return "Entering the End";
-+        }
-+        else if (this instanceof WorldProviderHell)
-+        {
-+            return "Entering the Nether";
-+        }
-+        return null;
-+    }
-+
-+    /**
-+     * A Message to display to the user when they transfer out of this dismension.
-+     *
-+     * @return The message to be displayed
-+     */
-+    public String getDepartMessage()
-+    {
-+        if (this instanceof WorldProviderEnd)
-+        {
-+            return "Leaving the End";
-+        }
-+        else if (this instanceof WorldProviderHell)
-+        {
-+            return "Leaving the Nether";
-+        }
-+        return null;
 +    }
 +
 +    /**
@@ -187,6 +151,20 @@
 +    {
 +        weatherRenderer = renderer;
 +    }
++
++    /**
++     * Allows for manipulating the coloring of the lightmap texture.
++     * Will be called for each 16*16 combination of sky/block light values.
++     *
++     * @param partialTicks Progress between ticks.
++     * @param sunBrightness Current sun brightness.
++     * @param skyLight Sky light brightness factor.
++     * @param blockLight Block light brightness factor.
++     * @param colors The color values that will be used: [r, g, b].
++     *
++     * @see net.minecraft.client.renderer.EntityRenderer#updateLightmap(float)
++     */
++    public void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors) {}
 +
 +    public BlockPos getRandomizedSpawnPoint()
 +    {

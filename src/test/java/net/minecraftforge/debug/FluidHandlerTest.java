@@ -58,7 +58,7 @@ public class FluidHandlerTest
         {
             FluidStack drain = fluidHandler.drain(Integer.MAX_VALUE, true);
             ItemStack drainedStack = fluidHandler.getContainer();
-            logger.info("Draining " + stackString(stack) + " gives " + fluidString(drain) + " and " + stackString(drainedStack));
+            logger.info("Draining {} gives {} and {}", stackString(stack), fluidString(drain), stackString(drainedStack));
 
             if (drain == null && !ItemStack.areItemStacksEqual(originalStack, preDrainStack))
             {
@@ -76,7 +76,7 @@ public class FluidHandlerTest
 
                     if (filled > 0)
                     {
-                        logger.info("Filling " + stackString(stack) + " with " + fluidString(new FluidStack(fluid, filled)) + " gives " + stackString(filledStack));
+                        logger.info("Filling {} with {} gives {}", stackString(stack), fluidString(new FluidStack(fluid, filled)), stackString(filledStack));
                     }
                     else
                     {

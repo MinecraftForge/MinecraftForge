@@ -39,7 +39,7 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.logging.log4j.util.PropertiesUtil;
 import org.fusesource.jansi.AnsiConsole;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Functions;
 
 import jline.TerminalFactory;

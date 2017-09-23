@@ -34,9 +34,8 @@
          GlStateManager.func_179096_D();
          GlStateManager.func_179128_n(5888);
          this.func_71361_d("Startup");
--        this.field_147128_au = new TextureMap("textures");
 +        bar.step("Loading Texture Map");
-+        this.field_147128_au = new TextureMap("textures", true);
+         this.field_147128_au = new TextureMap("textures");
          this.field_147128_au.func_147633_a(this.field_71474_y.field_151442_I);
          this.field_71446_o.func_110580_a(TextureMap.field_110575_b, this.field_147128_au);
          this.field_71446_o.func_110577_a(TextureMap.field_110575_b);
@@ -87,15 +86,6 @@
          if (this.field_71474_y.field_74353_u && !this.field_71431_Q)
          {
              this.func_71352_k();
-@@ -581,7 +591,7 @@
-         {
-             return (List)p_193990_0_.func_192711_b().stream().flatMap((p_193993_0_) -> {
-                 return p_193993_0_.func_77571_b().func_82840_a((EntityPlayer)null, ITooltipFlag.TooltipFlags.NORMAL).stream();
--            }).map(TextFormatting::func_110646_a).map(String::trim).filter((p_193994_0_) -> {
-+            }).map(TextFormatting::getTextWithoutFormattingCodes).map(String::trim).filter((p_193994_0_) -> {
-                 return !p_193994_0_.isEmpty();
-             }).collect(Collectors.toList());
-         }, (p_193991_0_) ->
 @@ -748,21 +758,23 @@
          File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
          Bootstrap.func_179870_a(p_71377_1_.func_71502_e());
@@ -204,7 +194,19 @@
                      if (!itemstack.func_190926_b() && this.field_71442_b.func_187101_a(this.field_71439_g, this.field_71441_e, enumhand) == EnumActionResult.SUCCESS)
                      {
                          this.field_71460_t.field_78516_c.func_187460_a(enumhand);
-@@ -1676,6 +1698,8 @@
+@@ -1630,6 +1652,11 @@
+             }
+ 
+             Display.setFullscreen(this.field_71431_Q);
++            if (!this.field_71431_Q) //Forge: Fix MC-68754, Screen is not resizeable after exiting fullscreen due to LWJGL bug https://github.com/LWJGL/lwjgl/issues/142 which is fixed, but not in the version MC ships
++            {
++                Display.setResizable(false);
++                Display.setResizable(true);
++            }
+             Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
+             this.func_175601_h();
+         }
+@@ -1676,6 +1703,8 @@
              --this.field_71467_ac;
          }
  
@@ -213,15 +215,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1788,6 +1812,7 @@
-                     this.field_71457_ai = 0;
-                     this.field_71441_e.func_72897_h(this.field_71439_g);
-                 }
-+                net.minecraftforge.fml.common.FMLCommonHandler.instance().fireMouseInput();
-             }
- 
-             this.field_71424_I.func_76318_c("gameRenderer");
-@@ -1877,6 +1902,7 @@
+@@ -1877,6 +1906,7 @@
          }
  
          this.field_71424_I.func_76319_b();
@@ -229,7 +223,7 @@
          this.field_71423_H = func_71386_F();
      }
  
-@@ -1982,6 +2008,7 @@
+@@ -1982,6 +2012,7 @@
                      }
                  }
              }
@@ -237,7 +231,7 @@
          }
  
          this.func_184117_aA();
-@@ -2239,6 +2266,8 @@
+@@ -2239,6 +2270,8 @@
      {
          while (Mouse.next())
          {
@@ -246,7 +240,15 @@
              int i = Mouse.getEventButton();
              KeyBinding.func_74510_a(i - 100, Mouse.getEventButtonState());
  
-@@ -2304,6 +2333,7 @@
+@@ -2294,6 +2327,7 @@
+                     this.field_71462_r.func_146274_d();
+                 }
+             }
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().fireMouseInput();
+         }
+     }
+ 
+@@ -2304,6 +2338,7 @@
  
      public void func_71371_a(String p_71371_1_, String p_71371_2_, @Nullable WorldSettings p_71371_3_)
      {
@@ -254,7 +256,7 @@
          this.func_71403_a((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
-@@ -2346,6 +2376,12 @@
+@@ -2346,6 +2381,12 @@
  
          while (!this.field_71437_Z.func_71200_ad())
          {
@@ -267,13 +269,13 @@
              String s = this.field_71437_Z.func_71195_b_();
  
              if (s != null)
-@@ -2371,8 +2407,14 @@
+@@ -2371,8 +2412,14 @@
          SocketAddress socketaddress = this.field_71437_Z.func_147137_ag().func_151270_a();
          NetworkManager networkmanager = NetworkManager.func_150722_a(socketaddress);
          networkmanager.func_150719_a(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
--        networkmanager.func_179290_a(new C00Handshake(335, socketaddress.toString(), 0, EnumConnectionState.LOGIN));
+-        networkmanager.func_179290_a(new C00Handshake(socketaddress.toString(), 0, EnumConnectionState.LOGIN));
 -        networkmanager.func_179290_a(new CPacketLoginStart(this.func_110432_I().func_148256_e()));
-+        networkmanager.func_179290_a(new C00Handshake(335, socketaddress.toString(), 0, EnumConnectionState.LOGIN, true));
++        networkmanager.func_179290_a(new C00Handshake(socketaddress.toString(), 0, EnumConnectionState.LOGIN, true));
 +        com.mojang.authlib.GameProfile gameProfile = this.func_110432_I().func_148256_e();
 +        if (!this.func_110432_I().hasCachedProperties())
 +        {
@@ -284,7 +286,7 @@
          this.field_71453_ak = networkmanager;
      }
  
-@@ -2383,6 +2425,8 @@
+@@ -2383,6 +2430,8 @@
  
      public void func_71353_a(@Nullable WorldClient p_71353_1_, String p_71353_2_)
      {
@@ -293,7 +295,7 @@
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2395,6 +2439,18 @@
+@@ -2395,6 +2444,18 @@
              if (this.field_71437_Z != null && this.field_71437_Z.func_175578_N())
              {
                  this.field_71437_Z.func_71263_m();
@@ -312,7 +314,7 @@
              }
  
              this.field_71437_Z = null;
-@@ -2418,6 +2474,7 @@
+@@ -2418,6 +2479,7 @@
              this.field_71456_v.func_181029_i();
              this.func_71351_a((ServerData)null);
              this.field_71455_al = false;
@@ -320,7 +322,25 @@
          }
  
          this.field_147127_av.func_147690_c();
-@@ -2535,159 +2592,8 @@
+@@ -2488,6 +2550,17 @@
+         EntityPlayerSP entityplayersp = this.field_71439_g;
+         this.field_71439_g = this.field_71442_b.func_192830_a(this.field_71441_e, this.field_71439_g == null ? new StatisticsManager() : this.field_71439_g.func_146107_m(), this.field_71439_g == null ? new RecipeBook() : this.field_71439_g.func_192035_E());
+         this.field_71439_g.func_184212_Q().func_187218_a(entityplayersp.func_184212_Q().func_187231_c());
++        // Forge - Fix MC-88179 attributes not being copied to new player
++        for (net.minecraft.entity.ai.attributes.IAttributeInstance oldInst : entityplayersp.func_110140_aT().func_111146_a())
++        {
++            net.minecraft.entity.ai.attributes.IAttribute attrib = oldInst.func_111123_a();
++            net.minecraft.entity.ai.attributes.IAttributeInstance newInst = field_71439_g.func_110140_aT().func_111151_a(attrib);
++            newInst.func_111128_a(oldInst.func_111125_b());
++            for (net.minecraft.entity.ai.attributes.AttributeModifier modifier : oldInst.func_111122_c())
++            {
++                newInst.func_111121_a(modifier);
++            }
++        }
+         this.field_71439_g.field_71093_bK = p_71354_1_;
+         this.field_175622_Z = this.field_71439_g;
+         this.field_71439_g.func_70065_x();
+@@ -2535,159 +2608,8 @@
      {
          if (this.field_71476_x != null && this.field_71476_x.field_72313_a != RayTraceResult.Type.MISS)
          {
@@ -482,7 +502,7 @@
          }
      }
  
-@@ -3009,18 +2915,8 @@
+@@ -3009,18 +2931,8 @@
  
      public static int func_71369_N()
      {
@@ -503,7 +523,7 @@
      }
  
      public boolean func_70002_Q()
-@@ -3181,11 +3077,11 @@
+@@ -3181,11 +3093,11 @@
              {
                  if (Keyboard.getEventKeyState())
                  {
@@ -517,7 +537,7 @@
                      {
                          this.field_71456_v.func_146158_b().func_146227_a(ScreenShotHelper.func_148260_a(this.field_71412_D, this.field_71443_c, this.field_71440_d, this.field_147124_at));
                      }
-@@ -3199,6 +3095,7 @@
+@@ -3199,6 +3111,7 @@
                          }
                      }
                  }
@@ -525,7 +545,7 @@
              }
          }
      }
-@@ -3328,6 +3225,12 @@
+@@ -3328,6 +3241,12 @@
          return this.field_184127_aH;
      }
  
@@ -538,3 +558,13 @@
      public boolean func_189648_am()
      {
          return this.field_71439_g != null && this.field_71439_g.func_175140_cp() || this.field_71474_y.field_178879_v;
+@@ -3342,4 +3261,9 @@
+     {
+         return this.field_193035_aW;
+     }
++
++    public SearchTreeManager getSearchTreeManager()
++    {
++        return this.field_193995_ae;
++    }
+ }

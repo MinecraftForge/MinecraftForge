@@ -44,14 +44,14 @@ public enum OBJLoader implements ICustomModelLoader {
     INSTANCE;
 
     private IResourceManager manager;
-    private final Set<String> enabledDomains = new HashSet<String>();
-    private final Map<ResourceLocation, OBJModel> cache = new HashMap<ResourceLocation, OBJModel>();
-    private final Map<ResourceLocation, Exception> errors = new HashMap<ResourceLocation, Exception>();
+    private final Set<String> enabledDomains = new HashSet<>();
+    private final Map<ResourceLocation, OBJModel> cache = new HashMap<>();
+    private final Map<ResourceLocation, Exception> errors = new HashMap<>();
 
     public void addDomain(String domain)
     {
         enabledDomains.add(domain.toLowerCase());
-        FMLLog.log(Level.INFO, "OBJLoader: Domain %s has been added.", domain.toLowerCase());
+        FMLLog.log.info("OBJLoader: Domain {} has been added.", domain.toLowerCase());
     }
 
     @Override
@@ -74,7 +74,7 @@ public enum OBJLoader implements ICustomModelLoader {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if (!cache.containsKey(file))
         {
-            IResource resource = null;
+            IResource resource;
             try
             {
                 resource = manager.getResource(file);

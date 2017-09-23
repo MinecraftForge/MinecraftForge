@@ -24,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 /**
@@ -85,6 +87,14 @@ public class ReflectionHelper
         {
             super(e);
             //this.fieldNameList = fieldNameList;
+        }
+    }
+
+    public static class UnknownConstructorException extends RuntimeException
+    {
+        public UnknownConstructorException(final String message)
+        {
+            super(message);
         }
     }
 
@@ -181,29 +191,6 @@ public class ReflectionHelper
     }
 
     /**
-     * @deprecated use {@link #findMethod(Class, String, String, Class[])}
-     */
-    @Deprecated
-    public static <E> Method findMethod(Class<? super E> clazz, E instance, String[] methodNames, Class<?>... methodTypes)
-    {
-        Throwable failed = null;
-        for (String methodName : methodNames)
-        {
-            try
-            {
-                Method m = clazz.getDeclaredMethod(methodName, methodTypes);
-                m.setAccessible(true);
-                return m;
-            }
-            catch (Exception e)
-            {
-                failed = e;
-            }
-        }
-        throw new UnableToFindMethodException(failed);
-    }
-
-    /**
      * Finds a method with the specified name and parameters in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
@@ -242,5 +229,46 @@ public class ReflectionHelper
         {
             throw new UnableToFindMethodException(e);
         }
+    }
+
+    /**
+     * Finds a constructor in the specified class that has matching parameter types.
+     *
+     * @param klass The class to find the constructor in
+     * @param parameterTypes The parameter types of the constructor.
+     * @param <T> The type
+     * @return The constructor
+     * @throws NullPointerException if {@code klass} is null
+     * @throws NullPointerException if {@code parameterTypes} is null
+     * @throws UnknownConstructorException if the constructor could not be found
+     */
+    @Nonnull
+    public static <T> Constructor<T> findConstructor(@Nonnull final Class<T> klass, @Nonnull final Class<?>... parameterTypes)
+    {
+        Preconditions.checkNotNull(klass, "class");
+        Preconditions.checkNotNull(parameterTypes, "parameter types");
+
+        final Constructor<T> constructor;
+        try
+        {
+            constructor = klass.getDeclaredConstructor(parameterTypes);
+            constructor.setAccessible(true);
+        }
+        catch (final NoSuchMethodException e)
+        {
+            final StringBuilder desc = new StringBuilder();
+            desc.append(klass.getSimpleName()).append('(');
+            for (int i = 0, length = parameterTypes.length; i < length; i++)
+            {
+                desc.append(parameterTypes[i].getName());
+                if (i > length)
+                {
+                    desc.append(',').append(' ');
+                }
+            }
+            desc.append(')');
+            throw new UnknownConstructorException("Could not find constructor '" + desc.toString() + "' in " + klass);
+        }
+        return constructor;
     }
 }

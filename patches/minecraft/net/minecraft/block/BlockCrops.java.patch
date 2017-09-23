@@ -36,14 +36,14 @@
      }
  
      protected Item func_149866_i()
-@@ -174,11 +176,33 @@
+@@ -174,11 +176,32 @@
          return Items.field_151015_O;
      }
  
 +    @Override
-+    public java.util.List<ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
++        super.getDrops(drops, world, pos, state, 0);
 +        int age = func_185527_x(state);
 +        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
 +
@@ -55,16 +55,16 @@
 +            {
 +                if (rand.nextInt(2 * func_185526_g()) <= age)
 +                {
-+                    ret.add(new ItemStack(this.func_149866_i(), 1, 0));
++                    drops.add(new ItemStack(this.func_149866_i(), 1, 0));
 +                }
 +            }
 +        }
-+        return ret;
 +    }
 +
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, 0);
+-        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, 0);
++        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
  
 -        if (!p_180653_1_.field_72995_K)
 +        if (false && !p_180653_1_.field_72995_K) // Forge: NOP all this.

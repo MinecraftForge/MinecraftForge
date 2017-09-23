@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNewLeaf.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNewLeaf.java
-@@ -109,4 +109,10 @@
+@@ -106,4 +106,10 @@
              super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
          }
      }

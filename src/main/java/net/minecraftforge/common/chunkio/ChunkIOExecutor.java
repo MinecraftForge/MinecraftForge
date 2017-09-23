@@ -120,7 +120,7 @@ public class ChunkIOExecutor
         ChunkIOProvider task = tasks.get(key);
         if (task == null)
         {
-            FMLLog.warning("Attempted to dequeue chunk that wasn't queued? %d @ (%d, %d)", world.provider.getDimension(), x, z);
+            FMLLog.log.warn("Attempted to dequeue chunk that wasn't queued? {} @ ({}, {})", world.provider.getDimension(), x, z);
             return;
         }
 

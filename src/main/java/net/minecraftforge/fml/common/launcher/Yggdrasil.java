@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 
-import com.google.common.base.Throwables;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
@@ -49,9 +48,8 @@ public class Yggdrasil
         }
         catch (AuthenticationException e)
         {
-            LogManager.getLogger("FMLTWEAK").error("-- Login failed!  " + e.getMessage());
-            Throwables.propagate(e);
-            return; // don't set other variables
+            LogManager.getLogger("FMLTWEAK").error("-- Login failed! {}", e.getMessage(), e);
+            throw new RuntimeException(e); // don't set other variables
         }
 
         args.put("--username",       auth.getSelectedProfile().getName());

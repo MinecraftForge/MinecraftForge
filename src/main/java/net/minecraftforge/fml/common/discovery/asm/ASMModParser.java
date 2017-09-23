@@ -65,7 +65,7 @@ public class ASMModParser
         }
         catch (Exception ex)
         {
-            FMLLog.log(Level.ERROR, ex, "Unable to read a class file correctly");
+            FMLLog.log.error("Unable to read a class file correctly", ex);
             throw new LoaderException(ex);
         }
     }
@@ -131,11 +131,7 @@ public class ASMModParser
 
     public void validate()
     {
-//        if (classVersion > 50.0)
-//        {
-//
-//            throw new LoaderException(new RuntimeException("Mod compiled for Java 7 detected"));
-//        }
+
     }
 
     public boolean isBaseMod(List<String> rememberedTypes)

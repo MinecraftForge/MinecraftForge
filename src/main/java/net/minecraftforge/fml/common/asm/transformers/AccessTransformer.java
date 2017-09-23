@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.common.asm.transformers;
 
+import net.minecraftforge.fml.common.FMLLog;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PROTECTED;
@@ -35,6 +36,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +45,6 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
 
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassReader;
@@ -54,7 +55,6 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
@@ -124,8 +124,8 @@ public class AccessTransformer implements IClassTransformer
         {
             rulesResource = Resources.getResource(rulesFile);
         }
-        processATFile(Resources.asCharSource(rulesResource, Charsets.UTF_8));
-        FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer config file %s", modifiers.size(), rulesFile);
+        processATFile(Resources.asCharSource(rulesResource, StandardCharsets.UTF_8));
+        FMLLog.log.debug("Loaded {} rules from AccessTransformer config file {}", modifiers.size(), rulesFile);
     }
     protected void processATFile(CharSource rulesResource) throws IOException
     {
@@ -173,7 +173,7 @@ public class AccessTransformer implements IClassTransformer
                 }
                 String className = parts.get(1).replace('/', '.');
                 modifiers.put(className, m);
-                if (DEBUG) FMLRelaunchLog.fine("AT RULE: %s %s %s (type %s)", toBinary(m.targetAccess), m.name, m.desc, className);
+                if (DEBUG) FMLLog.log.debug("AT RULE: {} {} {} (type {})", toBinary(m.targetAccess), m.name, m.desc, className);
                 return true;
             }
         });
@@ -187,7 +187,7 @@ public class AccessTransformer implements IClassTransformer
 
         if (DEBUG)
         {
-            FMLRelaunchLog.fine("Considering all methods and fields on %s (%s)", transformedName, name);
+            FMLLog.log.debug("Considering all methods and fields on {} ({})", transformedName, name);
         }
 
         ClassNode classNode = new ClassNode();
@@ -202,7 +202,7 @@ public class AccessTransformer implements IClassTransformer
                 classNode.access = getFixedAccess(classNode.access, m);
                 if (DEBUG)
                 {
-                    FMLRelaunchLog.fine("Class: %s %s -> %s", name, toBinary(m.oldAccess), toBinary(m.newAccess));
+                    FMLLog.log.debug("Class: {} {} -> {}", name, toBinary(m.oldAccess), toBinary(m.newAccess));
                 }
                 continue;
             }
@@ -215,7 +215,7 @@ public class AccessTransformer implements IClassTransformer
                         n.access = getFixedAccess(n.access, m);
                         if (DEBUG)
                         {
-                            FMLRelaunchLog.fine("Field: %s.%s %s -> %s", name, n.name, toBinary(m.oldAccess), toBinary(m.newAccess));
+                            FMLLog.log.debug("Field: {}.{} {} -> {}", name, n.name, toBinary(m.oldAccess), toBinary(m.newAccess));
                         }
 
                         if (!m.name.equals("*"))
@@ -251,7 +251,7 @@ public class AccessTransformer implements IClassTransformer
 
                         if (DEBUG)
                         {
-                            FMLRelaunchLog.fine("Method: %s.%s%s %s -> %s", name, n.name, n.desc, toBinary(m.oldAccess), toBinary(m.newAccess));
+                            FMLLog.log.debug("Method: {}.{}{} {} -> {}", name, n.name, n.desc, toBinary(m.oldAccess), toBinary(m.newAccess));
                         }
 
                         if (!m.name.equals("*"))

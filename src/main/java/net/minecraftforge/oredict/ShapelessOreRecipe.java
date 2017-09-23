@@ -34,7 +34,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 
@@ -133,13 +133,6 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
 
     @Override
     @Nonnull
-    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv)
-    {
-        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
-    }
-
-    @Override
-    @Nonnull
     public String getGroup()
     {
         return this.group == null ? "" : this.group.toString();
@@ -162,7 +155,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         if (ings.isEmpty())
             throw new JsonParseException("No ingredients for shapeless recipe");
 
-        ItemStack itemstack = ShapedRecipes.deserializeItem(JsonUtils.getJsonObject(json, "result"), true);
+        ItemStack itemstack = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
         return new ShapelessOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), ings, itemstack);
     }
 }

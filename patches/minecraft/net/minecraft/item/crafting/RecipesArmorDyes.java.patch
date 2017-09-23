@@ -8,10 +8,34 @@
 -import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class RecipesArmorDyes implements IRecipe
-+public class RecipesArmorDyes extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++public class RecipesArmorDyes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
  {
      public boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_)
      {
+@@ -38,7 +36,7 @@
+                 }
+                 else
+                 {
+-                    if (itemstack1.func_77973_b() != Items.field_151100_aR)
++                    if (!net.minecraftforge.oredict.DyeUtils.isDye(itemstack1))
+                     {
+                         return false;
+                     }
+@@ -92,12 +90,12 @@
+                 }
+                 else
+                 {
+-                    if (itemstack1.func_77973_b() != Items.field_151100_aR)
++                    if (!net.minecraftforge.oredict.DyeUtils.isDye(itemstack1))
+                     {
+                         return ItemStack.field_190927_a;
+                     }
+ 
+-                    float[] afloat = EnumDyeColor.func_176766_a(itemstack1.func_77960_j()).func_193349_f();
++                    float[] afloat = net.minecraftforge.oredict.DyeUtils.colorFromStack(itemstack1).get().func_193349_f();
+                     int l1 = (int)(afloat[0] * 255.0F);
+                     int i2 = (int)(afloat[1] * 255.0F);
+                     int j2 = (int)(afloat[2] * 255.0F);
 @@ -143,11 +141,7 @@
          for (int i = 0; i < nonnulllist.size(); ++i)
          {

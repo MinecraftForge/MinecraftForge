@@ -32,14 +32,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
+import net.minecraftforge.common.crafting.IShapedRecipe;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.common.crafting.JsonContext;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -48,7 +50,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
+public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IShapedRecipe
 {
     //Added in for future ease of change, but hard coded for now.
     public static final int MAX_CRAFT_GRID_WIDTH = 3;
@@ -105,6 +107,9 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         return false;
     }
 
+    /**
+     * Based on {@link net.minecraft.item.crafting.ShapedRecipes#checkMatch(InventoryCrafting, int, int, boolean)}
+     */
     protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++)
@@ -113,7 +118,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
             {
                 int subX = x - startX;
                 int subY = y - startY;
-                Ingredient target = null;
+                Ingredient target = Ingredient.EMPTY;
 
                 if (subX >= 0 && subY >= 0 && subX < width && subY < height)
                 {
@@ -125,11 +130,11 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
                     {
                         target = input.get(subX + subY * width);
                     }
-                    
-                    if (!target.apply(inv.getStackInRowAndColumn(x, y)))
-                    {
-                        return false;
-                    }
+                }
+
+                if (!target.apply(inv.getStackInRowAndColumn(x, y)))
+                {
+                    return false;
                 }
             }
         }
@@ -150,28 +155,35 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         return this.input;
     }
 
-    @Override
-    @Nonnull
-    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) //getRecipeLeftovers
-    {
-        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
-    }
-
+    @Deprecated //Use IShapedRecipe.getRecipeWidth
     public int getWidth()
     {
         return width;
     }
 
+    @Override
+    public int getRecipeWidth()
+    {
+        return this.getWidth();
+    }
+
+    @Deprecated //Use IShapedRecipe.getRecipeHeight
     public int getHeight()
     {
         return height;
     }
 
     @Override
+    public int getRecipeHeight()
+    {
+        return this.getHeight();
+    }
+
+    @Override
     @Nonnull
     public String getGroup()
     {
-        return this.group.toString();
+        return this.group == null ? "" : this.group.toString();
     }
 
     @Override

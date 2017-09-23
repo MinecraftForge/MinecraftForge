@@ -33,8 +33,6 @@ import net.minecraftforge.fml.common.versioning.InvalidVersionSpecificationExcep
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 
-import org.apache.logging.log4j.Level;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -83,7 +81,7 @@ public class NetworkModHolder
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "Error occurred invoking NetworkCheckHandler %s at %s", checkHandler.getName(), container);
+                FMLLog.log.error("Error occurred invoking NetworkCheckHandler {} at {}", container, e);
                 return false;
             }
         }
@@ -118,7 +116,7 @@ public class NetworkModHolder
     {
         this(container);
         this.checker = Preconditions.checkNotNull(checker);
-        FMLLog.fine("The mod %s is using a custom checker %s", container.getModId(), checker.getClass().getName());
+        FMLLog.log.debug("The mod {} is using a custom checker {}", container.getModId(), checker.getClass().getName());
     }
     public NetworkModHolder(ModContainer container, Class<?> modClass, @Nullable String acceptableVersionRange, ASMDataTable table)
     {
@@ -156,7 +154,7 @@ public class NetworkModHolder
                     }
                     else
                     {
-                        FMLLog.severe("Found unexpected method signature for annotation NetworkCheckHandler");
+                        FMLLog.log.fatal("Found unexpected method signature for annotation NetworkCheckHandler");
                     }
                 }
             }
@@ -173,7 +171,7 @@ public class NetworkModHolder
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.WARN, e, "The declared version check handler method %s on network mod id %s is not accessible", networkCheckHandlerMethod, container.getModId());
+                FMLLog.log.warn("The declared version check handler method {} on network mod id {} is not accessible", networkCheckHandlerMethod, container.getModId(), e);
             }
         }
         if (this.checkHandler != null)
@@ -192,20 +190,20 @@ public class NetworkModHolder
             }
             catch (InvalidVersionSpecificationException e)
             {
-                FMLLog.log(Level.WARN, e, "Invalid bounded range %s specified for network mod id %s", acceptableVersionRange, container.getModId());
+                FMLLog.log.warn("Invalid bounded range {} specified for network mod id {}", acceptableVersionRange, container.getModId(), e);
             }
             this.checker = new DefaultNetworkChecker();
         }
-        FMLLog.finer("Mod %s is using network checker : %s", container.getModId(), this.checker);
-        FMLLog.finer("Testing mod %s to verify it accepts its own version in a remote connection", container.getModId());
+        FMLLog.log.trace("Mod {} is using network checker : {}", container.getModId(), this.checker);
+        FMLLog.log.trace("Testing mod {} to verify it accepts its own version in a remote connection", container.getModId());
         boolean acceptsSelf = acceptVersion(container.getVersion());
         if (!acceptsSelf)
         {
-            FMLLog.severe("The mod %s appears to reject its own version number (%s) in its version handling. This is likely a severe bug in the mod!", container.getModId(), container.getVersion());
+            FMLLog.log.fatal("The mod {} appears to reject its own version number ({}) in its version handling. This is likely a severe bug in the mod!", container.getModId(), container.getVersion());
         }
         else
         {
-            FMLLog.finer("The mod %s accepts its own version (%s)", container.getModId(), container.getVersion());
+            FMLLog.log.trace("The mod {} accepts its own version ({})", container.getModId(), container.getVersion());
         }
     }
 

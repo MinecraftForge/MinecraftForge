@@ -37,7 +37,6 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -102,7 +101,6 @@ public class UniversalBucket extends Item
         return super.getContainerItem(itemStack);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
     {
@@ -254,29 +252,14 @@ public class UniversalBucket extends Item
         }
     }
 
+    /**
+     * @deprecated use the NBT-sensitive version {@link FluidUtil#getFilledBucket(FluidStack)}
+     */
+    @Deprecated
     @Nonnull
     public static ItemStack getFilledBucket(@Nonnull UniversalBucket item, Fluid fluid)
     {
-        ItemStack bucket = new ItemStack(item);
-
-        if (FluidRegistry.getBucketFluids().contains(fluid))
-        {
-            // fill the container
-            NBTTagCompound tag = new NBTTagCompound();
-            FluidStack fluidStack = new FluidStack(fluid, item.getCapacity());
-            fluidStack.writeToNBT(tag);
-            bucket.setTagCompound(tag);
-        }
-        else if (fluid == FluidRegistry.WATER)
-        {
-            return new ItemStack(Items.WATER_BUCKET);
-        }
-        else if (fluid == FluidRegistry.LAVA)
-        {
-            return new ItemStack(Items.LAVA_BUCKET);
-        }
-
-        return bucket;
+        return FluidUtil.getFilledBucket(new FluidStack(fluid, Fluid.BUCKET_VOLUME));
     }
 
     @Nullable

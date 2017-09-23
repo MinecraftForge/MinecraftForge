@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-@@ -69,6 +69,8 @@
+@@ -70,6 +70,8 @@
      private GuiScreen field_183503_M;
      private int field_193978_M;
      private int field_193979_N;
@@ -9,7 +9,7 @@
  
      public GuiMainMenu()
      {
-@@ -211,13 +213,15 @@
+@@ -212,13 +214,15 @@
              this.field_183503_M.func_183500_a(this.field_146294_l, this.field_146295_m);
              this.field_183503_M.func_73866_w_();
          }
@@ -26,7 +26,7 @@
      }
  
      private void func_73972_b(int p_73972_1_, int p_73972_2_)
-@@ -265,6 +269,11 @@
+@@ -266,6 +270,11 @@
              this.field_146297_k.func_71400_g();
          }
  
@@ -38,16 +38,17 @@
          if (p_146284_1_.field_146127_k == 11)
          {
              this.field_146297_k.func_71371_a("Demo_World", "Demo_World", WorldServerDemo.field_73071_a);
-@@ -497,6 +506,8 @@
-             this.func_73729_b(j + 155, 30, 0, 45, 155, 44);
-         }
+@@ -500,6 +509,9 @@
  
+         this.field_146297_k.func_110434_K().func_110577_a(field_194400_H);
+         func_146110_a(j + 88, 67, 0.0F, 0.0F, 98, 14, 128.0F, 16.0F);
++
 +        this.field_73975_c = net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.field_146289_q, this.field_146294_l, this.field_146295_m, this.field_73975_c);
 +
          GlStateManager.func_179094_E();
          GlStateManager.func_179109_b((float)(this.field_146294_l / 2 + 90), 70.0F, 0.0F);
          GlStateManager.func_179114_b(-20.0F, 0.0F, 0.0F, 1.0F);
-@@ -516,7 +527,16 @@
+@@ -519,7 +531,16 @@
              s = s + ("release".equalsIgnoreCase(this.field_146297_k.func_184123_d()) ? "" : "/" + this.field_146297_k.func_184123_d());
          }
  
@@ -65,7 +66,7 @@
          this.func_73731_b(this.field_146289_q, "Copyright Mojang AB. Do not distribute!", this.field_193979_N, this.field_146295_m - 10, -1);
  
          if (p_73863_1_ > this.field_193979_N && p_73863_1_ < this.field_193979_N + this.field_193978_M && p_73863_2_ > this.field_146295_m - 10 && p_73863_2_ < this.field_146295_m && Mouse.isInsideWindow())
-@@ -537,6 +557,7 @@
+@@ -540,6 +561,7 @@
          {
              this.field_183503_M.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
          }
@@ -73,12 +74,3 @@
      }
  
      protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException
-@@ -562,6 +583,8 @@
-         {
-             this.field_146297_k.func_147108_a(new GuiWinGame(false, Runnables.doNothing()));
-         }
-+
-+        net.minecraftforge.client.ForgeHooksClient.mainMenuMouseClick(p_73864_1_, p_73864_2_, p_73864_3_, this.field_146289_q, this.field_146294_l);
-     }
- 
-     public void func_146281_b()

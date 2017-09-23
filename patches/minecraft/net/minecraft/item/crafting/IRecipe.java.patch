@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/IRecipe.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/IRecipe.java
-@@ -4,35 +4,30 @@
+@@ -4,21 +4,21 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.NonNullList;
  import net.minecraft.world.World;
@@ -8,7 +8,7 @@
 -import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public interface IRecipe
-+public interface IRecipe extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry<IRecipe>
++public interface IRecipe extends net.minecraftforge.registries.IForgeRegistryEntry<IRecipe>
  {
      boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_);
  
@@ -19,24 +19,19 @@
  
      ItemStack func_77571_b();
  
-     NonNullList<ItemStack> func_179532_b(InventoryCrafting p_179532_1_);
+-    NonNullList<ItemStack> func_179532_b(InventoryCrafting p_179532_1_);
++    default NonNullList<ItemStack> func_179532_b(InventoryCrafting p_179532_1_)
++    {
++        return net.minecraftforge.common.ForgeHooks.defaultRecipeGetRemainingItems(p_179532_1_);
++    }
  
--    @SideOnly(Side.CLIENT)
--default NonNullList<Ingredient> func_192400_c()
-+    default NonNullList<Ingredient> func_192400_c()
+ default NonNullList<Ingredient> func_192400_c()
      {
-         return NonNullList.<Ingredient>func_191196_a();
-     }
- 
--default boolean func_192399_d()
-+    default boolean func_192399_d()
-     {
+@@ -30,7 +30,6 @@
          return false;
      }
  
 -    @SideOnly(Side.CLIENT)
--default String func_193358_e()
-+    default String func_193358_e()
+ default String func_193358_e()
      {
          return "";
-     }
