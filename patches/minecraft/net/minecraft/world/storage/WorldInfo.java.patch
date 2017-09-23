@@ -20,14 +20,14 @@
              }
          }
      }
-@@ -334,6 +335,7 @@
-         nbttagcompound.func_74757_a("Snapshot", false);
-         p_76064_1_.func_74782_a("Version", nbttagcompound);
-         p_76064_1_.func_74768_a("DataVersion", 1139);
+@@ -366,6 +367,7 @@
+         p_76064_1_.func_74780_a("BorderSizeLerpTarget", this.field_176148_F);
+         p_76064_1_.func_74780_a("BorderWarningBlocks", (double)this.field_176154_I);
+         p_76064_1_.func_74780_a("BorderWarningTime", (double)this.field_176155_J);
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(p_76064_1_);
-         p_76064_1_.func_74772_a("RandomSeed", this.field_76100_a);
-         p_76064_1_.func_74778_a("generatorName", this.field_76098_b.func_77127_a());
-         p_76064_1_.func_74768_a("generatorVersion", this.field_76098_b.func_77131_c());
+ 
+         if (this.field_176158_z != null)
+         {
 @@ -376,9 +378,10 @@
          p_76064_1_.func_74782_a("GameRules", this.field_82577_x.func_82770_a());
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();

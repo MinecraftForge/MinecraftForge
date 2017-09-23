@@ -9,12 +9,12 @@
      public C00Handshake()
      {
 @@ -28,18 +29,26 @@
-         this.field_149597_d = p_i45266_4_;
+         this.field_149597_d = p_i47613_3_;
      }
  
-+    public C00Handshake(int protocol, String address, int port, EnumConnectionState state, boolean addFMLMarker)
++    public C00Handshake(String address, int port, EnumConnectionState state, boolean addFMLMarker)
 +    {
-+        this(protocol, address, port, state);
++        this(address, port, state);
 +        this.hasFMLMarker = addFMLMarker;
 +    }
 +

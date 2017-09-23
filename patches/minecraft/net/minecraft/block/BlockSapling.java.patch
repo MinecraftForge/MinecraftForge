@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSapling.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSapling.java
-@@ -76,6 +76,7 @@
+@@ -74,6 +74,7 @@
  
      public void func_176476_e(World p_176476_1_, BlockPos p_176476_2_, IBlockState p_176476_3_, Random p_176476_4_)
      {
@@ -8,11 +8,3 @@
          WorldGenerator worldgenerator = (WorldGenerator)(p_176476_4_.nextInt(10) == 0 ? new WorldGenBigTree(true) : new WorldGenTrees(true));
          int i = 0;
          int j = 0;
-@@ -209,7 +210,6 @@
-         return ((BlockPlanks.EnumType)p_180651_1_.func_177229_b(field_176480_a)).func_176839_a();
-     }
- 
--    @SideOnly(Side.CLIENT)
-     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
-     {
-         for (BlockPlanks.EnumType blockplanks$enumtype : BlockPlanks.EnumType.values())
