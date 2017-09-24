@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/BlockPart.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/BlockPart.java
+@@ -110,16 +110,7 @@
+ 
+             private float func_178255_b(JsonObject p_178255_1_)
+             {
+-                float f = JsonUtils.func_151217_k(p_178255_1_, "angle");
+-
+-                if (f != 0.0F && MathHelper.func_76135_e(f) != 22.5F && MathHelper.func_76135_e(f) != 45.0F)
+-                {
+-                    throw new JsonParseException("Invalid rotation " + f + " found, only -45/-22.5/0/22.5/45 allowed");
+-                }
+-                else
+-                {
+-                    return f;
+-                }
++                return JsonUtils.func_151217_k(p_178255_1_, "angle");
+             }
+ 
+             private EnumFacing.Axis func_178252_c(JsonObject p_178252_1_)
