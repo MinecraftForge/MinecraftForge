@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelBlock.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelBlock.java
+@@ -238,6 +238,8 @@
+                 this.field_178324_a = p_i46223_1_;
+             }
+         }
++    
++    protected static boolean limitSize = true;
+ 
+     @SideOnly(Side.CLIENT)
+     public static class Deserializer implements JsonDeserializer<ModelBlock>
+@@ -299,6 +301,11 @@
+                 return JsonUtils.func_151219_a(p_178326_1_, "parent", "");
+             }
+ 
++            protected boolean getSizeLimited(JsonObject object)
++            {
++                return JsonUtils.func_151209_a(object, "limitsize", true);
++            }
++
+             protected boolean func_178328_a(JsonObject p_178328_1_)
+             {
+                 return JsonUtils.func_151209_a(p_178328_1_, "ambientocclusion", true);
+@@ -306,6 +313,11 @@
+ 
+             protected List<BlockPart> func_178325_a(JsonDeserializationContext p_178325_1_, JsonObject p_178325_2_)
+             {
++            	limitSize = getSizeLimited(p_178325_2_);
++                boolean flag = this.func_178328_a(p_178325_2_);
++                if (!limitSize && flag)
++                	throw new JsonParseException("Ambient occlusion cannot be enabled for model of unlimited size, it causes lighting issues with large models.");
++				
+                 List<BlockPart> list = Lists.<BlockPart>newArrayList();
+ 
+                 if (p_178325_2_.has("elements"))
+@@ -315,6 +327,7 @@
+                         list.add((BlockPart)p_178325_1_.deserialize(jsonelement, BlockPart.class));
+                     }
+                 }
++                limitSize = true;
+ 
+                 return list;
+             }
