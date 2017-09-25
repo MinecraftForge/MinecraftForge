@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.common.util.TextTable;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.event.FMLEvent;
@@ -310,14 +311,28 @@ public class LoadController
         for (ModState state : ModState.values())
             ret.append(" '").append(state.getMarker()).append("' = ").append(state.toString());
 
+        TextTable table = new TextTable(Lists.newArrayList(
+            TextTable.column("State"),
+            TextTable.column("ID"),
+            TextTable.column("Version"),
+            TextTable.column("Source"),
+            TextTable.column("Signature"))
+        );
         for (ModContainer mc : loader.getModList())
         {
-            ret.append("\n\t");
-            for (ModState state : modStates.get(mc.getModId()))
-                ret.append(state.getMarker());
-
-            ret.append("\t").append(mc.getModId()).append("{").append(mc.getVersion()).append("} [").append(mc.getName()).append("] (").append(mc.getSource().getName()).append(") ");
+            table.add(
+                modStates.get(mc.getModId()).stream().map(ModState::getMarker).reduce("", (a, b) -> a + b),
+                mc.getModId(),
+                mc.getVersion(),
+                mc.getSource().getName(),
+                mc.getSigningCertificate() != null ? CertificateHelper.getFingerprint(mc.getSigningCertificate()) : "None"
+            );
         }
+
+        ret.append("\n");
+        ret.append("\n\t");
+        table.append(ret, "\n\t");
+        ret.append("\n");
     }
 
     public List<ModContainer> getActiveModList()

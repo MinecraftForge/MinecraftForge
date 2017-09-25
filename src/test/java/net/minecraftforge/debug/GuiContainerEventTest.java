@@ -28,11 +28,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
 
-@EventBusSubscriber
+@EventBusSubscriber(Side.CLIENT)
 @Mod (modid = "guicontainereventtest", name = "GuiContainer Event Tests!", version = "1.0", acceptableRemoteVersions = "*")
 public class GuiContainerEventTest
 {
+    static final boolean ENABLED = false;
 
     @ObjectHolder("minecraft:stone")
     public static final Item STONE_ITEM = null;
@@ -40,6 +42,8 @@ public class GuiContainerEventTest
     @SubscribeEvent
     public static void onForegroundRender(GuiContainerEvent.DrawForeground event)
     {
+        if (!ENABLED) return;
+
         for (Slot slot : event.getGuiContainer().inventorySlots.inventorySlots)
         {
             if (slot.getStack().getItem() == STONE_ITEM)

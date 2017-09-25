@@ -362,4 +362,11 @@ public class EntityRegistry
         }
         return null;
     }
+
+    // This is an internal method - do not touch.
+    final void insert(final Class<? extends Entity> entity, final EntityRegistration registration)
+    {
+        this.entityClassRegistrations.put(entity, registration);
+        this.entityRegistrations.put(registration.container, registration);
+    }
 }

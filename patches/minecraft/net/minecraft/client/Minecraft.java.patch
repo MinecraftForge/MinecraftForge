@@ -273,9 +273,9 @@
          SocketAddress socketaddress = this.field_71437_Z.func_147137_ag().func_151270_a();
          NetworkManager networkmanager = NetworkManager.func_150722_a(socketaddress);
          networkmanager.func_150719_a(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
--        networkmanager.func_179290_a(new C00Handshake(335, socketaddress.toString(), 0, EnumConnectionState.LOGIN));
+-        networkmanager.func_179290_a(new C00Handshake(socketaddress.toString(), 0, EnumConnectionState.LOGIN));
 -        networkmanager.func_179290_a(new CPacketLoginStart(this.func_110432_I().func_148256_e()));
-+        networkmanager.func_179290_a(new C00Handshake(335, socketaddress.toString(), 0, EnumConnectionState.LOGIN, true));
++        networkmanager.func_179290_a(new C00Handshake(socketaddress.toString(), 0, EnumConnectionState.LOGIN, true));
 +        com.mojang.authlib.GameProfile gameProfile = this.func_110432_I().func_148256_e();
 +        if (!this.func_110432_I().hasCachedProperties())
 +        {

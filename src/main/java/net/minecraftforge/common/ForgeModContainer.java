@@ -99,6 +99,7 @@ import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -131,6 +132,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
     public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
+    public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
+                                                       // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
 
     static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
@@ -302,6 +305,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_GENERAL, "fixVanillaCascading", false,
+                "Fix vanilla issues that cause worldgen cascading. This DOES change vanilla worldgen so DO NOT report bugs related to world differences if this flag is on.");
+        fixVanillaCascading = prop.getBoolean();
+        prop.setLanguageKey("forge.configgui.fixVanillaCascading");
+        propOrder.add(prop.getName());
+
         prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 0,
                 "The time in ticks the server will wait when a dimension was queued to unload. " +
                         "This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.");
@@ -428,6 +437,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             all.add(asm.getClassName());
         for (ASMData asm : evt.getASMHarvestedData().getAll(ICrashCallable.class.getName().replace('.', '/')))
             all.add(asm.getClassName());
+        // Add table classes for mod list tabulation
+        all.add("net/minecraftforge/common/util/TextTable");
+        all.add("net/minecraftforge/common/util/TextTable$Column");
+        all.add("net/minecraftforge/common/util/TextTable$Row");
+        all.add("net/minecraftforge/common/util/TextTable$Alignment");
 
         all.removeIf(cls -> !cls.startsWith("net/minecraft/") && !cls.startsWith("net/minecraftforge/"));
 
@@ -517,6 +531,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         evt.registerServerCommand(new ForgeCommand());
     }
+
+    @Subscribe
+    public void serverStopping(FMLServerStoppingEvent evt)
+    {
+        WorldWorkerManager.clear();
+    }
+
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {

@@ -43,12 +43,16 @@ import com.google.common.collect.Multimap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
+import net.minecraft.block.BlockObserver;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
@@ -57,6 +61,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -69,6 +74,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
 import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 
@@ -150,7 +156,7 @@ public class GameData
         makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).create();
         makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
         makeRegistry(FLUIDS,       Fluid.class,       MAX_FLUID_ID).create();
-        makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().allowModification().create();
+        makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().allowModification().addCallback(RecipeCallbacks.INSTANCE).create();
         makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
         entityRegistry = (ForgeRegistry<EntityEntry>)makeRegistry(ENTITIES, EntityEntry.class, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
     }
@@ -328,7 +334,6 @@ public class GameData
     private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
-        Field regName;
 
         @SuppressWarnings("deprecation")
         @Override
@@ -357,6 +362,8 @@ public class GameData
 
             for (int meta = 0; meta < 16; meta++)
             {
+                if (block.getClass() == BlockObserver.class)
+                    continue; //Observers are bad and have non-cyclical states. So we HAVE to use the vanilla logic above.
                 if (usedMeta[meta])
                     blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta); // Put the CORRECT thing!
             }
@@ -401,31 +408,8 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            if (regName == null)
-            {
-                try
-                {
-                    regName = IForgeRegistryEntry.Impl.class.getDeclaredField("registryName");
-                    regName.setAccessible(true);
-                }
-                catch (NoSuchFieldException | SecurityException e)
-                {
-                    FMLLog.log.error("Could not get `registryName` field from IForgeRegistryEntry.Impl");
-                    FMLLog.log.throwing(Level.ERROR, e);
-                    throw new RuntimeException(e);
-                }
-            }
             Block ret = new BlockDummyAir().setUnlocalizedName("air");
-            try
-            {
-                regName.set(ret, key);
-            }
-            catch (IllegalArgumentException | IllegalAccessException e)
-            {
-                FMLLog.log.error("Could not set `registryName` field in IForgeRegistryEntry.Impl to `{}`", key.toString());
-                FMLLog.log.throwing(Level.ERROR, e);
-                throw new RuntimeException(e);
-            }
+            GameData.forceRegistryName(ret, key);
             return ret;
         }
         private static class BlockDummyAir extends BlockAir //A named class so DummyBlockReplacementTest can detect if its a dummy
@@ -466,6 +450,35 @@ public class GameData
         }
     }
 
+    private static class RecipeCallbacks implements IForgeRegistry.MissingFactory<IRecipe>
+    {
+        static final RecipeCallbacks INSTANCE = new RecipeCallbacks();
+
+        @Override
+        public IRecipe createMissing(ResourceLocation key, boolean isNetwork)
+        {
+            return isNetwork ? new DummyRecipe().setRegistryName(key) : null;
+        }
+        private static class DummyRecipe implements IRecipe
+        {
+            private static ItemStack result = new ItemStack(Items.DIAMOND, 64);
+            private ResourceLocation name;
+
+            @Override
+            public IRecipe setRegistryName(ResourceLocation name) {
+                this.name = name;
+                return this;
+            }
+            @Override public ResourceLocation getRegistryName() { return name; }
+            @Override public Class<IRecipe> getRegistryType() { return IRecipe.class; }
+            @Override public boolean matches(InventoryCrafting inv, World worldIn) { return false; } //dirt?
+            @Override public ItemStack getCraftingResult(InventoryCrafting inv) { return result; }
+            @Override public boolean canFit(int width, int height) { return false; }
+            @Override public ItemStack getRecipeOutput() { return result; }
+            @Override public boolean isHidden() { return true; }
+        }
+    }
+
 
     private static ForgeRegistry<EntityEntry> entityRegistry;
     public static ForgeRegistry<EntityEntry> getEntityRegistry() { return entityRegistry; }
@@ -482,6 +495,10 @@ public class GameData
         @Override
         public void onAdd(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage, int id, EntityEntry entry, @Nullable EntityEntry oldEntry)
         {
+            if (entry instanceof EntityEntryBuilder.BuiltEntityEntry)
+            {
+                ((EntityEntryBuilder.BuiltEntityEntry) entry).addedToRegistry();
+            }
             if (entry.getEgg() != null)
                 EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
         }
@@ -587,7 +604,7 @@ public class GameData
                     // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
                     // in mod setup - Mark this entry as a dummy
                     int id = reg.getID(dummy);
-                    FMLLog.log.warn("Registry {}: The ID {} is currently locally mapped - it will be replaced with a dummy for this session", key, id);
+                    FMLLog.log.warn("Registry {}: The ID {} @ {} is currently locally mapped - it will be replaced with a dummy for this session", dummy, key, id);
                     reg.markDummy(dummy, id);
                 }
             });
@@ -607,20 +624,16 @@ public class GameData
                 RegistryEvent.MissingMappings<?> event = reg.getMissingEvent(name, m.getValue());
                 MinecraftForge.EVENT_BUS.post(event);
 
-                List<MissingMappings.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.DEFAULT).collect(Collectors.toList());
+                List<MissingMappings.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.DEFAULT).sorted((a, b) -> a.toString().compareTo(b.toString())).collect(Collectors.toList());
                 if (!lst.isEmpty())
                 {
                     FMLLog.log.error("Unidentified mapping from registry {}", name);
-                    lst.forEach(map -> {
-                        FMLLog.log.error("    {}: {}", map.key, map.id);
-                        if (!isLocalWorld)
-                            defaulted.put(name, map.key);
-                    });
+                    lst.forEach(map -> FMLLog.log.error("    {}: {}", map.key, map.id));
                 }
                 event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
 
                 final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(name);
-                processMissing(clazz, name, STAGING, event, m.getValue(), remaps.get(name), defaulted.get(name), failed.get(name));
+                processMissing(clazz, name, STAGING, event, m.getValue(), remaps.get(name), defaulted.get(name), failed.get(name), !isLocalWorld);
             });
 
             if (!defaulted.isEmpty() && !isLocalWorld)
@@ -731,12 +744,12 @@ public class GameData
 
     //Another bouncer for generic reasons
     @SuppressWarnings("unchecked")
-    private static <T extends IForgeRegistryEntry<T>> void processMissing(Class<T> clazz, ResourceLocation name, RegistryManager STAGING, MissingMappings<?> e, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed)
+    private static <T extends IForgeRegistryEntry<T>> void processMissing(Class<T> clazz, ResourceLocation name, RegistryManager STAGING, MissingMappings<?> e, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
     {
         List<MissingMappings.Mapping<T>> mappings = ((MissingMappings<T>)e).getAllMappings();
         ForgeRegistry<T> active = RegistryManager.ACTIVE.getRegistry(name);
         ForgeRegistry<T> staging = STAGING.getRegistry(name);
-        staging.processMissingEvent(name, active, mappings, missing, remaps, defaulted, failed);
+        staging.processMissingEvent(name, active, mappings, missing, remaps, defaulted, failed, injectNetworkDummies);
     }
 
     private static <T extends IForgeRegistryEntry<T>> void loadFrozenDataToStagingRegistry(RegistryManager STAGING, ResourceLocation name, Map<ResourceLocation, Integer[]> remaps, Class<T> clazz)
@@ -798,5 +811,35 @@ public class GameData
                 ((ForgeRegistry<?>)reg).freeze();
         });
         */
+    }
+
+    private static Field regName;
+    private static void forceRegistryName(IForgeRegistryEntry<?> entry, ResourceLocation name)
+    {
+        if (regName == null)
+        {
+            try
+            {
+                regName = IForgeRegistryEntry.Impl.class.getDeclaredField("registryName");
+                regName.setAccessible(true);
+            }
+            catch (NoSuchFieldException | SecurityException e)
+            {
+                FMLLog.log.error("Could not get `registryName` field from IForgeRegistryEntry.Impl");
+                FMLLog.log.throwing(Level.ERROR, e);
+                throw new RuntimeException(e);
+            }
+        }
+        try
+        {
+            regName.set(entry, name);
+        }
+        catch (IllegalArgumentException | IllegalAccessException e)
+        {
+            FMLLog.log.error("Could not set `registryName` field in IForgeRegistryEntry.Impl to `{}`", name.toString());
+            FMLLog.log.throwing(Level.ERROR, e);
+            throw new RuntimeException(e);
+        }
+
     }
 }

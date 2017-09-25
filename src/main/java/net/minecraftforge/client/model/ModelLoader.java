@@ -702,14 +702,17 @@ public final class ModelLoader extends ModelBakery
     private static final class WeightedRandomModel implements IModel
     {
         private final List<Variant> variants;
-        private final List<ResourceLocation> locations = new ArrayList<>();
-        private final Set<ResourceLocation> textures = Sets.newHashSet();
-        private final List<IModel> models = new ArrayList<>();
+        private final List<ResourceLocation> locations;
+        private final Set<ResourceLocation> textures;
+        private final List<IModel> models;
         private final IModelState defaultState;
 
         public WeightedRandomModel(ResourceLocation parent, VariantList variants) throws Exception
         {
             this.variants = variants.getVariantList();
+            this.locations = new ArrayList<>();
+            this.textures = Sets.newHashSet();
+            this.models = new ArrayList<>();
             ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
             for (Variant v : this.variants)
             {
@@ -755,6 +758,15 @@ public final class ModelLoader extends ModelBakery
             defaultState = new MultiModelState(builder.build());
         }
 
+        private WeightedRandomModel(List<Variant> variants, List<ResourceLocation> locations, Set<ResourceLocation> textures, List<IModel> models, IModelState defaultState)
+        {
+            this.variants = variants;
+            this.locations = locations;
+            this.textures = textures;
+            this.models = models;
+            this.defaultState = defaultState;
+        }
+
         @Override
         public Collection<ResourceLocation> getDependencies()
         {
@@ -792,6 +804,28 @@ public final class ModelLoader extends ModelBakery
         public IModelState getDefaultState()
         {
             return defaultState;
+        }
+
+        @Override
+        public WeightedRandomModel retexture(ImmutableMap<String, String> textures)
+        {
+            if (textures.isEmpty())
+                return this;
+
+            // rebuild the texture list taking into account new textures
+            Set<ResourceLocation> modelTextures = Sets.newHashSet();
+            // also recreate the MultiModelState so IModelState data is properly applied to the retextured model
+            ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
+            List<IModel> retexturedModels = Lists.newArrayList();
+            for(int i = 0; i < this.variants.size(); i++)
+            {
+                IModel retextured = this.models.get(i).retexture(textures);
+                modelTextures.addAll(retextured.getTextures());
+                retexturedModels.add(retextured);
+                builder.add(Pair.of(retextured, this.variants.get(i).getState()));
+            }
+
+            return new WeightedRandomModel(this.variants, this.locations, modelTextures, retexturedModels, new MultiModelState(builder.build()));
         }
     }
 
@@ -1244,6 +1278,13 @@ public final class ModelLoader extends ModelBakery
             partModels = builder.build();
         }
 
+        private MultipartModel(ResourceLocation location, Multipart multipart, ImmutableMap<Selector, IModel> partModels)
+        {
+            this.location = location;
+            this.multipart = multipart;
+            this.partModels = partModels;
+        }
+
         // FIXME: represent selectors as dependencies?
         // FIXME
         @Override
@@ -1258,6 +1299,21 @@ public final class ModelLoader extends ModelBakery
 
             IBakedModel bakedModel = builder.makeMultipartModel();
             return bakedModel;
+        }
+
+        @Override
+        public IModel retexture(ImmutableMap<String, String> textures)
+        {
+            if (textures.isEmpty())
+                return this;
+
+            ImmutableMap.Builder<Selector, IModel> builder = ImmutableMap.builder();
+            for (Entry<Selector, IModel> partModel : this.partModels.entrySet())
+            {
+                builder.put(partModel.getKey(), partModel.getValue().retexture(textures));
+            }
+
+            return new MultipartModel(location, multipart, builder.build());
         }
     }
 }

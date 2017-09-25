@@ -33,6 +33,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
@@ -68,10 +69,13 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.network.play.server.SPacketRecipeBook;
+import net.minecraft.network.play.server.SPacketRecipeBook.State;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
@@ -131,7 +135,12 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
+import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher.ConnectionType;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryManager;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -1334,7 +1343,25 @@ public class ForgeHooks
 
                 return true;
             },
-            true
+            true, true
         );
+    }
+
+    public static void sendRecipeBook(NetHandlerPlayServer connection, State state, List<IRecipe> recipes, List<IRecipe> display, boolean isGuiOpen, boolean isFilteringCraftable)
+    {
+        NetworkDispatcher disp = NetworkDispatcher.get(connection.getNetworkManager());
+        //Not sure how it could ever be null, but screw it lets protect against it. Could Error the client but we dont care if they are asking for this stuff in the wrong state!
+        ConnectionType type = disp == null || disp.getConnectionType() == null ? ConnectionType.MODDED : disp.getConnectionType();
+        if (type == ConnectionType.VANILLA)
+        {
+            IForgeRegistry<IRecipe> vanilla = RegistryManager.VANILLA.getRegistry(IRecipe.class);
+            if (recipes.size() > 0)
+                recipes = recipes.stream().filter(e -> vanilla.containsValue(e)).collect(Collectors.toList());
+            if (display.size() > 0)
+                display = display.stream().filter(e -> vanilla.containsValue(e)).collect(Collectors.toList());
+        }
+
+        if (recipes.size() > 0 || display.size() > 0)
+            connection.sendPacket(new SPacketRecipeBook(state, recipes, display, isGuiOpen, isFilteringCraftable));
     }
 }

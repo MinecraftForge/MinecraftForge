@@ -26,7 +26,7 @@ public class InitMapGenEvent extends Event
 {
     /** Use CUSTOM to filter custom event types
      */
-    public static enum EventType { CAVE, MINESHAFT, NETHER_BRIDGE, NETHER_CAVE, RAVINE, SCATTERED_FEATURE, STRONGHOLD, VILLAGE, OCEAN_MONUMENT, CUSTOM }
+    public static enum EventType { CAVE, MINESHAFT, NETHER_BRIDGE, NETHER_CAVE, RAVINE, SCATTERED_FEATURE, STRONGHOLD, VILLAGE, OCEAN_MONUMENT, WOODLAND_MANSION, END_CITY, CUSTOM }
 
     private final EventType type;
     private final MapGenBase originalGen;
