@@ -205,6 +205,7 @@ public class LightingEngine
         }
 
         this.updating = true;
+        this.curChunkIdentifier = -1; //reset chunk cache
 
         this.profiler.startSection("lighting");
 
