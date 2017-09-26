@@ -123,7 +123,7 @@ public class GameData
     private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE >> 5; // Int (SPacketEffect)
     private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
     private static final int MAX_ENTITY_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSpawnMob)
-    private static final int MAX_FLUID_ID = 4096; //There are only 4096 possible blocks
+    private static final int MAX_FLUID_ID = 4095; //There are only 4095 possible blocks
     private static final int MAX_RECIPE_ID = Integer.MAX_VALUE >> 5; // Varint CPacketRecipeInfo/SPacketRecipeBook
     private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
 
