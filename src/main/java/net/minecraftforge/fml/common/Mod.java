@@ -95,6 +95,8 @@ public @interface Mod
      *
      * The version string here should be just numbers separated by dots,
      * to make specifying {@link #dependencies()} simple for other mods.
+     *
+     * See also: <a href="https://cwiki.apache.org/confluence/display/MAVENOLD/Versioning">"Versioning" on Maven Wiki</a>
      */
     String version() default "";
 
