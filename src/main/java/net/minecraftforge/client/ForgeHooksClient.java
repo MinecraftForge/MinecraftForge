@@ -715,37 +715,4 @@ public class ForgeHooksClient
         if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
         return Pair.of(model, mat);
     }
-
-    private static final char[] ALPHABET = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-    private static int[] lastCharIndices = new int[3];
-    /**For internal use only**/
-    public static String generateHorseArmorHash()
-    {
-        if (lastCharIndices[0] == -1)
-        {
-            throw new RuntimeException("No available horse armor hash.");
-        }
-        char[] hashChars = new char[3];
-        for (int c = 0; c < 3; c++)
-        {
-            hashChars[c] = ALPHABET[lastCharIndices[c]];
-        }
-        if (lastCharIndices[2]++ >= ALPHABET.length - 1)
-        {
-            lastCharIndices[2] = 0;
-            if (lastCharIndices[1]++ >= ALPHABET.length - 1)
-            {
-                lastCharIndices[1] = 0;
-                if (lastCharIndices[0]++ >= ALPHABET.length - 1)
-                {
-                    //This is the last available hash. -1 is used as a marker to indicate there are no more hashes available
-                    lastCharIndices[0] = -1;
-                }
-            }
-        }
-        String result = String.valueOf(hashChars);
-        //Make sure we don't return a hash used by vanilla
-        if (result.equals(HorseArmorType.IRON.getHash()) || result.equals(HorseArmorType.GOLD.getHash()) || result.equals(HorseArmorType.DIAMOND.getHash())) result = generateHorseArmorHash();
-        return result;
-    }
 }

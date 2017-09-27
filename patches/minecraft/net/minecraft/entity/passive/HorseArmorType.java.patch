@@ -48,7 +48,7 @@
 +    {
 +        this.field_188588_g = armorStrengthIn;
 +        this.field_188586_e = textureLocation;
-+        this.field_188587_f = net.minecraftforge.client.ForgeHooksClient.generateHorseArmorHash();
++        this.field_188587_f = net.minecraftforge.common.ForgeHooks.generateHorseArmorHash();
 +    }
 +    
 +    public static HorseArmorType getByName(String name)
