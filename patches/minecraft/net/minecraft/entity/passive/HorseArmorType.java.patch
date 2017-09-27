@@ -32,7 +32,7 @@
      public static HorseArmorType func_188576_a(Item p_188576_0_)
      {
          if (p_188576_0_ == Items.field_151138_bX)
-@@ -81,8 +86,29 @@
+@@ -81,8 +86,30 @@
          }
      }
  
@@ -42,7 +42,7 @@
          return func_188576_a(p_188577_0_) != NONE;
      }
 +    
-+    /********* FORGE *********/
++    /* ======================================== FORGE START ======================================== */
 +    //Allows for textures located outside the vanilla horse armor folder
 +    private HorseArmorType(String textureLocation, int armorStrengthIn)
 +    {
@@ -61,4 +61,5 @@
 +    {
 +        return func_188580_a(stack) != NONE;
 +    }
++    /* ======================================== FORGE END ======================================== */
  }
