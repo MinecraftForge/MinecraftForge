@@ -13,7 +13,7 @@
                  return JsonUtils.func_151219_a(p_178326_1_, "parent", "");
              }
  
-+            protected boolean getSizeLimited(JsonObject object)
++            protected boolean isSizeLimited(JsonObject object)
 +            {
 +                return JsonUtils.func_151209_a(object, "limitsize", true);
 +            }
@@ -25,7 +25,7 @@
  
              protected List<BlockPart> func_178325_a(JsonDeserializationContext p_178325_1_, JsonObject p_178325_2_)
              {
-+            	limitSize = getSizeLimited(p_178325_2_);
++            	 limitSize = isSizeLimited(p_178325_2_);
 +                boolean flag = this.func_178328_a(p_178325_2_);
 +                if (!limitSize && flag)
 +                	throw new JsonParseException("Ambient occlusion cannot be enabled for model of unlimited size, it causes lighting issues with large models.");
