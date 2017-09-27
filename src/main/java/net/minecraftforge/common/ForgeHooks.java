@@ -1339,7 +1339,14 @@ public class ForgeHooks
         }
         String result = String.valueOf(hashChars);
         //Make sure we don't return a hash used by vanilla
-        if (result.equals(HorseArmorType.IRON.getHash()) || result.equals(HorseArmorType.GOLD.getHash()) || result.equals(HorseArmorType.DIAMOND.getHash())) result = generateHorseArmorHash();
+        for(HorseArmorType type : HorseArmorType.values())
+        {
+            if(result.equals(type.getHash()))
+            {
+                result = generateHorseArmorHash();
+                break;
+            }
+        }
         return result;
     }
 }
