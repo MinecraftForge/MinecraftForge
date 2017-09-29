@@ -27,6 +27,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -34,36 +35,18 @@ import net.minecraftforge.common.ForgeModContainer;
 
 public class ForgeBlockModelRenderer extends BlockModelRenderer
 {
-    private final ThreadLocal<VertexLighterFlat> lighterFlat = new ThreadLocal<VertexLighterFlat>()
-    {
-        @Override
-        protected VertexLighterFlat initialValue()
-        {
-            return new VertexLighterFlat(colors);
-        }
-    };
-
-    private final ThreadLocal<VertexLighterSmoothAo> lighterSmooth = new ThreadLocal<VertexLighterSmoothAo>()
-    {
-        @Override
-        protected VertexLighterSmoothAo initialValue()
-        {
-            return new VertexLighterSmoothAo(colors);
-        }
-    };
-
+    private final ThreadLocal<VertexLighterFlat> lighterFlat;
+    private final ThreadLocal<VertexLighterSmoothAo> lighterSmooth;
     private final ThreadLocal<VertexBufferConsumer> wrFlat = new ThreadLocal<>();
     private final ThreadLocal<VertexBufferConsumer> wrSmooth = new ThreadLocal<>();
     private final ThreadLocal<BufferBuilder> lastRendererFlat = new ThreadLocal<>();
     private final ThreadLocal<BufferBuilder> lastRendererSmooth = new ThreadLocal<>();
 
-    private final BlockColors colors;
-
     public ForgeBlockModelRenderer(BlockColors colors)
     {
-        // TODO Auto-generated constructor stub
         super(colors);
-        this.colors = colors;
+        lighterFlat = ThreadLocal.withInitial(() -> new VertexLighterFlat(colors));
+        lighterSmooth = ThreadLocal.withInitial(() -> new VertexLighterSmoothAo(colors));
     }
 
     @Override
@@ -108,13 +91,15 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
     }
 
-    public static boolean render(VertexLighterFlat lighter, IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder wr, boolean checkSides, long rand)
+    public static boolean render(VertexLighterFlat lighter, IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, long rand)
     {
+        BlockRenderLayer layer = buffer.getRenderLayer();
         lighter.setWorld(world);
         lighter.setState(state);
         lighter.setBlockPos(pos);
+        lighter.setRenderLayer(layer);
         boolean empty = true;
-        List<BakedQuad> quads = model.getQuads(state, null, rand);
+        List<BakedQuad> quads = model.getQuads(state, null, rand, layer);
         if(!quads.isEmpty())
         {
             lighter.updateBlockInfo();
@@ -126,7 +111,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
         for(EnumFacing side : EnumFacing.values())
         {
-            quads = model.getQuads(state, side, rand);
+            quads = model.getQuads(state, side, rand, layer);
             if(!quads.isEmpty())
             {
                 if(!checkSides || state.shouldSideBeRendered(world, pos, side))

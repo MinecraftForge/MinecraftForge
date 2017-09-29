@@ -1,6 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BufferBuilder.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BufferBuilder.java
-@@ -123,6 +123,8 @@
+@@ -36,12 +36,21 @@
+     private VertexFormat field_179011_q;
+     private boolean field_179010_r;
+ 
++    @javax.annotation.Nullable
++    private final net.minecraft.util.BlockRenderLayer layer;
++
+     public BufferBuilder(int p_i46275_1_)
+     {
+-        this.field_179001_a = GLAllocation.func_74524_c(p_i46275_1_ * 4);
++        this(p_i46275_1_, null);
++    }
++
++    public BufferBuilder(int bufferSizeIn, @javax.annotation.Nullable net.minecraft.util.BlockRenderLayer layer)
++    {
++        this.field_179001_a = GLAllocation.func_74524_c(bufferSizeIn * 4);
+         this.field_178999_b = this.field_179001_a.asIntBuffer();
+         this.field_181676_c = this.field_179001_a.asShortBuffer();
+         this.field_179000_c = this.field_179001_a.asFloatBuffer();
++        this.layer = layer;
+     }
+ 
+     private void func_181670_b(int p_181670_1_)
+@@ -123,6 +132,8 @@
  
              bitset.set(i1);
          }
@@ -9,7 +32,7 @@
      }
  
      public BufferBuilder.State func_181672_a()
-@@ -506,15 +508,15 @@
+@@ -506,15 +517,15 @@
                  break;
              case USHORT:
              case SHORT:
@@ -31,7 +54,7 @@
          }
  
          this.func_181667_k();
-@@ -605,4 +607,19 @@
+@@ -605,4 +616,25 @@
              return this.field_179018_e;
          }
      }
@@ -49,5 +72,11 @@
 +    public boolean isColorDisabled()
 +    {
 +        return this.field_78939_q;
++    }
++
++    @javax.annotation.Nullable
++    public net.minecraft.util.BlockRenderLayer getRenderLayer()
++    {
++        return layer;
 +    }
  }

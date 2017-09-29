@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/RegionRenderCacheBuilder.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/RegionRenderCacheBuilder.java
+@@ -11,10 +11,10 @@
+ 
+     public RegionRenderCacheBuilder()
+     {
+-        this.field_179040_a[BlockRenderLayer.SOLID.ordinal()] = new BufferBuilder(2097152);
+-        this.field_179040_a[BlockRenderLayer.CUTOUT.ordinal()] = new BufferBuilder(131072);
+-        this.field_179040_a[BlockRenderLayer.CUTOUT_MIPPED.ordinal()] = new BufferBuilder(131072);
+-        this.field_179040_a[BlockRenderLayer.TRANSLUCENT.ordinal()] = new BufferBuilder(262144);
++        this.field_179040_a[BlockRenderLayer.SOLID.ordinal()] = new BufferBuilder(2097152, BlockRenderLayer.SOLID);
++        this.field_179040_a[BlockRenderLayer.CUTOUT.ordinal()] = new BufferBuilder(131072, BlockRenderLayer.CUTOUT);
++        this.field_179040_a[BlockRenderLayer.CUTOUT_MIPPED.ordinal()] = new BufferBuilder(131072, BlockRenderLayer.CUTOUT_MIPPED);
++        this.field_179040_a[BlockRenderLayer.TRANSLUCENT.ordinal()] = new BufferBuilder(262144, BlockRenderLayer.TRANSLUCENT);
+     }
+ 
+     public BufferBuilder func_179038_a(BlockRenderLayer p_179038_1_)

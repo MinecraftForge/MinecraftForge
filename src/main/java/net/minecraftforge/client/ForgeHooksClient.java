@@ -187,8 +187,10 @@ public class ForgeHooksClient
         renderPass = pass;
     }
 
+    @Deprecated // TODO: remove (1.13?)
     static final ThreadLocal<BlockRenderLayer> renderLayer = new ThreadLocal<BlockRenderLayer>();
 
+    @Deprecated // TODO: remove (1.13?)
     public static void setRenderLayer(BlockRenderLayer layer)
     {
         renderLayer.set(layer);
