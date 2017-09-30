@@ -702,6 +702,24 @@
                          return i;
                      }
                  }
+@@ -2609,7 +2804,7 @@
+ 
+     public boolean func_180500_c(EnumSkyBlock p_180500_1_, BlockPos p_180500_2_)
+     {
+-        if (!this.func_175648_a(p_180500_2_, 17, false))
++        if (!this.func_175648_a(p_180500_2_, 16, false))
+         {
+             return false;
+         }
+@@ -2652,7 +2847,7 @@
+                             int k3 = MathHelper.func_76130_a(j2 - j1);
+                             int l3 = MathHelper.func_76130_a(k2 - k1);
+ 
+-                            if (j3 + k3 + l3 < 17)
++                            if (j3 + k3 + l3 < 16)
+                             {
+                                 BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.func_185346_s();
+ 
 @@ -2662,7 +2857,7 @@
                                      int j4 = j2 + enumfacing.func_96559_d();
                                      int k4 = k2 + enumfacing.func_82599_e();
@@ -711,6 +729,15 @@
                                      i3 = this.func_175642_b(p_180500_1_, blockpos$pooledmutableblockpos);
  
                                      if (i3 == l2 - l4 && j < this.field_72994_J.length)
+@@ -2704,7 +2899,7 @@
+                         int i7 = Math.abs(l5 - k1);
+                         boolean flag = j < this.field_72994_J.length - 6;
+ 
+-                        if (k6 + l6 + i7 < 17 && flag)
++                        if (k6 + l6 + i7 < 16 && flag)
+                         {
+                             if (this.func_175642_b(p_180500_1_, blockpos1.func_177976_e()) < j6)
+                             {
 @@ -2770,10 +2965,10 @@
      public List<Entity> func_175674_a(@Nullable Entity p_175674_1_, AxisAlignedBB p_175674_2_, @Nullable Predicate <? super Entity > p_175674_3_)
      {
