@@ -10,11 +10,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod(modid = "clientchateventtest", name = "Client Chat Event Test", version = "0.0.0", clientSideOnly = true)
 public class ClientChatEventTest
 {
+    static final boolean ENABLED = false;
 
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        MinecraftForge.EVENT_BUS.register(this);
+        if (ENABLED)
+        {
+            MinecraftForge.EVENT_BUS.register(this);
+        }
     }
 
     @SubscribeEvent

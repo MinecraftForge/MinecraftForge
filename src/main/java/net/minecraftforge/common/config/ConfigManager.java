@@ -26,11 +26,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.logging.log4j.Level;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -45,6 +42,8 @@ import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation.EnumHolder;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class ConfigManager
 {
@@ -249,7 +248,7 @@ public class ConfigManager
 
                     for (String key : wrapper.getKeys())
                     {
-                        String suffix = key.replaceFirst(wrapper.getCategory() + ".", "");
+                        String suffix = StringUtils.replaceOnce(key, wrapper.getCategory() + ".", "");
 
                         boolean existed = exists(cfg, wrapper.getCategory(), suffix);
                         if (!existed || loading) //Creates keys in category specified by the wrapper if new ones are programaticaly added
@@ -307,10 +306,10 @@ public class ConfigManager
                 {
                     newInstance = f.get(instance);
                 }
-                catch (Exception e)
+                catch (IllegalAccessException e)
                 {
                     //This should never happen. Previous checks should eliminate this.
-                    Throwables.propagate(e);
+                    throw new RuntimeException(e);
                 }
 
                 String sub = (category.isEmpty() ? "" : category + ".") + getName(f).toLowerCase(Locale.ENGLISH);

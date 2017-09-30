@@ -218,7 +218,13 @@ public class CraftingHelper {
             // Lets hope this works? Needs test
             try
             {
-                NBTTagCompound nbt = JsonToNBT.getTagFromJson(GSON.toJson(json.get("nbt")));
+                JsonElement element = json.get("nbt");
+                NBTTagCompound nbt;
+                if(element.isJsonObject())
+                    nbt = JsonToNBT.getTagFromJson(GSON.toJson(element));
+                else
+                    nbt = JsonToNBT.getTagFromJson(element.getAsString());
+
                 NBTTagCompound tmp = new NBTTagCompound();
                 if (nbt.hasKey("ForgeCaps"))
                 {
@@ -613,6 +619,9 @@ public class CraftingHelper {
         Loader.instance().getActiveModList().forEach(CraftingHelper::loadFactories);
         Loader.instance().getActiveModList().forEach(CraftingHelper::loadRecipes);
         Loader.instance().setActiveModContainer(null);
+
+        GameData.fireRegistryEvents(rl -> rl.equals(GameData.RECIPES));
+
         //reg.freeze();
         FMLCommonHandler.instance().resetClientRecipeBook();
     }
@@ -717,20 +726,41 @@ public class CraftingHelper {
                     IOUtils.closeQuietly(reader);
                 }
                 return true;
-            }
+            },
+            true, true
         );
     }
 
-
+    /**
+     * @deprecated Use {@link CraftingHelper#findFiles(ModContainer, String, Function, BiFunction, boolean, boolean)} instead.
+     */
+    @Deprecated
     public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor)
+    {
+        return findFiles(mod, base, preprocessor, processor, false, false);
+    }
+
+    /**
+     * @deprecated Use {@link CraftingHelper#findFiles(ModContainer, String, Function, BiFunction, boolean, boolean)} instead.
+     */
+    @Deprecated
+    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot)
+    {
+        return findFiles(mod, base, preprocessor, processor, defaultUnfoundRoot, false);
+    }
+
+    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot, boolean visitAllFiles)
     {
         FileSystem fs = null;
         try
         {
             File source = mod.getSource();
 
-            if ("minecraft".equals(mod.getModId()) && DEBUG_LOAD_MINECRAFT)
+            if ("minecraft".equals(mod.getModId()))
             {
+                if (!DEBUG_LOAD_MINECRAFT)
+                    return true;
+
                 try
                 {
                     URI tmp = CraftingManager.class.getResource("/assets/.mcassetsroot").toURI();
@@ -763,7 +793,7 @@ public class CraftingHelper {
             }
 
             if (root == null || !Files.exists(root))
-                return false;
+                return defaultUnfoundRoot;
 
             if (preprocessor != null)
             {
@@ -771,6 +801,8 @@ public class CraftingHelper {
                 if (cont == null || !cont.booleanValue())
                     return false;
             }
+
+            boolean success = true;
 
             if (processor != null)
             {
@@ -788,12 +820,19 @@ public class CraftingHelper {
                 while (itr != null && itr.hasNext())
                 {
                     Boolean cont = processor.apply(root, itr.next());
-                    if (cont == null || !cont.booleanValue())
+
+                    if (visitAllFiles)
+                    {
+                        success &= cont != null && cont;
+                    }
+                    else if (cont == null || !cont)
+                    {
                         return false;
+                    }
                 }
             }
 
-            return true;
+            return success;
         }
         finally
         {

@@ -18,24 +18,20 @@
  */
 package net.minecraftforge.fml.common.registry;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
-import com.google.common.base.Throwables;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.registries.IForgeRegistryEntry.Impl;
+
+import java.util.function.Function;
 
 public class EntityEntry extends Impl<EntityEntry>
 {
     private Class<? extends Entity> cls;
     private String name;
     private EntityEggInfo egg;
-    private Constructor<?> ctr;
+    Function<World, ? extends Entity> factory;
 
     public EntityEntry(Class<? extends Entity> cls, String name)
     {
@@ -47,18 +43,12 @@ public class EntityEntry extends Impl<EntityEntry>
     //Protected method, to make this optional, in case people subclass this to have a better factory.
     protected void init()
     {
-        try
-        {
-            this.ctr = this.cls.getConstructor(World.class);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new RuntimeException("Invalid class " + this.cls + " no constructor taking " + World.class.getName());
-        }
-        catch (SecurityException e)
-        {
-            Throwables.propagate(e);
-        }
+        this.factory = new EntityEntryBuilder.ConstructorFactory<Entity>(this.cls) {
+            @Override
+            protected String describeEntity() {
+                return String.valueOf(EntityEntry.this.getRegistryName());
+            }
+        };
     }
 
     public Class<? extends Entity> getEntityClass(){ return this.cls; }
@@ -74,14 +64,6 @@ public class EntityEntry extends Impl<EntityEntry>
 
     public Entity newInstance(World world)
     {
-        try
-        {
-            return (Entity)this.ctr.newInstance(world);
-        }
-        catch (Exception e)
-        {
-            FMLLog.log.error("Error creating entity.", e);
-            return null;
-        }
+        return this.factory.apply(world);
     }
 }

@@ -39,3 +39,12 @@
      public float func_70603_bj()
      {
          return 1.0F;
+@@ -1003,7 +1015,7 @@
+             }
+             else
+             {
+-                return p_184640_0_.func_77973_b() == Items.field_185159_cQ ? EntityEquipmentSlot.OFFHAND : EntityEquipmentSlot.MAINHAND;
++                return p_184640_0_.func_77973_b().isShield(p_184640_0_, null) ? EntityEquipmentSlot.OFFHAND : EntityEquipmentSlot.MAINHAND;
+             }
+         }
+         else

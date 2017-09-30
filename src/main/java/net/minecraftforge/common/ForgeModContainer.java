@@ -35,7 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,6 +48,7 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -63,7 +63,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
@@ -76,7 +75,6 @@ import com.google.common.eventbus.Subscribe;
 import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import net.minecraftforge.fml.common.AutomaticEventSubscriber;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -93,6 +91,7 @@ import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -119,6 +118,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
     public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
+    public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
+                                                       // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
 
     static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
@@ -171,6 +172,18 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         return config;
     }
 
+    private static void remapGeneralPropertyToClient(String key)
+    {
+        ConfigCategory GENERAL = config.getCategory(CATEGORY_GENERAL);
+        if (GENERAL.containsKey(key))
+        {
+            FMLLog.log.debug("Remapping property {} from category general to client", key);
+            Property property = GENERAL.get(key);
+            GENERAL.remove(key);
+            config.getCategory(CATEGORY_CLIENT).put(key, property);
+        }
+    }
+
     /**
      * Synchronizes the local fields with the values in the Configuration object.
      */
@@ -200,6 +213,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         if (config.getCategory(CATEGORY_GENERAL).containsKey("spawnHasFuzz")) config.getCategory(CATEGORY_GENERAL).remove("spawnHasFuzz");
         if (config.getCategory(CATEGORY_GENERAL).containsKey("disableStitchedFileSaving")) config.getCategory(CATEGORY_GENERAL).remove("disableStitchedFileSaving");
         if (config.getCategory(CATEGORY_CLIENT).containsKey("java8Reminder")) config.getCategory(CATEGORY_CLIENT).remove("java8Reminder");
+
+        // remap properties wrongly listed as general properties to client properties
+        remapGeneralPropertyToClient("biomeSkyBlendRange");
+        remapGeneralPropertyToClient("forgeLightPipelineEnabled");
 
         prop = config.get(CATEGORY_GENERAL, "disableVersionCheck", false);
         prop.setComment("Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.");
@@ -256,12 +273,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         fullBoundingBoxLadders = prop.getBoolean(false);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 });
-        prop.setComment("Control the range of sky blending for colored skies in biomes.");
-        prop.setLanguageKey("forge.configgui.biomeSkyBlendRange");
-        blendRanges = prop.getIntList();
-        propOrder.add(prop.getName());
-
         prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBaseSummonChance", 0.1,
                 "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.", 0.0D, 1.0D);
         prop.setLanguageKey("forge.configgui.zombieBaseSummonChance").setRequiresWorldRestart(true);
@@ -274,16 +285,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         zombieBabyChance = (float) prop.getDouble(0.05);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", true,
-                "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
-        forgeLightPipelineEnabled = prop.getBoolean(true);
-        prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
-        propOrder.add(prop.getName());
-
         prop = config.get(Configuration.CATEGORY_GENERAL, "logCascadingWorldGeneration", true,
                 "Log cascading chunk generation issues during terrain population.");
         logCascadingWorldGeneration = prop.getBoolean();
         prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "fixVanillaCascading", false,
+                "Fix vanilla issues that cause worldgen cascading. This DOES change vanilla worldgen so DO NOT report bugs related to world differences if this flag is on.");
+        fixVanillaCascading = prop.getBoolean();
+        prop.setLanguageKey("forge.configgui.fixVanillaCascading");
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 0,
@@ -327,6 +338,18 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "without a significant number of cores available.");
         alwaysSetupTerrainOffThread = prop.getBoolean(false);
         prop.setLanguageKey("forge.configgui.alwaysSetupTerrainOffThread");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 });
+        prop.setComment("Control the range of sky blending for colored skies in biomes.");
+        prop.setLanguageKey("forge.configgui.biomeSkyBlendRange");
+        blendRanges = prop.getIntList();
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "forgeLightPipelineEnabled", true,
+                "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
+        forgeLightPipelineEnabled = prop.getBoolean(true);
+        prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
@@ -400,6 +423,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             all.add(asm.getClassName());
         for (ASMData asm : evt.getASMHarvestedData().getAll(ICrashCallable.class.getName().replace('.', '/')))
             all.add(asm.getClassName());
+        // Add table classes for mod list tabulation
+        all.add("net/minecraftforge/common/util/TextTable");
+        all.add("net/minecraftforge/common/util/TextTable$Column");
+        all.add("net/minecraftforge/common/util/TextTable$Row");
+        all.add("net/minecraftforge/common/util/TextTable$Alignment");
 
         all.removeIf(cls -> !cls.startsWith("net/minecraft/") && !cls.startsWith("net/minecraftforge/"));
 
@@ -490,6 +518,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         evt.registerServerCommand(new ForgeCommand());
     }
+
+    @Subscribe
+    public void serverStopping(FMLServerStoppingEvent evt)
+    {
+        WorldWorkerManager.clear();
+    }
+
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {

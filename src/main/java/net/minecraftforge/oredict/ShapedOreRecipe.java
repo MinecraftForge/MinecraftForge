@@ -32,6 +32,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
+import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.common.crafting.JsonContext;
 
@@ -49,7 +50,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
+public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IShapedRecipe
 {
     //Added in for future ease of change, but hard coded for now.
     public static final int MAX_CRAFT_GRID_WIDTH = 3;
@@ -154,14 +155,28 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         return this.input;
     }
 
+    @Deprecated //Use IShapedRecipe.getRecipeWidth
     public int getWidth()
     {
         return width;
     }
 
+    @Override
+    public int getRecipeWidth()
+    {
+        return this.getWidth();
+    }
+
+    @Deprecated //Use IShapedRecipe.getRecipeHeight
     public int getHeight()
     {
         return height;
+    }
+
+    @Override
+    public int getRecipeHeight()
+    {
+        return this.getHeight();
     }
 
     @Override

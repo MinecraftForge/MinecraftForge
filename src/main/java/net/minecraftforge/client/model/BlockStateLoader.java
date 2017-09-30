@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +38,9 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import net.minecraftforge.fml.common.FMLLog;
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -74,8 +73,8 @@ public class BlockStateLoader
     {
         try
         {
-            byte[] data = IOUtils.toByteArray(reader);
-            reader = new InputStreamReader(new ByteArrayInputStream(data), Charsets.UTF_8);
+            byte[] data = IOUtils.toByteArray(reader, StandardCharsets.UTF_8);
+            reader = new InputStreamReader(new ByteArrayInputStream(data), StandardCharsets.UTF_8);
 
             Marker marker = GSON.fromJson(new String(data), Marker.class);  // Read "forge_marker" to determine what to load.
 
@@ -111,9 +110,8 @@ public class BlockStateLoader
         }
         catch (IOException e)
         {
-            Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     public static class Marker
@@ -215,7 +213,7 @@ public class BlockStateLoader
                 final IModel model;
                 if (modelLocation == null)
                 {
-                    FMLLog.getLogger().error("model not found for variant " + entry.getKey() + "for blockstate " + blockstateLocation);
+                    FMLLog.log.error("model not found for variant {} for blockstate {}", entry.getKey(), blockstateLocation);
                     model = ModelLoaderRegistry.getMissingModel(blockstateLocation, new Throwable());
                 }
                 else

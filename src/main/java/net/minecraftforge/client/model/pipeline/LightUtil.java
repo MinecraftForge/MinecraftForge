@@ -194,15 +194,15 @@ public class LightUtil
                 }
                 else if(type == VertexFormatElement.EnumType.BYTE)
                 {
-                    to[i] = ((float)(byte)bits) / mask * 2;
+                    to[i] = ((float)(byte)bits) / (mask >> 1);
                 }
                 else if(type == VertexFormatElement.EnumType.SHORT)
                 {
-                    to[i] = ((float)(short)bits) / mask * 2;
+                    to[i] = ((float)(short)bits) / (mask >> 1);
                 }
                 else if(type == VertexFormatElement.EnumType.INT)
                 {
-                    to[i] = ((float)(bits & 0xFFFFFFFFL)) / 0xFFFFFFFFL * 2;
+                    to[i] = (float)((double)(bits & 0xFFFFFFFFL) / (0xFFFFFFFFL >> 1));
                 }
             }
             else
@@ -239,11 +239,11 @@ public class LightUtil
                     type == VertexFormatElement.EnumType.UINT
                 )
                 {
-                    bits = (int)(f * mask);
+                    bits = Math.round(f * mask);
                 }
                 else
                 {
-                    bits = (int)(f * mask / 2);
+                    bits = Math.round(f * (mask >> 1));
                 }
                 to[index] &= ~(mask << (offset * 8));
                 to[index] |= (((bits & mask) << (offset * 8)));
