@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
-@@ -116,6 +116,7 @@
+@@ -38,6 +38,7 @@
+         this.field_71513_a = p_i1348_1_;
+         this.field_71511_b = p_i1348_2_;
+         this.func_71504_g();
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.CrashEvent(this));
+     }
+ 
+     private void func_71504_g()
+@@ -116,6 +117,7 @@
                  return IntCache.func_85144_b();
              }
          });
@@ -8,7 +16,7 @@
      }
  
      public String func_71501_a()
-@@ -205,6 +206,8 @@
+@@ -205,6 +207,8 @@
      {
          StringBuilder stringbuilder = new StringBuilder();
          stringbuilder.append("---- Minecraft Crash Report ----\n");
