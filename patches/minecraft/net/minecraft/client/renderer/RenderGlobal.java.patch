@@ -107,7 +107,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p().func_186068_a() == 1)
          {
              this.func_180448_r();
-@@ -1470,6 +1492,12 @@
+@@ -1470,6 +1492,7 @@
  
      public void func_180447_b(float p_180447_1_, int p_180447_2_, double p_180447_3_, double p_180447_5_, double p_180447_7_)
      {
@@ -115,7 +115,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1892,8 +1920,11 @@
+@@ -1892,8 +1915,11 @@
                  double d7 = (double)blockpos.func_177956_o() - d4;
                  double d8 = (double)blockpos.func_177952_p() - d5;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -128,7 +128,7 @@
                  {
                      if (d6 * d6 + d7 * d7 + d8 * d8 > 1024.0D)
                      {
-@@ -2388,7 +2419,7 @@
+@@ -2388,7 +2414,7 @@
  
                  if (block.func_176223_P().func_185904_a() != Material.field_151579_a)
                  {

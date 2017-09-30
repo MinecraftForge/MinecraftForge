@@ -42,10 +42,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
 public class CloudRenderer implements IResourceManagerReloadListener
 {
@@ -80,8 +76,6 @@ public class CloudRenderer implements IResourceManagerReloadListener
     {
         // Resource manager should always be reloadable.
         ((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(this);
-
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     private int getScale()
@@ -104,7 +98,7 @@ public class CloudRenderer implements IResourceManagerReloadListener
 
         float bCol = fancy ? 0.7F : 1F;
 
-        float sectEnd = ceilToScale(renderDistance * 16);
+        float sectEnd = ceilToScale((renderDistance * 2) * 16);
         float sectStart = -sectEnd;
 
         float sectStep = ceilToScale(sectEnd * 2 / TOP_SECTIONS);
@@ -241,7 +235,7 @@ public class CloudRenderer implements IResourceManagerReloadListener
         BufferBuilder buffer = tess.getBuffer();
 
         if (OpenGlHelper.useVbo())
-            vbo = new net.minecraft.client.renderer.vertex.VertexBuffer(FORMAT);
+            vbo = new VertexBuffer(FORMAT);
         else
             GlStateManager.glNewList(displayList = GLAllocation.generateDisplayLists(1), GL11.GL_COMPILE);
 
@@ -270,31 +264,27 @@ public class CloudRenderer implements IResourceManagerReloadListener
         return OpenGlHelper.useVbo() ? vbo != null : displayList >= 0;
     }
 
-    @SubscribeEvent
-    public void checkSettings(ClientTickEvent event)
+    public void checkSettings()
     {
-        if (event.phase == Phase.END)
+        boolean newEnabled = ForgeModContainer.forgeCloudsEnabled
+                && mc.gameSettings.shouldRenderClouds() != 0
+                && mc.world != null
+                && mc.world.provider.isSurfaceWorld();
+
+        if (isBuilt()
+                    && (!newEnabled
+                    || mc.gameSettings.shouldRenderClouds() != cloudMode
+                    || mc.gameSettings.renderDistanceChunks != renderDistance))
         {
-            boolean newEnabled = ForgeModContainer.forgeCloudsEnabled
-                    && mc.gameSettings.shouldRenderClouds() != 0
-                    && mc.world != null
-                    && mc.world.provider.isSurfaceWorld();
+            dispose();
+        }
 
-            if (isBuilt()
-                        && (!newEnabled
-                        || mc.gameSettings.shouldRenderClouds() != cloudMode
-                        || mc.gameSettings.renderDistanceChunks != renderDistance))
-            {
-                dispose();
-            }
+        cloudMode = mc.gameSettings.shouldRenderClouds();
+        renderDistance = mc.gameSettings.renderDistanceChunks;
 
-            cloudMode = mc.gameSettings.shouldRenderClouds();
-            renderDistance = mc.gameSettings.renderDistanceChunks;
-
-            if (newEnabled && !isBuilt())
-            {
-                build();
-            }
+        if (newEnabled && !isBuilt())
+        {
+            build();
         }
     }
 

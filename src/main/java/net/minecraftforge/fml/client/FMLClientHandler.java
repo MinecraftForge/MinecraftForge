@@ -467,8 +467,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             logMissingTextureErrors();
         }
-
-        cloudRenderer = new CloudRenderer();
     }
     /**
      * Get the server instance
@@ -1122,6 +1120,18 @@ public class FMLClientHandler implements IFMLSidedHandler
         this.client.getSearchTreeManager().onResourceManagerReload(this.client.getResourceManager());
     }
 
+    private CloudRenderer getCloudRenderer()
+    {
+        if (cloudRenderer == null)
+            cloudRenderer = new CloudRenderer();
+        return cloudRenderer;
+    }
+
+    public void updateCloudSettings()
+    {
+        getCloudRenderer().checkSettings();
+    }
+
     public boolean renderClouds(int cloudTicks, float partialTicks)
     {
         IRenderHandler renderer = this.client.world.provider.getCloudRenderer();
@@ -1130,6 +1140,6 @@ public class FMLClientHandler implements IFMLSidedHandler
             renderer.render(partialTicks, this.client.world, this.client);
             return true;
         }
-        return cloudRenderer.render(cloudTicks, partialTicks);
+        return getCloudRenderer().render(cloudTicks, partialTicks);
     }
 }
