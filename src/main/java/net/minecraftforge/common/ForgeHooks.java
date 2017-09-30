@@ -1386,6 +1386,7 @@ public class ForgeHooks
             }
         }
         return result;
+    }
       
     public static void sendRecipeBook(NetHandlerPlayServer connection, State state, List<IRecipe> recipes, List<IRecipe> display, boolean isGuiOpen, boolean isFilteringCraftable)
     {
