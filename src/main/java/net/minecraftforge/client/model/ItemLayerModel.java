@@ -19,14 +19,10 @@
 
 package net.minecraftforge.client.model;
 
-import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
 import net.minecraftforge.common.ForgeVersion;
-import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
@@ -45,7 +41,6 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -122,69 +117,7 @@ public final class ItemLayerModel implements IModel
         }
         TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
         ImmutableMap<TransformType, TRSRTransformation> map = PerspectiveMapWrapper.getTransforms(state);
-        return new BakedItemModel(builder.build(), particle, map, overrides, null);
-    }
-
-    private static final class BakedItemModel implements IBakedModel
-    {
-        private final ImmutableList<BakedQuad> quads;
-        private final TextureAtlasSprite particle;
-        private final ImmutableMap<TransformType, TRSRTransformation> transforms;
-        private final IBakedModel otherModel;
-        private final boolean isCulled;
-        private final ItemOverrideList overrides;
-
-        public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, ItemOverrideList overrides, @Nullable IBakedModel otherModel)
-        {
-            this.quads = quads;
-            this.particle = particle;
-            this.transforms = transforms;
-            this.overrides = overrides;
-            if(otherModel != null)
-            {
-                this.otherModel = otherModel;
-                this.isCulled = true;
-            }
-            else
-            {
-                ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                for(BakedQuad quad : quads)
-                {
-                    if(quad.getFace() == EnumFacing.SOUTH)
-                    {
-                        builder.add(quad);
-                    }
-                }
-                this.otherModel = new BakedItemModel(builder.build(), particle, transforms, overrides, this);
-                isCulled = false;
-            }
-        }
-
-        public boolean isAmbientOcclusion() { return true; }
-        public boolean isGui3d() { return false; }
-        public boolean isBuiltInRenderer() { return false; }
-        public TextureAtlasSprite getParticleTexture() { return particle; }
-        public ItemOverrideList getOverrides() { return overrides; }
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
-        {
-            if(side == null) return quads;
-            return ImmutableList.of();
-        }
-
-        @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
-        {
-            Pair<? extends IBakedModel, Matrix4f> pair = PerspectiveMapWrapper.handlePerspective(this, transforms, type);
-            if(type == TransformType.GUI && !isCulled && pair.getRight() == null)
-            {
-                return Pair.of(otherModel, null);
-            }
-            else if(type != TransformType.GUI && isCulled)
-            {
-                return Pair.of(otherModel, pair.getRight());
-            }
-            return pair;
-        }
+        return new BakedItemModel(builder.build(), particle, map, overrides);
     }
 
     public static ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format, Optional<TRSRTransformation> transform)
