@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Bootstrap;
+import net.minecraft.world.storage.MapDecoration;
 import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.EnumHelper;
@@ -87,6 +88,10 @@ public class EnumHelperTest
                     boolean filter = declaredConstructor.isSynthetic();
 
                     if (returnType == EnumEnchantmentType.class && declaredConstructor.getParameterTypes().length == 2)
+                    {
+                        filter = true; //We don't want people using this method.
+                    }
+                    else if (returnType == MapDecoration.Type.class && (declaredConstructor.getParameterTypes().length == 3 || declaredConstructor.getParameterTypes().length == 4))
                     {
                         filter = true; //We don't want people using this method.
                     }
