@@ -41,18 +41,18 @@ import java.util.List;
 import java.util.Random;
 
 @Mod.EventBusSubscriber
-@Mod(modid = ModelParticleTextureTest.MOD_ID, name = "test mod for state-aware particles", version = "1.0")
+@Mod(modid = ModelParticleTextureTest.MOD_ID, name = "Test mod for state-aware particles", version = "1.0")
 public class ModelParticleTextureTest
 {
     static final String MOD_ID = "multi_particle_model_test";
 
-    @GameRegistry.ObjectHolder(MOD_ID + ":" + TestBlock.NAME)
+    @GameRegistry.ObjectHolder(TestBlock.NAME)
     public static final Block TEST_BLOCK = null;
 
     private static final class TestBlock extends Block
     {
         static final String NAME = "test_block";
-        static final IUnlistedProperty<Float> PROPERTY = new PropertyFloat("value");
+        static final IUnlistedProperty<Float> PROPERTY = new PropertyFloat("value", f -> f != null && f >= 0f && f < 1f);
 
         TestBlock()
         {
