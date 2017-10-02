@@ -129,7 +129,7 @@
 +                }
 +
                  IBlockState iblockstate = p_187099_2_.func_180495_p(p_187099_3_);
-+                boolean bypass = itemstack.func_190926_b() || itemstack.func_77973_b().doesSneakBypassUse(itemstack, p_187099_2_, p_187099_3_, p_187099_1_);
++                boolean bypass = p_187099_1_.func_184614_ca().doesSneakBypassUse(p_187099_2_, p_187099_3_, p_187099_1_) && p_187099_1_.func_184592_cb().doesSneakBypassUse(p_187099_2_, p_187099_3_, p_187099_1_);
  
 -                if ((!p_187099_1_.func_70093_af() || p_187099_1_.func_184614_ca().func_190926_b() && p_187099_1_.func_184592_cb().func_190926_b()) && iblockstate.func_177230_c().func_180639_a(p_187099_2_, p_187099_3_, iblockstate, p_187099_1_, p_187099_6_, p_187099_4_, f, f1, f2))
 +                if ((!p_187099_1_.func_70093_af() || bypass || event.getUseBlock() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW))
