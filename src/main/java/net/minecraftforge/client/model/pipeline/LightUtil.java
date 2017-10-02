@@ -297,8 +297,15 @@ public class LightUtil
 
     public static void renderQuadColor(BufferBuilder wr, BakedQuad quad, int auxColor)
     {
-        wr.addVertexData(quad.getVertexData());
-        ForgeHooksClient.putQuadColor(wr, quad, auxColor);
+        if (quad.getFormat().equals(wr.getVertexFormat())) 
+        {
+            wr.addVertexData(quad.getVertexData());
+            ForgeHooksClient.putQuadColor(wr, quad, auxColor);
+        }
+        else
+        {
+            renderQuadColorSlow(wr, quad, auxColor);
+        }
     }
 
     public static class ItemConsumer extends VertexTransformer
