@@ -274,7 +274,16 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1381,7 +1400,7 @@
+@@ -1266,6 +1285,8 @@
+     public void func_150809_p()
+     {
+         this.field_76646_k = true;
++        net.minecraftforge.common.lighting.LightingHooks.initChunkLighting(this, this.field_76637_e);
++        if (true) return;
+         this.field_150814_l = true;
+         BlockPos blockpos = new BlockPos(this.field_76635_g << 4, 0, this.field_76647_h << 4);
+ 
+@@ -1381,7 +1402,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -283,7 +292,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1489,4 +1508,34 @@
+@@ -1489,4 +1510,34 @@
          QUEUED,
          CHECK;
      }
