@@ -6,6 +6,13 @@ commands.forge.gen.dim_fail=Failed to load world for dimension %d, Task terminat
 commands.forge.gen.progress=Generation Progress: %d/%d
 commands.forge.gen.complete=Finished generating %d new chunks (out of %d) for dimension %d.
 commands.forge.gen.start=Starting to generate %d chunks in a spiral around %d, %d in dimension %d.
+commands.forge.entity.usage=Use /forge entity [list] help for more infomration on a specific command.
+commands.forge.entity.list.usage=Use /forge entity list [filter] [dim] to get entity info that matches the optional filter.
+commands.forge.entity.list.invalid=Invalid filter, does not match any entities. Use /forge entity list for a proper list
+commands.forge.entity.list.invalidworld=Could not load world for dimension %d. Please select a valid dimension.
+commands.forge.entity.list.none=No entities found.
+commands.forge.entity.list.single.header=Entity: %s Total: %d
+commands.forge.entity.list.multiple.header=Total: %d
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 commands.tree_base.invalid_cmd=Invalid subcommand '%s'!
