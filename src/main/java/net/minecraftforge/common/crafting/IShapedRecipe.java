@@ -18,26 +18,15 @@
  */
 package net.minecraftforge.common.crafting;
 
-import javax.annotation.Nullable;
+import net.minecraft.item.crafting.IRecipe;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-
-public class IngredientNBT extends Ingredient
+/**
+ * Used to mark a recipe that shape matters so that the recipe
+ * book and auto crafting picks the correct shape.
+ * Note: These methods can't be named 'getHeight' or 'getWidth' due to obfusication issues.
+ */
+public interface IShapedRecipe extends IRecipe
 {
-    private final ItemStack stack;
-    protected IngredientNBT(ItemStack stack)
-    {
-        super(stack);
-        this.stack = stack;
-    }
-
-    @Override
-    public boolean apply(@Nullable ItemStack input)
-    {
-        if (input == null)
-            return false;
-        //Can't use areItemStacksEqualUsingNBTShareTag because it compares stack size as well
-        return this.stack.getItem() == input.getItem() && this.stack.getItemDamage() == input.getItemDamage() && ItemStack.areItemStackShareTagsEqual(this.stack, input);
-    }
+    public int getRecipeWidth();
+    public int getRecipeHeight();
 }

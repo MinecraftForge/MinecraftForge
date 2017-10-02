@@ -56,6 +56,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
 import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 
@@ -442,6 +443,10 @@ public class GameData
         @Override
         public void onAdd(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage, int id, EntityEntry entry, @Nullable EntityEntry oldEntry)
         {
+            if (entry instanceof EntityEntryBuilder.BuiltEntityEntry)
+            {
+                ((EntityEntryBuilder.BuiltEntityEntry) entry).addedToRegistry();
+            }
             if (entry.getEgg() != null)
                 EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
         }
@@ -567,7 +572,7 @@ public class GameData
                 RegistryEvent.MissingMappings<?> event = reg.getMissingEvent(name, m.getValue());
                 MinecraftForge.EVENT_BUS.post(event);
 
-                List<MissingMappings.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.DEFAULT).collect(Collectors.toList());
+                List<MissingMappings.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.DEFAULT).sorted((a, b) -> a.toString().compareTo(b.toString())).collect(Collectors.toList());
                 if (!lst.isEmpty())
                 {
                     FMLLog.log.error("Unidentified mapping from registry {}", name);

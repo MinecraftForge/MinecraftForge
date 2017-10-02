@@ -257,7 +257,9 @@ public class FMLModContainer implements ModContainer
 
         String mcVersionString = (String)descriptor.get("acceptedMinecraftVersions");
         if ("[1.12]".equals(mcVersionString))
-            mcVersionString = "[1.12,1.12.1]";
+            mcVersionString = "[1.12,1.12.2]";
+        if ("[1.12.1]".equals(mcVersionString) || "[1.12,1.12.1]".equals(mcVersionString))
+            mcVersionString = "[1.12,1.12.2]";
 
         if (!Strings.isNullOrEmpty(mcVersionString))
         {

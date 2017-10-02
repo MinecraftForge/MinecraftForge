@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -663,7 +663,10 @@
+@@ -671,7 +671,10 @@
                  double d2 = this.field_147369_b.field_70161_v - ((double)blockpos.func_177952_p() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -12,7 +12,7 @@
                  {
                      return;
                  }
-@@ -721,7 +724,9 @@
+@@ -729,7 +732,9 @@
  
          if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || enumfacing != EnumFacing.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z())
          {
@@ -23,7 +23,7 @@
              {
                  this.field_147369_b.field_71134_c.func_187251_a(this.field_147369_b, worldserver, itemstack, enumhand, blockpos, enumfacing, p_184337_1_.func_187026_d(), p_184337_1_.func_187025_e(), p_184337_1_.func_187020_f());
              }
-@@ -925,7 +930,9 @@
+@@ -933,7 +938,9 @@
              }
              else
              {
@@ -34,7 +34,7 @@
                  this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
              }
  
-@@ -1058,6 +1065,7 @@
+@@ -1066,6 +1073,7 @@
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT_AT)
                  {
                      EnumHand enumhand1 = p_147340_1_.func_186994_b();
@@ -42,7 +42,7 @@
                      entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), enumhand1);
                  }
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.ATTACK)
-@@ -1098,7 +1106,7 @@
+@@ -1106,7 +1114,7 @@
                          return;
                      }
  
@@ -51,7 +51,7 @@
  
                      if (this.field_147367_d.func_71199_h())
                      {
-@@ -1141,7 +1149,7 @@
+@@ -1149,7 +1157,7 @@
              {
                  ItemStack itemstack2 = this.field_147369_b.field_71070_bA.func_184996_a(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(), p_147351_1_.func_186993_f(), this.field_147369_b);
  

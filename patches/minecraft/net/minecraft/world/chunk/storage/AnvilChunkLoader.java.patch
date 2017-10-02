@@ -84,17 +84,18 @@
              }
          }
      }
-@@ -121,7 +167,9 @@
+@@ -121,7 +167,10 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
-             nbttagcompound.func_74768_a("DataVersion", 1241);
+             nbttagcompound.func_74768_a("DataVersion", 1343);
 +            net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(nbttagcompound);
              this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
++            net.minecraftforge.common.ForgeChunkManager.storeChunkNBT(p_75816_2_, nbttagcompound1);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -305,11 +353,19 @@
+@@ -305,11 +354,19 @@
              {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
@@ -114,7 +115,7 @@
              }
          }
  
-@@ -318,8 +374,16 @@
+@@ -318,8 +375,16 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -131,7 +132,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -345,6 +409,18 @@
+@@ -345,6 +410,18 @@
  
              p_75820_3_.func_74782_a("TileTicks", nbttaglist3);
          }
@@ -150,7 +151,7 @@
      }
  
      private Chunk func_75823_a(World p_75823_1_, NBTTagCompound p_75823_2_)
-@@ -388,6 +464,16 @@
+@@ -388,6 +465,16 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -167,7 +168,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
-@@ -431,8 +517,6 @@
+@@ -431,8 +518,6 @@
                  p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
              }
          }

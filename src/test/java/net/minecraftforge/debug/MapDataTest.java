@@ -216,30 +216,34 @@ public class MapDataTest
     {
         @Nullable
         @Override
-        public IMessage onMessage(CustomMapPacket message, MessageContext ctx) {
+        public IMessage onMessage(CustomMapPacket message, MessageContext ctx)
+        {
             // Like NetHandlerPlayClient.handleMaps but using our custom type
-            Minecraft.getMinecraft().addScheduledTask(() ->
-            {
-                MapItemRenderer mapitemrenderer = Minecraft.getMinecraft().entityRenderer.getMapItemRenderer();
-                MapData mapdata = CustomMap.loadMapData(message.vanillaPacket.getMapId(), Minecraft.getMinecraft().world);
+            Minecraft.getMinecraft().addScheduledTask(new Runnable() {
+                @Override
+                public void run()
+                {
+                    MapItemRenderer mapitemrenderer = Minecraft.getMinecraft().entityRenderer.getMapItemRenderer();
+                    MapData mapdata = CustomMap.loadMapData(message.vanillaPacket.getMapId(), Minecraft.getMinecraft().world);
 
-                if (mapdata == null) {
-                    String s = CustomMap.PREFIX + "_" + message.vanillaPacket.getMapId();
-                    mapdata = new CustomMapData(s);
+                    if (mapdata == null) {
+                        String s = CustomMap.PREFIX + "_" + message.vanillaPacket.getMapId();
+                        mapdata = new CustomMapData(s);
 
-                    if (mapitemrenderer.getMapInstanceIfExists(s) != null) {
-                        MapData mapdata1 = mapitemrenderer.getData(mapitemrenderer.getMapInstanceIfExists(s));
+                        if (mapitemrenderer.getMapInstanceIfExists(s) != null) {
+                            MapData mapdata1 = mapitemrenderer.getData(mapitemrenderer.getMapInstanceIfExists(s));
 
-                        if (mapdata1 != null) {
-                            mapdata = mapdata1;
+                            if (mapdata1 != null) {
+                                mapdata = mapdata1;
+                            }
                         }
+
+                        Minecraft.getMinecraft().world.setData(s, mapdata);
                     }
 
-                    Minecraft.getMinecraft().world.setData(s, mapdata);
+                    message.vanillaPacket.setMapdataTo(mapdata);
+                    mapitemrenderer.updateMapTexture(mapdata);
                 }
-
-                message.vanillaPacket.setMapdataTo(mapdata);
-                mapitemrenderer.updateMapTexture(mapdata);
             });
 
             return null;
