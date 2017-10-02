@@ -70,7 +70,7 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -435,11 +445,666 @@
+@@ -435,11 +445,683 @@
          return false;
      }
  
@@ -336,16 +336,33 @@
 +    public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack){}
 +
 +    /**
-+     * Determines if the specific ItemStack can be placed in the specified armor slot.
++     * Determines if the specific ItemStack can be placed in the specified armor slot, for the entity.
++     *
++     * TODO: Change name to canEquip in 1.13?
 +     *
 +     * @param stack The ItemStack
-+     * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
++     * @param armorType Armor slot to be verified.
 +     * @param entity The entity trying to equip the armor
 +     * @return True if the given ItemStack can be inserted in the slot
 +     */
 +    public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
 +    {
 +        return net.minecraft.entity.EntityLiving.func_184640_d(stack) == armorType;
++    }
++
++    /**
++     * Override this to set a non-default armor slot for an ItemStack, but
++     * <em>do not use this to get the armor slot of said stack; for that, use
++     * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)}.</em>
++     *
++     * @param stack the ItemStack
++     * @return the armor slot of the ItemStack, or {@code null} to let the default
++     * vanilla logic as per {@code EntityLiving.getSlotForItemStack(stack)} decide
++     */
++    @Nullable
++    public EntityEquipmentSlot getEquipmentSlot(ItemStack stack)
++    {
++        return null;
 +    }
 +
 +    /**
@@ -737,7 +754,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -999,6 +1664,8 @@
+@@ -999,6 +1681,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -746,7 +763,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1034,6 +1701,7 @@
+@@ -1034,6 +1718,7 @@
              return this.field_78008_j;
          }
  
@@ -754,7 +771,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1057,5 +1725,21 @@
+@@ -1057,5 +1742,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }

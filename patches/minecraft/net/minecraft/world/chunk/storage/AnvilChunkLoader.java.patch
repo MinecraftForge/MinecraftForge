@@ -84,7 +84,7 @@
              }
          }
      }
-@@ -121,7 +167,9 @@
+@@ -121,7 +167,10 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
              nbttagcompound.func_74768_a("DataVersion", 1343);
