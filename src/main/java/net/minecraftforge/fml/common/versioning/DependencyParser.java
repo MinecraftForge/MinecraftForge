@@ -155,11 +155,6 @@ public final class DependencyParser
             }
         }
 
-        if (depSide != null && depSide != this.side)
-        {
-            return;
-        }
-
         ArtifactVersion artifactVersion;
         try
         {
@@ -181,22 +176,25 @@ public final class DependencyParser
             throw new DependencyParserException(dep, "Soft dependencies must have a version restriction specified.");
         }
 
-        if (depRequired)
+        if (depSide == null || depSide == this.side)
         {
-            info.requirements.add(artifactVersion);
-        }
+            if (depRequired)
+            {
+                info.requirements.add(artifactVersion);
+            }
 
-        if ("before".equals(depOrder))
-        {
-            info.dependants.add(artifactVersion);
-        }
-        else if ("after".equals(depOrder))
-        {
-            info.dependencies.add(artifactVersion);
-        }
-        else if (!depRequired && depOrder == null)
-        {
-            info.softRequirements.add(artifactVersion);
+            if ("before".equals(depOrder))
+            {
+                info.dependants.add(artifactVersion);
+            }
+            else if ("after".equals(depOrder))
+            {
+                info.dependencies.add(artifactVersion);
+            }
+            else if (!depRequired && depOrder == null)
+            {
+                info.softRequirements.add(artifactVersion);
+            }
         }
     }
 

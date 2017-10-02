@@ -1,6 +1,6 @@
 package net.minecraftforge.fml.test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,14 +9,14 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import net.minecraftforge.fml.common.versioning.DependencyParser;
 import net.minecraftforge.fml.relauncher.Side;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
 import net.minecraftforge.fml.common.LoaderException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class DependencyParserTest
 {
@@ -24,8 +24,8 @@ public class DependencyParserTest
     private static DependencyParser serverDependencyParser;
     private static List<DependencyParser> parsers;
 
-    @BeforeClass
-    public static void beforeClass()
+    @BeforeAll
+    public static void beforeAll()
     {
         clientDependencyParser = new DependencyParser(Side.CLIENT);
         serverDependencyParser = new DependencyParser(Side.SERVER);
@@ -176,65 +176,129 @@ public class DependencyParserTest
         }
     }
 
-    @Test(expected = LoaderException.class)
+    @Test
     public void testParsingInvalidDependencyInstructions()
     {
-        clientDependencyParser.parseDependencies("gibberishtext:amod");
+        for (DependencyParser parser : parsers)
+        {
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("gibberishtext:amod");
+            });
+        }
     }
 
-    @Test(expected = LoaderException.class)
-    public void testParsingInvalidDependencyVersion()
+    @Test
+    public void testParsingInvalidDependencyVersionClient()
     {
-        clientDependencyParser.parseDependencies("amod@[10");
+        for (DependencyParser parser : parsers)
+        {
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("amod@[10");
+            });
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("client:amod@[10");
+            });
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("server:amod@[10");
+            });
+        }
     }
 
     // TODO: enable this in 1.13
 //    @Test(expected = LoaderException.class)
 //    public void testParsingUppercaseModId()
 //    {
-//        clientDependencyParser.parseDependencies("Forge@[1.0]");
+//        for (DependencyParser parser : parsers)
+//        {
+//            assertThrows(LoaderException.class, () -> {
+//                parser.parseDependencies("Forge@[1.0]");
+//            });
+//            assertThrows(LoaderException.class, () -> {
+//                parser.parseDependencies("client:Forge@[1.0]");
+//            });
+//            assertThrows(LoaderException.class, () -> {
+//                parser.parseDependencies("server:Forge@[1.0]");
+//            });
+//        }
 //    }
 
-    @Test(expected = LoaderException.class)
+    @Test
     public void testParsingSoftDepWithNoVersion()
     {
-        clientDependencyParser.parseDependencies("amod");
+        for (DependencyParser parser : parsers)
+        {
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("amod");
+            });
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("client:amod");
+            });
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("server:amod");
+            });
+        }
     }
 
     @Test
     public void testParsingDepAfterAll()
     {
-        clientDependencyParser.parseDependencies("after:*");
+        for (DependencyParser parser : parsers)
+        {
+            parser.parseDependencies("after:*");
+        }
     }
 
     @Test
     public void testParsingDepBeforeAll()
     {
-        clientDependencyParser.parseDependencies("before:*");
+        for (DependencyParser parser : parsers)
+        {
+            parser.parseDependencies("before:*");
+        }
     }
 
-    @Test(expected = LoaderException.class)
+    @Test
     public void testParsingDepOnAll()
     {
-        clientDependencyParser.parseDependencies("*");
+        for (DependencyParser parser : parsers)
+        {
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("*");
+            });
+        }
     }
 
-    @Test(expected = LoaderException.class)
+    @Test
     public void testParsingSidedDepOnAll()
     {
-        clientDependencyParser.parseDependencies("client:*");
+        for (DependencyParser parser : parsers)
+        {
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("client:*");
+            });
+        }
     }
 
-    @Test(expected = LoaderException.class)
+    @Test
     public void testParsingRequireAll()
     {
-        clientDependencyParser.parseDependencies("required:*");
+        for (DependencyParser parser : parsers)
+        {
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("required:*");
+            });
+        }
     }
 
-    @Test(expected = LoaderException.class)
+    @Test
     public void testParsingVersionedAll()
     {
-        clientDependencyParser.parseDependencies("*@[1.0]");
+        for (DependencyParser parser : parsers)
+        {
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies("*@[1.0]");
+            });
+        }
     }
 
     public static void assertContainsSameToString(Collection<?> c1, Collection<String> expected)
