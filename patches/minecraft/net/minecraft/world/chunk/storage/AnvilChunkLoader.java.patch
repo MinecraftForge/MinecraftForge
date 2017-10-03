@@ -132,10 +132,33 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -388,6 +453,12 @@
+@@ -345,6 +410,18 @@
+ 
+             p_75820_3_.func_74782_a("TileTicks", nbttaglist3);
+         }
++
++        if (p_75820_1_.getCapabilities() != null)
++        {
++            try
++            {
++                p_75820_3_.func_74782_a("ForgeCaps", p_75820_1_.getCapabilities().serializeNBT());
++            }
++            catch (Exception exception)
++            {
++                net.minecraftforge.fml.common.FMLLog.log.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
++            }
++        }
+     }
+ 
+     private Chunk func_75823_a(World p_75823_1_, NBTTagCompound p_75823_2_)
+@@ -388,6 +465,16 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
++        if (chunk.getCapabilities() != null && p_75823_2_.func_74764_b("ForgeCaps")) {
++            chunk.getCapabilities().deserializeNBT(p_75823_2_.func_74775_l("ForgeCaps"));
++        }
++
 +        // End this method here and split off entity loading to another method
 +        return chunk;
 +    }
@@ -145,7 +168,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
-@@ -431,8 +502,6 @@
+@@ -431,8 +518,6 @@
                  p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
              }
          }
