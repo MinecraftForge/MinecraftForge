@@ -21,10 +21,7 @@ package net.minecraftforge.fml.common.versioning;
 
 import java.util.List;
 
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
-
-import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -76,8 +73,7 @@ public class VersionParser
         }
         catch (InvalidVersionSpecificationException e)
         {
-            FMLLog.log.error("Unable to parse a version range specification successfully {}", range, e);
-            throw new LoaderException(e);
+            throw new LoaderException("Unable to parse a version range specification successfully " + range, e);
         }
     }
 }
