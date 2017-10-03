@@ -48,10 +48,12 @@ public final class DependencyParser
     private static final Splitter DEPENDENCY_PART_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCY_SPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
 
+    private final String modId;
     private final Side side;
 
-    public DependencyParser(Side side)
+    public DependencyParser(String modId, Side side)
     {
+        this.modId = modId;
         this.side = side;
     }
 
@@ -68,7 +70,7 @@ public final class DependencyParser
             final List<String> depParts = DEPENDENCY_PART_SPLITTER.splitToList(dep);
             if (depParts.size() != 2)
             {
-                throw new DependencyParserException(dep, "Dependency string needs 2 parts.");
+                throw new DependencyParserException(modId, dep, "Dependency string needs 2 parts.");
             }
 
             final List<String>  instructions = DEPENDENCY_INSTRUCTIONS_SPLITTER.splitToList(depParts.get(0));
@@ -86,11 +88,11 @@ public final class DependencyParser
         {
             if (target.length() > 1)
             {
-                throw new DependencyParserException(dep, "Cannot have an \"all\" (*) relationship with anything except pure *");
+                throw new DependencyParserException(modId, dep, "Cannot have an \"all\" (*) relationship with anything except pure *");
             }
             else if (targetIsBounded)
             {
-                throw new DependencyParserException(dep, "You cannot have a versioned dependency on everything (*)");
+                throw new DependencyParserException(modId, dep, "You cannot have a versioned dependency on everything (*)");
             }
         }
 
@@ -104,7 +106,7 @@ public final class DependencyParser
             {
                 if (depSide != null)
                 {
-                    throw new DependencyParserException(dep, "Up to one side (client or server) can be specified.");
+                    throw new DependencyParserException(modId, dep, "Up to one side (client or server) can be specified.");
                 }
                 depSide = Side.CLIENT;
             }
@@ -112,7 +114,7 @@ public final class DependencyParser
             {
                 if (depSide != null)
                 {
-                    throw new DependencyParserException(dep, "Up to one side (client or server) can be specified.");
+                    throw new DependencyParserException(modId, dep, "Up to one side (client or server) can be specified.");
                 }
                 depSide = Side.SERVER;
             }
@@ -120,11 +122,11 @@ public final class DependencyParser
             {
                 if (depRequired)
                 {
-                    throw new DependencyParserException(dep, "'required' can only be specified once.");
+                    throw new DependencyParserException(modId, dep, "'required' can only be specified once.");
                 }
                 if (targetIsAll)
                 {
-                    throw new DependencyParserException(dep, "You can't 'require' everything (*)");
+                    throw new DependencyParserException(modId, dep, "You can't 'require' everything (*)");
                 }
                 depRequired = true;
             }
@@ -132,13 +134,13 @@ public final class DependencyParser
             {
                 if (depOrder != null)
                 {
-                    throw new DependencyParserException(dep, "'before' or 'after' can only be specified once.");
+                    throw new DependencyParserException(modId, dep, "'before' or 'after' can only be specified once.");
                 }
                 depOrder = instruction;
             }
             else
             {
-                throw new DependencyParserException(dep, String.format("Found invalid instruction '%s'. Only %s are allowed.", instruction, DEPENDENCY_INSTRUCTIONS));
+                throw new DependencyParserException(modId, dep, String.format("Found invalid instruction '%s'. Only %s are allowed.", instruction, DEPENDENCY_INSTRUCTIONS));
             }
         }
 
@@ -149,18 +151,18 @@ public final class DependencyParser
         }
         catch (RuntimeException e)
         {
-            throw new DependencyParserException(dep, "Could not parse version string.", e);
+            throw new DependencyParserException(modId, dep, "Could not parse version string.", e);
         }
 
         if (!targetIsAll)
         {
-            String modId = artifactVersion.getLabel();
-            sanityCheckModId(dep, modId);
+            String depModId = artifactVersion.getLabel();
+            sanityCheckModId(modId, dep, depModId);
         }
 
         if (!depRequired && depOrder == null)
         {
-            throw new DependencyParserException(dep, "'required', 'client', or 'server' must be specified.");
+            throw new DependencyParserException(modId, dep, "'required', 'client', or 'server' must be specified.");
         }
 
         if (depSide == null || depSide == this.side)
@@ -183,37 +185,37 @@ public final class DependencyParser
 
     // TODO 1.13: throw these exceptions instead of logging them
     /** Based on {@link net.minecraftforge.fml.common.FMLModContainer#sanityCheckModId()} */
-    private static void sanityCheckModId(String dep, String modId)
+    private static void sanityCheckModId(String modId, String dep, String depModId)
     {
-        if (Strings.isNullOrEmpty(modId))
+        if (Strings.isNullOrEmpty(depModId))
         {
-            LOGGER.error(new DependencyParserException(dep, "The modId is null or empty").getMessage());
+            LOGGER.error(new DependencyParserException(modId, dep, "The modId is null or empty").getMessage());
         }
-        else if (modId.length() > 64)
+        else if (depModId.length() > 64)
         {
-            LOGGER.error(new DependencyParserException(dep, String.format("The modId '%s' is longer than the maximum of 64 characters.", modId)).getMessage());
+            LOGGER.error(new DependencyParserException(modId, dep, String.format("The modId '%s' is longer than the maximum of 64 characters.", depModId)).getMessage());
         }
-        else if (!modId.equals(modId.toLowerCase(Locale.ENGLISH)))
+        else if (!depModId.equals(depModId.toLowerCase(Locale.ENGLISH)))
         {
-            LOGGER.error(new DependencyParserException(dep, String.format("The modId '%s' must be all lowercase.", modId)).getMessage());
+            LOGGER.error(new DependencyParserException(modId, dep, String.format("The modId '%s' must be all lowercase.", depModId)).getMessage());
         }
     }
 
     private static class DependencyParserException extends LoaderException
     {
-        public DependencyParserException(String dependencyString, String explanation)
+        public DependencyParserException(String modId, String dependencyString, String explanation)
         {
-            super(formatMessage(dependencyString, explanation));
+            super(formatMessage(modId, dependencyString, explanation));
         }
 
-        public DependencyParserException(String dependencyString, String explanation, Throwable cause)
+        public DependencyParserException(String modId, String dependencyString, String explanation, Throwable cause)
         {
-            super(formatMessage(dependencyString, explanation), cause);
+            super(formatMessage(modId, dependencyString, explanation), cause);
         }
 
-        public static String formatMessage(String dependencyString, String explanation)
+        public static String formatMessage(String modId, String dependencyString, String explanation)
         {
-            return String.format("Unable to parse dependency string '%s'. %s", dependencyString, explanation);
+            return String.format("Unable to parse dependency for mod '%s' with dependency string '%s'. %s", modId, dependencyString, explanation);
         }
     }
 }

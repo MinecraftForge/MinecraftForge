@@ -699,7 +699,7 @@ public class Loader
     @Deprecated // TODO: remove in 1.13
     public void computeDependencies(String dependencyString, Set<ArtifactVersion> requirements, List<ArtifactVersion> dependencies, List<ArtifactVersion> dependants)
     {
-        DependencyParser dependencyParser = new DependencyParser(FMLCommonHandler.instance().getSide());
+        DependencyParser dependencyParser = new DependencyParser("unknown", FMLCommonHandler.instance().getSide());
         DependencyParser.DependencyInfo info = dependencyParser.parseDependencies(dependencyString);
         requirements.addAll(info.requirements);
         dependencies.addAll(info.dependencies);

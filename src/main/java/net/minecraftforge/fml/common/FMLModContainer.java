@@ -210,7 +210,7 @@ public class FMLModContainer implements ModContainer
         if (overridesMetadata || !modMetadata.useDependencyInformation)
         {
             annotationDependencies = (String)descriptor.get("dependencies");
-            DependencyParser dependencyParser = new DependencyParser(FMLCommonHandler.instance().getSide());
+            DependencyParser dependencyParser = new DependencyParser(getModId(), FMLCommonHandler.instance().getSide());
             DependencyParser.DependencyInfo info = dependencyParser.parseDependencies(annotationDependencies);
             info.dependants.addAll(Loader.instance().getInjectedBefore(getModId()));
             info.dependencies.addAll(Loader.instance().getInjectedAfter(getModId()));

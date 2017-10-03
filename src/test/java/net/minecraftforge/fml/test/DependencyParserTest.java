@@ -27,8 +27,8 @@ public class DependencyParserTest
     @BeforeAll
     public static void beforeAll()
     {
-        clientDependencyParser = new DependencyParser(Side.CLIENT);
-        serverDependencyParser = new DependencyParser(Side.SERVER);
+        clientDependencyParser = new DependencyParser("test", Side.CLIENT);
+        serverDependencyParser = new DependencyParser("test", Side.SERVER);
         parsers = ImmutableList.of(clientDependencyParser, serverDependencyParser);
     }
 
