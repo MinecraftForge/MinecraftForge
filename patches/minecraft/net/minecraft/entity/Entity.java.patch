@@ -155,7 +155,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2901,6 +2928,184 @@
+@@ -2901,6 +2928,185 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -248,6 +248,7 @@
 +    /**
 +     * Reset the entity ID to a new value. Not to be used from Mod code
 +     */
++    @Deprecated // TODO: remove (1.13?)
 +    public final void resetEntityId()
 +    {
 +        this.field_145783_c = field_70152_a++;
