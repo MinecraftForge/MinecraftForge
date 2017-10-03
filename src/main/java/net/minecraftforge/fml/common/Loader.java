@@ -261,11 +261,7 @@ public class Loader
                     continue;
                 }
                 reqList.putAll(mod.getModId(), names.keySet());
-                ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder()
-                        .addAll(mod.getDependants())
-                        .addAll(mod.getDependencies())
-                        .addAll(mod.getSoftRequirements())
-                        .build();
+                ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
                 for (ArtifactVersion v : allDeps)
                 {
                     if (modVersions.containsKey(v.getLabel()))
@@ -708,7 +704,6 @@ public class Loader
         requirements.addAll(info.requirements);
         dependencies.addAll(info.dependencies);
         dependants.addAll(info.dependants);
-        dependants.addAll(info.softRequirements); // best approximation, treats all soft requirements as 'after'
     }
 
     public Map<String,ModContainer> getIndexedModList()

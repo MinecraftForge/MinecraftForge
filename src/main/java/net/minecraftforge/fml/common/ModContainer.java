@@ -95,14 +95,6 @@ public interface ModContainer
     Set<ArtifactVersion> getRequirements();
 
     /**
-     * A list of the ArtifactVersions that this mod requires *if* those mods are present.
-     */
-    default Set<ArtifactVersion> getSoftRequirements()
-    {
-        return Collections.emptySet();
-    }
-
-    /**
      * A list of ArtifactVersions that should be loaded prior to this one. The special
      * value <strong>*</strong> indicates to load <em>after</em> any other mod.
      */

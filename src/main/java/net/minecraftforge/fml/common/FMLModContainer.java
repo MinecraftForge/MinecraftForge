@@ -215,14 +215,13 @@ public class FMLModContainer implements ModContainer
             info.dependants.addAll(Loader.instance().getInjectedBefore(getModId()));
             info.dependencies.addAll(Loader.instance().getInjectedAfter(getModId()));
             modMetadata.requiredMods = info.requirements;
-            modMetadata.softRequiredMods = info.softRequirements;
             modMetadata.dependencies = info.dependencies;
             modMetadata.dependants = info.dependants;
-            modLog.trace("Parsed dependency info : Requirements: {} SoftRequirements:{} After:{} Before:{}", info.requirements, info.softRequirements, info.dependencies, info.dependants);
+            modLog.trace("Parsed dependency info : Requirements: {} After:{} Before:{}", info.requirements, info.dependencies, info.dependants);
         }
         else
         {
-            modLog.trace("Using mcmod dependency info : {} {} {} {}", modMetadata.requiredMods, modMetadata.softRequiredMods, modMetadata.dependencies, modMetadata.dependants);
+            modLog.trace("Using mcmod dependency info : {} {} {}", modMetadata.requiredMods, modMetadata.dependencies, modMetadata.dependants);
         }
         if (Strings.isNullOrEmpty(modMetadata.name))
         {
@@ -335,12 +334,6 @@ public class FMLModContainer implements ModContainer
     public Set<ArtifactVersion> getRequirements()
     {
         return modMetadata.requiredMods;
-    }
-
-    @Override
-    public Set<ArtifactVersion> getSoftRequirements()
-    {
-        return modMetadata.softRequiredMods;
     }
 
     @Override

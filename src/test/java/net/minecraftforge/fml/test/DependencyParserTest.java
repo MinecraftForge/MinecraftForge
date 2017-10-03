@@ -46,7 +46,6 @@ public class DependencyParserTest
             {
                 DependencyParser.DependencyInfo info = parser.parseDependencies(string);
                 assertTrue(info.requirements.isEmpty());
-                assertTrue(info.softRequirements.isEmpty());
                 assertTrue(info.dependants.isEmpty());
                 assertTrue(info.dependencies.isEmpty());
             }
@@ -63,7 +62,6 @@ public class DependencyParserTest
             assertContainsSameToString(info.requirements, Sets.newHashSet(mod));
             assertTrue(info.dependants.isEmpty());
             assertTrue(info.dependencies.isEmpty());
-            assertTrue(info.softRequirements.isEmpty());
         }
     }
 
@@ -75,7 +73,6 @@ public class DependencyParserTest
         {
             DependencyParser.DependencyInfo info = parser.parseDependencies("before:" + mod);
             assertTrue(info.requirements.isEmpty());
-            assertTrue(info.softRequirements.isEmpty());
             assertContainsSameToString(info.dependants, Sets.newHashSet(mod));
             assertTrue(info.dependencies.isEmpty());
         }
@@ -89,23 +86,20 @@ public class DependencyParserTest
         {
             DependencyParser.DependencyInfo info = parser.parseDependencies("after:" + mod);
             assertTrue(info.requirements.isEmpty());
-            assertTrue(info.softRequirements.isEmpty());
             assertTrue(info.dependants.isEmpty());
             assertContainsSameToString(info.dependencies, Sets.newHashSet(mod));
         }
     }
 
     @Test
-    public void testParsingSoftDependencies()
+    public void testParsingNoPrefix()
     {
         String mod = "supermod3000@[1.2,)";
         for (DependencyParser parser : parsers)
         {
-            DependencyParser.DependencyInfo info = parser.parseDependencies(mod);
-            assertTrue(info.requirements.isEmpty());
-            assertContainsSameToString(info.softRequirements, Sets.newHashSet(mod));
-            assertTrue(info.dependants.isEmpty());
-            assertTrue(info.dependencies.isEmpty());
+            assertThrows(LoaderException.class, () -> {
+                parser.parseDependencies(mod);
+            });
         }
     }
 
@@ -114,10 +108,9 @@ public class DependencyParserTest
     {
         for (DependencyParser parser : parsers)
         {
-            String dependencyString = "after:supermod2000@[1.3,);required-before:yetanothermod;softdepmod@[1.0,2.0);required:modw";
+            String dependencyString = "after:supermod2000@[1.3,);required-before:yetanothermod;required:modw";
             DependencyParser.DependencyInfo info = parser.parseDependencies(dependencyString);
             assertContainsSameToString(info.requirements, Sets.newHashSet("yetanothermod", "modw"));
-            assertContainsSameToString(info.softRequirements, Sets.newHashSet("softdepmod@[1.0,2.0)"));
             assertContainsSameToString(info.dependencies, Sets.newHashSet("supermod2000@[1.3,)"));
             assertContainsSameToString(info.dependants, Sets.newHashSet("yetanothermod"));
         }
@@ -128,50 +121,44 @@ public class DependencyParserTest
     {
         String mod = "testmod@[1.0,2.0)";
         {
-            DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("client:" + mod);
+            DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("client-after:" + mod);
             assertTrue(info.requirements.isEmpty());
-            assertContainsSameToString(info.softRequirements, Sets.newHashSet(mod));
+            assertTrue(info.dependants.isEmpty());
+            assertContainsSameToString(info.dependencies, Sets.newHashSet(mod));
+        }
+
+        {
+            DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("server-after:testmod@[1.0,2.0);server-required:testmod2;server-after:testmod3;server-before:testmod4");
+            assertTrue(info.requirements.isEmpty());
             assertTrue(info.dependants.isEmpty());
             assertTrue(info.dependencies.isEmpty());
         }
 
         {
-            DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("server:testmod@[1.0,2.0);server-required:testmod2;server-after:testmod3;server-before:testmod4");
+            DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("client-before:testmod@[1.0,2.0);server-required:testmod2;server-after:testmod3;server-before:testmod4");
             assertTrue(info.requirements.isEmpty());
-            assertTrue(info.softRequirements.isEmpty());
+            assertContainsSameToString(info.dependants, Sets.newHashSet(mod));
+            assertTrue(info.dependencies.isEmpty());
+        }
+
+        {
+            DependencyParser.DependencyInfo info = serverDependencyParser.parseDependencies("server-before:" + mod);
+            assertTrue(info.requirements.isEmpty());
+            assertContainsSameToString(info.dependants, Sets.newHashSet(mod));
+            assertTrue(info.dependencies.isEmpty());
+        }
+
+        {
+            DependencyParser.DependencyInfo info = serverDependencyParser.parseDependencies("client-before:testmod@[1.0,2.0);client-required:testmod2;client-after:testmod3;client-before:testmod4");
+            assertTrue(info.requirements.isEmpty());
             assertTrue(info.dependants.isEmpty());
             assertTrue(info.dependencies.isEmpty());
         }
 
         {
-            DependencyParser.DependencyInfo info = clientDependencyParser.parseDependencies("client:testmod@[1.0,2.0);server-required:testmod2;server-after:testmod3;server-before:testmod4");
+            DependencyParser.DependencyInfo info = serverDependencyParser.parseDependencies("server-before:testmod@[1.0,2.0);client-required:testmod2;client-after:testmod3;client-before:testmod4");
             assertTrue(info.requirements.isEmpty());
-            assertContainsSameToString(info.softRequirements, Sets.newHashSet(mod));
-            assertTrue(info.dependants.isEmpty());
-            assertTrue(info.dependencies.isEmpty());
-        }
-
-        {
-            DependencyParser.DependencyInfo info = serverDependencyParser.parseDependencies("server:" + mod);
-            assertTrue(info.requirements.isEmpty());
-            assertContainsSameToString(info.softRequirements, Sets.newHashSet(mod));
-            assertTrue(info.dependants.isEmpty());
-            assertTrue(info.dependencies.isEmpty());
-        }
-
-        {
-            DependencyParser.DependencyInfo info = serverDependencyParser.parseDependencies("client:testmod@[1.0,2.0);client-required:testmod2;client-after:testmod3;client-before:testmod4");
-            assertTrue(info.requirements.isEmpty());
-            assertTrue(info.softRequirements.isEmpty());
-            assertTrue(info.dependants.isEmpty());
-            assertTrue(info.dependencies.isEmpty());
-        }
-
-        {
-            DependencyParser.DependencyInfo info = serverDependencyParser.parseDependencies("server:testmod@[1.0,2.0);client-required:testmod2;client-after:testmod3;client-before:testmod4");
-            assertTrue(info.requirements.isEmpty());
-            assertContainsSameToString(info.softRequirements, Sets.newHashSet(mod));
-            assertTrue(info.dependants.isEmpty());
+            assertContainsSameToString(info.dependants, Sets.newHashSet(mod));
             assertTrue(info.dependencies.isEmpty());
         }
     }

@@ -62,7 +62,6 @@ public class ModMetadata
 
     public boolean useDependencyInformation;
     public Set<ArtifactVersion> requiredMods = Sets.newHashSet();
-    public Set<ArtifactVersion> softRequiredMods = Sets.newHashSet();
     public List<ArtifactVersion> dependencies = Lists.newArrayList();
     public List<ArtifactVersion> dependants = Lists.newArrayList();
     // this field is not for use in the json

@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.common.versioning;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -39,7 +38,6 @@ public final class DependencyParser
     public static class DependencyInfo
     {
         public final Set<ArtifactVersion> requirements = new HashSet<>();
-        public final Set<ArtifactVersion> softRequirements = new HashSet<>();
         public final List<ArtifactVersion> dependencies = new ArrayList<>();
         public final List<ArtifactVersion> dependants = new ArrayList<>();
     }
@@ -67,25 +65,14 @@ public final class DependencyParser
 
         for (String dep : DEPENDENCY_SPLITTER.split(dependencyString))
         {
-            final List<String> instructions;
-            final String target;
-
             final List<String> depParts = DEPENDENCY_PART_SPLITTER.splitToList(dep);
-            if (depParts.size() == 1)
+            if (depParts.size() != 2)
             {
-                instructions = Collections.emptyList();
-                target = depParts.get(0);
-            }
-            else if (depParts.size() == 2)
-            {
-                instructions = DEPENDENCY_INSTRUCTIONS_SPLITTER.splitToList(depParts.get(0));
-                target = depParts.get(1);
-            }
-            else
-            {
-                throw new DependencyParserException(dep, "Dependency string needs 1 or 2 parts.");
+                throw new DependencyParserException(dep, "Dependency string needs 2 parts.");
             }
 
+            final List<String>  instructions = DEPENDENCY_INSTRUCTIONS_SPLITTER.splitToList(depParts.get(0));
+            final String target = depParts.get(1);
             parseDependency(dep, instructions, target, info);
         }
         return info;
@@ -171,9 +158,9 @@ public final class DependencyParser
             sanityCheckModId(dep, modId);
         }
 
-        if (!depRequired && depOrder == null && !targetIsBounded)
+        if (!depRequired && depOrder == null)
         {
-            throw new DependencyParserException(dep, "Soft dependencies must have a version restriction specified.");
+            throw new DependencyParserException(dep, "'required', 'client', or 'server' must be specified.");
         }
 
         if (depSide == null || depSide == this.side)
@@ -190,10 +177,6 @@ public final class DependencyParser
             else if ("after".equals(depOrder))
             {
                 info.dependencies.add(artifactVersion);
-            }
-            else if (!depRequired && depOrder == null)
-            {
-                info.softRequirements.add(artifactVersion);
             }
         }
     }
