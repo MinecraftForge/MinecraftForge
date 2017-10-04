@@ -40,20 +40,20 @@ public class LootContextTweaksTest
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        if(!ENABLED) return; 
+        if (!ENABLED) return; 
         LootConditionManager.registerCondition(new InBiome.Serialiser());
     }
 
     @SubscribeEvent
     public static void onLootTableLoad(LootTableLoadEvent event)
     {
-        if(!ENABLED) return;
-        if(event.getName().equals(LootTableList.GAMEPLAY_FISHING))
+        if (!ENABLED) return;
+        if (event.getName().equals(LootTableList.GAMEPLAY_FISHING))
         {
             LootPool main = event.getTable().getPool("main");
             main.addEntry(new LootEntryItem(Items.ACACIA_BOAT, 100, 1, new LootFunction[0], new LootCondition[] {new InBiome(Biomes.SAVANNA)}, "fishing_test"));
         }
-        else if(event.getName().equals(LootTableList.CHESTS_SIMPLE_DUNGEON))
+        else if (event.getName().equals(LootTableList.CHESTS_SIMPLE_DUNGEON))
         {
             LootPool main = event.getTable().getPool("main");
             LootCondition onFire = new EntityHasProperty(new EntityProperty[] {new EntityOnFire(true)}, LootContext.EntityTarget.KILLER_PLAYER);
@@ -73,7 +73,7 @@ public class LootContextTweaksTest
         @Override
         public boolean testCondition(Random rand, LootContext context) 
         {
-            if(context.getLootedEntity() == null) return false;
+            if (context.getLootedEntity() == null) return false;
             Biome biome = context.getWorld().getBiome(context.getLootedEntity().getPosition());
             return biome == requiredBiome;
         }
@@ -94,10 +94,10 @@ public class LootContextTweaksTest
             @Override
             public InBiome deserialize(JsonObject json, JsonDeserializationContext context) 
             {
-                if(!json.has("biome")) throw new JsonSyntaxException("Missing biome tag, expected to find a biome registry name");
+                if (!json.has("biome")) throw new JsonSyntaxException("Missing biome tag, expected to find a biome registry name");
                 ResourceLocation biomeResLoc = new ResourceLocation(json.get("biome").getAsString());
                 Biome biome = ForgeRegistries.BIOMES.getValue(biomeResLoc);
-                if(biome == null) throw new JsonSyntaxException("Invalid biome tag. " + biomeResLoc + " does not exist in the biome registry.");
+                if (biome == null) throw new JsonSyntaxException("Invalid biome tag. " + biomeResLoc + " does not exist in the biome registry.");
                 return new InBiome(biome);
             }
         }
