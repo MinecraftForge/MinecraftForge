@@ -54,7 +54,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -222,6 +208,352 @@
+@@ -222,6 +208,353 @@
          return new WorldBorder();
      }
  
@@ -181,6 +181,7 @@
 +     * Allows for manipulating the coloring of the lightmap texture.
 +     * Will be called for each 16*16 combination of sky/block light values.
 +     *
++     * @param partialTicks Progress between ticks.
 +     * @param sunBrightness Current sun brightness.
 +     * @param skyLight Sky light brightness factor.
 +     * @param blockLight Block light brightness factor.
@@ -188,7 +189,7 @@
 +     *
 +     * @see net.minecraft.client.renderer.EntityRenderer#updateLightmap(float)
 +     */
-+    public void getLightmapColors(float sunBrightness, float skyLight, float blockLight, float[] colors) {}
++    public void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors) {}
 +
 +    public BlockPos getRandomizedSpawnPoint()
 +    {
