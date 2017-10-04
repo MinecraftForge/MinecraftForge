@@ -73,7 +73,7 @@ public final class Clips
         }
 
         @Override
-        public Iterable<Event> pastEvents(float lastPollTime, float time)
+        public Iterable<Event> pastEvents(double lastPollTime, double time)
         {
             return ImmutableSet.<Event>of();
         }
@@ -125,7 +125,7 @@ public final class Clips
         }
 
         @Override
-        public Iterable<Event> pastEvents(float lastPollTime, float time)
+        public Iterable<Event> pastEvents(double lastPollTime, double time)
         {
             return childClip.pastEvents(lastPollTime, time);
         }
@@ -171,7 +171,7 @@ public final class Clips
             {
                 private final IJointClip parent = childClip.apply(joint);
                 @Override
-                public TRSRTransformation apply(float time)
+                public TRSRTransformation apply(double time)
                 {
                     return parent.apply(TimeClip.this.time.apply(time));
                 }
@@ -179,7 +179,7 @@ public final class Clips
         }
 
         @Override
-        public Iterable<Event> pastEvents(float lastPollTime, float time)
+        public Iterable<Event> pastEvents(double lastPollTime, double time)
         {
             return childClip.pastEvents(this.time.apply(lastPollTime), this.time.apply(time));
         }
@@ -231,10 +231,10 @@ public final class Clips
         }
 
         @Override
-        public Iterable<Event> pastEvents(float lastPollTime, float time)
+        public Iterable<Event> pastEvents(double lastPollTime, double time)
         {
-            float clipLastPollTime = input.apply(lastPollTime);
-            float clipTime = input.apply(time);
+            double clipLastPollTime = input.apply(lastPollTime);
+            double clipTime = input.apply(time);
             return Iterables.mergeSorted(ImmutableSet.of(
                 from.pastEvents(clipLastPollTime, clipTime),
                 to.pastEvents(clipLastPollTime, clipTime)
@@ -288,10 +288,10 @@ public final class Clips
         return new IJointClip()
         {
             @Override
-            public TRSRTransformation apply(float time)
+            public TRSRTransformation apply(double time)
             {
-                float clipTime = input.apply(time);
-                return fromClip.apply(clipTime).slerp(toClip.apply(clipTime), MathHelper.clamp(progress.apply(time), 0, 1));
+                double clipTime = input.apply(time);
+                return fromClip.apply(clipTime).slerp(toClip.apply(clipTime), (float)MathHelper.clamp(progress.apply(time), 0, 1));
             }
         };
     }
@@ -299,7 +299,7 @@ public final class Clips
     /**
      * IModelState wrapper for a Clip, sampled at specified time.
      */
-    public static Pair<IModelState, Iterable<Event>> apply(final IClip clip, final float lastPollTime, final float time)
+    public static Pair<IModelState, Iterable<Event>> apply(final IClip clip, final double lastPollTime, final double time)
     {
         return Pair.<IModelState, Iterable<Event>>of(new IModelState()
         {
@@ -348,7 +348,7 @@ public final class Clips
         }
 
         @Override
-        public Iterable<Event> pastEvents(float lastPollTime, float time)
+        public Iterable<Event> pastEvents(double lastPollTime, double time)
         {
             if(parameter.apply(lastPollTime) < 0 && parameter.apply(time) >= 0)
             {
@@ -400,7 +400,7 @@ public final class Clips
         }
 
         @Override
-        public Iterable<Event> pastEvents(float lastPollTime, float time)
+        public Iterable<Event> pastEvents(double lastPollTime, double time)
         {
             resolve();
             return clip.pastEvents(lastPollTime, time);

@@ -31,7 +31,7 @@ public final class JointClips
         INSTANCE;
 
         @Override
-        public TRSRTransformation apply(float time)
+        public TRSRTransformation apply(double time)
         {
             return TRSRTransformation.identity();
         }
@@ -49,7 +49,7 @@ public final class JointClips
         }
 
         @Override
-        public TRSRTransformation apply(float time)
+        public TRSRTransformation apply(double time)
         {
             return clip.apply(child).apply(time);
         }

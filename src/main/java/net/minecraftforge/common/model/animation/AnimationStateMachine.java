@@ -76,15 +76,15 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     private transient boolean shouldHandleSpecialEvents;
     private transient String currentStateName;
     private transient IClip currentState;
-    private transient float lastPollTime;
+    private transient double lastPollTime;
 
-    private static final LoadingCache<Triple<? extends IClip, Float, Float>, Pair<IModelState, Iterable<Event>>> clipCache = CacheBuilder.newBuilder()
+    private static final LoadingCache<Triple<? extends IClip, Double, Double>, Pair<IModelState, Iterable<Event>>> clipCache = CacheBuilder.newBuilder()
         .maximumSize(100)
         .expireAfterWrite(100, TimeUnit.MILLISECONDS)
-        .build(new CacheLoader<Triple<? extends IClip, Float, Float>, Pair<IModelState, Iterable<Event>>>()
+        .build(new CacheLoader<Triple<? extends IClip, Double, Double>, Pair<IModelState, Iterable<Event>>>()
         {
             @Override
-            public Pair<IModelState, Iterable<Event>> load(Triple<? extends IClip, Float, Float> key) throws Exception
+            public Pair<IModelState, Iterable<Event>> load(Triple<? extends IClip, Double, Double> key) throws Exception
             {
                 return Clips.apply(key.getLeft(), key.getMiddle(), key.getRight());
             }
@@ -127,7 +127,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
             throw new JsonParseException("Animation State Machine should contain \"transitions\" key.");
         }
         shouldHandleSpecialEvents = true;
-        lastPollTime = Float.NEGATIVE_INFINITY;
+        lastPollTime = Double.NEGATIVE_INFINITY;
         // setting the starting state
         IClip state = clips.get(startState);
         if(!clips.containsKey(startState) || !states.contains(startState))
@@ -139,9 +139,9 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     }
 
     @Override
-    public Pair<IModelState, Iterable<Event>> apply(float time)
+    public Pair<IModelState, Iterable<Event>> apply(double time)
     {
-        if(lastPollTime == Float.NEGATIVE_INFINITY)
+        if(lastPollTime == Double.NEGATIVE_INFINITY)
         {
             lastPollTime = time;
         }

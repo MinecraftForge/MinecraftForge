@@ -727,7 +727,7 @@
 +            final IItemPropertyGetter parameter = field_185051_m.func_82594_a(location);
 +            builder.put(location.toString(), new net.minecraftforge.common.animation.ITimeValue()
 +            {
-+                public float apply(float input)
++                public double apply(double input)
 +                {
 +                    return parameter.func_185085_a(stack, world, entity);
 +                }

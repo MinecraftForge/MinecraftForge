@@ -114,9 +114,9 @@ public class ModelBlockAnimation
         @SuppressWarnings("unused")
         private final Type type;
         private final Interpolation interpolation;
-        private final float[] samples;
+        private final double[] samples;
 
-        public MBVariableClip(Variable variable, Type type, Interpolation interpolation, float[] samples)
+        public MBVariableClip(Variable variable, Type type, Interpolation interpolation, double[] samples)
         {
             this.variable = variable;
             this.type = type;
@@ -133,7 +133,7 @@ public class ModelBlockAnimation
         private transient ImmutableMap<String, MBJointClip> jointClips;
         @SerializedName("events")
         private final ImmutableMap<String, String> eventsRaw;
-        private transient TreeMap<Float, Event> events;
+        private transient TreeMap<Double, Event> events;
 
         public MBClip(boolean loop, ImmutableMap<String, ImmutableList<MBVariableClip>> clips, ImmutableMap<String, String> events)
         {
@@ -155,20 +155,20 @@ public class ModelBlockAnimation
                 events = Maps.newTreeMap();
                 if (!eventsRaw.isEmpty())
                 {
-                    TreeMap<Float, String> times = Maps.newTreeMap();
+                    TreeMap<Double, String> times = Maps.newTreeMap();
                     for (String time : eventsRaw.keySet())
                     {
-                        times.put(Float.parseFloat(time), time);
+                        times.put(Double.parseDouble(time), time);
                     }
-                    float lastTime = Float.POSITIVE_INFINITY;
+                    double lastTime = Double.POSITIVE_INFINITY;
                     if (loop)
                     {
                         lastTime = times.firstKey();
                     }
-                    for (Map.Entry<Float, String> entry : times.descendingMap().entrySet())
+                    for (Map.Entry<Double, String> entry : times.descendingMap().entrySet())
                     {
-                        float time = entry.getKey();
-                        float offset = lastTime - time;
+                        double time = entry.getKey();
+                        double offset = lastTime - time;
                         if (loop)
                         {
                             offset = 1 - (1 - offset) % 1;
@@ -194,7 +194,7 @@ public class ModelBlockAnimation
         }
 
         @Override
-        public Iterable<Event> pastEvents(final float lastPollTime, final float time)
+        public Iterable<Event> pastEvents(final double lastPollTime, final double time)
         {
             initialize();
             return new Iterable<Event>()
@@ -204,9 +204,9 @@ public class ModelBlockAnimation
                 {
                     return new UnmodifiableIterator<Event>()
                     {
-                        private Float curKey;
+                        private Double curKey;
                         private Event firstEvent;
-                        private float stopTime;
+                        private double stopTime;
                         {
                             if(lastPollTime >= time)
                             {
@@ -214,19 +214,19 @@ public class ModelBlockAnimation
                             }
                             else
                             {
-                                float fractTime = time - (float)Math.floor(time);
-                                float fractLastTime = lastPollTime - (float)Math.floor(lastPollTime);
+                                double fractTime = time - Math.floor(time);
+                                double fractLastTime = lastPollTime - (double)Math.floor(lastPollTime);
                                 // swap if not in order
                                 if(fractLastTime > fractTime)
                                 {
-                                    float tmp = fractTime;
+                                    double tmp = fractTime;
                                     fractTime = fractLastTime;
                                     fractLastTime = tmp;
                                 }
                                 // need to wrap around, swap again
                                 if(fractTime - fractLastTime > .5f)
                                 {
-                                    float tmp = fractTime;
+                                    double tmp = fractTime;
                                     fractTime = fractLastTime;
                                     fractLastTime = tmp;
                                 }
@@ -240,11 +240,11 @@ public class ModelBlockAnimation
                                 }
                                 if(curKey != null)
                                 {
-                                    float checkCurTime = curKey;
-                                    float checkStopTime = stopTime;
+                                    double checkCurTime = curKey;
+                                    double checkStopTime = stopTime;
                                     if(checkCurTime >= fractTime) checkCurTime--;
                                     if(checkStopTime >= fractTime) checkStopTime--;
-                                    float offset = fractTime - checkCurTime;
+                                    double offset = fractTime - checkCurTime;
                                     Event event = events.get(curKey);
                                     if(checkCurTime < checkStopTime)
                                     {
@@ -288,7 +288,7 @@ public class ModelBlockAnimation
                             }
                             if(curKey != null)
                             {
-                                float checkStopTime = stopTime;
+                                double checkStopTime = stopTime;
                                 while(curKey + events.get(curKey).offset() < checkStopTime) checkStopTime--;
                                 while(curKey + events.get(curKey).offset() >= checkStopTime + 1) checkStopTime++;
                                 if(curKey <= checkStopTime)
@@ -324,7 +324,7 @@ public class ModelBlockAnimation
             }
 
             @Override
-            public TRSRTransformation apply(float time)
+            public TRSRTransformation apply(double time)
             {
                 time -= Math.floor(time);
                 Vector3f translation = new Vector3f(0, 0, 0);
@@ -333,9 +333,9 @@ public class ModelBlockAnimation
                 for(MBVariableClip var : variables)
                 {
                     int length = loop ? var.samples.length : (var.samples.length - 1);
-                    float timeScaled = time * length;
+                    double timeScaled = time * length;
                     int s1 = MathHelper.clamp((int)Math.round(Math.floor(timeScaled)), 0, length - 1);
-                    float progress = timeScaled - s1;
+                    double progress = timeScaled - s1;
                     int s2 = s1 + 1;
                     if(s2 == length && loop) s2 = 0;
                     float value = 0;
@@ -344,18 +344,18 @@ public class ModelBlockAnimation
                         case LINEAR:
                             if(var.variable == Variable.ANGLE)
                             {
-                                float v1 = var.samples[s1];
-                                float v2 = var.samples[s2];
-                                float diff = ((v2 - v1) % 360 + 540) % 360 - 180;
-                                value = v1 + diff * progress;
+                                double v1 = var.samples[s1];
+                                double v2 = var.samples[s2];
+                                double diff = ((v2 - v1) % 360 + 540) % 360 - 180;
+                                value = (float)(v1 + diff * progress);
                             }
                             else
                             {
-                                value = var.samples[s1] * (1 - progress) + var.samples[s2] * progress;
+                                value = (float)(var.samples[s1] * (1 - progress) + var.samples[s2] * progress);
                             }
                             break;
                         case NEAREST:
-                            value = var.samples[progress < .5f ? s1 : s2];
+                            value = (float)(var.samples[progress < .5f ? s1 : s2]);
                             break;
                     }
                     switch(var.variable)

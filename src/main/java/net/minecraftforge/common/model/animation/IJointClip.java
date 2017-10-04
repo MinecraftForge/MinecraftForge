@@ -26,5 +26,5 @@ import net.minecraftforge.common.model.TRSRTransformation;
  */
 public interface IJointClip
 {
-    TRSRTransformation apply(float time);
+    TRSRTransformation apply(double time);
 }
