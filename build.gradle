@@ -30,7 +30,7 @@ apply plugin: "net.minecraftforge.gradle.launch4j"
 minecraft.version = "1.12.2"
 
 minecraft {
-    mappings = 'snapshot_nodoc_20171003'
+    mappings = 'snapshot_nodoc_20171004'
     workspaceDir = "projects"
     versionJson = "jsons/${minecraft.version}-dev.json"
     buildUserdev = true
