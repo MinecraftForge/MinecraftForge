@@ -28,7 +28,18 @@
          if (this.func_92059_d().func_190926_b())
          {
              this.func_70106_y();
-@@ -169,8 +176,16 @@
+@@ -137,7 +144,9 @@
+ 
+             if (this.field_70122_E)
+             {
+-                f = this.field_70170_p.func_180495_p(new BlockPos(MathHelper.func_76128_c(this.field_70165_t), MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b) - 1, MathHelper.func_76128_c(this.field_70161_v))).func_177230_c().field_149765_K * 0.98F;
++                BlockPos underPos = new BlockPos(MathHelper.func_76128_c(this.field_70165_t), MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b) - 1, MathHelper.func_76128_c(this.field_70161_v));
++                net.minecraft.block.state.IBlockState underState = this.field_70170_p.func_180495_p(underPos);
++                f = underState.func_177230_c().getSlipperiness(underState, this.field_70170_p, underPos, this) * 0.98F;
+             }
+ 
+             this.field_70159_w *= (double)f;
+@@ -169,8 +178,16 @@
                  }
              }
  
@@ -46,7 +57,7 @@
                  this.func_70106_y();
              }
          }
-@@ -227,6 +242,10 @@
+@@ -227,6 +244,10 @@
                      {
                          return false;
                      }
@@ -57,7 +68,7 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -284,6 +303,7 @@
+@@ -284,6 +305,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -65,7 +76,7 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -316,6 +336,7 @@
+@@ -316,6 +338,7 @@
          p_70014_1_.func_74777_a("Health", (short)this.field_70291_e);
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
          p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -73,7 +84,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -360,17 +381,22 @@
+@@ -360,17 +383,22 @@
          {
              this.func_70106_y();
          }
@@ -97,7 +108,7 @@
              {
                  if (item == Item.func_150898_a(Blocks.field_150364_r))
                  {
-@@ -407,6 +433,7 @@
+@@ -407,6 +435,7 @@
                      }
                  }
  
@@ -105,7 +116,7 @@
                  p_70100_1_.func_71001_a(this, i);
  
                  if (itemstack.func_190926_b())
-@@ -513,6 +540,6 @@
+@@ -513,6 +542,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();
