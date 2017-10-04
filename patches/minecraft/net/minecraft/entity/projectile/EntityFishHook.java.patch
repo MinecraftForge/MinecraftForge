@@ -19,10 +19,12 @@
              if (this.field_146043_c != null)
              {
                  this.func_184527_k();
-@@ -516,8 +517,16 @@
+@@ -515,9 +516,17 @@
+             else if (this.field_146045_ax > 0)
              {
                  LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.field_70170_p);
-                 lootcontext$builder.func_186469_a((float)this.field_191518_aw + this.field_146042_b.func_184817_da());
+-                lootcontext$builder.func_186469_a((float)this.field_191518_aw + this.field_146042_b.func_184817_da());
++                lootcontext$builder.func_186469_a((float)this.field_191518_aw + this.field_146042_b.func_184817_da()).func_186470_a(this.field_146042_b).func_186472_a(this); // Forge: add player & looted entity to LootContext
 +                List<ItemStack> result = this.field_70170_p.func_184146_ak().func_186521_a(LootTableList.field_186387_al).func_186462_a(this.field_70146_Z, lootcontext$builder.func_186471_a());
 +                event = new net.minecraftforge.event.entity.player.ItemFishedEvent(result, this.field_146051_au ? 2 : 1, this);
 +                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
