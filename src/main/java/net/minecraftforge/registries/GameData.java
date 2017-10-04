@@ -423,7 +423,7 @@ public class GameData
             @Override public ItemStack getCraftingResult(InventoryCrafting inv) { return result; }
             @Override public boolean canFit(int width, int height) { return false; }
             @Override public ItemStack getRecipeOutput() { return result; }
-            @Override public boolean isHidden() { return true; }
+            @Override public boolean isDynamic() { return true; }
         }
     }
 
