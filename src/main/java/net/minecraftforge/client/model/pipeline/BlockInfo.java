@@ -28,6 +28,8 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockInfo
 {
+    private static final EnumFacing[] SIDES = EnumFacing.values();
+
     private final BlockColors colors;
     private IBlockAccess world;
     private IBlockState state;
@@ -127,7 +129,7 @@ public class BlockInfo
         }
         if(!full)
         {
-            for(EnumFacing side : EnumFacing.values())
+            for(EnumFacing side : SIDES)
             {
                 int x = side.getFrontOffsetX() + 1;
                 int y = side.getFrontOffsetY() + 1;
@@ -167,7 +169,7 @@ public class BlockInfo
         full = state.isFullCube();
         packed[0] = state.getPackedLightmapCoords(world, blockPos);
 
-        for (EnumFacing side : EnumFacing.values())
+        for (EnumFacing side : SIDES)
         {
             int i = side.ordinal() + 1;
             packed[i] = state.getPackedLightmapCoords(world, blockPos.offset(side));
