@@ -15,7 +15,7 @@ Contributor License Agreement
 - You grant Forge a license to use your code contributed to the primary codebase (everything **not** under patches) in Forge, under the LGPLv2.1 license.
 - You assign copyright ownership of your contributions to the patches codebase (everything under patches) to Forge, where it will be licensed under the LGPLv2.1 license.
 
-Additionally, while 1.12.2 is being maintained, you will be asked to acknowledge these two additional clauses.
+Additionally, while 1.9.4 is being maintained, you will be asked to acknowledge these two additional clauses.
 - You grant Forge a license to use your code contributed to the primary codebase (everything **not** under patches) in Forge, under the MinecraftForge license.
 - You grant assign copyright ownership of your contributions to the patches codebase (everything under patches) to Forge, where it will be licensed under the MinecraftForge license.
 
