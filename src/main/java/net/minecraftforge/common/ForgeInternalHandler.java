@@ -30,6 +30,8 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 
 public class ForgeInternalHandler
 {
@@ -68,7 +70,7 @@ public class ForgeInternalHandler
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionSave(WorldEvent.Save event)
     {
-    	ForgeChunkManager.saveWorld(event.getWorld());
+        ForgeChunkManager.saveWorld(event.getWorld());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -78,4 +80,11 @@ public class ForgeInternalHandler
         if (event.getWorld() instanceof WorldServer)
             FakePlayerFactory.unloadWorld((WorldServer) event.getWorld());
     }
+
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent event)
+    {
+        WorldWorkerManager.tick(event.phase == TickEvent.Phase.START);
+    }
 }
+

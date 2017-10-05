@@ -91,6 +91,7 @@ import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -117,6 +118,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
     public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
+    public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
+                                                       // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
 
     static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
@@ -286,6 +289,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Log cascading chunk generation issues during terrain population.");
         logCascadingWorldGeneration = prop.getBoolean();
         prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "fixVanillaCascading", false,
+                "Fix vanilla issues that cause worldgen cascading. This DOES change vanilla worldgen so DO NOT report bugs related to world differences if this flag is on.");
+        fixVanillaCascading = prop.getBoolean();
+        prop.setLanguageKey("forge.configgui.fixVanillaCascading");
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 0,
@@ -509,6 +518,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         evt.registerServerCommand(new ForgeCommand());
     }
+
+    @Subscribe
+    public void serverStopping(FMLServerStoppingEvent evt)
+    {
+        WorldWorkerManager.clear();
+    }
+
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
