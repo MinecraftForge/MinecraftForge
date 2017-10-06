@@ -33,6 +33,9 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.common.crafting.IShapedRecipe;
+import net.minecraftforge.fluids.FluidIngredient;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.common.crafting.JsonContext;
 
@@ -141,6 +144,48 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         }
 
         return true;
+    }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
+    {
+        NonNullList<ItemStack> remainders = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        for (int index = 0; index < remainders.size(); index++)
+        {
+            ItemStack itemStack = inv.getStackInSlot(index);
+            if (!itemStack.isEmpty())
+            {
+                Ingredient ingredient = input.get(index);
+                if (ingredient instanceof FluidIngredient)
+                {
+                    ItemStack container = itemStack.copy();
+                    container.setCount(1);
+                    IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
+                    if (fluidHandler != null)
+                    {
+                        if (((FluidIngredient)ingredient).getMatchingStrategy() == FluidIngredient.MatchingStrategy.VOIDING)
+                        {
+                            fluidHandler.drain(Integer.MAX_VALUE, true);
+                        }
+                        else
+                        {
+                            fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
+                        }
+
+                        if (container.getCount() <= 0)
+                        {
+                            itemStack = fluidHandler.getContainer();
+                        }
+                    }
+                }
+                else
+                {
+                    itemStack = ForgeHooks.getContainerItem(itemStack);
+                }
+                remainders.set(index, itemStack);
+            }
+        }
+        return remainders;
     }
 
     public ShapedOreRecipe setMirrored(boolean mirror)

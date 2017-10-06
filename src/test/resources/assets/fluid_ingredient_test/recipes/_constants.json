@@ -1,0 +1,19 @@
+[
+  {
+    "name": "water_matching_exceeded",
+    "ingredient": {
+      "type": "forge:fluid",
+      "fluid": "water",
+      "amount": 1000
+    }
+  },
+  {
+    "name": "water_matching_exact",
+    "ingredient": {
+      "type": "forge:fluid",
+      "fluid": "water",
+      "amount": 250,
+      "match": "exact"
+    }
+  }
+]

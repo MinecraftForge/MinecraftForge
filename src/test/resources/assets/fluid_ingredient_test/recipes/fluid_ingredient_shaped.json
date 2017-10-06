@@ -1,0 +1,21 @@
+{
+  "group": "fluid_ingredient_test",
+  "type": "forge:ore_shaped",
+  "result": {
+    "item": "fluid_ingredient_test:dough",
+    "Count": 4
+  },
+  "pattern": [
+    " W ",
+    "WFW",
+    " W "
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:wheat"
+    },
+    "F": {
+      "item": "#water_matching_exceeded"
+    }
+  }
+}

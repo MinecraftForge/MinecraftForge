@@ -40,6 +40,8 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import net.minecraftforge.fluids.FluidIngredient;
+import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
@@ -126,6 +128,8 @@ public class CraftingHelper {
             return Ingredient.fromStacks(new ItemStack((Block)obj, 1, OreDictionary.WILDCARD_VALUE));
         else if (obj instanceof String)
             return new OreIngredient((String)obj);
+        else if (obj instanceof FluidStack)
+            return new FluidIngredient((FluidStack)obj, FluidIngredient.MatchingStrategy.EXCEED);
         else if (obj instanceof JsonElement)
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 
@@ -538,6 +542,7 @@ public class CraftingHelper {
         registerI("minecraft:empty", (context, json) -> Ingredient.EMPTY);
         registerI("minecraft:item_nbt", (context, json) -> new IngredientNBT(CraftingHelper.getItemStack(json, context)));
         registerI("forge:ore_dict", (context, json) -> new OreIngredient(JsonUtils.getString(json, "ore")));
+        registerI("forge:fluid", FluidIngredient::factory);
     }
 
     private static void registerC(String name, IConditionFactory fac) {

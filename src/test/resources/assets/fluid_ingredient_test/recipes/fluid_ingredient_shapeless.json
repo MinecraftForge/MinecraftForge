@@ -1,0 +1,16 @@
+{
+  "group": "fluid_ingredient_test",
+  "type": "forge:ore_shapeless",
+  "result": {
+    "item": "fluid_ingredient_test:dough",
+    "Count": 1
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "item": "#water_matching_exact"
+    }
+  ]
+}
