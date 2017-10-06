@@ -113,6 +113,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean disableVersionCheck = false;
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
+    public static boolean minimizeItemModelQuads = false;
     public static boolean zoomInMissingModelTextInGui = false;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
@@ -350,6 +351,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
         forgeLightPipelineEnabled = prop.getBoolean(true);
         prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "minimizeItemModelQuads", false,
+                "Use the minimum possible number of quads when generating item models. " +
+                        "Saves memory at the expense of rendering artifacts, particularly for items with translucent textures.");
+        prop.setLanguageKey("forge.configgui.minimizeItemModelQuads").setRequiresMcRestart(true);
+        minimizeItemModelQuads = prop.getBoolean(false);
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);

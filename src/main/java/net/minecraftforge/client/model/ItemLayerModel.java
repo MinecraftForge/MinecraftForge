@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -247,29 +248,44 @@ public final class ItemLayerModel implements IModel
         {
             for (int v = 0; v < vMax; v++)
             {
-                int uStart = 0;
+                int uStart = 0, uEnd = uMax;
                 boolean building = false;
                 for (int u = 0; u < uMax; u++)
                 {
                     boolean face = faceData.get(facing, u, v);
-                    if (building && !face) // finish current quad
+                    if (ForgeModContainer.minimizeItemModelQuads)
                     {
-                        // make quad [uStart, u]
-                        int off = facing == EnumFacing.DOWN ? 1 : 0;
-                        builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, u-uStart));
-                        building = false;
+                        if (face)
+                        {
+                            if (!building)
+                            {
+                                building = true;
+                                uStart = u;
+                            }
+                            uEnd = u + 1;
+                        }
                     }
-                    else if (!building && face) // start new quad
+                    else
                     {
-                        building = true;
-                        uStart = u;
+                        if (building && !face) // finish current quad
+                        {
+                            // make quad [uStart, u]
+                            int off = facing == EnumFacing.DOWN ? 1 : 0;
+                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, u-uStart));
+                            building = false;
+                        }
+                        else if (!building && face) // start new quad
+                        {
+                            building = true;
+                            uStart = u;
+                        }
                     }
                 }
-                if (building) // quad extends to far edge
+                if (building) // build remaining quad
                 {
-                    // make quad [uStart, uMax]
+                    // make quad [uStart, uEnd]
                     int off = facing == EnumFacing.DOWN ? 1 : 0;
-                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, uMax-uStart));
+                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, uEnd-uStart));
                 }
             }
         }
@@ -279,29 +295,44 @@ public final class ItemLayerModel implements IModel
         {
             for (int u = 0; u < uMax; u++)
             {
-                int vStart = 0;
+                int vStart = 0, vEnd = vMax;
                 boolean building = false;
                 for (int v = 0; v < vMax; v++)
                 {
                     boolean face = faceData.get(facing, u, v);
-                    if (building && !face) // finish current quad
+                    if (ForgeModContainer.minimizeItemModelQuads)
                     {
-                        // make quad [vStart, v]
-                        int off = facing == EnumFacing.EAST ? 1 : 0;
-                        builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, v-vStart));
-                        building = false;
+                        if (face)
+                        {
+                            if (!building)
+                            {
+                                building = true;
+                                vStart = v;
+                            }
+                            vEnd = v + 1;
+                        }
                     }
-                    else if (!building && face) // start new quad
+                    else
                     {
-                        building = true;
-                        vStart = v;
+                        if (building && !face) // finish current quad
+                        {
+                            // make quad [vStart, v]
+                            int off = facing == EnumFacing.EAST ? 1 : 0;
+                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, v-vStart));
+                            building = false;
+                        }
+                        else if (!building && face) // start new quad
+                        {
+                            building = true;
+                            vStart = v;
+                        }
                     }
                 }
-                if (building) // quad extends to far edge
+                if (building) // build remaining quad
                 {
-                    // make quad [vStart, vMax]
+                    // make quad [vStart, vEnd]
                     int off = facing == EnumFacing.EAST ? 1 : 0;
-                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, vMax-vStart));
+                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, vEnd-vStart));
                 }
             }
         }
@@ -363,14 +394,18 @@ public final class ItemLayerModel implements IModel
 
     private static BakedQuad buildSideQuad(VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v, int size)
     {
-        final float eps0 = 30e-5f;
-        final float eps1 = 45e-5f;
-        final float eps2 = .5f;
-        final float eps3 = .5f;
+        boolean offset = !ForgeModContainer.minimizeItemModelQuads;
+
+        final float eps0 = offset ? 30e-5f : 0f;
+        final float eps1 = offset ? 45e-5f : 0f;
+        final float eps2 = offset ? .5f : 0f;
+        final float eps3 = offset ? .5f : 1e-2f;
+
         float x0 = (float)u / sprite.getIconWidth();
         float y0 = (float)v / sprite.getIconHeight();
         float x1 = x0, y1 = y0;
         float z1 = 7.5f / 16f - eps1, z2 = 8.5f / 16f + eps1;
+
         switch(side)
         {
         case WEST:
@@ -388,10 +423,12 @@ public final class ItemLayerModel implements IModel
         default:
             throw new IllegalArgumentException("can't handle z-oriented side");
         }
+
         float u0 = 16f * (x0 - side.getDirectionVec().getX() * eps3 / sprite.getIconWidth());
         float u1 = 16f * (x1 - side.getDirectionVec().getX() * eps3 / sprite.getIconWidth());
         float v0 = 16f * (1f - y0 - side.getDirectionVec().getY() * eps3 / sprite.getIconHeight());
         float v1 = 16f * (1f - y1 - side.getDirectionVec().getY() * eps3 / sprite.getIconHeight());
+
         switch(side)
         {
         case WEST:
@@ -411,6 +448,7 @@ public final class ItemLayerModel implements IModel
         default:
             throw new IllegalArgumentException("can't handle z-oriented side");
         }
+
         switch(side)
         {
         case WEST:
@@ -432,6 +470,7 @@ public final class ItemLayerModel implements IModel
         default:
             throw new IllegalArgumentException("can't handle z-oriented side");
         }
+
         return buildQuad(
             format, transform, side.getOpposite(), sprite, tint, // getOpposite is related either to the swapping of V direction, or something else
             x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),

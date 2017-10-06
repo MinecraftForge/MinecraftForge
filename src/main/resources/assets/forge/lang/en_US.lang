@@ -66,6 +66,8 @@ forge.configgui.zoomInMissingModelTextInGui=Zoom in Missing model text in the GU
 forge.configgui.disableStairSlabCulling.tooltip=Enable this if you see through blocks touching stairs/slabs with your resource pack.
 forge.configgui.alwaysSetupTerrainOffThread=Force threaded chunk rendering
 forge.configgui.alwaysSetupTerrainOffThread.tooltip=Enable forge to queue all chunk updates to the Chunk Update thread. May increase FPS significantly, but may also cause weird rendering lag. Not recommended for computers without a significant number of cores available.
+forge.configgui.minimizeItemModelQuads=Minimize Item Model Quads
+forge.configgui.minimizeItemModelQuads.tooltip=Use the minimum possible number of quads when generating item models. Saves memory at the expense of rendering artifacts, particularly for items with translucent textures.
 
 forge.configgui.modID.tooltip=The mod ID that you want to define override settings for.
 forge.configgui.modID=Mod ID
