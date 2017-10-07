@@ -37,10 +37,7 @@ public class HelpCommand extends CommandTreeBase
         this.parent = parent;
         for (ICommand command : parent.getSubCommands())
         {
-            if (!this.equals(command))
-            {
-                addSubcommand(new HelpSubCommand(this, command));
-            }
+            addSubcommand(new HelpSubCommand(this, command));
         }
     }
 
