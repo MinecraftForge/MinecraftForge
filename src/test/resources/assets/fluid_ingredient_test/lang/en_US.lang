@@ -1,3 +1,3 @@
 item.test_dough.name=Dough (Crafted from 250 mB water and wheat)
-item.quarter_bucket=Quarter Bucket (Only has volume of 250 mB)
-item.big_bucket=Big Bucket (Has volume of 2000 mB)
+item.quarter_bucket.name=Quarter Bucket (Only has volume of 250 mB)
+item.big_bucket.name=Big Bucket (Has volume of 2000 mB)

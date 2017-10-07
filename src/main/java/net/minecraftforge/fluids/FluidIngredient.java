@@ -52,19 +52,7 @@ public class FluidIngredient extends Ingredient
          * fluid out. Example: if the FluidIngredient asks for 500 mB water, a vanilla bucket
          * will be matched.
          */
-        EXCEED,
-
-        /**
-         * VOIDING is similar to EXCEED, with only difference that it will try to void exceeded
-         * amount of fluid. Example: consider about an IC2 Universal Fluid Cell, which can holds
-         * fluids with arbitrary amount, up to 1000 mB. Under VOIDING strategy, if FluidIngredient
-         * asks for 500 mB water, and an Fluid Cell with 1000 mB water presents, it will be matched,
-         * and only empty Fluid Cell will be given back upon getRemainingItems() is called, i.e.
-         * the exceeded 500 mB water is voided.
-         *
-         * Note that for vanilla bucket, the default behavior will be VOIDING as well.
-         */
-        VOIDING
+        EXCEED
     }
 
     private final FluidStack fluidStack;
@@ -105,7 +93,6 @@ public class FluidIngredient extends Ingredient
         switch (this.strategy)
         {
             case EXCEED:
-            case VOIDING:
                 return fluidStack.isFluidEqual(fluidStackToTest) && fluidStack.amount <= fluidStackToTest.amount;
 
             case EXACT:

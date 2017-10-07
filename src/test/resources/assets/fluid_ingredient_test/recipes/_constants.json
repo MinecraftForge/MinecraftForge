@@ -15,5 +15,14 @@
       "amount": 250,
       "match": "exact"
     }
+  },
+  {
+    "name": "lava_matching_exceeded",
+    "ingredient": {
+      "type": "forge:fluid",
+      "fluid": "lava",
+      "amount": 1000,
+      "match": "exceeded"
+    }
   }
 ]

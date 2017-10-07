@@ -19,11 +19,13 @@
 
 package net.minecraftforge.oredict;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -131,6 +133,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
     {
         NonNullList<ItemStack> remainder = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        List<Ingredient> copyOfInput = new ArrayList<>(input);
 
         for (int index = 0; index < inv.getSizeInventory(); index++)
         {
@@ -138,9 +141,10 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
             if (!itemStack.isEmpty())
             {
                 boolean hasSettled = false;
-
-                for (Ingredient ingredient : input)
+                Iterator<Ingredient> remainingIngredient = copyOfInput.iterator();
+                while (remainingIngredient.hasNext())
                 {
+                    Ingredient ingredient = remainingIngredient.next();
                     if (ingredient instanceof FluidIngredient && ingredient.apply(itemStack))
                     {
                         ItemStack container = itemStack.copy();
@@ -148,17 +152,10 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
                         IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
                         if (fluidHandler != null)
                         {
-                            if (((FluidIngredient)ingredient).getMatchingStrategy() == FluidIngredient.MatchingStrategy.VOIDING)
-                            {
-                                fluidHandler.drain(Integer.MAX_VALUE, true);
-                            }
-                            else
-                            {
-                                fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
-                            }
-
+                            fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
                             remainder.set(index, fluidHandler.getContainer());
                             hasSettled = true;
+                            remainingIngredient.remove();
                             break;
                         }
                     }

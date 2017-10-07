@@ -1,12 +1,14 @@
 package net.minecraftforge.debug;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -21,6 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 @Mod(modid = "fluid_ingredient_test", name = "FluidIngredient Test", version = "0.0.0")
 @Mod.EventBusSubscriber
@@ -76,6 +79,21 @@ public final class FluidIngredientTest
                 IFluidHandlerItem handler = FluidUtil.getFluidHandler(stack);
                 handler.fill(new FluidStack(FluidRegistry.WATER, Integer.MAX_VALUE), true);
                 list.add(stack);
+            }
+        }
+
+        @Override
+        public void addInformation(ItemStack stack, World world, List<String> tooltips, ITooltipFlag flag)
+        {
+            FluidStack fluidStack = FluidUtil.getFluidContained(stack);
+            if (fluidStack != null)
+            {
+                tooltips.add("Fluid contained: " + fluidStack.getLocalizedName());
+                tooltips.add("Amount: " + fluidStack.amount);
+            }
+            else
+            {
+                tooltips.add("Empty");
             }
         }
 

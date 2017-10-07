@@ -163,15 +163,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
                     IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
                     if (fluidHandler != null)
                     {
-                        if (((FluidIngredient)ingredient).getMatchingStrategy() == FluidIngredient.MatchingStrategy.VOIDING)
-                        {
-                            fluidHandler.drain(Integer.MAX_VALUE, true);
-                        }
-                        else
-                        {
-                            fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
-                        }
-
+                        fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
                         itemStack = fluidHandler.getContainer();
                     }
                 }

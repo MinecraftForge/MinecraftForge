@@ -1,0 +1,37 @@
+{
+  "group": "fluid_ingredient_test",
+  "type": "forge:ore_shapeless",
+  "result": {
+    "item": "minecraft:obsidian",
+    "Count": 4
+  },
+  "ingredients": [
+    {
+      "item": "#water_matching_exceeded"
+    },
+    {
+      "item": "#water_matching_exceeded"
+    },
+    {
+      "item": "#water_matching_exceeded"
+    },
+    {
+      "item": "#water_matching_exceeded"
+    },
+    {
+      "item": "#lava_matching_exceeded"
+    },
+    {
+      "item": "#lava_matching_exceeded"
+    },
+    {
+      "item": "#lava_matching_exceeded"
+    },
+    {
+      "item": "#lava_matching_exceeded"
+    },
+    {
+      "item": "minecraft:redstone_block"
+    }
+  ]
+}
