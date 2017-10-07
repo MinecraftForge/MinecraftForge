@@ -29,7 +29,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.WorldWorkerManager.IWorker;
 
@@ -86,7 +85,7 @@ public class ChunkGenWorker implements IWorker
     {
         return new TextComponentTranslation("commands.forge.gen.start", total, start.getX(), start.getZ(), dim);
     }
-    
+
     public TextComponentBase getStartMessage(ICommandSender sender)
     {
         return TextComponentHelper.createComponentTranslation(sender, "commands.forge.gen.start", total, start.getX(), start.getZ(), dim);
