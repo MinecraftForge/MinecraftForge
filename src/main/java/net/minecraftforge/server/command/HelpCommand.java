@@ -59,7 +59,7 @@ public class HelpCommand extends CommandTreeBase
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return String.format("/%s %s", parent.getName(), getName());
+        return "commands.forge.usage.help";
     }
 
     @Override
@@ -106,7 +106,7 @@ public class HelpCommand extends CommandTreeBase
         @Override
         public String getUsage(ICommandSender sender)
         {
-            return String.format("%s %s", parent.getUsage(sender), getName());
+            return command.getUsage(sender);
         }
 
         @Override
