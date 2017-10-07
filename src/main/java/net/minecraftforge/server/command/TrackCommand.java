@@ -54,7 +54,7 @@ class TrackCommand extends CommandBase
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
-        if (args.length != 3)
+        if (args.length != 2)
         {
             throw new WrongUsageException("commands.forge.usage.tracking");
         }
@@ -76,14 +76,9 @@ class TrackCommand extends CommandBase
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
     {
-        if (args.length == 0) {
+        if (args.length == 1)
+        {
             return Collections.singletonList("te");
-        } else if (args.length == 1) {
-            List<String> validNumbers = new ArrayList<>();
-            for (int i = 1; i <= 60; i++) {
-                validNumbers.add(Integer.toString(i));
-            }
-            return validNumbers;
         }
         return Collections.emptyList();
     }
