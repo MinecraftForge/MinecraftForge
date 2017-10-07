@@ -17,6 +17,7 @@ commands.forge.entity.list.multiple.header=Total: %d
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 commands.tree_base.invalid_cmd=Invalid subcommand '%s'!
+commands.tree_base.invalid_cmd.list_subcommands=Invalid subcommand '%s'! Available subcommands: %s
 commands.tree_base.available_subcommands=Available SubCommands: %s
 forge.texture.preload.warning=Warning: Texture %s not preloaded, will cause render glitches!
 forge.client.shutdown.internal=Shutting down internal server...
