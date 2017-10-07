@@ -19,6 +19,7 @@
 package net.minecraftforge.server.command;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -127,38 +128,48 @@ class EntityCommand extends CommandTreeBase
                 if (info == null)
                     throw new WrongUsageException("commands.forge.entity.list.none");
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.entity.list.single.header", name, info.getLeft()));
-                info.getRight().entrySet().stream()
-                        .sorted((a, b) -> {
-                            if (Objects.equals(a.getValue(), b.getValue()))
-                            {
-                                return a.getKey().toString().compareTo(b.getKey().toString());
-                            }
-                            else
-                            {
-                                return b.getValue() - a.getValue();
-                            }
-                        })
-                        .limit(10)
-                        .forEach(e -> sender.sendMessage(new TextComponentString("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z)));
+                List<Map.Entry<ChunkPos, Integer>> toSort = new ArrayList<>();
+                toSort.addAll(info.getRight().entrySet());
+                toSort.sort((a, b) -> {
+                    if (Objects.equals(a.getValue(), b.getValue()))
+                    {
+                        return a.getKey().toString().compareTo(b.getKey().toString());
+                    }
+                    else
+                    {
+                        return b.getValue() - a.getValue();
+                    }
+                });
+                long limit = 10;
+                for (Map.Entry<ChunkPos, Integer> e : toSort)
+                {
+                    if (limit-- == 0) break;
+                    sender.sendMessage(new TextComponentString("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z));
+                }
             }
             else
             {
 
-                List<Pair<ResourceLocation, Integer>> info = list.entrySet().stream()
-                        .filter(e -> names.contains(e.getKey()))
-                        .map(e -> Pair.of(e.getKey(), e.getValue().left))
-                        .sorted((a, b) -> {
-                            if (Objects.equals(a.getRight(), b.getRight()))
-                            {
-                                return a.getKey().toString().compareTo(b.getKey().toString());
-                            } else
-                            {
-                                return b.getRight() - a.getRight();
-                            }
-                        })
-                        .collect(Collectors.toList());
+                List<Pair<ResourceLocation, Integer>> info = new ArrayList<>();
+                list.forEach((key, value) -> {
+                    if (names.contains(key))
+                    {
+                        Pair<ResourceLocation, Integer> of = Pair.of(key, value.left);
+                        info.add(of);
+                    }
+                });
+                info.sort((a, b) -> {
+                    if (Objects.equals(a.getRight(), b.getRight()))
+                    {
+                        return a.getKey().toString().compareTo(b.getKey().toString());
+                    }
+                    else
+                    {
+                        return b.getRight() - a.getRight();
+                    }
+                });
 
-                if (info == null || info.size() == 0)
+                if (info.size() == 0)
                     throw new WrongUsageException("commands.forge.entity.list.none");
 
                 int count = info.stream().mapToInt(Pair::getRight).sum();
