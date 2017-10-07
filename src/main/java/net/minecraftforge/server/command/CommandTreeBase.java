@@ -138,7 +138,8 @@ public abstract class CommandTreeBase extends CommandBase
                     availableCommands.add(command.getName());
                 }
             }
-            sender.sendMessage(new TextComponentTranslation("commands.tree_base.available_subcommands", CommandBase.joinNiceStringFromCollection(availableCommands)));
+            String niceCommandList = CommandBase.joinNiceStringFromCollection(availableCommands);
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.tree_base.available_subcommands", niceCommandList));
         }
         else
         {

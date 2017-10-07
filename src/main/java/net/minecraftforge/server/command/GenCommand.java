@@ -66,7 +66,7 @@ class GenCommand extends CommandBase
         BlockPos chunkpos = new BlockPos(blockpos.getX() >> 4, 0, blockpos.getZ() >> 4);
 
         ChunkGenWorker worker = new ChunkGenWorker(sender, chunkpos, count, dim, interval);
-        sender.sendMessage(worker.getStartMessage());
+        sender.sendMessage(worker.getStartMessage(sender));
         WorldWorkerManager.addWorker(worker);
     }
 

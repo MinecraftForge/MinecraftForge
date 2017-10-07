@@ -68,7 +68,7 @@ public class HelpCommand extends CommandTreeBase
     {
         if (args.length == 0)
         {
-            sender.sendMessage(new TextComponentTranslation(parent.getUsage(sender)));
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, parent.getUsage(sender)));
             for (ICommand subCommand : getSubCommands())
             {
                 if (subCommand instanceof HelpSubCommand && subCommand.checkPermission(server, sender))
@@ -119,7 +119,7 @@ public class HelpCommand extends CommandTreeBase
         @Override
         public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
         {
-            sender.sendMessage(new TextComponentTranslation(command.getUsage(sender)));
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, command.getUsage(sender)));
         }
     }
 }

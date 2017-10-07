@@ -66,7 +66,7 @@ class TrackCommand extends CommandBase
         {
             ForgeTimeTracker.tileEntityTrackingDuration = duration;
             ForgeTimeTracker.tileEntityTracking = true;
-            sender.sendMessage(new TextComponentTranslation("commands.forge.tracking.te.enabled", duration));
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.te.enabled", duration));
         }
         else
         {

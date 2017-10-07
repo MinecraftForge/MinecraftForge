@@ -128,7 +128,7 @@ class EntityCommand extends CommandTreeBase
                 Pair<Integer, Map<ChunkPos, Integer>> info = list.get(name);
                 if (info == null)
                     throw new WrongUsageException("commands.forge.entity.list.none");
-                sender.sendMessage(new TextComponentTranslation("commands.forge.entity.list.single.header", name, info.getLeft()));
+                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.entity.list.single.header", name, info.getLeft()));
                 info.getRight().entrySet().stream()
                         .sorted((a, b) -> {
                             if (Objects.equals(a.getValue(), b.getValue()))
@@ -164,7 +164,7 @@ class EntityCommand extends CommandTreeBase
                     throw new WrongUsageException("commands.forge.entity.list.none");
 
                 int count = info.stream().mapToInt(Pair::getRight).sum();
-                sender.sendMessage(new TextComponentTranslation("commands.forge.entity.list.multiple.header", count));
+                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.entity.list.multiple.header", count));
                 info.forEach(e -> sender.sendMessage(new TextComponentString("  " + e.getValue() + ": " + e.getKey())));
             }
         }
