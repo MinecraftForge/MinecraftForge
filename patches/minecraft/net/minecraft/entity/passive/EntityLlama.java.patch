@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityLlama.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityLlama.java
+@@ -349,7 +349,7 @@
+ 
+     protected void func_110232_cE()
+     {
+-        if (!this.field_70170_p.field_72995_K)
++        if (this.field_70170_p != null && !this.field_70170_p.field_72995_K)
+         {
+             super.func_110232_cE();
+             this.func_190702_g(this.field_110296_bG.func_70301_a(1));
