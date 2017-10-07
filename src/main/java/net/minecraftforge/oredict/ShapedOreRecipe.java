@@ -172,10 +172,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
                             fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
                         }
 
-                        if (container.getCount() <= 0)
-                        {
-                            itemStack = fluidHandler.getContainer();
-                        }
+                        itemStack = fluidHandler.getContainer();
                     }
                 }
                 else

@@ -34,6 +34,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
+import net.minecraftforge.fluids.FluidIngredient;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
@@ -122,6 +125,53 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         }
 
         return required.isEmpty();
+    }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
+    {
+        NonNullList<ItemStack> remainder = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+
+        for (int index = 0; index < inv.getSizeInventory(); index++)
+        {
+            ItemStack itemStack = inv.getStackInSlot(index);
+            if (!itemStack.isEmpty())
+            {
+                boolean hasSettled = false;
+
+                for (Ingredient ingredient : input)
+                {
+                    if (ingredient instanceof FluidIngredient && ingredient.apply(itemStack))
+                    {
+                        ItemStack container = itemStack.copy();
+                        container.setCount(1);
+                        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
+                        if (fluidHandler != null)
+                        {
+                            if (((FluidIngredient)ingredient).getMatchingStrategy() == FluidIngredient.MatchingStrategy.VOIDING)
+                            {
+                                fluidHandler.drain(Integer.MAX_VALUE, true);
+                            }
+                            else
+                            {
+                                fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
+                            }
+
+                            remainder.set(index, fluidHandler.getContainer());
+                            hasSettled = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!hasSettled)
+                {
+                    remainder.set(index, ForgeHooks.getContainerItem(itemStack));
+                }
+            }
+        }
+
+        return remainder;
     }
 
     @Override
