@@ -354,8 +354,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_CLIENT, "minimizeItemModelQuads", false,
-                "Use the minimum possible number of quads when generating item models. " +
-                        "Saves memory at the expense of rendering artifacts, particularly for items with translucent textures.");
+                "Use the minimum possible number of quads when generating item models. Saves memory at the expense of some rendering artifacts.");
         prop.setLanguageKey("forge.configgui.minimizeItemModelQuads").setRequiresMcRestart(true);
         minimizeItemModelQuads = prop.getBoolean(false);
         propOrder.add(prop.getName());

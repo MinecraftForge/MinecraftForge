@@ -196,6 +196,7 @@ public final class ItemLayerModel implements IModel
         int vMax = sprite.getIconHeight();
 
         FaceData faceData = new FaceData(uMax, vMax);
+        boolean translucent = false;
 
         for(int f = 0; f < sprite.getFrameCount(); f++)
         {
@@ -208,7 +209,14 @@ public final class ItemLayerModel implements IModel
                 ptu = true;
                 for(int u = 0; u < uMax; u++)
                 {
-                    boolean t = isTransparent(pixels, uMax, vMax, u, v);
+                    int alpha = getAlpha(pixels, uMax, vMax, u, v);
+                    boolean t = isTransparent(alpha);
+
+                    if (!t && alpha < 255)
+                    {
+                        translucent = true;
+                    }
+
                     if(ptu && !t) // left - transparent, right - opaque
                     {
                         faceData.set(EnumFacing.WEST, u, v);
@@ -225,6 +233,7 @@ public final class ItemLayerModel implements IModel
                     {
                         faceData.set(EnumFacing.DOWN, u, v-1);
                     }
+
                     ptu = t;
                     ptv[u] = t;
                 }
@@ -243,6 +252,8 @@ public final class ItemLayerModel implements IModel
             }
         }
 
+        boolean minimizeQuads = !translucent && ForgeModContainer.minimizeItemModelQuads;
+
         // horizontal quads
         for (EnumFacing facing : HORIZONTALS)
         {
@@ -253,7 +264,7 @@ public final class ItemLayerModel implements IModel
                 for (int u = 0; u < uMax; u++)
                 {
                     boolean face = faceData.get(facing, u, v);
-                    if (ForgeModContainer.minimizeItemModelQuads)
+                    if (minimizeQuads)
                     {
                         if (face)
                         {
@@ -271,7 +282,7 @@ public final class ItemLayerModel implements IModel
                         {
                             // make quad [uStart, u]
                             int off = facing == EnumFacing.DOWN ? 1 : 0;
-                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, u-uStart));
+                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, u-uStart, true));
                             building = false;
                         }
                         else if (!building && face) // start new quad
@@ -285,7 +296,7 @@ public final class ItemLayerModel implements IModel
                 {
                     // make quad [uStart, uEnd]
                     int off = facing == EnumFacing.DOWN ? 1 : 0;
-                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, uEnd-uStart));
+                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, uEnd-uStart, !minimizeQuads));
                 }
             }
         }
@@ -300,7 +311,7 @@ public final class ItemLayerModel implements IModel
                 for (int v = 0; v < vMax; v++)
                 {
                     boolean face = faceData.get(facing, u, v);
-                    if (ForgeModContainer.minimizeItemModelQuads)
+                    if (minimizeQuads)
                     {
                         if (face)
                         {
@@ -318,7 +329,7 @@ public final class ItemLayerModel implements IModel
                         {
                             // make quad [vStart, v]
                             int off = facing == EnumFacing.EAST ? 1 : 0;
-                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, v-vStart));
+                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, v-vStart, true));
                             building = false;
                         }
                         else if (!building && face) // start new quad
@@ -332,7 +343,7 @@ public final class ItemLayerModel implements IModel
                 {
                     // make quad [vStart, vEnd]
                     int off = facing == EnumFacing.EAST ? 1 : 0;
-                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, vEnd-vStart));
+                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, vEnd-vStart, !minimizeQuads));
                 }
             }
         }
@@ -387,22 +398,25 @@ public final class ItemLayerModel implements IModel
         }
     }
 
-    private static boolean isTransparent(int[] pixels, int uMax, int vMax, int u, int v)
+    private static int getAlpha(int[] pixels, int uMax, int vMax, int u, int v)
     {
-        return (pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF) == 0;
+        return pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF;
     }
 
-    private static BakedQuad buildSideQuad(VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v, int size)
+    private static boolean isTransparent(int alpha)
     {
-        boolean offset = !ForgeModContainer.minimizeItemModelQuads;
+        return alpha == 0;
+    }
 
-        final float eps0 = offset ? 30e-5f : 0f;
-        final float eps1 = offset ? 45e-5f : 0f;
-        final float eps2 = offset ? .5f : 0f;
-        final float eps3 = offset ? .5f : 1e-2f;
+    private static BakedQuad buildSideQuad(VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v, int size, boolean offset)
+    {
+        float eps0 = offset ? 30e-5f : 0f;
+        float eps1 = offset ? 45e-5f : 0f;
+        float eps2 = offset ? .5f : 0f;
+        float eps3 = offset ? .5f : 1e-2f;
 
-        float x0 = (float)u / sprite.getIconWidth();
-        float y0 = (float)v / sprite.getIconHeight();
+        float x0 = (float) u / sprite.getIconWidth();
+        float y0 = (float) v / sprite.getIconHeight();
         float x1 = x0, y1 = y0;
         float z1 = 7.5f / 16f - eps1, z2 = 8.5f / 16f + eps1;
 
