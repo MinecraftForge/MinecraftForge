@@ -23,7 +23,6 @@ import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -59,6 +58,8 @@ public final class ItemLayerModel implements IModel
 
     private static final EnumFacing[] HORIZONTALS = {EnumFacing.UP, EnumFacing.DOWN};
     private static final EnumFacing[] VERTICALS = {EnumFacing.WEST, EnumFacing.EAST};
+
+    private static final boolean minimizeFlag = true; // debug flag
 
     private final ImmutableList<ResourceLocation> textures;
     private final ItemOverrideList overrides;
@@ -252,7 +253,7 @@ public final class ItemLayerModel implements IModel
             }
         }
 
-        boolean minimizeQuads = !translucent && ForgeModContainer.minimizeItemModelQuads;
+        boolean minimizeQuads = minimizeFlag && !translucent;
 
         // horizontal quads
         for (EnumFacing facing : HORIZONTALS)
