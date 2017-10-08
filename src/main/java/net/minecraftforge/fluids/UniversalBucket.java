@@ -37,6 +37,7 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.event.ForgeEventFactory.
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -160,7 +161,7 @@ public class UniversalBucket extends Item
         // clicked on a block?
         RayTraceResult mop = this.rayTrace(world, player, false);
 
-        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(playerIn, worldIn, itemstack, raytraceresult);
+        ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, itemstack, mop);
         if (ret != null) return ret;
 
         if(mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK)
