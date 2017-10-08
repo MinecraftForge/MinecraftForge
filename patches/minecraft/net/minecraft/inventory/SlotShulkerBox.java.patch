@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/inventory/SlotShulkerBox.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotShulkerBox.java
+@@ -13,6 +13,6 @@
+ 
+     public boolean func_75214_a(ItemStack p_75214_1_)
+     {
+-        return !(Block.func_149634_a(p_75214_1_.func_77973_b()) instanceof BlockShulkerBox);
++        return p_75214_1_.func_77973_b().canPutIntoItemInventory(p_75214_1_, new net.minecraftforge.items.PortableInventoryLocation(field_75224_c, null));
+     }
+ }
