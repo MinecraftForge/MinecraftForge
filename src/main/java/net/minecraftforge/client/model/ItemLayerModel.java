@@ -209,7 +209,7 @@ public final class ItemLayerModel implements IModel
                 for(int u = 0; u < uMax; u++)
                 {
                     int alpha = getAlpha(pixels, uMax, vMax, u, v);
-                    boolean t = isTransparent(alpha);
+                    boolean t = alpha == 0;
 
                     if (!t && alpha < 255)
                     {
@@ -398,11 +398,6 @@ public final class ItemLayerModel implements IModel
     private static int getAlpha(int[] pixels, int uMax, int vMax, int u, int v)
     {
         return pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF;
-    }
-
-    private static boolean isTransparent(int alpha)
-    {
-        return alpha == 0;
     }
 
     private static BakedQuad buildSideQuad(VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v, int size)
