@@ -28,7 +28,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nonnull;
 
-public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound>
+public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, IItemHandlerContainer, INBTSerializable<NBTTagCompound>
 {
     protected NonNullList<ItemStack> stacks;
 
@@ -201,6 +201,18 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
             }
         }
         onLoad();
+    }
+
+    @Override
+    public boolean acceptsStack(int slot, @Nonnull ItemStack stack)
+    {
+        return true;
+    }
+
+    @Override
+    public int getEffectiveStackLimit(int slot, @Nonnull ItemStack stack)
+    {
+        return getStackLimit(slot, stack);
     }
 
     protected void validateSlotIndex(int slot)
