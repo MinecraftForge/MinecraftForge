@@ -160,6 +160,9 @@ public class UniversalBucket extends Item
         // clicked on a block?
         RayTraceResult mop = this.rayTrace(world, player, false);
 
+        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(playerIn, worldIn, itemstack, raytraceresult);
+        if (ret != null) return ret;
+
         if(mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK)
         {
             return ActionResult.newResult(EnumActionResult.PASS, itemstack);
