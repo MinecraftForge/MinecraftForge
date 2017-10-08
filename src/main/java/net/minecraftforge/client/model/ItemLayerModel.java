@@ -59,8 +59,6 @@ public final class ItemLayerModel implements IModel
     private static final EnumFacing[] HORIZONTALS = {EnumFacing.UP, EnumFacing.DOWN};
     private static final EnumFacing[] VERTICALS = {EnumFacing.WEST, EnumFacing.EAST};
 
-    private static final boolean minimizeFlag = true; // debug flag
-
     private final ImmutableList<ResourceLocation> textures;
     private final ItemOverrideList overrides;
 
@@ -253,8 +251,6 @@ public final class ItemLayerModel implements IModel
             }
         }
 
-        boolean minimizeQuads = minimizeFlag && !translucent;
-
         // horizontal quads
         for (EnumFacing facing : HORIZONTALS)
         {
@@ -265,7 +261,7 @@ public final class ItemLayerModel implements IModel
                 for (int u = 0; u < uMax; u++)
                 {
                     boolean face = faceData.get(facing, u, v);
-                    if (minimizeQuads)
+                    if (!translucent)
                     {
                         if (face)
                         {
@@ -283,7 +279,7 @@ public final class ItemLayerModel implements IModel
                         {
                             // make quad [uStart, u]
                             int off = facing == EnumFacing.DOWN ? 1 : 0;
-                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, u-uStart, true));
+                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, u-uStart));
                             building = false;
                         }
                         else if (!building && face) // start new quad
@@ -297,7 +293,7 @@ public final class ItemLayerModel implements IModel
                 {
                     // make quad [uStart, uEnd]
                     int off = facing == EnumFacing.DOWN ? 1 : 0;
-                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, uEnd-uStart, !minimizeQuads));
+                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, uStart, v+off, uEnd-uStart));
                 }
             }
         }
@@ -312,7 +308,7 @@ public final class ItemLayerModel implements IModel
                 for (int v = 0; v < vMax; v++)
                 {
                     boolean face = faceData.get(facing, u, v);
-                    if (minimizeQuads)
+                    if (!translucent)
                     {
                         if (face)
                         {
@@ -330,7 +326,7 @@ public final class ItemLayerModel implements IModel
                         {
                             // make quad [vStart, v]
                             int off = facing == EnumFacing.EAST ? 1 : 0;
-                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, v-vStart, true));
+                            builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, v-vStart));
                             building = false;
                         }
                         else if (!building && face) // start new quad
@@ -344,7 +340,7 @@ public final class ItemLayerModel implements IModel
                 {
                     // make quad [vStart, vEnd]
                     int off = facing == EnumFacing.EAST ? 1 : 0;
-                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, vEnd-vStart, !minimizeQuads));
+                    builder.add(buildSideQuad(format, transform, facing, tint, sprite, u+off, vStart, vEnd-vStart));
                 }
             }
         }
@@ -409,82 +405,40 @@ public final class ItemLayerModel implements IModel
         return alpha == 0;
     }
 
-    private static BakedQuad buildSideQuad(VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v, int size, boolean offset)
+    private static BakedQuad buildSideQuad(VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v, int size)
     {
-        float eps0 = offset ? 30e-5f : 0f;
-        float eps1 = offset ? 45e-5f : 0f;
-        float eps2 = offset ? .5f : 0f;
-        float eps3 = offset ? .5f : 1e-2f;
+        final float eps = 1e-2f;
 
-        float x0 = (float) u / sprite.getIconWidth();
-        float y0 = (float) v / sprite.getIconHeight();
+        int width = sprite.getIconWidth();
+        int height = sprite.getIconHeight();
+
+        float x0 = (float) u / width;
+        float y0 = (float) v / height;
         float x1 = x0, y1 = y0;
-        float z1 = 7.5f / 16f - eps1, z2 = 8.5f / 16f + eps1;
+        float z1 = 7.5f / 16f, z2 = 8.5f / 16f;
 
         switch(side)
         {
         case WEST:
-            z1 = 8.5f / 16f + eps1;
-            z2 = 7.5f / 16f - eps1;
+            z1 = 8.5f / 16f;
+            z2 = 7.5f / 16f;
         case EAST:
-            y1 = (float) (v + size) / sprite.getIconHeight();
+            y1 = (float) (v + size) / height;
             break;
         case DOWN:
-            z1 = 8.5f / 16f + eps1;
-            z2 = 7.5f / 16f - eps1;
+            z1 = 8.5f / 16f;
+            z2 = 7.5f / 16f;
         case UP:
-            x1 = (float) (u + size) / sprite.getIconWidth();
+            x1 = (float) (u + size) / width;
             break;
         default:
             throw new IllegalArgumentException("can't handle z-oriented side");
         }
 
-        float u0 = 16f * (x0 - side.getDirectionVec().getX() * eps3 / sprite.getIconWidth());
-        float u1 = 16f * (x1 - side.getDirectionVec().getX() * eps3 / sprite.getIconWidth());
-        float v0 = 16f * (1f - y0 - side.getDirectionVec().getY() * eps3 / sprite.getIconHeight());
-        float v1 = 16f * (1f - y1 - side.getDirectionVec().getY() * eps3 / sprite.getIconHeight());
-
-        switch(side)
-        {
-        case WEST:
-        case EAST:
-            y0 -= eps1;
-            y1 += eps1;
-            v0 -= eps2 / sprite.getIconHeight();
-            v1 += eps2 / sprite.getIconHeight();
-            break;
-        case DOWN:
-        case UP:
-            x0 -= eps1;
-            x1 += eps1;
-            u0 += eps2 / sprite.getIconWidth();
-            u1 -= eps2 / sprite.getIconWidth();
-            break;
-        default:
-            throw new IllegalArgumentException("can't handle z-oriented side");
-        }
-
-        switch(side)
-        {
-        case WEST:
-            x0 += eps0;
-            x1 += eps0;
-            break;
-        case EAST:
-            x0 -= eps0;
-            x1 -= eps0;
-            break;
-        case DOWN:
-            y0 -= eps0;
-            y1 -= eps0;
-            break;
-        case UP:
-            y0 += eps0;
-            y1 += eps0;
-            break;
-        default:
-            throw new IllegalArgumentException("can't handle z-oriented side");
-        }
+        float u0 = 16f * (x0 - side.getDirectionVec().getX() * eps / width);
+        float u1 = 16f * (x1 - side.getDirectionVec().getX() * eps / width);
+        float v0 = 16f * (1f - y0 - side.getDirectionVec().getY() * eps / height);
+        float v1 = 16f * (1f - y1 - side.getDirectionVec().getY() * eps / height);
 
         return buildQuad(
             format, transform, side.getOpposite(), sprite, tint, // getOpposite is related either to the swapping of V direction, or something else
