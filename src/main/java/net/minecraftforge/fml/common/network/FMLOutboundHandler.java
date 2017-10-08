@@ -43,9 +43,11 @@ import com.google.common.collect.Sets;
 import javax.annotation.Nullable;
 
 public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
+    //TODO Merge FML_MESSAGETARGET and FML_SPECIALMESSAGETARGET in next breaking version
     public static final AttributeKey<OutboundTarget> FML_MESSAGETARGET = AttributeKey.valueOf("fml:outboundTarget");
+    public static final AttributeKey<IOutboundTarget> FML_SPECIALMESSAGETARGET = AttributeKey.valueOf("fml:specialOutboundTarget");
     public static final AttributeKey<Object> FML_MESSAGETARGETARGS = AttributeKey.valueOf("fml:outboundTargetArgs");
-    public enum OutboundTarget {
+    public enum OutboundTarget implements IOutboundTarget {
         /**
          * The packet is sent nowhere. It will be on the {@link EmbeddedChannel#outboundMessages()} Queue.
          *
@@ -248,6 +250,32 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                 NetworkManager clientConnection = FMLCommonHandler.instance().getClientToServerNetworkManager();
                 return clientConnection == null || clientConnection.channel().attr(NetworkDispatcher.FML_DISPATCHER).get() == null ? ImmutableList.<NetworkDispatcher>of() : ImmutableList.of(clientConnection.channel().attr(NetworkDispatcher.FML_DISPATCHER).get());
             }
+        },
+        /**
+         * The packet is processed using the {@link IOutboundTarget} specified by the {@link #FML_SPECIALMESSAGETARGET}.
+         * Can only be used from the server.
+         */
+        //TODO Remove in next breaking version
+        SPECIAL(ImmutableSet.<Side>of())
+        {
+            @Override
+            public void validateArgs(Object args)
+            {
+                throw new RuntimeException("SPECIAL should never be called directly");
+            }
+
+            @Nullable
+            @Override
+            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            {
+                throw new RuntimeException("SPECIAL should never be called directly");
+            }
+
+            @Override
+            IOutboundTarget getActualOutboundTarget(ChannelHandlerContext ctx)
+            {
+                return ctx.channel().attr(FML_SPECIALMESSAGETARGET).get();
+            }
         };
 
         private OutboundTarget(ImmutableSet<Side> sides)
@@ -256,8 +284,18 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
         }
         public final ImmutableSet<Side> allowed;
         public abstract void validateArgs(Object args);
-        @Nullable
-        public abstract List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet);
+
+        //TODO Remove in next breaking version
+        IOutboundTarget getActualOutboundTarget(ChannelHandlerContext ctx)
+        {
+            return this;
+        }
+
+        @Override
+        public boolean isSideAllowed(Side side)
+        {
+            return allowed.contains(side);
+        }
     }
 
     @Override
@@ -268,7 +306,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             return;
         }
         FMLProxyPacket pkt = (FMLProxyPacket) msg;
-        OutboundTarget outboundTarget;
+        IOutboundTarget outboundTarget;
         Object args = null;
         NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
         // INTERNAL message callback - let it pass out
@@ -279,8 +317,11 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
         }
 
         outboundTarget = ctx.channel().attr(FML_MESSAGETARGET).get();
+        //TODO Remove in next breaking version
+        if (outboundTarget != null) ((OutboundTarget)outboundTarget).getActualOutboundTarget(ctx);
+
         Side channelSide = ctx.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get();
-        if (outboundTarget != null && outboundTarget.allowed.contains(channelSide))
+        if (outboundTarget != null && outboundTarget.isSideAllowed(channelSide))
         {
             args = ctx.channel().attr(FML_MESSAGETARGETARGS).get();
             outboundTarget.validateArgs(args);
