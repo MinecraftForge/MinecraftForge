@@ -186,6 +186,16 @@
              p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f = p_70665_2_;
+@@ -1389,8 +1406,8 @@
+             if (p_70665_2_ != 0.0F)
+             {
+                 float f1 = this.func_110143_aJ();
+-                this.func_70606_j(f1 - p_70665_2_);
+                 this.func_110142_aN().func_94547_a(p_70665_1_, f1, p_70665_2_);
++                this.func_70606_j(f1 - p_70665_2_); // Forge: moved to fix MC-121048
+                 this.func_110149_m(this.func_110139_bj() - p_70665_2_);
+             }
+         }
 @@ -1447,6 +1464,11 @@
  
      public void func_184609_a(EnumHand p_184609_1_)
