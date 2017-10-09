@@ -410,19 +410,19 @@ public final class ItemLayerModel implements IModel
         float x0 = (float) u / width;
         float y0 = (float) v / height;
         float x1 = x0, y1 = y0;
-        float z1 = 7.5f / 16f, z2 = 8.5f / 16f;
+        float z0 = 7.5f / 16f, z1 = 8.5f / 16f;
 
         switch(side)
         {
         case WEST:
-            z1 = 8.5f / 16f;
-            z2 = 7.5f / 16f;
+            z0 = 8.5f / 16f;
+            z1 = 7.5f / 16f;
         case EAST:
             y1 = (float) (v + size) / height;
             break;
         case DOWN:
-            z1 = 8.5f / 16f;
-            z2 = 7.5f / 16f;
+            z0 = 8.5f / 16f;
+            z1 = 7.5f / 16f;
         case UP:
             x1 = (float) (u + size) / width;
             break;
@@ -437,10 +437,10 @@ public final class ItemLayerModel implements IModel
 
         return buildQuad(
             format, transform, side.getOpposite(), sprite, tint, // getOpposite is related either to the swapping of V direction, or something else
-            x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
+            x0, y0, z0, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
+            x1, y1, z0, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
             x1, y1, z1, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
-            x1, y1, z2, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
-            x0, y0, z2, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0)
+            x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0)
         );
     }
 
