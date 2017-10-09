@@ -35,6 +35,10 @@ import org.objectweb.asm.Type;
 
 import com.google.common.collect.Maps;
 
+/**
+ * @deprecated Replaced by {@link LambdaEventHandler}
+ */
+@Deprecated
 public class ASMEventHandler implements IEventListener
 {
     private static int IDs = 0;
