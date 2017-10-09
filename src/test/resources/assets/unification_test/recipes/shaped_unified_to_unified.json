@@ -1,0 +1,20 @@
+{
+  "type": "forge:ore_shaped",
+  "group": "shaped_unified_to_unified",
+  "pattern": [
+    "XX",
+    "XX"
+  ],
+  "key": {
+    "X": {
+      "type": "forge:unified",
+      "material": "redstone",
+      "form": "block"
+    }
+  },
+  "result": {
+    "type": "forge:unified",
+    "material": "diamond",
+    "form": "gem"
+  }
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "name": "diamond",
+    "ingredient": {
+      "type": "forge:unified",
+      "material": "diamond",
+      "form": "gem"
+    }
+  }
+]

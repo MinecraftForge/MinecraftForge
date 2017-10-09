@@ -31,7 +31,6 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -122,6 +121,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
                                                        // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
+    private static final List<String> unificationPriorityModIds = new ArrayList<>();
+    private static final List<String> unmodifiableUnificationPriorityModIds = Collections.unmodifiableList(unificationPriorityModIds);
 
     static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
@@ -161,6 +162,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         syncConfig(true);
 
         INSTANCE = this;
+    }
+
+    public static List<String> getUnificationPriorityModIds()
+    {
+        return unmodifiableUnificationPriorityModIds;
     }
 
     @Override
@@ -305,6 +311,14 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                         "This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.");
         dimensionUnloadQueueDelay = prop.getInt(0);
         prop.setLanguageKey("forge.configgui.dimensionUnloadQueueDelay");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "unificationPriorityModIds", new String[] {"minecraft"},
+                "This list sets which mods get chosen first when unifying with the Unifier.");
+        String[] priorityModIds = prop.getStringList();
+        unificationPriorityModIds.clear();
+        Collections.addAll(unificationPriorityModIds, priorityModIds);
+        prop.setLanguageKey("forge.configgui.unificationPriorityModIds");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
