@@ -1,10 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayer.java
-@@ -47,11 +47,11 @@
+@@ -13,6 +13,8 @@
+     protected long field_75906_d;
+ 
+     public static GenLayer[] func_180781_a(long p_180781_0_, WorldType p_180781_2_, ChunkGeneratorSettings p_180781_3_)
++    { return initializeAllBiomeGenerators(p_180781_0_, p_180781_2_, p_180781_3_, null); }
++    public static GenLayer[] initializeAllBiomeGenerators(long p_180781_0_, WorldType p_180781_2_, ChunkGeneratorSettings p_180781_3_, net.minecraft.world.World world) // Forge: Added a World argument
+     {
+         GenLayer genlayer = new GenLayerIsland(1L);
+         genlayer = new GenLayerFuzzyZoom(2000L, genlayer);
+@@ -47,11 +49,11 @@
              i = 6;
          }
  
-+        i = getModdedBiomeSize(p_180781_2_, i);
++        i = getModdedBiomeSize(world, p_180781_2_, i);
 +
          GenLayer lvt_7_1_ = GenLayerZoom.func_75915_a(1000L, genlayer4, 0);
          GenLayer genlayerriverinit = new GenLayerRiverInit(100L, lvt_7_1_);
@@ -15,7 +24,7 @@
          GenLayer lvt_9_1_ = GenLayerZoom.func_75915_a(1000L, genlayerriverinit, 2);
          GenLayer genlayerhills = new GenLayerHills(1000L, genlayerbiomeedge, lvt_9_1_);
          GenLayer genlayer5 = GenLayerZoom.func_75915_a(1000L, genlayerriverinit, 2);
-@@ -171,10 +171,32 @@
+@@ -171,10 +173,32 @@
  
      protected static boolean func_151618_b(int p_151618_0_)
      {
@@ -39,9 +48,9 @@
 +        return j;
 +    }
 +
-+    public static int getModdedBiomeSize(WorldType worldType, int original)
++    public static int getModdedBiomeSize(@javax.annotation.Nullable net.minecraft.world.World world, WorldType worldType, int original)
 +    {
-+        net.minecraftforge.event.terraingen.WorldTypeEvent.BiomeSize event = new net.minecraftforge.event.terraingen.WorldTypeEvent.BiomeSize(worldType, original);
++        net.minecraftforge.event.terraingen.WorldTypeEvent.BiomeSize event = new net.minecraftforge.event.terraingen.WorldTypeEvent.BiomeSize(world, worldType, original);
 +        net.minecraftforge.common.MinecraftForge.TERRAIN_GEN_BUS.post(event);
 +        return event.getNewSize();
 +    }

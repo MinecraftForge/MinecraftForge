@@ -61,3 +61,7 @@ net/minecraft/world/storage/loot/LootEntryEmpty.<init>(II[Lnet/minecraft/world/s
 net/minecraft/world/chunk/BlockStateContainer.setBits(IZ)V=|p_186012_1_,forceBits
 net/minecraft/village/Village.getPlayerReputation(Ljava/util/UUID;)I=|p_82684_1_
 net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_82688_1_,p_82688_2_
+
+net/minecraft/world/biome/BiomeProvider.<init>(Lnet/minecraft/world/storage/WorldInfo;Lnet/minecraft/world/World;)V=|p_i46712_1_,world
+net/minecraft/world/biome/BiomeProvider.<init>(JLnet/minecraft/world/WorldType;Ljava/lang/String;Lnet/minecraft/world/World;)V=|p_i45744_1_,p_i45744_3_,p_i45744_4_,world
+net/minecraft/world/gen/layer/GenLayer.initializeAllBiomeGenerators(JLnet/minecraft/world/WorldType;Lnet/minecraft/world/gen/ChunkGeneratorSettings;Lnet/minecraft/world/World;)[Lnet/minecraft/world/gen/layer/GenLayer;=|p_180781_0_,p_180781_2_,p_180781_3_,world
