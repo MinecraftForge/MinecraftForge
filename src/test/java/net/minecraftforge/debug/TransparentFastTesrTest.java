@@ -40,7 +40,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = TransparentFastTesrTest.MODID, name = "TransparentFastTESRTest")
+@Mod(modid = TransparentFastTesrTest.MODID, name = "TransparentFastTESRTest", version = "1.0")
 public class TransparentFastTesrTest
 {
 
