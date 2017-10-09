@@ -129,7 +129,7 @@ public class CraftingHelper {
         else if (obj instanceof String)
             return new OreIngredient((String)obj);
         else if (obj instanceof FluidStack)
-            return new FluidIngredient((FluidStack)obj, FluidIngredient.MatchingStrategy.EXCEED);
+            return new FluidIngredient((FluidStack)obj, FluidIngredient.MatchingStrategy.EXCEEDED);
         else if (obj instanceof JsonElement)
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 

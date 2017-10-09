@@ -37,6 +37,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fluids.FluidIngredient;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -152,7 +153,12 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
                         IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
                         if (fluidHandler != null)
                         {
-                            fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
+                            FluidStack drained = fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
+                            if (drained == null)
+                            {
+                                // Fluid type is ensured by the FluidIngredient::apply call above, so it's safe to drain all of them
+                                fluidHandler.drain(Integer.MAX_VALUE, true);
+                            }
                             remainder.set(index, fluidHandler.getContainer());
                             hasSettled = true;
                             remainingIngredient.remove();

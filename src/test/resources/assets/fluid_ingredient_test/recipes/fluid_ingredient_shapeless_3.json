@@ -3,7 +3,7 @@
   "type": "forge:ore_shapeless",
   "result": {
     "item": "minecraft:obsidian",
-    "count": 4
+    "count": 1
   },
   "ingredients": [
     {
@@ -13,19 +13,10 @@
       "item": "#water_matching_exceeded"
     },
     {
-      "item": "#water_matching_exceeded"
+      "item": "#water_matching_wasting"
     },
     {
-      "item": "#water_matching_exceeded"
-    },
-    {
-      "item": "#lava_matching_exceeded"
-    },
-    {
-      "item": "#lava_matching_exceeded"
-    },
-    {
-      "item": "#lava_matching_exceeded"
+      "item": "#water_matching_no_wasting"
     },
     {
       "item": "#lava_matching_exceeded"

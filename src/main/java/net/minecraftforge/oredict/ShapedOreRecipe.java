@@ -34,6 +34,7 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fluids.FluidIngredient;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -163,7 +164,11 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
                     IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
                     if (fluidHandler != null)
                     {
-                        fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
+                        FluidStack checking = fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
+                        if (checking == null)
+                        {
+                            fluidHandler.drain(Integer.MAX_VALUE, true);
+                        }
                         itemStack = fluidHandler.getContainer();
                     }
                 }

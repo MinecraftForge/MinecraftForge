@@ -30,6 +30,7 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.util.JsonUtils;
 import net.minecraftforge.common.crafting.JsonContext;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
@@ -42,17 +43,27 @@ public class FluidIngredient extends Ingredient
         /**
          * EXACT matching indicates that it will try matching exact amount of fluid.
          * Example: if the FluidIngredient asks for 500 mB water, a vanilla water bucket
-         * will not be matched, as it holds 1000 mB water.
+         * will not be matched, as it holds 1000 mB water, 1000 != 500.
          */
         EXACT,
 
         /**
-         * EXCEED matching is the default matching strategy, when not specified.
+         * EXCEEDED matching is the default matching strategy, when not specified.
          * It will try matching those containers that can drain the specified amount of
          * fluid out. Example: if the FluidIngredient asks for 500 mB water, a vanilla bucket
          * will be matched.
+         *
+         * Do note that this strategy will try voiding the exceeded part of fluid when possible.
+         * If waste shall be avoided, use NON_VOIDING strategy.
          */
-        EXCEED
+        EXCEEDED,
+
+        /**
+         * NON_VOIDING has similar logic with EXCEEDED, but it will try to avoid wasting fluid.
+         * Example: if the FluidIngredient asks for 500 mB water, a vanilla water bucket
+         * will not be matched, as one can only draw at least 1000 mB water from it.
+         */
+        NON_VOIDING
     }
 
     private final FluidStack fluidStack;
@@ -92,7 +103,11 @@ public class FluidIngredient extends Ingredient
 
         switch (this.strategy)
         {
-            case EXCEED:
+            case NON_VOIDING:
+                IFluidHandlerItem handler = FluidUtil.getFluidHandler(itemStackIn);
+                return handler != null && fluidStack.isFluidStackIdentical(handler.drain(fluidStack, false));
+
+            case EXCEEDED:
                 return fluidStack.isFluidEqual(fluidStackToTest) && fluidStack.amount <= fluidStackToTest.amount;
 
             case EXACT:
@@ -137,7 +152,7 @@ public class FluidIngredient extends Ingredient
         }
         catch (Exception e)
         {
-            strategy = MatchingStrategy.EXCEED; // Default to EXCEED;
+            strategy = MatchingStrategy.EXCEEDED; // Default to EXCEEDED;
         }
 
         return new FluidIngredient(fluidStack, strategy);

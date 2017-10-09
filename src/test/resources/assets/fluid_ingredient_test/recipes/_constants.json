@@ -17,6 +17,24 @@
     }
   },
   {
+    "name": "water_matching_wasting",
+    "ingredient": {
+      "type": "forge:fluid",
+      "fluid": "water",
+      "amount": 250,
+      "match": "exceeded"
+    }
+  },
+  {
+    "name": "water_matching_no_wasting",
+    "ingredient": {
+      "type": "forge:fluid",
+      "fluid": "water",
+      "amount": 250,
+      "match": "non_voiding"
+    }
+  },
+  {
     "name": "lava_matching_exceeded",
     "ingredient": {
       "type": "forge:fluid",
