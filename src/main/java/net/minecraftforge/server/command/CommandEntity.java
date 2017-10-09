@@ -44,12 +44,12 @@ import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-class EntityCommand extends CommandTreeBase
+class CommandEntity extends CommandTreeBase
 {
-    public EntityCommand()
+    public CommandEntity()
     {
         addSubcommand(new EntityListCommand());
-        addSubcommand(new HelpCommand(this));
+        addSubcommand(new CommandTreeHelp(this));
     }
 
     @Override

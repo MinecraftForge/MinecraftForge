@@ -28,11 +28,11 @@ import net.minecraft.server.MinecraftServer;
  * Add help for parent and all its children.
  * Must be added to parent after all other commands.
  */
-public class HelpCommand extends CommandTreeBase
+public class CommandTreeHelp extends CommandTreeBase
 {
     private final ICommand parent;
 
-    public HelpCommand(CommandTreeBase parent)
+    public CommandTreeHelp(CommandTreeBase parent)
     {
         this.parent = parent;
         for (ICommand command : parent.getSubCommands())
@@ -79,10 +79,10 @@ public class HelpCommand extends CommandTreeBase
 
     public static class HelpSubCommand extends CommandBase
     {
-        private final HelpCommand parent;
+        private final CommandTreeHelp parent;
         private final ICommand command;
 
-        public HelpSubCommand(HelpCommand parent, ICommand command)
+        public HelpSubCommand(CommandTreeHelp parent, ICommand command)
         {
             this.parent = parent;
             this.command = command;

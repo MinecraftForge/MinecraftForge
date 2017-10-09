@@ -42,16 +42,32 @@ import java.util.Map;
  */
 public abstract class CommandTreeBase extends CommandBase
 {
-    private final Map<String, ICommand> commandMap = new HashMap<String, ICommand>();
+    private final Map<String, ICommand> commandMap = new HashMap<>();
+    private final Map<String, ICommand> commandAliasMap = new HashMap<>();
 
-    public void addSubcommand(ICommand c)
+    public void addSubcommand(ICommand command)
     {
-        commandMap.put(c.getName(), c);
+        commandMap.put(command.getName(), command);
+        for (String alias : command.getAliases())
+        {
+            commandAliasMap.put(alias, command);
+        }
     }
 
     public Collection<ICommand> getSubCommands()
     {
-        return getCommandMap().values();
+        return commandMap.values();
+    }
+
+    @Nullable
+    public ICommand getSubCommand(String command)
+    {
+        ICommand cmd = commandMap.get(command);
+        if (cmd != null)
+        {
+            return cmd;
+        }
+        return commandAliasMap.get(command);
     }
 
     public Map<String, ICommand> getCommandMap()
@@ -85,7 +101,7 @@ public abstract class CommandTreeBase extends CommandBase
         {
             List<String> keys = new ArrayList<>();
 
-            for(ICommand c : getCommandMap().values())
+            for (ICommand c : getSubCommands())
             {
                 if(c.checkPermission(server, sender))
                 {
@@ -97,7 +113,7 @@ public abstract class CommandTreeBase extends CommandBase
             return getListOfStringsMatchingLastWord(args, keys);
         }
 
-        ICommand cmd = getCommandMap().get(args[0]);
+        ICommand cmd = getSubCommand(args[0]);
 
         if(cmd != null)
         {
@@ -110,10 +126,10 @@ public abstract class CommandTreeBase extends CommandBase
     @Override
     public boolean isUsernameIndex(String[] args, int index)
     {
-        if(index > 0 && args.length > 1)
+        if (index > 0 && args.length > 1)
         {
-            ICommand cmd = getCommandMap().get(args[0]);
-            if(cmd != null)
+            ICommand cmd = getSubCommand(args[0]);
+            if (cmd != null)
             {
                 return cmd.isUsernameIndex(shiftArgs(args), index - 1);
             }
@@ -132,7 +148,7 @@ public abstract class CommandTreeBase extends CommandBase
         }
         else
         {
-            ICommand cmd = getCommandMap().get(args[0]);
+            ICommand cmd = getSubCommand(args[0]);
 
             if(cmd == null)
             {

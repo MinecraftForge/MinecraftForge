@@ -30,12 +30,18 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.WorldWorkerManager;
 
-class GenCommand extends CommandBase
+class CommandGenerate extends CommandBase
 {
     @Override
     public String getName()
     {
-        return "gen";
+        return "generate";
+    }
+
+    @Override
+    public List<String> getAliases()
+    {
+        return Collections.singletonList("gen");
     }
 
     @Override

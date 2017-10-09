@@ -27,7 +27,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 
-class TpsCommand extends CommandBase
+class CommandTps extends CommandBase
 {
     private static final DecimalFormat TIME_FORMATTER = new DecimalFormat("########0.000");
 

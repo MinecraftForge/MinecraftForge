@@ -28,11 +28,11 @@ public class ForgeCommand extends CommandTreeBase
 {
     public ForgeCommand()
     {
-        super.addSubcommand(new TpsCommand());
-        super.addSubcommand(new TrackCommand());
-        super.addSubcommand(new GenCommand());
-        super.addSubcommand(new EntityCommand());
-        super.addSubcommand(new HelpCommand(this));
+        super.addSubcommand(new CommandTps());
+        super.addSubcommand(new CommandTrack());
+        super.addSubcommand(new CommandGenerate());
+        super.addSubcommand(new CommandEntity());
+        super.addSubcommand(new CommandTreeHelp(this));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ForgeCommand extends CommandTreeBase
     }
 
     @Override
-    public void addSubcommand(ICommand c)
+    public void addSubcommand(ICommand command)
     {
         throw new UnsupportedOperationException("Don't add sub-commands to /forge, create your own command.");
     }
