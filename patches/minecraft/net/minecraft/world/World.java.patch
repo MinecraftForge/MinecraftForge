@@ -232,7 +232,7 @@
                                  iblockstate1.func_185908_a(this, blockpos$pooledmutableblockpos, p_191504_2_, p_191504_4_, p_191504_1_, false);
  
 -                                if (p_191504_3_ && !p_191504_4_.isEmpty())
-+                                if (p_191504_3_ && !net.minecraftforge.event.ForgeEventFactory.gatherCollisionBoxes(this, p_191504_1_, p_191504_2_, p_191504_4_))
++                                if (p_191504_3_)
                                  {
 +                                    if (net.minecraftforge.event.ForgeEventFactory.gatherCollisionBoxes(this, p_191504_1_, p_191504_2_, p_191504_4_)) continue;
                                      boolean flag5 = true;
