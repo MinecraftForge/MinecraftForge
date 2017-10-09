@@ -72,10 +72,8 @@ public class FluidIngredient extends Ingredient
     public FluidIngredient(FluidStack fluidStack, MatchingStrategy strategy)
     {
         super(0);
-        Preconditions.checkNotNull(fluidStack, "Null FluidStack is not permitted in FluidIngredient");
-        Preconditions.checkNotNull(strategy, "MatchingStrategy cannot be null");
-        this.fluidStack = fluidStack;
-        this.strategy = strategy;
+        this.fluidStack = Preconditions.checkNotNull(fluidStack, "Null FluidStack is not permitted in FluidIngredient");
+        this.strategy = Preconditions.checkNotNull(strategy, "MatchingStrategy cannot be null");
     }
 
     public FluidStack getFluidStack()
