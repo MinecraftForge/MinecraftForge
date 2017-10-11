@@ -21,7 +21,7 @@
                              if (iblockstate.func_185904_a() != Material.field_151579_a)
                              {
 -                                float f2 = this.field_77283_e != null ? this.field_77283_e.func_180428_a(this, this.field_77287_j, blockpos, iblockstate) : iblockstate.func_177230_c().func_149638_a((Entity)null);
-+                                float f2 = this.field_77283_e != null ? this.field_77283_e.func_180428_a(this, this.field_77287_j, blockpos, iblockstate) : iblockstate.func_177230_c().getExplosionResistance(field_77287_j, blockpos, (Entity)null, this);
++                                float f2 = this.field_77283_e != null ? this.field_77283_e.func_180428_a(this, this.field_77287_j, blockpos, iblockstate) : iblockstate.func_177230_c().getExplosionResistance(iblockstate, field_77287_j, blockpos, (Entity)null, this);
                                  f -= (f2 + 0.3F) * 0.3F;
                              }
  

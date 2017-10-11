@@ -7,7 +7,7 @@
 +    /* ======================================== FORGE START ======================================== */
 +
 +    @Override
-+    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    public boolean canBeConnectedTo(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
 +        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
 +        return connector instanceof BlockPane;
@@ -17,7 +17,7 @@
 +    {
 +        BlockPos other = pos.func_177972_a(dir);
 +        IBlockState state = world.func_180495_p(other);
-+        return state.func_177230_c().canBeConnectedTo(world, other, dir.func_176734_d()) || func_193393_b(world, state, other, dir.func_176734_d());
++        return state.func_177230_c().canBeConnectedTo(state, world, other, dir.func_176734_d()) || func_193393_b(world, state, other, dir.func_176734_d());
 +    }
 +
 +    /* ======================================== FORGE END ======================================== */

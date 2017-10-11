@@ -151,7 +151,7 @@
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
 -        return p_180428_4_.func_177230_c().func_149638_a(this);
-+        return p_180428_4_.func_177230_c().getExplosionResistance(p_180428_2_, p_180428_3_, this, p_180428_1_);
++        return p_180428_4_.func_177230_c().getExplosionResistance(p_180428_4_, p_180428_2_, p_180428_3_, this, p_180428_1_);
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
