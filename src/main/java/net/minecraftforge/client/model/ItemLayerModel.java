@@ -430,10 +430,13 @@ public final class ItemLayerModel implements IModel
             throw new IllegalArgumentException("can't handle z-oriented side");
         }
 
-        float u0 = 16f * (x0 - side.getDirectionVec().getX() * eps / width);
-        float u1 = 16f * (x1 - side.getDirectionVec().getX() * eps / width);
-        float v0 = 16f * (1f - y0 - side.getDirectionVec().getY() * eps / height);
-        float v1 = 16f * (1f - y1 - side.getDirectionVec().getY() * eps / height);
+        float dx = side.getDirectionVec().getX() * eps / width;
+        float dy = side.getDirectionVec().getY() * eps / height;
+
+        float u0 = 16f * (x0 - dx);
+        float u1 = 16f * (x1 - dx);
+        float v0 = 16f * (1f - y0 - dy);
+        float v1 = 16f * (1f - y1 - dy);
 
         return buildQuad(
             format, transform, side.getOpposite(), sprite, tint, // getOpposite is related either to the swapping of V direction, or something else
