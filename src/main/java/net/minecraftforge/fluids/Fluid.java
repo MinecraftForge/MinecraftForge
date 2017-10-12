@@ -125,6 +125,16 @@ public class Fluid
      * The default value of null should remain for any Fluid without a Block implementation.
      */
     protected Block block = null;
+    
+    /**
+     * Color used by universal bucket and the ModelFluid baked model.
+     * Note that this int includes the alpha so converting this to RGB with alpha would be
+     *   float r = ((color >> 16) & 0xFF) / 255f; // red
+     *   float g = ((color >> 8) & 0xFF) / 255f; // green
+     *   float b = ((color >> 0) & 0xFF) / 255f; // blue
+     *   float a = ((color >> 24) & 0xFF) / 255f; // alpha
+     */
+    protected int color = 0xFFFFFFFF;
 
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing)
     {
@@ -201,6 +211,17 @@ public class Fluid
         this.emptySound = emptySound;
         return this;
     }
+
+    /**
+     *  The color parameter includes alpha! so ARGB format
+     *  For example, if you want pure green (which is RGB #00FF00)
+     *  you probably want to pass 0xFF00FF00 so there is no
+     *  alpha transparency. 
+     */
+    public Fluid setColor(int color) 
+    { 
+        this.color = color; return this; 
+    } 
 
     public final String getName()
     {
