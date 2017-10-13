@@ -728,4 +728,21 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     {
         return NULL_AABB;
     }
+    
+    @SideOnly (Side.CLIENT)
+    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
+    {
+        if (getFluid() != null)
+        {
+            int color = getFluid().getColor();
+            int red = color >> 16 & 0xFF;
+            int green = color >> 8 & 0xFF;
+            int blue = color & 0xFF;
+            return new Vec3d(red, green, blue);
+        }
+        else
+        {
+            return super.getFogColor(world, pos, state, entity, originalColor, partialTicks);
+        }
+    }
 }
