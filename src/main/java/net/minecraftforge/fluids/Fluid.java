@@ -216,7 +216,9 @@ public class Fluid
      *  The color parameter includes alpha! so ARGB format
      *  For example, if you want pure green (which is RGB #00FF00)
      *  you probably want to pass 0xFF00FF00 so there is no
-     *  alpha transparency. 
+     *  alpha transparency. It also is blended with color
+     *  of your texture, so if you want to preserve texture
+     *  then leave at default value (white).
      */
     public Fluid setColor(int color) 
     { 
@@ -332,7 +334,7 @@ public class Fluid
 
     public int getColor()
     {
-        return 0xFFFFFFFF;
+        return color;
     }
 
     public ResourceLocation getStill()
