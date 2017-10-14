@@ -52,6 +52,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is a base implementation for Fluid blocks.
@@ -727,5 +728,19 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos)
     {
         return NULL_AABB;
+    }
+    
+    @Override
+    @Nullable
+    public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead)
+    {
+        if(materialIn == Material.WATER)
+        {
+            return iblockstate.getMaterial().isLiquid();
+        } 
+        else 
+        {
+            return false;
+        }
     }
 }
