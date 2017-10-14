@@ -735,9 +735,9 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (getFluid() != null)
         {
             int color = getFluid().getColor();
-            int red = color >> 16 & 0xFF;
-            int green = color >> 8 & 0xFF;
-            int blue = color & 0xFF;
+            float red = (color >> 16 & 0xFF) / 255.0F;
+            float green = (color >> 8 & 0xFF) / 255.0F;
+            float blue = (color & 0xFF) / 255.0F;
             return new Vec3d(red, green, blue);
         }
         else
