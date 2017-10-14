@@ -59,9 +59,31 @@ public class LightingHooks
             if (world.provider.hasSkyLight())
                 chunk.setSkylightUpdated();
 
-            chunk.setLightPopulated(true);
+            chunk.setLightInitialized(true);
         }
 
         pos.release();
+    }
+
+    public static void checkChunkLighting(final Chunk chunk, final World world)
+    {
+        if (!chunk.isLightInitialized())
+            initChunkLighting(chunk, world);
+
+        for (int x = -1; x <= 1; ++x)
+        {
+            for (int z = -1; z <= 1; ++z)
+            {
+                if (x != 0 || z != 0)
+                {
+                    Chunk nChunk = world.getChunkProvider().getLoadedChunk(chunk.xPosition + x, chunk.zPosition + z);
+
+                    if (nChunk == null || !nChunk.isLightInitialized())
+                        return;
+                }
+            }
+        }
+
+        chunk.setLightPopulated(true);
     }
 }
