@@ -94,6 +94,15 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
+@@ -256,7 +304,7 @@
+         p_75820_3_.func_74772_a("LastUpdate", p_75820_2_.func_82737_E());
+         p_75820_3_.func_74783_a("HeightMap", p_75820_1_.func_177445_q());
+         p_75820_3_.func_74757_a("TerrainPopulated", p_75820_1_.func_177419_t());
+-        p_75820_3_.func_74757_a("LightPopulated", p_75820_1_.func_177423_u());
++        p_75820_3_.func_74757_a("LightPopulated", p_75820_1_.isLightInitialized());
+         p_75820_3_.func_74772_a("InhabitedTime", p_75820_1_.func_177416_w());
+         ExtendedBlockStorage[] aextendedblockstorage = p_75820_1_.func_76587_i();
+         NBTTagList nbttaglist = new NBTTagList();
 @@ -305,11 +353,19 @@
              {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
@@ -131,6 +140,15 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
+@@ -354,7 +418,7 @@
+         Chunk chunk = new Chunk(p_75823_1_, i, j);
+         chunk.func_177420_a(p_75823_2_.func_74759_k("HeightMap"));
+         chunk.func_177446_d(p_75823_2_.func_74767_n("TerrainPopulated"));
+-        chunk.func_177421_e(p_75823_2_.func_74767_n("LightPopulated"));
++        chunk.setLightInitialized(p_75823_2_.func_74767_n("LightPopulated"));
+         chunk.func_177415_c(p_75823_2_.func_74763_f("InhabitedTime"));
+         NBTTagList nbttaglist = p_75823_2_.func_150295_c("Sections", 10);
+         int k = 16;
 @@ -388,6 +452,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
