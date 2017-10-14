@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -18,6 +20,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,7 +35,7 @@ public class CollisionBoxesEventTest
 {
     public static final String MODID = "collisionboxexeventtest";
 
-    public static final boolean ENABLED = false;
+    public static final boolean ENABLED = true;
     @GameRegistry.ObjectHolder("box_block")
     private static final Block BOX_BLOCK = null;
     private static final ArrayList<BlockPos> locations = new ArrayList<>();
@@ -52,6 +57,7 @@ public class CollisionBoxesEventTest
             event.getRegistry().register(new ItemBlock(BOX_BLOCK).setRegistryName(new ResourceLocation(MODID, "box_block")));
         }
     }
+
 
     @SubscribeEvent
     public static void getBoxes(GetCollisionBoxesEvent event)
@@ -76,6 +82,7 @@ public class CollisionBoxesEventTest
         {
             super(Material.ROCK);
             setRegistryName(new ResourceLocation(MODID, "box_block"));
+            setCreativeTab(CreativeTabs.MISC);
         }
 
         @Override
@@ -89,5 +96,12 @@ public class CollisionBoxesEventTest
         {
             locations.add(pos);
         }
+
+
+        @Override
+        public String getUnlocalizedName() {
+            return "CollisionBoxes event test block";
+        }
+
     }
 }
