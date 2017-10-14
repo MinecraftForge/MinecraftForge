@@ -22,19 +22,60 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid=FluidAdditionalFieldsTest.MODID, name="Test Mod", version="1.0.0", acceptedMinecraftVersions="*") 
-@EventBusSubscriber 
-public class FluidAdditionalFieldsTest{
-	static final boolean ENABLED = false; // <-- enable mod
-	static final int COLOR = 0xFFd742f4;  // <-- change value for testing
+@Mod(modid = FluidAdditionalFieldsTest.MODID, name = "Test Mod", version = "1.0.0", acceptedMinecraftVersions = "*")
+@EventBusSubscriber
+public class FluidAdditionalFieldsTest
+{
+    static final boolean ENABLED = false; // <-- enable mod
+    static final int COLOR = 0xFFd742f4; // <-- change value for testing
 
-	static final String MODID = "fluidadditionalfields";
-	static final ResourceLocation RL = new ResourceLocation(MODID, "slime");
-    static {if (ENABLED) {FluidRegistry.enableUniversalBucket();}}
-	public static final Fluid SF = new Fluid("slime", new ResourceLocation(MODID,"slime_still"), new ResourceLocation(MODID, "slime_flow")).setColor(COLOR);
-    @ObjectHolder("slime") public static final BlockFluidBase SB = null;
-    @EventHandler public void ev(FMLPreInitializationEvent ev) {if (ENABLED) {FluidRegistry.registerFluid(SF); FluidRegistry.addBucketForFluid(SF);}}
-    @SubscribeEvent public static void evb(final RegistryEvent.Register<Block> ev) {if (ENABLED) ev.getRegistry().register((new BlockFluidClassic(SF, Material.WATER)).setRegistryName(RL).setUnlocalizedName(RL.toString()));}
-    @SubscribeEvent public static void evib(final RegistryEvent.Register<Item> ev) {if (ENABLED) {ev.getRegistry().register((new ItemBlock(SB)).setRegistryName(RL));}} 
-    @SubscribeEvent @SideOnly(Side.CLIENT) public static void evm(final ModelRegistryEvent ev) {if (ENABLED) {ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(SB), 0, new ModelResourceLocation(RL, "inventory")); ModelLoader.setCustomModelResourceLocation((new ItemBlock(SB)), 0, new ModelResourceLocation(RL, "inventory"));}}
+    static final String MODID = "fluidadditionalfields";
+    static final ResourceLocation RES_LOC = new ResourceLocation(MODID, "slime");
+    static
+    {
+        if (ENABLED)
+        {
+            FluidRegistry.enableUniversalBucket();
+        }
+    }
+    public static final Fluid SLIME = new Fluid("slime", new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow")).setColor(COLOR);
+    @ObjectHolder("slime")
+    public static final BlockFluidBase SLIME_BLOCK = null;
+
+    @EventHandler
+    public void ev(FMLPreInitializationEvent event)
+    {
+        if (ENABLED)
+        {
+            FluidRegistry.registerFluid(SLIME);
+            FluidRegistry.addBucketForFluid(SLIME);
+        }
+    }
+
+    @SubscribeEvent
+    public static void evb(final RegistryEvent.Register<Block> event)
+    {
+        if (ENABLED)
+            event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
+    }
+
+    @SubscribeEvent
+    public static void evib(final RegistryEvent.Register<Item> event)
+    {
+        if (ENABLED)
+        {
+            event.getRegistry().register((new ItemBlock(SLIME_BLOCK)).setRegistryName(RES_LOC));
+        }
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public static void evm(final ModelRegistryEvent event)
+    {
+        if (ENABLED)
+        {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(SLIME_BLOCK), 0, new ModelResourceLocation(RES_LOC, "inventory"));
+            ModelLoader.setCustomModelResourceLocation((new ItemBlock(SLIME_BLOCK)), 0, new ModelResourceLocation(RES_LOC, "inventory"));
+        }
+    }
 }
