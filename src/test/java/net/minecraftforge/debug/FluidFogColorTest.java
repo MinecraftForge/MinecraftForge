@@ -27,7 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class FluidFogColorTest
 {
     static final boolean ENABLED = false; // <-- enable mod
-    static int color = 0xFFd742f4; // <-- change value for testing
+    static int color = 0xFFd742f4;        // <-- change value for testing
 
     static final String MODID = "fluidfogcolor";
     static final ResourceLocation RES_LOC = new ResourceLocation(MODID, "slime");
@@ -58,7 +58,7 @@ public class FluidFogColorTest
     public static final BlockFluidBase SLIME_BLOCK = null;
 
     @EventHandler
-    public void ev(FMLPreInitializationEvent event)
+    public void preInit(FMLPreInitializationEvent event)
     {
         if (ENABLED)
         {
@@ -68,14 +68,17 @@ public class FluidFogColorTest
     }
 
     @SubscribeEvent
-    public static void evb(final RegistryEvent.Register<Block> event)
+    public static void eventBlockRegistry(final RegistryEvent.Register<Block> event)
     {
         if (ENABLED)
+        {
             event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
+    
+        }
     }
 
     @SubscribeEvent
-    public static void evib(final RegistryEvent.Register<Item> event)
+    public static void eventItemRegistry(final RegistryEvent.Register<Item> event)
     {
         if (ENABLED)
         {
@@ -85,7 +88,7 @@ public class FluidFogColorTest
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public static void evm(final ModelRegistryEvent event)
+    public static void eventModelRegistry(final ModelRegistryEvent event)
     {
         if (ENABLED)
         {
