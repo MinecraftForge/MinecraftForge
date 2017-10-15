@@ -1,5 +1,7 @@
 package net.minecraftforge.debug;
 
+import java.awt.Color;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -26,9 +28,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @EventBusSubscriber
 public class FluidAdditionalFieldsTest
 {
-    static final boolean ENABLED = false; // <-- enable mod
-    static final int COLOR = 0xFFd742f4; // <-- change value for testing
-
+    static final boolean ENABLED = false;      // <-- enable mod
+    static final int COLOR = 0xFFd742f4;       // <-- change value for testing
+    static final Color COLOR_ALT = Color.PINK; // <-- or use this one to test alternate setter
+    
     static final String MODID = "fluidadditionalfields";
     static final ResourceLocation RES_LOC = new ResourceLocation(MODID, "slime");
     static
@@ -43,7 +46,7 @@ public class FluidAdditionalFieldsTest
     public static final BlockFluidBase SLIME_BLOCK = null;
 
     @EventHandler
-    public void ev(FMLPreInitializationEvent event)
+    public void preInit(FMLPreInitializationEvent event)
     {
         if (ENABLED)
         {
@@ -53,14 +56,14 @@ public class FluidAdditionalFieldsTest
     }
 
     @SubscribeEvent
-    public static void evb(final RegistryEvent.Register<Block> event)
+    public static void eventBlockRegistry(final RegistryEvent.Register<Block> event)
     {
         if (ENABLED)
             event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
     }
 
     @SubscribeEvent
-    public static void evib(final RegistryEvent.Register<Item> event)
+    public static void eventItemRegistry(final RegistryEvent.Register<Item> event)
     {
         if (ENABLED)
         {
@@ -70,7 +73,7 @@ public class FluidAdditionalFieldsTest
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public static void evm(final ModelRegistryEvent event)
+    public static void eventModelRegistry(final ModelRegistryEvent event)
     {
         if (ENABLED)
         {

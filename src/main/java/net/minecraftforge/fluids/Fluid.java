@@ -20,6 +20,8 @@
 package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
+
+import java.awt.Color;
 import java.util.Locale;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -222,8 +224,18 @@ public class Fluid
      */
     public Fluid setColor(int color) 
     { 
-        this.color = color; return this; 
+        this.color = color; 
+        return this; 
     } 
+    
+    /*
+     * Alternate setter to allow awt.Color parameter
+     */
+    public Fluid setColor(Color color)
+    {
+        this.color = (color.getAlpha()<<24) + (color.getRed()<<16) + (color.getGreen()<<8) + color.getBlue();
+        return this;
+    }
 
     public final String getName()
     {
