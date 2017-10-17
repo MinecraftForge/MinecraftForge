@@ -21,6 +21,9 @@ package net.minecraftforge.fluids;
 
 import java.util.Random;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -28,9 +31,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This is a fluid block implementation which emulates vanilla Minecraft fluid behavior.
@@ -325,8 +325,7 @@ public class BlockFluidClassic extends BlockFluidBase
 
         Material material = state.getMaterial();
         if (material.blocksMovement()  ||
-            material == Material.WATER ||
-            material == Material.LAVA  ||
+            material.isLiquid() ||
             material == Material.PORTAL)
         {
             return false;
