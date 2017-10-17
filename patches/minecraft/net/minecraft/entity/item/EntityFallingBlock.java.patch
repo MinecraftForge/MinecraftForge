@@ -1,79 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityFallingBlock.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityFallingBlock.java
-@@ -1,12 +1,14 @@
- package net.minecraft.entity.item;
- 
--import com.google.common.collect.Lists;
- import java.util.List;
-+
- import javax.annotation.Nullable;
-+
-+import com.google.common.collect.Lists;
-+
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockAnvil;
- import net.minecraft.block.BlockFalling;
--import net.minecraft.block.ITileEntityProvider;
- import net.minecraft.block.material.Material;
- import net.minecraft.block.state.IBlockState;
- import net.minecraft.crash.CrashReportCategory;
-@@ -55,7 +57,7 @@
-         this.field_175132_d = p_i45848_8_;
-         this.field_70156_m = true;
-         this.func_70105_a(0.98F, 0.98F);
--        this.func_70107_b(p_i45848_2_, p_i45848_4_ + (double)((1.0F - this.field_70131_O) / 2.0F), p_i45848_6_);
-+        this.func_70107_b(p_i45848_2_, p_i45848_4_ + (1.0F - this.field_70131_O) / 2.0F, p_i45848_6_);
-         this.field_70159_w = 0.0D;
-         this.field_70181_x = 0.0D;
-         this.field_70179_y = 0.0D;
-@@ -65,6 +67,7 @@
-         this.func_184530_a(new BlockPos(this));
-     }
- 
-+    @Override
-     public boolean func_70075_an()
-     {
-         return false;
-@@ -78,24 +81,28 @@
-     @SideOnly(Side.CLIENT)
-     public BlockPos func_184531_j()
-     {
--        return (BlockPos)this.field_70180_af.func_187225_a(field_184532_d);
-+        return this.field_70180_af.func_187225_a(field_184532_d);
-     }
- 
-+    @Override
-     protected boolean func_70041_e_()
-     {
-         return false;
-     }
- 
-+    @Override
-     protected void func_70088_a()
-     {
-         this.field_70180_af.func_187214_a(field_184532_d, BlockPos.field_177992_a);
-     }
- 
-+    @Override
-     public boolean func_70067_L()
-     {
-         return !this.field_70128_L;
-     }
- 
-+    @Override
-     public void func_70071_h_()
-     {
-         Block block = this.field_175132_d.func_177230_c();
-@@ -136,7 +143,7 @@
-             {
-                 BlockPos blockpos1 = new BlockPos(this);
-                 boolean flag = this.field_175132_d.func_177230_c() == Blocks.field_192444_dS;
--                boolean flag1 = flag && this.field_70170_p.func_180495_p(blockpos1).func_185904_a() == Material.field_151586_h;
-+                boolean flag1 = flag && this.field_70170_p.func_180495_p(blockpos1).func_185904_a().func_76224_d();
-                 double d0 = this.field_70159_w * this.field_70159_w + this.field_70181_x * this.field_70181_x + this.field_70179_y * this.field_70179_y;
- 
-                 if (flag && d0 > 1.0D)
-@@ -166,6 +173,7 @@
+@@ -166,6 +166,7 @@
                  {
                      IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos1);
  
@@ -81,7 +8,7 @@
                      if (!flag1 && BlockFalling.func_185759_i(this.field_70170_p.func_180495_p(new BlockPos(this.field_70165_t, this.field_70163_u - 0.009999999776482582D, this.field_70161_v))))
                      {
                          this.field_70122_E = false;
-@@ -189,7 +197,7 @@
+@@ -189,7 +190,7 @@
                                      ((BlockFalling)block).func_176502_a_(this.field_70170_p, blockpos1, this.field_175132_d, iblockstate);
                                  }
  
@@ -90,67 +17,3 @@
                                  {
                                      TileEntity tileentity = this.field_70170_p.func_175625_s(blockpos1);
  
-@@ -231,6 +239,7 @@
-         }
-     }
- 
-+    @Override
-     public void func_180430_e(float p_180430_1_, float p_180430_2_)
-     {
-         Block block = this.field_175132_d.func_177230_c();
-@@ -247,12 +256,12 @@
- 
-                 for (Entity entity : list)
-                 {
--                    entity.func_70097_a(damagesource, (float)Math.min(MathHelper.func_76141_d((float)i * this.field_145816_i), this.field_145815_h));
-+                    entity.func_70097_a(damagesource, Math.min(MathHelper.func_76141_d(i * this.field_145816_i), this.field_145815_h));
-                 }
- 
--                if (flag && (double)this.field_70146_Z.nextFloat() < 0.05000000074505806D + (double)i * 0.05D)
-+                if (flag && this.field_70146_Z.nextFloat() < 0.05000000074505806D + i * 0.05D)
-                 {
--                    int j = ((Integer)this.field_175132_d.func_177229_b(BlockAnvil.field_176505_b)).intValue();
-+                    int j = this.field_175132_d.func_177229_b(BlockAnvil.field_176505_b).intValue();
-                     ++j;
- 
-                     if (j > 2)
-@@ -272,6 +281,7 @@
-     {
-     }
- 
-+    @Override
-     protected void func_70014_b(NBTTagCompound p_70014_1_)
-     {
-         Block block = this.field_175132_d != null ? this.field_175132_d.func_177230_c() : Blocks.field_150350_a;
-@@ -290,6 +300,7 @@
-         }
-     }
- 
-+    @Override
-     protected void func_70037_a(NBTTagCompound p_70037_1_)
-     {
-         int i = p_70037_1_.func_74771_c("Data") & 255;
-@@ -342,6 +353,7 @@
-         this.field_145809_g = p_145806_1_;
-     }
- 
-+    @Override
-     public void func_85029_a(CrashReportCategory p_85029_1_)
-     {
-         super.func_85029_a(p_85029_1_);
-@@ -360,6 +372,7 @@
-         return this.field_70170_p;
-     }
- 
-+    @Override
-     @SideOnly(Side.CLIENT)
-     public boolean func_90999_ad()
-     {
-@@ -372,6 +385,7 @@
-         return this.field_175132_d;
-     }
- 
-+    @Override
-     public boolean func_184213_bq()
-     {
-         return true;
