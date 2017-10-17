@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/client/particle/ParticleSuspend.java
++++ ../src-work/minecraft/net/minecraft/client/particle/ParticleSuspend.java
+@@ -1,6 +1,5 @@
+ package net.minecraft.client.particle;
+ 
+-import net.minecraft.block.material.Material;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+@@ -24,6 +23,7 @@
+         this.field_70547_e = (int)(16.0D / (Math.random() * 0.8D + 0.2D));
+     }
+ 
++    @Override
+     public void func_189213_a()
+     {
+         this.field_187123_c = this.field_187126_f;
+@@ -31,7 +31,7 @@
+         this.field_187125_e = this.field_187128_h;
+         this.func_187110_a(this.field_187129_i, this.field_187130_j, this.field_187131_k);
+ 
+-        if (this.field_187122_b.func_180495_p(new BlockPos(this.field_187126_f, this.field_187127_g, this.field_187128_h)).func_185904_a() != Material.field_151586_h)
++        if (!this.field_187122_b.func_180495_p(new BlockPos(this.field_187126_f, this.field_187127_g, this.field_187128_h)).func_185904_a().func_76224_d())
+         {
+             this.func_187112_i();
+         }
+@@ -45,6 +45,7 @@
+     @SideOnly(Side.CLIENT)
+     public static class Factory implements IParticleFactory
+         {
++            @Override
+             public Particle func_178902_a(int p_178902_1_, World p_178902_2_, double p_178902_3_, double p_178902_5_, double p_178902_7_, double p_178902_9_, double p_178902_11_, double p_178902_13_, int... p_178902_15_)
+             {
+                 return new ParticleSuspend(p_178902_2_, p_178902_3_, p_178902_5_, p_178902_7_, p_178902_9_, p_178902_11_, p_178902_13_);

@@ -1,0 +1,78 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockConcretePowder.java
++++ ../src-work/minecraft/net/minecraft/block/BlockConcretePowder.java
+@@ -27,6 +27,7 @@
+         this.func_149647_a(CreativeTabs.field_78030_b);
+     }
+ 
++    @Override
+     public void func_176502_a_(World p_176502_1_, BlockPos p_176502_2_, IBlockState p_176502_3_, IBlockState p_176502_4_)
+     {
+         if (p_176502_4_.func_185904_a().func_76224_d())
+@@ -45,7 +46,7 @@
+             {
+                 BlockPos blockpos = p_192425_2_.func_177972_a(enumfacing);
+ 
+-                if (p_192425_1_.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
++                if (p_192425_1_.func_180495_p(blockpos).func_185904_a().func_76224_d())
+                 {
+                     flag = true;
+                     break;
+@@ -61,6 +62,7 @@
+         return flag;
+     }
+ 
++    @Override
+     public void func_189540_a(IBlockState p_189540_1_, World p_189540_2_, BlockPos p_189540_3_, Block p_189540_4_, BlockPos p_189540_5_)
+     {
+         if (!this.func_192425_e(p_189540_2_, p_189540_3_, p_189540_1_))
+@@ -69,6 +71,7 @@
+         }
+     }
+ 
++    @Override
+     public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
+     {
+         if (!this.func_192425_e(p_176213_1_, p_176213_2_, p_176213_3_))
+@@ -77,11 +80,13 @@
+         }
+     }
+ 
++    @Override
+     public int func_180651_a(IBlockState p_180651_1_)
+     {
+-        return ((EnumDyeColor)p_180651_1_.func_177229_b(field_192426_a)).func_176765_a();
++        return p_180651_1_.func_177229_b(field_192426_a).func_176765_a();
+     }
+ 
++    @Override
+     public void func_149666_a(CreativeTabs p_149666_1_, NonNullList<ItemStack> p_149666_2_)
+     {
+         for (EnumDyeColor enumdyecolor : EnumDyeColor.values())
+@@ -90,21 +95,25 @@
+         }
+     }
+ 
++    @Override
+     public MapColor func_180659_g(IBlockState p_180659_1_, IBlockAccess p_180659_2_, BlockPos p_180659_3_)
+     {
+-        return MapColor.func_193558_a((EnumDyeColor)p_180659_1_.func_177229_b(field_192426_a));
++        return MapColor.func_193558_a(p_180659_1_.func_177229_b(field_192426_a));
+     }
+ 
++    @Override
+     public IBlockState func_176203_a(int p_176203_1_)
+     {
+         return this.func_176223_P().func_177226_a(field_192426_a, EnumDyeColor.func_176764_b(p_176203_1_));
+     }
+ 
++    @Override
+     public int func_176201_c(IBlockState p_176201_1_)
+     {
+-        return ((EnumDyeColor)p_176201_1_.func_177229_b(field_192426_a)).func_176765_a();
++        return p_176201_1_.func_177229_b(field_192426_a).func_176765_a();
+     }
+ 
++    @Override
+     protected BlockStateContainer func_180661_e()
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_192426_a});
