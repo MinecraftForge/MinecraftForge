@@ -11,6 +11,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -241,6 +242,7 @@ public class TransparentFastTesrTest
         public static void registerModels(ModelRegistryEvent event)
         {
             ModelLoader.setCustomStateMapper(testBlock, block -> Collections.emptyMap());
+            ModelBakery.registerItemVariants(Item.getItemFromBlock(testBlock));
             ClientRegistry.bindTileEntitySpecialRenderer(TransparentFastTE.class, new TransparentFastTESR());
         }
     }
