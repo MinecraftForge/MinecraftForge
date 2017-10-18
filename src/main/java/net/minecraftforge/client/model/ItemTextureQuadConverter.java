@@ -92,7 +92,7 @@ public final class ItemTextureQuadConverter
                     // if they are, we can extend the quad downwards
                     int endY = y + 1;
                     boolean sameRow = true;
-                    while (sameRow)
+                    while (sameRow && endY < h)
                     {
                         for (int i = 0; i < w; i++)
                         {
@@ -166,7 +166,7 @@ public final class ItemTextureQuadConverter
                     // if they are, we can extend the quad downwards
                     int endX = x + 1;
                     boolean sameColumn = true;
-                    while (sameColumn)
+                    while (sameColumn && endX < w)
                     {
                         for (int i = 0; i < h; i++)
                         {

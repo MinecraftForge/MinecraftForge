@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
+import net.minecraft.block.BlockObserver;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -55,6 +56,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
 import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 
@@ -308,6 +310,8 @@ public class GameData
 
             for (int meta = 0; meta < 16; meta++)
             {
+                if (block.getClass() == BlockObserver.class)
+                    continue; //Observers are bad and have non-cyclical states. So we HAVE to use the vanilla logic above.
                 if (usedMeta[meta])
                     blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta); // Put the CORRECT thing!
             }
@@ -419,7 +423,7 @@ public class GameData
             @Override public ItemStack getCraftingResult(InventoryCrafting inv) { return result; }
             @Override public boolean canFit(int width, int height) { return false; }
             @Override public ItemStack getRecipeOutput() { return result; }
-            @Override public boolean isHidden() { return true; }
+            @Override public boolean isDynamic() { return true; }
         }
     }
 
@@ -439,6 +443,10 @@ public class GameData
         @Override
         public void onAdd(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage, int id, EntityEntry entry, @Nullable EntityEntry oldEntry)
         {
+            if (entry instanceof EntityEntryBuilder.BuiltEntityEntry)
+            {
+                ((EntityEntryBuilder.BuiltEntityEntry) entry).addedToRegistry();
+            }
             if (entry.getEgg() != null)
                 EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
         }
@@ -544,7 +552,7 @@ public class GameData
                     // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
                     // in mod setup - Mark this entry as a dummy
                     int id = reg.getID(dummy);
-                    FMLLog.log.warn("Registry {}: The ID {} is currently locally mapped - it will be replaced with a dummy for this session", key, id);
+                    FMLLog.log.warn("Registry {}: The ID {} @ {} is currently locally mapped - it will be replaced with a dummy for this session", dummy, key, id);
                     reg.markDummy(dummy, id);
                 }
             });
@@ -564,7 +572,7 @@ public class GameData
                 RegistryEvent.MissingMappings<?> event = reg.getMissingEvent(name, m.getValue());
                 MinecraftForge.EVENT_BUS.post(event);
 
-                List<MissingMappings.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.DEFAULT).collect(Collectors.toList());
+                List<MissingMappings.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.DEFAULT).sorted((a, b) -> a.toString().compareTo(b.toString())).collect(Collectors.toList());
                 if (!lst.isEmpty())
                 {
                     FMLLog.log.error("Unidentified mapping from registry {}", name);

@@ -225,7 +225,7 @@
 +            EnumActionResult ret = p_187251_3_.onItemUseFirst(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
 +            if (ret != EnumActionResult.PASS) return ret;
 +
-+            boolean bypass = p_187251_3_.func_190926_b() || p_187251_3_.func_77973_b().doesSneakBypassUse(p_187251_3_, p_187251_2_, p_187251_5_, p_187251_1_);
++            boolean bypass = p_187251_1_.func_184614_ca().doesSneakBypassUse(p_187251_2_, p_187251_5_, p_187251_1_) && p_187251_1_.func_184592_cb().doesSneakBypassUse(p_187251_2_, p_187251_5_, p_187251_1_);
 +            EnumActionResult result = EnumActionResult.PASS;
 +
 +            if (!p_187251_1_.func_70093_af() || bypass || event.getUseBlock() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)

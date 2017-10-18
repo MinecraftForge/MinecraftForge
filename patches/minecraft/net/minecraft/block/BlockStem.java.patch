@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
-@@ -70,7 +70,7 @@
+@@ -70,14 +70,14 @@
          {
              float f = BlockCrops.func_180672_a(this, p_180650_1_, p_180650_2_);
  
@@ -9,6 +9,15 @@
              {
                  int i = ((Integer)p_180650_3_.func_177229_b(field_176484_a)).intValue();
  
+                 if (i < 7)
+                 {
+-                    p_180650_3_ = p_180650_3_.func_177226_a(field_176484_a, Integer.valueOf(i + 1));
+-                    p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_, 2);
++                    IBlockState newState = p_180650_3_.func_177226_a(field_176484_a, Integer.valueOf(i + 1));
++                    p_180650_1_.func_180501_a(p_180650_2_, newState, 2);
+                 }
+                 else
+                 {
 @@ -90,13 +90,15 @@
                      }
  

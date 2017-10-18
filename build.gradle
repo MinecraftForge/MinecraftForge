@@ -27,10 +27,10 @@ apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
 apply plugin: "net.minecraftforge.gradle.launch4j"
 
-minecraft.version = "1.12.1"
+minecraft.version = "1.12.2"
 
 minecraft {
-    mappings = 'snapshot_nodoc_20170624'
+    mappings = 'snapshot_nodoc_20171003'
     workspaceDir = "projects"
     versionJson = "jsons/${minecraft.version}-dev.json"
     buildUserdev = true
@@ -66,8 +66,10 @@ version = getVersionFromJava(file("src/main/java/net/minecraftforge/common/Forge
 extractForgeSources { exclude "**/SideOnly.java", "**/Side.java" }
 extractForgeResources { exclude "**/log4j2.xml" }
 
-genGradleProjects { 
-    addTestCompileDep "junit:junit:4.12"
+genGradleProjects {
+    addTestCompileDep "junit:junit:4.12" // TODO update unit tests to junit 5 and remove this
+    addTestCompileDep "org.junit.jupiter:junit-jupiter-api:5.0.0"
+    addTestCompileDep "org.opentest4j:opentest4j:1.0.0" // needed for junit 5
     addTestCompileDep "org.hamcrest:hamcrest-core:1.3"
     filter { dep -> !dep.contains("scala") }
 }

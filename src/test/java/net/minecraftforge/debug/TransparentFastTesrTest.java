@@ -1,5 +1,6 @@
 package net.minecraftforge.debug;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.block.Block;
@@ -25,6 +26,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.FastTESR;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -232,12 +234,13 @@ public class TransparentFastTesrTest
         GameRegistry.registerTileEntity(TransparentFastTE.class, "fast-tesr-te");
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    @EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientLoader
     {
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
+            ModelLoader.setCustomStateMapper(testBlock, block -> Collections.emptyMap());
             ClientRegistry.bindTileEntitySpecialRenderer(TransparentFastTE.class, new TransparentFastTESR());
         }
     }
