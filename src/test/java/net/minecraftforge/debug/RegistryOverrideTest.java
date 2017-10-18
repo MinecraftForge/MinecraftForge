@@ -39,11 +39,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class RegistryOverrideTest
 {
     public static final String MODID = "registry_override_test";
+    static final boolean ENABLED = false;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().register(new BlockReplacement());
+        if (ENABLED)
+        {
+            event.getRegistry().register(new BlockReplacement());
+        }
     }
 
     private static class BlockReplacement extends Block
