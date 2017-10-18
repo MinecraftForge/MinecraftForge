@@ -255,7 +255,7 @@ public class BiomeDictionary
     {
         if (biome.decorator.treesPerChunk >= 3)
         {
-            if (biome.isHighHumidity() && biome.getTemperature() >= 0.9F)
+            if (biome.isHighHumidity() && biome.getDefaultTemperature() >= 0.9F)
             {
                 BiomeDictionary.addTypes(biome, JUNGLE);
             }
@@ -263,7 +263,7 @@ public class BiomeDictionary
             {
                 BiomeDictionary.addTypes(biome, FOREST);
 
-                if (biome.getTemperature() <= 0.2f)
+                if (biome.getDefaultTemperature() <= 0.2f)
                 {
                     BiomeDictionary.addTypes(biome, CONIFEROUS);
                 }
@@ -287,12 +287,12 @@ public class BiomeDictionary
             BiomeDictionary.addTypes(biome, DRY);
         }
 
-        if (biome.getTemperature() > 0.85f)
+        if (biome.getDefaultTemperature() > 0.85f)
         {
             BiomeDictionary.addTypes(biome, HOT);
         }
 
-        if (biome.getTemperature() < 0.15f)
+        if (biome.getDefaultTemperature() < 0.15f)
         {
             BiomeDictionary.addTypes(biome, COLD);
         }
@@ -338,7 +338,7 @@ public class BiomeDictionary
             BiomeDictionary.addTypes(biome, SNOWY);
         }
 
-        if (biome.topBlock != Blocks.SAND && biome.getTemperature() >= 1.0f && biome.getRainfall() < 0.2f)
+        if (biome.topBlock != Blocks.SAND && biome.getDefaultTemperature() >= 1.0f && biome.getRainfall() < 0.2f)
         {
             BiomeDictionary.addTypes(biome, SAVANNA);
         }

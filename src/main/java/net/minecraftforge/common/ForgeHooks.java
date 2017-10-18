@@ -781,7 +781,7 @@ public class ForgeHooks
                 && !itemstack.getItem().canDestroyBlockInCreative(world, pos, itemstack, entityPlayer))
             preCancelEvent = true;
 
-        if (gameType.isAdventure())
+        if (gameType.hasLimitedInteractions())
         {
             if (gameType == GameType.SPECTATOR)
                 preCancelEvent = true;
