@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -53,6 +54,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -1016,6 +1018,94 @@ public class ForgeHooks
         {
             return eyes < pos.getY() + 1 + filled;
         }
+    }
+
+    public static boolean isInsideOfMaterial(Predicate<Material> predicate, Entity entity, BlockPos pos)
+    {
+        Material material = entity.world.getBlockState(pos).getMaterial();
+        if (predicate.test(material))
+        {
+            return isInsideOfMaterial(material, entity, pos);
+        }
+        else
+        {
+            return false;
+        }
+     }
+
+    /*
+     * Returns the material that the entity's HEAD (eye level) is in while
+     * taking into account fluid and liquid levels.
+     */
+    @Nonnull
+    public static Material getMaterialAtEyeHeight(Entity parEntity)
+    {      
+        if (parEntity.getRidingEntity() instanceof EntityBoat)
+        {
+            return Material.AIR;
+        }
+        else
+        {
+            BlockPos blockpos = new BlockPos(parEntity.posX, parEntity.posY + parEntity.getEyeHeight(), parEntity.posZ);
+            Material theMaterial = parEntity.world.getBlockState(blockpos).getMaterial();
+
+            if (net.minecraftforge.common.ForgeHooks.isInsideOfMaterial(theMaterial, parEntity, blockpos))
+            {
+                return theMaterial; 
+            }
+            else
+            {
+                return Material.AIR;
+            }
+        }
+    }
+    
+    public static Material getMaterialStandingIn(Entity parEntity)
+    {
+        if (parEntity.getRidingEntity() instanceof EntityBoat)
+        {
+            return Material.AIR;
+        }
+        else
+        {
+            BlockPos blockpos = new BlockPos(parEntity.posX, parEntity.posY, parEntity.posZ);
+            return parEntity.world.getBlockState(blockpos).getMaterial();
+        }
+    }
+    
+    public static Predicate<Material> isMaterialLiquid()
+    {
+        return material -> material.isLiquid();
+    }
+    
+    public static Predicate<Material> doesMaterialDrown()
+    {
+        return material -> material.getCanDrownEntity()();
+    }
+    
+    public static Predicate<Material> doesMaterialPushEntities()
+    {
+        return material -> material.getCanPushEntity()();
+    }
+    
+    public static Predicate<Material> doesMaterialFloatBoats()
+    {
+        return material -> material.getCanFloatBoat();
+    }
+    
+    public static Predicate<Material> isMaterialAbsorbable()
+    {
+        return material -> material.getCanBeAbsorbed();
+    }
+    
+    public static Predicate<Material> doesMaterialWaterPlants()
+    {
+        return material -> material.getCanWaterPlant();
+    }
+    
+    public static Predicate<Material> canMaterialSpawnWaterCreatures()
+    {
+        return material -> material.getCanSpawnWaterCreatures();
     }
 
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
