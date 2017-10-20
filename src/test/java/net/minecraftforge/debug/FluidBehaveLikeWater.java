@@ -73,7 +73,7 @@ public class FluidBehaveLikeWater
     {
         if (ENABLED)
         {
-            event.getRegistry().register((new BlockFluidClassic(SLIME, new MaterialLiquid(MapColor.GREEN))).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
+            event.getRegistry().register((new BlockFluidClassic(SLIME, new MaterialLiquid(MapColor.GREEN).setCanDrownEntity().setCanFloatBoat().setCanPushEntity().setIsLiquid().setIsSwimmable().setCanBeAbsorbed())).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
         }
     }
 

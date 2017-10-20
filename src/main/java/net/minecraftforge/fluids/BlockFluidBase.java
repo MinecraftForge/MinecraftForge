@@ -738,7 +738,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             // If block's material is liquid, respond true like water would.
             // This works because this method is only called against WATER
-            // for applying liquid-like effects (pushing, drowning, swimming).
+            // for applying liquid-like effects.
             return iblockstate.getMaterial().isLiquid();
         } 
         else 
