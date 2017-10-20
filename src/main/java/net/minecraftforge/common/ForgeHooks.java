@@ -1080,12 +1080,12 @@ public class ForgeHooks
     
     public static Predicate<Material> doesMaterialDrown()
     {
-        return material -> material.getCanDrownEntity()();
+        return material -> material.getCanDrownEntity();
     }
     
     public static Predicate<Material> doesMaterialPushEntities()
     {
-        return material -> material.getCanPushEntity()();
+        return material -> material.getCanPushEntity();
     }
     
     public static Predicate<Material> doesMaterialFloatBoats()
