@@ -213,27 +213,10 @@ public class Fluid
         this.emptySound = emptySound;
         return this;
     }
-
-    /**
-     *  The color parameter includes alpha! so ARGB format
-     *  For example, if you want pure green (which is RGB #00FF00)
-     *  you probably want to pass 0xFF00FF00 so there is no
-     *  alpha transparency. It also is blended with color
-     *  of your texture, so if you want to preserve texture
-     *  then leave at default value (white).
-     */
-    public Fluid setColor(int color) 
-    { 
-        this.color = color; 
-        return this; 
-    } 
     
-    /*
-     * Alternate setter to allow awt.Color parameter
-     */
     public Fluid setColor(Color color)
     {
-        this.color = (color.getAlpha()<<24) + (color.getRed()<<16) + (color.getGreen()<<8) + color.getBlue();
+        this.color = color.getRGB();
         return this;
     }
 
