@@ -3,6 +3,7 @@ package net.minecraftforge.debug;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
@@ -50,13 +51,14 @@ public class SlipperinessTest
         e.getRegistry().register(new ItemBlock(BB_BLOCK).setRegistryName(BB_BLOCK.getRegistryName()));
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
+    @EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
     public static class ClientEventHandler
     {
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
             ModelLoader.setCustomStateMapper(BB_BLOCK, block -> Collections.emptyMap());
+            ModelBakery.registerItemVariants(Item.getItemFromBlock(BB_BLOCK));
         }
     }
 }
