@@ -992,7 +992,7 @@ public class ForgeHooks
         return ItemStack.EMPTY;
     }
 
-    public static boolean isInsideOfMaterial(Material material, Entity entity, BlockPos pos)
+    public static boolean isInsideOfMaterial(Entity entity, BlockPos pos)
     {
         IBlockState state = entity.world.getBlockState(pos);
         Block block = state.getBlock();
@@ -1019,58 +1019,31 @@ public class ForgeHooks
             return eyes < pos.getY() + 1 + filled;
         }
     }
-
-    public static boolean isInsideOfMaterial(Predicate<Material> predicate, Entity entity, BlockPos pos)
+    
+    /*
+     * Predicate version of Entity inside material method
+     */
+    public static boolean isEntityInsideOfMaterial(Entity entity, Predicate<Material> predicate)
     {
-        Material material = entity.world.getBlockState(pos).getMaterial();
-        if (predicate.test(material))
-        {
-            return isInsideOfMaterial(material, entity, pos);
-        }
-        else
+        if (entity.getRidingEntity() instanceof EntityBoat)
         {
             return false;
         }
-     }
-
-    /*
-     * Returns the material that the entity's HEAD (eye level) is in while
-     * taking into account fluid and liquid levels.
-     */
-    @Nonnull
-    public static Material getMaterialAtEyeHeight(Entity parEntity)
-    {      
-        if (parEntity.getRidingEntity() instanceof EntityBoat)
-        {
-            return Material.AIR;
-        }
         else
         {
-            BlockPos blockpos = new BlockPos(parEntity.posX, parEntity.posY + parEntity.getEyeHeight(), parEntity.posZ);
-            Material theMaterial = parEntity.world.getBlockState(blockpos).getMaterial();
-
-            if (net.minecraftforge.common.ForgeHooks.isInsideOfMaterial(theMaterial, parEntity, blockpos))
+            BlockPos pos = new BlockPos(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+            Material material = entity.world.getBlockState(pos).getMaterial();
+            if (predicate.test(material))
             {
-                return theMaterial; 
+                // DEBUG
+                if (entity instanceof EntityPlayer) System.out.println("Passed predicate test");
+                return isInsideOfMaterial(entity, pos);
             }
             else
             {
-                return Material.AIR;
+                return false;
             }
-        }
-    }
-    
-    public static Material getMaterialStandingIn(Entity parEntity)
-    {
-        if (parEntity.getRidingEntity() instanceof EntityBoat)
-        {
-            return Material.AIR;
-        }
-        else
-        {
-            BlockPos blockpos = new BlockPos(parEntity.posX, parEntity.posY, parEntity.posZ);
-            return parEntity.world.getBlockState(blockpos).getMaterial();
-        }
+        }    
     }
     
     public static Predicate<Material> isMaterialLiquid()
@@ -1106,6 +1079,11 @@ public class ForgeHooks
     public static Predicate<Material> canMaterialSpawnWaterCreatures()
     {
         return material -> material.getCanSpawnWaterCreatures();
+    }
+    
+    public static Predicate<Material> isMaterialSwimmable()
+    {
+        return material -> material.isSwimmable();
     }
 
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)

@@ -729,21 +729,4 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     {
         return NULL_AABB;
     }
-    
-    @Override
-    @Nullable
-    public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead)
-    {
-        if(materialIn == Material.WATER)
-        {
-            // If block's material is liquid, respond true like water would.
-            // This works because this method is only called against WATER
-            // for applying liquid-like effects.
-            return iblockstate.getMaterial().isLiquid();
-        } 
-        else 
-        {
-            return false;
-        }
-    }
 }

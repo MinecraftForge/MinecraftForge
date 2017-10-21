@@ -2,6 +2,7 @@ package net.minecraftforge.debug;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -28,6 +29,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class FluidBehaveLikeWater
 {
     static final boolean ENABLED = true; // <-- enable mod
+    public static final Material SLIME_MATERIAL = new MaterialLiquid(MapColor.GREEN)
+            .setCanDrownEntity()
+            .setCanFloatBoat()   // <-- change these chained methods to change material behavior
+            .setCanPushEntity()
+            .setIsSwimmable()
+            .setCanBeAbsorbed()
+            .setCanWaterPlants()
+            .setCanSpawnWaterCreatures();
 
     static final String MODID = "fluidbehaveslikewater";
     static final net.minecraft.util.ResourceLocation RES_LOC = new ResourceLocation(MODID, "slime");
@@ -38,12 +47,12 @@ public class FluidBehaveLikeWater
             FluidRegistry.enableUniversalBucket();
         }
     }
-    public static final MF SLIME = new MF("slime", new net.minecraft.util.ResourceLocation(MODID, "slime_still"),
+    public static final ModFluid SLIME = new ModFluid("slime", new net.minecraft.util.ResourceLocation(MODID, "slime_still"),
             new ResourceLocation(MODID, "slime_flow"));
 
-    public static class MF extends Fluid
+    public static class ModFluid extends Fluid
     {
-        public MF(String name, ResourceLocation st, ResourceLocation flowing)
+        public ModFluid(String name, ResourceLocation st, ResourceLocation flowing)
         {
             super(name, st, flowing);
         }
@@ -73,7 +82,7 @@ public class FluidBehaveLikeWater
     {
         if (ENABLED)
         {
-            event.getRegistry().register((new BlockFluidClassic(SLIME, new MaterialLiquid(MapColor.GREEN).setCanDrownEntity().setCanFloatBoat().setCanPushEntity().setIsLiquid().setIsSwimmable().setCanBeAbsorbed())).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
+            event.getRegistry().register((new BlockFluidClassic(SLIME, SLIME_MATERIAL)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
         }
     }
 
