@@ -127,8 +127,6 @@ import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
 {
-    //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
-
     static TextureManager engine()
     {
         return FMLClientHandler.instance().getClient().renderEngine;
@@ -290,14 +288,6 @@ public class ForgeHooksClient
         skyRGBMultiplier = multiplier;
         return skyRGBMultiplier;
     }
-    /**
-     * Initialization of Forge Renderers.
-     */
-    static
-    {
-        //FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
-        //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
-    }
 
     private static int updatescrollcounter = 0;
     public static String renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height, String splashText)
@@ -315,9 +305,6 @@ public class ForgeHooksClient
         String line = null;
         switch(status)
         {
-            //case FAILED:        line = " Version check failed"; break;
-            //case UP_TO_DATE:    line = "Forge up to date"}; break;
-            //case AHEAD:         line = "Using non-recommended Forge build, issues may arise."}; break;
             case OUTDATED:
             case BETA_OUTDATED: line = I18n.format("forge.update.newversion", ForgeVersion.getTarget()); break;
             default: break;
@@ -339,7 +326,6 @@ public class ForgeHooksClient
         return e.getResultSound();
     }
 
-    //static RenderBlocks VertexBufferRB;
     static int worldRenderPass;
 
     public static int getWorldRenderPass()
@@ -521,7 +507,6 @@ public class ForgeHooksClient
         tmp.m03 = tmp.m13 = tmp.m23 = .5f;
         ret.mul(tmp, ret);
         tmp.invert();
-        //tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
         ret.mul(tmp);
         return ret;
     }
