@@ -1086,6 +1086,54 @@ public class ForgeHooks
         return material -> material.isSwimmable();
     }
 
+    /*
+     * This is different than "inside" liquid but rather ensures that the 
+     * vanilla inWater field is updated for all custom fluids as well.
+     */
+    public static boolean isInLiquid(AxisAlignedBB bb, Entity entity)
+    {
+        int minX = MathHelper.floor(bb.minX);
+        int maxX = MathHelper.ceil(bb.maxX);
+        int minY = MathHelper.floor(bb.minY);
+        int maxY = MathHelper.ceil(bb.maxY);
+        int minZ = MathHelper.floor(bb.minZ);
+        int maxZ = MathHelper.ceil(bb.maxZ);
+
+        if (!entity.world.isAreaLoaded(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ), true))
+        {
+            return false;
+        }
+        else
+        {
+            boolean isInLiquid = false;
+            BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
+
+            for (int l3 = minX; l3 < maxX; ++l3)
+            {
+                for (int i4 = minY; i4 < maxY; ++i4)
+                {
+                    for (int j4 = minZ; j4 < maxZ; ++j4)
+                    {
+                        blockpos$pooledmutableblockpos.setPos(l3, i4, j4);
+                        IBlockState iblockstate1 = entity.world.getBlockState(blockpos$pooledmutableblockpos);
+
+                        if (iblockstate1.getMaterial().isLiquid())
+                        {
+                            double d0 = (double)((float)(i4 + 1) - BlockLiquid.getLiquidHeightPercent(((Integer)iblockstate1.getValue(BlockLiquid.LEVEL)).intValue()));
+
+                            if ((double)maxY >= d0)
+                            {
+                                isInLiquid = true;
+                            }
+                        }
+                    }
+                }
+            }
+            blockpos$pooledmutableblockpos.release();
+            return isInLiquid;
+        }
+    }
+    
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
     {
         if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(player, target))) return false;
