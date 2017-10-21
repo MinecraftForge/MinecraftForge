@@ -47,22 +47,15 @@ public class FluidBehaveLikeWater
             FluidRegistry.enableUniversalBucket();
         }
     }
-    public static final ModFluid SLIME = new ModFluid("slime", new net.minecraft.util.ResourceLocation(MODID, "slime_still"),
-            new ResourceLocation(MODID, "slime_flow"));
-
-    public static class ModFluid extends Fluid
-    {
-        public ModFluid(String name, ResourceLocation st, ResourceLocation flowing)
-        {
-            super(name, st, flowing);
-        }
-
-        @Override
-        public int getColor()
-        {
-            return 0xFFd742f4;
-        }
-    }
+    public static final Fluid SLIME = new Fluid("slime", new net.minecraft.util.ResourceLocation(MODID, "slime_still"),
+            new ResourceLocation(MODID, "slime_flow")) 
+            {        
+                @Override
+                public int getColor()
+                {
+                    return 0xFFd742f4; // pink slime
+                }
+            };
 
     @ObjectHolder("slime")
     public static final BlockFluidBase SLIME_BLOCK = null;
@@ -83,26 +76,6 @@ public class FluidBehaveLikeWater
         if (ENABLED)
         {
             event.getRegistry().register((new BlockFluidClassic(SLIME, SLIME_MATERIAL)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
-        }
-    }
-
-    @SubscribeEvent
-    public static void eventItemRegistry(final RegistryEvent.Register<Item> event)
-    {
-        if (ENABLED)
-        {
-            event.getRegistry().register((new ItemBlock(SLIME_BLOCK)).setRegistryName(RES_LOC));
-        }
-    }
-
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public static void eventModelRegistry(final ModelRegistryEvent event)
-    {
-        if (ENABLED)
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(SLIME_BLOCK), 0, new ModelResourceLocation(RES_LOC, "inventory"));
-            ModelLoader.setCustomModelResourceLocation((new ItemBlock(SLIME_BLOCK)), 0, new ModelResourceLocation(RES_LOC, "inventory"));
         }
     }
 }
