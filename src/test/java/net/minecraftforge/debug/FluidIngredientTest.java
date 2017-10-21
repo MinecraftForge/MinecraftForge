@@ -44,19 +44,25 @@ public final class FluidIngredientTest
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().registerAll(
-                new Item().setUnlocalizedName("test_dough").setCreativeTab(CreativeTabs.MISC).setRegistryName("fluid_ingredient_test:dough"),
-                new TestWaterBucket(250, false).setCreativeTab(CreativeTabs.MISC).setUnlocalizedName("quarter_bucket").setRegistryName("fluid_ingredient_test:quarter_bucket"),
-                new TestWaterBucket(2000, false).setCreativeTab(CreativeTabs.MISC).setUnlocalizedName("big_bucket").setRegistryName("fluid_ingredient_test:big_bucket")
-        );
+        if (ENABLED)
+        {
+            event.getRegistry().registerAll(
+                    new Item().setUnlocalizedName("test_dough").setCreativeTab(CreativeTabs.MISC).setRegistryName("fluid_ingredient_test:dough"),
+                    new TestWaterBucket(250, false).setCreativeTab(CreativeTabs.MISC).setUnlocalizedName("quarter_bucket").setRegistryName("fluid_ingredient_test:quarter_bucket"),
+                    new TestWaterBucket(2000, false).setCreativeTab(CreativeTabs.MISC).setUnlocalizedName("big_bucket").setRegistryName("fluid_ingredient_test:big_bucket")
+            );
+        }
     }
 
     @SubscribeEvent
     public static void onModelRegister(ModelRegistryEvent event)
     {
-        ModelLoader.setCustomModelResourceLocation(DOUGH, 0, new ModelResourceLocation("minecraft:snowball", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(QUARTER_BUCKET, 0, new ModelResourceLocation("minecraft:water_bucket", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(BIG_BUCKET, 0, new ModelResourceLocation("minecraft:water_bucket", "inventory"));
+        if (ENABLED)
+        {
+            ModelLoader.setCustomModelResourceLocation(DOUGH, 0, new ModelResourceLocation("minecraft:snowball", "inventory"));
+            ModelLoader.setCustomModelResourceLocation(QUARTER_BUCKET, 0, new ModelResourceLocation("minecraft:water_bucket", "inventory"));
+            ModelLoader.setCustomModelResourceLocation(BIG_BUCKET, 0, new ModelResourceLocation("minecraft:water_bucket", "inventory"));
+        }
     }
 
     static class TestWaterBucket extends Item
