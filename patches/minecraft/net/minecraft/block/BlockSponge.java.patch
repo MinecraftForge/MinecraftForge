@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSponge.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSponge.java
+@@ -80,7 +80,7 @@
+             {
+                 BlockPos blockpos1 = blockpos.func_177972_a(enumfacing);
+ 
+-                if (p_176312_1_.func_180495_p(blockpos1).func_185904_a() == Material.field_151586_h)
++                if (p_176312_1_.func_180495_p(blockpos1).func_185904_a().getCanBeAbsorbed())
+                 {
+                     p_176312_1_.func_180501_a(blockpos1, Blocks.field_150350_a.func_176223_P(), 2);
+                     list.add(blockpos1);

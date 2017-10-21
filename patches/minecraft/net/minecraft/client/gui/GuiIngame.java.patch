@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiIngame.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngame.java
-@@ -379,7 +379,8 @@
+@@ -55,6 +55,7 @@
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TextFormatting;
+ import net.minecraft.world.border.WorldBorder;
++import net.minecraftforge.common.ForgeHooks;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -379,7 +380,8 @@
  
                  BlockPos blockpos = raytraceresult.func_178782_a();
  
@@ -10,7 +18,7 @@
                  {
                      return;
                  }
-@@ -449,7 +450,10 @@
+@@ -449,7 +451,10 @@
              {
                  Potion potion = potioneffect.func_188419_a();
  
@@ -22,7 +30,7 @@
                  {
                      int k = p_184048_1_.func_78326_a();
                      int l = 1;
-@@ -492,7 +496,10 @@
+@@ -492,7 +497,10 @@
                      }
  
                      GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, f);
@@ -33,3 +41,12 @@
                  }
              }
          }
+@@ -955,7 +963,7 @@
+ 
+             this.field_73839_d.field_71424_I.func_76318_c("air");
+ 
+-            if (entityplayer.func_70055_a(Material.field_151586_h))
++            if (ForgeHooks.isEntityInsideOfMaterial(entityplayer, ForgeHooks.doesMaterialDrown()))
+             {
+                 int i6 = this.field_73839_d.field_71439_g.func_70086_ai();
+                 int k6 = MathHelper.func_76143_f((double)(i6 - 2) * 10.0D / 300.0D);

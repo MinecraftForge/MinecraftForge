@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityWitch.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityWitch.java
+@@ -39,6 +39,7 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.World;
+ import net.minecraft.world.storage.loot.LootTableList;
++import net.minecraftforge.common.ForgeHooks;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -141,7 +142,7 @@
+             {
+                 PotionType potiontype = null;
+ 
+-                if (this.field_70146_Z.nextFloat() < 0.15F && this.func_70055_a(Material.field_151586_h) && !this.func_70644_a(MobEffects.field_76427_o))
++                if (this.field_70146_Z.nextFloat() < 0.15F && ForgeHooks.isEntityInsideOfMaterial(this, ForgeHooks.doesMaterialDrown()) && !this.func_70644_a(MobEffects.field_76427_o))
+                 {
+                     potiontype = PotionTypes.field_185248_t;
+                 }

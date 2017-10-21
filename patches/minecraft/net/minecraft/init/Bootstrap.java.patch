@@ -27,3 +27,19 @@
          }
      }
  
+@@ -568,13 +574,13 @@
+                 Material material = world.func_180495_p(blockpos).func_185904_a();
+                 double d3;
+ 
+-                if (Material.field_151586_h.equals(material))
++                if (material.getCanFloatBoat())
+                 {
+                     d3 = 1.0D;
+                 }
+                 else
+                 {
+-                    if (!Material.field_151579_a.equals(material) || !Material.field_151586_h.equals(world.func_180495_p(blockpos.func_177977_b()).func_185904_a()))
++                    if (!Material.field_151579_a.equals(material) || !world.func_180495_p(blockpos.func_177977_b()).func_185904_a().getCanFloatBoat())
+                     {
+                         return this.field_185026_b.func_82482_a(p_82487_1_, p_82487_2_);
+                     }

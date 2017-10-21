@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenReed.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenReed.java
+@@ -18,7 +18,7 @@
+             {
+                 BlockPos blockpos1 = blockpos.func_177977_b();
+ 
+-                if (p_180709_1_.func_180495_p(blockpos1.func_177976_e()).func_185904_a() == Material.field_151586_h || p_180709_1_.func_180495_p(blockpos1.func_177974_f()).func_185904_a() == Material.field_151586_h || p_180709_1_.func_180495_p(blockpos1.func_177978_c()).func_185904_a() == Material.field_151586_h || p_180709_1_.func_180495_p(blockpos1.func_177968_d()).func_185904_a() == Material.field_151586_h)
++                if (p_180709_1_.func_180495_p(blockpos1.func_177976_e()).func_185904_a().getCanWaterPlants() || p_180709_1_.func_180495_p(blockpos1.func_177974_f()).func_185904_a().getCanWaterPlants() || p_180709_1_.func_180495_p(blockpos1.func_177978_c()).func_185904_a().getCanWaterPlants() || p_180709_1_.func_180495_p(blockpos1.func_177968_d()).func_185904_a().getCanWaterPlants())
+                 {
+                     int j = 2 + p_180709_2_.nextInt(p_180709_2_.nextInt(3) + 1);
+ 

@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/block/material/Material.java
++++ ../src-work/minecraft/net/minecraft/block/material/Material.java
+@@ -9,8 +9,8 @@
+     public static final Material field_151576_e = (new Material(MapColor.field_151665_m)).func_76221_f();
+     public static final Material field_151573_f = (new Material(MapColor.field_151668_h)).func_76221_f();
+     public static final Material field_151574_g = (new Material(MapColor.field_151668_h)).func_76221_f().func_76225_o();
+-    public static final Material field_151586_h = (new MaterialLiquid(MapColor.field_151662_n)).func_76219_n();
+-    public static final Material field_151587_i = (new MaterialLiquid(MapColor.field_151656_f)).func_76219_n();
++    public static final Material field_151586_h = (new MaterialLiquid(MapColor.field_151662_n)).func_76219_n().setIsLiquid().setCanDrownEntity().setCanPushEntity().setCanBeAbsorbed().setCanFloatBoat().setCanWaterPlants().setCanSpawnWaterCreatures().setIsSwimmable();
++    public static final Material field_151587_i = (new MaterialLiquid(MapColor.field_151656_f)).func_76219_n().setIsLiquid();
+     public static final Material field_151584_j = (new Material(MapColor.field_151669_i)).func_76226_g().func_76223_p().func_76219_n();
+     public static final Material field_151585_k = (new MaterialLogic(MapColor.field_151669_i)).func_76219_n();
+     public static final Material field_151582_l = (new MaterialLogic(MapColor.field_151669_i)).func_76226_g().func_76219_n().func_76231_i();
+@@ -51,6 +51,9 @@
+     private boolean field_76241_J = true;
+     private EnumPushReaction field_76242_K = EnumPushReaction.NORMAL;
+     private boolean field_85159_M;
++    private boolean isLiquid = false; private boolean canDrownEntity = false; private boolean canPushEntity = false; private boolean canFloatBoat = false; private boolean canBeAbsorbed = false; private boolean canWaterPlants = false; private boolean canSpawnWaterCreatures = false; private boolean isSwimmable = false;
++    public Material setIsLiquid() {isLiquid = true; return this;} public Material setCanDrownEntity() {canDrownEntity = true; return this;} public Material setCanPushEntity() {canPushEntity = true; return this;} public Material setCanFloatBoat() {canFloatBoat = true; return this;} public Material setCanBeAbsorbed() {canBeAbsorbed = true; return this;} public Material setCanWaterPlants() {canWaterPlants = true; return this;} public Material setCanSpawnWaterCreatures() {canSpawnWaterCreatures = true; return this;} public Material setIsSwimmable() {isSwimmable = true; return this;}
++    public boolean getCanDrownEntity() {return canDrownEntity;} public boolean getCanPushEntity() {return canPushEntity;} public boolean getCanFloatBoat() {return canFloatBoat;} public boolean getCanBeAbsorbed() {return canBeAbsorbed;} public boolean getCanWaterPlants() {return canWaterPlants;} public boolean getCanSpawnWaterCreatures() {return canSpawnWaterCreatures;} public boolean isSwimmable() {return isSwimmable;}  public boolean isLiquidOtherThanLava() {return isLiquid && this != Material.field_151587_i;} 
+ 
+     public Material(MapColor p_i2116_1_)
+     {
+@@ -59,7 +62,7 @@
+ 
+     public boolean func_76224_d()
+     {
+-        return false;
++        return isLiquid;
+     }
+ 
+     public boolean func_76220_a()
+@@ -148,4 +151,4 @@
+     {
+         return this.field_76234_F;
+     }
+-}
++ }
