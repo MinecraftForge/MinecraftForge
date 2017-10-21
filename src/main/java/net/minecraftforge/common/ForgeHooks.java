@@ -53,6 +53,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -66,6 +67,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
@@ -1363,5 +1365,17 @@ public class ForgeHooks
 
         if (recipes.size() > 0 || display.size() > 0)
             connection.sendPacket(new SPacketRecipeBook(state, recipes, display, isGuiOpen, isFilteringCraftable));
+    }
+    
+    /**
+     * Return if the passed Player currently has the ability to use elytra flight
+     * @param entity
+     * @return
+     */
+    public static boolean hasElytraFlightAbility(EntityLivingBase player, ItemStack itemstack) {
+    	if(!(player instanceof EntityPlayer)) return false;
+    	boolean vanillaElytra = itemstack.getItem() == Items.ELYTRA && ItemElytra.isUsable(itemstack);
+    	double attributeValue = player.getEntityAttribute(SharedMonsterAttributes.ELYTRA_FLIGHT).getAttributeValue();
+    	return attributeValue>1.0D || (vanillaElytra && attributeValue >=1.0D);
     }
 }
