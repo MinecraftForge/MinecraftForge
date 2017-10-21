@@ -1100,7 +1100,7 @@ public class ForgeHooks
     
     public static Predicate<Material> doesMaterialWaterPlants()
     {
-        return material -> material.getCanWaterPlant();
+        return material -> material.getCanWaterPlants();
     }
     
     public static Predicate<Material> canMaterialSpawnWaterCreatures()
