@@ -992,7 +992,7 @@ public class ForgeHooks
         return ItemStack.EMPTY;
     }
 
-    public static boolean isInsideOfMaterial(Entity entity, BlockPos pos)
+    public static boolean isInsideOfMaterial(Material material, Entity entity, BlockPos pos)
     {
         IBlockState state = entity.world.getBlockState(pos);
         Block block = state.getBlock();
@@ -1037,7 +1037,7 @@ public class ForgeHooks
             {
                 // DEBUG
                 if (entity instanceof EntityPlayer) System.out.println("Passed predicate test");
-                return isInsideOfMaterial(entity, pos);
+                return isInsideOfMaterial(material, entity, pos);
             }
             else
             {
