@@ -1,6 +1,85 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -302,7 +302,7 @@
+@@ -30,6 +30,12 @@
+     private static final EnchantmentHelper.HurtIterator field_151388_d = new EnchantmentHelper.HurtIterator();
+     private static final EnchantmentHelper.DamageIterator field_151389_e = new EnchantmentHelper.DamageIterator();
+ 
++    public static int getEnchantmentLevel(Enchantment enchID, ItemStack stack, EntityLivingBase entityLivingBase)
++    {
++        return net.minecraftforge.common.ForgeHooks.getEnchantmentLevel(entityLivingBase, enchID, stack, func_77506_a(enchID, stack));
++    }
++
++    @Deprecated
+     public static int func_77506_a(Enchantment p_77506_0_, ItemStack p_77506_1_)
+     {
+         if (p_77506_1_.func_190926_b())
+@@ -203,7 +209,7 @@
+ 
+             for (ItemStack itemstack : iterable)
+             {
+-                int j = func_77506_a(p_185284_0_, itemstack);
++                int j = getEnchantmentLevel(p_185284_0_, itemstack, p_185284_1_);
+ 
+                 if (j > i)
+                 {
+@@ -240,11 +246,23 @@
+         return func_185284_a(Enchantments.field_185305_q, p_185293_0_);
+     }
+ 
++    public static int getFishingLuckBonus(ItemStack stack, EntityLivingBase entityLiving)
++    {
++        return getEnchantmentLevel(Enchantments.field_151370_z, stack, entityLiving);
++    }
++
++    @Deprecated
+     public static int func_191529_b(ItemStack p_191529_0_)
+     {
+         return func_77506_a(Enchantments.field_151370_z, p_191529_0_);
+     }
+ 
++    public static int getFishingSpeedBonus(ItemStack stack, EntityLivingBase entityLiving)
++    {
++        return getEnchantmentLevel(Enchantments.field_151369_A, stack, entityLiving);
++    }
++
++    @Deprecated
+     public static int func_191528_c(ItemStack p_191528_0_)
+     {
+         return func_77506_a(Enchantments.field_151369_A, p_191528_0_);
+@@ -265,11 +283,23 @@
+         return func_185284_a(Enchantments.field_185301_j, p_189869_0_) > 0;
+     }
+ 
++    public static boolean hasBindingCurse(ItemStack stack, EntityLivingBase entityLiving)
++    {
++        return getEnchantmentLevel(Enchantments.field_190941_k, stack, entityLiving) > 0;
++    }
++
++    @Deprecated
+     public static boolean func_190938_b(ItemStack p_190938_0_)
+     {
+         return func_77506_a(Enchantments.field_190941_k, p_190938_0_) > 0;
+     }
+ 
++    public static boolean hasVanishingCurse(ItemStack stack, EntityLivingBase entityLiving)
++    {
++        return getEnchantmentLevel(Enchantments.field_190940_C, stack, entityLiving) > 0;
++    }
++
++    @Deprecated
+     public static boolean func_190939_c(ItemStack p_190939_0_)
+     {
+         return func_77506_a(Enchantments.field_190940_C, p_190939_0_) > 0;
+@@ -289,7 +319,7 @@
+ 
+             for (ItemStack itemstack : list)
+             {
+-                if (!itemstack.func_190926_b() && func_77506_a(p_92099_0_, itemstack) > 0)
++                if (!itemstack.func_190926_b() && getEnchantmentLevel(p_92099_0_, itemstack, p_92099_1_) > 0)
+                 {
+                     list1.add(itemstack);
+                 }
+@@ -302,7 +332,7 @@
      public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
      {
          Item item = p_77514_3_.func_77973_b();
@@ -9,7 +88,7 @@
  
          if (i <= 0)
          {
-@@ -357,7 +357,7 @@
+@@ -357,7 +387,7 @@
      {
          List<EnchantmentData> list = Lists.<EnchantmentData>newArrayList();
          Item item = p_77513_1_.func_77973_b();
@@ -18,7 +97,7 @@
  
          if (i <= 0)
          {
-@@ -413,7 +413,7 @@
+@@ -413,7 +443,7 @@
  
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {

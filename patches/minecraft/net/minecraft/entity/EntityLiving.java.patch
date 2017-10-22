@@ -8,6 +8,15 @@
      }
  
      public boolean func_70686_a(Class <? extends EntityLivingBase > p_70686_1_)
+@@ -632,7 +633,7 @@
+             {
+                 flag = true;
+             }
+-            else if (itemstack.func_77973_b() instanceof ItemArmor && itemstack1.func_77973_b() instanceof ItemArmor && !EnchantmentHelper.func_190938_b(itemstack1))
++            else if (itemstack.func_77973_b() instanceof ItemArmor && itemstack1.func_77973_b() instanceof ItemArmor && !EnchantmentHelper.hasBindingCurse(itemstack1, this))
+             {
+                 ItemArmor itemarmor = (ItemArmor)itemstack.func_77973_b();
+                 ItemArmor itemarmor1 = (ItemArmor)itemstack1.func_77973_b();
 @@ -702,10 +703,22 @@
  
      protected void func_70623_bb()
@@ -39,6 +48,15 @@
      public float func_70603_bj()
      {
          return 1.0F;
+@@ -926,7 +938,7 @@
+ 
+             boolean flag = d0 > 1.0D;
+ 
+-            if (!itemstack.func_190926_b() && !EnchantmentHelper.func_190939_c(itemstack) && (p_82160_1_ || flag) && (double)(this.field_70146_Z.nextFloat() - (float)p_82160_2_ * 0.01F) < d0)
++            if (!itemstack.func_190926_b() && !EnchantmentHelper.hasVanishingCurse(itemstack, this) && (p_82160_1_ || flag) && (double)(this.field_70146_Z.nextFloat() - (float)p_82160_2_ * 0.01F) < d0)
+             {
+                 if (!flag && itemstack.func_77984_f())
+                 {
 @@ -991,6 +1003,8 @@
  
      public static EntityEquipmentSlot func_184640_d(ItemStack p_184640_0_)

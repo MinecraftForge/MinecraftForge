@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
-@@ -43,7 +43,7 @@
+@@ -43,12 +43,12 @@
                  }
                  public boolean func_75214_a(ItemStack p_75214_1_)
                  {
@@ -9,3 +9,9 @@
                  }
                  public boolean func_82869_a(EntityPlayer p_82869_1_)
                  {
+                     ItemStack itemstack = this.func_75211_c();
+-                    return !itemstack.func_190926_b() && !p_82869_1_.func_184812_l_() && EnchantmentHelper.func_190938_b(itemstack) ? false : super.func_82869_a(p_82869_1_);
++                    return !itemstack.func_190926_b() && !p_82869_1_.func_184812_l_() && EnchantmentHelper.hasBindingCurse(itemstack, p_82869_1_) ? false : super.func_82869_a(p_82869_1_);
+                 }
+                 @Nullable
+                 @SideOnly(Side.CLIENT)
