@@ -1031,12 +1031,16 @@ public class ForgeHooks
         }
         else
         {
-            BlockPos pos = new BlockPos(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
-            Material material = entity.world.getBlockState(pos).getMaterial();
+            double eyePosY = entity.posY + entity.getEyeHeight();
+            BlockPos pos = new BlockPos(entity.posX, eyePosY, entity.posZ);
+            IBlockState iBlockState = entity.world.getBlockState(pos);
+            Material material = iBlockState.getMaterial();
+
+            Boolean result = iBlockState.getBlock().isEntityInsideMaterial(entity.world, pos, iBlockState, entity, eyePosY, material, true);
+            if (result != null) return result;
+
             if (predicate.test(material))
             {
-                // DEBUG
-                if (entity instanceof EntityPlayer) System.out.println("Passed predicate test");
                 return isInsideOfMaterial(material, entity, pos);
             }
             else
