@@ -1046,41 +1046,6 @@ public class ForgeHooks
         }    
     }
     
-    public static Predicate<Material> isMaterialLiquid()
-    {
-        return material -> material.isLiquid();
-    }
-    
-    public static Predicate<Material> doesMaterialDrown()
-    {
-        return material -> material.getCanDrownEntity();
-    }
-    
-    public static Predicate<Material> doesMaterialPushEntities()
-    {
-        return material -> material.getCanPushEntity();
-    }
-    
-    public static Predicate<Material> doesMaterialFloatBoats()
-    {
-        return material -> material.getCanFloatBoat();
-    }
-    
-    public static Predicate<Material> isMaterialAbsorbable()
-    {
-        return material -> material.getCanBeAbsorbed();
-    }
-    
-    public static Predicate<Material> doesMaterialWaterPlants()
-    {
-        return material -> material.getCanWaterPlants();
-    }
-    
-    public static Predicate<Material> canMaterialSpawnWaterCreatures()
-    {
-        return material -> material.getCanSpawnWaterCreatures();
-    }
-    
     public static Predicate<Material> isMaterialSwimmable()
     {
         return material -> material.isSwimmable();

@@ -52,7 +52,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This is a base implementation for Fluid blocks.

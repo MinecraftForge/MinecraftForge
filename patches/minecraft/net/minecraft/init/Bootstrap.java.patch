@@ -10,6 +10,15 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
+@@ -276,7 +279,7 @@
+                 Material material = iblockstate.func_185904_a();
+                 Item item;
+ 
+-                if (Material.field_151586_h.equals(material) && block instanceof BlockLiquid && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0)
++                if (material.isLiquidOtherThanLava() && block instanceof BlockLiquid && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0)
+                 {
+                     item = Items.field_151131_as;
+                 }
 @@ -489,6 +492,7 @@
          if (!field_151355_a)
          {

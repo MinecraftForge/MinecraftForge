@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
-@@ -22,6 +22,7 @@
- import net.minecraft.util.math.MathHelper;
- import net.minecraft.util.text.translation.I18n;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.ForgeHooks;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- import org.apache.logging.log4j.LogManager;
-@@ -38,6 +39,11 @@
+@@ -38,6 +38,11 @@
      private String field_145802_g;
      public float field_70290_d;
  
@@ -20,7 +12,7 @@
      public EntityItem(World p_i1709_1_, double p_i1709_2_, double p_i1709_4_, double p_i1709_6_)
      {
          super(p_i1709_1_);
-@@ -55,6 +61,7 @@
+@@ -55,6 +60,7 @@
      {
          this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);
          this.func_92058_a(p_i1710_8_);
@@ -28,7 +20,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -78,6 +85,7 @@
+@@ -78,6 +84,7 @@
  
      public void func_70071_h_()
      {
@@ -36,7 +28,7 @@
          if (this.func_92059_d().func_190926_b())
          {
              this.func_70106_y();
-@@ -135,7 +143,9 @@
+@@ -135,7 +142,9 @@
  
              if (this.field_70122_E)
              {
@@ -47,7 +39,7 @@
              }
  
              this.field_70159_w *= (double)f;
-@@ -167,8 +177,16 @@
+@@ -167,8 +176,16 @@
                  }
              }
  
@@ -65,7 +57,7 @@
                  this.func_70106_y();
              }
          }
-@@ -225,6 +243,10 @@
+@@ -225,6 +242,10 @@
                      {
                          return false;
                      }
@@ -76,16 +68,16 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -271,7 +293,7 @@
+@@ -271,7 +292,7 @@
          {
              this.field_70171_ac = false;
          }
 -
-+        this.field_70171_ac = ForgeHooks.isInLiquid(this.func_174813_aQ(), this);
++        this.field_70171_ac = net.minecraftforge.common.ForgeHooks.isInLiquid(this.func_174813_aQ(), this);
          return this.field_70171_ac;
      }
  
-@@ -282,6 +304,7 @@
+@@ -282,6 +303,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -93,7 +85,7 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -314,6 +337,7 @@
+@@ -314,6 +336,7 @@
          p_70014_1_.func_74777_a("Health", (short)this.field_70291_e);
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
          p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -101,7 +93,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -358,18 +382,24 @@
+@@ -358,18 +381,24 @@
          {
              this.func_70106_y();
          }
@@ -127,7 +119,7 @@
                  p_70100_1_.func_71001_a(this, i);
  
                  if (itemstack.func_190926_b())
-@@ -476,6 +506,6 @@
+@@ -476,6 +505,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();

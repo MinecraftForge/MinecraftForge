@@ -11,17 +11,7 @@
      public static final Material field_151584_j = (new Material(MapColor.field_151669_i)).func_76226_g().func_76223_p().func_76219_n();
      public static final Material field_151585_k = (new MaterialLogic(MapColor.field_151669_i)).func_76219_n();
      public static final Material field_151582_l = (new MaterialLogic(MapColor.field_151669_i)).func_76226_g().func_76219_n().func_76231_i();
-@@ -51,6 +51,9 @@
-     private boolean field_76241_J = true;
-     private EnumPushReaction field_76242_K = EnumPushReaction.NORMAL;
-     private boolean field_85159_M;
-+    private boolean isLiquid = false; private boolean canDrownEntity = false; private boolean canPushEntity = false; private boolean canFloatBoat = false; private boolean canBeAbsorbed = false; private boolean canWaterPlants = false; private boolean canSpawnWaterCreatures = false; private boolean isSwimmable = false;
-+    public Material setIsLiquid() {isLiquid = true; return this;} public Material setCanDrownEntity() {canDrownEntity = true; return this;} public Material setCanPushEntity() {canPushEntity = true; return this;} public Material setCanFloatBoat() {canFloatBoat = true; return this;} public Material setCanBeAbsorbed() {canBeAbsorbed = true; return this;} public Material setCanWaterPlants() {canWaterPlants = true; return this;} public Material setCanSpawnWaterCreatures() {canSpawnWaterCreatures = true; return this;} public Material setIsSwimmable() {isSwimmable = true; return this;}
-+    public boolean getCanDrownEntity() {return canDrownEntity;} public boolean getCanPushEntity() {return canPushEntity;} public boolean getCanFloatBoat() {return canFloatBoat;} public boolean getCanBeAbsorbed() {return canBeAbsorbed;} public boolean getCanWaterPlants() {return canWaterPlants;} public boolean getCanSpawnWaterCreatures() {return canSpawnWaterCreatures;} public boolean isSwimmable() {return isSwimmable;}  public boolean isLiquidOtherThanLava() {return isLiquid && this != Material.field_151587_i;} 
- 
-     public Material(MapColor p_i2116_1_)
-     {
-@@ -59,7 +62,7 @@
+@@ -59,7 +59,7 @@
  
      public boolean func_76224_d()
      {
@@ -30,9 +20,34 @@
      }
  
      public boolean func_76220_a()
-@@ -148,4 +151,4 @@
+@@ -148,4 +148,30 @@
      {
          return this.field_76234_F;
      }
--}
-+ }
++    
++    /*=================================== FORGE START =========================================*/
++    private boolean isLiquid = false; 
++    private boolean canDrownEntity = false; 
++    private boolean canPushEntity = false; 
++    private boolean canFloatBoat = false; 
++    private boolean canBeAbsorbed = false; 
++    private boolean canWaterPlants = false; 
++    private boolean canSpawnWaterCreatures = false; 
++    private boolean isSwimmable = false;
++    public Material setIsLiquid() {isLiquid = true; return this;} 
++    public Material setCanDrownEntity() {canDrownEntity = true; return this;} 
++    public Material setCanPushEntity() {canPushEntity = true; return this;} 
++    public Material setCanFloatBoat() {canFloatBoat = true; return this;} 
++    public Material setCanBeAbsorbed() {canBeAbsorbed = true; return this;} 
++    public Material setCanWaterPlants() {canWaterPlants = true; return this;} 
++    public Material setCanSpawnWaterCreatures() {canSpawnWaterCreatures = true; return this;} 
++    public Material setIsSwimmable() {isSwimmable = true; return this;}
++    public boolean getCanDrownEntity() {return canDrownEntity;} 
++    public boolean getCanPushEntity() {return canPushEntity;} 
++    public boolean getCanFloatBoat() {return canFloatBoat;} 
++    public boolean getCanBeAbsorbed() {return canBeAbsorbed;} 
++    public boolean getCanWaterPlants() {return canWaterPlants;} 
++    public boolean getCanSpawnWaterCreatures() {return canSpawnWaterCreatures;} 
++    public boolean isSwimmable() {return isSwimmable;}  
++    public boolean isLiquidOtherThanLava() {return isLiquid && this != Material.field_151587_i;} 
+ }
