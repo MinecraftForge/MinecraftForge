@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common.crafting;
 
+import net.minecraft.inventory.ContainerPlayer;
+import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 
@@ -27,8 +29,19 @@ import net.minecraft.inventory.InventoryCrafting;
  * For GUIs with recipe books, this allows their containers to have
  * recipe completion and ghost recipes in their craft matrices.
  */
-public interface IRecipeContainer {
-    public InventoryCraftResult getCraftResult();
+public interface IRecipeContainer
+{
+    /**
+     * The crafting result slot of your container, where you take out the crafted item.
+     * The equivalent for {@link ContainerWorkbench} is {@link ContainerWorkbench#craftResult}.
+     * The equivalent for {@link ContainerPlayer} is {@link ContainerPlayer#craftResult}.
+     */
+    InventoryCraftResult getCraftResult();
 
-    public InventoryCrafting getCraftMatrix();
+    /**
+     * The crafting matrix of your container, where ingredients go for crafting.
+     * The equivalent for {@link ContainerWorkbench} is {@link ContainerWorkbench#craftMatrix}.
+     * The equivalent for {@link ContainerPlayer} is {@link ContainerPlayer#craftMatrix}.
+     */
+    InventoryCrafting getCraftMatrix();
 }
