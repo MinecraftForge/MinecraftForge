@@ -13,7 +13,123 @@
      public static int func_77506_a(Enchantment p_77506_0_, ItemStack p_77506_1_)
      {
          if (p_77506_1_.func_190926_b())
-@@ -203,7 +209,7 @@
+@@ -108,11 +114,11 @@
+         }
+     }
+ 
+-    private static void func_77518_a(EnchantmentHelper.IModifier p_77518_0_, ItemStack p_77518_1_)
++    private static void applyEnchantmentModifier(EnchantmentHelper.IModifier modifier, ItemStack stack, @javax.annotation.Nullable EntityLivingBase entityLivingBase)
+     {
+-        if (!p_77518_1_.func_190926_b())
++        if (!stack.func_190926_b())
+         {
+-            NBTTagList nbttaglist = p_77518_1_.func_77986_q();
++            NBTTagList nbttaglist = stack.func_77986_q();
+ 
+             for (int i = 0; i < nbttaglist.func_74745_c(); ++i)
+             {
+@@ -121,36 +127,60 @@
+ 
+                 if (Enchantment.func_185262_c(j) != null)
+                 {
+-                    p_77518_0_.func_77493_a(Enchantment.func_185262_c(j), k);
++                    modifier.func_77493_a(Enchantment.func_185262_c(j), entityLivingBase == null ? k : net.minecraftforge.common.ForgeHooks.getEnchantmentLevel(entityLivingBase, Enchantment.func_185262_c(j), stack, k));
+                 }
+             }
+         }
+     }
+ 
+-    private static void func_77516_a(EnchantmentHelper.IModifier p_77516_0_, Iterable<ItemStack> p_77516_1_)
++    @Deprecated
++    private static void func_77518_a(EnchantmentHelper.IModifier p_77518_0_, ItemStack p_77518_1_)
+     {
+-        for (ItemStack itemstack : p_77516_1_)
++        applyEnchantmentModifier(p_77518_0_, p_77518_1_, null);
++    }
++
++    private static void applyEnchantmentModifierArray(EnchantmentHelper.IModifier modifier, Iterable<ItemStack> stacks, @javax.annotation.Nullable EntityLivingBase entityLivingBase)
++    {
++        for (ItemStack itemstack : stacks)
+         {
+-            func_77518_a(p_77516_0_, itemstack);
++            applyEnchantmentModifier(modifier, itemstack, entityLivingBase);
+         }
+     }
+ 
+-    public static int func_77508_a(Iterable<ItemStack> p_77508_0_, DamageSource p_77508_1_)
++    @Deprecated
++    private static void func_77516_a(EnchantmentHelper.IModifier p_77516_0_, Iterable<ItemStack> p_77516_1_)
+     {
++        applyEnchantmentModifierArray(p_77516_0_, p_77516_1_, null);
++    }
++
++    public static int getEnchantmentModifierDamage(Iterable<ItemStack> stacks, DamageSource source, @javax.annotation.Nullable EntityLivingBase entityLivingBase)
++    {
+         field_77520_b.field_77497_a = 0;
+-        field_77520_b.field_77496_b = p_77508_1_;
+-        func_77516_a(field_77520_b, p_77508_0_);
++        field_77520_b.field_77496_b = source;
++        applyEnchantmentModifierArray(field_77520_b, stacks, entityLivingBase);
+         return field_77520_b.field_77497_a;
+     }
+ 
+-    public static float func_152377_a(ItemStack p_152377_0_, EnumCreatureAttribute p_152377_1_)
++    @Deprecated
++    public static int func_77508_a(Iterable<ItemStack> p_77508_0_, DamageSource p_77508_1_)
+     {
++        return getEnchantmentModifierDamage(p_77508_0_, p_77508_1_, null);
++    }
++
++    public static float getModifierForCreature(ItemStack stack, EnumCreatureAttribute creatureAttribute, @javax.annotation.Nullable EntityLivingBase entityLivingBase)
++    {
+         field_77521_c.field_77495_a = 0.0F;
+-        field_77521_c.field_77494_b = p_152377_1_;
+-        func_77518_a(field_77521_c, p_152377_0_);
++        field_77521_c.field_77494_b = creatureAttribute;
++        applyEnchantmentModifier(field_77521_c, stack, entityLivingBase);
+         return field_77521_c.field_77495_a;
+     }
+ 
++    @Deprecated
++    public static float func_152377_a(ItemStack p_152377_0_, EnumCreatureAttribute p_152377_1_)
++    {
++        return getModifierForCreature(p_152377_0_, p_152377_1_, null);
++    }
++
+     public static float func_191527_a(EntityLivingBase p_191527_0_)
+     {
+         int i = func_185284_a(Enchantments.field_191530_r, p_191527_0_);
+@@ -164,12 +194,12 @@
+ 
+         if (p_151384_0_ != null)
+         {
+-            func_77516_a(field_151388_d, p_151384_0_.func_184209_aF());
++            applyEnchantmentModifierArray(field_151388_d, p_151384_0_.func_184209_aF(), p_151384_0_);
+         }
+ 
+         if (p_151384_1_ instanceof EntityPlayer)
+         {
+-            func_77518_a(field_151388_d, p_151384_0_.func_184614_ca());
++            applyEnchantmentModifier(field_151388_d, p_151384_0_.func_184614_ca(), p_151384_0_);
+         }
+     }
+ 
+@@ -180,12 +210,12 @@
+ 
+         if (p_151385_0_ != null)
+         {
+-            func_77516_a(field_151389_e, p_151385_0_.func_184209_aF());
++            applyEnchantmentModifierArray(field_151389_e, p_151385_0_.func_184209_aF(), p_151385_0_);
+         }
+ 
+         if (p_151385_0_ instanceof EntityPlayer)
+         {
+-            func_77518_a(field_151389_e, p_151385_0_.func_184614_ca());
++            applyEnchantmentModifier(field_151389_e, p_151385_0_.func_184614_ca(), p_151385_0_);
+         }
+     }
+ 
+@@ -203,7 +233,7 @@
  
              for (ItemStack itemstack : iterable)
              {
@@ -22,7 +138,7 @@
  
                  if (j > i)
                  {
-@@ -240,11 +246,23 @@
+@@ -240,11 +270,23 @@
          return func_185284_a(Enchantments.field_185305_q, p_185293_0_);
      }
  
@@ -46,7 +162,7 @@
      public static int func_191528_c(ItemStack p_191528_0_)
      {
          return func_77506_a(Enchantments.field_151369_A, p_191528_0_);
-@@ -265,11 +283,23 @@
+@@ -265,11 +307,23 @@
          return func_185284_a(Enchantments.field_185301_j, p_189869_0_) > 0;
      }
  
@@ -70,7 +186,7 @@
      public static boolean func_190939_c(ItemStack p_190939_0_)
      {
          return func_77506_a(Enchantments.field_190940_C, p_190939_0_) > 0;
-@@ -289,7 +319,7 @@
+@@ -289,7 +343,7 @@
  
              for (ItemStack itemstack : list)
              {
@@ -79,7 +195,7 @@
                  {
                      list1.add(itemstack);
                  }
-@@ -302,7 +332,7 @@
+@@ -302,7 +356,7 @@
      public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
      {
          Item item = p_77514_3_.func_77973_b();
@@ -88,7 +204,7 @@
  
          if (i <= 0)
          {
-@@ -357,7 +387,7 @@
+@@ -357,7 +411,7 @@
      {
          List<EnchantmentData> list = Lists.<EnchantmentData>newArrayList();
          Item item = p_77513_1_.func_77973_b();
@@ -97,7 +213,7 @@
  
          if (i <= 0)
          {
-@@ -413,7 +443,7 @@
+@@ -413,7 +467,7 @@
  
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {

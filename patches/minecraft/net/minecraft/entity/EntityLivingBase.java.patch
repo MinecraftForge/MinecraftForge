@@ -187,6 +187,15 @@
                  this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
              }
          }
+@@ -1364,7 +1382,7 @@
+             }
+             else
+             {
+-                int k = EnchantmentHelper.func_77508_a(this.func_184193_aE(), p_70672_1_);
++                int k = EnchantmentHelper.getEnchantmentModifierDamage(this.func_184193_aE(), p_70672_1_, this);
+ 
+                 if (k > 0)
+                 {
 @@ -1380,17 +1398,20 @@
      {
          if (!this.func_180431_b(p_70665_1_))

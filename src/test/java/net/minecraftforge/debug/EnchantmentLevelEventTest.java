@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 public class EnchantmentLevelEventTest
 {
     static final String MOD_ID = "enchantmentleveleventtest";
-    static final boolean ENABLED = true; // TODO: set to false
+    static final boolean ENABLED = false;
     private static Logger logger;
 
     @Mod.EventHandler
