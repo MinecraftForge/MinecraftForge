@@ -1049,11 +1049,6 @@ public class ForgeHooks
             }
         }    
     }
-    
-    public static Predicate<Material> isMaterialSwimmable()
-    {
-        return material -> material.isSwimmable();
-    }
 
     /*
      * This is different than "inside" liquid but rather ensures that the 
