@@ -68,12 +68,10 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -271,7 +292,8 @@
-         {
+@@ -272,6 +293,7 @@
              this.field_70171_ac = false;
          }
--
-+        
+ 
 +        this.field_70171_ac = net.minecraftforge.common.ForgeHooks.isInLiquid(this.func_174813_aQ(), this);
          return this.field_70171_ac;
      }

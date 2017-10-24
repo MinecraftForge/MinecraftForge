@@ -55,12 +55,10 @@
  
          if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
          {
-@@ -1210,7 +1222,8 @@
-         {
+@@ -1211,6 +1223,7 @@
              this.field_70171_ac = false;
          }
--
-+        
+ 
 +        this.field_70171_ac = net.minecraftforge.common.ForgeHooks.isInLiquid(this.func_174813_aQ().func_72314_b(0.0D, -0.4000000059604645D, 0.0D).func_186664_h(0.001D), this); if (field_70171_ac) this.func_70066_B();
          return this.field_70171_ac;
      }
