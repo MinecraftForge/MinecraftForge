@@ -1368,14 +1368,19 @@ public class ForgeHooks
     }
     
     /**
-     * Return if the passed Player currently has the ability to use elytra flight
+     * Return if the passed player currently has the ability to use elytra flight
+     * Return if true if the stack is vanilla elytra for non player EntityLivingBase to emulate exact vanilla behaviour 
      * @param entity
      * @return
      */
-    public static boolean hasElytraFlightAbility(EntityLivingBase player, ItemStack itemstack) {
-    	if(!(player instanceof EntityPlayer)) return false;
+    public static boolean hasElytraFlightAbility(EntityLivingBase player, ItemStack itemstack)
+    {
     	boolean vanillaElytra = itemstack.getItem() == Items.ELYTRA && ItemElytra.isUsable(itemstack);
+    	if(!(player instanceof EntityPlayer))
+    	{
+    		return vanillaElytra;
+    	}
     	double attributeValue = player.getEntityAttribute(SharedMonsterAttributes.ELYTRA_FLIGHT).getAttributeValue();
-    	return attributeValue>1.0D || (vanillaElytra && attributeValue >=1.0D);
+    	return attributeValue > 1.0D || (vanillaElytra && attributeValue >= 1.0D);
     }
 }
