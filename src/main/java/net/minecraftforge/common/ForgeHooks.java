@@ -1369,14 +1369,14 @@ public class ForgeHooks
     
     /**
      * Return if the passed player currently has the ability to use elytra flight
-     * Return if true if the stack is vanilla elytra for non player EntityLivingBase to emulate exact vanilla behaviour 
+     * Return true if the stack is vanilla elytra for non player EntityLivingBase to emulate exact vanilla behaviour 
      * @param entity
      * @return
      */
     public static boolean hasElytraFlightAbility(EntityLivingBase player, ItemStack itemstack)
     {
     	boolean vanillaElytra = itemstack.getItem() == Items.ELYTRA && ItemElytra.isUsable(itemstack);
-    	if(!(player instanceof EntityPlayer))
+    	if (!(player instanceof EntityPlayer))
     	{
     		return vanillaElytra;
     	}

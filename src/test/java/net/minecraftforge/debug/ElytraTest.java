@@ -112,13 +112,13 @@ public class ElytraTest
 	public void onJump(LivingJumpEvent event)
 	{
 		EntityLivingBase elb = event.getEntityLiving();
-		if(elb instanceof EntityPlayer)
+		if (elb instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) elb;
 			ItemStack boots = player.inventory.armorInventory.get(0);
 	
 			boolean hasBoots = !boots.isEmpty() && boots.getItem() == ELYTRA_BOOTS;
-			if(hasBoots)
+			if (hasBoots)
 			{
 				player.motionY+=5.0D;
 			}
@@ -129,13 +129,13 @@ public class ElytraTest
 	public void onFall(LivingFallEvent event)
 	{
 		EntityLivingBase elb = event.getEntityLiving();
-		if(elb instanceof EntityPlayer)
+		if (elb instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) elb;
 			ItemStack boots = player.inventory.armorInventory.get(0);
 	
 			boolean hasBoots = !boots.isEmpty() && boots.getItem() == ELYTRA_BOOTS;
-			if(hasBoots)
+			if (hasBoots)
 			{
 				event.setDistance(0f);
 				event.setDamageMultiplier(0f);

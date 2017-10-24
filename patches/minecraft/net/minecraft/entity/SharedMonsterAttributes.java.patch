@@ -9,3 +9,24 @@
      public static final IAttribute field_111265_b = (new RangedAttribute((IAttribute)null, "generic.followRange", 32.0D, 0.0D, 2048.0D)).func_111117_a("Follow Range");
      public static final IAttribute field_111266_c = (new RangedAttribute((IAttribute)null, "generic.knockbackResistance", 0.0D, 0.0D, 1.0D)).func_111117_a("Knockback Resistance");
      public static final IAttribute field_111263_d = (new RangedAttribute((IAttribute)null, "generic.movementSpeed", 0.699999988079071D, 0.0D, 1024.0D)).func_111117_a("Movement Speed").func_111112_a(true);
+@@ -26,7 +26,7 @@
+     public static final IAttribute field_188791_g = (new RangedAttribute((IAttribute)null, "generic.armor", 0.0D, 0.0D, 30.0D)).func_111112_a(true);
+     public static final IAttribute field_189429_h = (new RangedAttribute((IAttribute)null, "generic.armorToughness", 0.0D, 0.0D, 20.0D)).func_111112_a(true);
+     public static final IAttribute field_188792_h = (new RangedAttribute((IAttribute)null, "generic.luck", 0.0D, -1024.0D, 1024.0D)).func_111112_a(true);
+-
++    
+     public static NBTTagList func_111257_a(AbstractAttributeMap p_111257_0_)
+     {
+         NBTTagList nbttaglist = new NBTTagList();
+@@ -135,4 +135,11 @@
+             return null;
+         }
+     }
++    /* ======================================== FORGE START ===================================== */
++    /**
++     * A player can use elytra flight if this is 1 and the player has vanilla elytra.
++     * A player can use elytra flight it this is > 1.
++     * A player can't use elytra flight if this is < 1. 
++     */
++    public static final IAttribute ELYTRA_FLIGHT = (new RangedAttribute((IAttribute)null,"forge.elytraFlight", 1.0D, 0.0D, 2.0D)).func_111112_a(true);
+ }
