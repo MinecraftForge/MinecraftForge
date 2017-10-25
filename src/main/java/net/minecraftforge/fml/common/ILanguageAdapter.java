@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import net.minecraftforge.fml.common.event.FMLEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
@@ -32,6 +33,13 @@ public interface ILanguageAdapter {
     public boolean supportsStatics();
     public void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
     public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
+
+    /**
+     * This method provides means to hook into the execution of event handlers to alter the behaviour
+     * @param method the handler that should be executed
+     * @param event the event that was fired
+     */
+    public void callEventHandler(Method method, FMLEvent event) throws InvocationTargetException, IllegalAccessException;
 
     public static class ScalaAdapter implements ILanguageAdapter {
         @Override
@@ -178,6 +186,12 @@ public interface ILanguageAdapter {
                 FMLLog.log.trace("Mod does not appear to be a singleton.");
             }
         }
+
+        @Override
+        public void callEventHandler(Method method, FMLEvent event) throws InvocationTargetException, IllegalAccessException
+        {
+            method.invoke(event);
+        }
     }
 
     public static class JavaAdapter implements ILanguageAdapter {
@@ -211,6 +225,12 @@ public interface ILanguageAdapter {
         public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader)
         {
             // Nothing to do here.
+        }
+
+        @Override
+        public void callEventHandler(Method method, FMLEvent event) throws InvocationTargetException, IllegalAccessException
+        {
+            method.invoke(event);
         }
     }
 }
