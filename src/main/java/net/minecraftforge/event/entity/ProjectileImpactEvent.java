@@ -32,6 +32,8 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired when a projectile entity impacts something.
  * This event is fired via {@link ForgeEventFactory#onProjectileImpact(Entity, RayTraceResult)}
  * Subclasses of this event exist for more specific types of projectile.
+ * This event is fired for all vanilla projectiles by Forge,
+ * custom projectiles should fire this event and check the result in a similar fashion.
  * This event is cancelable. When canceled, the impact will not be processed.
  * Killing or other handling of the entity after event cancellation is up to the modder.
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
