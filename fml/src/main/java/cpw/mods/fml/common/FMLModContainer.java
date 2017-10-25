@@ -529,6 +529,7 @@ public class FMLModContainer implements ModContainer
         {
             for (Method m : eventMethods.get(event.getClass()))
             {
+                this.getLanguageAdapter().callEventHandler(m, event);
                 m.invoke(modInstance, event);
             }
         }
