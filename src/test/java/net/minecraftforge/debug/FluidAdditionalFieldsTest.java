@@ -29,8 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class FluidAdditionalFieldsTest
 {
     static final boolean ENABLED = false;      // <-- enable mod
-    static final int COLOR = 0xFFd742f4;       // <-- change value for testing
-    static final Color COLOR_ALT = Color.PINK; // <-- or use this one to test alternate setter
+    static final Color COLOR = Color.PINK; // <-- change this to try other colors
     
     static final String MODID = "fluidadditionalfields";
     static final ResourceLocation RES_LOC = new ResourceLocation(MODID, "slime");
