@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
@@ -79,15 +80,17 @@ public class FogColorInsideMaterialTest
         if (ENABLED)
         {
             event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
-            Block fluid = new BlockFluidClassic(FluidRegistry.WATER, Material.WATER) {
+            Fluid fluid = new Fluid("fog_test", Blocks.WATER.getRegistryName(), Blocks.FLOWING_WATER.getRegistryName());
+            FluidRegistry.registerFluid(fluid);
+            Block fluidBlock = new BlockFluidClassic(fluid, Material.WATER)
+            {
                 @Override
                 public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
                 {
                     return new Vec3d(0.6F, 0.1F, 0.0F);
                 }
             };
-            event.getRegistry().register(fluid.setCreativeTab(CreativeTabs.BUILDING_BLOCKS).setUnlocalizedName(testFluidRegistryName.toString())
-                    .setRegistryName(testFluidRegistryName));
+            event.getRegistry().register(fluidBlock.setCreativeTab(CreativeTabs.BUILDING_BLOCKS).setUnlocalizedName(MODID + ".test_fluid").setRegistryName(testFluidRegistryName));
         }
     }
 

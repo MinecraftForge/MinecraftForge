@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-@Mod(modid = "recipetest", version = "1.0", acceptableRemoteVersions = "*")
+@Mod(modid = "recipetest", name = "Recipe test mod", version = "1.0", acceptableRemoteVersions = "*")
 public class RecipeTestMod
 {
     @Mod.EventHandler
