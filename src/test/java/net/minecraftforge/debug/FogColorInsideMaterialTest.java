@@ -16,69 +16,109 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidClassic;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
 
 @EventBusSubscriber
-@Mod (modid = FogColorInsideMaterialTest.MOD_ID, name = "FogColor inside material debug.", version = "1.0", acceptableRemoteVersions = "*")
+@Mod(modid = FogColorInsideMaterialTest.MODID, name = "FogColor inside material debug.", version = "1.0", acceptableRemoteVersions = "*")
 public class FogColorInsideMaterialTest
 {
+    static final boolean ENABLED = false; // <-- enable mod
+    static int color = 0xFFd742f4; // <-- change value for testing
 
-    public static final String MOD_ID = "fogcolorinsidematerialtest";
+    public static final String MODID = "fogcolorinsidematerialtest";
 
-    @ObjectHolder ("test_fluid")
+    static
+    {
+        if (ENABLED)
+        {
+            FluidRegistry.enableUniversalBucket();
+        }
+    }
+
+    public static final Fluid SLIME = new Fluid("slime", new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow")) {
+        @Override
+        public int getColor()
+        {
+            return color;
+        }
+    };
+
+    @ObjectHolder("slime")
+    public static final BlockFluidBase SLIME_BLOCK = null;
+    @ObjectHolder("test_fluid")
     public static final Block FLUID_BLOCK = null;
-    @ObjectHolder ("test_fluid")
+    @ObjectHolder("test_fluid")
     public static final Item FLUID_ITEM = null;
 
-    private static final ResourceLocation testFluidRegistryName = new ResourceLocation(MOD_ID, "test_fluid");
+    private static final ResourceLocation RES_LOC = new ResourceLocation(MODID, "slime");
+    private static final ResourceLocation testFluidRegistryName = new ResourceLocation(MODID, "test_fluid");
+
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        if (ENABLED)
+        {
+            FluidRegistry.registerFluid(SLIME);
+            FluidRegistry.addBucketForFluid(SLIME);
+        }
+    }
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        Block fluid = new BlockFluidClassic(FluidRegistry.WATER, Material.WATER)
+        if (ENABLED)
         {
-            @Override
-            public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
-            {
-                return new Vec3d(0.6F, 0.1F, 0.0F);
-            }
-        };
-        fluid.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-        fluid.setUnlocalizedName(testFluidRegistryName.toString());
-        fluid.setRegistryName(testFluidRegistryName);
-        event.getRegistry().register(fluid);
+            event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
+            Block fluid = new BlockFluidClassic(FluidRegistry.WATER, Material.WATER) {
+                @Override
+                public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
+                {
+                    return new Vec3d(0.6F, 0.1F, 0.0F);
+                }
+            };
+            event.getRegistry().register(fluid.setCreativeTab(CreativeTabs.BUILDING_BLOCKS).setUnlocalizedName(testFluidRegistryName.toString())
+                    .setRegistryName(testFluidRegistryName));
+        }
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(new ItemBlock(FLUID_BLOCK).setRegistryName(testFluidRegistryName));
+        if (ENABLED)
+        {
+            event.getRegistry().register(new ItemBlock(FLUID_BLOCK).setRegistryName(testFluidRegistryName));
+        }
     }
 
-    @EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
+    @EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
-            ModelResourceLocation fluidLocation = new ModelResourceLocation(testFluidRegistryName, "fluid");
-            ModelLoader.registerItemVariants(FLUID_ITEM);
-            ModelLoader.setCustomMeshDefinition(FLUID_ITEM, stack -> fluidLocation);
-            ModelLoader.setCustomStateMapper(FLUID_BLOCK, new StateMapperBase()
+            if (ENABLED)
             {
-                @Override
-                protected ModelResourceLocation getModelResourceLocation(IBlockState state)
-                {
-                    return fluidLocation;
-                }
-            });
+                ModelResourceLocation fluidLocation = new ModelResourceLocation(testFluidRegistryName, "fluid");
+                ModelLoader.registerItemVariants(FLUID_ITEM);
+                ModelLoader.setCustomMeshDefinition(FLUID_ITEM, stack -> fluidLocation);
+                ModelLoader.setCustomStateMapper(FLUID_BLOCK, new StateMapperBase() {
+                    @Override
+                    protected ModelResourceLocation getModelResourceLocation(IBlockState state)
+                    {
+                        return fluidLocation;
+                    }
+                });
+            }
         }
     }
-
 }

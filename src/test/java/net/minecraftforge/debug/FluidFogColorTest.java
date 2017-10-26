@@ -73,7 +73,6 @@ public class FluidFogColorTest
         if (ENABLED)
         {
             event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
-    
         }
     }
 
