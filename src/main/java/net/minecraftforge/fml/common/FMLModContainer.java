@@ -597,26 +597,32 @@ public class FMLModContainer implements ModContainer
         {
             return;
         }
-        eventHandlers.get(event.getClass())
-                .stream()
-                .map(eventHandler ->
-                {
-                    try
+        try
+        {
+            eventHandlers.get(event.getClass())
+                    .stream()
+                    .map(eventHandler ->
                     {
-                        return eventHandler.handleEvent(event);
-                    }
-                    catch (Throwable t)
-                    {
-                        controller.errorOccurred(this, t);
-                        CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
-                        future.completeExceptionally(t);
-                        return future;
-                    }
-                })
-                .reduce((future1, future2) -> future1.thenComposeAsync(aVoid -> future2))
-                .orElse(CompletableFuture.completedFuture(null))
-                .toCompletableFuture()
-                .join();
+                        try
+                        {
+                            return eventHandler.handleEvent(event);
+                        }
+                        catch (Throwable t)
+                        {
+                            CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
+                            future.completeExceptionally(t);
+                            return future;
+                        }
+                    })
+                    .reduce((future1, future2) -> future1.thenComposeAsync(aVoid -> future2))
+                    .orElse(CompletableFuture.completedFuture(null))
+                    .toCompletableFuture()
+                    .join();
+        }
+        catch (Throwable t)
+        {
+            controller.errorOccurred(this, t);
+        }
     }
 
     @Override
