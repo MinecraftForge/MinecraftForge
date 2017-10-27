@@ -80,6 +80,8 @@ public class ModelAnimationDebug
     public static final String rotateBlockName = "rotatest";
     @ObjectHolder(rotateBlockName)
     public static final Block TEST_ROTATE_BLOCK = null;
+    @ObjectHolder(rotateBlockName)
+    public static final Item TEST_ROTATE_ITEM = null;
 
     @Instance(MODID)
     public static ModelAnimationDebug instance;
@@ -287,6 +289,7 @@ public class ModelAnimationDebug
                     chest.handleEvents(time, pastEvents);
                 }
             });
+            ModelLoader.setCustomModelResourceLocation(TEST_ROTATE_ITEM, 0, new ModelResourceLocation(TEST_ROTATE_ITEM.getRegistryName(), "inventory"));
             ClientRegistry.bindTileEntitySpecialRenderer(Spin.class, new AnimationTESR<Spin>());
             String entityName = MODID + ":entity_chest";
             //EntityRegistry.registerGlobalEntityID(EntityChest.class, entityName, EntityRegistry.findGlobalUniqueEntityId());
