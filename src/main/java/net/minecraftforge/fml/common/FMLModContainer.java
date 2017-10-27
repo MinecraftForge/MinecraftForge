@@ -29,12 +29,7 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
@@ -48,6 +43,7 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLEvent;
 import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
+import net.minecraftforge.fml.common.eventhandler.IEventHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
@@ -61,6 +57,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -100,7 +98,7 @@ public class FMLModContainer implements ModContainer
     private String modLanguage;
     private ILanguageAdapter languageAdapter;
     private Disableable disableability;
-    private ListMultimap<Class<? extends FMLEvent>, Method> eventMethods;
+    private ListMultimap<Class<? extends FMLEvent>, IEventHandler> eventHandlers;
     private Map<String, String> customModProperties;
     private ModCandidate candidate;
     private URL updateJSONUrl;
@@ -114,7 +112,7 @@ public class FMLModContainer implements ModContainer
         this.source = container.getModContainer();
         this.candidate = container;
         this.descriptor = modDescriptor;
-        this.eventMethods = ArrayListMultimap.create();
+        this.eventHandlers = ArrayListMultimap.create();
 
         this.modLanguage = (String)modDescriptor.get("modLanguage");
         String languageAdapterType = (String)modDescriptor.get("modLanguageAdapter");
@@ -399,7 +397,7 @@ public class FMLModContainer implements ModContainer
                     if (m.getParameterTypes().length == 1 && FMLEvent.class.isAssignableFrom(m.getParameterTypes()[0]))
                     {
                         m.setAccessible(true);
-                        eventMethods.put((Class<? extends FMLEvent>)m.getParameterTypes()[0], m);
+                        eventHandlers.put((Class<? extends FMLEvent>)m.getParameterTypes()[0], this.getLanguageAdapter().createEventHandler(m));
                     }
                     else
                     {
@@ -595,21 +593,30 @@ public class FMLModContainer implements ModContainer
     @Subscribe
     public void handleModStateEvent(FMLEvent event)
     {
-        if (!eventMethods.containsKey(event.getClass()))
+        if (!eventHandlers.containsKey(event.getClass()))
         {
             return;
         }
-        try
-        {
-            for (Method m : eventMethods.get(event.getClass()))
-            {
-                this.getLanguageAdapter().callEventHandler(m, event);
-            }
-        }
-        catch (Throwable t)
-        {
-            controller.errorOccurred(this, t);
-        }
+        eventHandlers.get(event.getClass())
+                .stream()
+                .map(eventHandler ->
+                {
+                    try
+                    {
+                        return eventHandler.handleEvent(event);
+                    }
+                    catch (Throwable t)
+                    {
+                        controller.errorOccurred(this, t);
+                        CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
+                        future.completeExceptionally(t);
+                        return future;
+                    }
+                })
+                .reduce((future1, future2) -> future1.thenComposeAsync(aVoid -> future2))
+                .orElse(CompletableFuture.completedFuture(null))
+                .toCompletableFuture()
+                .join();
     }
 
     @Override

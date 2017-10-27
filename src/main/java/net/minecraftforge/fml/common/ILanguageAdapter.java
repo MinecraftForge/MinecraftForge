@@ -22,8 +22,11 @@ package net.minecraftforge.fml.common;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 import net.minecraftforge.fml.common.event.FMLEvent;
+import net.minecraftforge.fml.common.eventhandler.IEventHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
@@ -35,11 +38,10 @@ public interface ILanguageAdapter {
     public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
 
     /**
-     * This method provides means to hook into the execution of event handlers to alter the behaviour
-     * @param method the handler that should be executed
-     * @param event the event that was fired
+     * Wraps an event handler method in an {@code EventHandler} instance
+     * @param method the eventhandler method of a mod
      */
-    public void callEventHandler(Method method, FMLEvent event) throws InvocationTargetException, IllegalAccessException;
+    public IEventHandler createEventHandler(Method method);
 
     public static class ScalaAdapter implements ILanguageAdapter {
         @Override
@@ -188,10 +190,22 @@ public interface ILanguageAdapter {
         }
 
         @Override
-        public void callEventHandler(Method method, FMLEvent event) throws InvocationTargetException, IllegalAccessException
+        public IEventHandler createEventHandler(Method method)
         {
-            method.invoke(event);
+            return event ->
+            {
+                if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
+                    //noinspection unchecked
+                    return (CompletionStage<Void>) method.invoke(event);
+                }
+                else
+                {
+                    method.invoke(event);
+                    return CompletableFuture.completedFuture(null);
+                }
+            };
         }
+
     }
 
     public static class JavaAdapter implements ILanguageAdapter {
@@ -228,9 +242,21 @@ public interface ILanguageAdapter {
         }
 
         @Override
-        public void callEventHandler(Method method, FMLEvent event) throws InvocationTargetException, IllegalAccessException
+        public IEventHandler createEventHandler(Method method)
         {
-            method.invoke(event);
+            return event ->
+            {
+                if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
+                    //noinspection unchecked
+                    return (CompletionStage<Void>) method.invoke(event);
+                }
+                else
+                {
+                    method.invoke(event);
+                    return CompletableFuture.completedFuture(null);
+                }
+            };
         }
+
     }
 }
