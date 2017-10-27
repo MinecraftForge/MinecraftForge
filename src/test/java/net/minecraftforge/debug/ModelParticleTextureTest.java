@@ -178,6 +178,7 @@ public class ModelParticleTextureTest
                     return TestBlockModel.LOCATION;
                 }
             });
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TEST_BLOCK), 0, TestBlockModel.LOCATION);
         }
 
         @SubscribeEvent
