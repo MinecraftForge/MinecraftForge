@@ -290,7 +290,14 @@ public class ModelAnimationDebug
                 }
             });
             ModelLoader.setCustomModelResourceLocation(TEST_ROTATE_ITEM, 0, new ModelResourceLocation(TEST_ROTATE_ITEM.getRegistryName(), "inventory"));
-            ClientRegistry.bindTileEntitySpecialRenderer(Spin.class, new AnimationTESR<Spin>());
+            ClientRegistry.bindTileEntitySpecialRenderer(Spin.class, new AnimationTESR<Spin>()
+            {
+                @Override
+                public void handleEvents(Spin spin, float time, Iterable<Event> pastEvents)
+                {
+                    spin.handleEvents(time, pastEvents);
+                }
+            });
             String entityName = MODID + ":entity_chest";
             //EntityRegistry.registerGlobalEntityID(EntityChest.class, entityName, EntityRegistry.findGlobalUniqueEntityId());
             EntityRegistry.registerModEntity(new ResourceLocation(entityName), EntityChest.class, entityName, 0, ModelAnimationDebug.instance, 64, 20, true, 0xFFAAAA00, 0xFFDDDD00);
@@ -360,29 +367,25 @@ public class ModelAnimationDebug
         logger = event.getModLog();
     }
 
-    public static class Spin extends TileEntity implements ITickable, ICapabilityProvider {
-
+    public static class Spin extends TileEntity
+    {
         @Nullable
         private final IAnimationStateMachine asm;
         private final VariableValue cycle = new VariableValue(0);
 
-        public Spin() {
-            asm = proxy.load(new ResourceLocation(MODID, "asms/block/rotatest.json"), ImmutableMap.<String, ITimeValue>of("cycle", cycle));
-
+        public Spin()
+        {
+            asm = proxy.load(new ResourceLocation(MODID, "asms/block/rotatest.json"), ImmutableMap.of("cycle", cycle));
         }
 
-        int tickcounter;
-
-        @Override
-        public void update() {
-            tickcounter++;
-            if (world.isRemote) {
-                cycle.setValue(tickcounter/40.0F);
-            }
+        public void handleEvents(float time, Iterable<Event> pastEvents)
+        {
+            cycle.setValue(time * 0.5f);
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side) {
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
+        {
             return capability == CapabilityAnimation.ANIMATION_CAPABILITY || super.hasCapability(capability, side);
         }
 
@@ -390,7 +393,7 @@ public class ModelAnimationDebug
         @Nullable
         public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
         {
-            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
                 return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
             }
