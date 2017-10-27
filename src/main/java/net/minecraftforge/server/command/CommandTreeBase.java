@@ -77,7 +77,7 @@ public abstract class CommandTreeBase extends CommandBase
 
     public List<ICommand> getSortedCommandList()
     {
-        List<ICommand> list = new ArrayList<ICommand>(getSubCommands());
+        List<ICommand> list = new ArrayList<>(getSubCommands());
         Collections.sort(list);
         return list;
     }

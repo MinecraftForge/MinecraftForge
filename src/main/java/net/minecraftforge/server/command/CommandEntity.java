@@ -111,7 +111,7 @@ class CommandEntity extends CommandTreeBase
                 throw new WrongUsageException("commands.forge.entity.list.invalidworld", dim);
 
             Map<ResourceLocation, MutablePair<Integer, Map<ChunkPos, Integer>>> list = Maps.newHashMap();
-            List<Entity> entities = world.getLoadedEntityList();
+            List<Entity> entities = world.loadedEntityList;
             entities.forEach(e -> {
                 ResourceLocation key = EntityList.getKey(e);
 
