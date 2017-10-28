@@ -1,12 +1,14 @@
-commands.forge.usage=Use /forge <subcommand>. Subcommands are tps, track, gen
-commands.forge.usage.tracking=Use /forge track <type> <duration>. Valid types are te (Tile Entities). Duration is < 60.
+commands.forge.usage=Use /forge <subcommand>
+commands.forge.usage.tracking=Use /forge track <type> <duration>. Valid types are "te" (Tile Entities). Duration in seconds must be <= 60.
+commands.forge.usage.help=Use help [command] to view usages for that command.
 commands.forge.tps.summary=%s : Mean tick time: %d ms. Mean TPS: %d
+commands.forge.tps.usage=Use /forge tps [dimension]
 commands.forge.gen.usage=Use /forge gen <x> <y> <z> <chunkCount> [dimension] [interval]
 commands.forge.gen.dim_fail=Failed to load world for dimension %d, Task terminated.
 commands.forge.gen.progress=Generation Progress: %d/%d
 commands.forge.gen.complete=Finished generating %d new chunks (out of %d) for dimension %d.
 commands.forge.gen.start=Starting to generate %d chunks in a spiral around %d, %d in dimension %d.
-commands.forge.entity.usage=Use /forge entity [list] help for more infomration on a specific command.
+commands.forge.entity.usage=Use /forge entity help for more information on entity subcommands.
 commands.forge.entity.list.usage=Use /forge entity list [filter] [dim] to get entity info that matches the optional filter.
 commands.forge.entity.list.invalid=Invalid filter, does not match any entities. Use /forge entity list for a proper list
 commands.forge.entity.list.invalidworld=Could not load world for dimension %d. Please select a valid dimension.
@@ -16,6 +18,8 @@ commands.forge.entity.list.multiple.header=Total: %d
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 commands.tree_base.invalid_cmd=Invalid subcommand '%s'!
+commands.tree_base.invalid_cmd.list_subcommands=Invalid subcommand '%s'! Available subcommands: %s
+commands.tree_base.available_subcommands=Available SubCommands: %s
 forge.texture.preload.warning=Warning: Texture %s not preloaded, will cause render glitches!
 forge.client.shutdown.internal=Shutting down internal server...
 forge.update.newversion=New Forge version available: %s
