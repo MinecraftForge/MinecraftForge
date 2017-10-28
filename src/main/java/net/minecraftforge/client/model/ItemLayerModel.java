@@ -24,6 +24,10 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
 import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.state.IBlockState;
@@ -35,8 +39,11 @@ import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.BakeItemLayerModelEvent;
+import net.minecraftforge.client.event.ClientAttachCapabilitiesEvent;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -52,7 +59,7 @@ import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public final class ItemLayerModel implements IModel
+public final class ItemLayerModel implements IModel, ICapabilityProvider
 {
     public static final ItemLayerModel INSTANCE = new ItemLayerModel(ImmutableList.of());
 
@@ -61,21 +68,39 @@ public final class ItemLayerModel implements IModel
 
     private final ImmutableList<ResourceLocation> textures;
     private final ItemOverrideList overrides;
+    private final CapabilityDispatcher capabilities;
+
+    public ItemLayerModel(ImmutableList<ResourceLocation> textures, NBTTagCompound capabilities)
+    {
+        this(textures, ItemOverrideList.NONE, capabilities);
+    }
 
     public ItemLayerModel(ImmutableList<ResourceLocation> textures)
     {
-        this(textures, ItemOverrideList.NONE);
+        this(textures, (NBTTagCompound) null);
+    }
+
+    public ItemLayerModel(ImmutableList<ResourceLocation> textures, ItemOverrideList overrides, NBTTagCompound capabilities)
+    {
+        this.textures = textures;
+        this.overrides = overrides;
+        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilitiesNotNull(new ClientAttachCapabilitiesEvent.ItemLayerModel(this));
+        if(capabilities != null) this.capabilities.deserializeNBT(capabilities);
     }
 
     public ItemLayerModel(ImmutableList<ResourceLocation> textures, ItemOverrideList overrides)
     {
-        this.textures = textures;
-        this.overrides = overrides;
+        this(textures, overrides, null);
+    }
+
+    public ItemLayerModel(ModelBlock model, NBTTagCompound capabilities)
+    {
+        this(getTextures(model), model.createOverrides(), capabilities);
     }
 
     public ItemLayerModel(ModelBlock model)
     {
-        this(getTextures(model), model.createOverrides());
+        this(model, null);
     }
 
     private static ImmutableList<ResourceLocation> getTextures(ModelBlock model)
@@ -86,6 +111,21 @@ public final class ItemLayerModel implements IModel
             builder.add(new ResourceLocation(model.resolveTextureName("layer" + i)));
         }
         return builder.build();
+    }
+
+    public Collection<ResourceLocation> getDependencies()
+    {
+        return ImmutableList.of();
+    }
+
+    public ItemOverrideList getOverrides()
+    {
+        return overrides;
+    }
+
+    public CapabilityDispatcher getCapabilities()
+    {
+        return capabilities;
     }
 
     public Collection<ResourceLocation> getTextures()
@@ -107,7 +147,7 @@ public final class ItemLayerModel implements IModel
                 builder.add(this.textures.get(i));
             }
         }
-        return new ItemLayerModel(builder.build(), overrides);
+        return new ItemLayerModel(builder.build(), overrides, capabilities.serializeNBT());
     }
 
     @Override
@@ -115,6 +155,10 @@ public final class ItemLayerModel implements IModel
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         Optional<TRSRTransformation> transform = state.apply(Optional.empty());
+        BakeItemLayerModelEvent event = new BakeItemLayerModelEvent.Pre(this, state, format, bakedTextureGetter, builder, transform);
+        MinecraftForge.EVENT_BUS.post(event);
+        builder = event.getBuilder();
+        transform = event.getTransform();
         for(int i = 0; i < textures.size(); i++)
         {
             TextureAtlasSprite sprite = bakedTextureGetter.apply(textures.get(i));
@@ -122,7 +166,23 @@ public final class ItemLayerModel implements IModel
         }
         TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
         ImmutableMap<TransformType, TRSRTransformation> map = PerspectiveMapWrapper.getTransforms(state);
-        return new BakedItemModel(builder.build(), particle, map, overrides, null);
+        BakeItemLayerModelEvent.Post pevent = new BakeItemLayerModelEvent.Post(this, state, format, bakedTextureGetter, builder, transform, particle, map);
+        MinecraftForge.EVENT_BUS.post(pevent);
+        return new BakedItemModel(pevent.getBuilder().build(), pevent.getParticle(), pevent.getMap(), overrides, null);
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+    {
+        if (getCapability(capability, facing) != null)
+            return true;
+        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+    {
+        return capabilities == null ? null : capabilities.getCapability(capability, facing);
     }
 
     private static final class BakedItemModel implements IBakedModel

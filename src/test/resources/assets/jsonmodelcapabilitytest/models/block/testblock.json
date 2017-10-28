@@ -1,0 +1,71 @@
+{
+    "textures":{
+    	"all": "jsonmodelcapabilitytest:blocks/lights"
+    },
+    "elements": [
+        {   
+        	"from": [ 2, 2, 2 ],
+            "to": [ 14, 14, 14 ],
+            "faces": {
+                "down":  { "texture": "all", "cullface": "down", "uv": [0, 0, 16, 16], "capabilities": { "test:uvlightmap": { "block": 0.007, "sky": 0.007 } } },
+                "up":    { "texture": "all", "cullface": "up", "uv": [0, 0, 16, 16], "capabilities": { "test:uvlightmap": { "block": 0.007, "sky": 0.007 } } },
+                "north": { "texture": "all", "cullface": "north", "uv": [0, 0, 16, 16], "capabilities": { "test:uvlightmap": { "block": 0.004, "sky": 0.004 } } },
+                "south": { "texture": "all", "cullface": "south", "uv": [0, 0, 16, 16], "capabilities": { "test:uvlightmap": { "block": 0.001, "sky": 0.001 } } },
+                "west":  { "texture": "all", "cullface": "west", "uv": [0, 0, 16, 16], "capabilities": { "test:uvlightmap": { "block": 0.001, "sky": 0.001 } } },
+                "east":  { "texture": "all", "cullface": "east", "uv": [0, 0, 16, 16], "capabilities": { "test:uvlightmap": { "block": 0.001, "sky": 0.001 } } }
+            }
+        }
+    ],
+    "capabilities":{
+    	"test:include": [
+    		{
+    			"model": "block/furnace",
+    			"transform": [
+    				{
+    					"rotation": {
+    						"x": 0,
+    						"y": 0,
+    						"z": 180
+    					},
+    					"scale": {
+    						"x": 0.5,
+    						"y": 0.5,
+    						"z": 0.5
+    					}
+    				}
+    			]
+    		},
+    		{
+    			"model": "block/beacon",
+    			"transform": [
+    				{
+    					"scale": {
+    						"x": 0.5,
+    						"y": 0.5,
+    						"z": 0.5
+    					}
+    				},
+    				{
+    					"translation": {
+    						"x": 0,
+    						"y": 1,
+    						"z": 0
+    					}
+    				}
+    			]
+    		},
+    		{
+    			"model": "block/end_rod",
+    			"transform": [
+    				{
+    					"translation": {
+    					"x": 0,
+    						"y": 1.25,
+    						"z": 0
+    					}
+    				}
+    			]
+    		}
+    	]
+    }
+}

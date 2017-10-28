@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ItemModelGenerator.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ItemModelGenerator.java
+@@ -44,7 +44,7 @@
+         else
+         {
+             map.put("particle", p_178392_2_.func_178300_b("particle") ? p_178392_2_.func_178308_c("particle") : (String)map.get("layer0"));
+-            return new ModelBlock((ResourceLocation)null, list, map, false, false, p_178392_2_.func_181682_g(), p_178392_2_.func_187966_f());
++            return new ModelBlock((ResourceLocation)null, list, map, false, false, p_178392_2_.func_181682_g(), p_178392_2_.func_187966_f(), p_178392_2_.getCapabilities().serializeNBT());
+         }
+     }
+ 

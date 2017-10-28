@@ -29,6 +29,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+
+import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -37,6 +39,7 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -55,12 +58,15 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.model.BlockPartFace;
+import net.minecraft.client.renderer.block.model.BlockPartRotation;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.SimpleBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -77,6 +83,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -90,6 +101,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.event.BakeBlockPartFaceEvent;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -102,14 +114,17 @@ import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.VanillaModelWrapperEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoader.VanillaModelWrapper;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.ITransformation;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -239,6 +254,18 @@ public class ForgeHooksClient
         return event.getFOV();
     }
 
+    public static Collection<ResourceLocation> getDependencies(VanillaModelWrapper modelWrapper, Collection<ResourceLocation> dependencies){
+        VanillaModelWrapperEvent.GetDependencies event = new VanillaModelWrapperEvent.GetDependencies(modelWrapper, dependencies);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getDependecies();
+    }
+
+    public static ImmutableSet<ResourceLocation> getTextures(VanillaModelWrapper modelWrapper, ImmutableSet.Builder<ResourceLocation> textures){
+        VanillaModelWrapperEvent.GetTextures event = new VanillaModelWrapperEvent.GetTextures(modelWrapper, textures);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getTextures().build();
+    }
+
     private static int skyX, skyZ;
 
     private static boolean skyInit;
@@ -366,6 +393,12 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
         modelLoader.onPostBakeEvent(modelRegistry);
+    }
+
+    public static BakedQuad bakeBlockPartFace(org.lwjgl.util.vector.Vector3f posFrom, org.lwjgl.util.vector.Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, net.minecraftforge.common.model.ITransformation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade, BakedQuad quad){
+        BakeBlockPartFaceEvent event = new BakeBlockPartFaceEvent(posFrom, posTo, face, sprite, facing, modelRotationIn, partRotation, uvLocked, shade, quad);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getQuad();
     }
 
     @SuppressWarnings("deprecation")
@@ -720,6 +753,39 @@ public class ForgeHooksClient
         return event;
     }
 
+    public static NBTTagCompound capabilitiesJsonToNbt(String json)
+    {
+        try
+        {
+            return deepRemoveQuotes(JsonToNBT.getTagFromJson(json));
+        }
+        catch (NBTException e)
+        {
+
+        }
+        return null;
+    }
+
+    private static NBTTagCompound deepRemoveQuotes(NBTTagCompound nbt)
+    {
+        NBTTagCompound tag = new NBTTagCompound();
+        for(String s : nbt.getKeySet()){
+            NBTBase b = nbt.getTag(s);
+            if(b instanceof NBTTagCompound){
+                tag.setTag(s.substring(1, s.length() - 1), deepRemoveQuotes((NBTTagCompound) b));
+            } else if (b instanceof NBTTagList && ((NBTTagList) b).getTagType() == 10){
+                NBTTagList list = new NBTTagList();
+                for(int i = 0; i < ((NBTTagList) b).tagCount(); i++){
+                    list.appendTag(deepRemoveQuotes(((NBTTagList) b).getCompoundTagAt(i)));
+                }
+                tag.setTag(s.substring(1, s.length() - 1), list);
+            } else {
+                tag.setTag(s.substring(1, s.length() - 1), b);
+            }
+        }
+        return tag;
+    }
+
     @SuppressWarnings("deprecation")
     public static Pair<? extends IBakedModel,Matrix4f> handlePerspective(IBakedModel model, ItemCameraTransforms.TransformType type)
     {
@@ -728,4 +794,5 @@ public class ForgeHooksClient
         if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
         return Pair.of(model, mat);
     }
+
 }

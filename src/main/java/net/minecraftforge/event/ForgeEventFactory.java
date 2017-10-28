@@ -21,6 +21,7 @@ package net.minecraftforge.event;
 
 import java.io.File;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -596,6 +597,11 @@ public class ForgeEventFactory
     public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent<World>(World.class, world), parent);
+    }
+
+    public static CapabilityDispatcher gatherCapabilitiesNotNull(AttachCapabilitiesEvent<?> event){
+        CapabilityDispatcher caps = gatherCapabilities(event, null);
+        return caps != null ? caps : new CapabilityDispatcher(new HashMap<ResourceLocation, ICapabilityProvider>());
     }
 
     @Nullable

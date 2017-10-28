@@ -1,0 +1,64 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/BlockPart.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/BlockPart.java
+@@ -19,13 +19,14 @@
+ import org.lwjgl.util.vector.Vector3f;
+ 
+ @SideOnly(Side.CLIENT)
+-public class BlockPart
++public class BlockPart implements net.minecraftforge.common.capabilities.ICapabilityProvider
+ {
+     public final Vector3f field_178241_a;
+     public final Vector3f field_178239_b;
+     public final Map<EnumFacing, BlockPartFace> field_178240_c;
+     public final BlockPartRotation field_178237_d;
+     public final boolean field_178238_e;
++    public final net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
+ 
+     public BlockPart(Vector3f p_i46231_1_, Vector3f p_i46231_2_, Map<EnumFacing, BlockPartFace> p_i46231_3_, @Nullable BlockPartRotation p_i46231_4_, boolean p_i46231_5_)
+     {
+@@ -35,8 +36,15 @@
+         this.field_178237_d = p_i46231_4_;
+         this.field_178238_e = p_i46231_5_;
+         this.func_178235_a();
++        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilitiesNotNull(new net.minecraftforge.client.event.ClientAttachCapabilitiesEvent.BlockPart(this));
+     }
+ 
++    public BlockPart(Vector3f positionFromIn, Vector3f positionToIn, Map<EnumFacing, BlockPartFace> mapFacesIn, @Nullable BlockPartRotation partRotationIn, boolean shadeIn, net.minecraft.nbt.NBTTagCompound capabilities)
++    {
++        this(positionFromIn, positionToIn, mapFacesIn, partRotationIn, shadeIn);
++        if(capabilities != null) this.capabilities.deserializeNBT(capabilities);
++    }
++
+     private void func_178235_a()
+     {
+         for (Entry<EnumFacing, BlockPartFace> entry : this.field_178240_c.entrySet())
+@@ -66,6 +74,20 @@
+         }
+     }
+ 
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (getCapability(capability, facing) != null)
++            return true;
++        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
++    }
++
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
++
+     @SideOnly(Side.CLIENT)
+     static class Deserializer implements JsonDeserializer<BlockPart>
+         {
+@@ -84,7 +106,7 @@
+                 else
+                 {
+                     boolean flag = JsonUtils.func_151209_a(jsonobject, "shade", true);
+-                    return new BlockPart(vector3f, vector3f1, map, blockpartrotation, flag);
++                    return new BlockPart(vector3f, vector3f1, map, blockpartrotation, flag, net.minecraftforge.client.ForgeHooksClient.capabilitiesJsonToNbt(ModelBlock.field_178319_a.toJson(jsonobject.get("capabilities"))));
+                 }
+             }
+ 
