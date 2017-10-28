@@ -4,7 +4,7 @@
      public ParticleDigging func_174846_a(BlockPos p_174846_1_)
      {
          this.field_181019_az = p_174846_1_;
-+        updateTexture();
++        if (updateState()) updateTexture();
  
          if (this.field_174847_a.func_177230_c() == Blocks.field_150349_c)
          {
@@ -12,42 +12,37 @@
      {
          this.field_181019_az = new BlockPos(this.field_187126_f, this.field_187127_g, this.field_187128_h);
          Block block = this.field_174847_a.func_177230_c();
-+        updateTexture();
++        if (updateState()) updateTexture();
  
          if (block == Blocks.field_150349_c)
          {
-@@ -63,7 +65,9 @@
- 
-     protected void func_187154_b(@Nullable BlockPos p_187154_1_)
-     {
--        int i = Minecraft.func_71410_x().func_184125_al().func_186724_a(this.field_174847_a, this.field_187122_b, p_187154_1_, 0);
-+        boolean flag = p_187154_1_ == null || this.field_187122_b.func_180495_p(p_187154_1_) != this.field_174847_a;
-+        IBlockState state = flag ? this.field_174847_a : this.field_174847_a.func_177230_c().getExtendedState(this.field_174847_a.func_185899_b(this.field_187122_b, p_187154_1_), this.field_187122_b, p_187154_1_);
-+        int i = Minecraft.func_71410_x().func_184125_al().func_186724_a(state, this.field_187122_b, p_187154_1_, 0);
-         this.field_70552_h *= (float)(i >> 16 & 255) / 255.0F;
-         this.field_70553_i *= (float)(i >> 8 & 255) / 255.0F;
-         this.field_70551_j *= (float)(i & 255) / 255.0F;
-@@ -123,4 +127,23 @@
+@@ -123,4 +125,29 @@
                  return (new ParticleDigging(p_178902_2_, p_178902_3_, p_178902_5_, p_178902_7_, p_178902_9_, p_178902_11_, p_178902_13_, Block.func_176220_d(p_178902_15_[0]))).func_174845_l();
              }
          }
 +
-+    private void updateTexture()
++    private boolean updateState()
 +    {
++        boolean flag = false;
 +        if (this.field_174847_a == this.field_187122_b.func_180495_p(this.field_181019_az))
 +        {
-+            updateTexture(this.field_181019_az);
++            flag = true;
 +        }
 +        else if (this.field_174847_a == this.field_187122_b.func_180495_p(this.field_181019_az.func_177977_b()))
 +        {
-+            updateTexture(this.field_181019_az.func_177977_b());
++            this.field_181019_az = this.field_181019_az.func_177977_b();
++            flag = true;
 +        }
++        if (flag)
++        {
++            IBlockState state = this.field_174847_a.func_185899_b(this.field_187122_b, this.field_181019_az);
++            this.field_174847_a = state.func_177230_c().getExtendedState(state, this.field_187122_b, this.field_181019_az);
++        }
++        return flag;
 +    }
 +
-+    private void updateTexture(BlockPos pos)
++    private void updateTexture()
 +    {
-+        IBlockState state = this.field_174847_a.func_185899_b(this.field_187122_b, pos);
-+        state = state.func_177230_c().getExtendedState(state, this.field_187122_b, pos);
-+        this.func_187117_a(Minecraft.func_71410_x().func_175602_ab().func_175023_a().func_178122_a(state));
++        this.func_187117_a(Minecraft.func_71410_x().func_175602_ab().func_175023_a().func_178122_a(this.field_174847_a));
 +    }
  }
