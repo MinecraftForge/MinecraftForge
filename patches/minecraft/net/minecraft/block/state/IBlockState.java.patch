@@ -1,9 +1,0 @@
---- ../src-base/minecraft/net/minecraft/block/state/IBlockState.java
-+++ ../src-work/minecraft/net/minecraft/block/state/IBlockState.java
-@@ -18,4 +18,6 @@
-     ImmutableMap < IProperty<?>, Comparable<? >> func_177228_b();
- 
-     Block func_177230_c();
-+
-+    default IBlockState getClean() {return this;}
- }

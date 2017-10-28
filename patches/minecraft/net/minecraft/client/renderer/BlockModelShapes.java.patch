@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
-@@ -201,12 +201,12 @@
+@@ -201,11 +201,14 @@
              ibakedmodel = this.field_178128_c.func_174951_a();
          }
  
@@ -10,12 +10,13 @@
  
      public IBakedModel func_178125_b(IBlockState p_178125_1_)
      {
--        IBakedModel ibakedmodel = this.field_178129_a.get(p_178125_1_);
-+        IBakedModel ibakedmodel = this.field_178129_a.get(p_178125_1_.getClean());
++        if (p_178125_1_ instanceof net.minecraftforge.common.property.IExtendedBlockState)
++            p_178125_1_ = ((net.minecraftforge.common.property.IExtendedBlockState) p_178125_1_).getClean();
++
+         IBakedModel ibakedmodel = this.field_178129_a.get(p_178125_1_);
  
          if (ibakedmodel == null)
-         {
-@@ -391,5 +391,6 @@
+@@ -391,5 +394,6 @@
                  return new ModelResourceLocation(s + "_double_slab", s1);
              }
          });
