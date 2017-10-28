@@ -8,16 +8,20 @@
          this.field_187241_h.add(p_78873_1_);
      }
  
-@@ -409,7 +410,7 @@
+@@ -409,9 +410,10 @@
  
      public void func_180533_a(BlockPos p_180533_1_, IBlockState p_180533_2_)
      {
 -        if (p_180533_2_.func_185904_a() != Material.field_151579_a)
 +        if (!p_180533_2_.func_177230_c().isAir(p_180533_2_, this.field_78878_a, p_180533_1_) && !p_180533_2_.func_177230_c().addDestroyEffects(field_78878_a, p_180533_1_, this))
          {
-             p_180533_2_ = p_180533_2_.func_185899_b(this.field_78878_a, p_180533_1_);
+-            p_180533_2_ = p_180533_2_.func_185899_b(this.field_78878_a, p_180533_1_);
++            // Forge: handle this in ParticleDigging
++            if (false) p_180533_2_ = p_180533_2_.func_185899_b(this.field_78878_a, p_180533_1_);
              int i = 4;
-@@ -493,4 +494,13 @@
+ 
+             for (int j = 0; j < 4; ++j)
+@@ -493,4 +495,13 @@
  
          return "" + i;
      }
@@ -25,9 +29,9 @@
 +    public void addBlockHitEffects(BlockPos pos, net.minecraft.util.math.RayTraceResult target)
 +    {
 +        IBlockState state = field_78878_a.func_180495_p(pos);
-+        if (state != null && !state.func_177230_c().addHitEffects(state, field_78878_a, target, this))
++        if (!state.func_177230_c().isAir(state, field_78878_a, pos) && !state.func_177230_c().addHitEffects(state, field_78878_a, target, this))
 +        {
 +            func_180532_a(pos, target.field_178784_b);
 +        }
-+     }
++    }
  }
