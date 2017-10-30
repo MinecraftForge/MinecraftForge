@@ -58,7 +58,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -606,9 +605,12 @@ public class FMLModContainer implements ModContainer
                         // safely transform the result of eventHandler.handleEvent into a CompletableFuture
                         return new CompletableFuture<Void>().thenCompose(aVoid ->
                         {
-                            try {
+                            try
+                            {
                                 return eventHandler.handleEvent(event);
-                            } catch (Throwable t) {
+                            }
+                            catch (Throwable t)
+                            {
                                 CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
                                 future.completeExceptionally(t);
                                 return future;
