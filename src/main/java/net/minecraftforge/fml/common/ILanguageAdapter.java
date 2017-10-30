@@ -41,7 +41,20 @@ public interface ILanguageAdapter {
      * Wraps an event handler method in an {@code EventHandler} instance
      * @param method the eventhandler method of a mod
      */
-    public IEventHandler createEventHandler(Method method);
+    public default IEventHandler createEventHandler(Method method) {
+        return event ->
+        {
+            if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
+                //noinspection unchecked
+                return (CompletionStage<Void>) method.invoke(event);
+            }
+            else
+            {
+                method.invoke(event);
+                return CompletableFuture.completedFuture(null);
+            }
+        };
+    }
 
     public static class ScalaAdapter implements ILanguageAdapter {
         @Override
@@ -189,23 +202,6 @@ public interface ILanguageAdapter {
             }
         }
 
-        @Override
-        public IEventHandler createEventHandler(Method method)
-        {
-            return event ->
-            {
-                if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
-                    //noinspection unchecked
-                    return (CompletionStage<Void>) method.invoke(event);
-                }
-                else
-                {
-                    method.invoke(event);
-                    return CompletableFuture.completedFuture(null);
-                }
-            };
-        }
-
     }
 
     public static class JavaAdapter implements ILanguageAdapter {
@@ -239,23 +235,6 @@ public interface ILanguageAdapter {
         public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader)
         {
             // Nothing to do here.
-        }
-
-        @Override
-        public IEventHandler createEventHandler(Method method)
-        {
-            return event ->
-            {
-                if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
-                    //noinspection unchecked
-                    return (CompletionStage<Void>) method.invoke(event);
-                }
-                else
-                {
-                    method.invoke(event);
-                    return CompletableFuture.completedFuture(null);
-                }
-            };
         }
 
     }
