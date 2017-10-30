@@ -17,7 +17,7 @@
   "releaseTime": "1960-01-01T00:00:00-0700",
   "type": "release",
   "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --tweakClass net.minecraftforge.fml.common.launcher.FMLTweaker --versionType Forge",
-  "mainClass": "net.minecraft.launchwrapper.Launch",
+  "mainClass": "net.minecraftforge.fml.relauncher.ClientLaunchWrapper",
   "inheritsFrom": "1.12.2",
   "jar": "1.12.2",
   "logging": {},
