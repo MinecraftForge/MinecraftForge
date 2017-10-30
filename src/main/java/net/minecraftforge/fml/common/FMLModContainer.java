@@ -588,20 +588,20 @@ public class FMLModContainer implements ModContainer
                     .stream()
                     .map(eventHandler ->
                     {
-                        try
+                        // safely transform the result of eventHandler.handleEvent into a CompletableFuture
+                        return new CompletableFuture<Void>().thenCompose(aVoid ->
                         {
-                            return eventHandler.handleEvent(event);
-                        }
-                        catch (Throwable t)
-                        {
-                            CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
-                            future.completeExceptionally(t);
-                            return future;
-                        }
+                            try {
+                                return eventHandler.handleEvent(event);
+                            } catch (Throwable t) {
+                                CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
+                                future.completeExceptionally(t);
+                                return future;
+                            }
+                        });
                     })
                     .reduce((future1, future2) -> future1.thenComposeAsync(aVoid -> future2))
                     .orElse(CompletableFuture.completedFuture(null))
-                    .toCompletableFuture()
                     .join();
         }
         catch (Throwable t)
