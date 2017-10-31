@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +34,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -52,6 +52,7 @@ import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.common.toposort.TopologicalSort;
 import net.minecraftforge.fml.common.toposort.ModSortingException.SortingExceptionData;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.DependencyParser;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.relauncher.ModListHelper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -62,7 +63,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.CharMatcher;
-import java.util.function.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
@@ -124,9 +124,7 @@ import javax.annotation.Nullable;
 @SuppressWarnings("unused")
 public class Loader
 {
-    public static final String MC_VERSION = net.minecraftforge.common.ForgeVersion.mcVersion;
-    private static final Splitter DEPENDENCYPARTSPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
-    private static final Splitter DEPENDENCYSPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
+    public static final String MC_VERSION = ForgeVersion.mcVersion;
     /**
      * The singleton instance
      */
@@ -695,77 +693,17 @@ public class Loader
         return modClassLoader;
     }
 
+    /**
+     * @deprecated use {@link DependencyParser#parseDependencies(String)}
+     */
+    @Deprecated // TODO: remove in 1.13
     public void computeDependencies(String dependencyString, Set<ArtifactVersion> requirements, List<ArtifactVersion> dependencies, List<ArtifactVersion> dependants)
     {
-        if (dependencyString == null || dependencyString.length() == 0)
-        {
-            return;
-        }
-
-        boolean parseFailure = false;
-
-        for (String dep : DEPENDENCYSPLITTER.split(dependencyString))
-        {
-            List<String> depparts = Lists.newArrayList(DEPENDENCYPARTSPLITTER.split(dep));
-            // Need two parts to the string
-            if (depparts.size() != 2)
-            {
-                parseFailure = true;
-                continue;
-            }
-            String instruction = depparts.get(0);
-            String target = depparts.get(1);
-            boolean targetIsAll = target.startsWith("*");
-
-            // Cannot have an "all" relationship with anything except pure *
-            if (targetIsAll && target.length() > 1)
-            {
-                parseFailure = true;
-                continue;
-            }
-
-            // If this is a required element, add it to the required list
-            if ("required-before".equals(instruction) || "required-after".equals(instruction))
-            {
-                // You can't require everything
-                if (!targetIsAll)
-                {
-                    requirements.add(VersionParser.parseVersionReference(target));
-                }
-                else
-                {
-                    parseFailure = true;
-                    continue;
-                }
-            }
-
-            // You cannot have a versioned dependency on everything
-            if (targetIsAll && target.indexOf('@') > -1)
-            {
-                parseFailure = true;
-                continue;
-            }
-            // before elements are things we are loaded before (so they are our dependants)
-            if ("required-before".equals(instruction) || "before".equals(instruction))
-            {
-                dependants.add(VersionParser.parseVersionReference(target));
-            }
-            // after elements are things that load before we do (so they are out dependencies)
-            else if ("required-after".equals(instruction) || "after".equals(instruction))
-            {
-                dependencies.add(VersionParser.parseVersionReference(target));
-            }
-            else
-            {
-                parseFailure = true;
-            }
-        }
-
-        if (parseFailure)
-        {
-            FMLLog.log.warn("Unable to parse dependency string {}", dependencyString);
-            throw new LoaderException(String.format("Unable to parse dependency string %s", dependencyString));
-        }
+        DependencyParser dependencyParser = new DependencyParser("unknown", FMLCommonHandler.instance().getSide());
+        DependencyParser.DependencyInfo info = dependencyParser.parseDependencies(dependencyString);
+        requirements.addAll(info.requirements);
+        dependencies.addAll(info.dependencies);
+        dependants.addAll(info.dependants);
     }
 
     public Map<String,ModContainer> getIndexedModList()

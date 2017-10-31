@@ -14,11 +14,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod(modid = "fovmodifiertest", name = "FOV Modifier Test", version = "0.0.0", clientSideOnly = true)
 public class FOVModifierTest
 {
+    static final boolean ENABLED = false;
 
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        MinecraftForge.EVENT_BUS.register(this);
+        if (ENABLED)
+        {
+            MinecraftForge.EVENT_BUS.register(this);
+        }
     }
 
     @SubscribeEvent

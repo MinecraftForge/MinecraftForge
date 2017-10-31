@@ -59,6 +59,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
@@ -595,6 +596,12 @@ public class ForgeEventFactory
     public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent<World>(World.class, world), parent);
+    }
+
+    @Nullable
+    public static CapabilityDispatcher gatherCapabilities(Chunk chunk)
+    {
+        return gatherCapabilities(new AttachCapabilitiesEvent<Chunk>(Chunk.class, chunk), null);
     }
 
     @Nullable

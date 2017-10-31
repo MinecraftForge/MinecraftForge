@@ -42,8 +42,6 @@ import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
@@ -282,6 +280,15 @@ public class UniversalBucket extends Item
     public boolean isNbtSensitive()
     {
         return nbtSensitive;
+    }
+
+    @Nullable
+    @Override
+    public String getCreatorModId(@Nonnull ItemStack itemStack)
+    {
+        FluidStack fluidStack = getFluid(itemStack);
+        String modId = FluidRegistry.getModId(fluidStack);
+        return modId != null ? modId : super.getCreatorModId(itemStack);
     }
 
     @Override

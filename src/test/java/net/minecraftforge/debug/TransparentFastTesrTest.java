@@ -1,5 +1,6 @@
 package net.minecraftforge.debug;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.block.Block;
@@ -10,6 +11,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,6 +27,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.FastTESR;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -38,7 +41,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = TransparentFastTesrTest.MODID, name = "TransparentFastTESRTest")
+@Mod(modid = TransparentFastTesrTest.MODID, name = "TransparentFastTESRTest", version = "1.0")
 public class TransparentFastTesrTest
 {
 
@@ -232,12 +235,14 @@ public class TransparentFastTesrTest
         GameRegistry.registerTileEntity(TransparentFastTE.class, "fast-tesr-te");
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    @EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientLoader
     {
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
+            ModelLoader.setCustomStateMapper(testBlock, block -> Collections.emptyMap());
+            ModelBakery.registerItemVariants(Item.getItemFromBlock(testBlock));
             ClientRegistry.bindTileEntitySpecialRenderer(TransparentFastTE.class, new TransparentFastTESR());
         }
     }

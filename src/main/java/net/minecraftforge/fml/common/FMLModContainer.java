@@ -51,6 +51,7 @@ import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import net.minecraftforge.fml.common.versioning.DependencyParser;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
@@ -67,14 +68,11 @@ import java.util.function.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -140,19 +138,18 @@ public class FMLModContainer implements ModContainer
         String modid = (String)this.descriptor.get("modid");
         if (Strings.isNullOrEmpty(modid))
         {
-            throw new IllegalArgumentException("Modid cannot be null or empty");
+            throw new IllegalArgumentException("The modId is null or empty");
         }
         if (modid.length() > 64)
         {
-            FMLLog.bigWarning("The modid {} is longer than the recommended maximum of 64 characters. Truncation is enforced in 1.11", modid);
-            throw new IllegalArgumentException(String.format("The modid %s is longer than the recommended maximum of 64 characters. Truncation is enforced in 1.11", modid));
+            throw new IllegalArgumentException(String.format("The modId %s is longer than the maximum of 64 characters.", modid));
         }
         if (!modid.equals(modid.toLowerCase(Locale.ENGLISH)))
         {
-            FMLLog.bigWarning("The modid {} is not the same as it's lowercase version. Lowercasing is enforced in 1.11", modid);
-            throw new IllegalArgumentException(String.format("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11", modid));
+            throw new IllegalArgumentException(String.format("The modId %s must be all lowercase.", modid));
         }
     }
+
     private ILanguageAdapter getLanguageAdapter()
     {
         if (languageAdapter == null)
@@ -212,17 +209,15 @@ public class FMLModContainer implements ModContainer
 
         if (overridesMetadata || !modMetadata.useDependencyInformation)
         {
-            Set<ArtifactVersion> requirements = Sets.newHashSet();
-            List<ArtifactVersion> dependencies = Lists.newArrayList();
-            List<ArtifactVersion> dependants = Lists.newArrayList();
             annotationDependencies = (String)descriptor.get("dependencies");
-            Loader.instance().computeDependencies(annotationDependencies, requirements, dependencies, dependants);
-            dependants.addAll(Loader.instance().getInjectedBefore(getModId()));
-            dependencies.addAll(Loader.instance().getInjectedAfter(getModId()));
-            modMetadata.requiredMods = requirements;
-            modMetadata.dependencies = dependencies;
-            modMetadata.dependants = dependants;
-            modLog.trace("Parsed dependency info : {} {} {}", requirements, dependencies, dependants);
+            DependencyParser dependencyParser = new DependencyParser(getModId(), FMLCommonHandler.instance().getSide());
+            DependencyParser.DependencyInfo info = dependencyParser.parseDependencies(annotationDependencies);
+            info.dependants.addAll(Loader.instance().getInjectedBefore(getModId()));
+            info.dependencies.addAll(Loader.instance().getInjectedAfter(getModId()));
+            modMetadata.requiredMods = info.requirements;
+            modMetadata.dependencies = info.dependencies;
+            modMetadata.dependants = info.dependants;
+            modLog.trace("Parsed dependency info : Requirements: {} After:{} Before:{}", info.requirements, info.dependencies, info.dependants);
         }
         else
         {
@@ -257,7 +252,9 @@ public class FMLModContainer implements ModContainer
 
         String mcVersionString = (String)descriptor.get("acceptedMinecraftVersions");
         if ("[1.12]".equals(mcVersionString))
-            mcVersionString = "[1.12,1.12.1]";
+            mcVersionString = "[1.12,1.12.2]";
+        if ("[1.12.1]".equals(mcVersionString) || "[1.12,1.12.1]".equals(mcVersionString))
+            mcVersionString = "[1.12,1.12.2]";
 
         if (!Strings.isNullOrEmpty(mcVersionString))
         {
