@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/advancements/PlayerAdvancements.java
++++ ../src-work/minecraft/net/minecraft/advancements/PlayerAdvancements.java
+@@ -196,6 +196,9 @@
+ 
+     public boolean func_192750_a(Advancement p_192750_1_, String p_192750_2_)
+     {
++        // Forge: don't grant advancements for fake players
++        if (this.field_192762_j instanceof net.minecraftforge.common.util.FakePlayer) return false;
++
+         boolean flag = false;
+         AdvancementProgress advancementprogress = this.func_192747_a(p_192750_1_);
+         boolean flag1 = advancementprogress.func_192105_a();
