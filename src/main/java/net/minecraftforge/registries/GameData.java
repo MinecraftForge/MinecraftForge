@@ -264,7 +264,7 @@ public class GameData
     {
         FMLLog.log.debug("Reverting {} to {}", registry, state.getName());
         final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(registry);
-        loadRegistry(registry, RegistryManager.FROZEN, RegistryManager.ACTIVE, clazz, lock);
+        loadRegistry(registry, state, RegistryManager.ACTIVE, clazz, lock);
         FMLLog.log.debug("Reverting complete");
     }
 
@@ -423,7 +423,7 @@ public class GameData
             @Override public ItemStack getCraftingResult(InventoryCrafting inv) { return result; }
             @Override public boolean canFit(int width, int height) { return false; }
             @Override public ItemStack getRecipeOutput() { return result; }
-            @Override public boolean isHidden() { return true; }
+            @Override public boolean isDynamic() { return true; }
         }
     }
 

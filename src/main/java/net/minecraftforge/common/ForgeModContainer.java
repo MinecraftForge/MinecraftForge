@@ -112,6 +112,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
     public static boolean forgeLightPipelineEnabled = true;
+    @Deprecated // TODO remove in 1.13
     public static boolean replaceVanillaBucketModel = true;
     public static boolean zoomInMissingModelTextInGui = false;
     public static boolean forgeCloudsEnabled = true;
@@ -214,6 +215,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         if (config.getCategory(CATEGORY_GENERAL).containsKey("spawnHasFuzz")) config.getCategory(CATEGORY_GENERAL).remove("spawnHasFuzz");
         if (config.getCategory(CATEGORY_GENERAL).containsKey("disableStitchedFileSaving")) config.getCategory(CATEGORY_GENERAL).remove("disableStitchedFileSaving");
         if (config.getCategory(CATEGORY_CLIENT).containsKey("java8Reminder")) config.getCategory(CATEGORY_CLIENT).remove("java8Reminder");
+        if (config.getCategory(CATEGORY_CLIENT).containsKey("replaceVanillaBucketModel")) config.getCategory(CATEGORY_CLIENT).remove("replaceVanillaBucketModel");
 
         // remap properties wrongly listed as general properties to client properties
         remapGeneralPropertyToClient("biomeSkyBlendRange");
@@ -315,12 +317,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         // Client-Side only properties
         propOrder = new ArrayList<String>();
-
-        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", false,
-                "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
-        prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
-        replaceVanillaBucketModel = prop.getBoolean(false);
-        propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_CLIENT, "zoomInMissingModelTextInGui", false,
         "Toggle off to make missing model text in the gui fit inside the slot.");

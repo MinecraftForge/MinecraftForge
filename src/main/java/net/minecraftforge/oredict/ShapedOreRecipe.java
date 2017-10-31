@@ -52,8 +52,9 @@ import com.google.gson.JsonSyntaxException;
 
 public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IShapedRecipe
 {
-    //Added in for future ease of change, but hard coded for now.
+    @Deprecated
     public static final int MAX_CRAFT_GRID_WIDTH = 3;
+    @Deprecated
     public static final int MAX_CRAFT_GRID_HEIGHT = 3;
 
     @Nonnull
@@ -88,9 +89,9 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
     @Override
     public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world)
     {
-        for (int x = 0; x <= MAX_CRAFT_GRID_WIDTH - width; x++)
+        for (int x = 0; x <= inv.getWidth() - width; x++)
         {
-            for (int y = 0; y <= MAX_CRAFT_GRID_HEIGHT - height; ++y)
+            for (int y = 0; y <= inv.getHeight() - height; ++y)
             {
                 if (checkMatch(inv, x, y, false))
                 {
@@ -112,9 +113,9 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
      */
     protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
-        for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++)
+        for (int x = 0; x < inv.getWidth(); x++)
         {
-            for (int y = 0; y < MAX_CRAFT_GRID_HEIGHT; y++)
+            for (int y = 0; y < inv.getHeight(); y++)
             {
                 int subX = x - startX;
                 int subY = y - startY;
