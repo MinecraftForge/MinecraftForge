@@ -17,3 +17,13 @@
                      p_176375_3_.func_177230_c().func_176226_b(p_176375_1_, p_176375_2_, p_176375_3_, 0);
                  }
              }
+@@ -258,7 +259,8 @@
+ 
+         if (!(block instanceof BlockDoor) && block != Blocks.field_150472_an && block != Blocks.field_150468_ap && block != Blocks.field_150436_aH)
+         {
+-            return block.field_149764_J != Material.field_151567_E && block.field_149764_J != Material.field_189963_J ? block.field_149764_J.func_76230_c() : true;
++            Material material = p_176372_1_.func_180495_p(p_176372_2_).func_185904_a();
++            return material != Material.field_151567_E && material != Material.field_189963_J ? material.func_76230_c() : true;
+         }
+         else
+         {
