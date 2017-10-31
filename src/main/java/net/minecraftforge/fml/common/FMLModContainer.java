@@ -608,7 +608,7 @@ public class FMLModContainer implements ModContainer
                     .map(eventHandler ->
                     {
                         // safely transform the result of eventHandler.handleEvent into a CompletableFuture
-                        return new CompletableFuture<Void>().thenCompose(aVoid ->
+                        return CompletableFuture.completedFuture(null).thenCompose(aVoid ->
                         {
                             try
                             {
@@ -616,7 +616,7 @@ public class FMLModContainer implements ModContainer
                             }
                             catch (Throwable t)
                             {
-                                CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
+                                CompletableFuture<Void> future = new CompletableFuture<>();
                                 future.completeExceptionally(t);
                                 return future;
                             }
