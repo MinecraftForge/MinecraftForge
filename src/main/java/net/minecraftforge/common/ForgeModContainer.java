@@ -115,6 +115,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Deprecated // TODO remove in 1.13
     public static boolean replaceVanillaBucketModel = true;
     public static boolean zoomInMissingModelTextInGui = false;
+    public static boolean forgeCloudsEnabled = true;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
     public static int dimensionUnloadQueueDelay = 0;
@@ -321,6 +322,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         "Toggle off to make missing model text in the gui fit inside the slot.");
         zoomInMissingModelTextInGui = prop.getBoolean(false);
         prop.setLanguageKey("forge.configgui.zoomInMissingModelTextInGui");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "forgeCloudsEnabled", true,
+                "Enable uploading cloud geometry to the GPU for faster rendering.");
+        prop.setLanguageKey("forge.configgui.forgeCloudsEnabled");
+        forgeCloudsEnabled = prop.getBoolean();
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", false,
