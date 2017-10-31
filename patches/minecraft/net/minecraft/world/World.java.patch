@@ -523,6 +523,15 @@
                  p_72866_1_.func_70071_h_();
              }
          }
+@@ -1914,7 +2066,7 @@
+         {
+             Entity entity4 = list.get(j2);
+ 
+-            if (!entity4.field_70128_L && entity4.field_70156_m && entity4 != p_72917_2_ && (p_72917_2_ == null || entity4.func_184223_x(p_72917_2_)))
++            if (!entity4.field_70128_L && entity4.field_70156_m && entity4 != p_72917_2_ && (p_72917_2_ == null || !entity4.func_184223_x(p_72917_2_))) // Forge: fix MC-103516
+             {
+                 return false;
+             }
 @@ -2011,6 +2163,11 @@
                              blockpos$pooledmutableblockpos.func_185344_t();
                              return true;

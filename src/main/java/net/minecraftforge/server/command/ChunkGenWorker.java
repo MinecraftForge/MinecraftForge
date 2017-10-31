@@ -24,11 +24,11 @@ import java.util.Queue;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.WorldWorkerManager.IWorker;
 
@@ -80,9 +80,15 @@ public class ChunkGenWorker implements IWorker
         return ret;
     }
 
+    @Deprecated // TODO remove in 1.13
     public TextComponentTranslation getStartMessage()
     {
         return new TextComponentTranslation("commands.forge.gen.start", total, start.getX(), start.getZ(), dim);
+    }
+
+    public TextComponentBase getStartMessage(ICommandSender sender)
+    {
+        return TextComponentHelper.createComponentTranslation(sender, "commands.forge.gen.start", total, start.getX(), start.getZ(), dim);
     }
 
     @Override
@@ -105,7 +111,7 @@ public class ChunkGenWorker implements IWorker
                 world = DimensionManager.getWorld(dim);
                 if (world == null)
                 {
-                    listener.sendMessage(new TextComponentTranslation("commands.forge.gen.dim_fail", dim));
+                    listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.dim_fail", dim));
                     queue.clear();
                     return;
                 }
@@ -119,7 +125,7 @@ public class ChunkGenWorker implements IWorker
 
             if (++lastNotification >= notificationFrequency)
             {
-                listener.sendMessage(new TextComponentTranslation("commands.forge.gen.progress", total - queue.size(), total));
+                listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.progress", total - queue.size(), total));
                 lastNotification = 0;
             }
 
@@ -153,7 +159,7 @@ public class ChunkGenWorker implements IWorker
 
         if (queue.size() == 0)
         {
-            listener.sendMessage(new TextComponentTranslation("commands.forge.gen.complete", genned, total, dim));
+            listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.complete", genned, total, dim));
             ForgeModContainer.dimensionUnloadQueueDelay = oldUnloadDelay;
         }
     }

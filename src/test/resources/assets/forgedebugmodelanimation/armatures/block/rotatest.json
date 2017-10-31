@@ -1,0 +1,56 @@
+{
+  "joints": {
+    "wall": { "0": [1.0]},
+    "wall2" : { "1": [1.0]},
+    "stick": {"2": [1.0]},
+    "cube": {"3": [1.0]}
+  },
+  "clips": {
+    "default": {
+      "loop": true,
+      "joint_clips": {
+        "stick": [
+          {
+            "variable": "offset_x",
+            "type": "uniform",
+            "interpolation": "linear",
+            "samples": [0, 0.6875, 0]
+          }
+        ],
+        "cube": [
+          {
+            "variable": "offset_x",
+            "type": "uniform",
+            "interpolation": "linear",
+            "samples": [0, 0.6875, 0]
+          },
+          {
+            "variable": "axis_z",
+            "type": "uniform",
+            "interpolation": "nearest",
+            "samples": [ 1 ]
+          },
+          {
+            "variable": "origin_x",
+            "type": "uniform",
+            "interpolation": "nearest",
+            "samples": [ 0.15625 ]
+          },
+          {
+            "variable": "origin_y",
+            "type": "uniform",
+            "interpolation": "nearest",
+            "samples": [ 0.40625 ]
+          },
+          {
+            "variable": "angle",
+            "type": "uniform",
+            "interpolation": "linear",
+            "samples": [0, 120, 240, 0, 120, 240]
+          }
+        ]
+      },
+      "events": {}
+    }
+  }
+}
