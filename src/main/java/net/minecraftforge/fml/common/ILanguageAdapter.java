@@ -201,7 +201,6 @@ public interface ILanguageAdapter {
                 FMLLog.log.trace("Mod does not appear to be a singleton.");
             }
         }
-
     }
 
     public static class JavaAdapter implements ILanguageAdapter {
@@ -236,6 +235,5 @@ public interface ILanguageAdapter {
         {
             // Nothing to do here.
         }
-
     }
 }
