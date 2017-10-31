@@ -79,7 +79,7 @@
      }
  
      public final boolean func_150559_j()
-@@ -397,6 +402,83 @@
+@@ -397,6 +402,84 @@
          return this.field_76766_R;
      }
  
@@ -147,6 +147,7 @@
 +
 +    public void plantFlower(World world, Random rand, BlockPos pos)
 +    {
++        if (flowers.isEmpty()) return;
 +        FlowerEntry flower = (FlowerEntry)WeightedRandom.func_76271_a(rand, flowers);
 +        if (flower == null || flower.state == null ||
 +            (flower.state.func_177230_c() instanceof net.minecraft.block.BlockBush &&
@@ -163,7 +164,7 @@
      public static void func_185358_q()
      {
          func_185354_a(0, "ocean", new BiomeOcean((new Biome.BiomeProperties("Ocean")).func_185398_c(-1.0F).func_185400_d(0.1F)));
-@@ -552,6 +634,7 @@
+@@ -552,6 +635,7 @@
              public Class <? extends EntityLiving > field_76300_b;
              public int field_76301_c;
              public int field_76299_d;
@@ -171,7 +172,7 @@
  
              public SpawnListEntry(Class <? extends EntityLiving > p_i1970_1_, int p_i1970_2_, int p_i1970_3_, int p_i1970_4_)
              {
-@@ -559,12 +642,28 @@
+@@ -559,12 +643,28 @@
                  this.field_76300_b = p_i1970_1_;
                  this.field_76301_c = p_i1970_3_;
                  this.field_76299_d = p_i1970_4_;
