@@ -683,6 +683,12 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, rand, x, z, hasVillageGenerated));
     }
 
+    public static void onChunkGenerate(IChunkGenerator gen, World world, int x, int z, ChunkPrimer primer)
+    {
+        MinecraftForge.EVENT_BUS.post(new ChunkGeneratorEvent.Generate(gen,world,x,z,primer));
+    }
+
+
     public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTableManager lootTableManager)
     {
         LootTableLoadEvent event = new LootTableLoadEvent(name, table, lootTableManager);
