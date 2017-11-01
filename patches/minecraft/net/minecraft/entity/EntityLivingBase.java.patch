@@ -283,7 +283,15 @@
  
                      if (!itemstack.func_190926_b())
                      {
-@@ -2575,6 +2604,40 @@
+@@ -2377,6 +2406,7 @@
+             {
+                 flag = false;
+             }
++            flag = net.minecraftforge.common.ForgeHooks.hasElytraFlightAbility(this,itemstack);
+         }
+         else
+         {
+@@ -2575,6 +2605,40 @@
          this.field_70752_e = true;
      }
  
@@ -324,7 +332,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2595,12 +2658,19 @@
+@@ -2595,12 +2659,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -345,7 +353,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2618,8 +2688,10 @@
+@@ -2618,8 +2689,10 @@
  
          if (!itemstack.func_190926_b() && !this.func_184587_cr())
          {
@@ -357,7 +365,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2700,7 +2772,9 @@
+@@ -2700,7 +2773,9 @@
          if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
          {
              this.func_184584_a(this.field_184627_bm, 16);
@@ -368,7 +376,7 @@
              this.func_184602_cy();
          }
      }
-@@ -2724,7 +2798,8 @@
+@@ -2724,7 +2799,8 @@
      {
          if (!this.field_184627_bm.func_190926_b())
          {
@@ -378,7 +386,7 @@
          }
  
          this.func_184602_cy();
-@@ -2852,6 +2927,31 @@
+@@ -2852,6 +2928,31 @@
          return true;
      }
  
