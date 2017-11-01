@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/BlockPart.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/BlockPart.java
+@@ -183,7 +183,7 @@
+             {
+                 Vector3f vector3f = this.func_178251_a(p_178247_1_, "to");
+ 
+-                if (vector3f.x >= -16.0F && vector3f.y >= -16.0F && vector3f.z >= -16.0F && vector3f.x <= 32.0F && vector3f.y <= 32.0F && vector3f.z <= 32.0F)
++                if (!ModelBlock.limitSize || vector3f.x >= -16.0F && vector3f.y >= -16.0F && vector3f.z >= -16.0F && vector3f.x <= 32.0F && vector3f.y <= 32.0F && vector3f.z <= 32.0F)
+                 {
+                     return vector3f;
+                 }
+@@ -197,7 +197,7 @@
+             {
+                 Vector3f vector3f = this.func_178251_a(p_178249_1_, "from");
+ 
+-                if (vector3f.x >= -16.0F && vector3f.y >= -16.0F && vector3f.z >= -16.0F && vector3f.x <= 32.0F && vector3f.y <= 32.0F && vector3f.z <= 32.0F)
++                if (!ModelBlock.limitSize || vector3f.x >= -16.0F && vector3f.y >= -16.0F && vector3f.z >= -16.0F && vector3f.x <= 32.0F && vector3f.y <= 32.0F && vector3f.z <= 32.0F)
+                 {
+                     return vector3f;
+                 }
