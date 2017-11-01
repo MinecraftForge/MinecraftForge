@@ -142,7 +142,7 @@ public final class ItemLayerModel implements IModel
                 for(int u = 0; u < uMax; u++)
                 {
                     int alpha = getAlpha(pixels, uMax, vMax, u, v);
-                    boolean t = alpha == 0;
+                    boolean t = alpha / 255f <= 0.1f;
 
                     if (!t && alpha < 255)
                     {
