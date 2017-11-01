@@ -35,7 +35,7 @@
      }
  
      public void func_180622_a(World p_180622_1_, Random p_180622_2_, ChunkPrimer p_180622_3_, int p_180622_4_, int p_180622_5_, double p_180622_6_)
-@@ -88,4 +81,24 @@
+@@ -88,4 +81,25 @@
          EXTRA_TREES,
          MUTATED;
      }
@@ -48,7 +48,8 @@
 +            int count = 3 + rand.nextInt(6);
 +            for (int i = 0; i < count; i++)
 +            {
-+                BlockPos blockpos = pos.func_177982_a(rand.nextInt(16), rand.nextInt(28) + 4, rand.nextInt(16));
++                int offset = net.minecraftforge.common.ForgeModContainer.fixVanillaCascading ? 8 : 0; // MC-114332
++                BlockPos blockpos = pos.func_177982_a(rand.nextInt(16) + offset, rand.nextInt(28) + 4, rand.nextInt(16) + offset);
 +
 +                net.minecraft.block.state.IBlockState state = worldIn.func_180495_p(blockpos);
 +                if (state.func_177230_c().isReplaceableOreGen(state, worldIn, blockpos, net.minecraft.block.state.pattern.BlockMatcher.func_177642_a(Blocks.field_150348_b)))

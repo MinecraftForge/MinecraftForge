@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.MapItemRenderer;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -63,6 +64,7 @@ public class MapDataTest
     {
         ModelLoader.setCustomModelResourceLocation(EMPTY_CUSTOM_MAP, 0, new ModelResourceLocation("map", "inventory"));
         ModelLoader.setCustomMeshDefinition(CUSTOM_MAP, s -> new ModelResourceLocation("filled_map", "inventory"));
+        ModelBakery.registerItemVariants(CUSTOM_MAP, new ModelResourceLocation("filled_map", "inventory"));
     }
 
     @SubscribeEvent
@@ -216,30 +218,34 @@ public class MapDataTest
     {
         @Nullable
         @Override
-        public IMessage onMessage(CustomMapPacket message, MessageContext ctx) {
+        public IMessage onMessage(CustomMapPacket message, MessageContext ctx)
+        {
             // Like NetHandlerPlayClient.handleMaps but using our custom type
-            Minecraft.getMinecraft().addScheduledTask(() ->
-            {
-                MapItemRenderer mapitemrenderer = Minecraft.getMinecraft().entityRenderer.getMapItemRenderer();
-                MapData mapdata = CustomMap.loadMapData(message.vanillaPacket.getMapId(), Minecraft.getMinecraft().world);
+            Minecraft.getMinecraft().addScheduledTask(new Runnable() {
+                @Override
+                public void run()
+                {
+                    MapItemRenderer mapitemrenderer = Minecraft.getMinecraft().entityRenderer.getMapItemRenderer();
+                    MapData mapdata = CustomMap.loadMapData(message.vanillaPacket.getMapId(), Minecraft.getMinecraft().world);
 
-                if (mapdata == null) {
-                    String s = CustomMap.PREFIX + "_" + message.vanillaPacket.getMapId();
-                    mapdata = new CustomMapData(s);
+                    if (mapdata == null) {
+                        String s = CustomMap.PREFIX + "_" + message.vanillaPacket.getMapId();
+                        mapdata = new CustomMapData(s);
 
-                    if (mapitemrenderer.getMapInstanceIfExists(s) != null) {
-                        MapData mapdata1 = mapitemrenderer.getData(mapitemrenderer.getMapInstanceIfExists(s));
+                        if (mapitemrenderer.getMapInstanceIfExists(s) != null) {
+                            MapData mapdata1 = mapitemrenderer.getData(mapitemrenderer.getMapInstanceIfExists(s));
 
-                        if (mapdata1 != null) {
-                            mapdata = mapdata1;
+                            if (mapdata1 != null) {
+                                mapdata = mapdata1;
+                            }
                         }
+
+                        Minecraft.getMinecraft().world.setData(s, mapdata);
                     }
 
-                    Minecraft.getMinecraft().world.setData(s, mapdata);
+                    message.vanillaPacket.setMapdataTo(mapdata);
+                    mapitemrenderer.updateMapTexture(mapdata);
                 }
-
-                message.vanillaPacket.setMapdataTo(mapdata);
-                mapitemrenderer.updateMapTexture(mapdata);
             });
 
             return null;

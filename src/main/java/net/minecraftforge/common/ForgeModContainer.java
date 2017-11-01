@@ -91,6 +91,7 @@ import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -111,12 +112,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
     public static boolean forgeLightPipelineEnabled = true;
+    @Deprecated // TODO remove in 1.13
     public static boolean replaceVanillaBucketModel = true;
     public static boolean zoomInMissingModelTextInGui = false;
+    public static boolean forgeCloudsEnabled = true;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
     public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
+    public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
+                                                       // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
 
     static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
@@ -210,6 +215,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         if (config.getCategory(CATEGORY_GENERAL).containsKey("spawnHasFuzz")) config.getCategory(CATEGORY_GENERAL).remove("spawnHasFuzz");
         if (config.getCategory(CATEGORY_GENERAL).containsKey("disableStitchedFileSaving")) config.getCategory(CATEGORY_GENERAL).remove("disableStitchedFileSaving");
         if (config.getCategory(CATEGORY_CLIENT).containsKey("java8Reminder")) config.getCategory(CATEGORY_CLIENT).remove("java8Reminder");
+        if (config.getCategory(CATEGORY_CLIENT).containsKey("replaceVanillaBucketModel")) config.getCategory(CATEGORY_CLIENT).remove("replaceVanillaBucketModel");
 
         // remap properties wrongly listed as general properties to client properties
         remapGeneralPropertyToClient("biomeSkyBlendRange");
@@ -288,6 +294,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.setLanguageKey("forge.configgui.logCascadingWorldGeneration");
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_GENERAL, "fixVanillaCascading", false,
+                "Fix vanilla issues that cause worldgen cascading. This DOES change vanilla worldgen so DO NOT report bugs related to world differences if this flag is on.");
+        fixVanillaCascading = prop.getBoolean();
+        prop.setLanguageKey("forge.configgui.fixVanillaCascading");
+        propOrder.add(prop.getName());
+
         prop = config.get(Configuration.CATEGORY_GENERAL, "dimensionUnloadQueueDelay", 0,
                 "The time in ticks the server will wait when a dimension was queued to unload. " +
                         "This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.");
@@ -306,16 +318,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         // Client-Side only properties
         propOrder = new ArrayList<String>();
 
-        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", false,
-                "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
-        prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
-        replaceVanillaBucketModel = prop.getBoolean(false);
-        propOrder.add(prop.getName());
-
         prop = config.get(Configuration.CATEGORY_CLIENT, "zoomInMissingModelTextInGui", false,
         "Toggle off to make missing model text in the gui fit inside the slot.");
         zoomInMissingModelTextInGui = prop.getBoolean(false);
         prop.setLanguageKey("forge.configgui.zoomInMissingModelTextInGui");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "forgeCloudsEnabled", true,
+                "Enable uploading cloud geometry to the GPU for faster rendering.");
+        prop.setLanguageKey("forge.configgui.forgeCloudsEnabled");
+        forgeCloudsEnabled = prop.getBoolean();
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", false,
@@ -509,6 +521,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         evt.registerServerCommand(new ForgeCommand());
     }
+
+    @Subscribe
+    public void serverStopping(FMLServerStoppingEvent evt)
+    {
+        WorldWorkerManager.clear();
+    }
+
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {

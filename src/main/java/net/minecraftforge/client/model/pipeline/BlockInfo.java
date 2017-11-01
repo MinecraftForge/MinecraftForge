@@ -28,6 +28,8 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockInfo
 {
+    private static final EnumFacing[] SIDES = EnumFacing.values();
+
     private final BlockColors colors;
     private IBlockAccess world;
     private IBlockState state;
@@ -39,6 +41,10 @@ public class BlockInfo
     private final float[][][][] skyLight = new float[3][2][2][2];
     private final float[][][][] blockLight = new float[3][2][2][2];
     private final float[][][] ao = new float[3][3][3];
+
+    private final int[] packed = new int[7];
+
+    private boolean full;
 
     private float shx = 0, shy = 0, shz = 0;
 
@@ -116,7 +122,7 @@ public class BlockInfo
                 }
             }
         }
-        for(EnumFacing side : EnumFacing.values())
+        for(EnumFacing side : SIDES)
         {
             if(!state.getBlock().doesSideBlockRendering(state, world, blockPos, side))
             {
@@ -153,6 +159,18 @@ public class BlockInfo
         }
     }
 
+    public void updateFlatLighting()
+    {
+        full = state.isFullCube();
+        packed[0] = state.getPackedLightmapCoords(world, blockPos);
+
+        for (EnumFacing side : SIDES)
+        {
+            int i = side.ordinal() + 1;
+            packed[i] = state.getPackedLightmapCoords(world, blockPos.offset(side));
+        }
+    }
+
     public IBlockAccess getWorld()
     {
         return world;
@@ -186,6 +204,16 @@ public class BlockInfo
     public float[][][] getAo()
     {
         return ao;
+    }
+
+    public int[] getPackedLight()
+    {
+        return packed;
+    }
+
+    public boolean isFullCube()
+    {
+        return full;
     }
 
     public float getShx()
