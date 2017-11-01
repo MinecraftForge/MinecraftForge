@@ -28,7 +28,7 @@ public class AdvancementEventTest
     @SubscribeEvent
     public static void onAdvancementEvent(AdvancementEvent event)
     {
-        if (ENABLED && event.getAdvancement().getDisplay() != null && event.getAdvancement().getDisplay().shouldAnnounceToChat())
+        if (event.getAdvancement().getDisplay() != null && event.getAdvancement().getDisplay().shouldAnnounceToChat())
         {
             logger.info("{} got the {} advancement", event.getEntityPlayer().getDisplayNameString(), event.getAdvancement().getDisplayText().getUnformattedText());
         }

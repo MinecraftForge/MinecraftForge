@@ -25,7 +25,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
- * This event is fired when a player gets an advancement
+ * This event is fired when a player gets an advancement.
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
