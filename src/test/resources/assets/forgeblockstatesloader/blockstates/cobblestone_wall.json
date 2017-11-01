@@ -27,7 +27,7 @@
 		"east=false,north=true,south=true,up=false,west=false": {"model": null},	// Fully specified variant, will inherit from variants above, but remove the model set in "defaults", removing the wall post.
 		"east=true,north=false,south=false,up=false,west=true": {"model": null},
 		"inventory": [{  // inventory variant can be specified here too, and it will inherit properties from "defaults"
-		    submodel: {
+		    "submodel": {
 		        "north": { "model": "forgeblockstatesloader:wall_connect" },
 		        "south": { "model": "forgeblockstatesloader:wall_connect", "y": 180 }
 		    }
