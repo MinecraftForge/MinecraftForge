@@ -287,6 +287,15 @@
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
+@@ -1180,7 +1263,7 @@
+                 {
+                     f1 = EnchantmentHelper.func_152377_a(this.func_184614_ca(), EnumCreatureAttribute.UNDEFINED);
+                 }
+-
++                f += EnchantmentHelper.getModifierForCreature(this.func_184614_ca(), p_71059_1_);
+                 float f2 = this.func_184825_o(0.5F);
+                 f = f * (0.2F + f2 * f2 * 0.8F);
+                 f1 = f1 * f2;
 @@ -1203,9 +1286,11 @@
                      boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(MobEffects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof EntityLivingBase;
                      flag2 = flag2 && !this.func_70051_ag();
