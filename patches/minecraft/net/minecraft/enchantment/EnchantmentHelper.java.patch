@@ -9,10 +9,9 @@
      public static float func_152377_a(ItemStack p_152377_0_, EnumCreatureAttribute p_152377_1_)
      {
          field_77521_c.field_77495_a = 0.0F;
--        field_77521_c.field_77494_b = p_152377_1_;
-+        field_77521_c.attribute = p_152377_1_;
+         field_77521_c.field_77494_b = p_152377_1_;
          func_77518_a(field_77521_c, p_152377_0_);
-+        field_77521_c.attribute = null;
++        field_77521_c.field_77494_b = null;
          return field_77521_c.field_77495_a;
      }
  
@@ -76,7 +75,7 @@
              public float field_77495_a;
 -            public EnumCreatureAttribute field_77494_b;
 +            public @javax.annotation.Nullable Entity entity;
-+            public @javax.annotation.Nullable EnumCreatureAttribute attribute;
++            public @javax.annotation.Nullable EnumCreatureAttribute field_77494_b;
  
              private ModifierLiving()
              {
@@ -85,7 +84,7 @@
              public void func_77493_a(Enchantment p_77493_1_, int p_77493_2_)
              {
 -                this.field_77495_a += p_77493_1_.func_152376_a(p_77493_2_, this.field_77494_b);
-+                this.field_77495_a += attribute == null ? p_77493_1_.calcDamageByEntity(p_77493_2_, this.entity) : p_77493_1_.func_152376_a(p_77493_2_,attribute);//Check attribute instead of entity if set for compatibility
++                this.field_77495_a += field_77494_b == null ? p_77493_1_.calcDamageByEntity(p_77493_2_, this.entity) : p_77493_1_.func_152376_a(p_77493_2_,field_77494_b);//Check attribute instead of entity if set for compatibility
              }
          }
  }

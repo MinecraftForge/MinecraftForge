@@ -18,13 +18,14 @@ import javax.annotation.Nullable;
  * HowTo Test:
  * <p>
  * a) Grab yourself a wooden sword and enchant it with "enchantmentdamagetest.new_enchantment"
- * Spawn a Zombie and any other animal (e.g. a cow)
+ * Spawn a Zombie and any other creature (e.g. a cow)
  * The Zombie should be one hit with this sword, the cow should take multiple hits (as normal)
  * <p>
  * b) To verify that the old (deprecated/vanilla) way/method still works
  * enchant a wooden sword with "enchantmentdamagetest.old_enchantment"
- * and repeat the test with a undead creature (Zombie) and a non undead creature (cow).
- * It should have the same result
+ * and repeat the test with an undead creature (Zombie) and a non undead creature (cow).
+ * It should have the same result.
+ *
  */
 @Mod(modid = EnchantmentDamageTest.MODID, name = "EnchantmentDamageTest", version = "0.0.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
