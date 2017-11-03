@@ -24,14 +24,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
 
 import net.minecraftforge.fml.common.event.FMLEvent;
-import net.minecraftforge.fml.common.eventhandler.IEventHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
 
-public interface ILanguageAdapter {
+public interface ILanguageAdapter
+{
     public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception;
     public boolean supportsStatics();
     public void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
@@ -41,18 +42,40 @@ public interface ILanguageAdapter {
      * Wraps an event handler method in an {@code EventHandler} instance
      * @param method the eventhandler method of a mod
      */
-    public default IEventHandler createEventHandler(Method method) {
+    public default Function<FMLEvent, CompletableFuture<Void>> createEventHandler(Method method)
+    {
         return event ->
         {
-            if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
-                //noinspection unchecked
-                return (CompletionStage<Void>) method.invoke(event);
-            }
-            else
+            CompletableFuture<Void> future = new CompletableFuture<>();
+            try
             {
-                method.invoke(event);
-                return CompletableFuture.completedFuture(null);
+                if (CompletionStage.class.isAssignableFrom(method.getReturnType()))
+                {
+                    // safely transform the result of the event handler into a CompletableFuture
+                    //noinspection unchecked
+                    ((CompletionStage<Void>) method.invoke(event)).whenComplete((value, throwable) ->
+                    {
+                        if (throwable != null)
+                        {
+                            future.completeExceptionally(throwable);
+                        }
+                        else
+                        {
+                            future.complete(value);
+                        }
+                    });
+                }
+                else
+                {
+                    method.invoke(event);
+                    future.complete(null);
+                }
             }
+            catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exception)
+            {
+                future.completeExceptionally(exception);
+            }
+            return future;
         };
     }
 

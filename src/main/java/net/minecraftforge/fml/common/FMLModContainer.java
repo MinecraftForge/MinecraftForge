@@ -49,7 +49,6 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLEvent;
 import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
-import net.minecraftforge.fml.common.eventhandler.IEventHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
@@ -102,7 +101,7 @@ public class FMLModContainer implements ModContainer
     private String modLanguage;
     private ILanguageAdapter languageAdapter;
     private Disableable disableability;
-    private ListMultimap<Class<? extends FMLEvent>, IEventHandler> eventHandlers;
+    private ListMultimap<Class<? extends FMLEvent>, Function<FMLEvent, CompletableFuture<Void>>> eventHandlers;
     private Map<String, String> customModProperties;
     private ModCandidate candidate;
     private URL updateJSONUrl;
@@ -603,28 +602,11 @@ public class FMLModContainer implements ModContainer
         }
         try
         {
-            eventHandlers.get(event.getClass())
+            CompletableFuture[] futures = eventHandlers.get(event.getClass())
                     .stream()
-                    .map(eventHandler ->
-                    {
-                        // safely transform the result of eventHandler.handleEvent into a CompletableFuture
-                        return CompletableFuture.completedFuture(null).thenCompose(aVoid ->
-                        {
-                            try
-                            {
-                                return eventHandler.handleEvent(event);
-                            }
-                            catch (Throwable t)
-                            {
-                                CompletableFuture<Void> future = new CompletableFuture<>();
-                                future.completeExceptionally(t);
-                                return future;
-                            }
-                        });
-                    })
-                    .reduce((future1, future2) -> future1.thenComposeAsync(aVoid -> future2))
-                    .orElse(CompletableFuture.completedFuture(null))
-                    .join();
+                    .map(eventHandler -> eventHandler.apply(event))
+                    .toArray(CompletableFuture[]::new);
+            CompletableFuture.allOf(futures).join();
         }
         catch (Throwable t)
         {
