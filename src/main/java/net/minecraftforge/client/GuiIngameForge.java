@@ -62,9 +62,6 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiIngameForge extends GuiIngame
 {
-    //private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
-    //private static final ResourceLocation WIDGITS      = new ResourceLocation("textures/gui/widgets.png");
-    //private static final ResourceLocation PUMPKIN_BLUR = new ResourceLocation("textures/misc/pumpkinblur.png");
 
     private static final int WHITE = 0xFFFFFF;
 

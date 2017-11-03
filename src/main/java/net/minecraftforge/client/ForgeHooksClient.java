@@ -127,7 +127,6 @@ import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
 {
-    //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
     static TextureManager engine()
     {
