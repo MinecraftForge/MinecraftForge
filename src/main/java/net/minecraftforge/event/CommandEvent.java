@@ -20,12 +20,13 @@
 package net.minecraftforge.event;
 
 import net.minecraft.command.CommandHandler;
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
+import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
  * CommandEvent is fired whenever a command is scheduled to be executed. 
@@ -37,14 +38,16 @@ import net.minecraft.command.ICommandSender;
  * {@link #parameters} contains the arguments passed for the command execution.<br>
  * {@link #exception} begins null, but can be populated with an exception to be thrown within the command.<br>
  * <br>
- * This event is {@link Cancelable}. <br>
- * If the event is canceled, the execution of the command does not occur.<br>
+ * This event is not {@link Cancelable}. <br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event has a result. {@link HasResult}<br>
+ * If the result is {@link Result#ALLOW}, the command is executed.<br>
+ * If the result is {@link Result#DEFAULT}, the command is executed if {@link ICommand#checkPermission(MinecraftServer, ICommandSender)} returns true.<br>
+ * If the result is {@link Result#DENY}, the command isn't executed.
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-@Cancelable
+@HasResult
 public class CommandEvent extends Event
 {
 
@@ -66,4 +69,21 @@ public class CommandEvent extends Event
     public void setParameters(String[] parameters) { this.parameters = parameters; }
     public Throwable getException() { return exception; }
     public void setException(Throwable exception) { this.exception = exception; }
+
+    /**
+     * {@link CommandEvent} now {@link HasResult}, use {@link Event#setResult(Result)}.
+     */
+    @Deprecated
+    @Override
+    public void setCanceled(boolean cancel)
+    {
+        if(cancel)
+        {
+            this.setResult(Result.DENY);
+        }
+        else 
+        {
+            this.setResult(Result.DEFAULT);
+        }
+    }
 }
