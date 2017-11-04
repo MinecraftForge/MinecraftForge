@@ -685,7 +685,7 @@ public class ForgeEventFactory
 
     public static void onChunkGenerate(IChunkGenerator gen, World world, int x, int z, ChunkPrimer primer)
     {
-        MinecraftForge.EVENT_BUS.post(new ChunkGeneratorEvent.Generate(gen,world,x,z,primer));
+        MinecraftForge.EVENT_BUS.post(new ChunkGeneratorEvent.Generate(gen, world, x, z, primer));
     }
 
 
