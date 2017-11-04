@@ -1,23 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomePlains.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomePlains.java
-@@ -80,6 +80,7 @@
+@@ -80,7 +80,7 @@
              this.field_76760_I.field_76803_B = 10;
              field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.GRASS);
  
-+            if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
-             for (int i = 0; i < 7; ++i)
+-            for (int i = 0; i < 7; ++i)
++            for (int f_i_o = net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS, 7, field_180280_ag, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.Generator.Position.SURFACE); f_i_o > 0; f_i_o--)
              {
                  int j = p_180624_2_.nextInt(16) + 8;
-@@ -89,7 +90,7 @@
-             }
-         }
- 
--        if (this.field_150628_aC)
-+        if (this.field_150628_aC && net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS))
+                 int k = p_180624_2_.nextInt(16) + 8;
+@@ -93,7 +93,7 @@
          {
              field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.SUNFLOWER);
  
-@@ -105,6 +106,21 @@
+-            for (int i1 = 0; i1 < 10; ++i1)
++            for (int f_i_o = net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS, 10, field_180280_ag, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.Generator.Position.SURFACE); f_i_o > 0; f_i_o--)
+             {
+                 int j1 = p_180624_2_.nextInt(16) + 8;
+                 int k1 = p_180624_2_.nextInt(16) + 8;
+@@ -105,6 +105,21 @@
          super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
      }
  

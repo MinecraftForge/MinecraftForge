@@ -1,139 +1,197 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeDecorator.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeDecorator.java
-@@ -92,8 +92,10 @@
+@@ -23,6 +23,13 @@
+ import net.minecraft.world.gen.feature.WorldGenWaterlily;
+ import net.minecraft.world.gen.feature.WorldGenerator;
+ 
++import net.minecraftforge.event.terraingen.TerrainGen;
++import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
++import static net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.*;
++
++import net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType;
++import net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.Generator;
++
+ public class BiomeDecorator
+ {
+     public boolean field_185425_a;
+@@ -92,23 +99,24 @@
  
      protected void func_150513_a(Biome p_150513_1_, World p_150513_2_, Random p_150513_3_)
      {
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.DecorateBiomeEvent.Pre(p_150513_2_, p_150513_3_, field_180294_c));
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(p_150513_2_, p_150513_3_, field_180294_c));
          this.func_76797_b(p_150513_2_, p_150513_3_);
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SAND))
-         for (int i = 0; i < this.field_76805_H; ++i)
+-        for (int i = 0; i < this.field_76805_H; ++i)
++        for (int f_i = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.SAND, field_76805_H, field_76810_g, Generator.Position.SURFACE); f_i > 0; f_i--)
          {
              int j = p_150513_3_.nextInt(16) + 8;
-@@ -101,6 +103,7 @@
+             int k = p_150513_3_.nextInt(16) + 8;
              this.field_76810_g.func_180709_b(p_150513_2_, p_150513_3_, p_150513_2_.func_175672_r(this.field_180294_c.func_177982_a(j, 0, k)));
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.CLAY))
-         for (int i1 = 0; i1 < this.field_76806_I; ++i1)
+-        for (int i1 = 0; i1 < this.field_76806_I; ++i1)
++        for (int f_i = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.CLAY, field_76806_I, field_76809_f, Generator.Position.SURFACE); f_i > 0; f_i--)
          {
              int l1 = p_150513_3_.nextInt(16) + 8;
-@@ -108,6 +111,7 @@
+             int i6 = p_150513_3_.nextInt(16) + 8;
              this.field_76809_f.func_180709_b(p_150513_2_, p_150513_3_, p_150513_2_.func_175672_r(this.field_180294_c.func_177982_a(l1, 0, i6)));
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SAND_PASS2))
-         for (int j1 = 0; j1 < this.field_76801_G; ++j1)
+-        for (int j1 = 0; j1 < this.field_76801_G; ++j1)
++        for (int f_i = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.SAND_PASS2, field_76801_G, field_76822_h, Generator.Position.SURFACE); f_i > 0; f_i--)
          {
              int i2 = p_150513_3_.nextInt(16) + 8;
-@@ -122,6 +126,7 @@
+             int j6 = p_150513_3_.nextInt(16) + 8;
+@@ -122,6 +130,7 @@
              ++k1;
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.TREE))
++        k1 = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.TREE, k1);
          for (int j2 = 0; j2 < k1; ++j2)
          {
              int k6 = p_150513_3_.nextInt(16) + 8;
-@@ -136,6 +141,7 @@
+@@ -136,14 +145,14 @@
              }
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.BIG_SHROOM))
-         for (int k2 = 0; k2 < this.field_76807_J; ++k2)
+-        for (int k2 = 0; k2 < this.field_76807_J; ++k2)
++        for (int f_i = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.BIG_SHROOM, field_76807_J, field_76826_u, Generator.Position.SURFACE); f_i > 0; f_i--)
          {
              int l6 = p_150513_3_.nextInt(16) + 8;
-@@ -143,6 +149,7 @@
+             int k10 = p_150513_3_.nextInt(16) + 8;
              this.field_76826_u.func_180709_b(p_150513_2_, p_150513_3_, p_150513_2_.func_175645_m(this.field_180294_c.func_177982_a(l6, 0, k10)));
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS))
-         for (int l2 = 0; l2 < this.field_76802_A; ++l2)
+-        for (int l2 = 0; l2 < this.field_76802_A; ++l2)
++        for (int f_i = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.FLOWERS, field_76802_A); f_i > 0; f_i--)
          {
              int i7 = p_150513_3_.nextInt(16) + 8;
-@@ -164,6 +171,7 @@
+             int l10 = p_150513_3_.nextInt(16) + 8;
+@@ -164,7 +173,7 @@
              }
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
-         for (int i3 = 0; i3 < this.field_76803_B; ++i3)
+-        for (int i3 = 0; i3 < this.field_76803_B; ++i3)
++        for (int f_i = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.GRASS, field_76803_B); f_i > 0; f_i--)
          {
              int j7 = p_150513_3_.nextInt(16) + 8;
-@@ -177,6 +185,7 @@
+             int i11 = p_150513_3_.nextInt(16) + 8;
+@@ -177,7 +186,7 @@
              }
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.DEAD_BUSH))
-         for (int j3 = 0; j3 < this.field_76804_C; ++j3)
+-        for (int j3 = 0; j3 < this.field_76804_C; ++j3)
++        for (int f_i = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.DEAD_BUSH, field_76804_C); f_i > 0; f_i--)
          {
              int k7 = p_150513_3_.nextInt(16) + 8;
-@@ -190,6 +199,7 @@
+             int j11 = p_150513_3_.nextInt(16) + 8;
+@@ -190,7 +199,7 @@
              }
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.LILYPAD))
-         for (int k3 = 0; k3 < this.field_76833_y; ++k3)
+-        for (int k3 = 0; k3 < this.field_76833_y; ++k3)
++        for (int f_i = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.LILYPAD, field_76833_y, field_76834_x, Generator.Position.SURFACE); f_i > 0; f_i--)
          {
              int l7 = p_150513_3_.nextInt(16) + 8;
-@@ -216,6 +226,8 @@
+             int k11 = p_150513_3_.nextInt(16) + 8;
+@@ -216,9 +225,9 @@
              }
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SHROOM))
-+        {
-         for (int l3 = 0; l3 < this.field_76798_D; ++l3)
+-        for (int l3 = 0; l3 < this.field_76798_D; ++l3)
++        for (int f_i_o = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.SHROOM, field_76798_D); f_i_o > 0; f_i_o--)
          {
-             if (p_150513_3_.nextInt(4) == 0)
-@@ -266,7 +278,9 @@
-                 this.field_76827_t.func_180709_b(p_150513_2_, p_150513_3_, this.field_180294_c.func_177982_a(j4, l15, l8));
+-            if (p_150513_3_.nextInt(4) == 0)
++            for (int f_i = TerrainGen.mushroom(p_150513_2_, p_150513_3_, field_180294_c, this.field_76828_s, Generator.Position.SURFACE, p_150513_3_.nextInt(4) == 0 ? 1 : 0); f_i > 0; f_i--)
+             {
+                 int i8 = p_150513_3_.nextInt(16) + 8;
+                 int l11 = p_150513_3_.nextInt(16) + 8;
+@@ -226,7 +235,7 @@
+                 this.field_76828_s.func_180709_b(p_150513_2_, p_150513_3_, blockpos2);
+             }
+ 
+-            if (p_150513_3_.nextInt(8) == 0)
++            for (int f_i = TerrainGen.mushroom(p_150513_2_, p_150513_3_, field_180294_c, this.field_76827_t, Generator.Position.SURFACE, p_150513_3_.nextInt(8) == 0 ? 1 : 0); f_i > 0; f_i--)
+             {
+                 int j8 = p_150513_3_.nextInt(16) + 8;
+                 int i12 = p_150513_3_.nextInt(16) + 8;
+@@ -241,7 +250,7 @@
              }
          }
--
-+        } // End of Mushroom generation
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.REED))
-+        {
-         for (int k4 = 0; k4 < this.field_76799_E; ++k4)
+ 
+-        if (p_150513_3_.nextInt(4) == 0)
++        for (int f_i = TerrainGen.mushroom(p_150513_2_, p_150513_3_, field_180294_c, this.field_76828_s, Generator.Position.ANYWHERE, p_150513_3_.nextInt(4) == 0 ? 1 : 0); f_i > 0; f_i--)
+         {
+             int i4 = p_150513_3_.nextInt(16) + 8;
+             int k8 = p_150513_3_.nextInt(16) + 8;
+@@ -254,7 +263,7 @@
+             }
+         }
+ 
+-        if (p_150513_3_.nextInt(8) == 0)
++        for (int f_i = TerrainGen.mushroom(p_150513_2_, p_150513_3_, field_180294_c, this.field_76827_t, Generator.Position.ANYWHERE, p_150513_3_.nextInt(8) == 0 ? 1 : 0); f_i > 0; f_i--)
+         {
+             int j4 = p_150513_3_.nextInt(16) + 8;
+             int l8 = p_150513_3_.nextInt(16) + 8;
+@@ -267,7 +276,7 @@
+             }
+         }
+ 
+-        for (int k4 = 0; k4 < this.field_76799_E; ++k4)
++        for (int f_i_o = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.REED, field_76799_E + 10, field_76825_v, Generator.Position.SURFACE); f_i_o > 0; f_i_o--)
          {
              int i9 = p_150513_3_.nextInt(16) + 8;
-@@ -292,7 +306,8 @@
-                 this.field_76825_v.func_180709_b(p_150513_2_, p_150513_3_, this.field_180294_c.func_177982_a(j9, i19, i13));
-             }
-         }
--
-+        } // End of Reed generation
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.PUMPKIN))
-         if (p_150513_3_.nextInt(32) == 0)
-         {
-             int i5 = p_150513_3_.nextInt(16) + 8;
-@@ -306,6 +321,7 @@
+             int l12 = p_150513_3_.nextInt(16) + 8;
+@@ -280,7 +289,7 @@
              }
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.CACTUS))
-         for (int j5 = 0; j5 < this.field_76800_F; ++j5)
+-        for (int l4 = 0; l4 < 10; ++l4)
++        if (false) // The 10 iterations are accounted for in the previous block
+         {
+             int j9 = p_150513_3_.nextInt(16) + 8;
+             int i13 = p_150513_3_.nextInt(16) + 8;
+@@ -293,7 +302,7 @@
+             }
+         }
+ 
+-        if (p_150513_3_.nextInt(32) == 0)
++        for (int f_i_o = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.PUMPKIN, p_150513_3_.nextInt(32) == 0 ? 1 : 0); f_i_o > 0; f_i_o--)
+         {
+             int i5 = p_150513_3_.nextInt(16) + 8;
+             int k9 = p_150513_3_.nextInt(16) + 8;
+@@ -306,7 +315,7 @@
+             }
+         }
+ 
+-        for (int j5 = 0; j5 < this.field_76800_F; ++j5)
++        for (int f_i_o = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.CACTUS, field_76800_F, field_76824_w, Generator.Position.SURFACE); f_i_o > 0; f_i_o--)
          {
              int l9 = p_150513_3_.nextInt(16) + 8;
-@@ -321,6 +337,7 @@
+             int k13 = p_150513_3_.nextInt(16) + 8;
+@@ -321,7 +330,7 @@
  
          if (this.field_76808_K)
          {
-+            if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.LAKE_WATER))
-             for (int k5 = 0; k5 < 50; ++k5)
+-            for (int k5 = 0; k5 < 50; ++k5)
++            for (int f_i_o = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.LAKE_WATER, 50); f_i_o > 0; f_i_o--)
              {
                  int i10 = p_150513_3_.nextInt(16) + 8;
-@@ -335,6 +352,7 @@
+                 int l13 = p_150513_3_.nextInt(16) + 8;
+@@ -335,7 +344,7 @@
                  }
              }
  
-+            if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.LAKE_LAVA))
-             for (int l5 = 0; l5 < 20; ++l5)
+-            for (int l5 = 0; l5 < 20; ++l5)
++            for (int f_i_o = TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, EventType.LAKE_LAVA, 20); f_i_o > 0; f_i_o--)
              {
                  int j10 = p_150513_3_.nextInt(16) + 8;
-@@ -344,21 +362,35 @@
+                 int i14 = p_150513_3_.nextInt(16) + 8;
+@@ -344,21 +353,35 @@
                  (new WorldGenLiquids(Blocks.field_150356_k)).func_180709_b(p_150513_2_, p_150513_3_, blockpos3);
              }
          }
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.DecorateBiomeEvent.Post(p_150513_2_, p_150513_3_, field_180294_c));
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(p_150513_2_, p_150513_3_, field_180294_c));
      }
  
      protected void func_76797_b(World p_76797_1_, Random p_76797_2_)

@@ -22,12 +22,15 @@ package net.minecraftforge.event.terraingen;
 import java.util.Random;
 
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 /**DecorateBiomeEvent is fired when a BiomeDecorator is created.
  * <br>
@@ -107,16 +110,79 @@ public class DecorateBiomeEvent extends Event
             return type;
         }
 
+        public boolean hasAmountData()
+        {
+            return totalAmount != null && modifiedAmount != null;
+        }
+
+        public int getTotalAmount()
+        {
+            if (totalAmount == null)
+                throw new IllegalStateException();
+
+            return totalAmount;
+        }
+
+        public int getModifiedAmount()
+        {
+            if (modifiedAmount == null)
+                throw new IllegalStateException();
+
+            return modifiedAmount;
+        }
+
+        public void setModifiedAmount(int modifiedAmount)
+        {
+            this.modifiedAmount = modifiedAmount;
+        }
+
         /** Use CUSTOM to filter custom event types
          */
         public static enum EventType { BIG_SHROOM, CACTUS, CLAY, DEAD_BUSH, DESERT_WELL, LILYPAD, FLOWERS, FOSSIL, GRASS, ICE, LAKE_WATER, LAKE_LAVA, PUMPKIN, REED, ROCK, SAND, SAND_PASS2, SHROOM, TREE, CUSTOM }
 
         private final EventType type;
 
+        @Nullable
+        private final Integer totalAmount;
+        @Nullable
+        private Integer modifiedAmount;
+
         public Decorate(World world, Random rand, BlockPos pos, EventType type)
         {
             super(world, rand, pos);
             this.type = type;
+            this.totalAmount = null;
+            this.modifiedAmount = null;
+        }
+
+        public Decorate(World world, Random rand, BlockPos pos, EventType type, int amount)
+        {
+            super(world, rand, pos);
+            this.type = type;
+            this.totalAmount = amount;
+            this.modifiedAmount = amount;
+        }
+
+        public static class Generator extends Decorate
+        {
+            public final WorldGenerator generator;
+            public final Position position;
+
+            public enum Position
+            {
+                SURFACE,
+                UNDERGROUND,
+                AIR,
+                ANYWHERE,
+                OTHER
+            }
+
+            public Generator(World world, Random rand, BlockPos pos, EventType type, int amount, WorldGenerator generator, Position position)
+            {
+                super(world, rand, pos, type, amount);
+                this.generator = generator;
+                this.position = position;
+            }
         }
     }
 }

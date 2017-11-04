@@ -18,20 +18,12 @@
      }
  
      public WorldGenAbstractTree func_150567_a(Random p_150567_1_)
-@@ -85,6 +96,8 @@
-             this.func_185379_b(p_180624_1_, p_180624_2_, p_180624_3_);
+@@ -92,12 +103,14 @@
+             i += 2;
          }
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS))
-+        { // no tab for patch
-         int i = p_180624_2_.nextInt(5) - 3;
- 
-         if (this.field_150632_aF == BiomeForest.Type.FLOWER)
-@@ -93,11 +106,13 @@
-         }
- 
++        i = net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS, i);
          this.func_185378_a(p_180624_1_, p_180624_2_, p_180624_3_, i);
-+        }
          super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
      }
  
@@ -41,18 +33,17 @@
          for (int i = 0; i < 4; ++i)
          {
              for (int j = 0; j < 4; ++j)
-@@ -106,12 +121,12 @@
-                 int l = j * 4 + 1 + 8 + p_185379_2_.nextInt(3);
+@@ -107,11 +120,13 @@
                  BlockPos blockpos = p_185379_1_.func_175645_m(p_185379_3_.func_177982_a(k, 0, l));
  
--                if (p_185379_2_.nextInt(20) == 0)
-+                if (p_185379_2_.nextInt(20) == 0 && net.minecraftforge.event.terraingen.TerrainGen.decorate(p_185379_1_, p_185379_2_, blockpos, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.BIG_SHROOM))
+                 if (p_185379_2_.nextInt(20) == 0)
++                for (int f_i_o = net.minecraftforge.event.terraingen.TerrainGen.decorate(p_185379_1_, p_185379_2_, p_185379_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.BIG_SHROOM, 1); f_i_o > 0; f_i_o--)
                  {
                      WorldGenBigMushroom worldgenbigmushroom = new WorldGenBigMushroom();
                      worldgenbigmushroom.func_180709_b(p_185379_1_, p_185379_2_, blockpos);
                  }
--                else
-+                else if (net.minecraftforge.event.terraingen.TerrainGen.decorate(p_185379_1_, p_185379_2_, blockpos, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.TREE))
+                 else
++                for (int f_i_o = net.minecraftforge.event.terraingen.TerrainGen.decorate(p_185379_1_, p_185379_2_, p_185379_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.TREE, 1); f_i_o > 0; f_i_o--)
                  {
                      WorldGenAbstractTree worldgenabstracttree = this.func_150567_a(p_185379_2_);
                      worldgenabstracttree.func_175904_e();

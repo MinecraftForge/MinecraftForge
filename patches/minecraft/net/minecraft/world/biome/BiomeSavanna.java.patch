@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeSavanna.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeSavanna.java
-@@ -39,6 +39,7 @@
+@@ -39,7 +39,7 @@
      {
          field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.GRASS);
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
-         for (int i = 0; i < 7; ++i)
+-        for (int i = 0; i < 7; ++i)
++        for (int f_i_o = net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS, 7, field_180280_ag, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.Generator.Position.SURFACE); f_i_o > 0; f_i_o--)
          {
              int j = p_180624_2_.nextInt(16) + 8;
+             int k = p_180624_2_.nextInt(16) + 8;
