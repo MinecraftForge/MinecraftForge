@@ -382,7 +382,7 @@ public final class ItemLayerModel implements IModel
 
     private static EnumFacing remap(EnumFacing side)
     {
-        // getOpposite is related either to the swapping of V direction, or something else
+        // getOpposite is related to the swapping of V direction
         return side.getAxis() == EnumFacing.Axis.Y ? side.getOpposite() : side;
     }
 
