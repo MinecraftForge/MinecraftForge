@@ -126,6 +126,15 @@ public class ChunkGeneratorEvent extends Event
         private final @Nullable ChunkPrimer primer;
         private final int x, z;
 
+        public Generate(IChunkGenerator gen, World world, int x, int z, @Nullable ChunkPrimer primer)
+        {
+            super(gen);
+            this.world = world;
+            this.x = x;
+            this.z = z;
+            this.primer = primer;
+        }
+
         public World getWorld()
         {
             return world;
@@ -145,20 +154,11 @@ public class ChunkGeneratorEvent extends Event
         {
             return z;
         }
-
-        public Generate(IChunkGenerator gen, World world, int x, int z, @Nullable ChunkPrimer primer)
-        {
-            super(gen);
-            this.world = world;
-            this.x = x;
-            this.z = z;
-            this.primer = primer;
-        }
     }
 
     /**
-     * This event is fired when the chunk generator is ask for a list of possible creatures for a specific location.
-     * (Vanilla checks if there is a structure which wants to spawn special creatures at the location.
+     * This event is fired when the chunk generator is asked for a list of possible creatures for a specific location.
+     * (Vanilla checks if there is a structure which wants to spawn special creatures at the location)
      * <p>
      * To return your own spawn entries, add them to the list and cancel this event.
      */
@@ -167,24 +167,7 @@ public class ChunkGeneratorEvent extends Event
     {
         private final EnumCreatureType creatureType;
         private final List<Biome.SpawnListEntry> possibleCreatures;
-
-        public World getWorld()
-        {
-            return world;
-        }
-
         private final World world;
-
-        public EnumCreatureType getCreatureType()
-        {
-            return creatureType;
-        }
-
-        public BlockPos getPos()
-        {
-            return pos;
-        }
-
         private final BlockPos pos;
 
         public GetPossibleCreatures(IChunkGenerator gen, World world, EnumCreatureType creatureType, BlockPos pos)
@@ -194,6 +177,21 @@ public class ChunkGeneratorEvent extends Event
             this.pos = pos;
             this.world = world;
             possibleCreatures = Lists.newArrayList();
+        }
+
+        public World getWorld()
+        {
+            return world;
+        }
+
+        public EnumCreatureType getCreatureType()
+        {
+            return creatureType;
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
         }
 
         public List<Biome.SpawnListEntry> getPossibleCreatures()
@@ -211,30 +209,9 @@ public class ChunkGeneratorEvent extends Event
     @Cancelable
     public static class StructureCheck extends ChunkGeneratorEvent
     {
-        public World getWorldIn()
-        {
-            return worldIn;
-        }
-
-        public String getStructureName()
-        {
-            return structureName;
-        }
-
-        public BlockPos getPos()
-        {
-            return pos;
-        }
-
         private final World worldIn;
         private final String structureName;
         private final BlockPos pos;
-
-        public void setInStructure(boolean inStructure)
-        {
-            this.inStructure = inStructure;
-        }
-
         private boolean inStructure;
 
         public StructureCheck(IChunkGenerator gen, World worldIn, String structureName, BlockPos pos)
@@ -246,20 +223,6 @@ public class ChunkGeneratorEvent extends Event
             inStructure = false;
         }
 
-        public boolean isInStructure()
-        {
-            return inStructure;
-        }
-    }
-
-    /**
-     * This event is fired if the chunk generator is asked for a nearby structure.
-     * <p>
-     * To return your own location set the found pos and cancel this event.
-     */
-    @Cancelable
-    public static class FindStructure extends ChunkGeneratorEvent
-    {
         public World getWorldIn()
         {
             return worldIn;
@@ -275,19 +238,31 @@ public class ChunkGeneratorEvent extends Event
             return pos;
         }
 
+        public boolean isInStructure()
+        {
+            return inStructure;
+        }
+
+        public void setInStructure(boolean inStructure)
+        {
+            this.inStructure = inStructure;
+        }
+    }
+
+    /**
+     * This event is fired if the chunk generator is asked for a nearby structure.
+     * <p>
+     * To return your own location set the found pos and cancel this event.
+     */
+    @Cancelable
+    public static class FindStructure extends ChunkGeneratorEvent
+    {
         private final World worldIn;
         private final String structureName;
         private final BlockPos pos;
-
+        private final boolean findUnexplored;
         @Nullable
         private BlockPos foundPos;
-
-        public boolean isFindUnexplored()
-        {
-            return findUnexplored;
-        }
-
-        private final boolean findUnexplored;
 
         public FindStructure(IChunkGenerator gen, World worldIn, String structureName, BlockPos pos, boolean findUnexplored)
         {
@@ -297,6 +272,26 @@ public class ChunkGeneratorEvent extends Event
             this.pos = pos;
             this.findUnexplored = findUnexplored;
             foundPos = null;
+        }
+
+        public World getWorldIn()
+        {
+            return worldIn;
+        }
+
+        public String getStructureName()
+        {
+            return structureName;
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
+        }
+
+        public boolean isFindUnexplored()
+        {
+            return findUnexplored;
         }
 
         @Nullable public BlockPos getFoundPos()

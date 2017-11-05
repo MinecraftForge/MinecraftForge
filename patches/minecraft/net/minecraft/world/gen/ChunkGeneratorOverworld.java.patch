@@ -43,16 +43,15 @@
          double d0 = 0.03125D;
          this.field_186002_u = this.field_185994_m.func_151599_a(this.field_186002_u, (double)(p_185977_1_ * 16), (double)(p_185977_2_ * 16), 16, 16, 0.0625D, 0.0625D, 1.0D);
  
-@@ -183,7 +205,7 @@
-         this.func_185976_a(p_185932_1_, p_185932_2_, chunkprimer);
+@@ -184,6 +206,7 @@
          this.field_185981_C = this.field_185995_n.func_72959_q().func_76933_b(this.field_185981_C, p_185932_1_ * 16, p_185932_2_ * 16, 16, 16);
          this.func_185977_a(p_185932_1_, p_185932_2_, chunkprimer, this.field_185981_C);
--
+ 
 +        net.minecraftforge.event.ForgeEventFactory.onChunkGenerate(this, this.field_185995_n, p_185932_1_, p_185932_2_, chunkprimer);
          if (this.field_186000_s.field_177839_r)
          {
              this.field_186003_v.func_186125_a(this.field_185995_n, p_185932_1_, p_185932_2_, chunkprimer);
-@@ -370,6 +392,8 @@
+@@ -370,6 +393,8 @@
          boolean flag = false;
          ChunkPos chunkpos = new ChunkPos(p_185931_1_, p_185931_2_);
  
@@ -61,7 +60,7 @@
          if (this.field_185996_o)
          {
              if (this.field_186000_s.field_177829_w)
-@@ -404,6 +428,7 @@
+@@ -404,6 +429,7 @@
          }
  
          if (biome != Biomes.field_76769_d && biome != Biomes.field_76786_s && this.field_186000_s.field_177781_A && !flag && this.field_185990_i.nextInt(this.field_186000_s.field_177782_B) == 0)
@@ -69,7 +68,7 @@
          {
              int i1 = this.field_185990_i.nextInt(16) + 8;
              int j1 = this.field_185990_i.nextInt(256);
-@@ -412,6 +437,7 @@
+@@ -412,6 +438,7 @@
          }
  
          if (!flag && this.field_185990_i.nextInt(this.field_186000_s.field_177777_D / 10) == 0 && this.field_186000_s.field_177783_C)
@@ -77,7 +76,7 @@
          {
              int i2 = this.field_185990_i.nextInt(16) + 8;
              int l2 = this.field_185990_i.nextInt(this.field_185990_i.nextInt(248) + 8);
-@@ -424,6 +450,7 @@
+@@ -424,6 +451,7 @@
          }
  
          if (this.field_186000_s.field_177837_s)
@@ -85,7 +84,7 @@
          {
              for (int j2 = 0; j2 < this.field_186000_s.field_177835_t; ++j2)
              {
-@@ -435,9 +462,12 @@
+@@ -435,9 +463,12 @@
          }
  
          biome.func_180624_a(this.field_185995_n, this.field_185990_i, new BlockPos(i, 0, j));
@@ -98,7 +97,7 @@
          for (int k2 = 0; k2 < 16; ++k2)
          {
              for (int j3 = 0; j3 < 16; ++j3)
-@@ -456,7 +486,10 @@
+@@ -456,7 +487,10 @@
                  }
              }
          }
@@ -109,17 +108,16 @@
          BlockFalling.field_149832_M = false;
      }
  
-@@ -475,7 +508,8 @@
-     public List<Biome.SpawnListEntry> func_177458_a(EnumCreatureType p_177458_1_, BlockPos p_177458_2_)
+@@ -476,6 +510,8 @@
      {
          Biome biome = this.field_185995_n.func_180494_b(p_177458_2_);
--
-+        net.minecraftforge.event.terraingen.ChunkGeneratorEvent.GetPossibleCreatures event=new net.minecraftforge.event.terraingen.ChunkGeneratorEvent.GetPossibleCreatures(this, field_185995_n, p_177458_1_, p_177458_2_);
+ 
++        net.minecraftforge.event.terraingen.ChunkGeneratorEvent.GetPossibleCreatures event = new net.minecraftforge.event.terraingen.ChunkGeneratorEvent.GetPossibleCreatures(this, field_185995_n, p_177458_1_, p_177458_2_);
 +        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return event.getPossibleCreatures();
          if (this.field_185996_o)
          {
              if (p_177458_1_ == EnumCreatureType.MONSTER && this.field_186007_z.func_175798_a(p_177458_2_))
-@@ -494,6 +528,8 @@
+@@ -494,6 +530,8 @@
  
      public boolean func_193414_a(World p_193414_1_, String p_193414_2_, BlockPos p_193414_3_)
      {
@@ -128,7 +126,7 @@
          if (!this.field_185996_o)
          {
              return false;
-@@ -527,6 +563,8 @@
+@@ -527,6 +565,8 @@
      @Nullable
      public BlockPos func_180513_a(World p_180513_1_, String p_180513_2_, BlockPos p_180513_3_, boolean p_180513_4_)
      {
@@ -137,7 +135,7 @@
          if (!this.field_185996_o)
          {
              return null;
-@@ -559,6 +597,7 @@
+@@ -559,6 +599,7 @@
  
      public void func_180514_a(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_)
      {

@@ -688,7 +688,6 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new ChunkGeneratorEvent.Generate(gen, world, x, z, primer));
     }
 
-
     public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTableManager lootTableManager)
     {
         LootTableLoadEvent event = new LootTableLoadEvent(name, table, lootTableManager);
