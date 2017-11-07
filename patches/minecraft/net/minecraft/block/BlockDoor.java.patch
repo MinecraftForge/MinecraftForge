@@ -9,7 +9,7 @@
              {
                  p_189540_2_.func_175698_g(p_189540_3_);
                  flag1 = true;
-@@ -247,13 +247,13 @@
+@@ -247,13 +247,14 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -21,7 +21,8 @@
          else
          {
 -            return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
-+            return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_193401_d(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP) == BlockFaceShape.SOLID && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
++            IBlockState state = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
++            return (state.func_185896_q() || state.func_193401_d(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP) == BlockFaceShape.SOLID) && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
          }
      }
  

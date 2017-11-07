@@ -22,9 +22,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -79,6 +77,12 @@ public class ModelAnimationDebug
     @ObjectHolder(blockName)
     public static final Item TEST_ITEM = null;
 
+    public static final String rotateBlockName = "rotatest";
+    @ObjectHolder(rotateBlockName)
+    public static final Block TEST_ROTATE_BLOCK = null;
+    @ObjectHolder(rotateBlockName)
+    public static final Item TEST_ROTATE_ITEM = null;
+
     @Instance(MODID)
     public static ModelAnimationDebug instance;
 
@@ -94,6 +98,7 @@ public class ModelAnimationDebug
         public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
             GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
+            GameRegistry.registerTileEntity(Spin.class, MODID + ":" + "tile_" + rotateBlockName);
             event.getRegistry().register(
             new Block(Material.WOOD)
             {
@@ -181,6 +186,56 @@ public class ModelAnimationDebug
                     return true;
                 }
             });
+
+            event.getRegistry().register(new Block(Material.WOOD){
+                {
+                    setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+                    setUnlocalizedName(MODID + "." + rotateBlockName);
+                    setRegistryName(new ResourceLocation(MODID, rotateBlockName));
+                }
+
+                @Override
+                public ExtendedBlockState createBlockState()
+                {
+                    return new ExtendedBlockState(this, new IProperty[]{ Properties.StaticProperty }, new IUnlistedProperty[]{ Properties.AnimationProperty });
+                }
+
+                @Override
+                public boolean isOpaqueCube(IBlockState state) { return false; }
+
+                @Override
+                public boolean isFullCube(IBlockState state) { return false; }
+
+                @Override
+                public boolean hasTileEntity(IBlockState state) {
+                    return true;
+                }
+
+                @Override
+                public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+                    return state.withProperty(Properties.StaticProperty, false);
+                }
+
+                @Override
+                public int getMetaFromState(IBlockState state) {
+                    return 0;
+                }
+
+                @Override
+                public EnumBlockRenderType getRenderType(IBlockState state) {
+                    return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+                }
+
+                @Override
+                public IBlockState getStateFromMeta(int meta) {
+                    return getDefaultState();
+                }
+
+                @Override
+                public TileEntity createTileEntity(World world, IBlockState state) {
+                    return new Spin();
+                }
+            });
         }
 
         @SubscribeEvent
@@ -195,6 +250,11 @@ public class ModelAnimationDebug
                     return new ItemAnimationHolder();
                 }
             }.setRegistryName(TEST_BLOCK.getRegistryName())
+            );
+            event.getRegistry().register(
+                    new ItemBlock(TEST_ROTATE_BLOCK) {
+
+                    }.setRegistryName(TEST_ROTATE_BLOCK.getRegistryName())
             );
         }
     }
@@ -229,6 +289,8 @@ public class ModelAnimationDebug
                     chest.handleEvents(time, pastEvents);
                 }
             });
+            ModelLoader.setCustomModelResourceLocation(TEST_ROTATE_ITEM, 0, new ModelResourceLocation(TEST_ROTATE_ITEM.getRegistryName(), "inventory"));
+            ClientRegistry.bindTileEntitySpecialRenderer(Spin.class, new AnimationTESR<Spin>());
             String entityName = MODID + ":entity_chest";
             //EntityRegistry.registerGlobalEntityID(EntityChest.class, entityName, EntityRegistry.findGlobalUniqueEntityId());
             EntityRegistry.registerModEntity(new ResourceLocation(entityName), EntityChest.class, entityName, 0, ModelAnimationDebug.instance, 64, 20, true, 0xFFAAAA00, 0xFFDDDD00);
@@ -296,6 +358,40 @@ public class ModelAnimationDebug
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
+    }
+
+    public static class Spin extends TileEntity
+    {
+        @Nullable
+        private final IAnimationStateMachine asm;
+
+        public Spin()
+        {
+            asm = proxy.load(new ResourceLocation(MODID, "asms/block/rotatest.json"), ImmutableMap.of());
+        }
+
+        @Override
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
+        {
+            return capability == CapabilityAnimation.ANIMATION_CAPABILITY || super.hasCapability(capability, side);
+        }
+
+        @Override
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
+        {
+            if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            {
+                return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
+            }
+            return super.getCapability(capability, side);
+        }
+
+        @Override
+        public boolean hasFastRenderer()
+        {
+            return true;
+        }
     }
 
     public static class Chest extends TileEntity

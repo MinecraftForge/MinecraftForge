@@ -22,6 +22,11 @@ package net.minecraftforge.fluids;
 import java.util.Map;
 import java.util.Random;
 
+import javax.annotation.Nonnull;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -35,10 +40,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -731,5 +736,23 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos)
     {
         return NULL_AABB;
+    }
+    
+    @Override
+    @SideOnly (Side.CLIENT)
+    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
+    {
+        if (getFluid() != null)
+        {
+            int color = getFluid().getColor();
+            float red = (color >> 16 & 0xFF) / 255.0F;
+            float green = (color >> 8 & 0xFF) / 255.0F;
+            float blue = (color & 0xFF) / 255.0F;
+            return new Vec3d(red, green, blue);
+        }
+        else
+        {
+            return super.getFogColor(world, pos, state, entity, originalColor, partialTicks);
+        }
     }
 }

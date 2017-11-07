@@ -10,7 +10,10 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is cancelable. When canceled, {@link EntityThrowable#onImpact} will not be called.
  * Killing or other handling of the entity after event cancellation is up to the modder.
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
+ *
+ * @deprecated use {@link ProjectileImpactEvent.Throwable}
  */
+@Deprecated // TODO: remove (1.13)
 @Cancelable
 public class ThrowableImpactEvent extends EntityEvent
 {

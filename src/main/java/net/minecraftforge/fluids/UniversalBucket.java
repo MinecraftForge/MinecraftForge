@@ -285,6 +285,15 @@ public class UniversalBucket extends Item
         return nbtSensitive;
     }
 
+    @Nullable
+    @Override
+    public String getCreatorModId(@Nonnull ItemStack itemStack)
+    {
+        FluidStack fluidStack = getFluid(itemStack);
+        String modId = FluidRegistry.getModId(fluidStack);
+        return modId != null ? modId : super.getCreatorModId(itemStack);
+    }
+
     @Override
     public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, NBTTagCompound nbt)
     {

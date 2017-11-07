@@ -40,12 +40,7 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
     @Override
     protected void updateColor(float[] normal, float[] color, float x, float y, float z, float tint, int multiplier)
     {
-        if(tint != -1)
-        {
-            color[0] *= (float)(multiplier >> 0x10 & 0xFF) / 0xFF;
-            color[1] *= (float)(multiplier >> 0x8 & 0xFF) / 0xFF;
-            color[2] *= (float)(multiplier & 0xFF) / 0xFF;
-        }
+        super.updateColor(normal, color, x, y, z, tint, multiplier);
         float a = getAo(x, y, z);
         color[0] *= a;
         color[1] *= a;
@@ -179,7 +174,7 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
     @Override
     public void updateBlockInfo()
     {
-        super.updateBlockInfo();
+        blockInfo.updateShift();
         blockInfo.updateLightMatrix();
     }
 }
