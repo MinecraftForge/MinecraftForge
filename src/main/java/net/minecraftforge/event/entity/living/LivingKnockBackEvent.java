@@ -1,0 +1,57 @@
+package net.minecraftforge.event.entity.living;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+
+/**
+ * LivingAttackEvent is fired when a living entity is about to be knocked back. <br>
+ * This event is fired whenever an Entity is knocked back in
+ * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)}, 
+ * {@link EntityLivingBase#blockWithShield(EntityLivingBase)}, 
+ * {@link EntityMob#attackEntityAsMob(Entity)} and 
+ * {@link EntityPlayer#attackTargetEntityWithCurrentItem(Entity)} <br>
+ * <br>
+ * This event is fired via {@link ForgeHooks#onLivingKnockBack(EntityLivingBase, Entity, float, double, double)}.<br>
+ * <br>
+ * {@link #attacker} contains the Entity that caused the knock back. <br>
+ * {@link #strength} contains the strength of the knock back. <br>
+ * {@link #ratioX} contains the x ratio of the knock back. <br>
+ * {@link #ratioZ} contains the z ratio of the knock back. <br>
+ * <br>
+ * This event is {@link Cancelable}.<br>
+ * If this event is canceled, the entity is not knocked back.<br>
+ * <br>
+ * This event does not have a result. {@link HasResult}<br>
+ *<br>
+ * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ **/
+@Cancelable
+public class LivingKnockBackEvent extends LivingEvent
+{
+	private final Entity attacker;
+	private float strength;
+	private double ratioX, ratioZ;
+
+	public LivingKnockBackEvent(EntityLivingBase target, Entity attacker, float strength, double ratioX, double ratioZ)
+	{
+		super(target);
+		this.attacker = attacker;
+		this.strength = strength;
+		this.ratioX = ratioX;
+		this.ratioZ = ratioZ;
+	}
+
+	public Entity getAttacker() {return this.attacker;}
+
+	public float getStrength() {return this.strength;}
+
+	public double getRatioX() {return this.ratioX;}
+
+	public double getRatioZ() {return this.ratioZ;}
+}
