@@ -562,7 +562,7 @@ public class ForgeHooks
 
     public static boolean onLivingKnockBack(LivingKnockBackEvent event)
     {
-    	return !MinecraftForge.EVENT_BUS.post(event);
+        return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)

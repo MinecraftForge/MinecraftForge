@@ -10,16 +10,21 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod.EventBusSubscriber
 public class KnockBackHookTest
 {
+	private static final boolean ENABLED = false;
+
 	@SubscribeEvent
 	public static void onKnockBack(LivingKnockBackEvent event)
 	{
-		if(event.getEntityLiving() instanceof EntitySheep)
+		if(ENABLED)
 		{
-			event.setStrength(0.1F);
-		}
-		else if(event.getEntityLiving() instanceof EntityCow)
-		{
-			event.setCanceled(true);
+			if(event.getEntityLiving() instanceof EntitySheep)
+			{
+				event.setStrength(0.2F);
+			}
+			else if(event.getEntityLiving() instanceof EntityCow)
+			{
+				event.setCanceled(true);
+			}
 		}
 	}
 }
