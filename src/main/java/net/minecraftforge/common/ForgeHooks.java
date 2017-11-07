@@ -113,9 +113,9 @@ import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
-import net.minecraftforge.event.entity.ThrowableImpactEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
@@ -564,6 +564,12 @@ public class ForgeHooks
     public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
     {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
+    }
+
+    public static float onLivingDamage(EntityLivingBase entity, DamageSource src, float amount)
+    {
+        LivingDamageEvent event = new LivingDamageEvent(entity, src, amount);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
     }
 
@@ -1319,9 +1325,11 @@ public class ForgeHooks
     public static LootEntry deserializeJsonLootEntry(String type, JsonObject json, int weight, int quality, LootCondition[] conditions){ return null; }
     public static String getLootEntryType(LootEntry entry){ return null; } //Companion to above function
 
+    /** @deprecated use {@link ForgeEventFactory#onProjectileImpact(EntityThrowable, RayTraceResult)} */
+    @Deprecated // TODO: remove (1.13)
     public static boolean onThrowableImpact(EntityThrowable throwable, RayTraceResult ray)
     {
-        return MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, ray));
+        return ForgeEventFactory.onProjectileImpact(throwable, ray);
     }
 
     public static boolean onCropsGrowPre(World worldIn, BlockPos pos, IBlockState state, boolean def)

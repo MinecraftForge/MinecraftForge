@@ -20,7 +20,7 @@
         "aux": [{
             "model": "cube_all",
             "textures": { "all": "blocks/slime" },
-            "transform": { "scale": .5 }
+            "transform": { "scale": 0.5 }
         }]
     }
 }
