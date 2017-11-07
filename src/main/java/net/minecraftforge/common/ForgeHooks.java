@@ -560,9 +560,11 @@ public class ForgeHooks
         return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
-    public static boolean onLivingKnockBack(LivingKnockBackEvent event)
+    public static LivingKnockBackEvent onLivingKnockBack(EntityLivingBase target, Entity attacker, float strength, double ratioX, double ratioZ)
     {
-        return MinecraftForge.EVENT_BUS.post(event);
+        LivingKnockBackEvent event = new LivingKnockBackEvent(target, attacker, strength, ratioX, ratioZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 
     public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
