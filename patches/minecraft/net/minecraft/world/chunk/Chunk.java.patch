@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/Chunk.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/Chunk.java
-@@ -41,7 +41,7 @@
+@@ -41,31 +41,52 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,52 @@
  {
      private static final Logger field_150817_t = LogManager.getLogger();
      public static final ExtendedBlockStorage field_186036_a = null;
-@@ -91,6 +91,7 @@
++    /**
++     * Used to store block IDs, block MSBs, Sky-light maps, Block-light maps, and metadata. Each entry corresponds to a
++     * logical segment of 16x16x16 blocks, stacked vertically.
++     */
+     private final ExtendedBlockStorage[] field_76652_q;
++    /** Contains a 16x16 mapping on the X/Z plane of the biome ID to which each colum belongs. */
+     private final byte[] field_76651_r;
++    /** A map, similar to heightMap, that tracks how far down precipitation can fall. */
+     private final int[] field_76638_b;
++    /** Which columns need their skylightMaps updated. */
+     private final boolean[] field_76639_c;
++    /** Whether or not this Chunk is currently loaded into the World */
+     private boolean field_76636_d;
++    /** Reference to the World object. */
+     private final World field_76637_e;
+     private final int[] field_76634_f;
++    /** The x coordinate of the chunk. */
+     public final int field_76635_g;
++    /** The z coordinate of the chunk. */
+     public final int field_76647_h;
+     private boolean field_76650_s;
++    /** A Map of ChunkPositions to TileEntities in this chunk */
+     private final Map<BlockPos, TileEntity> field_150816_i;
++    /** Array of Lists containing the entities in this Chunk. Each List represents a 16 block subchunk. */
+     private final ClassInheritanceMultiMap<Entity>[] field_76645_j;
++    /** Boolean value indicating if the terrain is populated. */
+     private boolean field_76646_k;
+     private boolean field_150814_l;
+     private boolean field_150815_m;
++    /** Set to true if the chunk has been modified and needs to be updated internally. */
+     private boolean field_76643_l;
++    /** Whether this Chunk has any Entities and thus requires saving on every tick */
+     private boolean field_76644_m;
++    /** The time according to World.worldTime when this chunk was last saved */
+     private long field_76641_n;
++    /** Lowest value in the heightmap. */
+     private int field_82912_p;
++    /** the cumulative number of ticks players have been in this chunk */
+     private long field_111204_q;
++    /** Contains the current round-robin relight check index, and is implied as the relight check location as well. */
+     private int field_76649_t;
++    /** Queue containing the BlockPos of tile entities queued for creation */
+     private final ConcurrentLinkedQueue<BlockPos> field_177447_w;
+     public boolean field_189550_d;
+ 
+@@ -91,6 +112,7 @@
  
          Arrays.fill(this.field_76638_b, -999);
          Arrays.fill(this.field_76651_r, (byte) - 1);
@@ -17,7 +62,54 @@
      }
  
      public Chunk(World p_i45645_1_, ChunkPrimer p_i45645_2_, int p_i45645_3_, int p_i45645_4_)
-@@ -179,7 +180,7 @@
+@@ -123,6 +145,9 @@
+         }
+     }
+ 
++    /**
++     * Checks whether the chunk is at the X/Z location specified
++     */
+     public boolean func_76600_a(int p_76600_1_, int p_76600_2_)
+     {
+         return p_76600_1_ == this.field_76635_g && p_76600_2_ == this.field_76647_h;
+@@ -133,6 +158,9 @@
+         return this.func_76611_b(p_177433_1_.func_177958_n() & 15, p_177433_1_.func_177952_p() & 15);
+     }
+ 
++    /**
++     * Returns the value in the height map at this x, z coordinate in the chunk
++     */
+     public int func_76611_b(int p_76611_1_, int p_76611_2_)
+     {
+         return this.field_76634_f[p_76611_2_ << 4 | p_76611_1_];
+@@ -152,17 +180,26 @@
+         return null;
+     }
+ 
++    /**
++     * Returns the topmost ExtendedBlockStorage instance for this Chunk that actually contains a block.
++     */
+     public int func_76625_h()
+     {
+         ExtendedBlockStorage extendedblockstorage = this.func_186031_y();
+         return extendedblockstorage == null ? 0 : extendedblockstorage.func_76662_d();
+     }
+ 
++    /**
++     * Returns the ExtendedBlockStorage array for this Chunk.
++     */
+     public ExtendedBlockStorage[] func_76587_i()
+     {
+         return this.field_76652_q;
+     }
+ 
++    /**
++     * Generates the height map for a chunk from scratch
++     */
+     @SideOnly(Side.CLIENT)
+     protected void func_76590_a()
+     {
+@@ -179,7 +216,7 @@
                  {
                      IBlockState iblockstate = this.func_186032_a(j, l - 1, k);
  
@@ -26,7 +118,47 @@
                      {
                          this.field_76634_f[k << 4 | j] = l;
  
-@@ -452,12 +453,13 @@
+@@ -197,6 +234,9 @@
+         this.field_76643_l = true;
+     }
+ 
++    /**
++     * Generates the initial skylight map for the chunk upon generation or load.
++     */
+     public void func_76603_b()
+     {
+         int i = this.func_76625_h();
+@@ -264,6 +304,9 @@
+         this.field_76643_l = true;
+     }
+ 
++    /**
++     * Propagates a given sky-visible block's light value downward and upward to neighboring blocks as necessary.
++     */
+     private void func_76595_e(int p_76595_1_, int p_76595_2_)
+     {
+         this.field_76639_c[p_76595_1_ + p_76595_2_ * 16] = true;
+@@ -315,6 +358,9 @@
+         this.field_76637_e.field_72984_F.func_76319_b();
+     }
+ 
++    /**
++     * Checks the height of a block next to a sky-visible block and schedules a lighting update as necessary.
++     */
+     private void func_76599_g(int p_76599_1_, int p_76599_2_, int p_76599_3_)
+     {
+         int i = this.field_76637_e.func_175645_m(new BlockPos(p_76599_1_, 0, p_76599_2_)).func_177956_o();
+@@ -342,6 +388,9 @@
+         }
+     }
+ 
++    /**
++     * Initiates the recalculation of both the block-light and sky-light for a given block inside a chunk.
++     */
+     private void func_76615_h(int p_76615_1_, int p_76615_2_, int p_76615_3_)
+     {
+         int i = this.field_76634_f[p_76615_3_ << 4 | p_76615_1_] & 255;
+@@ -452,12 +501,13 @@
  
      public int func_177437_b(BlockPos p_177437_1_)
      {
@@ -42,7 +174,7 @@
      }
  
      public IBlockState func_177435_g(BlockPos p_177435_1_)
-@@ -539,6 +541,7 @@
+@@ -539,6 +589,7 @@
          {
              Block block = p_177436_2_.func_177230_c();
              Block block1 = iblockstate.func_177230_c();
@@ -50,7 +182,7 @@
              ExtendedBlockStorage extendedblockstorage = this.field_76652_q[j >> 4];
              boolean flag = false;
  
-@@ -556,14 +559,19 @@
+@@ -556,14 +607,19 @@
  
              extendedblockstorage.func_177484_a(i, j & 15, k, p_177436_2_);
  
@@ -72,7 +204,7 @@
                      this.field_76637_e.func_175713_t(p_177436_1_);
                  }
              }
-@@ -580,8 +588,7 @@
+@@ -580,8 +636,7 @@
                  }
                  else
                  {
@@ -82,7 +214,7 @@
  
                      if (j1 > 0)
                      {
-@@ -601,28 +608,19 @@
+@@ -601,28 +656,19 @@
                      }
                  }
  
@@ -115,7 +247,17 @@
                          this.field_76637_e.func_175690_a(p_177436_1_, tileentity1);
                      }
  
-@@ -738,6 +736,7 @@
+@@ -714,6 +760,9 @@
+         }
+     }
+ 
++    /**
++     * Adds an entity to the chunk.
++     */
+     public void func_76612_a(Entity p_76612_1_)
+     {
+         this.field_76644_m = true;
+@@ -738,6 +787,7 @@
              k = this.field_76645_j.length - 1;
          }
  
@@ -123,7 +265,25 @@
          p_76612_1_.field_70175_ag = true;
          p_76612_1_.field_70176_ah = this.field_76635_g;
          p_76612_1_.field_70162_ai = k;
-@@ -778,7 +777,7 @@
+@@ -745,11 +795,17 @@
+         this.field_76645_j[k].add(p_76612_1_);
+     }
+ 
++    /**
++     * removes entity using its y chunk coordinate as its index
++     */
+     public void func_76622_b(Entity p_76622_1_)
+     {
+         this.func_76608_a(p_76622_1_, p_76622_1_.field_70162_ai);
+     }
+ 
++    /**
++     * Removes entity at the specified index from the entity array.
++     */
+     public void func_76608_a(Entity p_76608_1_, int p_76608_2_)
+     {
+         if (p_76608_2_ < 0)
+@@ -778,7 +834,7 @@
      {
          IBlockState iblockstate = this.func_177435_g(p_177422_1_);
          Block block = iblockstate.func_177230_c();
@@ -132,7 +292,7 @@
      }
  
      @Nullable
-@@ -786,6 +785,12 @@
+@@ -786,6 +842,12 @@
      {
          TileEntity tileentity = this.field_150816_i.get(p_177424_1_);
  
@@ -145,7 +305,7 @@
          if (tileentity == null)
          {
              if (p_177424_2_ == Chunk.EnumCreateEntityType.IMMEDIATE)
-@@ -795,14 +800,9 @@
+@@ -795,14 +857,9 @@
              }
              else if (p_177424_2_ == Chunk.EnumCreateEntityType.QUEUED)
              {
@@ -161,7 +321,7 @@
  
          return tileentity;
      }
-@@ -819,10 +819,11 @@
+@@ -819,10 +876,11 @@
  
      public void func_177426_a(BlockPos p_177426_1_, TileEntity p_177426_2_)
      {
@@ -174,7 +334,17 @@
          {
              if (this.field_150816_i.containsKey(p_177426_1_))
              {
-@@ -854,8 +855,9 @@
+@@ -847,6 +905,9 @@
+         }
+     }
+ 
++    /**
++     * Called when this Chunk is loaded by the ChunkProvider
++     */
+     public void func_76631_c()
+     {
+         this.field_76636_d = true;
+@@ -854,10 +915,14 @@
  
          for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.field_76645_j)
          {
@@ -184,17 +354,30 @@
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(this));
      }
  
++    /**
++     * Called when this Chunk is unloaded by the ChunkProvider
++     */
      public void func_76623_d()
-@@ -871,6 +873,7 @@
+     {
+         this.field_76636_d = false;
+@@ -871,17 +936,24 @@
          {
              this.field_76637_e.func_175681_c(classinheritancemultimap);
          }
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(this));
      }
  
++    /**
++     * Sets the isModified flag for this Chunk
++     */
      public void func_76630_e()
-@@ -880,8 +883,8 @@
+     {
+         this.field_76643_l = true;
+     }
  
++    /**
++     * Fills the given list of all entities that intersect within the given bounding box that aren't the passed entity.
++     */
      public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, Predicate <? super Entity > p_177414_4_)
      {
 -        int i = MathHelper.func_76128_c((p_177414_2_.field_72338_b - 2.0D) / 16.0D);
@@ -204,8 +387,13 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -918,8 +921,8 @@
+@@ -916,10 +988,13 @@
+         }
+     }
  
++    /**
++     * Gets all entities that can be assigned to the specified class.
++     */
      public <T extends Entity> void func_177430_a(Class <? extends T > p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, Predicate <? super T > p_177430_4_)
      {
 -        int i = MathHelper.func_76128_c((p_177430_2_.field_72338_b - 2.0D) / 16.0D);
@@ -215,7 +403,17 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -997,6 +1000,8 @@
+@@ -935,6 +1010,9 @@
+         }
+     }
+ 
++    /**
++     * Returns true if this Chunk needs to be saved
++     */
+     public boolean func_76601_a(boolean p_76601_1_)
+     {
+         if (p_76601_1_)
+@@ -997,6 +1075,8 @@
  
      protected void func_186034_a(IChunkGenerator p_186034_1_)
      {
@@ -224,7 +422,7 @@
          if (this.func_177419_t())
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
-@@ -1008,8 +1013,10 @@
+@@ -1008,8 +1088,10 @@
          {
              this.func_150809_p();
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
@@ -235,7 +433,7 @@
      }
  
      public BlockPos func_177440_h(BlockPos p_177440_1_)
-@@ -1064,7 +1071,7 @@
+@@ -1064,7 +1146,7 @@
          {
              BlockPos blockpos = this.field_177447_w.poll();
  
@@ -244,7 +442,34 @@
              {
                  TileEntity tileentity = this.func_177422_i(blockpos);
                  this.field_76637_e.func_175690_a(blockpos, tileentity);
-@@ -1128,6 +1135,13 @@
+@@ -1083,11 +1165,18 @@
+         return this.field_150815_m;
+     }
+ 
++    /**
++     * Gets a {@link ChunkPos} representing the x and z coordinates of this chunk.
++     */
+     public ChunkPos func_76632_l()
+     {
+         return new ChunkPos(this.field_76635_g, this.field_76647_h);
+     }
+ 
++    /**
++     * Returns whether the ExtendedBlockStorages containing levels (in blocks) from arg 1 to arg 2 are fully empty
++     * (true) or not (false).
++     */
+     public boolean func_76606_c(int p_76606_1_, int p_76606_2_)
+     {
+         if (p_76606_1_ < 0)
+@@ -1125,9 +1214,21 @@
+         }
+     }
+ 
++    /**
++     * Loads this chunk from the given buffer.
++     *  
++     * @see net.minecraft.network.play.server.SPacketChunkData#getReadBuffer()
++     */
      @SideOnly(Side.CLIENT)
      public void func_186033_a(PacketBuffer p_186033_1_, int p_186033_2_, boolean p_186033_3_)
      {
@@ -258,7 +483,7 @@
          boolean flag = this.field_76637_e.field_73011_w.func_191066_m();
  
          for (int i = 0; i < this.field_76652_q.length; ++i)
-@@ -1176,10 +1190,16 @@
+@@ -1176,10 +1277,16 @@
          this.field_76646_k = true;
          this.func_76590_a();
  
@@ -275,7 +500,46 @@
      }
  
      public Biome func_177411_a(BlockPos p_177411_1_, BiomeProvider p_177411_2_)
-@@ -1244,13 +1264,13 @@
+@@ -1199,11 +1306,18 @@
+         return biome1 == null ? Biomes.field_76772_c : biome1;
+     }
+ 
++    /**
++     * Returns an array containing a 16x16 mapping on the X/Z of block positions in this Chunk to biome IDs.
++     */
+     public byte[] func_76605_m()
+     {
+         return this.field_76651_r;
+     }
+ 
++    /**
++     * Accepts a 256-entry array that contains a 16x16 mapping on the X/Z plane of block positions in this Chunk to
++     * biome IDs.
++     */
+     public void func_76616_a(byte[] p_76616_1_)
+     {
+         if (this.field_76651_r.length != p_76616_1_.length)
+@@ -1216,11 +1330,19 @@
+         }
+     }
+ 
++    /**
++     * Resets the relight check index to 0 for this Chunk.
++     */
+     public void func_76613_n()
+     {
+         this.field_76649_t = 0;
+     }
+ 
++    /**
++     * Called once-per-chunk-per-tick, and advances the round-robin relight check index by up to 8 blocks at a time. In
++     * a worst-case scenario, can potentially take up to 25.6 seconds, calculated via (4096/8)/20, to re-check all
++     * blocks in a chunk, which may explain lagging light updates on initial world generation.
++     */
+     public void func_76594_o()
+     {
+         if (this.field_76649_t < 4096)
+@@ -1244,13 +1366,13 @@
                      BlockPos blockpos1 = blockpos.func_177982_a(k, (j << 4) + i1, l);
                      boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
@@ -291,7 +555,7 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1381,7 +1401,7 @@
+@@ -1381,7 +1503,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -300,7 +564,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1420,6 +1440,7 @@
+@@ -1420,6 +1542,7 @@
          else
          {
              System.arraycopy(p_177420_1_, 0, this.field_76634_f, 0, this.field_76634_f.length);
@@ -308,7 +572,7 @@
          }
      }
  
-@@ -1489,4 +1510,52 @@
+@@ -1489,4 +1612,52 @@
          QUEUED,
          CHECK;
      }
