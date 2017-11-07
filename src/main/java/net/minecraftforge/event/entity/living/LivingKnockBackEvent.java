@@ -34,9 +34,9 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 @Cancelable
 public class LivingKnockBackEvent extends LivingEvent
 {
-	private final Entity attacker;
-	private float strength;
-	private double ratioX, ratioZ;
+	protected Entity attacker;
+	protected float strength;
+	protected double ratioX, ratioZ;
 
 	public LivingKnockBackEvent(EntityLivingBase target, Entity attacker, float strength, double ratioX, double ratioZ)
 	{
@@ -54,4 +54,12 @@ public class LivingKnockBackEvent extends LivingEvent
 	public double getRatioX() {return this.ratioX;}
 
 	public double getRatioZ() {return this.ratioZ;}
+
+	public void setAttacker(Entity attacker) {this.attacker = attacker;}
+
+	public void setStrength(float strength) {this.strength = strength;}
+
+	public void setRatioX(double ratioX) {this.ratioX = ratioX;}
+
+	public void setRatioZ(double ratioZ) {this.ratioZ = ratioZ;}
 }
