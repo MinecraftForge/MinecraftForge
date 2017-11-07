@@ -36,7 +36,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * {@link EntityMob#attackEntityAsMob(Entity)} and 
  * {@link EntityPlayer#attackTargetEntityWithCurrentItem(Entity)} <br>
  * <br>
- * This event is fired via {@link ForgeHooks#onLivingKnockBack(LivingKnockBackEvent)}.<br>
+ * This event is fired via {@link ForgeHooks#onLivingKnockBack(EntityLivingBase, Entity, float, double, double)}.<br>
  * <br>
  * {@link #attacker} contains the Entity that caused the knock back. <br>
  * {@link #strength} contains the strength of the knock back. <br>
