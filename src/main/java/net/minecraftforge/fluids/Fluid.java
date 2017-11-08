@@ -138,6 +138,18 @@ public class Fluid
      */
     protected int color = 0xFFFFFFFF;
 
+    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, Color color)
+    {
+        this(fluidName, still, flowing);
+        this.setColor(color);
+    }
+
+    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, int color)
+    {
+        this(fluidName, still, flowing);
+        this.setColor(color);
+    }
+    
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing)
     {
         this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
@@ -217,6 +229,12 @@ public class Fluid
     public Fluid setColor(Color color)
     {
         this.color = color.getRGB();
+        return this;
+    }
+    
+    public Fluid setColor(int color)
+    {
+        this.color = color;
         return this;
     }
 
