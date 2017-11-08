@@ -27,3 +27,15 @@
          {
              int i = 1 << p_77872_3_.field_76197_d;
              int j = p_77872_3_.field_76201_a;
+@@ -251,9 +251,9 @@
+ 
+     public static void func_190905_a(World p_190905_0_, ItemStack p_190905_1_)
+     {
+-        if (p_190905_1_.func_77973_b() == Items.field_151098_aY)
++        if (p_190905_1_.func_77973_b() instanceof ItemMap)
+         {
+-            MapData mapdata = Items.field_151098_aY.func_77873_a(p_190905_1_, p_190905_0_);
++            MapData mapdata = ((ItemMap) p_190905_1_.func_77973_b()).func_77873_a(p_190905_1_, p_190905_0_);
+ 
+             if (mapdata != null)
+             {

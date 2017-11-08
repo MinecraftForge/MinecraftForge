@@ -1,29 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -661,7 +661,10 @@
+@@ -671,7 +671,10 @@
                  double d2 = this.field_147369_b.field_70161_v - ((double)blockpos.func_177952_p() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
 -                if (d3 > 36.0D)
-+                double dist = field_147369_b.field_71134_c.getBlockReachDistance() + 1;
++                double dist = field_147369_b.func_110148_a(EntityPlayer.REACH_DISTANCE).func_111126_e() + 1;
 +                dist *= dist;
 +
 +                if (d3 > dist)
                  {
                      return;
                  }
-@@ -719,7 +722,9 @@
+@@ -729,7 +732,9 @@
  
          if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || enumfacing != EnumFacing.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z())
          {
 -            if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < 64.0D && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
-+            double dist = field_147369_b.field_71134_c.getBlockReachDistance() + 3;
++            double dist = field_147369_b.func_110148_a(EntityPlayer.REACH_DISTANCE).func_111126_e() + 3;
 +            dist *= dist;
 +            if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < dist && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
              {
                  this.field_147369_b.field_71134_c.func_187251_a(this.field_147369_b, worldserver, itemstack, enumhand, blockpos, enumfacing, p_184337_1_.func_187026_d(), p_184337_1_.func_187025_e(), p_184337_1_.func_187020_f());
              }
-@@ -923,7 +928,9 @@
+@@ -933,7 +938,9 @@
              }
              else
              {
@@ -34,15 +34,15 @@
                  this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
              }
  
-@@ -1056,6 +1063,7 @@
+@@ -1066,6 +1073,7 @@
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT_AT)
                  {
                      EnumHand enumhand1 = p_147340_1_.func_186994_b();
-+                    if(net.minecraftforge.common.ForgeHooks.onInteractEntityAtAction(field_147369_b, entity, p_147340_1_.func_179712_b(), enumhand1) != null) return;
++                    if(net.minecraftforge.common.ForgeHooks.onInteractEntityAt(field_147369_b, entity, p_147340_1_.func_179712_b(), enumhand1) != null) return;
                      entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), enumhand1);
                  }
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.ATTACK)
-@@ -1096,7 +1104,7 @@
+@@ -1106,7 +1114,7 @@
                          return;
                      }
  
@@ -51,7 +51,7 @@
  
                      if (this.field_147367_d.func_71199_h())
                      {
-@@ -1139,7 +1147,7 @@
+@@ -1149,7 +1157,7 @@
              {
                  ItemStack itemstack2 = this.field_147369_b.field_71070_bA.func_184996_a(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(), p_147351_1_.func_186993_f(), this.field_147369_b);
  

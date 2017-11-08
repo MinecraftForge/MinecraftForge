@@ -31,7 +31,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.ArrayEntry;
 import net.minecraftforge.fml.common.FMLLog;
 
-import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Keyboard;
 
 import static net.minecraftforge.fml.client.config.GuiUtils.INVALID;
@@ -77,7 +76,7 @@ public class GuiEditArrayEntries extends GuiListExtended
                 try
                 {
                     listEntries.add(clazz.getConstructor(GuiEditArray.class, GuiEditArrayEntries.class, IConfigElement.class, Object.class)
-                            .newInstance(this.owningGui, this, configElement, value.toString()));
+                            .newInstance(this.owningGui, this, configElement, value));
                 }
                 catch (Throwable e)
                 {
@@ -687,7 +686,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void func_192633_a(int p_178011_1_, int p_178011_2_, int p_178011_3_, float partial){}
+        public void updatePosition(int p_178011_1_, int p_178011_2_, int p_178011_3_, float partial){}
     }
 
     public static interface IArrayEntry extends GuiListExtended.IGuiListEntry

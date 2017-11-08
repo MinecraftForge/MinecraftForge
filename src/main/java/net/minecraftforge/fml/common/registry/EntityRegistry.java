@@ -36,7 +36,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -284,16 +284,7 @@ public class EntityRegistry
     {
         for (Biome biome : biomes)
         {
-            Iterator<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature).iterator();
-
-            while (spawns.hasNext())
-            {
-                SpawnListEntry entry = spawns.next();
-                if (entry.entityClass == entityClass)
-                {
-                    spawns.remove();
-                }
-            }
+            biome.getSpawnableList(typeOfCreature).removeIf(entry -> entry.entityClass == entityClass);
         }
     }
 
@@ -370,5 +361,12 @@ public class EntityRegistry
                 return e;
         }
         return null;
+    }
+
+    // This is an internal method - do not touch.
+    final void insert(final Class<? extends Entity> entity, final EntityRegistration registration)
+    {
+        this.entityClassRegistrations.put(entity, registration);
+        this.entityRegistrations.put(registration.container, registration);
     }
 }

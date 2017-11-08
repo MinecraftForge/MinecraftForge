@@ -8,10 +8,43 @@
 -import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class RecipeFireworks implements IRecipe
-+public class RecipeFireworks extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++public class RecipeFireworks extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
  {
      private ItemStack field_92102_a = ItemStack.field_190927_a;
  
+@@ -41,7 +39,7 @@
+                 {
+                     ++l;
+                 }
+-                else if (itemstack.func_77973_b() == Items.field_151100_aR)
++                else if (net.minecraftforge.oredict.DyeUtils.isDye(itemstack))
+                 {
+                     ++k;
+                 }
+@@ -127,9 +125,9 @@
+ 
+                     if (!itemstack2.func_190926_b())
+                     {
+-                        if (itemstack2.func_77973_b() == Items.field_151100_aR)
++                        if (net.minecraftforge.oredict.DyeUtils.isDye(itemstack2))
+                         {
+-                            list.add(Integer.valueOf(ItemDye.field_150922_c[itemstack2.func_77960_j() & 15]));
++                            list.add(Integer.valueOf(ItemDye.field_150922_c[net.minecraftforge.oredict.DyeUtils.rawDyeDamageFromStack(itemstack2) & 15]));
+                         }
+                         else if (itemstack2.func_77973_b() == Items.field_151114_aO)
+                         {
+@@ -181,9 +179,9 @@
+ 
+                     if (!itemstack1.func_190926_b())
+                     {
+-                        if (itemstack1.func_77973_b() == Items.field_151100_aR)
++                        if (net.minecraftforge.oredict.DyeUtils.isDye(itemstack1))
+                         {
+-                            list1.add(Integer.valueOf(ItemDye.field_150922_c[itemstack1.func_77960_j() & 15]));
++                            list1.add(Integer.valueOf(ItemDye.field_150922_c[net.minecraftforge.oredict.DyeUtils.rawDyeDamageFromStack(itemstack1) & 15]));
+                         }
+                         else if (itemstack1.func_77973_b() == Items.field_151154_bQ)
+                         {
 @@ -248,10 +246,7 @@
          {
              ItemStack itemstack = p_179532_1_.func_70301_a(i);

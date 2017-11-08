@@ -13,7 +13,7 @@
      private Block field_179550_j;
      private boolean field_179551_k;
  
-+    private net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate;
++    private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +    private NBTTagCompound capNBT;
 +
@@ -232,7 +232,7 @@
          }
  
          return multimap;
-@@ -1130,4 +1155,113 @@
+@@ -1130,4 +1155,127 @@
      {
          this.func_190917_f(-p_190918_1_);
      }
@@ -294,7 +294,7 @@
 +        {
 +            this.delegate = item.delegate;
 +            net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
-+            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(item, this, provider);
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this, provider);
 +            if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
 +        }
 +    }
@@ -344,5 +344,19 @@
 +            return shareTagB == null;
 +        else
 +            return shareTagB != null && shareTagA.equals(shareTagB);
++    }
++
++    /**
++     *
++     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
++     *
++     * @param world The world
++     * @param pos Block position in world
++     * @param player The Player that is wielding the item
++     * @return
++     */
++    public boolean doesSneakBypassUse(net.minecraft.world.IBlockAccess world, BlockPos pos, EntityPlayer player)
++    {
++        return this.func_190926_b() || this.func_77973_b().doesSneakBypassUse(this, world, pos, player);
 +    }
  }

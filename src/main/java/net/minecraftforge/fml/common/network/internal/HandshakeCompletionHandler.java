@@ -23,8 +23,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.CompleteHandshake;
 
-import org.apache.logging.log4j.Level;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -34,7 +32,7 @@ public class HandshakeCompletionHandler extends SimpleChannelInboundHandler<FMLM
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CompleteHandshake msg) throws Exception
     {
-        NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).getAndRemove();
+        NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).getAndSet(null);
         dispatcher.completeHandshake(msg.target);
     }
 

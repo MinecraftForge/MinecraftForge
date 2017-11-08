@@ -3,7 +3,6 @@ package net.minecraftforge.debug;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,6 +42,7 @@ public class TestCapabilityMod
     @CapabilityInject(IExampleCapability.class)
     private static final Capability<IExampleCapability> TEST_CAP = null;
 
+    static final boolean ENABLED = false;
     private static Logger logger;
 
     @Mod.EventHandler
@@ -59,7 +59,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent.LeftClickBlock event)
     {
-        if (event.getItemStack().getItem() != Items.STICK)
+        if (!ENABLED || event.getItemStack().getItem() != Items.STICK)
         {
             return;
         }
@@ -83,7 +83,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onInteractItem(PlayerInteractEvent.RightClickItem event)
     {
-        if (!event.getEntityPlayer().isSneaking())
+        if (!ENABLED || !event.getEntityPlayer().isSneaking())
         {
             return;
         }
@@ -189,26 +189,6 @@ public class TestCapabilityMod
         }
     }
 
-    // these can be removed if we remove these legacy events
-    @SubscribeEvent
-    public void onItemLoadLegacy(AttachCapabilitiesEvent<Item> event)
-    {
-        if (event.getObject() == Items.APPLE)
-        {
-            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<Item>(event.getObject()));
-        }
-    }
-
-    @SubscribeEvent
-    public void onItemLoadLegacy(AttachCapabilitiesEvent.Item event)
-    {
-        if (event.getObject() == Items.ARROW)
-        {
-            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<Item>(event.getObject()));
-        }
-    }
-
-
     @SuppressWarnings("rawtypes")
     @SubscribeEvent
     public void attachEvent(AttachCapabilitiesEvent event) //Test Raw type gets everything still.
@@ -236,7 +216,7 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent event)
     {
-        if (!event.world.isRemote)
+        if (ENABLED && !event.world.isRemote)
         {
             List<EntityPlayer> players = event.world.playerEntities;
             int i = 0;

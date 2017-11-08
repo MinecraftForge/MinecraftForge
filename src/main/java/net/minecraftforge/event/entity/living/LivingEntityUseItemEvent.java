@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 import javax.annotation.Nonnull;
 
-public abstract class LivingEntityUseItemEvent extends LivingEvent
+public class LivingEntityUseItemEvent extends LivingEvent
 {
     private final ItemStack item;
     private int duration;

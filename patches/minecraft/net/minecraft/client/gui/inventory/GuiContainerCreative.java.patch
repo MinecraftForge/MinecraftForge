@@ -32,15 +32,14 @@
          {
              if (GameSettings.func_100015_a(this.field_146297_k.field_71474_y.field_74310_D))
              {
-@@ -346,6 +355,35 @@
+@@ -346,6 +355,34 @@
          GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
          guicontainercreative$containercreative.field_148330_a.clear();
  
 +        CreativeTabs tab = CreativeTabs.field_78032_a[field_147058_w];
 +        if (tab.hasSearchBar() && tab != CreativeTabs.field_78027_g)
 +        {
-+            for (Item item : Item.field_150901_e)
-+                item.func_150895_a(tab, guicontainercreative$containercreative.field_148330_a);
++            tab.func_78018_a(guicontainercreative$containercreative.field_148330_a);
 +            if (!this.field_147062_A.func_146179_b().isEmpty())
 +            {
 +                //TODO: Make this a SearchTree not a manual search
@@ -68,7 +67,7 @@
          if (this.field_147062_A.func_146179_b().isEmpty())
          {
              for (Item item : Item.field_150901_e)
-@@ -366,7 +404,7 @@
+@@ -366,7 +403,7 @@
      {
          CreativeTabs creativetabs = CreativeTabs.field_78032_a[field_147058_w];
  
@@ -77,7 +76,7 @@
          {
              GlStateManager.func_179084_k();
              this.field_146289_q.func_78276_b(I18n.func_135052_a(creativetabs.func_78024_c()), 8, 6, 4210752);
-@@ -401,7 +439,7 @@
+@@ -401,7 +438,7 @@
  
              for (CreativeTabs creativetabs : CreativeTabs.field_78032_a)
              {
@@ -86,7 +85,7 @@
                  {
                      this.func_147050_b(creativetabs);
                      return;
-@@ -414,11 +452,13 @@
+@@ -414,11 +451,13 @@
  
      private boolean func_147055_p()
      {
@@ -100,7 +99,7 @@
          int i = field_147058_w;
          field_147058_w = p_147050_1_.func_78021_a();
          GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
-@@ -524,12 +564,14 @@
+@@ -524,12 +563,14 @@
  
          if (this.field_147062_A != null)
          {
@@ -116,7 +115,7 @@
                  this.func_147053_i();
              }
              else
-@@ -601,19 +643,43 @@
+@@ -601,19 +642,43 @@
  
          super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
  
@@ -161,12 +160,14 @@
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          GlStateManager.func_179140_f();
          this.func_191948_b(p_73863_1_, p_73863_2_);
-@@ -662,7 +728,9 @@
+@@ -662,7 +727,10 @@
                  }
              }
  
+-            this.func_146283_a(list, p_146285_2_, p_146285_3_);
++            net.minecraft.client.gui.FontRenderer font = p_146285_1_.func_77973_b().getFontRenderer(p_146285_1_);
 +            net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_146285_1_);
-             this.func_146283_a(list, p_146285_2_, p_146285_3_);
++            this.drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
 +            net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
          }
          else

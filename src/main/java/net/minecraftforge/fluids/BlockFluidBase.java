@@ -22,6 +22,11 @@ package net.minecraftforge.fluids;
 import java.util.Map;
 import java.util.Random;
 
+import javax.annotation.Nonnull;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -34,10 +39,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -47,11 +52,6 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.PropertyFloat;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-
-import javax.annotation.Nonnull;
 
 /**
  * This is a base implementation for Fluid blocks.
@@ -642,33 +642,6 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return !here.getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * 0.875F;
     }
 
-    /**
-     * @deprecated we now pass along up from getExtendedState
-     */
-    @Deprecated
-    public float getFluidHeightForRender(IBlockAccess world, BlockPos pos)
-    {
-        IBlockState here = world.getBlockState(pos);
-        IBlockState up = world.getBlockState(pos.down(densityDir));
-        if (here.getBlock() == this)
-        {
-            if (up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock)
-            {
-                return 1;
-            }
-
-            if (getMetaFromState(here) == getMaxRenderHeightMeta())
-            {
-                return 0.875F;
-            }
-        }
-        if (here.getBlock() instanceof BlockLiquid)
-        {
-            return Math.min(1 - BlockLiquid.getLiquidHeightPercent(here.getValue(BlockLiquid.LEVEL)), 14f / 16);
-        }
-        return !here.getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * 0.875F;
-    }
-
     public Vec3d getFlowVector(IBlockAccess world, BlockPos pos)
     {
         Vec3d vec = new Vec3d(0.0D, 0.0D, 0.0D);
@@ -754,5 +727,23 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos)
     {
         return NULL_AABB;
+    }
+    
+    @Override
+    @SideOnly (Side.CLIENT)
+    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
+    {
+        if (getFluid() != null)
+        {
+            int color = getFluid().getColor();
+            float red = (color >> 16 & 0xFF) / 255.0F;
+            float green = (color >> 8 & 0xFF) / 255.0F;
+            float blue = (color & 0xFF) / 255.0F;
+            return new Vec3d(red, green, blue);
+        }
+        else
+        {
+            return super.getFogColor(world, pos, state, entity, originalColor, partialTicks);
+        }
     }
 }

@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.common.network.internal;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -42,14 +40,7 @@ public class OpenGuiHandler extends SimpleChannelInboundHandler<FMLMessage.OpenG
         }
         else
         {
-            thread.addScheduledTask(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    OpenGuiHandler.this.process(msg);
-                }
-            });
+            thread.addScheduledTask(() -> OpenGuiHandler.this.process(msg));
         }
     }
 

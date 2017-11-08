@@ -5,7 +5,7 @@
      private static final Logger field_192422_a = LogManager.getLogger();
      private static int field_193381_c;
 -    public static final RegistryNamespaced<ResourceLocation, IRecipe> field_193380_a = new RegistryNamespaced<ResourceLocation, IRecipe>();
-+    public static final RegistryNamespaced<ResourceLocation, IRecipe> field_193380_a = net.minecraftforge.fml.common.registry.GameData.getRecipeRegistry();
++    public static final RegistryNamespaced<ResourceLocation, IRecipe> field_193380_a = net.minecraftforge.registries.GameData.getWrapper(IRecipe.class);
  
      public static boolean func_193377_a()
      {

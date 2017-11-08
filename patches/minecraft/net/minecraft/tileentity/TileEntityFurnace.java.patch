@@ -62,19 +62,16 @@
              }
  
              if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && itemstack.func_77960_j() == 1 && !((ItemStack)this.field_145957_n.get(1)).func_190926_b() && ((ItemStack)this.field_145957_n.get(1)).func_77973_b() == Items.field_151133_ar)
-@@ -316,6 +316,11 @@
+@@ -315,6 +315,8 @@
+         }
          else
          {
++            int burnTime = net.minecraftforge.event.ForgeEventFactory.getItemBurnTime(p_145952_0_);
++            if (burnTime >= 0) return burnTime;
              Item item = p_145952_0_.func_77973_b();
-+            if (!item.getRegistryName().func_110624_b().equals("minecraft"))
-+            {
-+                int burnTime = net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
-+                if (burnTime != 0) return burnTime;
-+            }
  
              if (item == Item.func_150898_a(Blocks.field_150376_bx))
-             {
-@@ -530,4 +535,22 @@
+@@ -530,4 +532,22 @@
      {
          this.field_145957_n.clear();
      }

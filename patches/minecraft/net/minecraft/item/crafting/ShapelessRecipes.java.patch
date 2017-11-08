@@ -8,7 +8,7 @@
 -import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class ShapelessRecipes implements IRecipe
-+public class ShapelessRecipes extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++public class ShapelessRecipes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
  {
      private final ItemStack field_77580_a;
      public final NonNullList<Ingredient> field_77579_b;
@@ -20,11 +20,10 @@
      public String func_193358_e()
      {
          return this.field_194138_c;
-@@ -44,17 +41,12 @@
-         for (int i = 0; i < nonnulllist.size(); ++i)
+@@ -50,10 +47,7 @@
          {
              ItemStack itemstack = p_179532_1_.func_70301_a(i);
--
+ 
 -            if (itemstack.func_77973_b().func_77634_r())
 -            {
 -                nonnulllist.set(i, new ItemStack(itemstack.func_77973_b().func_77668_q()));
@@ -33,13 +32,48 @@
          }
  
          return nonnulllist;
+@@ -61,7 +55,8 @@
+ 
+     public boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_)
+     {
+-        List<Ingredient> list = Lists.newArrayList(this.field_77579_b);
++        int ingredientCount = 0;
++        net.minecraft.client.util.RecipeItemHelper recipeItemHelper = new net.minecraft.client.util.RecipeItemHelper();
+ 
+         for (int i = 0; i < p_77569_1_.func_174923_h(); ++i)
+         {
+@@ -71,27 +66,13 @@
+ 
+                 if (!itemstack.func_190926_b())
+                 {
+-                    boolean flag = false;
+-
+-                    for (Ingredient ingredient : list)
+-                    {
+-                        if (ingredient.apply(itemstack))
+-                        {
+-                            flag = true;
+-                            list.remove(ingredient);
+-                            break;
+-                        }
+-                    }
+-
+-                    if (!flag)
+-                    {
+-                        return false;
+-                    }
++                    ++ingredientCount;
++                    recipeItemHelper.func_194112_a(itemstack);
+                 }
+             }
+         }
+ 
+-        return list.isEmpty();
++        return ingredientCount == this.field_77579_b.size() && recipeItemHelper.func_194116_a(this, null);
      }
  
--    @SideOnly(Side.CLIENT)
-     public NonNullList<Ingredient> func_192400_c()
-     {
-         return this.field_77579_b;
-@@ -137,7 +129,6 @@
+     public ItemStack func_77572_b(InventoryCrafting p_77572_1_)
+@@ -136,7 +117,6 @@
          return nonnulllist;
      }
  

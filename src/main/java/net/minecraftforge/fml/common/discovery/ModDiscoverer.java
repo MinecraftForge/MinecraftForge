@@ -31,9 +31,6 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.FileListHelper;
 
-import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.ObjectArrays;
@@ -151,10 +148,6 @@ public class ModDiscoverer
             catch (LoaderException le)
             {
                 FMLLog.log.warn("Identified a problem with the mod candidate {}, ignoring this source", candidate.getModContainer(), le);
-            }
-            catch (Throwable t)
-            {
-                Throwables.propagate(t);
             }
         }
 

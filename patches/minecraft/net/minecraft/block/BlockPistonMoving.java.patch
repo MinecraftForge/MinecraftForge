@@ -17,20 +17,19 @@
      }
  
      @Nullable
-@@ -210,6 +211,18 @@
+@@ -210,6 +211,17 @@
          return new BlockStateContainer(this, new IProperty[] {field_176426_a, field_176425_b});
      }
  
 +    @Override
-+    public java.util.List<net.minecraft.item.ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(net.minecraft.util.NonNullList<net.minecraft.item.ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
 +        TileEntityPiston tileentitypiston = this.func_185589_c(world, pos);
 +        if (tileentitypiston != null)
 +        {
 +            IBlockState pushed = tileentitypiston.func_174927_b();
-+            return pushed.func_177230_c().getDrops(world, pos, pushed, fortune);
++            drops.addAll(pushed.func_177230_c().getDrops(world, pos, pushed, fortune)); // use the old method until it gets removed, for backward compatibility
 +        }
-+        return new java.util.ArrayList();
 +    }
 +
      public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)

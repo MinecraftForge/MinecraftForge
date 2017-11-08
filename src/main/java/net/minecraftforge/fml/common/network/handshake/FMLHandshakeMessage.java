@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common.network.handshake;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +36,8 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
+import net.minecraftforge.registries.ForgeRegistry;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -47,7 +47,7 @@ public abstract class FMLHandshakeMessage {
     public static FMLProxyPacket makeCustomChannelRegistration(Set<String> channels)
     {
         String salutation = Joiner.on('\0').join(Iterables.concat(Arrays.asList("FML|HS","FML", "FML|MP"),channels));
-        FMLProxyPacket proxy = new FMLProxyPacket(new PacketBuffer(Unpooled.wrappedBuffer(salutation.getBytes(Charsets.UTF_8))), "REGISTER");
+        FMLProxyPacket proxy = new FMLProxyPacket(new PacketBuffer(Unpooled.wrappedBuffer(salutation.getBytes(StandardCharsets.UTF_8))), "REGISTER");
         return proxy;
     }
     public static class ServerHello extends FMLHandshakeMessage {
@@ -178,20 +178,20 @@ public abstract class FMLHandshakeMessage {
 
         }
 
-        public RegistryData(boolean hasMore, ResourceLocation name, PersistentRegistryManager.GameDataSnapshot.Entry entry)
+        public RegistryData(boolean hasMore, ResourceLocation name, ForgeRegistry.Snapshot entry)
         {
             this.hasMore = hasMore;
             this.name = name;
             this.ids = entry.ids;
-            this.substitutions = entry.substitutions;
             this.dummied = entry.dummied;
+            this.overrides = entry.overrides;
         }
 
         private boolean hasMore;
         private ResourceLocation name;
         private Map<ResourceLocation, Integer> ids;
-        private Set<ResourceLocation> substitutions;
         private Set<ResourceLocation> dummied;
+        private Map<ResourceLocation, String> overrides;
 
         @Override
         public void fromBytes(ByteBuf buffer)
@@ -208,22 +208,20 @@ public abstract class FMLHandshakeMessage {
             }
 
             length = ByteBufUtils.readVarInt(buffer, 3);
-            substitutions = Sets.newHashSet();
-
-            for (int i = 0; i < length; i++)
-            {
-                substitutions.add(new ResourceLocation(ByteBufUtils.readUTF8String(buffer)));
-            }
             dummied = Sets.newHashSet();
-            // if the dummied list isn't present - probably an older server
-            if (!buffer.isReadable()) return;
-            length = ByteBufUtils.readVarInt(buffer, 3);
 
             for (int i = 0; i < length; i++)
             {
                 dummied.add(new ResourceLocation(ByteBufUtils.readUTF8String(buffer)));
             }
-            //if (!buffer.isReadable()) return; // In case we expand
+
+            length = ByteBufUtils.readVarInt(buffer, 3);
+            overrides = Maps.newHashMap();
+
+            for (int i = 0; i < length; i++)
+            {
+                overrides.put(new ResourceLocation(ByteBufUtils.readUTF8String(buffer)), ByteBufUtils.readUTF8String(buffer));
+            }
         }
 
         @Override
@@ -239,31 +237,40 @@ public abstract class FMLHandshakeMessage {
                 ByteBufUtils.writeVarInt(buffer, entry.getValue(), 3);
             }
 
-            ByteBufUtils.writeVarInt(buffer, substitutions.size(), 3);
-            for (ResourceLocation entry: substitutions)
-            {
-                ByteBufUtils.writeUTF8String(buffer, entry.toString());
-            }
             ByteBufUtils.writeVarInt(buffer, dummied.size(), 3);
             for (ResourceLocation entry: dummied)
             {
                 ByteBufUtils.writeUTF8String(buffer, entry.toString());
             }
+
+            ByteBufUtils.writeVarInt(buffer, overrides.size(), 3);
+            for (Entry<ResourceLocation, String> entry: overrides.entrySet())
+            {
+                ByteBufUtils.writeUTF8String(buffer, entry.getKey().toString());
+                ByteBufUtils.writeUTF8String(buffer, entry.getValue().toString());
+            }
         }
 
-        public Map<ResourceLocation,Integer> getIdMap()
+        public Map<ResourceLocation, Integer> getIdMap()
         {
             return ids;
         }
-        public Set<ResourceLocation> getSubstitutions()
+
+        public Set<ResourceLocation> getDummied()
         {
-            return substitutions;
+            return dummied;
         }
-        public Set<ResourceLocation> getDummied() { return dummied; }
+
+        public Map<ResourceLocation, String> getOverrides()
+        {
+            return overrides;
+        }
+
         public ResourceLocation getName()
         {
             return this.name;
         }
+
         public boolean hasMore()
         {
             return this.hasMore;

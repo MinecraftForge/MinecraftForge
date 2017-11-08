@@ -9,9 +9,10 @@ import net.minecraftforge.common.crafting.IIngredientFactory;
 import net.minecraftforge.common.crafting.IRecipeFactory;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.function.BooleanSupplier;
 
@@ -22,10 +23,12 @@ public class CraftingSystemTest
     static final String MOD_ID = "crafting_system_test";
     static final boolean ENABLED = false;
 
+    static final Logger logger = LogManager.getLogger(MOD_ID);
+
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
-        FMLLog.info("Registering Test Recipes:");
+        logger.info("Registering Test Recipes:");
     }
 
     public static class IngredientFactory implements IIngredientFactory
@@ -44,7 +47,6 @@ public class CraftingSystemTest
         {
             return null;
         }
-
     }
 
     public static class ConditionFactory implements IConditionFactory

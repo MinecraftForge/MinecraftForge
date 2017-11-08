@@ -20,6 +20,7 @@
 package net.minecraftforge.common;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -36,6 +37,8 @@ import com.google.common.collect.ImmutableList;
 
 public class BiomeDictionary
 {
+    private static final boolean DEBUG = false;
+
     public static final class Type
     {
 
@@ -173,6 +176,7 @@ public class BiomeDictionary
         Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot add types to unregistered biome %s", biome);
 
         Collection<Type> supertypes = listSupertypes(types);
+        Collections.addAll(supertypes, types);
 
         for (Type type : supertypes)
         {
@@ -251,7 +255,7 @@ public class BiomeDictionary
     {
         if (biome.decorator.treesPerChunk >= 3)
         {
-            if (biome.isHighHumidity() && biome.getTemperature() >= 0.9F)
+            if (biome.isHighHumidity() && biome.getDefaultTemperature() >= 0.9F)
             {
                 BiomeDictionary.addTypes(biome, JUNGLE);
             }
@@ -259,7 +263,7 @@ public class BiomeDictionary
             {
                 BiomeDictionary.addTypes(biome, FOREST);
 
-                if (biome.getTemperature() <= 0.2f)
+                if (biome.getDefaultTemperature() <= 0.2f)
                 {
                     BiomeDictionary.addTypes(biome, CONIFEROUS);
                 }
@@ -283,12 +287,12 @@ public class BiomeDictionary
             BiomeDictionary.addTypes(biome, DRY);
         }
 
-        if (biome.getTemperature() > 0.85f)
+        if (biome.getDefaultTemperature() > 0.85f)
         {
             BiomeDictionary.addTypes(biome, HOT);
         }
 
-        if (biome.getTemperature() < 0.15f)
+        if (biome.getDefaultTemperature() < 0.15f)
         {
             BiomeDictionary.addTypes(biome, COLD);
         }
@@ -334,7 +338,7 @@ public class BiomeDictionary
             BiomeDictionary.addTypes(biome, SNOWY);
         }
 
-        if (biome.topBlock != Blocks.SAND && biome.getTemperature() >= 1.0f && biome.getRainfall() < 0.2f)
+        if (biome.topBlock != Blocks.SAND && biome.getDefaultTemperature() >= 1.0f && biome.getRainfall() < 0.2f)
         {
             BiomeDictionary.addTypes(biome, SAVANNA);
         }
@@ -356,13 +360,7 @@ public class BiomeDictionary
     //Internal implementation
     private static BiomeInfo getBiomeInfo(Biome biome)
     {
-        BiomeInfo info = biomeInfoMap.get(biome.getRegistryName());
-        if (info == null)
-        {
-            info = new BiomeInfo();
-            biomeInfoMap.put(biome.getRegistryName(), info);
-        }
-        return info;
+        return biomeInfoMap.computeIfAbsent(biome.getRegistryName(), k -> new BiomeInfo());
     }
 
     /**
@@ -389,7 +387,7 @@ public class BiomeDictionary
 
             for (Type sType : Type.byName.values())
             {
-                if (type.subTypes.contains(type) && supertypes.add(sType))
+                if (sType.subTypes.contains(type) && supertypes.add(sType))
                     next.add(sType);
             }
         }
@@ -461,5 +459,17 @@ public class BiomeDictionary
         addTypes(Biomes.MUTATED_MESA,                     HOT,      DRY,        SPARSE,   SAVANNA,  MOUNTAIN, RARE);
         addTypes(Biomes.MUTATED_MESA_ROCK,                HOT,      DRY,        SPARSE,   HILLS,    RARE          );
         addTypes(Biomes.MUTATED_MESA_CLEAR_ROCK,          HOT,      DRY,        SPARSE,   SAVANNA,  MOUNTAIN, RARE);
+
+
+        if (DEBUG)
+        {
+            FMLLog.log.debug("BiomeDictionary:");
+            for (Type type : Type.byName.values())
+            {
+                StringBuilder buf = new StringBuilder();
+                buf.append("    ").append(type.name).append(": ").append(type.biomes.stream().map(Biome::getBiomeName).collect(Collectors.joining(", ")));
+                FMLLog.log.debug(buf.toString());
+            }
+        }
     }
 }

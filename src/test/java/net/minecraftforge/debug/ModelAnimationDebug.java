@@ -22,12 +22,11 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.animation.Animation;
@@ -44,6 +43,8 @@ import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
+import net.minecraftforge.debug.ItemTileDebug.TestBlock;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -52,8 +53,12 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -65,9 +70,18 @@ public class ModelAnimationDebug
     public static final String MODID = "forgedebugmodelanimation";
     public static final String VERSION = "0.0";
 
-    public static String blockName = "test_animation_block";
-    public static ResourceLocation blockId = new ResourceLocation(MODID, blockName);
+    public static final String blockName = "test_animation_block";
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
+    @ObjectHolder(blockName)
+    public static final Block TEST_BLOCK = null;
+    @ObjectHolder(blockName)
+    public static final Item TEST_ITEM = null;
+
+    public static final String rotateBlockName = "rotatest";
+    @ObjectHolder(rotateBlockName)
+    public static final Block TEST_ROTATE_BLOCK = null;
+    @ObjectHolder(rotateBlockName)
+    public static final Item TEST_ROTATE_ITEM = null;
 
     @Instance(MODID)
     public static ModelAnimationDebug instance;
@@ -76,16 +90,22 @@ public class ModelAnimationDebug
     public static CommonProxy proxy;
     private static Logger logger;
 
-    public static abstract class CommonProxy
+
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class Registration
     {
-        public void preInit(FMLPreInitializationEvent event)
+        @SubscribeEvent
+        public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
-            GameRegistry.register(new Block(Material.WOOD)
+            GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
+            GameRegistry.registerTileEntity(Spin.class, MODID + ":" + "tile_" + rotateBlockName);
+            event.getRegistry().register(
+            new Block(Material.WOOD)
             {
                 {
                     setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
                     setUnlocalizedName(MODID + "." + blockName);
-                    setRegistryName(blockId);
+                    setRegistryName(new ResourceLocation(MODID, blockName));
                 }
 
                 @Override
@@ -166,38 +186,101 @@ public class ModelAnimationDebug
                     return true;
                 }
             });
-            GameRegistry.register(new ItemBlock(Block.REGISTRY.getObject(blockId))
+
+            event.getRegistry().register(new Block(Material.WOOD){
+                {
+                    setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+                    setUnlocalizedName(MODID + "." + rotateBlockName);
+                    setRegistryName(new ResourceLocation(MODID, rotateBlockName));
+                }
+
+                @Override
+                public ExtendedBlockState createBlockState()
+                {
+                    return new ExtendedBlockState(this, new IProperty[]{ Properties.StaticProperty }, new IUnlistedProperty[]{ Properties.AnimationProperty });
+                }
+
+                @Override
+                public boolean isOpaqueCube(IBlockState state) { return false; }
+
+                @Override
+                public boolean isFullCube(IBlockState state) { return false; }
+
+                @Override
+                public boolean hasTileEntity(IBlockState state) {
+                    return true;
+                }
+
+                @Override
+                public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+                    return state.withProperty(Properties.StaticProperty, false);
+                }
+
+                @Override
+                public int getMetaFromState(IBlockState state) {
+                    return 0;
+                }
+
+                @Override
+                public EnumBlockRenderType getRenderType(IBlockState state) {
+                    return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+                }
+
+                @Override
+                public IBlockState getStateFromMeta(int meta) {
+                    return getDefaultState();
+                }
+
+                @Override
+                public TileEntity createTileEntity(World world, IBlockState state) {
+                    return new Spin();
+                }
+            });
+        }
+
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event)
+        {
+            event.getRegistry().register(
+            new ItemBlock(TEST_BLOCK)
             {
                 @Override
                 public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
                 {
                     return new ItemAnimationHolder();
                 }
-            }.setRegistryName(blockId));
-            GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
-        }
+            }.setRegistryName(TEST_BLOCK.getRegistryName())
+            );
+            event.getRegistry().register(
+                    new ItemBlock(TEST_ROTATE_BLOCK) {
 
-        @Nullable
-        public abstract IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters);
+                    }.setRegistryName(TEST_ROTATE_BLOCK.getRegistryName())
+            );
+        }
     }
 
-    public static class ServerProxy extends CommonProxy
+    public static abstract class CommonProxy
     {
         @Nullable
-        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
-        {
-            return null;
-        }
+        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters){ return null; };
     }
 
+    public static class ServerProxy extends CommonProxy {}
+
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientProxy extends CommonProxy
     {
-        @Override
-        public void preInit(FMLPreInitializationEvent event)
+
+        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
         {
-            super.preInit(event);
+            return ModelLoaderRegistry.loadASM(location, parameters);
+        }
+
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
+        {
             B3DLoader.INSTANCE.addDomain(MODID);
-            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(blockId), 0, new ModelResourceLocation(blockId, "inventory"));
+            ModelLoader.setCustomModelResourceLocation(TEST_ITEM, 0, new ModelResourceLocation(TEST_ITEM.getRegistryName(), "inventory"));
             ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, new AnimationTESR<Chest>()
             {
                 @Override
@@ -206,6 +289,8 @@ public class ModelAnimationDebug
                     chest.handleEvents(time, pastEvents);
                 }
             });
+            ModelLoader.setCustomModelResourceLocation(TEST_ROTATE_ITEM, 0, new ModelResourceLocation(TEST_ROTATE_ITEM.getRegistryName(), "inventory"));
+            ClientRegistry.bindTileEntitySpecialRenderer(Spin.class, new AnimationTESR<Spin>());
             String entityName = MODID + ":entity_chest";
             //EntityRegistry.registerGlobalEntityID(EntityChest.class, entityName, EntityRegistry.findGlobalUniqueEntityId());
             EntityRegistry.registerModEntity(new ResourceLocation(entityName), EntityChest.class, entityName, 0, ModelAnimationDebug.instance, 64, 20, true, 0xFFAAAA00, 0xFFDDDD00);
@@ -214,15 +299,15 @@ public class ModelAnimationDebug
                 @SuppressWarnings("deprecation")
                 public Render<EntityChest> createRenderFor(RenderManager manager)
                 {
-                    /*model = ModelLoaderRegistry.getModel(new ResourceLocation(ModelLoaderRegistryDebug.MODID, "block/chest.b3d"));
-                    if(model instanceof IRetexturableModel)
-                    {
-                        model = ((IRetexturableModel)model).retexture(ImmutableMap.of("#chest", "entity/chest/normal"));
-                    }
-                    if(model instanceof IModelCustomData)
-                    {
-                        model = ((IModelCustomData)model).process(ImmutableMap.of("mesh", "[\"Base\", \"Lid\"]"));
-                    }*/
+                /*model = ModelLoaderRegistry.getModel(new ResourceLocation(ModelLoaderRegistryDebug.MODID, "block/chest.b3d"));
+                if(model instanceof IRetexturableModel)
+                {
+                    model = ((IRetexturableModel)model).retexture(ImmutableMap.of("#chest", "entity/chest/normal"));
+                }
+                if(model instanceof IModelCustomData)
+                {
+                    model = ((IModelCustomData)model).process(ImmutableMap.of("mesh", "[\"Base\", \"Lid\"]"));
+                }*/
                     ResourceLocation location = new ModelResourceLocation(new ResourceLocation(MODID, blockName), "entity");
                     return new RenderLiving<EntityChest>(manager, new net.minecraftforge.client.model.animation.AnimationModelBase<EntityChest>(location, new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()))
                     {
@@ -241,12 +326,6 @@ public class ModelAnimationDebug
                 }
             });
         }
-
-        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
-        {
-            return ModelLoaderRegistry.loadASM(location, parameters);
-        }
-
     }
 
     private static class ItemAnimationHolder implements ICapabilityProvider
@@ -279,7 +358,40 @@ public class ModelAnimationDebug
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
-        proxy.preInit(event);
+    }
+
+    public static class Spin extends TileEntity
+    {
+        @Nullable
+        private final IAnimationStateMachine asm;
+
+        public Spin()
+        {
+            asm = proxy.load(new ResourceLocation(MODID, "asms/block/rotatest.json"), ImmutableMap.of());
+        }
+
+        @Override
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
+        {
+            return capability == CapabilityAnimation.ANIMATION_CAPABILITY || super.hasCapability(capability, side);
+        }
+
+        @Override
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
+        {
+            if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            {
+                return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
+            }
+            return super.getCapability(capability, side);
+        }
+
+        @Override
+        public boolean hasFastRenderer()
+        {
+            return true;
+        }
     }
 
     public static class Chest extends TileEntity

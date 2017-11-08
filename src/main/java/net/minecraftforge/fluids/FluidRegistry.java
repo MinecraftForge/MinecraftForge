@@ -47,7 +47,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.registry.RegistryDelegate;
+import net.minecraftforge.registries.IRegistryDelegate;
 
 import javax.annotation.Nullable;
 
@@ -356,6 +356,21 @@ public abstract class FluidRegistry
         return name;
     }
 
+    @Nullable
+    public static String getModId(@Nullable FluidStack fluidStack)
+    {
+        if (fluidStack != null)
+        {
+            String defaultFluidName = getDefaultFluidName(fluidStack.getFluid());
+            if (defaultFluidName != null)
+            {
+                ResourceLocation fluidResourceName = new ResourceLocation(defaultFluidName);
+                return fluidResourceName.getResourceDomain();
+            }
+        }
+        return null;
+    }
+
     public static void loadFluidDefaults(NBTTagCompound tag)
     {
         Set<String> defaults = Sets.newHashSet();
@@ -411,13 +426,13 @@ public abstract class FluidRegistry
         }
     }
 
-    static RegistryDelegate<Fluid> makeDelegate(Fluid fl)
+    static IRegistryDelegate<Fluid> makeDelegate(Fluid fl)
     {
         return delegates.get(fl);
     }
 
 
-    private static class FluidDelegate implements RegistryDelegate<Fluid>
+    private static class FluidDelegate implements IRegistryDelegate<Fluid>
     {
         private String name;
         private Fluid fluid;

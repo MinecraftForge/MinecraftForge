@@ -1,11 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
-@@ -118,11 +118,14 @@
+@@ -117,12 +117,15 @@
+     {
          if (p_180546_1_.func_145835_a(this.field_147560_j, this.field_147561_k, this.field_147558_l) < p_180546_1_.func_145833_n())
          {
-             RenderHelper.func_74519_b();
 +            if(!drawingBatch || !p_180546_1_.hasFastRenderer())
 +            {
+             RenderHelper.func_74519_b();
              int i = this.field_147550_f.func_175626_b(p_180546_1_.func_174877_v(), 0);
              int j = i % 65536;
              int k = i / 65536;
@@ -70,7 +71,7 @@
 +
 +        if(pass > 0)
 +        {
-+            batchBuffer.func_178180_c().func_181674_a((float)field_147554_b, (float)field_147555_c, (float)field_147552_d);
++            batchBuffer.func_178180_c().func_181674_a(0, 0, 0);
 +        }
 +        batchBuffer.func_78381_a();
 +

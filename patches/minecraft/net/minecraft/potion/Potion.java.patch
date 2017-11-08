@@ -5,10 +5,10 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class Potion
-+public class Potion extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Potion>
++public class Potion extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Potion>
  {
 -    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = new RegistryNamespaced<ResourceLocation, Potion>();
-+    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = net.minecraftforge.fml.common.registry.GameData.getPotionRegistry();
++    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = net.minecraftforge.registries.GameData.getWrapper(Potion.class);
      private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.<IAttribute, AttributeModifier>newHashMap();
      private final boolean field_76418_K;
      private final int field_76414_N;
@@ -20,7 +20,7 @@
      public boolean func_76398_f()
      {
          return this.field_76418_K;
-@@ -293,7 +292,74 @@
+@@ -293,7 +292,85 @@
          return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
      }
  
@@ -87,6 +87,17 @@
 +        java.util.ArrayList<net.minecraft.item.ItemStack> ret = new java.util.ArrayList<net.minecraft.item.ItemStack>();
 +        ret.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.field_151117_aB));
 +        return ret;
++    }
++    
++    /**
++     * Used for determining {@code PotionEffect} sort order in GUIs.
++     * Defaults to the {@code PotionEffect}'s liquid color.
++     * @param potionEffect the {@code PotionEffect} instance containing the potion
++     * @return a value used to sort {@code PotionEffect}s in GUIs 
++     */
++    public int getGuiSortColor(PotionEffect potionEffect)
++    {
++        return this.func_76401_j();
 +    }
 +
 +    /* ======================================== FORGE END =====================================*/

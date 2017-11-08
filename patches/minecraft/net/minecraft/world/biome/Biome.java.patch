@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public abstract class Biome
-+public abstract class Biome extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Biome>
++public abstract class Biome extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Biome>
  {
      private static final Logger field_150586_aC = LogManager.getLogger();
      protected static final IBlockState field_185365_a = Blocks.field_150348_b.func_176223_P();
@@ -14,7 +14,7 @@
      protected static final WorldGenBigTree field_76758_O = new WorldGenBigTree(false);
      protected static final WorldGenSwamp field_76763_Q = new WorldGenSwamp();
 -    public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = new RegistryNamespaced<ResourceLocation, Biome>();
-+    public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = net.minecraftforge.fml.common.registry.GameData.getBiomeRegistry();
++    public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = net.minecraftforge.registries.GameData.getWrapper(Biome.class);
      private final String field_76791_y;
      private final float field_76748_D;
      private final float field_76749_E;
@@ -79,7 +79,7 @@
      }
  
      public final boolean func_150559_j()
-@@ -397,6 +402,83 @@
+@@ -397,6 +402,84 @@
          return this.field_76766_R;
      }
  
@@ -147,6 +147,7 @@
 +
 +    public void plantFlower(World world, Random rand, BlockPos pos)
 +    {
++        if (flowers.isEmpty()) return;
 +        FlowerEntry flower = (FlowerEntry)WeightedRandom.func_76271_a(rand, flowers);
 +        if (flower == null || flower.state == null ||
 +            (flower.state.func_177230_c() instanceof net.minecraft.block.BlockBush &&
@@ -163,29 +164,27 @@
      public static void func_185358_q()
      {
          func_185354_a(0, "ocean", new BiomeOcean((new Biome.BiomeProperties("Ocean")).func_185398_c(-1.0F).func_185400_d(0.1F)));
-@@ -552,6 +634,7 @@
+@@ -552,6 +635,7 @@
              public Class <? extends EntityLiving > field_76300_b;
              public int field_76301_c;
              public int field_76299_d;
-+            private final java.lang.reflect.Constructor<?> ctr;
++            private final java.lang.reflect.Constructor<? extends EntityLiving> ctr;
  
              public SpawnListEntry(Class <? extends EntityLiving > p_i1970_1_, int p_i1970_2_, int p_i1970_3_, int p_i1970_4_)
              {
-@@ -559,12 +642,28 @@
+@@ -559,12 +643,26 @@
                  this.field_76300_b = p_i1970_1_;
                  this.field_76301_c = p_i1970_3_;
                  this.field_76299_d = p_i1970_4_;
 +
-+                java.lang.reflect.Constructor<?> tmp = null;
 +                try
 +                {
-+                    tmp = p_i1970_1_.getConstructor(World.class);
++                    ctr = p_i1970_1_.getConstructor(World.class);
 +                }
 +                catch (NoSuchMethodException e)
 +                {
-+                    com.google.common.base.Throwables.propagate(e);
++                    throw new RuntimeException(e);
 +                }
-+                ctr = tmp;
              }
  
              public String toString()
@@ -195,7 +194,7 @@
 +
 +            public EntityLiving newInstance(World world) throws Exception
 +            {
-+                return (EntityLiving)ctr.newInstance(world);
++                return ctr.newInstance(world);
 +            }
          }
  

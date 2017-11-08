@@ -9,11 +9,8 @@
      public static final Ingredient field_193370_a = new Ingredient(new ItemStack[0])
      {
          public boolean apply(@Nullable ItemStack p_apply_1_)
-@@ -21,15 +23,19 @@
-         }
-     };
+@@ -23,12 +25,17 @@
      private final ItemStack[] field_193371_b;
--    @SideOnly(Side.CLIENT)
      private IntList field_194140_c;
  
 +    protected Ingredient(int size)
@@ -21,7 +18,7 @@
 +        this(new ItemStack[size]);
 +    }
 +
-     private Ingredient(ItemStack... p_i47503_1_)
+     protected Ingredient(ItemStack... p_i47503_1_)
      {
          this.field_193371_b = p_i47503_1_;
 +        Ingredient.INSTANCES.add(this);
@@ -31,11 +28,10 @@
      public ItemStack[] func_193365_a()
      {
          return this.field_193371_b;
-@@ -110,4 +116,16 @@
- 
+@@ -76,6 +83,18 @@
          return this.field_194140_c;
      }
-+
+ 
 +    public static void invalidateAll()
 +    {
 +        for (Ingredient ing : INSTANCES)
@@ -47,4 +43,7 @@
 +    {
 +        this.field_194140_c = null;
 +    }
- }
++
+     public static Ingredient func_193367_a(Item p_193367_0_)
+     {
+         return func_193369_a(new ItemStack(p_193367_0_, 1, 32767));

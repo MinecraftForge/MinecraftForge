@@ -22,13 +22,10 @@ package net.minecraftforge.event;
 import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import com.google.common.base.Predicate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -39,6 +36,9 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -52,9 +52,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.village.Village;
@@ -63,6 +63,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
@@ -83,6 +84,8 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.ThrowableImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
@@ -108,6 +111,7 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -116,10 +120,12 @@ import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -127,7 +133,7 @@ import javax.annotation.Nullable;
 public class ForgeEventFactory
 {
 
-    public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction, @Nullable EnumHand hand)
+    public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction, EnumHand hand)
     {
         BlockSnapshot snap = blockSnapshots.get(0);
         IBlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().offset(direction.getOpposite()));
@@ -169,18 +175,27 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
+    /**
+     * @deprecated use {@link #canEntitySpawn(EntityLiving, World, float, float, float, boolean)} instead
+     */
+    @Deprecated
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
+    {
+        return canEntitySpawn(entity, world, x, y, z, true);
+    }
+
+    public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner)
     {
         if (entity == null)
             return Result.DEFAULT;
-        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z);
+        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z, isSpawner);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
     }
 
     public static boolean canEntitySpawnSpawner(EntityLiving entity, World world, float x, float y, float z)
     {
-        Result result = canEntitySpawn(entity, world, x, y, z);
+        Result result = canEntitySpawn(entity, world, x, y, z, true);
         if (result == Result.DEFAULT)
         {
             return entity.getCanSpawnHere() && entity.isNotColliding(); // vanilla logic
@@ -201,6 +216,24 @@ public class ForgeEventFactory
         AllowDespawn event = new AllowDespawn(entity);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
+    }
+
+    public static int getItemBurnTime(@Nonnull ItemStack itemStack)
+    {
+        Item item = itemStack.getItem();
+        int burnTime = item.getItemBurnTime(itemStack);
+        FurnaceFuelBurnTimeEvent event = new FurnaceFuelBurnTimeEvent(itemStack, burnTime);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.getBurnTime() < 0)
+        {
+            // legacy handling
+            int fuelValue = GameRegistry.getFuelValueLegacy(itemStack);
+            if (fuelValue > 0)
+            {
+                return fuelValue;
+            }
+        }
+        return event.getBurnTime();
     }
 
     public static int getExperienceDrop(EntityLivingBase entity, EntityPlayer attackingPlayer, int originalExperience)
@@ -400,9 +433,9 @@ public class ForgeEventFactory
         return event.getExtraLife();
     }
 
-    public static int onItemPickup(EntityItem entityItem, EntityPlayer entityIn, ItemStack itemstack)
+    public static int onItemPickup(EntityItem entityItem, EntityPlayer player)
     {
-        Event event = new EntityItemPickupEvent(entityIn, entityItem);
+        Event event = new EntityItemPickupEvent(player, entityItem);
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         return event.getResult() == Result.ALLOW ? 1 : 0;
     }
@@ -561,21 +594,21 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(Item item, ItemStack stack, ICapabilityProvider parent)
+    public static CapabilityDispatcher gatherCapabilities(ItemStack stack, ICapabilityProvider parent)
     {
-        // first fire the legacy event
-        AttachCapabilitiesEvent.Item legacyEvent = new AttachCapabilitiesEvent.Item(item, stack);
-        MinecraftForge.EVENT_BUS.post(legacyEvent);
-
-        // fire new event with the caps that were already registered on the legacy event
-        AttachCapabilitiesEvent<ItemStack> event = new AttachCapabilitiesEvent<ItemStack>(ItemStack.class, stack, legacyEvent.caps);
-        return gatherCapabilities(event, parent);
+        return gatherCapabilities(new AttachCapabilitiesEvent<ItemStack>(ItemStack.class, stack), parent);
     }
 
     @Nullable
     public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent<World>(World.class, world), parent);
+    }
+
+    @Nullable
+    public static CapabilityDispatcher gatherCapabilities(Chunk chunk)
+    {
+        return gatherCapabilities(new AttachCapabilitiesEvent<Chunk>(Chunk.class, chunk), null);
     }
 
     @Nullable
@@ -614,6 +647,28 @@ public class ForgeEventFactory
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
         return event.getCharge();
+    }
+
+    public static boolean onProjectileImpact(Entity entity, RayTraceResult ray)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent(entity, ray));
+    }
+
+    public static boolean onProjectileImpact(EntityArrow arrow, RayTraceResult ray)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Arrow(arrow, ray));
+    }
+
+    public static boolean onProjectileImpact(EntityFireball fireball, RayTraceResult ray)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Fireball(fireball, ray));
+    }
+
+    public static boolean onProjectileImpact(EntityThrowable throwable, RayTraceResult ray)
+    {
+        boolean oldEvent = MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, ray));
+        boolean newEvent = MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
+        return oldEvent || newEvent; // TODO: clean up when old event is removed
     }
 
     public static boolean onReplaceBiomeBlocks(IChunkGenerator gen, int x, int z, ChunkPrimer primer, World world)
@@ -655,5 +710,11 @@ public class ForgeEventFactory
     public static boolean onEntityDestroyBlock(EntityLivingBase entity, BlockPos pos, IBlockState state)
     {
         return !MinecraftForge.EVENT_BUS.post(new LivingDestroyBlockEvent(entity, pos, state));
+    }
+
+    public static boolean gatherCollisionBoxes(World world, Entity entity, AxisAlignedBB aabb, List<AxisAlignedBB> outList)
+    {
+        MinecraftForge.EVENT_BUS.post(new GetCollisionBoxesEvent(world, entity, aabb, outList));
+        return outList.isEmpty();
     }
 }

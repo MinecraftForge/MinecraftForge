@@ -34,7 +34,7 @@
                                                  entityliving.func_70012_b((double)f, (double)i3, (double)f1, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
  
 -                                                if (entityliving.func_70601_bi() && entityliving.func_70058_J())
-+                                                net.minecraftforge.fml.common.eventhandler.Event.Result canSpawn = net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(entityliving, p_77192_1_, f, i3, f1);
++                                                net.minecraftforge.fml.common.eventhandler.Event.Result canSpawn = net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(entityliving, p_77192_1_, f, i3, f1, false);
 +                                                if (canSpawn == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW || (canSpawn == net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT && (entityliving.func_70601_bi() && entityliving.func_70058_J())))
                                                  {
 +                                                    if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f, i3, f1))
@@ -70,3 +70,11 @@
                              }
                              catch (Exception exception)
                              {
+@@ -281,6 +286,7 @@
+                                 continue;
+                             }
+ 
++                            if (net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(entityliving, p_77191_0_, j + 0.5f, (float) blockpos.func_177956_o(), k +0.5f, false) == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) continue;
+                             entityliving.func_70012_b((double)((float)j + 0.5F), (double)blockpos.func_177956_o(), (double)((float)k + 0.5F), p_77191_6_.nextFloat() * 360.0F, 0.0F);
+                             p_77191_0_.func_72838_d(entityliving);
+                             ientitylivingdata = entityliving.func_180482_a(p_77191_0_.func_175649_E(new BlockPos(entityliving)), ientitylivingdata);

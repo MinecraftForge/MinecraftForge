@@ -27,7 +27,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.animation.IAnimatedModel;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.IModelPart;
@@ -40,9 +39,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
@@ -93,15 +92,12 @@ public final class Clips
     public static IClip getModelClipNode(ResourceLocation modelLocation, String clipName)
     {
         IModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
-        if(model instanceof IAnimatedModel)
+        Optional<? extends IClip> clip = model.getClip(clipName);
+        if (clip.isPresent())
         {
-            Optional<? extends IClip> clip = ((IAnimatedModel)model).getClip(clipName);
-            if(clip.isPresent())
-            {
-                return new ModelClip(clip.get(), modelLocation, clipName);
-            }
-            FMLLog.log.error("Unable to find clip {} in the model {}", clipName, modelLocation);
+            return new ModelClip(clip.get(), modelLocation, clipName);
         }
+        FMLLog.log.error("Unable to find clip {} in the model {}", clipName, modelLocation);
         // FIXME: missing clip?
         return new ModelClip(IdentityClip.INSTANCE, modelLocation, clipName);
     }
@@ -312,7 +308,7 @@ public final class Clips
             {
                 if(!part.isPresent() || !(part.get() instanceof IJoint))
                 {
-                    return Optional.absent();
+                    return Optional.empty();
                 }
                 IJoint joint = (IJoint)part.get();
                 // TODO: Cache clip application?

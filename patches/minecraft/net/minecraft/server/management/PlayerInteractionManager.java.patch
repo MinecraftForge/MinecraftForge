@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -28,6 +28,8 @@
- 
- public class PlayerInteractionManager
- {
-+    /** Forge reach distance */
-+    private double blockReachDistance = 5.0d;
-     public World field_73092_a;
-     public EntityPlayerMP field_73090_b;
-     private GameType field_73091_c = GameType.NOT_SET;
-@@ -88,7 +90,7 @@
+@@ -88,7 +88,7 @@
              int i = this.field_73100_i - this.field_73093_n;
              IBlockState iblockstate = this.field_73092_a.func_180495_p(this.field_180241_i);
  
@@ -18,7 +9,7 @@
              {
                  this.field_73097_j = false;
              }
-@@ -114,7 +116,7 @@
+@@ -114,7 +114,7 @@
          {
              IBlockState iblockstate1 = this.field_73092_a.func_180495_p(this.field_180240_f);
  
@@ -27,7 +18,7 @@
              {
                  this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
                  this.field_73094_o = -1;
-@@ -123,7 +125,7 @@
+@@ -123,7 +123,7 @@
              else
              {
                  int k = this.field_73100_i - this.field_73089_e;
@@ -36,11 +27,12 @@
                  int l = (int)(f1 * 10.0F);
  
                  if (l != this.field_73094_o)
-@@ -137,6 +139,15 @@
+@@ -137,6 +137,16 @@
  
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
-+        net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(field_73090_b, p_180784_1_, p_180784_2_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(field_73090_b, getBlockReachDistance() + 1));
++        double reachDist = field_73090_b.func_110148_a(EntityPlayer.REACH_DISTANCE).func_111126_e();
++        net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(field_73090_b, p_180784_1_, p_180784_2_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(field_73090_b, reachDist + 1));
 +        if (event.isCanceled())
 +        {
 +            // Restore block and te data
@@ -52,7 +44,7 @@
          if (this.func_73083_d())
          {
              if (!this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_))
-@@ -172,17 +183,36 @@
+@@ -172,17 +182,36 @@
                  }
              }
  
@@ -93,7 +85,7 @@
              {
                  this.func_180237_b(p_180784_1_);
              }
-@@ -204,7 +234,7 @@
+@@ -204,7 +233,7 @@
              int i = this.field_73100_i - this.field_73089_e;
              IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180785_1_);
  
@@ -102,7 +94,7 @@
              {
                  float f = iblockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_180785_1_) * (float)(i + 1);
  
-@@ -233,13 +263,17 @@
+@@ -233,13 +262,17 @@
  
      private boolean func_180235_c(BlockPos p_180235_1_)
      {
@@ -124,7 +116,7 @@
          }
  
          return flag;
-@@ -247,7 +281,8 @@
+@@ -247,7 +280,8 @@
  
      public boolean func_180237_b(BlockPos p_180237_1_)
      {
@@ -134,7 +126,7 @@
          {
              return false;
          }
-@@ -264,53 +299,41 @@
+@@ -264,53 +298,41 @@
              }
              else
              {
@@ -200,11 +192,11 @@
                  return flag1;
              }
          }
-@@ -328,8 +351,11 @@
+@@ -328,8 +350,11 @@
          }
          else
          {
-+            EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClickAction(p_187250_1_, p_187250_4_);
++            EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187250_1_, p_187250_4_);
 +            if (cancelResult != null) return cancelResult;
              int i = p_187250_3_.func_190916_E();
              int j = p_187250_3_.func_77960_j();
@@ -212,7 +204,7 @@
              ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
              ItemStack itemstack = actionresult.func_188398_b();
  
-@@ -357,6 +383,7 @@
+@@ -357,6 +382,7 @@
  
                  if (itemstack.func_190926_b())
                  {
@@ -220,19 +212,20 @@
                      p_187250_1_.func_184611_a(p_187250_4_, ItemStack.field_190927_a);
                  }
  
-@@ -402,13 +429,23 @@
+@@ -402,13 +428,24 @@
          }
          else
          {
 -            if (!p_187251_1_.func_70093_af() || p_187251_1_.func_184614_ca().func_190926_b() && p_187251_1_.func_184592_cb().func_190926_b())
++            double reachDist = p_187251_1_.func_110148_a(EntityPlayer.REACH_DISTANCE).func_111126_e();
 +            net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks
-+                    .onRightClickBlock(p_187251_1_, p_187251_4_, p_187251_5_, p_187251_6_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(p_187251_1_, getBlockReachDistance() + 1));
++                    .onRightClickBlock(p_187251_1_, p_187251_4_, p_187251_5_, p_187251_6_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(p_187251_1_, reachDist + 1));
 +            if (event.isCanceled()) return event.getCancellationResult();
 +
 +            EnumActionResult ret = p_187251_3_.onItemUseFirst(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
 +            if (ret != EnumActionResult.PASS) return ret;
 +
-+            boolean bypass = p_187251_3_.func_190926_b() || p_187251_3_.func_77973_b().doesSneakBypassUse(p_187251_3_, p_187251_2_, p_187251_5_, p_187251_1_);
++            boolean bypass = p_187251_1_.func_184614_ca().doesSneakBypassUse(p_187251_2_, p_187251_5_, p_187251_1_) && p_187251_1_.func_184592_cb().doesSneakBypassUse(p_187251_2_, p_187251_5_, p_187251_1_);
 +            EnumActionResult result = EnumActionResult.PASS;
 +
 +            if (!p_187251_1_.func_70093_af() || bypass || event.getUseBlock() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
@@ -271,17 +264,20 @@
                  }
              }
          }
-@@ -453,4 +498,13 @@
+@@ -453,4 +498,16 @@
      {
          this.field_73092_a = p_73080_1_;
      }
 +
++    @Deprecated // use the attribute directly
 +    public double getBlockReachDistance()
 +    {
-+        return blockReachDistance;
++        return field_73090_b.func_110148_a(EntityPlayer.REACH_DISTANCE).func_111126_e();
 +    }
++
++    @Deprecated // use an attribute modifier
 +    public void setBlockReachDistance(double distance)
 +    {
-+        blockReachDistance = distance;
++        field_73090_b.func_110148_a(EntityPlayer.REACH_DISTANCE).func_111128_a(distance);
 +    }
  }

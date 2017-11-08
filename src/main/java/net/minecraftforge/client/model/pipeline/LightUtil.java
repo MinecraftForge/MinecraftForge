@@ -30,9 +30,8 @@ import net.minecraftforge.client.ForgeHooksClient;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class LightUtil
 {
@@ -90,16 +89,7 @@ public class LightUtil
         }
     }
 
-    private static final LoadingCache<Pair<VertexFormat, VertexFormat>, int[]> formatMaps = CacheBuilder.newBuilder()
-        .maximumSize(10)
-        .build(new CacheLoader<Pair<VertexFormat, VertexFormat>, int[]>()
-        {
-            @Override
-            public int[] load(Pair<VertexFormat, VertexFormat> pair)
-            {
-                return mapFormats(pair.getLeft(), pair.getRight());
-            }
-        });
+    private static final ConcurrentMap<Pair<VertexFormat, VertexFormat>, int[]> formatMaps = new ConcurrentHashMap<>();
 
     public static void putBakedQuad(IVertexConsumer consumer, BakedQuad quad)
     {
@@ -110,20 +100,19 @@ public class LightUtil
             consumer.setQuadTint(quad.getTintIndex());
         }
         consumer.setApplyDiffuseLighting(quad.shouldApplyDiffuseLighting());
-        //int[] eMap = mapFormats(consumer.getVertexFormat(), DefaultVertexFormats.ITEM);
         float[] data = new float[4];
         VertexFormat formatFrom = consumer.getVertexFormat();
         VertexFormat formatTo = quad.getFormat();
         int countFrom = formatFrom.getElementCount();
         int countTo = formatTo.getElementCount();
-        int[] eMap = formatMaps.getUnchecked(Pair.of(formatFrom, formatTo));
+        int[] eMap = mapFormats(formatFrom, formatTo);
         for(int v = 0; v < 4; v++)
         {
             for(int e = 0; e < countFrom; e++)
             {
                 if(eMap[e] != countTo)
                 {
-                    unpack(quad.getVertexData(), data, quad.getFormat(), v, eMap[e]);
+                    unpack(quad.getVertexData(), data, formatTo, v, eMap[e]);
                     consumer.put(e, data);
                 }
                 else
@@ -135,6 +124,11 @@ public class LightUtil
     }
 
     public static int[] mapFormats(VertexFormat from, VertexFormat to)
+    {
+        return formatMaps.computeIfAbsent(Pair.of(from, to), pair -> generateMapping(pair.getLeft(), pair.getRight()));
+    }
+
+    private static int[] generateMapping(VertexFormat from, VertexFormat to)
     {
         int fromCount = from.getElementCount();
         int toCount = to.getElementCount();
@@ -194,15 +188,15 @@ public class LightUtil
                 }
                 else if(type == VertexFormatElement.EnumType.BYTE)
                 {
-                    to[i] = ((float)(byte)bits) / mask * 2;
+                    to[i] = ((float)(byte)bits) / (mask >> 1);
                 }
                 else if(type == VertexFormatElement.EnumType.SHORT)
                 {
-                    to[i] = ((float)(short)bits) / mask * 2;
+                    to[i] = ((float)(short)bits) / (mask >> 1);
                 }
                 else if(type == VertexFormatElement.EnumType.INT)
                 {
-                    to[i] = ((float)(bits & 0xFFFFFFFFL)) / 0xFFFFFFFFL * 2;
+                    to[i] = (float)((double)(bits & 0xFFFFFFFFL) / (0xFFFFFFFFL >> 1));
                 }
             }
             else
@@ -239,11 +233,11 @@ public class LightUtil
                     type == VertexFormatElement.EnumType.UINT
                 )
                 {
-                    bits = (int)(f * mask);
+                    bits = Math.round(f * mask);
                 }
                 else
                 {
-                    bits = (int)(f * mask / 2);
+                    bits = Math.round(f * (mask >> 1));
                 }
                 to[index] &= ~(mask << (offset * 8));
                 to[index] |= (((bits & mask) << (offset * 8)));
@@ -297,8 +291,15 @@ public class LightUtil
 
     public static void renderQuadColor(BufferBuilder wr, BakedQuad quad, int auxColor)
     {
-        wr.addVertexData(quad.getVertexData());
-        ForgeHooksClient.putQuadColor(wr, quad, auxColor);
+        if (quad.getFormat().equals(wr.getVertexFormat())) 
+        {
+            wr.addVertexData(quad.getVertexData());
+            ForgeHooksClient.putQuadColor(wr, quad, auxColor);
+        }
+        else
+        {
+            renderQuadColorSlow(wr, quad, auxColor);
+        }
     }
 
     public static class ItemConsumer extends VertexTransformer

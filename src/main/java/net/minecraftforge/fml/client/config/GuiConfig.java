@@ -41,6 +41,7 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.PostConfigChangedEvent;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
@@ -126,15 +127,7 @@ public class GuiConfig extends GuiScreen
                 toReturn.add(ConfigElement.from(clazz));
             }
         }
-        Collections.sort(toReturn, new Comparator<IConfigElement>(){
-
-            @Override
-            public int compare(IConfigElement e1, IConfigElement e2)
-            {
-                return I18n.format(e1.getLanguageKey()).compareTo(I18n.format(e2.getLanguageKey()));
-            }
-            
-        });
+        toReturn.sort(Comparator.comparing(e -> I18n.format(e.getLanguageKey())));
         return toReturn;
     }
 
@@ -344,7 +337,7 @@ public class GuiConfig extends GuiScreen
             }
             catch (Throwable e)
             {
-                e.printStackTrace();
+                FMLLog.log.error("Error performing GuiConfig action:", e);
             }
 
             if (flag)

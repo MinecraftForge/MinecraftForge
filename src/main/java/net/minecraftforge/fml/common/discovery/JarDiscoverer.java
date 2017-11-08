@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarFile;
 
-import net.minecraftforge.common.util.Java6Utils;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
@@ -47,24 +46,16 @@ public class JarDiscoverer implements ITypeDiscoverer
     {
         List<ModContainer> foundMods = Lists.newArrayList();
         FMLLog.log.debug("Examining file {} for potential mods", candidate.getModContainer().getName());
-        JarFile jar = null;
-        try
+        try (JarFile jar = new JarFile(candidate.getModContainer()))
         {
-            jar = new JarFile(candidate.getModContainer());
-
             ZipEntry modInfo = jar.getEntry("mcmod.info");
             MetadataCollection mc = null;
             if (modInfo != null)
             {
                 FMLLog.log.trace("Located mcmod.info file in file {}", candidate.getModContainer().getName());
-                InputStream inputStream = jar.getInputStream(modInfo);
-                try
+                try (InputStream inputStream = jar.getInputStream(modInfo))
                 {
                     mc = MetadataCollection.from(inputStream, candidate.getModContainer().getName());
-                }
-                finally
-                {
-                    IOUtils.closeQuietly(inputStream);
                 }
             }
             else
@@ -84,14 +75,9 @@ public class JarDiscoverer implements ITypeDiscoverer
                     ASMModParser modParser;
                     try
                     {
-                        InputStream inputStream = jar.getInputStream(ze);
-                        try
+                        try (InputStream inputStream = jar.getInputStream(ze))
                         {
                             modParser = new ASMModParser(inputStream);
-                        }
-                        finally
-                        {
-                            IOUtils.closeQuietly(inputStream);
                         }
                         candidate.addClassEntry(ze.getName());
                     }
@@ -117,10 +103,6 @@ public class JarDiscoverer implements ITypeDiscoverer
         catch (Exception e)
         {
             FMLLog.log.warn("Zip file {} failed to read properly, it will be ignored", candidate.getModContainer().getName(), e);
-        }
-        finally
-        {
-            Java6Utils.closeZipQuietly(jar);
         }
         return foundMods;
     }

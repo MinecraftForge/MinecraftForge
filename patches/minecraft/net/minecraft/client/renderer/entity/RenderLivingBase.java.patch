@@ -14,7 +14,7 @@
  
      public void func_76986_a(T p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_)
      {
-+        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T>(p_76986_1_, this, p_76986_2_, p_76986_4_, p_76986_6_))) return;
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T>(p_76986_1_, this, p_76986_9_, p_76986_2_, p_76986_4_, p_76986_6_))) return;
          GlStateManager.func_179094_E();
          GlStateManager.func_179129_p();
          this.field_77045_g.field_78095_p = this.func_77040_d(p_76986_1_, p_76986_9_);
@@ -45,7 +45,7 @@
          GlStateManager.func_179089_o();
          GlStateManager.func_179121_F();
          super.func_76986_a(p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T>(p_76986_1_, this, p_76986_2_, p_76986_4_, p_76986_6_));
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T>(p_76986_1_, this, p_76986_9_, p_76986_2_, p_76986_4_, p_76986_6_));
      }
  
      public float func_188322_c(T p_188322_1_, float p_188322_2_)
