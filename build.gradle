@@ -30,7 +30,7 @@ apply plugin: "net.minecraftforge.gradle.launch4j"
 minecraft.version = "1.12.2"
 
 minecraft {
-    mappings = 'snapshot_nodoc_20171102'
+    mappings = 'snapshot_nodoc_20171108'
     workspaceDir = "projects"
     versionJson = "jsons/${minecraft.version}-dev.json"
     buildUserdev = true
@@ -233,9 +233,9 @@ task ciWriteBuildNumber {
         def ln = "\n" //Linux line endings because we're on git!
 
         file.eachLine{ String s ->
-            if (s.matches("^    public static final int buildVersion    = [\\d]+;\$"))
+            if (s.matches("^ {4}public static final int buildVersion {4}= [\\d]+;\$"))
                 s = "    public static final int buildVersion    = ${bn};"
-            if (s.matches('^    public static final String mcVersion = "[^\\"]+";'))
+            if (s.matches('^ {4}public static final String mcVersion = "[^"]+";'))
                 s = "    public static final String mcVersion = \"${minecraft.version}\";"
             outfile += (s+ln)
         }
