@@ -23,6 +23,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -63,7 +64,7 @@ public class ForgeTimeTracker {
         {
             tileEntityTrackingTime = nanoTime;
         }
-        else if (tileEntityTrackingTime + tileEntityTrackingDuration < nanoTime)
+        else if (tileEntityTrackingTime + TimeUnit.NANOSECONDS.convert(tileEntityTrackingDuration, TimeUnit.SECONDS) < nanoTime)
         {
             tileEntityTracking = false;
             tileEntityTrackingTime = 0;
