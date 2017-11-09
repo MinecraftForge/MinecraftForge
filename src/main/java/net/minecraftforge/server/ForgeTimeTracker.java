@@ -25,12 +25,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MapMaker;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.server.timings.ForgeTimings;
 
 public class ForgeTimeTracker {
     public static boolean tileEntityTracking;
@@ -89,17 +89,16 @@ public class ForgeTimeTracker {
         timings[idx] = (int) (nanoTime - timing);
     }
 
-    public static ImmutableMap<TileEntity,int[]> getTileTimings()
+    public static ImmutableList<ForgeTimings<TileEntity>> getTileTimings()
     {
-        return INSTANCE.buildImmutableTileEntityTimingMap();
+        return INSTANCE.buildImmutableTileEntityTimingList();
     }
-    
-    private ImmutableMap<TileEntity, int[]> buildImmutableTileEntityTimingMap()
-    {
-        Builder<TileEntity, int[]> builder = ImmutableMap.builder();
-        for (Entry<TileEntity, int[]> entry : tileEntityTimings.entrySet())
-        {
-            builder.put(entry.getKey(), Arrays.copyOfRange(entry.getValue(), 0, 100));
+
+    private ImmutableList<ForgeTimings<TileEntity>> buildImmutableTileEntityTimingList(){
+        ImmutableList.Builder<ForgeTimings<TileEntity>> builder = ImmutableList.builder();
+
+        for(Entry<TileEntity, int[]> entry : tileEntityTimings.entrySet()){
+            builder.add(new ForgeTimings<TileEntity>(entry.getKey(), Arrays.copyOfRange(entry.getValue(), 0, 99)));
         }
         return builder.build();
     }
