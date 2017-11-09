@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockConcretePowder.java
++++ ../src-work/minecraft/net/minecraft/block/BlockConcretePowder.java
+@@ -45,7 +45,7 @@
+             {
+                 BlockPos blockpos = p_192425_2_.func_177972_a(enumfacing);
+ 
+-                if (p_192425_1_.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
++                if (p_192425_1_.func_180495_p(blockpos).func_185904_a().isLiquidOtherThanLava())
+                 {
+                     flag = true;
+                     break;

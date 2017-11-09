@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLilyPad.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLilyPad.java
+@@ -56,7 +56,7 @@
+         {
+             IBlockState iblockstate = p_180671_1_.func_180495_p(p_180671_2_.func_177977_b());
+             Material material = iblockstate.func_185904_a();
+-            return material == Material.field_151586_h && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0 || material == Material.field_151588_w;
++            return material.getCanWaterPlants() && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0 || material == Material.field_151588_w;
+         }
+         else
+         {

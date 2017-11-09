@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -96,6 +96,12 @@
+@@ -96,48 +96,89 @@
  @SuppressWarnings("incomplete-switch")
  public abstract class EntityPlayer extends EntityLivingBase
  {
@@ -10,10 +10,87 @@
 +    public float eyeHeight = this.getDefaultEyeHeight();
 +    public static final net.minecraft.entity.ai.attributes.IAttribute REACH_DISTANCE = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "generic.reachDistance", 5.0D, 0.0D, 1024.0D).func_111112_a(true);
 +
++    /** The absorption data parameter */
      private static final DataParameter<Float> field_184829_a = EntityDataManager.<Float>func_187226_a(EntityPlayer.class, DataSerializers.field_187193_c);
      private static final DataParameter<Integer> field_184830_b = EntityDataManager.<Integer>func_187226_a(EntityPlayer.class, DataSerializers.field_187192_b);
      protected static final DataParameter<Byte> field_184827_bp = EntityDataManager.<Byte>func_187226_a(EntityPlayer.class, DataSerializers.field_187191_a);
-@@ -165,6 +171,7 @@
+     protected static final DataParameter<Byte> field_184828_bq = EntityDataManager.<Byte>func_187226_a(EntityPlayer.class, DataSerializers.field_187191_a);
+     protected static final DataParameter<NBTTagCompound> field_192032_bt = EntityDataManager.<NBTTagCompound>func_187226_a(EntityPlayer.class, DataSerializers.field_192734_n);
+     protected static final DataParameter<NBTTagCompound> field_192033_bu = EntityDataManager.<NBTTagCompound>func_187226_a(EntityPlayer.class, DataSerializers.field_192734_n);
++    /** Inventory of the player */
+     public InventoryPlayer field_71071_by = new InventoryPlayer(this);
+     protected InventoryEnderChest field_71078_a = new InventoryEnderChest();
++    /** The Container for the player's inventory (which opens when they press E) */
+     public Container field_71069_bz;
++    /** The Container the player has open. */
+     public Container field_71070_bA;
++    /** The food object of the player, the general hunger logic. */
+     protected FoodStats field_71100_bB = new FoodStats();
++    /**
++     * Used to tell if the player pressed jump twice. If this is at 0 and it's pressed (And they are allowed to fly, as
++     * defined in the player's movementInput) it sets this to 7. If it's pressed and it's greater than 0 enable fly.
++     */
+     protected int field_71101_bC;
+     public float field_71107_bF;
+     public float field_71109_bG;
++    /** Used by EntityPlayer to prevent too many xp orbs from getting absorbed at once. */
+     public int field_71090_bL;
++    /** Previous X position of the player's cape */
+     public double field_71091_bM;
++    /** Previous Y position of the player's cape */
+     public double field_71096_bN;
++    /** Previous Z position of the player's cape */
+     public double field_71097_bO;
++    /** Current X position of the player's cape */
+     public double field_71094_bP;
++    /** Current Y position of the player's cape */
+     public double field_71095_bQ;
++    /** Current Z position of the player's cape */
+     public double field_71085_bR;
++    /** Boolean value indicating weather a player is sleeping or not */
+     protected boolean field_71083_bS;
++    /** The location of the bed the player is sleeping in, or {@code null} if they are not sleeping */
+     public BlockPos field_71081_bT;
+     private int field_71076_b;
++    /** Offset in the X axis used for rendering. This field is {@linkplain #setRenderOffsetForSleep() used by beds}. */
+     public float field_71079_bU;
++    /**
++     * Offset in the Y axis used for rendering. This field is not written to in vanilla (other than being set to 0 each
++     * tick by {@link net.minecraft.client.entity.EntityOtherPlayerMP#onUpdate()}).
++     */
+     @SideOnly(Side.CLIENT)
+     public float field_71082_cx;
++    /** Offset in the Z axis used for rendering. This field is {@linkplain #setRenderOffsetForSleep() used by beds}. */
+     public float field_71089_bV;
++    /** holds the spawn chunk of the player */
+     private BlockPos field_71077_c;
++    /** Whether this player's spawn point is forced, preventing execution of bed checks. */
+     private boolean field_82248_d;
++    /** The player's capabilities. (See class PlayerCapabilities) */
+     public PlayerCapabilities field_71075_bZ = new PlayerCapabilities();
++    /** The current experience level the player is on. */
+     public int field_71068_ca;
++    /**
++     * The total amount of experience the player has. This also includes the amount of experience within their
++     * Experience Bar.
++     */
+     public int field_71067_cb;
++    /** The current amount of experience the player has within their Experience Bar. */
+     public float field_71106_cc;
+     protected int field_175152_f;
+     protected float field_71102_ce = 0.02F;
+     private int field_82249_h;
++    /** The player's unique game profile */
+     private final GameProfile field_146106_i;
+     @SideOnly(Side.CLIENT)
+     private boolean field_175153_bG;
+     private ItemStack field_184831_bT = ItemStack.field_190927_a;
+     private final CooldownTracker field_184832_bU = this.func_184815_l();
++    /** An instance of a fishing rod's hook. If this isn't null, the icon image of the fishing rod is slightly different */
+     @Nullable
+     public EntityFishHook field_71104_cf;
+ 
+@@ -165,6 +206,7 @@
          this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.10000000149011612D);
          this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188790_f);
          this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188792_h);
@@ -21,23 +98,79 @@
      }
  
      protected void func_70088_a()
-@@ -180,6 +187,7 @@
+@@ -178,8 +220,12 @@
+         this.field_70180_af.func_187214_a(field_192033_bu, new NBTTagCompound());
+     }
  
++    /**
++     * Called to update the entity's position/logic.
++     */
      public void func_70071_h_()
      {
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPreTick(this);
          this.field_70145_X = this.func_175149_v();
  
          if (this.func_175149_v())
-@@ -367,6 +375,7 @@
+@@ -367,8 +413,12 @@
                  this.func_70105_a(f, f1);
              }
          }
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPostTick(this);
      }
  
++    /**
++     * Return the amount of time this entity should stay in a portal before being transported.
++     */
      public int func_82145_z()
-@@ -454,11 +463,11 @@
+     {
+         return this.field_71075_bZ.field_75102_a ? 1 : 80;
+@@ -384,6 +434,9 @@
+         return SoundEvents.field_187806_ee;
+     }
+ 
++    /**
++     * Return the amount of cooldown before this entity can use a portal again.
++     */
+     public int func_82147_ab()
+     {
+         return 10;
+@@ -404,6 +457,9 @@
+         return 20;
+     }
+ 
++    /**
++     * Handler for {@link World#setEntityState}
++     */
+     @SideOnly(Side.CLIENT)
+     public void func_70103_a(byte p_70103_1_)
+     {
+@@ -425,16 +481,25 @@
+         }
+     }
+ 
++    /**
++     * Dead and sleeping entities cannot move
++     */
+     protected boolean func_70610_aX()
+     {
+         return this.func_110143_aJ() <= 0.0F || this.func_70608_bn();
+     }
+ 
++    /**
++     * set current crafting inventory back to the 2x2 square
++     */
+     public void func_71053_j()
+     {
+         this.field_71070_bA = this.field_71069_bz;
+     }
+ 
++    /**
++     * Handles updating while riding another entity
++     */
+     public void func_70098_U()
+     {
+         if (!this.field_70170_p.field_72995_K && this.func_70093_af() && this.func_184218_aH())
+@@ -454,15 +519,19 @@
              this.field_71109_bG = 0.0F;
              this.func_71015_k(this.field_70165_t - d0, this.field_70163_u - d1, this.field_70161_v - d2);
  
@@ -51,8 +184,49 @@
              }
          }
      }
-@@ -609,11 +618,15 @@
  
++    /**
++     * Keeps moving the entity up so it isn't colliding with blocks and other requirements for this entity to be spawned
++     * (only actually used on players though its also on Entity)
++     */
+     @SideOnly(Side.CLIENT)
+     public void func_70065_x()
+     {
+@@ -479,6 +548,10 @@
+         this.field_70759_as = this.field_70177_z;
+     }
+ 
++    /**
++     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
++     * use this to react to sunlight and start to burn.
++     */
+     public void func_70636_d()
+     {
+         if (this.field_71101_bC > 0)
+@@ -596,24 +669,37 @@
+         return ((Integer)this.field_70180_af.func_187225_a(field_184830_b)).intValue();
+     }
+ 
++    /**
++     * Set player's score
++     */
+     public void func_85040_s(int p_85040_1_)
+     {
+         this.field_70180_af.func_187227_b(field_184830_b, Integer.valueOf(p_85040_1_));
+     }
+ 
++    /**
++     * Add to player's score
++     */
+     public void func_85039_t(int p_85039_1_)
+     {
+         int i = this.func_71037_bA();
+         this.field_70180_af.func_187227_b(field_184830_b, Integer.valueOf(i + p_85039_1_));
+     }
+ 
++    /**
++     * Called when the mob's health reaches 0.
++     */
      public void func_70645_a(DamageSource p_70645_1_)
      {
 +        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this,  p_70645_1_)) return;
@@ -67,7 +241,7 @@
          if ("Notch".equals(this.func_70005_c_()))
          {
              this.func_146097_a(new ItemStack(Items.field_151034_e, 1), true, false);
-@@ -625,6 +638,9 @@
+@@ -625,6 +711,9 @@
              this.field_71071_by.func_70436_m();
          }
  
@@ -77,7 +251,14 @@
          if (p_70645_1_ != null)
          {
              this.field_70159_w = (double)(-MathHelper.func_76134_b((this.field_70739_aP + this.field_70177_z) * 0.017453292F) * 0.1F);
-@@ -675,13 +691,24 @@
+@@ -672,16 +761,34 @@
+         return SoundEvents.field_187798_ea;
+     }
+ 
++    /**
++     * Drop one item out of the currently selected stack if {@code dropAll} is false. If {@code dropItem} is true the
++     * entire stack is dropped.
++     */
      @Nullable
      public EntityItem func_71040_bB(boolean p_71040_1_)
      {
@@ -96,6 +277,9 @@
 +        return null;
      }
  
++    /**
++     * Drops an item into the world.
++     */
      @Nullable
      public EntityItem func_71019_a(ItemStack p_71019_1_, boolean p_71019_2_)
      {
@@ -104,7 +288,7 @@
      }
  
      @Nullable
-@@ -741,14 +768,22 @@
+@@ -741,14 +848,22 @@
  
      public ItemStack func_184816_a(EntityItem p_184816_1_)
      {
@@ -128,7 +312,16 @@
          if (f > 1.0F)
          {
              int i = EnchantmentHelper.func_185293_e(this);
-@@ -798,12 +833,13 @@
+@@ -788,7 +903,7 @@
+             f *= f1;
+         }
+ 
+-        if (this.func_70055_a(Material.field_151586_h) && !EnchantmentHelper.func_185287_i(this))
++        if (net.minecraftforge.common.ForgeHooks.isEntityInsideOfMaterial(this, Material::func_76224_d) && !EnchantmentHelper.func_185287_i(this))
+         {
+             f /= 5.0F;
+         }
+@@ -798,12 +913,13 @@
              f /= 5.0F;
          }
  
@@ -144,7 +337,17 @@
      }
  
      public static void func_189806_a(DataFixer p_189806_0_)
-@@ -863,6 +899,17 @@
+@@ -830,6 +946,9 @@
+         });
+     }
+ 
++    /**
++     * (abstract) Protected helper method to read subclass entity data from NBT.
++     */
+     public void func_70037_a(NBTTagCompound p_70037_1_)
+     {
+         super.func_70037_a(p_70037_1_);
+@@ -863,6 +982,17 @@
              this.field_82248_d = p_70037_1_.func_74767_n("SpawnForced");
          }
  
@@ -162,7 +365,17 @@
          this.field_71100_bB.func_75112_a(p_70037_1_);
          this.field_71075_bZ.func_75095_b(p_70037_1_);
  
-@@ -896,6 +943,7 @@
+@@ -883,6 +1013,9 @@
+         }
+     }
+ 
++    /**
++     * (abstract) Protected helper method to write subclass entity data to NBT.
++     */
+     public void func_70014_b(NBTTagCompound p_70014_1_)
+     {
+         super.func_70014_b(p_70014_1_);
+@@ -896,6 +1029,7 @@
          p_70014_1_.func_74768_a("XpTotal", this.field_71067_cb);
          p_70014_1_.func_74768_a("XpSeed", this.field_175152_f);
          p_70014_1_.func_74768_a("Score", this.func_71037_bA());
@@ -170,7 +383,7 @@
  
          if (this.field_71077_c != null)
          {
-@@ -905,6 +953,27 @@
+@@ -905,6 +1039,27 @@
              p_70014_1_.func_74757_a("SpawnForced", this.field_82248_d);
          }
  
@@ -198,15 +411,20 @@
          this.field_71100_bB.func_75117_b(p_70014_1_);
          this.field_71075_bZ.func_75091_a(p_70014_1_);
          p_70014_1_.func_74782_a("EnderItems", this.field_71078_a.func_70487_g());
-@@ -922,6 +991,7 @@
+@@ -920,8 +1075,12 @@
+         }
+     }
  
++    /**
++     * Called when the entity is attacked.
++     */
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
 +        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, p_70097_1_, p_70097_2_)) return false;
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -974,7 +1044,7 @@
+@@ -974,7 +1133,7 @@
      {
          super.func_190629_c(p_190629_1_);
  
@@ -215,7 +433,7 @@
          {
              this.func_190777_m(true);
          }
-@@ -1002,14 +1072,16 @@
+@@ -1002,14 +1161,16 @@
  
      protected void func_184590_k(float p_184590_1_)
      {
@@ -233,7 +451,26 @@
  
                  if (enumhand == EnumHand.MAIN_HAND)
                  {
-@@ -1045,11 +1117,15 @@
+@@ -1026,6 +1187,10 @@
+         }
+     }
+ 
++    /**
++     * When searching for vulnerable players, if a player is invisible, the return value of this is the chance of seeing
++     * them anyway.
++     */
+     public float func_82243_bO()
+     {
+         int i = 0;
+@@ -1041,15 +1206,23 @@
+         return (float)i / (float)this.field_71071_by.field_70460_b.size();
+     }
+ 
++    /**
++     * Deals damage to the entity. This will take the armor of the entity into consideration before damaging the health
++     * bar.
++     */
+     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_)
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -250,7 +487,17 @@
  
              if (p_70665_2_ != 0.0F)
              {
-@@ -1115,6 +1191,8 @@
+@@ -1086,6 +1259,9 @@
+     {
+     }
+ 
++    /**
++     * Displays the GUI for interacting with a chest inventory.
++     */
+     public void func_71007_a(IInventory p_71007_1_)
+     {
+     }
+@@ -1115,6 +1291,8 @@
          }
          else
          {
@@ -259,7 +506,7 @@
              ItemStack itemstack = this.func_184586_b(p_190775_2_);
              ItemStack itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
  
-@@ -1124,7 +1202,10 @@
+@@ -1124,7 +1302,10 @@
                  {
                      itemstack.func_190920_e(itemstack1.func_190916_E());
                  }
@@ -271,7 +518,7 @@
                  return EnumActionResult.SUCCESS;
              }
              else
-@@ -1140,6 +1221,7 @@
+@@ -1140,6 +1321,7 @@
                      {
                          if (itemstack.func_190926_b() && !this.field_71075_bZ.field_75098_d)
                          {
@@ -279,15 +526,38 @@
                              this.func_184611_a(p_190775_2_, ItemStack.field_190927_a);
                          }
  
-@@ -1165,6 +1247,7 @@
+@@ -1152,19 +1334,30 @@
+         }
+     }
  
++    /**
++     * Returns the Y Offset of this entity.
++     */
+     public double func_70033_W()
+     {
+         return -0.35D;
+     }
+ 
++    /**
++     * Dismounts this entity from the entity it is riding.
++     */
+     public void func_184210_p()
+     {
+         super.func_184210_p();
+         this.field_184245_j = 0;
+     }
+ 
++    /**
++     * Attacks for the player the targeted entity with the currently equipped item.  The equipped item has hitEntity
++     * called on it. Args: targetEntity
++     */
      public void func_71059_n(Entity p_71059_1_)
      {
 +        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(this, p_71059_1_)) return;
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
-@@ -1203,9 +1286,11 @@
+@@ -1203,9 +1396,11 @@
                      boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(MobEffects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof EntityLivingBase;
                      flag2 = flag2 && !this.func_70051_ag();
  
@@ -300,7 +570,7 @@
                      }
  
                      f = f + f1;
-@@ -1332,10 +1417,12 @@
+@@ -1332,10 +1527,12 @@
  
                          if (!itemstack1.func_190926_b() && entity instanceof EntityLivingBase)
                          {
@@ -313,7 +583,7 @@
                                  this.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
                              }
                          }
-@@ -1384,7 +1471,7 @@
+@@ -1384,12 +1581,15 @@
  
          if (this.field_70146_Z.nextFloat() < f)
          {
@@ -322,7 +592,51 @@
              this.func_184602_cy();
              this.field_70170_p.func_72960_a(this, (byte)30);
          }
-@@ -1442,6 +1529,8 @@
+     }
+ 
++    /**
++     * Called when the entity is dealt a critical hit.
++     */
+     public void func_71009_b(Entity p_71009_1_)
+     {
+     }
+@@ -1414,6 +1614,9 @@
+     {
+     }
+ 
++    /**
++     * Will get destroyed next tick.
++     */
+     public void func_70106_y()
+     {
+         super.func_70106_y();
+@@ -1425,16 +1628,25 @@
+         }
+     }
+ 
++    /**
++     * Checks if this entity is inside of an opaque block
++     */
+     public boolean func_70094_T()
+     {
+         return !this.field_71083_bS && super.func_70094_T();
+     }
+ 
++    /**
++     * returns true if this is an EntityPlayerSP, or the logged in player.
++     */
+     public boolean func_175144_cb()
+     {
+         return false;
+     }
+ 
++    /**
++     * Returns the GameProfile for this player
++     */
+     public GameProfile func_146103_bH()
+     {
+         return this.field_146106_i;
+@@ -1442,6 +1654,8 @@
  
      public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
      {
@@ -331,7 +645,7 @@
          EnumFacing enumfacing = (EnumFacing)this.field_70170_p.func_180495_p(p_180469_1_).func_177229_b(BlockHorizontal.field_185512_D);
  
          if (!this.field_70170_p.field_72995_K)
-@@ -1484,8 +1573,9 @@
+@@ -1484,8 +1698,9 @@
          this.func_192030_dh();
          this.func_70105_a(0.2F, 0.2F);
  
@@ -343,8 +657,13 @@
              float f1 = 0.5F + (float)enumfacing.func_82601_c() * 0.4F;
              float f = 0.5F + (float)enumfacing.func_82599_e() * 0.4F;
              this.func_175139_a(enumfacing);
-@@ -1532,13 +1622,14 @@
+@@ -1530,15 +1745,19 @@
+         this.field_71089_bV = -1.8F * (float)p_175139_1_.func_82599_e();
+     }
  
++    /**
++     * Wake up the player if they're sleeping.
++     */
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
 +        net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_70999_1_, p_70999_2_, p_70999_3_);
@@ -361,7 +680,7 @@
  
              if (blockpos == null)
              {
-@@ -1547,6 +1638,10 @@
+@@ -1547,6 +1766,10 @@
  
              this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
          }
@@ -372,7 +691,7 @@
  
          this.field_71083_bS = false;
  
-@@ -1565,15 +1660,16 @@
+@@ -1565,15 +1788,19 @@
  
      private boolean func_175143_p()
      {
@@ -380,6 +699,9 @@
 +        return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, this.field_71081_bT);
      }
  
++    /**
++     * Return null if bed is invalid
++     */
      @Nullable
      public static BlockPos func_180467_a(World p_180467_0_, BlockPos p_180467_1_, boolean p_180467_2_)
      {
@@ -392,7 +714,7 @@
          {
              if (!p_180467_2_)
              {
-@@ -1588,16 +1684,17 @@
+@@ -1588,16 +1815,20 @@
          }
          else
          {
@@ -401,6 +723,9 @@
          }
      }
  
++    /**
++     * Returns the orientation of the bed in degrees.
++     */
      @SideOnly(Side.CLIENT)
      public float func_71051_bG()
      {
@@ -413,7 +738,25 @@
  
              switch (enumfacing)
              {
-@@ -1637,16 +1734,24 @@
+@@ -1615,11 +1846,17 @@
+         return 0.0F;
+     }
+ 
++    /**
++     * Returns whether player is sleeping or not
++     */
+     public boolean func_70608_bn()
+     {
+         return this.field_71083_bS;
+     }
+ 
++    /**
++     * Returns whether or not the player is asleep and the screen has fully faded.
++     */
+     public boolean func_71026_bH()
+     {
+         return this.field_71083_bS && this.field_71076_b >= 100;
+@@ -1637,16 +1874,24 @@
  
      public BlockPos func_180470_cg()
      {
@@ -440,7 +783,69 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
-@@ -1839,6 +1944,10 @@
+@@ -1659,11 +1904,17 @@
+         }
+     }
+ 
++    /**
++     * Add a stat once
++     */
+     public void func_71029_a(StatBase p_71029_1_)
+     {
+         this.func_71064_a(p_71029_1_, 1);
+     }
+ 
++    /**
++     * Adds a value to a statistic field.
++     */
+     public void func_71064_a(StatBase p_71064_1_, int p_71064_2_)
+     {
+     }
+@@ -1684,6 +1935,9 @@
+     {
+     }
+ 
++    /**
++     * Causes this entity to do an upwards motion (jumping).
++     */
+     public void func_70664_aZ()
+     {
+         super.func_70664_aZ();
+@@ -1724,16 +1978,22 @@
+         this.func_71000_j(this.field_70165_t - d0, this.field_70163_u - d1, this.field_70161_v - d2);
+     }
+ 
++    /**
++     * the movespeed used for the new AI system
++     */
+     public float func_70689_ay()
+     {
+         return (float)this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111126_e();
+     }
+ 
++    /**
++     * Adds a value to a movement statistic field - like run, walk, swin or climb.
++     */
+     public void func_71000_j(double p_71000_1_, double p_71000_3_, double p_71000_5_)
+     {
+         if (!this.func_184218_aH())
+         {
+-            if (this.func_70055_a(Material.field_151586_h))
++            if (net.minecraftforge.common.ForgeHooks.isEntityInsideOfMaterial(this, Material::isSwimmable))
+             {
+                 int i = Math.round(MathHelper.func_76133_a(p_71000_1_ * p_71000_1_ + p_71000_3_ * p_71000_3_ + p_71000_5_ * p_71000_5_) * 100.0F);
+ 
+@@ -1800,6 +2060,9 @@
+         }
+     }
+ 
++    /**
++     * Adds a value to a mounted movement statistic field - by minecart, boat, or pig.
++     */
+     private void func_71015_k(double p_71015_1_, double p_71015_3_, double p_71015_5_)
+     {
+         if (this.func_184218_aH())
+@@ -1839,8 +2102,16 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -450,9 +855,206 @@
 +        }
      }
  
++    /**
++     * Plays the {@link #getSplashSound() splash sound}, and the {@link ParticleType#WATER_BUBBLE} and {@link
++     * ParticleType#WATER_SPLASH} particles.
++     */
      protected void func_71061_d_()
-@@ -2176,7 +2285,10 @@
+     {
+         if (!this.func_175149_v())
+@@ -1854,6 +2125,9 @@
+         return p_184588_1_ > 4 ? SoundEvents.field_187736_dY : SoundEvents.field_187804_ed;
+     }
  
++    /**
++     * This method gets called when the entity kills another one.
++     */
+     public void func_70074_a(EntityLivingBase p_70074_1_)
+     {
+         EntityList.EntityEggInfo entitylist$entityegginfo = EntityList.field_75627_a.get(EntityList.func_191301_a(p_70074_1_));
+@@ -1864,6 +2138,9 @@
+         }
+     }
+ 
++    /**
++     * Sets the Entity inside a web block.
++     */
+     public void func_70110_aj()
+     {
+         if (!this.field_71075_bZ.field_75100_b)
+@@ -1872,6 +2149,9 @@
+         }
+     }
+ 
++    /**
++     * Add experience points to player.
++     */
+     public void func_71023_q(int p_71023_1_)
+     {
+         this.func_85039_t(p_71023_1_);
+@@ -1910,6 +2190,9 @@
+         this.field_175152_f = this.field_70146_Z.nextInt();
+     }
+ 
++    /**
++     * Add experience levels to this player.
++     */
+     public void func_82242_a(int p_82242_1_)
+     {
+         this.field_71068_ca += p_82242_1_;
+@@ -1929,6 +2212,10 @@
+         }
+     }
+ 
++    /**
++     * This method returns the cap amount of experience that the experience bar can hold. With each level, the
++     * experience cap on the player's experience bar is raised by 10.
++     */
+     public int func_71050_bK()
+     {
+         if (this.field_71068_ca >= 30)
+@@ -1941,6 +2228,9 @@
+         }
+     }
+ 
++    /**
++     * increases exhaustion level by supplied amount
++     */
+     public void func_71020_j(float p_71020_1_)
+     {
+         if (!this.field_71075_bZ.field_75102_a)
+@@ -1952,6 +2242,9 @@
+         }
+     }
+ 
++    /**
++     * Returns the player's FoodStats object.
++     */
+     public FoodStats func_71024_bL()
+     {
+         return this.field_71100_bB;
+@@ -1962,6 +2255,9 @@
+         return (p_71043_1_ || this.field_71100_bB.func_75121_c()) && !this.field_71075_bZ.field_75102_a;
+     }
+ 
++    /**
++     * Checks if the player's health is not full and not zero.
++     */
+     public boolean func_70996_bM()
+     {
+         return this.func_110143_aJ() > 0.0F && this.func_110143_aJ() < this.func_110138_aP();
+@@ -1972,6 +2268,21 @@
+         return this.field_71075_bZ.field_75099_e;
+     }
+ 
++    /**
++     * Returns whether this player can modify the block at a certain location with the given stack.
++     * <p>
++     * The position being queried is {@code pos.offset(facing.getOpposite()))}.
++     * 
++     * @return Whether this player may modify the queried location in the current world
++     * @see ItemStack#canPlaceOn(Block)
++     * @see ItemStack#canEditBlocks()
++     * @see PlayerCapabilities#allowEdit
++     *  
++     * @param pos a position adjacent to the queried position
++     * @param facing the direction from the queried location to (that is, pointing away from the location queried)
++     * {@code pos}
++     * @param stack the {@code ItemStack} that would be used to edit the world
++     */
+     public boolean func_175151_a(BlockPos p_175151_1_, EnumFacing p_175151_2_, ItemStack p_175151_3_)
+     {
+         if (this.field_71075_bZ.field_75099_e)
+@@ -1990,6 +2301,9 @@
+         }
+     }
+ 
++    /**
++     * Get the experience points the entity currently has.
++     */
+     protected int func_70693_a(EntityPlayer p_70693_1_)
+     {
+         if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory") && !this.func_175149_v())
+@@ -2003,6 +2317,9 @@
+         }
+     }
+ 
++    /**
++     * Only use is to identify if class is an instance of player for experience dropping
++     */
+     protected boolean func_70684_aJ()
+     {
+         return true;
+@@ -2014,24 +2331,40 @@
+         return true;
+     }
+ 
++    /**
++     * returns if this entity triggers Block.onEntityWalking on the blocks they walk on. used for spiders and wolves to
++     * prevent them from trampling crops
++     */
+     protected boolean func_70041_e_()
+     {
+         return !this.field_71075_bZ.field_75100_b;
+     }
+ 
++    /**
++     * Sends the player's abilities to the server (if there is one).
++     */
+     public void func_71016_p()
+     {
+     }
+ 
++    /**
++     * Sets the player's game mode and sends it to them.
++     */
+     public void func_71033_a(GameType p_71033_1_)
+     {
+     }
+ 
++    /**
++     * Get the name of this object. For players this returns their username
++     */
+     public String func_70005_c_()
+     {
+         return this.field_146106_i.getName();
+     }
+ 
++    /**
++     * Returns the InventoryEnderChest of this player.
++     */
+     public InventoryEnderChest func_71005_bN()
+     {
+         return this.field_71078_a;
+@@ -2137,6 +2470,11 @@
+         }
+     }
+ 
++    /**
++     * Only used by renderer in EntityLivingBase subclasses.
++     * Determines if an entity is visible or not to a specfic player, if the entity is normally invisible.
++     * For EntityLivingBase subclasses, returning false when invisible will render the entity semitransparent.
++     */
+     @SideOnly(Side.CLIENT)
+     public boolean func_98034_c(EntityPlayer p_98034_1_)
+     {
+@@ -2155,6 +2493,9 @@
+         }
+     }
+ 
++    /**
++     * Returns true if the player is in spectator mode.
++     */
+     public abstract boolean func_175149_v();
+ 
+     public abstract boolean func_184812_l_();
+@@ -2174,9 +2515,15 @@
+         return this.func_96123_co().func_96509_i(this.func_70005_c_());
+     }
+ 
++    /**
++     * Get the formatted ChatComponent that will be used for the sender's username in chat
++     */
      public ITextComponent func_145748_c_()
      {
 -        ITextComponent itextcomponent = new TextComponentString(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.func_70005_c_()));
@@ -463,7 +1065,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2185,7 +2297,7 @@
+@@ -2185,7 +2532,7 @@
  
      public float func_70047_e()
      {
@@ -472,7 +1074,83 @@
  
          if (this.func_70608_bn())
          {
-@@ -2421,6 +2533,168 @@
+@@ -2216,11 +2563,17 @@
+         this.func_184212_Q().func_187227_b(field_184829_a, Float.valueOf(p_110149_1_));
+     }
+ 
++    /**
++     * Returns the amount of health added by the Absorption effect.
++     */
+     public float func_110139_bj()
+     {
+         return ((Float)this.func_184212_Q().func_187225_a(field_184829_a)).floatValue();
+     }
+ 
++    /**
++     * Gets a players UUID given their GameProfie
++     */
+     public static UUID func_146094_a(GameProfile p_146094_0_)
+     {
+         UUID uuid = p_146094_0_.getId();
+@@ -2238,6 +2591,9 @@
+         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + p_175147_0_).getBytes(StandardCharsets.UTF_8));
+     }
+ 
++    /**
++     * Check whether this player can open an inventory locked with the given LockCode.
++     */
+     public boolean func_175146_a(LockCode p_175146_1_)
+     {
+         if (p_175146_1_.func_180160_a())
+@@ -2257,6 +2613,9 @@
+         return (((Byte)this.func_184212_Q().func_187225_a(field_184827_bp)).byteValue() & p_175148_1_.func_179327_a()) == p_175148_1_.func_179327_a();
+     }
+ 
++    /**
++     * Returns true if the command sender should be sent feedback about executed commands
++     */
+     public boolean func_174792_t_()
+     {
+         return this.func_184102_h().field_71305_c[0].func_82736_K().func_82766_b("sendCommandFeedback");
+@@ -2341,6 +2700,9 @@
+         }
+     }
+ 
++    /**
++     * Whether the "reducedDebugInfo" option is active for this player.
++     */
+     @SideOnly(Side.CLIENT)
+     public boolean func_175140_cp()
+     {
+@@ -2388,6 +2750,9 @@
+         return (float)(1.0D / this.func_110148_a(SharedMonsterAttributes.field_188790_f).func_111126_e() * 20.0D);
+     }
+ 
++    /**
++     * Returns the percentage of attack power available based on the cooldown (zero to one).
++     */
+     public float func_184825_o(float p_184825_1_)
+     {
+         return MathHelper.func_76131_a(((float)this.field_184617_aD + p_184825_1_) / this.func_184818_cX(), 0.0F, 1.0F);
+@@ -2403,6 +2768,9 @@
+         return this.field_184832_bU;
+     }
+ 
++    /**
++     * Applies a velocity to the entities, to push them away from eachother.
++     */
+     public void func_70108_f(Entity p_70108_1_)
+     {
+         if (!this.func_70608_bn())
+@@ -2416,11 +2784,176 @@
+         return (float)this.func_110148_a(SharedMonsterAttributes.field_188792_h).func_111126_e();
+     }
+ 
++    /**
++     * Can the player use command blocks. It checks if the player is on Creative mode and has permissions (is he OP)
++     */
+     public boolean func_189808_dh()
+     {
          return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }
  

@@ -51,7 +51,7 @@
              EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
-@@ -453,11 +456,13 @@
+@@ -453,24 +456,28 @@
                  if (iblockstate1.func_191058_s())
                  {
                      iblockstate = iblockstate1;
@@ -65,9 +65,11 @@
                  this.func_178108_a(this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
              }
          }
-@@ -466,11 +471,13 @@
+ 
+         if (!this.field_78455_a.field_71439_g.func_175149_v())
          {
-             if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
+-            if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
++            if (net.minecraftforge.common.ForgeHooks.isEntityInsideOfMaterial(this.field_78455_a.field_71439_g, Material::func_76224_d))
              {
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_))
                  this.func_78448_c(p_78447_1_);

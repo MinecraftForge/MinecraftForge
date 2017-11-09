@@ -553,13 +553,14 @@
                      }
                  }
              }
-@@ -2050,6 +2207,16 @@
+@@ -2050,8 +2207,18 @@
                          IBlockState iblockstate1 = this.func_180495_p(blockpos$pooledmutableblockpos);
                          Block block = iblockstate1.func_177230_c();
  
+-                        if (iblockstate1.func_185904_a() == p_72918_2_)
 +                        Boolean result = block.isEntityInsideMaterial(this, blockpos$pooledmutableblockpos, iblockstate1, p_72918_3_, (double)i3, p_72918_2_, false);
 +                        if (result != null && result == true)
-+                        {
+                         {
 +                            // Forge: When requested call blocks modifyAcceleration method, and more importantly cause this method to return true, which results in an entity being "inWater"
 +                            flag = true;
 +                            vec3d = block.func_176197_a(this, blockpos$pooledmutableblockpos, p_72918_3_, vec3d);
@@ -567,9 +568,11 @@
 +                        }
 +                        else if (result != null && result == false) continue;
 +
-                         if (iblockstate1.func_185904_a() == p_72918_2_)
-                         {
++                        if (iblockstate1.func_185904_a().getCanPushEntity())
++                        {
                              double d0 = (double)((float)(i4 + 1) - BlockLiquid.func_149801_b(((Integer)iblockstate1.func_177229_b(BlockLiquid.field_176367_b)).intValue()));
+ 
+                             if ((double)i3 >= d0)
 @@ -2116,6 +2283,7 @@
      public Explosion func_72885_a(@Nullable Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {

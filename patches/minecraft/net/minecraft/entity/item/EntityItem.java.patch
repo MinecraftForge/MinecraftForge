@@ -68,7 +68,15 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -282,6 +303,7 @@
+@@ -272,6 +293,7 @@
+             this.field_70171_ac = false;
+         }
+ 
++        this.field_70171_ac = net.minecraftforge.common.ForgeHooks.isInLiquid(this.func_174813_aQ(), this);
+         return this.field_70171_ac;
+     }
+ 
+@@ -282,6 +304,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -76,7 +84,7 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -314,6 +336,7 @@
+@@ -314,6 +337,7 @@
          p_70014_1_.func_74777_a("Health", (short)this.field_70291_e);
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
          p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -84,7 +92,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -358,18 +381,24 @@
+@@ -358,18 +382,24 @@
          {
              this.func_70106_y();
          }
@@ -110,7 +118,7 @@
                  p_70100_1_.func_71001_a(this, i);
  
                  if (itemstack.func_190926_b())
-@@ -476,6 +505,6 @@
+@@ -476,6 +506,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();

@@ -33,3 +33,12 @@
                  }
              }
          }
+@@ -955,7 +962,7 @@
+ 
+             this.field_73839_d.field_71424_I.func_76318_c("air");
+ 
+-            if (entityplayer.func_70055_a(Material.field_151586_h))
++            if (net.minecraftforge.common.ForgeHooks.isEntityInsideOfMaterial(entityplayer, Material::getCanDrownEntity))
+             {
+                 int i6 = this.field_73839_d.field_71439_g.func_70086_ai();
+                 int k6 = MathHelper.func_76143_f((double)(i6 - 2) * 10.0D / 300.0D);

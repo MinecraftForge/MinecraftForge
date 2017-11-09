@@ -13,6 +13,15 @@
                  ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.BLOCK_DUST, this.field_70165_t, this.field_70163_u, this.field_70161_v, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, Block.func_176210_f(p_184231_4_));
              }
          }
+@@ -255,7 +256,7 @@
+ 
+         if (this.func_70089_S())
+         {
+-            if (!this.func_70055_a(Material.field_151586_h))
++            if (!net.minecraftforge.common.ForgeHooks.isEntityInsideOfMaterial(this, Material::getCanDrownEntity))
+             {
+                 this.func_70050_g(300);
+             }
 @@ -281,7 +282,7 @@
                      }
                  }
@@ -225,7 +234,7 @@
                          BlockPos blockpos = new BlockPos(d11, this.field_70163_u - 1.0D, d12);
  
 -                        if (this.field_70170_p.func_180495_p(blockpos).func_185896_q() || this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
-+                        if (this.field_70170_p.func_180495_p(blockpos).isSideSolid(field_70170_p, blockpos, EnumFacing.UP) || this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
++                        if (this.field_70170_p.func_180495_p(blockpos).isSideSolid(field_70170_p, blockpos, EnumFacing.UP) || this.field_70170_p.func_180495_p(blockpos).func_185904_a().isSwimmable())
                          {
                              d1 = d11;
                              d13 = this.field_70163_u + 1.0D;

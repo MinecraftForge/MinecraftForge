@@ -55,7 +55,23 @@
  
          if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
          {
-@@ -1277,12 +1289,12 @@
+@@ -1211,6 +1223,7 @@
+             this.field_70171_ac = false;
+         }
+ 
++        this.field_70171_ac = net.minecraftforge.common.ForgeHooks.isInLiquid(this.func_174813_aQ().func_72314_b(0.0D, -0.4000000059604645D, 0.0D).func_186664_h(0.001D), this); if (field_70171_ac) this.func_70066_B();
+         return this.field_70171_ac;
+     }
+ 
+@@ -1265,6 +1278,7 @@
+         }
+     }
+ 
++    @Deprecated
+     public boolean func_70055_a(Material p_70055_1_)
+     {
+         if (this.func_184187_bx() instanceof EntityBoat)
+@@ -1277,12 +1291,12 @@
              BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -72,7 +88,7 @@
              }
              else
              {
-@@ -1707,6 +1719,7 @@
+@@ -1707,6 +1721,7 @@
              {
                  p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
              }
@@ -80,7 +96,7 @@
  
              if (!this.field_184236_aF.isEmpty())
              {
-@@ -1720,6 +1733,9 @@
+@@ -1720,6 +1735,9 @@
                  p_189511_1_.func_74782_a("Tags", nbttaglist);
              }
  
@@ -90,7 +106,7 @@
              this.func_70014_b(p_189511_1_);
  
              if (this.func_184207_aI())
-@@ -1826,7 +1842,11 @@
+@@ -1826,7 +1844,11 @@
              this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
              this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
              this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
@@ -102,7 +118,7 @@
              if (p_70020_1_.func_150297_b("Tags", 9))
              {
                  this.field_184236_aF.clear();
-@@ -1918,7 +1938,10 @@
+@@ -1918,7 +1940,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -114,7 +130,7 @@
              return entityitem;
          }
      }
-@@ -1985,6 +2008,7 @@
+@@ -1985,6 +2010,7 @@
              this.field_70159_w = 0.0D;
              this.field_70181_x = 0.0D;
              this.field_70179_y = 0.0D;
@@ -122,7 +138,7 @@
              this.func_70071_h_();
  
              if (this.func_184218_aH())
-@@ -2032,6 +2056,7 @@
+@@ -2032,6 +2058,7 @@
              }
          }
  
@@ -130,7 +146,7 @@
          if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this))
          {
              if (this.func_184218_aH())
-@@ -2067,6 +2092,7 @@
+@@ -2067,6 +2094,7 @@
          if (this.field_184239_as != null)
          {
              Entity entity = this.field_184239_as;
@@ -138,7 +154,7 @@
              this.field_184239_as = null;
              entity.func_184225_p(this);
          }
-@@ -2511,6 +2537,7 @@
+@@ -2511,6 +2539,7 @@
      {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
          {
@@ -146,7 +162,7 @@
              this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
              MinecraftServer minecraftserver = this.func_184102_h();
              int i = this.field_71093_bK;
-@@ -2604,7 +2631,7 @@
+@@ -2604,7 +2633,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -155,7 +171,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2901,6 +2928,185 @@
+@@ -2901,6 +2930,185 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  

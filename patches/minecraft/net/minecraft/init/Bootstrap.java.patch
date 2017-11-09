@@ -10,6 +10,15 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
+@@ -276,7 +279,7 @@
+                 Material material = iblockstate.func_185904_a();
+                 Item item;
+ 
+-                if (Material.field_151586_h.equals(material) && block instanceof BlockLiquid && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0)
++                if (material.isLiquidOtherThanLava() && block instanceof BlockLiquid && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0)
+                 {
+                     item = Items.field_151131_as;
+                 }
 @@ -489,6 +492,7 @@
          if (!field_151355_a)
          {
@@ -27,3 +36,19 @@
          }
      }
  
+@@ -568,13 +574,13 @@
+                 Material material = world.func_180495_p(blockpos).func_185904_a();
+                 double d3;
+ 
+-                if (Material.field_151586_h.equals(material))
++                if (material.getCanFloatBoat())
+                 {
+                     d3 = 1.0D;
+                 }
+                 else
+                 {
+-                    if (!Material.field_151579_a.equals(material) || !Material.field_151586_h.equals(world.func_180495_p(blockpos.func_177977_b()).func_185904_a()))
++                    if (!Material.field_151579_a.equals(material) || !world.func_180495_p(blockpos.func_177977_b()).func_185904_a().getCanFloatBoat())
+                     {
+                         return this.field_185026_b.func_82482_a(p_82487_1_, p_82487_2_);
+                     }

@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityBoat.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityBoat.java
+@@ -449,7 +449,7 @@
+                         blockpos$pooledmutableblockpos.func_181079_c(l1, k1, i2);
+                         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
+ 
+-                        if (iblockstate.func_185904_a() == Material.field_151586_h)
++                        if (iblockstate.func_185904_a().getCanFloatBoat())
+                         {
+                             f = Math.max(f, BlockLiquid.func_190973_f(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos));
+                         }
 @@ -508,7 +508,7 @@
  
                                  if (!list.isEmpty())
@@ -9,6 +18,33 @@
                                      ++k1;
                                  }
  
+@@ -551,7 +551,7 @@
+                         blockpos$pooledmutableblockpos.func_181079_c(k1, l1, i2);
+                         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
+ 
+-                        if (iblockstate.func_185904_a() == Material.field_151586_h)
++                        if (iblockstate.func_185904_a().getCanFloatBoat())
+                         {
+                             float f = BlockLiquid.func_190972_g(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos);
+                             this.field_184465_aD = Math.max((double)f, this.field_184465_aD);
+@@ -594,7 +594,7 @@
+                         blockpos$pooledmutableblockpos.func_181079_c(k1, l1, i2);
+                         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
+ 
+-                        if (iblockstate.func_185904_a() == Material.field_151586_h && d0 < (double)BlockLiquid.func_190972_g(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos))
++                        if (iblockstate.func_185904_a().getCanFloatBoat() && d0 < (double)BlockLiquid.func_190972_g(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos))
+                         {
+                             if (((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() != 0)
+                             {
+@@ -842,7 +842,7 @@
+ 
+                 this.field_70143_R = 0.0F;
+             }
+-            else if (this.field_70170_p.func_180495_p((new BlockPos(this)).func_177977_b()).func_185904_a() != Material.field_151586_h && p_184231_1_ < 0.0D)
++            else if (!this.field_70170_p.func_180495_p((new BlockPos(this)).func_177977_b()).func_185904_a().getCanFloatBoat() && p_184231_1_ < 0.0D)
+             {
+                 this.field_70143_R = (float)((double)this.field_70143_R - p_184231_1_);
+             }
 @@ -980,4 +980,20 @@
              return values()[0];
          }
