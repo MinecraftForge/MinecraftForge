@@ -111,6 +111,11 @@ public class ForgeTimeTracker {
         INSTANCE.trackTileStart(tileEntity, System.nanoTime());
     }
 
+    public static void clearTileEntityTimings()
+    {
+        INSTANCE.tileEntityTimings.clear();
+    }
+
     public static void trackEnd(TileEntity tileEntity)
     {
         if (!tileEntityTracking) return;
