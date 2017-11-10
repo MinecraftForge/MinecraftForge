@@ -21,10 +21,13 @@ package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
+
+import javax.annotation.Nullable;
 
 public class BlockInfo
 {
@@ -34,6 +37,9 @@ public class BlockInfo
     private IBlockAccess world;
     private IBlockState state;
     private BlockPos blockPos;
+
+    @Nullable
+    private BlockRenderLayer layer;
 
     private final boolean[][][] translucent = new boolean[3][3][3];
     private final int[][][] s = new int[3][3][3];
@@ -94,6 +100,13 @@ public class BlockInfo
         shx = shy = shz = 0;
     }
 
+    public void setRenderLayer(@Nullable BlockRenderLayer layer)
+    {
+        this.layer = layer;
+        cachedTint = -1;
+        cachedMultiplier = -1;
+    }
+
     private float combine(int c, int s1, int s2, int s3)
     {
         if(c == 0) c = Math.max(0, Math.max(s1, s2) - 1);
@@ -116,7 +129,7 @@ public class BlockInfo
                     IBlockState state = world.getBlockState(pos);
                     translucent[x][y][z] = state.isTranslucent();
                     //translucent[x][y][z] = world.getBlockState(pos).getBlock().getLightOpacity(world, pos) == 0;
-                    int brightness = state.getPackedLightmapCoords(world, pos);
+                    int brightness = state.getBlock().getPackedLightmapCoords(state, world, pos, layer);
                     s[x][y][z] = (brightness >> 0x14) & 0xF;
                     b[x][y][z] = (brightness >> 0x04) & 0xF;
                     ao[x][y][z] = state.getAmbientOcclusionLightValue();
@@ -189,6 +202,12 @@ public class BlockInfo
     public BlockPos getBlockPos()
     {
         return blockPos;
+    }
+
+    @Nullable
+    public BlockRenderLayer getRenderLayer()
+    {
+        return layer;
     }
 
     public boolean[][][] getTranslucent()

@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model.pipeline;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Vector3f;
 
 import net.minecraft.block.state.IBlockState;
@@ -27,6 +28,7 @@ import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -266,11 +268,15 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     {
         this.tint = tint;
     }
+
     @Override
     public void setQuadOrientation(EnumFacing orientation) {}
+
     public void setQuadCulled() {}
+
     @Override
     public void setTexture(TextureAtlasSprite texture) {}
+
     @Override
     public void setApplyDiffuseLighting(boolean diffuse)
     {
@@ -290,6 +296,11 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     public void setBlockPos(BlockPos blockPos)
     {
         blockInfo.setBlockPos(blockPos);
+    }
+
+    public void setRenderLayer(@Nullable BlockRenderLayer layer)
+    {
+        blockInfo.setRenderLayer(layer);
     }
 
     public void updateBlockInfo()

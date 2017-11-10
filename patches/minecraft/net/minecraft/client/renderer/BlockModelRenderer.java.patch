@@ -9,6 +9,42 @@
  
          try
          {
+@@ -65,7 +65,7 @@
+ 
+         for (EnumFacing enumfacing : EnumFacing.values())
+         {
+-            List<BakedQuad> list = p_187498_2_.func_188616_a(p_187498_3_, enumfacing, p_187498_7_);
++            List<BakedQuad> list = p_187498_2_.getQuads(p_187498_3_, enumfacing, p_187498_7_, p_187498_5_.getRenderLayer());
+ 
+             if (!list.isEmpty() && (!p_187498_6_ || p_187498_3_.func_185894_c(p_187498_1_, p_187498_4_, enumfacing)))
+             {
+@@ -74,7 +74,7 @@
+             }
+         }
+ 
+-        List<BakedQuad> list1 = p_187498_2_.func_188616_a(p_187498_3_, (EnumFacing)null, p_187498_7_);
++        List<BakedQuad> list1 = p_187498_2_.getQuads(p_187498_3_, (EnumFacing)null, p_187498_7_, p_187498_5_.getRenderLayer());
+ 
+         if (!list1.isEmpty())
+         {
+@@ -92,7 +92,7 @@
+ 
+         for (EnumFacing enumfacing : EnumFacing.values())
+         {
+-            List<BakedQuad> list = p_187497_2_.func_188616_a(p_187497_3_, enumfacing, p_187497_7_);
++            List<BakedQuad> list = p_187497_2_.getQuads(p_187497_3_, enumfacing, p_187497_7_, p_187497_5_.getRenderLayer());
+ 
+             if (!list.isEmpty() && (!p_187497_6_ || p_187497_3_.func_185894_c(p_187497_1_, p_187497_4_, enumfacing)))
+             {
+@@ -102,7 +102,7 @@
+             }
+         }
+ 
+-        List<BakedQuad> list1 = p_187497_2_.func_188616_a(p_187497_3_, (EnumFacing)null, p_187497_7_);
++        List<BakedQuad> list1 = p_187497_2_.getQuads(p_187497_3_, (EnumFacing)null, p_187497_7_, p_187497_5_.getRenderLayer());
+ 
+         if (!list1.isEmpty())
+         {
 @@ -128,7 +128,14 @@
              p_187492_8_.func_187491_a(p_187492_1_, p_187492_2_, p_187492_3_, bakedquad.func_178210_d(), p_187492_6_, p_187492_7_);
              p_187492_4_.func_178981_a(bakedquad.func_178209_a());

@@ -161,8 +161,13 @@ public final class MultiLayerModel implements IModel
         @Override
         public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
+            return getQuads(state, side, rand, null);
+        }
+
+        @Override
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand, @Nullable BlockRenderLayer layer)
+        {
             IBakedModel model;
-            BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
             if(layer == null)
             {
                 return quads.get(Optional.ofNullable(side));

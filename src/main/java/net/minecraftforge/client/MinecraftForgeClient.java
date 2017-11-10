@@ -42,6 +42,8 @@ public class MinecraftForgeClient
         return ForgeHooksClient.renderPass;
     }
 
+    /** @deprecated use layer-aware functions */
+    @Deprecated // TODO: remove (1.13?)
     public static BlockRenderLayer getRenderLayer()
     {
         return ForgeHooksClient.renderLayer.get();

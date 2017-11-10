@@ -221,7 +221,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -934,6 +952,1287 @@
+@@ -934,6 +952,1296 @@
      {
      }
  
@@ -1375,12 +1375,21 @@
 +
 +     /**
 +     * Queries if this block should render in a given layer.
-+     * ISmartBlockModel can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
 +     */
 +    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
 +    {
 +        return func_180664_k() == layer;
 +    }
++
++    /**
++     * Version of {@code func_185484_c} that allows blocks that render in multiple layers
++     * to return distinct values (e.g. for fullbright model effects)
++     */
++    public int getPackedLightmapCoords(IBlockState state, IBlockAccess source, BlockPos pos, @Nullable BlockRenderLayer layer)
++    {
++        return state.func_185889_a(source, pos);
++    }
++
 +    // For Internal use only to capture droped items inside getDrops
 +    protected static ThreadLocal<Boolean> captureDrops = ThreadLocal.withInitial(() -> false);
 +    protected static ThreadLocal<NonNullList<ItemStack>> capturedDrops = ThreadLocal.withInitial(NonNullList::func_191196_a);
@@ -1509,7 +1518,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1230,31 +2529,6 @@
+@@ -1230,31 +2538,6 @@
                  block15.field_149783_u = flag;
              }
          }
