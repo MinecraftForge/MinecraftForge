@@ -3,7 +3,9 @@
     "defaults": {
         "model": "forge:multi-layer",
         "custom": {
+            // base is used for model properties - camera transforms, isGui3d, e.t.c.
             "base": "forgedebugmultilayermodel:test_layer_block#aux",
+            // per-layer models
             "Solid": "forgedebugmultilayermodel:test_layer_block#aux",
             "Translucent": "forgedebugmultilayermodel:test_layer_block#pane"
         },
