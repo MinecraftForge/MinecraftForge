@@ -34,15 +34,6 @@
                  this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
              }
  
-@@ -1023,7 +1030,7 @@
-                 {
-                     ItemStack itemstack = this.field_147369_b.func_184582_a(EntityEquipmentSlot.CHEST);
- 
--                    if (itemstack.func_77973_b() == Items.field_185160_cR && ItemElytra.func_185069_d(itemstack))
-+                    if (net.minecraftforge.common.ForgeHooks.hasElytraFlightAbility(this.field_147369_b, itemstack))
-                     {
-                         this.field_147369_b.func_184847_M();
-                     }
 @@ -1066,6 +1073,7 @@
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT_AT)
                  {
