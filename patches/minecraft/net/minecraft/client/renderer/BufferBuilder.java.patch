@@ -9,13 +9,12 @@
 +
      public BufferBuilder(int p_i46275_1_)
      {
--        this.field_179001_a = GLAllocation.func_74524_c(p_i46275_1_ * 4);
 +        this(p_i46275_1_, null);
 +    }
 +
-+    public BufferBuilder(int bufferSizeIn, @javax.annotation.Nullable net.minecraft.util.BlockRenderLayer layer)
++    public BufferBuilder(int p_i46275_1_, @javax.annotation.Nullable net.minecraft.util.BlockRenderLayer layer)
 +    {
-+        this.field_179001_a = GLAllocation.func_74524_c(bufferSizeIn * 4);
+         this.field_179001_a = GLAllocation.func_74524_c(p_i46275_1_ * 4);
          this.field_178999_b = this.field_179001_a.asIntBuffer();
          this.field_181676_c = this.field_179001_a.asShortBuffer();
          this.field_179000_c = this.field_179001_a.asFloatBuffer();

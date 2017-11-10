@@ -65,3 +65,6 @@ net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_8268
 net/minecraft/command/EntitySelector.matchEntitiesDefault(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;Ljava/lang/Class;)Ljava/util/List;=|p_179656_0_,p_179656_1_,p_179656_2_
 net/minecraft/command/EntitySelector.matchesMultiplePlayersDefault(Ljava/lang/String;)Z=|p_82377_0_
 net/minecraft/command/EntitySelector.isSelectorDefault(Ljava/lang/String;)Z=|p_82378_0_
+
+net/minecraft/client/renderer/BufferBuilder.<init>(ILnet/minecraft/util/BlockRenderLayer;)V=|p_i46275_1_,layer
+net/minecraft/client/renderer/BlockModelRenderer$AmbientOcclusionFace.updateVertexBrightness(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;[FLjava/util/BitSet;Lnet/minecraft/util/BlockRenderLayer;)V=|p_187491_1_,p_187491_2_,p_187491_3_,p_187491_4_,p_187491_5_,p_187491_6_,layer
