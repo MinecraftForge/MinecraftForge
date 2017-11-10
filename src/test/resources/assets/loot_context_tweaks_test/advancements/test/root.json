@@ -18,6 +18,5 @@
 	"rewards": 
 	{
 		"loot": ["minecraft:chests/simple_dungeon"]
-	},
-	"requirements": [["no"]]
+	}
 }
