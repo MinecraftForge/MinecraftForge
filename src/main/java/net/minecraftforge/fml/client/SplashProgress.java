@@ -158,10 +158,9 @@ public class SplashProgress
             FMLLog.log.info("Could not load splash.properties, will create a default one");
         }
 
-        //Some system do not support this and have weird effects so we need to detect and disable by default.
+        //Some systems do not support this and have weird effects, so we need to detect and disable them by default.
         //The user can always force enable it if they want to take the responsibility for bugs.
-        //For now macs derp so disable them.
-        boolean defaultEnabled = !System.getProperty("os.name").toLowerCase().contains("mac");
+        boolean defaultEnabled = true;
 
         // Enable if we have the flag, and there's either no optifine, or optifine has added a key to the blackboard ("optifine.ForgeSplashCompatible")
         // Optifine authors - add this key to the blackboard if you feel your modifications are now compatible with this code.
