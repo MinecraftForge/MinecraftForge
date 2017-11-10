@@ -180,12 +180,12 @@ public class BlockInfo
     public void updateFlatLighting()
     {
         full = state.isFullCube();
-        packed[0] = state.getPackedLightmapCoords(world, blockPos);
+        packed[0] = state.getBlock().getPackedLightmapCoords(state, world, blockPos, layer);
 
         for (EnumFacing side : SIDES)
         {
             int i = side.ordinal() + 1;
-            packed[i] = state.getPackedLightmapCoords(world, blockPos.offset(side));
+            packed[i] = state.getBlock().getPackedLightmapCoords(state, world, blockPos.offset(side), layer);
         }
     }
 
