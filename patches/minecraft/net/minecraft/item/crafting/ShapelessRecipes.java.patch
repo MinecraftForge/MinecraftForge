@@ -32,48 +32,7 @@
          }
  
          return nonnulllist;
-@@ -61,7 +55,8 @@
- 
-     public boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_)
-     {
--        List<Ingredient> list = Lists.newArrayList(this.field_77579_b);
-+        int ingredientCount = 0;
-+        net.minecraft.client.util.RecipeItemHelper recipeItemHelper = new net.minecraft.client.util.RecipeItemHelper();
- 
-         for (int i = 0; i < p_77569_1_.func_174923_h(); ++i)
-         {
-@@ -71,27 +66,13 @@
- 
-                 if (!itemstack.func_190926_b())
-                 {
--                    boolean flag = false;
--
--                    for (Ingredient ingredient : list)
--                    {
--                        if (ingredient.apply(itemstack))
--                        {
--                            flag = true;
--                            list.remove(ingredient);
--                            break;
--                        }
--                    }
--
--                    if (!flag)
--                    {
--                        return false;
--                    }
-+                    ++ingredientCount;
-+                    recipeItemHelper.func_194112_a(itemstack);
-                 }
-             }
-         }
- 
--        return list.isEmpty();
-+        return ingredientCount == this.field_77579_b.size() && recipeItemHelper.func_194116_a(this, null);
-     }
- 
-     public ItemStack func_77572_b(InventoryCrafting p_77572_1_)
-@@ -136,7 +117,6 @@
+@@ -136,7 +130,6 @@
          return nonnulllist;
      }
  

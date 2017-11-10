@@ -8,15 +8,6 @@
          }
      }
  
-@@ -290,7 +291,7 @@
-             this.field_78531_r.func_175607_a(this.field_78531_r.field_71439_g);
-         }
- 
--        float f3 = this.field_78531_r.field_71441_e.func_175724_o(new BlockPos(this.field_78531_r.func_175606_aa()));
-+        float f3 = this.field_78531_r.field_71441_e.func_175724_o(new BlockPos(this.field_78531_r.func_175606_aa().func_174824_e(1F))); // Forge: fix MC-51150
-         float f4 = (float)this.field_78531_r.field_71474_y.field_151451_c / 32.0F;
-         float f2 = f3 * (1.0F - f4) + f4;
-         this.field_78539_ae += (f2 - this.field_78539_ae) * 0.1F;
 @@ -412,7 +413,7 @@
  
                          if (d3 < d2 || d2 == 0.0D)
