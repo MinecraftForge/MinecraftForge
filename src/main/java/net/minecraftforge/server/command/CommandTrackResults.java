@@ -20,9 +20,7 @@
 package net.minecraftforge.server.command;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -32,6 +30,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.server.ForgeTimeTracker;
@@ -139,14 +138,35 @@ public class CommandTrackResults extends CommandBase
     {
         ArrayList<ForgeTimings<TileEntity>> list = new ArrayList<>();
         list.addAll(ForgeTimeTracker.getTileTimings());
-        list.sort(new Comparator<ForgeTimings<TileEntity>>()
-        {
-            @Override
-            public int compare(ForgeTimings<TileEntity> o1, ForgeTimings<TileEntity> o2)
-            {
-                return Double.compare(o2.getAverageTimings(), o1.getAverageTimings());
-            }
-        });
+        list.sort((o1, o2) -> Double.compare(o2.getAverageTimings(), o1.getAverageTimings()));
         return list;
+    }
+
+    private Map<ChunkPos, Double> getChunkTickTimes()
+    {
+        HashMap<ChunkPos, Double> times = new HashMap<>();
+        HashMap<ChunkPos, Integer> count = new HashMap<>();
+
+        ForgeTimeTracker.getTileTimings().forEach(timings -> {
+            TileEntity te = timings.getObject().get();
+            if (te == null || te.isInvalid())
+                return;
+            ChunkPos pos = new ChunkPos(te.getPos());
+            double t = times.getOrDefault(pos, 0.0);
+            int c = count.getOrDefault(pos, 0);
+            for (int microSeconds : timings.getRawTimingData())
+            {
+                t += microSeconds;
+                c++;
+            }
+            times.put(pos, t);
+            count.put(pos, c);
+        });
+
+        for (Map.Entry<ChunkPos, Double> entries : times.entrySet())
+        {
+            entries.setValue(entries.getValue() / count.getOrDefault(entries.getKey(), 1));
+        }
+        return times;
     }
 }
