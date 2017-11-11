@@ -137,7 +137,7 @@ public class CommandTrackResults extends CommandBase
     private List<ForgeTimings<TileEntity>> getSortedTileEntityTimings()
     {
         ArrayList<ForgeTimings<TileEntity>> list = new ArrayList<>();
-        list.addAll(ForgeTimeTracker.getTileTimings());
+        list.addAll(ForgeTimeTracker.TILE_ENTITY_UPDATE.getTimingData());
         list.sort((o1, o2) -> Double.compare(o2.getAverageTimings(), o1.getAverageTimings()));
         return list;
     }
@@ -147,7 +147,7 @@ public class CommandTrackResults extends CommandBase
         HashMap<ChunkPos, Double> times = new HashMap<>();
         HashMap<ChunkPos, Integer> count = new HashMap<>();
 
-        ForgeTimeTracker.getTileTimings().forEach(timings -> {
+        ForgeTimeTracker.TILE_ENTITY_UPDATE.getTimingData().forEach(timings -> {
             TileEntity te = timings.getObject().get();
             if (te == null || te.isInvalid())
                 return;

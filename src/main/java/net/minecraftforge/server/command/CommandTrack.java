@@ -62,9 +62,9 @@ class CommandTrack extends CommandBase
 
         if ("te".equals(type))
         {
-            ForgeTimeTracker.clearTileEntityTimings();
-            ForgeTimeTracker.tileEntityTrackingDuration = duration;
-            ForgeTimeTracker.tileEntityTracking = true;
+            ForgeTimeTracker.TILE_ENTITY_UPDATE.reset();
+            ForgeTimeTracker.TILE_ENTITY_UPDATE.trackingDuration = duration;
+            ForgeTimeTracker.TILE_ENTITY_UPDATE.enabled = true;
             sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.te.enabled", duration));
         }
         else

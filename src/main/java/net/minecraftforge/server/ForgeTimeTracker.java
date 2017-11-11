@@ -22,7 +22,6 @@ package net.minecraftforge.server;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.ImmutableList;
@@ -32,103 +31,112 @@ import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.server.timings.ForgeTimings;
 
-public class ForgeTimeTracker {
-    public static boolean tileEntityTracking;
-    public static int tileEntityTrackingDuration;
-    public static long tileEntityTrackingTime;
-    
-    private Map<TileEntity,int[]> tileEntityTimings;
-    private WeakReference<TileEntity> tile;
-    
-    private static final ForgeTimeTracker INSTANCE = new ForgeTimeTracker();
+/**
+ * A class to assist in the collection of data to measure the update times of ticking objects {currently Tile Entities and Entities}
+ *
+ * @param <T>
+ */
+public class ForgeTimeTracker<T>
+{
 
-    /* not implemented
-    private WeakReference<Entity> entity;
-    private Map<Entity,int[]> entityTimings;
-    */
-    
+    /**
+     * A tracker for timing tile entity update
+     */
+    public static ForgeTimeTracker<TileEntity> TILE_ENTITY_UPDATE = new ForgeTimeTracker<>();
+    /**
+     * A tracker for timing entity updates
+     */
+    public static ForgeTimeTracker<Entity> ENTITY_UPDATE = new ForgeTimeTracker<>();
+
+    public boolean enabled;
+    public int trackingDuration;
+    private Map<T, int[]> timings;
+    private WeakReference<T> currentlyTracking;
+    private long trackTime;
     private long timing;
-    
+
     private ForgeTimeTracker()
     {
         MapMaker mm = new MapMaker();
         mm.weakKeys();
-        tileEntityTimings = mm.makeMap();
-        //entityTimings = mm.makeMap();
+        timings = mm.makeMap();
     }
-    
 
-    private void trackTileStart(TileEntity tileEntity, long nanoTime)
+    /**
+     * Returns the timings data recorded by the tracker
+     *
+     * @return An immutable list of timings data collected by this tracker
+     */
+    public ImmutableList<ForgeTimings<T>> getTimingData()
     {
-        if (tileEntityTrackingTime == 0)
+        ImmutableList.Builder<ForgeTimings<T>> builder = ImmutableList.builder();
+
+        for (Map.Entry<T, int[]> entry : timings.entrySet())
         {
-            tileEntityTrackingTime = nanoTime;
-        }
-        else if (tileEntityTrackingTime + TimeUnit.NANOSECONDS.convert(tileEntityTrackingDuration, TimeUnit.SECONDS) < nanoTime)
-        {
-            tileEntityTracking = false;
-            tileEntityTrackingTime = 0;
-            
-            return;
-        }
-        tile = new WeakReference<TileEntity>(tileEntity);
-        timing = nanoTime;
-    }
-
-
-    private void trackTileEnd(TileEntity tileEntity, long nanoTime)
-    {
-        if (tile == null || tile.get() != tileEntity)
-        {
-            tile = null;
-            // race, exit
-            return;
-        }
-        int[] timings = tileEntityTimings.computeIfAbsent(tileEntity, k -> new int[101]);
-        int idx = timings[100] = (timings[100] + 1) % 100;
-        timings[idx] = (int) (nanoTime - timing);
-    }
-
-    public static ImmutableList<ForgeTimings<TileEntity>> getTileTimings()
-    {
-        return INSTANCE.buildImmutableTileEntityTimingList();
-    }
-
-    private ImmutableList<ForgeTimings<TileEntity>> buildImmutableTileEntityTimingList(){
-        ImmutableList.Builder<ForgeTimings<TileEntity>> builder = ImmutableList.builder();
-
-        for(Entry<TileEntity, int[]> entry : tileEntityTimings.entrySet()){
-            builder.add(new ForgeTimings<TileEntity>(entry.getKey(), Arrays.copyOfRange(entry.getValue(), 0, 99)));
+            builder.add(new ForgeTimings<>(entry.getKey(), Arrays.copyOfRange(entry.getValue(), 0, 99)));
         }
         return builder.build();
     }
 
-
-    public static void trackStart(TileEntity tileEntity)
+    /**
+     * Resets the tracker (clears timings and stops any in-progress timings)
+     */
+    public void reset()
     {
-        if (!tileEntityTracking) return;
-        INSTANCE.trackTileStart(tileEntity, System.nanoTime());
+        enabled = false;
+        trackTime = 0;
+        timings.clear();
     }
 
-    public static void clearTileEntityTimings()
+    /**
+     * Ends the timing of the currently tracking object
+     *
+     * @param tracking The object to stop timing
+     */
+    public void trackEnd(T tracking)
     {
-        INSTANCE.tileEntityTimings.clear();
+        if (!enabled)
+            return;
+        this.trackEnd(tracking, System.nanoTime());
     }
 
-    public static void trackEnd(TileEntity tileEntity)
+    /**
+     * Starts timing of the provided object
+     *
+     * @param toTrack The object to start timing
+     */
+    public void trackStart(T toTrack)
     {
-        if (!tileEntityTracking) return;
-        INSTANCE.trackTileEnd(tileEntity, System.nanoTime());
+        if (!enabled)
+            return;
+        this.trackStart(toTrack, System.nanoTime());
     }
 
-    public static void trackStart(Entity par1Entity)
+    private void trackEnd(T object, long nanoTime)
     {
-        
+        if (currentlyTracking == null || currentlyTracking.get() != object)
+        {
+            currentlyTracking = null;
+            return;
+        }
+        int[] timings = this.timings.computeIfAbsent(object, k -> new int[101]);
+        int idx = timings[100] = (timings[100] + 1) % 100;
+        timings[idx] = (int) (nanoTime - timing);
     }
 
-    public static void trackEnd(Entity par1Entity)
+    private void trackStart(T toTrack, long nanoTime)
     {
-        
-    }
+        if (trackTime == 0)
+        {
+            trackTime = nanoTime;
+        }
+        else if (trackTime + TimeUnit.NANOSECONDS.convert(trackingDuration, TimeUnit.SECONDS) < nanoTime)
+        {
+            enabled = false;
+            trackTime = 0;
+        }
 
+        currentlyTracking = new WeakReference<>(toTrack);
+        timing = nanoTime;
+    }
 }
