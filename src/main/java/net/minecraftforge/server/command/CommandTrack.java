@@ -19,7 +19,9 @@
 package net.minecraftforge.server.command;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -27,11 +29,27 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.server.ForgeTimeTracker;
+import net.minecraftforge.server.timings.ForgeTimings;
 
-class CommandTrack extends CommandBase
+class CommandTrack extends CommandTreeBase
 {
+
+    private static final DecimalFormat TIME_FORMAT = new DecimalFormat("#####0.00");
+
+    public CommandTrack()
+    {
+        addSubcommand(new StartTrackingCommand());
+        addSubcommand(new ResetTrackingCommand());
+        addSubcommand(new TrackResultsTileEntity());
+        addSubcommand(new CommandTreeHelp(this));
+    }
+
     @Override
     public String getName()
     {
@@ -47,39 +65,196 @@ class CommandTrack extends CommandBase
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "commands.forge.usage.tracking";
+        return "commands.forge.tracking.usage";
     }
 
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    private static class StartTrackingCommand extends CommandBase
     {
-        if (args.length != 2)
-        {
-            throw new WrongUsageException("commands.forge.usage.tracking");
-        }
-        String type = args[0];
-        int duration = parseInt(args[1], 1, 60);
 
-        if ("te".equals(type))
+        @Override
+        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
         {
-            ForgeTimeTracker.TILE_ENTITY_UPDATE.reset();
-            ForgeTimeTracker.TILE_ENTITY_UPDATE.trackingDuration = duration;
-            ForgeTimeTracker.TILE_ENTITY_UPDATE.enabled = true;
-            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.te.enabled", duration));
+            if (args.length != 2)
+            {
+                throw new WrongUsageException(getUsage(sender));
+            }
+            String type = args[0];
+            int duration = parseInt(args[1], 1, 60);
+            if ("te".equals(type))
+            {
+                ForgeTimeTracker.TILE_ENTITY_UPDATE.reset();
+                ForgeTimeTracker.TILE_ENTITY_UPDATE.trackingDuration = duration;
+                ForgeTimeTracker.TILE_ENTITY_UPDATE.enabled = true;
+                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.te.enabled", duration));
+            }
         }
-        else
+
+        @Override
+        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
         {
-            throw new WrongUsageException("commands.forge.usage.tracking");
+            return Arrays.asList("te", "entity");
+        }
+
+        @Override
+        public String getName()
+        {
+            return "start";
+        }
+
+        @Override
+        public int getRequiredPermissionLevel()
+        {
+            return 2;
+        }
+
+        @Override
+        public String getUsage(ICommandSender sender)
+        {
+            return "commands.forge.tracking.start.usage";
         }
     }
 
-    @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    private static class ResetTrackingCommand extends CommandBase
     {
-        if (args.length == 1)
+        @Override
+        public String getName()
         {
-            return Collections.singletonList("te");
+            return "reset";
         }
-        return Collections.emptyList();
+
+        @Override
+        public String getUsage(ICommandSender sender)
+        {
+            return "commands.forge.tracking.reset.usage";
+        }
+
+        @Override
+        public int getRequiredPermissionLevel()
+        {
+            return 2;
+        }
+
+        @Override
+        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+        {
+            if (args.length != 1)
+            {
+                throw new WrongUsageException(getUsage(sender));
+            }
+            String type = args[0];
+            if ("te".equals(type))
+            {
+                ForgeTimeTracker.TILE_ENTITY_UPDATE.reset();
+                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.reset"));
+            }
+        }
+
+        @Override
+        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+        {
+            return Arrays.asList("te", "entity");
+        }
+    }
+
+    private static class TrackResultsTileEntity extends CommandBase
+    {
+
+        @Override
+        public String getName()
+        {
+            return "te";
+        }
+
+        @Override
+        public String getUsage(ICommandSender sender)
+        {
+            return "commands.forge.tracking.te.usage";
+        }
+
+        @Override
+        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+        {
+            List<ForgeTimings<TileEntity>> timingsList = getSortedTileEntityTimings();
+            if (timingsList.isEmpty())
+            {
+                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.noData"));
+            }
+            else
+            {
+                List<ForgeTimings<TileEntity>> subList = new ArrayList<>();
+                int count = 0;
+                for (ForgeTimings<TileEntity> e : timingsList)
+                {
+                    TileEntity te = e.getObject().get();
+                    if (te == null || te.isInvalid())
+                        continue;
+                    subList.add(e);
+                    if (++count > 10)
+                        break;
+                }
+                for (ForgeTimings<TileEntity> e : subList)
+                {
+                    TileEntity te = e.getObject().get();
+                    if (te == null || te.isInvalid())
+                        continue; // Probably shouldn't ever happen
+
+                    String name = getTileEntityName(te);
+                    BlockPos pos = te.getPos();
+
+                    double averageTimings = e.getAverageTimings();
+                    String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + getTimeSuffix(
+                            averageTimings);
+                    sender.sendMessage(TextComponentHelper
+                            .createComponentTranslation(sender, "commands.forge.tracking.timingEntry", name, getWorldName(te.getWorld().provider.getDimension()),
+                                    pos.getX(), pos.getY(), pos.getZ(), tickTime));
+                }
+            }
+        }
+
+        private String getTimeSuffix(double time)
+        {
+            if (time < 1000)
+            {
+                return "µs";
+            }
+            else
+            {
+                return "ms";
+            }
+        }
+
+        private String getTileEntityName(TileEntity tileEntity)
+        {
+            String className = tileEntity.getClass().getSimpleName();
+
+            ResourceLocation registryId = TileEntity.getKey(tileEntity.getClass());
+            if (registryId == null)
+                return className;
+            else
+            {
+                return registryId.toString();
+            }
+        }
+
+        private String getWorldName(int dimId)
+        {
+            DimensionType type = DimensionManager.getProviderType(dimId);
+            if (type == null)
+            {
+                return "Dim " + dimId;
+            }
+            else
+            {
+                return type.getName();
+            }
+        }
+
+        private List<ForgeTimings<TileEntity>> getSortedTileEntityTimings()
+        {
+            ArrayList<ForgeTimings<TileEntity>> list = new ArrayList<>();
+            list.addAll(ForgeTimeTracker.TILE_ENTITY_UPDATE.getTimingData());
+            list.sort((o1, o2) -> Double.compare(o2.getAverageTimings(), o1.getAverageTimings()));
+            return list;
+        }
     }
 }

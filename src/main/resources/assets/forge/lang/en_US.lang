@@ -17,7 +17,14 @@ commands.forge.entity.list.single.header=Entity: %s Total: %d
 commands.forge.entity.list.multiple.header=Total: %d
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
-commands.forge.timings.timingEntry=%s - %s [%d, %d, %d]: %s
+commands.forge.tracking.usage=Use /forge track help for more information on tracking subcommands.
+commands.forge.tracking.start.usage=Use /forge track start <te|entity>
+commands.forge.tracking.reset.usage=Use /forge track reset <te|entity>
+commands.forge.tracking.reset=Timings data has been cleared!
+commands.forge.tracking.te.usage=Use /forge track te
+
+commands.forge.tracking.timingEntry=%s - %s [%d, %d, %d]: %s
+commands.forge.tracking.noData=No data has been recorded yet.
 commands.tree_base.invalid_cmd=Invalid subcommand '%s'!
 commands.tree_base.invalid_cmd.list_subcommands=Invalid subcommand '%s'! Available subcommands: %s
 commands.tree_base.available_subcommands=Available SubCommands: %s
