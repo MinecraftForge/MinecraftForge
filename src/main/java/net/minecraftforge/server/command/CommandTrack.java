@@ -28,6 +28,7 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -48,6 +49,7 @@ class CommandTrack extends CommandTreeBase
         addSubcommand(new StartTrackingCommand());
         addSubcommand(new ResetTrackingCommand());
         addSubcommand(new TrackResultsTileEntity());
+        addSubcommand(new TrackResultsEntity());
         addSubcommand(new CommandTreeHelp(this));
     }
 
@@ -159,6 +161,15 @@ class CommandTrack extends CommandTreeBase
                 ForgeTimeTracker.TILE_ENTITY_UPDATE.reset();
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.reset"));
             }
+            else if ("entity".equals(type))
+            {
+                ForgeTimeTracker.ENTITY_UPDATE.reset();
+                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.reset"));
+            }
+            else
+            {
+                throw new WrongUsageException(getUsage(sender));
+            }
         }
 
         @Override
@@ -214,7 +225,7 @@ class CommandTrack extends CommandTreeBase
                     if (te == null)
                         continue;
                     subList.add(e);
-                    if (++count > 10)
+                    if (++count >= 10)
                         break;
                 }
                 for (ForgeTimings<T> e : subList)
@@ -247,6 +258,62 @@ class CommandTrack extends CommandTreeBase
             {
                 return "ms";
             }
+        }
+
+        /**
+         * Translates a world dimension ID into a name
+         *
+         * @param dimId The dimension ID
+         * @return The name of the dimension
+         */
+        protected String getWorldName(int dimId)
+        {
+            DimensionType type = DimensionManager.getProviderType(dimId);
+            if (type == null)
+            {
+                return "Dim " + dimId;
+            }
+            else
+            {
+                return type.getName();
+            }
+        }
+    }
+
+    private static class TrackResultsEntity extends TrackResultsBaseCommand<Entity>
+    {
+        public TrackResultsEntity()
+        {
+            super(ForgeTimeTracker.ENTITY_UPDATE);
+        }
+
+        @Override
+        public String getName()
+        {
+            return "entity";
+        }
+
+        @Override
+        public String getUsage(ICommandSender sender)
+        {
+            return "commands.forge.tracking.entity.usage";
+        }
+
+        @Override
+        protected ITextComponent buildTrackString(ICommandSender sender, ForgeTimings<Entity> data)
+        {
+            Entity entity = data.getObject().get();
+            if (entity == null)
+                return TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.invalid");
+
+            BlockPos currentPos = entity.getPosition();
+            String world = getWorldName(entity.world.provider.getDimension());
+            double averageTimings = data.getAverageTimings();
+            String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + getTimeSuffix(
+                    averageTimings);
+
+            return TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.timingEntry", entity.getName(),
+                    world, currentPos.getX(), currentPos.getY(), currentPos.getZ(), tickTime);
         }
     }
 
@@ -299,19 +366,6 @@ class CommandTrack extends CommandTreeBase
             else
             {
                 return registryId.toString();
-            }
-        }
-
-        private String getWorldName(int dimId)
-        {
-            DimensionType type = DimensionManager.getProviderType(dimId);
-            if (type == null)
-            {
-                return "Dim " + dimId;
-            }
-            else
-            {
-                return type.getName();
             }
         }
     }
