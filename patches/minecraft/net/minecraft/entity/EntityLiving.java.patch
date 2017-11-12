@@ -13,7 +13,7 @@
                  flag = true;
              }
 -            else if (itemstack.func_77973_b() instanceof ItemArmor && itemstack1.func_77973_b() instanceof ItemArmor && !EnchantmentHelper.func_190938_b(itemstack1))
-+            else if (itemstack.func_77973_b() instanceof ItemArmor && itemstack1.func_77973_b() instanceof ItemArmor && !EnchantmentHelper.hasBindingCurse(itemstack1, this))
++            else if (itemstack.func_77973_b() instanceof ItemArmor && itemstack1.func_77973_b() instanceof ItemArmor && !net.minecraftforge.common.ForgeEnchantmentHelper.hasBindingCurse(itemstack1, this))
              {
                  ItemArmor itemarmor = (ItemArmor)itemstack.func_77973_b();
                  ItemArmor itemarmor1 = (ItemArmor)itemstack1.func_77973_b();
@@ -53,7 +53,7 @@
              boolean flag = d0 > 1.0D;
  
 -            if (!itemstack.func_190926_b() && !EnchantmentHelper.func_190939_c(itemstack) && (p_82160_1_ || flag) && (double)(this.field_70146_Z.nextFloat() - (float)p_82160_2_ * 0.01F) < d0)
-+            if (!itemstack.func_190926_b() && !EnchantmentHelper.hasVanishingCurse(itemstack, this) && (p_82160_1_ || flag) && (double)(this.field_70146_Z.nextFloat() - (float)p_82160_2_ * 0.01F) < d0)
++            if (!itemstack.func_190926_b() && !net.minecraftforge.common.ForgeEnchantmentHelper.hasVanishingCurse(itemstack, this) && (p_82160_1_ || flag) && (double)(this.field_70146_Z.nextFloat() - (float)p_82160_2_ * 0.01F) < d0)
              {
                  if (!flag && itemstack.func_77984_f())
                  {

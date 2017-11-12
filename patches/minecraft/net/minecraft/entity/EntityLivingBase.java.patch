@@ -192,7 +192,7 @@
              else
              {
 -                int k = EnchantmentHelper.func_77508_a(this.func_184193_aE(), p_70672_1_);
-+                int k = EnchantmentHelper.getEnchantmentModifierDamage(this.func_184193_aE(), p_70672_1_, this);
++                int k = net.minecraftforge.common.ForgeEnchantmentHelper.getEnchantmentModifierDamage(this.func_184193_aE(), p_70672_1_, this);
  
                  if (k > 0)
                  {

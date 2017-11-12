@@ -82,7 +82,7 @@
              ItemStack itemstack = this.field_71071_by.func_70301_a(i);
  
 -            if (!itemstack.func_190926_b() && EnchantmentHelper.func_190939_c(itemstack))
-+            if (!itemstack.func_190926_b() && EnchantmentHelper.hasVanishingCurse(itemstack, this))
++            if (!itemstack.func_190926_b() && net.minecraftforge.common.ForgeEnchantmentHelper.hasVanishingCurse(itemstack, this))
              {
                  this.field_71071_by.func_70304_b(i);
              }
@@ -301,12 +301,12 @@
                  if (p_71059_1_ instanceof EntityLivingBase)
                  {
 -                    f1 = EnchantmentHelper.func_152377_a(this.func_184614_ca(), ((EntityLivingBase)p_71059_1_).func_70668_bt());
-+                    f1 = EnchantmentHelper.getModifierForCreature(this.func_184614_ca(), ((EntityLivingBase)p_71059_1_).func_70668_bt(), this);
++                    f1 = net.minecraftforge.common.ForgeEnchantmentHelper.getModifierForCreature(this.func_184614_ca(), ((EntityLivingBase)p_71059_1_).func_70668_bt(), this);
                  }
                  else
                  {
 -                    f1 = EnchantmentHelper.func_152377_a(this.func_184614_ca(), EnumCreatureAttribute.UNDEFINED);
-+                    f1 = EnchantmentHelper.getModifierForCreature(this.func_184614_ca(), EnumCreatureAttribute.UNDEFINED, this);
++                    f1 = net.minecraftforge.common.ForgeEnchantmentHelper.getModifierForCreature(this.func_184614_ca(), EnumCreatureAttribute.UNDEFINED, this);
                  }
  
                  float f2 = this.func_184825_o(0.5F);

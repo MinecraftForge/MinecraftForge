@@ -5,7 +5,7 @@
          if (p_70652_1_ instanceof EntityLivingBase)
          {
 -            f += EnchantmentHelper.func_152377_a(this.func_184614_ca(), ((EntityLivingBase)p_70652_1_).func_70668_bt());
-+            f += EnchantmentHelper.getModifierForCreature(this.func_184614_ca(), ((EntityLivingBase)p_70652_1_).func_70668_bt(), this);
++            f += net.minecraftforge.common.ForgeEnchantmentHelper.getModifierForCreature(this.func_184614_ca(), ((EntityLivingBase)p_70652_1_).func_70668_bt(), this);
              i += EnchantmentHelper.func_77501_a(this);
          }
  

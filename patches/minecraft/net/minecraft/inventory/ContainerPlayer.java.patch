@@ -11,7 +11,7 @@
                  {
                      ItemStack itemstack = this.func_75211_c();
 -                    return !itemstack.func_190926_b() && !p_82869_1_.func_184812_l_() && EnchantmentHelper.func_190938_b(itemstack) ? false : super.func_82869_a(p_82869_1_);
-+                    return !itemstack.func_190926_b() && !p_82869_1_.func_184812_l_() && EnchantmentHelper.hasBindingCurse(itemstack, p_82869_1_) ? false : super.func_82869_a(p_82869_1_);
++                    return !itemstack.func_190926_b() && !p_82869_1_.func_184812_l_() && net.minecraftforge.common.ForgeEnchantmentHelper.hasBindingCurse(itemstack, p_82869_1_) ? false : super.func_82869_a(p_82869_1_);
                  }
                  @Nullable
                  @SideOnly(Side.CLIENT)

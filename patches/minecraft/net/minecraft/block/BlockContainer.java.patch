@@ -5,7 +5,7 @@
              }
  
 -            int i = EnchantmentHelper.func_77506_a(Enchantments.field_185308_t, p_180657_6_);
-+            int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185308_t, p_180657_6_, p_180657_2_);
++            int i = net.minecraftforge.common.ForgeEnchantmentHelper.getEnchantmentLevel(Enchantments.field_185308_t, p_180657_6_, p_180657_2_);
              Item item = this.func_180660_a(p_180657_4_, p_180657_1_.field_73012_v, i);
  
              if (item == Items.field_190931_a)
