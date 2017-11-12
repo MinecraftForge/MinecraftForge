@@ -32,6 +32,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.server.ForgeTimeTracker;
@@ -86,6 +87,17 @@ class CommandTrack extends CommandTreeBase
                 ForgeTimeTracker.TILE_ENTITY_UPDATE.trackingDuration = duration;
                 ForgeTimeTracker.TILE_ENTITY_UPDATE.enabled = true;
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.te.enabled", duration));
+            }
+            else if ("entity".equals(type))
+            {
+                ForgeTimeTracker.ENTITY_UPDATE.reset();
+                ForgeTimeTracker.ENTITY_UPDATE.trackingDuration = duration;
+                ForgeTimeTracker.ENTITY_UPDATE.enabled = true;
+                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.entity.enabled", duration));
+            }
+            else
+            {
+                throw new WrongUsageException(getUsage(sender));
             }
         }
 
@@ -156,8 +168,95 @@ class CommandTrack extends CommandTreeBase
         }
     }
 
-    private static class TrackResultsTileEntity extends CommandBase
+    /**
+     * A base command for all the tracking results commands
+     *
+     * @param <T>
+     */
+    private static abstract class TrackResultsBaseCommand<T> extends CommandBase
     {
+
+        private ForgeTimeTracker<T> tracker;
+
+        protected TrackResultsBaseCommand(ForgeTimeTracker<T> tracker)
+        {
+            this.tracker = tracker;
+        }
+
+        /**
+         * Returns the time objects recorded by the time tracker sorted by average time
+         *
+         * @return A list of time objects
+         */
+        protected List<ForgeTimings<T>> getSortedTimings()
+        {
+            ArrayList<ForgeTimings<T>> list = new ArrayList<>();
+            list.addAll(tracker.getTimingData());
+            list.sort((o1, o2) -> Double.compare(o2.getAverageTimings(), o1.getAverageTimings()));
+            return list;
+        }
+
+        @Override
+        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+        {
+            List<ForgeTimings<T>> timingsList = getSortedTimings();
+            if (timingsList.isEmpty())
+            {
+                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.noData"));
+            }
+            else
+            {
+                List<ForgeTimings<T>> subList = new ArrayList<>();
+                int count = 0;
+                for (ForgeTimings<T> e : timingsList)
+                {
+                    T te = e.getObject().get();
+                    if (te == null)
+                        continue;
+                    subList.add(e);
+                    if (++count > 10)
+                        break;
+                }
+                for (ForgeTimings<T> e : subList)
+                {
+                    T te = e.getObject().get();
+
+                    if (te == null)
+                        continue; // Probably shouldn't ever happen
+
+                    sender.sendMessage(buildTrackString(sender, e));
+                }
+            }
+        }
+
+        protected abstract ITextComponent buildTrackString(ICommandSender sender, ForgeTimings<T> data);
+
+        /**
+         * Gets the time suffix for the provided time in nanoseconds
+         *
+         * @param time The time in nanoseconds
+         * @return The time suffix
+         */
+        protected String getTimeSuffix(double time)
+        {
+            if (time < 1000)
+            {
+                return "µs";
+            }
+            else
+            {
+                return "ms";
+            }
+        }
+    }
+
+    private static class TrackResultsTileEntity extends TrackResultsBaseCommand<TileEntity>
+    {
+
+        public TrackResultsTileEntity()
+        {
+            super(ForgeTimeTracker.TILE_ENTITY_UPDATE);
+        }
 
         @Override
         public String getName()
@@ -172,55 +271,22 @@ class CommandTrack extends CommandTreeBase
         }
 
         @Override
-        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+        protected ITextComponent buildTrackString(ICommandSender sender, ForgeTimings<TileEntity> data)
         {
-            List<ForgeTimings<TileEntity>> timingsList = getSortedTileEntityTimings();
-            if (timingsList.isEmpty())
-            {
-                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.noData"));
-            }
-            else
-            {
-                List<ForgeTimings<TileEntity>> subList = new ArrayList<>();
-                int count = 0;
-                for (ForgeTimings<TileEntity> e : timingsList)
-                {
-                    TileEntity te = e.getObject().get();
-                    if (te == null || te.isInvalid())
-                        continue;
-                    subList.add(e);
-                    if (++count > 10)
-                        break;
-                }
-                for (ForgeTimings<TileEntity> e : subList)
-                {
-                    TileEntity te = e.getObject().get();
-                    if (te == null || te.isInvalid())
-                        continue; // Probably shouldn't ever happen
+            TileEntity te = data.getObject().get();
+            if (te == null)
+                return TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.invalid");
 
-                    String name = getTileEntityName(te);
-                    BlockPos pos = te.getPos();
+            String name = getTileEntityName(te);
+            BlockPos pos = te.getPos();
 
-                    double averageTimings = e.getAverageTimings();
-                    String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + getTimeSuffix(
-                            averageTimings);
-                    sender.sendMessage(TextComponentHelper
-                            .createComponentTranslation(sender, "commands.forge.tracking.timingEntry", name, getWorldName(te.getWorld().provider.getDimension()),
-                                    pos.getX(), pos.getY(), pos.getZ(), tickTime));
-                }
-            }
-        }
-
-        private String getTimeSuffix(double time)
-        {
-            if (time < 1000)
-            {
-                return "µs";
-            }
-            else
-            {
-                return "ms";
-            }
+            double averageTimings = data.getAverageTimings();
+            String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + getTimeSuffix(
+                    averageTimings);
+            return TextComponentHelper
+                    .createComponentTranslation(sender, "commands.forge.tracking.timingEntry", name,
+                            getWorldName(te.getWorld().provider.getDimension()),
+                            pos.getX(), pos.getY(), pos.getZ(), tickTime);
         }
 
         private String getTileEntityName(TileEntity tileEntity)
@@ -247,14 +313,6 @@ class CommandTrack extends CommandTreeBase
             {
                 return type.getName();
             }
-        }
-
-        private List<ForgeTimings<TileEntity>> getSortedTileEntityTimings()
-        {
-            ArrayList<ForgeTimings<TileEntity>> list = new ArrayList<>();
-            list.addAll(ForgeTimeTracker.TILE_ENTITY_UPDATE.getTimingData());
-            list.sort((o1, o2) -> Double.compare(o2.getAverageTimings(), o1.getAverageTimings()));
-            return list;
         }
     }
 }
