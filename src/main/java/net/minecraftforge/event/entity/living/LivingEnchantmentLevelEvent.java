@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * {@link #enchantment} contains the Enchantment that is being looked up. <br>
  * {@link #heldItem} contains the held item when the level is being looked up. <br>
  * {@link #level} contains the enchantment level, which is initialized by Vanilla's default logic. <br>
+ * {@link #originalLevel} contains the unchanged original enchantment level, as initialized by Vanilla's default logic. <br>
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
@@ -30,6 +31,7 @@ public class LivingEnchantmentLevelEvent extends LivingEvent
     private final Enchantment enchantment;
     private final ItemStack heldItem;
     private int level;
+    private final int originalLevel;
 
     public LivingEnchantmentLevelEvent(EntityLivingBase entityLiving, Enchantment enchantment, ItemStack heldItem, int level)
     {
@@ -37,6 +39,7 @@ public class LivingEnchantmentLevelEvent extends LivingEvent
         this.enchantment = enchantment;
         this.heldItem = heldItem;
         this.level = level;
+        this.originalLevel = level;
     }
 
     public Enchantment getEnchantment()
@@ -57,6 +60,11 @@ public class LivingEnchantmentLevelEvent extends LivingEvent
     public void setLevel(int level)
     {
         this.level = level;
+    }
+
+    public int getOriginalLevel()
+    {
+        return originalLevel;
     }
 
 }
