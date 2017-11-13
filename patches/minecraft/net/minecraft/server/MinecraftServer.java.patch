@@ -129,7 +129,6 @@
              {
 -                this.field_71316_v = true;
                  this.func_71260_j();
-+                this.field_71316_v = true;
              }
              catch (Throwable throwable)
              {
