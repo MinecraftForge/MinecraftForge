@@ -12,6 +12,15 @@
  
              if (this.field_194335_f != null && this.field_194336_g != null)
              {
+@@ -147,7 +152,7 @@
+             while (intlistiterator.hasNext())
+             {
+                 int k = ((Integer)intlistiterator.next()).intValue();
+-                int l = RecipeItemHelper.func_194115_b(k).func_77976_d();
++                int l = this.field_194331_b.getItemStack(k).func_77958_k();
+ 
+                 if (l < j1)
+                 {
 @@ -199,11 +204,11 @@
          int i = this.field_194336_g.func_174922_i();
          int j = this.field_194336_g.func_174923_h();
@@ -28,3 +37,12 @@
          }
  
          int j1 = 1;
+@@ -220,7 +225,7 @@
+                 }
+ 
+                 Slot slot = this.field_194337_h.get(j1);
+-                ItemStack itemstack = RecipeItemHelper.func_194115_b(((Integer)iterator.next()).intValue());
++                ItemStack itemstack = this.field_194331_b.getItemStack(iterator.next());
+ 
+                 if (itemstack.func_190926_b())
+                 {

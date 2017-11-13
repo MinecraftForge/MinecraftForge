@@ -1,0 +1,103 @@
+--- ../src-base/minecraft/net/minecraft/client/util/RecipeItemHelper.java
++++ ../src-work/minecraft/net/minecraft/client/util/RecipeItemHelper.java
+@@ -20,18 +20,21 @@
+ 
+ public class RecipeItemHelper
+ {
++    private final List<ItemStack> itemStackDictionary = new java.util.ArrayList<>();
+     public final Int2IntMap field_194124_a = new Int2IntOpenHashMap();
+ 
+     public void func_194112_a(ItemStack p_194112_1_)
+     {
+         if (!p_194112_1_.func_190926_b() && !p_194112_1_.func_77951_h() && !p_194112_1_.func_77948_v() && !p_194112_1_.func_82837_s())
+         {
+-            int i = func_194113_b(p_194112_1_);
+             int j = p_194112_1_.func_190916_E();
++            int i = this.itemStackDictionary.size();
++            this.itemStackDictionary.add(p_194112_1_);
+             this.func_194117_b(i, j);
+         }
+     }
+ 
++    @Deprecated
+     public static int func_194113_b(ItemStack p_194113_0_)
+     {
+         Item item = p_194113_0_.func_77973_b();
+@@ -84,6 +87,12 @@
+         return (new RecipeItemHelper.RecipePicker(p_194121_1_)).func_194102_b(p_194121_2_, p_194121_3_);
+     }
+ 
++    public ItemStack getItemStack(int packedInteger)
++    {
++        return packedInteger >= this.itemStackDictionary.size() ? ItemStack.field_190927_a : this.itemStackDictionary.get(packedInteger);
++    }
++
++    @Deprecated
+     public static ItemStack func_194115_b(int p_194115_0_)
+     {
+         return p_194115_0_ == 0 ? ItemStack.field_190927_a : new ItemStack(Item.func_150899_d(p_194115_0_ >> 16 & 65535), 1, p_194115_0_ & 65535);
+@@ -92,6 +101,7 @@
+     public void func_194119_a()
+     {
+         this.field_194124_a.clear();
++        this.itemStackDictionary.clear();
+     }
+ 
+     class RecipePicker
+@@ -119,11 +129,9 @@
+ 
+             for (int i = 0; i < this.field_194106_c.size(); ++i)
+             {
+-                IntList intlist = ((Ingredient)this.field_194106_c.get(i)).func_194139_b();
+-
+                 for (int j = 0; j < this.field_194109_f; ++j)
+                 {
+-                    if (intlist.contains(this.field_194108_e[j]))
++                    if (this.field_194106_c.get(i).apply(RecipeItemHelper.this.itemStackDictionary.get(this.field_194108_e[j])))
+                     {
+                         this.field_194110_g.set(this.func_194095_d(true, j, i));
+                     }
+@@ -202,18 +210,15 @@
+         {
+             IntCollection intcollection = new IntAVLTreeSet();
+ 
+-            for (Ingredient ingredient : this.field_194106_c)
++            for (int i = 0; i < RecipeItemHelper.this.itemStackDictionary.size(); ++i)
+             {
+-                intcollection.addAll(ingredient.func_194139_b());
+-            }
+-
+-            IntIterator intiterator = intcollection.iterator();
+-
+-            while (intiterator.hasNext())
+-            {
+-                if (!RecipeItemHelper.this.func_194120_a(intiterator.nextInt()))
++                ItemStack stack = RecipeItemHelper.this.itemStackDictionary.get(i);
++                for (Ingredient ingredient : this.field_194106_c)
+                 {
+-                    intiterator.remove();
++                    if (ingredient.apply(stack))
++                    {
++                        intcollection.add(i);
++                    }
+                 }
+             }
+ 
+@@ -359,11 +364,14 @@
+             for (Ingredient ingredient : this.field_194106_c)
+             {
+                 int l = 0;
+-                int i1;
+ 
+-                for (IntListIterator intlistiterator = ingredient.func_194139_b().iterator(); intlistiterator.hasNext(); l = Math.max(l, RecipeItemHelper.this.field_194124_a.get(i1)))
++                for (int i = 0; i < RecipeItemHelper.this.itemStackDictionary.size(); ++i)
+                 {
+-                    i1 = ((Integer)intlistiterator.next()).intValue();
++                    ItemStack stack = RecipeItemHelper.this.itemStackDictionary.get(i);
++                    if (ingredient.apply(stack))
++                    {
++                        l = Math.max(l, RecipeItemHelper.this.field_194124_a.get(i));
++                    }
+                 }
+ 
+                 if (k > 0)

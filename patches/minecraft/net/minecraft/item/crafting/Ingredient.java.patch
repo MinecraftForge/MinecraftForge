@@ -28,7 +28,15 @@
      public ItemStack[] func_193365_a()
      {
          return this.field_193371_b;
-@@ -76,6 +83,18 @@
+@@ -59,6 +66,7 @@
+         }
+     }
+ 
++    @Deprecated
+     public IntList func_194139_b()
+     {
+         if (this.field_194140_c == null)
+@@ -76,6 +84,18 @@
          return this.field_194140_c;
      }
  
