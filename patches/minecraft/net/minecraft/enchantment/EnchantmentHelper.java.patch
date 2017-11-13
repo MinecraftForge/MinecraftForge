@@ -1,13 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -25,11 +25,12 @@
- 
- public class EnchantmentHelper
- {
--    private static final EnchantmentHelper.ModifierDamage field_77520_b = new EnchantmentHelper.ModifierDamage();
--    private static final EnchantmentHelper.ModifierLiving field_77521_c = new EnchantmentHelper.ModifierLiving();
-+    public static final EnchantmentHelper.ModifierDamage field_77520_b = new EnchantmentHelper.ModifierDamage();
-+    public static final EnchantmentHelper.ModifierLiving field_77521_c = new EnchantmentHelper.ModifierLiving();
+@@ -30,6 +30,7 @@
      private static final EnchantmentHelper.HurtIterator field_151388_d = new EnchantmentHelper.HurtIterator();
      private static final EnchantmentHelper.DamageIterator field_151389_e = new EnchantmentHelper.DamageIterator();
  
@@ -150,27 +143,3 @@
              {
                  for (int i = enchantment.func_77325_b(); i > enchantment.func_77319_d() - 1; --i)
                  {
-@@ -459,12 +468,12 @@
-             }
-         }
- 
--    interface IModifier
-+    public interface IModifier
-     {
-         void func_77493_a(Enchantment p_77493_1_, int p_77493_2_);
-     }
- 
--    static final class ModifierDamage implements EnchantmentHelper.IModifier
-+    public static final class ModifierDamage implements EnchantmentHelper.IModifier
-         {
-             public int field_77497_a;
-             public DamageSource field_77496_b;
-@@ -479,7 +488,7 @@
-             }
-         }
- 
--    static final class ModifierLiving implements EnchantmentHelper.IModifier
-+    public static final class ModifierLiving implements EnchantmentHelper.IModifier
-         {
-             public float field_77495_a;
-             public EnumCreatureAttribute field_77494_b;
