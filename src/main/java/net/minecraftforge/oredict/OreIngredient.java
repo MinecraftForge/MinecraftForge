@@ -64,6 +64,7 @@ public class OreIngredient extends Ingredient
     }
 
 
+    @Deprecated
     @Override
     @Nonnull
     public IntList getValidItemStacksPacked()

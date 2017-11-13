@@ -44,6 +44,7 @@ public class CompoundIngredient extends Ingredient
         return stacks;
     }
 
+    @Deprecated
     @Override
     @Nonnull
     @SideOnly(Side.CLIENT)
