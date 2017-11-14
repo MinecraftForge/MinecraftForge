@@ -36,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @Mod(modid = "elytratest", name = "Custom Elytra Test", version = "0.0.0", clientSideOnly = true)
 public class ElytraTest
 {
-    static final boolean ENABLED = true;
+    static final boolean ENABLED = false;
 
     static final UUID UUID_ELYTRA_BOOTS_FLIGHT = UUID.fromString("D468D2A8-A074-497C-AC24-043203938E0C");
     static final String UUID_ANTI_ELYTRA_POTION = "5B03EF4D-4177-4BBC-ADCD-CA585543950C";
