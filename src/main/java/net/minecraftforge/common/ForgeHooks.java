@@ -53,7 +53,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -1388,7 +1387,7 @@ public class ForgeHooks
     	{
     		return vanillaElytra;
     	}
-    	double attributeValue = player.getEntityAttribute(SharedMonsterAttributes.ELYTRA_FLIGHT).getAttributeValue();
+    	double attributeValue = player.getEntityAttribute(EntityPlayer.ELYTRA_FLIGHT).getAttributeValue();
     	return attributeValue > 1.0D || (vanillaElytra && attributeValue >= 1.0D);
     }
 }

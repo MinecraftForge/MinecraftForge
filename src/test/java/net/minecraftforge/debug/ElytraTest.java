@@ -36,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @Mod(modid = "elytratest", name = "Custom Elytra Test", version = "0.0.0", clientSideOnly = true)
 public class ElytraTest
 {
-    static final boolean ENABLED = false;
+    static final boolean ENABLED = true;
 
     static final UUID UUID_ELYTRA_BOOTS_FLIGHT = UUID.fromString("D468D2A8-A074-497C-AC24-043203938E0C");
     static final String UUID_ANTI_ELYTRA_POTION = "5B03EF4D-4177-4BBC-ADCD-CA585543950C";
@@ -52,7 +52,7 @@ public class ElytraTest
         {
             super(true, 0xFFFF0000);
             this.setPotionName("antielytrapotion");
-            this.registerPotionAttributeModifier(SharedMonsterAttributes.ELYTRA_FLIGHT, UUID_ANTI_ELYTRA_POTION, -1D, 2);
+            this.registerPotionAttributeModifier(EntityPlayer.ELYTRA_FLIGHT, UUID_ANTI_ELYTRA_POTION, -1D, 2);
             this.setRegistryName(new ResourceLocation("elytratest", "antielytrapotion"));
         }
 
@@ -88,7 +88,7 @@ public class ElytraTest
             boolean hasBoots = !boots.isEmpty() && boots.getItem() == ELYTRA_BOOTS;
 
             IAttributeInstance attributeElytraFlight = event.player.getAttributeMap()
-                    .getAttributeInstance(SharedMonsterAttributes.ELYTRA_FLIGHT);
+                    .getAttributeInstance(EntityPlayer.ELYTRA_FLIGHT);
 
             if (attributeElytraFlight != null)
             {
