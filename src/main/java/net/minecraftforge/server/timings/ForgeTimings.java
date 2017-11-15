@@ -22,7 +22,7 @@ package net.minecraftforge.server.timings;
 import java.lang.ref.WeakReference;
 
 /**
- * ForgeTimings aggregates timings data collected by {@link net.minecraftforge.server.ForgeTimeTracker} for an Object
+ * ForgeTimings aggregates timings data collected by {@link ForgeTimeTracker} for an Object
  * and performs operations for interpretation of the data.
  *
  * @param <T>
@@ -50,18 +50,9 @@ public class ForgeTimings<T>
         return object;
     }
 
-    /**
-     * Returns the raw data collected by the timings tracker
-     *
-     * @return An array of the time it took (in nanoseconds) for the object to update
-     */
-    public int[] getRawTimingData()
-    {
-        return rawTimingData;
-    }
 
     /**
-     * Averages the raw timings data returned by {@link ForgeTimings#getRawTimingData()}
+     * Averages the raw timings data collected
      *
      * @return An average of the raw timing data
      */

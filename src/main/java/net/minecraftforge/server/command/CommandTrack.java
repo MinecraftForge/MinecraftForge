@@ -20,9 +20,7 @@ package net.minecraftforge.server.command;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -36,7 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.server.ForgeTimeTracker;
+import net.minecraftforge.server.timings.ForgeTimeTracker;
 import net.minecraftforge.server.timings.ForgeTimings;
 
 class CommandTrack extends CommandTreeBase
@@ -86,15 +84,13 @@ class CommandTrack extends CommandTreeBase
             if ("te".equals(type))
             {
                 ForgeTimeTracker.TILE_ENTITY_UPDATE.reset();
-                ForgeTimeTracker.TILE_ENTITY_UPDATE.trackingDuration = duration;
-                ForgeTimeTracker.TILE_ENTITY_UPDATE.enabled = true;
+                ForgeTimeTracker.TILE_ENTITY_UPDATE.enable(duration);
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.te.enabled", duration));
             }
             else if ("entity".equals(type))
             {
                 ForgeTimeTracker.ENTITY_UPDATE.reset();
-                ForgeTimeTracker.ENTITY_UPDATE.trackingDuration = duration;
-                ForgeTimeTracker.ENTITY_UPDATE.enabled = true;
+                ForgeTimeTracker.ENTITY_UPDATE.enable(duration);
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.entity.enabled", duration));
             }
             else
@@ -202,8 +198,11 @@ class CommandTrack extends CommandTreeBase
         protected List<ForgeTimings<T>> getSortedTimings()
         {
             ArrayList<ForgeTimings<T>> list = new ArrayList<>();
+
             list.addAll(tracker.getTimingData());
-            list.sort((o1, o2) -> Double.compare(o2.getAverageTimings(), o1.getAverageTimings()));
+            list.sort(Comparator.comparingDouble(ForgeTimings::getAverageTimings));
+            Collections.reverse(list);
+
             return list;
         }
 
@@ -217,26 +216,11 @@ class CommandTrack extends CommandTreeBase
             }
             else
             {
-                List<ForgeTimings<T>> subList = new ArrayList<>();
-                int count = 0;
-                for (ForgeTimings<T> e : timingsList)
-                {
-                    T te = e.getObject().get();
-                    if (te == null)
-                        continue;
-                    subList.add(e);
-                    if (++count >= 10)
-                        break;
-                }
-                for (ForgeTimings<T> e : subList)
-                {
-                    T te = e.getObject().get();
-
-                    if (te == null)
-                        continue; // Probably shouldn't ever happen
-
-                    sender.sendMessage(buildTrackString(sender, e));
-                }
+                timingsList.stream()
+                        .filter(timings -> timings.getObject().get() != null)
+                        .limit(10)
+                        .forEach( timings -> sender.sendMessage(buildTrackString(sender, timings))
+                );
             }
         }
 
@@ -358,11 +342,9 @@ class CommandTrack extends CommandTreeBase
 
         private String getTileEntityName(TileEntity tileEntity)
         {
-            String className = tileEntity.getClass().getSimpleName();
-
             ResourceLocation registryId = TileEntity.getKey(tileEntity.getClass());
             if (registryId == null)
-                return className;
+                return tileEntity.getClass().getSimpleName();
             else
             {
                 return registryId.toString();

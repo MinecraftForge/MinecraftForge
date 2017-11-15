@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.server;
+package net.minecraftforge.server.timings;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -29,7 +29,6 @@ import com.google.common.collect.MapMaker;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.server.timings.ForgeTimings;
 
 /**
  * A class to assist in the collection of data to measure the update times of ticking objects {currently Tile Entities and Entities}
@@ -42,25 +41,18 @@ public class ForgeTimeTracker<T>
     /**
      * A tracker for timing tile entity update
      */
-    public static ForgeTimeTracker<TileEntity> TILE_ENTITY_UPDATE = new ForgeTimeTracker<>();
+    public static final ForgeTimeTracker<TileEntity> TILE_ENTITY_UPDATE = new ForgeTimeTracker<>();
     /**
      * A tracker for timing entity updates
      */
-    public static ForgeTimeTracker<Entity> ENTITY_UPDATE = new ForgeTimeTracker<>();
+    public static final ForgeTimeTracker<Entity> ENTITY_UPDATE = new ForgeTimeTracker<>();
 
-    public boolean enabled;
-    public int trackingDuration;
-    private Map<T, int[]> timings;
+    private boolean enabled;
+    private int trackingDuration;
+    private Map<T, int[]> timings = new MapMaker().weakKeys().makeMap();
     private WeakReference<T> currentlyTracking;
     private long trackTime;
     private long timing;
-
-    private ForgeTimeTracker()
-    {
-        MapMaker mm = new MapMaker();
-        mm.weakKeys();
-        timings = mm.makeMap();
-    }
 
     /**
      * Returns the timings data recorded by the tracker
@@ -98,6 +90,17 @@ public class ForgeTimeTracker<T>
         if (!enabled)
             return;
         this.trackEnd(tracking, System.nanoTime());
+    }
+
+    /**
+     * Starts recording tracking data for the given duration in seconds
+     *
+     * @param duration The duration for the time to track
+     */
+    public void enable(int duration)
+    {
+        this.trackingDuration = duration;
+        this.enabled = true;
     }
 
     /**
