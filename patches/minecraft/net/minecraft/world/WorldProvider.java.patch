@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,317 @@
+@@ -241,6 +216,318 @@
          return new WorldBorder();
      }
  
@@ -102,9 +102,10 @@
 +    }
 +
 +    /**
-+     * The dimensions movement factor. Relative to normal overworld.
-+     * It is applied to the players position when they transfer dimensions.
-+     * Exa: Nether movement is 8.0
++     * The dimension's movement factor.
++     * Whenever a player or entity changes dimension from world A to world B, their coordinates are multiplied by
++     * worldA.provider.getMovementFactor() / worldB.provider.getMovementFactor()
++     * Example: Overworld factor is 1, nether factor is 8. Traveling from overworld to nether multiplies coordinates by 1/8.
 +     * @return The movement factor
 +     */
 +    public double getMovementFactor()
