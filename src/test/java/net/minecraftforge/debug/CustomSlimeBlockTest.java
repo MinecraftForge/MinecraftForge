@@ -50,8 +50,7 @@ public class CustomSlimeBlockTest
         {
             Item item = Item.getItemFromBlock(CUSTOM_SLIME_BLOCK);
             ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(ASSETS + "blue_slime_block", "inventory"));
-            ModelLoader.setCustomModelResourceLocation(item, 1, new ModelResourceLocation(ASSETS + "purple_slime_block", "inventory"));
-            ModelLoader.setCustomModelResourceLocation(item, 2, new ModelResourceLocation(ASSETS + "obsidian_slime_block", "inventory"));
+            ModelLoader.setCustomModelResourceLocation(item, 1, new ModelResourceLocation(ASSETS + "obsidian_slime_block", "inventory"));
         }
     }
 
@@ -106,7 +105,6 @@ public class CustomSlimeBlockTest
         public static enum BlockType implements IStringSerializable
         {
             BLUE_SLIME_BLOCK,
-            PURPLE_SLIME_BLOCK,
             OBSIDIAN_SLIME_BLOCK;
 
             protected static final BlockType[] values = BlockType.values();
