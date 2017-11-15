@@ -109,7 +109,7 @@ public class CustomSlimeBlockTest
             PURPLE_SLIME_BLOCK,
             OBSIDIAN_SLIME_BLOCK;
 
-            private static final BlockType[] values = BlockType.values();
+            protected static final BlockType[] values = BlockType.values();
 
             @Override
             public String toString()
