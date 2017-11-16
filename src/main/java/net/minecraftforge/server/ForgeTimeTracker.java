@@ -20,7 +20,6 @@
 package net.minecraftforge.server;
 
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -34,23 +33,27 @@ import net.minecraftforge.server.timings.TimeTracker;
  * @deprecated To be removed in 1.13 - Implementation has been moved
  * @see net.minecraftforge.server.timings.TimeTracker
  */
+@Deprecated
 public class ForgeTimeTracker {
     /**
      * @deprecated To be removed in 1.13 - Implementation has been moved
      * @see net.minecraftforge.server.timings.TimeTracker
      */
+    @Deprecated
     public static boolean tileEntityTracking;
 
     /**
      * @deprecated To be removed in 1.13 - Implementation has been moved
      * @see net.minecraftforge.server.timings.TimeTracker
      */
+    @Deprecated
     public static int tileEntityTrackingDuration;
 
     /**
      * @deprecated To be removed in 1.13 - Implementation has been moved
      * @see net.minecraftforge.server.timings.TimeTracker
      */
+    @Deprecated
     public static long tileEntityTrackingTime;
 
     private Map<TileEntity,int[]> tileEntityTimings;
@@ -109,6 +112,7 @@ public class ForgeTimeTracker {
      * @deprecated To be removed in 1.13 - Implementation has been moved
      * @see TimeTracker#getTimingData()
      */
+    @Deprecated
     public static ImmutableMap<TileEntity,int[]> getTileTimings()
     {
         return INSTANCE.buildImmutableTileEntityTimingMap();
@@ -126,6 +130,7 @@ public class ForgeTimeTracker {
      * @deprecated To be removed in 1.13 - Implementation has been moved
      * @see TimeTracker#trackStart(Object)
      */
+    @Deprecated
     public static void trackStart(TileEntity tileEntity)
     {
         TimeTracker.TILE_ENTITY_UPDATE.trackStart(tileEntity);
@@ -135,6 +140,7 @@ public class ForgeTimeTracker {
      * @deprecated To be removed in 1.13 - Implementation has been moved
      * @see TimeTracker#trackEnd(Object)
      */
+    @Deprecated
     public static void trackEnd(TileEntity tileEntity)
     {
         TimeTracker.TILE_ENTITY_UPDATE.trackEnd(tileEntity);
@@ -144,6 +150,7 @@ public class ForgeTimeTracker {
      * @deprecated To be removed in 1.13 - Implementation has been moved
      * @see TimeTracker#trackStart(Object)
      */
+    @Deprecated
     public static void trackStart(Entity par1Entity)
     {
     }
@@ -152,6 +159,7 @@ public class ForgeTimeTracker {
      * @deprecated To be removed in 1.13 - Implementation has been moved
      * @see TimeTracker#trackEnd(Object)
      */
+    @Deprecated
     public static void trackEnd(Entity par1Entity)
     {
 
