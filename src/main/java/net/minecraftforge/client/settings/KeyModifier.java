@@ -57,7 +57,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(int keyCode)
         {
-            String keyName = GameSettings.getKeyDisplayString(keyCode);
+            String keyName = NONE.getLocalizedComboName(keyCode);
             String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
             return I18n.format(localizationFormatKey, keyName);
         }
@@ -84,7 +84,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(int keyCode)
         {
-            String keyName = GameSettings.getKeyDisplayString(keyCode);
+            String keyName = NONE.getLocalizedComboName(keyCode);
             return I18n.format("forge.controlsgui.shift", keyName);
         }
     },
@@ -110,7 +110,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(int keyCode)
         {
-            String keyName = GameSettings.getKeyDisplayString(keyCode);
+            String keyName = NONE.getLocalizedComboName(keyCode);
             return I18n.format("forge.controlsgui.alt", keyName);
         }
     },
@@ -146,7 +146,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(int keyCode)
         {
-            return GameSettings.getKeyDisplayString(keyCode);
+            return CustomKeyNames.getCustomKeyName(keyCode, GameSettings::getKeyDisplayString);
         }
     };
 
