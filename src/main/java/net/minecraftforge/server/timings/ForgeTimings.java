@@ -20,9 +20,10 @@
 package net.minecraftforge.server.timings;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 
 /**
- * ForgeTimings aggregates timings data collected by {@link ForgeTimeTracker} for an Object
+ * ForgeTimings aggregates timings data collected by {@link TimeTracker} for an Object
  * and performs operations for interpretation of the data.
  *
  * @param <T>
@@ -66,5 +67,14 @@ public class ForgeTimings<T>
         }
 
         return sum / rawTimingData.length;
+    }
+
+    /**
+     * Returns a copy of the raw timings data collected by the tracker
+     * @return The raw timing data
+     * @deprecated Added for compatibility, remove in 1.13
+     */
+    public int[] getRawTimingData(){
+        return Arrays.copyOfRange(rawTimingData, 0, rawTimingData.length);
     }
 }

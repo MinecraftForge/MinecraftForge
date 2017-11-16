@@ -35,17 +35,17 @@ import net.minecraft.tileentity.TileEntity;
  *
  * @param <T>
  */
-public class ForgeTimeTracker<T>
+public class TimeTracker<T>
 {
 
     /**
      * A tracker for timing tile entity update
      */
-    public static final ForgeTimeTracker<TileEntity> TILE_ENTITY_UPDATE = new ForgeTimeTracker<>();
+    public static final TimeTracker<TileEntity> TILE_ENTITY_UPDATE = new TimeTracker<>();
     /**
      * A tracker for timing entity updates
      */
-    public static final ForgeTimeTracker<Entity> ENTITY_UPDATE = new ForgeTimeTracker<>();
+    public static final TimeTracker<Entity> ENTITY_UPDATE = new TimeTracker<>();
 
     private boolean enabled;
     private int trackingDuration;

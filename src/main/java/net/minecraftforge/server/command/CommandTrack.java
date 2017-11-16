@@ -20,7 +20,11 @@ package net.minecraftforge.server.command;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -34,8 +38,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.server.timings.ForgeTimeTracker;
 import net.minecraftforge.server.timings.ForgeTimings;
+import net.minecraftforge.server.timings.TimeTracker;
 
 class CommandTrack extends CommandTreeBase
 {
@@ -83,14 +87,14 @@ class CommandTrack extends CommandTreeBase
             int duration = parseInt(args[1], 1, 60);
             if ("te".equals(type))
             {
-                ForgeTimeTracker.TILE_ENTITY_UPDATE.reset();
-                ForgeTimeTracker.TILE_ENTITY_UPDATE.enable(duration);
+                TimeTracker.TILE_ENTITY_UPDATE.reset();
+                TimeTracker.TILE_ENTITY_UPDATE.enable(duration);
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.te.enabled", duration));
             }
             else if ("entity".equals(type))
             {
-                ForgeTimeTracker.ENTITY_UPDATE.reset();
-                ForgeTimeTracker.ENTITY_UPDATE.enable(duration);
+                TimeTracker.ENTITY_UPDATE.reset();
+                TimeTracker.ENTITY_UPDATE.enable(duration);
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.entity.enabled", duration));
             }
             else
@@ -154,12 +158,12 @@ class CommandTrack extends CommandTreeBase
             String type = args[0];
             if ("te".equals(type))
             {
-                ForgeTimeTracker.TILE_ENTITY_UPDATE.reset();
+                TimeTracker.TILE_ENTITY_UPDATE.reset();
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.reset"));
             }
             else if ("entity".equals(type))
             {
-                ForgeTimeTracker.ENTITY_UPDATE.reset();
+                TimeTracker.ENTITY_UPDATE.reset();
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.reset"));
             }
             else
@@ -183,9 +187,9 @@ class CommandTrack extends CommandTreeBase
     private static abstract class TrackResultsBaseCommand<T> extends CommandBase
     {
 
-        private ForgeTimeTracker<T> tracker;
+        private TimeTracker<T> tracker;
 
-        protected TrackResultsBaseCommand(ForgeTimeTracker<T> tracker)
+        protected TrackResultsBaseCommand(TimeTracker<T> tracker)
         {
             this.tracker = tracker;
         }
@@ -219,8 +223,8 @@ class CommandTrack extends CommandTreeBase
                 timingsList.stream()
                         .filter(timings -> timings.getObject().get() != null)
                         .limit(10)
-                        .forEach( timings -> sender.sendMessage(buildTrackString(sender, timings))
-                );
+                        .forEach(timings -> sender.sendMessage(buildTrackString(sender, timings))
+                        );
             }
         }
 
@@ -268,7 +272,7 @@ class CommandTrack extends CommandTreeBase
     {
         public TrackResultsEntity()
         {
-            super(ForgeTimeTracker.ENTITY_UPDATE);
+            super(TimeTracker.ENTITY_UPDATE);
         }
 
         @Override
@@ -306,7 +310,7 @@ class CommandTrack extends CommandTreeBase
 
         public TrackResultsTileEntity()
         {
-            super(ForgeTimeTracker.TILE_ENTITY_UPDATE);
+            super(TimeTracker.TILE_ENTITY_UPDATE);
         }
 
         @Override

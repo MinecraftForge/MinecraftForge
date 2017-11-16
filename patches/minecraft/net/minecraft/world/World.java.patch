@@ -406,9 +406,9 @@
              {
                  try
                  {
-+                    net.minecraftforge.server.timings.ForgeTimeTracker.ENTITY_UPDATE.trackStart(entity2);
++                    net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(entity2);
                      this.func_72870_g(entity2);
-+                    net.minecraftforge.server.timings.ForgeTimeTracker.ENTITY_UPDATE.trackEnd(entity2);
++                    net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackEnd(entity2);
                  }
                  catch (Throwable throwable1)
                  {
@@ -464,9 +464,9 @@
                          {
                              return String.valueOf((Object)TileEntity.func_190559_a(tileentity.getClass()));
                          });
-+                        net.minecraftforge.server.timings.ForgeTimeTracker.TILE_ENTITY_UPDATE.trackStart(tileentity);
++                        net.minecraftforge.server.timings.TimeTracker.TILE_ENTITY_UPDATE.trackStart(tileentity);
                          ((ITickable)tileentity).func_73660_a();
-+                        net.minecraftforge.server.timings.ForgeTimeTracker.TILE_ENTITY_UPDATE.trackEnd(tileentity);
++                        net.minecraftforge.server.timings.TimeTracker.TILE_ENTITY_UPDATE.trackEnd(tileentity);
                          this.field_72984_F.func_76319_b();
                      }
                      catch (Throwable throwable)
