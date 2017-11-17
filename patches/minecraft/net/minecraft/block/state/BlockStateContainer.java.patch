@@ -49,7 +49,7 @@
              public Collection < IProperty<? >> func_177227_a()
              {
                  return Collections. < IProperty<? >> unmodifiableCollection(this.field_177237_b.keySet());
-@@ -473,5 +490,92 @@
+@@ -473,5 +490,86 @@
              {
                  return this.field_177239_a.func_193383_a(p_193401_1_, this, p_193401_2_, p_193401_3_);
              }
@@ -81,12 +81,6 @@
 +            public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing side)
 +            {
 +                return this.field_177239_a.doesSideBlockRendering(this, world, pos, side);
-+            }
-+
-+            @Override
-+            public boolean isStickyBlock(IBlockAccess world, BlockPos pos)
-+            {
-+                return this.field_177239_a.isStickyBlock(this, world, pos);
 +            }
          }
 +
