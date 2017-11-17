@@ -5,7 +5,7 @@
                  BlockPos blockpos = this.field_177258_e.get(i);
  
 -                if (this.field_177261_a.func_180495_p(blockpos).func_177230_c() == Blocks.field_180399_cE && !this.func_177250_b(blockpos))
-+                if (this.field_177261_a.func_180495_p(blockpos).func_177230_c().isStickyBlock(this.field_177261_a.func_180495_p(blockpos), this.field_177261_a, blockpos) && !this.func_177250_b(blockpos))
++                if (this.field_177261_a.func_180495_p(blockpos).func_177230_c().isStickyBlock(this.field_177261_a.func_180495_p(blockpos)) && !this.func_177250_b(blockpos))
                  {
                      return false;
                  }
@@ -23,7 +23,7 @@
              else
              {
 -                while (block == Blocks.field_180399_cE)
-+                while (block.isStickyBlock(iblockstate, this.field_177261_a, p_177251_1_))
++                while (block.isStickyBlock(iblockstate))
                  {
                      BlockPos blockpos = p_177251_1_.func_177967_a(this.field_177257_d.func_176734_d(), i);
                      iblockstate = this.field_177261_a.func_180495_p(blockpos);
@@ -39,7 +39,7 @@
                              BlockPos blockpos2 = this.field_177258_e.get(l);
  
 -                            if (this.field_177261_a.func_180495_p(blockpos2).func_177230_c() == Blocks.field_180399_cE && !this.func_177250_b(blockpos2))
-+                            if (this.field_177261_a.func_180495_p(blockpos2).func_177230_c().isStickyBlock(this.field_177261_a.func_180495_p(blockpos2), this.field_177261_a, blockpos2) && !this.func_177250_b(blockpos2))
++                            if (this.field_177261_a.func_180495_p(blockpos2).func_177230_c().isStickyBlock(this.field_177261_a.func_180495_p(blockpos2)) && !this.func_177250_b(blockpos2))
                              {
                                  return false;
                              }

@@ -13,8 +13,6 @@ import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
@@ -97,7 +95,7 @@ public class CustomSlimeBlockTest
         }
 
         @Override
-        public boolean isStickyBlock(IBlockState state, IBlockAccess world, BlockPos pos)
+        public boolean isStickyBlock(IBlockState state)
         {
             return state.getValue(VARIANT) != BlockType.OBSIDIAN_SLIME_BLOCK;
         }
