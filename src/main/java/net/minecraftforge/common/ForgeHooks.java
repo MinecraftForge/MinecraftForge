@@ -1376,6 +1376,6 @@ public class ForgeHooks
     
     public static boolean onMovementCheck(Entity entity, boolean isVehicle)
     {
-    	return !MinecraftForge.EVENT_BUS.post(new MovementCheckEvent(entity, isVehicle));
+        return !MinecraftForge.EVENT_BUS.post(new MovementCheckEvent(entity, isVehicle));
     }
 }
