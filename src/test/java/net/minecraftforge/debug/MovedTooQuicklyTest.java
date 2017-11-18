@@ -31,16 +31,13 @@ public class MovedTooQuicklyTest
     @EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
     {
-        if (ENABLED)
-        {
-            MinecraftForge.EVENT_BUS.register(this);
-        }
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
     public void onMovementCheck(MovementCheckEvent event)
     {
-        if (event.getEntity() instanceof EntityPlayer && ((EntityPlayer) event.getEntity()).getHeldItemMainhand().getItem() == pogostick)
+        if (ENABLED && event.getEntity() instanceof EntityPlayer && ((EntityPlayer) event.getEntity()).getHeldItemMainhand().getItem() == pogostick)
         {
             event.setCanceled(true);
         }
