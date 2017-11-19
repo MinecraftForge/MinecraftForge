@@ -1506,7 +1506,7 @@
 +
 +    /**
 +     * @param state The state
-+     * @return true if the block is sticky block (slime blocks)
++     * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
 +     */
 +    public boolean isStickyBlock(IBlockState state)
 +    {
