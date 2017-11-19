@@ -651,7 +651,7 @@ public class SplashProgress
             checkThreadState();
             done = true;
             thread.join();
-            glFlush();              // process any remaining GL calls before releaseContext
+            glFlush();        // process any remaining GL calls before releaseContext (prevents missing textures on mac)
             d.releaseContext();
             Display.getDrawable().makeCurrent();
             fontTexture.delete();
