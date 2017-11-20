@@ -17,7 +17,7 @@
      }
  
 +    @Override public boolean canSustainLeaves(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos){ return true; }
-+    @Override public boolean isWood(net.minecraft.world.IBlockAccess world, BlockPos pos){ return true; }
++    @Override public boolean isWood(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos){ return true; }
 +
      public static enum EnumAxis implements IStringSerializable
      {

@@ -16,7 +16,7 @@
 +    /* ======================================== FORGE START ======================================== */
 +
 +    @Override
-+    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    public boolean canBeConnectedTo(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
 +        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
 +        return connector instanceof BlockFence || connector instanceof BlockWall;
@@ -24,8 +24,8 @@
 +
 +    private boolean canFenceGateConnectTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
-+        Block block = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
-+        return block.canBeConnectedTo(world, pos.func_177972_a(facing), facing.func_176734_d());
++        IBlockState state = world.func_180495_p(pos.func_177972_a(facing));
++        return state.func_177230_c().canBeConnectedTo(state, world, pos.func_177972_a(facing), facing.func_176734_d());
 +    }
 +
 +    /* ======================================== FORGE END ======================================== */

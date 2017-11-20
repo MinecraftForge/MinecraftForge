@@ -169,7 +169,7 @@
                      ItemStack itemstack1 = this.field_73090_b.func_184614_ca();
                      ItemStack itemstack2 = itemstack1.func_190926_b() ? ItemStack.field_190927_a : itemstack1.func_77946_l();
 -                    boolean flag = this.field_73090_b.func_184823_b(iblockstate);
-+                    boolean flag = iblockstate.func_177230_c().canHarvestBlock(field_73092_a, p_180237_1_, field_73090_b);
++                    boolean flag = iblockstate.func_177230_c().canHarvestBlock(iblockstate, field_73092_a, p_180237_1_, field_73090_b);
  
                      if (!itemstack1.func_190926_b())
                      {

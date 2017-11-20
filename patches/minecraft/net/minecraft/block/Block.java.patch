@@ -221,7 +221,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -934,6 +952,1287 @@
+@@ -934,6 +952,1290 @@
      {
      }
  
@@ -418,11 +418,12 @@
 +    /**
 +     * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
 +     *
++     * @param state The current state
 +     * @param player The player damaging the block
 +     * @param pos The block's current position
 +     * @return True to spawn the drops
 +     */
-+    public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player)
++    public boolean canHarvestBlock(IBlockState state, IBlockAccess world, BlockPos pos, EntityPlayer player)
 +    {
 +        return net.minecraftforge.common.ForgeHooks.canHarvestBlock(this, player, world, pos);
 +    }
@@ -757,12 +758,12 @@
 +    }
 +
 +    /**
-+     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @return  true if the block is wood (logs)
 +     */
-+    public boolean isWood(IBlockAccess world, BlockPos pos)
++    public boolean isWood(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
 +        return false;
 +    }
@@ -785,13 +786,14 @@
 +    /**
 +     * Location sensitive version of getExplosionResistance
 +     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param exploder The entity that caused the explosion, can be null
 +     * @param explosion The explosion
 +     * @return The amount of the explosion absorbed.
 +     */
-+    public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
++    public float getExplosionResistance(IBlockState state, World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
 +    {
 +        return func_149638_a(exploder);
 +    }
@@ -881,7 +883,7 @@
 +     * @param numberOfParticles that vanilla would have spawned.
 +     * @return True to prevent vanilla landing particles form spawning.
 +     */
-+    public boolean addLandingEffects(IBlockState state, net.minecraft.world.WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles )
++    public boolean addLandingEffects(IBlockState state, net.minecraft.world.WorldServer world, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles )
 +    {
 +        return false;
 +    }
@@ -899,7 +901,7 @@
 +     * @return True to prevent vanilla digging particles form spawning.
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, net.minecraft.client.particle.ParticleManager manager)
++    public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, net.minecraft.client.particle.ParticleManager manager)
 +    {
 +        return false;
 +    }
@@ -1483,12 +1485,13 @@
 +    /**
 +     * Determines if another block can connect to this block
 +     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos The position of this block
 +     * @param facing The side the connecting block is on
 +     * @return True to allow another block to connect to this block
 +     */
-+    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
++    public boolean canBeConnectedTo(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
 +        return false;
 +    }
@@ -1509,7 +1512,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1230,31 +2529,6 @@
+@@ -1230,31 +2532,6 @@
                  block15.field_149783_u = flag;
              }
          }
