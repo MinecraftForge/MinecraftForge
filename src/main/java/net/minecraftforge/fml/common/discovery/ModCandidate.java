@@ -37,8 +37,10 @@ public class ModCandidate
     private File modContainer;
     private ContainerType sourceType;
     private boolean classpath;
+    @Deprecated // remove in 1.13
     private List<String> baseModTypes = Lists.newArrayList();
     private boolean isMinecraft;
+    @Deprecated // remove in 1.13
     private List<ASMModParser> baseModCandidateTypes = Lists.newArrayListWithCapacity(1);
     private Set<String> foundClasses = Sets.newHashSet();
     private List<ModContainer> mods;
@@ -102,10 +104,12 @@ public class ModCandidate
     {
         return classpath;
     }
+    @Deprecated // remove in 1.13
     public void rememberBaseModType(String className)
     {
         baseModTypes.add(className);
     }
+    @Deprecated // remove in 1.13
     public List<String> getRememberedBaseMods()
     {
         return baseModTypes;
@@ -114,6 +118,7 @@ public class ModCandidate
     {
         return isMinecraft;
     }
+    @Deprecated // remove in 1.13
     public void rememberModCandidateType(ASMModParser modParser)
     {
         baseModCandidateTypes.add(modParser);

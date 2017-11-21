@@ -49,6 +49,7 @@ public class ASMModParser
     private Type asmSuperType;
     private LinkedList<ModAnnotation> annotations = Lists.newLinkedList();
     private Set<String> interfaces = Sets.newHashSet();
+    @Deprecated // remove in 1.13
     private String baseModProperties;
 
     static enum AnnotationType
@@ -134,16 +135,19 @@ public class ASMModParser
 
     }
 
+    @Deprecated // remove in 1.13
     public boolean isBaseMod(List<String> rememberedTypes)
     {
         return getASMSuperType().equals(Type.getType("LBaseMod;")) || getASMSuperType().equals(Type.getType("Lnet/minecraft/src/BaseMod;"))|| rememberedTypes.contains(getASMSuperType().getClassName());
     }
 
+    @Deprecated // remove in 1.13
     public void setBaseModProperties(String foundProperties)
     {
         this.baseModProperties = foundProperties;
     }
 
+    @Deprecated // remove in 1.13
     public String getBaseModProperties()
     {
         return this.baseModProperties;
