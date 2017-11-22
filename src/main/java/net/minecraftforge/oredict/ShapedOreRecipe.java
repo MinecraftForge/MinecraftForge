@@ -32,11 +32,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
+import net.minecraftforge.common.crafting.ICustomContainerCallback;
 import net.minecraftforge.common.crafting.IShapedRecipe;
-import net.minecraftforge.fluids.FluidIngredient;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.common.crafting.JsonContext;
 
@@ -157,20 +154,9 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
             if (!itemStack.isEmpty())
             {
                 Ingredient ingredient = input.get(index);
-                if (ingredient instanceof FluidIngredient)
+                if (ingredient instanceof ICustomContainerCallback)
                 {
-                    ItemStack container = itemStack.copy();
-                    container.setCount(1);
-                    IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
-                    if (fluidHandler != null)
-                    {
-                        FluidStack checking = fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
-                        if (checking == null)
-                        {
-                            fluidHandler.drain(Integer.MAX_VALUE, true);
-                        }
-                        itemStack = fluidHandler.getContainer();
-                    }
+                    itemStack = ((ICustomContainerCallback)ingredient).getContainer(itemStack);
                 }
                 else
                 {

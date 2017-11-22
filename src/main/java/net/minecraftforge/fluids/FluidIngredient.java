@@ -29,14 +29,14 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.util.JsonUtils;
+import net.minecraftforge.common.crafting.ICustomContainerCallback;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Locale;
 
-public class FluidIngredient extends Ingredient
+public class FluidIngredient extends Ingredient implements ICustomContainerCallback
 {
 
     public enum MatchingStrategy
@@ -77,16 +77,6 @@ public class FluidIngredient extends Ingredient
         this.strategy = Preconditions.checkNotNull(strategy, "MatchingStrategy cannot be null");
     }
 
-    public FluidStack getFluidStack()
-    {
-        return fluidStack.copy();
-    }
-
-    public MatchingStrategy getMatchingStrategy()
-    {
-        return strategy;
-    }
-
     @Override
     public ItemStack[] getMatchingStacks()
     {
@@ -124,8 +114,31 @@ public class FluidIngredient extends Ingredient
     }
 
     @Override
-    public boolean isSimple() {
+    public boolean isSimple()
+    {
         return false;
+    }
+
+    @Override
+    public ItemStack getContainer(ItemStack input)
+    {
+        ItemStack container = input.copy();
+        container.setCount(1);
+        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
+        if (fluidHandler != null)
+        {
+            FluidStack drained = fluidHandler.drain(this.fluidStack.copy(), true);
+            if (drained == null)
+            {
+                // Matching strategy is ensured by the FluidIngredient::apply call above, so it's safe to drain all of them
+                fluidHandler.drain(Integer.MAX_VALUE, true);
+            }
+            return fluidHandler.getContainer();
+        }
+        else
+        {
+            return container; // return verbatim to avoid issue.
+        }
     }
 
     @Nonnull

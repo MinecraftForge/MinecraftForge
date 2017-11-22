@@ -33,11 +33,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.ICustomContainerCallback;
 import net.minecraftforge.common.crafting.JsonContext;
-import net.minecraftforge.fluids.FluidIngredient;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -133,11 +130,13 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     {
         NonNullList<ItemStack> remainder = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         NonNullList<ItemStack> items = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
-        for (int index = 0; index < inv.getSizeInventory(); index++) {
+        for (int index = 0; index < inv.getSizeInventory(); index++)
+        {
             items.set(index, inv.getStackInSlot(index));
         }
         int[] mapping = RecipeMatcher.findMatches(items, this.input);
-        if (mapping == null) {
+        if (mapping == null)
+        {
             return remainder;
         }
 
@@ -147,22 +146,9 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
             if (!itemStack.isEmpty())
             {
                 Ingredient ingredient = this.input.get(mapping[index]);
-                if (ingredient instanceof FluidIngredient && ingredient.apply(itemStack))
+                if (ingredient instanceof ICustomContainerCallback && ingredient.apply(itemStack))
                 {
-                    ItemStack container = itemStack.copy();
-                    container.setCount(1);
-                    IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
-                    if (fluidHandler != null)
-                    {
-                        FluidStack drained = fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
-                        if (drained == null)
-                        {
-                            // Fluid type is ensured by the FluidIngredient::apply call above, so it's safe to drain all of them
-                            fluidHandler.drain(Integer.MAX_VALUE, true);
-                        }
-                        remainder.set(index, fluidHandler.getContainer());
-                        break;
-                    }
+                    remainder.set(index, ((ICustomContainerCallback)ingredient).getContainer(itemStack));
                 }
                 else
                 {
