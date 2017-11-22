@@ -60,7 +60,9 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
     {
         if (msg.getClass().equals(FMLMessage.EntitySpawnMessage.class))
         {
-            spawnEntity((FMLMessage.EntitySpawnMessage)msg);
+            FMLMessage.EntitySpawnMessage spawnMsg = (FMLMessage.EntitySpawnMessage) msg;
+            spawnEntity(spawnMsg);
+            spawnMsg.dataStream.release();
         }
     }
 

@@ -82,3 +82,11 @@
  
              if (potion != null)
              {
+@@ -1856,6 +1867,7 @@
+             }
+             finally
+             {
++                if (false) // Forge: let packet handle releasing buffer
+                 packetbuffer.release();
+             }
+         }

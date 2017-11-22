@@ -14,8 +14,6 @@ import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class CompoundIngredient extends Ingredient
 {
@@ -46,7 +44,6 @@ public class CompoundIngredient extends Ingredient
 
     @Override
     @Nonnull
-    @SideOnly(Side.CLIENT)
     public IntList getValidItemStacksPacked()
     {
         //TODO: Add a child.isInvalid()?
