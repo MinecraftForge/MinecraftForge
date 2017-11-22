@@ -130,6 +130,8 @@ public class ConfigTest
         public static SubCat sub1 = new SubCat("Hello");
         @Name("test_b")
         public static SubCat sub2 = new SubCat("Goodbye");
+        @Name("test_c")
+        public static SubCat2 sub3 = new SubCat2("Hi");
 
         public static class SubCat
         {
@@ -139,6 +141,17 @@ public class ConfigTest
             public SubCat(String value)
             {
                 this.value = value;
+            }
+        }
+
+        public static class SubCat2
+        {
+            @Name("child_cat")
+            public SubCat child;
+
+            public SubCat2(String value)
+            {
+                this.child = new SubCat(value);
             }
         }
     }
