@@ -32,7 +32,7 @@ import com.google.common.collect.Lists;
  * http://docs.codehaus.org/display/MAVEN/Versioning
  * and allows for comparison of versions based on that document.
  * Bounded version specifications are defined as
- * http://maven.apache.org/plugins/maven-enforcer-plugin/rules/versionRanges.html
+ * https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html
  *
  * Borrows heavily from maven version range management code
  *

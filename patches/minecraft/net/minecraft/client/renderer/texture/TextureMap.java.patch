@@ -164,16 +164,17 @@
              {
                  String s = textureatlassprite1.func_94215_i();
                  map.remove(s);
-@@ -186,6 +257,8 @@
+@@ -186,6 +257,9 @@
          {
              textureatlassprite2.func_94217_a(this.field_94249_f);
          }
++        org.lwjgl.opengl.GL11.glFlush(); // Some systems (mainly macs) need this to make sure the texture map creation finishes before moving on
 +        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
 +        net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }
  
      private boolean func_184397_a(IResourceManager p_184397_1_, final TextureAtlasSprite p_184397_2_)
-@@ -195,7 +268,7 @@
+@@ -195,7 +269,7 @@
          label62:
          {
              boolean flag;
@@ -182,7 +183,7 @@
              try
              {
                  iresource = p_184397_1_.func_110536_a(resourcelocation);
-@@ -292,7 +365,7 @@
+@@ -292,7 +366,7 @@
          }
          else
          {
@@ -191,7 +192,7 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +391,52 @@
+@@ -318,4 +392,52 @@
      {
          return this.field_94249_f;
      }
