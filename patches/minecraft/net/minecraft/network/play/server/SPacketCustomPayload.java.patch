@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/play/server/SPacketCustomPayload.java
 +++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketCustomPayload.java
-@@ -46,7 +46,11 @@
+@@ -46,12 +46,18 @@
      public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
      {
          p_148840_1_.func_180714_a(this.field_149172_a);
@@ -12,3 +12,10 @@
      }
  
      public void func_148833_a(INetHandlerPlayClient p_148833_1_)
+     {
+         p_148833_1_.func_147240_a(this);
++        // Forge: fix network buffer leaks (MC-121884)
++        if (this.field_149171_b != null) this.field_149171_b.release();
+     }
+ 
+     @SideOnly(Side.CLIENT)
