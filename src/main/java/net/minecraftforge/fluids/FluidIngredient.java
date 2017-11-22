@@ -33,6 +33,7 @@ import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 public class FluidIngredient extends Ingredient
@@ -93,7 +94,7 @@ public class FluidIngredient extends Ingredient
     }
 
     @Override
-    public boolean apply(@Nonnull ItemStack itemStackIn)
+    public boolean apply(ItemStack itemStackIn)
     {
         FluidStack fluidStackToTest = FluidUtil.getFluidContained(itemStackIn);
         if (fluidStackToTest == null)
@@ -120,6 +121,11 @@ public class FluidIngredient extends Ingredient
     public IntList getValidItemStacksPacked()
     {
         return IntLists.EMPTY_LIST;
+    }
+
+    @Override
+    public boolean isSimple() {
+        return false;
     }
 
     @Nonnull

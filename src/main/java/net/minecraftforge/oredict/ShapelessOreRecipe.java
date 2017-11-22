@@ -31,6 +31,7 @@ import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fluids.FluidIngredient;
@@ -131,40 +132,39 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
     {
         NonNullList<ItemStack> remainder = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
-        List<Ingredient> copyOfInput = new ArrayList<>(input);
+        NonNullList<ItemStack> items = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        for (int index = 0; index < inv.getSizeInventory(); index++) {
+            items.set(index, inv.getStackInSlot(index));
+        }
+        int[] mapping = RecipeMatcher.findMatches(items, this.input);
+        if (mapping == null) {
+            return remainder;
+        }
 
         for (int index = 0; index < inv.getSizeInventory(); index++)
         {
             ItemStack itemStack = inv.getStackInSlot(index);
             if (!itemStack.isEmpty())
             {
-                boolean hasSettled = false;
-                Iterator<Ingredient> remainingIngredient = copyOfInput.iterator();
-                while (remainingIngredient.hasNext())
+                Ingredient ingredient = this.input.get(mapping[index]);
+                if (ingredient instanceof FluidIngredient && ingredient.apply(itemStack))
                 {
-                    Ingredient ingredient = remainingIngredient.next();
-                    if (ingredient instanceof FluidIngredient && ingredient.apply(itemStack))
+                    ItemStack container = itemStack.copy();
+                    container.setCount(1);
+                    IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
+                    if (fluidHandler != null)
                     {
-                        ItemStack container = itemStack.copy();
-                        container.setCount(1);
-                        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(container);
-                        if (fluidHandler != null)
+                        FluidStack drained = fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
+                        if (drained == null)
                         {
-                            FluidStack drained = fluidHandler.drain(((FluidIngredient)ingredient).getFluidStack(), true);
-                            if (drained == null)
-                            {
-                                // Fluid type is ensured by the FluidIngredient::apply call above, so it's safe to drain all of them
-                                fluidHandler.drain(Integer.MAX_VALUE, true);
-                            }
-                            remainder.set(index, fluidHandler.getContainer());
-                            hasSettled = true;
-                            remainingIngredient.remove();
-                            break;
+                            // Fluid type is ensured by the FluidIngredient::apply call above, so it's safe to drain all of them
+                            fluidHandler.drain(Integer.MAX_VALUE, true);
                         }
+                        remainder.set(index, fluidHandler.getContainer());
+                        break;
                     }
                 }
-
-                if (!hasSettled)
+                else
                 {
                     remainder.set(index, ForgeHooks.getContainerItem(itemStack));
                 }
