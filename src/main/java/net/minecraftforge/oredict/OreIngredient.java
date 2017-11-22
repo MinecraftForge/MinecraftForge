@@ -114,4 +114,10 @@ public class OreIngredient extends Ingredient
         this.itemIds = null;
         this.array = null;
     }
+
+    @Override
+    public boolean isSimple()
+    {
+        return true;
+    }
 }

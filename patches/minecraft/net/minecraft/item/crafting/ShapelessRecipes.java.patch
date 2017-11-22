@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
-@@ -10,10 +10,8 @@
+@@ -10,23 +10,25 @@
  import net.minecraft.util.JsonUtils;
  import net.minecraft.util.NonNullList;
  import net.minecraft.world.World;
@@ -12,15 +12,25 @@
  {
      private final ItemStack field_77580_a;
      public final NonNullList<Ingredient> field_77579_b;
-@@ -26,7 +24,6 @@
+     private final String field_194138_c;
++    private final boolean isSimple;
+ 
+     public ShapelessRecipes(String p_i47500_1_, ItemStack p_i47500_2_, NonNullList<Ingredient> p_i47500_3_)
+     {
+         this.field_194138_c = p_i47500_1_;
+         this.field_77580_a = p_i47500_2_;
          this.field_77579_b = p_i47500_3_;
++        boolean simple = true;
++        for (Ingredient i : p_i47500_3_)
++            simple &= i.isSimple();
++        this.isSimple = simple;
      }
  
 -    @SideOnly(Side.CLIENT)
      public String func_193358_e()
      {
          return this.field_194138_c;
-@@ -50,10 +47,7 @@
+@@ -50,10 +52,7 @@
          {
              ItemStack itemstack = p_179532_1_.func_70301_a(i);
  
@@ -32,17 +42,18 @@
          }
  
          return nonnulllist;
-@@ -61,7 +55,8 @@
+@@ -61,7 +60,9 @@
  
      public boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_)
      {
 -        List<Ingredient> list = Lists.newArrayList(this.field_77579_b);
 +        int ingredientCount = 0;
 +        net.minecraft.client.util.RecipeItemHelper recipeItemHelper = new net.minecraft.client.util.RecipeItemHelper();
++        List<ItemStack> inputs = Lists.newArrayList();
  
          for (int i = 0; i < p_77569_1_.func_174923_h(); ++i)
          {
-@@ -71,27 +66,13 @@
+@@ -71,27 +72,22 @@
  
                  if (!itemstack.func_190926_b())
                  {
@@ -63,17 +74,26 @@
 -                        return false;
 -                    }
 +                    ++ingredientCount;
-+                    recipeItemHelper.func_194112_a(itemstack);
++                    if (this.isSimple)
++                        recipeItemHelper.func_194112_a(itemstack);
++                    else
++                        inputs.add(itemstack);
                  }
              }
          }
  
 -        return list.isEmpty();
-+        return ingredientCount == this.field_77579_b.size() && recipeItemHelper.func_194116_a(this, null);
++        if (ingredientCount != this.field_77579_b.size())
++            return false;
++
++        if (this.isSimple)
++            return recipeItemHelper.func_194116_a(this, null);
++
++        return net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs, this.field_77579_b) != null;
      }
  
      public ItemStack func_77572_b(InventoryCrafting p_77572_1_)
-@@ -136,7 +117,6 @@
+@@ -136,7 +132,6 @@
          return nonnulllist;
      }
  
