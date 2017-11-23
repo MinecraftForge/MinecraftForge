@@ -75,6 +75,8 @@ forge.configgui.alwaysSetupTerrainOffThread.tooltip=Enable forge to queue all ch
 
 forge.configgui.modID.tooltip=The mod ID that you want to define override settings for.
 forge.configgui.modID=Mod ID
+forge.configgui.asyncChunkLoading=Async Chunk Loading
+forge.configgui.asyncChunkLoading.tooltip=Load chunks asynchronously for players, reducing load on the server thread. Can be disabled to help troubleshoot chunk loading issues.
 forge.configgui.dormantChunkCacheSize.tooltip=Unloaded chunks can first be kept in a dormant cache for quicker loading times. Specify the size (in chunks) of that cache here.
 forge.configgui.dormantChunkCacheSize=Dormant Chunk Cache Size
 forge.configgui.enableModOverrides.tooltip=Enable this setting to allow custom per-mod settings to be defined.

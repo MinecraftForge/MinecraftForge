@@ -4,7 +4,7 @@
      public final IChunkLoader field_73247_e;
      public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192);
      public final WorldServer field_73251_h;
-+    private Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
++    private final Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
@@ -17,7 +17,7 @@
 +    }
  
 +    @Nullable
-+    public Chunk loadChunk(int p_186028_1_, int p_186028_2_, Runnable runnable)
++    public Chunk loadChunk(int p_186028_1_, int p_186028_2_, @Nullable Runnable runnable)
 +    {
 +        Chunk chunk = this.func_186026_b(p_186028_1_, p_186028_2_);
          if (chunk == null)
@@ -44,7 +44,7 @@
 +            else
 +            {
 +                net.minecraft.world.chunk.storage.AnvilChunkLoader loader = (net.minecraft.world.chunk.storage.AnvilChunkLoader) this.field_73247_e;
-+                if (runnable == null)
++                if (runnable == null || !net.minecraftforge.common.ForgeChunkManager.asyncChunkLoading)
 +                    chunk = net.minecraftforge.common.chunkio.ChunkIOExecutor.syncChunkLoad(this.field_73251_h, loader, this, p_186028_1_, p_186028_2_);
 +                else if (loader.func_191063_a(p_186028_1_, p_186028_2_))
 +                {

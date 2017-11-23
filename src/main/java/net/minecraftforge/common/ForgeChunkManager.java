@@ -113,6 +113,8 @@ public class ForgeChunkManager
     private static int playerTicketLength;
     private static int dormantChunkCacheSize;
 
+    public static boolean asyncChunkLoading;
+
     public static final List<String> MOD_PROP_ORDER = new ArrayList<String>(2);
 
     private static Set<String> warnedMods = Sets.newHashSet();
@@ -1099,6 +1101,13 @@ public class ForgeChunkManager
         dormantChunkCacheSize = temp.getInt(0);
         propOrder.add("dormantChunkCacheSize");
         FMLLog.log.info("Configured a dormant chunk cache size of {}", temp.getInt(0));
+
+        temp = config.get("defaults", "asyncChunkLoading", true);
+        temp.setComment("Load chunks asynchronously for players, reducing load on the server thread.\n" +
+                    "Can be disabled to help troubleshoot chunk loading issues.");
+        temp.setLanguageKey("forge.configgui.asyncChunkLoading");
+        asyncChunkLoading = temp.getBoolean(true);
+        propOrder.add("asyncChunkLoading");
 
         config.setCategoryPropertyOrder("defaults", propOrder);
 
