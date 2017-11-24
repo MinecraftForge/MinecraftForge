@@ -130,7 +130,7 @@ public class FluidHandlerTest
     private static List<ItemStack> getAllItems()
     {
         NonNullList<ItemStack> list = NonNullList.create();
-        for (Item item : ForgeRegistries.ITEMS.getValues())
+        for (Item item : ForgeRegistries.ITEMS.getValuesCollection())
         {
             for (CreativeTabs tab : item.getCreativeTabs())
             {

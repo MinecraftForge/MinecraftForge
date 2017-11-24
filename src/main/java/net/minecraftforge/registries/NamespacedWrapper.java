@@ -1,5 +1,7 @@
 package net.minecraftforge.registries;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -97,10 +99,8 @@ class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamesp
     @Nullable
     public V getRandomObject(Random random)
     {
-        List<V> lst = this.delegate.getValues();
-        if (lst.isEmpty())
-            return null;
-        return lst.get(random.nextInt(lst.size()));
+        Collection<V> values = this.delegate.getValuesCollection();
+        return values.stream().skip(random.nextInt(values.size())).findFirst().orElse(null);
     }
 
     //internal

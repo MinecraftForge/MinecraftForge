@@ -19,6 +19,7 @@
 
 package net.minecraftforge.registries;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -48,7 +49,12 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     @Nullable ResourceLocation getKey(V value);
 
     @Nonnull Set<ResourceLocation>           getKeys();
+    @Deprecated // TODO: remove in 1.13
     @Nonnull List<V>                         getValues();
+    @Nonnull
+    default Collection<V>                    getValuesCollection() {
+        return getValues();
+    }
     @Nonnull Set<Entry<ResourceLocation, V>> getEntries();
 
     /**

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
@@ -188,19 +189,27 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     @Override
     public Set<ResourceLocation> getKeys()
     {
-        return ImmutableSet.copyOf(this.names.keySet());
+        return Collections.unmodifiableSet(this.names.keySet());
     }
 
+    @Deprecated
     @Override
     public List<V> getValues()
     {
         return ImmutableList.copyOf(this.names.values());
     }
 
+    @Nonnull
+    @Override
+    public Collection<V> getValuesCollection()
+    {
+        return Collections.unmodifiableSet(this.names.values());
+    }
+
     @Override
     public Set<Entry<ResourceLocation, V>> getEntries()
     {
-        return ImmutableSet.copyOf(this.names.entrySet());
+        return Collections.unmodifiableSet(this.names.entrySet());
     }
 
     @SuppressWarnings("unchecked")
