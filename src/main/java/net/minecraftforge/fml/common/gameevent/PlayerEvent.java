@@ -35,6 +35,9 @@ public class PlayerEvent extends Event {
     }
 
     public static class ItemPickupEvent extends PlayerEvent {
+    	/**
+    	 * This entity is a clone of what the player picked up, containing intact ItemStack information.
+    	 */
         public final EntityItem pickedUp;
         public ItemPickupEvent(EntityPlayer player, EntityItem pickedUp)
         {

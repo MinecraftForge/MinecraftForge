@@ -84,7 +84,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -358,18 +381,24 @@
+@@ -358,18 +381,25 @@
          {
              this.func_70106_y();
          }
@@ -103,14 +103,15 @@
 -            if (this.field_145804_b == 0 && (this.field_145802_g == null || 6000 - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && p_70100_1_.field_71071_by.func_70441_a(itemstack))
 +            int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_70100_1_);
 +            if (hook < 0) return;
++            EntityItem clone = new EntityItem(field_70170_p, field_70165_t, field_70163_u, field_70161_v, itemstack.func_77946_l());
 +
 +            if (this.field_145804_b <= 0 && (this.field_145802_g == null || lifespan - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && (hook == 1 || i <= 0 || p_70100_1_.field_71071_by.func_70441_a(itemstack)))
              {
-+                net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerItemPickupEvent(p_70100_1_, this);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerItemPickupEvent(p_70100_1_, clone);
                  p_70100_1_.func_71001_a(this, i);
  
                  if (itemstack.func_190926_b())
-@@ -476,6 +505,6 @@
+@@ -476,6 +506,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();
