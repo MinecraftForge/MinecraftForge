@@ -23,9 +23,6 @@ import java.lang.reflect.Method;
 
 public class ServerLaunchWrapper {
 
-    /**
-     * @param args
-     */
     public static void main(String[] args)
     {
         new ServerLaunchWrapper().run(args);
@@ -38,15 +35,27 @@ public class ServerLaunchWrapper {
 
     private void run(String[] args)
     {
+        //Check java version, as we don't support java 9 yet
+        //TODO remove this check in 1.13 when ModLauncher supports J9
+        String javaVersion = System.getProperty("java.specification.version");
+        if (javaVersion == null) //should never happen, but let's be safe
+        {
+            System.out.println("Could not determine java version, things may not work!");
+        }
+        else if (!javaVersion.startsWith("1.8") && !"true".equalsIgnoreCase(System.getProperty("fml.disableJavaVersionCheck")))
+        {
+            throw new RuntimeException(String.format("Your java version (%s) is not supported with this version of minecraft! Please use Java 8!", javaVersion));
+        }
+
         Class<?> launchwrapper = null;
         try
         {
-            launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch",true,getClass().getClassLoader());
-            Class.forName("org.objectweb.asm.Type",true,getClass().getClassLoader());
+            launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch", true, getClass().getClassLoader());
+            Class.forName("org.objectweb.asm.Type",true, getClass().getClassLoader());
         }
         catch (Exception e)
         {
-            System.err.printf("We appear to be missing one or more essential library files.\n" +
+            System.err.println("We appear to be missing one or more essential library files.\n" +
             		"You will need to add them to your server before FML and Forge will run successfully.");
             e.printStackTrace(System.err);
             System.exit(1);
@@ -63,7 +72,7 @@ public class ServerLaunchWrapper {
         }
         catch (Exception e)
         {
-            System.err.printf("A problem occurred running the Server launcher.");
+            System.err.println("A problem occurred running the Server launcher.");
             e.printStackTrace(System.err);
             System.exit(1);
         }
