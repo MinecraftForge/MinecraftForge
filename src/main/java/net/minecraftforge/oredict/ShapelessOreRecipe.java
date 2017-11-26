@@ -49,7 +49,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     protected ItemStack output = ItemStack.EMPTY;
     protected NonNullList<Ingredient> input = NonNullList.create();
     protected ResourceLocation group;
-    protected boolean isSimple = true;
+    protected boolean isSimple = false; //true; Always use Forge logic until Grum finds a fix for https://github.com/MinecraftForge/MinecraftForge/issues/4557
 
     public ShapelessOreRecipe(ResourceLocation group, Block result, Object... recipe){ this(group, new ItemStack(result), recipe); }
     public ShapelessOreRecipe(ResourceLocation group, Item  result, Object... recipe){ this(group, new ItemStack(result), recipe); }

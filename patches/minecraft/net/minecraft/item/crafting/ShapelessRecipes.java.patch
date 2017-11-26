@@ -23,7 +23,7 @@
 +        boolean simple = true;
 +        for (Ingredient i : p_i47500_3_)
 +            simple &= i.isSimple();
-+        this.isSimple = simple;
++        this.isSimple = false; //simple; Always use Forge logic until Grum finds a fix for https://github.com/MinecraftForge/MinecraftForge/issues/4557
      }
  
 -    @SideOnly(Side.CLIENT)
