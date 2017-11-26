@@ -192,6 +192,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return Collections.unmodifiableSet(this.names.keySet());
     }
 
+    /**
+     * @deprecated use {@link #getValuesCollection} to avoid copying
+     */
     @Deprecated
     @Override
     public List<V> getValues()

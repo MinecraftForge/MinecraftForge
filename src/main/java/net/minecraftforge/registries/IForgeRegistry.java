@@ -49,10 +49,11 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     @Nullable ResourceLocation getKey(V value);
 
     @Nonnull Set<ResourceLocation>           getKeys();
+    /** @deprecated use {@link #getValuesCollection} */
     @Deprecated // TODO: remove in 1.13
     @Nonnull List<V>                         getValues();
     @Nonnull
-    default Collection<V>                    getValuesCollection() {
+    default Collection<V>                    getValuesCollection() { // TODO rename this to getValues in 1.13
         return getValues();
     }
     @Nonnull Set<Entry<ResourceLocation, V>> getEntries();
