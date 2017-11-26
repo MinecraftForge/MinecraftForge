@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
 +++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
-@@ -69,7 +69,7 @@
+@@ -69,12 +69,12 @@
              if (entityplayermp == null)
              {
                  this.field_147328_g = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
@@ -8,6 +8,12 @@
 +                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.func_184103_al(), this.field_147333_a, this.field_181025_l);
                  this.field_181025_l = null;
              }
+         }
+ 
+-        if (this.field_147336_h++ == 600)
++        if (this.field_147336_h++ == net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.LOGIN_TIMEOUT)
+         {
+             this.func_194026_b(new TextComponentTranslation("multiplayer.disconnect.slow_login", new Object[0]));
          }
 @@ -132,7 +132,7 @@
              }
