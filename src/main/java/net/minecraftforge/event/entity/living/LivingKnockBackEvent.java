@@ -56,14 +56,17 @@ public class LivingKnockBackEvent extends LivingEvent
     protected Entity attacker;
     protected float strength;
     protected double ratioX, ratioZ;
+    protected final Entity originalAttacker;
+    protected final float originalStrength;
+    protected final double originalRatioX, originalRatioZ;
 
     public LivingKnockBackEvent(EntityLivingBase target, Entity attacker, float strength, double ratioX, double ratioZ)
     {
         super(target);
-        this.attacker = attacker;
-        this.strength = strength;
-        this.ratioX = ratioX;
-        this.ratioZ = ratioZ;
+        this.attacker = this.originalAttacker = attacker;
+        this.strength = this.originalStrength = strength;
+        this.ratioX = this.originalRatioX = ratioX;
+        this.ratioZ = this.originalRatioZ = ratioZ;
     }
 
     public Entity getAttacker() {return this.attacker;}
@@ -73,6 +76,14 @@ public class LivingKnockBackEvent extends LivingEvent
     public double getRatioX() {return this.ratioX;}
 
     public double getRatioZ() {return this.ratioZ;}
+
+    public Entity getOriginalAttacker() {return this.originalAttacker;}
+
+    public float getOriginalStrength() {return this.originalStrength;}
+
+    public double getOriginalRatioX() {return this.originalRatioX;}
+
+    public double getOriginalRatioZ() {return this.originalRatioZ;}
 
     public void setAttacker(Entity attacker) {this.attacker = attacker;}
 
