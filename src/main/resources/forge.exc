@@ -65,3 +65,5 @@ net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_8268
 net/minecraft/command/EntitySelector.matchEntitiesDefault(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;Ljava/lang/Class;)Ljava/util/List;=|p_179656_0_,p_179656_1_,p_179656_2_
 net/minecraft/command/EntitySelector.matchesMultiplePlayersDefault(Ljava/lang/String;)Z=|p_82377_0_
 net/minecraft/command/EntitySelector.isSelectorDefault(Ljava/lang/String;)Z=|p_82378_0_
+
+net/minecraft/client/util/RecipeItemHelper.accountStack(Lnet/minecraft/item/ItemStack;I)V=|p_194112_1_,forceCount
