@@ -114,7 +114,6 @@ public class FMLCommonHandler
     private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
     private Set<SaveHandler> handlerSet = Collections.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
     private WeakReference<SaveHandler> handlerToCheck;
-    private EventBus eventBus = MinecraftForge.EVENT_BUS;
     private volatile CountDownLatch exitLatch = null;
 
     private FMLCommonHandler()
@@ -143,13 +142,13 @@ public class FMLCommonHandler
     /**
      * The FML event bus. Subscribe here for FML related events
      *
-     * @Deprecated Use {@link MinecraftForge#EVENT_BUS} they're the same thing now
+     * @deprecated Use {@link MinecraftForge#EVENT_BUS} they're the same thing now
      * @return the event bus
      */
-    @Deprecated
+    @Deprecated // TODO: remove
     public EventBus bus()
     {
-        return eventBus;
+        return MinecraftForge.EVENT_BUS;
     }
 
     public List<String> beginLoading(IFMLSidedHandler handler)
@@ -188,7 +187,7 @@ public class FMLCommonHandler
      *
      * @deprecated Not used in FML, Mods use your own logger, see {@link FMLPreInitializationEvent#getModLog()}
      */
-    @Deprecated
+    @Deprecated // TODO: remove
     public Logger getFMLLogger()
     {
         return FMLLog.log;
@@ -261,7 +260,7 @@ public class FMLCommonHandler
 
     public void onPostServerTick()
     {
-        bus().post(new TickEvent.ServerTickEvent(Phase.END));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(Phase.END));
     }
 
     /**
@@ -269,12 +268,12 @@ public class FMLCommonHandler
      */
     public void onPostWorldTick(World world)
     {
-        bus().post(new TickEvent.WorldTickEvent(Side.SERVER, Phase.END, world));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(Side.SERVER, Phase.END, world));
     }
 
     public void onPreServerTick()
     {
-        bus().post(new TickEvent.ServerTickEvent(Phase.START));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(Phase.START));
     }
 
     /**
@@ -282,7 +281,7 @@ public class FMLCommonHandler
      */
     public void onPreWorldTick(World world)
     {
-        bus().post(new TickEvent.WorldTickEvent(Side.SERVER, Phase.START, world));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(Side.SERVER, Phase.START, world));
     }
 
     public boolean handleServerAboutToStart(MinecraftServer server)
@@ -339,33 +338,33 @@ public class FMLCommonHandler
 
     public void onPreClientTick()
     {
-        bus().post(new TickEvent.ClientTickEvent(Phase.START));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.ClientTickEvent(Phase.START));
     }
 
     public void onPostClientTick()
     {
-        bus().post(new TickEvent.ClientTickEvent(Phase.END));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.ClientTickEvent(Phase.END));
     }
 
     public void onRenderTickStart(float timer)
     {
         Animation.setClientPartialTickTime(timer);
-        bus().post(new TickEvent.RenderTickEvent(Phase.START, timer));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(Phase.START, timer));
     }
 
     public void onRenderTickEnd(float timer)
     {
-        bus().post(new TickEvent.RenderTickEvent(Phase.END, timer));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(Phase.END, timer));
     }
 
     public void onPlayerPreTick(EntityPlayer player)
     {
-        bus().post(new TickEvent.PlayerTickEvent(Phase.START, player));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(Phase.START, player));
     }
 
     public void onPlayerPostTick(EntityPlayer player)
     {
-        bus().post(new TickEvent.PlayerTickEvent(Phase.END, player));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(Phase.END, player));
     }
 
     public void registerCrashCallable(ICrashCallable callable)
@@ -555,47 +554,47 @@ public class FMLCommonHandler
 
     public void fireMouseInput()
     {
-        bus().post(new InputEvent.MouseInputEvent());
+        MinecraftForge.EVENT_BUS.post(new InputEvent.MouseInputEvent());
     }
 
     public void fireKeyInput()
     {
-        bus().post(new InputEvent.KeyInputEvent());
+        MinecraftForge.EVENT_BUS.post(new InputEvent.KeyInputEvent());
     }
 
     public void firePlayerChangedDimensionEvent(EntityPlayer player, int fromDim, int toDim)
     {
-        bus().post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
     }
 
     public void firePlayerLoggedIn(EntityPlayer player)
     {
-        bus().post(new PlayerEvent.PlayerLoggedInEvent(player));
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(player));
     }
 
     public void firePlayerLoggedOut(EntityPlayer player)
     {
-        bus().post(new PlayerEvent.PlayerLoggedOutEvent(player));
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedOutEvent(player));
     }
 
     public void firePlayerRespawnEvent(EntityPlayer player, boolean endConquered)
     {
-        bus().post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
     }
 
     public void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item)
     {
-        bus().post(new PlayerEvent.ItemPickupEvent(player, item));
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemPickupEvent(player, item));
     }
 
     public void firePlayerCraftingEvent(EntityPlayer player, ItemStack crafted, IInventory craftMatrix)
     {
-        bus().post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix));
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix));
     }
 
     public void firePlayerSmeltedEvent(EntityPlayer player, ItemStack smelted)
     {
-        bus().post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
     }
 
     public INetHandler getClientPlayHandler()
@@ -605,7 +604,7 @@ public class FMLCommonHandler
 
     public void fireNetRegistrationEvent(NetworkManager manager, Set<String> channelSet, String channel, Side side)
     {
-        sidedDelegate.fireNetRegistrationEvent(bus(), manager, channelSet, channel, side);
+        sidedDelegate.fireNetRegistrationEvent(MinecraftForge.EVENT_BUS, manager, channelSet, channel, side);
     }
 
     public boolean shouldAllowPlayerLogins()
