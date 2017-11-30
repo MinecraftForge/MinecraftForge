@@ -38,11 +38,13 @@ public class PlayerEvent extends Event {
     	/**
     	 * This entity is a clone of what the player picked up, containing intact ItemStack information.
     	 */
-        public final EntityItem pickedUp;
-        public ItemPickupEvent(EntityPlayer player, EntityItem pickedUp)
+        public final EntityItem originalEntity;
+        public final ItemStack pickedUp;
+        public ItemPickupEvent(EntityPlayer player, EntityItem entPickedUp, ItemStack stack)
         {
             super(player);
-            this.pickedUp = pickedUp;
+            originalEntity = entPickedUp;
+            pickedUp = stack;
         }
     }
 

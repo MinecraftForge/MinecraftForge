@@ -33,6 +33,6 @@ public class PlayerItemPickupEventDebug
     @SubscribeEvent
     public void itemPickupEvent(PlayerEvent.ItemPickupEvent event)
     {
-    	logger.info("Item picked up: " + event.pickedUp.getItem().getDisplayName());
+    	logger.info("Item picked up: " + event.pickedUp.getDisplayName() + "x" + event.pickedUp.getCount());
     }
 }
