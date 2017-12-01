@@ -42,16 +42,16 @@ public class PlayerEvent extends Event {
         /**
          * Clone item stack, containing the item and amount picked up
          */
-        private final ItemStack pickedUp;
+        private final ItemStack stack;
         public ItemPickupEvent(EntityPlayer player, EntityItem entPickedUp, ItemStack stack)
         {
             super(player);
             originalEntity = entPickedUp;
-            pickedUp = stack;
+            this.stack = stack;
         }
         
         public ItemStack getStack() {
-        	return pickedUp;
+        	return stack;
         }
         
         public EntityItem getOriginalEntity() {

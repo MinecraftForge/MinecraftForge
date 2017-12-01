@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 public class PlayerItemPickupEventDebug
 {
 
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
     public static final String MODID = "playeritempickupeventdebug";
     public static final String NAME = "Player.ItemPickup Event Debug";
     public static final String VERSION = "1.0.0";
@@ -33,6 +33,6 @@ public class PlayerItemPickupEventDebug
     @SubscribeEvent
     public void itemPickupEvent(PlayerEvent.ItemPickupEvent event)
     {
-    	logger.info("Item picked up: " + event.pickedUp.getDisplayName() + "x" + event.pickedUp.getCount());
+    	logger.info("Item picked up: " + event.getStack().getDisplayName() + "x" + event.getStack().getCount());
     }
 }
