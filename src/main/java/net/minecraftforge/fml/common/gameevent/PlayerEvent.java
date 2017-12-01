@@ -35,9 +35,11 @@ public class PlayerEvent extends Event {
     }
 
     public static class ItemPickupEvent extends PlayerEvent {
-    	/**
-    	 * Original EntityItem with current remaining stack size
-    	 */
+        @Deprecated
+        public final EntityItem pickedUp;
+        /**
+        * Original EntityItem with current remaining stack size
+        */
         private final EntityItem originalEntity;
         /**
          * Clone item stack, containing the item and amount picked up
@@ -46,16 +48,17 @@ public class PlayerEvent extends Event {
         public ItemPickupEvent(EntityPlayer player, EntityItem entPickedUp, ItemStack stack)
         {
             super(player);
-            originalEntity = entPickedUp;
+            this.originalEntity = entPickedUp;
+            this.pickedUp = entPickedUp;
             this.stack = stack;
         }
-        
+
         public ItemStack getStack() {
-        	return stack;
+            return stack;
         }
-        
+
         public EntityItem getOriginalEntity() {
-        	return originalEntity;
+            return originalEntity;
         }
     }
 
