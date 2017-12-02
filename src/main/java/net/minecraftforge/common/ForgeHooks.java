@@ -104,6 +104,7 @@ import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraftforge.client.event.PickBlockEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -497,6 +498,17 @@ public class ForgeHooks
                 te = world.getTileEntity(target.getBlockPos());
 
             result = state.getBlock().getPickBlock(state, target, world, target.getBlockPos(), player);
+
+            PickBlockEvent pickBlockEvent =  new PickBlockEvent( state, target, world, player, result);
+
+            if (MinecraftForge.EVENT_BUS.post(pickBlockEvent))
+            {
+                return false;
+            }
+            else
+            {
+                result = pickBlockEvent.getPickResult();
+            }
         }
         else
         {
