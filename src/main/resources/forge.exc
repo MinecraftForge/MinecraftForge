@@ -68,3 +68,5 @@ net/minecraft/command/EntitySelector.isSelectorDefault(Ljava/lang/String;)Z=|p_8
 
 net/minecraft/client/renderer/BufferBuilder.<init>(ILnet/minecraft/util/BlockRenderLayer;)V=|p_i46275_1_,layer
 net/minecraft/client/renderer/BlockModelRenderer$AmbientOcclusionFace.updateVertexBrightness(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;[FLjava/util/BitSet;Lnet/minecraft/util/BlockRenderLayer;)V=|p_187491_1_,p_187491_2_,p_187491_3_,p_187491_4_,p_187491_5_,p_187491_6_,layer
+
+net/minecraft/client/util/RecipeItemHelper.accountStack(Lnet/minecraft/item/ItemStack;I)V=|p_194112_1_,forceCount
