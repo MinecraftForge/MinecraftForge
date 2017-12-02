@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids.capability.templates;
 
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
@@ -72,19 +73,19 @@ public class VoidFluidHandler implements IFluidHandler, IFluidTank
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, EnumSimulate simulate)
     {
         return resource.amount;
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
     {
         return null;
     }
 
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, EnumSimulate simulate)
     {
         return null;
     }

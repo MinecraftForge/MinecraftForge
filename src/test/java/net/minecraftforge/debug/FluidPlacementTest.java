@@ -21,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.RegistryEvent;
@@ -173,7 +174,7 @@ public class FluidPlacementTest
             }
 
             @Override
-            public int fill(FluidStack resource, boolean doFill)
+            public int fill(FluidStack resource, EnumSimulate simulate)
             {
                 if (container.getCount() != 1 || resource == null || resource.amount > Fluid.BUCKET_VOLUME || container
                         .getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
@@ -181,7 +182,7 @@ public class FluidPlacementTest
                     return 0;
                 }
 
-                if (doFill)
+                if (simulate == EnumSimulate.EXECUTE)
                 {
                     container = new ItemStack(FluidContainer.instance);
                     NBTTagCompound tag = new NBTTagCompound();

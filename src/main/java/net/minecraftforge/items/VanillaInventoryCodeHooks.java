@@ -31,6 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.EnumSimulate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -54,7 +55,7 @@ public class VanillaInventoryCodeHooks
 
         for (int i = 0; i < handler.getSlots(); i++)
         {
-            ItemStack extractItem = handler.extractItem(i, 1, true);
+            ItemStack extractItem = handler.extractItem(i, 1, EnumSimulate.SIMULATE);
             if (!extractItem.isEmpty())
             {
                 for (int j = 0; j < dest.getSizeInventory(); j++)
@@ -62,7 +63,7 @@ public class VanillaInventoryCodeHooks
                     ItemStack destStack = dest.getStackInSlot(j);
                     if (dest.isItemValidForSlot(j, extractItem) && (destStack.isEmpty() || destStack.getCount() < destStack.getMaxStackSize() && destStack.getCount() < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack)))
                     {
-                        extractItem = handler.extractItem(i, 1, false);
+                        extractItem = handler.extractItem(i, 1, EnumSimulate.EXECUTE);
                         if (destStack.isEmpty())
                             dest.setInventorySlotContents(j, extractItem);
                         else
@@ -173,21 +174,21 @@ public class VanillaInventoryCodeHooks
     {
         ItemStack itemstack = destInventory.getStackInSlot(slot);
 
-        if (destInventory.insertItem(slot, stack, true).isEmpty())
+        if (destInventory.insertItem(slot, stack, EnumSimulate.SIMULATE).isEmpty())
         {
             boolean insertedItem = false;
             boolean inventoryWasEmpty = isEmpty(destInventory);
 
             if (itemstack.isEmpty())
             {
-                destInventory.insertItem(slot, stack, false);
+                destInventory.insertItem(slot, stack, EnumSimulate.EXECUTE);
                 stack = ItemStack.EMPTY;
                 insertedItem = true;
             }
             else if (ItemHandlerHelper.canItemStacksStack(itemstack, stack))
             {
                 int originalSize = stack.getCount();
-                stack = destInventory.insertItem(slot, stack, false);
+                stack = destInventory.insertItem(slot, stack, EnumSimulate.EXECUTE);
                 insertedItem = originalSize < stack.getCount();
             }
 

@@ -30,6 +30,7 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -67,7 +68,7 @@ public class BlockLiquidWrapper implements IFluidHandler
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, EnumSimulate simulate)
     {
         // NOTE: "Filling" means placement in this context!
         if (resource.amount < Fluid.BUCKET_VOLUME)
@@ -75,7 +76,7 @@ public class BlockLiquidWrapper implements IFluidHandler
             return 0;
         }
 
-        if (doFill)
+        if (simulate == EnumSimulate.EXECUTE)
         {
             Material material = blockLiquid.getDefaultState().getMaterial();
             BlockLiquid block = BlockLiquid.getFlowingBlock(material);
@@ -87,7 +88,7 @@ public class BlockLiquidWrapper implements IFluidHandler
 
     @Nullable
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
     {
         if (resource == null || resource.amount < Fluid.BUCKET_VOLUME)
         {
@@ -100,7 +101,7 @@ public class BlockLiquidWrapper implements IFluidHandler
             FluidStack containedStack = getStack(blockState);
             if (containedStack != null && resource.containsFluid(containedStack))
             {
-                if (doDrain)
+                if (simulate == EnumSimulate.EXECUTE)
                 {
                     world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 11);
                 }
@@ -113,7 +114,7 @@ public class BlockLiquidWrapper implements IFluidHandler
 
     @Nullable
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, EnumSimulate simulate)
     {
         if (maxDrain < Fluid.BUCKET_VOLUME)
         {
@@ -126,7 +127,7 @@ public class BlockLiquidWrapper implements IFluidHandler
             FluidStack containedStack = getStack(blockState);
             if (containedStack != null && containedStack.amount <= maxDrain)
             {
-                if (doDrain)
+                if (simulate == EnumSimulate.EXECUTE)
                 {
                     world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 11);
                 }

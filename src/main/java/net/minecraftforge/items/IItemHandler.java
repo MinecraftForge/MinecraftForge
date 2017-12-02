@@ -20,6 +20,7 @@
 package net.minecraftforge.items;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.EnumSimulate;
 
 import javax.annotation.Nonnull;
 
@@ -29,7 +30,7 @@ public interface IItemHandler
      * Returns the number of slots available
      *
      * @return The number of slots available
-     **/
+     */
     int getSlots();
 
     /**
@@ -48,7 +49,7 @@ public interface IItemHandler
      *
      * @param slot Slot to query
      * @return ItemStack in given slot. Empty Itemstack if the slot is empty.
-     **/
+     */
     @Nonnull
     ItemStack getStackInSlot(int slot);
 
@@ -59,13 +60,13 @@ public interface IItemHandler
      *
      * @param slot     Slot to insert into.
      * @param stack    ItemStack to insert. This must not be modified by the item handler.
-     * @param simulate If true, the insertion is only simulated
+     * @param simulate If {@link EnumSimulate#SIMULATE}, the insertion is only simulated
      * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return an empty ItemStack).
      *         May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
      *         The returned ItemStack can be safely modified after.
-     **/
+     */
     @Nonnull
-    ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate);
+    ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate);
 
     /**
      * Extracts an ItemStack from the given slot.
@@ -74,12 +75,12 @@ public interface IItemHandler
      *
      * @param slot     Slot to extract from.
      * @param amount   Amount to extract (may be greater than the current stacks max limit)
-     * @param simulate If true, the extraction is only simulated
+     * @param simulate If {@link EnumSimulate#SIMULATE}, the extraction is only simulated
      * @return ItemStack extracted from the slot, must be empty if nothing can be extracted.
      *         The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
-     **/
+     */
     @Nonnull
-    ItemStack extractItem(int slot, int amount, boolean simulate);
+    ItemStack extractItem(int slot, int amount, EnumSimulate simulate);
 
     /**
      * Retrieves the maximum stack size allowed to exist in the given slot.

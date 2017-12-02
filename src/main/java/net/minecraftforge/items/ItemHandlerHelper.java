@@ -27,6 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import javax.annotation.Nonnull;
@@ -35,7 +36,7 @@ import javax.annotation.Nullable;
 public class ItemHandlerHelper
 {
     @Nonnull
-    public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, boolean simulate)
+    public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, EnumSimulate simulate)
     {
         if (dest == null || stack.isEmpty())
             return stack;
@@ -100,7 +101,7 @@ public class ItemHandlerHelper
      * Note: This function stacks items without subtypes with different metadata together.
      */
     @Nonnull
-    public static ItemStack insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, boolean simulate)
+    public static ItemStack insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, EnumSimulate simulate)
     {
         if (inventory == null || stack.isEmpty())
             return stack;
@@ -170,12 +171,12 @@ public class ItemHandlerHelper
         // insert into preferred slot first
         if(preferredSlot >= 0)
         {
-            remainder = inventory.insertItem(preferredSlot, stack, false);
+            remainder = inventory.insertItem(preferredSlot, stack, EnumSimulate.EXECUTE);
         }
         // then into the inventory in general
         if(!remainder.isEmpty())
         {
-            remainder = insertItemStacked(inventory, remainder, false);
+            remainder = insertItemStacked(inventory, remainder, EnumSimulate.EXECUTE);
         }
 
         // play sound if something got picked up

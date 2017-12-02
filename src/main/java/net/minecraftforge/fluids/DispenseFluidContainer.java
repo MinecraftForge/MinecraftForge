@@ -29,6 +29,7 @@ import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 /**
@@ -107,7 +108,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
             return super.dispenseStack(source, stack);
         }
 
-        FluidStack fluidStack = fluidHandler.drain(Fluid.BUCKET_VOLUME, false);
+        FluidStack fluidStack = fluidHandler.drain(Fluid.BUCKET_VOLUME, EnumSimulate.SIMULATE);
         EnumFacing dispenserFacing = source.getBlockState().getValue(BlockDispenser.FACING);
         BlockPos blockpos = source.getBlockPos().offset(dispenserFacing);
         FluidActionResult result = fluidStack != null ? FluidUtil.tryPlaceFluid(null, source.getWorld(), blockpos, stack, fluidStack) : FluidActionResult.FAILURE;

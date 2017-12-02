@@ -21,6 +21,7 @@ package net.minecraftforge.fluids.capability.templates;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
@@ -69,19 +70,19 @@ public class EmptyFluidHandler implements IFluidHandler, IFluidTank
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, EnumSimulate simulate)
     {
         return 0;
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
     {
         return null;
     }
 
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, EnumSimulate simulate)
     {
         return null;
     }

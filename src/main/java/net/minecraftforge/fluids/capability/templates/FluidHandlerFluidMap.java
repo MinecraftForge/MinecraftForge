@@ -20,6 +20,7 @@
 package net.minecraftforge.fluids.capability.templates;
 
 import com.google.common.collect.Lists;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -38,7 +39,7 @@ public class FluidHandlerFluidMap implements IFluidHandler
     public FluidHandlerFluidMap()
     {
         // LinkedHashMap to ensure iteration order is consistent.
-        this(new LinkedHashMap<Fluid, IFluidHandler>());
+        this(new LinkedHashMap<>());
     }
 
     public FluidHandlerFluidMap(Map<Fluid, IFluidHandler> handlers)
@@ -64,33 +65,33 @@ public class FluidHandlerFluidMap implements IFluidHandler
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, EnumSimulate simulate)
     {
         if (resource == null)
             return 0;
         IFluidHandler handler = handlers.get(resource.getFluid());
         if (handler == null)
             return 0;
-        return handler.fill(resource, doFill);
+        return handler.fill(resource, simulate);
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
     {
         if (resource == null)
             return null;
         IFluidHandler handler = handlers.get(resource.getFluid());
         if (handler == null)
             return null;
-        return handler.drain(resource, doDrain);
+        return handler.drain(resource, simulate);
     }
 
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, EnumSimulate simulate)
     {
         for (IFluidHandler handler : handlers.values())
         {
-            FluidStack drain = handler.drain(maxDrain, doDrain);
+            FluidStack drain = handler.drain(maxDrain, simulate);
             if (drain != null)
                 return drain;
         }

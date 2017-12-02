@@ -20,6 +20,7 @@
 package net.minecraftforge.fluids.capability.templates;
 
 import com.google.common.collect.Lists;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -58,7 +59,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, EnumSimulate simulate)
     {
         if (resource == null || resource.amount <= 0)
             return 0;
@@ -68,7 +69,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
         int totalFillAmount = 0;
         for (IFluidHandler handler : subHandlers)
         {
-            int fillAmount = handler.fill(resource, doFill);
+            int fillAmount = handler.fill(resource, simulate);
             totalFillAmount += fillAmount;
             resource.amount -= fillAmount;
             if (resource.amount <= 0)
@@ -78,7 +79,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
     {
         if (resource == null || resource.amount <= 0)
             return null;
@@ -88,7 +89,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
         FluidStack totalDrained = null;
         for (IFluidHandler handler : subHandlers)
         {
-            FluidStack drain = handler.drain(resource, doDrain);
+            FluidStack drain = handler.drain(resource, simulate);
             if (drain != null)
             {
                 if (totalDrained == null)
@@ -105,7 +106,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
     }
 
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, EnumSimulate simulate)
     {
         if (maxDrain == 0)
             return null;
@@ -114,7 +115,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
         {
             if (totalDrained == null)
             {
-                totalDrained = handler.drain(maxDrain, doDrain);
+                totalDrained = handler.drain(maxDrain, simulate);
                 if (totalDrained != null)
                 {
                     maxDrain -= totalDrained.amount;
@@ -124,7 +125,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
             {
                 FluidStack copy = totalDrained.copy();
                 copy.amount = maxDrain;
-                FluidStack drain = handler.drain(copy, doDrain);
+                FluidStack drain = handler.drain(copy, simulate);
                 if (drain != null)
                 {
                     totalDrained.amount += drain.amount;

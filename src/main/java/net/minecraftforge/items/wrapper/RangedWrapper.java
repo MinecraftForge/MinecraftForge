@@ -21,6 +21,7 @@ package net.minecraftforge.items.wrapper;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -63,7 +64,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate)
     {
         if (checkSlot(slot))
         {
@@ -75,7 +76,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
 
     @Override
     @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
+    public ItemStack extractItem(int slot, int amount, EnumSimulate simulate)
     {
         if (checkSlot(slot))
         {

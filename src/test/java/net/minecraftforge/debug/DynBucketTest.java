@@ -33,6 +33,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -150,7 +151,7 @@ public class DynBucketTest
                 IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(bucket);
                 if (fluidHandler != null)
                 {
-                    int fillAmount = fluidHandler.fill(fs, true);
+                    int fillAmount = fluidHandler.fill(fs, EnumSimulate.EXECUTE);
                     if (fillAmount > 0)
                     {
                         ItemStack filledBucket = fluidHandler.getContainer();

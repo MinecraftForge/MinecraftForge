@@ -21,6 +21,8 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.common.EnumSimulate;
+
 /**
  * A tank is the unit of interaction with Fluid inventories.
  *
@@ -55,23 +57,17 @@ public interface IFluidTank
     FluidTankInfo getInfo();
 
     /**
-     *
-     * @param resource
-     *            FluidStack attempting to fill the tank.
-     * @param doFill
-     *            If false, the fill will only be simulated.
+     * @param resource FluidStack attempting to fill the tank.
+     * @param simulate If {@link EnumSimulate#SIMULATE}, the fill will only be simulated.
      * @return Amount of fluid that was accepted by the tank.
      */
-    int fill(FluidStack resource, boolean doFill);
+    int fill(FluidStack resource, EnumSimulate simulate);
 
     /**
-     *
-     * @param maxDrain
-     *            Maximum amount of fluid to be removed from the container.
-     * @param doDrain
-     *            If false, the drain will only be simulated.
+     * @param maxDrain Maximum amount of fluid to be removed from the container.
+     * @param simulate If {@link EnumSimulate#SIMULATE}, the drain will only be simulated.
      * @return Amount of fluid that was removed from the tank.
      */
     @Nullable
-    FluidStack drain(int maxDrain, boolean doDrain);
+    FluidStack drain(int maxDrain, EnumSimulate simulate);
 }

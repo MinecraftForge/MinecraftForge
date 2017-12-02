@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -78,7 +79,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate)
     {
         if (stack.isEmpty())
             return ItemStack.EMPTY;
@@ -102,7 +103,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
         boolean reachedLimit = stack.getCount() > limit;
 
-        if (!simulate)
+        if (simulate == EnumSimulate.EXECUTE)
         {
             if (existing.isEmpty())
             {
@@ -120,7 +121,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
     @Override
     @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
+    public ItemStack extractItem(int slot, int amount, EnumSimulate simulate)
     {
         if (amount == 0)
             return ItemStack.EMPTY;
@@ -136,7 +137,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
         if (existing.getCount() <= toExtract)
         {
-            if (!simulate)
+            if (simulate == EnumSimulate.EXECUTE)
             {
                 this.stacks.set(slot, ItemStack.EMPTY);
                 onContentsChanged(slot);
@@ -145,7 +146,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         }
         else
         {
-            if (!simulate)
+            if (simulate == EnumSimulate.EXECUTE)
             {
                 this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
                 onContentsChanged(slot);

@@ -24,6 +24,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.EnumSimulate;
 
 import javax.annotation.Nonnull;
 
@@ -55,13 +56,13 @@ public class SlotItemHandler extends Slot
 
             handlerModifiable.setStackInSlot(index, ItemStack.EMPTY);
 
-            remainder = handlerModifiable.insertItem(index, stack, true);
+            remainder = handlerModifiable.insertItem(index, stack, EnumSimulate.SIMULATE);
 
             handlerModifiable.setStackInSlot(index, currentStack);
         }
         else
         {
-            remainder = handler.insertItem(index, stack, true);
+            remainder = handler.insertItem(index, stack, EnumSimulate.SIMULATE);
         }
         return remainder.isEmpty() || remainder.getCount() < stack.getCount();
     }
@@ -107,7 +108,7 @@ public class SlotItemHandler extends Slot
 
             handlerModifiable.setStackInSlot(index, ItemStack.EMPTY);
 
-            ItemStack remainder = handlerModifiable.insertItem(index, maxAdd, true);
+            ItemStack remainder = handlerModifiable.insertItem(index, maxAdd, EnumSimulate.SIMULATE);
 
             handlerModifiable.setStackInSlot(index, currentStack);
 
@@ -115,7 +116,7 @@ public class SlotItemHandler extends Slot
         }
         else
         {
-            ItemStack remainder = handler.insertItem(index, maxAdd, true);
+            ItemStack remainder = handler.insertItem(index, maxAdd, EnumSimulate.SIMULATE);
 
             int current = currentStack.getCount();
             int added = maxInput - remainder.getCount();
@@ -126,14 +127,14 @@ public class SlotItemHandler extends Slot
     @Override
     public boolean canTakeStack(EntityPlayer playerIn)
     {
-        return !this.getItemHandler().extractItem(index, 1, true).isEmpty();
+        return !this.getItemHandler().extractItem(index, 1, EnumSimulate.SIMULATE).isEmpty();
     }
 
     @Override
     @Nonnull
     public ItemStack decrStackSize(int amount)
     {
-        return this.getItemHandler().extractItem(index, amount, false);
+        return this.getItemHandler().extractItem(index, amount, EnumSimulate.EXECUTE);
     }
 
     public IItemHandler getItemHandler()

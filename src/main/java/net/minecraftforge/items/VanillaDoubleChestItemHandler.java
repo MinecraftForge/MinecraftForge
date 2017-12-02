@@ -30,6 +30,7 @@ import net.minecraft.world.World;
 import java.lang.ref.WeakReference;
 
 import com.google.common.base.Objects;
+import net.minecraftforge.common.EnumSimulate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -139,7 +140,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate)
     {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
@@ -149,7 +150,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
 
         int starting = stack.getCount();
         ItemStack ret = chest.getSingleChestHandler().insertItem(targetSlot, stack, simulate);
-        if (ret.getCount() != starting && !simulate)
+        if (ret.getCount() != starting && simulate == EnumSimulate.EXECUTE)
         {
             chest = getChest(!accessingUpperChest);
             if (chest != null)
@@ -161,7 +162,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
 
     @Override
     @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
+    public ItemStack extractItem(int slot, int amount, EnumSimulate simulate)
     {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
@@ -170,7 +171,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
             return ItemStack.EMPTY;
 
         ItemStack ret = chest.getSingleChestHandler().extractItem(targetSlot, amount, simulate);
-        if (!ret.isEmpty() && !simulate)
+        if (!ret.isEmpty() && simulate == EnumSimulate.EXECUTE)
         {
             chest = getChest(!accessingUpperChest);
             if (chest != null)

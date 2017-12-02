@@ -22,6 +22,7 @@ package net.minecraftforge.items.wrapper;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -83,7 +84,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate)
     {
         if (stack.isEmpty())
             return ItemStack.EMPTY;
@@ -111,7 +112,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
 
             if (stack.getCount() <= m)
             {
-                if (!simulate)
+                if (simulate == EnumSimulate.EXECUTE)
                 {
                     ItemStack copy = stack.copy();
                     copy.grow(stackInSlot.getCount());
@@ -124,7 +125,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
-                if (!simulate)
+                if (simulate == EnumSimulate.EXECUTE)
                 {
                     ItemStack copy = stack.splitStack(m);
                     copy.grow(stackInSlot.getCount());
@@ -148,7 +149,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
-                if (!simulate)
+                if (simulate == EnumSimulate.EXECUTE)
                 {
                     setInventorySlotContents(slot1, stack.splitStack(m));
                     return stack;
@@ -161,8 +162,10 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             }
             else
             {
-                if (!simulate)
+                if (simulate == EnumSimulate.EXECUTE)
+                {
                     setInventorySlotContents(slot1, stack);
+                }
                 return ItemStack.EMPTY;
             }
         }
@@ -185,7 +188,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
 
     @Override
     @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
+    public ItemStack extractItem(int slot, int amount, EnumSimulate simulate)
     {
         if (amount == 0)
             return ItemStack.EMPTY;
@@ -203,7 +206,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         if (!inv.canExtractItem(slot1, stackInSlot, side))
             return ItemStack.EMPTY;
 
-        if (simulate)
+        if (simulate == EnumSimulate.SIMULATE)
         {
             if (stackInSlot.getCount() < amount)
             {

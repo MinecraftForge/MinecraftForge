@@ -39,6 +39,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -101,10 +102,10 @@ public class FluidUtil
             IItemHandler playerInventory = player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             if (playerInventory != null)
             {
-                FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player, true);
+                FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player, EnumSimulate.EXECUTE);
                 if (!fluidActionResult.isSuccess())
                 {
-                    fluidActionResult = tryEmptyContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player, true);
+                    fluidActionResult = tryEmptyContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player, EnumSimulate.EXECUTE);
                 }
 
                 if (fluidActionResult.isSuccess())
@@ -122,26 +123,26 @@ public class FluidUtil
      *
      * @param container   The container to be filled. Will not be modified.
      *                    Separate handling must be done to reduce the stack size, stow containers, etc, on success.
-     *                    See {@link  #tryFillContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer, boolean)}.
+     *                    See {@link  #tryFillContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer, EnumSimulate)}.
      * @param fluidSource The fluid handler to be drained.
      * @param maxAmount   The largest amount of fluid that should be transferred.
      * @param player      The player to make the filling noise. Pass null for no noise.
-     * @param doFill      true if the container should actually be filled, false if it should be simulated.
+     * @param simulate    {@link EnumSimulate#EXECUTE} if the container should actually be filled, {@link EnumSimulate#SIMULATE} if it should be simulated.
      * @return a {@link FluidActionResult} holding the filled container if successful.
      */
     @Nonnull
-    public static FluidActionResult tryFillContainer(@Nonnull ItemStack container, IFluidHandler fluidSource, int maxAmount, @Nullable EntityPlayer player, boolean doFill)
+    public static FluidActionResult tryFillContainer(@Nonnull ItemStack container, IFluidHandler fluidSource, int maxAmount, @Nullable EntityPlayer player, EnumSimulate simulate)
     {
         ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
         IFluidHandlerItem containerFluidHandler = getFluidHandler(containerCopy);
         if (containerFluidHandler != null)
         {
-            FluidStack simulatedTransfer = tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, false);
+            FluidStack simulatedTransfer = tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, EnumSimulate.SIMULATE);
             if (simulatedTransfer != null)
             {
-                if (doFill)
+                if (simulate == EnumSimulate.EXECUTE)
                 {
-                    tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, true);
+                    tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, EnumSimulate.EXECUTE);
                     if (player != null)
                     {
                         SoundEvent soundevent = simulatedTransfer.getFluid().getFillSound(simulatedTransfer);
@@ -150,7 +151,7 @@ public class FluidUtil
                 }
                 else
                 {
-                    containerFluidHandler.fill(simulatedTransfer, true);
+                    containerFluidHandler.fill(simulatedTransfer, EnumSimulate.EXECUTE);
                 }
 
                 ItemStack resultContainer = containerFluidHandler.getContainer();
@@ -165,24 +166,24 @@ public class FluidUtil
      *
      * @param container        The filled container. Will not be modified.
      *                         Separate handling must be done to reduce the stack size, stow containers, etc, on success.
-     *                         See {@link #tryEmptyContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer, boolean)}.
+     *                         See {@link #tryEmptyContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer, EnumSimulate)}.
      * @param fluidDestination The fluid handler to be filled by the container.
      * @param maxAmount        The largest amount of fluid that should be transferred.
      * @param player           Player for making the bucket drained sound. Pass null for no noise.
-     * @param doDrain          true if the container should actually be drained, false if it should be simulated.
+     * @param simulate         {@link EnumSimulate#EXECUTE} if the container should actually be drained, {@link EnumSimulate#SIMULATE} if it should be simulated.
      * @return a {@link FluidActionResult} holding the empty container if the fluid handler was filled.
      *         NOTE If the container is consumable, the empty container will be null on success.
      */
     @Nonnull
-    public static FluidActionResult tryEmptyContainer(@Nonnull ItemStack container, IFluidHandler fluidDestination, int maxAmount, @Nullable EntityPlayer player, boolean doDrain)
+    public static FluidActionResult tryEmptyContainer(@Nonnull ItemStack container, IFluidHandler fluidDestination, int maxAmount, @Nullable EntityPlayer player, EnumSimulate simulate)
     {
         ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
         IFluidHandlerItem containerFluidHandler = getFluidHandler(containerCopy);
         if (containerFluidHandler != null)
         {
-            if (doDrain)
+            if (simulate == EnumSimulate.EXECUTE)
             {
-                FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, true);
+                FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, EnumSimulate.EXECUTE);
                 if (transfer != null)
                 {
                     if (player != null)
@@ -196,10 +197,10 @@ public class FluidUtil
             }
             else
             {
-                FluidStack simulatedTransfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, false);
+                FluidStack simulatedTransfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, EnumSimulate.SIMULATE);
                 if (simulatedTransfer != null)
                 {
-                    containerFluidHandler.drain(simulatedTransfer, true);
+                    containerFluidHandler.drain(simulatedTransfer, EnumSimulate.EXECUTE);
                     ItemStack resultContainer = containerFluidHandler.getContainer();
                     return new FluidActionResult(resultContainer);
                 }
@@ -222,35 +223,11 @@ public class FluidUtil
      * @param maxAmount   Maximum amount of fluid to take from the tank.
      * @param player      The player that gets the items the inventory can't take.
      *                    Can be null, only used if the inventory cannot take the filled stack.
-     * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
-     * @deprecated use {@link #tryFillContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer, boolean)}
-     */
-    @Deprecated // TODO remove in 1.13
-    @Nonnull
-    public static FluidActionResult tryFillContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidSource, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player)
-    {
-        return tryFillContainerAndStow(container, fluidSource, inventory, maxAmount, player, true);
-    }
-
-    /**
-     * Takes an Fluid Container Item and tries to fill it from the given tank.
-     * If the player is in creative mode, the container will not be modified on success, and no additional items created.
-     * If the input itemstack has a stacksize > 1 it will stow the filled container in the given inventory.
-     * If the inventory does not accept it, it will be given to the player or dropped at the players feet.
-     *      If player is null in this case, the action will be aborted.
-     *
-     * @param container   The Fluid Container ItemStack to fill.
-     *                    Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
-     * @param fluidSource The fluid source to fill from
-     * @param inventory   An inventory where any additionally created item (filled container if multiple empty are present) are put
-     * @param maxAmount   Maximum amount of fluid to take from the tank.
-     * @param player      The player that gets the items the inventory can't take.
-     *                    Can be null, only used if the inventory cannot take the filled stack.
-     * @param doFill      true if the container should actually be filled, false if it should be simulated.
+     * @param simulate    {@link EnumSimulate#EXECUTE} if the container should actually be filled, {@link EnumSimulate#SIMULATE} if it should be simulated.
      * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
      */
     @Nonnull
-    public static FluidActionResult tryFillContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidSource, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player, boolean doFill)
+    public static FluidActionResult tryFillContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidSource, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player, EnumSimulate simulate)
     {
         if (container.isEmpty())
         {
@@ -259,7 +236,7 @@ public class FluidUtil
 
         if (player != null && player.capabilities.isCreativeMode)
         {
-            FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, doFill);
+            FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, simulate);
             if (filledReal.isSuccess())
             {
                 return new FluidActionResult(container); // creative mode: item does not change
@@ -267,7 +244,7 @@ public class FluidUtil
         }
         else if (container.getCount() == 1) // don't need to stow anything, just fill the container stack
         {
-            FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, doFill);
+            FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, simulate);
             if (filledReal.isSuccess())
             {
                 return filledReal;
@@ -275,18 +252,18 @@ public class FluidUtil
         }
         else
         {
-            FluidActionResult filledSimulated = tryFillContainer(container, fluidSource, maxAmount, player, false);
+            FluidActionResult filledSimulated = tryFillContainer(container, fluidSource, maxAmount, player, EnumSimulate.SIMULATE);
             if (filledSimulated.isSuccess())
             {
                 // check if we can give the itemStack to the inventory
-                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, filledSimulated.getResult(), true);
+                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, filledSimulated.getResult(), EnumSimulate.SIMULATE);
                 if (remainder.isEmpty() || player != null)
                 {
-                    FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, doFill);
-                    remainder = ItemHandlerHelper.insertItemStacked(inventory, filledReal.getResult(), !doFill);
+                    FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, simulate);
+                    remainder = ItemHandlerHelper.insertItemStacked(inventory, filledReal.getResult(), simulate);
 
                     // give it to the player or drop it at their feet
-                    if (!remainder.isEmpty() && player != null && doFill)
+                    if (!remainder.isEmpty() && player != null && simulate == EnumSimulate.EXECUTE)
                     {
                         ItemHandlerHelper.giveItemToPlayer(player, remainder);
                     }
@@ -314,34 +291,11 @@ public class FluidUtil
      * @param inventory        An inventory where any additionally created item (filled container if multiple empty are present) are put
      * @param maxAmount        Maximum amount of fluid to take from the tank.
      * @param player           The player that gets the items the inventory can't take. Can be null, only used if the inventory cannot take the filled stack.
-     * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
-     * @deprecated use {@link #tryEmptyContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer, boolean)}
-     */
-    @Deprecated // TODO: remove in 1.13
-    @Nonnull
-    public static FluidActionResult tryEmptyContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidDestination, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player)
-    {
-        return tryEmptyContainerAndStow(container, fluidDestination, inventory, maxAmount, player, true);
-    }
-
-    /**
-     * Takes an Fluid Container Item, tries to empty it into the fluid handler, and stows it in the given inventory.
-     * If the player is in creative mode, the container will not be modified on success, and no additional items created.
-     * If the input itemstack has a stacksize > 1 it will stow the emptied container in the given inventory.
-     * If the inventory does not accept the emptied container, it will be given to the player or dropped at the players feet.
-     *      If player is null in this case, the action will be aborted.
-     *
-     * @param container        The filled Fluid Container Itemstack to empty.
-     *                         Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
-     * @param fluidDestination The fluid destination to fill from the fluid container.
-     * @param inventory        An inventory where any additionally created item (filled container if multiple empty are present) are put
-     * @param maxAmount        Maximum amount of fluid to take from the tank.
-     * @param player           The player that gets the items the inventory can't take. Can be null, only used if the inventory cannot take the filled stack.
-     * @param doDrain          true if the container should actually be drained, false if it should be simulated.
+     * @param simulate         {@link EnumSimulate#EXECUTE} if the container should actually be drained, {@link EnumSimulate#SIMULATE} if it should be simulated.
      * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
      */
     @Nonnull
-    public static FluidActionResult tryEmptyContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidDestination, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player, boolean doDrain)
+    public static FluidActionResult tryEmptyContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidDestination, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player, EnumSimulate simulate)
     {
         if (container.isEmpty())
         {
@@ -350,7 +304,7 @@ public class FluidUtil
 
         if (player != null && player.capabilities.isCreativeMode)
         {
-            FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, doDrain);
+            FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, simulate);
             if (emptiedReal.isSuccess())
             {
                 return new FluidActionResult(container); // creative mode: item does not change
@@ -358,7 +312,7 @@ public class FluidUtil
         }
         else if (container.getCount() == 1) // don't need to stow anything, just fill and edit the container stack
         {
-            FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, doDrain);
+            FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, simulate);
             if (emptiedReal.isSuccess())
             {
                 return emptiedReal;
@@ -366,18 +320,18 @@ public class FluidUtil
         }
         else
         {
-            FluidActionResult emptiedSimulated = tryEmptyContainer(container, fluidDestination, maxAmount, player, false);
+            FluidActionResult emptiedSimulated = tryEmptyContainer(container, fluidDestination, maxAmount, player, EnumSimulate.SIMULATE);
             if (emptiedSimulated.isSuccess())
             {
                 // check if we can give the itemStack to the inventory
-                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedSimulated.getResult(), true);
+                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedSimulated.getResult(), EnumSimulate.SIMULATE);
                 if (remainder.isEmpty() || player != null)
                 {
-                    FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, doDrain);
-                    remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal.getResult(), !doDrain);
+                    FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, simulate);
+                    remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal.getResult(), simulate);
 
                     // give it to the player or drop it at their feet
-                    if (!remainder.isEmpty() && player != null && doDrain)
+                    if (!remainder.isEmpty() && player != null && simulate == EnumSimulate.EXECUTE)
                     {
                         ItemHandlerHelper.giveItemToPlayer(player, remainder);
                     }
@@ -394,44 +348,44 @@ public class FluidUtil
 
     /**
      * Fill a destination fluid handler from a source fluid handler with a max amount.
-     * To specify a fluid to transfer instead of max amount, use {@link #tryFluidTransfer(IFluidHandler, IFluidHandler, FluidStack, boolean)}
+     * To specify a fluid to transfer instead of max amount, use {@link #tryFluidTransfer(IFluidHandler, IFluidHandler, FluidStack, EnumSimulate)}
      * To transfer as much as possible, use {@link Integer#MAX_VALUE} for maxAmount.
      *
      * @param fluidDestination The fluid handler to be filled.
      * @param fluidSource      The fluid handler to be drained.
      * @param maxAmount        The largest amount of fluid that should be transferred.
-     * @param doTransfer       True if the transfer should actually be done, false if it should be simulated.
+     * @param simulate         {@link EnumSimulate#EXECUTE} if the transfer should actually be done, {@link EnumSimulate#SIMULATE} if it should be simulated.
      * @return the fluidStack that was transferred from the source to the destination. null on failure.
      */
     @Nullable
-    public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, int maxAmount, boolean doTransfer)
+    public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, int maxAmount, EnumSimulate simulate)
     {
-        FluidStack drainable = fluidSource.drain(maxAmount, false);
+        FluidStack drainable = fluidSource.drain(maxAmount, EnumSimulate.SIMULATE);
         if (drainable != null && drainable.amount > 0)
         {
-            return tryFluidTransfer_Internal(fluidDestination, fluidSource, drainable, doTransfer);
+            return tryFluidTransfer_Internal(fluidDestination, fluidSource, drainable, simulate);
         }
         return null;
     }
 
     /**
      * Fill a destination fluid handler from a source fluid handler using a specific fluid.
-     * To specify a max amount to transfer instead of specific fluid, use {@link #tryFluidTransfer(IFluidHandler, IFluidHandler, int, boolean)}
+     * To specify a max amount to transfer instead of specific fluid, use {@link #tryFluidTransfer(IFluidHandler, IFluidHandler, int, EnumSimulate)}
      * To transfer as much as possible, use {@link Integer#MAX_VALUE} for resource.amount.
      *
      * @param fluidDestination The fluid handler to be filled.
      * @param fluidSource      The fluid handler to be drained.
      * @param resource         The fluid that should be transferred. Amount represents the maximum amount to transfer.
-     * @param doTransfer       True if the transfer should actually be done, false if it should be simulated.
+     * @param simulate         {@link EnumSimulate#EXECUTE} if the transfer should actually be done, {@link EnumSimulate#SIMULATE} if it should be simulated.
      * @return the fluidStack that was transferred from the source to the destination. null on failure.
      */
     @Nullable
-    public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, FluidStack resource, boolean doTransfer)
+    public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, FluidStack resource, EnumSimulate simulate)
     {
-        FluidStack drainable = fluidSource.drain(resource, false);
+        FluidStack drainable = fluidSource.drain(resource, EnumSimulate.SIMULATE);
         if (drainable != null && drainable.amount > 0 && resource.isFluidEqual(drainable))
         {
-            return tryFluidTransfer_Internal(fluidDestination, fluidSource, drainable, doTransfer);
+            return tryFluidTransfer_Internal(fluidDestination, fluidSource, drainable, simulate);
         }
         return null;
     }
@@ -440,21 +394,21 @@ public class FluidUtil
      * Internal method for filling a destination fluid handler from a source fluid handler using a specific fluid.
      * Assumes that "drainable" can be drained from "fluidSource".
      *
-     * Modders: Instead of this method, use {@link #tryFluidTransfer(IFluidHandler, IFluidHandler, FluidStack, boolean)}
-     * or {@link #tryFluidTransfer(IFluidHandler, IFluidHandler, int, boolean)}.
+     * Modders: Instead of this method, use {@link #tryFluidTransfer(IFluidHandler, IFluidHandler, FluidStack, EnumSimulate)}
+     * or {@link #tryFluidTransfer(IFluidHandler, IFluidHandler, int, EnumSimulate)}.
      */
     @Nullable
-    private static FluidStack tryFluidTransfer_Internal(IFluidHandler fluidDestination, IFluidHandler fluidSource, FluidStack drainable, boolean doTransfer)
+    private static FluidStack tryFluidTransfer_Internal(IFluidHandler fluidDestination, IFluidHandler fluidSource, FluidStack drainable, EnumSimulate simulate)
     {
-        int fillableAmount = fluidDestination.fill(drainable, false);
+        int fillableAmount = fluidDestination.fill(drainable, EnumSimulate.SIMULATE);
         if (fillableAmount > 0)
         {
-            if (doTransfer)
+            if (simulate == EnumSimulate.EXECUTE)
             {
-                FluidStack drained = fluidSource.drain(fillableAmount, true);
+                FluidStack drained = fluidSource.drain(fillableAmount, EnumSimulate.EXECUTE);
                 if (drained != null)
                 {
-                    drained.amount = fluidDestination.fill(drained, true);
+                    drained.amount = fluidDestination.fill(drained, EnumSimulate.EXECUTE);
                     return drained;
                 }
             }
@@ -506,7 +460,7 @@ public class FluidUtil
             IFluidHandlerItem fluidHandler = getFluidHandler(container);
             if (fluidHandler != null)
             {
-                return fluidHandler.drain(Integer.MAX_VALUE, false);
+                return fluidHandler.drain(Integer.MAX_VALUE, EnumSimulate.SIMULATE);
             }
         }
         return null;
@@ -570,7 +524,7 @@ public class FluidUtil
             IFluidHandler targetFluidHandler = getFluidHandler(worldIn, pos, side);
             if (targetFluidHandler != null)
             {
-                return tryFillContainer(emptyContainer, targetFluidHandler, Integer.MAX_VALUE, playerIn, true);
+                return tryFillContainer(emptyContainer, targetFluidHandler, Integer.MAX_VALUE, playerIn, EnumSimulate.EXECUTE);
             }
         }
         return FluidActionResult.FAILURE;
@@ -627,7 +581,7 @@ public class FluidUtil
             return false;
         }
 
-        if (fluidSource.drain(resource, false) == null)
+        if (fluidSource.drain(resource, EnumSimulate.SIMULATE) == null)
         {
             return false;
         }
@@ -644,7 +598,7 @@ public class FluidUtil
 
         if (world.provider.doesWaterVaporize() && fluid.doesVaporize(resource))
         {
-            FluidStack result = fluidSource.drain(resource, true);
+            FluidStack result = fluidSource.drain(resource, EnumSimulate.EXECUTE);
             if (result != null)
             {
                 result.getFluid().vaporize(player, world, pos, result);
@@ -655,7 +609,7 @@ public class FluidUtil
         {
             // This fluid handler places the fluid block when filled
             IFluidHandler handler = getFluidBlockHandler(fluid, world, pos);
-            FluidStack result = tryFluidTransfer(handler, fluidSource, resource, true);
+            FluidStack result = tryFluidTransfer(handler, fluidSource, resource, EnumSimulate.EXECUTE);
             if (result != null)
             {
                 SoundEvent soundevent = resource.getFluid().getEmptySound(resource);
@@ -693,7 +647,7 @@ public class FluidUtil
      * Destroys a block when a fluid is placed in the same position.
      * Modeled after {@link ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}
      *
-     * This is a helper method for implementing {@link IFluidBlock#place(World, BlockPos, FluidStack, boolean)}.
+     * This is a helper method for implementing {@link IFluidBlock#place(World, BlockPos, FluidStack, EnumSimulate)}.
      *
      * @param world the world that the fluid will be placed in
      * @param pos   the location that the fluid will be placed

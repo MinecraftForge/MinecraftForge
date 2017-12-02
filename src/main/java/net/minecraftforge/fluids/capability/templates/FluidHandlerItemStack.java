@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.EnumSimulate;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.*;
@@ -97,7 +98,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, EnumSimulate simulate)
     {
         if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !canFillFluidType(resource))
         {
@@ -109,7 +110,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         {
             int fillAmount = Math.min(capacity, resource.amount);
 
-            if (doFill)
+            if (simulate == EnumSimulate.EXECUTE)
             {
                 FluidStack filled = resource.copy();
                 filled.amount = fillAmount;
@@ -124,7 +125,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
             {
                 int fillAmount = Math.min(capacity - contained.amount, resource.amount);
 
-                if (doFill && fillAmount > 0) {
+                if (simulate == EnumSimulate.EXECUTE && fillAmount > 0) {
                     contained.amount += fillAmount;
                     setFluid(contained);
                 }
@@ -137,17 +138,17 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
     {
         if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !resource.isFluidEqual(getFluid()))
         {
             return null;
         }
-        return drain(resource.amount, doDrain);
+        return drain(resource.amount, simulate);
     }
 
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, EnumSimulate simulate)
     {
         if (container.getCount() != 1 || maxDrain <= 0)
         {
@@ -165,7 +166,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         FluidStack drained = contained.copy();
         drained.amount = drainAmount;
 
-        if (doDrain)
+        if (simulate == EnumSimulate.EXECUTE)
         {
             contained.amount -= drainAmount;
             if (contained.amount == 0)
