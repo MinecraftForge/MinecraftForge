@@ -111,6 +111,7 @@ import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.event.entity.MovementCheckEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -1371,5 +1372,10 @@ public class ForgeHooks
 
         if (recipes.size() > 0 || display.size() > 0)
             connection.sendPacket(new SPacketRecipeBook(state, recipes, display, isGuiOpen, isFilteringCraftable));
+    }
+    
+    public static boolean onMovementCheck(Entity entity, boolean isVehicle)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new MovementCheckEvent(entity, isVehicle));
     }
 }
