@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:stone",
+      "data": 0
+    },
+    {
+      "item": "minecraft:stone",
+      "data": 0
+    }
+  ],
+  "result": {
+    "item": "minecraft:stone",
+    "data": 1
+  }
+}

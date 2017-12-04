@@ -21,8 +21,6 @@ package net.minecraftforge.fml.common.network.handshake;
 
 import net.minecraftforge.fml.common.FMLLog;
 
-import org.apache.logging.log4j.Level;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
@@ -60,7 +58,7 @@ public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> ext
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception
     {
-        S state = ctx.attr(fmlHandshakeState).get();
+        S state = ctx.channel().attr(fmlHandshakeState).get();
         FMLLog.log.debug("{}: null->{}:{}", stateType.getSimpleName(), state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.')+1), state);
         state.accept(ctx, null, s ->
         {

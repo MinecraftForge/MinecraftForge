@@ -80,6 +80,8 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
+import net.minecraftforge.client.CloudRenderer;
+import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigManager;
@@ -197,6 +199,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     private Map<ServerData, ExtendedServerListData> serverDataTag;
 
     private WeakReference<NetHandlerPlayClient> currentPlayClient;
+
+    private CloudRenderer cloudRenderer;
 
     /**
      * Called to start the whole game off
@@ -1114,5 +1118,28 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         this.client.populateSearchTreeManager();
         this.client.getSearchTreeManager().onResourceManagerReload(this.client.getResourceManager());
+    }
+
+    private CloudRenderer getCloudRenderer()
+    {
+        if (cloudRenderer == null)
+            cloudRenderer = new CloudRenderer();
+        return cloudRenderer;
+    }
+
+    public void updateCloudSettings()
+    {
+        getCloudRenderer().checkSettings();
+    }
+
+    public boolean renderClouds(int cloudTicks, float partialTicks)
+    {
+        IRenderHandler renderer = this.client.world.provider.getCloudRenderer();
+        if (renderer != null)
+        {
+            renderer.render(partialTicks, this.client.world, this.client);
+            return true;
+        }
+        return getCloudRenderer().render(cloudTicks, partialTicks);
     }
 }

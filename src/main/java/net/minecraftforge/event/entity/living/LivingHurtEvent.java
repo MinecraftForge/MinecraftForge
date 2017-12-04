@@ -43,6 +43,7 @@ import net.minecraft.entity.EntityLivingBase;
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * @see LivingDamageEvent
  **/
 @Cancelable
 public class LivingHurtEvent extends LivingEvent
