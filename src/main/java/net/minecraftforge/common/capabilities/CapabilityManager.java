@@ -49,7 +49,8 @@ public enum CapabilityManager
      * @param type The Interface to be registered
      * @param storage A default implementation of the storage handler.
      * @param implementation A default implementation of the interface.
-     * @deprecated Pass a constructor reference instead of a class name as the third parameter
+     * @deprecated Use the overload that takes a factory instead of a class.
+     *  You can easily do this by passing a constructor reference
      *  (MyImpl::new instead of MyImpl.class). TODO remove in 1.13.
      */
     @Deprecated
