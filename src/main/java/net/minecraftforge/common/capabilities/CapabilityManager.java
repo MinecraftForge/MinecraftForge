@@ -49,7 +49,10 @@ public enum CapabilityManager
      * @param type The Interface to be registered
      * @param storage A default implementation of the storage handler.
      * @param implementation A default implementation of the interface.
+     * @deprecated Pass a constructor reference instead of a class name as the third parameter
+     *  (MyImpl::new instead of MyImpl.class). TODO remove in 1.13.
      */
+    @Deprecated
     public <T> void register(Class<T> type, Capability.IStorage<T> storage, final Class<? extends T> implementation)
     {
         Preconditions.checkArgument(implementation != null, "Attempted to register a capability with no default implementation");
