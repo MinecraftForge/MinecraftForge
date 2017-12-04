@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,318 @@
+@@ -241,6 +216,329 @@
          return new WorldBorder();
      }
  
@@ -285,6 +285,17 @@
 +    public float getStarBrightness(float par1)
 +    {
 +        return field_76579_a.getStarBrightnessBody(par1);
++    }
++
++    @SideOnly(Side.CLIENT)
++    public int getCombinedLight(BlockPos pos, int lightValue)
++    {
++        return field_76579_a.getCombinedLightBody(pos, lightValue);
++    }
++
++    public float getLightBrightness(BlockPos pos)
++    {
++        return field_76579_a.getLightBrightnessBody(pos);
 +    }
 +
 +    public void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful)
