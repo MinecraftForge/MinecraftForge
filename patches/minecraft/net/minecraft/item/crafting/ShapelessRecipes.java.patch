@@ -23,7 +23,7 @@
 +        boolean simple = true;
 +        for (Ingredient i : p_i47500_3_)
 +            simple &= i.isSimple();
-+        this.isSimple = false; //simple; Always use Forge logic until Grum finds a fix for https://github.com/MinecraftForge/MinecraftForge/issues/4557
++        this.isSimple = simple;
      }
  
 -    @SideOnly(Side.CLIENT)
@@ -75,7 +75,7 @@
 -                    }
 +                    ++ingredientCount;
 +                    if (this.isSimple)
-+                        recipeItemHelper.func_194112_a(itemstack);
++                        recipeItemHelper.accountStack(itemstack, 1);
 +                    else
 +                        inputs.add(itemstack);
                  }
