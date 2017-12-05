@@ -55,7 +55,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
-import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -1355,7 +1354,7 @@ public class ForgeHooks
             true, true
         );
     }
-      
+
     public static void sendRecipeBook(NetHandlerPlayServer connection, State state, List<IRecipe> recipes, List<IRecipe> display, boolean isGuiOpen, boolean isFilteringCraftable)
     {
         NetworkDispatcher disp = NetworkDispatcher.get(connection.getNetworkManager());
