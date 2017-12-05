@@ -1,7 +1,7 @@
 package net.minecraftforge.debug;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
@@ -10,7 +10,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.IHorseArmor;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -25,7 +24,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class HorseArmorTest 
 {
     public static final String MODID = "horse_armor_test";
-    public static final boolean ENABLED = false;
+    public static final boolean ENABLED = true;
     
     public static HorseArmorType testArmorType;
     @ObjectHolder("test_armor")
@@ -57,7 +56,7 @@ public class HorseArmorTest
         }
     }
 
-    private static class ItemTestHorseArmor extends Item implements IHorseArmor
+    private static class ItemTestHorseArmor extends Item
     {   
         @Override
         public HorseArmorType getHorseArmorType(ItemStack stack) 
@@ -66,10 +65,16 @@ public class HorseArmorTest
         }
         
         @Override
-        public void onHorseArmorTick(World world, EntityHorse horse, ItemStack itemStack) 
+        public String getHorseArmorTexture(EntityLiving wearer, ItemStack stack) 
         {
-            if(horse.ticksExisted % 15 == 0)
-                horse.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 20, 1));
+            return stack.isItemEnchanted() ? HorseArmorType.IRON.getTextureName() : super.getHorseArmorTexture(wearer, stack);
+        }
+        
+        @Override
+        public void onHorseArmorTick(World world, EntityLiving wearer, ItemStack itemStack) 
+        {
+            if(wearer.ticksExisted % 15 == 0)
+                wearer.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 20, 1));
         }
     }
 }

@@ -73,6 +73,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -737,5 +738,12 @@ public class ForgeHooksClient
     public static void onInputUpdate(EntityPlayer player, MovementInput movementInput)
     {
         MinecraftForge.EVENT_BUS.post(new InputUpdateEvent(player, movementInput));
+    }
+    
+    public static String getHorseArmorTexture(EntityHorse horse, ItemStack armorStack)
+    {
+        String texture = armorStack.getItem().getHorseArmorTexture(horse, armorStack);
+        if(texture == null) texture = horse.getHorseArmorType().getTextureName();
+        return texture;
     }
 }

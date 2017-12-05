@@ -68,7 +68,7 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -435,11 +445,704 @@
+@@ -435,11 +441,728 @@
          return false;
      }
  
@@ -767,13 +767,37 @@
 +    {
 +        return -1;
 +    }
++    
++    /** 
++     * Returns an enum constant of type {@code HorseArmorType}.
++     * The returned enum constant will be used to determine the armor value and texture of this item when equipped.
++     * @param stack the armor stack
++     * @return an enum constant of type {@code HorseArmorType}. Return HorseArmorType.NONE if this is not horse armor
++     */
++    public net.minecraft.entity.passive.HorseArmorType getHorseArmorType(ItemStack stack)
++    {
++        return net.minecraft.entity.passive.HorseArmorType.func_188576_a(stack.func_77973_b());
++    }
++    
++    public String getHorseArmorTexture(net.minecraft.entity.EntityLiving wearer, ItemStack stack)
++    {
++        return getHorseArmorType(stack).func_188574_d();
++    }
++    
++    /**
++     * Called every tick from {@link EntityHorse#onUpdate()} on the item in the armor slot.
++     * @param world the world the horse is in
++     * @param horse the horse wearing this armor
++     * @param armor the armor itemstack
++     */
++    public void onHorseArmorTick(World world, net.minecraft.entity.EntityLiving horse, ItemStack armor) {}
 +
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -999,6 +1702,8 @@
+@@ -999,6 +1722,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -782,7 +806,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1034,6 +1739,7 @@
+@@ -1034,6 +1759,7 @@
              return this.field_78008_j;
          }
  
@@ -790,7 +814,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1057,5 +1763,21 @@
+@@ -1057,5 +1783,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
