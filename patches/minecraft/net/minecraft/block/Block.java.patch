@@ -1189,7 +1189,7 @@
 +            if (prop.func_177701_a().equals("color") && prop.func_177699_b() == net.minecraft.item.EnumDyeColor.class)
 +            {
 +                net.minecraft.item.EnumDyeColor current = (net.minecraft.item.EnumDyeColor)state.func_177229_b(prop);
-+                if (current != color)
++                if (current != color && prop.func_177700_c().contains(color))
 +                {
 +                    world.func_175656_a(pos, state.func_177226_a(prop, color));
 +                    return true;
