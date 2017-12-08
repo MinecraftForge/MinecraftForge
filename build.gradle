@@ -30,7 +30,7 @@ apply plugin: "net.minecraftforge.gradle.launch4j"
 minecraft.version = "1.12.2"
 
 minecraft {
-    mappings = 'snapshot_nodoc_20171003'
+    mappings = 'snapshot_nodoc_20171108'
     workspaceDir = "projects"
     versionJson = "jsons/${minecraft.version}-dev.json"
     buildUserdev = true
@@ -96,9 +96,9 @@ task changelog(type: JenkinsChangelog) {
     outputs.upToDateWhen { false } // never up to date
     serverRoot = "http://ci.jenkins.minecraftforge.net/"
     jobName = "minecraftforge"
-    targetBuild = System.env['BUILD_NUMBER'] ?: project.ext.properties.buildNumber ?:0;
+    targetBuild = System.env['BUILD_NUMBER'] ?: project.ext.properties.buildNumber ?:0
     authName = "console_script"
-    authPassword = project.hasProperty('forgeJenkinsPass') ? project.getProperty('forgeJenkinsPass') : "";
+    authPassword = project.hasProperty('forgeJenkinsPass') ? project.getProperty('forgeJenkinsPass') : ""
     output = "build/distributions/${project.name}-${project.version}-changelog.txt"
 }
 
@@ -107,7 +107,7 @@ task crowdin(type: CrowdinDownload) {
     projectId = 'minecraft-forge'
     extract = false // we wanna keep it as a zip. not extract it to a folder named "crowdin.zip"
     
-    // task auomatically skips if this is null
+    // task automatically skips if this is null
     if (project.hasProperty('crowdinKey'))
         apiKey = project.crowdinKey
 }
@@ -150,10 +150,10 @@ task signUniversal(type: SignJar, dependsOn: 'outputJar') {
         project.hasProperty('jarsigner')
     }
 
-    def jarsigner = [:];
+    def jarsigner = [:]
 
     if (project.hasProperty('jarsigner'))
-        jarsigner = project.jarsigner;
+        jarsigner = project.jarsigner
 
     alias = 'forge'
     exclude "paulscode/**"
@@ -210,8 +210,8 @@ launch4j {
     icon = file('icon.ico').canonicalPath
     manifest = file('l4jManifest.xml').canonicalPath
     jreMinVersion = '1.8.0'
-    initialHeapPercent = 5;
-    maxHeapPercent = 100;
+    initialHeapPercent = 5
+    maxHeapPercent = 100
 }
 tasks.generateXmlConfig.dependsOn installer
 tasks.build.dependsOn 'launch4j'
@@ -225,20 +225,22 @@ artifacts {
     archives makeMdk
 }
 
-task ciWriteBuildNumber << {
-    def file = file("src/main/java/net/minecraftforge/common/ForgeVersion.java");
-    def bn = System.getenv("BUILD_NUMBER")?:project.ext.properties.buildNumber?:0;
-    def outfile = "";
-    def ln = "\n"; //Linux line endings because we're on git!
+task ciWriteBuildNumber {
+    doLast {
+        def file = file("src/main/java/net/minecraftforge/common/ForgeVersion.java")
+        def bn = System.getenv("BUILD_NUMBER")?:project.ext.properties.buildNumber?:0
+        def outfile = ""
+        def ln = "\n" //Linux line endings because we're on git!
 
-    file.eachLine{ String s ->
-        if (s.matches("^    public static final int buildVersion    = [\\d]+;\$"))
-            s = "    public static final int buildVersion    = ${bn};";
-        if (s.matches('^    public static final String mcVersion = "[^\\"]+";'))
-            s = "    public static final String mcVersion = \"${minecraft.version}\";";
-        outfile += (s+ln);
+        file.eachLine{ String s ->
+            if (s.matches("^ {4}public static final int buildVersion {4}= [\\d]+;\$"))
+                s = "    public static final int buildVersion    = ${bn};"
+            if (s.matches('^ {4}public static final String mcVersion = "[^"]+";'))
+                s = "    public static final String mcVersion = \"${minecraft.version}\";"
+            outfile += (s+ln)
+        }
+        file.write(outfile)
     }
-    file.write(outfile);
 }
 
 uploadArchives {
@@ -254,7 +256,7 @@ uploadArchives {
         }
         else
         {
-            // local repo folder. Might wanna juset use  gradle install   if you wanans end it to maven-local
+            // local repo folder. Might wanna just use  gradle install   if you wanna end it to maven-local
             repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
         }
 
@@ -311,11 +313,11 @@ uploadArchives {
 
 // HELPER METHODS
 
-import groovy.json.JsonSlurper;
+import groovy.json.JsonSlurper
 
 String getServerClasspath(File file)
 {
-    def node = new JsonSlurper().parse(file);
+    def node = new JsonSlurper().parse(file)
     def out = new StringBuilder()
     node.versionInfo.libraries.each { lib ->
         if (lib.serverreq)
@@ -330,35 +332,35 @@ String getServerClasspath(File file)
     }
     out += "minecraft_server.${minecraft.version}.jar"
 
-    return out.toString();
+    return out.toString()
 }
 
 String getVersionFromJava(File file)
 {
-    String major = "0";
-    String minor = "0";
-    String revision = "0";
-    String build = "0";
+    String major = "0"
+    String minor = "0"
+    String revision = "0"
+    String build = "0"
 
-    String prefix = "public static final int";
+    String prefix = "public static final int"
     file.eachLine{ String s ->
-        s = s.trim();
+        s = s.trim()
         if (s.startsWith(prefix))
         {
-            s = s.substring(prefix.length(), s.length() - 1);
-            s = s.replace('=', ' ').replace("Version", "").replaceAll(" +", " ").trim();
-            String[] pts = s.split(" ");
+            s = s.substring(prefix.length(), s.length() - 1)
+            s = s.replace('=', ' ').replace("Version", "").replaceAll(" +", " ").trim()
+            String[] pts = s.split(" ")
 
-            if (pts[0].equals("major")) major = pts[pts.length - 1];
-            else if (pts[0] == "minor") minor = pts[pts.length - 1];
-            else if (pts[0] == "revision") revision = pts[pts.length - 1];
+            if (pts[0] == "major") major = pts[pts.length - 1]
+            else if (pts[0] == "minor") minor = pts[pts.length - 1]
+            else if (pts[0] == "revision") revision = pts[pts.length - 1]
         }
     }
 
     build = System.getenv("BUILD_NUMBER") ?: project.ext.properties.buildNumber ?: 0
 
 
-    String branch = null;
+    String branch = null
     if (!System.getenv().containsKey("GIT_BRANCH"))
     {
         // TODO: use grgit - Tried to switch 07/07/16 - jgit broken on windows?
@@ -366,8 +368,8 @@ String getVersionFromJava(File file)
     }
     else
     {
-        branch = System.getenv("GIT_BRANCH");
-        branch = branch.substring(branch.lastIndexOf('/') + 1);
+        branch = System.getenv("GIT_BRANCH")
+        branch = branch.substring(branch.lastIndexOf('/') + 1)
     }
 
     def out = "${minecraft.version.replace('-', '_')}-$major.$minor.$revision.$build"
@@ -378,7 +380,7 @@ String getVersionFromJava(File file)
             out += "-$branch"
     }
 
-    return out;
+    return out
 }
 
 reobfuscate {
@@ -387,12 +389,14 @@ reobfuscate {
     ]
 }
 
-task resetBuildNumber << {
-    project.ext.properties.buildNumber = 0;
-    ciWriteBuildNumber.execute()
+task resetBuildNumber {
+    doLast {
+        project.ext.properties.buildNumber = 0
+        ciWriteBuildNumber.execute()
+    }
 }
-// re-add old tasks for jenkins compat
-// should be remvoed, and the jenkisn fixed when no longer building with FG 1.2
+// re-add old tasks for jenkins compatibility
+// should be removed, and the jenkins fixed when no longer building with FG 1.2
 task setupForge { dependsOn 'setup', 'ciWriteBuildNumber' }
 task buildPackages { dependsOn 'build' }
 
