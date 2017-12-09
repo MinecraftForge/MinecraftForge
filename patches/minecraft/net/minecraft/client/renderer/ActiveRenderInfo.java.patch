@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/ActiveRenderInfo.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/ActiveRenderInfo.java
+@@ -108,4 +108,14 @@
+     {
+         return field_74596_h;
+     }
++
++    /* ======================================== FORGE START =====================================*/
++
++    /**
++     * Vector from render view entity position (corrected for partialTickTime) to the middle of screen
++     */
++    public static Vec3d getCameraPosition()
++    {
++        return field_178811_e;
++    }
+ }
