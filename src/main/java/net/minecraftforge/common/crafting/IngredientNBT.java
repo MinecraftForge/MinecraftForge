@@ -40,4 +40,10 @@ public class IngredientNBT extends Ingredient
         //Can't use areItemStacksEqualUsingNBTShareTag because it compares stack size as well
         return this.stack.getItem() == input.getItem() && this.stack.getItemDamage() == input.getItemDamage() && ItemStack.areItemStackShareTagsEqual(this.stack, input);
     }
+
+    @Override
+    public boolean isSimple()
+    {
+        return false;
+    }
 }

@@ -189,8 +189,8 @@
 +        net.minecraft.world.WorldProvider pOld = p_82448_3_.field_73011_w;
 +        net.minecraft.world.WorldProvider pNew = p_82448_4_.field_73011_w;
 +        double moveFactor = pOld.getMovementFactor() / pNew.getMovementFactor();
-+        double d0 = p_82448_1_.field_70165_t * moveFactor;
-+        double d1 = p_82448_1_.field_70161_v * moveFactor;
++        double d0 = MathHelper.func_151237_a(p_82448_1_.field_70165_t * moveFactor, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
++        double d1 = MathHelper.func_151237_a(p_82448_1_.field_70161_v * moveFactor, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
          double d2 = 8.0D;
          float f = p_82448_1_.field_70177_z;
          p_82448_3_.field_72984_F.func_76320_a("moving");

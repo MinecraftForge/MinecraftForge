@@ -1,0 +1,13 @@
+{
+  "result": {
+    "item": "minecraft:dirt",
+    "data": 1
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:stone",
+      "data": 32767
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

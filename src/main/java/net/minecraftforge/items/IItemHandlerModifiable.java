@@ -32,7 +32,7 @@ public interface IItemHandlerModifiable extends IItemHandler
      * is called unexpectedly.
      *
      * @param slot  Slot to modify
-     * @param stack ItemStack to set slot to (may be null)
+     * @param stack ItemStack to set slot to (may be empty).
      * @throws RuntimeException if the handler is called in a way that the handler
      * was not expecting.
      **/
