@@ -3,14 +3,13 @@ package net.minecraftforge.debug;
 import net.minecraftforge.fml.common.FMLModContainer;
 import net.minecraftforge.fml.common.ILanguageAdapter;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.services.LanguageService;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 //Just copy of the java adapter
-@LanguageService.LanguageProvider(provides = "test")
+
 public class TestAdapterService implements ILanguageAdapter
 {
 
@@ -44,5 +43,11 @@ public class TestAdapterService implements ILanguageAdapter
     public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader)
     {
         // Nothing to do here.
+    }
+
+    @Override
+    public String provides()
+    {
+        return "test";
     }
 }
