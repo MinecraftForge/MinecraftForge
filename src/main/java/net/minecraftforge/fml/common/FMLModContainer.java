@@ -117,16 +117,9 @@ public class FMLModContainer implements ModContainer
         this.eventMethods = ArrayListMultimap.create();
 
         this.modLanguage = (String)modDescriptor.get("modLanguage");
-        String languageAdapterType = (String)modDescriptor.get("modLanguageAdapter");
-        if (Strings.isNullOrEmpty(languageAdapterType))
+        if (Strings.isNullOrEmpty(modLanguage))
         {
-            this.languageAdapter = "scala".equals(modLanguage) ? new ILanguageAdapter.ScalaAdapter() : new ILanguageAdapter.JavaAdapter();
-        }
-        else
-        {
-            // Delay loading of the adapter until the mod is on the classpath, in case the mod itself contains it.
-            this.languageAdapter = null;
-            FMLLog.log.trace("Using custom language adapter {} for {} (modid: {})", languageAdapterType, this.className, getModId());
+            this.languageAdapter =  new ILanguageAdapter.JavaAdapter();
         }
         sanityCheckModId();
 
@@ -149,23 +142,27 @@ public class FMLModContainer implements ModContainer
             throw new IllegalArgumentException(String.format("The modId %s must be all lowercase.", modid));
         }
     }
-
     private ILanguageAdapter getLanguageAdapter()
     {
-        if (languageAdapter == null)
-        {
-            try
-            {
-                languageAdapter = (ILanguageAdapter)Class.forName((String)descriptor.get("modLanguageAdapter"), true, Loader.instance().getModClassLoader()).newInstance();
-            }
-            catch (Exception ex)
-            {
-                FMLLog.log.error("Error constructing custom mod language adapter referenced by {} (modid: {})", getModId(), ex);
-                throw new RuntimeException(ex);
-            }
-        }
-        return languageAdapter;
+        return Loader.instance().getAdapterByName(modLanguage);
     }
+
+//    private ILanguageAdapter getLanguageAdapter()
+//    {
+//        if (languageAdapter == null)
+//        {
+//            try
+//            {
+//                languageAdapter = (ILanguageAdapter)Class.forName((String)descriptor.get("modLanguageAdapter"), true, Loader.instance().getModClassLoader()).newInstance();
+//            }
+//            catch (Exception ex)
+//            {
+//                FMLLog.log.error("Error constructing custom mod language adapter referenced by {} (modid: {})", getModId(), ex);
+//                throw new RuntimeException(ex);
+//            }
+//        }
+//        return languageAdapter;
+//    }
 
     @Override
     public String getModId()

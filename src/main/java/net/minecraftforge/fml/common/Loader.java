@@ -47,6 +47,7 @@ import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.registry.*;
+import net.minecraftforge.fml.common.services.LanguageService;
 import net.minecraftforge.fml.common.toposort.ModSorter;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.common.toposort.TopologicalSort;
@@ -170,6 +171,7 @@ public class Loader
     private File forcedModFile;
     private ModDiscoverer discoverer;
     private ProgressBar progressBar;
+    private LanguageService languageService;
 
     public static Loader instance()
     {
@@ -534,6 +536,7 @@ public class Loader
         progressBar = ProgressManager.push("Loading", 7);
         progressBar.step("Constructing Mods");
         initializeLoader();
+        languageService = new LanguageService(modClassLoader);
         mods = Lists.newArrayList();
         namedMods = Maps.newHashMap();
         modController = new LoadController(this);
@@ -1004,5 +1007,10 @@ public class Loader
     public void setActiveModContainer(@Nullable ModContainer container)
     {
         this.modController.forceActiveContainer(container);
+    }
+
+    public ILanguageAdapter getAdapterByName(String name)
+    {
+        return languageService.getAdapterByLang(name);
     }
 }
