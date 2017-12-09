@@ -19,19 +19,19 @@
 
 package net.minecraftforge.fml.common;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import net.minecraftforge.fml.relauncher.Side;
 
-import org.apache.logging.log4j.Level;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public interface ILanguageAdapter {
     public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception;
     public boolean supportsStatics();
     public void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
     public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
+
+    //name of the language this adapter provides
+    public String provides();
 
     public static class JavaAdapter implements ILanguageAdapter {
         @Override
@@ -64,6 +64,12 @@ public interface ILanguageAdapter {
         public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader)
         {
             // Nothing to do here.
+        }
+
+        @Override
+        public String provides()
+        {
+            return "java";
         }
     }
 }

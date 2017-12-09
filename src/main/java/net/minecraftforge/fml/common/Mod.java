@@ -193,15 +193,12 @@ public @interface Mod
     String certificateFingerprint() default "";
 
     /**
-     * The language adapter to be used to load this mod. This overrides the value of modLanguage. The class must have a
-     * public zero variable constructor and implement {@link ILanguageAdapter} just like the Java and Scala adapters.
+     * The language the mod is authored in. This will be used to control certain compatibility behaviours for this mod.
+     * Valid values are currently "java"
      *
-     * A class with an invalid constructor or that doesn't implement {@link ILanguageAdapter} will throw an exception and
-     * halt loading.
-     *
-     * @return The full class name of the language adapter
+     * @return The language the mod is authored in
      */
-    String modLanguageAdapter() default "";
+    String modLanguage() default "java";
 
     /**
      * If your mod doesn't have a runtime persistent effect on the state of the game, and can be disabled without side effects
