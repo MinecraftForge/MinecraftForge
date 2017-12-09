@@ -4,14 +4,14 @@ Go to [http://files.minecraftforge.net](http://files.minecraftforge.net)
  and select the minecraft version you wish to get forge for from the list.
 
 You can download the installer for the *Recommended Build* or the
- *Lastest build* there. Latest builds may have newer features  but may be
+ *Latest Build* there. Latest builds may have newer features  but may be
  more unstable as a result. The installer will attempt to install forge
  into your vanilla launcher environment, where you can then create a new
  profile using that version and play the game!
 
 Here is a short video from Rorax showing how to install and setup Forge.
 
-[![HOWTO Install Forge](https://img.youtube.com/vi/lB3ArN_-3Oc/0.jpg)](https://www.youtube.com/watch?v=lB3ArN_-3Oc)
+[![HOW TO Install Forge](https://img.youtube.com/vi/lB3ArN_-3Oc/0.jpg)](https://www.youtube.com/watch?v=lB3ArN_-3Oc)
 
 For support and user questions, visit [http://www.minecraftforge.net](http://www.minecraftforge.net).
  
@@ -28,7 +28,7 @@ This is the `Modder Developer Kit` - basically, an example mod with all
 Here is a short video from @cpw showing how to install and setup the MDK
  in Intellij.
 
-[![HOWTO Install MDK](https://img.youtube.com/vi/PfmlNiHonV0/0.jpg)](https://www.youtube.com/watch?v=PfmlNiHonV0)
+[![HOW TO Install MDK](https://img.youtube.com/vi/PfmlNiHonV0/0.jpg)](https://www.youtube.com/watch?v=PfmlNiHonV0)
  
 # How to install Forge: For those wishing to work on Forge itself
 
@@ -44,20 +44,20 @@ After that, open a workspace in your favorite IDE and import existing projects
 Here is a short video from @cpw showing how to install and setup Forge
  in Intellij.
  
-[![HOWTO Install MDK](https://img.youtube.com/vi/yanCpy8p2ZE/0.jpg)](https://www.youtube.com/watch?v=yanCpy8p2ZE)
+[![HOW TO Install MDK](https://img.youtube.com/vi/yanCpy8p2ZE/0.jpg)](https://www.youtube.com/watch?v=yanCpy8p2ZE)
 
 ## Pull requests
 
 Pull requests should target the current default branch. Currently, that is 
- the 1.10.x branch for Minecraft 1.10.2.
+ the 1.12.x branch for Minecraft 1.12.2.
 
 If you intend to modify a minecraft patch, or add a new one, always run
 ```gradlew genPatches``` to generate your patch and validate that you
 are not doing anything unexpected in your patch.
 
 ### Contributor License Agreement
-As stated in the (https://github.com/MinecraftForge/MinecraftForge/blob/1.10.x/LICENSE-new.txt)
- file, we require all contributors to acknowledge the Forge Contributor
+As stated in the [License](https://github.com/MinecraftForge/MinecraftForge/blob/1.12.x/LICENSE-new.txt),
+ we require all contributors to acknowledge the Forge Contributor
  License Agreement. Please ensure you have a valid email address
  associated with your github account to do this. If you have previously
  signed it, you should be OK.
