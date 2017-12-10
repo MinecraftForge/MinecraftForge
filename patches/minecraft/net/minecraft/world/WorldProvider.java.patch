@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,329 @@
+@@ -241,6 +216,334 @@
          return new WorldBorder();
      }
  
@@ -288,9 +288,14 @@
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public int getCombinedLight(BlockPos pos, int lightValue)
++    public int getCombinedLight(IBlockAccess access, BlockPos pos, int lightValue)
 +    {
-+        return field_76579_a.getCombinedLightBody(pos, lightValue);
++        if (access instanceof World)
++            return ((World) access).getCombinedLightBody(pos, lightValue);
++        else if (access instanceof ChunkCache)
++            return ((ChunkCache) access).getCombinedLightBody(pos, lightValue);
++        else
++            return access.func_175626_b(pos, lightValue);
 +    }
 +
 +    public float getLightBrightness(BlockPos pos)

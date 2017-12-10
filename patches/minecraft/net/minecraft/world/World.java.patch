@@ -181,7 +181,7 @@
      @SideOnly(Side.CLIENT)
      public int func_175626_b(BlockPos p_175626_1_, int p_175626_2_)
      {
-+        return this.field_73011_w.getCombinedLight(p_175626_1_, p_175626_2_);
++        return this.field_73011_w.getCombinedLight(this, p_175626_1_, p_175626_2_);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
