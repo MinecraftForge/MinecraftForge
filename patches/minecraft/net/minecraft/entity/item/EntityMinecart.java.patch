@@ -254,9 +254,16 @@
                              {
                                  p_70108_1_.field_70159_w *= 0.20000000298023224D;
                                  p_70108_1_.field_70179_y *= 0.20000000298023224D;
-@@ -1015,6 +1047,229 @@
+@@ -1014,7 +1046,236 @@
+     {
          this.func_184212_Q().func_187227_b(field_184270_f, Boolean.valueOf(p_94096_1_));
      }
++    
++    @Override
++    public boolean func_184230_a(EntityPlayer player, net.minecraft.util.EnumHand hand)
++    {
++        return net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, player, hand));
++    }
  
 +    /* =================================== FORGE START ===========================================*/
 +    private BlockPos getCurrentRailPosition()
