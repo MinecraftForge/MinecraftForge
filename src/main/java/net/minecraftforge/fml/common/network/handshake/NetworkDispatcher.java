@@ -344,39 +344,18 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     }
 
     private MultiPartCustomPayload multipart = null;
+
     private boolean handleClientSideCustomPacket(SPacketCustomPayload msg, ChannelHandlerContext context)
     {
         String channelName = msg.getChannelName();
         if ("FML|MP".equals(channelName))
         {
-            try
+            boolean result = handleMultiPartCustomPacket(msg, context);
+            if (result)
             {
-                if (multipart == null)
-                {
-                    multipart = new MultiPartCustomPayload(msg.getBufferData());
-                }
-                else
-                {
-                    multipart.processPart(msg.getBufferData());
-                }
+                msg.getBufferData().release();
             }
-            catch (IOException e)
-            {
-                this.kickWithMessage(e.getMessage());
-                multipart = null;
-                return true;
-            }
-
-            if (multipart.isComplete())
-            {
-                msg = multipart;
-                channelName = msg.getChannelName();
-                multipart = null;
-            }
-            else
-            {
-                return true; // Haven't received all so return till we have.
-            }
+            return result;
         }
         if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
         {
@@ -405,6 +384,37 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
             return true;
         }
         return false;
+    }
+
+    private boolean handleMultiPartCustomPacket(SPacketCustomPayload msg, ChannelHandlerContext context)
+    {
+        try
+        {
+            if (multipart == null)
+            {
+                multipart = new MultiPartCustomPayload(msg.getBufferData());
+            }
+            else
+            {
+                multipart.processPart(msg.getBufferData());
+            }
+        }
+        catch (IOException e)
+        {
+            this.kickWithMessage(e.getMessage());
+            multipart = null;
+            return true;
+        }
+        if (multipart.isComplete())
+        {
+            boolean result = handleClientSideCustomPacket(multipart, context);
+            multipart = null;
+            return result;
+        }
+        else
+        {
+            return true; // Haven't received all so return till we have.
+        }
     }
 
     private boolean handleServerSideCustomPacket(CPacketCustomPayload msg, ChannelHandlerContext context)

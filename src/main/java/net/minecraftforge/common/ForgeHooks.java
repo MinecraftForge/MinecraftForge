@@ -128,6 +128,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -1373,7 +1374,12 @@ public class ForgeHooks
         if (recipes.size() > 0 || display.size() > 0)
             connection.sendPacket(new SPacketRecipeBook(state, recipes, display, isGuiOpen, isFilteringCraftable));
     }
-    
+
+    public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
+    {
+        MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+
     /**
      * Return if the passed player currently has the ability to use elytra flight
      * Return true if the stack is vanilla elytra for non player EntityLivingBase to emulate exact vanilla behaviour 
