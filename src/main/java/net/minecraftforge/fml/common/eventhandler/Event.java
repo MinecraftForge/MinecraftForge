@@ -53,6 +53,7 @@ public class Event
     private Result result = Result.DEFAULT;
     private static ListenerList listeners = new ListenerList();
     private EventPriority phase = null;
+    @Nullable
     private ModContainer canceler;
 
     public Event()
