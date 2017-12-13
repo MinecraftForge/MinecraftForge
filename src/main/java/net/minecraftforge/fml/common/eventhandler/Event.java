@@ -30,6 +30,8 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
+import net.minecraftforge.fml.common.ModContainer;
+
 
 /**
  * Base Event class that all other events are derived from
@@ -51,6 +53,7 @@ public class Event
     private Result result = Result.DEFAULT;
     private static ListenerList listeners = new ListenerList();
     private EventPriority phase = null;
+    private ModContainer canceler;
 
     public Event()
     {
@@ -162,5 +165,27 @@ public class Event
         int prev = phase == null ? -1 : phase.ordinal();
         Preconditions.checkArgument(prev < value.ordinal(), "Attempted to set event phase to %s when already %s", value, phase);
         phase = value;
+    }
+    
+    /**
+     * Gets the owner of the event listener that canceled this event.
+     * If the event has not been cancelled, this will be null.
+     * 
+     * @return The mod that canceled this event.
+     */
+    @Nullable
+    public ModContainer getCanceler() 
+    {
+        return this.canceler;
+    }
+    
+    /**
+     * Sets the mod that canceled the event.
+     * 
+     * @param container The mod that canceled the event.
+     */
+    protected void setCanceler(ModContainer container) 
+    {
+        this.canceler = container;
     }
 }
