@@ -177,7 +177,19 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2901,6 +2929,185 @@
+@@ -2800,7 +2828,10 @@
+ 
+     public void func_174826_a(AxisAlignedBB p_174826_1_)
+     {
+-        this.field_70121_D = p_174826_1_;
++        net.minecraftforge.event.entity.EntityBoundingBoxChangeEvent event = new net.minecraftforge.event.entity.EntityBoundingBoxChangeEvent(this, func_174813_aQ(), p_174826_1_);
++        if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
++            this.field_70121_D = event.newBoundingBox;
++        }
+     }
+ 
+     public float func_70047_e()
+@@ -2901,6 +2932,185 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
