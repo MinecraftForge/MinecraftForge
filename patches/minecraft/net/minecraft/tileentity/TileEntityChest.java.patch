@@ -8,7 +8,7 @@
      }
  
      @SuppressWarnings("incomplete-switch")
-@@ -349,6 +350,30 @@
+@@ -349,6 +350,29 @@
          }
      }
  
@@ -29,7 +29,6 @@
 +        return super.getCapability(capability, facing);
 +    }
 +
-+    @Nullable
 +    public net.minecraftforge.items.IItemHandler getSingleChestHandler()
 +    {
 +        return super.getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
