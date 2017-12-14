@@ -17,54 +17,63 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.items.wrapper;
+package net.minecraftforge.items.templates;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.IItemHandlerIterator;
 
 import javax.annotation.Nonnull;
 
-public class EmptyHandler implements IItemHandlerModifiable
+public class EmptyItemHandlerItr implements IItemHandlerIterator
 {
-    public static final IItemHandler INSTANCE = new EmptyHandler();
+
+    public static final EmptyItemHandlerItr INSTANCE = new EmptyItemHandlerItr();
+
+    private EmptyItemHandlerItr()
+    {
+    }
 
     @Override
-    public int getSlots()
+    public boolean hasNext()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean hasPrevious()
+    {
+        return false;
+    }
+
+    @Override
+    public int currentIndex()
     {
         return 0;
     }
 
     @Override
-    @Nonnull
-    public ItemStack getStackInSlot(int slot)
-    {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
-    {
-        return stack;
-    }
-
-    @Override
-    @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
-    {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
-    {
-        // nothing to do here
-    }
-
-    @Override
-    public int getSlotLimit(int slot)
+    public int nextIndex()
     {
         return 0;
+    }
+
+    @Override
+    public int previousIndex()
+    {
+        return 0;
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack next()
+    {
+        return ItemStack.EMPTY;
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack previous()
+    {
+        return ItemStack.EMPTY;
     }
 }

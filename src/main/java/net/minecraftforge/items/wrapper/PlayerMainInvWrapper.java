@@ -19,9 +19,12 @@
 
 package net.minecraftforge.items.wrapper;
 
+import com.google.common.collect.Range;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.InsertTransaction;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -39,28 +42,97 @@ public class PlayerMainInvWrapper extends RangedWrapper
         inventoryPlayer = inv;
     }
 
-    @Override
+
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    @Override
+    public InsertTransaction insert(Range<Integer> slotRange, ItemStack stack, boolean simulate)
     {
-        ItemStack rest = super.insertItem(slot, stack, simulate);
-        if (rest.getCount()!= stack.getCount())
+        if (ItemHandlerHelper.isRangeSingleton(slotRange))
         {
-            // the stack in the slot changed, animate it
-            ItemStack inSlot = getStackInSlot(slot);
-            if(!inSlot.isEmpty())
+            int slot = slotRange.lowerEndpoint();
+            ItemStack existing = getStackInSlot(slot);
+            if (existing.isEmpty() || ItemHandlerHelper.canItemStacksStack(existing, stack))
             {
-                if (getInventoryPlayer().player.world.isRemote)
+                InsertTransaction transaction = ItemHandlerHelper.split(stack, ItemHandlerHelper.getFreeSpaceForSlot(this, slot));
+                if (!transaction.getInsertedStack().isEmpty())
                 {
-                    inSlot.setAnimationsToGo(5);
-                }
-                else if(getInventoryPlayer().player instanceof EntityPlayerMP) {
-                    getInventoryPlayer().player.openContainer.detectAndSendChanges();
+                    if (simulate)
+                        return transaction;
+                    else
+                    {
+                        ItemStack InsertedStack = transaction.getInsertedStack();
+                        getInventoryPlayer().setInventorySlotContents(slot, InsertedStack);
+                        getInventoryPlayer().markDirty();
+                        setAnimationsToGo(InsertedStack);
+                        return transaction;
+                    }
                 }
             }
         }
-        return rest;
+        else
+        {
+            InsertTransaction transaction;
+            transaction = insert(slotRange, stack, simulate, true);
+            if (!transaction.getInsertedStack().isEmpty())
+                return transaction;
+            else
+            {
+                transaction = insert(slotRange, stack, simulate, false);
+                return transaction;
+            }
+        }
+        return new InsertTransaction(ItemStack.EMPTY, stack);
     }
+
+    protected InsertTransaction insert(Range<Integer> slotRange, ItemStack stack, boolean simulate, boolean firstRun)
+    {
+        int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
+        int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), size()) : size());
+
+        for (int i = minSlot; i < maxSlot; i++)
+        {
+            ItemStack existing = getStackInSlot(i);
+            if (existing.isEmpty() && firstRun) continue;
+
+            InsertTransaction transaction = ItemHandlerHelper.split(stack, ItemHandlerHelper.getFreeSpaceForSlot(this, i));
+            if (!transaction.getInsertedStack().isEmpty())
+            {
+                if (simulate)
+                    return transaction;
+                else
+                {
+                    if (existing.isEmpty())
+                    {
+                        ItemStack insertedStack = transaction.getInsertedStack();
+                        getInventoryPlayer().setInventorySlotContents(i, insertedStack);
+                        getInventoryPlayer().markDirty();
+                        setAnimationsToGo(insertedStack);
+                    }
+                    else
+                    {
+                        existing.grow(transaction.getInsertedStack().getCount());
+                        getInventoryPlayer().markDirty();
+                        setAnimationsToGo(existing);
+                    }
+                    return transaction;
+                }
+            }
+        }
+        return new InsertTransaction(ItemStack.EMPTY, stack);
+    }
+
+    protected void setAnimationsToGo(ItemStack stack)
+    {
+        if (getInventoryPlayer().player.world.isRemote)
+        {
+            stack.setAnimationsToGo(5);
+        }
+        else if (getInventoryPlayer().player instanceof EntityPlayerMP)
+        {
+            getInventoryPlayer().player.openContainer.detectAndSendChanges();
+        }
+    }
+
 
     public InventoryPlayer getInventoryPlayer()
     {

@@ -17,42 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.items.wrapper;
+package net.minecraftforge.items.filter;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
-public class InvWrapper extends IInvWrapperBase
+import java.util.function.Predicate;
+
+@FunctionalInterface
+public interface IStackFilter extends Predicate<ItemStack>
 {
-
-    private final IInventory inventory;
-
-    public InvWrapper(IInventory inventory)
-    {
-        this.inventory = inventory;
-    }
-
-    protected IInventory getInventory()
-    {
-        return inventory;
-    }
+    NonNullList<ItemStack> emptyNNList = NonNullList.withSize(0, ItemStack.EMPTY);
 
     @Override
-    public boolean equals(Object o)
+    boolean test(ItemStack stack);
+
+    default NonNullList<ItemStack> getExamples()
     {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        InvWrapper that = (InvWrapper) o;
-
-        return getInventory().equals(that.getInventory());
-
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return getInventory().hashCode();
+        return emptyNNList;
     }
 }

@@ -17,42 +17,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.items.wrapper;
+package net.minecraftforge.items;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
-public class InvWrapper extends IInvWrapperBase
+import javax.annotation.Nonnull;
+
+public class InsertTransaction
 {
+    /**
+     * the is insertedItemStack Must be the same as the stack put in the slot
+     */
+    @Nonnull
+    private final ItemStack insertedStack;
+    @Nonnull
+    private final ItemStack leftoverStack;
 
-    private final IInventory inventory;
-
-    public InvWrapper(IInventory inventory)
+    public InsertTransaction(@Nonnull ItemStack insertedStack, @Nonnull ItemStack leftoverStack)
     {
-        this.inventory = inventory;
+        this.insertedStack = insertedStack;
+        this.leftoverStack = leftoverStack;
     }
 
-    protected IInventory getInventory()
+    @Nonnull
+    public ItemStack getInsertedStack()
     {
-        return inventory;
+        return insertedStack;
     }
 
-    @Override
-    public boolean equals(Object o)
+    @Nonnull
+    public ItemStack getLeftoverStack()
     {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        InvWrapper that = (InvWrapper) o;
-
-        return getInventory().equals(that.getInventory());
-
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return getInventory().hashCode();
+        return leftoverStack;
     }
 }

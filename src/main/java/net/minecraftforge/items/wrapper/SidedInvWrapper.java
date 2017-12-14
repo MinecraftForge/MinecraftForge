@@ -19,31 +19,53 @@
 
 package net.minecraftforge.items.wrapper;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
-public class SidedInvWrapper implements IItemHandlerModifiable
+public class SidedInvWrapper extends IInvWrapperBase
 {
-    protected final ISidedInventory inv;
-    protected final EnumFacing side;
+    private final ISidedInventory inventory;
+    private final EnumFacing facing;
 
-    public SidedInvWrapper(ISidedInventory inv, EnumFacing side)
+    public SidedInvWrapper(ISidedInventory inventory, EnumFacing facing)
     {
-        this.inv = inv;
-        this.side = side;
+        this.inventory = inventory;
+        this.facing = facing;
     }
 
-    public static int getSlot(ISidedInventory inv, int slot, EnumFacing side)
+    @Override
+    public boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
     {
-        int[] slots = inv.getSlotsForFace(side);
-        if (slot < slots.length)
-            return slots[slot];
-        return -1;
+        return inventory.canInsertItem(inventory.getSlotsForFace(facing)[slot], stack, facing);
+    }
+
+    @Override
+    public boolean canExtractStackFromSlot(@Nonnull ItemStack stack, int slot)
+    {
+        return inventory.canExtractItem(inventory.getSlotsForFace(facing)[slot], stack, facing);
+    }
+
+    @Override
+    public int size()
+    {
+        return inventory.getSlotsForFace(facing).length;
+    }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        return getInventory().getInventoryStackLimit();
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getStackInSlot(int slot)
+    {
+        return inventory.getStackInSlot(inventory.getSlotsForFace(facing)[slot]);
     }
 
     @Override
@@ -54,180 +76,21 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         if (o == null || getClass() != o.getClass())
             return false;
 
-        SidedInvWrapper that = (SidedInvWrapper) o;
+        InvWrapper that = (InvWrapper) o;
 
-        return inv.equals(that.inv) && side == that.side;
+        return getInventory().equals(that.getInventory());
+
     }
 
     @Override
     public int hashCode()
     {
-        int result = inv.hashCode();
-        result = 31 * result + side.hashCode();
-        return result;
+        return getInventory().hashCode();
     }
 
     @Override
-    public int getSlots()
+    protected IInventory getInventory()
     {
-        return inv.getSlotsForFace(side).length;
-    }
-
-    @Override
-    @Nonnull
-    public ItemStack getStackInSlot(int slot)
-    {
-        int i = getSlot(inv, slot, side);
-        return i == -1 ? ItemStack.EMPTY : inv.getStackInSlot(i);
-    }
-
-    @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
-    {
-        if (stack.isEmpty())
-            return ItemStack.EMPTY;
-
-        int slot1 = getSlot(inv, slot, side);
-
-        if (slot1 == -1)
-            return stack;
-
-        ItemStack stackInSlot = inv.getStackInSlot(slot1);
-
-        int m;
-        if (!stackInSlot.isEmpty())
-        {
-            if (stackInSlot.getCount() >= Math.min(stackInSlot.getMaxStackSize(), getSlotLimit(slot)))
-                return stack;
-
-            if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
-                return stack;
-
-            if (!inv.canInsertItem(slot1, stack, side) || !inv.isItemValidForSlot(slot1, stack))
-                return stack;
-
-            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot)) - stackInSlot.getCount();
-
-            if (stack.getCount() <= m)
-            {
-                if (!simulate)
-                {
-                    ItemStack copy = stack.copy();
-                    copy.grow(stackInSlot.getCount());
-                    setInventorySlotContents(slot1, copy);
-                }
-
-                return ItemStack.EMPTY;
-            }
-            else
-            {
-                // copy the stack to not modify the original one
-                stack = stack.copy();
-                if (!simulate)
-                {
-                    ItemStack copy = stack.splitStack(m);
-                    copy.grow(stackInSlot.getCount());
-                    setInventorySlotContents(slot1, copy);
-                    return stack;
-                }
-                else
-                {
-                    stack.shrink(m);
-                    return stack;
-                }
-            }
-        }
-        else
-        {
-            if (!inv.canInsertItem(slot1, stack, side) || !inv.isItemValidForSlot(slot1, stack))
-                return stack;
-
-            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot));
-            if (m < stack.getCount())
-            {
-                // copy the stack to not modify the original one
-                stack = stack.copy();
-                if (!simulate)
-                {
-                    setInventorySlotContents(slot1, stack.splitStack(m));
-                    return stack;
-                }
-                else
-                {
-                    stack.shrink(m);
-                    return stack;
-                }
-            }
-            else
-            {
-                if (!simulate)
-                    setInventorySlotContents(slot1, stack);
-                return ItemStack.EMPTY;
-            }
-        }
-
-    }
-
-    @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
-    {
-        int slot1 = getSlot(inv, slot, side);
-
-        if (slot1 != -1)
-            setInventorySlotContents(slot1, stack);
-    }
-
-    private void setInventorySlotContents(int slot, ItemStack stack) {
-      inv.markDirty(); //Notify vanilla of updates, We change the handler to be responsible for this instead of the caller. So mimic vanilla behavior
-      inv.setInventorySlotContents(slot, stack);
-    }
-
-    @Override
-    @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
-    {
-        if (amount == 0)
-            return ItemStack.EMPTY;
-
-        int slot1 = getSlot(inv, slot, side);
-
-        if (slot1 == -1)
-            return ItemStack.EMPTY;
-
-        ItemStack stackInSlot = inv.getStackInSlot(slot1);
-
-        if (stackInSlot.isEmpty())
-            return ItemStack.EMPTY;
-
-        if (!inv.canExtractItem(slot1, stackInSlot, side))
-            return ItemStack.EMPTY;
-
-        if (simulate)
-        {
-            if (stackInSlot.getCount() < amount)
-            {
-                return stackInSlot.copy();
-            }
-            else
-            {
-                ItemStack copy = stackInSlot.copy();
-                copy.setCount(amount);
-                return copy;
-            }
-        }
-        else
-        {
-            int m = Math.min(stackInSlot.getCount(), amount);
-            ItemStack ret = inv.decrStackSize(slot1, m);
-            inv.markDirty();
-            return ret;
-        }
-    }
-
-    @Override
-    public int getSlotLimit(int slot)
-    {
-        return inv.getInventoryStackLimit();
+        return inventory;
     }
 }

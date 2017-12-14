@@ -21,7 +21,11 @@ package net.minecraftforge.items.wrapper;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+
+import javax.annotation.Nonnull;
 
 /**
  * Exposes the armor inventory of an {@link EntityLivingBase} as an {@link IItemHandler} using {@link EntityLivingBase#getItemStackFromSlot} and
@@ -32,5 +36,17 @@ public class EntityArmorInvWrapper extends EntityEquipmentInvWrapper
     public EntityArmorInvWrapper(final EntityLivingBase entity)
     {
         super(entity, EntityEquipmentSlot.Type.ARMOR);
+    }
+
+    @Override
+    public boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
+    {
+        return stack.getItem().isValidArmor(stack, ItemHandlerHelper.arrmorSlots[slot], entity);
+    }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        return 1;
     }
 }

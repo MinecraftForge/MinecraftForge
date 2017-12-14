@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.items;
+package net.minecraftforge.items.holder;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
@@ -25,19 +25,26 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.holder.ItemHolder;
 
-public class CapabilityItemHandler
+import javax.annotation.Nullable;
+
+public class CapabilityItemHolder
 {
-    @CapabilityInject(IItemHandler.class)
-    public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
+    /**
+     * this is only intended for ItemStack to get slots its ItemHolder.
+     * and is NOT intended for external use bye other mods, for that use the IItemHandler
+     */
+    @CapabilityInject(IItemHolder.class)
+    public static IItemHolder ITEM_HOLDER_CAPABILITY = null;
 
     public static void register()
     {
-        CapabilityManager.INSTANCE.register(IItemHandler.class, new Capability.IStorage<IItemHandler>()
+        CapabilityManager.INSTANCE.register(IItemHolder.class, new Capability.IStorage<IItemHolder>()
         {
+
+            @Nullable
             @Override
-            public NBTBase writeNBT(Capability<IItemHandler> capability, IItemHandler instance, EnumFacing side)
+            public NBTBase writeNBT(Capability<IItemHolder> capability, IItemHolder instance, EnumFacing side)
             {
                 if (!(instance instanceof INBTSerializable))
                     throw new RuntimeException();
@@ -46,13 +53,12 @@ public class CapabilityItemHandler
 
             @Override
             @SuppressWarnings("unchecked")
-            public void readNBT(Capability<IItemHandler> capability, IItemHandler instance, EnumFacing side, NBTBase base)
+            public void readNBT(Capability<IItemHolder> capability, IItemHolder instance, EnumFacing side, NBTBase nbt)
             {
                 if (!(instance instanceof INBTSerializable))
                     throw new RuntimeException();
-                else ((INBTSerializable) instance).deserializeNBT(base);
+                else ((INBTSerializable) instance).deserializeNBT(nbt);
             }
-        }, () -> new ItemHandler(new ItemHolder(1)));
+        }, () -> new ItemHolder(1));
     }
-
 }

@@ -19,40 +19,12 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.entity.player.InventoryPlayer;
 
-public class InvWrapper extends IInvWrapperBase
+public class PlayerWrapper extends CombinedWrapper
 {
-
-    private final IInventory inventory;
-
-    public InvWrapper(IInventory inventory)
+    public PlayerWrapper(InventoryPlayer inv)
     {
-        this.inventory = inventory;
-    }
-
-    protected IInventory getInventory()
-    {
-        return inventory;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        InvWrapper that = (InvWrapper) o;
-
-        return getInventory().equals(that.getInventory());
-
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return getInventory().hashCode();
+        super(new PlayerMainInvWrapper(inv), new PlayerArmorInvWrapper(inv), new PlayerOffhandInvWrapper(inv));
     }
 }

@@ -19,27 +19,31 @@
 
 package net.minecraftforge.items;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Range;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.lang.ref.WeakReference;
-
-import com.google.common.base.Objects;
+import net.minecraftforge.items.filter.IStackFilter;
+import net.minecraftforge.items.templates.EmptyHandler;
+import net.minecraftforge.items.wrapper.CombinedWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
 
-public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandlerModifiable
+public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandler
 {
     // Dummy cache value to signify that we have checked and definitely found no adjacent chests
     public static final VanillaDoubleChestItemHandler NO_ADJACENT_CHESTS_INSTANCE = new VanillaDoubleChestItemHandler(null, null, false);
     private final boolean mainChestIsUpper;
     private final TileEntityChest mainChest;
+    private final CombinedWrapper wrapper;
     private final int hashCode;
 
     public VanillaDoubleChestItemHandler(@Nullable TileEntityChest mainChest, @Nullable TileEntityChest other, boolean mainChestIsUpper)
@@ -47,6 +51,10 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         super(other);
         this.mainChest = mainChest;
         this.mainChestIsUpper = mainChestIsUpper;
+        if (mainChest == null || other == null)
+            wrapper = new EmptyCombinedWrapper();
+        else
+            wrapper = new CombinedWrapper(getChest(true).getSingleChestHandler(), getChest(false).getSingleChestHandler());
         hashCode = Objects.hashCode(mainChestIsUpper ? mainChest : other) * 31 + Objects.hashCode(!mainChestIsUpper ? mainChest : other);
     }
 
@@ -102,9 +110,23 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     }
 
     @Override
-    public int getSlots()
+    public int size()
     {
         return 27 * 2;
+    }
+
+    @Override
+    public void clearInv()
+    {
+        TileEntityChest upperChest = getChest(true);
+
+        if (upperChest != null)
+            upperChest.getSingleChestHandler().clearInv();
+
+        TileEntityChest LowerChest = getChest(false);
+
+        if (LowerChest != null)
+            LowerChest.getSingleChestHandler().clearInv();
     }
 
     @Override
@@ -117,67 +139,29 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         return chest != null ? chest.getStackInSlot(targetSlot) : ItemStack.EMPTY;
     }
 
+    @Nonnull
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
+    public InsertTransaction insert(Range<Integer> slotRange, @Nonnull ItemStack stack, boolean simulate)
     {
-        boolean accessingUpperChest = slot < 27;
-        int targetSlot = accessingUpperChest ? slot : slot - 27;
-        TileEntityChest chest = getChest(accessingUpperChest);
-        if (chest != null)
-        {
-            IItemHandler singleHandler = chest.getSingleChestHandler();
-            if (singleHandler instanceof IItemHandlerModifiable)
-            {
-                ((IItemHandlerModifiable) singleHandler).setStackInSlot(targetSlot, stack);
-            }
-        }
-
-        chest = getChest(!accessingUpperChest);
-        if (chest != null)
-            chest.markDirty();
+        if (!wrapper.isValid())
+            return new InsertTransaction(ItemStack.EMPTY, stack);
+        else return wrapper.insert(slotRange, stack, simulate);
     }
 
-    @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
-    {
-        boolean accessingUpperChest = slot < 27;
-        int targetSlot = accessingUpperChest ? slot : slot - 27;
-        TileEntityChest chest = getChest(accessingUpperChest);
-        if (chest == null)
-            return stack;
-
-        int starting = stack.getCount();
-        ItemStack ret = chest.getSingleChestHandler().insertItem(targetSlot, stack, simulate);
-        if (ret.getCount() != starting && !simulate)
-        {
-            chest = getChest(!accessingUpperChest);
-            if (chest != null)
-                chest.markDirty();
-        }
-
-        return ret;
-    }
-
     @Override
-    @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
+    public ItemStack extract(Range<Integer> slotRange, IStackFilter filter, int amount, boolean simulate)
     {
-        boolean accessingUpperChest = slot < 27;
-        int targetSlot = accessingUpperChest ? slot : slot - 27;
-        TileEntityChest chest = getChest(accessingUpperChest);
-        if (chest == null)
+        if (!wrapper.isValid())
             return ItemStack.EMPTY;
+        else return wrapper.extract(slotRange, filter, amount, simulate);
+    }
 
-        ItemStack ret = chest.getSingleChestHandler().extractItem(targetSlot, amount, simulate);
-        if (!ret.isEmpty() && !simulate)
-        {
-            chest = getChest(!accessingUpperChest);
-            if (chest != null)
-                chest.markDirty();
-        }
-
-        return ret;
+    @Override
+    public void MultiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
+    {
+        if (wrapper.isValid())
+            wrapper.MultiExtract(filter, slotRange, manager, simulate);
     }
 
     @Override
@@ -220,4 +204,13 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         TileEntityChest tileEntityChest = get();
         return tileEntityChest == null || tileEntityChest.isInvalid();
     }
+
+    private static class EmptyCombinedWrapper extends CombinedWrapper
+    {
+        public EmptyCombinedWrapper()
+        {
+            super(EmptyHandler.INSTANCE);
+        }
+    }
+
 }

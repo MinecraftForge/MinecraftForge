@@ -17,42 +17,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.items.wrapper;
+package net.minecraftforge.items.filter;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.ArrayUtils;
 
-public class InvWrapper extends IInvWrapperBase
+public class OreDictFilter implements IStackFilter
 {
+    private final String oreName;
 
-    private final IInventory inventory;
-
-    public InvWrapper(IInventory inventory)
+    public OreDictFilter(String oreName)
     {
-        this.inventory = inventory;
-    }
-
-    protected IInventory getInventory()
-    {
-        return inventory;
+        this.oreName = oreName;
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean test(ItemStack stack)
     {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        InvWrapper that = (InvWrapper) o;
-
-        return getInventory().equals(that.getInventory());
-
+        return !stack.isEmpty() && ArrayUtils.contains(OreDictionary.getOreIDs(stack), OreDictionary.getOreID(oreName));
     }
 
     @Override
-    public int hashCode()
+    public NonNullList<ItemStack> getExamples()
     {
-        return getInventory().hashCode();
+        return OreDictionary.getOres(oreName);
     }
 }

@@ -1,5 +1,6 @@
 package net.minecraftforge.debug;
 
+import com.google.common.collect.Range;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -19,13 +20,11 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -53,7 +52,6 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -61,12 +59,14 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.minecraftforge.items.ItemHandler;
+import net.minecraftforge.items.holder.ItemHolder;
+import net.minecraftforge.items.wrapper.CombinedWrapper;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Iterator;
 
 @Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID, acceptableRemoteVersions = "*")
 public class DynBucketTest
@@ -195,41 +195,41 @@ public class DynBucketTest
             ItemStack itemStackIn = playerIn.getHeldItem(hand);
             if (worldIn.isRemote)
             {
-                return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStackIn);
+                return new ActionResult<>(EnumActionResult.PASS, itemStackIn);
             }
 
-            ItemStackHandler handler = new ItemStackHandler(5);
-            ItemStackHandler handler2 = new ItemStackHandler(5);
-            IItemHandler joined = new CombinedInvWrapper(handler, handler2);
+            ItemHolder holder = new ItemHolder(5);
+            ItemHandler handler = new ItemHandler(holder);
+            ItemHolder holder2 = new ItemHolder(5);
+            ItemHandler handler2 = new ItemHandler(holder2);
+            IItemHandler joined = new CombinedWrapper(handler, handler2);
 
-            handler.setStackInSlot(0, new ItemStack(Blocks.STONE));
-            handler.setStackInSlot(1, new ItemStack(Blocks.GRASS));
-            handler.setStackInSlot(2, new ItemStack(Blocks.DIRT));
-            handler.setStackInSlot(3, new ItemStack(Blocks.GLASS));
-            handler.setStackInSlot(4, new ItemStack(Blocks.SAND));
+            handler.insert(Range.all(), new ItemStack(Blocks.STONE), false);
+            handler.insert(Range.all(), new ItemStack(Blocks.GRASS), false);
+            handler.insert(Range.all(), new ItemStack(Blocks.DIRT), false);
+            handler.insert(Range.all(), new ItemStack(Blocks.GLASS), false);
+            handler.insert(Range.all(), new ItemStack(Blocks.SAND), false);
 
-            handler2.setStackInSlot(0, new ItemStack(Blocks.SLIME_BLOCK));
-            handler2.setStackInSlot(1, new ItemStack(Blocks.TNT));
-            handler2.setStackInSlot(2, new ItemStack(Blocks.PLANKS));
-            handler2.setStackInSlot(3, new ItemStack(Blocks.LOG));
-            handler2.setStackInSlot(4, new ItemStack(Blocks.DIAMOND_BLOCK));
+            handler2.insert(Range.all(), new ItemStack(Blocks.SLIME_BLOCK), false);
+            handler2.insert(Range.all(), new ItemStack(Blocks.TNT), false);
+            handler2.insert(Range.all(), new ItemStack(Blocks.PLANKS), false);
+            handler2.insert(Range.all(), new ItemStack(Blocks.LOG), false);
+            handler2.insert(Range.all(), new ItemStack(Blocks.DIAMOND_BLOCK), false);
 
-            for (int i = 0; i < handler.getSlots(); i++)
-            {
-                logger.info("Expected 1: {}", handler.getStackInSlot(i));
-            }
+            Iterator<ItemStack> stackIterator = handler.itemHandlerIterator();
+            while (stackIterator.hasNext())
+                logger.info("Expected 2: {}", stackIterator.next());
 
-            for (int i = 0; i < handler2.getSlots(); i++)
-            {
-                logger.info("Expected 2: {}", handler2.getStackInSlot(i));
-            }
+            Iterator<ItemStack> stackIterator2 = handler2.itemHandlerIterator();
+            while (stackIterator2.hasNext())
+                logger.info("Expected 2: {}", stackIterator2.next());
 
-            for (int i = 0; i < joined.getSlots(); i++)
-            {
-                logger.info("Joined: {}", joined.getStackInSlot(i));
-            }
+            Iterator<ItemStack> combinedIterator = joined.itemHandlerIterator();
+            while (combinedIterator.hasNext())
+                logger.info("Expected 2: {}", combinedIterator.next());
+            
 
-            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
+            return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
         }
     }
 

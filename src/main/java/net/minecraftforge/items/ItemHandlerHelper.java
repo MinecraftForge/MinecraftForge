@@ -19,38 +19,30 @@
 
 package net.minecraftforge.items;
 
+import com.google.common.collect.Range;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.items.filter.IStackFilter;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class ItemHandlerHelper
 {
-    @Nonnull
-    public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, boolean simulate)
-    {
-        if (dest == null || stack.isEmpty())
-            return stack;
+    public final static IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
+    public final static EntityEquipmentSlot[] arrmorSlots = new EntityEquipmentSlot[]{
+            EntityEquipmentSlot.FEET, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.HEAD
+    };
 
-        for (int i = 0; i < dest.getSlots(); i++)
-        {
-            stack = dest.insertItem(i, stack, simulate);
-            if (stack.isEmpty())
-            {
-                return ItemStack.EMPTY;
-            }
-        }
-
-        return stack;
-    }
 
     public static boolean canItemStacksStack(@Nonnull ItemStack a, @Nonnull ItemStack b)
     {
@@ -95,61 +87,10 @@ public class ItemHandlerHelper
     }
 
     /**
-     * Inserts the ItemStack into the inventory, filling up already present stacks first.
-     * This is equivalent to the behaviour of a player picking up an item.
-     * Note: This function stacks items without subtypes with different metadata together.
+     * giveItemToPlayer without preferred slot
      */
-    @Nonnull
-    public static ItemStack insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, boolean simulate)
+    public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack)
     {
-        if (inventory == null || stack.isEmpty())
-            return stack;
-
-        // not stackable -> just insert into a new slot
-        if (!stack.isStackable())
-        {
-            return insertItem(inventory, stack, simulate);
-        }
-
-        int sizeInventory = inventory.getSlots();
-
-        // go through the inventory and try to fill up already existing items
-        for (int i = 0; i < sizeInventory; i++)
-        {
-            ItemStack slot = inventory.getStackInSlot(i);
-            if (canItemStacksStackRelaxed(slot, stack))
-            {
-                stack = inventory.insertItem(i, stack, simulate);
-
-                if (stack.isEmpty())
-                {
-                    break;
-                }
-            }
-        }
-
-        // insert remainder into empty slots
-        if (!stack.isEmpty())
-        {
-            // find empty slot
-            for (int i = 0; i < sizeInventory; i++)
-            {
-                if (inventory.getStackInSlot(i).isEmpty())
-                {
-                    stack = inventory.insertItem(i, stack, simulate);
-                    if (stack.isEmpty())
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-
-        return stack;
-    }
-
-    /** giveItemToPlayer without preferred slot */
-    public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack) {
         giveItemToPlayer(player, stack, -1);
     }
 
@@ -157,8 +98,9 @@ public class ItemHandlerHelper
      * Inserts the given itemstack into the players inventory.
      * If the inventory can't hold it, the item will be dropped in the world at the players position.
      *
-     * @param player The player to give the item to
-     * @param stack  The itemstack to insert
+     * @param player        The player to give the item to
+     * @param preferredSlot a slot to try to insert to, if the slot cant accept the stack or preferredSlot is < 0 the stack will be slotLess inserted
+     * @param stack         The itemstack to insert
      */
     public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack, int preferredSlot)
     {
@@ -168,14 +110,14 @@ public class ItemHandlerHelper
         // try adding it into the inventory
         ItemStack remainder = stack;
         // insert into preferred slot first
-        if(preferredSlot >= 0)
+        if (preferredSlot >= 0)
         {
-            remainder = inventory.insertItem(preferredSlot, stack, false);
+            remainder = inventory.insert(Range.singleton(preferredSlot), stack, false).getLeftoverStack();
         }
         // then into the inventory in general
-        if(!remainder.isEmpty())
+        if (!remainder.isEmpty())
         {
-            remainder = insertItemStacked(inventory, remainder, false);
+            remainder = inventory.insert(Range.all(), stack, false).getLeftoverStack();
         }
 
         // play sound if something got picked up
@@ -197,36 +139,219 @@ public class ItemHandlerHelper
         }
     }
 
-    /**
-     * This method uses the standard vanilla algorithm to calculate a comparator output for how "full" the inventory is.
-     * This method is an adaptation of Container#calcRedstoneFromInventory(IInventory).
-     * @param inv The inventory handler to test.
-     * @return A redstone value in the range [0,15] representing how "full" this inventory is.
-     */
-    public static int calcRedstoneFromInventory(@Nullable IItemHandler inv)
+    public static InsertTransaction split(@Nonnull ItemStack stack, int size)
     {
-        if (inv == null)
+        int i = Math.min(stack.getCount(), size);
+        ItemStack insert = copyStackWithSize(stack, i);
+
+        ItemStack leftover = stack.copy();
+        leftover.setCount(stack.getCount() - insert.getCount());
+        return new InsertTransaction(insert, leftover);
+    }
+
+    public static boolean isRangeSlotLess(Range<Integer> range)
+    {
+        return !range.hasLowerBound() && !range.hasUpperBound();
+    }
+
+    public static boolean isRangeSingleton(Range<Integer> range)
+    {
+        return range.hasLowerBound() && range.hasUpperBound() && Objects.equals(range.lowerEndpoint(), range.upperEndpoint());
+    }
+
+    public static int getFreeSpaceForSlot(IItemHandler handler, int slot)
+    {
+        ItemStack existing = handler.getStackInSlot(slot);
+        if (!existing.isEmpty())
         {
-            return 0;
+            if (!existing.isStackable())
+            {
+                return 0;
+            }
+            else return handler.getStackLimit(existing, slot) - existing.getCount();
+        }
+        return handler.getSlotLimit(slot);
+    }
+
+    public static void MultiExtract(IStackFilter filter, Range<Integer> slotRange, IExtractionManager manager, boolean simulate, IItemHandlerModifiable handler)
+    {
+        if (isRangeSingleton(slotRange))
+        {
+            int slot = slotRange.lowerEndpoint();
+            ItemStack stack = handler.getStackInSlot(slot);
+            if (!stack.isEmpty() && handler.canExtractStackFromSlot(stack, slot) && filter.test(stack) && !manager.satisfied())
+            {
+                int toExtract = manager.extract(stack);
+
+                if (stack.getCount() <= toExtract)
+                {
+                    if (!simulate)
+                    {
+                        handler.setStackInSlot(slot, ItemStack.EMPTY);
+                    }
+                    manager.extractedStack(stack.copy(), slot);
+                }
+                else
+                {
+                    if (!simulate)
+                    {
+                        handler.setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - toExtract));
+                    }
+
+                    manager.extractedStack(ItemHandlerHelper.copyStackWithSize(stack, toExtract), slot);
+                }
+            }
         }
         else
         {
-            int itemsFound = 0;
-            float proportion = 0.0F;
-
-            for (int j = 0; j < inv.getSlots(); ++j)
+            int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
+            int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), handler.size()) : handler.size());
+            for (int i = minSlot; i < maxSlot && !manager.satisfied(); i++)
             {
-                ItemStack itemstack = inv.getStackInSlot(j);
-
-                if (!itemstack.isEmpty())
+                ItemStack stack = handler.getStackInSlot(i);
+                if (!stack.isEmpty() && handler.canExtractStackFromSlot(stack, i) && filter.test(stack))
                 {
-                    proportion += (float)itemstack.getCount() / (float)Math.min(inv.getSlotLimit(j), itemstack.getMaxStackSize());
-                    ++itemsFound;
+                    int toExtract = manager.extract(stack);
+
+                    if (stack.getCount() <= toExtract)
+                    {
+                        if (!simulate)
+                        {
+                            handler.setStackInSlot(i, ItemStack.EMPTY);
+                        }
+                        manager.extractedStack(stack.copy(), i);
+                    }
+                    else
+                    {
+                        if (!simulate)
+                        {
+                            handler.setStackInSlot(i, ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - toExtract));
+                        }
+
+                        manager.extractedStack(ItemHandlerHelper.copyStackWithSize(stack, toExtract), i);
+                    }
                 }
             }
-
-            proportion = proportion / (float)inv.getSlots();
-            return MathHelper.floor(proportion * 14.0F) + (itemsFound > 0 ? 1 : 0);
         }
+    }
+
+    @Nonnull
+    public static ItemStack extract(Range<Integer> slotRange, IStackFilter filter, int amount, boolean simulate, IItemHandlerModifiable handler)
+    {
+        if (amount == 0) return ItemStack.EMPTY;
+        if (isRangeSingleton(slotRange))
+            return extract(slotRange.lowerEndpoint(), filter, amount, simulate, handler);
+        else
+        {
+            int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
+            int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), handler.size()) : handler.size());
+            for (int i = minSlot; i < maxSlot; i++)
+            {
+                ItemStack stack = extract(i, filter, amount, simulate, handler);
+                if (!stack.isEmpty())
+                    return stack;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Nonnull
+    private static ItemStack extract(int slot, IStackFilter filter, int amount, boolean simulate, IItemHandlerModifiable handler)
+    {
+        ItemStack existing = handler.getStackInSlot(slot);
+
+        if (existing.isEmpty())
+            return ItemStack.EMPTY;
+
+        if (!handler.canExtractStackFromSlot(existing, slot))
+            return ItemStack.EMPTY;
+
+        if (!filter.test(existing)) return ItemStack.EMPTY;
+
+        int toExtract = Math.min(amount, existing.getMaxStackSize());
+
+        if (existing.getCount() <= toExtract)
+        {
+            if (!simulate)
+            {
+                handler.setStackInSlot(slot, ItemStack.EMPTY);
+                handler.onContentsChanged(slot);
+            }
+            return existing;
+        }
+        else
+        {
+            if (!simulate)
+            {
+                handler.setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+                handler.onContentsChanged(slot);
+            }
+
+            return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+        }
+    }
+
+    @Nonnull
+    public static InsertTransaction insert(Range<Integer> slotRange, ItemStack stack, boolean simulate, IItemHandlerModifiable handler)
+    {
+        if (stack.isEmpty()) return new InsertTransaction(ItemStack.EMPTY, ItemStack.EMPTY);
+
+        if (isRangeSingleton(slotRange))
+            return insert(slotRange.lowerEndpoint(), stack, simulate, handler);
+
+        else
+        {
+            int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
+            int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), handler.size()) : handler.size());
+
+            for (int i = minSlot; i < maxSlot; i++)
+            {
+                InsertTransaction transaction = insert(i, stack, simulate, handler);
+                if (!transaction.getInsertedStack().isEmpty())
+                {
+                    return transaction;
+                }
+            }
+        }
+        return new InsertTransaction(ItemStack.EMPTY, stack);
+    }
+
+    @Nonnull
+    private static InsertTransaction insert(int slot, ItemStack stack, boolean simulate, IItemHandlerModifiable handler)
+    {
+        ItemStack existing = handler.getStackInSlot(slot);
+
+        int limit = handler.getStackLimit(stack, slot);
+
+        if (!handler.isStackValidForSlot(stack, slot))
+            return new InsertTransaction(ItemStack.EMPTY, stack);
+
+        if (!existing.isEmpty())
+        {
+            if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
+                return new InsertTransaction(ItemStack.EMPTY, stack);
+
+            limit -= existing.getCount();
+        }
+
+        if (limit <= 0)
+            return new InsertTransaction(ItemStack.EMPTY, stack);
+
+        InsertTransaction transaction = split(stack, limit);
+
+        if (!simulate)
+        {
+            if (existing.isEmpty())
+            {
+                handler.setStackInSlot(slot, transaction.getInsertedStack());
+                handler.onContentsChanged(slot);
+            }
+            else
+            {
+                existing.grow(transaction.getInsertedStack().getCount());
+                handler.onContentsChanged(slot);
+            }
+        }
+        return transaction;
     }
 }

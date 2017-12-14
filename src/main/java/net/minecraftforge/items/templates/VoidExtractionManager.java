@@ -17,14 +17,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.items.wrapper;
+package net.minecraftforge.items.templates;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IExtractionManager;
 
-public class PlayerInvWrapper extends CombinedInvWrapper
+import javax.annotation.Nonnull;
+
+public class VoidExtractionManager implements IExtractionManager
 {
-    public PlayerInvWrapper(InventoryPlayer inv)
+    public static final VoidExtractionManager INSTANCE = new VoidExtractionManager();
+
+    private VoidExtractionManager()
     {
-        super(new PlayerMainInvWrapper(inv), new PlayerArmorInvWrapper(inv), new PlayerOffhandInvWrapper(inv));
+    }
+
+    @Override
+    public int extract(@Nonnull ItemStack stack)
+    {
+        return stack.getCount();
+    }
+
+    @Override
+    public void extractedStack(@Nonnull ItemStack stack, int slot)
+    {
+
+    }
+
+    @Override
+    public boolean satisfied()
+    {
+        return false;
     }
 }

@@ -20,8 +20,8 @@
 package net.minecraftforge.items.wrapper;
 
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -36,24 +36,9 @@ public class PlayerArmorInvWrapper extends RangedWrapper
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    public boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
     {
-        EntityEquipmentSlot equ = null;
-        for (EntityEquipmentSlot s : EntityEquipmentSlot.values())
-        {
-            if (s.getSlotType() == EntityEquipmentSlot.Type.ARMOR && s.getIndex() == slot)
-            {
-                equ = s;
-                break;
-            }
-        }
-        // check if it's valid for the armor slot
-        if (equ != null && slot < 4 && !stack.isEmpty() && stack.getItem().isValidArmor(stack, equ, getInventoryPlayer().player))
-        {
-            return super.insertItem(slot, stack, simulate);
-        }
-        return stack;
+        return stack.getItem().isValidArmor(stack, ItemHandlerHelper.arrmorSlots[slot], getInventoryPlayer().player);
     }
 
     public InventoryPlayer getInventoryPlayer()

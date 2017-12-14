@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Range;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -254,11 +255,11 @@ public class FluidUtil
             if (filledSimulated.isSuccess())
             {
                 // check if we can give the itemStack to the inventory
-                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, filledSimulated.getResult(), true);
+                ItemStack remainder = inventory.insert(Range.all(), filledSimulated.result, true).getLeftoverStack();
                 if (remainder.isEmpty() || player != null)
                 {
                     FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
-                    remainder = ItemHandlerHelper.insertItemStacked(inventory, filledReal.getResult(), false);
+                    remainder = inventory.insert(Range.all(), filledReal.result, false).getLeftoverStack();
 
                     // give it to the player or drop it at their feet
                     if (!remainder.isEmpty() && player != null)
@@ -321,11 +322,11 @@ public class FluidUtil
             if (emptiedSimulated.isSuccess())
             {
                 // check if we can give the itemStack to the inventory
-                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedSimulated.getResult(), true);
+                ItemStack remainder = inventory.insert(Range.all(), emptiedSimulated.result, true).getLeftoverStack();
                 if (remainder.isEmpty() || player != null)
                 {
                     FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, true);
-                    remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal.getResult(), false);
+                    remainder = inventory.insert(Range.all(), emptiedSimulated.result, false).getLeftoverStack();
 
                     // give it to the player or drop it at their feet
                     if (!remainder.isEmpty() && player != null)

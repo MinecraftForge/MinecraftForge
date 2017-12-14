@@ -17,42 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.items.wrapper;
+package net.minecraftforge.items;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
-public class InvWrapper extends IInvWrapperBase
+import javax.annotation.Nonnull;
+import java.util.Iterator;
+
+public interface IItemHandlerIterator extends Iterator<ItemStack>
 {
+    boolean hasNext();
 
-    private final IInventory inventory;
+    boolean hasPrevious();
 
-    public InvWrapper(IInventory inventory)
-    {
-        this.inventory = inventory;
-    }
+    int currentIndex();
 
-    protected IInventory getInventory()
-    {
-        return inventory;
-    }
+    int nextIndex();
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+    int previousIndex();
 
-        InvWrapper that = (InvWrapper) o;
+    @Nonnull
+    ItemStack next();
 
-        return getInventory().equals(that.getInventory());
-
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return getInventory().hashCode();
-    }
+    @Nonnull
+    ItemStack previous();
 }

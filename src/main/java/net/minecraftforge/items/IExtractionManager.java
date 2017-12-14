@@ -17,42 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.items.wrapper;
+package net.minecraftforge.items;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
-public class InvWrapper extends IInvWrapperBase
+import javax.annotation.Nonnull;
+
+public interface IExtractionManager
 {
 
-    private final IInventory inventory;
+    /**
+     * @param stack the stack in the current slot
+     * @return the amount to extract
+     */
+    int extract(@Nonnull ItemStack stack);
 
-    public InvWrapper(IInventory inventory)
-    {
-        this.inventory = inventory;
-    }
+    /**
+     * @param stack the stack extracted
+     * @param slot  the slot extracted from
+     */
+    void extractedStack(@Nonnull ItemStack stack, int slot);
 
-    protected IInventory getInventory()
-    {
-        return inventory;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        InvWrapper that = (InvWrapper) o;
-
-        return getInventory().equals(that.getInventory());
-
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return getInventory().hashCode();
-    }
+    /**
+     * @return true when you are done extracting
+     */
+    boolean satisfied();
 }

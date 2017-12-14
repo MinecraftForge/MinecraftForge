@@ -17,40 +17,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.items;
+package net.minecraftforge.items.wrapper;
 
+import com.google.common.collect.Range;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.InsertTransaction;
 
 import javax.annotation.Nonnull;
 
-public class VanillaHopperItemHandler extends InvWrapper
+public class HopperWrapper extends InvWrapper
 {
     private final TileEntityHopper hopper;
 
-    public VanillaHopperItemHandler(TileEntityHopper hopper)
+    public HopperWrapper(TileEntityHopper hopper)
     {
         super(hopper);
         this.hopper = hopper;
     }
 
-    @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    @Override
+    public InsertTransaction insert(Range<Integer> slotRange, ItemStack stack, boolean simulate)
     {
         if (simulate)
         {
-            return super.insertItem(slot, stack, simulate);
+            return super.insert(slotRange, stack, true);
         }
         else
         {
-            boolean wasEmpty = getInv().isEmpty();
+            boolean wasEmpty = getInventory().isEmpty();
 
             int originalStackSize = stack.getCount();
-            stack = super.insertItem(slot, stack, simulate);
+            InsertTransaction transaction = super.insert(slotRange, stack, false);
 
-            if (wasEmpty && originalStackSize > stack.getCount())
+            if (wasEmpty && originalStackSize > transaction.getLeftoverStack().getCount())
             {
                 if (!hopper.mayTransfer())
                 {
@@ -62,8 +63,7 @@ public class VanillaHopperItemHandler extends InvWrapper
                     hopper.setTransferCooldown(8);
                 }
             }
-
-            return stack;
+            return transaction;
         }
     }
 }
