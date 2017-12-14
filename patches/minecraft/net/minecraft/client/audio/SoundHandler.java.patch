@@ -17,7 +17,7 @@
                              this.func_147693_a(new ResourceLocation(s, entry.getKey()), entry.getValue());
                          }
                      }
-@@ -94,6 +97,13 @@
+@@ -94,6 +97,20 @@
              }
          }
  
@@ -25,7 +25,14 @@
 +        resources.forEach((location, soundList) ->
 +        {
 +            resourcesBar.step(location.toString());
-+            this.func_147693_a(location, soundList);
++            try
++            {
++                this.func_147693_a(location, soundList);
++            }
++            catch (RuntimeException e)
++            {
++                field_147698_b.warn("Invalid sounds.json", e);
++            }
 +        });
 +        net.minecraftforge.fml.common.ProgressManager.pop(resourcesBar);
          for (ResourceLocation resourcelocation : this.field_147697_e.func_148742_b())
