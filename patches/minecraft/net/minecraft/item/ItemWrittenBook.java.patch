@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemWrittenBook.java
++++ ../src-work/minecraft/net/minecraft/item/ItemWrittenBook.java
+@@ -137,7 +137,8 @@
+                     if (p_179229_2_ instanceof EntityPlayerMP && p_179229_2_.func_184614_ca() == p_179229_1_)
+                     {
+                         Slot slot = p_179229_2_.field_71070_bA.func_75147_a(p_179229_2_.field_71071_by, p_179229_2_.field_71071_by.field_70461_c);
+-                        ((EntityPlayerMP)p_179229_2_).field_71135_a.func_147359_a(new SPacketSetSlot(0, slot.field_75222_d, p_179229_1_));
++                        EntityPlayerMP playerMP = (EntityPlayerMP) p_179229_2_;
++                        playerMP.field_71135_a.func_147359_a(new SPacketSetSlot(playerMP, 0, slot.field_75222_d, p_179229_1_));
+                     }
+                 }
+             }

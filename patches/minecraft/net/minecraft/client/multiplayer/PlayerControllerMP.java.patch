@@ -212,3 +212,30 @@
          return this.field_78779_k == GameType.SPECTATOR ? EnumActionResult.PASS : p_187102_2_.func_184199_a(p_187102_1_, vec3d, p_187102_4_);
      }
  
+@@ -516,7 +564,7 @@
+     {
+         short short1 = p_187098_5_.field_71070_bA.func_75136_a(p_187098_5_.field_71071_by);
+         ItemStack itemstack = p_187098_5_.field_71070_bA.func_184996_a(p_187098_2_, p_187098_3_, p_187098_4_, p_187098_5_);
+-        this.field_78774_b.func_147297_a(new CPacketClickWindow(p_187098_1_, p_187098_2_, p_187098_3_, p_187098_4_, itemstack, short1));
++        this.field_78774_b.func_147297_a(new CPacketClickWindow(p_187098_5_, p_187098_1_, p_187098_2_, p_187098_3_, p_187098_4_, itemstack, short1));
+         return itemstack;
+     }
+ 
+@@ -534,7 +582,7 @@
+     {
+         if (this.field_78779_k.func_77145_d())
+         {
+-            this.field_78774_b.func_147297_a(new CPacketCreativeInventoryAction(p_78761_2_, p_78761_1_));
++            this.field_78774_b.func_147297_a(new CPacketCreativeInventoryAction(field_78776_a.field_71439_g, p_78761_2_, p_78761_1_));
+         }
+     }
+ 
+@@ -542,7 +590,7 @@
+     {
+         if (this.field_78779_k.func_77145_d() && !p_78752_1_.func_190926_b())
+         {
+-            this.field_78774_b.func_147297_a(new CPacketCreativeInventoryAction(-1, p_78752_1_));
++            this.field_78774_b.func_147297_a(new CPacketCreativeInventoryAction(field_78776_a.field_71439_g, -1, p_78752_1_));
+         }
+     }
+ 
