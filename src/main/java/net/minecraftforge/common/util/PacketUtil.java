@@ -37,6 +37,7 @@ public class PacketUtil
      * Serializes an ItemStack to send to the client. If the player is in creative mode, all NBT
      * data of the item is sent to the client. This prevents the NBT data of the ItemStack being lost
      * due to the fact that creative serializes from Client to Server, rather than the opposite way.
+     * This still respects the original getShareTag() behavior in PacketBuffer#writeItemStack()
      *
      * @param buffer the packet buffer
      * @param player the player being sent the packet
@@ -87,6 +88,7 @@ public class PacketUtil
             buffer.writeByte(stack.getCount());
             buffer.writeShort(stack.getMetadata());
             NBTTagCompound nbttagcompound = null;
+
 
             if (stack.getItem().isDamageable() || stack.getItem().getShareTag() || player.capabilities.isCreativeMode)
             {
