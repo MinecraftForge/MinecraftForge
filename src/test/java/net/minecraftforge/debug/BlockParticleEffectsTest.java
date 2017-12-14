@@ -50,7 +50,7 @@ public class BlockParticleEffectsTest
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        Block particle_block = new Block(Material.ROCK)
+        Block block = new Block(Material.ROCK)
         {
             @Override
             public boolean addLandingEffects(IBlockState state, WorldServer world, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles)
@@ -82,7 +82,7 @@ public class BlockParticleEffectsTest
                 return true;
             }
         };
-        event.getRegistry().register(particle_block.setCreativeTab(CreativeTabs.BUILDING_BLOCKS).setHardness(20).setRegistryName(particleBlockLocation));
+        event.getRegistry().register(block.setCreativeTab(CreativeTabs.BUILDING_BLOCKS).setHardness(20).setRegistryName(particleBlockLocation));
     }
 
     @SubscribeEvent
