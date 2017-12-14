@@ -146,15 +146,11 @@
      }
  
      protected void func_70670_a(PotionEffect p_70670_1_)
-@@ -1214,6 +1244,11 @@
+@@ -1213,6 +1243,7 @@
+     {
          this.field_71134_c.func_73076_a(p_71033_1_);
          this.field_71135_a.func_147359_a(new SPacketChangeGameState(3, (float)p_71033_1_.func_77148_a()));
++        this.func_71120_a(field_71069_bz);
  
-+        if(p_71033_1_ == GameType.CREATIVE)
-+        {
-+            this.func_71120_a(field_71069_bz);
-+        }
-+
          if (p_71033_1_ == GameType.SPECTATOR)
          {
-             this.func_192030_dh();
