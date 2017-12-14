@@ -277,8 +277,9 @@
  
                  if (!ItemStack.func_77989_b(itemstack1, itemstack))
                  {
+-                    ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
 +                    if (!ItemStack.areItemStacksEqualUsingNBTShareTag(itemstack1, itemstack))
-                     ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
++                    ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this instanceof net.minecraft.entity.player.EntityPlayerMP ? (net.minecraft.entity.player.EntityPlayerMP) this : null, this.func_145782_y(), entityequipmentslot, itemstack1));
 +                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, entityequipmentslot, itemstack, itemstack1));
  
                      if (!itemstack.func_190926_b())

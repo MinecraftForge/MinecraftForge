@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketEntityEquipment.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketEntityEquipment.java
+@@ -11,6 +11,7 @@
+ 
+ public class SPacketEntityEquipment implements Packet<INetHandlerPlayClient>
+ {
++    private net.minecraft.entity.player.EntityPlayerMP player;
+     private int field_149394_a;
+     private EntityEquipmentSlot field_149392_b;
+     private ItemStack field_149393_c = ItemStack.field_190927_a;
+@@ -26,6 +27,12 @@
+         this.field_149393_c = p_i46913_3_.func_77946_l();
+     }
+ 
++    public SPacketEntityEquipment(@javax.annotation.Nullable net.minecraft.entity.player.EntityPlayerMP player, int entityIdIn, EntityEquipmentSlot equipmentSlotIn, ItemStack itemStackIn)
++    {
++        this(entityIdIn, equipmentSlotIn, itemStackIn);
++        this.player = player;
++    }
++
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
+     {
+         this.field_149394_a = p_148837_1_.func_150792_a();
+@@ -37,7 +44,7 @@
+     {
+         p_148840_1_.func_150787_b(this.field_149394_a);
+         p_148840_1_.func_179249_a(this.field_149392_b);
+-        p_148840_1_.func_150788_a(this.field_149393_c);
++        net.minecraftforge.common.util.PacketUtil.writeItemStackFromServerToClient(p_148840_1_, this.player, this.field_149393_c);
+     }
+ 
+     public void func_148833_a(INetHandlerPlayClient p_148833_1_)

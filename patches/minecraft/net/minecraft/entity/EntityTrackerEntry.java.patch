@@ -16,6 +16,15 @@
  
                      if (packet != null)
                      {
+@@ -420,7 +420,7 @@
+ 
+                             if (!itemstack.func_190926_b())
+                             {
+-                                p_73117_1_.field_71135_a.func_147359_a(new SPacketEntityEquipment(this.field_73132_a.func_145782_y(), entityequipmentslot, itemstack));
++                                p_73117_1_.field_71135_a.func_147359_a(new SPacketEntityEquipment(this.field_73132_a instanceof net.minecraft.entity.player.EntityPlayerMP ? (net.minecraft.entity.player.EntityPlayerMP) this.field_73132_a : null, this.field_73132_a.func_145782_y(), entityequipmentslot, itemstack));
+                             }
+                         }
+                     }
 @@ -457,6 +457,7 @@
  
                      this.field_73132_a.func_184178_b(p_73117_1_);

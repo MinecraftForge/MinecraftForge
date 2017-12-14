@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketSetSlot.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketSetSlot.java
+@@ -10,6 +10,7 @@
+ 
+ public class SPacketSetSlot implements Packet<INetHandlerPlayClient>
+ {
++    private net.minecraft.entity.player.EntityPlayerMP player;
+     private int field_149179_a;
+     private int field_149177_b;
+     private ItemStack field_149178_c = ItemStack.field_190927_a;
+@@ -25,6 +26,12 @@
+         this.field_149178_c = p_i46951_3_.func_77946_l();
+     }
+ 
++    public SPacketSetSlot(@javax.annotation.Nullable net.minecraft.entity.player.EntityPlayerMP player, int windowIdIn, int slotIn, ItemStack itemIn)
++    {
++        this(windowIdIn, slotIn, itemIn);
++        this.player = player;
++    }
++
+     public void func_148833_a(INetHandlerPlayClient p_148833_1_)
+     {
+         p_148833_1_.func_147266_a(this);
+@@ -41,7 +48,7 @@
+     {
+         p_148840_1_.writeByte(this.field_149179_a);
+         p_148840_1_.writeShort(this.field_149177_b);
+-        p_148840_1_.func_150788_a(this.field_149178_c);
++        net.minecraftforge.common.util.PacketUtil.writeItemStackFromServerToClient(p_148840_1_, this.player, this.field_149178_c);
+     }
+ 
+     @SideOnly(Side.CLIENT)

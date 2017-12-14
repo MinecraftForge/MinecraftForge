@@ -91,7 +91,35 @@
          IInventory iinventory = ((ContainerMerchant)this.field_71070_bA).func_75174_d();
          ITextComponent itextcomponent = p_180472_1_.func_145748_c_();
          this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "minecraft:villager", itextcomponent, iinventory.func_70302_i_()));
-@@ -1003,6 +1020,7 @@
+@@ -957,7 +974,7 @@
+ 
+             if (!this.field_71137_h)
+             {
+-                this.field_71135_a.func_147359_a(new SPacketSetSlot(p_71111_1_.field_75152_c, p_71111_2_, p_71111_3_));
++                this.field_71135_a.func_147359_a(new SPacketSetSlot(this, p_71111_1_.field_75152_c, p_71111_2_, p_71111_3_));
+             }
+         }
+     }
+@@ -969,8 +986,8 @@
+ 
+     public void func_71110_a(Container p_71110_1_, NonNullList<ItemStack> p_71110_2_)
+     {
+-        this.field_71135_a.func_147359_a(new SPacketWindowItems(p_71110_1_.field_75152_c, p_71110_2_));
+-        this.field_71135_a.func_147359_a(new SPacketSetSlot(-1, -1, this.field_71071_by.func_70445_o()));
++        this.field_71135_a.func_147359_a(new SPacketWindowItems(this, p_71110_1_.field_75152_c, p_71110_2_));
++        this.field_71135_a.func_147359_a(new SPacketSetSlot(this, -1, -1, this.field_71071_by.func_70445_o()));
+     }
+ 
+     public void func_71112_a(Container p_71112_1_, int p_71112_2_, int p_71112_3_)
+@@ -996,13 +1013,14 @@
+     {
+         if (!this.field_71137_h)
+         {
+-            this.field_71135_a.func_147359_a(new SPacketSetSlot(-1, -1, this.field_71071_by.func_70445_o()));
++            this.field_71135_a.func_147359_a(new SPacketSetSlot(this, -1, -1, this.field_71071_by.func_70445_o()));
+         }
+     }
+ 
      public void func_71128_l()
      {
          this.field_71070_bA.func_75134_a(this);
@@ -118,3 +146,15 @@
      }
  
      protected void func_70670_a(PotionEffect p_70670_1_)
+@@ -1214,6 +1244,11 @@
+         this.field_71134_c.func_73076_a(p_71033_1_);
+         this.field_71135_a.func_147359_a(new SPacketChangeGameState(3, (float)p_71033_1_.func_77148_a()));
+ 
++        if(p_71033_1_ == GameType.CREATIVE)
++        {
++            this.func_71120_a(field_71069_bz);
++        }
++
+         if (p_71033_1_ == GameType.SPECTATOR)
+         {
+             this.func_192030_dh();

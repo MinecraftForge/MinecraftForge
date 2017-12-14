@@ -24,3 +24,13 @@
      }
  
      public boolean func_70441_a(ItemStack p_70441_1_)
+@@ -479,7 +487,8 @@
+ 
+                 if (this.func_191971_c(i, p_191975_2_.func_77979_a(j)))
+                 {
+-                    ((EntityPlayerMP)this.field_70458_d).field_71135_a.func_147359_a(new SPacketSetSlot(-2, i, this.func_70301_a(i)));
++                    EntityPlayerMP playerMP = (EntityPlayerMP) this.field_70458_d;
++                    playerMP.field_71135_a.func_147359_a(new SPacketSetSlot(playerMP, -2, i, this.func_70301_a(i)));
+                 }
+             }
+         }

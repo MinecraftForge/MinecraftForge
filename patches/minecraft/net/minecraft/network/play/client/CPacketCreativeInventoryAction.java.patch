@@ -1,11 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/network/play/client/CPacketCreativeInventoryAction.java
 +++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketCreativeInventoryAction.java
-@@ -38,7 +38,7 @@
+@@ -10,6 +10,7 @@
+ 
+ public class CPacketCreativeInventoryAction implements Packet<INetHandlerPlayServer>
+ {
++    private net.minecraft.entity.player.EntityPlayer player;
+     private int field_149629_a;
+     private ItemStack field_149628_b = ItemStack.field_190927_a;
+ 
+@@ -24,6 +25,14 @@
+         this.field_149628_b = p_i46862_2_.func_77946_l();
+     }
+ 
++    @SideOnly(Side.CLIENT)
++    public CPacketCreativeInventoryAction(@javax.annotation.Nullable net.minecraft.entity.player.EntityPlayer player, int slotIdIn, ItemStack stackIn)
++    {
++        this.player = player;
++        this.field_149629_a = slotIdIn;
++        this.field_149628_b = stackIn.func_77946_l();
++    }
++
+     public void func_148833_a(INetHandlerPlayServer p_148833_1_)
+     {
+         p_148833_1_.func_147344_a(this);
+@@ -38,7 +47,7 @@
      public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
      {
          p_148840_1_.writeShort(this.field_149629_a);
 -        p_148840_1_.func_150788_a(this.field_149628_b);
-+        net.minecraftforge.common.util.PacketUtil.writeItemStackFromClientToServer(p_148840_1_, this.field_149628_b);
++        net.minecraftforge.common.util.PacketUtil.writeItemStackFromClientToServer(p_148840_1_, this.player, this.field_149628_b);
      }
  
      public int func_149627_c()

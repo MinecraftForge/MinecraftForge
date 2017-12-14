@@ -1,11 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/network/play/client/CPacketClickWindow.java
 +++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketClickWindow.java
-@@ -55,7 +55,7 @@
+@@ -11,6 +11,7 @@
+ 
+ public class CPacketClickWindow implements Packet<INetHandlerPlayServer>
+ {
++    private net.minecraft.entity.player.EntityPlayer player;
+     private int field_149554_a;
+     private int field_149552_b;
+     private int field_149553_c;
+@@ -33,6 +34,18 @@
+         this.field_149549_f = p_i46882_4_;
+     }
+ 
++    @SideOnly(Side.CLIENT)
++    public CPacketClickWindow(@javax.annotation.Nullable net.minecraft.entity.player.EntityPlayer player, int windowIdIn, int slotIdIn, int usedButtonIn, ClickType modeIn, ItemStack clickedItemIn, short actionNumberIn)
++    {
++        this.player = player;
++        this.field_149554_a = windowIdIn;
++        this.field_149552_b = slotIdIn;
++        this.field_149553_c = usedButtonIn;
++        this.field_149551_e = clickedItemIn.func_77946_l();
++        this.field_149550_d = actionNumberIn;
++        this.field_149549_f = modeIn;
++    }
++
+     public void func_148833_a(INetHandlerPlayServer p_148833_1_)
+     {
+         p_148833_1_.func_147351_a(this);
+@@ -55,7 +68,7 @@
          p_148840_1_.writeByte(this.field_149553_c);
          p_148840_1_.writeShort(this.field_149550_d);
          p_148840_1_.func_179249_a(this.field_149549_f);
 -        p_148840_1_.func_150788_a(this.field_149551_e);
-+        net.minecraftforge.common.util.PacketUtil.writeItemStackFromClientToServer(p_148840_1_, this.field_149551_e);
++        net.minecraftforge.common.util.PacketUtil.writeItemStackFromClientToServer(p_148840_1_, this.player, this.field_149551_e);
      }
  
      public int func_149548_c()

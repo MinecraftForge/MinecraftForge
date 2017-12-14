@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketWindowItems.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketWindowItems.java
+@@ -12,6 +12,7 @@
+ 
+ public class SPacketWindowItems implements Packet<INetHandlerPlayClient>
+ {
++    private net.minecraft.entity.player.EntityPlayerMP player;
+     private int field_148914_a;
+     private List<ItemStack> field_148913_b;
+ 
+@@ -31,6 +32,12 @@
+         }
+     }
+ 
++    public SPacketWindowItems(@javax.annotation.Nullable net.minecraft.entity.player.EntityPlayerMP player, int p_i47317_1_, NonNullList<ItemStack> p_i47317_2_)
++    {
++        this(p_i47317_1_, p_i47317_2_);
++        this.player = player;
++    }
++
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
+     {
+         this.field_148914_a = p_148837_1_.readUnsignedByte();
+@@ -50,7 +57,7 @@
+ 
+         for (ItemStack itemstack : this.field_148913_b)
+         {
+-            p_148840_1_.func_150788_a(itemstack);
++            net.minecraftforge.common.util.PacketUtil.writeItemStackFromServerToClient(p_148840_1_, this.player, itemstack);
+         }
+     }
+ 
