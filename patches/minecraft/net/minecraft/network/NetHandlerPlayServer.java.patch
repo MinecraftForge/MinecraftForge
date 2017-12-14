@@ -60,3 +60,14 @@
                  {
                      this.field_147369_b.field_71135_a.func_147359_a(new SPacketConfirmTransaction(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
                      this.field_147369_b.field_71137_h = true;
+@@ -1741,8 +1749,8 @@
+             {
+                 int j1 = packetbuffer6.func_150792_a();
+                 this.field_147369_b.field_71071_by.func_184430_d(j1);
+-                this.field_147369_b.field_71135_a.func_147359_a(new SPacketSetSlot(-2, this.field_147369_b.field_71071_by.field_70461_c, this.field_147369_b.field_71071_by.func_70301_a(this.field_147369_b.field_71071_by.field_70461_c)));
+-                this.field_147369_b.field_71135_a.func_147359_a(new SPacketSetSlot(-2, j1, this.field_147369_b.field_71071_by.func_70301_a(j1)));
++                this.field_147369_b.field_71135_a.func_147359_a(new SPacketSetSlot(this.field_147369_b, -2, this.field_147369_b.field_71071_by.field_70461_c, this.field_147369_b.field_71071_by.func_70301_a(this.field_147369_b.field_71071_by.field_70461_c)));
++                this.field_147369_b.field_71135_a.func_147359_a(new SPacketSetSlot(this.field_147369_b, -2, j1, this.field_147369_b.field_71071_by.func_70301_a(j1)));
+                 this.field_147369_b.field_71135_a.func_147359_a(new SPacketHeldItemChange(this.field_147369_b.field_71071_by.field_70461_c));
+             }
+             catch (Exception exception)

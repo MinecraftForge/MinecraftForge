@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketEntityEquipment.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketEntityEquipment.java
+@@ -1,16 +1,22 @@
+ package net.minecraft.network.play.server;
+ 
+ import java.io.IOException;
++
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.inventory.EntityEquipmentSlot;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.network.Packet;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.network.play.INetHandlerPlayClient;
++import net.minecraftforge.common.util.PacketUtil;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
++import javax.annotation.Nullable;
++
+ public class SPacketEntityEquipment implements Packet<INetHandlerPlayClient>
+ {
++    private EntityPlayerMP player;
+     private int field_149394_a;
+     private EntityEquipmentSlot field_149392_b;
+     private ItemStack field_149393_c = ItemStack.field_190927_a;
+@@ -19,11 +25,12 @@
+     {
+     }
+ 
+-    public SPacketEntityEquipment(int p_i46913_1_, EntityEquipmentSlot p_i46913_2_, ItemStack p_i46913_3_)
++    public SPacketEntityEquipment(@Nullable EntityPlayerMP player, int entityIdIn, EntityEquipmentSlot equipmentSlotIn, ItemStack itemStackIn)
+     {
+-        this.field_149394_a = p_i46913_1_;
+-        this.field_149392_b = p_i46913_2_;
+-        this.field_149393_c = p_i46913_3_.func_77946_l();
++        this.player = player;
++        this.field_149394_a = entityIdIn;
++        this.field_149392_b = equipmentSlotIn;
++        this.field_149393_c = itemStackIn.func_77946_l();
+     }
+ 
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
+@@ -37,7 +44,7 @@
+     {
+         p_148840_1_.func_150787_b(this.field_149394_a);
+         p_148840_1_.func_179249_a(this.field_149392_b);
+-        p_148840_1_.func_150788_a(this.field_149393_c);
++        PacketUtil.writeItemStackFromServerToClient(p_148840_1_, this.player, this.field_149393_c);
+     }
+ 
+     public void func_148833_a(INetHandlerPlayClient p_148833_1_)
