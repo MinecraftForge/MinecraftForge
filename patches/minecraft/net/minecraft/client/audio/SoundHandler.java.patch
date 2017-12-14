@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/client/audio/SoundHandler.java
++++ ../src-work/minecraft/net/minecraft/client/audio/SoundHandler.java
+@@ -67,8 +67,11 @@
+     {
+         this.field_147697_e.func_148763_c();
+ 
++        Map<ResourceLocation, SoundList> resources = new java.util.IdentityHashMap<>();
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar domainsBar = net.minecraftforge.fml.common.ProgressManager.push("Loading sound domains", p_110549_1_.func_135055_a().size());
+         for (String s : p_110549_1_.func_135055_a())
+         {
++            domainsBar.step(s);
+             try
+             {
+                 for (IResource iresource : p_110549_1_.func_135056_b(new ResourceLocation(s, "sounds.json")))
+@@ -79,6 +82,8 @@
+ 
+                         for (Entry<String, SoundList> entry : map.entrySet())
+                         {
++                            resources.put(new ResourceLocation(s, entry.getKey()), entry.getValue());
++                            if (false)
+                             this.func_147693_a(new ResourceLocation(s, entry.getKey()), entry.getValue());
+                         }
+                     }
+@@ -94,6 +99,14 @@
+             }
+         }
+ 
++        net.minecraftforge.fml.common.ProgressManager.pop(domainsBar);
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar resourcesBar = net.minecraftforge.fml.common.ProgressManager.push("Loading sounds", resources.size());
++        resources.forEach((location, soundList) ->
++        {
++            resourcesBar.step(location.toString());
++            this.func_147693_a(location, soundList);
++        });
++        net.minecraftforge.fml.common.ProgressManager.pop(resourcesBar);
+         for (ResourceLocation resourcelocation : this.field_147697_e.func_148742_b())
+         {
+             SoundEventAccessor soundeventaccessor = (SoundEventAccessor)this.field_147697_e.func_82594_a(resourcelocation);
