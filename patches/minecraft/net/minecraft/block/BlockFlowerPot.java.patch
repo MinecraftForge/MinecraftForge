@@ -5,14 +5,14 @@
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
 -        return super.func_176196_c(p_176196_1_, p_176196_2_) && p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q();
-+    	IBlockState downState = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
++        IBlockState downState = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
 +        return super.func_176196_c(p_176196_1_, p_176196_2_) && (downState.func_185896_q() || downState.func_193401_d(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP) == BlockFaceShape.SOLID);
      }
  
      public void func_189540_a(IBlockState p_189540_1_, World p_189540_2_, BlockPos p_189540_3_, Block p_189540_4_, BlockPos p_189540_5_)
      {
 -        if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).func_185896_q())
-+    	IBlockState downState = p_189540_2_.func_180495_p(p_189540_3_.func_177977_b());
++        IBlockState downState = p_189540_2_.func_180495_p(p_189540_3_.func_177977_b());
 +        if (!downState.func_185896_q() && downState.func_193401_d(p_189540_2_, p_189540_3_.func_177977_b(), EnumFacing.UP) != BlockFaceShape.SOLID)
          {
              this.func_176226_b(p_189540_2_, p_189540_3_, p_189540_1_, 0);
