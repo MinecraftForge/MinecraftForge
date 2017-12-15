@@ -4,7 +4,7 @@
      {
          this.field_147697_e.func_148763_c();
  
-+        Map<ResourceLocation, SoundList> resources = new java.util.IdentityHashMap<>();
++        java.util.List<net.minecraft.util.Tuple<ResourceLocation, SoundList>> resources = new java.util.LinkedList<>();
          for (String s : p_110549_1_.func_135055_a())
          {
              try
@@ -13,7 +13,7 @@
                          for (Entry<String, SoundList> entry : map.entrySet())
                          {
 -                            this.func_147693_a(new ResourceLocation(s, entry.getKey()), entry.getValue());
-+                            resources.put(new ResourceLocation(s, entry.getKey()), entry.getValue());
++                            resources.add(new net.minecraft.util.Tuple<>(new ResourceLocation(s, entry.getKey()), entry.getValue()));
                          }
                      }
                      catch (RuntimeException runtimeexception)
@@ -22,12 +22,12 @@
          }
  
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar resourcesBar = net.minecraftforge.fml.common.ProgressManager.push("Loading sounds", resources.size());
-+        resources.forEach((location, soundList) ->
++        resources.forEach(entry ->
 +        {
-+            resourcesBar.step(location.toString());
++            resourcesBar.step(entry.func_76341_a().toString());
 +            try
 +            {
-+                this.func_147693_a(location, soundList);
++                this.func_147693_a(entry.func_76341_a(), entry.func_76340_b());
 +            }
 +            catch (RuntimeException e)
 +            {
