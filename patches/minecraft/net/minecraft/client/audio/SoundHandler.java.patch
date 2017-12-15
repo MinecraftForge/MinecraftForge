@@ -8,16 +8,16 @@
          for (String s : p_110549_1_.func_135055_a())
          {
              try
-@@ -79,6 +80,8 @@
+@@ -79,7 +80,7 @@
  
                          for (Entry<String, SoundList> entry : map.entrySet())
                          {
+-                            this.func_147693_a(new ResourceLocation(s, entry.getKey()), entry.getValue());
 +                            resources.put(new ResourceLocation(s, entry.getKey()), entry.getValue());
-+                            if (false)
-                             this.func_147693_a(new ResourceLocation(s, entry.getKey()), entry.getValue());
                          }
                      }
-@@ -94,6 +97,20 @@
+                     catch (RuntimeException runtimeexception)
+@@ -94,6 +95,20 @@
              }
          }
  
