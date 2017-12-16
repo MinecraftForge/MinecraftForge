@@ -241,4 +241,74 @@ public abstract class RenderTooltipEvent extends Event
         public PostText(@Nonnull ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int width, int height)
             { super(stack, textLines, x, y, fr, width, height); }
     }
+    
+    /**
+     * This event is fired when the colours for the tooltip background are determined. 
+     */
+    public static class Color extends RenderTooltipEvent
+    {
+        private final int originalBackground;
+        private final int originalBorderStart;
+        private final int originalBorderEnd;
+        private int background;
+        private int borderStart;
+        private int borderEnd;
+
+        public Color(@Nonnull ItemStack stack, @Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer fr, int background, int borderStart,
+                int borderEnd)
+        {
+            super(stack, textLines, x, y, fr);
+            this.originalBackground = background;
+            this.originalBorderStart = borderStart;
+            this.originalBorderEnd = borderEnd;
+            this.background = background;
+            this.borderStart = borderStart;
+            this.borderEnd = borderEnd;
+        }
+
+        public int getBackground()
+        {
+            return background;
+        }
+
+        public void setBackground(int background)
+        {
+            this.background = background;
+        }
+
+        public int getBorderStart()
+        {
+            return borderStart;
+        }
+
+        public void setBorderStart(int borderStart)
+        {
+            this.borderStart = borderStart;
+        }
+
+        public int getBorderEnd()
+        {
+            return borderEnd;
+        }
+
+        public void setBorderEnd(int borderEnd)
+        {
+            this.borderEnd = borderEnd;
+        }
+
+        public int getOriginalBackground()
+        {
+            return originalBackground;
+        }
+
+        public int getOriginalBorderStart()
+        {
+            return originalBorderStart;
+        }
+
+        public int getOriginalBorderEnd()
+        {
+            return originalBorderEnd;
+        }
+    }
 }
