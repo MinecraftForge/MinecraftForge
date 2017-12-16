@@ -25,7 +25,7 @@ public class TooltipColorTest
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void enterDimension(RenderTooltipEvent.Color event)
+    public void getTooltipColor(RenderTooltipEvent.Color event)
     {
         if (event.getStack().getItem() == Items.APPLE)
         {
