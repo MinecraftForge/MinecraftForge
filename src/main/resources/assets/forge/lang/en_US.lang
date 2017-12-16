@@ -15,6 +15,10 @@ commands.forge.entity.list.invalidworld=Could not load world for dimension %d. P
 commands.forge.entity.list.none=No entities found.
 commands.forge.entity.list.single.header=Entity: %s Total: %d
 commands.forge.entity.list.multiple.header=Total: %d
+commands.forge.setdim.usage=Use /forge setdim <entity> <dimension> [<x> <y> <z>]
+commands.forge.setdim.invalid.entity=The entity selected (%s) is not valid.
+commands.forge.setdim.invalid.dim=The dimension ID specified (%d) is not valid.
+commands.forge.setdim.rejected=Dimension change was blocked by a mod.
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 commands.tree_base.invalid_cmd=Invalid subcommand '%s'!
