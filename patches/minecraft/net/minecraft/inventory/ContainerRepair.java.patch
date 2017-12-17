@@ -32,6 +32,15 @@
  
                  if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
                  {
+@@ -213,7 +217,7 @@
+                             l1 = 0;
+                         }
+ 
+-                        if (l1 < itemstack1.func_77960_j())
++                        if (l1 < itemstack1.func_77952_i()) // vanilla uses metadata here instead of damage.
+                         {
+                             itemstack1.func_77964_b(l1);
+                             i += 2;
 @@ -317,6 +321,7 @@
                  i += k;
                  itemstack1.func_151001_c(this.field_82857_m);
