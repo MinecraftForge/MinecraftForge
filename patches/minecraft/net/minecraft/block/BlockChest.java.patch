@@ -14,7 +14,7 @@
      private boolean func_176456_n(World p_176456_1_, BlockPos p_176456_2_)
      {
 -        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).func_185915_l();
-+        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).isSideSolid(p_176456_1_, p_176456_2_.func_177984_a(), EnumFacing.DOWN);
++        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).doesSideBlockChestOpening(p_176456_1_, p_176456_2_.func_177984_a(), EnumFacing.DOWN);
      }
  
      private boolean func_176453_o(World p_176453_1_, BlockPos p_176453_2_)
