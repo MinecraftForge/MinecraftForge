@@ -11,6 +11,30 @@
  
          if (!this.field_146042_b.field_70128_L && this.field_146042_b.func_70089_S() && (flag || flag1) && this.func_70068_e(this.field_146042_b) <= 1024.0D)
          {
+@@ -416,9 +416,9 @@
+                 double d0 = this.field_70165_t + (double)(f1 * (float)this.field_146038_az * 0.1F);
+                 double d1 = (double)((float)MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b) + 1.0F);
+                 double d2 = this.field_70161_v + (double)(f2 * (float)this.field_146038_az * 0.1F);
+-                Block block = worldserver.func_180495_p(new BlockPos(d0, d1 - 1.0D, d2)).func_177230_c();
++                IBlockState state = worldserver.func_180495_p(new BlockPos(d0, d1 - 1.0D, d2));
+ 
+-                if (block == Blocks.field_150355_j || block == Blocks.field_150358_i)
++                if (state.func_185904_a() == Material.field_151586_h)
+                 {
+                     if (this.field_70146_Z.nextFloat() < 0.15F)
+                     {
+@@ -466,9 +466,9 @@
+                 double d4 = this.field_70165_t + (double)(MathHelper.func_76126_a(f6) * f7 * 0.1F);
+                 double d5 = (double)((float)MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b) + 1.0F);
+                 double d6 = this.field_70161_v + (double)(MathHelper.func_76134_b(f6) * f7 * 0.1F);
+-                Block block1 = worldserver.func_180495_p(new BlockPos((int)d4, (int)d5 - 1, (int)d6)).func_177230_c();
++                IBlockState state = worldserver.func_180495_p(new BlockPos((int) d4, (int) d5 - 1, (int) d6));
+ 
+-                if (block1 == Blocks.field_150355_j || block1 == Blocks.field_150358_i)
++                if (state.func_185904_a() == Material.field_151586_h)
+                 {
+                     worldserver.func_175739_a(EnumParticleTypes.WATER_SPLASH, d4, d5, d6, 2 + this.field_70146_Z.nextInt(2), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
+                 }
 @@ -506,6 +506,7 @@
          {
              int i = 0;
