@@ -164,3 +164,20 @@
      }
  
      public static class EntityEggInfo
+@@ -428,5 +449,16 @@
+                 this.field_151512_d = StatList.func_151182_a(this);
+                 this.field_151513_e = StatList.func_151176_b(this);
+             }
++
++            // Forge start
++            public EntityEggInfo(ResourceLocation id, int primaryColor, int secondaryColor, StatBase killEntityStatistic, StatBase entityKilledByStatistic)
++            {
++                this.field_75613_a = id;
++                this.field_75611_b = primaryColor;
++                this.field_75612_c = secondaryColor;
++                this.field_151512_d = killEntityStatistic;
++                this.field_151513_e = entityKilledByStatistic;
++            }
++            // Forge end
+         }
+ }
