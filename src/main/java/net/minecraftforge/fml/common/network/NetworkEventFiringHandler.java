@@ -22,8 +22,6 @@ package net.minecraftforge.fml.common.network;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
-import org.apache.logging.log4j.Level;
-
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -49,6 +47,7 @@ public class NetworkEventFiringHandler extends SimpleChannelInboundHandler<FMLPr
     protected void channelRead0(ChannelHandlerContext ctx, FMLProxyPacket msg) throws Exception
     {
         eventChannel.fireRead(msg,ctx);
+        msg.payload().release();
     }
 
     @Override
@@ -56,6 +55,7 @@ public class NetworkEventFiringHandler extends SimpleChannelInboundHandler<FMLPr
     {
         eventChannel.fireUserEvent(evt,ctx);
     }
+
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
