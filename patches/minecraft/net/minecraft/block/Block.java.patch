@@ -1536,7 +1536,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1230,31 +2556,6 @@
+@@ -1230,31 +2529,6 @@
                  block15.field_149783_u = flag;
              }
          }

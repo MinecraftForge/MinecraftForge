@@ -1,14 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/pathfinding/WalkNodeProcessor.java
 +++ ../src-work/minecraft/net/minecraft/pathfinding/WalkNodeProcessor.java
-@@ -427,6 +427,7 @@
+@@ -417,7 +417,9 @@
+                 {
+                     if (i != 0 || j != 0)
+                     {
+-                        Block block = p_193578_1_.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(i + p_193578_2_, p_193578_3_, j + p_193578_4_)).func_177230_c();
++                        IBlockState state = p_193578_1_.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(i + p_193578_2_, p_193578_3_, j + p_193578_4_));
++                        Block block = state.func_177230_c();
++                        p_193578_5_ = block.getAiEnvironmentalPathNodeType(state, p_193578_1_, blockpos$pooledmutableblockpos, p_193578_5_);
+ 
+                         if (block == Blocks.field_150434_aF)
                          {
-                             p_193578_5_ = PathNodeType.DANGER_FIRE;
-                         }
-+                        else if(block.isBurning(p_193578_1_,blockpos$pooledmutableblockpos)) p_193578_5_ = PathNodeType.DAMAGE_FIRE;
-                     }
-                 }
-             }
-@@ -443,6 +444,9 @@
+@@ -443,6 +445,9 @@
          Block block = iblockstate.func_177230_c();
          Material material = iblockstate.func_185904_a();
  
