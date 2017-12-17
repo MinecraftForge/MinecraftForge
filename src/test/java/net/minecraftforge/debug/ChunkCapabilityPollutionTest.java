@@ -169,7 +169,7 @@ public class ChunkCapabilityPollutionTest {
     {
         if (ENABLE)
         {
-            CapabilityManager.INSTANCE.register(IPollution.class, new PollutionStorage(), DefaultPollution.class);
+            CapabilityManager.INSTANCE.register(IPollution.class, new PollutionStorage(), DefaultPollution::new);
             MinecraftForge.EVENT_BUS.register(new EventBusHandler());
         }
     }
