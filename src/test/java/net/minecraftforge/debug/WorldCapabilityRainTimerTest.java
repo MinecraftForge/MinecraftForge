@@ -36,7 +36,7 @@ public class WorldCapabilityRainTimerTest
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        CapabilityManager.INSTANCE.register(IRainTimer.class, new TimerStorage(), DefaultTimer.class);
+        CapabilityManager.INSTANCE.register(IRainTimer.class, new TimerStorage(), DefaultTimer::new);
         MinecraftForge.EVENT_BUS.register(new NormalEventHandler());
     }
 
