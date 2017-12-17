@@ -264,7 +264,7 @@
      }
  
      public int func_147056_g()
-@@ -1031,6 +1145,38 @@
+@@ -1031,6 +1145,39 @@
          {
              return this.field_148332_b.func_82869_a(p_82869_1_);
          }
@@ -280,11 +280,12 @@
 +            this.field_148332_b.setBackgroundLocation(texture);
 +        }
 +
-+        public void setBackgroundName(String name)
++        public void setBackgroundName(@Nullable String name)
 +        {
 +            this.field_148332_b.setBackgroundName(name);
 +        }
 +
++        @Nullable
 +        public net.minecraft.client.renderer.texture.TextureAtlasSprite getBackgroundSprite()
 +        {
 +            return this.field_148332_b.getBackgroundSprite();

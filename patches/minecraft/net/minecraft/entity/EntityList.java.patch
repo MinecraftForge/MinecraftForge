@@ -12,7 +12,7 @@
  
      @Nullable
      public static ResourceLocation func_191301_a(Entity p_191301_0_)
-@@ -121,37 +119,52 @@
+@@ -121,38 +119,54 @@
      @Nullable
      public static ResourceLocation func_191306_a(Class <? extends Entity > p_191306_0_)
      {
@@ -63,16 +63,18 @@
 +        return entry == null ? -1 : net.minecraftforge.registries.GameData.getEntityRegistry().getID(entry);
 +    }
 +
+     @Nullable
 +    public static Class<? extends Entity> getClass(ResourceLocation key)
 +    {
 +        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES.getValue(key);
 +        return entry == null ? null : entry.getEntityClass();
 +    }
 +
-     @Nullable
++    @Nullable
      public static Entity func_191304_a(@Nullable Class <? extends Entity > p_191304_0_, World p_191304_1_)
      {
-@@ -163,6 +176,8 @@
+         if (p_191304_0_ == null)
+@@ -163,6 +177,8 @@
          {
              try
              {
@@ -81,7 +83,7 @@
                  return p_191304_0_.getConstructor(World.class).newInstance(p_191304_1_);
              }
              catch (Exception exception)
-@@ -177,13 +192,15 @@
+@@ -177,13 +193,15 @@
      @SideOnly(Side.CLIENT)
      public static Entity func_75616_a(int p_75616_0_, World p_75616_1_)
      {
@@ -99,7 +101,7 @@
      }
  
      @Nullable
-@@ -198,7 +215,16 @@
+@@ -198,7 +216,16 @@
          }
          else
          {
@@ -116,7 +118,7 @@
          }
  
          return entity;
-@@ -206,7 +232,7 @@
+@@ -206,7 +233,7 @@
  
      public static Set<ResourceLocation> func_180124_b()
      {
@@ -125,7 +127,7 @@
      }
  
      public static boolean func_180123_a(Entity p_180123_0_, ResourceLocation p_180123_1_)
-@@ -373,7 +399,7 @@
+@@ -373,7 +400,7 @@
          func_191305_a("zombie_horse", 3232308, 9945732);
          func_191305_a("zombie_pigman", 15373203, 5009705);
          func_191305_a("zombie_villager", 5651507, 7969893);
@@ -134,7 +136,7 @@
      }
  
      private static void func_191303_a(int p_191303_0_, String p_191303_1_, Class <? extends Entity > p_191303_2_, String p_191303_3_)
-@@ -394,22 +420,17 @@
+@@ -394,22 +421,17 @@
          else
          {
              ResourceLocation resourcelocation = new ResourceLocation(p_191303_1_);
