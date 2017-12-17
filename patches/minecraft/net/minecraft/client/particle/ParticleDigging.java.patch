@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/net/minecraft/client/particle/ParticleDigging.java
++++ ../src-work/minecraft/net/minecraft/client/particle/ParticleDigging.java
+@@ -33,6 +33,7 @@
+     public ParticleDigging func_174846_a(BlockPos p_174846_1_)
+     {
+         this.field_181019_az = p_174846_1_;
++        if (updateState()) updateTexture();
+ 
+         if (this.field_174847_a.func_177230_c() == Blocks.field_150349_c)
+         {
+@@ -49,6 +50,7 @@
+     {
+         this.field_181019_az = new BlockPos(this.field_187126_f, this.field_187127_g, this.field_187128_h);
+         Block block = this.field_174847_a.func_177230_c();
++        if (updateState()) updateTexture();
+ 
+         if (block == Blocks.field_150349_c)
+         {
+@@ -123,4 +125,29 @@
+                 return (new ParticleDigging(p_178902_2_, p_178902_3_, p_178902_5_, p_178902_7_, p_178902_9_, p_178902_11_, p_178902_13_, Block.func_176220_d(p_178902_15_[0]))).func_174845_l();
+             }
+         }
++
++    private boolean updateState()
++    {
++        boolean flag = false;
++        if (this.field_174847_a == this.field_187122_b.func_180495_p(this.field_181019_az))
++        {
++            flag = true;
++        }
++        else if (this.field_174847_a == this.field_187122_b.func_180495_p(this.field_181019_az.func_177977_b()))
++        {
++            this.field_181019_az = this.field_181019_az.func_177977_b();
++            flag = true;
++        }
++        if (flag)
++        {
++            IBlockState state = this.field_174847_a.func_185899_b(this.field_187122_b, this.field_181019_az);
++            this.field_174847_a = state.func_177230_c().getExtendedState(state, this.field_187122_b, this.field_181019_az);
++        }
++        return flag;
++    }
++
++    private void updateTexture()
++    {
++        this.func_187117_a(Minecraft.func_71410_x().func_175602_ab().func_175023_a().func_178122_a(this.field_174847_a));
++    }
+ }

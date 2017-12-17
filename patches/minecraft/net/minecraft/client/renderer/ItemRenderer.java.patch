@@ -51,7 +51,7 @@
              EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
-@@ -453,11 +456,13 @@
+@@ -453,12 +456,16 @@
                  if (iblockstate1.func_191058_s())
                  {
                      iblockstate = iblockstate1;
@@ -61,11 +61,14 @@
  
              if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE)
              {
-+                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
++                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos)) {
++                iblockstate = iblockstate.func_177230_c().getExtendedState(iblockstate.func_185899_b(this.field_78455_a.field_71441_e, overlayPos), this.field_78455_a.field_71441_e, overlayPos);
                  this.func_178108_a(this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
++                }
              }
          }
-@@ -466,11 +471,13 @@
+ 
+@@ -466,11 +473,13 @@
          {
              if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
              {
@@ -79,7 +82,7 @@
                  this.func_78442_d();
              }
          }
-@@ -592,8 +599,17 @@
+@@ -592,8 +601,17 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);
