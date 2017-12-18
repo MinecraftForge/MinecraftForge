@@ -236,7 +236,7 @@
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
 -                p_82448_4_.func_85176_s().func_180266_a(p_82448_1_, f);
-+                teleporter.placeEntity(p_82448_1_, f);
++                teleporter.placeEntity(p_82448_4_, p_82448_1_, f);
                  p_82448_4_.func_72838_d(p_82448_1_);
                  p_82448_4_.func_72866_a(p_82448_1_, false);
              }

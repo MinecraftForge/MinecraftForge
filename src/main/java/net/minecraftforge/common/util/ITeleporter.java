@@ -20,18 +20,34 @@
 package net.minecraftforge.common.util;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 
 /**
  * Interface for handling the placement of entities during dimension change.
+ *
+ * An implementation of this interface can be used to place the entity
+ * in a safe location, or generate a return portal, for instance.
+ *
+ * See the {@link net.minecraft.world.Teleporter} class, which has
+ * been patched to implement this interface, for a vanilla example.
  */
 public interface ITeleporter
 {
     /**
      * Called to handle placing the entity in the new world.
-     * (e.g. finding a safe place, adding a way back, etc)
      *
+     * The initial position of the entity will be its
+     * position in the origin world, multiplied horizontally
+     * by the computed cross-dimensional movement factor
+     * (see {@link WorldProvider#getMovementFactor()}).
+     *
+     * Note that the supplied entity has not yet been spawned
+     * in the destination world at the time.
+     *
+     * @param world  the entity's destination
      * @param entity the entity to be placed
-     * @param yaw suggested yaw value
+     * @param yaw    the suggested yaw value to apply
      */
-    void placeEntity(Entity entity, float yaw);
+    void placeEntity(World world, Entity entity, float yaw);
 }

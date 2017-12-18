@@ -15,7 +15,7 @@
      }
 +
 +    @Override
-+    public void placeEntity(Entity entity, float yaw)
++    public void placeEntity(World world, Entity entity, float yaw)
 +    {
 +        func_180266_a(entity, yaw);
 +    }
