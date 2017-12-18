@@ -1372,6 +1372,20 @@
 +     {
 +         return null;
 +     }
++     
++     /**
++      * Called when entities are moving to check if they are inside a liquid
++      *
++      * @param world world that is being tested.
++      * @param pos block thats being tested.
++      * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
++      * @return null for default behavior, true if the box is within the material, false if it was not.
++      */
++     @Nullable
++     public Boolean isAABBInsideLiquid(World world, BlockPos pos, AxisAlignedBB boundingBox)
++     {
++         return null;
++     }
 +
 +     /**
 +     * Queries if this block should render in a given layer.
