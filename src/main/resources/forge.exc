@@ -3,8 +3,8 @@ net/minecraft/client/renderer/ItemRenderer.renderItem(Lnet/minecraft/entity/Enti
 net/minecraft/client/renderer/RenderGlobal.drawBlockDamageTexture(Lnet/minecraft/client/renderer/Tessellator;Lnet/minecraft/entity/EntityLivingBase;F)V=|p_72717_1_,p_72717_2_,p_72717_3_
 net/minecraft/client/renderer/entity/RenderItem.renderDroppedItem(Lnet/minecraft/entity/item/EntityItem;Lnet/minecraft/util/IIcon;IFFFFI)V=|p_77020_1_,p_77020_2_,p_77020_3_,p_77020_4_,p_77020_5_,p_77020_6_,p_77020_7_,pass
 net/minecraft/client/renderer/entity/RenderItem.renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V=|p_77015_1_,p_77015_2_,p_77015_3_,p_77015_4_,p_77015_5_,renderEffect
-net/minecraft/server/management/PlayerList.transferPlayerToDimension(Lnet/minecraft/entity/player/EntityPlayerMP;ILnet/minecraft/world/Teleporter;)V=|p_187242_1_,p_187242_2_,teleporter
-net/minecraft/server/management/PlayerList.transferEntityToWorld(Lnet/minecraft/entity/Entity;ILnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/Teleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
+net/minecraft/server/management/PlayerList.transferPlayerToDimension(Lnet/minecraft/entity/player/EntityPlayerMP;ILnet/minecraftforge/common/util/ITeleporter;)V=|p_187242_1_,p_187242_2_,teleporter
+net/minecraft/server/management/PlayerList.transferEntityToWorld(Lnet/minecraft/entity/Entity;ILnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
 net/minecraft/world/World.getBiomeGenForCoordsBody(II)Lnet/minecraft/world/biome/Biome;=|p_72807_1_,p_72807_2_
 net/minecraft/world/World.getSunBrightnessFactor(F)F=|p_72967_1_
 net/minecraft/world/World.getSunBrightnessBody(F)F=|p_72971_1_

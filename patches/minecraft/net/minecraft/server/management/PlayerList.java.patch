@@ -153,7 +153,7 @@
 +        transferPlayerToDimension(p_187242_1_, p_187242_2_, field_72400_f.func_71218_a(p_187242_2_).func_85176_s());
 +    }
 +
-+    public void transferPlayerToDimension(EntityPlayerMP p_187242_1_, int p_187242_2_, net.minecraft.world.Teleporter teleporter)
++    public void transferPlayerToDimension(EntityPlayerMP p_187242_1_, int p_187242_2_, net.minecraftforge.common.util.ITeleporter teleporter)
 +    {
          int i = p_187242_1_.field_71093_bK;
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
@@ -184,7 +184,7 @@
 +    }
 +
 +    @SuppressWarnings("unused")
-+    public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, net.minecraft.world.Teleporter teleporter)
++    public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, net.minecraftforge.common.util.ITeleporter teleporter)
 +    {
 +        net.minecraft.world.WorldProvider pOld = p_82448_3_.field_73011_w;
 +        net.minecraft.world.WorldProvider pNew = p_82448_4_.field_73011_w;
@@ -224,7 +224,7 @@
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
 -                p_82448_4_.func_85176_s().func_180266_a(p_82448_1_, f);
-+                teleporter.func_180266_a(p_82448_1_, f);
++                teleporter.placeEntity(p_82448_1_, f);
                  p_82448_4_.func_72838_d(p_82448_1_);
                  p_82448_4_.func_72866_a(p_82448_1_, false);
              }
