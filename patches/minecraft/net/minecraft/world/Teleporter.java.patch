@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/world/Teleporter.java
++++ ../src-work/minecraft/net/minecraft/world/Teleporter.java
+@@ -15,7 +15,7 @@
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.util.math.MathHelper;
+ 
+-public class Teleporter
++public class Teleporter implements net.minecraftforge.common.util.ITeleporter
+ {
+     protected final WorldServer field_85192_a;
+     protected final Random field_77187_a;
+@@ -428,4 +428,10 @@
+             this.field_85087_d = p_i45747_3_;
+         }
+     }
++
++    @Override
++    public void placeEntity(Entity entity, float yaw)
++    {
++        func_180266_a(entity, yaw);
++    }
+ }
