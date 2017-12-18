@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/state/BlockPistonStructureHelper.java
 +++ ../src-work/minecraft/net/minecraft/block/state/BlockPistonStructureHelper.java
+@@ -65,7 +65,7 @@
+             {
+                 BlockPos blockpos = this.field_177258_e.get(i);
+ 
+-                if (this.field_177261_a.func_180495_p(blockpos).func_177230_c() == Blocks.field_180399_cE && !this.func_177250_b(blockpos))
++                if (this.field_177261_a.func_180495_p(blockpos).func_177230_c().isStickyBlock(this.field_177261_a.func_180495_p(blockpos)) && !this.func_177250_b(blockpos))
+                 {
+                     return false;
+                 }
 @@ -80,7 +80,7 @@
          IBlockState iblockstate = this.field_177261_a.func_180495_p(p_177251_1_);
          Block block = iblockstate.func_177230_c();
@@ -9,7 +18,14 @@
          {
              return true;
          }
-@@ -112,7 +112,7 @@
+@@ -106,13 +106,13 @@
+             }
+             else
+             {
+-                while (block == Blocks.field_180399_cE)
++                while (block.isStickyBlock(iblockstate))
+                 {
+                     BlockPos blockpos = p_177251_1_.func_177967_a(this.field_177257_d.func_176734_d(), i);
                      iblockstate = this.field_177261_a.func_180495_p(blockpos);
                      block = iblockstate.func_177230_c();
  
@@ -18,6 +34,15 @@
                      {
                          break;
                      }
+@@ -148,7 +148,7 @@
+                         {
+                             BlockPos blockpos2 = this.field_177258_e.get(l);
+ 
+-                            if (this.field_177261_a.func_180495_p(blockpos2).func_177230_c() == Blocks.field_180399_cE && !this.func_177250_b(blockpos2))
++                            if (this.field_177261_a.func_180495_p(blockpos2).func_177230_c().isStickyBlock(this.field_177261_a.func_180495_p(blockpos2)) && !this.func_177250_b(blockpos2))
+                             {
+                                 return false;
+                             }
 @@ -159,7 +159,7 @@
  
                      iblockstate = this.field_177261_a.func_180495_p(blockpos1);

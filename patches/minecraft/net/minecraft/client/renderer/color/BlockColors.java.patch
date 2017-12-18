@@ -10,7 +10,13 @@
  
      public static BlockColors func_186723_a()
      {
-@@ -164,7 +165,7 @@
+@@ -159,12 +160,13 @@
+                 return p_186720_2_ != null && p_186720_3_ != null ? 2129968 : 7455580;
+             }
+         }, Blocks.field_150392_bi);
++        net.minecraftforge.client.ForgeHooksClient.onBlockColorsInit(blockcolors);
+         return blockcolors;
+     }
  
      public int func_189991_a(IBlockState p_189991_1_, World p_189991_2_, BlockPos p_189991_3_)
      {
@@ -19,7 +25,7 @@
  
          if (iblockcolor != null)
          {
-@@ -179,7 +180,7 @@
+@@ -179,7 +181,7 @@
  
      public int func_186724_a(IBlockState p_186724_1_, @Nullable IBlockAccess p_186724_2_, @Nullable BlockPos p_186724_3_, int p_186724_4_)
      {
@@ -28,7 +34,7 @@
          return iblockcolor == null ? -1 : iblockcolor.func_186720_a(p_186724_1_, p_186724_2_, p_186724_3_, p_186724_4_);
      }
  
-@@ -187,7 +188,9 @@
+@@ -187,7 +189,9 @@
      {
          for (Block block : p_186722_2_)
          {
