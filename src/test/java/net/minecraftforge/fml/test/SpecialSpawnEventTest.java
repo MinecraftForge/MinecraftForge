@@ -13,28 +13,33 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = SpecialSpawnEventTest.MOD_ID, version = "1.0", acceptableRemoteVersions="*")
 public class SpecialSpawnEventTest {
-    private static final boolean ENABLED = true; // TODO FALSE
+    private static final boolean ENABLED = false;
     public static final String MOD_ID = "spawnerduratest";
 
     @EventHandler
     public void onPreInit(FMLPreInitializationEvent e)
     {
-        if (ENABLED) {
+        if (ENABLED)
+        {
             MinecraftForge.EVENT_BUS.register(this);
         }
 
     }
 
     @SubscribeEvent
-    public void specialSpawnEvent(LivingSpawnEvent.SpecialSpawn e) {
+    public void specialSpawnEvent(LivingSpawnEvent.SpecialSpawn e)
+    {
         MobSpawnerBaseLogic spawner = e.getSpawner();
         if (spawner == null) return;
-        if (spawner.getSpawnerEntity() != null) {
+        if (spawner.getSpawnerEntity() != null)
+        {
             Entity spawn = new EntityChicken(e.getWorld());
             spawn.copyLocationAndAnglesFrom(spawner.getSpawnerEntity());
             e.getWorld().spawnEntity(spawn);
             spawner.getSpawnerEntity().setDead();
-        } else {
+        }
+        else
+        {
              e.getWorld().setBlockState(spawner.getSpawnerPosition(), Blocks.FIRE.getDefaultState());
         }
     }

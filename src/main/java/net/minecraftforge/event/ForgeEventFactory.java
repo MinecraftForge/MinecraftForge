@@ -177,19 +177,22 @@ public class ForgeEventFactory
     }
 
     /**
-     * @deprecated use {@link #canEntitySpawn(EntityLiving, World, float, float, float, boolean)} instead
+     * @deprecated use {@link #canEntitySpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)} instead
      */
-    @Deprecated
+    @Deprecated // TODO remove in 1.13
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
     {
         return canEntitySpawn(entity, world, x, y, z, true);
     }
-
+    /**
+     * @deprecated use {@link #canEntitySpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)} instead
+     */
+    @Deprecated // Still used in base game for non-spawner spawns, which is safe
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner)
     {
         if (entity == null)
             return Result.DEFAULT;
-        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z, isSpawner);
+        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z, isSpawner); // TODO: replace isSpawner with null in 1.13
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
     }
@@ -216,7 +219,10 @@ public class ForgeEventFactory
         }
     }
 
-    @Deprecated
+    /**
+     * @deprecated Use {@link #canEntitySpawnSpawner(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
+     */
+    @Deprecated // TODO remove in 1.13
     public static boolean canEntitySpawnSpawner(EntityLiving entity, World world, float x, float y, float z)
     {
         Result result = canEntitySpawn(entity, world, x, y, z, true);
@@ -230,10 +236,13 @@ public class ForgeEventFactory
         }
     }
 
-    @Deprecated
+    /**
+     * @deprecated Use {@link #canEntitySpawnSpawner(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
+     */
+    @Deprecated // Still used in base game for non-spawner spawns, which is safe
     public static boolean doSpecialSpawn(EntityLiving entity, World world, float x, float y, float z)
     {
-        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z));
+        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, null));
     }
 
     public static boolean doSpecialSpawn(EntityLiving entity, World world, float x, float y, float z, MobSpawnerBaseLogic spawner)

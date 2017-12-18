@@ -13,12 +13,11 @@
                              ((EntityLiving)entity).func_180482_a(world.func_175649_E(new BlockPos(entity)), (IEntityLivingData)null);
                          }
  
-@@ -296,6 +297,8 @@
- 
-     public abstract BlockPos func_177221_b();
- 
-+    @Nullable public Entity getSpawnerEntity() { return null; }
-+
-     @SideOnly(Side.CLIENT)
-     public double func_177222_d()
+@@ -307,4 +308,7 @@
      {
+         return this.field_98284_d;
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    @Nullable public Entity getSpawnerEntity() { return null; }
+ }
