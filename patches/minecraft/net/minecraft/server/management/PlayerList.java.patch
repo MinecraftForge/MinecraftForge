@@ -146,11 +146,17 @@
          return entityplayermp;
      }
  
-@@ -556,15 +601,20 @@
+@@ -556,15 +601,26 @@
  
      public void func_187242_a(EntityPlayerMP p_187242_1_, int p_187242_2_)
      {
 +        transferPlayerToDimension(p_187242_1_, p_187242_2_, field_72400_f.func_71218_a(p_187242_2_).func_85176_s());
++    }
++
++    // TODO: Remove (1.13)
++    public void transferPlayerToDimension(EntityPlayerMP p_187242_1_, int p_187242_2_, net.minecraft.world.Teleporter teleporter)
++    {
++        transferPlayerToDimension(p_187242_1_, p_187242_2_, (net.minecraftforge.common.util.ITeleporter) teleporter);
 +    }
 +
 +    public void transferPlayerToDimension(EntityPlayerMP p_187242_1_, int p_187242_2_, net.minecraftforge.common.util.ITeleporter teleporter)
@@ -169,13 +175,14 @@
          this.func_72375_a(p_187242_1_, worldserver);
          p_187242_1_.field_71135_a.func_147364_a(p_187242_1_.field_70165_t, p_187242_1_.field_70163_u, p_187242_1_.field_70161_v, p_187242_1_.field_70177_z, p_187242_1_.field_70125_A);
          p_187242_1_.field_71134_c.func_73080_a(worldserver1);
-@@ -576,17 +626,27 @@
+@@ -576,17 +632,33 @@
          {
              p_187242_1_.field_71135_a.func_147359_a(new SPacketEntityEffect(p_187242_1_.func_145782_y(), potioneffect));
          }
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(p_187242_1_, i, p_187242_2_);
      }
  
++    @SuppressWarnings("unused")
      public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)
      {
 -        double d0 = p_82448_1_.field_70165_t;
@@ -183,7 +190,12 @@
 +        transferEntityToWorld(p_82448_1_, p_82448_2_, p_82448_3_, p_82448_4_, p_82448_4_.func_85176_s());
 +    }
 +
-+    @SuppressWarnings("unused")
++    // TODO: Remove (1.13)
++    public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, net.minecraft.world.Teleporter teleporter)
++    {
++        transferEntityToWorld(p_82448_1_, p_82448_2_, p_82448_3_, p_82448_4_, (net.minecraftforge.common.util.ITeleporter) teleporter);
++    }
++
 +    public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, net.minecraftforge.common.util.ITeleporter teleporter)
 +    {
 +        net.minecraft.world.WorldProvider pOld = p_82448_3_.field_73011_w;
@@ -200,7 +212,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 / 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 / 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -597,7 +657,7 @@
+@@ -597,7 +669,7 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -209,7 +221,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 * 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 * 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -608,7 +668,8 @@
+@@ -608,7 +680,8 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -219,7 +231,7 @@
          {
              BlockPos blockpos;
  
-@@ -643,7 +704,7 @@
+@@ -643,7 +716,7 @@
              if (p_82448_1_.func_70089_S())
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
