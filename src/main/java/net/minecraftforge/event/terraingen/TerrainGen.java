@@ -19,18 +19,19 @@
 
 package net.minecraftforge.event.terraingen;
 
-import java.util.Random;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraftforge.common.MapGenStructureManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+
+import java.util.Random;
 
 public abstract class TerrainGen
 {
@@ -74,5 +75,12 @@ public abstract class TerrainGen
         SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
+    }
+
+    public static <T extends IChunkGenerator> MapGenStructureManager getAddedStructures(Class<T> generatorClazz)
+    {
+        InitStructureGensEvent<T> event = new InitStructureGensEvent<>(generatorClazz);
+        MinecraftForge.TERRAIN_GEN_BUS.post(event);
+        return new MapGenStructureManager(event.getStructuresImmutable());
     }
 }

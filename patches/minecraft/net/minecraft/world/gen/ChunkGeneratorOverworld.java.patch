@@ -17,7 +17,7 @@
          this.field_185995_n = p_i46668_1_;
          this.field_185996_o = p_i46668_4_;
          this.field_185997_p = p_i46668_1_.func_72912_H().func_76067_t();
-@@ -90,6 +100,17 @@
+@@ -90,6 +100,18 @@
              this.field_186001_t = this.field_186000_s.field_177778_E ? Blocks.field_150353_l.func_176223_P() : Blocks.field_150355_j.func_176223_P();
              p_i46668_1_.func_181544_b(this.field_186000_s.field_177841_q);
          }
@@ -32,10 +32,11 @@
 +        this.field_185983_b = ctx.getScale();
 +        this.field_185984_c = ctx.getDepth();
 +        this.field_185985_d = ctx.getForest();
++        this.structureManager = net.minecraftforge.event.terraingen.TerrainGen.getAddedStructures(ChunkGeneratorOverworld.class);
      }
  
      public void func_185976_a(int p_185976_1_, int p_185976_2_, ChunkPrimer p_185976_3_)
-@@ -163,6 +184,7 @@
+@@ -163,6 +185,7 @@
  
      public void func_185977_a(int p_185977_1_, int p_185977_2_, ChunkPrimer p_185977_3_, Biome[] p_185977_4_)
      {
@@ -43,7 +44,15 @@
          double d0 = 0.03125D;
          this.field_186002_u = this.field_185994_m.func_151599_a(this.field_186002_u, (double)(p_185977_1_ * 16), (double)(p_185977_2_ * 16), 16, 16, 0.0625D, 0.0625D, 1.0D);
  
-@@ -370,6 +392,8 @@
+@@ -225,6 +248,7 @@
+             {
+                 this.field_191060_C.func_186125_a(this.field_185995_n, p_185932_1_, p_185932_2_, chunkprimer);
+             }
++            structureManager.generate(this.field_185995_n, p_185932_1_, p_185932_2_, chunkprimer);
+         }
+ 
+         Chunk chunk = new Chunk(this.field_185995_n, chunkprimer, p_185932_1_, p_185932_2_);
+@@ -370,6 +394,8 @@
          boolean flag = false;
          ChunkPos chunkpos = new ChunkPos(p_185931_1_, p_185931_2_);
  
@@ -52,7 +61,11 @@
          if (this.field_185996_o)
          {
              if (this.field_186000_s.field_177829_w)
-@@ -404,6 +428,7 @@
+@@ -401,9 +427,11 @@
+             {
+                 this.field_191060_C.func_175794_a(this.field_185995_n, this.field_185990_i, chunkpos);
+             }
++            structureManager.generateStructure(this.field_185995_n, this.field_185990_i, chunkpos);
          }
  
          if (biome != Biomes.field_76769_d && biome != Biomes.field_76786_s && this.field_186000_s.field_177781_A && !flag && this.field_185990_i.nextInt(this.field_186000_s.field_177782_B) == 0)
@@ -60,7 +73,7 @@
          {
              int i1 = this.field_185990_i.nextInt(16) + 8;
              int j1 = this.field_185990_i.nextInt(256);
-@@ -412,6 +437,7 @@
+@@ -412,6 +440,7 @@
          }
  
          if (!flag && this.field_185990_i.nextInt(this.field_186000_s.field_177777_D / 10) == 0 && this.field_186000_s.field_177783_C)
@@ -68,7 +81,7 @@
          {
              int i2 = this.field_185990_i.nextInt(16) + 8;
              int l2 = this.field_185990_i.nextInt(this.field_185990_i.nextInt(248) + 8);
-@@ -424,6 +450,7 @@
+@@ -424,6 +453,7 @@
          }
  
          if (this.field_186000_s.field_177837_s)
@@ -76,7 +89,7 @@
          {
              for (int j2 = 0; j2 < this.field_186000_s.field_177835_t; ++j2)
              {
-@@ -435,9 +462,12 @@
+@@ -435,9 +465,12 @@
          }
  
          biome.func_180624_a(this.field_185995_n, this.field_185990_i, new BlockPos(i, 0, j));
@@ -89,7 +102,7 @@
          for (int k2 = 0; k2 < 16; ++k2)
          {
              for (int j3 = 0; j3 < 16; ++j3)
-@@ -456,7 +486,10 @@
+@@ -456,7 +489,10 @@
                  }
              }
          }
@@ -100,3 +113,42 @@
          BlockFalling.field_149832_M = false;
      }
  
+@@ -487,6 +523,7 @@
+             {
+                 return this.field_185980_B.func_175799_b();
+             }
++            if(structureManager.shouldSpawn(p_177458_1_, p_177458_2_)) return structureManager.getSpawns(this.field_185995_n, p_177458_1_, p_177458_2_);
+         }
+ 
+         return biome.func_76747_a(p_177458_1_);
+@@ -520,7 +557,7 @@
+         }
+         else
+         {
+-            return "Temple".equals(p_193414_2_) && this.field_186007_z != null ? this.field_186007_z.func_175795_b(p_193414_3_) : false;
++            return "Temple".equals(p_193414_2_) && this.field_186007_z != null ? this.field_186007_z.func_175795_b(p_193414_3_) : structureManager.isInsideStructure(p_193414_1_, p_193414_2_, p_193414_3_);
+         }
+     }
+ 
+@@ -553,7 +590,7 @@
+         }
+         else
+         {
+-            return "Temple".equals(p_180513_2_) && this.field_186007_z != null ? this.field_186007_z.func_180706_b(p_180513_1_, p_180513_3_, p_180513_4_) : null;
++            return "Temple".equals(p_180513_2_) && this.field_186007_z != null ? this.field_186007_z.func_180706_b(p_180513_1_, p_180513_3_, p_180513_4_) : structureManager.getNearestStructurePos(p_180513_1_, p_180513_2_, p_180513_3_, p_180513_4_);
+         }
+     }
+ 
+@@ -590,6 +627,12 @@
+             {
+                 this.field_191060_C.func_186125_a(this.field_185995_n, p_180514_2_, p_180514_3_, (ChunkPrimer)null);
+             }
++            structureManager.generate(this.field_185995_n, p_180514_2_, p_180514_3_, null);
+         }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++
++    private final net.minecraftforge.common.MapGenStructureManager structureManager;
++    /* ========================================= FORGE END ======================================*/
+ }

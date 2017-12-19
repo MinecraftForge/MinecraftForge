@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorHell.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorHell.java
-@@ -77,6 +77,19 @@
+@@ -77,6 +77,20 @@
          this.field_185946_g = new NoiseGeneratorOctaves(this.field_185954_p, 10);
          this.field_185947_h = new NoiseGeneratorOctaves(this.field_185954_p, 16);
          p_i45637_1_.func_181544_b(63);
@@ -17,10 +17,11 @@
 +        this.field_185947_h = ctx.getDepth();
 +        this.field_73172_c = (MapGenNetherBridge)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73172_c, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_BRIDGE);
 +        this.field_185939_I = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_185939_I, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_CAVE);
++        this.structureManager = net.minecraftforge.event.terraingen.TerrainGen.getAddedStructures(ChunkGeneratorHell.class);
      }
  
      public void func_185936_a(int p_185936_1_, int p_185936_2_, ChunkPrimer p_185936_3_)
-@@ -155,6 +168,7 @@
+@@ -155,6 +169,7 @@
  
      public void func_185937_b(int p_185937_1_, int p_185937_2_, ChunkPrimer p_185937_3_)
      {
@@ -28,7 +29,15 @@
          int i = this.field_185952_n.func_181545_F() + 1;
          double d0 = 0.03125D;
          this.field_73185_q = this.field_73177_m.func_76304_a(this.field_73185_q, p_185937_1_ * 16, p_185937_2_ * 16, 0, 16, 16, 1, 0.03125D, 0.03125D, 1.0D);
-@@ -277,6 +291,10 @@
+@@ -255,6 +270,7 @@
+         if (this.field_185953_o)
+         {
+             this.field_73172_c.func_186125_a(this.field_185952_n, p_185932_1_, p_185932_2_, chunkprimer);
++            this.structureManager.generate(this.field_185952_n, p_185932_1_, p_185932_2_, chunkprimer);
+         }
+ 
+         Chunk chunk = new Chunk(this.field_185952_n, chunkprimer, p_185932_1_, p_185932_2_);
+@@ -277,6 +293,10 @@
              p_185938_1_ = new double[p_185938_5_ * p_185938_6_ * p_185938_7_];
          }
  
@@ -39,7 +48,7 @@
          double d0 = 684.412D;
          double d1 = 2053.236D;
          this.field_73168_g = this.field_185946_g.func_76304_a(this.field_73168_g, p_185938_2_, p_185938_3_, p_185938_4_, p_185938_5_, 1, p_185938_7_, 1.0D, 0.0D, 1.0D);
-@@ -358,6 +376,7 @@
+@@ -358,23 +378,29 @@
      public void func_185931_b(int p_185931_1_, int p_185931_2_)
      {
          BlockFalling.field_149832_M = true;
@@ -47,9 +56,10 @@
          int i = p_185931_1_ * 16;
          int j = p_185931_2_ * 16;
          BlockPos blockpos = new BlockPos(i, 0, j);
-@@ -365,16 +384,20 @@
+         Biome biome = this.field_185952_n.func_180494_b(blockpos.func_177982_a(16, 0, 16));
          ChunkPos chunkpos = new ChunkPos(p_185931_1_, p_185931_2_);
          this.field_73172_c.func_175794_a(this.field_185952_n, this.field_185954_p, chunkpos);
++        this.structureManager.generateStructure(this.field_185952_n, this.field_185954_p, chunkpos);
  
 +        if (net.minecraftforge.event.terraingen.TerrainGen.populate(this, this.field_185952_n, this.field_185954_p, p_185931_1_, p_185931_2_, false, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.NETHER_LAVA))
          for (int k = 0; k < 8; ++k)
@@ -68,7 +78,7 @@
          for (int j1 = 0; j1 < this.field_185954_p.nextInt(this.field_185954_p.nextInt(10) + 1); ++j1)
          {
              this.field_177469_u.func_180709_b(this.field_185952_n, this.field_185954_p, blockpos.func_177982_a(this.field_185954_p.nextInt(16) + 8, this.field_185954_p.nextInt(120) + 4, this.field_185954_p.nextInt(16) + 8));
-@@ -384,7 +407,13 @@
+@@ -384,7 +410,13 @@
          {
              this.field_177468_v.func_180709_b(this.field_185952_n, this.field_185954_p, blockpos.func_177982_a(this.field_185954_p.nextInt(16) + 8, this.field_185954_p.nextInt(128), this.field_185954_p.nextInt(16) + 8));
          }
@@ -82,7 +92,7 @@
          if (this.field_185954_p.nextBoolean())
          {
              this.field_177471_z.func_180709_b(this.field_185952_n, this.field_185954_p, blockpos.func_177982_a(this.field_185954_p.nextInt(16) + 8, this.field_185954_p.nextInt(128), this.field_185954_p.nextInt(16) + 8));
-@@ -394,7 +423,10 @@
+@@ -394,7 +426,10 @@
          {
              this.field_177465_A.func_180709_b(this.field_185952_n, this.field_185954_p, blockpos.func_177982_a(this.field_185954_p.nextInt(16) + 8, this.field_185954_p.nextInt(128), this.field_185954_p.nextInt(16) + 8));
          }
@@ -93,7 +103,7 @@
          for (int l1 = 0; l1 < 16; ++l1)
          {
              this.field_177467_w.func_180709_b(this.field_185952_n, this.field_185954_p, blockpos.func_177982_a(this.field_185954_p.nextInt(16), this.field_185954_p.nextInt(108) + 10, this.field_185954_p.nextInt(16)));
-@@ -402,17 +434,23 @@
+@@ -402,17 +437,23 @@
  
          int i2 = this.field_185952_n.func_181545_F() / 2 + 1;
  
@@ -118,3 +128,36 @@
          BlockFalling.field_149832_M = false;
      }
  
+@@ -435,6 +476,7 @@
+                 return this.field_73172_c.func_75059_a();
+             }
+         }
++        if(structureManager.shouldSpawn(p_177458_1_, p_177458_2_)) return structureManager.getSpawns(this.field_185952_n, p_177458_1_, p_177458_2_);
+ 
+         Biome biome = this.field_185952_n.func_180494_b(p_177458_2_);
+         return biome.func_76747_a(p_177458_1_);
+@@ -443,16 +485,22 @@
+     @Nullable
+     public BlockPos func_180513_a(World p_180513_1_, String p_180513_2_, BlockPos p_180513_3_, boolean p_180513_4_)
+     {
+-        return "Fortress".equals(p_180513_2_) && this.field_73172_c != null ? this.field_73172_c.func_180706_b(p_180513_1_, p_180513_3_, p_180513_4_) : null;
++        return "Fortress".equals(p_180513_2_) && this.field_73172_c != null ? this.field_73172_c.func_180706_b(p_180513_1_, p_180513_3_, p_180513_4_) : structureManager.getNearestStructurePos(p_180513_1_, p_180513_2_, p_180513_3_, p_180513_4_);
+     }
+ 
+     public boolean func_193414_a(World p_193414_1_, String p_193414_2_, BlockPos p_193414_3_)
+     {
+-        return "Fortress".equals(p_193414_2_) && this.field_73172_c != null ? this.field_73172_c.func_175795_b(p_193414_3_) : false;
++        return "Fortress".equals(p_193414_2_) && this.field_73172_c != null ? this.field_73172_c.func_175795_b(p_193414_3_) : structureManager.isInsideStructure(p_193414_1_, p_193414_2_, p_193414_3_);
+     }
+ 
+     public void func_180514_a(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_)
+     {
+         this.field_73172_c.func_186125_a(this.field_185952_n, p_180514_2_, p_180514_3_, (ChunkPrimer)null);
++        structureManager.generate(this.field_185952_n, p_180514_2_, p_180514_3_, null);
+     }
++
++    /* ======================================== FORGE START =====================================*/
++
++    private final net.minecraftforge.common.MapGenStructureManager structureManager;
++    /* ========================================= FORGE END ======================================*/
+ }
