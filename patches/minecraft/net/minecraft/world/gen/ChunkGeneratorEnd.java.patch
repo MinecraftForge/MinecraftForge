@@ -36,7 +36,7 @@
          for (int i = 0; i < 16; ++i)
          {
              for (int j = 0; j < 16; ++j)
-@@ -173,6 +188,7 @@
+@@ -173,12 +188,14 @@
  
      public Chunk func_185932_a(int p_185932_1_, int p_185932_2_)
      {
@@ -44,7 +44,14 @@
          this.field_73220_k.setSeed((long)p_185932_1_ * 341873128712L + (long)p_185932_2_ * 132897987541L);
          ChunkPrimer chunkprimer = new ChunkPrimer();
          this.field_73231_z = this.field_73230_p.func_72959_q().func_76933_b(this.field_73231_z, p_185932_1_ * 16, p_185932_2_ * 16, 16, 16);
-@@ -254,6 +270,10 @@
+         this.func_180518_a(p_185932_1_, p_185932_2_, chunkprimer);
+         this.func_185962_a(chunkprimer);
+ 
++        net.minecraftforge.event.ForgeEventFactory.onChunkGenerate(this, this.field_73230_p, p_185932_1_, p_185932_2_, chunkprimer);
+         if (this.field_73229_q)
+         {
+             this.field_185972_n.func_186125_a(this.field_73230_p, p_185932_1_, p_185932_2_, chunkprimer);
+@@ -254,6 +271,10 @@
  
      private double[] func_185963_a(double[] p_185963_1_, int p_185963_2_, int p_185963_3_, int p_185963_4_, int p_185963_5_, int p_185963_6_, int p_185963_7_)
      {
@@ -55,7 +62,7 @@
          if (p_185963_1_ == null)
          {
              p_185963_1_ = new double[p_185963_5_ * p_185963_6_ * p_185963_7_];
-@@ -326,6 +346,7 @@
+@@ -326,6 +347,7 @@
      public void func_185931_b(int p_185931_1_, int p_185931_2_)
      {
          BlockFalling.field_149832_M = true;
@@ -63,7 +70,7 @@
          BlockPos blockpos = new BlockPos(p_185931_1_ * 16, 0, p_185931_2_ * 16);
  
          if (this.field_73229_q)
-@@ -394,6 +415,7 @@
+@@ -394,6 +416,7 @@
              }
          }
  
@@ -71,3 +78,32 @@
          BlockFalling.field_149832_M = false;
      }
  
+@@ -404,21 +427,28 @@
+ 
+     public List<Biome.SpawnListEntry> func_177458_a(EnumCreatureType p_177458_1_, BlockPos p_177458_2_)
+     {
++        net.minecraftforge.event.terraingen.ChunkGeneratorEvent.GetPossibleCreatures event = new net.minecraftforge.event.terraingen.ChunkGeneratorEvent.GetPossibleCreatures(this, field_73230_p, p_177458_1_, p_177458_2_);
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return event.getPossibleCreatures();
+         return this.field_73230_p.func_180494_b(p_177458_2_).func_76747_a(p_177458_1_);
+     }
+ 
+     @Nullable
+     public BlockPos func_180513_a(World p_180513_1_, String p_180513_2_, BlockPos p_180513_3_, boolean p_180513_4_)
+     {
++        net.minecraftforge.event.terraingen.ChunkGeneratorEvent.FindStructure event = new net.minecraftforge.event.terraingen.ChunkGeneratorEvent.FindStructure(this, p_180513_1_, p_180513_2_, p_180513_3_, p_180513_4_);
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return event.getFoundPos();
+         return "EndCity".equals(p_180513_2_) && this.field_185972_n != null ? this.field_185972_n.func_180706_b(p_180513_1_, p_180513_3_, p_180513_4_) : null;
+     }
+ 
+     public boolean func_193414_a(World p_193414_1_, String p_193414_2_, BlockPos p_193414_3_)
+     {
++        net.minecraftforge.event.terraingen.ChunkGeneratorEvent.StructureCheck event = new net.minecraftforge.event.terraingen.ChunkGeneratorEvent.StructureCheck(this, field_73230_p, p_193414_2_, p_193414_3_);
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return event.isInStructure();
+         return "EndCity".equals(p_193414_2_) && this.field_185972_n != null ? this.field_185972_n.func_175795_b(p_193414_3_) : false;
+     }
+ 
+     public void func_180514_a(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_)
+     {
++        net.minecraftforge.event.ForgeEventFactory.onChunkGenerate(this, this.field_73230_p, p_180514_2_, p_180514_3_, (ChunkPrimer) null);
+     }
+ }
