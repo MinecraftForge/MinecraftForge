@@ -9,7 +9,7 @@
  {
      protected final WorldServer field_85192_a;
      protected final Random field_77187_a;
-@@ -428,4 +428,10 @@
+@@ -428,4 +428,13 @@
              this.field_85087_d = p_i45747_3_;
          }
      }
@@ -17,6 +17,9 @@
 +    @Override
 +    public void placeEntity(World world, Entity entity, float yaw)
 +    {
-+        func_180266_a(entity, yaw);
++        if (entity instanceof EntityPlayerMP)
++            func_180266_a(entity, yaw);
++        else
++            func_180620_b(entity, yaw);
 +    }
  }
