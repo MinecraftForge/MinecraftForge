@@ -156,8 +156,17 @@ public class MapGenStructureManager
      */
     public interface ISpawningStructure
     {
+        /**
+         * If you want to replace creature spawn list of the biome with your own list within the bounding box of your structure.
+         */
         boolean shouldSpawn(EnumCreatureType creatureType);
 
+        /**
+         * Called when shouldSpawn returns true.
+         *
+         * Used instead of the biome's creature spawn list
+         */
+        @Nonnull
         List<Biome.SpawnListEntry> getSpawns(World world, EnumCreatureType creatureType, BlockPos pos);
     }
 
