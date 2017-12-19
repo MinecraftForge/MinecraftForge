@@ -533,6 +533,9 @@ public enum B3DLoader implements ICustomModelLoader
         @Override
         public ModelWrapper process(ImmutableMap<String, String> data)
         {
+            ImmutableSet<String> newMeshes = this.meshes;
+            int newDefaultKey = this.defaultKey;
+            boolean hasChanged = false;
             if(data.containsKey("mesh"))
             {
                 JsonElement e = new JsonParser().parse(data.get("mesh"));
@@ -555,7 +558,8 @@ public enum B3DLoader implements ICustomModelLoader
                             return this;
                         }
                     }
-                    return new ModelWrapper(modelLocation, model, builder.build(), smooth, gui3d, defaultKey, textures);
+                    newMeshes = builder.build();
+                    hasChanged = true;
                 }
                 else
                 {
@@ -568,7 +572,8 @@ public enum B3DLoader implements ICustomModelLoader
                 JsonElement e = new JsonParser().parse(data.get("key"));
                 if(e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber())
                 {
-                    return new ModelWrapper(modelLocation, model, meshes, smooth, gui3d, e.getAsNumber().intValue(), textures);
+                    newDefaultKey = e.getAsNumber().intValue();
+                    hasChanged = true;
                 }
                 else
                 {
@@ -576,7 +581,7 @@ public enum B3DLoader implements ICustomModelLoader
                     return this;
                 }
             }
-            return this;
+            return hasChanged ? new ModelWrapper(modelLocation, model, newMeshes, smooth, gui3d, newDefaultKey, textures) : this;
         }
 
         public Optional<IClip> getClip(String name)
