@@ -436,6 +436,13 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
+    @Nonnull
+    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face)
+    {
+        return BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
     public boolean shouldSideBeRendered(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side)
     {
         IBlockState neighbor = world.getBlockState(pos.offset(side));
