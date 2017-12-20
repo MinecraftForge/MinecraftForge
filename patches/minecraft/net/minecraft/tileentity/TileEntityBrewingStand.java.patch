@@ -1,6 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -153,6 +153,7 @@
+@@ -72,9 +72,10 @@
+     {
+         ItemStack itemstack = this.field_145945_j.get(4);
+ 
+-        if (this.field_184278_m <= 0 && itemstack.func_77973_b() == Items.field_151065_br)
++        int fuel = net.minecraftforge.event.ForgeEventFactory.getBrewingStandFuel(itemstack);
++        if (this.field_184278_m <= 0 && fuel > 0)
+         {
+-            this.field_184278_m = 20;
++            this.field_184278_m = fuel;
+             itemstack.func_190918_g(1);
+             this.func_70296_d();
+         }
+@@ -153,6 +154,7 @@
  
      private boolean func_145934_k()
      {
@@ -8,7 +21,7 @@
          ItemStack itemstack = this.field_145945_j.get(3);
  
          if (itemstack.func_190926_b())
-@@ -181,19 +182,17 @@
+@@ -181,19 +183,17 @@
  
      private void func_145940_l()
      {
@@ -32,7 +45,7 @@
  
              if (itemstack.func_190926_b())
              {
-@@ -207,6 +206,7 @@
+@@ -207,6 +207,7 @@
  
          this.field_145945_j.set(3, itemstack);
          this.field_145850_b.func_175718_b(1035, blockpos, 0);
@@ -40,7 +53,7 @@
      }
  
      public static void func_189675_a(DataFixer p_189675_0_)
-@@ -296,7 +296,7 @@
+@@ -296,7 +297,7 @@
      {
          if (p_94041_1_ == 3)
          {
@@ -49,7 +62,12 @@
          }
          else
          {
-@@ -308,7 +308,7 @@
+@@ -304,11 +305,11 @@
+ 
+             if (p_94041_1_ == 4)
+             {
+-                return item == Items.field_151065_br;
++                return net.minecraftforge.event.ForgeEventFactory.getBrewingStandFuel(p_94041_2_) > 0;
              }
              else
              {
@@ -58,7 +76,7 @@
              }
          }
      }
-@@ -377,6 +377,27 @@
+@@ -377,6 +378,27 @@
          }
      }
  
