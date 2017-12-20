@@ -152,6 +152,8 @@ public class MapGenStructureManager
         /**
          * Collect the list of creatures of the given type that should spawn within the structures bounding box.
          * <p>
+         * If this method is called repeatedly you should always return exactly the same (equals) objects otherwise the spawning will not work.
+         *
          * @param spawnEntries Contains the biome's default spawn entries. Modify this list to add your own spawns and/or clear the biome's ones.
          */
         void getSpawns(List<Biome.SpawnListEntry> spawnEntries, World world, EnumCreatureType creatureType, BlockPos pos);

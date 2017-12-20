@@ -1,10 +1,8 @@
 package net.minecraftforge.debug;
 
+import com.google.common.collect.Lists;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.monster.EntityGiantZombie;
-import net.minecraft.entity.monster.EntitySilverfish;
-import net.minecraft.entity.monster.EntityWitherSkeleton;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -38,6 +36,8 @@ import java.util.Random;
  * 4) run "/locate forge-test-structure"
  * 5) Check the console for result
  * 6) Repeat in Hell and End
+ *
+ * You should also notice that Blaze are spawning (at least during the night)
  */
 @Mod(modid = StructureGenTest.MODID, name = StructureGenTest.MODID, version = "1.0")
 public class StructureGenTest
@@ -114,10 +114,12 @@ public class StructureGenTest
         private boolean isAt = true;
         private boolean generate = true;
         private boolean generateStructure = true;
+        private final List<Biome.SpawnListEntry> spawnList = Lists.newArrayList();
 
         private TestStructure(String generator)
         {
             this.generator = generator;
+            spawnList.add(new Biome.SpawnListEntry(EntityBlaze.class, 100, 1 ,5));
         }
 
         @Override
@@ -199,7 +201,7 @@ public class StructureGenTest
             }
             if(creatureType==EnumCreatureType.MONSTER){
                 spawnListEntries.clear();
-                spawnListEntries.add(new Biome.SpawnListEntry(EntityBlaze.class, 100, 1, 10));
+                spawnListEntries.addAll(spawnList);
             }
         }
 
