@@ -27,6 +27,7 @@ import net.minecraftforge.common.MapGenStructureManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,11 +49,10 @@ public class InitStructureGensEvent<T extends IChunkGenerator> extends GenericEv
     public void addStructure(MapGenStructure struct)
     {
         structureList.add(struct);
-        MapGenStructureManager.addStructureName(struct.getStructureName());
     }
 
     public List<MapGenStructure> getStructuresImmutable()
     {
-        return ImmutableList.copyOf(structureList);
+        return Collections.unmodifiableList(structureList);
     }
 }

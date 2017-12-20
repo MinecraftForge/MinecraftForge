@@ -1,6 +1,5 @@
 package net.minecraftforge.debug;
 
-import com.google.common.collect.Lists;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -40,11 +39,11 @@ import java.util.Random;
 public class StructureGenTest
 {
     public final static String MODID = "structure_gen_test";
-    private final static boolean ENABLED = false;
+    private final static boolean ENABLED = true;
     private static Logger logger;
 
     @Mod.EventHandler
-    public void preinit(FMLPreInitializationEvent evt)
+    public void preInit(FMLPreInitializationEvent evt)
     {
         logger = evt.getModLog();
 
@@ -81,6 +80,26 @@ public class StructureGenTest
     public void onCollectStructures(InitStructureGensEvent event)
     {
         logger.info("Collecting structures for {}", event.getGenericType());
+    }
+
+    /**
+     * Has to be public due to the MapGenStructureIO system
+     */
+    public static class Start extends StructureStart
+    {
+        Start(int x, int z)
+        {
+            super(x, z);
+            this.updateBoundingBox();
+        }
+
+        /**
+         * Required. Don't use. Used internally
+         */
+        public Start()
+        {
+            super();
+        }
     }
 
     private class TestStructure extends MapGenStructure implements MapGenStructureManager.ISpawningStructure
@@ -125,7 +144,8 @@ public class StructureGenTest
             return super.generateStructure(worldIn, randomIn, chunkCoord);
         }
 
-        @Nullable @Override
+        @Nullable
+        @Override
         public BlockPos getNearestStructurePos(World worldIn, BlockPos pos, boolean findUnexplored)
         {
             logger.info("Getting nearest structure {}", generator);
@@ -138,7 +158,7 @@ public class StructureGenTest
                 FMLLog.bigWarning("Structure Gen Test not successful. Spawn {}, isAt {}, generate {}, generateStructure {}", spawn, isAt, generate,
                         generateStructure);
             }
-            return new BlockPos(64,0,64);
+            return new BlockPos(64, 0, 64);
         }
 
         @Override
@@ -155,17 +175,6 @@ public class StructureGenTest
         }
 
         @Override
-        public boolean shouldSpawn(EnumCreatureType creatureType)
-        {
-            if (spawn)
-            {
-                logger.info("Checking for spawn {}", generator);
-                //spawn is disabled in getSpawns
-            }
-            return spawn;
-        }
-
-        @Override
         public boolean isInsideStructure(BlockPos pos)
         {
             if (isAt)
@@ -173,18 +182,18 @@ public class StructureGenTest
                 logger.info("Checking for structure {}", generator);
                 isAt = false;
             }
-            return pos.getX() /16 == 4 && pos.getZ() /16 == 4;
+            return pos.getX() / 16 == 4 && pos.getZ() / 16 == 4;
         }
 
         @Override
-        public List<Biome.SpawnListEntry> getSpawns(World world, EnumCreatureType creatureType, BlockPos pos)
+        public List<Biome.SpawnListEntry> getSpawns(List<Biome.SpawnListEntry> defaults, World world, EnumCreatureType creatureType, BlockPos pos)
         {
             if (spawn)
             {
                 logger.info("Getting spawns {}", generator);
                 spawn = false;
             }
-            return Lists.newArrayList();
+            return defaults; //Don't change spawn behaviour
         }
 
         private boolean isComplete()
@@ -192,25 +201,5 @@ public class StructureGenTest
             return !spawn && !generate && !generateStructure && !isAt;
         }
 
-    }
-
-    /**
-     * Has to be public due to the MapGenStructureIO system
-     */
-    public static class Start extends StructureStart
-    {
-        Start(int x, int z)
-        {
-            super(x, z);
-            this.updateBoundingBox();
-        }
-
-        /**
-         * Required. Don't use. Used internally
-         */
-        public Start()
-        {
-            super();
-        }
     }
 }

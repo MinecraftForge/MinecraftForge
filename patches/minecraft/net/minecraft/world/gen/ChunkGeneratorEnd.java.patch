@@ -25,7 +25,7 @@
 +        this.field_73212_b = ctx.getScale();
 +        this.field_185973_o = ctx.getIsland();
 +        this.field_185972_n = (MapGenEndCity) net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(this.field_185972_n, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.END_CITY);
-+        this.structureManager = net.minecraftforge.event.terraingen.TerrainGen.getAddedStructures(ChunkGeneratorHell.class);
++        this.structureManager = net.minecraftforge.event.terraingen.TerrainGen.getAddedStructures(ChunkGeneratorEnd.class);
      }
  
      public void func_180518_a(int p_180518_1_, int p_180518_2_, ChunkPrimer p_180518_3_)
@@ -86,12 +86,12 @@
          BlockFalling.field_149832_M = false;
      }
  
-@@ -404,21 +429,28 @@
+@@ -404,21 +429,27 @@
  
      public List<Biome.SpawnListEntry> func_177458_a(EnumCreatureType p_177458_1_, BlockPos p_177458_2_)
      {
-+        if(structureManager.shouldSpawn(p_177458_1_, p_177458_2_)) return structureManager.getSpawns(this.field_73230_p, p_177458_1_, p_177458_2_);
-         return this.field_73230_p.func_180494_b(p_177458_2_).func_76747_a(p_177458_1_);
+-        return this.field_73230_p.func_180494_b(p_177458_2_).func_76747_a(p_177458_1_);
++        return structureManager.getSpawns(this.field_73230_p.func_180494_b(p_177458_2_).func_76747_a(p_177458_1_), this.field_73230_p, p_177458_1_, p_177458_2_);
      }
  
      @Nullable
@@ -114,6 +114,6 @@
 +
 +    /* ======================================== FORGE START =====================================*/
 +
-+    private final net.minecraftforge.common.MapGenStructureManager structureManager;
++    protected final net.minecraftforge.common.MapGenStructureManager structureManager;
 +    /* ========================================= FORGE END ======================================*/
  }

@@ -128,15 +128,14 @@
          BlockFalling.field_149832_M = false;
      }
  
-@@ -435,6 +476,7 @@
-                 return this.field_73172_c.func_75059_a();
-             }
+@@ -437,22 +478,28 @@
          }
-+        if(structureManager.shouldSpawn(p_177458_1_, p_177458_2_)) return structureManager.getSpawns(this.field_185952_n, p_177458_1_, p_177458_2_);
  
          Biome biome = this.field_185952_n.func_180494_b(p_177458_2_);
-         return biome.func_76747_a(p_177458_1_);
-@@ -443,16 +485,22 @@
+-        return biome.func_76747_a(p_177458_1_);
++        return structureManager.getSpawns(biome.func_76747_a(p_177458_1_), this.field_185952_n, p_177458_1_, p_177458_2_);
+     }
+ 
      @Nullable
      public BlockPos func_180513_a(World p_180513_1_, String p_180513_2_, BlockPos p_180513_3_, boolean p_180513_4_)
      {
@@ -158,6 +157,6 @@
 +
 +    /* ======================================== FORGE START =====================================*/
 +
-+    private final net.minecraftforge.common.MapGenStructureManager structureManager;
++    protected final net.minecraftforge.common.MapGenStructureManager structureManager;
 +    /* ========================================= FORGE END ======================================*/
  }

@@ -113,15 +113,16 @@
          BlockFalling.field_149832_M = false;
      }
  
-@@ -487,6 +523,7 @@
-             {
-                 return this.field_185980_B.func_175799_b();
+@@ -489,7 +525,7 @@
              }
-+            if(structureManager.shouldSpawn(p_177458_1_, p_177458_2_)) return structureManager.getSpawns(this.field_185995_n, p_177458_1_, p_177458_2_);
          }
  
-         return biome.func_76747_a(p_177458_1_);
-@@ -520,7 +557,7 @@
+-        return biome.func_76747_a(p_177458_1_);
++        return structureManager.getSpawns(biome.func_76747_a(p_177458_1_), this.field_185995_n, p_177458_1_, p_177458_2_);
+     }
+ 
+     public boolean func_193414_a(World p_193414_1_, String p_193414_2_, BlockPos p_193414_3_)
+@@ -520,7 +556,7 @@
          }
          else
          {
@@ -130,7 +131,7 @@
          }
      }
  
-@@ -553,7 +590,7 @@
+@@ -553,7 +589,7 @@
          }
          else
          {
@@ -139,7 +140,7 @@
          }
      }
  
-@@ -590,6 +627,12 @@
+@@ -590,6 +626,12 @@
              {
                  this.field_191060_C.func_186125_a(this.field_185995_n, p_180514_2_, p_180514_3_, (ChunkPrimer)null);
              }
@@ -149,6 +150,6 @@
 +
 +    /* ======================================== FORGE START =====================================*/
 +
-+    private final net.minecraftforge.common.MapGenStructureManager structureManager;
++    protected final net.minecraftforge.common.MapGenStructureManager structureManager;
 +    /* ========================================= FORGE END ======================================*/
  }

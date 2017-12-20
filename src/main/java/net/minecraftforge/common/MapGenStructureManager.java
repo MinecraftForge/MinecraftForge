@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -40,23 +42,33 @@ import java.util.Random;
 public class MapGenStructureManager
 {
     private static final List<String> allStructureNames = Lists.newArrayList();
-    private final List<MapGenStructure> structures;
+    private final Map<String, MapGenStructure> structureMap;
 
     public MapGenStructureManager(List<MapGenStructure> structures)
     {
-        this.structures = structures;
+        ImmutableMap.Builder<String, MapGenStructure> builder = ImmutableMap.builder();
+        for (MapGenStructure s : structures)
+        {
+            String name = s.getStructureName();
+            builder.put(name, s);
+            addStructureName(name);
+        }
+        structureMap = builder.build();
     }
 
     /**
      * Add a structure name to the locate command autocomplete list.
      * <p>
-     * Is automatically done when registering your structure in {@link net.minecraftforge.event.terraingen.InitStructureGensEvent}
+     * Is automatically done on construction
      *
      * @param structure Name of the structure
      */
-    public static void addStructureName(String structure)
+    protected static void addStructureName(String structure)
     {
-        if(!allStructureNames.contains(structure))allStructureNames.add(structure);
+        if (!allStructureNames.contains(structure))
+        {
+            allStructureNames.add(structure);
+        }
     }
 
     /**
@@ -74,12 +86,9 @@ public class MapGenStructureManager
     @Nullable
     public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean findUnexplored)
     {
-        for (MapGenStructure struct : structures)
+        if (structureMap.containsKey(structureName))
         {
-            if (struct.getStructureName().equals(structureName))
-            {
-                return struct.getNearestStructurePos(worldIn, position, findUnexplored);
-            }
+            return structureMap.get(structureName).getNearestStructurePos(worldIn, position, findUnexplored);
         }
         return null;
     }
@@ -90,27 +99,9 @@ public class MapGenStructureManager
      */
     public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos)
     {
-        for (MapGenStructure struct : structures)
+        if (structureMap.containsKey(structureName))
         {
-            if (struct.getStructureName().equals(structureName))
-            {
-                return struct.isInsideStructure(pos);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check if there is a given structure at the given position that would like to spawn creatures of the given type.
-     */
-    public boolean shouldSpawn(EnumCreatureType creatureType, BlockPos pos)
-    {
-        for (MapGenStructure structure : structures)
-        {
-            if (structure instanceof ISpawningStructure && structure.isInsideStructure(pos))
-            {
-                return ((ISpawningStructure) structure).shouldSpawn(creatureType);
-            }
+            return structureMap.get(structureName).isInsideStructure(pos);
         }
         return false;
     }
@@ -118,26 +109,26 @@ public class MapGenStructureManager
     /**
      * Get the creatures of the given type the structure at the given position would like to spawn.
      * <p>
-     * Only call if {@link MapGenStructureManager#shouldSpawn(EnumCreatureType, BlockPos)} returns true.
-     * <p>
-     * Returns an empty list if no structure is found
+     * Returns the defaults list if no structure is found
+     *
+     * @param defaults Returns this if no spawning structure is found
      */
     @Nonnull
-    public List<Biome.SpawnListEntry> getSpawns(World world, EnumCreatureType creatureType, BlockPos pos)
+    public List<Biome.SpawnListEntry> getSpawns(List<Biome.SpawnListEntry> defaults, World world, EnumCreatureType creatureType, BlockPos pos)
     {
-        for (MapGenStructure structure : structures)
+        for (MapGenStructure structure : structureMap.values())
         {
             if (structure instanceof ISpawningStructure && structure.isInsideStructure(pos))
             {
-                return ((ISpawningStructure) structure).getSpawns(world, creatureType, pos);
+                return ((ISpawningStructure) structure).getSpawns(defaults, world, creatureType, pos);
             }
         }
-        return Lists.newArrayList();
+        return defaults;
     }
 
     public void generateStructure(World world, Random rand, ChunkPos chunkPos)
     {
-        for (MapGenStructure structure : structures)
+        for (MapGenStructure structure : structureMap.values())
         {
             structure.generateStructure(world, rand, chunkPos);
         }
@@ -145,7 +136,7 @@ public class MapGenStructureManager
 
     public void generate(World worldIn, int x, int z, ChunkPrimer primer)
     {
-        for (MapGenStructure structure : structures)
+        for (MapGenStructure structure : structureMap.values())
         {
             structure.generate(worldIn, x, z, primer);
         }
@@ -157,17 +148,12 @@ public class MapGenStructureManager
     public interface ISpawningStructure
     {
         /**
-         * If you want to replace creature spawn list of the biome with your own list within the bounding box of your structure.
-         */
-        boolean shouldSpawn(EnumCreatureType creatureType);
-
-        /**
-         * Called when shouldSpawn returns true.
-         *
-         * Used instead of the biome's creature spawn list
+         * Return the list of creatures of the given type that should spawn within the structures bounding box.
+         * <p>
+         * You should return the given defaults list if you don't want to affect the spawn behaviour
          */
         @Nonnull
-        List<Biome.SpawnListEntry> getSpawns(World world, EnumCreatureType creatureType, BlockPos pos);
+        List<Biome.SpawnListEntry> getSpawns(List<Biome.SpawnListEntry> defaults, World world, EnumCreatureType creatureType, BlockPos pos);
     }
 
 }
