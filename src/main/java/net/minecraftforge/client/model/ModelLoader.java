@@ -176,14 +176,23 @@ public final class ModelLoader extends ModelBakery
 
         for(IModel model : models.keySet())
         {
-            bakeBar.step("[" + Joiner.on(", ").join(models.get(model)) + "]");
+            String modelLocations = "[" + Joiner.on(", ").join(models.get(model)) + "]";
+            bakeBar.step(modelLocations);
             if(model == getMissingModel())
             {
                 bakedModels.put(model, missingBaked);
             }
             else
             {
-                bakedModels.put(model, model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.INSTANCE));
+                try
+                {
+                    bakedModels.put(model, model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.INSTANCE));
+                }
+                catch (Exception e)
+                {
+                    FMLLog.log.error("Exception baking model for location(s) {}:", modelLocations, e);
+                    bakedModels.put(model, missingBaked);
+                }
             }
         }
 
