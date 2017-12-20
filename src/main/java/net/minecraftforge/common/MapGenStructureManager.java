@@ -32,6 +32,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -54,6 +55,7 @@ public class MapGenStructureManager
             addStructureName(name);
         }
         structureMap = builder.build();
+        Collections.sort(allStructureNames);
     }
 
     /**
@@ -108,22 +110,22 @@ public class MapGenStructureManager
 
     /**
      * Get the creatures of the given type the structure at the given position would like to spawn.
-     * <p>
-     * Returns the defaults list if no structure is found
      *
-     * @param defaults Returns this if no spawning structure is found
+     * @param defaults List of spawn entries. Should contain the (biome's) default entries. Won't be modified
      */
     @Nonnull
     public List<Biome.SpawnListEntry> getSpawns(List<Biome.SpawnListEntry> defaults, World world, EnumCreatureType creatureType, BlockPos pos)
     {
+        List<Biome.SpawnListEntry> spawnEntries = Lists.newArrayList(defaults);//Don't modify the biome's list
         for (MapGenStructure structure : structureMap.values())
         {
             if (structure instanceof ISpawningStructure && structure.isInsideStructure(pos))
             {
-                return ((ISpawningStructure) structure).getSpawns(defaults, world, creatureType, pos);
+                ((ISpawningStructure) structure).getSpawns(spawnEntries, world, creatureType, pos);
+                return spawnEntries;
             }
         }
-        return defaults;
+        return spawnEntries;
     }
 
     public void generateStructure(World world, Random rand, ChunkPos chunkPos)
@@ -148,12 +150,11 @@ public class MapGenStructureManager
     public interface ISpawningStructure
     {
         /**
-         * Return the list of creatures of the given type that should spawn within the structures bounding box.
+         * Collect the list of creatures of the given type that should spawn within the structures bounding box.
          * <p>
-         * You should return the given defaults list if you don't want to affect the spawn behaviour
+         * @param spawnEntries Contains the biome's default spawn entries. Modify this list to add your own spawns and/or clear the biome's ones.
          */
-        @Nonnull
-        List<Biome.SpawnListEntry> getSpawns(List<Biome.SpawnListEntry> defaults, World world, EnumCreatureType creatureType, BlockPos pos);
+        void getSpawns(List<Biome.SpawnListEntry> spawnEntries, World world, EnumCreatureType creatureType, BlockPos pos);
     }
 
 }

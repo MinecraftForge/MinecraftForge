@@ -1,6 +1,10 @@
 package net.minecraftforge.debug;
 
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.monster.EntityBlaze;
+import net.minecraft.entity.monster.EntityGiantZombie;
+import net.minecraft.entity.monster.EntitySilverfish;
+import net.minecraft.entity.monster.EntityWitherSkeleton;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -39,7 +43,7 @@ import java.util.Random;
 public class StructureGenTest
 {
     public final static String MODID = "structure_gen_test";
-    private final static boolean ENABLED = true;
+    private final static boolean ENABLED = false;
     private static Logger logger;
 
     @Mod.EventHandler
@@ -186,14 +190,17 @@ public class StructureGenTest
         }
 
         @Override
-        public List<Biome.SpawnListEntry> getSpawns(List<Biome.SpawnListEntry> defaults, World world, EnumCreatureType creatureType, BlockPos pos)
+        public void getSpawns(List<Biome.SpawnListEntry> spawnListEntries, World world, EnumCreatureType creatureType, BlockPos pos)
         {
             if (spawn)
             {
                 logger.info("Getting spawns {}", generator);
                 spawn = false;
             }
-            return defaults; //Don't change spawn behaviour
+            if(creatureType==EnumCreatureType.MONSTER){
+                spawnListEntries.clear();
+                spawnListEntries.add(new Biome.SpawnListEntry(EntityBlaze.class, 100, 1, 10));
+            }
         }
 
         private boolean isComplete()
