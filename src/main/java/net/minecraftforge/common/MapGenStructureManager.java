@@ -116,16 +116,14 @@ public class MapGenStructureManager
     @Nonnull
     public List<Biome.SpawnListEntry> getSpawns(List<Biome.SpawnListEntry> defaults, World world, EnumCreatureType creatureType, BlockPos pos)
     {
-        List<Biome.SpawnListEntry> spawnEntries = Lists.newArrayList(defaults);//Don't modify the biome's list
         for (MapGenStructure structure : structureMap.values())
         {
             if (structure instanceof ISpawningStructure && structure.isInsideStructure(pos))
             {
-                ((ISpawningStructure) structure).getSpawns(spawnEntries, world, creatureType, pos);
-                return spawnEntries;
+                return ((ISpawningStructure) structure).getSpawns(Collections.unmodifiableList(defaults), world, creatureType, pos);//Ensure mods don't accidentally modify the biomes spawn list itself
             }
         }
-        return spawnEntries;
+        return defaults;
     }
 
     public void generateStructure(World world, Random rand, ChunkPos chunkPos)
@@ -150,13 +148,14 @@ public class MapGenStructureManager
     public interface ISpawningStructure
     {
         /**
-         * Collect the list of creatures of the given type that should spawn within the structures bounding box.
+         * Collect a list of creatures of the given type that should spawn within the structures bounding box.
          * <p>
-         * If this method is called repeatedly you should always return exactly the same (equals) objects otherwise the spawning will not work.
+         * This method is called twice in a row by {@link net.minecraft.world.WorldEntitySpawner}. If the elements returned are not the same (equals) both times the spawning will be canceled
          *
-         * @param spawnEntries Contains the biome's default spawn entries. Modify this list to add your own spawns and/or clear the biome's ones.
+         * @param defaults Unmodifiable. Contains the biome's default spawn entries. Return this if you don't want to affect spawn. You can also add the contained elements to your own list
+         * @return The spawn entries that should be used for spawning
          */
-        void getSpawns(List<Biome.SpawnListEntry> spawnEntries, World world, EnumCreatureType creatureType, BlockPos pos);
+        List<Biome.SpawnListEntry> getSpawns(List<Biome.SpawnListEntry> defaults, World world, EnumCreatureType creatureType, BlockPos pos);
     }
 
 }

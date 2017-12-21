@@ -37,7 +37,7 @@ import java.util.Random;
  * 5) Check the console for result
  * 6) Repeat in Hell and End
  *
- * You should also notice that Blaze are spawning (at least during the night)
+ * You should also notice that Blaze are spawning (at least during the night and on suitable terrain)
  */
 @Mod(modid = StructureGenTest.MODID, name = StructureGenTest.MODID, version = "1.0")
 public class StructureGenTest
@@ -157,11 +157,11 @@ public class StructureGenTest
             logger.info("Getting nearest structure {}", generator);
             if (isComplete())
             {
-                FMLLog.bigWarning("Structure Gen Test in {} successful", generator);
+               logger.info("[STRUCTURE-GEN-TEST] Test in {} successful", generator);
             }
             else
             {
-                FMLLog.bigWarning("Structure Gen Test not successful. Spawn {}, isAt {}, generate {}, generateStructure {}", spawn, isAt, generate,
+                logger.info("[STRUCTURE-GEN-TEST] Test not successful. Spawn {}, isAt {}, generate {}, generateStructure {}", spawn, isAt, generate,
                         generateStructure);
             }
             return new BlockPos(64, 0, 64);
@@ -192,7 +192,7 @@ public class StructureGenTest
         }
 
         @Override
-        public void getSpawns(List<Biome.SpawnListEntry> spawnListEntries, World world, EnumCreatureType creatureType, BlockPos pos)
+        public List<Biome.SpawnListEntry> getSpawns(List<Biome.SpawnListEntry> defaults, World world, EnumCreatureType creatureType, BlockPos pos)
         {
             if (spawn)
             {
@@ -200,9 +200,9 @@ public class StructureGenTest
                 spawn = false;
             }
             if(creatureType==EnumCreatureType.MONSTER){
-                spawnListEntries.clear();
-                spawnListEntries.addAll(spawnList);
+                return spawnList;
             }
+            return defaults;
         }
 
         private boolean isComplete()
