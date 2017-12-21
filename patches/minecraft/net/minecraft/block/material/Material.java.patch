@@ -1,0 +1,122 @@
+--- ../src-base/minecraft/net/minecraft/block/material/Material.java
++++ ../src-work/minecraft/net/minecraft/block/material/Material.java
+@@ -36,6 +36,7 @@
+     public static final Material field_151568_F = (new Material(MapColor.field_151660_b)).func_76219_n();
+     public static final Material field_151569_G = (new Material(MapColor.field_151659_e)
+     {
++        @Override
+         public boolean func_76230_c()
+         {
+             return false;
+@@ -59,7 +60,7 @@
+ 
+     public boolean func_76224_d()
+     {
+-        return false;
++        return isLiquid;
+     }
+ 
+     public boolean func_76220_a()
+@@ -148,4 +149,102 @@
+     {
+         return this.field_76234_F;
+     }
++    
++    /*=================================== FORGE START =========================================*/
++    private boolean isLiquid = false;
++    private boolean canDrownEntity = false;
++    private boolean canPushEntity = false;
++    private boolean canFloatBoat = false;
++    private boolean canBeAbsorbed = false;
++    private boolean canWaterPlants = false;
++    private boolean canSpawnWaterCreatures = false;
++    private boolean isSwimmable = false;
++    
++    public Material setIsLiquid()
++    {
++        isLiquid = true;
++        return this;
++    }
++    
++    public Material setCanDrownEntity()
++    {
++        canDrownEntity = true;
++        return this;
++    }
++    
++    public Material setCanPushEntity()
++    {
++        canPushEntity = true;
++        return this;
++    }
++    
++    public Material setCanFloatBoat()
++    {
++        canFloatBoat = true;
++        return this;
++    }
++    
++    public Material setCanBeAbsorbed() 
++    {
++        canBeAbsorbed = true; 
++        return this;
++    }
++    
++    public Material setCanWaterPlants()
++    {
++        canWaterPlants = true;
++        return this;
++    }
++    
++    public Material setCanSpawnWaterCreatures()
++    {
++        canSpawnWaterCreatures = true;
++        return this;
++    }
++    
++    public Material setIsSwimmable()
++    {
++        isSwimmable = true;
++        return this;
++    }
++    
++    public boolean getCanDrownEntity()
++    {
++        return canDrownEntity;
++    }
++    
++    public boolean getCanPushEntity()
++    {
++        return canPushEntity;
++    }
++    
++    public boolean getCanFloatBoat()
++    {
++        return canFloatBoat;
++    }
++    
++    public boolean getCanBeAbsorbed()
++    {
++        return canBeAbsorbed;
++    }
++    
++    public boolean getCanWaterPlants()
++    {
++        return canWaterPlants;
++    }
++    
++    public boolean getCanSpawnWaterCreatures()
++    {
++        return canSpawnWaterCreatures;
++    }
++    
++    public boolean isSwimmable()
++    {
++        return isSwimmable;
++    }
++    
++    public boolean isLiquidOtherThanLava()
++    {
++        return isLiquid && this != Material.field_151587_i;
++    }
+ }
