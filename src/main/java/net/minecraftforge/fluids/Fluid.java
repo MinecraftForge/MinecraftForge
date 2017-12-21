@@ -104,12 +104,14 @@ public class Fluid
     protected int viscosity = 1000;
 
     /**
+     * @deprecated This flag is going to be removed, use isLighterThanAir() / density instead.
      * This indicates if the fluid is gaseous.
      *
      * Useful for rendering the fluid in containers and the world.
      *
      * Generally this is associated with negative density fluids.
      */
+    @Deprecated
     protected boolean isGaseous;
 
     /**
@@ -163,6 +165,7 @@ public class Fluid
     public Fluid setDensity(int density)
     {
         this.density = density;
+        this.isGaseous = density < 0;
         return this;
     }
 
@@ -178,9 +181,12 @@ public class Fluid
         return this;
     }
 
+    /**
+     * @deprecated Use setDensity() with a negative value to achieve reverse fluid gravity
+     */
+    @Deprecated
     public Fluid setGaseous(boolean isGaseous)
     {
-        this.isGaseous = isGaseous;
         return this;
     }
 
@@ -299,9 +305,18 @@ public class Fluid
         return this.viscosity;
     }
 
+    /**
+     * @deprecated Use isLighterThanAir() instead
+     */
+    @Deprecated
     public final boolean isGaseous()
     {
-        return this.isGaseous;
+        return isLighterThanAir();
+    }
+
+    public final boolean isLighterThanAir()
+    {
+        return this.density < 0;
     }
 
     public EnumRarity getRarity()
@@ -363,7 +378,12 @@ public class Fluid
     public int getDensity(FluidStack stack){ return getDensity(); }
     public int getTemperature(FluidStack stack){ return getTemperature(); }
     public int getViscosity(FluidStack stack){ return getViscosity(); }
-    public boolean isGaseous(FluidStack stack){ return isGaseous(); }
+    /**
+     * @deprecated Use isLighterThanAir() instead
+     */
+    @Deprecated
+    public boolean isGaseous(FluidStack stack){ return isLighterThanAir(); }
+    public boolean isLighterThanAir(FluidStack stack){ return isLighterThanAir(); }
     public EnumRarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
     public ResourceLocation getStill(FluidStack stack) { return getStill(); }
@@ -376,7 +396,12 @@ public class Fluid
     public int getDensity(World world, BlockPos pos){ return getDensity(); }
     public int getTemperature(World world, BlockPos pos){ return getTemperature(); }
     public int getViscosity(World world, BlockPos pos){ return getViscosity(); }
-    public boolean isGaseous(World world, BlockPos pos){ return isGaseous(); }
+    /**
+     * @deprecated Use isLighterThanAir() instead
+     */
+    @Deprecated
+    public boolean isGaseous(World world, BlockPos pos){ return isLighterThanAir(); }
+    public boolean isLighterThanAir(World world, BlockPos pos){ return isLighterThanAir(); }
     public EnumRarity getRarity(World world, BlockPos pos){ return getRarity(); }
     public int getColor(World world, BlockPos pos){ return getColor(); }
     public ResourceLocation getStill(World world, BlockPos pos) { return getStill(); }
