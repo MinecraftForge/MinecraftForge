@@ -52,6 +52,6 @@ public class FakePlayer extends EntityPlayerMP
     @Override public boolean canAttackPlayer(EntityPlayer player){ return false; }
     @Override public void onDeath(DamageSource source){ return; }
     @Override public void onUpdate(){ return; }
-    @Override public Entity changeDimension(int dim){ return this; }
+    @Override public Entity changeDimension(int dim, ITeleporter teleporter){ return this; }
     @Override public void handleClientSettings(CPacketClientSettings pkt){ return; }
 }

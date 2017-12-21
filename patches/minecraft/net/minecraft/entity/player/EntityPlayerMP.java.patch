@@ -50,14 +50,26 @@
          }
  
          for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreCriteria.field_96642_c))
-@@ -647,6 +660,7 @@
+@@ -645,8 +658,9 @@
+     }
+ 
      @Nullable
-     public Entity func_184204_a(int p_184204_1_)
+-    public Entity func_184204_a(int p_184204_1_)
++    public Entity changeDimension(int p_184204_1_, net.minecraftforge.common.util.ITeleporter teleporter)
      {
 +        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return this;
          this.field_184851_cj = true;
  
          if (this.field_71093_bK == 0 && p_184204_1_ == -1)
+@@ -658,7 +672,7 @@
+             this.field_193110_cw = null;
+         }
+ 
+-        if (this.field_71093_bK == 1 && p_184204_1_ == 1)
++        if (this.field_71093_bK == 1 && p_184204_1_ == 1 && teleporter.isVanilla())
+         {
+             this.field_70170_p.func_72900_e(this);
+ 
 @@ -808,7 +822,7 @@
          BlockPos blockpos = new BlockPos(i, j, k);
          IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);

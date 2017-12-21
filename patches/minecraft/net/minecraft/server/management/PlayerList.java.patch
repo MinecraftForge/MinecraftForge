@@ -221,21 +221,30 @@
          {
              d0 = MathHelper.func_151237_a(d0 * 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 * 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -608,7 +680,8 @@
+@@ -608,7 +680,7 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
 -        else
-+
-+        if (p_82448_1_.field_71093_bK == 1)
++        if (p_82448_1_.field_71093_bK == 1 && teleporter.isVanilla())
          {
              BlockPos blockpos;
  
-@@ -643,7 +716,7 @@
+@@ -634,7 +706,7 @@
+ 
+         p_82448_3_.field_72984_F.func_76319_b();
+ 
+-        if (p_82448_2_ != 1)
++        if (p_82448_2_ != 1 || !teleporter.isVanilla())
+         {
+             p_82448_3_.field_72984_F.func_76320_a("placing");
+             d0 = (double)MathHelper.func_76125_a((int)d0, -29999872, 29999872);
+@@ -643,7 +715,8 @@
              if (p_82448_1_.func_70089_S())
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
 -                p_82448_4_.func_85176_s().func_180266_a(p_82448_1_, f);
++                p_82448_3_.func_72866_a(p_82448_1_, false);
 +                teleporter.placeEntity(p_82448_4_, p_82448_1_, f);
                  p_82448_4_.func_72838_d(p_82448_1_);
                  p_82448_4_.func_72866_a(p_82448_1_, false);

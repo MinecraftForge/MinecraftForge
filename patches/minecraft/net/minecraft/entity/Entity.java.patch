@@ -138,15 +138,40 @@
              this.field_184239_as = null;
              entity.func_184225_p(this);
          }
-@@ -2511,6 +2537,7 @@
+@@ -2509,8 +2535,16 @@
+     @Nullable
+     public Entity func_184204_a(int p_184204_1_)
      {
++        if (this.field_70170_p.field_72995_K || this.field_70128_L) return null;
++        return changeDimension(p_184204_1_, this.func_184102_h().func_71218_a(p_184204_1_).func_85176_s());
++    }
++
++    @Nullable
++    public Entity changeDimension(int p_184204_1_, net.minecraftforge.common.util.ITeleporter teleporter)
++    {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
          {
 +            if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return null;
              this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
              MinecraftServer minecraftserver = this.func_184102_h();
              int i = this.field_71093_bK;
-@@ -2535,16 +2562,17 @@
+@@ -2518,7 +2552,7 @@
+             WorldServer worldserver1 = minecraftserver.func_71218_a(p_184204_1_);
+             this.field_71093_bK = p_184204_1_;
+ 
+-            if (i == 1 && p_184204_1_ == 1)
++            if (i == 1 && p_184204_1_ == 1 && teleporter.isVanilla())
+             {
+                 worldserver1 = minecraftserver.func_71218_a(0);
+                 this.field_71093_bK = 0;
+@@ -2529,22 +2563,23 @@
+             this.field_70170_p.field_72984_F.func_76320_a("reposition");
+             BlockPos blockpos;
+ 
+-            if (p_184204_1_ == 1)
++            if (p_184204_1_ == 1 && teleporter.isVanilla())
+             {
+                 blockpos = worldserver1.func_180504_m();
              }
              else
              {
@@ -168,7 +193,26 @@
                  {
                      d0 = MathHelper.func_151237_a(d0 * 8.0D, worldserver1.func_175723_af().func_177726_b() + 16.0D, worldserver1.func_175723_af().func_177728_d() - 16.0D);
                      d1 = MathHelper.func_151237_a(d1 * 8.0D, worldserver1.func_175723_af().func_177736_c() + 16.0D, worldserver1.func_175723_af().func_177733_e() - 16.0D);
-@@ -2604,7 +2632,7 @@
+@@ -2554,8 +2589,7 @@
+                 d1 = (double)MathHelper.func_76125_a((int)d1, -29999872, 29999872);
+                 float f = this.field_70177_z;
+                 this.func_70012_b(d0, this.field_70163_u, d1, 90.0F, 0.0F);
+-                Teleporter teleporter = worldserver1.func_85176_s();
+-                teleporter.func_180620_b(this, f);
++                teleporter.placeEntity(worldserver1, this, f);
+                 blockpos = new BlockPos(this);
+             }
+ 
+@@ -2567,7 +2601,7 @@
+             {
+                 entity.func_180432_n(this);
+ 
+-                if (i == 1 && p_184204_1_ == 1)
++                if (i == 1 && p_184204_1_ == 1 && teleporter.isVanilla())
+                 {
+                     BlockPos blockpos1 = worldserver1.func_175672_r(worldserver1.func_175694_M());
+                     entity.func_174828_a(blockpos1, entity.field_70177_z, entity.field_70125_A);
+@@ -2604,7 +2638,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -177,7 +221,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2901,6 +2929,183 @@
+@@ -2901,6 +2935,183 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  

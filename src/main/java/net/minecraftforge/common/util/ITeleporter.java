@@ -20,6 +20,7 @@
 package net.minecraftforge.common.util;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 
@@ -50,4 +51,10 @@ public interface ITeleporter
      * @param yaw    the suggested yaw value to apply
      */
     void placeEntity(World world, Entity entity, float yaw);
+
+    // used internally to handle vanilla hardcoding
+    default boolean isVanilla()
+    {
+        return getClass() == Teleporter.class;
+    }
 }
