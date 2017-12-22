@@ -523,7 +523,17 @@
      }
  
      public boolean func_70002_Q()
-@@ -3181,11 +3093,11 @@
+@@ -3152,6 +3064,9 @@
+         }
+         else if (this.field_71439_g != null)
+         {
++            MusicTicker.MusicType type = this.field_71441_e.field_73011_w.getMusicType();
++            if (type != null) return type;
++
+             if (this.field_71439_g.field_70170_p.field_73011_w instanceof WorldProviderHell)
+             {
+                 return MusicTicker.MusicType.NETHER;
+@@ -3181,11 +3096,11 @@
              {
                  if (Keyboard.getEventKeyState())
                  {
@@ -537,7 +547,7 @@
                      {
                          this.field_71456_v.func_146158_b().func_146227_a(ScreenShotHelper.func_148260_a(this.field_71412_D, this.field_71443_c, this.field_71440_d, this.field_147124_at));
                      }
-@@ -3199,6 +3111,7 @@
+@@ -3199,6 +3114,7 @@
                          }
                      }
                  }
@@ -545,7 +555,7 @@
              }
          }
      }
-@@ -3328,6 +3241,12 @@
+@@ -3328,6 +3244,12 @@
          return this.field_184127_aH;
      }
  
@@ -558,7 +568,7 @@
      public boolean func_189648_am()
      {
          return this.field_71439_g != null && this.field_71439_g.func_175140_cp() || this.field_71474_y.field_178879_v;
-@@ -3342,4 +3261,9 @@
+@@ -3342,4 +3264,9 @@
      {
          return this.field_193035_aW;
      }
