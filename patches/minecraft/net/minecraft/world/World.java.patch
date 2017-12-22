@@ -565,16 +565,16 @@
                  {
                      IBlockState iblockstate1 = this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(l3, i4, j4));
 -
++                    
 +                    Boolean result = iblockstate1.func_177230_c().isAABBInsideLiquid(this, blockpos$pooledmutableblockpos, p_72953_1_);
-+                    if(result != null)
-+                    {
-+                        if(result)
-+                        {
++                    if(result != null) {
++                        if(result) {
 +                            blockpos$pooledmutableblockpos.func_185344_t();
 +                            return true;
 +                        }else
 +                            continue;
 +                    }
++                    
                      if (iblockstate1.func_185904_a().func_76224_d())
                      {
                          blockpos$pooledmutableblockpos.func_185344_t();
@@ -607,27 +607,26 @@
                          if (iblockstate1.func_185904_a() == p_72918_2_)
                          {
                              double d0 = (double)((float)(i4 + 1) - BlockLiquid.func_149801_b(((Integer)iblockstate1.func_177229_b(BlockLiquid.field_176367_b)).intValue()));
-@@ -2095,8 +2275,19 @@
+@@ -2095,7 +2275,18 @@
              {
                  for (int j4 = j3; j4 < k3; ++j4)
                  {
 -                    if (this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(l3, i4, j4)).func_185904_a() == p_72875_2_)
 +                    IBlockState iblockstate1 = this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(l3, i4, j4));
++                    
 +                    Boolean result = iblockstate1.func_177230_c().isAABBInsideLiquid(this, blockpos$pooledmutableblockpos, p_72875_1_);
-+                    if(result != null)
-                     {
-+                        if(result)
-+                        {
++                    if(result != null) {
++                        if(result) {
 +                            blockpos$pooledmutableblockpos.func_185344_t();
 +                            return true;
 +                        }else
 +                            continue;
 +                    }
++                    
 +                    if (iblockstate1.func_185904_a() == p_72875_2_)
-+                    {
+                     {
                          blockpos$pooledmutableblockpos.func_185344_t();
                          return true;
-                     }
 @@ -2116,6 +2307,7 @@
      public Explosion func_72885_a(@Nullable Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
