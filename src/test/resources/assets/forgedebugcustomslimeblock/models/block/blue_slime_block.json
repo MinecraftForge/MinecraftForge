@@ -1,0 +1,7 @@
+{
+    "parent": "block/slime",
+    "textures": {
+        "particle": "forgedebugcustomslimeblock:blocks/blue_slime_block",
+        "texture": "forgedebugcustomslimeblock:blocks/blue_slime_block"
+    }
+}

@@ -52,7 +52,7 @@ public class TestCapabilityMod
         // If you are a API, provide register your capability ASAP.
         // You MUST supply a default save handler and a default implementation
         // If you are a CONSUMER of the capability DO NOT register it. Only APIs should.
-        CapabilityManager.INSTANCE.register(IExampleCapability.class, new Storage(), DefaultImpl.class);
+        CapabilityManager.INSTANCE.register(IExampleCapability.class, new Storage(), DefaultImpl::new);
         MinecraftForge.EVENT_BUS.register(this);
     }
 

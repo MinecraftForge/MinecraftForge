@@ -232,7 +232,7 @@
          }
  
          return multimap;
-@@ -1130,4 +1155,127 @@
+@@ -1130,4 +1155,128 @@
      {
          this.func_190917_f(-p_190918_1_);
      }
@@ -303,6 +303,7 @@
 +     * Internal call to get the actual item, not the delegate.
 +     * In all other methods, FML replaces calls to this.item with the item delegate.
 +     */
++    @Nullable
 +    private Item getItemRaw()
 +    {
 +        return this.field_151002_e;
