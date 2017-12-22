@@ -66,7 +66,7 @@ public class NoBedSleepingTest
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        CapabilityManager.INSTANCE.register(IExtraSleeping.class, new Storage(), DefaultImpl.class);
+        CapabilityManager.INSTANCE.register(IExtraSleeping.class, new Storage(), DefaultImpl::new);
         MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 

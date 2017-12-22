@@ -71,7 +71,7 @@
              Item item = p_145952_0_.func_77973_b();
  
              if (item == Item.func_150898_a(Blocks.field_150376_bx))
-@@ -530,4 +532,22 @@
+@@ -530,4 +532,23 @@
      {
          this.field_145957_n.clear();
      }
@@ -82,6 +82,7 @@
 +
 +    @SuppressWarnings("unchecked")
 +    @Override
++    @javax.annotation.Nullable
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)

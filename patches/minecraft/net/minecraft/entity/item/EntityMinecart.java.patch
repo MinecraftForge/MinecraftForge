@@ -254,7 +254,7 @@
                              {
                                  p_70108_1_.field_70159_w *= 0.20000000298023224D;
                                  p_70108_1_.field_70179_y *= 0.20000000298023224D;
-@@ -1015,6 +1047,229 @@
+@@ -1015,6 +1047,230 @@
          this.func_184212_Q().func_187227_b(field_184270_f, Boolean.valueOf(p_94096_1_));
      }
  
@@ -306,6 +306,7 @@
 +     * is registered, returns null
 +     * @return The collision handler or null
 +     */
++    @Nullable
 +    public static net.minecraftforge.common.IMinecartCollisionHandler getCollisionHandler()
 +    {
 +        return collisionHandler;
