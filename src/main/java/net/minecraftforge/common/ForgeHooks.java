@@ -1005,6 +1005,11 @@ public class ForgeHooks
         return ItemStack.EMPTY;
     }
 
+    /*
+     * It is recommended to call the predicate version instead
+     * to test a material property (e.g. isLiquid)
+     * rather than an exact material match to support mod compatibility.
+     */
     public static boolean isInsideOfMaterial(Material material, Entity entity, BlockPos pos)
     {
         IBlockState state = entity.world.getBlockState(pos);
@@ -1032,6 +1037,85 @@ public class ForgeHooks
             return eyes < pos.getY() + 1 + filled;
         }
     }
+    
+    /*
+     * Predicate version of Entity inside material method
+     */
+    public static boolean isEntityInsideOfMaterial(Entity entity, Predicate<Material> predicate)
+    {
+        if (entity.getRidingEntity() instanceof EntityBoat)
+        {
+            return false;
+        }
+        else
+        {
+            double eyePosY = entity.posY + entity.getEyeHeight();
+            BlockPos pos = new BlockPos(entity.posX, eyePosY, entity.posZ);
+            IBlockState iBlockState = entity.world.getBlockState(pos);
+            Material material = iBlockState.getMaterial();
+
+            Boolean result = iBlockState.getBlock().isEntityInsideMaterial(entity.world, pos, iBlockState, entity, eyePosY, material, true);
+            if (result != null) return result;
+
+            if (predicate.test(material))
+            {
+                return isInsideOfMaterial(material, entity, pos);
+            }
+            else
+            {
+                return false;
+            }
+        }    
+    }
+
+    /*
+     * This is different than "inside" liquid but rather ensures that the 
+     * vanilla inWater field is updated for all custom fluids as well.
+    */
+    public static boolean isInLiquid(AxisAlignedBB bb, Entity entity)
+    {
+        int minX = MathHelper.floor(bb.minX);
+        int maxX = MathHelper.ceil(bb.maxX);
+        int minY = MathHelper.floor(bb.minY);
+        int maxY = MathHelper.ceil(bb.maxY);
+        int minZ = MathHelper.floor(bb.minZ);
+        int maxZ = MathHelper.ceil(bb.maxZ);
+     
+        if (!entity.world.isAreaLoaded(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ), true))
+        {
+            return false;
+        }
+        else
+        {
+            boolean isInLiquid = false;
+            BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
+
+            for (int l3 = minX; l3 < maxX; ++l3)
+            {
+                for (int i4 = minY; i4 < maxY; ++i4)
+                {
+                    for (int j4 = minZ; j4 < maxZ; ++j4)
+                    {
+                        blockpos$pooledmutableblockpos.setPos(l3, i4, j4);
+                        IBlockState iblockstate1 = entity.world.getBlockState(blockpos$pooledmutableblockpos);
+
+                        if (iblockstate1.getMaterial().isLiquid())
+                        {
+                            double d0 = i4 + 1 - BlockLiquid.getLiquidHeightPercent(iblockstate1.getValue(BlockLiquid.LEVEL).intValue());
+
+                            if (maxY >= d0)
+                            {
+                                isInLiquid = true;
+                            }
+                        }
+                    }
+                }
+            }
+            blockpos$pooledmutableblockpos.release();
+            return isInLiquid;
+        }
+    }
+    
 
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
     {

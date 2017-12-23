@@ -1,9 +1,9 @@
 package net.minecraftforge.debug;
 
-import java.awt.Color;
-
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -17,14 +17,25 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@Mod(modid = FluidAdditionalFieldsTest.MODID, name = "Test Mod", version = "1.0.0", acceptedMinecraftVersions = "*")
+@Mod(modid = FluidsBehaveLikeWaterTest.MODID, name = "Test Mod", version = "1.0.0", acceptedMinecraftVersions = "*")
 @EventBusSubscriber
-public class FluidAdditionalFieldsTest
+public class FluidsBehaveLikeWaterTest
 {
-    static final boolean ENABLED = false;      // <-- enable mod
-    static final Color COLOR = Color.PINK; // <-- change this to try other colors
-    
-    static final String MODID = "fluidadditionalfields";
+    static final boolean ENABLED = true; // <-- enable mod
+
+    public static final Material SLIME_MATERIAL = new MaterialLiquid(MapColor.GREEN)
+            .setCanDrownEntity() // <-- change these chained methods to change material behavior
+            .setCanFloatBoat()
+            .setCanPushEntity()
+            .setIsSwimmable()
+            .setCanBeAbsorbed()
+            .setCanWaterPlants()
+            .setCanSpawnWaterCreatures()
+            .setCanVaporize()
+            .setCanMixWithConcrete()
+            .setCanMixWithLava();
+
+    static final String MODID = "fluidbehaveslikewater";
     static final ResourceLocation RES_LOC = new ResourceLocation(MODID, "slime");
     static
     {
@@ -33,7 +44,10 @@ public class FluidAdditionalFieldsTest
             FluidRegistry.enableUniversalBucket();
         }
     }
-    public static final Fluid SLIME = new Fluid("slime", new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow")).setColor(COLOR);
+
+    public static final Fluid SLIME = new Fluid("slime", new ResourceLocation(MODID, "slime_still"),
+            new ResourceLocation(MODID, "slime_flow")).setColor(0xFFd742f4); // <-- pink
+
     @ObjectHolder("slime")
     public static final BlockFluidBase SLIME_BLOCK = null;
 
@@ -52,7 +66,7 @@ public class FluidAdditionalFieldsTest
     {
         if (ENABLED)
         {
-            event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
+            event.getRegistry().register((new BlockFluidClassic(SLIME, SLIME_MATERIAL)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
         }
     }
 }

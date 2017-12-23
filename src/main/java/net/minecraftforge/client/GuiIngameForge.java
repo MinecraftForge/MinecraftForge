@@ -357,7 +357,7 @@ public class GuiIngameForge extends GuiIngame
         int left = width / 2 + 91;
         int top = height - right_height;
 
-        if (player.isInsideOfMaterial(Material.WATER))
+        if (net.minecraftforge.common.ForgeHooks.isEntityInsideOfMaterial(player, Material::canDrownEntity))
         {
             int air = player.getAir();
             int full = MathHelper.ceil((double)(air - 2) * 10.0D / 300.0D);

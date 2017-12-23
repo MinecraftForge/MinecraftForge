@@ -266,7 +266,7 @@ public class Fluid
     {
         if (block == null)
             return false;
-        return block.getDefaultState().getMaterial() == Material.WATER;
+        return block.getDefaultState().getMaterial().canVaporize();
     }
 
 	/**
