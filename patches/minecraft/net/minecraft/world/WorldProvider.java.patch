@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,339 @@
+@@ -241,6 +216,352 @@
          return new WorldBorder();
      }
  
@@ -292,22 +292,6 @@
 +        return field_76579_a.getStarBrightnessBody(par1);
 +    }
 +
-+    @SideOnly(Side.CLIENT)
-+    public int getCombinedLight(IBlockAccess access, BlockPos pos, int lightValue)
-+    {
-+        if (access instanceof World)
-+            return ((World) access).getCombinedLightBody(pos, lightValue);
-+        else if (access instanceof ChunkCache)
-+            return ((ChunkCache) access).getCombinedLightBody(pos, lightValue);
-+        else
-+            return access.func_175626_b(pos, lightValue);
-+    }
-+
-+    public float getLightBrightness(BlockPos pos)
-+    {
-+        return field_76579_a.getLightBrightnessBody(pos);
-+    }
-+
 +    public void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful)
 +    {
 +        field_76579_a.field_72985_G = allowHostile;
@@ -401,6 +385,35 @@
 +    {
 +        return true;
 +    }
++
++    /**
++     * Gets the light level at the given position for the specified light type.
++     *
++     * @param chunk the chunk
++     * @param type  the type of light
++     * @param pos   the position in the world
++     * @return the light level
++     */
++    public int getLight(net.minecraft.world.chunk.Chunk chunk, EnumSkyBlock type, BlockPos pos)
++    {
++        return chunk.getLightForBody(type, pos);
++    }
++
++    /**
++     * Gets the effective light level at the given position.
++     * This takes into account both sky and block light.
++     * The skylight level is reduced by the specified amount when being considered.
++     *
++     * @param chunk             the chunk
++     * @param pos               the position in the world
++     * @param skylightReduction the reduction in skylight levels due to weather/time of day
++     * @return the light level
++     */
++    public int getEffectiveLight(net.minecraft.world.chunk.Chunk chunk, BlockPos pos, int skylightReduction)
++    {
++        return chunk.getLightSubtractedBody(pos, skylightReduction);
++    }
++    /* ========================================= FORGE END ====================================== */
 +
      public void func_186061_a(EntityPlayerMP p_186061_1_)
      {
