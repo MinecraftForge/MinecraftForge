@@ -9,6 +9,15 @@
              for (int j = 0; j < i * 8; ++j)
              {
                  float f = this.field_70146_Z.nextFloat() * ((float)Math.PI * 2F);
+@@ -189,7 +189,7 @@
+ 
+             if (this.func_70090_H() && this.field_70146_Z.nextInt(20) == 0)
+             {
+-                this.func_71061_d_();
++                if (net.minecraftforge.common.ForgeHooks.isEntityBBInsideMaterial(this, net.minecraft.block.material.Material::hasLiquidParticles)) {this.func_71061_d_();}
+             }
+         }
+ 
 @@ -304,7 +304,7 @@
          BlockPos blockpos = new BlockPos(MathHelper.func_76128_c(this.field_70165_t), 0, MathHelper.func_76128_c(this.field_70161_v));
          Chunk chunk = this.field_70170_p.func_175726_f(blockpos);

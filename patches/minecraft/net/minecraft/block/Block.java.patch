@@ -221,7 +221,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -934,6 +952,1314 @@
+@@ -934,6 +952,1319 @@
      {
      }
  
@@ -966,13 +966,13 @@
 +            case Crop:   return this == net.minecraft.init.Blocks.field_150458_ak;
 +            case Cave:   return state.isSideSolid(world, pos, EnumFacing.UP);
 +            case Plains: return this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150346_d || this == net.minecraft.init.Blocks.field_150458_ak;
-+            case Water:  return state.func_185904_a() == Material.field_151586_h && state.func_177229_b(BlockLiquid.field_176367_b) == 0;
++            case Water:  return state.func_185904_a().canWaterPlants() && state.func_177229_b(BlockLiquid.field_176367_b) == 0;
 +            case Beach:
 +                boolean isBeach = this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150346_d || this == net.minecraft.init.Blocks.field_150354_m;
-+                boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_185904_a() == Material.field_151586_h ||
-+                                    world.func_180495_p(pos.func_177976_e()).func_185904_a() == Material.field_151586_h ||
-+                                    world.func_180495_p(pos.func_177978_c()).func_185904_a() == Material.field_151586_h ||
-+                                    world.func_180495_p(pos.func_177968_d()).func_185904_a() == Material.field_151586_h);
++                boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_185904_a().canWaterPlants() ||
++                                    world.func_180495_p(pos.func_177976_e()).func_185904_a().canWaterPlants() ||
++                                    world.func_180495_p(pos.func_177978_c()).func_185904_a().canWaterPlants() ||
++                                    world.func_180495_p(pos.func_177968_d()).func_185904_a().canWaterPlants());
 +                return isBeach && hasWater;
 +        }
 +
@@ -1339,6 +1339,10 @@
 +    }
 +
 +    /**
++      * @Deprecated. Use ForgeHooks' predicate-based isEntityInsideMaterial() method instead
++      * for cases where material properties are of interest. That method handles liquid and fluid
++      * levels as well.
++      * 
 +      * Called when the entity is inside this block, may be used to determined if the entity can breathing,
 +      * display material overlays, or if the entity can swim inside a block.
 +      *
@@ -1351,6 +1355,7 @@
 +      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
 +      * @return null for default behavior, true if the entity is within the material, false if it was not.
 +      */
++    @Deprecated
 +    @Nullable
 +    public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead)
 +    {
@@ -1439,7 +1444,7 @@
 +    @SideOnly (Side.CLIENT)
 +    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
 +    {
-+        if (state.func_185904_a() == Material.field_151586_h)
++        if (state.func_185904_a().isLiquidOtherThanLava())
 +        {
 +            float f12 = 0.0F;
 +
@@ -1448,7 +1453,7 @@
 +                net.minecraft.entity.EntityLivingBase ent = (net.minecraft.entity.EntityLivingBase)entity;
 +                f12 = (float)net.minecraft.enchantment.EnchantmentHelper.func_185292_c(ent) * 0.2F;
 +
-+                if (ent.func_70644_a(net.minecraft.init.MobEffects.field_76427_o))
++                if (state.func_185904_a().canDrownEntity() && ent.func_70644_a(net.minecraft.init.MobEffects.field_76427_o))
 +                {
 +                    f12 = f12 * 0.3F + 0.6F;
 +                }
@@ -1536,7 +1541,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1230,31 +2556,6 @@
+@@ -1230,31 +2561,6 @@
                  block15.field_149783_u = flag;
              }
          }

@@ -1,5 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityFallingBlock.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityFallingBlock.java
+@@ -136,14 +136,14 @@
+             {
+                 BlockPos blockpos1 = new BlockPos(this);
+                 boolean flag = this.field_175132_d.func_177230_c() == Blocks.field_192444_dS;
+-                boolean flag1 = flag && this.field_70170_p.func_180495_p(blockpos1).func_185904_a() == Material.field_151586_h;
++                boolean flag1 = flag && this.field_70170_p.func_180495_p(blockpos1).func_185904_a().canMixWithConcrete();
+                 double d0 = this.field_70159_w * this.field_70159_w + this.field_70181_x * this.field_70181_x + this.field_70179_y * this.field_70179_y;
+ 
+                 if (flag && d0 > 1.0D)
+                 {
+                     RayTraceResult raytraceresult = this.field_70170_p.func_72901_a(new Vec3d(this.field_70169_q, this.field_70167_r, this.field_70166_s), new Vec3d(this.field_70165_t, this.field_70163_u, this.field_70161_v), true);
+ 
+-                    if (raytraceresult != null && this.field_70170_p.func_180495_p(raytraceresult.func_178782_a()).func_185904_a() == Material.field_151586_h)
++                    if (raytraceresult != null && this.field_70170_p.func_180495_p(raytraceresult.func_178782_a()).func_185904_a().canMixWithConcrete())
+                     {
+                         blockpos1 = raytraceresult.func_178782_a();
+                         flag1 = true;
 @@ -166,6 +166,7 @@
                  {
                      IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos1);

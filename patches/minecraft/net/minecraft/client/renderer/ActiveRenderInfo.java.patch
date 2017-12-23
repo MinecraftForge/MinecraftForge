@@ -1,6 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ActiveRenderInfo.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ActiveRenderInfo.java
-@@ -108,4 +108,14 @@
+@@ -72,6 +72,10 @@
+             {
+                 f = BlockLiquid.func_149801_b(((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue()) - 0.11111111F;
+             }
++            if (iblockstate.func_177230_c() instanceof net.minecraftforge.fluids.IFluidBlock)
++            {
++                f = (float) (((net.minecraftforge.fluids.IFluidBlock)iblockstate.func_177230_c()).getFilledPercentage(p_186703_0_, blockpos)-0.1);
++            }
+ 
+             float f1 = (float)(blockpos.func_177956_o() + 1) - f;
+ 
+@@ -108,4 +112,14 @@
      {
          return field_74596_h;
      }

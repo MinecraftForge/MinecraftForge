@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/material/MaterialLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/material/MaterialLiquid.java
+@@ -7,6 +7,7 @@
+         super(p_i2114_1_);
+         this.func_76231_i();
+         this.func_76219_n();
++        this.setIsLiquid();
+     }
+ 
+     public boolean func_76224_d()

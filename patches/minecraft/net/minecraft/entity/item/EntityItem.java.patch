@@ -68,7 +68,24 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -282,6 +303,7 @@
+@@ -262,7 +283,7 @@
+         {
+             if (!this.field_70171_ac && !this.field_70148_d)
+             {
+-                this.func_71061_d_();
++                if (net.minecraftforge.common.ForgeHooks.isEntityBBInsideMaterial(this, Material::hasLiquidParticles)) {this.func_71061_d_();}
+             }
+ 
+             this.field_70171_ac = true;
+@@ -272,6 +293,7 @@
+             this.field_70171_ac = false;
+         }
+ 
++        this.field_70171_ac = net.minecraftforge.common.ForgeHooks.isEntityBBInsideMaterial(this, Material::func_76224_d); if (field_70171_ac) this.func_70066_B();
+         return this.field_70171_ac;
+     }
+ 
+@@ -282,6 +304,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -76,7 +93,7 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -314,6 +336,7 @@
+@@ -314,6 +337,7 @@
          p_70014_1_.func_74777_a("Health", (short)this.field_70291_e);
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
          p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -84,7 +101,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -358,22 +381,30 @@
+@@ -358,22 +382,30 @@
          {
              this.func_70106_y();
          }
@@ -117,7 +134,7 @@
                      this.func_70106_y();
                      itemstack.func_190920_e(i);
                  }
-@@ -476,6 +507,6 @@
+@@ -476,6 +508,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();

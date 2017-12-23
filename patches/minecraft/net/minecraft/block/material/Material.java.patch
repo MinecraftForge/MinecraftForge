@@ -1,14 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/block/material/Material.java
 +++ ../src-work/minecraft/net/minecraft/block/material/Material.java
-@@ -36,6 +36,7 @@
-     public static final Material field_151568_F = (new Material(MapColor.field_151660_b)).func_76219_n();
-     public static final Material field_151569_G = (new Material(MapColor.field_151659_e)
-     {
-+        @Override
-         public boolean func_76230_c()
-         {
-             return false;
-@@ -59,7 +60,7 @@
+@@ -9,8 +9,8 @@
+     public static final Material field_151576_e = (new Material(MapColor.field_151665_m)).func_76221_f();
+     public static final Material field_151573_f = (new Material(MapColor.field_151668_h)).func_76221_f();
+     public static final Material field_151574_g = (new Material(MapColor.field_151668_h)).func_76221_f().func_76225_o();
+-    public static final Material field_151586_h = (new MaterialLiquid(MapColor.field_151662_n)).func_76219_n();
+-    public static final Material field_151587_i = (new MaterialLiquid(MapColor.field_151656_f)).func_76219_n();
++    public static final Material field_151586_h = (new MaterialLiquid(MapColor.field_151662_n)).func_76219_n().setCanBeAbsorbed().setCanDrownEntity().setCanFloatBoat().setCanPushEntity().setIsSwimmable().setCanSpawnWaterCreatures().setCanWaterPlants().setCanVaporize().setCanMixWithLava().setCanMixWithConcrete().setCanFreeze().setChangesFOV();
++    public static final Material field_151587_i = (new MaterialLiquid(MapColor.field_151656_f)).func_76219_n().setIsLiquid();
+     public static final Material field_151584_j = (new Material(MapColor.field_151669_i)).func_76226_g().func_76223_p().func_76219_n();
+     public static final Material field_151585_k = (new MaterialLogic(MapColor.field_151669_i)).func_76219_n();
+     public static final Material field_151582_l = (new MaterialLogic(MapColor.field_151669_i)).func_76226_g().func_76219_n().func_76231_i();
+@@ -59,7 +59,7 @@
  
      public boolean func_76224_d()
      {
@@ -17,7 +20,7 @@
      }
  
      public boolean func_76220_a()
-@@ -148,4 +149,102 @@
+@@ -148,4 +148,259 @@
      {
          return this.field_76234_F;
      }
@@ -31,6 +34,12 @@
 +    private boolean canWaterPlants = false;
 +    private boolean canSpawnWaterCreatures = false;
 +    private boolean isSwimmable = false;
++    private boolean canVaporize = false;
++    private boolean canMixWithLava = false;
++    private boolean canMixWithConcrete = false;
++    private boolean hasLiquidParticles = false; // currently only generates vanilla water particles
++    private boolean canFreeze = false; // currently only freezes to vanilla ICE block
++    private boolean changesFOV = false; // causes the same FOV change as when under water
 +    
 +    public Material setIsLiquid()
 +    {
@@ -38,12 +47,25 @@
 +        return this;
 +    }
 +    
++    /**
++     * Intended to be used for custom fluids. This will cause the entity's air
++     * supply to dwindle, eventually to damage then death. Players will also 
++     * see air supply GUI in survival mode.
++     * 
++     * @return the material to allow method chaining
++     */    
 +    public Material setCanDrownEntity()
 +    {
 +        canDrownEntity = true;
 +        return this;
 +    }
 +    
++    /**
++     * Intended to be used for custom fluids. This will cause the material to 
++     * push entities (including EntityItem and EntityPlayer) like water does.
++     * 
++     * @return the material to allow method chaining
++     */    
 +    public Material setCanPushEntity()
 +    {
 +        canPushEntity = true;
@@ -56,56 +78,169 @@
 +        return this;
 +    }
 +    
++    /**
++     * Intended to be used for custom fluids. This will cause the material to be 
++     * absorbed by sponges. Currently the sponge will then contain vanilla water.
++     * 
++     * @return the material to allow method chaining
++     */    
 +    public Material setCanBeAbsorbed() 
 +    {
 +        canBeAbsorbed = true; 
 +        return this;
 +    }
 +    
++    
++    /**
++     * Intended to be used for custom fluids. This will cause the material to do 
++     * everything that water does for plants, such as irrigating farmland, allowing
++     * placement of sugar cane and water lilies, etc.
++     * 
++     * @return the material to allow method chaining
++     */    
 +    public Material setCanWaterPlants()
 +    {
 +        canWaterPlants = true;
 +        return this;
 +    }
 +    
++    
++    /**
++     * Intended to be used for custom fluids. This will allow water creatures
++     * to spawn. It also allows the material to be used for fishing.
++     * 
++     * @return the material to allow method chaining
++     */    
 +    public Material setCanSpawnWaterCreatures()
 +    {
 +        canSpawnWaterCreatures = true;
 +        return this;
 +    }
 +    
++    /**
++     * Intended to be used for custom fluids. This will cause the material to 
++     * allow swimming. Path navigation will treat blocks with this material the
++     * same as water.
++     * 
++     * @return the material to allow method chaining
++     */    
 +    public Material setIsSwimmable()
 +    {
 +        isSwimmable = true;
 +        return this;
 +    }
 +    
-+    public boolean getCanDrownEntity()
++    /**
++     * Intended to be used for custom fluids. This will cause the material to 
++     * vaporize (preventing them from being placed) in hot dimensions. This is 
++     * important as it prevents players from using this to turn lava into 
++     * obsidian in dimensions where it would create an unfair advantage.
++     * 
++     * @return the material to allow method chaining
++     */    
++    public Material setCanVaporize()
++    {
++        canVaporize = true;
++        return this;
++    }
++    
++    /**
++     * Intended to be used for custom fluids. This will cause the material to 
++     * turn lava into obsidian, like water does.
++     * 
++     * @return the material to allow method chaining
++     */    
++    public Material setCanMixWithLava()
++    {
++        canMixWithLava = true;
++        return this;
++    }
++    
++    /**
++     * Intended to be used for custom fluids. This will cause the material to 
++     * turn into concrete blocks if it comes in contact with concrete powder.
++     * 
++     * @return the material to allow method chaining
++     */    
++    public Material setCanMixWithConcrete()
++    {
++        canMixWithConcrete = true;
++        return this;
++    }
++       
++    /** 
++     * Intended to be used for custom fluids. Currently this will cause vanilla 
++     * water particles to be generated when an entity or entity item is moving
++     * in water; in the future it would be good to allow 
++     * custom particles. Note that even if this is not enabled, water particles
++     * will still appear for fishing, guardians, and drowning.
++     * 
++     * @return returns the material to allow method chaining
++     */
++    public Material setHasLiquidParticles()
++    {
++        hasLiquidParticles = true;
++        return this;
++    }
++    
++    /** 
++     * Intended to be used for custom fluids. Currently this will allow the material
++     * to freeze into vanilla ICE blocks; in the future it would be good to allow
++     * custom ice blocks. 
++     * 
++     * @return returns the material to allow method chaining
++     */
++    public Material setCanFreeze()
++    {
++        canFreeze = true;
++        return this;
++    }
++      
++    /** 
++     * Intended to be used for custom fluids. Currently this will allow the material
++     * to cause the field of view (FOV) to change if player is submerged in the liquid
++     * or fluid, the same as water. FOV will be modified by same effects such as 
++     * water-breathing. 
++     * 
++     * @return returns the material to allow method chaining
++     */
++    public Material setChangesFOV()
++    {
++        changesFOV = true;
++        return this;
++    }
++    
++    public boolean isLiquidOtherThanLava()
++    {
++        return isLiquid && this != Material.field_151587_i;
++    }
++    
++    public boolean canDrownEntity()
 +    {
 +        return canDrownEntity;
 +    }
 +    
-+    public boolean getCanPushEntity()
++    public boolean canPushEntity()
 +    {
 +        return canPushEntity;
 +    }
 +    
-+    public boolean getCanFloatBoat()
++    public boolean canFloatBoat()
 +    {
 +        return canFloatBoat;
 +    }
-+    
-+    public boolean getCanBeAbsorbed()
++
++    public boolean canBeAbsorbed()
 +    {
 +        return canBeAbsorbed;
 +    }
 +    
-+    public boolean getCanWaterPlants()
++    public boolean canWaterPlants()
 +    {
 +        return canWaterPlants;
 +    }
 +    
-+    public boolean getCanSpawnWaterCreatures()
++    public boolean canSpawnWaterCreatures()
 +    {
 +        return canSpawnWaterCreatures;
 +    }
@@ -115,8 +250,33 @@
 +        return isSwimmable;
 +    }
 +    
-+    public boolean isLiquidOtherThanLava()
++    public boolean canVaporize()
 +    {
-+        return isLiquid && this != Material.field_151587_i;
++        return canVaporize;
++    }
++    
++    public boolean canMixWithLava()
++    {
++        return canMixWithLava;
++    }
++    
++    public boolean canMixWithConcrete()
++    {
++        return canMixWithConcrete;
++    }
++
++    public boolean hasLiquidParticles()
++    {
++        return hasLiquidParticles;
++    }
++    
++    public boolean canFreeze()
++    {
++        return canFreeze;
++    }
++    
++    public boolean changesFOV()
++    {
++        return changesFOV;
 +    }
  }

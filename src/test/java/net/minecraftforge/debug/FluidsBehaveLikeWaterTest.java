@@ -17,14 +17,14 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@Mod(modid = FluidsBehaveLikeWaterTest.MODID, name = "Test Mod", version = "1.0.0", acceptedMinecraftVersions = "*")
+@Mod(modid = FluidsBehaveLikeWaterTest.MODID, name = "Test Mod", version = "1.0.0", acceptableRemoteVersions = "*", acceptedMinecraftVersions = "*")
 @EventBusSubscriber
 public class FluidsBehaveLikeWaterTest
 {
-    static final boolean ENABLED = true; // <-- enable mod
+    static final boolean ENABLED = false; // <-- enable mod
 
     public static final Material SLIME_MATERIAL = new MaterialLiquid(MapColor.GREEN)
-            .setCanDrownEntity() // <-- change these chained methods to change material behavior
+            .setCanDrownEntity() // <-- comment out these chained methods to change material behavior
             .setCanFloatBoat()
             .setCanPushEntity()
             .setIsSwimmable()
@@ -33,7 +33,11 @@ public class FluidsBehaveLikeWaterTest
             .setCanSpawnWaterCreatures()
             .setCanVaporize()
             .setCanMixWithConcrete()
-            .setCanMixWithLava();
+            .setCanMixWithLava()
+            .setCanFreeze()
+            .setChangesFOV()
+            .setHasLiquidParticles()
+            ;
 
     static final String MODID = "fluidbehaveslikewater";
     static final ResourceLocation RES_LOC = new ResourceLocation(MODID, "slime");

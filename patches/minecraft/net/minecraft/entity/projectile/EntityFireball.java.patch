@@ -9,3 +9,12 @@
              {
                  this.func_70227_a(raytraceresult);
              }
+@@ -109,7 +109,7 @@
+                 for (int i = 0; i < 4; ++i)
+                 {
+                     float f1 = 0.25F;
+-                    this.field_70170_p.func_175688_a(EnumParticleTypes.WATER_BUBBLE, this.field_70165_t - this.field_70159_w * 0.25D, this.field_70163_u - this.field_70181_x * 0.25D, this.field_70161_v - this.field_70179_y * 0.25D, this.field_70159_w, this.field_70181_x, this.field_70179_y);
++                    if (net.minecraftforge.common.ForgeHooks.isEntityBBInsideMaterial(this, net.minecraft.block.material.Material::hasLiquidParticles)) {this.field_70170_p.func_175688_a(EnumParticleTypes.WATER_BUBBLE, this.field_70165_t - this.field_70159_w * 0.25D, this.field_70163_u - this.field_70181_x * 0.25D, this.field_70161_v - this.field_70179_y * 0.25D, this.field_70159_w, this.field_70181_x, this.field_70179_y);}
+                 }
+ 
+                 f = 0.8F;

@@ -572,13 +572,14 @@
                      }
                  }
              }
-@@ -2050,6 +2211,16 @@
+@@ -2050,8 +2211,18 @@
                          IBlockState iblockstate1 = this.func_180495_p(blockpos$pooledmutableblockpos);
                          Block block = iblockstate1.func_177230_c();
  
+-                        if (iblockstate1.func_185904_a() == p_72918_2_)
 +                        Boolean result = block.isEntityInsideMaterial(this, blockpos$pooledmutableblockpos, iblockstate1, p_72918_3_, (double)i3, p_72918_2_, false);
 +                        if (result != null && result == true)
-+                        {
+                         {
 +                            // Forge: When requested call blocks modifyAcceleration method, and more importantly cause this method to return true, which results in an entity being "inWater"
 +                            flag = true;
 +                            vec3d = block.func_176197_a(this, blockpos$pooledmutableblockpos, p_72918_3_, vec3d);
@@ -586,9 +587,11 @@
 +                        }
 +                        else if (result != null && result == false) continue;
 +
-                         if (iblockstate1.func_185904_a() == p_72918_2_)
-                         {
++                        if (iblockstate1.func_185904_a().canPushEntity())
++                        {
                              double d0 = (double)((float)(i4 + 1) - BlockLiquid.func_149801_b(((Integer)iblockstate1.func_177229_b(BlockLiquid.field_176367_b)).intValue()));
+ 
+                             if ((double)i3 >= d0)
 @@ -2116,6 +2287,7 @@
      public Explosion func_72885_a(@Nullable Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
@@ -694,7 +697,22 @@
          Biome biome = this.func_180494_b(p_175670_1_);
          float f = biome.func_180626_a(p_175670_1_);
  
-@@ -2525,6 +2720,11 @@
+@@ -2498,7 +2693,7 @@
+                 IBlockState iblockstate1 = this.func_180495_p(p_175670_1_);
+                 Block block = iblockstate1.func_177230_c();
+ 
+-                if ((block == Blocks.field_150355_j || block == Blocks.field_150358_i) && ((Integer)iblockstate1.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0)
++                if ((iblockstate1.func_185904_a().canFreeze() || block == Blocks.field_150355_j || block == Blocks.field_150358_i) && ((Integer)iblockstate1.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0)
+                 {
+                     if (!p_175670_2_)
+                     {
+@@ -2520,11 +2715,16 @@
+ 
+     private boolean func_175696_F(BlockPos p_175696_1_)
+     {
+-        return this.func_180495_p(p_175696_1_).func_185904_a() == Material.field_151586_h;
++        return this.func_180495_p(p_175696_1_).func_185904_a().canFreeze();
+     }
  
      public boolean func_175708_f(BlockPos p_175708_1_, boolean p_175708_2_)
      {

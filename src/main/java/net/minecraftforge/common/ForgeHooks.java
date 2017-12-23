@@ -1007,10 +1007,12 @@ public class ForgeHooks
         return ItemStack.EMPTY;
     }
 
-    /*
+    /**
      * It is recommended to call the predicate version instead
      * to test a material property (e.g. isLiquid)
      * rather than an exact material match to support mod compatibility.
+     * 
+     * Note this checks for the head position of the enity.
      */
     public static boolean isInsideOfMaterial(Material material, Entity entity, BlockPos pos)
     {
@@ -1031,7 +1033,6 @@ public class ForgeHooks
         if (filled < 0)
         {
             filled *= -1;
-            //filled -= 0.11111111F; //Why this is needed.. not sure...
             return eyes > pos.getY() + 1 + (1 - filled);
         }
         else
@@ -1040,10 +1041,12 @@ public class ForgeHooks
         }
     }
     
-    /*
-     * Predicate version of Entity inside material method
+    /**
+     * Intended for use with liquids and fluids. Checks if the entity's head
+     * is inside a block that meets the conditions of the predicate. Typically
+     * used for things like air supply.
      */
-    public static boolean isEntityInsideOfMaterial(Entity entity, Predicate<Material> predicate)
+    public static boolean isEntityHeadInsideMaterial(Entity entity, Predicate<Material> predicate)
     {
         if (entity.getRidingEntity() instanceof EntityBoat)
         {
@@ -1070,12 +1073,14 @@ public class ForgeHooks
         }    
     }
 
-    /*
-     * This is different than "inside" liquid but rather ensures that the 
-     * vanilla inWater field is updated for all custom fluids as well.
-    */
-    public static boolean isInLiquid(AxisAlignedBB bb, Entity entity)
+    /**
+     * Intended for use with liquids and fluids. Checks if the entity's bounding
+     * box is inside a block that meets the conditions of the predicate. Typically
+     * used for things such as pushing an entity that may be standing in flowing fluid.
+     */
+    public static boolean isEntityBBInsideMaterial(Entity entity, Predicate<Material> predicate)
     {
+        AxisAlignedBB bb = entity.getEntityBoundingBox().grow(0.0D, -0.4D, 0.0D).shrink(0.001D);
         int minX = MathHelper.floor(bb.minX);
         int maxX = MathHelper.ceil(bb.maxX);
         int minY = MathHelper.floor(bb.minY);
@@ -1092,18 +1097,18 @@ public class ForgeHooks
             boolean isInLiquid = false;
             BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
 
-            for (int l3 = minX; l3 < maxX; ++l3)
+            for (int x = minX; x < maxX; ++x)
             {
-                for (int i4 = minY; i4 < maxY; ++i4)
+                for (int y = minY; y < maxY; ++y)
                 {
-                    for (int j4 = minZ; j4 < maxZ; ++j4)
+                    for (int z = minZ; z < maxZ; ++z)
                     {
-                        blockpos$pooledmutableblockpos.setPos(l3, i4, j4);
+                        blockpos$pooledmutableblockpos.setPos(x, y, z);
                         IBlockState iblockstate1 = entity.world.getBlockState(blockpos$pooledmutableblockpos);
 
-                        if (iblockstate1.getMaterial().isLiquid())
+                        if (predicate.test(iblockstate1.getMaterial()))
                         {
-                            double d0 = i4 + 1 - BlockLiquid.getLiquidHeightPercent(iblockstate1.getValue(BlockLiquid.LEVEL).intValue());
+                            double d0 = y + 1 - BlockLiquid.getLiquidHeightPercent(iblockstate1.getValue(BlockLiquid.LEVEL).intValue());
 
                             if (maxY >= d0)
                             {

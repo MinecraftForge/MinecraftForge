@@ -9,7 +9,7 @@
          {
              func_190970_b(p_180658_1_, p_180658_2_);
          }
-@@ -95,7 +95,7 @@
+@@ -95,14 +95,14 @@
      private boolean func_176529_d(World p_176529_1_, BlockPos p_176529_2_)
      {
          Block block = p_176529_1_.func_180495_p(p_176529_2_.func_177984_a()).func_177230_c();
@@ -18,3 +18,11 @@
      }
  
      private boolean func_176530_e(World p_176530_1_, BlockPos p_176530_2_)
+     {
+         for (BlockPos.MutableBlockPos blockpos$mutableblockpos : BlockPos.func_177975_b(p_176530_2_.func_177982_a(-4, 0, -4), p_176530_2_.func_177982_a(4, 1, 4)))
+         {
+-            if (p_176530_1_.func_180495_p(blockpos$mutableblockpos).func_185904_a() == Material.field_151586_h)
++            if (p_176530_1_.func_180495_p(blockpos$mutableblockpos).func_185904_a().canWaterPlants())
+             {
+                 return true;
+             }
