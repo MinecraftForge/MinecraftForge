@@ -60,10 +60,12 @@ public class DimensionManager
     private static class Dimension
     {
         private final DimensionType type;
+        private final int clientDimId;
         private int ticksWaited;
-        private Dimension(DimensionType type)
+        private Dimension(DimensionType type, int clientDimId)
         {
             this.type = type;
+            this.clientDimId = clientDimId;
             this.ticksWaited = 0;
         }
     }
@@ -110,12 +112,17 @@ public class DimensionManager
 
     public static void registerDimension(int id, DimensionType type)
     {
+        registerDimension(id, type, id);
+    }
+
+    public static void registerDimension(int id, DimensionType type, int clientDimensionId)
+    {
         DimensionType.getById(type.getId()); //Check if type is invalid {will throw an error} No clue how it would be invalid tho...
         if (dimensions.containsKey(id))
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        dimensions.put(id, new Dimension(type));
+        dimensions.put(id, new Dimension(type, clientDimensionId));
         if (id >= 0)
         {
             dimensionMap.set(id);
@@ -182,6 +189,11 @@ public class DimensionManager
     public static Integer[] getIDs()
     {
         return worlds.keySet().toArray(new Integer[worlds.size()]); //Only loaded dims, since usually used to cycle through loaded worlds
+    }
+
+    public static int getIdForClient(int id)
+    {
+        return dimensions.get(id).clientDimId;
     }
 
     public static void setWorld(int id, @Nullable WorldServer world, MinecraftServer server)

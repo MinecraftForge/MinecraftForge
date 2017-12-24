@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketRespawn.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketRespawn.java
+@@ -23,7 +23,7 @@
+ 
+     public SPacketRespawn(int p_i46923_1_, EnumDifficulty p_i46923_2_, WorldType p_i46923_3_, GameType p_i46923_4_)
+     {
+-        this.field_149088_a = p_i46923_1_;
++        this.field_149088_a = net.minecraftforge.common.DimensionManager.getIdForClient(p_i46923_1_);
+         this.field_149086_b = p_i46923_2_;
+         this.field_149087_c = p_i46923_4_;
+         this.field_149085_d = p_i46923_3_;

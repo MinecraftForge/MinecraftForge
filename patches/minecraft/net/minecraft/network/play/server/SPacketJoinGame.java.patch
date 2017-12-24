@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketJoinGame.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketJoinGame.java
+@@ -28,7 +28,7 @@
+     public SPacketJoinGame(int p_i46938_1_, GameType p_i46938_2_, boolean p_i46938_3_, int p_i46938_4_, EnumDifficulty p_i46938_5_, int p_i46938_6_, WorldType p_i46938_7_, boolean p_i46938_8_)
+     {
+         this.field_149206_a = p_i46938_1_;
+-        this.field_149202_d = p_i46938_4_;
++        this.field_149202_d = net.minecraftforge.common.DimensionManager.getIdForClient(p_i46938_4_);
+         this.field_149203_e = p_i46938_5_;
+         this.field_149205_c = p_i46938_2_;
+         this.field_149200_f = p_i46938_6_;
