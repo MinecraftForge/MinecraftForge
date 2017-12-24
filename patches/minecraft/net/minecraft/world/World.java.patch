@@ -609,7 +609,7 @@
                  {
 -                    if (this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(l3, i4, j4)).func_185904_a() == p_72875_2_)
 +                    IBlockState iblockstate1 = this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(l3, i4, j4));
-+                    Boolean result = iblockstate1.func_177230_c().isAABBInsideLiquid(this, blockpos$pooledmutableblockpos, p_72875_1_);
++                    Boolean result = iblockstate1.func_177230_c().isAABBInsideMaterial(this, blockpos$pooledmutableblockpos, p_72875_1_, p_72875_2_);
 +                    if (result != null) {
 +                        if (!result) continue;
 +                        blockpos$pooledmutableblockpos.func_185344_t();
