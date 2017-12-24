@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = ReachDistanceAttributeTest.MODID, name = ReachDistanceAttributeTest.MODID, version = "1.0")
+@Mod(modid = ReachDistanceAttributeTest.MODID, name = ReachDistanceAttributeTest.MODID, version = "1.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
 public class ReachDistanceAttributeTest
 {

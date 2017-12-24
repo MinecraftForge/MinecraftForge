@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Collections;
 
-@Mod(modid = SlipperinessTest.MOD_ID, name = "Slipperiness Test", version = "0.0.0")
+@Mod(modid = SlipperinessTest.MOD_ID, name = "Slipperiness Test", version = "0.0.0", acceptableRemoteVersions = "*")
 @EventBusSubscriber
 public class SlipperinessTest
 {

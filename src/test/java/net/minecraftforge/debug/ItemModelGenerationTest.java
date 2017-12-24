@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber
-@Mod(modid = ItemModelGenerationTest.MOD_ID, name = "Item model generation test", version = "1.0")
+@Mod(modid = ItemModelGenerationTest.MOD_ID, name = "Item model generation test", version = "1.0", acceptableRemoteVersions = "*")
 public class ItemModelGenerationTest
 {
     static final String MOD_ID = "item_model_generation_test";
