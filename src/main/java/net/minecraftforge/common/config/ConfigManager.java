@@ -222,6 +222,8 @@ public class ConfigManager
                 continue;
             if (Modifier.isStatic(f.getModifiers()) != (instance == null))
                 continue;
+            if (Modifier.isTransient(f.getModifiers()))
+                continue;
 
             String comment = null;
             Comment ca = f.getAnnotation(Comment.class);
