@@ -6,7 +6,7 @@
  
 -        if (this.field_184278_m <= 0 && itemstack.func_77973_b() == Items.field_151065_br)
 +        int fuel = net.minecraftforge.event.ForgeEventFactory.getBrewingStandFuel(itemstack);
-+        if (this.field_184278_m <= 0 && fuel > 0)
++        if ((this.field_184278_m <= 0 || this.field_184278_m + fuel <= 20) && fuel > 0)
          {
 -            this.field_184278_m = 20;
 +            this.field_184278_m = fuel;
