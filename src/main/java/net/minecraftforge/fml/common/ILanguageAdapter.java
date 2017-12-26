@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import net.minecraftforge.fml.common.event.FMLEvent;
@@ -42,9 +43,9 @@ public interface ILanguageAdapter
      * Wraps an event handler method in an {@code EventHandler} instance
      * @param method the eventhandler method of a mod
      */
-    public default Function<FMLEvent, CompletableFuture<Void>> createEventHandler(Method method)
+    public default BiFunction<Object, FMLEvent, CompletableFuture<Void>> createEventHandler(Method method)
     {
-        return event ->
+        return (Object mod, FMLEvent event) ->
         {
             CompletableFuture<Void> future = new CompletableFuture<>();
             try
@@ -53,7 +54,7 @@ public interface ILanguageAdapter
                 {
                     // safely transform the result of the event handler into a CompletableFuture
                     //noinspection unchecked
-                    ((CompletionStage<Void>) method.invoke(event)).whenComplete((value, throwable) ->
+                    ((CompletionStage<Void>) method.invoke(mod, event)).whenComplete((value, throwable) ->
                     {
                         if (throwable != null)
                         {
@@ -67,7 +68,7 @@ public interface ILanguageAdapter
                 }
                 else
                 {
-                    method.invoke(event);
+                    method.invoke(mod, event);
                     future.complete(null);
                 }
             }

@@ -62,6 +62,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.function.BiFunction;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -101,7 +102,7 @@ public class FMLModContainer implements ModContainer
     private String modLanguage;
     private ILanguageAdapter languageAdapter;
     private Disableable disableability;
-    private ListMultimap<Class<? extends FMLEvent>, Function<FMLEvent, CompletableFuture<Void>>> eventHandlers;
+    private ListMultimap<Class<? extends FMLEvent>, BiFunction<Object,  FMLEvent, CompletableFuture<Void>>> eventHandlers;
     private Map<String, String> customModProperties;
     private ModCandidate candidate;
     private URL updateJSONUrl;
@@ -604,7 +605,7 @@ public class FMLModContainer implements ModContainer
         {
             CompletableFuture[] futures = eventHandlers.get(event.getClass())
                     .stream()
-                    .map(eventHandler -> eventHandler.apply(event))
+                    .map(eventHandler -> eventHandler.apply(this.getMod(), event))
                     .toArray(CompletableFuture[]::new);
             CompletableFuture.allOf(futures).join();
         }
