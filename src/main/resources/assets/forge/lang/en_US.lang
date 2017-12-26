@@ -1,12 +1,14 @@
-commands.forge.usage=Use /forge <subcommand>. Subcommands are tps, track, gen
-commands.forge.usage.tracking=Use /forge track <type> <duration>. Valid types are te (Tile Entities). Duration is < 60.
+commands.forge.usage=Use /forge <subcommand>
+commands.forge.usage.tracking=Use /forge track <type> <duration>. Valid types are "te" (Tile Entities). Duration in seconds must be <= 60.
+commands.forge.usage.help=Use help [command] to view usages for that command.
 commands.forge.tps.summary=%s : Mean tick time: %d ms. Mean TPS: %d
+commands.forge.tps.usage=Use /forge tps [dimension]
 commands.forge.gen.usage=Use /forge gen <x> <y> <z> <chunkCount> [dimension] [interval]
 commands.forge.gen.dim_fail=Failed to load world for dimension %d, Task terminated.
 commands.forge.gen.progress=Generation Progress: %d/%d
 commands.forge.gen.complete=Finished generating %d new chunks (out of %d) for dimension %d.
 commands.forge.gen.start=Starting to generate %d chunks in a spiral around %d, %d in dimension %d.
-commands.forge.entity.usage=Use /forge entity [list] help for more infomration on a specific command.
+commands.forge.entity.usage=Use /forge entity help for more information on entity subcommands.
 commands.forge.entity.list.usage=Use /forge entity list [filter] [dim] to get entity info that matches the optional filter.
 commands.forge.entity.list.invalid=Invalid filter, does not match any entities. Use /forge entity list for a proper list
 commands.forge.entity.list.invalidworld=Could not load world for dimension %d. Please select a valid dimension.
@@ -15,7 +17,18 @@ commands.forge.entity.list.single.header=Entity: %s Total: %d
 commands.forge.entity.list.multiple.header=Total: %d
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
+commands.forge.tracking.entity.enabled=Entity tracking enabled for %d seconds.
+commands.forge.tracking.usage=Use /forge track help for more information on tracking subcommands.
+commands.forge.tracking.start.usage=Use /forge track start <te|entity> <duration>
+commands.forge.tracking.reset.usage=Use /forge track reset <te|entity>
+commands.forge.tracking.reset=Timings data has been cleared!
+commands.forge.tracking.te.usage=Use /forge track te
+
+commands.forge.tracking.timingEntry=%s - %s [%d, %d, %d]: %s
+commands.forge.tracking.noData=No data has been recorded yet.
 commands.tree_base.invalid_cmd=Invalid subcommand '%s'!
+commands.tree_base.invalid_cmd.list_subcommands=Invalid subcommand '%s'! Available subcommands: %s
+commands.tree_base.available_subcommands=Available SubCommands: %s
 forge.texture.preload.warning=Warning: Texture %s not preloaded, will cause render glitches!
 forge.client.shutdown.internal=Shutting down internal server...
 forge.update.newversion=New Forge version available: %s
@@ -60,6 +73,8 @@ forge.configgui.zombieBaseSummonChance.tooltip=Base zombie summoning spawn chanc
 forge.configgui.zombieBaseSummonChance=Zombie Summon Chance
 forge.configgui.stencilbits=Enable GL Stencil Bits
 forge.configgui.replaceBuckets=Use Forge's bucket model
+forge.configgui.forgeCloudsEnabled=Use Forge's cloud renderer
+forge.configgui.forgeCloudsEnabled.tooltip=Enable uploading cloud geometry to the GPU for faster rendering.
 forge.configgui.forgeLightPipelineEnabled=Forge Light Pipeline Enabled
 forge.configgui.disableStairSlabCulling=Disable Stair/Slab culling.
 forge.configgui.zoomInMissingModelTextInGui=Zoom in Missing model text in the GUI
@@ -205,3 +220,4 @@ fml.button.open.mods.folder=Open Mods Folder
 fml.button.open.file=Open %s
 
 forge.container.enchant.limitedEnchantability=Limited Enchantability
+attribute.name.generic.reachDistance=Reach Distance

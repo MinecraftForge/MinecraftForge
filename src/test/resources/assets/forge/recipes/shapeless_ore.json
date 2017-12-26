@@ -1,0 +1,20 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "gravel"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "gravel"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "gravel"
+    }
+  ],
+  "result": {
+    "item": "minecraft:flint"
+  }
+}

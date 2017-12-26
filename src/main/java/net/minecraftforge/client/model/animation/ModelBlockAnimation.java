@@ -419,43 +419,16 @@ public class ModelBlockAnimation
     protected static class MBJoint implements IJoint
     {
         private final String name;
-        private final TRSRTransformation invBindPose;
 
-        public MBJoint(String name, BlockPart part)
+        public MBJoint(String name)
         {
             this.name = name;
-            if(part.partRotation != null)
-            {
-                float x = 0, y = 0, z = 0;
-                switch(part.partRotation.axis)
-                {
-                    case X:
-                        x = 1;
-                    case Y:
-                        y = 1;
-                    case Z:
-                        z = 1;
-                }
-                Quat4f rotation = new Quat4f();
-                rotation.set(new AxisAngle4f(x, y, z, 0));
-                Matrix4f m = new TRSRTransformation(
-                    TRSRTransformation.toVecmath(part.partRotation.origin),
-                    rotation,
-                    null,
-                    null).getMatrix();
-                m.invert();
-                invBindPose = new TRSRTransformation(m);
-            }
-            else
-            {
-                invBindPose = TRSRTransformation.identity();
-            }
         }
 
         @Override
         public TRSRTransformation getInvBindPose()
         {
-            return invBindPose;
+            return TRSRTransformation.identity();
         }
 
         @Override
@@ -553,7 +526,7 @@ public class ModelBlockAnimation
             {
                 if(info.getWeights().containsKey(i))
                 {
-                    ModelBlockAnimation.MBJoint joint = new ModelBlockAnimation.MBJoint(info.getName(), part);
+                    ModelBlockAnimation.MBJoint joint = new ModelBlockAnimation.MBJoint(info.getName());
                     Optional<TRSRTransformation> trOp = state.apply(Optional.of(joint));
                     if(trOp.isPresent() && trOp.get() != TRSRTransformation.identity())
                     {

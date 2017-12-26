@@ -215,7 +215,7 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -997,6 +100,8 @@
+@@ -997,6 +1000,8 @@
  
      protected void func_186034_a(IChunkGenerator p_186034_1_)
      {
@@ -300,7 +300,15 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1489,4 +1509,34 @@
+@@ -1420,6 +1440,7 @@
+         else
+         {
+             System.arraycopy(p_177420_1_, 0, this.field_76634_f, 0, this.field_76634_f.length);
++            this.field_82912_p = com.google.common.primitives.Ints.min(this.field_76634_f); // Forge: fix MC-117412
+         }
+     }
+ 
+@@ -1489,4 +1510,52 @@
          QUEUED,
          CHECK;
      }

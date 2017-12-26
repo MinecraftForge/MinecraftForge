@@ -583,9 +583,9 @@ public class FMLCommonHandler
         bus().post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
     }
 
-    public void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item)
+    public void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item, ItemStack clone)
     {
-        bus().post(new PlayerEvent.ItemPickupEvent(player, item));
+        bus().post(new PlayerEvent.ItemPickupEvent(player, item, clone));
     }
 
     public void firePlayerCraftingEvent(EntityPlayer player, ItemStack crafted, IInventory craftMatrix)

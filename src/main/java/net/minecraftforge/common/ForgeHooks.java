@@ -111,15 +111,16 @@ import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
-import net.minecraftforge.event.entity.ThrowableImpactEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
@@ -127,6 +128,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -559,9 +561,22 @@ public class ForgeHooks
         return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
+    public static LivingKnockBackEvent onLivingKnockBack(EntityLivingBase target, Entity attacker, float strength, double ratioX, double ratioZ)
+    {
+        LivingKnockBackEvent event = new LivingKnockBackEvent(target, attacker, strength, ratioX, ratioZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
     public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
     {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
+    }
+
+    public static float onLivingDamage(EntityLivingBase entity, DamageSource src, float amount)
+    {
+        LivingDamageEvent event = new LivingDamageEvent(entity, src, amount);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
     }
 
@@ -1239,9 +1254,11 @@ public class ForgeHooks
     public static LootEntry deserializeJsonLootEntry(String type, JsonObject json, int weight, int quality, LootCondition[] conditions){ return null; }
     public static String getLootEntryType(LootEntry entry){ return null; } //Companion to above function
 
+    /** @deprecated use {@link ForgeEventFactory#onProjectileImpact(EntityThrowable, RayTraceResult)} */
+    @Deprecated // TODO: remove (1.13)
     public static boolean onThrowableImpact(EntityThrowable throwable, RayTraceResult ray)
     {
-        return MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, ray));
+        return ForgeEventFactory.onProjectileImpact(throwable, ray);
     }
 
     public static boolean onCropsGrowPre(World worldIn, BlockPos pos, IBlockState state, boolean def)
@@ -1363,5 +1380,10 @@ public class ForgeHooks
 
         if (recipes.size() > 0 || display.size() > 0)
             connection.sendPacket(new SPacketRecipeBook(state, recipes, display, isGuiOpen, isFilteringCraftable));
+    }
+
+    public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
+    {
+        MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
     }
 }
