@@ -1331,6 +1331,7 @@ public class ForgeHooks
 
                 String name = FilenameUtils.removeExtension(relative).replaceAll("\\\\", "/");
                 ResourceLocation key = new ResourceLocation(mod.getModId(), name);
+                if (MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.advancement.AdvancementAboutToLoadEvent(key))) return true;
 
                 if (!map.containsKey(key))
                 {

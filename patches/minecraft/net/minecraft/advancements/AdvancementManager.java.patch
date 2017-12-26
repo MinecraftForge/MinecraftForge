@@ -8,3 +8,19 @@
          field_192784_c.func_192083_a(map);
  
          for (Advancement advancement : field_192784_c.func_192088_b())
+@@ -101,6 +102,7 @@
+                 if (astring.length == 2)
+                 {
+                     ResourceLocation resourcelocation = new ResourceLocation(astring[0], astring[1]);
++                    if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.advancement.AdvancementAboutToLoadEvent(resourcelocation))) continue;
+ 
+                     try
+                     {
+@@ -172,6 +174,7 @@
+                         Path path2 = path.relativize(path1);
+                         String s = FilenameUtils.removeExtension(path2.toString()).replaceAll("\\\\", "/");
+                         ResourceLocation resourcelocation = new ResourceLocation("minecraft", s);
++                        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.advancement.AdvancementAboutToLoadEvent(resourcelocation))) continue;
+ 
+                         if (!p_192777_1_.containsKey(resourcelocation))
+                         {
