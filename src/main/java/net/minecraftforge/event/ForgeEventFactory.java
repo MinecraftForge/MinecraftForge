@@ -279,9 +279,9 @@ public class ForgeEventFactory
         return event.getDropChance();
     }
 
-    public static IBlockState fireFluidMixEvent(World world, BlockPos pos, Material liquid1, Material liquid2, IBlockState block)
+    public static IBlockState fireFluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, IBlockState state)
     {
-        BlockEvent.FluidMixEvent event = new BlockEvent.FluidMixEvent(world, pos, liquid1, liquid2, block);
+        BlockEvent.FluidPlaceBlockEvent event = new BlockEvent.FluidPlaceBlockEvent(world, pos, liquidPos, state);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getState();
     }

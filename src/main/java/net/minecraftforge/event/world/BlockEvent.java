@@ -285,43 +285,36 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when liquids mix to create a new block.
+     * Fired when a liquid places a block.
      */
-    public static class FluidMixEvent extends BlockEvent
+    public static class FluidPlaceBlockEvent extends BlockEvent
     {
-        private final Material liquid1;
-        private final Material liquid2;
-        private IBlockState block;
+        private final BlockPos liquidPos;
+        private IBlockState state;
 
-        public FluidMixEvent(World world, BlockPos pos, Material liquid1, Material liquid2, IBlockState block)
+        public FluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, IBlockState state)
         {
-            super(world, pos, block);
-            this.liquid1 = liquid1;
-            this.liquid2 = liquid2;
-            this.block = block;
+            super(world, pos, state);
+            this.liquidPos = liquidPos;
+            this.state = state;
         }
 
-        public Material getLiquid1()
+        public BlockPos getLiquidPos()
         {
-            return liquid1;
-        }
-
-        public Material getLiquid2()
-        {
-            return liquid2;
+            return liquidPos;
         }
 
         @Override
         public IBlockState getState()
         {
-            return block;
+            return state;
         }
 
-        public void setBlock(IBlockState state){
-            this.block = state;
+        public void setState(IBlockState state){
+            this.state = state;
         }
     }
-    
+
     /**
      * Fired when a crop block grows.  See subevents.
      *
