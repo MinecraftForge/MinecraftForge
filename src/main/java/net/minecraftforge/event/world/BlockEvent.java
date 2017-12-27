@@ -285,18 +285,22 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when a liquid places a block.
+     * Fired when a liquid places a block. Use {@link #getNewState()} to change the result of
+     * a cobblestone generator or add variants of obsidian. Alternatively, you  could execute
+     * arbitrary code when lava sets blocks on fire, even preventing it.
+     *
+     * It should be noted that {@link #getState()} will return the block that was originally going to be placed.
      */
     public static class FluidPlaceBlockEvent extends BlockEvent
     {
         private final BlockPos liquidPos;
-        private IBlockState state;
+        private IBlockState newState;
 
         public FluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, IBlockState state)
         {
             super(world, pos, state);
             this.liquidPos = liquidPos;
-            this.state = state;
+            this.newState = state;
         }
 
         public BlockPos getLiquidPos()
@@ -304,14 +308,13 @@ public class BlockEvent extends Event
             return liquidPos;
         }
 
-        @Override
-        public IBlockState getState()
+        public IBlockState getNewState()
         {
-            return state;
+            return newState;
         }
 
-        public void setState(IBlockState state){
-            this.state = state;
+        public void setNewState(IBlockState state){
+            this.newState = state;
         }
     }
 

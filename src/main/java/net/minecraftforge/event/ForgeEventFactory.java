@@ -283,7 +283,7 @@ public class ForgeEventFactory
     {
         BlockEvent.FluidPlaceBlockEvent event = new BlockEvent.FluidPlaceBlockEvent(world, pos, liquidPos, state);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getState();
+        return event.getNewState();
     }
 
     public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, ITooltipFlag flags)
