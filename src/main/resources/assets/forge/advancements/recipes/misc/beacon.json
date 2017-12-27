@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "minecraft:beacon"
+    ]
+  },
+  "criteria": {
+    "has_nether_star": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:nether_star"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "beacon"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_nether_star",
+      "has_the_recipe"
+    ]
+  ]
+}
