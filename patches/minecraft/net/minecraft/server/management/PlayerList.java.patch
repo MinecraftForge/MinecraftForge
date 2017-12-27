@@ -175,14 +175,13 @@
          this.func_72375_a(p_187242_1_, worldserver);
          p_187242_1_.field_71135_a.func_147364_a(p_187242_1_.field_70165_t, p_187242_1_.field_70163_u, p_187242_1_.field_70161_v, p_187242_1_.field_70177_z, p_187242_1_.field_70125_A);
          p_187242_1_.field_71134_c.func_73080_a(worldserver1);
-@@ -576,17 +632,33 @@
+@@ -576,17 +632,30 @@
          {
              p_187242_1_.field_71135_a.func_147359_a(new SPacketEntityEffect(p_187242_1_.func_145782_y(), potioneffect));
          }
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(p_187242_1_, i, p_187242_2_);
      }
  
-+    @SuppressWarnings("unused")
      public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)
      {
 -        double d0 = p_82448_1_.field_70165_t;
@@ -198,9 +197,7 @@
 +
 +    public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, net.minecraftforge.common.util.ITeleporter teleporter)
 +    {
-+        net.minecraft.world.WorldProvider pOld = p_82448_3_.field_73011_w;
-+        net.minecraft.world.WorldProvider pNew = p_82448_4_.field_73011_w;
-+        double moveFactor = pOld.getMovementFactor() / pNew.getMovementFactor();
++        double moveFactor = p_82448_3_.field_73011_w.getMovementFactor() / p_82448_4_.field_73011_w.getMovementFactor();
 +        double d0 = MathHelper.func_151237_a(p_82448_1_.field_70165_t * moveFactor, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
 +        double d1 = MathHelper.func_151237_a(p_82448_1_.field_70161_v * moveFactor, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
          double d2 = 8.0D;
@@ -212,7 +209,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 / 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 / 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -597,7 +669,7 @@
+@@ -597,7 +666,7 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -221,7 +218,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 * 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 * 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -608,7 +680,7 @@
+@@ -608,7 +677,7 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -230,7 +227,7 @@
          {
              BlockPos blockpos;
  
-@@ -634,7 +706,7 @@
+@@ -634,7 +703,7 @@
  
          p_82448_3_.field_72984_F.func_76319_b();
  
@@ -239,7 +236,7 @@
          {
              p_82448_3_.field_72984_F.func_76320_a("placing");
              d0 = (double)MathHelper.func_76125_a((int)d0, -29999872, 29999872);
-@@ -643,7 +715,8 @@
+@@ -643,7 +712,8 @@
              if (p_82448_1_.func_70089_S())
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);

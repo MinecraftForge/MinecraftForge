@@ -146,7 +146,7 @@
 +        return changeDimension(p_184204_1_, this.func_184102_h().func_71218_a(p_184204_1_).func_85176_s());
 +    }
 +
-+    @Nullable
++    @Nullable // Forge: Entities that require custom handling should override this method, not the other
 +    public Entity changeDimension(int p_184204_1_, net.minecraftforge.common.util.ITeleporter teleporter)
 +    {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
