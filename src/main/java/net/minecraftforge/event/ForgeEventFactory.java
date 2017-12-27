@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -276,6 +277,13 @@ public class ForgeEventFactory
         BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getDropChance();
+    }
+
+    public static IBlockState fireFluidMixEvent(World world, BlockPos pos, Material liquid1, Material liquid2, IBlockState block)
+    {
+        BlockEvent.FluidMixEvent event = new BlockEvent.FluidMixEvent(world, pos, liquid1, liquid2, block);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getState();
     }
 
     public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, ITooltipFlag flags)

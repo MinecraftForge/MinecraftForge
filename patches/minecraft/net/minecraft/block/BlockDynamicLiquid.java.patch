@@ -9,7 +9,17 @@
              {
                  IBlockState iblockstate = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b());
  
-@@ -166,6 +166,7 @@
+@@ -118,7 +118,8 @@
+         {
+             if (this.field_149764_J == Material.field_151587_i && p_180650_1_.func_180495_p(p_180650_2_.func_177977_b()).func_185904_a() == Material.field_151586_h)
+             {
+-                p_180650_1_.func_175656_a(p_180650_2_.func_177977_b(), Blocks.field_150348_b.func_176223_P());
++                //worldIn.setBlockState(pos.down(), Blocks.STONE.getDefaultState());
++                p_180650_1_.func_175656_a(p_180650_2_.func_177977_b(), net.minecraftforge.event.ForgeEventFactory.fireFluidMixEvent(p_180650_1_, p_180650_2_.func_177977_b(), Material.field_151587_i, Material.field_151586_h, Blocks.field_150348_b.func_176223_P()));
+                 this.func_180688_d(p_180650_1_, p_180650_2_.func_177977_b());
+                 return;
+             }
+@@ -166,6 +167,7 @@
                  }
                  else
                  {
@@ -17,7 +27,7 @@
                      p_176375_3_.func_177230_c().func_176226_b(p_176375_1_, p_176375_2_, p_176375_3_, 0);
                  }
              }
-@@ -187,7 +188,7 @@
+@@ -187,7 +189,7 @@
  
                  if (!this.func_176372_g(p_176374_1_, blockpos, iblockstate) && (iblockstate.func_185904_a() != this.field_149764_J || ((Integer)iblockstate.func_177229_b(field_176367_b)).intValue() > 0))
                  {
@@ -26,7 +36,7 @@
                      {
                          return p_176374_3_;
                      }
-@@ -254,11 +255,12 @@
+@@ -254,11 +256,12 @@
  
      private boolean func_176372_g(World p_176372_1_, BlockPos p_176372_2_, IBlockState p_176372_3_)
      {

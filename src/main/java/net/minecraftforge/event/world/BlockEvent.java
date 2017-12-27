@@ -22,6 +22,7 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -280,6 +281,44 @@ public class BlockEvent extends Event
         public CreateFluidSourceEvent(World world, BlockPos pos, IBlockState state)
         {
             super(world, pos, state);
+        }
+    }
+
+    /**
+     * Fired when liquids mix to create a new block.
+     */
+    public static class FluidMixEvent extends BlockEvent
+    {
+        private final Material liquid1;
+        private final Material liquid2;
+        private IBlockState block;
+
+        public FluidMixEvent(World world, BlockPos pos, Material liquid1, Material liquid2, IBlockState block)
+        {
+            super(world, pos, block);
+            this.liquid1 = liquid1;
+            this.liquid2 = liquid2;
+            this.block = block;
+        }
+
+        public Material getLiquid1()
+        {
+            return liquid1;
+        }
+
+        public Material getLiquid2()
+        {
+            return liquid2;
+        }
+
+        @Override
+        public IBlockState getState()
+        {
+            return block;
+        }
+
+        public void setBlock(IBlockState state){
+            this.block = state;
         }
     }
     

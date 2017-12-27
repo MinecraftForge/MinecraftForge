@@ -1,6 +1,25 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLiquid.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLiquid.java
-@@ -452,4 +452,29 @@
+@@ -284,14 +284,16 @@
+ 
+                 if (integer.intValue() == 0)
+                 {
+-                    p_176365_1_.func_175656_a(p_176365_2_, Blocks.field_150343_Z.func_176223_P());
++                    //worldIn.setBlockState(pos, Blocks.OBSIDIAN.getDefaultState());
++                    p_176365_1_.func_175656_a(p_176365_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidMixEvent(p_176365_1_, p_176365_2_, Material.field_151587_i, Material.field_151586_h, Blocks.field_150343_Z.func_176223_P()));
+                     this.func_180688_d(p_176365_1_, p_176365_2_);
+                     return true;
+                 }
+ 
+                 if (integer.intValue() <= 4)
+                 {
+-                    p_176365_1_.func_175656_a(p_176365_2_, Blocks.field_150347_e.func_176223_P());
++                    //worldIn.setBlockState(pos, Blocks.COBBLESTONE.getDefaultState());
++                    p_176365_1_.func_175656_a(p_176365_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidMixEvent(p_176365_1_, p_176365_2_, Material.field_151587_i, Material.field_151586_h, Blocks.field_150347_e.func_176223_P()));
+                     this.func_180688_d(p_176365_1_, p_176365_2_);
+                     return true;
+                 }
+@@ -452,4 +454,29 @@
      {
          return BlockFaceShape.UNDEFINED;
      }
