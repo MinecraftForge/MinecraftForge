@@ -81,6 +81,11 @@ public @interface Config
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
+    public @interface Ignore
+    {}
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
     public @interface RangeInt
     {
         int min() default Integer.MIN_VALUE;

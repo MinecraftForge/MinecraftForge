@@ -222,7 +222,7 @@ public class ConfigManager
                 continue;
             if (Modifier.isStatic(f.getModifiers()) != (instance == null))
                 continue;
-            if (Modifier.isTransient(f.getModifiers()))
+            if (f.isAnnotationPresent(Config.Ignore.class))
                 continue;
 
             String comment = null;
