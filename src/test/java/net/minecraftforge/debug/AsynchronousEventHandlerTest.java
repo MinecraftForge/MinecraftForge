@@ -6,6 +6,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.common.Mod.EventHandler;
@@ -42,10 +43,8 @@ public class AsynchronousEventHandlerTest
     public void synchronousPreInitializationEventHandler(FMLPreInitializationEvent e)
     {
         // This will block the thread for a total of about one second.
-        for (int i = 0; i < 10; i++)
-        {
-            doSomeStuffThatTakesALongTime();
-        }
+        IntStream.range(1, 10)
+                .forEachOrdered(i -> AsynchronousEventHandlerTest.doSomeStuffThatTakesALongTime());
     }
 
     /**
@@ -57,7 +56,8 @@ public class AsynchronousEventHandlerTest
     public Future<Void> asynchronousPreInitializationEventHandler(FMLPreInitializationEvent e)
     {
         // This won't block the thread and will run in parallel to the other event handler
-        CompletableFuture[] futures = Stream.of(1,2,3,4,5,6,7,8,9,10)
+        CompletableFuture[] futures = IntStream.range(1, 10)
+                .boxed()
                 .map(i -> CompletableFuture.runAsync(AsynchronousEventHandlerTest::doSomeStuffThatTakesALongTime))
                 .collect(Collectors.toList())
                 .toArray(new CompletableFuture[10]);
