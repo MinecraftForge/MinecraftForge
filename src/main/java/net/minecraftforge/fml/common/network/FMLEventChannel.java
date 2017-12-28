@@ -178,6 +178,19 @@ public class FMLEventChannel {
     }
 
     /**
+     * Send to all tracking the point
+     * The {@code range} field of the {@link NetworkRegistry.TargetPoint} is ignored.
+     * @param pkt
+     * @param point
+     */
+    public void sendToAllTracking(FMLProxyPacket pkt, NetworkRegistry.TargetPoint point)
+    {
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDTRACKING);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
+        channels.get(Side.SERVER).writeAndFlush(pkt).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+    }
+
+    /**
      * Send to all in a dimension
      * @param pkt
      * @param dimensionId

@@ -264,6 +264,21 @@ public class SimpleNetworkWrapper {
     }
 
     /**
+     * Sends this message to everyone tracking a point.
+     * The {@link IMessageHandler} for this message type should be on the CLIENT side.
+     * The {@code range} field of the {@link TargetPoint} is ignored.
+     *
+     * @param message The message to send
+     * @param point The tracked {@link TargetPoint} around which to send
+     */
+    public void sendToAllTracking(IMessage message, NetworkRegistry.TargetPoint point)
+    {
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDTRACKING);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+    }
+
+    /**
      * Send this message to everyone within the supplied dimension.
      * The {@link IMessageHandler} for this message type should be on the CLIENT side.
      *

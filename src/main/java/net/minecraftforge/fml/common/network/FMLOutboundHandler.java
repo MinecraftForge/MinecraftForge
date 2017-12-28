@@ -29,6 +29,8 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.server.management.PlayerChunkMap;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
@@ -226,6 +228,39 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                             NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                             if (dispatcher != null) builder.add(dispatcher);
                         }
+                    }
+                }
+                return builder.build();
+            }
+        },
+        /**
+         * The packet is sent to all players that are watching the Chunk containing the supplied {@link TargetPoint}.
+         * The {@code range} field of the {@link TargetPoint} is ignored.
+         */
+        ALLAROUNDTRACKING(Sets.immutableEnumSet(Side.SERVER))
+        {
+            @Override
+            public void validateArgs(Object args)
+            {
+                if (!(args instanceof TargetPoint))
+                {
+                    throw new RuntimeException("ALLAROUNDTRACKING expects a TargetPoint argument");
+                }
+            }
+
+            @Nullable
+            @Override
+            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            {
+                TargetPoint tp = (TargetPoint)args;
+                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
+                PlayerChunkMap chunkMap = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(tp.dimension).getPlayerChunkMap();
+                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers())
+                {
+                    if (player.dimension == tp.dimension && chunkMap.isPlayerWatchingChunk(player, MathHelper.floor(tp.x) >> 4, MathHelper.floor(tp.z) >> 4))
+                    {
+                        NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                        if (dispatcher != null) builder.add(dispatcher);
                     }
                 }
                 return builder.build();
