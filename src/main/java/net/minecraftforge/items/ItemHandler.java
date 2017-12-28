@@ -88,15 +88,18 @@ public class ItemHandler implements IItemHandlerModifiable
     }
 
     @Override
-    public void MultiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
+    public void multiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
     {
         ItemHandlerHelper.MultiExtract(filter, slotRange, manager, simulate, this);
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
+    @Nonnull
+    public ItemStack setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
+        ItemStack stack1 = holder.getStack(slot);
         holder.putStack(slot, stack, false);
+        return stack1;
     }
 
     public IItemHolder getHolder()

@@ -276,5 +276,5 @@ public interface IItemHandler
      * @param manager   to use for the extract operation see {@link IExtractionManager} for more detail
      * @param simulate  if true, the extraction is only simulated
      */
-    void MultiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate);
+    void multiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate);
 }

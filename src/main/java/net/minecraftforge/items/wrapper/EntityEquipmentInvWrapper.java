@@ -121,13 +121,16 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
+    @Nonnull
+    public ItemStack setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
+        ItemStack stack1 = entity.getItemStackFromSlot(validateSlotIndex(slot));
         entity.setItemStackToSlot(validateSlotIndex(slot), stack);
+        return stack1;
     }
 
     @Override
-    public void MultiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
+    public void multiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
     {
         ItemHandlerHelper.MultiExtract(filter, slotRange, manager, simulate, this);
     }

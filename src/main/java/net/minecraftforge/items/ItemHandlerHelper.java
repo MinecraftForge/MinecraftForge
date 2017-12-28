@@ -27,7 +27,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import net.minecraftforge.items.filter.IStackFilter;
@@ -38,8 +37,8 @@ import java.util.Objects;
 
 public class ItemHandlerHelper
 {
-    public final static IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
-    public final static EntityEquipmentSlot[] arrmorSlots = new EntityEquipmentSlot[]{
+    public static final IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
+    public static final EntityEquipmentSlot[] armorSlots = new EntityEquipmentSlot[]{
             EntityEquipmentSlot.FEET, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.HEAD
     };
 
@@ -240,18 +239,18 @@ public class ItemHandlerHelper
     {
         if (amount == 0) return ItemStack.EMPTY;
         if (isRangeSingleton(slotRange))
-            return extract(slotRange.lowerEndpoint(), filter, amount, simulate, handler);
-        else
         {
-            int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
-            int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), handler.size()) : handler.size());
-            for (int i = minSlot; i < maxSlot; i++)
-            {
-                ItemStack stack = extract(i, filter, amount, simulate, handler);
-                if (!stack.isEmpty())
-                    return stack;
-            }
+            return extract(slotRange.lowerEndpoint(), filter, amount, simulate, handler);
         }
+        int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
+        int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), handler.size()) : handler.size());
+        for (int i = minSlot; i < maxSlot; i++)
+        {
+            ItemStack stack = extract(i, filter, amount, simulate, handler);
+            if (!stack.isEmpty())
+                return stack;
+        }
+
         return ItemStack.EMPTY;
     }
 

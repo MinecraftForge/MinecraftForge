@@ -41,7 +41,7 @@ public class EntityArmorInvWrapper extends EntityEquipmentInvWrapper
     @Override
     public boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
     {
-        return stack.getItem().isValidArmor(stack, ItemHandlerHelper.arrmorSlots[slot], entity);
+        return stack.getItem().isValidArmor(stack, ItemHandlerHelper.armorSlots[slot], entity);
     }
 
     @Override

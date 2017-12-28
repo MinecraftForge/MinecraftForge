@@ -278,13 +278,13 @@ public class CombinedWrapper implements IItemHandler
     }
 
     @Override
-    public void MultiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
+    public void multiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
     {
         if (ItemHandlerHelper.isRangeSlotLess(slotRange))
         {
             for (IItemHandler handler : handlers)
             {
-                handler.MultiExtract(filter, slotRange, manager, simulate);
+                handler.multiExtract(filter, slotRange, manager, simulate);
 
             }
         }
@@ -293,7 +293,7 @@ public class CombinedWrapper implements IItemHandler
             int slot = slotRange.lowerEndpoint();
             int index = getIndexForSlot(slot);
             IItemHandler handler = getHandlerFromIndex(index);
-            handler.MultiExtract(filter, Range.singleton(getSlotFromIndex(slot, index)), manager, simulate);
+            handler.multiExtract(filter, Range.singleton(getSlotFromIndex(slot, index)), manager, simulate);
         }
         else
         {
@@ -306,7 +306,7 @@ public class CombinedWrapper implements IItemHandler
                 if (onehandler)
                 {
                     IItemHandler handler = getHandlerFromIndex(maxIndex);
-                    handler.MultiExtract(filter, slotRange, manager, simulate);
+                    handler.multiExtract(filter, slotRange, manager, simulate);
                 }
                 else
                 {
@@ -314,11 +314,11 @@ public class CombinedWrapper implements IItemHandler
                     {
                         IItemHandler handler = getHandlerFromIndex(i);
                         if (maxSlot >= handler.size() && minSlot == 0)
-                            handler.MultiExtract(filter, Range.all(), manager, simulate);
+                            handler.multiExtract(filter, Range.all(), manager, simulate);
                         else
                         {
                             int currentMaxSlot = Math.min(handler.size(), maxSlot);
-                            handler.MultiExtract(filter, Range.closed(minSlot, currentMaxSlot), manager, simulate);
+                            handler.multiExtract(filter, Range.closed(minSlot, currentMaxSlot), manager, simulate);
                         }
                     }
                 }

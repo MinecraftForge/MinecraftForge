@@ -19,6 +19,7 @@
 
 package net.minecraftforge.items;
 
+import com.google.common.collect.Range;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -50,11 +51,6 @@ public class ItemHandlerIterator implements IItemHandlerIterator
         return index != 0;
     }
 
-    @Override
-    public int currentIndex()
-    {
-        return index;
-    }
 
     @Override
     public int nextIndex()
@@ -89,5 +85,41 @@ public class ItemHandlerIterator implements IItemHandlerIterator
         ItemStack stack = itemHandler.getStackInSlot(index);
         index--;
         return stack;
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack set(@Nonnull ItemStack stack)
+    {
+        removeStack();
+        return itemHandler.insert(Range.singleton(index), stack, false).getLeftoverStack();
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack removeStack(){
+        ItemStack stack = stackAtIndex().copy();
+        while (!stackAtIndex().isEmpty())
+            itemHandler.extract(Range.singleton(index), stack1 -> true, stack.getMaxStackSize(), false);
+        return stack;
+    }
+
+    @Override
+    public void remove()
+    {
+        removeStack();
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack stackAtIndex()
+    {
+        return itemHandler.getStackInSlot(index);
+    }
+
+    @Override
+    public int index()
+    {
+        return index;
     }
 }

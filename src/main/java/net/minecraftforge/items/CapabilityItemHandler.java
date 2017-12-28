@@ -40,7 +40,7 @@ public class CapabilityItemHandler
             public NBTBase writeNBT(Capability<IItemHandler> capability, IItemHandler instance, EnumFacing side)
             {
                 if (!(instance instanceof INBTSerializable))
-                    throw new RuntimeException();
+                    throw new IllegalArgumentException("the IItemHandler must implement INBTSerializable");
                 else return ((INBTSerializable) instance).serializeNBT();
             }
 
@@ -49,7 +49,7 @@ public class CapabilityItemHandler
             public void readNBT(Capability<IItemHandler> capability, IItemHandler instance, EnumFacing side, NBTBase base)
             {
                 if (!(instance instanceof INBTSerializable))
-                    throw new RuntimeException();
+                    throw new IllegalArgumentException("the IItemHandler must implement INBTSerializable");
                 else ((INBTSerializable) instance).deserializeNBT(base);
             }
         }, () -> new ItemHandler(new ItemHolder(1)));

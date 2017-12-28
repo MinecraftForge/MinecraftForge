@@ -22,7 +22,6 @@ package net.minecraftforge.items;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -37,8 +36,9 @@ public interface IItemHandlerIterator extends Iterator<ItemStack>
      * than throwing an exception.)
      *
      * @return {@code true} if the list iterator has more elements when
-     *         traversing the list in the forward direction
+     * traversing the list in the forward direction
      */
+    @Override
     boolean hasNext();
 
     /**
@@ -52,6 +52,7 @@ public interface IItemHandlerIterator extends Iterator<ItemStack>
      * @throws NoSuchElementException if the iteration has no next element
      */
     @Nonnull
+    @Override
     ItemStack next();
 
     /**
@@ -61,7 +62,7 @@ public interface IItemHandlerIterator extends Iterator<ItemStack>
      * rather than throwing an exception.)
      *
      * @return {@code true} if the list iterator has more elements when
-     *         traversing the list in the reverse direction
+     * traversing the list in the reverse direction
      */
     boolean hasPrevious();
 
@@ -75,10 +76,32 @@ public interface IItemHandlerIterator extends Iterator<ItemStack>
      *
      * @return the previous element in the list
      * @throws NoSuchElementException if the iteration has no previous
-     *         element
+     *                                element
      */
     @Nonnull
     ItemStack previous();
+
+
+    /**
+     * @param stack to try insert into the index it is current at
+     * @return the Remainder that was not inserted
+     */
+    @Nonnull
+    ItemStack set(@Nonnull ItemStack stack);
+
+    /**
+     * sets the stack at the index it is current at to {@link ItemStack#EMPTY}
+     *
+     * @return the stack that was removed, the stackSize CAN be more then MaxStackSize
+     */
+    @Nonnull
+    ItemStack removeStack();
+
+    /**
+     * @return the ItemStack at the index it is currently at
+     */
+    @Nonnull
+    ItemStack stackAtIndex();
 
     /**
      * Returns the index of the element that would be returned by a
@@ -86,8 +109,19 @@ public interface IItemHandlerIterator extends Iterator<ItemStack>
      * iterator is at the end of the list.)
      *
      * @return the index of the element that would be returned by a
-     *         subsequent call to {@code next}, or list size if the list
-     *         iterator is at the end of the list
+     * subsequent call to {@code next}, or list size if the list
+     * iterator is at the end of the list
+     */
+    int index();
+
+    /**
+     * Returns the index of the element that would be returned by a
+     * subsequent call to {@link #next}. (Returns list size if the list
+     * iterator is at the end of the list.)
+     *
+     * @return the index of the element that would be returned by a
+     * subsequent call to {@code next}, or list size if the list
+     * iterator is at the end of the list
      */
     int nextIndex();
 
@@ -97,8 +131,8 @@ public interface IItemHandlerIterator extends Iterator<ItemStack>
      * iterator is at the beginning of the list.)
      *
      * @return the index of the element that would be returned by a
-     *         subsequent call to {@code previous}, or -1 if the list
-     *         iterator is at the beginning of the list
+     * subsequent call to {@code previous}, or -1 if the list
+     * iterator is at the beginning of the list
      */
     int previousIndex();
 }

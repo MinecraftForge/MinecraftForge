@@ -177,7 +177,7 @@ public class ItemHandlerTest
 
                     ExampleExtractionManager extractionManager = new ExampleExtractionManager();
 
-                    combined.MultiExtract(TileEntityFurnace::isItemFuel, Range.all(), extractionManager, false);
+                    combined.multiExtract(TileEntityFurnace::isItemFuel, Range.all(), extractionManager, false);
 
                     logger.info("end of inv");
                     for (ItemStack stack : extractionManager.stacks)

@@ -38,7 +38,7 @@ public class PlayerArmorInvWrapper extends RangedWrapper
     @Override
     public boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
     {
-        return stack.getItem().isValidArmor(stack, ItemHandlerHelper.arrmorSlots[slot], getInventoryPlayer().player);
+        return stack.getItem().isValidArmor(stack, ItemHandlerHelper.armorSlots[slot], getInventoryPlayer().player);
     }
 
     public InventoryPlayer getInventoryPlayer()

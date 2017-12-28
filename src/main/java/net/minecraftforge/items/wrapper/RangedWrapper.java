@@ -70,7 +70,7 @@ public class RangedWrapper implements IItemHandler
     @Override
     public void clearInv()
     {
-        compose.MultiExtract(stack -> true, Range.closed(min, maxSlotExclusive), VoidExtractionManager.INSTANCE, false);
+        compose.multiExtract(stack -> true, Range.closed(min, maxSlotExclusive), VoidExtractionManager.INSTANCE, false);
     }
 
     @Override
@@ -125,17 +125,17 @@ public class RangedWrapper implements IItemHandler
     }
 
     @Override
-    public void MultiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
+    public void multiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
     {
         if (ItemHandlerHelper.isRangeSlotLess(slotRange))
         {
-            compose.MultiExtract(filter, Range.closed(min, maxSlotExclusive), manager, simulate);
+            compose.multiExtract(filter, Range.closed(min, maxSlotExclusive), manager, simulate);
         }
         else
         {
             int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
             int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), size()) : size());
-            compose.MultiExtract(filter, Range.closed(Math.max(min, (minSlot + min)), Math.min(maxSlotExclusive, (maxSlot + min))), manager, simulate);
+            compose.multiExtract(filter, Range.closed(Math.max(min, (minSlot + min)), Math.min(maxSlotExclusive, (maxSlot + min))), manager, simulate);
         }
     }
 }
