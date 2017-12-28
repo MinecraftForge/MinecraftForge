@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraftforge.items.holder.CapabilityItemHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -459,6 +460,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void preInit(FMLPreInitializationEvent evt)
     {
         CapabilityItemHandler.register();
+        CapabilityItemHolder.register();
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
         CapabilityEnergy.register();

@@ -18,6 +18,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IExtractionManager;
 import net.minecraftforge.items.IItemHandler;
@@ -96,13 +97,40 @@ public class ItemHandlerTest
             World world = player.world;
             BlockPos hitpos = event.getPos();
             if (world.isRemote) return;
+            ItemStack heldStack = player.getHeldItem(event.getHand());
+            Item heldItem = heldStack.getItem();
+            if (heldStack.isEmpty()) return;
             Block block = world.getBlockState(event.getPos()).getBlock();
+            if (block == Blocks.BREWING_STAND)
+            {
+
+
+                IItemHandler handler = world.getTileEntity(hitpos).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, event.getFace());
+
+                if (heldItem  == Items.STICK){
+                    event.setCanceled(true);
+                    ItemHandlerTest.logger.info("Found on Side: {} {} slots", event.getFace(), handler.size());
+                }
+                if (heldItem == Items.GLOWSTONE_DUST){
+                    event.setCanceled(true);
+                    for (Item item : ForgeRegistries.ITEMS){
+                        if (item == Items.ENCHANTED_BOOK) continue;
+                        NonNullList<ItemStack> stacks = NonNullList.create();
+                        item.getSubItems(item.getCreativeTab(), stacks);
+                        for (ItemStack stack : stacks){
+                            for (int i = 0; i < handler.size(); i++)
+                            {
+                                if (handler.isStackValidForSlot(stack, i))
+                                    logger.info("stack with {} and meta {} and NBT {} is valid for slot {}", stack.getItem().getUnlocalizedName(), stack.getItemDamage(), stack.getTagCompound(), i);
+                            }
+                        }
+                    }
+                }
+            }
             if (block == Blocks.CHEST)
             {
-                ItemStack heldstack = player.getHeldItem(event.getHand());
-                if (heldstack.isEmpty()) return;
 
-                Logger log = ItemHandlerTest.logger;
+
                 IItemHandler playerinv = player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
                 IItemHandler chestInv = world.getTileEntity(hitpos).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, event.getFace());
                 IItemHandler chestInv0to9 = new RangedWrapper(chestInv, 0, 9);
@@ -110,7 +138,7 @@ public class ItemHandlerTest
                 IItemHandler chestInv19to27 = new RangedWrapper(chestInv, 19, 27);
                 IItemHandler combined = new CombinedWrapper(chestInv0to9, chestInv10to18, chestInv19to27);
 
-                if (heldstack.getItem() == Items.STICK)
+                if (heldItem == Items.STICK)
                 {
                     event.setCanceled(true);
                     player.sendMessage(new TextComponentString(Float.toString(chestInv.calcRedStoneFromInventory(Range.all(), 100, false))));
@@ -119,15 +147,15 @@ public class ItemHandlerTest
                     player.sendMessage(new TextComponentString(Float.toString(chestInv0to9.calcRedStoneFromInventory(Range.all(), 100, true))));
                 }
 
-                if (heldstack.getItem() == Items.BLAZE_ROD)
+                if (heldItem == Items.BLAZE_ROD)
                 {
                     event.setCanceled(true);
 
                     InsertTransaction transaction = chestInv19to27.insert(Range.singleton(0), new ItemStack(Items.GLOWSTONE_DUST, 48), false);
-                    log.info(transaction.getInsertedStack());
-                    log.info(transaction.getLeftoverStack());
+                    logger.info(transaction.getInsertedStack());
+                    logger.info(transaction.getLeftoverStack());
                 }
-                if (heldstack.getItem() == Items.GLOWSTONE_DUST)
+                if (heldItem == Items.GLOWSTONE_DUST)
                 {
                     event.setCanceled(true);
 
@@ -137,12 +165,12 @@ public class ItemHandlerTest
                         ItemStack stack = iterator.next();
                         if (!stack.isEmpty())
                         {
-                            log.info(stack + " at index " + Integer.toString(iterator.previousIndex()));
+                            logger.info(stack + " at index " + Integer.toString(iterator.previousIndex()));
                         }
                     }
-                    log.info("complete itr");
+                    logger.info("complete itr");
                 }
-                if (heldstack.getItem() == Item.getItemFromBlock(Blocks.COBBLESTONE))
+                if (heldItem == Item.getItemFromBlock(Blocks.COBBLESTONE))
                 {
 
                     event.setCanceled(true);
@@ -151,12 +179,12 @@ public class ItemHandlerTest
 
                     combined.MultiExtract(TileEntityFurnace::isItemFuel, Range.all(), extractionManager, false);
 
-                    log.info("end of inv");
+                    logger.info("end of inv");
                     for (ItemStack stack : extractionManager.stacks)
                     {
-                        log.info(stack.toString());
+                        logger.info(stack.toString());
                     }
-                    log.info(Integer.toString(extractionManager.slotExtractedFrom));
+                    logger.info(Integer.toString(extractionManager.slotExtractedFrom));
                 }
             }
         }

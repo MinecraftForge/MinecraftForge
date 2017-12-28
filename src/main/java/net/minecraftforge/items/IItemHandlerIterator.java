@@ -22,23 +22,83 @@ package net.minecraftforge.items;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public interface IItemHandlerIterator extends Iterator<ItemStack>
 {
+    // Query Operations
+
+    /**
+     * Returns {@code true} if this list iterator has more elements when
+     * traversing the list in the forward direction. (In other words,
+     * returns {@code true} if {@link #next} would return an element rather
+     * than throwing an exception.)
+     *
+     * @return {@code true} if the list iterator has more elements when
+     *         traversing the list in the forward direction
+     */
     boolean hasNext();
 
-    boolean hasPrevious();
-
-    int currentIndex();
-
-    int nextIndex();
-
-    int previousIndex();
-
+    /**
+     * Returns the next element in the list and advances the cursor position.
+     * This method may be called repeatedly to iterate through the list,
+     * or intermixed with calls to {@link #previous} to go back and forth.
+     * (Note that alternating calls to {@code next} and {@code previous}
+     * will return the same element repeatedly.)
+     *
+     * @return the next element in the list
+     * @throws NoSuchElementException if the iteration has no next element
+     */
     @Nonnull
     ItemStack next();
 
+    /**
+     * Returns {@code true} if this list iterator has more elements when
+     * traversing the list in the reverse direction.  (In other words,
+     * returns {@code true} if {@link #previous} would return an element
+     * rather than throwing an exception.)
+     *
+     * @return {@code true} if the list iterator has more elements when
+     *         traversing the list in the reverse direction
+     */
+    boolean hasPrevious();
+
+    /**
+     * Returns the previous element in the list and moves the cursor
+     * position backwards.  This method may be called repeatedly to
+     * iterate through the list backwards, or intermixed with calls to
+     * {@link #next} to go back and forth.  (Note that alternating calls
+     * to {@code next} and {@code previous} will return the same
+     * element repeatedly.)
+     *
+     * @return the previous element in the list
+     * @throws NoSuchElementException if the iteration has no previous
+     *         element
+     */
     @Nonnull
     ItemStack previous();
+
+    /**
+     * Returns the index of the element that would be returned by a
+     * subsequent call to {@link #next}. (Returns list size if the list
+     * iterator is at the end of the list.)
+     *
+     * @return the index of the element that would be returned by a
+     *         subsequent call to {@code next}, or list size if the list
+     *         iterator is at the end of the list
+     */
+    int nextIndex();
+
+    /**
+     * Returns the index of the element that would be returned by a
+     * subsequent call to {@link #previous}. (Returns -1 if the list
+     * iterator is at the beginning of the list.)
+     *
+     * @return the index of the element that would be returned by a
+     *         subsequent call to {@code previous}, or -1 if the list
+     *         iterator is at the beginning of the list
+     */
+    int previousIndex();
 }

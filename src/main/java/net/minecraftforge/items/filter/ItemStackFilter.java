@@ -20,13 +20,12 @@
 package net.minecraftforge.items.filter;
 
 import com.google.common.collect.Range;
-import com.google.common.collect.Table;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 public class ItemStackFilter implements IStackFilter
@@ -35,7 +34,7 @@ public class ItemStackFilter implements IStackFilter
     private final ItemStack stack;
     private final Item item;
     private final Range<Integer> metadata;
-    private final NBTTagCompound nbtTag;
+    private final Predicate<NBTTagCompound> nbtTag;
     private final Range<Integer> stackSize;
     private final boolean matchNBT;
     private final boolean matchItem;
@@ -44,8 +43,8 @@ public class ItemStackFilter implements IStackFilter
     private final boolean matchStackSize;
     private final boolean inverted;
 
-    public ItemStackFilter(ItemStack stack, Item item, Range<Integer> metadata, NBTTagCompound nbtTag,
-                           Range<Integer> stackSize, boolean matchNBT, boolean matchItem, boolean matchStack, boolean matchMeta, boolean matchStackSize, boolean inverted)
+    protected ItemStackFilter(ItemStack stack, Item item, Range<Integer> metadata, Predicate<NBTTagCompound> nbtTag,
+                              Range<Integer> stackSize, boolean matchNBT, boolean matchItem, boolean matchStack, boolean matchMeta, boolean matchStackSize, boolean inverted)
     {
         this.stack = stack;
         this.item = item;
@@ -109,11 +108,16 @@ public class ItemStackFilter implements IStackFilter
 
     public static class Builder
     {
+        @Nullable
         private Range<Integer> stackSize = null;
+        @Nonnull
         private ItemStack stack = ItemStack.EMPTY;
+        @Nullable
         private Item item = null;
+        @Nullable
         private Range<Integer> metadata = null;
-        private NBTTagCompound nbtTag = null;
+        @Nullable
+        private Predicate<NBTTagCompound> nbtTag = null;
         private boolean inverted = false;
 
 
@@ -123,7 +127,7 @@ public class ItemStackFilter implements IStackFilter
             return this;
         }
 
-        public Builder withNbtTag(NBTTagCompound nbtTag)
+        public Builder withNbtTag(Predicate<NBTTagCompound> nbtTag)
         {
             this.nbtTag = nbtTag;
             return this;

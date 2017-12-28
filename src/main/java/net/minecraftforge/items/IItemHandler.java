@@ -259,9 +259,9 @@ public interface IItemHandler
         if (matchStack.isEmpty()) return ItemStack.EMPTY;
         ItemStackFilter.Builder filterBuilder = ItemStackFilter.filterBuilder();
         filterBuilder.withItem(matchStack.getItem());
-        if (matchNBT)
+        if (matchNBT && matchStack.getTagCompound() != null)
         {
-            filterBuilder.withNbtTag(matchStack.getTagCompound());
+            filterBuilder.withNbtTag(nbtTagCompound -> matchStack.getTagCompound().equals(nbtTagCompound));
             filterBuilder.withCapNBTData(matchStack);
         }
         if (matchMeta)
