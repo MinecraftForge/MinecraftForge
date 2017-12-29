@@ -221,7 +221,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -934,6 +952,1287 @@
+@@ -934,6 +952,1314 @@
      {
      }
  
@@ -1504,12 +1504,39 @@
 +        return isBurning(world, pos) ? net.minecraft.pathfinding.PathNodeType.DAMAGE_FIRE : null;
 +    }
 +
++    /**
++     * @param blockState The state for this block
++     * @param world The world this block is in
++     * @param pos The position of this block
++     * @param side The side of this block that the chest lid is trying to open into
++     * @return true if the chest should be prevented from opening by this block
++     */
++    public boolean doesSideBlockChestOpening(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side)
++    {
++        ResourceLocation registryName = this.getRegistryName();
++        if (registryName != null && "minecraft".equals(registryName.func_110624_b()))
++        {
++            // maintain the vanilla behavior of https://bugs.mojang.com/browse/MC-378
++            return isNormalCube(blockState, world, pos);
++        }
++        return isSideSolid(blockState, world, pos, side);
++    }
++
++    /**
++     * @param state The state
++     * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
++     */
++    public boolean isStickyBlock(IBlockState state)
++    {
++        return state.func_177230_c() == Blocks.field_180399_cE;
++    }
++
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1230,31 +2529,6 @@
+@@ -1230,31 +2556,6 @@
                  block15.field_149783_u = flag;
              }
          }

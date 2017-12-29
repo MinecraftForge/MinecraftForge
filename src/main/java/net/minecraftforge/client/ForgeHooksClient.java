@@ -61,6 +61,8 @@ import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.SimpleBakedModel;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -91,6 +93,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -183,6 +186,16 @@ public class ForgeHooksClient
     public static void onTextureStitchedPost(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
+    }
+
+    public static void onBlockColorsInit(BlockColors blockColors)
+    {
+        MinecraftForge.EVENT_BUS.post(new ColorHandlerEvent.Block(blockColors));
+    }
+
+    public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors)
+    {
+        MinecraftForge.EVENT_BUS.post(new ColorHandlerEvent.Item(itemColors, blockColors));
     }
 
     static int renderPass = -1;
@@ -671,25 +684,29 @@ public class ForgeHooksClient
         TRSRTransformation global = new TRSRTransformation(rotation.getMatrix());
         Matrix4f uv = global.getUVLockTransform(originalSide).getMatrix();
         Vector4f vec = new Vector4f(0, 0, 0, 1);
-        vec.x = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0)) / 16;
-        vec.y = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0)) / 16;
+        float u0 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0));
+        float v0 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0));
+        vec.x = u0 / 16;
+        vec.y = v0 / 16;
         uv.transform(vec);
         float uMin = 16 * vec.x; // / vec.w;
         float vMin = 16 * vec.y; // / vec.w;
-        vec.x = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(2)) / 16;
-        vec.y = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(2)) / 16;
+        float u1 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(2));
+        float v1 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(2));
+        vec.x = u1 / 16;
+        vec.y = v1 / 16;
         vec.z = 0;
         vec.w = 1;
         uv.transform(vec);
         float uMax = 16 * vec.x; // / vec.w;
         float vMax = 16 * vec.y; // / vec.w;
-        if(uMin > uMax)
+        if (uMin > uMax && u0 < u1 || uMin < uMax && u0 > u1)
         {
             float t = uMin;
             uMin = uMax;
             uMax = t;
         }
-        if(vMin > vMax)
+        if (vMin > vMax && v0 < v1 || vMin < vMax && v0 > v1)
         {
             float t = vMin;
             vMin = vMax;

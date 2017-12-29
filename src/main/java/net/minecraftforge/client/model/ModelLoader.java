@@ -104,6 +104,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.function.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import java.util.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
@@ -670,7 +671,10 @@ public final class ModelLoader extends ModelBakery
                 textures.addAll(model.getTextures()); // Kick this, just in case.
 
                 models.add(model);
-                builder.add(Pair.of(model, v.getState()));
+
+                IModelState modelDefaultState = model.getDefaultState();
+                Preconditions.checkNotNull(modelDefaultState, "Model %s returned null as default state", loc);
+                builder.add(Pair.of(model, new ModelStateComposition(v.getState(), modelDefaultState)));
             }
 
             if (models.size() == 0) //If all variants are missing, add one with the missing model and default rotation.
