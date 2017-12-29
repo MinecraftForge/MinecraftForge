@@ -25,7 +25,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.holder.ItemHolder;
 
 public class CapabilityItemHandler
 {
@@ -52,7 +51,7 @@ public class CapabilityItemHandler
                     throw new IllegalArgumentException("the IItemHandler must implement INBTSerializable");
                 else ((INBTSerializable) instance).deserializeNBT(base);
             }
-        }, () -> new ItemHandler(new ItemHolder(1)));
+        }, () -> new ItemHandler((1)));
     }
 
 }

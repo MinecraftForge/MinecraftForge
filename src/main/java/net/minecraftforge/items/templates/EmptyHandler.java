@@ -19,15 +19,14 @@
 
 package net.minecraftforge.items.templates;
 
-import com.google.common.collect.Range;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IExtractionManager;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerIterator;
-import net.minecraftforge.items.InsertTransaction;
+import net.minecraftforge.items.IItemHandlerObserver;
 import net.minecraftforge.items.filter.IStackFilter;
 
 import javax.annotation.Nonnull;
+import java.util.Iterator;
+import java.util.OptionalInt;
 
 public class EmptyHandler implements IItemHandler
 {
@@ -94,19 +93,6 @@ public class EmptyHandler implements IItemHandler
 
     @Nonnull
     @Override
-    public IItemHandlerIterator itemHandlerIterator()
-    {
-        return EmptyItemHandlerItr.INSTANCE;
-    }
-
-    @Override
-    public float calcRedStoneFromInventory(Range<Integer> scanRange, int scale, boolean ignoreStackSize)
-    {
-        return 0;
-    }
-
-    @Nonnull
-    @Override
     public ItemStack getStackInSlot(int slot)
     {
         return ItemStack.EMPTY;
@@ -114,20 +100,27 @@ public class EmptyHandler implements IItemHandler
 
     @Nonnull
     @Override
-    public InsertTransaction insert(Range<Integer> slotRange, @Nonnull ItemStack stack, boolean simulate)
+    public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        return new InsertTransaction(ItemStack.EMPTY, stack);
+        return ItemStack.EMPTY;
     }
 
     @Nonnull
     @Override
-    public ItemStack extract(Range<Integer> slotRange, IStackFilter filter, int amount, boolean simulate)
+    public ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate)
     {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void multiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
+    public void addObserver(IItemHandlerObserver observer)
     {
+
+    }
+
+    @Override
+    public void removeObserver(IItemHandlerObserver observer)
+    {
+
     }
 }

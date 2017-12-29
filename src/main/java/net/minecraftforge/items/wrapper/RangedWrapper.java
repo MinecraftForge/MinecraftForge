@@ -21,26 +21,31 @@ package net.minecraftforge.items.wrapper;
 
 import com.google.common.collect.Range;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IExtractionManager;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.InsertTransaction;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.IItemHandlerObserver;
 import net.minecraftforge.items.filter.IStackFilter;
-import net.minecraftforge.items.templates.VoidExtractionManager;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.OptionalInt;
 
-public class RangedWrapper implements IItemHandler
+public class RangedWrapper implements IItemHandler, IItemHandlerObserver
 {
     private final IItemHandler compose;
     private final int min;
     private final int maxSlotExclusive;
+    protected final Range<Integer> scanrange;
+    protected final List<IItemHandlerObserver> observers = new ArrayList<>();
 
     public RangedWrapper(IItemHandler compose, int min, int maxSlotExclusive)
     {
         this.compose = compose;
         this.min = min;
         this.maxSlotExclusive = maxSlotExclusive;
+        this.scanrange = Range.closed(min, maxSlotExclusive);
+        compose.addObserver(this);
     }
 
     @Override
@@ -70,7 +75,12 @@ public class RangedWrapper implements IItemHandler
     @Override
     public void clearInv()
     {
-        compose.multiExtract(stack -> true, Range.closed(min, maxSlotExclusive), VoidExtractionManager.INSTANCE, false);
+        for (int i = min; i < maxSlotExclusive; i++)
+        {
+            ItemStack stack = getStackInSlot(i);
+            while (!stack.isEmpty())
+                compose.extract(OptionalInt.of(i), stack1 -> true, stack.getMaxStackSize(), false);
+        }
     }
 
     @Override
@@ -94,48 +104,65 @@ public class RangedWrapper implements IItemHandler
 
     @Nonnull
     @Override
-    public InsertTransaction insert(Range<Integer> slotRange, ItemStack stack, boolean simulate)
+    public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (ItemHandlerHelper.isRangeSlotLess(slotRange))
+        if (slot.isPresent())
         {
-            return compose.insert(Range.closed(min, maxSlotExclusive), stack, simulate);
+            return compose.insert(OptionalInt.of(min + slot.getAsInt()), stack, simulate);
         }
-        else
+        for (int i = min; i < maxSlotExclusive; i++)
         {
-            int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
-            int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), size()) : size());
-            return compose.insert(Range.closed(Math.max(min, (minSlot + min)), Math.min(maxSlotExclusive, (maxSlot + min))), stack, simulate);
+            ItemStack remainder = compose.insert(OptionalInt.of(i), stack, simulate);
+            if (remainder.getCount() != stack.getCount())
+                return remainder;
         }
+        return ItemStack.EMPTY;
     }
 
     @Nonnull
     @Override
-    public ItemStack extract(Range<Integer> slotRange, IStackFilter filter, int amount, boolean simulate)
+    public ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate)
     {
-        if (ItemHandlerHelper.isRangeSlotLess(slotRange))
+        if (slot.isPresent())
         {
-            return compose.extract(Range.closed(min, maxSlotExclusive), filter, amount, simulate);
+            return compose.extract(OptionalInt.of(min + slot.getAsInt()), filter, amount, simulate);
         }
-        else
+        for (int i = min; i < maxSlotExclusive; i++)
         {
-            int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
-            int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), size()) : size());
-            return compose.extract(Range.closed(Math.max(min, (minSlot + min)), Math.min(maxSlotExclusive, (maxSlot + min))), filter, amount, simulate);
+            ItemStack extract = compose.extract(OptionalInt.of(i), filter, amount, simulate);
+            if (!extract.isEmpty())
+                return extract;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public void addObserver(IItemHandlerObserver observer)
+    {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(IItemHandlerObserver observer)
+    {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void onStackInserted(IItemHandler handler, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, int slot)
+    {
+        if (scanrange.contains(slot))
+        {
+            observers.forEach(observer -> observer.onStackInserted(this, oldStack, newStack, slot));
         }
     }
 
     @Override
-    public void multiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
+    public void onStackExtracted(IItemHandler handler, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, int slot)
     {
-        if (ItemHandlerHelper.isRangeSlotLess(slotRange))
+        if (scanrange.contains(slot))
         {
-            compose.multiExtract(filter, Range.closed(min, maxSlotExclusive), manager, simulate);
-        }
-        else
-        {
-            int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
-            int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), size()) : size());
-            compose.multiExtract(filter, Range.closed(Math.max(min, (minSlot + min)), Math.min(maxSlotExclusive, (maxSlot + min))), manager, simulate);
+            observers.forEach(observer -> observer.onStackExtracted(this, oldStack, newStack, slot));
         }
     }
 }

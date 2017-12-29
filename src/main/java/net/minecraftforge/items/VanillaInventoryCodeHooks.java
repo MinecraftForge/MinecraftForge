@@ -19,7 +19,6 @@
 
 package net.minecraftforge.items;
 
-import com.google.common.collect.Range;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDropper;
 import net.minecraft.block.BlockHopper;
@@ -32,11 +31,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.items.filter.SimpleStackFilter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.OptionalInt;
 
 public class VanillaInventoryCodeHooks
 {
@@ -67,8 +68,8 @@ public class VanillaInventoryCodeHooks
                 continue;
 
             if (stackInHopper.isEmpty())
-                extract = handler.extract(Range.all(), stack -> true, 1, false);
-            else extract = handler.extractStack(Range.all(), stackInHopper, true, true, 1, false);
+                extract = handler.extract(OptionalInt.empty(), stack -> true, 1, false);
+            else extract = handler.extract(OptionalInt.empty(), new SimpleStackFilter(stackInHopper), 1, false);
             if (!extract.isEmpty())
             {
                 dest.markDirty();
@@ -106,8 +107,8 @@ public class VanillaInventoryCodeHooks
         {
             IItemHandler itemHandler = destinationResult.getKey();
 
-            InsertTransaction transaction = itemHandler.insert(Range.all(), stack.copy().splitStack(1), false);
-            if (!transaction.getInsertedStack().isEmpty())
+            ItemStack remainder = itemHandler.insert(OptionalInt.empty(), ItemHandlerHelper.copyStackWithSize(stack, 1), false);
+            if (remainder.getCount() != stack.getCount())
             {
                 dropper.decrStackSize(slot, 1);
             }
@@ -142,8 +143,8 @@ public class VanillaInventoryCodeHooks
                     ItemStack stackInHopper = hopper.getStackInSlot(i);
                     if (!stackInHopper.isEmpty())
                     {
-                        InsertTransaction transaction = itemHandler.insert(Range.all(), stackInHopper.copy().splitStack(1), false);
-                        if (!transaction.getInsertedStack().isEmpty())
+                        ItemStack insert = itemHandler.insert(OptionalInt.empty(), ItemHandlerHelper.copyStackWithSize(stackInHopper, 1), false);
+                        if (insert.isEmpty())
                         {
                             hopper.decrStackSize(i, 1);
 

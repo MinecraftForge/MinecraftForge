@@ -51,6 +51,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import java.util.OptionalInt;
+
 public class FluidUtil
 {
     private FluidUtil()
@@ -255,11 +257,11 @@ public class FluidUtil
             if (filledSimulated.isSuccess())
             {
                 // check if we can give the itemStack to the inventory
-                ItemStack remainder = inventory.insert(Range.all(), filledSimulated.result, true).getLeftoverStack();
+                ItemStack remainder = inventory.insert(OptionalInt.empty(), filledSimulated.result, true);
                 if (remainder.isEmpty() || player != null)
                 {
                     FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
-                    remainder = inventory.insert(Range.all(), filledReal.result, false).getLeftoverStack();
+                    remainder = inventory.insert(OptionalInt.empty(), filledReal.result, false);
 
                     // give it to the player or drop it at their feet
                     if (!remainder.isEmpty() && player != null)
@@ -322,11 +324,11 @@ public class FluidUtil
             if (emptiedSimulated.isSuccess())
             {
                 // check if we can give the itemStack to the inventory
-                ItemStack remainder = inventory.insert(Range.all(), emptiedSimulated.result, true).getLeftoverStack();
+                ItemStack remainder = inventory.insert(OptionalInt.empty(), emptiedSimulated.result, true);
                 if (remainder.isEmpty() || player != null)
                 {
                     FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, true);
-                    remainder = inventory.insert(Range.all(), emptiedSimulated.result, false).getLeftoverStack();
+                    remainder = inventory.insert(OptionalInt.empty(), emptiedSimulated.result, false);
 
                     // give it to the player or drop it at their feet
                     if (!remainder.isEmpty() && player != null)

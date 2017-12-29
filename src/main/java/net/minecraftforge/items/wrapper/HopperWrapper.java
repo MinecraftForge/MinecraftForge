@@ -19,12 +19,11 @@
 
 package net.minecraftforge.items.wrapper;
 
-import com.google.common.collect.Range;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraftforge.items.InsertTransaction;
 
 import javax.annotation.Nonnull;
+import java.util.OptionalInt;
 
 public class HopperWrapper extends InvWrapper
 {
@@ -38,32 +37,31 @@ public class HopperWrapper extends InvWrapper
 
     @Nonnull
     @Override
-    public InsertTransaction insert(Range<Integer> slotRange, ItemStack stack, boolean simulate)
+    public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (simulate)
-        {
-            return super.insert(slotRange, stack, true);
+        if (simulate){
+            return super.insert(slot, stack, simulate);
         }
-        else
+
+        boolean wasEmpty = getInventory().isEmpty();
+
+        int originalStackSize = stack.getCount();
+        ItemStack remainder = super.insert(slot, stack, false);
+
+        if (wasEmpty && originalStackSize > remainder.getCount())
         {
-            boolean wasEmpty = getInventory().isEmpty();
-
-            int originalStackSize = stack.getCount();
-            InsertTransaction transaction = super.insert(slotRange, stack, false);
-
-            if (wasEmpty && originalStackSize > transaction.getLeftoverStack().getCount())
+            if (!hopper.mayTransfer())
             {
-                if (!hopper.mayTransfer())
-                {
-                    // This cooldown is always set to 8 in vanilla with one exception:
-                    // Hopper -> Hopper transfer sets this cooldown to 7 when this hopper
-                    // has not been updated as recently as the one pushing items into it.
-                    // This vanilla behavior is preserved by VanillaInventoryCodeHooks#insertStack,
-                    // the cooldown is set properly by the hopper that is pushing items into this one.
-                    hopper.setTransferCooldown(8);
-                }
+                // This cooldown is always set to 8 in vanilla with one exception:
+                // Hopper -> Hopper transfer sets this cooldown to 7 when this hopper
+                // has not been updated as recently as the one pushing items into it.
+                // This vanilla behavior is preserved by VanillaInventoryCodeHooks#insertStack,
+                // the cooldown is set properly by the hopper that is pushing items into this one.
+                hopper.setTransferCooldown(8);
             }
-            return transaction;
         }
+        return remainder;
+
+
     }
 }

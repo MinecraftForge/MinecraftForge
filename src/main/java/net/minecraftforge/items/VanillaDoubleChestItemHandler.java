@@ -20,7 +20,6 @@
 package net.minecraftforge.items;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Range;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -35,6 +34,8 @@ import net.minecraftforge.items.wrapper.CombinedWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
+import java.util.OptionalInt;
 
 public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandler
 {
@@ -140,27 +141,34 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
 
     @Nonnull
     @Override
-    public InsertTransaction insert(Range<Integer> slotRange, @Nonnull ItemStack stack, boolean simulate)
+    public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (!wrapper.isValid())
-            return new InsertTransaction(ItemStack.EMPTY, stack);
-        else return wrapper.insert(slotRange, stack, simulate);
+        if (wrapper.isValid())
+            return wrapper.insert(slot, stack, simulate);
+        return ItemStack.EMPTY;
     }
 
     @Nonnull
     @Override
-    public ItemStack extract(Range<Integer> slotRange, IStackFilter filter, int amount, boolean simulate)
+    public ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate)
     {
-        if (!wrapper.isValid())
-            return ItemStack.EMPTY;
-        else return wrapper.extract(slotRange, filter, amount, simulate);
+        if (wrapper.isValid())
+            return wrapper.extract(slot, filter, amount, simulate);
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public void multiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
+    public void addObserver(IItemHandlerObserver observer)
     {
         if (wrapper.isValid())
-            wrapper.multiExtract(filter, slotRange, manager, simulate);
+            wrapper.addObserver(observer);
+    }
+
+    @Override
+    public void removeObserver(IItemHandlerObserver observer)
+    {
+        if (wrapper.isValid())
+            wrapper.removeObserver(observer);
     }
 
     @Override

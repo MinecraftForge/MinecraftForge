@@ -19,27 +19,48 @@
 
 package net.minecraftforge.items;
 
-import com.google.common.collect.Range;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.filter.IStackFilter;
-import net.minecraftforge.items.holder.IItemHolder;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.OptionalInt;
 
-public class ItemHandler implements IItemHandlerModifiable
+public class ItemHandler implements IItemHandlerModifiable, INBTSerializable<NBTTagCompound>
 {
-    private final IItemHolder holder;
+    private final NonNullList<ItemStack> stacks;
+    private final List<IItemHandlerObserver> observers = new ArrayList<>();
 
-    public ItemHandler(IItemHolder holder)
+    public ItemHandler(int size)
     {
-        this.holder = holder;
+        this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack setStackInSlot(int slot, @Nonnull ItemStack stack)
+    {
+        ItemStack stackInSlot = stacks.get(slot);
+        stacks.set(slot, stack);
+        return stackInSlot;
     }
 
     @Override
     public int size()
     {
-        return holder.getSlotCount();
+        return stacks.size();
+    }
+
+    @Override
+    public void clearInv()
+    {
+        stacks.clear();
     }
 
     @Override
@@ -52,64 +73,46 @@ public class ItemHandler implements IItemHandlerModifiable
     @Override
     public ItemStack getStackInSlot(int slot)
     {
-        return holder.getStack(slot);
-    }
-
-    @Override
-    public boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
-    {
-        return holder.isStackValidForSlot(stack, slot);
-    }
-
-    @Override
-    public boolean canExtractStackFromSlot(@Nonnull ItemStack stack, int slot)
-    {
-        return holder.canExtractStackFromSlot(stack, slot);
-    }
-
-    @Override
-    public void clearInv()
-    {
-        holder.clear();
+        return stacks.get(slot);
     }
 
     @Nonnull
     @Override
-    public InsertTransaction insert(Range<Integer> slotRange, ItemStack stack, boolean simulate)
+    public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        return ItemHandlerHelper.insert(slotRange, stack, simulate, this);
+        return ItemHandlerHelper.insert(slot, stack, simulate, this, observers);
     }
 
     @Nonnull
     @Override
-    public ItemStack extract(Range<Integer> slotRange, IStackFilter filter, int amount, boolean simulate)
+    public ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate)
     {
-        return ItemHandlerHelper.extract(slotRange, filter, amount, simulate, this);
+        return ItemHandlerHelper.extract(slot, filter, amount, simulate, this, observers);
     }
 
     @Override
-    public void multiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
+    public void addObserver(IItemHandlerObserver observer)
     {
-        ItemHandlerHelper.MultiExtract(filter, slotRange, manager, simulate, this);
+        observers.add(observer);
     }
 
     @Override
-    @Nonnull
-    public ItemStack setStackInSlot(int slot, @Nonnull ItemStack stack)
+    public void removeObserver(IItemHandlerObserver observer)
     {
-        ItemStack stack1 = holder.getStack(slot);
-        holder.putStack(slot, stack, false);
-        return stack1;
-    }
-
-    public IItemHolder getHolder()
-    {
-        return holder;
+        observers.remove(observer);
     }
 
     @Override
-    public void onContentsChanged(int slot)
+    public NBTTagCompound serializeNBT()
     {
-        holder.onContentChanged(slot);
+        NBTTagCompound compound = new NBTTagCompound();
+
+        return ItemStackHelper.saveAllItems(compound, stacks);
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound compound)
+    {
+        ItemStackHelper.loadAllItems(compound, stacks);
     }
 }

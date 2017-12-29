@@ -19,24 +19,25 @@
 
 package net.minecraftforge.items.wrapper;
 
-import com.google.common.collect.Range;
+import com.google.common.collect.Iterators;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IExtractionManager;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.InsertTransaction;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.IItemHandlerObserver;
 import net.minecraftforge.items.filter.IStackFilter;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.OptionalInt;
 
-public class CombinedWrapper implements IItemHandler
+public class CombinedWrapper implements IItemHandler, IItemHandlerObserver
 {
     protected final IItemHandler[] handlers;
     protected final int[] baseIndex; // index-offsets of the different handlers
     protected final int slotCount; // number of total slots
+    private final List<IItemHandlerObserver> observers = new ArrayList<>();
 
     public CombinedWrapper(IItemHandler... handlers)
     {
@@ -49,6 +50,7 @@ public class CombinedWrapper implements IItemHandler
             baseIndex[i] = index;
         }
         this.slotCount = index;
+        Arrays.stream(handlers).forEach(handler -> handler.addObserver(this));
     }
 
     // returns the handler index for the slot
@@ -65,6 +67,17 @@ public class CombinedWrapper implements IItemHandler
             }
         }
         throw new IndexOutOfBoundsException();
+    }
+
+    protected int getIndexFromHandler(IItemHandler handler){
+        for (int i = 0; i < handlers.length; i++)
+        {
+            if (handler == handlers[i])
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     protected IItemHandler getHandlerFromIndex(int index)
@@ -170,164 +183,66 @@ public class CombinedWrapper implements IItemHandler
 
     @Nonnull
     @Override
-    public InsertTransaction insert(Range<Integer> slotRange, ItemStack stack, boolean simulate)
+    public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (ItemHandlerHelper.isRangeSlotLess(slotRange))
-        {
-            for (IItemHandler handler : handlers)
-            {
-                InsertTransaction transaction = handler.insert(Range.all(), stack, simulate);
-                if (!transaction.getInsertedStack().isEmpty())
-                    return transaction;
-            }
-        }
-        else if (ItemHandlerHelper.isRangeSingleton(slotRange))
-        {
-            int slot = slotRange.lowerEndpoint();
-            int index = getIndexForSlot(slot);
+        if (slot.isPresent()){
+            int index = getIndexForSlot(slot.getAsInt());
             IItemHandler handler = getHandlerFromIndex(index);
-            return handler.insert(Range.singleton(getSlotFromIndex(slot, index)), stack, simulate);
+            int slotindex = getSlotFromIndex(slot.getAsInt(), index);
+            return handler.insert(OptionalInt.of(slotindex), stack, simulate);
         }
-        else
-        {
-            int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
-            int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), size()) : size());
-            int minIndex = getIndexForSlot(minSlot);
-            int maxIndex = getIndexForSlot(maxSlot);
-            int currentMinSlot = minSlot;
-            for (int i = minIndex; i < maxIndex; i++)
-            {
-                IItemHandler handler = getHandlerFromIndex(i);
-                if (maxSlot >= handler.size() && currentMinSlot == 0)
-                {
-                    InsertTransaction Inserted = handler.insert(Range.all(), stack, simulate);
-                    if (!Inserted.getInsertedStack().isEmpty())
-                    {
-                        return Inserted;
-                    }
-                    else currentMinSlot -= handler.size();
-                }
-                else
-                {
-                    int currentMaxSlot = Math.min(handler.size(), maxSlot);
-                    InsertTransaction Inserted = handler.insert(Range.closed(currentMinSlot, currentMaxSlot), stack, simulate);
-                    if (!Inserted.getInsertedStack().isEmpty())
-                    {
-                        return Inserted;
-                    }
-                    else currentMinSlot -= (currentMaxSlot - currentMinSlot);
-                }
+        for (IItemHandler handler : handlers){
+            ItemStack remainder = handler.insert(OptionalInt.empty(), stack, simulate);
+            if (remainder.getCount() != stack.getCount()){
+                return remainder;
             }
         }
-        return new InsertTransaction(ItemStack.EMPTY, stack);
+        return stack;
     }
 
     @Nonnull
     @Override
-    public ItemStack extract(Range<Integer> slotRange, IStackFilter filter, int amount, boolean simulate)
+    public ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate)
     {
-        if (ItemHandlerHelper.isRangeSlotLess(slotRange))
-        {
-            for (IItemHandler handler : handlers)
-            {
-                ItemStack extract = handler.extract(Range.all(), filter, amount, simulate);
-                if (!extract.isEmpty())
-                    return extract;
-            }
-        }
-        else if (ItemHandlerHelper.isRangeSingleton(slotRange))
-        {
-            int slot = slotRange.lowerEndpoint();
-            int index = getIndexForSlot(slot);
+        if (slot.isPresent()){
+            int index = getIndexForSlot(slot.getAsInt());
             IItemHandler handler = getHandlerFromIndex(index);
-            return handler.extract(Range.singleton(getSlotFromIndex(slot, index)), filter, amount, simulate);
+            int slotindex = getSlotFromIndex(slot.getAsInt(), index);
+            return handler.extract(OptionalInt.of(slotindex), filter, amount, simulate);
         }
-        else
-        {
-            int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
-            int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), size()) : size());
-            int minIndex = getIndexForSlot(minSlot);
-            int maxIndex = getIndexForSlot(maxSlot);
-            int currentMinSlot = minSlot;
-            for (int i = minIndex; i < maxIndex; i++)
-            {
-
-                IItemHandler handler = getHandlerFromIndex(i);
-                if (maxSlot >= handler.size() && currentMinSlot == 0)
-                {
-                    ItemStack extracted = handler.extract(Range.all(), filter, amount, simulate);
-                    if (!extracted.isEmpty())
-                    {
-                        return extracted;
-                    }
-                    else currentMinSlot -= handler.size();
-                }
-                else
-                {
-                    int currentMaxSlot = Math.min(handler.size(), maxSlot);
-                    ItemStack extracted = handler.extract(Range.closed(currentMinSlot, currentMaxSlot), filter, amount, simulate);
-                    if (!extracted.isEmpty())
-                    {
-                        return extracted;
-                    }
-                    else currentMinSlot -= (currentMaxSlot - currentMinSlot);
-                }
-            }
+        for (IItemHandler handler : handlers){
+            ItemStack extract = handler.extract(OptionalInt.empty(), filter, amount, simulate);
+            if (!extract.isEmpty())
+                return extract;
         }
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void multiExtract(IStackFilter filter, Range<Integer> slotRange, @Nonnull IExtractionManager manager, boolean simulate)
+    public void addObserver(IItemHandlerObserver observer)
     {
-        if (ItemHandlerHelper.isRangeSlotLess(slotRange))
-        {
-            for (IItemHandler handler : handlers)
-            {
-                handler.multiExtract(filter, slotRange, manager, simulate);
-
-            }
-        }
-        else if (ItemHandlerHelper.isRangeSingleton(slotRange))
-        {
-            int slot = slotRange.lowerEndpoint();
-            int index = getIndexForSlot(slot);
-            IItemHandler handler = getHandlerFromIndex(index);
-            handler.multiExtract(filter, Range.singleton(getSlotFromIndex(slot, index)), manager, simulate);
-        }
-        else
-        {
-            {
-                int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
-                int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), size()) : size());
-                int minIndex = getIndexForSlot(minSlot);
-                int maxIndex = getIndexForSlot(maxSlot);
-                boolean onehandler = minIndex == maxIndex;
-                if (onehandler)
-                {
-                    IItemHandler handler = getHandlerFromIndex(maxIndex);
-                    handler.multiExtract(filter, slotRange, manager, simulate);
-                }
-                else
-                {
-                    for (int i = minIndex; i < maxIndex; i++)
-                    {
-                        IItemHandler handler = getHandlerFromIndex(i);
-                        if (maxSlot >= handler.size() && minSlot == 0)
-                            handler.multiExtract(filter, Range.all(), manager, simulate);
-                        else
-                        {
-                            int currentMaxSlot = Math.min(handler.size(), maxSlot);
-                            handler.multiExtract(filter, Range.closed(minSlot, currentMaxSlot), manager, simulate);
-                        }
-                    }
-                }
-            }
-        }
+        observers.add(observer);
     }
 
-    public static class Builder
+    @Override
+    public void removeObserver(IItemHandlerObserver observer)
     {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void onStackInserted(IItemHandler handler, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, int slot)
+    {
+        observers.forEach(observer -> observer.onStackInserted(this, oldStack, newStack, getSlotFromIndex(slot, getIndexFromHandler(handler))));
+    }
+
+    @Override
+    public void onStackExtracted(IItemHandler handler, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, int slot)
+    {
+        observers.forEach(observer -> observer.onStackExtracted(this, oldStack, newStack, getSlotFromIndex(slot, getIndexFromHandler(handler))));
+    }
+
+    public static class Builder{
         List<IItemHandler> handlers = new ArrayList<>();
 
         public Builder withHandler(IItemHandler handler)

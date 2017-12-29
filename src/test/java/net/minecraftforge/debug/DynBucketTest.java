@@ -1,6 +1,5 @@
 package net.minecraftforge.debug;
 
-import com.google.common.collect.Range;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -10,7 +9,6 @@ import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -21,8 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -58,15 +54,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandler;
-import net.minecraftforge.items.holder.ItemHolder;
-import net.minecraftforge.items.wrapper.CombinedWrapper;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Iterator;
 
 @Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID, acceptableRemoteVersions = "*")
 public class DynBucketTest
@@ -78,8 +69,6 @@ public class DynBucketTest
     private static final boolean ENABLE = false;
     private static Logger logger;
 
-    @ObjectHolder("testitem")
-    public static final Item TEST_ITEM = null;
     @ObjectHolder("simpletank")
     public static final Block TANK_BLOCK = null;
     @ObjectHolder("simpletank")
@@ -109,7 +98,6 @@ public class DynBucketTest
         FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestGas.name));
 
         event.getRegistry().registerAll(
-            new TestItem().setRegistryName(testItemName),
             new ItemBlock(TANK_BLOCK).setRegistryName(simpleTankName),
             new DynBottle()
         );
@@ -187,51 +175,7 @@ public class DynBucketTest
         }
     }
 
-    public static class TestItem extends Item
-    {
-        @Override
-        public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand)
-        {
-            ItemStack itemStackIn = playerIn.getHeldItem(hand);
-            if (worldIn.isRemote)
-            {
-                return new ActionResult<>(EnumActionResult.PASS, itemStackIn);
-            }
 
-            ItemHolder holder = new ItemHolder(5);
-            ItemHandler handler = new ItemHandler(holder);
-            ItemHolder holder2 = new ItemHolder(5);
-            ItemHandler handler2 = new ItemHandler(holder2);
-            IItemHandler joined = new CombinedWrapper(handler, handler2);
-
-            handler.insert(Range.all(), new ItemStack(Blocks.STONE), false);
-            handler.insert(Range.all(), new ItemStack(Blocks.GRASS), false);
-            handler.insert(Range.all(), new ItemStack(Blocks.DIRT), false);
-            handler.insert(Range.all(), new ItemStack(Blocks.GLASS), false);
-            handler.insert(Range.all(), new ItemStack(Blocks.SAND), false);
-
-            handler2.insert(Range.all(), new ItemStack(Blocks.SLIME_BLOCK), false);
-            handler2.insert(Range.all(), new ItemStack(Blocks.TNT), false);
-            handler2.insert(Range.all(), new ItemStack(Blocks.PLANKS), false);
-            handler2.insert(Range.all(), new ItemStack(Blocks.LOG), false);
-            handler2.insert(Range.all(), new ItemStack(Blocks.DIAMOND_BLOCK), false);
-
-            Iterator<ItemStack> stackIterator = handler.itemHandlerIterator();
-            while (stackIterator.hasNext())
-                logger.info("Expected 2: {}", stackIterator.next());
-
-            Iterator<ItemStack> stackIterator2 = handler2.itemHandlerIterator();
-            while (stackIterator2.hasNext())
-                logger.info("Expected 2: {}", stackIterator2.next());
-
-            Iterator<ItemStack> combinedIterator = joined.itemHandlerIterator();
-            while (combinedIterator.hasNext())
-                logger.info("Expected 2: {}", combinedIterator.next());
-            
-
-            return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
-        }
-    }
 
     public static class DynBottle extends UniversalBucket
     {

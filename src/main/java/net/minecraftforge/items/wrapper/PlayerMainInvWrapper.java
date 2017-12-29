@@ -19,14 +19,12 @@
 
 package net.minecraftforge.items.wrapper;
 
-import com.google.common.collect.Range;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.InsertTransaction;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import java.util.OptionalInt;
 
 /**
  * Exposes the player inventory WITHOUT the armor inventory as IItemHandler.
@@ -42,83 +40,28 @@ public class PlayerMainInvWrapper extends RangedWrapper
         inventoryPlayer = inv;
     }
 
-
     @Nonnull
     @Override
-    public InsertTransaction insert(Range<Integer> slotRange, ItemStack stack, boolean simulate)
+    public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (ItemHandlerHelper.isRangeSingleton(slotRange))
+        if (simulate)
+            return super.insert(slot, stack, true);
+        if (slot.isPresent()){
+
+           ItemStack remainder = super.insert(slot, stack, false);
+
+           if (remainder.getCount() != stack.getCount())
+               setAnimationsToGo(getStackInSlot(slot.getAsInt()));
+        }
+        for (int i = 0; i < size(); i++)
         {
-            int slot = slotRange.lowerEndpoint();
-            ItemStack existing = getStackInSlot(slot);
-            if (existing.isEmpty() || ItemHandlerHelper.canItemStacksStack(existing, stack))
-            {
-                InsertTransaction transaction = ItemHandlerHelper.split(stack, ItemHandlerHelper.getFreeSpaceForSlot(this, slot));
-                if (!transaction.getInsertedStack().isEmpty())
-                {
-                    if (simulate)
-                        return transaction;
-                    else
-                    {
-                        ItemStack InsertedStack = transaction.getInsertedStack();
-                        getInventoryPlayer().setInventorySlotContents(slot, InsertedStack);
-                        getInventoryPlayer().markDirty();
-                        setAnimationsToGo(InsertedStack);
-                        return transaction;
-                    }
-                }
+            ItemStack remainder = super.insert(OptionalInt.of(i), stack, false);
+            if (remainder.getCount() != stack.getCount()){
+                setAnimationsToGo(getStackInSlot(i));
+                return remainder;
             }
         }
-        else
-        {
-            InsertTransaction transaction;
-            transaction = insert(slotRange, stack, simulate, true);
-            if (!transaction.getInsertedStack().isEmpty())
-                return transaction;
-            else
-            {
-                transaction = insert(slotRange, stack, simulate, false);
-                return transaction;
-            }
-        }
-        return new InsertTransaction(ItemStack.EMPTY, stack);
-    }
-
-    protected InsertTransaction insert(Range<Integer> slotRange, ItemStack stack, boolean simulate, boolean firstRun)
-    {
-        int minSlot = (slotRange.hasLowerBound() ? slotRange.lowerEndpoint() : 0);
-        int maxSlot = (slotRange.hasUpperBound() ? Math.min(slotRange.upperEndpoint(), size()) : size());
-
-        for (int i = minSlot; i < maxSlot; i++)
-        {
-            ItemStack existing = getStackInSlot(i);
-            if (existing.isEmpty() && firstRun) continue;
-
-            InsertTransaction transaction = ItemHandlerHelper.split(stack, ItemHandlerHelper.getFreeSpaceForSlot(this, i));
-            if (!transaction.getInsertedStack().isEmpty())
-            {
-                if (simulate)
-                    return transaction;
-                else
-                {
-                    if (existing.isEmpty())
-                    {
-                        ItemStack insertedStack = transaction.getInsertedStack();
-                        getInventoryPlayer().setInventorySlotContents(i, insertedStack);
-                        getInventoryPlayer().markDirty();
-                        setAnimationsToGo(insertedStack);
-                    }
-                    else
-                    {
-                        existing.grow(transaction.getInsertedStack().getCount());
-                        getInventoryPlayer().markDirty();
-                        setAnimationsToGo(existing);
-                    }
-                    return transaction;
-                }
-            }
-        }
-        return new InsertTransaction(ItemStack.EMPTY, stack);
+        return ItemStack.EMPTY;
     }
 
     protected void setAnimationsToGo(ItemStack stack)
