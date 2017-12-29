@@ -26,7 +26,10 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.util.AttributeKey;
 
 import java.util.List;
+import java.util.Set;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.management.PlayerChunkMap;
@@ -237,14 +240,14 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
          * The packet is sent to all players that are watching the Chunk containing the supplied {@link TargetPoint}.
          * The {@code range} field of the {@link TargetPoint} is ignored.
          */
-        ALLAROUNDTRACKING(Sets.immutableEnumSet(Side.SERVER))
+        TRACKING_POINT(Sets.immutableEnumSet(Side.SERVER))
         {
             @Override
             public void validateArgs(Object args)
             {
                 if (!(args instanceof TargetPoint))
                 {
-                    throw new RuntimeException("ALLAROUNDTRACKING expects a TargetPoint argument");
+                    throw new RuntimeException("TRACKING_POINT expects a TargetPoint argument");
                 }
             }
 
@@ -262,6 +265,38 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                         NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                         if (dispatcher != null) builder.add(dispatcher);
                     }
+                }
+                return builder.build();
+            }
+        },
+        /**
+         * The packet is sent to all players tracking the supplied {@link Entity}. This is different from {@link #TRACKING_POINT} because Entities
+         * can have different tracking distances depending on their type.
+         */
+        TRACKING_ENTITY(Sets.immutableEnumSet(Side.SERVER))
+        {
+            @Override
+            public void validateArgs(Object args)
+            {
+                if (!(args instanceof Entity))
+                {
+                    throw new RuntimeException("TRACKING_ENTITY expects an Entity argument");
+                }
+            }
+
+            @Nullable
+            @Override
+            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            {
+                Entity e = (Entity)args;
+                Set<? extends EntityPlayer> players = FMLCommonHandler.instance().getMinecraftServerInstance()
+                        .getWorld(e.dimension).getEntityTracker().getTrackingPlayers(e);
+
+                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
+                for (EntityPlayer player : players)
+                {
+                    NetworkDispatcher dispatcher = ((EntityPlayerMP) player).connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                    if (dispatcher != null) builder.add(dispatcher);
                 }
                 return builder.build();
             }
