@@ -291,6 +291,7 @@ public class BlockEvent extends Event
      *
      * It should be noted that {@link #getState()} will return the block that was originally going to be placed.
      */
+    @Cancelable
     public static class FluidPlaceBlockEvent extends BlockEvent
     {
         private final BlockPos liquidPos;
@@ -310,6 +311,7 @@ public class BlockEvent extends Event
 
         public IBlockState getNewState()
         {
+            if (this.isCanceled()) return this.getWorld().getBlockState(this.getPos());
             return newState;
         }
 
