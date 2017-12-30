@@ -10,10 +10,4 @@ public interface IItemHandlerObservable
     boolean addObserver(IItemHandlerObserver observer);
 
     void removeObserver(IItemHandlerObserver observer);
-
-    boolean containsObserver(IItemHandlerObserver observer);
-
-
-
-
 }

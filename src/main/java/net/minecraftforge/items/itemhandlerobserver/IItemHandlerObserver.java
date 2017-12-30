@@ -7,11 +7,11 @@ import javax.annotation.Nonnull;
 
 public interface IItemHandlerObserver
 {
-    void onStackInserted(IItemHandler handler, int slot, @Nonnull ItemStack newStack);
+    void onStackInserted(IItemHandler handler, int slot, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack);
 
-    void onStackExtracted(IItemHandler handler, int slot, @Nonnull ItemStack newStack);
+    void onStackExtracted(IItemHandler handler, int slot, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack);
 
-    void onObserverableInvalidated();
+    void onObservableeInvalidated();
 
-    boolean isNotValid();
+    boolean isValid();
 }

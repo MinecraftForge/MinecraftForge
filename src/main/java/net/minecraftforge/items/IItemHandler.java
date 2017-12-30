@@ -63,7 +63,7 @@ public interface IItemHandler
 
     /**
      * @param stack to check
-     * @param slot  to check
+     * @param slot  Slot to query.
      * @return true is the stack can be inserted into the slot
      */
     default boolean isStackValidForSlot(int slot, @Nonnull ItemStack stack)
@@ -73,7 +73,7 @@ public interface IItemHandler
 
     /**
      * @param stack to check
-     * @param slot  to check
+     * @param slot  Slot to query.
      * @return true is the stack can be extracted from the slot
      */
     default boolean canExtractStackFromSlot(int slot, @Nonnull ItemStack stack)
@@ -82,20 +82,20 @@ public interface IItemHandler
     }
 
     /**
-     * @return if the IItemHandler is full. this does take voiding into account
+     * @return true if the IItemHandler is full. this does take voiding into account
      */
     default boolean isFull()
     {
         for (int i = 0; i < size(); i++)
         {
-            if (ItemHandlerHelper.getFreeSpaceForSlot(this, i) != 0)
+            if (getFreeSpaceForSlot(i) != 0)
                 return false;
         }
         return true;
     }
 
     /**
-     * @return if the IItemHandler is empty
+     * @return true if the IItemHandler is empty
      */
     default boolean isEmpty()
     {
@@ -107,6 +107,10 @@ public interface IItemHandler
         return true;
     }
 
+    /**
+     * @param slot Slot to query.
+     * @return the free space available in the giving slot
+     */
     default int getFreeSpaceForSlot(int slot)
     {
         ItemStack existing = getStackInSlot(slot);

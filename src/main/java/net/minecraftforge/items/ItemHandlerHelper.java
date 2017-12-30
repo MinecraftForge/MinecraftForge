@@ -137,20 +137,6 @@ public class ItemHandlerHelper
         }
     }
 
-    public static int getFreeSpaceForSlot(IItemHandler handler, int slot)
-    {
-        ItemStack existing = handler.getStackInSlot(slot);
-        if (!existing.isEmpty())
-        {
-            if (!existing.isStackable())
-            {
-                return 0;
-            }
-            else return handler.getStackLimit(existing, slot) - existing.getCount();
-        }
-        return handler.getSlotLimit(slot);
-    }
-
     @Nonnull
     public static ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simlate, IItemHandlerModifiable handler)
     {

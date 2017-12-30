@@ -24,33 +24,19 @@ public class DefaultObservable implements IItemHandlerObservable
         observers.remove(observer);
     }
 
-    @Override
-    public boolean containsObserver(IItemHandlerObserver observer)
+    public void onStackInserted(IItemHandler handler, int slot, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack)
     {
-        return observers.contains(observer);
+        observers.forEach(observer -> observer.onStackInserted(handler, slot, oldStack, newStack));
     }
 
 
-    public void onStackInserted(IItemHandler handler, int slot, @Nonnull ItemStack newStack)
+    public void onStackExtracted(IItemHandler handler, int slot, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack)
     {
-        cleanup();
-        observers.forEach(observer -> observer.onStackInserted(handler, slot, newStack));
+        observers.forEach(observer -> observer.onStackExtracted(handler, slot, oldStack, newStack));
     }
 
-
-    public void onStackExtracted(IItemHandler handler, int slot, @Nonnull ItemStack newStack)
+    public void onObservableInvalidated()
     {
-        cleanup();
-        observers.forEach(observer -> observer.onStackExtracted(handler, slot, newStack));
-    }
-
-    public void onObserverableInvalidated()
-    {
-        observers.forEach(IItemHandlerObserver::onObserverableInvalidated);
-    }
-
-    public void cleanup()
-    {
-        observers.removeIf(IItemHandlerObserver::isNotValid);
+        observers.forEach(IItemHandlerObserver::onObservableeInvalidated);
     }
 }
