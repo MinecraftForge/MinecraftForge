@@ -28,3 +28,12 @@
                          {
                              return;
                          }
+@@ -86,7 +86,7 @@
+ 
+                         if (p_180650_1_.func_175623_d(blockpos1.func_177984_a()) && this.func_176368_m(p_180650_1_, blockpos1))
+                         {
+-                            p_180650_1_.func_175656_a(blockpos1.func_177984_a(), Blocks.field_150480_ab.func_176223_P());
++                            p_180650_1_.func_175656_a(blockpos1.func_177984_a(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_180650_1_, blockpos1.func_177984_a(), p_180650_2_, Blocks.field_150480_ab.func_176223_P()));
+                         }
+                     }
+                 }

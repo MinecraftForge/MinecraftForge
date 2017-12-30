@@ -27,11 +27,12 @@ public class FluidPlaceBlockTest
     {
         if (event.getState().getBlock() == Blocks.OBSIDIAN) event.setNewState(Blocks.GOLD_BLOCK.getDefaultState());
         if (event.getState().getBlock() == Blocks.COBBLESTONE) event.setNewState(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.GRANITE));
-        if (event.getState() == Blocks.STONE.getDefaultState()){
+        if (event.getState() == Blocks.STONE.getDefaultState())
+        {
             Biome biome = event.getWorld().getBiome(event.getPos());
             if (biome instanceof BiomeHills) event.setNewState(Blocks.EMERALD_BLOCK.getDefaultState());
             else event.setNewState(Blocks.DIAMOND_BLOCK.getDefaultState());
         }
-        if (event.getState().getBlock() == Blocks.FIRE) event.setNewState(Blocks.GLASS.getDefaultState());
+        if (event.getState().getBlock() == Blocks.FIRE) event.setCanceled(true);
     }
 }

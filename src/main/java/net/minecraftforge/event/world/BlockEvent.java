@@ -290,6 +290,7 @@ public class BlockEvent extends Event
      * arbitrary code when lava sets blocks on fire, even preventing it.
      *
      * It should be noted that {@link #getState()} will return the block that was originally going to be placed.
+     * If this event is cancelled a block identical to the current one will be placed.
      */
     @Cancelable
     public static class FluidPlaceBlockEvent extends BlockEvent
@@ -315,7 +316,8 @@ public class BlockEvent extends Event
             return newState;
         }
 
-        public void setNewState(IBlockState state){
+        public void setNewState(IBlockState state)
+        {
             this.newState = state;
         }
     }
