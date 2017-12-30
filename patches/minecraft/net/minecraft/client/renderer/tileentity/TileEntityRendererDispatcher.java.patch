@@ -4,7 +4,7 @@
      {
          if (p_180546_1_.func_145835_a(this.field_147560_j, this.field_147561_k, this.field_147558_l) < p_180546_1_.func_145833_n())
          {
-+            if(!drawingBatch || !p_180546_1_.hasFastRenderer())
++            if(!drawingBatch || !p_180546_1_.hasFastRenderer(net.minecraftforge.client.MinecraftForgeClient.getRenderPass()))
 +            {
              RenderHelper.func_74519_b();
              int i = this.field_147550_f.func_175626_b(p_180546_1_.func_174877_v(), 0);
@@ -20,7 +20,7 @@
          {
              try
              {
-+                if(drawingBatch && p_192854_1_.hasFastRenderer())
++                if(drawingBatch && p_192854_1_.hasFastRenderer(net.minecraftforge.client.MinecraftForgeClient.getRenderPass()))
 +                    tileentityspecialrenderer.renderTileEntityFast(p_192854_1_, p_192854_2_, p_192854_4_, p_192854_6_, p_192854_8_, p_192854_9_, p_192854_10_, batchBuffer.func_178180_c());
 +                else
                  tileentityspecialrenderer.func_192841_a(p_192854_1_, p_192854_2_, p_192854_4_, p_192854_6_, p_192854_8_, p_192854_9_, p_192854_10_);
