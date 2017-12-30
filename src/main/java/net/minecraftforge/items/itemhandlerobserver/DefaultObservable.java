@@ -29,14 +29,13 @@ public class DefaultObservable implements IItemHandlerObservable
         observers.forEach(observer -> observer.onStackInserted(handler, slot, oldStack, newStack));
     }
 
-
     public void onStackExtracted(IItemHandler handler, int slot, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack)
     {
         observers.forEach(observer -> observer.onStackExtracted(handler, slot, oldStack, newStack));
     }
 
-    public void onObservableInvalidated()
+    public void onInvalidated()
     {
-        observers.forEach(IItemHandlerObserver::onObservableeInvalidated);
+        observers.forEach(IItemHandlerObserver::onInvalidated);
     }
 }

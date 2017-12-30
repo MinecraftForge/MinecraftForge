@@ -11,7 +11,7 @@ public interface IItemHandlerObserver
 
     void onStackExtracted(IItemHandler handler, int slot, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack);
 
-    void onObservableeInvalidated();
+    void onInvalidated();
 
     boolean isValid();
 }

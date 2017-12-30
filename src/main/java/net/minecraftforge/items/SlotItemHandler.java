@@ -65,25 +65,26 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
-    public int getItemStackLimit(ItemStack stack)
+    public int getItemStackLimit(@Nonnull ItemStack stack)
     {
         return itemHandler.getStackLimit(stack, getSlotIndex());
     }
 
     @Override
-    public boolean isHere(IInventory inv, int slotIn)
+    public boolean isHere(@Nonnull IInventory inv, int slotIn)
     {
         return false;
     }
 
     @Override
+    @Nonnull
     public ItemStack decrStackSize(int amount)
     {
         return itemHandler.extract(OptionalInt.of(getSlotIndex()), stack -> true, amount, false);
     }
 
     @Override
-    public boolean isSameInventory(Slot other)
+    public boolean isSameInventory(@Nonnull Slot other)
     {
         return other instanceof SlotItemHandler && ((SlotItemHandler) other).getItemHandler() == this.itemHandler;
     }
