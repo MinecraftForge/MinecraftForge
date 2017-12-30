@@ -285,40 +285,55 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when a liquid places a block. Use {@link #getNewState()} to change the result of
+     * Fired when a liquid places a block. Use {@link #setNewState(IBlockState)} to change the result of
      * a cobblestone generator or add variants of obsidian. Alternatively, you  could execute
      * arbitrary code when lava sets blocks on fire, even preventing it.
      *
-     * It should be noted that {@link #getState()} will return the block that was originally going to be placed.
-     * If this event is cancelled a block identical to the current one will be placed.
+     * {@link #getState()} will return the block that was originally going to be placed.
+     * {@link #getPos()} will return the position of the block to be changed.
      */
     @Cancelable
     public static class FluidPlaceBlockEvent extends BlockEvent
     {
         private final BlockPos liquidPos;
         private IBlockState newState;
+        private IBlockState origState;
 
         public FluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, IBlockState state)
         {
             super(world, pos, state);
             this.liquidPos = liquidPos;
             this.newState = state;
+            this.origState = world.getBlockState(pos);
         }
 
+        /**
+         * @return The position of the liquid this event originated from. This may be the same as {@link #getPos()}.
+         */
         public BlockPos getLiquidPos()
         {
             return liquidPos;
         }
 
+        /**
+         * @return The block state that will be placed after this event resolves.
+         */
         public IBlockState getNewState()
         {
-            if (this.isCanceled()) return this.getWorld().getBlockState(this.getPos());
             return newState;
         }
 
         public void setNewState(IBlockState state)
         {
             this.newState = state;
+        }
+
+        /**
+         * @return The original state, as opposed to what minecraft would have placed by default ({@link #getState()}).
+         */
+        public IBlockState getOriginalState()
+        {
+            return origState;
         }
     }
 
