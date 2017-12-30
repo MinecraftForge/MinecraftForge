@@ -38,13 +38,13 @@ public class SidedInvWrapper extends IInvWrapperBase
     }
 
     @Override
-    public boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
+    public boolean isStackValidForSlot(int slot, @Nonnull ItemStack stack)
     {
         return inventory.canInsertItem(inventory.getSlotsForFace(facing)[slot], stack, facing);
     }
 
     @Override
-    public boolean canExtractStackFromSlot(@Nonnull ItemStack stack, int slot)
+    public boolean canExtractStackFromSlot(int slot, @Nonnull ItemStack stack)
     {
         return inventory.canExtractItem(inventory.getSlotsForFace(facing)[slot], stack, facing);
     }

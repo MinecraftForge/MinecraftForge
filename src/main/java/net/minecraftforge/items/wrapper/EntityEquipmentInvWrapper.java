@@ -25,13 +25,11 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.IItemHandlerObserver;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.filter.IStackFilter;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.OptionalInt;
 
@@ -41,13 +39,10 @@ import java.util.OptionalInt;
  */
 public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiable
 {
-    List<IItemHandlerObserver> observers = new ArrayList<>();
-
     /**
      * The entity.
      */
     protected final EntityLivingBase entity;
-
     /**
      * The slots exposed by this wrapper, with {@link EntityEquipmentSlot#index} as the index.
      */
@@ -121,26 +116,13 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     @Override
     public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        return ItemHandlerHelper.insert(slot, stack, simulate, this, observers);
+        return ItemHandlerHelper.insert(slot, stack, simulate, this);
     }
 
     @Nonnull
     @Override
     public ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate)
     {
-        return ItemHandlerHelper.extract(slot, filter, amount, simulate, this, observers);
+        return ItemHandlerHelper.extract(slot, filter, amount, simulate, this);
     }
-
-    @Override
-    public void addObserver(IItemHandlerObserver observer)
-    {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(IItemHandlerObserver observer)
-    {
-        observers.remove(observer);
-    }
-
 }

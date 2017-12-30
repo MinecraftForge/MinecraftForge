@@ -39,8 +39,9 @@ public class HopperWrapper extends InvWrapper
     @Override
     public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (simulate){
-            return super.insert(slot, stack, simulate);
+        if (simulate)
+        {
+            return super.insert(slot, stack, true);
         }
 
         boolean wasEmpty = getInventory().isEmpty();

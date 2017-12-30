@@ -27,15 +27,11 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.filter.IStackFilter;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.OptionalInt;
 
 public class ItemHandler implements IItemHandlerModifiable, INBTSerializable<NBTTagCompound>
 {
-    private final NonNullList<ItemStack> stacks;
-    private final List<IItemHandlerObserver> observers = new ArrayList<>();
+    protected final NonNullList<ItemStack> stacks;
 
     public ItemHandler(int size)
     {
@@ -80,26 +76,14 @@ public class ItemHandler implements IItemHandlerModifiable, INBTSerializable<NBT
     @Override
     public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        return ItemHandlerHelper.insert(slot, stack, simulate, this, observers);
+        return ItemHandlerHelper.insert(slot, stack, simulate, this);
     }
 
     @Nonnull
     @Override
     public ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate)
     {
-        return ItemHandlerHelper.extract(slot, filter, amount, simulate, this, observers);
-    }
-
-    @Override
-    public void addObserver(IItemHandlerObserver observer)
-    {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(IItemHandlerObserver observer)
-    {
-        observers.remove(observer);
+        return ItemHandlerHelper.extract(slot, filter, amount, simulate, this);
     }
 
     @Override

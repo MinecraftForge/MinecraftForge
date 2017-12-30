@@ -34,7 +34,6 @@ import net.minecraftforge.items.wrapper.CombinedWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.Iterator;
 import java.util.OptionalInt;
 
 public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandler
@@ -155,20 +154,6 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         if (wrapper.isValid())
             return wrapper.extract(slot, filter, amount, simulate);
         return ItemStack.EMPTY;
-    }
-
-    @Override
-    public void addObserver(IItemHandlerObserver observer)
-    {
-        if (wrapper.isValid())
-            wrapper.addObserver(observer);
-    }
-
-    @Override
-    public void removeObserver(IItemHandlerObserver observer)
-    {
-        if (wrapper.isValid())
-            wrapper.removeObserver(observer);
     }
 
     @Override

@@ -46,17 +46,19 @@ public class PlayerMainInvWrapper extends RangedWrapper
     {
         if (simulate)
             return super.insert(slot, stack, true);
-        if (slot.isPresent()){
+        if (slot.isPresent())
+        {
 
-           ItemStack remainder = super.insert(slot, stack, false);
+            ItemStack remainder = super.insert(slot, stack, false);
 
-           if (remainder.getCount() != stack.getCount())
-               setAnimationsToGo(getStackInSlot(slot.getAsInt()));
+            if (remainder.getCount() != stack.getCount())
+                setAnimationsToGo(getStackInSlot(slot.getAsInt()));
         }
         for (int i = 0; i < size(); i++)
         {
             ItemStack remainder = super.insert(OptionalInt.of(i), stack, false);
-            if (remainder.getCount() != stack.getCount()){
+            if (remainder.getCount() != stack.getCount())
+            {
                 setAnimationsToGo(getStackInSlot(i));
                 return remainder;
             }

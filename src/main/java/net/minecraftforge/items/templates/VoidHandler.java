@@ -21,11 +21,10 @@ package net.minecraftforge.items.templates;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerObserver;
+import net.minecraftforge.items.itemhandlerobserver.IItemHandlerObservable;
 import net.minecraftforge.items.filter.IStackFilter;
 
 import javax.annotation.Nonnull;
-import java.util.Iterator;
 import java.util.OptionalInt;
 
 public class VoidHandler implements IItemHandler
@@ -57,7 +56,7 @@ public class VoidHandler implements IItemHandler
     }
 
     @Override
-    public boolean canExtractStackFromSlot(@Nonnull ItemStack stack, int slot)
+    public boolean canExtractStackFromSlot(int slot, @Nonnull ItemStack stack)
     {
         return false;
     }
@@ -99,17 +98,5 @@ public class VoidHandler implements IItemHandler
     public ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate)
     {
         return ItemStack.EMPTY;
-    }
-
-    @Override
-    public void addObserver(IItemHandlerObserver observer)
-    {
-
-    }
-
-    @Override
-    public void removeObserver(IItemHandlerObserver observer)
-    {
-
     }
 }

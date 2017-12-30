@@ -40,7 +40,7 @@ public class OreDictFilter implements IStackFilter
     }
 
     @Override
-    public NonNullList<ItemStack> getExamples()
+    public NonNullList<ItemStack> getMatchingItemStacks()
     {
         return OreDictionary.getOres(oreName);
     }

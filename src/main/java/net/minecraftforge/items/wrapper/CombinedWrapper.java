@@ -19,25 +19,23 @@
 
 package net.minecraftforge.items.wrapper;
 
-import com.google.common.collect.Iterators;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerObserver;
+import net.minecraftforge.items.itemhandlerobserver.IItemHandlerObservable;
 import net.minecraftforge.items.filter.IStackFilter;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.OptionalInt;
 
-public class CombinedWrapper implements IItemHandler, IItemHandlerObserver
+public class CombinedWrapper implements IItemHandler
 {
     protected final IItemHandler[] handlers;
     protected final int[] baseIndex; // index-offsets of the different handlers
     protected final int slotCount; // number of total slots
-    private final List<IItemHandlerObserver> observers = new ArrayList<>();
+    private final List<IItemHandlerObservable> observers = new ArrayList<>();
 
     public CombinedWrapper(IItemHandler... handlers)
     {
@@ -50,7 +48,6 @@ public class CombinedWrapper implements IItemHandler, IItemHandlerObserver
             baseIndex[i] = index;
         }
         this.slotCount = index;
-        Arrays.stream(handlers).forEach(handler -> handler.addObserver(this));
     }
 
     // returns the handler index for the slot
@@ -69,7 +66,8 @@ public class CombinedWrapper implements IItemHandler, IItemHandlerObserver
         throw new IndexOutOfBoundsException();
     }
 
-    protected int getIndexFromHandler(IItemHandler handler){
+    protected int getIndexFromHandler(IItemHandler handler)
+    {
         for (int i = 0; i < handlers.length; i++)
         {
             if (handler == handlers[i])
@@ -133,21 +131,21 @@ public class CombinedWrapper implements IItemHandler, IItemHandlerObserver
     }
 
     @Override
-    public boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
+    public boolean isStackValidForSlot(int slot, @Nonnull ItemStack stack)
     {
         int index = getIndexForSlot(slot);
         IItemHandler handler = getHandlerFromIndex(index);
         int slotindex = getSlotFromIndex(slot, index);
-        return handler.isStackValidForSlot(stack, slotindex);
+        return handler.isStackValidForSlot(slotindex, stack);
     }
 
     @Override
-    public boolean canExtractStackFromSlot(@Nonnull ItemStack stack, int slot)
+    public boolean canExtractStackFromSlot(int slot, @Nonnull ItemStack stack)
     {
         int index = getIndexForSlot(slot);
         IItemHandler handler = getHandlerFromIndex(index);
         int slotindex = getSlotFromIndex(slot, index);
-        return handler.canExtractStackFromSlot(stack, slotindex);
+        return handler.canExtractStackFromSlot(slotindex, stack);
     }
 
     @Override
@@ -185,15 +183,18 @@ public class CombinedWrapper implements IItemHandler, IItemHandlerObserver
     @Override
     public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (slot.isPresent()){
+        if (slot.isPresent())
+        {
             int index = getIndexForSlot(slot.getAsInt());
             IItemHandler handler = getHandlerFromIndex(index);
             int slotindex = getSlotFromIndex(slot.getAsInt(), index);
             return handler.insert(OptionalInt.of(slotindex), stack, simulate);
         }
-        for (IItemHandler handler : handlers){
+        for (IItemHandler handler : handlers)
+        {
             ItemStack remainder = handler.insert(OptionalInt.empty(), stack, simulate);
-            if (remainder.getCount() != stack.getCount()){
+            if (remainder.getCount() != stack.getCount())
+            {
                 return remainder;
             }
         }
@@ -204,13 +205,15 @@ public class CombinedWrapper implements IItemHandler, IItemHandlerObserver
     @Override
     public ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate)
     {
-        if (slot.isPresent()){
+        if (slot.isPresent())
+        {
             int index = getIndexForSlot(slot.getAsInt());
             IItemHandler handler = getHandlerFromIndex(index);
             int slotindex = getSlotFromIndex(slot.getAsInt(), index);
             return handler.extract(OptionalInt.of(slotindex), filter, amount, simulate);
         }
-        for (IItemHandler handler : handlers){
+        for (IItemHandler handler : handlers)
+        {
             ItemStack extract = handler.extract(OptionalInt.empty(), filter, amount, simulate);
             if (!extract.isEmpty())
                 return extract;
@@ -218,31 +221,8 @@ public class CombinedWrapper implements IItemHandler, IItemHandlerObserver
         return ItemStack.EMPTY;
     }
 
-    @Override
-    public void addObserver(IItemHandlerObserver observer)
+    public static class Builder
     {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(IItemHandlerObserver observer)
-    {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void onStackInserted(IItemHandler handler, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, int slot)
-    {
-        observers.forEach(observer -> observer.onStackInserted(this, oldStack, newStack, getSlotFromIndex(slot, getIndexFromHandler(handler))));
-    }
-
-    @Override
-    public void onStackExtracted(IItemHandler handler, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, int slot)
-    {
-        observers.forEach(observer -> observer.onStackExtracted(this, oldStack, newStack, getSlotFromIndex(slot, getIndexFromHandler(handler))));
-    }
-
-    public static class Builder{
         List<IItemHandler> handlers = new ArrayList<>();
 
         public Builder withHandler(IItemHandler handler)

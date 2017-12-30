@@ -20,7 +20,7 @@ public class SimpleStackFilter implements IStackFilter
     }
 
     @Override
-    public NonNullList<ItemStack> getExamples()
+    public NonNullList<ItemStack> getMatchingItemStacks()
     {
         return NonNullList.from(ItemStack.EMPTY, toTest);
     }

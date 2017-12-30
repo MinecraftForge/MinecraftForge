@@ -18,12 +18,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerObserver;
 import net.minecraftforge.items.wrapper.CombinedWrapper;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
 import java.util.OptionalInt;
 
 @Mod(modid = ItemHandlerTest.MODID)
@@ -61,20 +59,24 @@ public class ItemHandlerTest
             {
                 IItemHandler handler = world.getTileEntity(hitpos).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, event.getFace());
 
-                if (heldItem  == Items.STICK){
+                if (heldItem == Items.STICK)
+                {
                     event.setCanceled(true);
                     ItemHandlerTest.logger.info("Found on Side: {} {} slots", event.getFace(), handler.size());
                 }
-                if (heldItem == Items.GLOWSTONE_DUST){
+                if (heldItem == Items.GLOWSTONE_DUST)
+                {
                     event.setCanceled(true);
-                    for (Item item : ForgeRegistries.ITEMS){
+                    for (Item item : ForgeRegistries.ITEMS)
+                    {
                         if (item == Items.ENCHANTED_BOOK) continue;
                         NonNullList<ItemStack> stacks = NonNullList.create();
                         item.getSubItems(item.getCreativeTab(), stacks);
-                        for (ItemStack stack : stacks){
+                        for (ItemStack stack : stacks)
+                        {
                             for (int i = 0; i < handler.size(); i++)
                             {
-                                if (handler.isStackValidForSlot(stack, i))
+                                if (handler.isStackValidForSlot(i, stack))
                                     logger.info("stack with {} and meta {} and NBT {} is valid for slot {}", stack.getItem().getUnlocalizedName(), stack.getItemDamage(), stack.getTagCompound(), i);
                             }
                         }
@@ -83,8 +85,6 @@ public class ItemHandlerTest
             }
             if (block == Blocks.CHEST)
             {
-
-
                 IItemHandler playerinv = player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
                 IItemHandler chestInv = world.getTileEntity(hitpos).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, event.getFace());
                 IItemHandler chestInv0to9 = new RangedWrapper(chestInv, 0, 9);
@@ -96,42 +96,11 @@ public class ItemHandlerTest
                 {
                     event.setCanceled(true);
 
-                    chestInv19to27.insert(OptionalInt.of(0), new ItemStack(Items.GLOWSTONE_DUST, 48), false);
+                    chestInv19to27.insert(OptionalInt.empty(), new ItemStack(Items.GLOWSTONE_DUST, 48), false);
 
-                }
-                if (heldItem == Items.STICK){
-                    event.setCanceled(true);
-                    IItemHandlerObserver observer = new IItemHandlerObserver()
-                    {
-                        @Override
-                        public void onStackInserted(IItemHandler handler, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, int slot)
-                        {
-                            logger.info("in {} was a stack inserted into slot {} tha old stack was {} and the new one is {}", handler, slot, oldStack, newStack);
-                        }
-
-                        @Override
-                        public void onStackExtracted(IItemHandler handler, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, int slot)
-                        {
-                            logger.info("in {} was a stack extracted from slot {} tha old stack was {} and the new one is {}", handler, slot, oldStack, newStack);
-                        }
-                    };
-                    chestInv.addObserver(observer);
-
-                }
-                if (heldItem == Items.GLOWSTONE_DUST)
-                {
-                    event.setCanceled(true);
-
-                    for (ItemStack stack : chestInv)
-                    {
-                        if (!stack.isEmpty())
-                        {
-                            logger.info(stack);
-                        }
-                    }
-                    logger.info("complete itr");
                 }
             }
         }
     }
 }
+

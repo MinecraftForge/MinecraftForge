@@ -22,20 +22,14 @@ package net.minecraftforge.items.wrapper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.IItemHandlerObserver;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.filter.IStackFilter;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.OptionalInt;
 
 public abstract class IInvWrapperBase implements IItemHandlerModifiable
 {
-    private final List<IItemHandlerObserver> observers = new ArrayList<>();
-
     @Override
     public int size()
     {
@@ -55,7 +49,8 @@ public abstract class IInvWrapperBase implements IItemHandlerModifiable
         return getInventory().getStackInSlot(slot);
     }
 
-    public boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
+    @Override
+    public boolean isStackValidForSlot(int slot, @Nonnull ItemStack stack)
     {
         return getInventory().isItemValidForSlot(slot, stack);
     }
@@ -80,26 +75,14 @@ public abstract class IInvWrapperBase implements IItemHandlerModifiable
     @Override
     public ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        return ItemHandlerHelper.insert(slot, stack, simulate, this, observers);
+        return ItemHandlerHelper.insert(slot, stack, simulate, this);
     }
 
     @Nonnull
     @Override
     public ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate)
     {
-        return ItemHandlerHelper.extract(slot, filter, amount, simulate, this, observers);
-    }
-
-    @Override
-    public void addObserver(IItemHandlerObserver observer)
-    {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(IItemHandlerObserver observer)
-    {
-        observers.remove(observer);
+        return ItemHandlerHelper.extract(slot, filter, amount, simulate, this);
     }
 
     @Override

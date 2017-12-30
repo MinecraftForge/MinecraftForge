@@ -22,30 +22,28 @@ package net.minecraftforge.items.wrapper;
 import com.google.common.collect.Range;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerObserver;
+import net.minecraftforge.items.itemhandlerobserver.IItemHandlerObservable;
 import net.minecraftforge.items.filter.IStackFilter;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.OptionalInt;
 
-public class RangedWrapper implements IItemHandler, IItemHandlerObserver
+public class RangedWrapper implements IItemHandler
 {
+    protected final Range<Integer> scanRange;
+    protected final List<IItemHandlerObservable> observers = new ArrayList<>();
     private final IItemHandler compose;
     private final int min;
     private final int maxSlotExclusive;
-    protected final Range<Integer> scanrange;
-    protected final List<IItemHandlerObserver> observers = new ArrayList<>();
 
     public RangedWrapper(IItemHandler compose, int min, int maxSlotExclusive)
     {
         this.compose = compose;
         this.min = min;
         this.maxSlotExclusive = maxSlotExclusive;
-        this.scanrange = Range.closed(min, maxSlotExclusive);
-        compose.addObserver(this);
+        this.scanRange = Range.closed(min, maxSlotExclusive);
     }
 
     @Override
@@ -61,15 +59,15 @@ public class RangedWrapper implements IItemHandler, IItemHandlerObserver
     }
 
     @Override
-    public boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
+    public boolean isStackValidForSlot(int slot, @Nonnull ItemStack stack)
     {
-        return compose.isStackValidForSlot(stack, slot + min);
+        return compose.isStackValidForSlot(slot + min, stack);
     }
 
     @Override
-    public boolean canExtractStackFromSlot(@Nonnull ItemStack stack, int slot)
+    public boolean canExtractStackFromSlot(int slot, @Nonnull ItemStack stack)
     {
-        return compose.canExtractStackFromSlot(stack, slot + min);
+        return compose.canExtractStackFromSlot(slot + min, stack);
     }
 
     @Override
@@ -134,35 +132,5 @@ public class RangedWrapper implements IItemHandler, IItemHandlerObserver
                 return extract;
         }
         return ItemStack.EMPTY;
-    }
-
-    @Override
-    public void addObserver(IItemHandlerObserver observer)
-    {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(IItemHandlerObserver observer)
-    {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void onStackInserted(IItemHandler handler, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, int slot)
-    {
-        if (scanrange.contains(slot))
-        {
-            observers.forEach(observer -> observer.onStackInserted(this, oldStack, newStack, slot));
-        }
-    }
-
-    @Override
-    public void onStackExtracted(IItemHandler handler, @Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, int slot)
-    {
-        if (scanrange.contains(slot))
-        {
-            observers.forEach(observer -> observer.onStackExtracted(this, oldStack, newStack, slot));
-        }
     }
 }

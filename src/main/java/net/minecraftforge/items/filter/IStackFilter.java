@@ -32,7 +32,12 @@ public interface IStackFilter extends Predicate<ItemStack>
     @Override
     boolean test(ItemStack stack);
 
-    default NonNullList<ItemStack> getExamples()
+    /**
+     *
+     *
+     * @return a NonNullList whit itemStacks that match the filter
+     */
+    default NonNullList<ItemStack> getMatchingItemStacks()
     {
         return emptyNNList;
     }

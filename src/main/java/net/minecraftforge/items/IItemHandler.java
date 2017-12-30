@@ -19,7 +19,6 @@
 
 package net.minecraftforge.items;
 
-import com.google.common.collect.Range;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.filter.IStackFilter;
 
@@ -42,7 +41,7 @@ public interface IItemHandler
     {
         for (int i = 0; i < size(); i++)
         {
-            if (isStackValidForSlot(stack, i))
+            if (isStackValidForSlot(i, stack))
                 return true;
         }
         return false;
@@ -56,7 +55,7 @@ public interface IItemHandler
     {
         for (int i = 0; i < size(); i++)
         {
-            if (canExtractStackFromSlot(stack, i))
+            if (canExtractStackFromSlot(i, stack))
                 return true;
         }
         return false;
@@ -67,7 +66,7 @@ public interface IItemHandler
      * @param slot  to check
      * @return true is the stack can be inserted into the slot
      */
-    default boolean isStackValidForSlot(@Nonnull ItemStack stack, int slot)
+    default boolean isStackValidForSlot(int slot, @Nonnull ItemStack stack)
     {
         return true;
     }
@@ -77,7 +76,7 @@ public interface IItemHandler
      * @param slot  to check
      * @return true is the stack can be extracted from the slot
      */
-    default boolean canExtractStackFromSlot(@Nonnull ItemStack stack, int slot)
+    default boolean canExtractStackFromSlot(int slot, @Nonnull ItemStack stack)
     {
         return true;
     }
@@ -106,6 +105,20 @@ public interface IItemHandler
                 return false;
         }
         return true;
+    }
+
+    default int getFreeSpaceForSlot(int slot)
+    {
+        ItemStack existing = getStackInSlot(slot);
+        if (!existing.isEmpty())
+        {
+            if (!existing.isStackable())
+            {
+                return 0;
+            }
+            else return getStackLimit(existing, slot) - existing.getCount();
+        }
+        return getSlotLimit(slot);
     }
 
     /**
@@ -148,25 +161,24 @@ public interface IItemHandler
     ItemStack getStackInSlot(int slot);
 
     /**
-     * @param slotRange use {@link Range#all()} for slotLess extraction, use {@link Range#singleton(Comparable)} for slotted extraction
-     * @param stack     the sctack to insert
-     * @param simulate  If true, the insertion is only simulated
-     * @return a {@link InsertTransaction}
+     * @param slot     use {@link OptionalInt#empty()} for slotLess insertion, use {@link OptionalInt#of(int)} for slotted insertion
+     * @param stack    the stack to insert
+     * @param simulate If true, the insertion is only simulated
+     * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return ItemStack.EMPTY).
+     * May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
+     * The returned ItemStack can be safely modified after.
      */
     @Nonnull
     ItemStack insert(OptionalInt slot, @Nonnull ItemStack stack, boolean simulate);
 
     /**
-     * @param slotRange use {@link Range#all()} for slotLess extraction, use {@link Range#singleton(Comparable)} for slotted extraction
-     * @param filter    the filter to test the the stack in in the current slot
-     * @param amount    the amount to extract
-     * @param simulate  If true, the extraction is only simulated
-     * @return the stack that is extracted or would have been if simulated, return {@link ItemStack#EMPTY} if nothing was extracted
+     * @param slot     use {@link OptionalInt#empty()} for slotLess extraction, use {@link OptionalInt#of(int)} for slotted extraction
+     * @param filter   the filter to test the the stack in in the current slot extraction
+     * @param amount   the amount to extract
+     * @param simulate If true, the extraction is only simulated
+     * @return ItemStack extracted from the slot, must be empty if nothing can be extracted.
+     * The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
      */
     @Nonnull
     ItemStack extract(OptionalInt slot, IStackFilter filter, int amount, boolean simulate);
-
-    void addObserver(IItemHandlerObserver observer);
-
-    void removeObserver(IItemHandlerObserver observer);
 }
