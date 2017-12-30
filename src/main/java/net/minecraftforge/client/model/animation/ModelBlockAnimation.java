@@ -326,7 +326,14 @@ public class ModelBlockAnimation
             @Override
             public TRSRTransformation apply(float time)
             {
-                time -= Math.floor(time);
+                if (loop)
+                {
+                    time -= Math.floor(time);
+                }
+                else
+                {
+                    time = MathHelper.clamp(time, 0f, 1f);
+                }
                 Vector3f translation = new Vector3f(0, 0, 0);
                 Vector3f scale = new Vector3f(1, 1, 1);
                 Vector3f origin = new Vector3f(0, 0, 0);
