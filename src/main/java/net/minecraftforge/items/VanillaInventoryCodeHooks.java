@@ -31,6 +31,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ItemTransferEvent;
 import net.minecraftforge.items.filter.SimpleStackFilter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -49,12 +51,22 @@ public class VanillaInventoryCodeHooks
     @Nullable
     public static Boolean extractHook(IHopper dest)
     {
-        Pair<IItemHandler, Object> itemHandlerResult = getItemHandler(dest, EnumFacing.UP);
+        Pair<IItemHandler, TileEntity> itemHandlerResult = getItemHandler(dest, EnumFacing.UP);
         if (itemHandlerResult == null)
             return null;
 
         IItemHandler handler = itemHandlerResult.getKey();
 
+        TileEntity tileEntity = dest instanceof TileEntity ? (TileEntity) dest : null;
+
+        boolean cancelled = MinecraftForge.EVENT_BUS.post(new ItemTransferEvent.PRE(handler, itemHandlerResult.getValue(), EnumFacing.UP, tileEntity, ItemTransferEvent.flow.EXTRACT));
+
+        if (cancelled)
+        {
+            if (tileEntity != null && tileEntity instanceof TileEntityHopper)
+                ((TileEntityHopper) tileEntity).setTransferCooldown(8);
+            return false;
+        }
 
         for (int i = 0; i < dest.getSizeInventory(); i++)
         {
@@ -77,17 +89,18 @@ public class VanillaInventoryCodeHooks
                 {
                     dest.setInventorySlotContents(i, extract);
                     dest.markDirty();
-                    return true;
                 }
                 else
                 {
                     stackInHopper.grow(1);
                     dest.markDirty();
-                    return true;
                 }
+
+                MinecraftForge.EVENT_BUS.post(new ItemTransferEvent.POST(handler, itemHandlerResult.getValue(), EnumFacing.UP, tileEntity, ItemTransferEvent.flow.EXTRACT, extract));
+
+                return true;
             }
         }
-
         return false;
     }
 
@@ -98,7 +111,7 @@ public class VanillaInventoryCodeHooks
     {
         EnumFacing enumfacing = world.getBlockState(pos).getValue(BlockDropper.FACING);
         BlockPos blockpos = pos.offset(enumfacing);
-        Pair<IItemHandler, Object> destinationResult = getItemHandler(world, (double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), enumfacing.getOpposite());
+        Pair<IItemHandler, TileEntity> destinationResult = getItemHandler(world, (double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), enumfacing.getOpposite());
         if (destinationResult == null)
         {
             return true;
@@ -106,11 +119,16 @@ public class VanillaInventoryCodeHooks
         else
         {
             IItemHandler itemHandler = destinationResult.getKey();
+            if (MinecraftForge.EVENT_BUS.post(new ItemTransferEvent.PRE(itemHandler, destinationResult.getValue(), enumfacing.getOpposite(), dropper, ItemTransferEvent.flow.INSERT)))
+                return false;
+
+            ItemStack stackToInsert = ItemHandlerHelper.copyStackWithSize(stack, 1);
 
             ItemStack remainder = itemHandler.insert(OptionalInt.empty(), ItemHandlerHelper.copyStackWithSize(stack, 1), false);
             if (remainder.getCount() != stack.getCount())
             {
                 dropper.decrStackSize(slot, 1);
+                MinecraftForge.EVENT_BUS.post(new ItemTransferEvent.POST(itemHandler, destinationResult.getValue(), enumfacing.getOpposite(), dropper, ItemTransferEvent.flow.INSERT, stackToInsert));
             }
         }
         return false;
@@ -122,7 +140,7 @@ public class VanillaInventoryCodeHooks
     public static boolean insertHook(TileEntityHopper hopper)
     {
         EnumFacing hopperFacing = BlockHopper.getFacing(hopper.getBlockMetadata());
-        Pair<IItemHandler, Object> destinationResult = getItemHandler(hopper, hopperFacing);
+        Pair<IItemHandler, TileEntity> destinationResult = getItemHandler(hopper, hopperFacing);
         if (destinationResult == null)
         {
             return false;
@@ -131,19 +149,24 @@ public class VanillaInventoryCodeHooks
         {
             IItemHandler itemHandler = destinationResult.getKey();
             boolean inventoryWasEmpty = itemHandler.isEmpty();
-            Object destination = destinationResult.getValue();
+            TileEntity destination = destinationResult.getValue();
             if (itemHandler.isFull())
             {
                 return false;
             }
             else
             {
+                if (MinecraftForge.EVENT_BUS.post(new ItemTransferEvent.PRE(itemHandler, destination, hopperFacing, hopper, ItemTransferEvent.flow.INSERT)))
+                    return false;
+
                 for (int i = 0; i < hopper.getSizeInventory(); ++i)
                 {
                     ItemStack stackInHopper = hopper.getStackInSlot(i);
                     if (!stackInHopper.isEmpty())
                     {
-                        ItemStack insert = itemHandler.insert(OptionalInt.empty(), ItemHandlerHelper.copyStackWithSize(stackInHopper, 1), false);
+                        ItemStack toInsert = ItemHandlerHelper.copyStackWithSize(stackInHopper, 1);
+
+                        ItemStack insert = itemHandler.insert(OptionalInt.empty(), toInsert, false);
                         if (insert.isEmpty())
                         {
                             hopper.decrStackSize(i, 1);
@@ -164,19 +187,21 @@ public class VanillaInventoryCodeHooks
                                     destinationHopper.setTransferCooldown(8 - k);
                                 }
                             }
+
+                            MinecraftForge.EVENT_BUS.post(new ItemTransferEvent.POST(itemHandler, destination, hopperFacing, hopper, ItemTransferEvent.flow.INSERT, toInsert));
+
                             return true;
 
                         }
                     }
                 }
-
                 return false;
             }
         }
     }
 
     @Nullable
-    private static Pair<IItemHandler, Object> getItemHandler(IHopper hopper, EnumFacing hopperFacing)
+    private static Pair<IItemHandler, TileEntity> getItemHandler(IHopper hopper, EnumFacing hopperFacing)
     {
         double x = hopper.getXPos() + (double) hopperFacing.getFrontOffsetX();
         double y = hopper.getYPos() + (double) hopperFacing.getFrontOffsetY();
@@ -185,9 +210,9 @@ public class VanillaInventoryCodeHooks
     }
 
     @Nullable
-    public static Pair<IItemHandler, Object> getItemHandler(World worldIn, double x, double y, double z, final EnumFacing side)
+    public static Pair<IItemHandler, TileEntity> getItemHandler(World worldIn, double x, double y, double z, final EnumFacing side)
     {
-        Pair<IItemHandler, Object> destination = null;
+        Pair<IItemHandler, TileEntity> destination = null;
         int i = MathHelper.floor(x);
         int j = MathHelper.floor(y);
         int k = MathHelper.floor(z);

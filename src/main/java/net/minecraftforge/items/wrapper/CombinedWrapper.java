@@ -21,7 +21,6 @@ package net.minecraftforge.items.wrapper;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.itemhandlerobserver.IItemHandlerObservable;
 import net.minecraftforge.items.filter.IStackFilter;
 
 import javax.annotation.Nonnull;
@@ -35,7 +34,6 @@ public class CombinedWrapper implements IItemHandler
     protected final IItemHandler[] handlers;
     protected final int[] baseIndex; // index-offsets of the different handlers
     protected final int slotCount; // number of total slots
-    private final List<IItemHandlerObservable> observers = new ArrayList<>();
 
     public CombinedWrapper(IItemHandler... handlers)
     {

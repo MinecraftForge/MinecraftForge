@@ -21,7 +21,6 @@ package net.minecraftforge.items.templates;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.itemhandlerobserver.IItemHandlerObservable;
 import net.minecraftforge.items.filter.IStackFilter;
 
 import javax.annotation.Nonnull;
@@ -29,7 +28,6 @@ import java.util.OptionalInt;
 
 public class EmptyHandler implements IItemHandler
 {
-
     public static final EmptyHandler INSTANCE = new EmptyHandler();
 
     private EmptyHandler()
@@ -75,7 +73,6 @@ public class EmptyHandler implements IItemHandler
     @Override
     public void clearInv()
     {
-
     }
 
     @Override

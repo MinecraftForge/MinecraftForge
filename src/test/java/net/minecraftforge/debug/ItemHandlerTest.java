@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.OptionalInt;
 
-@Mod(modid = ItemHandlerTest.MODID)
+@Mod(modid = ItemHandlerTest.MODID, name = "ItemHandlerTest", version = "1.0")
 public class ItemHandlerTest
 {
     public static final String MODID = "itemhandlertest";
@@ -85,18 +85,13 @@ public class ItemHandlerTest
             }
             if (block == Blocks.CHEST)
             {
-                IItemHandler playerinv = player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
                 IItemHandler chestInv = world.getTileEntity(hitpos).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, event.getFace());
-                IItemHandler chestInv0to9 = new RangedWrapper(chestInv, 0, 9);
-                IItemHandler chestInv10to18 = new RangedWrapper(chestInv, 10, 18);
-                IItemHandler chestInv19to27 = new RangedWrapper(chestInv, 19, 27);
-                IItemHandler combined = new CombinedWrapper(chestInv0to9, chestInv10to18, chestInv19to27);
 
                 if (heldItem == Items.BLAZE_ROD)
                 {
                     event.setCanceled(true);
 
-                    chestInv19to27.insert(OptionalInt.empty(), new ItemStack(Items.GLOWSTONE_DUST, 48), false);
+                    chestInv.insert(OptionalInt.empty(), new ItemStack(Items.GLOWSTONE_DUST, 48), false);
 
                 }
             }

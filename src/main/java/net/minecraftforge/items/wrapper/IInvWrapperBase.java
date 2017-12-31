@@ -56,13 +56,10 @@ public abstract class IInvWrapperBase implements IItemHandlerModifiable
     }
 
     @Override
-    @Nonnull
-    public ItemStack setStackInSlot(int slot, @Nonnull ItemStack stack)
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
-        ItemStack stack1 = getStackInSlot(slot);
         getInventory().setInventorySlotContents(slot, stack);
         getInventory().markDirty();
-        return stack1;
     }
 
     @Override

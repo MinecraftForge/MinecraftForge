@@ -22,8 +22,8 @@ package net.minecraftforge.items.wrapper;
 import com.google.common.collect.Range;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.itemhandlerobserver.IItemHandlerObservable;
 import net.minecraftforge.items.filter.IStackFilter;
+import net.minecraftforge.items.itemhandlerobserver.IItemHandlerObservable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -32,8 +32,6 @@ import java.util.OptionalInt;
 
 public class RangedWrapper implements IItemHandler
 {
-    protected final Range<Integer> scanRange;
-    protected final List<IItemHandlerObservable> observers = new ArrayList<>();
     private final IItemHandler compose;
     private final int min;
     private final int maxSlotExclusive;
@@ -43,7 +41,6 @@ public class RangedWrapper implements IItemHandler
         this.compose = compose;
         this.min = min;
         this.maxSlotExclusive = maxSlotExclusive;
-        this.scanRange = Range.closed(min, maxSlotExclusive);
     }
 
     @Override

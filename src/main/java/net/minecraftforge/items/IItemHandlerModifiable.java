@@ -34,10 +34,9 @@ public interface IItemHandlerModifiable extends IItemHandler
      *
      * @param slot  Slot to modify
      * @param stack ItemStack to set slot to (may be empty)
-     * @return the stack that was in the slot
      */
-    @Nonnull
-    ItemStack setStackInSlot(int slot, @Nonnull ItemStack stack);
+
+    void setStackInSlot(int slot, @Nonnull ItemStack stack);
 
     default void onContentsChanged(int slot)
     {

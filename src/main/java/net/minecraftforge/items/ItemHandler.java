@@ -38,13 +38,11 @@ public class ItemHandler implements IItemHandlerModifiable, INBTSerializable<NBT
         this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
     }
 
-    @Nonnull
+
     @Override
-    public ItemStack setStackInSlot(int slot, @Nonnull ItemStack stack)
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
-        ItemStack stackInSlot = stacks.get(slot);
         stacks.set(slot, stack);
-        return stackInSlot;
     }
 
     @Override

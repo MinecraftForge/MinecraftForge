@@ -104,12 +104,9 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     }
 
     @Override
-    @Nonnull
-    public ItemStack setStackInSlot(int slot, @Nonnull ItemStack stack)
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
-        ItemStack stack1 = entity.getItemStackFromSlot(validateSlotIndex(slot));
         entity.setItemStackToSlot(validateSlotIndex(slot), stack);
-        return stack1;
     }
 
     @Nonnull
