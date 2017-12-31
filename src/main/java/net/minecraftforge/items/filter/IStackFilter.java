@@ -33,9 +33,7 @@ public interface IStackFilter extends Predicate<ItemStack>
     boolean test(ItemStack stack);
 
     /**
-     *
-     *
-     * @return a NonNullList whit itemStacks that match the filter
+     * @return a NonNullList with itemStacks that match the filter
      */
     default NonNullList<ItemStack> getMatchingItemStacks()
     {
