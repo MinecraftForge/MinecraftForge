@@ -23,28 +23,40 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-
-import javax.annotation.Nonnull;
+import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Describes an extension slot and its contents.
  */
-public interface IExtensionSlot
+public interface IExtensionSlot extends INBTSerializable<NBTTagCompound>
 {
     /**
      * Gets the container that is managing this slot.
+     * <p>
+     * Note that multiple mods can share a slot through the GlobalSlotRegistry,
+     * which means the container returned here may be the FlexibleExtensionContainer,
+     * and not the container that returned this instance from getSlot/getSlots.
      *
      * @return The owning container.
      */
     IExtensionContainer getContainer();
 
     /**
-     * Gets the slot type identifier for this slot.
+     * Gets the slot identifier for this slot. This identifier should be unique within the container.
      *
-     * @return The resource name serving as a namespaced identifier
+     * @return The slot id
      */
-    ResourceLocation getType();
+    String getId();
+
+    /**
+     * Gets the slot type identifier for this slot. More than one slot can share the same type,
+     * e.g. multiple ring slots.
+     *
+     * @return The slot type name
+     */
+    String getType();
 
     /**
      * Gets the contents of the slot. The stack is *NOT* required to be of an IExtensionSlotItem!
@@ -60,8 +72,6 @@ public interface IExtensionSlot
      */
     void setContents(ItemStack stack);
 
-    // Permissions
-
     /**
      * Queries whether or not the stack can be placed in this slot.
      *
@@ -70,8 +80,13 @@ public interface IExtensionSlot
     default boolean canEquip(ItemStack stack)
     {
         IExtensionSlotItem extItem = stack.getCapability(CapabilityExtensionSlotItem.INSTANCE, null);
-        return extItem != null
-                && IExtensionSlot.isAcceptableSlot(this, extItem, stack)
+
+        // By default, a slot won't accept plain items, override if you want to allow them.
+        if (extItem == null)
+            return false;
+
+        ImmutableSet<ResourceLocation> slots = extItem.getAcceptableSlots(stack);
+        return (slots.contains(CapabilityExtensionSlotItem.ANY_SLOT) || slots.contains(getType()))
                 && extItem.canEquip(stack, this);
     }
 
@@ -88,16 +103,40 @@ public interface IExtensionSlot
     }
 
     /**
-     * Helper method to decide if a slot should accept a certain item
+     * Checks if the slot needs to be stored, useful for integrating other mods' slots into this system,
+     * while keeping their separate storage solution.
      *
-     * @param slot The slot we are testing
-     * @param extItem The extension item representing the stack
-     * @param stack The stack being tested
-     * @return True if the item acceptable slots contains the slot id, or the ANY id.
+     * See VanillaEquipment for an use case.
+     *
+     * @return False if you don't want the slot storage managed by the FlexibleExtensionContainer.
      */
-    static boolean isAcceptableSlot(IExtensionSlot slot, IExtensionSlotItem extItem, ItemStack stack)
+    default boolean skipStorage()
     {
-        ImmutableSet<ResourceLocation> slots = extItem.getAcceptableSlots(stack);
-        return slots.contains(CapabilityExtensionSlotItem.ANY_SLOT) || slots.contains(slot.getType());
+        return false;
+    }
+
+    @Override
+    default NBTTagCompound serializeNBT()
+    {
+        return getContents().serializeNBT();
+    }
+
+    @Override
+    default void deserializeNBT(NBTTagCompound nbt)
+    {
+        setContents(new ItemStack(nbt));
+    }
+
+    /**
+     * Calls the tick handler for the contained item.
+     */
+    default void onWornTick()
+    {
+        ItemStack stack = getContents();
+        if (stack.isEmpty())
+            return;
+        IExtensionSlotItem extItem = stack.getCapability(CapabilityExtensionSlotItem.INSTANCE, null);
+        if (extItem != null)
+            extItem.onWornTick(stack, this);
     }
 }

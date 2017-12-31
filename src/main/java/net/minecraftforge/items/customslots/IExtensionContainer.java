@@ -21,8 +21,9 @@ package net.minecraftforge.items.customslots;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Gives access to information about a provider of extension slots.
@@ -42,4 +43,13 @@ public interface IExtensionContainer
      * @return The list of extension slots
      */
     ImmutableList<IExtensionSlot> getSlots();
+
+    /**
+     * Gets a slot by its unique id.
+     *
+     * @param slotId A resource location identifying the slot within this container.
+     * @return The slot matching the requested id.
+     */
+    @Nullable
+    IExtensionSlot getSlot(String slotId);
 }

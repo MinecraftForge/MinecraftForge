@@ -60,7 +60,6 @@ public class SlotExtension extends Slot
         return slot.getContents();
     }
 
-    // Override if your IItemHandler does not implement IItemHandlerModifiable
     /**
      * Helper method to put a stack in the slot.
      */

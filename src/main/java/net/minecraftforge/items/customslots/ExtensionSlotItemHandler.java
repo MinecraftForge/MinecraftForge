@@ -23,20 +23,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-
 public class ExtensionSlotItemHandler implements IExtensionSlot
 {
-    private final ResourceLocation slotType;
+    private final String id;
+    private String slotType;
 
     protected final IExtensionContainer owner;
     protected final IItemHandlerModifiable inventory;
     protected final int slot;
 
-    public ExtensionSlotItemHandler(IExtensionContainer owner, ResourceLocation slotType, IItemHandlerModifiable inventory, int slot)
+    public ExtensionSlotItemHandler(IExtensionContainer owner, String id, IItemHandlerModifiable inventory, int slot)
     {
         this.owner = owner;
-        this.slotType = slotType;
+        this.id = id;
+        this.slotType = id; // Call setType to change from default!
         this.inventory = inventory;
         this.slot = slot;
     }
@@ -48,9 +48,21 @@ public class ExtensionSlotItemHandler implements IExtensionSlot
     }
 
     @Override
-    public ResourceLocation getType()
+    public String getId()
+    {
+        return id;
+    }
+
+    @Override
+    public String getType()
     {
         return slotType;
+    }
+
+    public ExtensionSlotItemHandler setType(String typeId)
+    {
+        this.slotType = typeId;
+        return this;
     }
 
     /**
@@ -95,19 +107,5 @@ public class ExtensionSlotItemHandler implements IExtensionSlot
         if (extItem == null)
             return;
         extItem.onUnequipped(stack, this);
-    }
-
-    /**
-     * Calls the tick handler for the contained item.
-     */
-    public void onWornTick()
-    {
-        ItemStack stack = getContents();
-        if (stack.isEmpty())
-            return;
-        IExtensionSlotItem extItem = stack.getCapability(CapabilityExtensionSlotItem.INSTANCE, null);
-        if (extItem == null)
-            return;
-        extItem.onWornTick(stack, this);
     }
 }

@@ -48,9 +48,12 @@ public class ExtensionContainerTest
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(new ExtensionSlotItemTest()
-                .setRegistryName("slot_item_test").setUnlocalizedName("forge.slot_item_test")
-                .setMaxStackSize(1).setMaxDamage(50).setCreativeTab(CreativeTabs.MISC));
+        if (ENABLED)
+        {
+            event.getRegistry().register(new ExtensionSlotItemTest()
+                    .setRegistryName("slot_item_test").setUnlocalizedName("forge.slot_item_test")
+                    .setMaxStackSize(1).setMaxDamage(50).setCreativeTab(CreativeTabs.MISC));
+        }
     }
 
     public static class ExtensionSlotItemTest extends Item implements IExtensionSlotItem
@@ -89,11 +92,7 @@ public class ExtensionContainerTest
         @Override
         public void onEquipped(@Nonnull ItemStack stack, @Nonnull IExtensionSlot slot)
         {
-            if (!onWornTick_received)
-            {
-                logger.debug("onWornTick Received!");
-                onWornTick_received = true;
-            }
+            logger.debug("onEquipped Received!");
         }
 
         @Override
@@ -235,19 +234,23 @@ public class ExtensionContainerTest
         // Equipment container implementation
         //
 
-        public static final ResourceLocation RING = new ResourceLocation("forge", "ring");
-        public static final ResourceLocation TRINKET = new ResourceLocation("forge", "trinket");
-        public static final ResourceLocation NECK = new ResourceLocation("forge", "neck");
-        public static final ResourceLocation BELT = new ResourceLocation("forge", "belt");
-        public static final ResourceLocation WRISTS = new ResourceLocation("forge", "wrists");
-        public static final ResourceLocation ANKLES = new ResourceLocation("forge", "ankles");
+        public static final String RING = "ring";
+        public static final String RING1 = "ring1";
+        public static final String RING2 = "ring2";
+        public static final String TRINKET = "trinket";
+        public static final String TRINKET1 = "trinket1";
+        public static final String TRINKET2 = "trinket2";
+        public static final String NECK = "neck";
+        public static final String BELT = "belt";
+        public static final String WRISTS = "wrists";
+        public static final String ANKLES = "ankles";
 
         private final EntityLivingBase owner;
         private final ItemStackHandler inventory = new ItemStackHandler(8);
-        private final ExtensionSlotItemHandler ring1 = new ExtensionSlotItemHandler(this, RING, inventory, 0);
-        private final ExtensionSlotItemHandler ring2 = new ExtensionSlotItemHandler(this, RING, inventory, 1);
-        private final ExtensionSlotItemHandler trinket1 = new ExtensionSlotItemHandler(this, TRINKET, inventory, 2);
-        private final ExtensionSlotItemHandler trinket2 = new ExtensionSlotItemHandler(this, TRINKET, inventory, 3);
+        private final ExtensionSlotItemHandler ring1 = new ExtensionSlotItemHandler(this, RING1, inventory, 0).setType(RING);
+        private final ExtensionSlotItemHandler ring2 = new ExtensionSlotItemHandler(this, RING2, inventory, 1).setType(RING);
+        private final ExtensionSlotItemHandler trinket1 = new ExtensionSlotItemHandler(this, TRINKET1, inventory, 2).setType(TRINKET);
+        private final ExtensionSlotItemHandler trinket2 = new ExtensionSlotItemHandler(this, TRINKET2, inventory, 3).setType(TRINKET);
         private final ExtensionSlotItemHandler neck = new ExtensionSlotItemHandler(this, NECK, inventory, 4);
         private final ExtensionSlotItemHandler belt = new ExtensionSlotItemHandler(this, BELT, inventory, 5);
         private final ExtensionSlotItemHandler wrists = new ExtensionSlotItemHandler(this, WRISTS, inventory, 6);
@@ -274,6 +277,21 @@ public class ExtensionContainerTest
         public ImmutableList<IExtensionSlot> getSlots()
         {
             return slots;
+        }
+
+        @Nullable
+        @Override
+        public IExtensionSlot getSlot(String slotId)
+        {
+            if (RING1.equals(slotId)) return ring1;
+            if (RING2.equals(slotId)) return ring2;
+            if (TRINKET1.equals(slotId)) return trinket1;
+            if (TRINKET2.equals(slotId)) return trinket2;
+            if (NECK.equals(slotId)) return neck;
+            if (BELT.equals(slotId)) return belt;
+            if (WRISTS.equals(slotId)) return wrists;
+            if (ANKLES.equals(slotId)) return ankles;
+            return null;
         }
 
         @Nonnull
@@ -328,7 +346,7 @@ public class ExtensionContainerTest
         {
             for (IExtensionSlot slot : slots)
             {
-                ((ExtensionSlotItemHandler) slot).onWornTick();
+                slot.onWornTick();
             }
         }
 

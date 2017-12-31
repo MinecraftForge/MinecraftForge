@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraftforge.items.customslots.CapabilityExtensionSlotItem;
+import net.minecraftforge.items.customslots.ExtensionSlotContainer;
+import net.minecraftforge.items.customslots.VanillaEquipment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -463,6 +465,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         CapabilityAnimation.register();
         CapabilityEnergy.register();
         CapabilityExtensionSlotItem.register();
+        ExtensionSlotContainer.register();
+        VanillaEquipment.register();
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         MinecraftForge.EVENT_BUS.register(this);

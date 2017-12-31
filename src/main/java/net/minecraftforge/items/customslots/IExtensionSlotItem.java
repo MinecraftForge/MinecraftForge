@@ -25,8 +25,6 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
-
 /**
  * Exposed as a CAPABILITY by items that want to be accepted in special equipment slots, and optionally to provide
  * custom processing for insertion, ticking, etc.
@@ -37,8 +35,11 @@ public interface IExtensionSlotItem
      * Returns the list of slot IDs for extension containers. "forge:any" should be accepted by all extension containers
      * and is the default return type. Should be used by extension containers to test for equipability, and to display
      * in tooltips.
+     * <p>
+     * Ideally, the value would be stored in a field somewhere, and only returned here
+     * <p>
      * Example:
-     * return ImmutableList.of(new ResourceLocation("baubles:belt"), new ResourceLocation("toolbelt:pocket"))
+     * ImmutableSet.of(new ResourceLocation("baubles:belt"), new ResourceLocation("toolbelt:pocket"));
      *
      * @param stack The ItemStack for which the acceptable slots are being requested.
      * @return An immutable list with the ResourceLocations of the slots.
@@ -92,11 +93,13 @@ public interface IExtensionSlotItem
     /**
      * Queries whether or not the stack can be removed from the slot.
      *
+     * Curse of Binding is handled by the slot, so it is not needed here.
+     *
      * @param stack The ItemStack in the slot.
      * @param slot  The slot being referenced.
      */
     default boolean canUnequip(ItemStack stack, IExtensionSlot slot)
     {
-        return EnchantmentHelper.getEnchantmentLevel(Enchantments.BINDING_CURSE, stack) <= 0;
+        return true;
     }
 }
