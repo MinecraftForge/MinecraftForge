@@ -51,7 +51,7 @@ public class CapabilityItemHandler
                     throw new IllegalArgumentException("the IItemHandler must implement INBTSerializable");
                 else ((INBTSerializable) instance).deserializeNBT(base);
             }
-        }, () -> new ItemHandler((1)));
+        }, () -> new ItemStackHandler((1)));
     }
 
 }

@@ -29,11 +29,11 @@ import net.minecraftforge.items.filter.IStackFilter;
 import javax.annotation.Nonnull;
 import java.util.OptionalInt;
 
-public class ItemHandler implements IItemHandlerModifiable, INBTSerializable<NBTTagCompound>
+public class ItemStackHandler implements IItemHandlerModifiable, INBTSerializable<NBTTagCompound>
 {
     protected final NonNullList<ItemStack> stacks;
 
-    public ItemHandler(int size)
+    public ItemStackHandler(int size)
     {
         this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
     }

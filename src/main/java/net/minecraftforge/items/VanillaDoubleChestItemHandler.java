@@ -29,7 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.filter.IStackFilter;
 import net.minecraftforge.items.templates.EmptyHandler;
-import net.minecraftforge.items.wrapper.CombinedWrapper;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,7 +42,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     public static final VanillaDoubleChestItemHandler NO_ADJACENT_CHESTS_INSTANCE = new VanillaDoubleChestItemHandler(null, null, false);
     private final boolean mainChestIsUpper;
     private final TileEntityChest mainChest;
-    private final CombinedWrapper wrapper;
+    private final CombinedInvWrapper wrapper;
     private final int hashCode;
 
     public VanillaDoubleChestItemHandler(@Nullable TileEntityChest mainChest, @Nullable TileEntityChest other, boolean mainChestIsUpper)
@@ -51,9 +51,9 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         this.mainChest = mainChest;
         this.mainChestIsUpper = mainChestIsUpper;
         if (mainChest == null || other == null)
-            wrapper = new EmptyCombinedWrapper();
+            wrapper = new EmptyCombinedInvWrapper();
         else
-            wrapper = new CombinedWrapper(getChest(true).getSingleChestHandler(), getChest(false).getSingleChestHandler());
+            wrapper = new CombinedInvWrapper(getChest(true).getSingleChestHandler(), getChest(false).getSingleChestHandler());
         hashCode = Objects.hashCode(mainChestIsUpper ? mainChest : other) * 31 + Objects.hashCode(!mainChestIsUpper ? mainChest : other);
     }
 
@@ -197,9 +197,9 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         return tileEntityChest == null || tileEntityChest.isInvalid();
     }
 
-    private static class EmptyCombinedWrapper extends CombinedWrapper
+    private static class EmptyCombinedInvWrapper extends CombinedInvWrapper
     {
-        public EmptyCombinedWrapper()
+        public EmptyCombinedInvWrapper()
         {
             super(EmptyHandler.INSTANCE);
         }

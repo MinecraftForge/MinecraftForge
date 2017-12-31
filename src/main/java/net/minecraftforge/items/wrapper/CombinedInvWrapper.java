@@ -29,13 +29,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.OptionalInt;
 
-public class CombinedWrapper implements IItemHandler
+public class CombinedInvWrapper implements IItemHandler
 {
     protected final IItemHandler[] handlers;
     protected final int[] baseIndex; // index-offsets of the different handlers
     protected final int slotCount; // number of total slots
 
-    public CombinedWrapper(IItemHandler... handlers)
+    public CombinedInvWrapper(IItemHandler... handlers)
     {
         this.handlers = handlers;
         this.baseIndex = new int[handlers.length];
@@ -229,9 +229,9 @@ public class CombinedWrapper implements IItemHandler
             return this;
         }
 
-        public CombinedWrapper build()
+        public CombinedInvWrapper build()
         {
-            return new CombinedWrapper(handlers.toArray(new IItemHandler[handlers.size()]));
+            return new CombinedInvWrapper(handlers.toArray(new IItemHandler[handlers.size()]));
         }
     }
 }

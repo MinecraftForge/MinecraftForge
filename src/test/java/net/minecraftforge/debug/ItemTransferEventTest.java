@@ -20,12 +20,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class ItemTransferEventTest
 {
 
-    public static Boolean DEBUG = true;
+    public static Boolean ENABLED = true;
 
     @SubscribeEvent
     public static void onItemTransferPost(ItemTransferEvent.POST event)
     {
-        if (!DEBUG) return;
+        if (!ENABLED) return;
         if (event.getFromTileEntity() != null && event.getFromTileEntity() instanceof TileEntityHopper)
         {
             if (!(event.getTargetTileEntity() instanceof TileEntityHopper))
@@ -40,6 +40,7 @@ public class ItemTransferEventTest
     @SubscribeEvent
     public static void onItemTransferPre(ItemTransferEvent.PRE event)
     {
+        if (!ENABLED) return;
         if (event.getTargetTileEntity() instanceof TileEntityLockable)
         {
             //we dont want to steal out of a locked chest
@@ -51,7 +52,7 @@ public class ItemTransferEventTest
     @SubscribeEvent
     public static void onPlayerInteract(PlayerInteractEvent.RightClickBlock event)
     {
-        if (!DEBUG) return;
+        if (!ENABLED) return;
         World world = event.getEntityPlayer().world;
         BlockPos pos = event.getPos();
         TileEntity tileEntity = world.getTileEntity(pos);
