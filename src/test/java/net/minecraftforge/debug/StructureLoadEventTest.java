@@ -17,9 +17,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class StructureLoadEventTest
 {
     static final String MOD_ID = "structure_load_event_test";
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     private static final ResourceLocation TEST_STRUCTURE_NAME = new ResourceLocation(MOD_ID, "test");
-//    private static final ResourceLocation TEST_STRUCTURE_NAME = new ResourceLocation("igloo/igloo_top"); //Uncomment to test overriding a built-in structure
+//    private static final ResourceLocation TEST_STRUCTURE_NAME = new ResourceLocation("igloo/igloo_top"); //Uncomment and comment line above to test overriding a built-in structure
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -40,22 +40,22 @@ public class StructureLoadEventTest
             event.setStructure(structure);
         }
     }
-    
+
     // Creates a structure that is one stone block
     private static NBTTagCompound createTestStructureTag()
     {
         NBTTagCompound testStructureTag = new NBTTagCompound();
-        
+
         NBTTagList size = new NBTTagList();
         size.appendTag(new NBTTagInt(1));
         size.appendTag(new NBTTagInt(1));
         size.appendTag(new NBTTagInt(1));
         testStructureTag.setTag("size", size);
-        
+
         NBTTagList palette = new NBTTagList();
         palette.appendTag(NBTUtil.writeBlockState(new NBTTagCompound(), Blocks.STONE.getDefaultState()));
         testStructureTag.setTag("palette", palette);
-        
+
         NBTTagList blocks = new NBTTagList();
         NBTTagCompound blockTag = new NBTTagCompound();
         NBTTagList pos = new NBTTagList();
@@ -66,7 +66,7 @@ public class StructureLoadEventTest
         blockTag.setInteger("state", 0);
         blocks.appendTag(blockTag);
         testStructureTag.setTag("blocks", blocks);
-        
+
         return testStructureTag;
     }
 }

@@ -18,9 +18,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class AdvancementLoadEventTest
 {
     static final String MOD_ID = "advancement_load_event_test";
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     private static final ResourceLocation TEST_ADVANCEMENT_NAME = new ResourceLocation(MOD_ID, "test/root");
-//    private static final ResourceLocation TEST_ADVANCEMENT_NAME = new ResourceLocation("story/root"); //Uncomment to test overriding a built-in advancement
+//    private static final ResourceLocation TEST_ADVANCEMENT_NAME = new ResourceLocation("story/root"); //Uncomment and comment line above to test overriding a built-in advancement
     private static final String TEST_ADVANCEMENT_JSON = 
               "{\n"
             + "  \"display\": {\n"

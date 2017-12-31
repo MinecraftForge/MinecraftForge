@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class FunctionLoadEventTest
 {
     static final String MOD_ID = "function_load_event_test";
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     private static final ResourceLocation TEST_FUNCTION_NAME = new ResourceLocation(MOD_ID, "test");
     private static final String TEST_COMMAND = "say Test";
 
