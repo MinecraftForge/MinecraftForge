@@ -9,6 +9,15 @@
          this.field_147299_f.field_71474_y.field_74318_M = p_147282_1_.func_149192_g();
          this.field_147299_f.func_71403_a(this.field_147300_g);
          this.field_147299_f.field_71439_g.field_71093_bK = p_147282_1_.func_149194_f();
+@@ -745,7 +745,7 @@
+         chunk.func_186033_a(p_147263_1_.func_186946_a(), p_147263_1_.func_149276_g(), p_147263_1_.func_149274_i());
+         this.field_147300_g.func_147458_c(p_147263_1_.func_149273_e() << 4, 0, p_147263_1_.func_149271_f() << 4, (p_147263_1_.func_149273_e() << 4) + 15, 256, (p_147263_1_.func_149271_f() << 4) + 15);
+ 
+-        if (!p_147263_1_.func_149274_i() || !(this.field_147300_g.field_73011_w instanceof WorldProviderSurface))
++        if (!p_147263_1_.func_149274_i() || this.field_147300_g.field_73011_w.shouldCheckLighting())
+         {
+             chunk.func_76613_n();
+         }
 @@ -757,7 +757,7 @@
  
              if (tileentity != null)
