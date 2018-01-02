@@ -725,7 +725,7 @@
 +            int k2 = iblockstate1.func_177230_c().getLightOpacity(iblockstate1, this, p_175638_1_);
  
 -            if (k2 >= 15 && iblockstate1.func_185906_d() > 0)
-+            if (k2 >= 15 && false) // Forge: fix MC-119932
++            if (false) // Forge: fix MC-119932
              {
                  k2 = 1;
              }
