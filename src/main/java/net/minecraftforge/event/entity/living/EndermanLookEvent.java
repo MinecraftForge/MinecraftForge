@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package net.minecraftforge.event.entity.player;
+package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,11 +38,9 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Event.HasResult
-public class EndermanLookEvent extends PlayerEvent {
-    private final EntityEnderman enderman;
+public class EndermanLookEvent extends LivingSetAttackTargetEvent {
 
     public EndermanLookEvent(EntityPlayer player, EntityEnderman enderman) {
-        super(player);
-        this.enderman = enderman;
+        super(enderman, player);
     }
 }

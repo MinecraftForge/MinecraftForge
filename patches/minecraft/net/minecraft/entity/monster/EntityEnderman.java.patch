@@ -1,16 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
-@@ -191,6 +191,9 @@
+@@ -47,6 +47,7 @@
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.World;
+ import net.minecraft.world.storage.loot.LootTableList;
++import net.minecraftforge.event.entity.living.EndermanLookEvent;
+ 
+ public class EntityEnderman extends EntityMob
+ {
+@@ -191,6 +192,9 @@
      {
          ItemStack itemstack = p_70821_1_.field_71071_by.field_70460_b.get(3);
  
-+        net.minecraftforge.event.entity.player.EndermanLookEvent event = net.minecraftforge.event.ForgeEventFactory.onLookAtEnderman(p_70821_1_,this);
++        EndermanLookEvent event = net.minecraftforge.event.ForgeEventFactory.onLookAtEnderman(p_70821_1_,this);
 +        if(event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW) return true;
 +        if(event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return false;
          if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150423_aK))
          {
              return false;
-@@ -267,7 +270,9 @@
+@@ -267,7 +271,9 @@
  
      private boolean func_70825_j(double p_70825_1_, double p_70825_3_, double p_70825_5_)
      {
@@ -21,7 +29,7 @@
  
          if (flag)
          {
-@@ -354,6 +359,18 @@
+@@ -354,6 +360,18 @@
          }
      }
  

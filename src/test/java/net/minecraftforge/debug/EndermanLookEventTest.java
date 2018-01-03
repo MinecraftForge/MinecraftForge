@@ -2,7 +2,7 @@ package net.minecraftforge.debug;
 
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraftforge.event.entity.player.EndermanLookEvent;
+import net.minecraftforge.event.entity.living.EndermanLookEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -18,7 +18,7 @@ public class EndermanLookEventTest {
         if (!ENABLED) {
             return;
         }
-        if (event.getEntityPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem().equals(Items.DIAMOND_HELMET)) {
+        if (event.getTarget().getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem().equals(Items.DIAMOND_HELMET)) {
             event.setResult(Event.Result.DENY);
         }
 
