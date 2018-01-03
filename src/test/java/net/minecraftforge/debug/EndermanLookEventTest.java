@@ -4,6 +4,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraftforge.event.entity.player.EndermanLookEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = EndermanLookEventTest.MOD_ID, name = "EndermanLookEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
@@ -18,7 +19,7 @@ public class EndermanLookEventTest {
             return;
         }
         if (event.getEntityPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem().equals(Items.DIAMOND_HELMET)) {
-            event.setCanceled(true);
+            event.setResult(Event.Result.DENY);
         }
 
     }

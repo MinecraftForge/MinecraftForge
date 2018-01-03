@@ -22,17 +22,22 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 
 /**
  * EndermanLookEvent is fired when a player looks at an Enderman in {@link EntityEnderman#shouldAttackPlayer(EntityPlayer)}<br>
  * <br>
- * This event is {@link Cancelable}.<br>
- * when canceled the Enderman will not attack
+ * This event is not {@link Cancelable}.<br>
  * <br>
+ * this event does have a result {@link HasResult}
+ * {@link Event.Result#DEFAULT} keeps vanilla behavior
+ * {@link Event.Result#ALLOW} makes the enderman attack
+ * {@link Event.Result#DENY} stops the enderman from attacking
+ *
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
+@Event.HasResult
 public class EndermanLookEvent extends PlayerEvent {
     private final EntityEnderman enderman;
 
