@@ -4,7 +4,7 @@
  import net.minecraft.util.math.Vec3d;
  import net.minecraft.world.World;
  import net.minecraft.world.storage.loot.LootTableList;
-+import net.minecraftforge.event.entity.living.EndermanLookEvent;
++import net.minecraftforge.event.entity.living.EndermanLookAggroEvent;
  
  public class EntityEnderman extends EntityMob
  {
@@ -12,7 +12,7 @@
      {
          ItemStack itemstack = p_70821_1_.field_71071_by.field_70460_b.get(3);
  
-+        EndermanLookEvent event = net.minecraftforge.event.ForgeEventFactory.onLookAtEnderman(p_70821_1_,this);
++        EndermanLookAggroEvent event = net.minecraftforge.event.ForgeEventFactory.onLookAtEnderman(p_70821_1_,this);
 +        if(event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW) return true;
 +        if(event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return false;
          if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150423_aK))

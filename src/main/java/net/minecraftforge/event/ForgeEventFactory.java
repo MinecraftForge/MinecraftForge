@@ -112,7 +112,7 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
-import net.minecraftforge.event.entity.living.EndermanLookEvent;
+import net.minecraftforge.event.entity.living.EndermanLookAggroEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -720,8 +720,8 @@ public class ForgeEventFactory
         return outList.isEmpty();
     }
 
-    public static EndermanLookEvent onLookAtEnderman(EntityPlayer player, EntityEnderman enderman) {
-        EndermanLookEvent event = new EndermanLookEvent(player,enderman);
+    public static EndermanLookAggroEvent onLookAtEnderman(EntityPlayer player, EntityEnderman enderman) {
+        EndermanLookAggroEvent event = new EndermanLookAggroEvent(player,enderman);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }

@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 
 /**
- * EndermanLookEvent is fired when a player looks at an Enderman in {@link EntityEnderman#shouldAttackPlayer(EntityPlayer)}<br>
+ * EndermanLookAggroEvent is fired when a player looks at an Enderman in {@link EntityEnderman#shouldAttackPlayer(EntityPlayer)}<br>
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
@@ -38,9 +38,9 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Event.HasResult
-public class EndermanLookEvent extends LivingSetAttackTargetEvent {
+public class EndermanLookAggroEvent extends LivingSetAttackTargetEvent {
 
-    public EndermanLookEvent(EntityPlayer player, EntityEnderman enderman) {
+    public EndermanLookAggroEvent(EntityPlayer player, EntityEnderman enderman) {
         super(enderman, player);
     }
 }
