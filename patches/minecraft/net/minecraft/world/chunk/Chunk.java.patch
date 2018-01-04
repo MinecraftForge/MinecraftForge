@@ -340,7 +340,7 @@
 +        if (activeModContainer == null) // vanilla minecraft has problems too (MC-114332), log it at a quieter level.
 +            net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
 +        else
-+            net.minecraftforge.fml.common.FMLLog.log.warn(format, activeModContainer.getName(), this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
++            net.minecraftforge.fml.common.FMLLog.bigWarning(format, activeModContainer.getName(), this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
 +    }
 +
 +    private final net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
