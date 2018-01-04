@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiCrafting.java
++++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiCrafting.java
+@@ -111,6 +111,7 @@
+ 
+     protected void func_146284_a(GuiButton p_146284_1_) throws IOException
+     {
++        super.func_146284_a(p_146284_1_); // Forge: Call GuiContainer#actionPerformed
+         if (p_146284_1_.field_146127_k == 10)
+         {
+             this.field_192050_x.func_193014_a(this.field_193112_y, ((ContainerWorkbench)this.field_147002_h).field_75162_e);
