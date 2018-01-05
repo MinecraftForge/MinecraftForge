@@ -39,12 +39,13 @@ public class EnumValuesTransformer implements IClassTransformer, Opcodes
     {
         if (basicClass == null)
             return null;
-        ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(basicClass);
-        classReader.accept(classNode, 0);
 
-        if ((classNode.access & ACC_ENUM) == 0)
+        ClassReader classReader = new ClassReader(basicClass);
+        if ((classReader.getAccess() & ACC_ENUM) == 0)
             return basicClass; // We only check enums
+
+        ClassNode classNode = new ClassNode();
+        classReader.accept(classNode, 0);
 
         for (FieldNode f : classNode.fields)
         {
