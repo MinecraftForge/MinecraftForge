@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 public class EnumValuesTransformerTest
 {
     static final String MOD_ID = "enum_values_transformer_test";
-    static final boolean DISABLED = false;
+    static final boolean DISABLED = true;
     static final Class<?>[] EMPTY_CLASSES = new Class<?>[0];
     static final Object[] EMPTY_ARGS = new Object[0];
     @Nullable
