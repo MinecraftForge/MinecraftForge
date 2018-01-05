@@ -129,7 +129,7 @@
 +     *
 +     * @return true if lighting checks should be performed
 +     */
-+    public boolean shouldCheckLighting()
++    public boolean shouldClientCheckLighting()
 +    {
 +        return !(this instanceof WorldProviderSurface);
 +    }

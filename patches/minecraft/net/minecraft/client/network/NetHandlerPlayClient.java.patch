@@ -14,7 +14,7 @@
          this.field_147300_g.func_147458_c(p_147263_1_.func_149273_e() << 4, 0, p_147263_1_.func_149271_f() << 4, (p_147263_1_.func_149273_e() << 4) + 15, 256, (p_147263_1_.func_149271_f() << 4) + 15);
  
 -        if (!p_147263_1_.func_149274_i() || !(this.field_147300_g.field_73011_w instanceof WorldProviderSurface))
-+        if (!p_147263_1_.func_149274_i() || this.field_147300_g.field_73011_w.shouldCheckLighting())
++        if (!p_147263_1_.func_149274_i() || this.field_147300_g.field_73011_w.shouldClientCheckLighting())
          {
              chunk.func_76613_n();
          }
