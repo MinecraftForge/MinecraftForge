@@ -19,9 +19,9 @@
      }
  
 -    public void func_110549_a(IResourceManager p_110549_1_)
-+    public void onResourceManagerReload(IResourceManager p_110549_1_, net.minecraftforge.client.resource.ReloadRequirements requirements)
++    public void onResourceManagerReload(IResourceManager resourceManager, java.util.function.Predicate<net.minecraftforge.client.resource.IResourceType> resourcePredicate)
      {
-+        if (!requirements.shouldReload(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES)) return;
++        if (!resourcePredicate.test(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES)) return;
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Reloading Texture Manager", this.field_110585_a.keySet().size(), true);
          Iterator<Entry<ResourceLocation, ITextureObject>> iterator = this.field_110585_a.entrySet().iterator();
  

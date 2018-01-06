@@ -21,10 +21,8 @@ package net.minecraftforge.client.resource;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.Deque;
-
-import com.google.common.collect.Sets;
+import java.util.function.Predicate;
 
 /**
  * Handles reload parameters for sensitive loaders.
@@ -33,28 +31,26 @@ public enum SensitiveReloadStateHandler
 {
     INSTANCE;
 
-    public static final ReloadRequirements ALLOW_ALL = new ReloadRequirements.Exclude(Collections.emptySet());
-
-    private final Deque<ReloadRequirements> currentRequirements = new ArrayDeque<>();
+    private final Deque<Predicate<IResourceType>> currentRequirements = new ArrayDeque<>();
 
     /***
-     * Pushes inclusion {@link ReloadRequirements} for the current reload based on the given types.
+     * Pushes an inclusion predicate for the current reload based on the given types.
      * Should only be called when initiating a resource reload.
      *
      * @param resourceTypes the resource types to be included in the reload
      */
     public void pushReloadRequirements(IResourceType... resourceTypes)
     {
-        this.currentRequirements.push(new ReloadRequirements.Include(Sets.newHashSet(resourceTypes)));
+        this.currentRequirements.push(ReloadRequirements.include(resourceTypes));
     }
 
     /***
-     * Pushes any {@link ReloadRequirements} for the current reload.
+     * Pushes a resource type predicate for the current reload.
      * Should only be called when initiating a resource reload.
      *
-     * @param requirements the resource requirement handler
+     * @param requirements the resource requirement predicate
      */
-    public void pushReloadRequirements(ReloadRequirements requirements)
+    public void pushReloadRequirements(Predicate<IResourceType> requirements)
     {
         this.currentRequirements.push(requirements);
     }
@@ -65,18 +61,18 @@ public enum SensitiveReloadStateHandler
      * @return the relevant requirements, or an empty one if none in progress
      */
     @Nonnull
-    public ReloadRequirements get()
+    public Predicate<IResourceType> get()
     {
         if (this.currentRequirements.isEmpty())
         {
-            return ALLOW_ALL;
+            return net.minecraftforge.client.resource.ReloadRequirements.all();
         }
 
         return this.currentRequirements.peek();
     }
 
     /**
-     * Pops the last added {@link ReloadRequirements} from the stack. Should only be called after a resource reload has
+     * Pops the last added reload predicate from the stack. Should only be called after a resource reload has
      * been completed.
      *
      * @throws java.util.EmptyStackException if a resource reload is not in progress

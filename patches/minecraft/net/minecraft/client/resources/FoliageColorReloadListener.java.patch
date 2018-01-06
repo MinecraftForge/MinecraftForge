@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/resources/FoliageColorReloadListener.java
 +++ ../src-work/minecraft/net/minecraft/client/resources/FoliageColorReloadListener.java
-@@ -8,12 +8,13 @@
+@@ -8,15 +8,16 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
  @SideOnly(Side.CLIENT)
@@ -10,9 +10,13 @@
      private static final ResourceLocation field_130079_a = new ResourceLocation("textures/colormap/foliage.png");
  
 -    public void func_110549_a(IResourceManager p_110549_1_)
-+    public void onResourceManagerReload(IResourceManager p_110549_1_, net.minecraftforge.client.resource.ReloadRequirements requirements)
++    public void onResourceManagerReload(IResourceManager resourceManager, java.util.function.Predicate<net.minecraftforge.client.resource.IResourceType> resourcePredicate)
      {
-+        if (!requirements.shouldReload(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES)) return;
++        if (!resourcePredicate.test(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES)) return;
          try
          {
-             ColorizerFoliage.func_77467_a(TextureUtil.func_110986_a(p_110549_1_, field_130079_a));
+-            ColorizerFoliage.func_77467_a(TextureUtil.func_110986_a(p_110549_1_, field_130079_a));
++            ColorizerFoliage.func_77467_a(TextureUtil.func_110986_a(resourceManager, field_130079_a));
+         }
+         catch (IOException var3)
+         {

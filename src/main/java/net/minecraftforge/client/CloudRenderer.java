@@ -20,8 +20,10 @@
 package net.minecraftforge.client;
 
 import java.nio.ByteBuffer;
+import java.util.function.Predicate;
 
-import net.minecraftforge.client.resource.ReloadRequirements;
+import net.minecraftforge.client.resource.IResourceType;
+import net.minecraftforge.client.resource.VanillaResourceType;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -479,9 +481,9 @@ public class CloudRenderer implements ISensitiveResourceReloadListener
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager, ReloadRequirements requirements)
+    public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate)
     {
-        if (!requirements.shouldReload(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES)) return;
+        if (!resourcePredicate.test(VanillaResourceType.TEXTURES)) return;
         reloadTextures();
     }
 }
