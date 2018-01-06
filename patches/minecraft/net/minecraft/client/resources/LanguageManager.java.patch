@@ -14,18 +14,9 @@
      }
  
 -    public void func_110549_a(IResourceManager p_110549_1_)
-+    public void onResourceManagerReload(IResourceManager resourceManager, java.util.function.Predicate<net.minecraftforge.client.resource.IResourceType> resourcePredicate)
++    public void onResourceManagerReload(IResourceManager p_110549_1_, java.util.function.Predicate<net.minecraftforge.client.resource.IResourceType> resourcePredicate)
      {
 +        if (!resourcePredicate.test(net.minecraftforge.client.resource.VanillaResourceType.LANGUAGES)) return;
          List<String> list = Lists.newArrayList("en_us");
  
          if (!"en_us".equals(this.field_135048_c))
-@@ -72,7 +73,7 @@
-             list.add(this.field_135048_c);
-         }
- 
--        field_135049_a.func_135022_a(p_110549_1_, list);
-+        field_135049_a.func_135022_a(resourceManager, list);
-         LanguageMap.func_135063_a(field_135049_a.field_135032_a);
-     }
- 
