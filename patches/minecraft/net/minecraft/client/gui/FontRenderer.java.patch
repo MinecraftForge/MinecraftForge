@@ -23,7 +23,7 @@
      }
  
 -    public void func_110549_a(IResourceManager p_110549_1_)
-+    public void onResourceManagerReload(IResourceManager resourceManager, net.minecraftforge.client.resource.ReloadRequirements requirements)
++    public void onResourceManagerReload(IResourceManager p_110549_1_, net.minecraftforge.client.resource.ReloadRequirements requirements)
      {
 +        if (!requirements.shouldReload(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES)) return;
          this.func_111272_d();
