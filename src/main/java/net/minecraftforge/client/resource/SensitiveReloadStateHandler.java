@@ -43,7 +43,7 @@ public enum SensitiveReloadStateHandler
      *
      * @param resourceTypes the resource types to be included in the reload
      */
-    public void pushReloadRequirements(@Nonnull IResourceType... resourceTypes)
+    public void pushReloadRequirements(IResourceType... resourceTypes)
     {
         this.currentRequirements.push(new ReloadRequirements.Include(Sets.newHashSet(resourceTypes)));
     }
@@ -54,7 +54,7 @@ public enum SensitiveReloadStateHandler
      *
      * @param requirements the resource requirement handler
      */
-    public void pushReloadRequirements(@Nonnull ReloadRequirements requirements)
+    public void pushReloadRequirements(ReloadRequirements requirements)
     {
         this.currentRequirements.push(requirements);
     }

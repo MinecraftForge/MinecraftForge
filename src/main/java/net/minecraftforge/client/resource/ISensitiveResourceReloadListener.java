@@ -22,5 +22,5 @@ public interface ISensitiveResourceReloadListener extends IResourceManagerReload
      * @param resourceManager the resource manager being reloaded
      * @param requirements the requirements used to check whether relevant resources should be reloaded
      */
-    void onResourceManagerReload(IResourceManager resourceManager, @Nonnull ReloadRequirements requirements);
+    void onResourceManagerReload(IResourceManager resourceManager, ReloadRequirements requirements);
 }

@@ -44,7 +44,7 @@ public interface ReloadRequirements
     /**
      * Handles reload requirements with an inclusion list of {@link IResourceType} rather than an exclusion list.
      */
-    class Include implements ReloadRequirements
+    final class Include implements ReloadRequirements
     {
         private final Set<IResourceType> inclusion;
 
@@ -63,7 +63,7 @@ public interface ReloadRequirements
     /**
      * Handles reload requirements with an exclusion list of {@link IResourceType}.
      */
-    class Exclude implements ReloadRequirements
+    final class Exclude implements ReloadRequirements
     {
         private final Set<IResourceType> exclusion;
 
