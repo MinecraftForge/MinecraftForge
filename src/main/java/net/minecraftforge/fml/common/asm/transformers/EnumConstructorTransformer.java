@@ -44,6 +44,8 @@ public class EnumConstructorTransformer implements IClassTransformer
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass)
     {
+        if (basicClass == null)
+            return null;
         ClassReader cr = new ClassReader(basicClass);
         if ((cr.getAccess() & Opcodes.ACC_ENUM) == 0)
         {
