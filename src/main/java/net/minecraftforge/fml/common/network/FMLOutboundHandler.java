@@ -34,6 +34,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.management.PlayerChunkMap;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
@@ -256,8 +258,14 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 TargetPoint tp = (TargetPoint)args;
+                WorldServer world = DimensionManager.getWorld(tp.dimension);
+                if (world == null)
+                {
+                    return ImmutableList.of();
+                }
+
                 ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
-                PlayerChunkMap chunkMap = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(tp.dimension).getPlayerChunkMap();
+                PlayerChunkMap chunkMap = world.getPlayerChunkMap();
                 for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers())
                 {
                     if (player.dimension == tp.dimension && chunkMap.isPlayerWatchingChunk(player, MathHelper.floor(tp.x) >> 4, MathHelper.floor(tp.z) >> 4))
