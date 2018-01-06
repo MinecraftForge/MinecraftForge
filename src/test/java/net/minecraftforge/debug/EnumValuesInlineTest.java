@@ -12,10 +12,10 @@ import javax.annotation.Nullable;
  * Also tests that the JVM does <i>not</i> inline the Enum.$VALUES field.
  */
 @SuppressWarnings("unused")
-@Mod(modid = EnumValuesInlineTest.MOD_ID, name = "Enum Values Transformer Test", version = "0.1")
+@Mod(modid = EnumValuesInlineTest.MOD_ID, name = "Enum Values Constructor Test", version = "0.1")
 public class EnumValuesInlineTest
 {
-    static final String MOD_ID = "enum_values_transformer_test";
+    static final String MOD_ID = "enum_values_constructor_test";
     static final boolean DISABLED = false;
     static final Class<?>[] EMPTY_CLASSES = new Class<?>[0];
     static final Object[] EMPTY_ARGS = new Object[0];
@@ -45,7 +45,7 @@ public class EnumValuesInlineTest
 
         if (!last.name().equals("V_10000"))
             throw new Error("The enum values field was incorrectly inlined!");
-        LogManager.getLogger(EnumValuesInlineTest.class).info("EnumValuesInlineTest completed successfully.");
+        LogManager.getLogger(MOD_ID).info("EnumValuesInlineTest completed successfully.");
     }
 
     private enum TestEnum
