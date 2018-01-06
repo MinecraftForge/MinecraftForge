@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/GrassColorReloadListener.java
++++ ../src-work/minecraft/net/minecraft/client/resources/GrassColorReloadListener.java
+@@ -8,15 +8,16 @@
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+ @SideOnly(Side.CLIENT)
+-public class GrassColorReloadListener implements IResourceManagerReloadListener
++public class GrassColorReloadListener implements net.minecraftforge.client.resource.ISensitiveResourceReloadListener
+ {
+     private static final ResourceLocation field_130078_a = new ResourceLocation("textures/colormap/grass.png");
+ 
+-    public void func_110549_a(IResourceManager p_110549_1_)
++    public void onResourceManagerReload(IResourceManager resourceManager, net.minecraftforge.client.resource.ReloadRequirements requirements)
+     {
++        if (!requirements.shouldReload(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES)) return;
+         try
+         {
+-            ColorizerGrass.func_77479_a(TextureUtil.func_110986_a(p_110549_1_, field_130078_a));
++            ColorizerGrass.func_77479_a(TextureUtil.func_110986_a(resourceManager, field_130078_a));
+         }
+         catch (IOException var3)
+         {
