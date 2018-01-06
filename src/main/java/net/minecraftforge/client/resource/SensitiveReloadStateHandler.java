@@ -20,8 +20,9 @@
 package net.minecraftforge.client.resource;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayDeque;
 import java.util.Collections;
-import java.util.Stack;
+import java.util.Deque;
 
 import com.google.common.collect.Sets;
 
@@ -34,7 +35,7 @@ public enum SensitiveReloadStateHandler
 
     public static final ReloadRequirements ALLOW_ALL = new ReloadRequirements.Exclude(Collections.emptySet());
 
-    private final Stack<ReloadRequirements> currentRequirements = new Stack<>();
+    private final Deque<ReloadRequirements> currentRequirements = new ArrayDeque<>();
 
     /***
      * Pushes inclusion {@link ReloadRequirements} for the current reload based on the given types.
@@ -66,7 +67,7 @@ public enum SensitiveReloadStateHandler
     @Nonnull
     public ReloadRequirements get()
     {
-        if (this.currentRequirements.empty())
+        if (this.currentRequirements.isEmpty())
         {
             return ALLOW_ALL;
         }
