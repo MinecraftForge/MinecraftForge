@@ -126,6 +126,11 @@ public class ForgeTestRunner extends Runner
                 }
             }
 
+            //Avoid JVM duplicate class def error
+            if (name.equals("net.minecraft.launchwrapper.LaunchClassLoader")){
+                quarantine = false;
+            }
+
             if (quarantine)
             {
                 try

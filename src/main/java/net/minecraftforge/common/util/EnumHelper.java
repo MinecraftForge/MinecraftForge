@@ -26,6 +26,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
@@ -230,6 +231,8 @@ public class EnumHelper
     //Tests an enum is compatible with these args, throws an error if not.
     public static void testEnum(Class<? extends Enum<?>> enumType, Class<?>[] paramTypes)
     {
+        if (!(EnumHelper.class.getClassLoader() instanceof LaunchClassLoader))
+            return;
         addEnum(true, enumType, null, paramTypes, (Object[])null);
     }
 
