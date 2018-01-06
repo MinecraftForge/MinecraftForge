@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -137,17 +137,20 @@
+@@ -20,7 +20,7 @@
+ import org.apache.logging.log4j.Logger;
+ 
+ @SideOnly(Side.CLIENT)
+-public class TextureManager implements ITickable, IResourceManagerReloadListener
++public class TextureManager implements ITickable, net.minecraftforge.client.resource.ISensitiveResourceReloadListener
+ {
+     private static final Logger field_147646_a = LogManager.getLogger();
+     public static final ResourceLocation field_194008_a = new ResourceLocation("");
+@@ -137,17 +137,21 @@
  
          if (itextureobject != null)
          {
@@ -9,8 +18,10 @@
          }
      }
  
-     public void func_110549_a(IResourceManager p_110549_1_)
+-    public void func_110549_a(IResourceManager p_110549_1_)
++    public void onResourceManagerReload(IResourceManager resourceManager, net.minecraftforge.client.resource.ReloadRequirements requirements)
      {
++        if (!requirements.shouldReload(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES)) return;
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Reloading Texture Manager", this.field_110585_a.keySet().size(), true);
          Iterator<Entry<ResourceLocation, ITextureObject>> iterator = this.field_110585_a.entrySet().iterator();
  
@@ -21,7 +32,7 @@
              ITextureObject itextureobject = entry.getValue();
  
              if (itextureobject == TextureUtil.field_111001_a)
-@@ -159,5 +162,6 @@
+@@ -159,5 +163,6 @@
                  this.func_110579_a(entry.getKey(), itextureobject);
              }
          }

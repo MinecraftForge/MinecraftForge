@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/FontRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/FontRenderer.java
+@@ -27,7 +27,7 @@
+ import org.apache.commons.io.IOUtils;
+ 
+ @SideOnly(Side.CLIENT)
+-public class FontRenderer implements IResourceManagerReloadListener
++public class FontRenderer implements net.minecraftforge.client.resource.ISensitiveResourceReloadListener
+ {
+     private static final ResourceLocation[] field_111274_c = new ResourceLocation[256];
+     protected final int[] field_78286_d = new int[256];
 @@ -57,7 +57,7 @@
          this.field_111273_g = p_i1035_2_;
          this.field_78298_i = p_i1035_3_;
@@ -9,7 +18,18 @@
  
          for (int i = 0; i < 32; ++i)
          {
-@@ -107,7 +107,7 @@
+@@ -94,8 +94,9 @@
+         this.func_98306_d();
+     }
+ 
+-    public void func_110549_a(IResourceManager p_110549_1_)
++    public void onResourceManagerReload(IResourceManager resourceManager, net.minecraftforge.client.resource.ReloadRequirements requirements)
+     {
++        if (!requirements.shouldReload(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES)) return;
+         this.func_111272_d();
+         this.func_98306_d();
+     }
+@@ -107,7 +108,7 @@
  
          try
          {
@@ -18,7 +38,7 @@
              bufferedimage = TextureUtil.func_177053_a(iresource.func_110527_b());
          }
          catch (IOException ioexception)
-@@ -172,7 +172,7 @@
+@@ -172,7 +173,7 @@
  
          try
          {
@@ -27,7 +47,7 @@
              iresource.func_110527_b().read(this.field_78287_e);
          }
          catch (IOException ioexception)
-@@ -187,6 +187,7 @@
+@@ -187,6 +188,7 @@
  
      private float func_181559_a(char p_181559_1_, boolean p_181559_2_)
      {
@@ -35,7 +55,7 @@
          if (p_181559_1_ == ' ')
          {
              return 4.0F;
-@@ -203,7 +204,7 @@
+@@ -203,7 +205,7 @@
          int i = p_78266_1_ % 16 * 8;
          int j = p_78266_1_ / 16 * 8;
          int k = p_78266_2_ ? 1 : 0;
@@ -44,7 +64,7 @@
          int l = this.field_78286_d[p_78266_1_];
          float f = (float)l - 0.01F;
          GlStateManager.func_187447_r(5);
-@@ -231,7 +232,7 @@
+@@ -231,7 +233,7 @@
  
      private void func_78257_a(int p_78257_1_)
      {
@@ -53,7 +73,7 @@
      }
  
      protected float func_78277_a(char p_78277_1_, boolean p_78277_2_)
-@@ -280,7 +281,7 @@
+@@ -280,7 +282,7 @@
  
      public int func_175065_a(String p_175065_1_, float p_175065_2_, float p_175065_3_, int p_175065_4_, boolean p_175065_5_)
      {
@@ -62,7 +82,7 @@
          this.func_78265_b();
          int i;
  
-@@ -350,7 +351,7 @@
+@@ -350,7 +352,7 @@
  
                      int j1 = this.field_78285_g[i1];
                      this.field_78304_r = j1;
@@ -71,7 +91,7 @@
                  }
                  else if (i1 == 16)
                  {
-@@ -379,7 +380,7 @@
+@@ -379,7 +381,7 @@
                      this.field_78299_w = false;
                      this.field_78300_v = false;
                      this.field_78301_u = false;
@@ -80,7 +100,7 @@
                  }
  
                  ++i;
-@@ -407,7 +408,7 @@
+@@ -407,7 +409,7 @@
                      c0 = c1;
                  }
  
@@ -89,7 +109,7 @@
                  boolean flag = (c0 == 0 || j == -1 || this.field_78293_l) && p_78255_2_;
  
                  if (flag)
-@@ -445,7 +446,16 @@
+@@ -445,7 +447,16 @@
  
                      ++f;
                  }
@@ -106,7 +126,7 @@
                  if (this.field_78299_w)
                  {
                      Tessellator tessellator = Tessellator.func_178181_a();
-@@ -518,7 +528,7 @@
+@@ -518,7 +529,7 @@
              this.field_78292_o = (float)(p_180455_4_ >> 8 & 255) / 255.0F;
              this.field_78306_p = (float)(p_180455_4_ & 255) / 255.0F;
              this.field_78305_q = (float)(p_180455_4_ >> 24 & 255) / 255.0F;
@@ -115,7 +135,7 @@
              this.field_78295_j = p_180455_2_;
              this.field_78296_k = p_180455_3_;
              this.func_78255_a(p_180455_1_, p_180455_5_);
-@@ -576,6 +586,7 @@
+@@ -576,6 +587,7 @@
  
      public int func_78263_a(char p_78263_1_)
      {
@@ -123,7 +143,7 @@
          if (p_78263_1_ == 167)
          {
              return -1;
-@@ -849,6 +860,26 @@
+@@ -849,6 +861,26 @@
          return this.field_78294_m;
      }
  

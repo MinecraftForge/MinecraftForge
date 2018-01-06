@@ -21,6 +21,7 @@ package net.minecraftforge.client;
 
 import java.nio.ByteBuffer;
 
+import net.minecraftforge.client.resource.ReloadRequirements;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -36,14 +37,14 @@ import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.client.resource.ISensitiveResourceReloadListener;
 
-public class CloudRenderer implements IResourceManagerReloadListener
+public class CloudRenderer implements ISensitiveResourceReloadListener
 {
     // Shared constants.
     private static final float PX_SIZE = 1 / 256F;
@@ -478,8 +479,9 @@ public class CloudRenderer implements IResourceManagerReloadListener
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager)
+    public void onResourceManagerReload(IResourceManager resourceManager, ReloadRequirements requirements)
     {
+        if (!requirements.shouldReload(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES)) return;
         reloadTextures();
     }
 }

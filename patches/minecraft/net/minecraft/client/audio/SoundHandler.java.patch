@@ -1,14 +1,36 @@
 --- ../src-base/minecraft/net/minecraft/client/audio/SoundHandler.java
 +++ ../src-work/minecraft/net/minecraft/client/audio/SoundHandler.java
-@@ -67,6 +67,7 @@
+@@ -33,7 +33,7 @@
+ import org.apache.logging.log4j.Logger;
+ 
+ @SideOnly(Side.CLIENT)
+-public class SoundHandler implements IResourceManagerReloadListener, ITickable
++public class SoundHandler implements net.minecraftforge.client.resource.ISensitiveResourceReloadListener, ITickable
+ {
+     public static final Sound field_147700_a = new Sound("meta:missing_sound", 1.0F, 1.0F, 1, Sound.Type.FILE, false);
+     private static final Logger field_147698_b = LogManager.getLogger();
+@@ -63,15 +63,17 @@
+         this.field_147694_f = new SoundManager(this, p_i45122_2_);
+     }
+ 
+-    public void func_110549_a(IResourceManager p_110549_1_)
++    public void onResourceManagerReload(IResourceManager resourceManager, net.minecraftforge.client.resource.ReloadRequirements requirements)
      {
++        if (!requirements.shouldReload(net.minecraftforge.client.resource.VanillaResourceType.SOUNDS)) return;
          this.field_147697_e.func_148763_c();
  
+-        for (String s : p_110549_1_.func_135055_a())
 +        java.util.List<net.minecraft.util.Tuple<ResourceLocation, SoundList>> resources = new java.util.LinkedList<>();
-         for (String s : p_110549_1_.func_135055_a())
++        for (String s : resourceManager.func_135055_a())
          {
              try
-@@ -79,7 +80,7 @@
+             {
+-                for (IResource iresource : p_110549_1_.func_135056_b(new ResourceLocation(s, "sounds.json")))
++                for (IResource iresource : resourceManager.func_135056_b(new ResourceLocation(s, "sounds.json")))
+                 {
+                     try
+                     {
+@@ -79,7 +81,7 @@
  
                          for (Entry<String, SoundList> entry : map.entrySet())
                          {
@@ -17,7 +39,7 @@
                          }
                      }
                      catch (RuntimeException runtimeexception)
-@@ -94,6 +95,20 @@
+@@ -94,6 +96,20 @@
              }
          }
  
