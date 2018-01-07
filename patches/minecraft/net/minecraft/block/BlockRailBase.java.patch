@@ -70,7 +70,7 @@
          {
              p_180663_1_.func_175685_c(p_180663_2_.func_177984_a(), this, false);
          }
-@@ -166,8 +166,101 @@
+@@ -166,8 +166,118 @@
          }
      }
  
@@ -167,12 +167,29 @@
 +        return false;
 +    }
 +
++    /**
++     * Called in {@link net.minecraft.entity.item.EntityMinecart#moveAlongTrack(BlockPos, IBlockState)}, this method allows
++     * modded minecarts to determine the rider's effects on the minecart.
++     *
++     * <p>See {@link net.minecraft.entity.item.EntityMinecart#BOOSTING_MASK} and {@link net.minecraft.entity.item.EntityMinecart#SLOWING_MASK} for details about flags.
++     *
++     * @param world the world of the rail and the minecart
++     * @param pos the position of the minecart
++     * @param state the block state of the rail
++     * @param cart the minecart instance
++     * @return the new bit flags indicating the minecart's motion state
++     */
++    public int determineCartState(World world, BlockPos pos, IBlockState state, net.minecraft.entity.item.EntityMinecart cart)
++    {
++        return this == Blocks.field_150318_D ? state.func_177229_b(BlockRailPowered.field_176569_M) ? net.minecraft.entity.item.EntityMinecart.BOOSTING_MASK : net.minecraft.entity.item.EntityMinecart.SLOWING_MASK : 0;
++    }
++
 +    /* ======================================== FORGE END =====================================*/
 +
      public static enum EnumRailDirection implements IStringSerializable
      {
          NORTH_SOUTH(0, "north_south"),
-@@ -238,6 +331,7 @@
+@@ -238,6 +348,7 @@
          private IBlockState field_180366_e;
          private final boolean field_150656_f;
          private final List<BlockPos> field_150657_g = Lists.<BlockPos>newArrayList();
@@ -180,7 +197,7 @@
  
          public Rail(World p_i45739_2_, BlockPos p_i45739_3_, IBlockState p_i45739_4_)
          {
-@@ -245,8 +339,9 @@
+@@ -245,8 +356,9 @@
              this.field_180367_c = p_i45739_3_;
              this.field_180366_e = p_i45739_4_;
              this.field_180365_d = (BlockRailBase)p_i45739_4_.func_177230_c();
@@ -192,7 +209,7 @@
              this.func_180360_a(blockrailbase$enumraildirection);
          }
  
-@@ -438,7 +533,7 @@
+@@ -438,7 +550,7 @@
                  }
              }
  
@@ -201,7 +218,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -451,7 +546,7 @@
+@@ -451,7 +563,7 @@
                  }
              }
  
@@ -210,7 +227,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {
-@@ -594,7 +689,7 @@
+@@ -594,7 +706,7 @@
                  }
              }
  
@@ -219,7 +236,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -607,7 +702,7 @@
+@@ -607,7 +719,7 @@
                  }
              }
  

@@ -43,7 +43,7 @@
      }
  
      public EntityMinecart(World p_i1713_1_, double p_i1713_2_, double p_i1713_4_, double p_i1713_6_)
-@@ -322,7 +338,7 @@
+@@ -322,10 +338,11 @@
              BlockPos blockpos = new BlockPos(k, l, i1);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -52,7 +52,11 @@
              {
                  this.func_180460_a(blockpos, iblockstate);
  
-@@ -361,9 +377,13 @@
++                if (shouldDoRailFunctions()) // Forge: add check for activator rail
+                 if (iblockstate.func_177230_c() == Blocks.field_150408_cc)
+                 {
+                     this.func_96095_a(k, l, i1, ((Boolean)iblockstate.func_177229_b(BlockRailPowered.field_176569_M)).booleanValue());
+@@ -361,9 +378,13 @@
  
              this.func_70101_b(this.field_70177_z, this.field_70125_A);
  
@@ -68,7 +72,7 @@
  
                  if (!list.isEmpty())
                  {
-@@ -384,7 +404,7 @@
+@@ -384,7 +405,7 @@
              }
              else
              {
@@ -77,7 +81,7 @@
                  {
                      if (!this.func_184196_w(entity) && entity.func_70104_M() && entity instanceof EntityMinecart)
                      {
-@@ -394,6 +414,7 @@
+@@ -394,6 +415,7 @@
              }
  
              this.func_70072_I();
@@ -85,7 +89,7 @@
          }
      }
  
-@@ -408,10 +429,21 @@
+@@ -408,10 +430,21 @@
  
      protected void func_180459_n()
      {
@@ -108,7 +112,7 @@
          if (this.field_70122_E)
          {
              this.field_70159_w *= 0.5D;
-@@ -419,13 +451,13 @@
+@@ -419,13 +452,13 @@
              this.field_70179_y *= 0.5D;
          }
  
@@ -126,9 +130,16 @@
          }
      }
  
-@@ -445,25 +477,25 @@
-             flag1 = !flag;
-         }
+@@ -439,31 +472,27 @@
+         boolean flag1 = false;
+         BlockRailBase blockrailbase = (BlockRailBase)p_180460_2_.func_177230_c();
+ 
+-        if (blockrailbase == Blocks.field_150318_D)
+-        {
+-            flag = ((Boolean)p_180460_2_.func_177229_b(BlockRailPowered.field_176569_M)).booleanValue();
+-            flag1 = !flag;
+-        }
++        int flags = blockrailbase.determineCartState(field_70170_p, p_180460_1_, p_180460_2_, this);
  
 -        double d0 = 0.0078125D;
 -        BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_180460_2_.func_177229_b(blockrailbase.func_176560_l());
@@ -158,16 +169,39 @@
                  ++this.field_70163_u;
          }
  
-@@ -509,7 +541,7 @@
-             }
-         }
+@@ -490,26 +519,12 @@
+         this.field_70179_y = d5 * d2 / d3;
+         Entity entity = this.func_184188_bt().isEmpty() ? null : (Entity)this.func_184188_bt().get(0);
  
+-        if (entity instanceof EntityLivingBase)
+-        {
+-            double d6 = (double)((EntityLivingBase)entity).field_191988_bg;
++        // Forge: totally cut the code block for the sake of local variables
++        flags = handleRider(entity, flags);
++        flag = (flags & BOOSTING_MASK) != 0;
++        flag1 = (flags & SLOWING_MASK) != 0;
+ 
+-            if (d6 > 0.0D)
+-            {
+-                double d7 = -Math.sin((double)(entity.field_70177_z * 0.017453292F));
+-                double d8 = Math.cos((double)(entity.field_70177_z * 0.017453292F));
+-                double d9 = this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y;
+-
+-                if (d9 < 0.01D)
+-                {
+-                    this.field_70159_w += d7 * 0.1D;
+-                    this.field_70179_y += d8 * 0.1D;
+-                    flag1 = false;
+-                }
+-            }
+-        }
+-
 -        if (flag1)
 +        if (flag1 && shouldDoRailFunctions())
          {
              double d17 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
-@@ -555,20 +587,8 @@
+@@ -555,20 +570,8 @@
          this.field_70165_t = d18 + d1 * d10;
          this.field_70161_v = d19 + d2 * d10;
          this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
@@ -189,7 +223,7 @@
          if (aint[0][1] != 0 && MathHelper.func_76128_c(this.field_70165_t) - p_180460_1_.func_177958_n() == aint[0][0] && MathHelper.func_76128_c(this.field_70161_v) - p_180460_1_.func_177952_p() == aint[0][2])
          {
              this.func_70107_b(this.field_70165_t, this.field_70163_u + (double)aint[0][1], this.field_70161_v);
-@@ -605,8 +625,14 @@
+@@ -605,8 +608,14 @@
              this.field_70179_y = d5 * (double)(i - p_180460_1_.func_177952_p());
          }
  
@@ -205,7 +239,7 @@
              double d15 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
              if (d15 > 0.01D)
-@@ -683,7 +709,7 @@
+@@ -683,7 +692,7 @@
  
          if (BlockRailBase.func_176563_d(iblockstate))
          {
@@ -214,7 +248,7 @@
              p_70495_3_ = (double)j;
  
              if (blockrailbase$enumraildirection.func_177018_c())
-@@ -733,7 +759,7 @@
+@@ -733,7 +742,7 @@
  
          if (BlockRailBase.func_176563_d(iblockstate))
          {
@@ -223,7 +257,7 @@
              int[][] aint = field_70500_g[blockrailbase$enumraildirection.func_177015_a()];
              double d0 = (double)i + 0.5D + (double)aint[0][0] * 0.5D;
              double d1 = (double)j + 0.0625D + (double)aint[0][1] * 0.5D;
-@@ -830,6 +856,12 @@
+@@ -830,6 +839,12 @@
  
      public void func_70108_f(Entity p_70108_1_)
      {
@@ -236,7 +270,7 @@
          if (!this.field_70170_p.field_72995_K)
          {
              if (!p_70108_1_.field_70145_X && !this.field_70145_X)
-@@ -877,7 +909,7 @@
+@@ -877,7 +892,7 @@
                              double d7 = p_70108_1_.field_70159_w + this.field_70159_w;
                              double d8 = p_70108_1_.field_70179_y + this.field_70179_y;
  
@@ -245,7 +279,7 @@
                              {
                                  this.field_70159_w *= 0.20000000298023224D;
                                  this.field_70179_y *= 0.20000000298023224D;
-@@ -885,7 +917,7 @@
+@@ -885,7 +900,7 @@
                                  p_70108_1_.field_70159_w *= 0.949999988079071D;
                                  p_70108_1_.field_70179_y *= 0.949999988079071D;
                              }
@@ -254,11 +288,22 @@
                              {
                                  p_70108_1_.field_70159_w *= 0.20000000298023224D;
                                  p_70108_1_.field_70179_y *= 0.20000000298023224D;
-@@ -1015,6 +1047,230 @@
+@@ -1015,6 +1030,274 @@
          this.func_184212_Q().func_187227_b(field_184270_f, Boolean.valueOf(p_94096_1_));
      }
  
 +    /* =================================== FORGE START ===========================================*/
++
++    /**
++     * The bitwise mask indicating the minecart is boosting, as if on a powered golden rail.
++     */
++    public static final int BOOSTING_MASK = 0x1;
++
++    /**
++     * The bitwise mask indicating the minecart is slowing, as if on a un-powered golden rail.
++     */
++    public static final int SLOWING_MASK = 0x2;
++
 +    private BlockPos getCurrentRailPosition()
 +    {
 +        int x = MathHelper.func_76128_c(this.field_70165_t);
@@ -401,6 +446,39 @@
 +    }
 +
 +    /**
++     * Called in {@link #moveAlongTrack(BlockPos, IBlockState)}, this method allows
++     * modded minecarts to determine the rider's effects on the minecart.
++     *
++     * <p>See {@link #BOOSTING_MASK} and {@link #SLOWING_MASK} for details about flags.
++     *
++     * @param entity the rider, may be {@code null}
++     * @param flags the flags indicating the cart's status before the handling
++     * @return the updated flags
++     */
++    protected int handleRider(@Nullable Entity entity, int flags)
++    {
++        if (entity instanceof EntityLivingBase)
++        {
++            double d6 = (double)((EntityLivingBase)entity).field_191988_bg;
++
++            if (d6 > 0.0D)
++            {
++                double d7 = -Math.sin((double)(entity.field_70177_z * 0.017453292F));
++                double d8 = Math.cos((double)(entity.field_70177_z * 0.017453292F));
++                double d9 = this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y;
++
++                if (d9 < 0.01D)
++                {
++                    this.field_70159_w += d7 * 0.1D;
++                    this.field_70179_y += d8 * 0.1D;
++                    flags &= ~SLOWING_MASK;
++                }
++            }
++        }
++        return flags;
++    }
++
++    /*
 +     * Getters/setters for physics variables
 +     */
 +
