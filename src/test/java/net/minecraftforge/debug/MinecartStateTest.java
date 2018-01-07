@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  * A test for {@link EntityMinecart#handleRider(Entity, int)}
  * and {@link BlockRailBase#determineCartState(World, BlockPos, IBlockState, EntityMinecart)}.
  */
-@Mod(modid = MinecartStateTest.MOD_ID, name = "Minecart State Test")
+@Mod(modid = MinecartStateTest.MOD_ID, name = "Minecart State Test", version = "0.1")
 public class MinecartStateTest
 {
     static final String MOD_ID = "minecart_state_test";
