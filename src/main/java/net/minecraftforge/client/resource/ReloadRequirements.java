@@ -45,35 +45,13 @@ public final class ReloadRequirements
 
     /**
      * Creates an inclusive reload predicate. Only given resource types will be loaded along with this.
-     * If the inclusion set is empty, all types will be accepted.
      *
      * @param inclusion the set of resource types to be included in the reload
      * @return an inclusion predicate based on the given types
      */
     public static Predicate<IResourceType> include(IResourceType... inclusion)
     {
-        if (inclusion.length == 0)
-        {
-            return all();
-        }
-
         Set<IResourceType> inclusionSet = Sets.newHashSet(inclusion);
         return inclusionSet::contains;
-    }
-
-    /**
-     * Creates an exclusive reload predicate. Only resource types not given will be loaded along with this.
-     *
-     * @param exclusion the set of resource types to be excluded from the reload
-     * @return an exclusion predicate based on the given types
-     */
-    public static Predicate<IResourceType> exclude(IResourceType... exclusion)
-    {
-        if (exclusion.length == 0)
-        {
-            return all();
-        }
-
-        return include(exclusion).negate();
     }
 }
