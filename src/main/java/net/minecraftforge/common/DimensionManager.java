@@ -137,7 +137,7 @@ public class DimensionManager
     
     public static void registerDimension(String id, DimensionType type)
     {
-    	if(!id.contains(":"))
+    	if(id.indexOf(":")==-1)
     	{
     		throw new IllegalArgumentException(String.format("Failed to register dimension for stringID id %d, please use format modid:name", id));
     	}
