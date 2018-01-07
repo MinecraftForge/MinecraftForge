@@ -4,7 +4,7 @@
      private BlockPos field_70775_bC = BlockPos.field_177992_a;
      private float field_70772_bD = -1.0F;
      private final float field_184661_bw = PathNodeType.WATER.func_186289_a();
-+    protected float maxLeashDistance = 10.0F;
++    protected float maxLeashDistance = 10.0F; // forge: make maxLeashDistance a field instead of hard-coded
  
      public EntityCreature(World p_i1602_1_)
      {
