@@ -169,7 +169,7 @@
                  ++this.field_70163_u;
          }
  
-@@ -490,26 +519,12 @@
+@@ -490,26 +519,13 @@
          this.field_70179_y = d5 * d2 / d3;
          Entity entity = this.func_184188_bt().isEmpty() ? null : (Entity)this.func_184188_bt().get(0);
  
@@ -186,7 +186,7 @@
 -                double d7 = -Math.sin((double)(entity.field_70177_z * 0.017453292F));
 -                double d8 = Math.cos((double)(entity.field_70177_z * 0.017453292F));
 -                double d9 = this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y;
--
+ 
 -                if (d9 < 0.01D)
 -                {
 -                    this.field_70159_w += d7 * 0.1D;
@@ -201,7 +201,7 @@
          {
              double d17 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
-@@ -555,20 +570,8 @@
+@@ -555,20 +571,8 @@
          this.field_70165_t = d18 + d1 * d10;
          this.field_70161_v = d19 + d2 * d10;
          this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
@@ -223,7 +223,7 @@
          if (aint[0][1] != 0 && MathHelper.func_76128_c(this.field_70165_t) - p_180460_1_.func_177958_n() == aint[0][0] && MathHelper.func_76128_c(this.field_70161_v) - p_180460_1_.func_177952_p() == aint[0][2])
          {
              this.func_70107_b(this.field_70165_t, this.field_70163_u + (double)aint[0][1], this.field_70161_v);
-@@ -605,8 +608,14 @@
+@@ -605,8 +609,14 @@
              this.field_70179_y = d5 * (double)(i - p_180460_1_.func_177952_p());
          }
  
@@ -239,7 +239,7 @@
              double d15 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
              if (d15 > 0.01D)
-@@ -683,7 +692,7 @@
+@@ -683,7 +693,7 @@
  
          if (BlockRailBase.func_176563_d(iblockstate))
          {
@@ -248,7 +248,7 @@
              p_70495_3_ = (double)j;
  
              if (blockrailbase$enumraildirection.func_177018_c())
-@@ -733,7 +742,7 @@
+@@ -733,7 +743,7 @@
  
          if (BlockRailBase.func_176563_d(iblockstate))
          {
@@ -257,7 +257,7 @@
              int[][] aint = field_70500_g[blockrailbase$enumraildirection.func_177015_a()];
              double d0 = (double)i + 0.5D + (double)aint[0][0] * 0.5D;
              double d1 = (double)j + 0.0625D + (double)aint[0][1] * 0.5D;
-@@ -830,6 +839,12 @@
+@@ -830,6 +840,12 @@
  
      public void func_70108_f(Entity p_70108_1_)
      {
@@ -270,7 +270,7 @@
          if (!this.field_70170_p.field_72995_K)
          {
              if (!p_70108_1_.field_70145_X && !this.field_70145_X)
-@@ -877,7 +892,7 @@
+@@ -877,7 +893,7 @@
                              double d7 = p_70108_1_.field_70159_w + this.field_70159_w;
                              double d8 = p_70108_1_.field_70179_y + this.field_70179_y;
  
@@ -279,7 +279,7 @@
                              {
                                  this.field_70159_w *= 0.20000000298023224D;
                                  this.field_70179_y *= 0.20000000298023224D;
-@@ -885,7 +900,7 @@
+@@ -885,7 +901,7 @@
                                  p_70108_1_.field_70159_w *= 0.949999988079071D;
                                  p_70108_1_.field_70179_y *= 0.949999988079071D;
                              }
@@ -288,7 +288,7 @@
                              {
                                  p_70108_1_.field_70159_w *= 0.20000000298023224D;
                                  p_70108_1_.field_70179_y *= 0.20000000298023224D;
-@@ -1015,6 +1030,274 @@
+@@ -1015,6 +1031,274 @@
          this.func_184212_Q().func_187227_b(field_184270_f, Boolean.valueOf(p_94096_1_));
      }
  
