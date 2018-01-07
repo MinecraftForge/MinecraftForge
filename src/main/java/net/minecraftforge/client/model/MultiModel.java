@@ -227,20 +227,32 @@ public final class MultiModel implements IModel
     private final ResourceLocation location;
     @Nullable
     private final IModel base;
-    private final IModelState baseState;
     private final Map<String, Pair<IModel, IModelState>> parts;
 
+    // TODO 1.13 remove, kept for binary compatibility
+    @Deprecated
     public MultiModel(ResourceLocation location, @Nullable IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
+    {
+        this(location, base, parts);
+    }
+
+    public MultiModel(ResourceLocation location, @Nullable IModel base, ImmutableMap<String, Pair<IModel, IModelState>> parts)
     {
         this.location = location;
         this.base = base;
-        this.baseState = baseState;
         this.parts = parts;
     }
 
+    // TODO 1.13 remove, kept for binary compatibility
+    @Deprecated
     public MultiModel(ResourceLocation location, IModel base, IModelState baseState, Map<String, Pair<IModel, IModelState>> parts)
     {
-        this(location, base, baseState, ImmutableMap.copyOf(parts));
+        this(location, base, parts);
+    }
+
+    public MultiModel(ResourceLocation location, IModel base, Map<String, Pair<IModel, IModelState>> parts)
+    {
+        this(location, base, ImmutableMap.copyOf(parts));
     }
 
     @Override
@@ -294,11 +306,5 @@ public final class MultiModel implements IModel
             return missing.bake(missing.getDefaultState(), format, bakedTextureGetter);
         }
         return new Baked(location, true, bakedBase, mapBuilder.build());
-    }
-
-    @Override
-    public IModelState getDefaultState()
-    {
-        return baseState;
     }
 }
