@@ -90,6 +90,10 @@ public class CommandSetDimension extends CommandBase
         {
             throw new CommandException("commands.forge.setdim.invalid.dim", dimension);
         }
+        if (dimension == entity.dimension)
+        {
+            throw new CommandException("commands.forge.setdim.invalid.nochange", entity.getName(), dimension);
+        }
         BlockPos pos = args.length == 5 ? parseBlockPos(sender, args, 2, false) : sender.getPosition();
         entity.changeDimension(dimension, new CommandTeleporter(pos));
     }
