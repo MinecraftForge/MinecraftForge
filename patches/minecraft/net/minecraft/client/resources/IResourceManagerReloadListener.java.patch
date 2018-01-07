@@ -5,7 +5,7 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 +/**
-+ * @deprecated in favor of {@link net.minecraftforge.client.resource.ISensitiveResourceReloadListener}, which is
++ * @deprecated in favor of {@link net.minecraftforge.client.resource.ISelectiveResourceReloadListener}, which is
 + * sensitive to individual resource types being requested for reload.
 + */
 +@Deprecated

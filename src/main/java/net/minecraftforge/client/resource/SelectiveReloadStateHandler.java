@@ -27,7 +27,7 @@ import java.util.function.Predicate;
 /**
  * Handles reload parameters for sensitive loaders.
  */
-public enum SensitiveReloadStateHandler
+public enum SelectiveReloadStateHandler
 {
     INSTANCE;
 

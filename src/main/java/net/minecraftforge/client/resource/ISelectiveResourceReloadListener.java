@@ -5,13 +5,13 @@ import java.util.function.Predicate;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 
-public interface ISensitiveResourceReloadListener extends IResourceManagerReloadListener
+public interface ISelectiveResourceReloadListener extends IResourceManagerReloadListener
 {
     @Override
     default void onResourceManagerReload(IResourceManager resourceManager)
     {
         // For compatibility, call the sensitive version from the insensitive function
-        onResourceManagerReload(resourceManager, SensitiveReloadStateHandler.INSTANCE.get());
+        onResourceManagerReload(resourceManager, SelectiveReloadStateHandler.INSTANCE.get());
     }
 
     /**

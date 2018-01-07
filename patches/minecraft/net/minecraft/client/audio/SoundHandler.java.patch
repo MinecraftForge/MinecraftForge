@@ -1,29 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/audio/SoundHandler.java
 +++ ../src-work/minecraft/net/minecraft/client/audio/SoundHandler.java
-@@ -33,7 +33,7 @@
- import org.apache.logging.log4j.Logger;
- 
- @SideOnly(Side.CLIENT)
--public class SoundHandler implements IResourceManagerReloadListener, ITickable
-+public class SoundHandler implements net.minecraftforge.client.resource.ISensitiveResourceReloadListener, ITickable
- {
-     public static final Sound field_147700_a = new Sound("meta:missing_sound", 1.0F, 1.0F, 1, Sound.Type.FILE, false);
-     private static final Logger field_147698_b = LogManager.getLogger();
-@@ -63,10 +63,12 @@
-         this.field_147694_f = new SoundManager(this, p_i45122_2_);
-     }
- 
--    public void func_110549_a(IResourceManager p_110549_1_)
-+    public void onResourceManagerReload(IResourceManager p_110549_1_, java.util.function.Predicate<net.minecraftforge.client.resource.IResourceType> resourcePredicate)
+@@ -67,6 +67,7 @@
      {
-+        if (!resourcePredicate.test(net.minecraftforge.client.resource.VanillaResourceType.SOUNDS)) return;
          this.field_147697_e.func_148763_c();
  
 +        java.util.List<net.minecraft.util.Tuple<ResourceLocation, SoundList>> resources = new java.util.LinkedList<>();
          for (String s : p_110549_1_.func_135055_a())
          {
              try
-@@ -79,7 +81,7 @@
+@@ -79,7 +80,7 @@
  
                          for (Entry<String, SoundList> entry : map.entrySet())
                          {
@@ -32,7 +17,7 @@
                          }
                      }
                      catch (RuntimeException runtimeexception)
-@@ -94,6 +96,20 @@
+@@ -94,6 +95,20 @@
              }
          }
  

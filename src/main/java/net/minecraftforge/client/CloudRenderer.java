@@ -44,9 +44,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.client.resource.ISensitiveResourceReloadListener;
+import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
 
-public class CloudRenderer implements ISensitiveResourceReloadListener
+public class CloudRenderer implements ISelectiveResourceReloadListener
 {
     // Shared constants.
     private static final float PX_SIZE = 1 / 256F;
@@ -483,7 +483,9 @@ public class CloudRenderer implements ISensitiveResourceReloadListener
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate)
     {
-        if (!resourcePredicate.test(VanillaResourceType.TEXTURES)) return;
-        reloadTextures();
+        if (resourcePredicate.test(VanillaResourceType.TEXTURES))
+        {
+            reloadTextures();
+        }
     }
 }

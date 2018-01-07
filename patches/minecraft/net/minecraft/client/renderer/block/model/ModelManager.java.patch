@@ -1,23 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelManager.java
-@@ -9,7 +9,7 @@
- import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -24,9 +24,10 @@
  
- @SideOnly(Side.CLIENT)
--public class ModelManager implements IResourceManagerReloadListener
-+public class ModelManager implements net.minecraftforge.client.resource.ISensitiveResourceReloadListener
- {
-     private IRegistry<ModelResourceLocation, IBakedModel> field_174958_a;
-     private final TextureMap field_174956_b;
-@@ -22,11 +22,13 @@
-         this.field_174957_c = new BlockModelShapes(this);
-     }
- 
--    public void func_110549_a(IResourceManager p_110549_1_)
-+    public void onResourceManagerReload(IResourceManager p_110549_1_, java.util.function.Predicate<net.minecraftforge.client.resource.IResourceType> resourcePredicate)
+     public void func_110549_a(IResourceManager p_110549_1_)
      {
 -        ModelBakery modelbakery = new ModelBakery(p_110549_1_, this.field_174956_b, this.field_174957_c);
-+        if (!resourcePredicate.test(net.minecraftforge.client.resource.VanillaResourceType.MODELS)) return;
 +        net.minecraftforge.client.model.ModelLoader modelbakery = new net.minecraftforge.client.model.ModelLoader(p_110549_1_, this.field_174956_b, this.field_174957_c);
          this.field_174958_a = modelbakery.func_177570_a();
          this.field_174955_d = this.field_174958_a.func_82594_a(ModelBakery.field_177604_a);

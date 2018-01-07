@@ -5,7 +5,7 @@
              languagemanager.func_135045_a(language);
              this.field_191888_F.field_71474_y.field_74363_ab = language.func_135034_a();
 -            this.field_191888_F.func_110436_a();
-+            this.field_191888_F.refreshResourcesInclusively(net.minecraftforge.client.resource.VanillaResourceType.LANGUAGES);
++            this.field_191888_F.refreshResources(net.minecraftforge.client.resource.VanillaResourceType.LANGUAGES);
              this.field_191888_F.field_71466_p.func_78264_a(this.field_191888_F.func_135016_M().func_135042_a() || this.field_191888_F.field_71474_y.field_151455_aw);
              this.field_191888_F.field_71466_p.func_78275_b(languagemanager.func_135044_b());
              this.field_191888_F.field_71474_y.func_74303_b();

@@ -41,6 +41,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.BossInfoClient;
 import net.minecraft.client.gui.FontRenderer;
@@ -72,7 +73,11 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
+import net.minecraft.client.resources.FoliageColorReloadListener;
+import net.minecraft.client.resources.GrassColorReloadListener;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -113,6 +118,9 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.resource.IResourceType;
+import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
+import net.minecraftforge.client.resource.VanillaResourceType;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
@@ -128,6 +136,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 
 import java.util.Optional;
+import java.util.function.Predicate;
+
 import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
@@ -762,11 +772,33 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new InputUpdateEvent(player, movementInput));
     }
-    
+
     public static String getHorseArmorTexture(EntityHorse horse, ItemStack armorStack)
     {
         String texture = armorStack.getItem().getHorseArmorTexture(horse, armorStack);
         if(texture == null) texture = horse.getHorseArmorType().getTextureName();
         return texture;
     }
+
+    public static boolean shouldUseVanillaReloadableListener(IResourceManagerReloadListener listener)
+    {
+        Predicate<IResourceType> predicate = SelectiveReloadStateHandler.INSTANCE.get();
+
+        if (listener instanceof SoundHandler)
+            return predicate.test(VanillaResourceType.SOUNDS);
+        else if (listener instanceof FontRenderer)
+            return predicate.test(VanillaResourceType.TEXTURES);
+        else if (listener instanceof EntityRenderer)
+            return predicate.test(VanillaResourceType.SHADERS);
+        else if (listener instanceof ModelManager)
+            return predicate.test(VanillaResourceType.MODELS);
+        else if (listener instanceof TextureManager)
+            return predicate.test(VanillaResourceType.TEXTURES);
+        else if (listener instanceof FoliageColorReloadListener || listener instanceof GrassColorReloadListener)
+            return predicate.test(VanillaResourceType.TEXTURES);
+        else if (listener instanceof LanguageManager)
+            return predicate.test(VanillaResourceType.LANGUAGES);
+
+        return true;
+   }
 }
