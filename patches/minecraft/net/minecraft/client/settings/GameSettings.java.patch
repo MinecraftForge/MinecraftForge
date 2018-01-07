@@ -30,7 +30,7 @@
          {
              this.field_74337_g = !this.field_74337_g;
 -            this.field_74317_L.func_110436_a();
-+            this.field_74317_L.refreshResources(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES);
++            net.minecraftforge.fml.client.FMLClientHandler.instance().refreshResources(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES);
          }
  
          if (p_74306_1_ == GameSettings.Options.GRAPHICS)
@@ -96,7 +96,7 @@
 +    {
 +        if (needsBlockModelRefresh)
 +        {
-+            this.field_74317_L.scheduleResourcesRefresh(net.minecraftforge.client.resource.VanillaResourceType.MODELS);
++            net.minecraftforge.fml.client.FMLClientHandler.instance().scheduleResourcesRefresh(net.minecraftforge.client.resource.VanillaResourceType.MODELS);
 +            this.needsBlockModelRefresh = false;
 +        }
 +    }
