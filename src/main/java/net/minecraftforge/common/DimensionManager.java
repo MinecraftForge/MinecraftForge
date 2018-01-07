@@ -73,7 +73,7 @@ public class DimensionManager
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
     private static Hashtable<Integer, Dimension> dimensions = new Hashtable<Integer, Dimension>();
-    private static HashBiMap<String, Integer> dimensionIDMap = HashBiMap.create();
+    private static BiMap<String, Integer> dimensionIDMap = HashBiMap.create();
     private static IntArrayList unloadQueue = new IntArrayList();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
@@ -132,14 +132,14 @@ public class DimensionManager
 
     public static void registerDimension(int id, DimensionType type)
     {
-        registerDimension(id,type,"noModnameProvided.dimension" + id);
+        registerDimension(id,type,"noModid:dimension" + id);
     }
     
     public static void registerDimension(String id, DimensionType type)
     {
-    	if(id.indexOf(".")==-1)
+    	if(!id.contains(":"))
     	{
-    		throw new IllegalArgumentException(String.format("Failed to register dimension for stringID id %d, please use format modName.dimensionName", id));
+    		throw new IllegalArgumentException(String.format("Failed to register dimension for stringID id %d, please use format modid:name", id));
     	}
     	registerDimension(getNextFreeDimId(),type,id);
     }
@@ -250,48 +250,9 @@ public class DimensionManager
         return getIDs();
     }
     
-    public static String[] getStringIDs(boolean check)
-    {
-        if (check)
-        {
-            List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
-            allWorlds.removeAll(worlds.values());
-            for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
-            {
-                World w = li.next();
-                leakedWorlds.add(System.identityHashCode(w));
-            }
-            for (World w : allWorlds)
-            {
-                int leakCount = leakedWorlds.count(System.identityHashCode(w));
-                if (leakCount == 5)
-                {
-                    FMLLog.log.debug("The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());
-                }
-                else if (leakCount % 5 == 0)
-                {
-                    FMLLog.log.debug("The world {} ({}) may have leaked: seen {} times.\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName(), leakCount);
-                }
-            }
-        }
-        return getStringIDs();
-    }
-    
     public static Integer[] getIDs()
     {
         return worlds.keySet().toArray(new Integer[worlds.size()]); //Only loaded dims, since usually used to cycle through loaded worlds
-    }
-    
-    public static String[] getStringIDs()	//Only normal map so not very fast
-    {
-    	String[] ret = new String[worlds.keySet().size()];
-    	int x = 0;
-    	BiMap<Integer,String> inverseMap = dimensionIDMap.inverse();
-    	for(int intID : worlds.keySet())
-    	{
-    		ret[x++] = inverseMap.get(intID);
-    	}
-        return Arrays.copyOf(ret, x); //Only loaded dims, since usually used to cycle through loaded worlds
     }
 
     public static void setWorld(int id, @Nullable WorldServer world, MinecraftServer server)
