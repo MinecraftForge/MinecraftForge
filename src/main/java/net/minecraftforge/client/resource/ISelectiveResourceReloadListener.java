@@ -29,12 +29,13 @@ public interface ISelectiveResourceReloadListener extends IResourceManagerReload
     @Override
     default void onResourceManagerReload(IResourceManager resourceManager)
     {
-        // For compatibility, call the sensitive version from the insensitive function
+        // For compatibility, call the selective version from the non-selective function
         onResourceManagerReload(resourceManager, SelectiveReloadStateHandler.INSTANCE.get());
     }
 
     /**
-     * An {@link net.minecraftforge.client.resource.IResourceType} sensitive version of onResourceManager reload.
+     * A version of onResourceManager that selectively chooses {@link net.minecraftforge.client.resource.IResourceType}s
+     * to reload.
      * When using this, the given predicate should be called to ensure the relevant resources should
      * be reloaded at this time.
      *

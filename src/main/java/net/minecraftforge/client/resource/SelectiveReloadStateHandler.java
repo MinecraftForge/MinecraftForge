@@ -25,7 +25,7 @@ import java.util.Deque;
 import java.util.function.Predicate;
 
 /**
- * Handles reload parameters for sensitive loaders.
+ * Handles reload parameters for selective loaders.
  */
 public enum SelectiveReloadStateHandler
 {
