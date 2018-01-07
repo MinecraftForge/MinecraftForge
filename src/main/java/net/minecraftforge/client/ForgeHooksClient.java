@@ -79,6 +79,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.util.SearchTreeManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
@@ -796,7 +797,7 @@ public class ForgeHooksClient
             return predicate.test(VanillaResourceType.TEXTURES);
         else if (listener instanceof FoliageColorReloadListener || listener instanceof GrassColorReloadListener)
             return predicate.test(VanillaResourceType.TEXTURES);
-        else if (listener instanceof LanguageManager)
+        else if (listener instanceof LanguageManager || listener instanceof SearchTreeManager)
             return predicate.test(VanillaResourceType.LANGUAGES);
 
         return true;
