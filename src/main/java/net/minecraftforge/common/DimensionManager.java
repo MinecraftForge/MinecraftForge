@@ -80,6 +80,8 @@ public class DimensionManager
     /**
      * Returns a list of dimensions associated with this DimensionType.
      */
+    /* @Deprecated, use String[] getDimensions(DimensionType type) */
+    @Deprecated
     public static int[] getDimensions(DimensionType type)
     {
         int[] ret = new int[dimensionMap.size()];
@@ -127,7 +129,10 @@ public class DimensionManager
         registerDimension(-1, DimensionType.NETHER, "minecraft.nether");
         registerDimension( 1, DimensionType.THE_END, "minecraft.end");
     }
-
+    /*@Deprecated, register dimensions using registerDimension(String id, DimensionType type) where id is 
+     * of the form modid:name.
+     */
+    @Deprecated
     public static void registerDimension(int id, DimensionType type)
     {
         registerDimension(id,type,"noModid:dimension" + id);
@@ -137,7 +142,7 @@ public class DimensionManager
     {
     	if(id.indexOf(":")==-1)
     	{
-    		throw new IllegalArgumentException(String.format("Failed to register dimension for stringID id %d, please use format modid:name", id));
+    		throw new IllegalArgumentException("Failed to register dimension for stringID " + id ", please use format modid:name", id));
     	}
     	registerDimension(getNextFreeDimId(),type,id);
     }
@@ -160,6 +165,8 @@ public class DimensionManager
     /**
      * For unregistering a dimension when the save is changed (disconnected from a server or loaded a new save
      */
+    /* @Deprecated, please use String ids of the form modid:name when registering and unregistering dimensions*/
+    @Deprecated
     public static void unregisterDimension(int id)
     {
         if (!dimensions.containsKey(id))
@@ -183,6 +190,8 @@ public class DimensionManager
         dimensionIDMap.remove(id);
     }
 
+    /*@Deprecated, please use String ids to check if a dimension is registered*/
+    @Deprecated
     public static boolean isDimensionRegistered(int dim)
     {
         return dimensions.containsKey(dim);
@@ -192,7 +201,9 @@ public class DimensionManager
     {
         return dimensionIDMap.containsKey(dim);
     }
-
+    
+    /*@Deprecated, please use String ids to check the type of a dimension*/
+    @Deprecated
     public static DimensionType getProviderType(int dim)
     {
         if (!dimensions.containsKey(dim))
@@ -211,6 +222,8 @@ public class DimensionManager
         return dimensions.get(dimensionIDMap.get(dim)).type;
     }
 
+    /*@Deprecated, please use String ids to get the worldprovider*/
+    @Deprecated
     public static WorldProvider getProvider(int dim)
     {
         return getWorld(dim).provider;
@@ -253,6 +266,8 @@ public class DimensionManager
         return worlds.keySet().toArray(new Integer[worlds.size()]); //Only loaded dims, since usually used to cycle through loaded worlds
     }
 
+    /*@Deprecated, please use String ids to set world*/
+    @Deprecated
     public static void setWorld(int id, @Nullable WorldServer world, MinecraftServer server)
     {
         if (world != null)
@@ -327,6 +342,8 @@ public class DimensionManager
         server.worlds = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
+    /*@Deprecated, please use String ids to initialise a dimension*/
+    @Deprecated
     public static void initDimension(int dim)
     {
         WorldServer overworld = getWorld(0);
@@ -389,6 +406,8 @@ public class DimensionManager
         mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
     }
 
+    /*@Deprecated, please use String ids to set and get worlds*/
+    @Deprecated
     public static WorldServer getWorld(int id)
     {
         return worlds.get(id);
@@ -418,6 +437,8 @@ public class DimensionManager
         return dimensions.keySet().toArray(new Integer[dimensions.keySet().size()]);
     }
     
+    /*@Deprecated, please use String ids to create and get providers*/
+    @Deprecated
     public static WorldProvider createProviderFor(int dim)
     {
         try
@@ -469,6 +490,8 @@ public class DimensionManager
      * If the dimension is already queued, it will reset the delay to unload
      * @param id The id of the dimension
      */
+    /*@Deprecated, please use String ids to load and unload dimensions*/
+    @Deprecated
     public static void unloadWorld(int id)
     {
         if(!unloadQueue.contains(id))
@@ -500,6 +523,8 @@ public class DimensionManager
         }
     }
 
+    /*@Deprecated, please use String ids to check if the status of a dimension*/
+    @Deprecated
     public static boolean isWorldQueuedToUnload(int id)
     {
         return unloadQueue.contains(id);
