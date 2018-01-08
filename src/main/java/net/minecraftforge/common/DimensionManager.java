@@ -140,9 +140,9 @@ public class DimensionManager
     
     public static void registerDimension(String id, DimensionType type)
     {
-    	if(id.indexOf(":")==-1)
+    	if(id.indexOf(":")== -1 || id.indexOf(":")==0)
     	{
-    		throw new IllegalArgumentException("Failed to register dimension for stringID " + id ", please use format modid:name", id));
+    		throw new IllegalArgumentException("Failed to register dimension for stringID " + id + ", please use format modid:name");
     	}
     	registerDimension(getNextFreeDimId(),type,id);
     }
@@ -523,7 +523,7 @@ public class DimensionManager
         }
     }
 
-    /*@Deprecated, please use String ids to check if the status of a dimension*/
+    /*@Deprecated, please use String ids to check if the status */
     @Deprecated
     public static boolean isWorldQueuedToUnload(int id)
     {
@@ -659,5 +659,32 @@ public class DimensionManager
         {
             return null;
         }
+    }
+    /* returns the dimensions registered to a mod based on its modid */
+    public static String[] getDimensionForMod(String modid)
+    {
+    	String[] ret = new String[dimensionIDMap.size()];
+    	int x = 0;
+    	for(String stringID : dimensionIDMap.keySet())
+    	{
+    		if(stringID.substring(0, stringID.indexOf(":")).equals(modid))
+    		{
+    			ret[x++] = stringID.substring(stringID.indexOf(":"));
+    		}
+    	}
+    	return Arrays.copyOf(ret, x);
+    }
+    
+    /*returns true if the dimension if from a mod given the modid*/
+    public static boolean isFromMod(World worldIn, String modid)
+    {
+    	int dim = worldIn.provider.getDimension(); //will be string if I can change the patch
+    	String stringID = dimensionIDMap.inverse().get(dim);
+    	if(stringID.substring(0, stringID.indexOf(":")).equals(modid))
+    	{
+    		return true;
+    	}
+    	return false;
+    	
     }
 }
