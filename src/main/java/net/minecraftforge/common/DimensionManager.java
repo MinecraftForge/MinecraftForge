@@ -42,6 +42,7 @@ import com.google.common.collect.HashBiMap;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
@@ -71,7 +72,7 @@ public class DimensionManager
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
     private static Hashtable<Integer, Dimension> dimensions = new Hashtable<Integer, Dimension>();
-    private static BiMap<String, Integer> dimensionIDMap = HashBiMap.create();
+    private static BiMap<ResourceLocation, Integer> dimensionIDMap = HashBiMap.create();
     private static IntArrayList unloadQueue = new IntArrayList();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
@@ -84,7 +85,7 @@ public class DimensionManager
     @Deprecated
     public static int[] getDimensions(DimensionType type)
     {
-        int[] ret = new int[dimensionMap.size()];
+        int[] ret = new int[dimensionIDMap.size()];
         int x = 0;
         for (Map.Entry<Integer, Dimension> ent : dimensions.entrySet())
         {
@@ -102,13 +103,13 @@ public class DimensionManager
      */
     public static String[] getStringDimensions(DimensionType type)
     {
-    	String[] ret = new String[dimensionMap.size()];
+    	String[] ret = new String[dimensionIDMap.size()];
         int x = 0;
         for (Map.Entry<Integer, Dimension> ent : dimensions.entrySet())
         {
             if (ent.getValue().type == type)
             {
-                ret[x++] = dimensionIDMap.inverse().get(ent.getKey());
+                ret[x++] = dimensionIDMap.inverse().get(ent.getKey()).toString();
             }
         }
 
@@ -125,47 +126,59 @@ public class DimensionManager
 
         hasInit = true;
 
-        registerDimension( 0, DimensionType.OVERWORLD, "minecraft.overworld");
-        registerDimension(-1, DimensionType.NETHER, "minecraft.nether");
-        registerDimension( 1, DimensionType.THE_END, "minecraft.end");
+        registerDimension( 0, DimensionType.OVERWORLD, new ResourceLocation("minecraft","overworld"));
+        registerDimension(-1, DimensionType.NETHER,  new ResourceLocation("minecraft","nether"));
+        registerDimension( 1, DimensionType.THE_END, new ResourceLocation("minecraft","the_end"));
     }
-    /*@Deprecated, register dimensions using registerDimension(String id, DimensionType type) where id is 
-     * of the form modid:name.
+    /*@Deprecated, register dimensions using new ResourceLocation(modid,dimensionName)
      */
     @Deprecated
     public static void registerDimension(int id, DimensionType type)
     {
-        registerDimension(id,type,"noModid:dimension" + id);
+        registerDimension(id,type,new ResourceLocation("nomodid","dimension"+id));
     }
     
-    public static void registerDimension(String id, DimensionType type)
+    /*Please register using resourcelocations instead*/
+    public static void registerDimension(String id, DimensionType type)	//Could remove this and force mods to use resourcelocations
     {
     	if(id.indexOf(':')== -1 || id.indexOf(':')==0)
     	{
     		throw new IllegalArgumentException("Failed to register dimension for stringID " + id + ", please use format modid:name");
     	}
+    	String[] idSplit = id.split(":");
+    	registerDimension(getNextFreeDimId(),type,new ResourceLocation(idSplit[0],idSplit[1]));
+    }
+    
+    /* ResourceLocation = new ResourceLocation(String modid, String dimensionName)*/
+    public static void registerDimension(ResourceLocation id, DimensionType type)	
+    {
+    	if(id.getResourceDomain().equals("minecraft"))
+    	{
+    		throw new IllegalArgumentException("Failed to register dimension for id " + id+ " no mod provided");
+    	}
     	registerDimension(getNextFreeDimId(),type,id);
     }
     
-    public static void registerDimension(int id, DimensionType type, String stringID)
+    public static void registerDimension(int intID, DimensionType type, ResourceLocation id)
     {
         DimensionType.getById(type.getId()); //Check if type is invalid {will throw an error} No clue how it would be invalid tho...
-        if (dimensions.containsKey(id) || dimensionIDMap.containsKey(stringID))
+        if (dimensions.containsKey(intID) || dimensionIDMap.containsKey(id))
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        dimensions.put(id, new Dimension(type));
-        dimensionIDMap.put(stringID, id);
-        if (id >= 0)
+        dimensions.put(intID, new Dimension(type));
+        dimensionIDMap.put(id, intID);
+        if (intID >= 0)
         {
-            dimensionMap.set(id);
+            dimensionMap.set(intID);
         }
     }
     
     /**
      * For unregistering a dimension when the save is changed (disconnected from a server or loaded a new save
      */
-    /* @Deprecated, please use String ids of the form modid:name when registering and unregistering dimensions*/
+    /* @Deprecated, please use ResourceLocations with arguments modid and 
+     * dimensionName when registering and unregistering dimensions*/
     @Deprecated
     public static void unregisterDimension(int id)
     {
@@ -180,7 +193,7 @@ public class DimensionManager
     /**
      * For unregistering a dimension when the save is changed (disconnected from a server or loaded a new save
      */
-    public static void unregisterDimension(String id)
+    public static void unregisterDimension(ResourceLocation id)
     {
         if (!dimensionIDMap.containsKey(id))
         {
@@ -190,19 +203,19 @@ public class DimensionManager
         dimensionIDMap.remove(id);
     }
 
-    /*@Deprecated, please use String ids to check if a dimension is registered*/
+    /*@Deprecated, please use ResourceLocations to check if a dimension is registered*/
     @Deprecated
     public static boolean isDimensionRegistered(int dim)
     {
         return dimensions.containsKey(dim);
     }
     
-    public static boolean isDimensionRegistered(String dim)
+    public static boolean isDimensionRegistered(ResourceLocation dim)
     {
         return dimensionIDMap.containsKey(dim);
     }
     
-    /*@Deprecated, please use String ids to check the type of a dimension*/
+    /*@Deprecated, please use ResourceLocations to check the type of a dimension*/
     @Deprecated
     public static DimensionType getProviderType(int dim)
     {
@@ -213,7 +226,7 @@ public class DimensionManager
         return dimensions.get(dim).type;
     }
     
-    public static DimensionType getProviderType(String dim)
+    public static DimensionType getProviderType(ResourceLocation dim)
     {
         if (!dimensionIDMap.containsKey(dim))
         {
@@ -222,14 +235,14 @@ public class DimensionManager
         return dimensions.get(dimensionIDMap.get(dim)).type;
     }
 
-    /*@Deprecated, please use String ids to get the worldprovider*/
+    /*@Deprecated, please use ResourceLocations to get the worldprovider*/
     @Deprecated
     public static WorldProvider getProvider(int dim)
     {
         return getWorld(dim).provider;
     }
     
-    public static WorldProvider getProvider(String dim)	//patch so can't be fully implemented
+    public static WorldProvider getProvider(ResourceLocation dim)	//patch so can't be fully implemented
     {
         return getWorld(dimensionIDMap.get(dim)).provider;
     }
@@ -266,7 +279,7 @@ public class DimensionManager
         return worlds.keySet().toArray(new Integer[worlds.size()]); //Only loaded dims, since usually used to cycle through loaded worlds
     }
 
-    /*@Deprecated, please use String ids to set world*/
+    /*@Deprecated, please use ReourceLocations to set world*/
     @Deprecated
     public static void setWorld(int id, @Nullable WorldServer world, MinecraftServer server)
     {
@@ -305,20 +318,20 @@ public class DimensionManager
         server.worlds = tmp.toArray(new WorldServer[tmp.size()]);
     }
     
-    public static void setWorld(String id, @Nullable WorldServer world, MinecraftServer server)
+    public static void setWorld(ResourceLocation id, @Nullable WorldServer world, MinecraftServer server)
     {
         if (world != null)
         {
             worlds.put(dimensionIDMap.get(id), world);
             weakWorldMap.put(world, world);
             server.worldTickTimes.put(dimensionIDMap.get(id), new long[100]);
-            FMLLog.log.info("Loading dimension {} ({}) ({})", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
+            FMLLog.log.info("Loading dimension {} ({}) ({})", id.toString(), world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
         {
             worlds.remove(dimensionIDMap.get(id));
             server.worldTickTimes.remove(dimensionIDMap.get(id));
-            FMLLog.log.info("Unloading dimension {}", id);
+            FMLLog.log.info("Unloading dimension {}", id.toString());
         }
 
         ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
@@ -342,7 +355,7 @@ public class DimensionManager
         server.worlds = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
-    /*@Deprecated, please use String ids to initialise a dimension*/
+    /*@Deprecated, please use ResourceLocations to initialise a dimension*/
     @Deprecated
     public static void initDimension(int dim)
     {
@@ -375,7 +388,7 @@ public class DimensionManager
         mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
     }
     
-    public static void initDimension(String dim)
+    public static void initDimension(ResourceLocation dim)
     {
         WorldServer overworld = getWorld(0);
         if (overworld == null)
@@ -388,14 +401,14 @@ public class DimensionManager
         }
         catch (Exception e)
         {
-            FMLLog.log.error("Cannot Hotload Dim: {}", dim, e);
+            FMLLog.log.error("Cannot Hotload Dim: {}", dim.toString(), e);
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
         MinecraftServer mcServer = overworld.getMinecraftServer();
         ISaveHandler savehandler = overworld.getSaveHandler();
         //WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        WorldServer world = (dim.equals("minecraft.overworld") ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, dimensionIDMap.get(dim), overworld, mcServer.profiler).init()));
+        WorldServer world = (dim.equals(new ResourceLocation("minecraft","overworld")) ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, dimensionIDMap.get(dim), overworld, mcServer.profiler).init()));
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
@@ -406,14 +419,14 @@ public class DimensionManager
         mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
     }
 
-    /*@Deprecated, please use String ids to set and get worlds*/
+    /*@Deprecated, please use ResourceLocations to set and get worlds*/
     @Deprecated
     public static WorldServer getWorld(int id)
     {
         return worlds.get(id);
     }
     
-    public static WorldServer getWorld(String id)
+    public static WorldServer getWorld(ResourceLocation id)
     {
         return worlds.get(dimensionIDMap.get(id));
     }
@@ -437,7 +450,7 @@ public class DimensionManager
         return dimensions.keySet().toArray(new Integer[dimensions.keySet().size()]);
     }
     
-    /*@Deprecated, please use String ids to create and get providers*/
+    /*@Deprecated, please use ResourceLocations to create and get providers*/
     @Deprecated
     public static WorldProvider createProviderFor(int dim)
     {
@@ -462,7 +475,7 @@ public class DimensionManager
         }
     }
     
-    public static WorldProvider createProviderFor(String dim)
+    public static WorldProvider createProviderFor(ResourceLocation dim)
     {
         try
         {
@@ -474,13 +487,13 @@ public class DimensionManager
             }
             else
             {
-                throw new RuntimeException("No WorldProvider bound for dimension "+ dim); //It's going to crash anyway at this point.  Might as well be informative
+                throw new RuntimeException("No WorldProvider bound for dimension "+ dim.toString()); //It's going to crash anyway at this point.  Might as well be informative
             }
         }
         catch (Exception e)
         {
             FMLLog.log.error("An error occurred trying to create an instance of WorldProvider {} ({})",
-                    dim, getProviderType(dim), e);
+                    dim.toString(), getProviderType(dim), e);
             throw new RuntimeException(e);
         }
     }
@@ -490,7 +503,7 @@ public class DimensionManager
      * If the dimension is already queued, it will reset the delay to unload
      * @param id The id of the dimension
      */
-    /*@Deprecated, please use String ids to load and unload dimensions*/
+    /*@Deprecated, please use ResourceLocations to load and unload dimensions*/
     @Deprecated
     public static void unloadWorld(int id)
     {
@@ -510,11 +523,11 @@ public class DimensionManager
      * If the dimension is already queued, it will reset the delay to unload
      * @param id The id of the dimension
      */
-    public static void unloadWorld(String id)
+    public static void unloadWorld(ResourceLocation id)
     {
         if(!unloadQueue.contains(dimensionIDMap.get(id)))
         {
-            FMLLog.log.debug("Queueing dimension {} to unload", id);
+            FMLLog.log.debug("Queueing dimension {} to unload", id.toString());
             unloadQueue.add(dimensionIDMap.get(id));
         }
         else
@@ -523,14 +536,14 @@ public class DimensionManager
         }
     }
 
-    /*@Deprecated, please use String ids to check if the status */
+    /*@Deprecated, please use ResourceLocations to check if the status */
     @Deprecated
     public static boolean isWorldQueuedToUnload(int id)
     {
         return unloadQueue.contains(id);
     }
     
-    public static boolean isWorldQueuedToUnload(String id)
+    public static boolean isWorldQueuedToUnload(ResourceLocation id)
     {
         return unloadQueue.contains(dimensionIDMap.get(id));
     }
@@ -665,11 +678,11 @@ public class DimensionManager
     {
     	String[] ret = new String[dimensionIDMap.size()];
     	int x = 0;
-    	for(String stringID : dimensionIDMap.keySet())
+    	for(ResourceLocation id : dimensionIDMap.keySet())
     	{
-    		if(stringID.substring(0, stringID.indexOf(":")).equals(modid))
+    		if(id.getResourceDomain().equals(modid))
     		{
-    			ret[x++] = stringID.substring(stringID.indexOf(":"));
+    			ret[x++] = id.getResourcePath();
     		}
     	}
     	return Arrays.copyOf(ret, x);
@@ -679,8 +692,7 @@ public class DimensionManager
     public static boolean isFromMod(World worldIn, String modid)
     {
     	int dim = worldIn.provider.getDimension(); //will be string if I can change the patch
-    	String stringID = dimensionIDMap.inverse().get(dim);
-    	if(stringID.substring(0, stringID.indexOf(":")).equals(modid))
+    	if(dimensionIDMap.inverse().get(dim).getResourceDomain().equals(modid))
     	{
     		return true;
     	}
