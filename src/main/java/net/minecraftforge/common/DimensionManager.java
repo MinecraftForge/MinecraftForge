@@ -140,7 +140,7 @@ public class DimensionManager
     
     public static void registerDimension(String id, DimensionType type)
     {
-    	if(id.indexOf(":")== -1 || id.indexOf(":")==0)
+    	if(id.indexOf(':')== -1 || id.indexOf(':')==0)
     	{
     		throw new IllegalArgumentException("Failed to register dimension for stringID " + id + ", please use format modid:name");
     	}
