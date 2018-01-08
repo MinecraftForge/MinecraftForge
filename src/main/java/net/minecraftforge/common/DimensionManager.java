@@ -53,6 +53,7 @@ import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nullable;
 
@@ -71,7 +72,7 @@ public class DimensionManager
 
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
-    private static Hashtable<Integer, Dimension> dimensions = new Hashtable<Integer, Dimension>();
+    private static Hashtable<ResourceLocation, Dimension> dimensions = new Hashtable<ResourceLocation, Dimension>();
     private static BiMap<ResourceLocation, Integer> dimensionIDMap = HashBiMap.create();
     private static IntArrayList unloadQueue = new IntArrayList();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
@@ -81,17 +82,17 @@ public class DimensionManager
     /**
      * Returns a list of dimensions associated with this DimensionType.
      */
-    /* @Deprecated, use String[] getDimensions(DimensionType type) */
+    /* @Deprecated, use ResourceLocation[] getDimensions(DimensionType type) */
     @Deprecated
     public static int[] getDimensions(DimensionType type)
     {
         int[] ret = new int[dimensionIDMap.size()];
         int x = 0;
-        for (Map.Entry<Integer, Dimension> ent : dimensions.entrySet())
+        for (Map.Entry<ResourceLocation, Dimension> ent : dimensions.entrySet())
         {
             if (ent.getValue().type == type)
             {
-                ret[x++] = ent.getKey();
+                ret[x++] = dimensionIDMap.get(ent.getKey());
             }
         }
 
@@ -105,11 +106,11 @@ public class DimensionManager
     {
     	ResourceLocation[] ret = new ResourceLocation[dimensionIDMap.size()];
         int x = 0;
-        for (Map.Entry<Integer, Dimension> ent : dimensions.entrySet())
+        for (Map.Entry<ResourceLocation, Dimension> ent : dimensions.entrySet())
         {
             if (ent.getValue().type == type)
             {
-                ret[x++] = dimensionIDMap.inverse().get(ent.getKey());
+                ret[x++] = ent.getKey();
             }
         }
 
@@ -135,7 +136,7 @@ public class DimensionManager
     @Deprecated
     public static void registerDimension(int id, DimensionType type)
     {
-        registerDimension(id,type,new ResourceLocation("nomodid","dimension"+id));
+        registerDimension(id,type,new ResourceLocation(Loader.instance().activeModContainer().getModId(),"dimension"+id));
     }
     
     /*Please register using resourcelocations instead*/
@@ -162,11 +163,11 @@ public class DimensionManager
     public static void registerDimension(int intID, DimensionType type, ResourceLocation id)
     {
         DimensionType.getById(type.getId()); //Check if type is invalid {will throw an error} No clue how it would be invalid tho...
-        if (dimensions.containsKey(intID) || dimensionIDMap.containsKey(id))
+        if (dimensions.containsKey(id) || dimensionIDMap.containsValue(intID))
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        dimensions.put(intID, new Dimension(type));
+        dimensions.put(id, new Dimension(type));
         dimensionIDMap.put(id, intID);
         if (intID >= 0)
         {
@@ -182,11 +183,11 @@ public class DimensionManager
     @Deprecated
     public static void unregisterDimension(int id)
     {
-        if (!dimensions.containsKey(id))
+        if (!dimensions.containsKey(dimensionIDMap.inverse().get(id)))
         {
             throw new IllegalArgumentException(String.format("Failed to unregister dimension for id %d; No provider registered", id));
         }
-        dimensions.remove(id);
+        dimensions.remove(dimensionIDMap.inverse().get(id));
         dimensionIDMap.inverse().remove(id);
     }
     
@@ -199,7 +200,7 @@ public class DimensionManager
         {
             throw new IllegalArgumentException(String.format("Failed to unregister dimension for id %d; No provider registered", id));
         }
-        dimensions.remove(dimensionIDMap.get(id));
+        dimensions.remove(id);
         dimensionIDMap.remove(id);
     }
 
@@ -207,7 +208,7 @@ public class DimensionManager
     @Deprecated
     public static boolean isDimensionRegistered(int dim)
     {
-        return dimensions.containsKey(dim);
+        return dimensions.containsKey(dimensionIDMap.inverse().get(dim));
     }
     
     public static boolean isDimensionRegistered(ResourceLocation dim)
@@ -219,20 +220,20 @@ public class DimensionManager
     @Deprecated
     public static DimensionType getProviderType(int dim)
     {
-        if (!dimensions.containsKey(dim))
+        if (!dimensions.containsKey(dimensionIDMap.inverse().get(dim)))
         {
             throw new IllegalArgumentException(String.format("Could not get provider type for dimension %d, does not exist", dim));
         }
-        return dimensions.get(dim).type;
+        return dimensions.get(dimensionIDMap.inverse().get(dim)).type;
     }
     
     public static DimensionType getProviderType(ResourceLocation dim)
     {
         if (!dimensionIDMap.containsKey(dim))
         {
-            throw new IllegalArgumentException("Could not get provider type for dimension " + dim + ", does not exist");
+            throw new IllegalArgumentException("Could not get provider type for dimension " + dim.toString() + ", does not exist");
         }
-        return dimensions.get(dimensionIDMap.get(dim)).type;
+        return dimensions.get(dim).type;
     }
 
     /*@Deprecated, please use ResourceLocations to get the worldprovider*/
@@ -244,7 +245,7 @@ public class DimensionManager
     
     public static WorldProvider getProvider(ResourceLocation dim)	//patch so can't be fully implemented
     {
-        return getWorld(dimensionIDMap.get(dim)).provider;
+        return getWorld(dim).provider;
     }
 
     public static Integer[] getIDs(boolean check)
@@ -447,7 +448,7 @@ public class DimensionManager
      */
     public static Integer[] getStaticDimensionIDs()	//will need changing if full rollout to string
     {
-        return dimensions.keySet().toArray(new Integer[dimensions.keySet().size()]);
+        return dimensionIDMap.inverse().keySet().toArray(new Integer[dimensionIDMap.keySet().size()]);
     }
     
     /*@Deprecated, please use ResourceLocations to create and get providers*/
@@ -456,7 +457,7 @@ public class DimensionManager
     {
         try
         {
-            if (dimensions.containsKey(dim))
+            if (dimensions.containsKey(dimensionIDMap.inverse().get(dim)))
             {
                 WorldProvider ret = getProviderType(dim).createDimension();
                 ret.setDimension(dim);
@@ -479,7 +480,7 @@ public class DimensionManager
     {
         try
         {
-            if (dimensions.containsKey(dimensionIDMap.get(dim)))
+            if (dimensions.containsKey(dim))
             {
                 WorldProvider ret = getProviderType(dim).createDimension();
                 ret.setDimension(dimensionIDMap.get(dim));
@@ -514,7 +515,7 @@ public class DimensionManager
         }
         else
         {
-            dimensions.get(id).ticksWaited = 0;
+            dimensions.get(dimensionIDMap.inverse().get(id)).ticksWaited = 0;
         }
     }
     
@@ -532,7 +533,7 @@ public class DimensionManager
         }
         else
         {
-            dimensions.get(dimensionIDMap.get(id)).ticksWaited = 0;
+            dimensions.get(id).ticksWaited = 0;
         }
     }
 
@@ -555,7 +556,7 @@ public class DimensionManager
         IntListIterator queueIterator = unloadQueue.iterator();
         while (queueIterator.hasNext()) {
             int id = queueIterator.next();
-            Dimension dimension = dimensions.get(id);
+            Dimension dimension = dimensions.get(dimensionIDMap.inverse().get(id));
             if (dimension.ticksWaited < ForgeModContainer.dimensionUnloadQueueDelay)
             {
                 dimension.ticksWaited++;
@@ -630,7 +631,7 @@ public class DimensionManager
         dimensionMap.clear();
         if (compoundTag == null)
         {
-            for (Integer id : dimensions.keySet())
+            for (Integer id : dimensionIDMap.inverse().keySet())
             {
                 if (id >= 0)
                 {
@@ -658,9 +659,9 @@ public class DimensionManager
     @Nullable
     public static File getCurrentSaveRootDirectory()
     {
-        if (DimensionManager.getWorld(0) != null)
+        if (DimensionManager.getWorld(new ResourceLocation("minecraft","overworld")) != null)
         {
-            return DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory();
+            return DimensionManager.getWorld(new ResourceLocation("minecraft","overworld")).getSaveHandler().getWorldDirectory();
         }/*
         else if (MinecraftServer.getServer() != null)
         {
@@ -676,9 +677,9 @@ public class DimensionManager
     /* returns the dimensions registered to a mod based on its modid */
     public static ResourceLocation[] getDimensionForMod(String modid)
     {
-    	ResourceLocation[] ret = new ResourceLocation[dimensionIDMap.size()];
+    	ResourceLocation[] ret = new ResourceLocation[dimensions.size()];
     	int x = 0;
-    	for(ResourceLocation id : dimensionIDMap.keySet())
+    	for(ResourceLocation id : dimensions.keySet())
     	{
     		if(id.getResourceDomain().equals(modid))
     		{
