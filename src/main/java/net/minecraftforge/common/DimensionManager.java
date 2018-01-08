@@ -51,25 +51,16 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.storage.ISaveHandler;
+import net.minecraftforge.common.Dimension;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 
 public class DimensionManager
 {
-    private static class Dimension
-    {
-        private final DimensionType type;
-        private int ticksWaited;
-        private Dimension(DimensionType type)
-        {
-            this.type = type;
-            this.ticksWaited = 0;
-        }
-    }
-
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
     private static Hashtable<ResourceLocation, Dimension> dimensions = new Hashtable<ResourceLocation, Dimension>();
@@ -90,7 +81,7 @@ public class DimensionManager
         int x = 0;
         for (Map.Entry<ResourceLocation, Dimension> ent : dimensions.entrySet())
         {
-            if (ent.getValue().type == type)
+            if (ent.getValue().getType() == type)
             {
                 ret[x++] = dimensionIDMap.get(ent.getKey());
             }
@@ -108,7 +99,7 @@ public class DimensionManager
         int x = 0;
         for (Map.Entry<ResourceLocation, Dimension> ent : dimensions.entrySet())
         {
-            if (ent.getValue().type == type)
+            if (ent.getValue().getType() == type)
             {
                 ret[x++] = ent.getKey();
             }
@@ -136,7 +127,7 @@ public class DimensionManager
     @Deprecated
     public static void registerDimension(int id, DimensionType type)
     {
-        registerDimension(id,type,new ResourceLocation(Loader.instance().activeModContainer().getModId(),"dimension"+id));
+        registerDimension("dimension"+id,type);
     }
     
     /*Please register using resourcelocations instead*/
