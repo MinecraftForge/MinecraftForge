@@ -23,11 +23,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -61,125 +63,41 @@ import javax.annotation.Nullable;
 
 public class DimensionManager
 {
-    private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
+    private static Hashtable<ResourceLocation, WorldServer> worlds = new Hashtable<ResourceLocation, WorldServer>();
     private static boolean hasInit = false;
-    private static Hashtable<ResourceLocation, Dimension> dimensions = new Hashtable<ResourceLocation, Dimension>();
-    private static BiMap<ResourceLocation, Integer> dimensionIDMap = HashBiMap.create();
-    private static IntArrayList unloadQueue = new IntArrayList();
+    private static Set<Dimension> activeDimensions = new HashSet<Dimension>();
+    private static List<ResourceLocation> unloadQueue = new ArrayList<ResourceLocation>();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
-    private static Multiset<Integer> leakedWorlds = HashMultiset.create();
+    private static Multiset<ResourceLocation> leakedWorlds = HashMultiset.create();
 
     /**
      * Returns a list of dimensions associated with this DimensionType.
      */
-    /* @Deprecated, use ResourceLocation[] getDimensions(DimensionType type) */
-    @Deprecated
-    public static int[] getDimensions(DimensionType type)
+    public static ResourceLocation[] getDimensions(DimensionType type)
     {
-        int[] ret = new int[dimensionIDMap.size()];
+    	ResourceLocation[] ret = new ResourceLocation[Dimension.REGISTRY.getKeys().size()];
         int x = 0;
-        for (Map.Entry<ResourceLocation, Dimension> ent : dimensions.entrySet())
+        for (Dimension dimension : Dimension.REGISTRY)
         {
-            if (ent.getValue().getType() == type)
+            if (dimension.getType() == type)
             {
-                ret[x++] = dimensionIDMap.get(ent.getKey());
-            }
-        }
-
-        return Arrays.copyOf(ret, x);
-    }
-    
-    /**
-     * Returns a list of dimensions associated with this DimensionType.
-     */
-    public static ResourceLocation[] getresourceDimensions(DimensionType type)
-    {
-    	ResourceLocation[] ret = new ResourceLocation[dimensionIDMap.size()];
-        int x = 0;
-        for (Map.Entry<ResourceLocation, Dimension> ent : dimensions.entrySet())
-        {
-            if (ent.getValue().getType() == type)
-            {
-                ret[x++] = ent.getKey();
+                ret[x++] = Dimension.REGISTRY.getNameForObject(dimension);
             }
         }
 
         return Arrays.copyOf(ret, x);
 
     }
-
-    public static void init()
-    {
-        if (hasInit)
-        {
-            return;
-        }
-
-        hasInit = true;
-
-        registerDimension( 0, DimensionType.OVERWORLD, new ResourceLocation("minecraft","overworld"));
-        registerDimension(-1, DimensionType.NETHER,  new ResourceLocation("minecraft","nether"));
-        registerDimension( 1, DimensionType.THE_END, new ResourceLocation("minecraft","the_end"));
-    }
-    /*@Deprecated, register dimensions using new ResourceLocation(modid,dimensionName)
-     */
-    @Deprecated
-    public static void registerDimension(int id, DimensionType type)
-    {
-        registerDimension("dimension"+id,type);
-    }
-    
-    /*Please register using resourcelocations instead*/
-    public static void registerDimension(String id, DimensionType type)	//Could remove this and force mods to use resourcelocations
-    {
-    	if(id.indexOf(':')== -1 || id.indexOf(':')==0)
-    	{
-    		throw new IllegalArgumentException("Failed to register dimension for stringID " + id + ", please use format modid:name");
-    	}
-    	String[] idSplit = id.split(":");
-    	registerDimension(getNextFreeDimId(),type,new ResourceLocation(idSplit[0],idSplit[1]));
-    }
-    
-    /* ResourceLocation = new ResourceLocation(String modid, String dimensionName)*/
-    public static void registerDimension(ResourceLocation id, DimensionType type)	
-    {
-    	if(id.getResourceDomain().equals("minecraft"))
-    	{
-    		throw new IllegalArgumentException("Failed to register dimension for id " + id+ " no mod provided");
-    	}
-    	registerDimension(getNextFreeDimId(),type,id);
-    }
-    
-    public static void registerDimension(int intID, DimensionType type, ResourceLocation id)
+    /*Will add dimension to registry if needed*/
+    public static void registerDimensionActive(DimensionType type, String id)
     {
         DimensionType.getById(type.getId()); //Check if type is invalid {will throw an error} No clue how it would be invalid tho...
-        if (dimensions.containsKey(id) || dimensionIDMap.containsValue(intID))
+        if(!Dimension.REGISTRY.containsKey(new ResourceLocation(id)))
         {
-            throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
+        	Dimension.REGISTRY.putObject(new ResourceLocation(id), new Dimension(type));
         }
-        dimensions.put(id, new Dimension(type));
-        dimensionIDMap.put(id, intID);
-        if (intID >= 0)
-        {
-            dimensionMap.set(intID);
-        }
-    }
-    
-    /**
-     * For unregistering a dimension when the save is changed (disconnected from a server or loaded a new save
-     */
-    /* @Deprecated, please use ResourceLocations with arguments modid and 
-     * dimensionName when registering and unregistering dimensions*/
-    @Deprecated
-    public static void unregisterDimension(int id)
-    {
-        if (!dimensions.containsKey(dimensionIDMap.inverse().get(id)))
-        {
-            throw new IllegalArgumentException(String.format("Failed to unregister dimension for id %d; No provider registered", id));
-        }
-        dimensions.remove(dimensionIDMap.inverse().get(id));
-        dimensionIDMap.inverse().remove(id);
+        activeDimensions.add()
     }
     
     /**

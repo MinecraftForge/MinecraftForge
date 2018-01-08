@@ -1,5 +1,8 @@
 package net.minecraftforge.common;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.DimensionType;
@@ -12,7 +15,7 @@ public class Dimension extends IForgeRegistryEntry.Impl<Dimension>
     private int ticksWaited;
     public static final RegistryNamespaced<ResourceLocation, Dimension> REGISTRY = GameData.getWrapper(Dimension.class);
     
-    private Dimension(DimensionType type)
+    public Dimension(DimensionType type)
     {
         this.type = type;
         this.ticksWaited = 0;
