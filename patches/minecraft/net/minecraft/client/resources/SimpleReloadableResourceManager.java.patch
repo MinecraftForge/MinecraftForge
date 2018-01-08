@@ -36,7 +36,7 @@
          for (IResourceManagerReloadListener iresourcemanagerreloadlistener : this.field_110546_b)
          {
 +            resReload.step(iresourcemanagerreloadlistener.getClass());
-+            if (!net.minecraftforge.client.ForgeHooksClient.shouldUseVanillaReloadableListener(iresourcemanagerreloadlistener)) continue;
++            if (!net.minecraftforge.client.ForgeHooksClient.shouldUseVanillaReloadableListener(iresourcemanagerreloadlistener)) continue; // Forge: Selective reloading for vanilla listeners
              iresourcemanagerreloadlistener.func_110549_a(this);
          }
 +        net.minecraftforge.fml.common.ProgressManager.pop(resReload);
