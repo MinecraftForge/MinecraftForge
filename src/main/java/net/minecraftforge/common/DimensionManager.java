@@ -101,15 +101,15 @@ public class DimensionManager
     /**
      * Returns a list of dimensions associated with this DimensionType.
      */
-    public static String[] getStringDimensions(DimensionType type)
+    public static ResourceLocation[] getresourceDimensions(DimensionType type)
     {
-    	String[] ret = new String[dimensionIDMap.size()];
+    	ResourceLocation[] ret = new ResourceLocation[dimensionIDMap.size()];
         int x = 0;
         for (Map.Entry<Integer, Dimension> ent : dimensions.entrySet())
         {
             if (ent.getValue().type == type)
             {
-                ret[x++] = dimensionIDMap.inverse().get(ent.getKey()).toString();
+                ret[x++] = dimensionIDMap.inverse().get(ent.getKey());
             }
         }
 
@@ -674,15 +674,15 @@ public class DimensionManager
         }
     }
     /* returns the dimensions registered to a mod based on its modid */
-    public static String[] getDimensionForMod(String modid)
+    public static ResourceLocation[] getDimensionForMod(String modid)
     {
-    	String[] ret = new String[dimensionIDMap.size()];
+    	ResourceLocation[] ret = new ResourceLocation[dimensionIDMap.size()];
     	int x = 0;
     	for(ResourceLocation id : dimensionIDMap.keySet())
     	{
     		if(id.getResourceDomain().equals(modid))
     		{
-    			ret[x++] = id.getResourcePath();
+    			ret[x++] = id;
     		}
     	}
     	return Arrays.copyOf(ret, x);
