@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client;
 
+import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 import java.util.function.Predicate;
 
@@ -481,7 +482,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate)
+    public void onResourceManagerReload(@Nonnull IResourceManager resourceManager, @Nonnull Predicate<IResourceType> resourcePredicate)
     {
         if (resourcePredicate.test(VanillaResourceType.TEXTURES))
         {

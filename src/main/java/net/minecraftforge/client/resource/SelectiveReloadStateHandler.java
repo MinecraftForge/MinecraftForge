@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.resource;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 /**
@@ -29,6 +29,7 @@ public enum SelectiveReloadStateHandler
 {
     INSTANCE;
 
+    @Nullable
     private Predicate<IResourceType> currentPredicate = null;
 
     /***
@@ -53,7 +54,6 @@ public enum SelectiveReloadStateHandler
      *
      * @return the active reload resource predicate, or an accepting one if none in progress
      */
-    @Nonnull
     public Predicate<IResourceType> get()
     {
         if (this.currentPredicate == null)
