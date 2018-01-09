@@ -83,30 +83,9 @@ public class Dimension extends IForgeRegistryEntry.Impl<Dimension>
     	return dimID;
     }
     
-    public int hashCode(ResourceLocation dimID)
-    {
-    	if(dimID.toString().equals("minecraft:nether"))
-    	{
-    		return -1;
-    	}
-    	else if(dimID.toString().equals("minecraft:overworld"))
-    	{
-    		return 0;
-    	}
-    	else if(dimID.toString().equals("minecraft:the_end"))
-    	{
-    		return 1;
-    	}
-    	else
-    	{
-    		return dimID.hashCode();
-    	}
-    	
-    }
-    
     /*Mods shouldn't call this*/
     public int getDimIntID()
     {
-    	return hashCode(this.dimID);
+    	return REGISTRY.getIDForObject(this);
     }
 }
