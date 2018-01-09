@@ -46,6 +46,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 
@@ -376,10 +377,8 @@ public class EnumHelper
         try
         {
             T[] previousValues = (T[])valuesField.get(enumType);
-            List<T> values = new ArrayList<T>(Arrays.asList(previousValues));
-            T newValue = makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
-            values.add(newValue);
-            setFailsafeFieldValue(valuesField, null, values.toArray((T[]) Array.newInstance(enumType, 0)));
+            T newValue = makeEnum(enumType, enumName, previousValues.length, paramTypes, paramValues);
+            setFailsafeFieldValue(valuesField, null, ArrayUtils.add(previousValues, newValue));
             cleanEnumCache(enumType);
 
             return newValue;
