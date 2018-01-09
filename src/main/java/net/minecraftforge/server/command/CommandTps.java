@@ -68,7 +68,7 @@ class CommandTps extends CommandBase
 
         if (summary)
         {
-            for (Integer dimId : DimensionManager.getIDs())
+            for (Integer dimId : DimensionManager.getIntIDs())
             {
                 double worldTickTime = mean(server.worldTickTimes.get(dimId)) * 1.0E-6D;
                 double worldTPS = Math.min(1000.0/worldTickTime, 20);

@@ -221,7 +221,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         if (playerNBT!=null)
         {
             int dimension = playerNBT.getInteger("Dimension");
-            if (DimensionManager.isDimensionRegistered(dimension))
+            if (DimensionManager.isDimensionActive(dimension))
             {
                 return dimension;
             }

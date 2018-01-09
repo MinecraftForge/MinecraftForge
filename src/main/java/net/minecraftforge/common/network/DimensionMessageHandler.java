@@ -31,9 +31,9 @@ public class DimensionMessageHandler extends SimpleChannelInboundHandler<ForgeMe
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DimensionRegisterMessage msg) throws Exception
     {
-        if (!DimensionManager.isDimensionRegistered(msg.dimensionId))
+        if (!DimensionManager.isDimensionActive(msg.dimensionId))
         {
-            DimensionManager.registerDimension(msg.dimensionId, DimensionType.valueOf(msg.providerId));
+            DimensionManager.registerDimensionActive(msg.dimensionId);
         }
     }
     @Override

@@ -56,7 +56,7 @@
      public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_)
      {
 -        if (p_175579_1_.field_73011_w.func_186058_p().func_186068_a() != 0)
-+        if (p_175579_1_.field_73011_w.getDimension() != 0)
++        if (p_175579_1_.field_73011_w.getDimensionInt() != 0)
          {
              return false;
          }

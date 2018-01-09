@@ -295,7 +295,7 @@ class CommandTrack extends CommandTreeBase
                 return TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.invalid");
 
             BlockPos currentPos = entity.getPosition();
-            String world = getWorldName(entity.world.provider.getDimension());
+            String world = getWorldName(entity.world.provider.getDimensionInt());
             double averageTimings = data.getAverageTimings();
             String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + getTimeSuffix(
                     averageTimings);
@@ -340,7 +340,7 @@ class CommandTrack extends CommandTreeBase
                     averageTimings);
             return TextComponentHelper
                     .createComponentTranslation(sender, "commands.forge.tracking.timingEntry", name,
-                            getWorldName(te.getWorld().provider.getDimension()),
+                            getWorldName(te.getWorld().provider.getDimensionInt()),
                             pos.getX(), pos.getY(), pos.getZ(), tickTime);
         }
 

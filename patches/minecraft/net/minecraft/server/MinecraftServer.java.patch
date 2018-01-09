@@ -179,7 +179,7 @@
 +        net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
  
 -        for (int j = 0; j < this.field_71305_c.length; ++j)
-+        Integer[] ids = net.minecraftforge.common.DimensionManager.getIDs(this.field_71315_w % 200 == 0);
++        Integer[] ids = net.minecraftforge.common.DimensionManager.getIntIDs(this.field_71315_w % 200 == 0);
 +        for (int x = 0; x < ids.length; x++)
          {
 +            int id = ids[x];
@@ -198,7 +198,7 @@
                  {
                      this.field_71304_b.func_76320_a("timeSync");
 -                    this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.func_186058_p().func_186068_a());
-+                    this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.getDimension());
++                    this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.getDimensionInt());
                      this.field_71304_b.func_76319_b();
                  }
  

@@ -532,8 +532,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
         NBTTagCompound forgeData = new NBTTagCompound();
-        NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
-        forgeData.setTag("DimensionData", dimData);
+//        NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
+//        forgeData.setTag("DimensionData", dimData);
         FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
@@ -541,7 +541,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Override
     public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
     {
-        DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
+//        DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
         FluidRegistry.loadFluidDefaults(tag);
     }
 

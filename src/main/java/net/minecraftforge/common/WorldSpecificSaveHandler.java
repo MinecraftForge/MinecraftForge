@@ -71,7 +71,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
         File file = new File(dataDir, name + ".dat");
         if (!file.exists())
         {
-            switch (world.provider.getDimension())
+            switch (net.minecraftforge.common.Dimension.REGISTRY.getObject(world.provider.getDimension()).getDimIntID())
             {
                 case -1:
                     if (name.equalsIgnoreCase("FORTRESS")) copyFile(name, file);

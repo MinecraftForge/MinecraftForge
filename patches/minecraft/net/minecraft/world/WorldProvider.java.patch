@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,323 @@
+@@ -241,6 +216,327 @@
          return new WorldBorder();
      }
  
@@ -73,7 +73,7 @@
 +    private net.minecraftforge.client.IRenderHandler skyRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
-+    private int dimensionId;
++    private net.minecraft.util.ResourceLocation dimensionId;
 +
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
@@ -82,13 +82,17 @@
 +     *
 +     * @param dim Dimension ID
 +     */
-+    public void setDimension(int dim)
++    public void setDimension(net.minecraft.util.ResourceLocation dimID)
 +    {
-+        this.dimensionId = dim;
++        this.dimensionId = dimID;
 +    }
-+    public int getDimension()
++    public net.minecraft.util.ResourceLocation getDimension()
 +    {
 +        return this.dimensionId;
++    }
++    public int  getDimensionInt()
++    {
++    	return net.minecraftforge.common.Dimension.REGISTRY.func_82594_a(dimensionId).getDimIntID();
 +    }
 +
 +    /**
@@ -99,7 +103,7 @@
 +    @Nullable
 +    public String getSaveFolder()
 +    {
-+        return (dimensionId == 0 ? null : "DIM" + dimensionId);
++        return (dimensionId.toString().equals("minecraft:overworld") ? null : "DIM" + dimensionId.toString());
 +    }
 +
 +    /**
@@ -198,9 +202,9 @@
 +     * @param rotation the regular rotation of the marker
 +     * @return True to 'spin' the cursor
 +     */
-+    public boolean shouldMapSpin(String entity, double x, double z, double rotation)
++    public boolean shouldMapSpin(String entity, double x, double z, double rotation)	//This might break, but I don't think negative dimension IDs were happening
 +    {
-+        return dimensionId < 0;
++        return dimensionId.toString().contains("nether");	//need some kind of String for this 
 +    }
 +
 +    /**

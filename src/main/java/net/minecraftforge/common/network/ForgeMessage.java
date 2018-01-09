@@ -23,6 +23,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.Dimension;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -37,12 +39,12 @@ import io.netty.buffer.ByteBuf;
 public abstract class ForgeMessage {
     public static class DimensionRegisterMessage extends ForgeMessage {
         /** The dimension ID to register on client */
-        int dimensionId;
+        ResourceLocation dimensionId;
         /** The provider ID to register with dimension on client */
         String providerId;
 
         public DimensionRegisterMessage(){}
-        public DimensionRegisterMessage(int dimensionId, String providerId)
+        public DimensionRegisterMessage(ResourceLocation dimensionId, String providerId)
         {
             this.dimensionId = dimensionId;
             this.providerId = providerId;
@@ -51,7 +53,7 @@ public abstract class ForgeMessage {
         @Override
         void toBytes(ByteBuf bytes)
         {
-            bytes.writeInt(this.dimensionId);
+            bytes.writeInt(Dimension.REGISTRY.getObject(this.dimensionId).getDimIntID());
             byte[] data = this.providerId.getBytes(StandardCharsets.UTF_8);
             bytes.writeShort(data.length);
             bytes.writeBytes(data);
@@ -60,7 +62,7 @@ public abstract class ForgeMessage {
         @Override
         void fromBytes(ByteBuf bytes)
         {
-            dimensionId = bytes.readInt();
+            dimensionId = Dimension.REGISTRY.getObjectById(bytes.readInt()).getID();
             byte[] data = new byte[bytes.readShort()];
             bytes.readBytes(data);
             providerId = new String(data, StandardCharsets.UTF_8);

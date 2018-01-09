@@ -64,7 +64,7 @@ public class BlockSnapshot
     public BlockSnapshot(World world, BlockPos pos, IBlockState state, @Nullable NBTTagCompound nbt)
     {
         this.setWorld(world);
-        this.dimId = world.provider.getDimension();
+        this.dimId = world.provider.getDimensionInt();
         this.pos = pos.toImmutable();
         this.setReplacedBlock(state);
         this.registryName = state.getBlock().getRegistryName();

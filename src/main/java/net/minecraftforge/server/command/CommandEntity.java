@@ -104,7 +104,7 @@ class CommandEntity extends CommandTreeBase
             if (names.isEmpty())
                 throw new WrongUsageException("commands.forge.entity.list.invalid");
 
-            int dim = args.length > 1 ? parseInt(args[1]) : sender.getEntityWorld().provider.getDimension();
+            int dim = args.length > 1 ? parseInt(args[1]) : sender.getEntityWorld().provider.getDimensionInt();
 
             WorldServer world = DimensionManager.getWorld(dim);
             if (world == null)
