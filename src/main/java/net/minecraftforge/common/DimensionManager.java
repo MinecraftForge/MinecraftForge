@@ -444,6 +444,7 @@ public class DimensionManager
     	}
     	return Arrays.copyOf(ret, x);
     }
+}
     
 //    /*returns true if the dimension if from a mod given the modid*/
 //    public static boolean isFromMod(World worldIn, String modid)	// needs patch really

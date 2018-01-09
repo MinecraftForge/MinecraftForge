@@ -96,7 +96,7 @@ public class GameData
     public static final ResourceLocation ENTITIES     = new ResourceLocation("minecraft:entities");
     public static final ResourceLocation RECIPES      = new ResourceLocation("minecraft:recipes");
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
-    public static final ResourceLocation DIMENSIONS = new ResourceLocation("minecraft:dimensions");
+    public static final ResourceLocation DIMENSIONS   = new ResourceLocation("minecraft:dimensions");
     private static final int MAX_BLOCK_ID = 4095;
     private static final int MIN_ITEM_ID = MAX_BLOCK_ID + 1;
     private static final int MAX_ITEM_ID = 31999;
