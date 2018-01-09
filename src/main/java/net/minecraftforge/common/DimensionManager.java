@@ -28,22 +28,15 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntListIterator;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
@@ -57,18 +50,14 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.Dimension;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 
 public class DimensionManager
 {
     private static Hashtable<ResourceLocation, WorldServer> worlds = new Hashtable<ResourceLocation, WorldServer>();
-    private static boolean hasInit = false;
     private static Set<ResourceLocation> activeDimensions = new HashSet<ResourceLocation>();
     private static List<ResourceLocation> unloadQueue = new ArrayList<ResourceLocation>();
-    private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
     private static Multiset<Integer> leakedWorlds = HashMultiset.create();
 
