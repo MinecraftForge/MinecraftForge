@@ -43,4 +43,14 @@ public class Dimension extends IForgeRegistryEntry.Impl<Dimension>
     {
     	return ticksWaited;
     }
+    
+    public void setTicksWaited(int ticksWaited)
+    {
+    	this.ticksWaited = ticksWaited;
+    }
+    
+    public void addTicksWaited(int ticks)
+    {
+    	ticksWaited += ticks;
+    }
 }
