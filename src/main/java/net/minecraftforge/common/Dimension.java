@@ -42,7 +42,7 @@ public class Dimension extends IForgeRegistryEntry.Impl<Dimension>
     
     public static void registerDimensions()
     {
-    	registerDimension(2, new Dimension(DimensionType.NETHER, "minecraft:nether"));
+    	registerDimension(-1, new Dimension(DimensionType.NETHER, "minecraft:nether"));
     	registerDimension(0, new Dimension(DimensionType.OVERWORLD, "minecraft:overworld"));
     	registerDimension(1, new Dimension(DimensionType.THE_END, "minecraft:the_end"));
 

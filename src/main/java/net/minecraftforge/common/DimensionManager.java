@@ -58,7 +58,7 @@ public class DimensionManager
     private static Set<ResourceLocation> activeDimensions = new HashSet<ResourceLocation>();
     private static List<ResourceLocation> unloadQueue = new ArrayList<ResourceLocation>();
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
-    private static Multiset<ResourceLocation> leakedWorlds = HashMultiset.create();
+    private static Multiset<Integer> leakedWorlds = HashMultiset.create();
 
     /**
      * Returns a list of dimensions associated with this DimensionType.
@@ -128,12 +128,12 @@ public class DimensionManager
             allWorlds.removeAll(worlds.values());
             for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
             {
-                ResourceLocation w = li.next().provider.getDimension();
-                leakedWorlds.add(w);
+                World w = li.next();
+                leakedWorlds.add(System.identityHashCode(w));
             }
             for (World w : allWorlds)
             {
-                int leakCount = leakedWorlds.count(w.provider.getDimension());
+                int leakCount = leakedWorlds.count(System.identityHashCode(w));
                 if (leakCount == 5)
                 {
                     FMLLog.log.debug("The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());
@@ -155,12 +155,12 @@ public class DimensionManager
             allWorlds.removeAll(worlds.values());
             for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
             {
-                ResourceLocation w = li.next().provider.getDimension();
-                leakedWorlds.add(w);
+                World w = li.next();
+                leakedWorlds.add(System.identityHashCode(w));
             }
             for (World w : allWorlds)
             {
-                int leakCount = leakedWorlds.count(w.provider.getDimension());
+                int leakCount = leakedWorlds.count(System.identityHashCode(w));
                 if (leakCount == 5)
                 {
                     FMLLog.log.debug("The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());

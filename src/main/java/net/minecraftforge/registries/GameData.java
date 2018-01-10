@@ -140,7 +140,7 @@ public class GameData
         makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
         makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().allowModification().addCallback(RecipeCallbacks.INSTANCE).create();
         makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
-        makeRegistry(DIMENSIONS,   Dimension.class,   MIN_DIMENSION_ID, MAX_DIMENSION_ID).allowModification().create();
+        makeRegistry(DIMENSIONS,   Dimension.class,   MIN_DIMENSION_ID, MAX_DIMENSION_ID).disableSaving().allowModification().create();
         entityRegistry = (ForgeRegistry<EntityEntry>)makeRegistry(ENTITIES, EntityEntry.class, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
     }
 
