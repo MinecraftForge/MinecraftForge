@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  */
 public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
 {
-    public Class<V> getRegistrySuperType();
+    Class<V> getRegistrySuperType();
 
     void register(V value);
 

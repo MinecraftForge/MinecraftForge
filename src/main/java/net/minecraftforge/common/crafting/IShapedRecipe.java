@@ -27,6 +27,6 @@ import net.minecraft.item.crafting.IRecipe;
  */
 public interface IShapedRecipe extends IRecipe
 {
-    public int getRecipeWidth();
-    public int getRecipeHeight();
+    int getRecipeWidth();
+    int getRecipeHeight();
 }

@@ -298,21 +298,21 @@ public class GameRegistry
          *
          * @return The registry name
          */
-        public String value();
+        String value();
 
         /**
          * The metadata or damage value for the itemstack, defaults to 0.
          *
          * @return the metadata value
          */
-        public int meta() default 0;
+        int meta() default 0;
 
         /**
          * The string serialized nbt value for the itemstack. Defaults to empty for no nbt.
          *
          * @return a nbt string
          */
-        public String nbt() default "";
+        String nbt() default "";
     }
 
     /**
