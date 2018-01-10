@@ -58,7 +58,7 @@ public class DimensionManager
     private static Set<ResourceLocation> activeDimensions = new HashSet<ResourceLocation>();
     private static List<ResourceLocation> unloadQueue = new ArrayList<ResourceLocation>();
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
-    private static Multiset<Integer> leakedWorlds = HashMultiset.create();
+    private static Multiset<ResourceLocation> leakedWorlds = HashMultiset.create();
 
     /**
      * Returns a list of dimensions associated with this DimensionType.
@@ -128,12 +128,12 @@ public class DimensionManager
             allWorlds.removeAll(worlds.values());
             for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
             {
-                World w = li.next();
-                leakedWorlds.add(System.identityHashCode(w));
+                ResourceLocation w = li.next().provider.getDimension();
+                leakedWorlds.add(w);
             }
             for (World w : allWorlds)
             {
-                int leakCount = leakedWorlds.count(System.identityHashCode(w));
+                int leakCount = leakedWorlds.count(w.provider.getDimension());
                 if (leakCount == 5)
                 {
                     FMLLog.log.debug("The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());
@@ -155,12 +155,12 @@ public class DimensionManager
             allWorlds.removeAll(worlds.values());
             for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
             {
-                World w = li.next();
-                leakedWorlds.add(System.identityHashCode(w));
+                ResourceLocation w = li.next().provider.getDimension();
+                leakedWorlds.add(w);
             }
             for (World w : allWorlds)
             {
-                int leakCount = leakedWorlds.count(System.identityHashCode(w));
+                int leakCount = leakedWorlds.count(w.provider.getDimension());
                 if (leakCount == 5)
                 {
                     FMLLog.log.debug("The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());
@@ -197,13 +197,13 @@ public class DimensionManager
         {
             worlds.put(dimID, world);
             weakWorldMap.put(world, world);
-            server.worldTickTimes.put(Dimension.REGISTRY.getObject(dimID).getDimIntID(), new long[100]);	//Have to patch or find a way around
+            server.worldTickTimes.put(dimID, new long[100]);	//Have to patch or find a way around
             FMLLog.log.info("Loading dimension {} ({}) ({})", dimID.toString(), world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
         {
             worlds.remove(dimID);
-            server.worldTickTimes.remove(Dimension.REGISTRY.getObject(dimID).getDimIntID());
+            server.worldTickTimes.remove(dimID);
             FMLLog.log.info("Unloading dimension {}", dimID.toString());
         }
 
@@ -235,13 +235,13 @@ public class DimensionManager
         {
             worlds.put(dimID, world);
             weakWorldMap.put(world, world);
-            server.worldTickTimes.put(Dimension.REGISTRY.getObject(dimID).getDimIntID(), new long[100]);	//Have to patch or find a way around
+            server.worldTickTimes.put(dimID, new long[100]);	//Have to patch or find a way around
             FMLLog.log.info("Loading dimension {} ({}) ({})", dimID.toString(), world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
         {
             worlds.remove(dimID);
-            server.worldTickTimes.remove(Dimension.REGISTRY.getObject(dimID).getDimIntID());
+            server.worldTickTimes.remove(dimID);
             FMLLog.log.info("Unloading dimension {}", dimID.toString());
         }
 
@@ -406,7 +406,7 @@ public class DimensionManager
     /*
     * To be called by the server at the appropriate time, do not call from mod code.
     */
-    public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
+    public static void unloadWorlds(Hashtable<ResourceLocation, long[]> worldTickTimes) {
         Iterator<ResourceLocation> queueIterator = unloadQueue.iterator();
         while (queueIterator.hasNext()) {
             ResourceLocation dimID = queueIterator.next();

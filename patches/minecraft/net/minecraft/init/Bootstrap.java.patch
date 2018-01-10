@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
 +++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
-@@ -264,6 +264,9 @@
+@@ -67,6 +67,7 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.storage.loot.LootTableList;
++import net.minecraftforge.common.Dimension;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.logging.log4j.LogManager;
+@@ -264,6 +265,9 @@
          };
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151129_at, ibehaviordispenseitem);
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
@@ -10,7 +18,7 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
-@@ -489,6 +492,7 @@
+@@ -489,6 +493,7 @@
          if (!field_151355_a)
          {
              field_151355_a = true;
@@ -18,7 +26,15 @@
              func_179868_d();
              SoundEvent.func_187504_b();
              Block.func_149671_p();
-@@ -524,6 +528,8 @@
+@@ -500,6 +505,7 @@
+             PotionHelper.func_185207_a();
+             EntityList.func_151514_a();
+             Biome.func_185358_q();
++            Dimension.registerDimensions();
+             func_151353_a();
+ 
+             if (!CraftingManager.func_193377_a())
+@@ -524,6 +530,8 @@
                      field_179871_c.error("Errors with built-in loot tables");
                  }
              }

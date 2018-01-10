@@ -233,7 +233,6 @@ public class GameData
             reg.freeze();
         });
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.freeze());
-        RegistryManager.FROZEN.registries.get(new ResourceLocation("minecraft:dimensions")).unfreeze();
 
         // the id mapping is fanilized, no ids actually changed but this is a good place to tell everyone to 'bake' their stuff.
         Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
