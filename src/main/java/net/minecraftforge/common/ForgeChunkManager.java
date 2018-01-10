@@ -1024,6 +1024,7 @@ public class ForgeChunkManager
 
         loadChunkEntities(entry.chunk, entry.nbt, world);
 
+        cache.invalidate(coords);
         return entry.chunk;
     }
 
