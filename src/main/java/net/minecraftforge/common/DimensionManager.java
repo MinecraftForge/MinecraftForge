@@ -22,7 +22,6 @@ package net.minecraftforge.common;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -442,72 +441,6 @@ public class DimensionManager
             }
         }
     }
-    
-/*					//I don't know if we can adapt this somehow to give ints
-    /**
-     * Return the next free dimension ID. Note: you are not guaranteed a contiguous
-     * block of free ids. Always call for each individual ID you wish to get.
-     * @return the next free dimension ID
-     */
-//    public static int getNextFreeDimId() {			
-//        int next = 0;
-//        while (true)
-//        {
-//            next = dimensionMap.nextClearBit(next);
-//            if (dimensions.containsKey(next))
-//            {
-//                dimensionMap.set(next);
-//            }
-//            else
-//            {
-//                return next;
-//            }
-//        }
-//    }
-
-
-//    public static NBTTagCompound saveDimensionDataMap()
-//    {
-//        int[] data = new int[(dimensionMap.length() + Integer.SIZE - 1 )/ Integer.SIZE];
-//        NBTTagCompound dimMap = new NBTTagCompound();
-//        for (int i = 0; i < data.length; i++)
-//        {
-//            int val = 0;
-//            for (int j = 0; j < Integer.SIZE; j++)
-//            {
-//                val |= dimensionMap.get(i * Integer.SIZE + j) ? (1 << j) : 0;
-//            }
-//            data[i] = val;
-//        }
-//        dimMap.setIntArray("DimensionArray", data);
-//        return dimMap;
-//    }
-//
-//    public static void loadDimensionDataMap(@Nullable NBTTagCompound compoundTag)
-//    {
-//        dimensionMap.clear();
-//        if (compoundTag == null)
-//        {
-//            for (Integer id : dimensionIDMap.inverse().keySet())
-//            {
-//                if (id >= 0)
-//                {
-//                    dimensionMap.set(id);
-//                }
-//            }
-//        }
-//        else
-//        {
-//            int[] intArray = compoundTag.getIntArray("DimensionArray");
-//            for (int i = 0; i < intArray.length; i++)
-//            {
-//                for (int j = 0; j < Integer.SIZE; j++)
-//                {
-//                    dimensionMap.set(i * Integer.SIZE + j, (intArray[i] & (1 << j)) != 0);
-//                }
-//            }
-//        }
-//    }
 
     /**
      * Return the current root directory for the world save. Accesses getSaveHandler from the overworld
@@ -545,11 +478,11 @@ public class DimensionManager
     	}
     	return Arrays.copyOf(ret, x);
     }
+
+    /*returns true if the dimension if from a mod given the modid*/
+    public static boolean isFromMod(World worldIn, String modid)	// needs patch really
+    {
+    	ResourceLocation dimID = worldIn.provider.getDimension();
+    	return dimID.getResourceDomain().equals(modid);
+    }
 }
-    
-//    /*returns true if the dimension if from a mod given the modid*/
-//    public static boolean isFromMod(World worldIn, String modid)	// needs patch really
-//    {
-//    	return true;
-//    }
-//    }
