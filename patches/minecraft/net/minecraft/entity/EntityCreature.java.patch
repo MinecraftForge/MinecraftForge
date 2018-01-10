@@ -1,14 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityCreature.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityCreature.java
-@@ -15,6 +15,7 @@
+@@ -15,6 +15,9 @@
      private BlockPos field_70775_bC = BlockPos.field_177992_a;
      private float field_70772_bD = -1.0F;
      private final float field_184661_bw = PathNodeType.WATER.func_186289_a();
 +    protected float maxLeashDistance = 10.0F; // forge: make maxLeashDistance a field instead of hard-coded
++    public float getMaxLeashDistance() { return maxLeashDistance; }
++    public void setMaxLeashDistance(float distance) { maxLeashDistance = distance; }
  
      public EntityCreature(World p_i1602_1_)
      {
-@@ -91,7 +92,7 @@
+@@ -91,7 +94,7 @@
  
              if (this instanceof EntityTameable && ((EntityTameable)this).func_70906_o())
              {
@@ -17,7 +19,7 @@
                  {
                      this.func_110160_i(true, true);
                  }
-@@ -101,7 +102,7 @@
+@@ -101,7 +104,7 @@
  
              this.func_142017_o(f);
  
