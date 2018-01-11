@@ -68,7 +68,7 @@ public class GuiTabsTest
     }
 
     @SubscribeEvent
-    public static void onBlckRightCLick(ItemTossEvent e)
+    public static void onBlockRightCLick(ItemTossEvent e)
     {
         if (!ENABLE)
         {
