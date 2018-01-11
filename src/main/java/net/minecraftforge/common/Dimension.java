@@ -25,6 +25,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 
@@ -40,8 +41,21 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     {
         this.type = type;
         this.ticksWaited = 0;
-        dimID = new ResourceLocation(Loader.instance().activeModContainer().getModId().toLowerCase(),dimensionName);
-        
+        if(dimensionName.indexOf(":")==-1)
+        {
+        	dimID = new ResourceLocation(Loader.instance().activeModContainer().getModId().toLowerCase(),dimensionName);
+        }
+        else
+        {
+        	dimID = new ResourceLocation(dimensionName);
+        }
+    }
+    
+    static void init()
+    {
+    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.OVERWORLD, "minecraft:overworld").setDimIntID(0));
+    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.NETHER, "minecraft:nether").setDimIntID(-1));
+    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.THE_END, "minecraft:the_end").setDimIntID(1));
     }
     
     public final Dimension setRegistryName(ResourceLocation dontUse)
@@ -100,10 +114,11 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     	return dimIntID;
     }
     
-    public void setDimIntID(int dimIntID)
+    public Dimension setDimIntID(int dimIntID)
     {
     	this.dimIntID=dimIntID;
     	dimensionTypeMap.put(dimIntID, type);
+    	return this;
     	
     }
 }

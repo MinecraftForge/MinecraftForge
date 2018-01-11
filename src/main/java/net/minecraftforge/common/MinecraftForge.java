@@ -90,8 +90,8 @@ public class MinecraftForge
        UsernameCache.load();
        // Load before all the mods, so MC owns the MC fluids
        FluidRegistry.validateFluidRegistry();
-       Dimension.registerDimensions();
        ForgeHooks.initTools();
+       Dimension.init();
 
        //For all the normal CrashReport classes to be defined. We're in MC's classloader so this should all be fine
        new CrashReport("ThisIsFake", new Exception("Not real"));
