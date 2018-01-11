@@ -21,6 +21,10 @@ package net.minecraftforge.common;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
+import net.minecraftforge.fml.common.FMLContainer;
+import net.minecraftforge.fml.common.InjectedModContainer;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 
@@ -35,14 +39,23 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     {
         this.type = type;
         this.ticksWaited = 0;
-        dimID = new ResourceLocation(dimensionName);
+        dimID = new ResourceLocation(Loader.instance().activeModContainer().getModId().toLowerCase(),dimensionName);
         
     }
     
-    public final Dimension setRegistryName()
+    public final Dimension setRegistryName(ResourceLocation dontUse)
     {
-    	if (getRegistryName() != null)
-            throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
+    	return this;
+    }	
+    
+    public ResourceLocation getRegistryName()
+    {
+    	return dimID;
+    }
+    
+    public Class<Dimension> getRegistryType()
+    {
+    	return Dimension.class;
     }
     
     public DimensionType getType()
