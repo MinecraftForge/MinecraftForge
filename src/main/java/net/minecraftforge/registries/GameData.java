@@ -109,6 +109,7 @@ public class GameData
     private static final int MAX_RECIPE_ID = Integer.MAX_VALUE >> 5; // Varint CPacketRecipeInfo/SPacketRecipeBook
     private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
     private static final int MAX_DIMENSION_ID = Long.SIZE << 4;
+    private static final int MIN_DIMENSION_ID = 2;
 
     private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
@@ -139,7 +140,7 @@ public class GameData
         makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
         makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().allowModification().addCallback(RecipeCallbacks.INSTANCE).create();
         makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
-        makeRegistry(DIMENSIONS,   Dimension.class,   MAX_DIMENSION_ID).disableSaving().allowModification().create();
+        makeRegistry(DIMENSIONS,   Dimension.class,   MIN_DIMENSION_ID, MAX_DIMENSION_ID).disableSaving().allowModification().create();
         entityRegistry = (ForgeRegistry<EntityEntry>)makeRegistry(ENTITIES, EntityEntry.class, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
     }
 
