@@ -50,6 +50,7 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.Dimension;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
@@ -66,14 +67,14 @@ public class DimensionManager
      */
     public static ResourceLocation[] getDimensions(DimensionType type)	//Could return Dimension[] since this contains name info
     {
-    	Set<ResourceLocation> dimIDs =  Dimension.REGISTRY.getKeys();
+    	Set<ResourceLocation> dimIDs =  ForgeRegistries.DIMENSIONS.getKeys();
     	return dimIDs.toArray(new ResourceLocation[dimIDs.size()]);
     }
     
     /*Dimension must be registered first*/
     public static void registerDimensionActive(ResourceLocation dimID)
     {
-    	if(!Dimension.REGISTRY.containsKey(dimID))
+    	if(!ForgeRegistries.DIMENSIONS.containsKey(dimID))
     	{
     		throw new IllegalArgumentException("Can't activate dimension "+ dimID.toString() + ", it hasn't been registered");
     	}
@@ -85,7 +86,7 @@ public class DimensionManager
      */
     public static void unregisterDimensionActive(ResourceLocation dimID)
     {
-        if (!Dimension.REGISTRY.containsKey(dimID))
+        if (!ForgeRegistries.DIMENSIONS.containsKey(dimID))
         {
             throw new IllegalArgumentException("Failed to unregister dimension for dimID "+ dimID.toString() +" No provider registered");
         }
@@ -99,21 +100,21 @@ public class DimensionManager
     
     public static boolean isDimensionActive(int dimIntID)
     {
-        return activeDimensions.contains(Dimension.REGISTRY.getObjectById(dimIntID).getID());
+        return activeDimensions.contains(Dimension.getID(dimIntID));
     }
     
     public static DimensionType getProviderType(int dimIntID)
     {
-    	return getProviderType(Dimension.REGISTRY.getObjectById(dimIntID).getID());
+    	return getProviderType(Dimension.getID(dimIntID));
     }
     
     public static DimensionType getProviderType(ResourceLocation dimID)
     {
-        if (!Dimension.REGISTRY.containsKey(dimID))
+        if (!ForgeRegistries.DIMENSIONS.containsKey(dimID))
         {
             throw new IllegalArgumentException("Could not get provider type for dimension " + dimID.toString() + ", does not exist");
         }
-        return Dimension.REGISTRY.getObject(dimID).getType();
+        return ForgeRegistries.DIMENSIONS.getValue(dimID).getType();
     }
     
     public static WorldProvider getProvider(ResourceLocation dimID)
@@ -187,7 +188,7 @@ public class DimensionManager
     	int x = 0;
     	for(ResourceLocation id : ids)
     	{
-    		ret[x++] = Dimension.REGISTRY.getObject(id).getDimIntID();
+    		ret[x++] = ForgeRegistries.DIMENSIONS.getValue(id).getDimIntID();
     	}
     	return Arrays.copyOf(ret, x);
     }
@@ -231,7 +232,7 @@ public class DimensionManager
     
     public static void setWorld(int dimIntID, @Nullable WorldServer world, MinecraftServer server)
     {
-    	ResourceLocation dimID = Dimension.REGISTRY.getObjectById(dimIntID).getID();
+    	ResourceLocation dimID = Dimension.getID(dimIntID);
         if (world != null)
         {
             worlds.put(dimID, world);
@@ -270,7 +271,7 @@ public class DimensionManager
     
     public static void initDimension(int dimIntID)
     {
-    	initDimension(Dimension.REGISTRY.getObjectById(dimIntID).getID());
+    	initDimension(Dimension.getID(dimIntID));
     }
     
     public static void initDimension(ResourceLocation dimID)
@@ -293,7 +294,7 @@ public class DimensionManager
         ISaveHandler savehandler = overworld.getSaveHandler();
         //WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        WorldServer world = (dimID.toString().equals("minecraft:overworld") ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, Dimension.REGISTRY.getObject(dimID).getDimIntID(), overworld, mcServer.profiler).init()));	//requires patch
+        WorldServer world = (dimID.toString().equals("minecraft:overworld") ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, ForgeRegistries.DIMENSIONS.getValue(dimID).getDimIntID(), overworld, mcServer.profiler).init()));	//requires patch
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
@@ -311,7 +312,7 @@ public class DimensionManager
     
     public static WorldServer getWorld(int dimIntID)
     {
-        return getWorld(Dimension.REGISTRY.getObjectById(dimIntID).getID());
+        return getWorld(Dimension.getID(dimIntID));
     }
 
     public static WorldServer[] getWorlds()
@@ -330,11 +331,11 @@ public class DimensionManager
      */
     public static Integer[] getStaticDimensionIDs()
     {
-    	Integer[] ret= new Integer[Dimension.REGISTRY.getKeys().size()];
+    	Integer[] ret= new Integer[ForgeRegistries.DIMENSIONS.getKeys().size()];
     	int x = 0;
-    	for(ResourceLocation dimID: Dimension.REGISTRY.getKeys())
+    	for(ResourceLocation dimID: ForgeRegistries.DIMENSIONS.getKeys())
     	{
-    		ret[x++] = Dimension.REGISTRY.getObject(dimID).getDimIntID();
+    		ret[x++] = ForgeRegistries.DIMENSIONS.getValue(dimID).getDimIntID();
     	}
     	return Arrays.copyOf(ret, x);
     }
@@ -343,7 +344,7 @@ public class DimensionManager
     {
         try
         {
-            if (Dimension.REGISTRY.containsKey(dimID))
+            if (ForgeRegistries.DIMENSIONS.containsKey(dimID))
             {
                 WorldProvider ret = getProviderType(dimID).createDimension();
                 ret.setDimension(dimID);
@@ -364,10 +365,10 @@ public class DimensionManager
     
     public static WorldProvider createProviderFor(int dimIntID)
     {
-    	ResourceLocation dimID = Dimension.REGISTRY.getObjectById(dimIntID).getID();
+    	ResourceLocation dimID = Dimension.getID(dimIntID);
     	try
         {
-            if (Dimension.REGISTRY.containsKey(dimID))
+            if (ForgeRegistries.DIMENSIONS.containsKey(dimID))
             {
                 WorldProvider ret = getProviderType(dimID).createDimension();
                 ret.setDimension(dimID);
@@ -400,7 +401,7 @@ public class DimensionManager
         }
         else
         {
-            Dimension.REGISTRY.getObject(dimID).setTicksWaited(0);
+        	ForgeRegistries.DIMENSIONS.getValue(dimID).setTicksWaited(0);
         }
     }
     
@@ -411,7 +412,7 @@ public class DimensionManager
         Iterator<ResourceLocation> queueIterator = unloadQueue.iterator();
         while (queueIterator.hasNext()) {
             ResourceLocation dimID = queueIterator.next();
-            Dimension dimension = Dimension.REGISTRY.getObject(dimID);
+            Dimension dimension = ForgeRegistries.DIMENSIONS.getValue(dimID);
             if (dimension.getTicksWaited() < ForgeModContainer.dimensionUnloadQueueDelay)
             {
             	
@@ -468,9 +469,9 @@ public class DimensionManager
     /* returns the dimensions registered to a mod based on its modid */
     public static ResourceLocation[] getDimensionForMod(String modid)
     {
-    	ResourceLocation[] ret = new ResourceLocation[Dimension.REGISTRY.getKeys().size()];
+    	ResourceLocation[] ret = new ResourceLocation[ForgeRegistries.DIMENSIONS.getKeys().size()];
     	int x = 0;
-    	for(ResourceLocation id : Dimension.REGISTRY.getKeys())
+    	for(ResourceLocation id : ForgeRegistries.DIMENSIONS.getKeys())
     	{
     		if(id.getResourceDomain().equals(modid))
     		{

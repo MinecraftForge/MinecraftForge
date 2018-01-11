@@ -35,6 +35,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     private final ResourceLocation dimID;
     private int ticksWaited;
     private int dimIntID;
+    public static Map<Integer,ResourceLocation> dimensionIntIDMap = new Int2ObjectOpenHashMap<ResourceLocation>();
     public static Map<Integer,DimensionType> dimensionTypeMap = new Int2ObjectOpenHashMap<DimensionType>();
     
     public Dimension(DimensionType type, String dimensionName)
@@ -83,6 +84,11 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     	return dimensionTypeMap.get(dimIntID);
     }
     
+    public static ResourceLocation getID(int dimIntID)
+    {
+    	return dimensionIntIDMap.get(dimIntID);
+    }
+    
     public int getTicksWaited()
     {
     	return ticksWaited;
@@ -118,6 +124,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     {
     	this.dimIntID=dimIntID;
     	dimensionTypeMap.put(dimIntID, type);
+    	dimensionIntIDMap.put(dimIntID,dimID);
     	return this;
     	
     }

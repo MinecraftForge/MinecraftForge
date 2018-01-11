@@ -34,6 +34,7 @@ import com.google.common.collect.Sets;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import io.netty.buffer.ByteBuf;
 
 public abstract class ForgeMessage {
@@ -53,7 +54,7 @@ public abstract class ForgeMessage {
         @Override
         void toBytes(ByteBuf bytes)
         {
-            bytes.writeInt(Dimension.REGISTRY.getObject(this.dimensionId).getDimIntID());
+            bytes.writeInt(ForgeRegistries.DIMENSIONS.getValue(this.dimensionId).getDimIntID());
             byte[] data = this.providerId.getBytes(StandardCharsets.UTF_8);
             bytes.writeShort(data.length);
             bytes.writeBytes(data);
@@ -62,7 +63,7 @@ public abstract class ForgeMessage {
         @Override
         void fromBytes(ByteBuf bytes)
         {
-            dimensionId = Dimension.REGISTRY.getObjectById(bytes.readInt()).getID();
+            dimensionId = Dimension.getID(bytes.readInt());
             byte[] data = new byte[bytes.readShort()];
             bytes.readBytes(data);
             providerId = new String(data, StandardCharsets.UTF_8);

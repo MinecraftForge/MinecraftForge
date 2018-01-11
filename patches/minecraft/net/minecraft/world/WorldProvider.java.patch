@@ -92,7 +92,7 @@
 +    }
 +    public int  getDimensionInt()
 +    {
-+    	return net.minecraftforge.common.Dimension.REGISTRY.func_82594_a(dimensionId).getDimIntID();
++    	return net.minecraftforge.fml.common.registry.ForgeRegistries.DIMENSIONS.getValue(dimensionId).getDimIntID();
 +    }
 +
 +    /**

@@ -36,6 +36,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 //Class used internally to provide the world specific data directories.
 
@@ -71,7 +72,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
         File file = new File(dataDir, name + ".dat");
         if (!file.exists())
         {
-            switch (net.minecraftforge.common.Dimension.REGISTRY.getObject(world.provider.getDimension()).getDimIntID())
+            switch (ForgeRegistries.DIMENSIONS.getValue(world.provider.getDimension()).getDimIntID())
             {
                 case -1:
                     if (name.equalsIgnoreCase("FORTRESS")) copyFile(name, file);
