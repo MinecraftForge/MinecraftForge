@@ -272,11 +272,7 @@ public class GuiTabMenu
 
     private void correctButtonAlignment()
     {
-        if (guiContainer instanceof GuiCrafting && ((GuiCrafting) guiContainer).mc.player.getRecipeBook().isGuiOpen())
-        {
-            this.setButtonAlignment();
-        }
-        if (guiContainer instanceof GuiInventory && ((GuiInventory) guiContainer).mc.player.getRecipeBook().isGuiOpen())
+        if ((guiContainer instanceof GuiCrafting || guiContainer instanceof GuiInventory) && guiContainer.mc.player.getRecipeBook().isGuiOpen())
         {
             this.setButtonAlignment();
         }
