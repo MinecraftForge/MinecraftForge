@@ -71,6 +71,7 @@ public class DefaultVanillaGuiTabs
         @Override
         public void onTabClicked(GuiContainer guiContainer)
         {
+            super.onTabClicked(guiContainer);
             mc.displayGuiScreen(new GuiInventory(mc.player));
         }
 
@@ -98,6 +99,7 @@ public class DefaultVanillaGuiTabs
         @Override
         public void onTabClicked(GuiContainer guiContainer)
         {
+            super.onTabClicked(guiContainer);
             BlockPos blockPos = mc.objectMouseOver.getBlockPos();
             TileEntity tileEntity = mc.world.getTileEntity(blockPos);
             if (tileEntity != null && tileEntity instanceof TileEntityFurnace)
@@ -123,6 +125,7 @@ public class DefaultVanillaGuiTabs
         @Override
         public void onTabClicked(GuiContainer guiContainer)
         {
+            super.onTabClicked(guiContainer);
             mc.displayGuiScreen(new GuiCrafting(mc.player.inventory, mc.world));
         }
     }.addTo(GuiCrafting.class).setTargetGui(GuiCrafting.class);
@@ -136,6 +139,7 @@ public class DefaultVanillaGuiTabs
         @Override
         public void onTabClicked(GuiContainer guiContainer)
         {
+            super.onTabClicked(guiContainer);
             BlockPos blockPos = mc.objectMouseOver.getBlockPos();
             TileEntity tileEntity = mc.world.getTileEntity(blockPos);
             if (tileEntity != null && tileEntity instanceof TileEntityBrewingStand)
@@ -215,6 +219,7 @@ public class DefaultVanillaGuiTabs
         @Override
         public void onTabClicked(GuiContainer guiContainer)
         {
+            super.onTabClicked(guiContainer);
             BlockPos blockPos = mc.objectMouseOver.getBlockPos();
             TileEntity tileEntity = mc.world.getTileEntity(blockPos);
 
@@ -257,6 +262,7 @@ public class DefaultVanillaGuiTabs
         @Override
         public void onTabClicked(GuiContainer guiContainer)
         {
+            super.onTabClicked(guiContainer);
             BlockPos blockPos = mc.objectMouseOver.getBlockPos();
             TileEntity tileEntity = mc.world.getTileEntity(blockPos);
             if (tileEntity != null && tileEntity instanceof TileEntityBeacon)
@@ -318,6 +324,7 @@ public class DefaultVanillaGuiTabs
         @Override
         public void onTabClicked(GuiContainer guiContainer)
         {
+            super.onTabClicked(guiContainer);
             BlockPos blockPos = mc.objectMouseOver.getBlockPos();
             TileEntity tileEntity = mc.world.getTileEntity(blockPos);
 
@@ -352,6 +359,7 @@ public class DefaultVanillaGuiTabs
         @Override
         public void onTabClicked(GuiContainer guiContainer)
         {
+            super.onTabClicked(guiContainer);
             BlockPos blockPos = mc.objectMouseOver.getBlockPos();
             TileEntity tileEntity = mc.world.getTileEntity(blockPos);
             if (tileEntity != null && tileEntity instanceof TileEntityShulkerBox)
@@ -377,6 +385,7 @@ public class DefaultVanillaGuiTabs
         @Override
         public void onTabClicked(GuiContainer guiContainer)
         {
+            super.onTabClicked(guiContainer);
             BlockPos blockPos = mc.objectMouseOver.getBlockPos();
             TileEntity tileEntity = mc.world.getTileEntity(blockPos);
             if (tileEntity != null && tileEntity instanceof TileEntityEnchantmentTable)
@@ -402,6 +411,7 @@ public class DefaultVanillaGuiTabs
         @Override
         public void onTabClicked(GuiContainer guiContainer)
         {
+            super.onTabClicked(guiContainer);
             mc.displayGuiScreen(new GuiRepair(mc.player.inventory, mc.world));
         }
 
