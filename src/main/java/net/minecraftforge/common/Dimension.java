@@ -19,12 +19,12 @@
 
 package net.minecraftforge.common;
 
+import java.util.Map;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
-import net.minecraftforge.fml.common.FMLContainer;
-import net.minecraftforge.fml.common.InjectedModContainer;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 
@@ -34,6 +34,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     private final ResourceLocation dimID;
     private int ticksWaited;
     private int dimIntID;
+    public static Map<Integer,DimensionType> dimensionTypeMap = new Int2ObjectOpenHashMap<DimensionType>();
     
     public Dimension(DimensionType type, String dimensionName)
     {
@@ -61,6 +62,11 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     public DimensionType getType()
     {
     	return type;
+    }
+    
+    public static DimensionType getType(int dimIntID)
+    {
+    	return dimensionTypeMap.get(dimIntID);
     }
     
     public int getTicksWaited()
@@ -97,5 +103,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     public void setDimIntID(int dimIntID)
     {
     	this.dimIntID=dimIntID;
+    	dimensionTypeMap.put(dimIntID, type);
+    	
     }
 }
