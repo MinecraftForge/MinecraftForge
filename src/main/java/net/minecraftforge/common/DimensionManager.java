@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -406,7 +407,7 @@ public class DimensionManager
     /*
     * To be called by the server at the appropriate time, do not call from mod code.
     */
-    public static void unloadWorlds(Hashtable<ResourceLocation, long[]> worldTickTimes) {
+    public static void unloadWorlds(Map<ResourceLocation, long[]> worldTickTimes) {
         Iterator<ResourceLocation> queueIterator = unloadQueue.iterator();
         while (queueIterator.hasNext()) {
             ResourceLocation dimID = queueIterator.next();

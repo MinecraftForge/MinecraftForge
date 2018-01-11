@@ -20,42 +20,29 @@
 package net.minecraftforge.common;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.DimensionType;
-import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-public class Dimension extends IForgeRegistryEntry.Impl<Dimension>
+
+public class Dimension implements IForgeRegistryEntry<Dimension>
 {
     private final DimensionType type;
     private final ResourceLocation dimID;
     private int ticksWaited;
-    public static final RegistryNamespaced<ResourceLocation, Dimension> REGISTRY = GameData.getWrapper(Dimension.class);
+    private int dimIntID;
     
     public Dimension(DimensionType type, String dimensionName)
     {
         this.type = type;
         this.ticksWaited = 0;
-        dimID = this.setRegistryName(dimensionName).getRegistryName();
+        dimID = new ResourceLocation(dimensionName);
         
     }
     
-    public static void registerDimensions()
+    public final Dimension setRegistryName()
     {
-    	registerDimension(-1, new Dimension(DimensionType.NETHER, "minecraft:nether"));
-    	registerDimension(0, new Dimension(DimensionType.OVERWORLD, "minecraft:overworld"));
-    	registerDimension(1, new Dimension(DimensionType.THE_END, "minecraft:the_end"));
-
-    }
-
-    public static void registerDimension(Dimension dimension)
-    {
-    	REGISTRY.register(0, dimension.dimID, dimension);
-    }
-    
-    public static void registerDimension(int intID, Dimension dimension)
-    {
-    	REGISTRY.register(intID, dimension.dimID, dimension);
+    	if (getRegistryName() != null)
+            throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
     }
     
     public DimensionType getType()
@@ -91,6 +78,11 @@ public class Dimension extends IForgeRegistryEntry.Impl<Dimension>
     /*Mods shouldn't call this*/
     public int getDimIntID()
     {
-    	return REGISTRY.getIDForObject(this);
+    	return dimIntID;
+    }
+    
+    public void setDimIntID(int dimIntID)
+    {
+    	this.dimIntID=dimIntID;
     }
 }

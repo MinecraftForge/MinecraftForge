@@ -15,7 +15,7 @@
      public final long[] field_71311_j = new long[100];
 -    public long[][] field_71312_k;
 +    //public long[][] timeOfLastDimensionTick;
-+    public java.util.Hashtable<net.minecraft.util.ResourceLocation, long[]> worldTickTimes = new java.util.Hashtable<net.minecraft.util.ResourceLocation, long[]>();
++    public java.util.Map<net.minecraft.util.ResourceLocation, long[]> worldTickTimes = new java.util.Hashtable<net.minecraft.util.ResourceLocation, long[]>();
      private KeyPair field_71292_I;
      private String field_71293_J;
      private String field_71294_K;
