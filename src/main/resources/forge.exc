@@ -60,3 +60,7 @@ net/minecraft/world/storage/loot/LootEntryEmpty.<init>(II[Lnet/minecraft/world/s
 net/minecraft/world/chunk/BlockStateContainer.setBits(IZ)V=|p_186012_1_,forceBits
 net/minecraft/village/Village.getPlayerReputation(Ljava/util/UUID;)I=|p_82684_1_
 net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_82688_1_,p_82688_2_
+
+net/minecraft/command/EntitySelector.matchEntitiesDefault(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;Ljava/lang/Class;)Ljava/util/List;=|p_179656_0_,p_179656_1_,p_179656_2_
+net/minecraft/command/EntitySelector.matchesMultiplePlayersDefault(Ljava/lang/String;)Z=|p_82377_0_
+net/minecraft/command/EntitySelector.isSelectorDefault(Ljava/lang/String;)Z=|p_82378_0_

@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/command/EntitySelector.java
 +++ ../src-work/minecraft/net/minecraft/command/EntitySelector.java
-@@ -148,6 +148,7 @@
+@@ -116,6 +116,11 @@
+ 
+     public static <T extends Entity> List<T> func_179656_b(ICommandSender p_179656_0_, String p_179656_1_, Class <? extends T > p_179656_2_) throws CommandException
+     {
++        return net.minecraftforge.common.command.SelectorHandlerManager.matchEntities(p_179656_0_, p_179656_1_, p_179656_2_);
++    }
++
++    public static <T extends Entity> List<T> matchEntitiesDefault(ICommandSender p_179656_0_, String p_179656_1_, Class <? extends T > p_179656_2_) throws CommandException
++    {
+         Matcher matcher = field_82389_a.matcher(p_179656_1_);
+ 
+         if (matcher.matches() && p_179656_0_.func_70003_b(1, "@"))
+@@ -148,6 +153,7 @@
                          list2.addAll(func_184951_f(map));
                          list2.addAll(func_180698_a(map, vec3d));
                          list2.addAll(func_179662_g(map));
@@ -8,3 +20,27 @@
                          list1.addAll(func_179660_a(map, p_179656_2_, list2, s, world, blockpos));
                      }
                  }
+@@ -722,6 +728,11 @@
+ 
+     public static boolean func_82377_a(String p_82377_0_) throws CommandException
+     {
++        return net.minecraftforge.common.command.SelectorHandlerManager.matchesMultiplePlayers(p_82377_0_);
++    }
++
++    public static boolean matchesMultiplePlayersDefault(String p_82377_0_) throws CommandException
++    {
+         Matcher matcher = field_82389_a.matcher(p_82377_0_);
+ 
+         if (!matcher.matches())
+@@ -739,6 +750,11 @@
+ 
+     public static boolean func_82378_b(String p_82378_0_)
+     {
++        return net.minecraftforge.common.command.SelectorHandlerManager.isSelector(p_82378_0_);
++    }
++
++    public static boolean isSelectorDefault(String p_82378_0_)
++    {
+         return field_82389_a.matcher(p_82378_0_).matches();
+     }
+ 
