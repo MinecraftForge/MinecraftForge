@@ -224,12 +224,9 @@ public class GuiTabMenu
         {
             this.setCurrentPage(Math.min(currentPage + 1, maxPages));
         }
-        else if (button.id == 10)
+        else if (button.id == 10 && button instanceof GuiButtonImage)
         {
-            if (button instanceof GuiButtonImage)
-            {
-                this.setButtonAlignment();
-            }
+            this.setButtonAlignment();
         }
     }
 
@@ -275,19 +272,13 @@ public class GuiTabMenu
 
     private void correctButtonAlignment()
     {
-        if (guiContainer instanceof GuiCrafting)
+        if (guiContainer instanceof GuiCrafting && ((GuiCrafting) guiContainer).mc.player.getRecipeBook().isGuiOpen())
         {
-            if (((GuiCrafting) guiContainer).mc.player.getRecipeBook().isGuiOpen())
-            {
-                this.setButtonAlignment();
-            }
+            this.setButtonAlignment();
         }
-        if (guiContainer instanceof GuiInventory)
+        if (guiContainer instanceof GuiInventory && ((GuiInventory) guiContainer).mc.player.getRecipeBook().isGuiOpen())
         {
-            if (((GuiInventory) guiContainer).mc.player.getRecipeBook().isGuiOpen())
-            {
-                this.setButtonAlignment();
-            }
+            this.setButtonAlignment();
         }
     }
 
