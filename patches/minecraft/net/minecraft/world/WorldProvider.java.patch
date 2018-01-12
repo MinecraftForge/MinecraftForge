@@ -103,7 +103,7 @@
 +    @Nullable
 +    public String getSaveFolder()
 +    {
-+        return (dimensionId.toString().equals("minecraft:overworld") ? null : "DIM" + dimensionId.toString());
++        return (dimensionId.toString().equals("minecraft:overworld") ? null : "DIM" + net.minecraftforge.fml.common.registry.ForgeRegistries.DIMENSIONS.getValue(dimensionId).getDimIntID());
 +    }
 +
 +    /**
