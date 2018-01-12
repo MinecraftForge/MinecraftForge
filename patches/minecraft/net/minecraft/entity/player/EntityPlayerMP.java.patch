@@ -29,28 +29,27 @@
          boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
          this.field_71135_a.func_147359_a(new SPacketCombatEvent(this.func_110142_aN(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
  
-@@ -499,8 +500,20 @@
+@@ -499,8 +500,19 @@
  
          if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory") && !this.func_175149_v())
          {
-+            captureDrops = true;
-+            capturedDrops.clear();
++            this.captureDrops(list -> { // avoid indenting the next block
              this.func_190776_cN();
              this.field_71071_by.func_70436_m();
 +
-+            captureDrops = false;
-+            net.minecraftforge.event.entity.player.PlayerDropsEvent event = new net.minecraftforge.event.entity.player.PlayerDropsEvent(this, p_70645_1_, capturedDrops, field_70718_bc > 0);
++            net.minecraftforge.event.entity.player.PlayerDropsEvent event = new net.minecraftforge.event.entity.player.PlayerDropsEvent(this, p_70645_1_, list, field_70718_bc > 0);
 +            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
 +            {
-+                for (net.minecraft.entity.item.EntityItem item : capturedDrops)
++                for (net.minecraft.entity.item.EntityItem item : list)
 +                {
 +                    this.field_70170_p.func_72838_d(item);
 +                }
 +            }
++            }); // Avoid indenting the above block
          }
  
          for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreCriteria.field_96642_c))
-@@ -647,6 +660,7 @@
+@@ -647,6 +659,7 @@
      @Nullable
      public Entity func_184204_a(int p_184204_1_)
      {
@@ -58,7 +57,7 @@
          this.field_184851_cj = true;
  
          if (this.field_71093_bK == 0 && p_184204_1_ == -1)
-@@ -808,7 +822,7 @@
+@@ -808,7 +821,7 @@
          BlockPos blockpos = new BlockPos(i, j, k);
          IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -67,7 +66,7 @@
          {
              BlockPos blockpos1 = blockpos.func_177977_b();
              IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
-@@ -848,6 +862,7 @@
+@@ -848,6 +861,7 @@
              this.field_71070_bA = p_180468_1_.func_174876_a(this.field_71071_by, this);
              this.field_71070_bA.field_75152_c = this.field_71139_cq;
              this.field_71070_bA.func_75132_a(this);
@@ -75,7 +74,7 @@
          }
      }
  
-@@ -891,6 +906,7 @@
+@@ -891,6 +905,7 @@
  
              this.field_71070_bA.field_75152_c = this.field_71139_cq;
              this.field_71070_bA.func_75132_a(this);
@@ -83,7 +82,7 @@
          }
      }
  
-@@ -900,6 +916,7 @@
+@@ -900,6 +915,7 @@
          this.field_71070_bA = new ContainerMerchant(this.field_71071_by, p_180472_1_, this.field_70170_p);
          this.field_71070_bA.field_75152_c = this.field_71139_cq;
          this.field_71070_bA.func_75132_a(this);
@@ -91,7 +90,7 @@
          IInventory iinventory = ((ContainerMerchant)this.field_71070_bA).func_75174_d();
          ITextComponent itextcomponent = p_180472_1_.func_145748_c_();
          this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "minecraft:villager", itextcomponent, iinventory.func_70302_i_()));
-@@ -1003,6 +1020,7 @@
+@@ -1003,6 +1019,7 @@
      public void func_71128_l()
      {
          this.field_71070_bA.func_75134_a(this);
@@ -99,7 +98,7 @@
          this.field_71070_bA = this.field_71069_bz;
      }
  
-@@ -1144,6 +1162,18 @@
+@@ -1144,6 +1161,18 @@
          this.field_193110_cw = p_193104_1_.field_193110_cw;
          this.func_192029_h(p_193104_1_.func_192023_dk());
          this.func_192031_i(p_193104_1_.func_192025_dl());

@@ -39,8 +39,8 @@
  
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
-+    public boolean captureDrops = false;
-+    public java.util.ArrayList<EntityItem> capturedDrops = new java.util.ArrayList<EntityItem>();
++    private List<EntityItem> capturedDrops = new java.util.ArrayList<EntityItem>();
++    private boolean performingDropCaptures = false;
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +
      public int func_145782_y()
@@ -107,7 +107,7 @@
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
 -            this.field_70170_p.func_72838_d(entityitem);
-+            if (captureDrops)
++            if (this.performingDropCaptures)
 +                this.capturedDrops.add(entityitem);
 +            else
 +                this.field_70170_p.func_72838_d(entityitem);
@@ -177,7 +177,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2901,6 +2929,183 @@
+@@ -2901,6 +2929,234 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -356,6 +356,57 @@
 +            && (this instanceof EntityPlayer || world.func_82736_K().func_82766_b("mobGriefing"))
 +            && this.field_70130_N * this.field_70130_N * this.field_70131_O > 0.512F;
 +    }
++
++    /**
++     * A functional call to consume a shared list of item drops, usually
++     * to collect all drops, modify, and or clear, before throwing an event.
++     * This is to be used instead of manually flipping fields. The provided
++     * list is always cleared on each call. If an event is to be thrown, the
++     * event should be thrown in the provided {@link java.util.function.Consumer}
++     * @param droppedItems
++     */
++    @SuppressWarnings("deprecation")
++    public void captureDrops(java.util.function.Consumer<List<EntityItem>> droppedItems)
++    {
++        if (this.performingDropCaptures) {
++            // verify someone isn't already using the field
++            // If they are, pass the same field over as technically
++            // the list will clear after the previous usage is completed.
++            droppedItems.accept(this.capturedDrops);
++            return;
++        }
++        this.performingDropCaptures = true; // actual used field
++        this.capturedDrops.clear(); // always clear for preparation,
++        // consumer code should always use the provided list
++        droppedItems.accept(this.capturedDrops);
++        // clear again, just in case. Can't
++        this.capturedDrops.clear();
++        this.performingDropCaptures = false; // actual used field
++    }
++
++    public boolean isCapturingItemDrops()
++    {
++        return this.performingDropCaptures;
++    }
++
++    /**
++     * Uses the provided supplier to artificially capture and remove the capture.
++     * Use this method in the case where something can provide an {@link EntityItem},
++     * such as {@link net.minecraft.entity.player.EntityPlayer#dropItem(Item, int)}
++     * where the item dropped needs to be provided, but not actually spawned, and
++     * therefor "captured"; however, the intention is to simply provide the entity
++     * without capturing the entity, for later spawning.
++     *
++     * @param supplier The supplier of the entity item
++     * @return The entity item from the supplier, without spawning or capturing
++     */
++    public EntityItem captureDrop(java.util.function.Supplier<EntityItem> supplier)
++    {
++        final EntityItem item = supplier.get();
++        captureDrops(list -> list.add(item));
++        return item;
++    }
++
 +    /* ================================== Forge End =====================================*/
 +
      public void func_184178_b(EntityPlayerMP p_184178_1_)

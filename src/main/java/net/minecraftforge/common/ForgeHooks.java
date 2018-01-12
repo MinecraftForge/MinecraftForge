@@ -585,7 +585,7 @@ public class ForgeHooks
         return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
     }
 
-    public static boolean onLivingDrops(EntityLivingBase entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit)
+    public static boolean onLivingDrops(EntityLivingBase entity, DamageSource source, List<EntityItem> drops, int lootingLevel, boolean recentlyHit)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
     }
@@ -667,10 +667,8 @@ public class ForgeHooks
     @Nullable
     public static EntityItem onPlayerTossEvent(@Nonnull EntityPlayer player, @Nonnull ItemStack item, boolean includeName)
     {
-        player.captureDrops = true;
-        EntityItem ret = player.dropItem(item, false, includeName);
-        player.capturedDrops.clear();
-        player.captureDrops = false;
+        // We aren't really capturing the drop, we just want it captured and removed from the capture list.
+        EntityItem ret = player.captureDrop(() -> player.dropItem(item, false, includeName));
 
         if (ret == null)
         {
