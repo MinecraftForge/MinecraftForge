@@ -25,9 +25,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ITeleporter;
@@ -116,15 +114,7 @@ public class CommandSetDimension extends CommandBase
         @Override
         public void placeEntity(World world, Entity entity, float yaw)
         {
-            entity.setPosition(targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5);
-            // clear out space for entity
-            AxisAlignedBB aabb = entity.getEntityBoundingBox();
-            BlockPos min = new BlockPos(MathHelper.floor(aabb.minX), MathHelper.floor(aabb.minY), MathHelper.floor(aabb.minZ));
-            BlockPos max = new BlockPos(MathHelper.ceil(aabb.maxX),  MathHelper.ceil(aabb.maxY),  MathHelper.ceil(aabb.maxZ));
-            for (BlockPos pos : BlockPos.getAllInBoxMutable(min, max))
-            {
-                world.setBlockToAir(pos);
-            }
+            entity.moveToBlockPosAndAngles(targetPos, yaw, entity.rotationPitch);
         }
     }
 }
