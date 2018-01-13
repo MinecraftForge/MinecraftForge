@@ -73,7 +73,7 @@
 +    private net.minecraftforge.client.IRenderHandler skyRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
-+    private net.minecraft.util.ResourceLocation dimensionId;
++    private net.minecraftforge.common.Dimension dimension;
 +
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
@@ -84,15 +84,15 @@
 +     */
 +    public void setDimension(net.minecraft.util.ResourceLocation dimID)
 +    {
-+        this.dimensionId = dimID;
++        this.dimension=net.minecraftforge.fml.common.registry.ForgeRegistries.DIMENSIONS.getValue(dimID);
 +    }
 +    public net.minecraft.util.ResourceLocation getDimension()
 +    {
-+        return this.dimensionId;
++        return dimension.getID();
 +    }
 +    public int  getDimensionInt()
 +    {
-+    	return net.minecraftforge.fml.common.registry.ForgeRegistries.DIMENSIONS.getValue(dimensionId).getDimIntID();
++    	return dimension.getDimIntID();
 +    }
 +
 +    /**
@@ -103,7 +103,7 @@
 +    @Nullable
 +    public String getSaveFolder()
 +    {
-+        return (dimensionId.toString().equals("minecraft:overworld") ? null : "DIM" + net.minecraftforge.fml.common.registry.ForgeRegistries.DIMENSIONS.getValue(dimensionId).getDimIntID());
++        return (dimension.getID().toString().equals("minecraft:overworld") ? null : "DIM" + dimension.getDimIntID());
 +    }
 +
 +    /**
@@ -204,7 +204,7 @@
 +     */
 +    public boolean shouldMapSpin(String entity, double x, double z, double rotation)	//This might break, but I don't think negative dimension IDs were happening
 +    {
-+        return dimensionId.toString().contains("nether");	//need some kind of String for this 
++        return dimension.getID().toString().contains("nether");	//need some kind of String for this 
 +    }
 +
 +    /**
