@@ -261,7 +261,7 @@ public class GuiTab
         {
             throw new IllegalArgumentException("Cannot add tabs to creative inventory. Use CreativeTabs instead");
         }
-        else if (parentContainer == InventoryEffectRenderer.class)
+        else if (parentContainer.isAssignableFrom(InventoryEffectRenderer.class))
         {
             throw new IllegalArgumentException(name + " tab has a parent that is ambiguous with the creative inventory. cannot proceed with registry.");
         }
