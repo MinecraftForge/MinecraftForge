@@ -23,9 +23,13 @@ import java.util.Map;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 
@@ -34,7 +38,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     private final DimensionType type;
     private final ResourceLocation dimID;
     private int ticksWaited;
-    private int dimIntID;
+    private int dimIntID = -2;
     public static Map<Integer,ResourceLocation> dimensionIntIDMap = new Int2ObjectOpenHashMap<ResourceLocation>();
     public static Map<Integer,DimensionType> dimensionTypeMap = new Int2ObjectOpenHashMap<DimensionType>();
     
@@ -50,6 +54,19 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
         {
         	dimID = new ResourceLocation(dimensionName);
         }
+    }
+
+    @EventHandler
+    public static void getDimensionIntIDs(FMLInitializationEvent event)
+    {
+    	RegistryNamespaced<ResourceLocation,Dimension> temp = GameData.getWrapper(Dimension.class);
+    	for(Dimension dimension: ForgeRegistries.DIMENSIONS.getValues())
+    	{
+    		if(dimension.getDimIntID()==-2)
+    		{
+    			dimension.setDimIntID(temp.getIDForObject(dimension));
+    		}
+    	}
     }
     
     static void init()
