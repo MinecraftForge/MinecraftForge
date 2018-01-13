@@ -19,6 +19,10 @@
 
 package net.minecraftforge.client;
 
+/**
+ * @deprecated TODO remove in 1.13. This has never been used
+ */
+@Deprecated
 public interface IRenderContextHandler
 {
     /** Run before the specified rendering context.
