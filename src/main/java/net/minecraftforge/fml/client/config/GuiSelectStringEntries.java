@@ -200,6 +200,6 @@ public class GuiSelectStringEntries extends GuiListExtended
 
     public static interface IGuiSelectStringListEntry extends GuiListExtended.IGuiListEntry
     {
-        public Object getValue();
+        Object getValue();
     }
 }

@@ -106,6 +106,9 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -208,8 +211,10 @@ public final class ModelLoader extends ModelBakery
     @Override
     protected void loadBlocks()
     {
-        List<Block> blocks = Lists.newArrayList(Iterables.filter(Block.REGISTRY, block -> block.getRegistryName() != null));
-        blocks.sort(Comparator.comparing(b -> b.getRegistryName().toString()));
+        List<Block> blocks = StreamSupport.stream(Block.REGISTRY.spliterator(), false)
+                .filter(block -> block.getRegistryName() != null)
+                .sorted(Comparator.comparing(b -> b.getRegistryName().toString()))
+                .collect(Collectors.toList());
         ProgressBar blockBar = ProgressManager.push("ModelLoader: blocks", blocks.size());
 
         BlockStateMapper mapper = this.blockModelShapes.getBlockStateMapper();
@@ -280,8 +285,10 @@ public final class ModelLoader extends ModelBakery
 
         registerVariantNames();
 
-        List<Item> items = Lists.newArrayList(Iterables.filter(Item.REGISTRY, item -> item.getRegistryName() != null));
-        Collections.sort(items, (i1, i2) -> i1.getRegistryName().toString().compareTo(i2.getRegistryName().toString()));
+        List<Item> items = StreamSupport.stream(Item.REGISTRY.spliterator(), false)
+                .filter(item -> item.getRegistryName() != null)
+                .sorted(Comparator.comparing(i -> i.getRegistryName().toString()))
+                .collect(Collectors.toList());
 
         ProgressBar itemBar = ProgressManager.push("ModelLoader: items", items.size());
         for(Item item : items)
