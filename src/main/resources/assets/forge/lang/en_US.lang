@@ -221,5 +221,3 @@ fml.button.open.file=Open %s
 
 forge.container.enchant.limitedEnchantability=Limited Enchantability
 attribute.name.generic.reachDistance=Reach Distance
-
-guiGroup.default=Main Gui
