@@ -111,7 +111,7 @@ public class Fluid
      * 
      * Default value is 0; anything above is considered a combustible fluid.
      * Hot fluids are hot, not combustible, so their value should be 0.
-     * If fuelEnergy > 0, isCombustible will return true.
+     * If fuelTime > 0, isCombustible will return true.
      *
      * For reference, smelting one item takes 200 ticks, one piece of coal = 1600 ticks.
      */
