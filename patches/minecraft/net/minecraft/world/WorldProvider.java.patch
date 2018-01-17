@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,318 @@
+@@ -241,6 +216,323 @@
          return new WorldBorder();
      }
  
@@ -96,6 +96,7 @@
 +     * EXA: DIM1, DIM-1
 +     * @return The sub-folder name to save this world's chunks to.
 +     */
++    @Nullable
 +    public String getSaveFolder()
 +    {
 +        return (dimensionId == 0 ? null : "DIM" + dimensionId);
@@ -117,6 +118,7 @@
 +        return 1.0;
 +    }
 +
++    @Nullable
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraftforge.client.IRenderHandler getSkyRenderer()
 +    {
@@ -129,6 +131,7 @@
 +        this.skyRenderer = skyRenderer;
 +    }
 +
++    @Nullable
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraftforge.client.IRenderHandler getCloudRenderer()
 +    {
@@ -141,6 +144,7 @@
 +        cloudRenderer = renderer;
 +    }
 +
++    @Nullable
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraftforge.client.IRenderHandler getWeatherRenderer()
 +    {
@@ -219,6 +223,7 @@
 +     * Note that this method is always called before the world load event.
 +     * @return initial holder for capabilities on the world
 +     */
++    @Nullable
 +    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities() {
 +        return null;
 +    }

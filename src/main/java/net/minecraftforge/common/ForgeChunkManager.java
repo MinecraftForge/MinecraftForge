@@ -166,7 +166,7 @@ public class ForgeChunkManager
          * @param tickets The tickets to re-register. The list is immutable and cannot be manipulated directly. Copy it first.
          * @param world the world
          */
-        public void ticketsLoaded(List<Ticket> tickets, World world);
+        void ticketsLoaded(List<Ticket> tickets, World world);
     }
 
     /**
@@ -197,7 +197,7 @@ public class ForgeChunkManager
          * to "maxTicketCount" size after the call returns and then offered to the other callback
          * method
          */
-        public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount);
+        List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount);
     }
 
     public interface PlayerOrderedLoadingCallback extends LoadingCallback
@@ -216,7 +216,7 @@ public class ForgeChunkManager
          * @return A list of the tickets this mod wishes to use. This list will subsequently be offered
          * to the main callback for action
          */
-        public ListMultimap<String, Ticket> playerTicketsLoaded(ListMultimap<String, Ticket> tickets, World world);
+        ListMultimap<String, Ticket> playerTicketsLoaded(ListMultimap<String, Ticket> tickets, World world);
     }
     public enum Type
     {
@@ -1009,6 +1009,7 @@ public class ForgeChunkManager
 
         loadChunkEntities(entry.chunk, entry.nbt, world);
 
+        cache.invalidate(coords);
         return entry.chunk;
     }
 

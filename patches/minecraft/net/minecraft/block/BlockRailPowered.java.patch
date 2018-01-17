@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRailPowered.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRailPowered.java
+@@ -146,7 +146,7 @@
+     {
+         IBlockState iblockstate = p_176567_1_.func_180495_p(p_176567_2_);
+ 
+-        if (iblockstate.func_177230_c() != this)
++        if (!(iblockstate.func_177230_c() instanceof BlockRailPowered))
+         {
+             return false;
+         }

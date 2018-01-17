@@ -167,7 +167,7 @@
          }
      }
  
-@@ -561,4 +582,30 @@
+@@ -561,4 +582,31 @@
              this.field_75590_b = p_i1674_3_;
          }
      }
@@ -179,6 +179,7 @@
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +
++    @Nullable
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
