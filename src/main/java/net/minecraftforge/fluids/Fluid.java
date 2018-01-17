@@ -427,6 +427,8 @@ public class Fluid
     public int getDensity(FluidStack stack){ return getDensity(); }
     public int getTemperature(FluidStack stack){ return getTemperature(); }
     public int getViscosity(FluidStack stack){ return getViscosity(); }
+    public int getFuelTime(FluidStack stack){ return getFuelTime(); }
+    public boolean isCombustible(FluidStack stack){ return isCombustible(); }
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public EnumRarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
@@ -440,6 +442,8 @@ public class Fluid
     public int getDensity(World world, BlockPos pos){ return getDensity(); }
     public int getTemperature(World world, BlockPos pos){ return getTemperature(); }
     public int getViscosity(World world, BlockPos pos){ return getViscosity(); }
+    public int getFuelTime(FluidStack stack){ return getFuelTime(); }
+    public boolean isCombustible(FluidStack stack){ return isCombustible(); }
     public boolean isGaseous(World world, BlockPos pos){ return isGaseous(); }
     public EnumRarity getRarity(World world, BlockPos pos){ return getRarity(); }
     public int getColor(World world, BlockPos pos){ return getColor(); }
