@@ -113,7 +113,7 @@ public class Fluid
      * If fuelEnergy > 0, isCombustible will return true.
      *
      * Energy is measured in fuel ticks per bucket of fluid.
-     * For reference, one piece of coal = 200 ticks.
+     * For reference, smelting one item takes 200 ticks, one piece of coal = 1600 ticks.
      */
     protected int fuelEnergy = 0;
 
