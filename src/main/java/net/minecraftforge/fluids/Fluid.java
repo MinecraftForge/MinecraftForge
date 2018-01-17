@@ -358,7 +358,7 @@ public class Fluid
         return this.fuelEnergy;
     }
 	
-    public final boolean isCombustible()
+    public boolean isCombustible()
     {
         return (this.fuelEnergy > 0);
     }
