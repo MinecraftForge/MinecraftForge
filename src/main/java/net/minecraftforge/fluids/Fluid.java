@@ -106,16 +106,16 @@ public class Fluid
     protected int viscosity = 1000;
 	
     /**
-     * Amount of energy the fluid can produce in a fluid-fueled generator.
+     * Amount of time a fluid will burn for in a fluid-fueled generator.
+     * Measured in fuel ticks per bucket of fluid.
      * 
      * Default value is 0; anything above is considered a combustible fluid.
      * Hot fluids are hot, not combustible, so their value should be 0.
      * If fuelEnergy > 0, isCombustible will return true.
      *
-     * Energy is measured in fuel ticks per bucket of fluid.
      * For reference, smelting one item takes 200 ticks, one piece of coal = 1600 ticks.
      */
-    protected int fuelEnergy = 0;
+    protected int fuelTime = 0;
 
     /**
      * This indicates if the fluid is gaseous.
@@ -214,9 +214,9 @@ public class Fluid
         return this;
     }
     
-    public Fluid setFuelEnergy(int fuelEnergy)
+    public Fluid setFuelTime(int fuelTime)
     {
-        this.fuelEnergy = fuelEnergy;
+        this.fuelTime = fuelTime;
         return this;
     }
 
@@ -353,14 +353,14 @@ public class Fluid
         return this.viscosity;
     }
 
-    public final int getFuelEnergy()
+    public final int getFuelTime()
     {
-        return this.fuelEnergy;
+        return this.fuelTime;
     }
 	
     public boolean isCombustible()
     {
-        return (this.fuelEnergy > 0);
+        return (this.fuelTime > 0);
     }
 
     public final boolean isGaseous()
