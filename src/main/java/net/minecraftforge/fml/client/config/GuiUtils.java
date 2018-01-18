@@ -361,9 +361,13 @@ public class GuiUtils
                 }
             }
 
-            if (tooltipY + tooltipHeight + 6 > screenHeight)
+            if (tooltipY < 4)
             {
-                tooltipY = screenHeight - tooltipHeight - 6;
+                tooltipY = 4;
+            }
+            else if (tooltipY + tooltipHeight + 4 > screenHeight)
+            {
+                tooltipY = screenHeight - tooltipHeight - 4;
             }
 
             final int zLevel = 300;

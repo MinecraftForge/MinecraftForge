@@ -116,7 +116,7 @@
          catch (Throwable throwable1)
          {
              field_147145_h.error("Encountered an unexpected exception", throwable1);
-@@ -536,14 +567,15 @@
+@@ -536,13 +567,13 @@
                  field_147145_h.error("We were unable to save this crash report to disk.");
              }
  
@@ -131,8 +131,7 @@
                  this.func_71260_j();
              }
              catch (Throwable throwable)
-             {
-@@ -551,6 +583,8 @@
+@@ -551,6 +582,8 @@
              }
              finally
              {
@@ -141,6 +140,14 @@
                  this.func_71240_o();
              }
          }
+@@ -577,6 +610,7 @@
+                 ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
+                 ByteBuf bytebuf1 = Base64.encode(bytebuf);
+                 p_184107_1_.func_151320_a("data:image/png;base64," + bytebuf1.toString(StandardCharsets.UTF_8));
++                bytebuf1.release(); // Forge: fix MC-122085
+             }
+             catch (Exception exception)
+             {
 @@ -618,6 +652,7 @@
      public void func_71217_p()
      {

@@ -33,6 +33,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
+import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
@@ -48,6 +49,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     protected ItemStack output = ItemStack.EMPTY;
     protected NonNullList<Ingredient> input = NonNullList.create();
     protected ResourceLocation group;
+    protected boolean isSimple = true;
 
     public ShapelessOreRecipe(ResourceLocation group, Block result, Object... recipe){ this(group, new ItemStack(result), recipe); }
     public ShapelessOreRecipe(ResourceLocation group, Item  result, Object... recipe){ this(group, new ItemStack(result), recipe); }
@@ -56,6 +58,8 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         this.group = group;
         output = result.copy();
         this.input = input;
+        for (Ingredient i : input)
+            this.isSimple &= i.isSimple();
     }
     public ShapelessOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe)
     {
@@ -67,6 +71,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
             if (ing != null)
             {
                 input.add(ing);
+                this.isSimple &= ing.isSimple();
             }
             else
             {
@@ -94,6 +99,7 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     {
         int ingredientCount = 0;
         RecipeItemHelper recipeItemHelper = new RecipeItemHelper();
+        List<ItemStack> items = Lists.newArrayList();
 
         for (int i = 0; i < inv.getSizeInventory(); ++i)
         {
@@ -101,11 +107,20 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
             if (!itemstack.isEmpty())
             {
                 ++ingredientCount;
-                recipeItemHelper.accountStack(itemstack);
+                if (this.isSimple)
+                    recipeItemHelper.accountStack(itemstack, 1);
+                else
+                    items.add(itemstack);
             }
         }
 
-        return ingredientCount == this.input.size() && recipeItemHelper.canCraft(this, null);
+        if (ingredientCount != this.input.size())
+            return false;
+
+        if (this.isSimple)
+            return recipeItemHelper.canCraft(this, null);
+
+        return RecipeMatcher.findMatches(items, this.input) != null;
     }
 
     @Override

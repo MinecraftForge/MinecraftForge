@@ -20,11 +20,17 @@ public class CompoundIngredient extends Ingredient
     private Collection<Ingredient> children;
     private ItemStack[] stacks;
     private IntList itemIds;
+    private final boolean isSimple;
 
     protected CompoundIngredient(Collection<Ingredient> children)
     {
         super(0);
         this.children = children;
+
+        boolean simple = true;
+        for (Ingredient child : children)
+            simple &= child.isSimple();
+        this.isSimple = simple;
     }
 
     @Override
@@ -77,5 +83,11 @@ public class CompoundIngredient extends Ingredient
         this.itemIds = null;
         this.stacks = null;
         //Shouldn't need to invalidate children as this is only called form invalidateAll..
+    }
+
+    @Override
+    public boolean isSimple()
+    {
+        return isSimple;
     }
 }
