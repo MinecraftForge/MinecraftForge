@@ -228,6 +228,7 @@ public class GameRegistry
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String key)
     {
+        GameData.checkPrefix(key);
         TileEntity.register(key, tileEntityClass);
     }
 
