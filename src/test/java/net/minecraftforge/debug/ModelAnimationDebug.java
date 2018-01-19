@@ -504,7 +504,7 @@ public class ModelAnimationDebug
 
         public void handleEvents(float time, Iterable<Event> pastEvents)
         {
-            // TODO Auto-generated method stub
+
         }
 
         @Override

@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = "clientexceptiontest", version = "1.0", name = "Client Exception Test", clientSideOnly = true)
@@ -12,8 +13,9 @@ public class ClientExceptionTestMod
 {
 
     // Disabled so other test mods can still work.
-    public static boolean ENABLE_PREINIT = false, ENABLE_INIT = false;
-    private static String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+    public static boolean ENABLE_PREINIT = false;
+    public static boolean ENABLE_INIT = false;
+    public static boolean ENABLE_LOAD_COMPLETE = false;
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent e)
@@ -33,6 +35,15 @@ public class ClientExceptionTestMod
         }
     }
 
+    @Mod.EventHandler
+    public void onLoadComplete(FMLLoadCompleteEvent e)
+    {
+        if (ENABLE_LOAD_COMPLETE)
+        {
+            throwException("Thrown in load complete");
+        }
+    }
+
     private void throwException(String runtimeMessage)
     {
         throw new CustomModLoadingErrorDisplayException("Custom Test Exception", new RuntimeException(runtimeMessage))
@@ -44,7 +55,7 @@ public class ClientExceptionTestMod
             public void drawScreen(GuiErrorScreen parent, FontRenderer fontRenderer, int mouseRelX, int mouseRelY, float tickTime)
             {
                 parent.drawCenteredString(parent.mc.fontRenderer, "Custom Test Exception", parent.width / 2, 90, 16777215);
-                parent.drawCenteredString(parent.mc.fontRenderer, LOREM_IPSUM, parent.width / 2, 110, 16777215);
+                parent.drawCenteredString(parent.mc.fontRenderer, runtimeMessage, parent.width / 2, 110, 16777215);
             }
         };
     }
