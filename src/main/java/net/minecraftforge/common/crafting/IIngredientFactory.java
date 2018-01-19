@@ -27,5 +27,5 @@ import net.minecraft.item.crafting.Ingredient;
 public interface IIngredientFactory
 {
     @Nonnull //If you would return null throw JsonSyntaxException to explain why
-    public Ingredient parse(JsonContext context, JsonObject json);
+    Ingredient parse(JsonContext context, JsonObject json);
 }

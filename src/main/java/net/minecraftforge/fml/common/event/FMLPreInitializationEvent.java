@@ -45,7 +45,6 @@ import javax.annotation.Nullable;
  * Load any configuration data you might have {@link #getSuggestedConfigurationFile()}
  * Search for a version.properties file and load it {@link #getVersionProperties()}
  * Configure your {@link ModMetadata} programmatically {@link #getModMetadata()}
- * Register your blocks and items with the {@link net.minecraftforge.fml.common.registry.GameRegistry}
  * Discover parts of your mod by using annotation search {@link #getAsmData()}
  *
  * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
@@ -147,8 +146,6 @@ public class FMLPreInitializationEvent extends FMLStateEvent
 
     /**
      * Get a logger instance configured to write to the FML Log as a parent, identified by modid. Handy for mod logging!
-     * Configurations can be applied through the <code>config/logging.properties</code> file, specifying logging levels
-     * for your ModID. Use this!
      *
      * @return A logger
      */
