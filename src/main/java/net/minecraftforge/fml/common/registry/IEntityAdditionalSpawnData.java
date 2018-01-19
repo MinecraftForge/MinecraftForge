@@ -33,7 +33,7 @@ public interface IEntityAdditionalSpawnData
      *
      * @param buffer The packet data stream
      */
-    public void writeSpawnData(ByteBuf buffer);
+    void writeSpawnData(ByteBuf buffer);
 
     /**
      * Called by the client when it receives a Entity spawn packet.
@@ -41,5 +41,5 @@ public interface IEntityAdditionalSpawnData
      *
      * @param additionalData The packet data stream
      */
-    public void readSpawnData(ByteBuf additionalData);
+    void readSpawnData(ByteBuf additionalData);
 }

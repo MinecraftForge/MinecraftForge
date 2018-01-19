@@ -164,7 +164,7 @@
      }
  
      public static class EntityEggInfo
-@@ -428,5 +449,16 @@
+@@ -428,5 +450,16 @@
                  this.field_151512_d = StatList.func_151182_a(this);
                  this.field_151513_e = StatList.func_151176_b(this);
              }
