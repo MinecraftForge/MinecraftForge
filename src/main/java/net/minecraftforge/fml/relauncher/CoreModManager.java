@@ -640,7 +640,7 @@ public class CoreModManager {
                 }
                 else if (deobfuscatedEnvironment && location == null) // This is probably a mod dev workspace
                 {
-                    FMLLog.log.info("Ignoring missing certificate for coremod {} ({}), as this is a probably dev workspace", coreModName, coreModClass);
+                    FMLLog.log.info("Ignoring missing certificate for coremod {} ({}), as this is probably a dev workspace", coreModName, coreModClass);
                 }
                 else // This is a probably a normal minecraft workspace - log at warn
                 {

@@ -887,6 +887,23 @@
 +    }
 +
 +    /**
++     * Allows a block to override the standard vanilla running particles.
++     * This is called from {@link Entity#spawnRunningParticles} and is called both,
++     * Client and server side, it's up to the implementor to client check / server check.
++     * By default vanilla spawns particles only on the client and the server methods no-op.
++     *
++     * @param state  The BlockState the entity is running on.
++     * @param world  The world.
++     * @param pos    The position at the entities feet.
++     * @param entity The entity running on the block.
++     * @return True to prevent vanilla running particles from spawning.
++     */
++    public boolean addRunningEffects(IBlockState state, World world, BlockPos pos, Entity entity)
++    {
++        return false;
++    }
++
++    /**
 +     * Spawn a digging particle effect in the world, this is a wrapper
 +     * around EffectRenderer.addBlockHitEffects to allow the block more
 +     * control over the particles. Useful when you have entirely different
@@ -1189,7 +1206,7 @@
 +            if (prop.func_177701_a().equals("color") && prop.func_177699_b() == net.minecraft.item.EnumDyeColor.class)
 +            {
 +                net.minecraft.item.EnumDyeColor current = (net.minecraft.item.EnumDyeColor)state.func_177229_b(prop);
-+                if (current != color)
++                if (current != color && prop.func_177700_c().contains(color))
 +                {
 +                    world.func_175656_a(pos, state.func_177226_a(prop, color));
 +                    return true;

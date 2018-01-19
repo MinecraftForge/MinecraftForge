@@ -4,7 +4,7 @@
  
      public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_)
      {
-+        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_184230_1_, p_184230_2_))) return true;
++        if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
 +
          if (p_184230_1_.func_70093_af())
          {
