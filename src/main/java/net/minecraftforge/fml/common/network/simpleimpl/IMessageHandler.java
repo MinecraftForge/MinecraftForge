@@ -39,5 +39,5 @@ public interface IMessageHandler<REQ extends IMessage, REPLY extends IMessage> {
      * @param message The message
      * @return an optional return message
      */
-    public REPLY onMessage(REQ message, MessageContext ctx);
+    REPLY onMessage(REQ message, MessageContext ctx);
 }

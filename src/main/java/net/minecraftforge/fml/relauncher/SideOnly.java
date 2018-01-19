@@ -44,5 +44,5 @@ import net.minecraftforge.fml.common.SidedProxy;
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface SideOnly
 {
-    public Side value();
+    Side value();
 }
