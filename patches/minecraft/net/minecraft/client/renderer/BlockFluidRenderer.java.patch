@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/BlockFluidRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/BlockFluidRenderer.java
+@@ -1,14 +1,13 @@
+ package net.minecraft.client.renderer;
+ 
+-import net.minecraft.block.Block;
+ import net.minecraft.block.BlockLiquid;
+ import net.minecraft.block.material.Material;
++import net.minecraft.block.state.BlockFaceShape;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.renderer.color.BlockColors;
+ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+ import net.minecraft.client.renderer.texture.TextureMap;
+-import net.minecraft.init.Blocks;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+@@ -184,9 +183,9 @@
+ 
+                 if (!flag)
+                 {
+-                    Block block = p_178270_1_.func_180495_p(blockpos).func_177230_c();
++                    IBlockState state = p_178270_1_.func_180495_p(blockpos);
+ 
+-                    if (block == Blocks.field_150359_w || block == Blocks.field_150399_cn)
++                    if (state.func_193401_d(p_178270_1_, blockpos, EnumFacing.field_82609_l[i1+2].func_176734_d()) == BlockFaceShape.SOLID)
+                     {
+                         textureatlassprite1 = this.field_187501_d;
+                     }
