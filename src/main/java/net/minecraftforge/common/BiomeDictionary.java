@@ -152,9 +152,9 @@ public class BiomeDictionary
         }
         
         /**
-         * @return A new collection of all current biome types.
+         * @return An unmodifiable collection of all current biome types.
          */
-        public static Collection<Type> getAllTypes()
+        public static Collection<Type> getAll()
         {
             return Collections.unmodifiableCollection(byName.values());
         }
