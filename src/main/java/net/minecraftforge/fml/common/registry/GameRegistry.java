@@ -233,6 +233,11 @@ public class GameRegistry
         TileEntity.register(key, tileEntityClass);
     }
 
+    public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, ResourceLocation key)
+    {
+        registerTileEntity(tileEntityClass, key.toString());
+    }
+
     /**
      * @deprecated set your item's {@link Item#getItemBurnTime(ItemStack)} or subscribe to {@link FurnaceFuelBurnTimeEvent} instead.
      */
