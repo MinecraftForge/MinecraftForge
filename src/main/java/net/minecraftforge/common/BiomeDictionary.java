@@ -150,6 +150,14 @@ public class BiomeDictionary
             }
             return t;
         }
+        
+        /**
+         * @return A new collection of all current biome types.
+         */
+        public static Collection<Type> getAllTypes()
+        {
+            return Collections.unmodifiableCollection(byName.values());
+        }
     }
 
     private static final Map<ResourceLocation, BiomeInfo> biomeInfoMap = new HashMap<ResourceLocation, BiomeInfo>();
