@@ -50,7 +50,7 @@ public final class Optional {
          * Mark a list of interfaces for optional removal.
          * @return
          */
-        public Interface[] value();
+        Interface[] value();
     }
     /**
      * Used to remove optional interfaces
@@ -65,20 +65,20 @@ public final class Optional {
          * The fully qualified name of the interface to be stripped
          * @return the interface name
          */
-        public String iface();
+        String iface();
 
         /**
          * The modid that is required to be present for stripping NOT to occur
          * @return the modid
          */
-        public String modid();
+        String modid();
 
         /**
          * Strip references to this interface in method declarations? (Useful to kill synthetic methods from scala f.e.)
          *
          * @return if references should be stripped
          */
-        public boolean striprefs() default false;
+        boolean striprefs() default false;
     }
     /**
      * Used to remove optional methods
@@ -92,6 +92,6 @@ public final class Optional {
          * The modid that is required to be present for stripping NOT to occur
          * @return the modid
          */
-        public String modid();
+        String modid();
     }
 }
