@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class WorldProviderEventTest
 {
     static final String MOD_ID = "world_provider_event_test";
-    static final boolean ENABLED = true;
+    static final boolean ENABLED = false;
 
     @SubscribeEvent
     public static void getWorldProvider(WorldProviderEvent event)
