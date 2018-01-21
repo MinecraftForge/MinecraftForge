@@ -24,7 +24,9 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
+import net.minecraftforge.common.Dimension;
 import net.minecraftforge.common.DimensionManager;
 
 class CommandTps extends CommandBase
@@ -68,7 +70,7 @@ class CommandTps extends CommandBase
 
         if (summary)
         {
-            for (Integer dimId : DimensionManager.getIntIDs())
+            for (ResourceLocation dimId : DimensionManager.getIDs())
             {
                 double worldTickTime = mean(server.worldTickTimes.get(dimId)) * 1.0E-6D;
                 double worldTPS = Math.min(1000.0/worldTickTime, 20);
@@ -80,22 +82,22 @@ class CommandTps extends CommandBase
         }
         else
         {
-            double worldTickTime = mean(server.worldTickTimes.get(dim)) * 1.0E-6D;
+            double worldTickTime = mean(server.worldTickTimes.get(Dimension.getID(dim))) * 1.0E-6D;
             double worldTPS = Math.min(1000.0/worldTickTime, 20);
-            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tps.summary", getDimensionPrefix(dim), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)));
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tps.summary", getDimensionPrefix(Dimension.getID(dim)), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)));
         }
     }
 
-    private static String getDimensionPrefix(int dimId)
+    private static String getDimensionPrefix(ResourceLocation dimId)
     {
         DimensionType providerType = DimensionManager.getProviderType(dimId);
         if (providerType == null)
         {
-            return String.format("Dim %2d", dimId);
+            return String.format("Dim %2d", dimId.toString());
         }
         else
         {
-            return String.format("Dim %2d (%s)", dimId, providerType.getName());
+            return String.format("Dim %2d (%s)", dimId.toString(), providerType.getName());
         }
     }
 
