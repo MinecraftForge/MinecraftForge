@@ -120,7 +120,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     {
     	if(dimIntID==-2)
     	{
-    		dimIntID = GameData.getWrapper(Dimension.class).getIDForObject(this);
+    		setDimIntID(GameData.getWrapper(Dimension.class).getIDForObject(this));
     	}
     	return dimIntID;
     }
