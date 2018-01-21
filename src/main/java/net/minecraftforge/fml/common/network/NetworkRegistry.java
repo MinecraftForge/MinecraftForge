@@ -24,10 +24,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.AttributeKey;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
 
@@ -304,13 +306,18 @@ public enum NetworkRegistry
 
     public boolean isVanillaAccepted(Side from)
     {
-        boolean result = true;
-        for (Entry<ModContainer, NetworkModHolder> e : registry.entrySet())
-        {
-            result &= e.getValue().acceptsVanilla(from);
-        }
-        return result;
+        return registry.values().stream()
+                .allMatch(mod -> mod.acceptsVanilla(from));
     }
+
+    public Collection<String> getModNamesThatDoNotAcceptVanilla(Side from)
+    {
+        return registry.values().stream()
+                .filter(mod -> !mod.acceptsVanilla(from))
+                .map(mod -> mod.getContainer().getName())
+                .collect(Collectors.toList());
+    }
+
     public Map<ModContainer,NetworkModHolder> registry()
     {
         return ImmutableMap.copyOf(registry);
