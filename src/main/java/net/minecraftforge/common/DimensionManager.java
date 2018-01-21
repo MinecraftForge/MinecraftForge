@@ -32,7 +32,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntListIterator;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
@@ -49,8 +48,8 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.storage.ISaveHandler;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 
 import javax.annotation.Nullable;
@@ -281,7 +280,9 @@ public class DimensionManager
         {
             if (dimensions.containsKey(dim))
             {
-                WorldProvider ret = getProviderType(dim).createDimension();
+                DimensionType type = getProviderType(dim);
+                WorldProvider ret = type.createDimension();
+                ret = ForgeEventFactory.getWorldProvider(dim, type, ret);
                 ret.setDimension(dim);
                 return ret;
             }

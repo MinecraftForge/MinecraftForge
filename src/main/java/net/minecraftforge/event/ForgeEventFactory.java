@@ -60,7 +60,9 @@ import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.village.Village;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
@@ -123,6 +125,7 @@ import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.world.WorldProviderEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
@@ -755,5 +758,12 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new GetCollisionBoxesEvent(world, entity, aabb, outList));
         return outList.isEmpty();
+    }
+
+    public static WorldProvider getWorldProvider(int dim, DimensionType type, WorldProvider provider)
+    {
+        WorldProviderEvent event = new WorldProviderEvent(dim, type, provider);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getProvider();
     }
 }
