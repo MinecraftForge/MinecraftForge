@@ -70,7 +70,7 @@ class CommandTps extends CommandBase
 
         if (summary)
         {
-            for (ResourceLocation dimId : DimensionManager.getIDs())
+            for (Integer dimId : DimensionManager.getIntIDs())
             {
                 double worldTickTime = mean(server.worldTickTimes.get(dimId)) * 1.0E-6D;
                 double worldTPS = Math.min(1000.0/worldTickTime, 20);
@@ -84,20 +84,20 @@ class CommandTps extends CommandBase
         {
             double worldTickTime = mean(server.worldTickTimes.get(Dimension.getID(dim))) * 1.0E-6D;
             double worldTPS = Math.min(1000.0/worldTickTime, 20);
-            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tps.summary", getDimensionPrefix(Dimension.getID(dim)), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)));
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tps.summary", dim, TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)));
         }
     }
 
-    private static String getDimensionPrefix(ResourceLocation dimId)
+    private static String getDimensionPrefix(int dimId)
     {
         DimensionType providerType = DimensionManager.getProviderType(dimId);
         if (providerType == null)
         {
-            return String.format("Dim %2d", dimId.toString());
+            return String.format("Dim %2d", dimId);
         }
         else
         {
-            return String.format("Dim %2d (%s)", dimId.toString(), providerType.getName());
+            return String.format("Dim %2d (%s)", dimId, providerType.getName());
         }
     }
 
