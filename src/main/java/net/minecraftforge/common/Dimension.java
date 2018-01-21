@@ -23,11 +23,8 @@ import java.util.Map;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -42,6 +39,13 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     public static Map<Integer,ResourceLocation> dimensionIntIDMap = new Int2ObjectOpenHashMap<ResourceLocation>();
     public static Map<Integer,DimensionType> dimensionTypeMap = new Int2ObjectOpenHashMap<DimensionType>();
     
+    static void init()
+    {
+    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.OVERWORLD, "minecraft:overworld").setDimIntID(0));
+    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.NETHER, "minecraft:nether").setDimIntID(-1));
+    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.THE_END, "minecraft:the_end").setDimIntID(1));
+    }
+    
     public Dimension(DimensionType type, String dimensionName)
     {
         this.type = type;
@@ -54,26 +58,6 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
         {
         	dimID = new ResourceLocation(dimensionName);
         }
-    }
-
-    @EventHandler
-    public static void getDimensionIntIDs(FMLInitializationEvent event)
-    {
-    	RegistryNamespaced<ResourceLocation,Dimension> temp = GameData.getWrapper(Dimension.class);
-    	for(Dimension dimension: ForgeRegistries.DIMENSIONS.getValues())
-    	{
-    		if(dimension.getDimIntID()==-2)
-    		{
-    			dimension.setDimIntID(temp.getIDForObject(dimension));
-    		}
-    	}
-    }
-    
-    static void init()
-    {
-    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.OVERWORLD, "minecraft:overworld").setDimIntID(0));
-    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.NETHER, "minecraft:nether").setDimIntID(-1));
-    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.THE_END, "minecraft:the_end").setDimIntID(1));
     }
     
     public final Dimension setRegistryName(ResourceLocation dontUse)
@@ -134,10 +118,14 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     /*Mods shouldn't call this*/
     public int getDimIntID()
     {
+    	if(dimIntID==-2)
+    	{
+    		dimIntID = GameData.getWrapper(Dimension.class).getIDForObject(this);
+    	}
     	return dimIntID;
     }
     
-    public Dimension setDimIntID(int dimIntID)
+    private Dimension setDimIntID(int dimIntID)
     {
     	this.dimIntID=dimIntID;
     	dimensionTypeMap.put(dimIntID, type);
