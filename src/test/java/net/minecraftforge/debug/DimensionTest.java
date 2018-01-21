@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.Dimension;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -23,13 +24,14 @@ public class DimensionTest {
 	public static final ResourceLocation OVERWORLD_ID = new ResourceLocation("minecraft:overworld");
 	
 	
-	@Mod.EventHandler
+	@EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         if (!ENABLED)
             return;
 
         logger = event.getModLog();
+        MinecraftForge.EVENT_BUS.register(DimensionTest.class);
     }
 	
 	@SubscribeEvent
@@ -37,6 +39,7 @@ public class DimensionTest {
 	{
 		if(!ENABLED)
 			return;
+		
 		logger.info("attempting registration of Dimensions");
 		event.getRegistry().register(new Dimension(DimensionType.OVERWORLD,"forgedimensiontest:pocketDimension"));
 		event.getRegistry().register(new Dimension(DimensionType.NETHER,"lavaDimension"));
