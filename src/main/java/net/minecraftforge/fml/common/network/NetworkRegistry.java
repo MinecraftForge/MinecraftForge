@@ -310,11 +310,12 @@ public enum NetworkRegistry
                 .allMatch(mod -> mod.acceptsVanilla(from));
     }
 
-    public Collection<String> getModNamesThatDoNotAcceptVanilla(Side from)
+    public Collection<String> getRequiredMods(Side from)
     {
         return registry.values().stream()
                 .filter(mod -> !mod.acceptsVanilla(from))
                 .map(mod -> mod.getContainer().getName())
+                .sorted()
                 .collect(Collectors.toList());
     }
 

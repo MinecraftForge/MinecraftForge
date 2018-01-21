@@ -637,8 +637,8 @@ public class FMLCommonHandler
         {
             manager.setConnectionState(EnumConnectionState.LOGIN);
             TextComponentString text = new TextComponentString("This server has mods that require FML/Forge to be installed on the client. Contact your server admin for more details.");
-            Collection<String> modNames = NetworkRegistry.INSTANCE.getModNamesThatDoNotAcceptVanilla(Side.CLIENT);
-            FMLLog.log.info("Disconnecting Player: This server has mods that require FML/Forge to be installed on the client:\n{}", modNames);
+            Collection<String> modNames = NetworkRegistry.INSTANCE.getRequiredMods(Side.CLIENT);
+            FMLLog.log.info("Disconnecting Player: This server has mods that require FML/Forge to be installed on the client: {}", modNames);
             manager.sendPacket(new SPacketDisconnect(text));
             manager.closeChannel(text);
             return false;
