@@ -50,7 +50,7 @@
              }
  
 -            if (!this.func_179860_f(villagedoorinfo.func_179852_d()) || Math.abs(this.field_75581_g - villagedoorinfo.func_75473_b()) > 1200)
-+            if (!field_75586_a.func_175667_e(villagedoorinfo.func_179852_d()) || !this.func_179860_f(villagedoorinfo.func_179852_d()) || Math.abs(this.field_75581_g - villagedoorinfo.func_75473_b()) > 1200) // Forge: check that the block is loaded to a void loading chunks
++            if (!field_75586_a.func_175667_e(villagedoorinfo.func_179852_d()) || !this.func_179860_f(villagedoorinfo.func_179852_d()) || Math.abs(this.field_75581_g - villagedoorinfo.func_75473_b()) > 1200) // Forge: check that the door block is loaded to avoid loading chunks
              {
                  this.field_75585_c = this.field_75585_c.func_177973_b(villagedoorinfo.func_179852_d());
                  flag = true;
