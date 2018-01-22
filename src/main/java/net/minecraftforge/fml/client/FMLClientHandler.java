@@ -33,6 +33,33 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.lwjgl.LWJGLUtil;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
+
+import com.google.common.base.CharMatcher;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
@@ -78,10 +105,11 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
+import net.minecraft.world.storage.WorldSummary;
 import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.client.IRenderHandler;
+import net.minecraftforge.client.SkyRenderer;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigManager;
@@ -97,9 +125,9 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.MissingModsException;
-import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
@@ -109,33 +137,6 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.GameData;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.lwjgl.LWJGLUtil;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-
-import com.google.common.base.CharMatcher;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.Maps;
-import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import javax.annotation.Nullable;
 
 
 /**
@@ -1141,5 +1142,22 @@ public class FMLClientHandler implements IFMLSidedHandler
             return true;
         }
         return getCloudRenderer().render(cloudTicks, partialTicks);
+    }
+
+    public boolean renderSky(float partialTicks)
+    {
+        SkyRenderer skyRenderer = this.client.world.provider.getSkyRenderHandler();
+        if(skyRenderer.render(partialTicks, this.client.world, this.client))
+        {
+            return true;
+        }
+
+        IRenderHandler renderer = this.client.world.provider.getSkyRenderer();
+        if(renderer != null)
+        {
+            renderer.render(partialTicks, this.client.world, this.client);
+            return true;
+        }
+        return false;
     }
 }
