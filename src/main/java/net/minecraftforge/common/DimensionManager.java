@@ -285,7 +285,7 @@ public class DimensionManager
                 WorldProvider actual = ForgeEventFactory.getWorldProvider(dim, type, initial);
                 if (actual != initial)
                 {
-                    FMLLog.log.info("Changing provider for {} ({}) from {} to {}",
+                    FMLLog.log.info("Changing provider for dimension {} ({}) from {} to {}",
                             dim, type.getName(), initial, actual);
                 }
                 actual.setDimension(dim);
