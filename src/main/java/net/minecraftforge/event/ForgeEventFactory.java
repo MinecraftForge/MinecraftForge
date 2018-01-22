@@ -122,10 +122,10 @@ import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
+import net.minecraftforge.event.world.CreateWorldProviderEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.event.world.WorldProviderEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
@@ -762,7 +762,7 @@ public class ForgeEventFactory
 
     public static WorldProvider getWorldProvider(int dim, DimensionType type, WorldProvider provider)
     {
-        WorldProviderEvent event = new WorldProviderEvent(dim, type, provider);
+        CreateWorldProviderEvent event = new CreateWorldProviderEvent(dim, type, provider);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getProvider();
     }

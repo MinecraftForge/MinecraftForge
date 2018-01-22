@@ -32,13 +32,13 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * Note that, for compatibility, it is recommended that any replacement
  * should extend the original provider class used.
  */
-public class WorldProviderEvent extends Event
+public class CreateWorldProviderEvent extends Event
 {
     private final int dimension;
     private final DimensionType type;
     private WorldProvider provider;
 
-    public WorldProviderEvent(int dimension, DimensionType type, WorldProvider provider)
+    public CreateWorldProviderEvent(int dimension, DimensionType type, WorldProvider provider)
     {
         this.dimension = dimension;
         this.type = type;

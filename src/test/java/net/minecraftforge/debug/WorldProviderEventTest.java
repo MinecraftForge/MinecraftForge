@@ -1,11 +1,11 @@
 package net.minecraftforge.debug;
 
 import net.minecraft.world.WorldProviderSurface;
-import net.minecraftforge.event.world.WorldProviderEvent;
+import net.minecraftforge.event.world.CreateWorldProviderEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = WorldProviderEventTest.MOD_ID, name = "WorldProviderEvent test mod", version = "1.0")
+@Mod(modid = WorldProviderEventTest.MOD_ID, name = "CreateWorldProviderEvent test mod", version = "1.0")
 @Mod.EventBusSubscriber
 public class WorldProviderEventTest
 {
@@ -13,7 +13,7 @@ public class WorldProviderEventTest
     static final boolean ENABLED = false;
 
     @SubscribeEvent
-    public static void getWorldProvider(WorldProviderEvent event)
+    public static void setWorldProvider(CreateWorldProviderEvent event)
     {
         if (!ENABLED) return;
 
