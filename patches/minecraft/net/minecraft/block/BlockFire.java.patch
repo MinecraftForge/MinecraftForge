@@ -29,7 +29,7 @@
      {
          if (p_180650_1_.func_82736_K().func_82766_b("doFireTick"))
          {
-+            if (!p_180650_1_.func_175697_a(p_180650_2_, 1)) return; // Forge: prevent loading unloaded chunks when spreading fire
++            if (!p_180650_1_.func_175697_a(p_180650_2_, 2)) return; // Forge: prevent loading unloaded chunks when spreading fire
              if (!this.func_176196_c(p_180650_1_, p_180650_2_))
              {
                  p_180650_1_.func_175698_g(p_180650_2_);
