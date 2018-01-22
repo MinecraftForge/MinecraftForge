@@ -281,10 +281,15 @@ public class DimensionManager
             if (dimensions.containsKey(dim))
             {
                 DimensionType type = getProviderType(dim);
-                WorldProvider ret = type.createDimension();
-                ret = ForgeEventFactory.getWorldProvider(dim, type, ret);
-                ret.setDimension(dim);
-                return ret;
+                WorldProvider initial = type.createDimension();
+                WorldProvider actual = ForgeEventFactory.getWorldProvider(dim, type, initial);
+                if (actual != initial)
+                {
+                    FMLLog.log.info("Changing provider for {} ({}) from {} to {}",
+                            dim, type.getName(), initial, actual);
+                }
+                actual.setDimension(dim);
+                return actual;
             }
             else
             {
