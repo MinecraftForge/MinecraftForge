@@ -71,7 +71,7 @@
  
 +    /*======================================= Forge Start =========================================*/
 +    private net.minecraftforge.client.IRenderHandler skyRenderer = null;
-+    private net.minecraftforge.client.SkyRenderer theSkyRenderer = new net.minecraftforge.client.SkyRenderer();
++    private net.minecraftforge.client.SkyRenderer skyRenderHandler = new net.minecraftforge.client.SkyRenderer();
 +    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
 +    private int dimensionId;
@@ -137,14 +137,14 @@
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraftforge.client.SkyRenderer getSkyRenderHandler()
 +    {
-+        return this.theSkyRenderer;
++        return this.skyRenderHandler;
 +    }
 +
 +    /** Sets sky renderer for certain pass and resource location. Renderer with higher priority is called earlier. */
 +    @SideOnly(Side.CLIENT)
 +    public void setSkyRenderer(net.minecraftforge.client.EnumSkyPass pass, net.minecraft.util.ResourceLocation id, @Nullable net.minecraftforge.client.IRenderHandler renderer, double priority)
 +    {
-+        theSkyRenderer.setSkyRenderer(pass, id, renderer, priority);
++        skyRenderHandler.setSkyRenderer(pass, id, renderer, priority);
 +    }
 +
 +    @Nullable
