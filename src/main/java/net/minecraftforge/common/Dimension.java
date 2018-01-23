@@ -60,6 +60,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
         }
     }
     
+    /* Only required for implementation, don't use this!*/
     public final Dimension setRegistryName(ResourceLocation dontUse)
     {
     	return this;
@@ -115,7 +116,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     	return dimID;
     }
     
-    /*Mods shouldn't call this*/
+    /*Internal use only*/
     public int getDimIntID()
     {
     	if(dimIntID==-2)
