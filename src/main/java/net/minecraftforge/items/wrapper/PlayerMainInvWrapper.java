@@ -22,7 +22,7 @@ package net.minecraftforge.items.wrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 
 import javax.annotation.Nonnull;
 
@@ -42,9 +42,9 @@ public class PlayerMainInvWrapper extends RangedWrapper
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate)
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, ActionType action)
     {
-        ItemStack rest = super.insertItem(slot, stack, simulate);
+        ItemStack rest = super.insertItem(slot, stack, action);
         if (rest.getCount()!= stack.getCount())
         {
             // the stack in the slot changed, animate it

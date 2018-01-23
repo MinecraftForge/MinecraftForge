@@ -29,7 +29,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 
 import javax.annotation.Nonnull;
 
@@ -246,7 +246,7 @@ public class BlockFluidFinite extends BlockFluidBase
 
     /* IFluidBlock */
     @Override
-    public int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, EnumSimulate simulate)
+    public int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, ActionType action)
     {
         IBlockState existing = world.getBlockState(pos);
         float quantaAmount = Fluid.BUCKET_VOLUME / quantaPerBlockFloat;
@@ -272,7 +272,7 @@ public class BlockFluidFinite extends BlockFluidBase
         if (quanta < 1 || quanta > 16)
             return 0;
 
-        if (simulate == EnumSimulate.EXECUTE)
+        if (action == ActionType.EXECUTE)
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, pos);
             world.setBlockState(pos, getDefaultState().withProperty(LEVEL, quanta - 1), 11);
@@ -282,11 +282,11 @@ public class BlockFluidFinite extends BlockFluidBase
     }
 
     @Override
-    public FluidStack drain(World world, BlockPos pos, EnumSimulate simulate)
+    public FluidStack drain(World world, BlockPos pos, ActionType action)
     {
         final FluidStack fluidStack = new FluidStack(getFluid(), MathHelper.floor(getQuantaPercentage(world, pos) * Fluid.BUCKET_VOLUME));
 
-        if (simulate == EnumSimulate.EXECUTE)
+        if (action == ActionType.EXECUTE)
         {
             world.setBlockToAir(pos);
         }

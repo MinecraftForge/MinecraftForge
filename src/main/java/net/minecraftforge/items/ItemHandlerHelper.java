@@ -23,11 +23,10 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import javax.annotation.Nonnull;
@@ -36,14 +35,14 @@ import javax.annotation.Nullable;
 public class ItemHandlerHelper
 {
     @Nonnull
-    public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, EnumSimulate simulate)
+    public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, ActionType action)
     {
         if (dest == null || stack.isEmpty())
             return stack;
 
         for (int i = 0; i < dest.getSlots(); i++)
         {
-            stack = dest.insertItem(i, stack, simulate);
+            stack = dest.insertItem(i, stack, action);
             if (stack.isEmpty())
             {
                 return ItemStack.EMPTY;
@@ -101,7 +100,7 @@ public class ItemHandlerHelper
      * Note: This function stacks items without subtypes with different metadata together.
      */
     @Nonnull
-    public static ItemStack insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, EnumSimulate simulate)
+    public static ItemStack insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, ActionType action)
     {
         if (inventory == null || stack.isEmpty())
             return stack;
@@ -109,7 +108,7 @@ public class ItemHandlerHelper
         // not stackable -> just insert into a new slot
         if (!stack.isStackable())
         {
-            return insertItem(inventory, stack, simulate);
+            return insertItem(inventory, stack, action);
         }
 
         int sizeInventory = inventory.getSlots();
@@ -120,7 +119,7 @@ public class ItemHandlerHelper
             ItemStack slot = inventory.getStackInSlot(i);
             if (canItemStacksStackRelaxed(slot, stack))
             {
-                stack = inventory.insertItem(i, stack, simulate);
+                stack = inventory.insertItem(i, stack, action);
 
                 if (stack.isEmpty())
                 {
@@ -137,7 +136,7 @@ public class ItemHandlerHelper
             {
                 if (inventory.getStackInSlot(i).isEmpty())
                 {
-                    stack = inventory.insertItem(i, stack, simulate);
+                    stack = inventory.insertItem(i, stack, action);
                     if (stack.isEmpty())
                     {
                         break;
@@ -171,12 +170,12 @@ public class ItemHandlerHelper
         // insert into preferred slot first
         if(preferredSlot >= 0)
         {
-            remainder = inventory.insertItem(preferredSlot, stack, EnumSimulate.EXECUTE);
+            remainder = inventory.insertItem(preferredSlot, stack, ActionType.EXECUTE);
         }
         // then into the inventory in general
         if(!remainder.isEmpty())
         {
-            remainder = insertItemStacked(inventory, remainder, EnumSimulate.EXECUTE);
+            remainder = insertItemStacked(inventory, remainder, ActionType.EXECUTE);
         }
 
         // play sound if something got picked up

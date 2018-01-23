@@ -20,7 +20,7 @@
 package net.minecraftforge.items.wrapper;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -45,14 +45,14 @@ public class EmptyHandler implements IItemHandlerModifiable
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate)
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, ActionType action)
     {
         return stack;
     }
 
     @Override
     @Nonnull
-    public ItemStack extractItem(int slot, int amount, EnumSimulate simulate)
+    public ItemStack extractItem(int slot, int amount, ActionType action)
     {
         return ItemStack.EMPTY;
     }

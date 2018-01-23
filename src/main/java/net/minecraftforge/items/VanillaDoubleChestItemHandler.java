@@ -30,7 +30,7 @@ import net.minecraft.world.World;
 import java.lang.ref.WeakReference;
 
 import com.google.common.base.Objects;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -140,7 +140,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate)
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, ActionType action)
     {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
@@ -149,8 +149,8 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
             return stack;
 
         int starting = stack.getCount();
-        ItemStack ret = chest.getSingleChestHandler().insertItem(targetSlot, stack, simulate);
-        if (ret.getCount() != starting && simulate == EnumSimulate.EXECUTE)
+        ItemStack ret = chest.getSingleChestHandler().insertItem(targetSlot, stack, action);
+        if (ret.getCount() != starting && action == ActionType.EXECUTE)
         {
             chest = getChest(!accessingUpperChest);
             if (chest != null)
@@ -162,7 +162,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
 
     @Override
     @Nonnull
-    public ItemStack extractItem(int slot, int amount, EnumSimulate simulate)
+    public ItemStack extractItem(int slot, int amount, ActionType action)
     {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
@@ -170,8 +170,8 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         if (chest == null)
             return ItemStack.EMPTY;
 
-        ItemStack ret = chest.getSingleChestHandler().extractItem(targetSlot, amount, simulate);
-        if (!ret.isEmpty() && simulate == EnumSimulate.EXECUTE)
+        ItemStack ret = chest.getSingleChestHandler().extractItem(targetSlot, amount, action);
+        if (!ret.isEmpty() && action == ActionType.EXECUTE)
         {
             chest = getChest(!accessingUpperChest);
             if (chest != null)

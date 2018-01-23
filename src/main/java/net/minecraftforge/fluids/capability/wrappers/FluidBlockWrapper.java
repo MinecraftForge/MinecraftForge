@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
@@ -61,31 +61,31 @@ public class FluidBlockWrapper implements IFluidHandler
     }
 
     @Override
-    public int fill(FluidStack resource, EnumSimulate simulate)
+    public int fill(FluidStack resource, ActionType action)
     {
         // NOTE: "Filling" means placement in this context!
         if (resource == null)
         {
             return 0;
         }
-        return fluidBlock.place(world, blockPos, resource, simulate);
+        return fluidBlock.place(world, blockPos, resource, action);
     }
 
     @Nullable
     @Override
-    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
+    public FluidStack drain(FluidStack resource, ActionType action)
     {
         if (resource == null || !fluidBlock.canDrain(world, blockPos))
         {
             return null;
         }
 
-        FluidStack simulatedDrain = fluidBlock.drain(world, blockPos, EnumSimulate.SIMULATE);
+        FluidStack simulatedDrain = fluidBlock.drain(world, blockPos, ActionType.SIMULATE);
         if (resource.containsFluid(simulatedDrain))
         {
-            if (simulate == EnumSimulate.EXECUTE)
+            if (action == ActionType.EXECUTE)
             {
-                return fluidBlock.drain(world, blockPos, EnumSimulate.EXECUTE);
+                return fluidBlock.drain(world, blockPos, ActionType.EXECUTE);
             }
             else
             {
@@ -98,19 +98,19 @@ public class FluidBlockWrapper implements IFluidHandler
 
     @Nullable
     @Override
-    public FluidStack drain(int maxDrain, EnumSimulate simulate)
+    public FluidStack drain(int maxDrain, ActionType action)
     {
         if (maxDrain <= 0 || !fluidBlock.canDrain(world, blockPos))
         {
             return null;
         }
 
-        FluidStack simulatedDrain = fluidBlock.drain(world, blockPos, EnumSimulate.SIMULATE);
+        FluidStack simulatedDrain = fluidBlock.drain(world, blockPos, ActionType.SIMULATE);
         if (simulatedDrain != null && simulatedDrain.amount <= maxDrain)
         {
-            if (simulate == EnumSimulate.EXECUTE)
+            if (action == ActionType.EXECUTE)
             {
-                return fluidBlock.drain(world, blockPos, EnumSimulate.EXECUTE);
+                return fluidBlock.drain(world, blockPos, ActionType.EXECUTE);
             }
             else
             {

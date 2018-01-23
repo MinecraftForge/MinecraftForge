@@ -22,7 +22,7 @@ package net.minecraftforge.fluids.capability.wrappers;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -47,14 +47,14 @@ public class BlockWrapper extends VoidFluidHandler
     }
 
     @Override
-    public int fill(FluidStack resource, EnumSimulate simulate)
+    public int fill(FluidStack resource, ActionType action)
     {
         // NOTE: "Filling" means placement in this context!
         if (resource.amount < Fluid.BUCKET_VOLUME)
         {
             return 0;
         }
-        if (simulate == EnumSimulate.EXECUTE)
+        if (action == ActionType.EXECUTE)
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, blockPos);
             world.setBlockState(blockPos, block.getDefaultState(), 11);

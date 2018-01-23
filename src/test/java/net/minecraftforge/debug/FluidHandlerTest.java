@@ -4,7 +4,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -57,7 +57,7 @@ public class FluidHandlerTest
         IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(preDrainStack);
         if (fluidHandler != null)
         {
-            FluidStack drain = fluidHandler.drain(Integer.MAX_VALUE, EnumSimulate.EXECUTE);
+            FluidStack drain = fluidHandler.drain(Integer.MAX_VALUE, ActionType.EXECUTE);
             ItemStack drainedStack = fluidHandler.getContainer();
             logger.info("Draining {} gives {} and {}", stackString(stack), fluidString(drain), stackString(drainedStack));
 
@@ -72,7 +72,7 @@ public class FluidHandlerTest
                 fluidHandler = FluidUtil.getFluidHandler(preFillStack);
                 if (fluidHandler != null)
                 {
-                    int filled = fluidHandler.fill(new FluidStack(fluid, Integer.MAX_VALUE), EnumSimulate.EXECUTE);
+                    int filled = fluidHandler.fill(new FluidStack(fluid, Integer.MAX_VALUE), ActionType.EXECUTE);
                     ItemStack filledStack = fluidHandler.getContainer();
 
                     if (filled > 0)

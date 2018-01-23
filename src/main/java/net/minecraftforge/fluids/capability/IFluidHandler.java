@@ -21,7 +21,7 @@ package net.minecraftforge.fluids.capability;
 
 import javax.annotation.Nullable;
 
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
@@ -45,20 +45,20 @@ public interface IFluidHandler
      * Fills fluid into internal tanks, distribution is left entirely to the IFluidHandler.
      *
      * @param resource FluidStack representing the Fluid and maximum amount of fluid to be filled.
-     * @param simulate If {@link EnumSimulate#SIMULATE}, fill will only be simulated.
+     * @param action   If {@link ActionType#SIMULATE}, fill will only be simulated.
      * @return Amount of resource that was (or would have been, if simulated) filled.
      */
-    int fill(FluidStack resource, EnumSimulate simulate);
+    int fill(FluidStack resource, ActionType action);
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
      *
      * @param resource FluidStack representing the Fluid and maximum amount of fluid to be drained.
-     * @param simulate If {@link EnumSimulate#SIMULATE}, drain will only be simulated.
+     * @param action   If {@link ActionType#SIMULATE}, drain will only be simulated.
      * @return FluidStack representing the Fluid and amount that was (or would have been, if simulated) drained.
      */
     @Nullable
-    FluidStack drain(FluidStack resource, EnumSimulate simulate);
+    FluidStack drain(FluidStack resource, ActionType action);
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
@@ -66,9 +66,9 @@ public interface IFluidHandler
      * This method is not Fluid-sensitive.
      *
      * @param maxDrain Maximum amount of fluid to drain.
-     * @param simulate  If {@link EnumSimulate#SIMULATE}, drain will only be simulated.
+     * @param action   If {@link ActionType#SIMULATE}, drain will only be simulated.
      * @return FluidStack representing the Fluid and amount that was (or would have been, if simulated) drained.
      */
     @Nullable
-    FluidStack drain(int maxDrain, EnumSimulate simulate);
+    FluidStack drain(int maxDrain, ActionType action);
 }

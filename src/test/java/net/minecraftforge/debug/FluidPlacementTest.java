@@ -3,7 +3,6 @@ package net.minecraftforge.debug;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
@@ -21,7 +20,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.RegistryEvent;
@@ -33,9 +32,6 @@ import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -174,7 +170,7 @@ public class FluidPlacementTest
             }
 
             @Override
-            public int fill(FluidStack resource, EnumSimulate simulate)
+            public int fill(FluidStack resource, ActionType action)
             {
                 if (container.getCount() != 1 || resource == null || resource.amount > Fluid.BUCKET_VOLUME || container
                         .getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
@@ -182,7 +178,7 @@ public class FluidPlacementTest
                     return 0;
                 }
 
-                if (simulate == EnumSimulate.EXECUTE)
+                if (action == ActionType.EXECUTE)
                 {
                     container = new ItemStack(FluidContainer.instance);
                     NBTTagCompound tag = new NBTTagCompound();

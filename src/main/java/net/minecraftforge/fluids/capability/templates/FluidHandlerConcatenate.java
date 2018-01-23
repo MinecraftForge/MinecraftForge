@@ -20,7 +20,7 @@
 package net.minecraftforge.fluids.capability.templates;
 
 import com.google.common.collect.Lists;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -59,7 +59,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
     }
 
     @Override
-    public int fill(FluidStack resource, EnumSimulate simulate)
+    public int fill(FluidStack resource, ActionType action)
     {
         if (resource == null || resource.amount <= 0)
             return 0;
@@ -69,7 +69,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
         int totalFillAmount = 0;
         for (IFluidHandler handler : subHandlers)
         {
-            int fillAmount = handler.fill(resource, simulate);
+            int fillAmount = handler.fill(resource, action);
             totalFillAmount += fillAmount;
             resource.amount -= fillAmount;
             if (resource.amount <= 0)
@@ -79,7 +79,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
+    public FluidStack drain(FluidStack resource, ActionType action)
     {
         if (resource == null || resource.amount <= 0)
             return null;
@@ -89,7 +89,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
         FluidStack totalDrained = null;
         for (IFluidHandler handler : subHandlers)
         {
-            FluidStack drain = handler.drain(resource, simulate);
+            FluidStack drain = handler.drain(resource, action);
             if (drain != null)
             {
                 if (totalDrained == null)
@@ -106,7 +106,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
     }
 
     @Override
-    public FluidStack drain(int maxDrain, EnumSimulate simulate)
+    public FluidStack drain(int maxDrain, ActionType action)
     {
         if (maxDrain == 0)
             return null;
@@ -115,7 +115,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
         {
             if (totalDrained == null)
             {
-                totalDrained = handler.drain(maxDrain, simulate);
+                totalDrained = handler.drain(maxDrain, action);
                 if (totalDrained != null)
                 {
                     maxDrain -= totalDrained.amount;
@@ -125,7 +125,7 @@ public class FluidHandlerConcatenate implements IFluidHandler
             {
                 FluidStack copy = totalDrained.copy();
                 copy.amount = maxDrain;
-                FluidStack drain = handler.drain(copy, simulate);
+                FluidStack drain = handler.drain(copy, action);
                 if (drain != null)
                 {
                     totalDrained.amount += drain.amount;

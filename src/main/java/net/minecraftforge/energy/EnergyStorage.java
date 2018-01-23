@@ -19,7 +19,7 @@
 
 package net.minecraftforge.energy;
 
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 
 /**
  * Reference implementation of {@link IEnergyStorage}. Use/extend this or implement your own.
@@ -58,7 +58,7 @@ public class EnergyStorage implements IEnergyStorage
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, EnumSimulate simulate)
+    public int receiveEnergy(int maxReceive, ActionType action)
     {
         if (!canReceive())
         {
@@ -66,7 +66,7 @@ public class EnergyStorage implements IEnergyStorage
         }
 
         int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
-        if (simulate == EnumSimulate.EXECUTE)
+        if (action == ActionType.EXECUTE)
         {
             energy += energyReceived;
         }
@@ -74,7 +74,7 @@ public class EnergyStorage implements IEnergyStorage
     }
 
     @Override
-    public int extractEnergy(int maxExtract, EnumSimulate simulate)
+    public int extractEnergy(int maxExtract, ActionType action)
     {
         if (!canExtract())
         {
@@ -82,7 +82,7 @@ public class EnergyStorage implements IEnergyStorage
         }
 
         int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
-        if (simulate == EnumSimulate.EXECUTE)
+        if (action == ActionType.EXECUTE)
         {
             energy -= energyExtracted;
         }

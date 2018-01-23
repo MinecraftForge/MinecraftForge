@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common;
 
-public enum EnumSimulate
+public enum ActionType
 {
     /**
      * Simulate an action.

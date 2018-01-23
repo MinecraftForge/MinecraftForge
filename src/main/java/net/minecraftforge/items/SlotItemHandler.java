@@ -24,7 +24,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 
 import javax.annotation.Nonnull;
 
@@ -56,13 +56,13 @@ public class SlotItemHandler extends Slot
 
             handlerModifiable.setStackInSlot(index, ItemStack.EMPTY);
 
-            remainder = handlerModifiable.insertItem(index, stack, EnumSimulate.SIMULATE);
+            remainder = handlerModifiable.insertItem(index, stack, ActionType.SIMULATE);
 
             handlerModifiable.setStackInSlot(index, currentStack);
         }
         else
         {
-            remainder = handler.insertItem(index, stack, EnumSimulate.SIMULATE);
+            remainder = handler.insertItem(index, stack, ActionType.SIMULATE);
         }
         return remainder.isEmpty() || remainder.getCount() < stack.getCount();
     }
@@ -108,7 +108,7 @@ public class SlotItemHandler extends Slot
 
             handlerModifiable.setStackInSlot(index, ItemStack.EMPTY);
 
-            ItemStack remainder = handlerModifiable.insertItem(index, maxAdd, EnumSimulate.SIMULATE);
+            ItemStack remainder = handlerModifiable.insertItem(index, maxAdd, ActionType.SIMULATE);
 
             handlerModifiable.setStackInSlot(index, currentStack);
 
@@ -116,7 +116,7 @@ public class SlotItemHandler extends Slot
         }
         else
         {
-            ItemStack remainder = handler.insertItem(index, maxAdd, EnumSimulate.SIMULATE);
+            ItemStack remainder = handler.insertItem(index, maxAdd, ActionType.SIMULATE);
 
             int current = currentStack.getCount();
             int added = maxInput - remainder.getCount();
@@ -127,14 +127,14 @@ public class SlotItemHandler extends Slot
     @Override
     public boolean canTakeStack(EntityPlayer playerIn)
     {
-        return !this.getItemHandler().extractItem(index, 1, EnumSimulate.SIMULATE).isEmpty();
+        return !this.getItemHandler().extractItem(index, 1, ActionType.SIMULATE).isEmpty();
     }
 
     @Override
     @Nonnull
     public ItemStack decrStackSize(int amount)
     {
-        return this.getItemHandler().extractItem(index, amount, EnumSimulate.EXECUTE);
+        return this.getItemHandler().extractItem(index, amount, ActionType.EXECUTE);
     }
 
     public IItemHandler getItemHandler()

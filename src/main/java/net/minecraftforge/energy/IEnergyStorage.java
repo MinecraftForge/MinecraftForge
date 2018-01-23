@@ -19,7 +19,7 @@
 
 package net.minecraftforge.energy;
 
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 
 /**
  * An energy storage is the unit of interaction with Energy inventories.
@@ -36,19 +36,19 @@ public interface IEnergyStorage
      * Adds energy to the storage. Returns quantity of energy that was accepted.
      *
      * @param maxReceive Maximum amount of energy to be inserted.
-     * @param simulate   If {@link EnumSimulate#SIMULATE}, the insertion will only be simulated.
+     * @param action     If {@link ActionType#SIMULATE}, the insertion will only be simulated.
      * @return Amount of energy that was (or would have been, if simulated) accepted by the storage.
      */
-    int receiveEnergy(int maxReceive, EnumSimulate simulate);
+    int receiveEnergy(int maxReceive, ActionType action);
 
     /**
      * Removes energy from the storage. Returns quantity of energy that was removed.
      *
      * @param maxExtract Maximum amount of energy to be extracted.
-     * @param simulate   If {@link EnumSimulate#SIMULATE}, the extraction will only be simulated.
+     * @param action     If {@link ActionType#SIMULATE}, the extraction will only be simulated.
      * @return Amount of energy that was (or would have been, if simulated) extracted from the storage.
      */
-    int extractEnergy(int maxExtract, EnumSimulate simulate);
+    int extractEnergy(int maxExtract, ActionType action);
 
     /**
     * Returns the amount of energy currently stored.

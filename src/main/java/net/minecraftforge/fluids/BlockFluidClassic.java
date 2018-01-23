@@ -27,7 +27,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nonnull;
@@ -361,13 +361,13 @@ public class BlockFluidClassic extends BlockFluidBase
 
     /* IFluidBlock */
     @Override
-    public int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, EnumSimulate simulate)
+    public int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, ActionType action)
     {
         if (fluidStack.amount < Fluid.BUCKET_VOLUME)
         {
             return 0;
         }
-        if (simulate == EnumSimulate.EXECUTE)
+        if (action == ActionType.EXECUTE)
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, pos);
             world.setBlockState(pos, this.getDefaultState(), 11);
@@ -377,14 +377,14 @@ public class BlockFluidClassic extends BlockFluidBase
 
     @Override
     @Nullable
-    public FluidStack drain(World world, BlockPos pos, EnumSimulate simulate)
+    public FluidStack drain(World world, BlockPos pos, ActionType action)
     {
         if (!isSourceBlock(world, pos))
         {
             return null;
         }
 
-        if (simulate == EnumSimulate.EXECUTE)
+        if (action == ActionType.EXECUTE)
         {
             world.setBlockToAir(pos);
         }

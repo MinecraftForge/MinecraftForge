@@ -21,7 +21,7 @@ package net.minecraftforge.items;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
@@ -38,18 +38,18 @@ public class VanillaHopperItemHandler extends InvWrapper
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate)
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, ActionType action)
     {
-        if (simulate == EnumSimulate.SIMULATE)
+        if (action == ActionType.SIMULATE)
         {
-            return super.insertItem(slot, stack, simulate);
+            return super.insertItem(slot, stack, action);
         }
         else
         {
             boolean wasEmpty = getInv().isEmpty();
 
             int originalStackSize = stack.getCount();
-            stack = super.insertItem(slot, stack, simulate);
+            stack = super.insertItem(slot, stack, action);
 
             if (wasEmpty && originalStackSize > stack.getCount())
             {

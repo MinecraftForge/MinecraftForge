@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -84,7 +84,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
     @Nonnull
     @Override
-    public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final EnumSimulate simulate)
+    public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final ActionType action)
     {
         if (stack.isEmpty())
             return ItemStack.EMPTY;
@@ -108,7 +108,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
         boolean reachedLimit = stack.getCount() > limit;
 
-        if (simulate == EnumSimulate.EXECUTE)
+        if (action == ActionType.EXECUTE)
         {
             if (existing.isEmpty())
             {
@@ -125,7 +125,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
     @Nonnull
     @Override
-    public ItemStack extractItem(final int slot, final int amount, final EnumSimulate simulate)
+    public ItemStack extractItem(final int slot, final int amount, final ActionType action)
     {
         if (amount == 0)
             return ItemStack.EMPTY;
@@ -141,7 +141,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
         if (existing.getCount() <= toExtract)
         {
-            if (simulate == EnumSimulate.EXECUTE)
+            if (action == ActionType.EXECUTE)
             {
                 entity.setItemStackToSlot(equipmentSlot, ItemStack.EMPTY);
             }
@@ -150,7 +150,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         }
         else
         {
-            if (simulate == EnumSimulate.EXECUTE)
+            if (action == ActionType.EXECUTE)
             {
                 entity.setItemStackToSlot(equipmentSlot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
             }

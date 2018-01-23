@@ -20,7 +20,7 @@
 package net.minecraftforge.fluids.capability.templates;
 
 import com.google.common.collect.Lists;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -65,33 +65,33 @@ public class FluidHandlerFluidMap implements IFluidHandler
     }
 
     @Override
-    public int fill(FluidStack resource, EnumSimulate simulate)
+    public int fill(FluidStack resource, ActionType action)
     {
         if (resource == null)
             return 0;
         IFluidHandler handler = handlers.get(resource.getFluid());
         if (handler == null)
             return 0;
-        return handler.fill(resource, simulate);
+        return handler.fill(resource, action);
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
+    public FluidStack drain(FluidStack resource, ActionType action)
     {
         if (resource == null)
             return null;
         IFluidHandler handler = handlers.get(resource.getFluid());
         if (handler == null)
             return null;
-        return handler.drain(resource, simulate);
+        return handler.drain(resource, action);
     }
 
     @Override
-    public FluidStack drain(int maxDrain, EnumSimulate simulate)
+    public FluidStack drain(int maxDrain, ActionType action)
     {
         for (IFluidHandler handler : handlers.values())
         {
-            FluidStack drain = handler.drain(maxDrain, simulate);
+            FluidStack drain = handler.drain(maxDrain, action);
             if (drain != null)
                 return drain;
         }

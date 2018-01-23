@@ -27,7 +27,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucketMilk;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -119,14 +119,14 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     }
 
     @Override
-    public int fill(FluidStack resource, EnumSimulate simulate)
+    public int fill(FluidStack resource, ActionType action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME || container.getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
         {
             return 0;
         }
 
-        if (simulate == EnumSimulate.EXECUTE)
+        if (action == ActionType.EXECUTE)
         {
             setFluid(resource);
         }
@@ -136,7 +136,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     @Nullable
     @Override
-    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
+    public FluidStack drain(FluidStack resource, ActionType action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME)
         {
@@ -146,7 +146,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         FluidStack fluidStack = getFluid();
         if (fluidStack != null && fluidStack.isFluidEqual(resource))
         {
-            if (simulate == EnumSimulate.EXECUTE)
+            if (action == ActionType.EXECUTE)
             {
                 setFluid((FluidStack) null);
             }
@@ -158,7 +158,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     @Nullable
     @Override
-    public FluidStack drain(int maxDrain, EnumSimulate simulate)
+    public FluidStack drain(int maxDrain, ActionType action)
     {
         if (container.getCount() != 1 || maxDrain < Fluid.BUCKET_VOLUME)
         {
@@ -168,7 +168,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         FluidStack fluidStack = getFluid();
         if (fluidStack != null)
         {
-            if (simulate == EnumSimulate.EXECUTE)
+            if (action == ActionType.EXECUTE)
             {
                 setFluid((FluidStack) null);
             }

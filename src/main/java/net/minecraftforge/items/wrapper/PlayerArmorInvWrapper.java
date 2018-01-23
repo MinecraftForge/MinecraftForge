@@ -22,7 +22,7 @@ package net.minecraftforge.items.wrapper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +38,7 @@ public class PlayerArmorInvWrapper extends RangedWrapper
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate)
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, ActionType action)
     {
         EntityEquipmentSlot equ = null;
         for (EntityEquipmentSlot s : EntityEquipmentSlot.values())
@@ -52,7 +52,7 @@ public class PlayerArmorInvWrapper extends RangedWrapper
         // check if it's valid for the armor slot
         if (equ != null && slot < 4 && !stack.isEmpty() && stack.getItem().isValidArmor(stack, equ, getInventoryPlayer().player))
         {
-            return super.insertItem(slot, stack, simulate);
+            return super.insertItem(slot, stack, action);
         }
         return stack;
     }

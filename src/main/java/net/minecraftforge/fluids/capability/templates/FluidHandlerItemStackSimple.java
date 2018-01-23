@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
@@ -95,7 +95,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     }
 
     @Override
-    public int fill(FluidStack resource, EnumSimulate simulate)
+    public int fill(FluidStack resource, ActionType action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !canFillFluidType(resource))
         {
@@ -107,7 +107,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         {
             int fillAmount = Math.min(capacity, resource.amount);
             if (fillAmount == capacity) {
-                if (simulate == EnumSimulate.EXECUTE) {
+                if (action == ActionType.EXECUTE) {
                     FluidStack filled = resource.copy();
                     filled.amount = fillAmount;
                     setFluid(filled);
@@ -121,17 +121,17 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
+    public FluidStack drain(FluidStack resource, ActionType action)
     {
         if (container.getCount() != 1 || resource == null || resource.amount <= 0 || !resource.isFluidEqual(getFluid()))
         {
             return null;
         }
-        return drain(resource.amount, simulate);
+        return drain(resource.amount, action);
     }
 
     @Override
-    public FluidStack drain(int maxDrain, EnumSimulate simulate)
+    public FluidStack drain(int maxDrain, ActionType action)
     {
         if (container.getCount() != 1 || maxDrain <= 0)
         {
@@ -148,7 +148,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         if (drainAmount == capacity) {
             FluidStack drained = contained.copy();
 
-            if (simulate == EnumSimulate.EXECUTE) {
+            if (action == ActionType.EXECUTE) {
                 setContainerToEmpty();
             }
 

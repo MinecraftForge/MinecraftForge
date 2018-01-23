@@ -20,7 +20,7 @@
 package net.minecraftforge.items.wrapper;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -107,22 +107,22 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, EnumSimulate simulate)
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, ActionType action)
     {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
         slot = getSlotFromIndex(slot, index);
-        return handler.insertItem(slot, stack, simulate);
+        return handler.insertItem(slot, stack, action);
     }
 
     @Override
     @Nonnull
-    public ItemStack extractItem(int slot, int amount, EnumSimulate simulate)
+    public ItemStack extractItem(int slot, int amount, ActionType action)
     {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
         slot = getSlotFromIndex(slot, index);
-        return handler.extractItem(slot, amount, simulate);
+        return handler.extractItem(slot, amount, action);
     }
 
     @Override

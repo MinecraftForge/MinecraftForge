@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -140,28 +140,28 @@ public class FluidTank implements IFluidTank, IFluidHandler
     }
 
     @Override
-    public int fill(FluidStack resource, EnumSimulate simulate)
+    public int fill(FluidStack resource, ActionType action)
     {
         if (!canFillFluidType(resource))
         {
             return 0;
         }
 
-        return fillInternal(resource, simulate);
+        return fillInternal(resource, action);
     }
 
     /**
      * Use this method to bypass the restrictions from {@link #canFillFluidType(FluidStack)}
      * Meant for use by the owner of the tank when they have {@link #canFill() set to false}.
      */
-    public int fillInternal(FluidStack resource, EnumSimulate simulate)
+    public int fillInternal(FluidStack resource, ActionType action)
     {
         if (resource == null || resource.amount <= 0)
         {
             return 0;
         }
 
-        if (simulate == EnumSimulate.SIMULATE)
+        if (action == ActionType.SIMULATE)
         {
             if (fluid == null)
             {
@@ -215,23 +215,23 @@ public class FluidTank implements IFluidTank, IFluidHandler
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, EnumSimulate simulate)
+    public FluidStack drain(FluidStack resource, ActionType action)
     {
         if (!canDrainFluidType(getFluid()))
         {
             return null;
         }
-        return drainInternal(resource, simulate);
+        return drainInternal(resource, action);
     }
 
     @Override
-    public FluidStack drain(int maxDrain, EnumSimulate simulate)
+    public FluidStack drain(int maxDrain, ActionType action)
     {
         if (!canDrainFluidType(fluid))
         {
             return null;
         }
-        return drainInternal(maxDrain, simulate);
+        return drainInternal(maxDrain, action);
     }
 
     /**
@@ -239,13 +239,13 @@ public class FluidTank implements IFluidTank, IFluidHandler
      * Meant for use by the owner of the tank when they have {@link #canDrain()} set to false}.
      */
     @Nullable
-    public FluidStack drainInternal(FluidStack resource, EnumSimulate simulate)
+    public FluidStack drainInternal(FluidStack resource, ActionType action)
     {
         if (resource == null || !resource.isFluidEqual(getFluid()))
         {
             return null;
         }
-        return drainInternal(resource.amount, simulate);
+        return drainInternal(resource.amount, action);
     }
 
     /**
@@ -253,7 +253,7 @@ public class FluidTank implements IFluidTank, IFluidHandler
      * Meant for use by the owner of the tank when they have {@link #canDrain()} set to false}.
      */
     @Nullable
-    public FluidStack drainInternal(int maxDrain, EnumSimulate simulate)
+    public FluidStack drainInternal(int maxDrain, ActionType action)
     {
         if (fluid == null || maxDrain <= 0)
         {
@@ -267,7 +267,7 @@ public class FluidTank implements IFluidTank, IFluidHandler
         }
 
         FluidStack stack = new FluidStack(fluid, drained);
-        if (simulate == EnumSimulate.EXECUTE)
+        if (action == ActionType.EXECUTE)
         {
             fluid.amount -= drained;
             if (fluid.amount <= 0)

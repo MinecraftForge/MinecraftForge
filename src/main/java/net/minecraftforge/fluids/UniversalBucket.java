@@ -35,7 +35,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.common.EnumSimulate;
+import net.minecraftforge.common.ActionType;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -114,7 +114,7 @@ public class UniversalBucket extends Item
                 FluidStack fs = new FluidStack(fluid, getCapacity());
                 ItemStack stack = new ItemStack(this);
                 IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
-                if (fluidHandler.fill(fs, EnumSimulate.EXECUTE) == fs.amount)
+                if (fluidHandler.fill(fs, ActionType.EXECUTE) == fs.amount)
                 {
                     ItemStack filled = fluidHandler.getContainer();
                     subItems.add(filled);
