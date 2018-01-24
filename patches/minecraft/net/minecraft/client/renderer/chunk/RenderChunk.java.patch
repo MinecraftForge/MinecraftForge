@@ -1,6 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -162,7 +162,7 @@
+@@ -157,12 +157,18 @@
+                 IBlockState iblockstate = this.field_189564_r.func_180495_p(blockpos$mutableblockpos);
+                 Block block = iblockstate.func_177230_c();
+ 
++                if (this.field_189564_r.func_175624_G() != net.minecraft.world.WorldType.field_180272_g)
++                {
++                    iblockstate = iblockstate.func_185899_b(this.field_189564_r, blockpos$mutableblockpos);
++                    iblockstate = block.getExtendedState(iblockstate, this.field_189564_r, blockpos$mutableblockpos);
++                }
++
+                 if (iblockstate.func_185914_p())
+                 {
                      lvt_9_1_.func_178606_a(blockpos$mutableblockpos);
                  }
  
@@ -9,7 +20,7 @@
                  {
                      TileEntity tileentity = this.field_189564_r.func_190300_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
  
-@@ -172,17 +172,19 @@
+@@ -172,17 +178,19 @@
  
                          if (tileentityspecialrenderer != null)
                          {
@@ -31,16 +42,19 @@
                  int j = blockrenderlayer1.ordinal();
  
                  if (block.func_176223_P().func_185901_i() != EnumBlockRenderType.INVISIBLE)
-@@ -197,6 +199,8 @@
+@@ -195,8 +203,10 @@
+                         this.func_178573_a(bufferbuilder, blockpos);
+                     }
  
-                     aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, this.field_189564_r, bufferbuilder);
+-                    aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, this.field_189564_r, bufferbuilder);
++                    aboolean[j] |= blockrendererdispatcher.renderBlock(iblockstate, blockpos$mutableblockpos, this.field_189564_r, bufferbuilder, false);
                  }
 +                }
 +                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
              }
  
              for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
-@@ -278,7 +282,9 @@
+@@ -278,7 +288,9 @@
      private void func_189563_q()
      {
          int i = 1;
@@ -51,7 +65,7 @@
      }
  
      @Nullable
-@@ -427,6 +433,26 @@
+@@ -427,6 +439,26 @@
          return this.field_178593_n && this.field_188284_q;
      }
  
