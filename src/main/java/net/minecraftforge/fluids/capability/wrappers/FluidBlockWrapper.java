@@ -83,7 +83,7 @@ public class FluidBlockWrapper implements IFluidHandler
         FluidStack simulatedDrain = fluidBlock.drain(world, blockPos, ActionType.SIMULATE);
         if (resource.containsFluid(simulatedDrain))
         {
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 return fluidBlock.drain(world, blockPos, ActionType.EXECUTE);
             }
@@ -108,7 +108,7 @@ public class FluidBlockWrapper implements IFluidHandler
         FluidStack simulatedDrain = fluidBlock.drain(world, blockPos, ActionType.SIMULATE);
         if (simulatedDrain != null && simulatedDrain.amount <= maxDrain)
         {
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 return fluidBlock.drain(world, blockPos, ActionType.EXECUTE);
             }

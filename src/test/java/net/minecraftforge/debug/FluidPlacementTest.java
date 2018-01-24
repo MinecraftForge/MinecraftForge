@@ -178,7 +178,7 @@ public class FluidPlacementTest
                     return 0;
                 }
 
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     container = new ItemStack(FluidContainer.instance);
                     NBTTagCompound tag = new NBTTagCompound();

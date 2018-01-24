@@ -161,7 +161,7 @@ public class FluidTank implements IFluidTank, IFluidHandler
             return 0;
         }
 
-        if (action == ActionType.SIMULATE)
+        if (!action.hasSideEffects())
         {
             if (fluid == null)
             {
@@ -267,7 +267,7 @@ public class FluidTank implements IFluidTank, IFluidHandler
         }
 
         FluidStack stack = new FluidStack(fluid, drained);
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             fluid.amount -= drained;
             if (fluid.amount <= 0)

@@ -66,7 +66,7 @@ public class EnergyStorage implements IEnergyStorage
         }
 
         int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             energy += energyReceived;
         }
@@ -82,7 +82,7 @@ public class EnergyStorage implements IEnergyStorage
         }
 
         int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             energy -= energyExtracted;
         }

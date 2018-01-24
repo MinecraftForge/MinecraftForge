@@ -76,7 +76,7 @@ public class BlockLiquidWrapper implements IFluidHandler
             return 0;
         }
 
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             Material material = blockLiquid.getDefaultState().getMaterial();
             BlockLiquid block = BlockLiquid.getFlowingBlock(material);
@@ -101,7 +101,7 @@ public class BlockLiquidWrapper implements IFluidHandler
             FluidStack containedStack = getStack(blockState);
             if (containedStack != null && resource.containsFluid(containedStack))
             {
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 11);
                 }
@@ -127,7 +127,7 @@ public class BlockLiquidWrapper implements IFluidHandler
             FluidStack containedStack = getStack(blockState);
             if (containedStack != null && containedStack.amount <= maxDrain)
             {
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 11);
                 }

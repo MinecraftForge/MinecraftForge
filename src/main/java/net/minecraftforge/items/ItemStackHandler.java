@@ -103,7 +103,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
         boolean reachedLimit = stack.getCount() > limit;
 
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             if (existing.isEmpty())
             {
@@ -137,7 +137,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
         if (existing.getCount() <= toExtract)
         {
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 this.stacks.set(slot, ItemStack.EMPTY);
                 onContentsChanged(slot);
@@ -146,7 +146,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         }
         else
         {
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
                 onContentsChanged(slot);

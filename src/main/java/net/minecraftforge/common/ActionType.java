@@ -29,5 +29,13 @@ public enum ActionType
     /**
      * Do an action, including side effects.
      */
-    EXECUTE,
+    EXECUTE;
+
+    /**
+     * @return true if this should do a complete action with side effects. false if there should be no side effects.
+     */
+    public boolean hasSideEffects()
+    {
+        return this == EXECUTE;
+    }
 }

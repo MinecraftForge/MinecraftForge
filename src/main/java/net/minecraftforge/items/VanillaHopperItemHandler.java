@@ -40,7 +40,7 @@ public class VanillaHopperItemHandler extends InvWrapper
     @Nonnull
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, ActionType action)
     {
-        if (action == ActionType.SIMULATE)
+        if (!action.hasSideEffects())
         {
             return super.insertItem(slot, stack, action);
         }

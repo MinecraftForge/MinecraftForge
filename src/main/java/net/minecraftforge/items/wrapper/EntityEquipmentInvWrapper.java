@@ -108,7 +108,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
         boolean reachedLimit = stack.getCount() > limit;
 
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             if (existing.isEmpty())
             {
@@ -141,7 +141,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
         if (existing.getCount() <= toExtract)
         {
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 entity.setItemStackToSlot(equipmentSlot, ItemStack.EMPTY);
             }
@@ -150,7 +150,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         }
         else
         {
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 entity.setItemStackToSlot(equipmentSlot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
             }

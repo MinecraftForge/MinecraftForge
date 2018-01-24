@@ -54,7 +54,7 @@ public class BlockWrapper extends VoidFluidHandler
         {
             return 0;
         }
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, blockPos);
             world.setBlockState(blockPos, block.getDefaultState(), 11);

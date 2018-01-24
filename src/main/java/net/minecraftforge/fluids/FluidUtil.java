@@ -140,7 +140,7 @@ public class FluidUtil
             FluidStack simulatedTransfer = tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, ActionType.SIMULATE);
             if (simulatedTransfer != null)
             {
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, ActionType.EXECUTE);
                     if (player != null)
@@ -181,7 +181,7 @@ public class FluidUtil
         IFluidHandlerItem containerFluidHandler = getFluidHandler(containerCopy);
         if (containerFluidHandler != null)
         {
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, ActionType.EXECUTE);
                 if (transfer != null)
@@ -263,7 +263,7 @@ public class FluidUtil
                     remainder = ItemHandlerHelper.insertItemStacked(inventory, filledReal.getResult(), action);
 
                     // give it to the player or drop it at their feet
-                    if (!remainder.isEmpty() && player != null && action == ActionType.EXECUTE)
+                    if (!remainder.isEmpty() && player != null && action.hasSideEffects())
                     {
                         ItemHandlerHelper.giveItemToPlayer(player, remainder);
                     }
@@ -331,7 +331,7 @@ public class FluidUtil
                     remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal.getResult(), action);
 
                     // give it to the player or drop it at their feet
-                    if (!remainder.isEmpty() && player != null && action == ActionType.EXECUTE)
+                    if (!remainder.isEmpty() && player != null && action.hasSideEffects())
                     {
                         ItemHandlerHelper.giveItemToPlayer(player, remainder);
                     }
@@ -403,7 +403,7 @@ public class FluidUtil
         int fillableAmount = fluidDestination.fill(drainable, ActionType.SIMULATE);
         if (fillableAmount > 0)
         {
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 FluidStack drained = fluidSource.drain(fillableAmount, ActionType.EXECUTE);
                 if (drained != null)

@@ -150,7 +150,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
 
         int starting = stack.getCount();
         ItemStack ret = chest.getSingleChestHandler().insertItem(targetSlot, stack, action);
-        if (ret.getCount() != starting && action == ActionType.EXECUTE)
+        if (ret.getCount() != starting && action.hasSideEffects())
         {
             chest = getChest(!accessingUpperChest);
             if (chest != null)
@@ -171,7 +171,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
             return ItemStack.EMPTY;
 
         ItemStack ret = chest.getSingleChestHandler().extractItem(targetSlot, amount, action);
-        if (!ret.isEmpty() && action == ActionType.EXECUTE)
+        if (!ret.isEmpty() && action.hasSideEffects())
         {
             chest = getChest(!accessingUpperChest);
             if (chest != null)

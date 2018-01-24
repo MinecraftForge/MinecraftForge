@@ -126,7 +126,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
             return 0;
         }
 
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             setFluid(resource);
         }
@@ -146,7 +146,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         FluidStack fluidStack = getFluid();
         if (fluidStack != null && fluidStack.isFluidEqual(resource))
         {
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 setFluid((FluidStack) null);
             }
@@ -168,7 +168,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         FluidStack fluidStack = getFluid();
         if (fluidStack != null)
         {
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 setFluid((FluidStack) null);
             }

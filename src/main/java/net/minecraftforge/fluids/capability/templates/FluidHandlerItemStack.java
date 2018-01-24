@@ -110,7 +110,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         {
             int fillAmount = Math.min(capacity, resource.amount);
 
-            if (action == ActionType.EXECUTE)
+            if (action.hasSideEffects())
             {
                 FluidStack filled = resource.copy();
                 filled.amount = fillAmount;
@@ -125,7 +125,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
             {
                 int fillAmount = Math.min(capacity - contained.amount, resource.amount);
 
-                if (action == ActionType.EXECUTE && fillAmount > 0) {
+                if (action.hasSideEffects() && fillAmount > 0) {
                     contained.amount += fillAmount;
                     setFluid(contained);
                 }
@@ -166,7 +166,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         FluidStack drained = contained.copy();
         drained.amount = drainAmount;
 
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             contained.amount -= drainAmount;
             if (contained.amount == 0)

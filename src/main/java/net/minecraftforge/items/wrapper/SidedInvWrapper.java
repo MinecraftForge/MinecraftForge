@@ -112,7 +112,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
 
             if (stack.getCount() <= m)
             {
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     ItemStack copy = stack.copy();
                     copy.grow(stackInSlot.getCount());
@@ -125,7 +125,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     ItemStack copy = stack.splitStack(m);
                     copy.grow(stackInSlot.getCount());
@@ -149,7 +149,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     setInventorySlotContents(slot1, stack.splitStack(m));
                     return stack;
@@ -162,7 +162,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             }
             else
             {
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     setInventorySlotContents(slot1, stack);
                 }
@@ -206,7 +206,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         if (!inv.canExtractItem(slot1, stackInSlot, side))
             return ItemStack.EMPTY;
 
-        if (action == ActionType.SIMULATE)
+        if (!action.hasSideEffects())
         {
             if (stackInSlot.getCount() < amount)
             {

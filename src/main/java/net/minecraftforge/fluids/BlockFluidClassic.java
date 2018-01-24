@@ -367,7 +367,7 @@ public class BlockFluidClassic extends BlockFluidBase
         {
             return 0;
         }
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, pos);
             world.setBlockState(pos, this.getDefaultState(), 11);
@@ -384,7 +384,7 @@ public class BlockFluidClassic extends BlockFluidBase
             return null;
         }
 
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             world.setBlockToAir(pos);
         }

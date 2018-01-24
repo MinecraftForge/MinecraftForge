@@ -94,7 +94,7 @@ public class InvWrapper implements IItemHandlerModifiable
 
             if (stack.getCount() <= m)
             {
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     ItemStack copy = stack.copy();
                     copy.grow(stackInSlot.getCount());
@@ -108,7 +108,7 @@ public class InvWrapper implements IItemHandlerModifiable
             {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     ItemStack copy = stack.splitStack(m);
                     copy.grow(stackInSlot.getCount());
@@ -133,7 +133,7 @@ public class InvWrapper implements IItemHandlerModifiable
             {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     getInv().setInventorySlotContents(slot, stack.splitStack(m));
                     getInv().markDirty();
@@ -147,7 +147,7 @@ public class InvWrapper implements IItemHandlerModifiable
             }
             else
             {
-                if (action == ActionType.EXECUTE)
+                if (action.hasSideEffects())
                 {
                     getInv().setInventorySlotContents(slot, stack);
                     getInv().markDirty();
@@ -170,7 +170,7 @@ public class InvWrapper implements IItemHandlerModifiable
         if (stackInSlot.isEmpty())
             return ItemStack.EMPTY;
 
-        if (action == ActionType.SIMULATE)
+        if (!action.hasSideEffects())
         {
             if (stackInSlot.getCount() < amount)
             {

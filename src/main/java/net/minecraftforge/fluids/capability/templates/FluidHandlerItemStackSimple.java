@@ -107,7 +107,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         {
             int fillAmount = Math.min(capacity, resource.amount);
             if (fillAmount == capacity) {
-                if (action == ActionType.EXECUTE) {
+                if (action.hasSideEffects()) {
                     FluidStack filled = resource.copy();
                     filled.amount = fillAmount;
                     setFluid(filled);
@@ -148,7 +148,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         if (drainAmount == capacity) {
             FluidStack drained = contained.copy();
 
-            if (action == ActionType.EXECUTE) {
+            if (action.hasSideEffects()) {
                 setContainerToEmpty();
             }
 

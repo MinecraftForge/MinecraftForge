@@ -272,7 +272,7 @@ public class BlockFluidFinite extends BlockFluidBase
         if (quanta < 1 || quanta > 16)
             return 0;
 
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, pos);
             world.setBlockState(pos, getDefaultState().withProperty(LEVEL, quanta - 1), 11);
@@ -286,7 +286,7 @@ public class BlockFluidFinite extends BlockFluidBase
     {
         final FluidStack fluidStack = new FluidStack(getFluid(), MathHelper.floor(getQuantaPercentage(world, pos) * Fluid.BUCKET_VOLUME));
 
-        if (action == ActionType.EXECUTE)
+        if (action.hasSideEffects())
         {
             world.setBlockToAir(pos);
         }
