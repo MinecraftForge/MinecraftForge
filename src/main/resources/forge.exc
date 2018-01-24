@@ -1,4 +1,5 @@
 net/minecraft/client/particle/EntityDiggingFX.<init>(Lnet/minecraft/world/World;DDDDDDLnet/minecraft/block/Block;II)V=|p_i1234_1_,p_i1234_2_,p_i1234_4_,p_i1234_6_,p_i1234_8_,p_i1234_10_,p_i1234_12_,p_i1234_14_,p_i1234_15_,side
+net/minecraft/client/renderer/BlockRendererDispatcher.renderBlock(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/renderer/BufferBuilder;Z)Z=|p_175018_1_,p_175018_2_,p_175018_3_,p_175018_4_,getFullState
 net/minecraft/client/renderer/ItemRenderer.renderItem(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/item/ItemStack;ILnet/minecraftforge/client/IItemRenderer$ItemRenderType;)V=|p_78443_1_,p_78443_2_,p_78443_3_,type
 net/minecraft/client/renderer/RenderGlobal.drawBlockDamageTexture(Lnet/minecraft/client/renderer/Tessellator;Lnet/minecraft/entity/EntityLivingBase;F)V=|p_72717_1_,p_72717_2_,p_72717_3_
 net/minecraft/client/renderer/entity/RenderItem.renderDroppedItem(Lnet/minecraft/entity/item/EntityItem;Lnet/minecraft/util/IIcon;IFFFFI)V=|p_77020_1_,p_77020_2_,p_77020_3_,p_77020_4_,p_77020_5_,p_77020_6_,p_77020_7_,pass
