@@ -31,7 +31,9 @@ import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.ICustomContainerCallback;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -121,6 +123,41 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
             return recipeItemHelper.canCraft(this, null);
 
         return RecipeMatcher.findMatches(items, this.input) != null;
+    }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
+    {
+        NonNullList<ItemStack> remainder = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        NonNullList<ItemStack> items = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        for (int index = 0; index < inv.getSizeInventory(); index++)
+        {
+            items.set(index, inv.getStackInSlot(index));
+        }
+        int[] mapping = RecipeMatcher.findMatches(items, this.input);
+        if (mapping == null)
+        {
+            return remainder;
+        }
+
+        for (int index = 0; index < inv.getSizeInventory(); index++)
+        {
+            ItemStack itemStack = inv.getStackInSlot(index);
+            if (!itemStack.isEmpty())
+            {
+                Ingredient ingredient = this.input.get(mapping[index]);
+                if (ingredient instanceof ICustomContainerCallback && ingredient.apply(itemStack))
+                {
+                    remainder.set(index, ((ICustomContainerCallback)ingredient).getContainer(itemStack));
+                }
+                else
+                {
+                    remainder.set(index, ForgeHooks.getContainerItem(itemStack));
+                }
+            }
+        }
+
+        return remainder;
     }
 
     @Override

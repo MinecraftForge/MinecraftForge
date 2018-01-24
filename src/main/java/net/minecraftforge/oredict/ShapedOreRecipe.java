@@ -32,6 +32,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
+import net.minecraftforge.common.crafting.ICustomContainerCallback;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.common.crafting.JsonContext;
@@ -141,6 +142,30 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         }
 
         return true;
+    }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
+    {
+        NonNullList<ItemStack> remainders = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        for (int index = 0; index < remainders.size(); index++)
+        {
+            ItemStack itemStack = inv.getStackInSlot(index);
+            if (!itemStack.isEmpty())
+            {
+                Ingredient ingredient = input.get(index);
+                if (ingredient instanceof ICustomContainerCallback)
+                {
+                    itemStack = ((ICustomContainerCallback)ingredient).getContainer(itemStack);
+                }
+                else
+                {
+                    itemStack = ForgeHooks.getContainerItem(itemStack);
+                }
+                remainders.set(index, itemStack);
+            }
+        }
+        return remainders;
     }
 
     public ShapedOreRecipe setMirrored(boolean mirror)

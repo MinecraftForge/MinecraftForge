@@ -1,0 +1,46 @@
+[
+  {
+    "name": "water_matching_exceeded",
+    "ingredient": {
+      "type": "forge:fluid",
+      "fluid": "water",
+      "amount": 1000
+    }
+  },
+  {
+    "name": "water_matching_exact",
+    "ingredient": {
+      "type": "forge:fluid",
+      "fluid": "water",
+      "amount": 250,
+      "match": "exact"
+    }
+  },
+  {
+    "name": "water_matching_wasting",
+    "ingredient": {
+      "type": "forge:fluid",
+      "fluid": "water",
+      "amount": 250,
+      "match": "exceeded"
+    }
+  },
+  {
+    "name": "water_matching_no_wasting",
+    "ingredient": {
+      "type": "forge:fluid",
+      "fluid": "water",
+      "amount": 250,
+      "match": "non_voiding"
+    }
+  },
+  {
+    "name": "lava_matching_exceeded",
+    "ingredient": {
+      "type": "forge:fluid",
+      "fluid": "lava",
+      "amount": 1000,
+      "match": "exceeded"
+    }
+  }
+]
