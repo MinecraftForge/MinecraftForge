@@ -109,7 +109,7 @@ import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.client.IRenderHandler;
-import net.minecraftforge.client.SkyRenderer;
+import net.minecraftforge.client.SkyRenderHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigManager;
@@ -1146,7 +1146,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public boolean renderSky(float partialTicks)
     {
-        SkyRenderer skyRenderer = this.client.world.provider.getSkyRenderHandler();
+        SkyRenderHandler skyRenderer = this.client.world.provider.getSkyRenderHandler();
         if(skyRenderer.render(partialTicks, this.client.world, this.client))
         {
             return true;

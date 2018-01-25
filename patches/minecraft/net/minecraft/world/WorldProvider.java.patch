@@ -65,13 +65,13 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,352 @@
+@@ -241,6 +216,348 @@
          return new WorldBorder();
      }
  
 +    /*======================================= Forge Start =========================================*/
-+    private net.minecraftforge.client.IRenderHandler skyRenderer = null;
-+    private net.minecraftforge.client.SkyRenderer skyRenderHandler = new net.minecraftforge.client.SkyRenderer();
++    private net.minecraftforge.client.IRenderHandler legacySkyRenderer = null;
++    private net.minecraftforge.client.SkyRenderHandler skyRenderHandler = new net.minecraftforge.client.SkyRenderHandler();
 +    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
 +    private int dimensionId;
@@ -119,32 +119,28 @@
 +        return 1.0;
 +    }
 +
++    /** Deprecated in favor of {@link #getSkyRenderHandler()} */
 +    @Deprecated
 +    @Nullable
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraftforge.client.IRenderHandler getSkyRenderer()
 +    {
-+        return this.skyRenderer;
++        return this.legacySkyRenderer;
 +    }
 +
++    /** Deprecated in favor of {@link #getSkyRenderHandler()} */
 +    @Deprecated
 +    @SideOnly(Side.CLIENT)
 +    public void setSkyRenderer(net.minecraftforge.client.IRenderHandler skyRenderer)
 +    {
-+        this.skyRenderer = skyRenderer;
++        this.legacySkyRenderer = skyRenderer;
 +    }
 +
++    /** Gets the sky render handler. Sky renderer can be registered in the handler. */
 +    @SideOnly(Side.CLIENT)
-+    public net.minecraftforge.client.SkyRenderer getSkyRenderHandler()
++    public net.minecraftforge.client.SkyRenderHandler getSkyRenderHandler()
 +    {
 +        return this.skyRenderHandler;
-+    }
-+
-+    /** Sets sky renderer for certain pass and resource location. Renderer with higher priority is called earlier. */
-+    @SideOnly(Side.CLIENT)
-+    public void setSkyRenderer(net.minecraftforge.client.EnumSkyPass pass, net.minecraft.util.ResourceLocation id, @Nullable net.minecraftforge.client.IRenderHandler renderer, double priority)
-+    {
-+        skyRenderHandler.setSkyRenderer(pass, id, renderer, priority);
 +    }
 +
 +    @Nullable

@@ -39,18 +39,31 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-public class SkyRenderer
+/**
+ * Class which handles sky rendering. Sky renderer can be registered here,
+ *  see {@link #registerSkyRenderer(SkyRenderPass, ResourceLocation, IRenderHandler, double) registerSkyRenderer}.
+ * */
+public class SkyRenderHandler
 {
-    private EnumMap<EnumSkyPass, PartSkyRenderer> renderers = new EnumMap<EnumSkyPass, PartSkyRenderer>(EnumSkyPass.class)
+    private EnumMap<SkyRenderPass, PartSkyRenderer> renderers = new EnumMap<SkyRenderPass, PartSkyRenderer>(SkyRenderPass.class)
     {{
-        this.put(EnumSkyPass.SKY_BACK, new PartSkyRenderer(getSkyBackDefault()));
-        this.put(EnumSkyPass.SUN_MOON_STARS, new PartSkyRenderer(getSunMoonStarsDefault()));
-        this.put(EnumSkyPass.SKY_FRONT, new PartSkyRenderer(getSkyFrontDefault()));
+        this.put(SkyRenderPass.SKY_BACK, new PartSkyRenderer(getSkyBackDefault()));
+        this.put(SkyRenderPass.SUN_MOON_STARS, new PartSkyRenderer(getSunMoonStarsDefault()));
+        this.put(SkyRenderPass.SKY_FRONT, new PartSkyRenderer(getSkyFrontDefault()));
     }};
 
-    public void setSkyRenderer(EnumSkyPass pass, ResourceLocation id, IRenderHandler renderer, double priority)
+    /**
+     * Registers sky renderer for certain pass and id.
+     * Registering a renderer with pre-existing id will replace the previous renderer.
+     * Renderer with higher priority is called earlier.
+     * @param pass the sky render pass
+     * @param id the id for the renderer
+     * @param renderer the renderer
+     * @param priority the priority for the renderer
+     * */
+    public void registerSkyRenderer(SkyRenderPass pass, ResourceLocation id, IRenderHandler renderer, double priority)
     {
-        renderers.get(pass).setSkyRenderer(id, renderer, priority);
+        renderers.get(pass).registerSkyRenderer(id, renderer, priority);
     }
 
     public boolean render(float partialTicks, WorldClient world, Minecraft mc)
@@ -62,9 +75,9 @@ public class SkyRenderer
         if(!enabled)
             return false;
 
-        renderers.get(EnumSkyPass.SKY_BACK).render(partialTicks, world, mc);
-        renderers.get(EnumSkyPass.SUN_MOON_STARS).render(partialTicks, world, mc);
-        renderers.get(EnumSkyPass.SKY_FRONT).render(partialTicks, world, mc);
+        renderers.get(SkyRenderPass.SKY_BACK).render(partialTicks, world, mc);
+        renderers.get(SkyRenderPass.SUN_MOON_STARS).render(partialTicks, world, mc);
+        renderers.get(SkyRenderPass.SKY_FRONT).render(partialTicks, world, mc);
         return true;
     }
 
@@ -76,7 +89,7 @@ public class SkyRenderer
             this.defHandlers = defaultHandlers;
         }
 
-        void setSkyRenderer(ResourceLocation id, IRenderHandler renderer, double priority)
+        void registerSkyRenderer(ResourceLocation id, IRenderHandler renderer, double priority)
         {
             if(renderer != null)
                 handlers.put(id, new RenderHandler(renderer, priority));
@@ -186,18 +199,18 @@ public class SkyRenderer
                 GlStateManager.enableFog();
                 GlStateManager.color(f, f1, f2);
 
-                if (SkyRenderer.this.vboEnabled)
+                if (SkyRenderHandler.this.vboEnabled)
                 {
-                    SkyRenderer.this.skyVBO.bindBuffer();
+                    SkyRenderHandler.this.skyVBO.bindBuffer();
                     GlStateManager.glEnableClientState(32884);
                     GlStateManager.glVertexPointer(3, 5126, 12, 0);
-                    SkyRenderer.this.skyVBO.drawArrays(7);
-                    SkyRenderer.this.skyVBO.unbindBuffer();
+                    SkyRenderHandler.this.skyVBO.drawArrays(7);
+                    SkyRenderHandler.this.skyVBO.unbindBuffer();
                     GlStateManager.glDisableClientState(32884);
                 }
                 else
                 {
-                    GlStateManager.callList(SkyRenderer.this.glSkyList);
+                    GlStateManager.callList(SkyRenderHandler.this.glSkyList);
                 }
 
                 GlStateManager.disableFog();
@@ -372,18 +385,18 @@ public class SkyRenderer
                 {
                     GlStateManager.color(f15, f15, f15, f15);
 
-                    if (SkyRenderer.this.vboEnabled)
+                    if (SkyRenderHandler.this.vboEnabled)
                     {
-                        SkyRenderer.this.starVBO.bindBuffer();
+                        SkyRenderHandler.this.starVBO.bindBuffer();
                         GlStateManager.glEnableClientState(32884);
                         GlStateManager.glVertexPointer(3, 5126, 12, 0);
-                        SkyRenderer.this.starVBO.drawArrays(7);
-                        SkyRenderer.this.starVBO.unbindBuffer();
+                        SkyRenderHandler.this.starVBO.drawArrays(7);
+                        SkyRenderHandler.this.starVBO.unbindBuffer();
                         GlStateManager.glDisableClientState(32884);
                     }
                     else
                     {
-                        GlStateManager.callList(SkyRenderer.this.starGLCallList);
+                        GlStateManager.callList(SkyRenderHandler.this.starGLCallList);
                     }
                 }
             }
@@ -427,18 +440,18 @@ public class SkyRenderer
                     GlStateManager.pushMatrix();
                     GlStateManager.translate(0.0F, 12.0F, 0.0F);
 
-                    if (SkyRenderer.this.vboEnabled)
+                    if (SkyRenderHandler.this.vboEnabled)
                     {
-                        SkyRenderer.this.sky2VBO.bindBuffer();
+                        SkyRenderHandler.this.sky2VBO.bindBuffer();
                         GlStateManager.glEnableClientState(32884);
                         GlStateManager.glVertexPointer(3, 5126, 12, 0);
-                        SkyRenderer.this.sky2VBO.drawArrays(7);
-                        SkyRenderer.this.sky2VBO.unbindBuffer();
+                        SkyRenderHandler.this.sky2VBO.drawArrays(7);
+                        SkyRenderHandler.this.sky2VBO.unbindBuffer();
                         GlStateManager.glDisableClientState(32884);
                     }
                     else
                     {
-                        GlStateManager.callList(SkyRenderer.this.glSkyList2);
+                        GlStateManager.callList(SkyRenderHandler.this.glSkyList2);
                     }
 
                     GlStateManager.popMatrix();
@@ -480,7 +493,7 @@ public class SkyRenderer
 
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(0.0F, -((float)(d3 - 16.0D)), 0.0F);
-                GlStateManager.callList(SkyRenderer.this.glSkyList2);
+                GlStateManager.callList(SkyRenderHandler.this.glSkyList2);
                 GlStateManager.popMatrix();
                 GlStateManager.enableTexture2D();
                 GlStateManager.depthMask(true);

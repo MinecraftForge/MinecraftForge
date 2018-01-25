@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client;
 
-public enum EnumSkyPass
+public enum SkyRenderPass
 {
     /**
      * Background sky.
