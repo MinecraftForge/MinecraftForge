@@ -1,13 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -157,12 +157,18 @@
+@@ -157,12 +157,19 @@
                  IBlockState iblockstate = this.field_189564_r.func_180495_p(blockpos$mutableblockpos);
                  Block block = iblockstate.func_177230_c();
  
 +                if (this.field_189564_r.func_175624_G() != net.minecraft.world.WorldType.field_180272_g)
 +                {
 +                    iblockstate = iblockstate.func_185899_b(this.field_189564_r, blockpos$mutableblockpos);
-+                    iblockstate = block.getExtendedState(iblockstate, this.field_189564_r, blockpos$mutableblockpos);
++                    if (iblockstate.func_185901_i() == EnumBlockRenderType.MODEL)
++                        iblockstate = block.getExtendedState(iblockstate, this.field_189564_r, blockpos$mutableblockpos);
 +                }
 +
                  if (iblockstate.func_185914_p())
@@ -20,7 +21,7 @@
                  {
                      TileEntity tileentity = this.field_189564_r.func_190300_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
  
-@@ -172,17 +178,19 @@
+@@ -172,17 +179,19 @@
  
                          if (tileentityspecialrenderer != null)
                          {
@@ -42,7 +43,7 @@
                  int j = blockrenderlayer1.ordinal();
  
                  if (block.func_176223_P().func_185901_i() != EnumBlockRenderType.INVISIBLE)
-@@ -195,8 +203,10 @@
+@@ -195,8 +204,10 @@
                          this.func_178573_a(bufferbuilder, blockpos);
                      }
  
@@ -54,7 +55,7 @@
              }
  
              for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
-@@ -278,7 +288,9 @@
+@@ -278,7 +289,9 @@
      private void func_189563_q()
      {
          int i = 1;
@@ -65,7 +66,7 @@
      }
  
      @Nullable
-@@ -427,6 +439,26 @@
+@@ -427,6 +440,26 @@
          return this.field_178593_n && this.field_188284_q;
      }
  
