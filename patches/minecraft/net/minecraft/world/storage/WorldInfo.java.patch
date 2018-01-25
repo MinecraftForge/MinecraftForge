@@ -36,7 +36,7 @@
 +        for (Entry<Integer, NBTTagCompound> entry : this.field_186348_N.entrySet())
          {
 -            nbttagcompound1.func_74782_a(String.valueOf(((DimensionType)entry.getKey()).func_186068_a()), entry.getValue());
-+            if (entry.getValue() != null || entry.getValue().func_82582_d()) continue;
++            if (entry.getValue() == null || entry.getValue().func_82582_d()) continue;
 +            nbttagcompound1.func_74782_a(String.valueOf(entry.getKey()), entry.getValue());
          }
  

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = DebugSearchTabs.MODID, name = "Debug Search Tab", version = "1.0")
+@Mod(modid = DebugSearchTabs.MODID, name = "Debug Search Tab", version = "1.0", acceptableRemoteVersions = "*")
 public class DebugSearchTabs
 {
     public static final String MODID = "debugsearchtab";
