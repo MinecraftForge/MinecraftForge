@@ -28,7 +28,6 @@ import java.util.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.Iterables;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -93,7 +92,7 @@ public class ExtendedBlockState extends BlockStateContainer
                 return this;
             }
 
-            if (!Iterables.any(unlistedProperties.values(), Optional::isPresent))
+            if (this == this.cleanState)
             { // no dynamic properties present, looking up in the normal table
                 return clean;
             }
@@ -112,15 +111,19 @@ public class ExtendedBlockState extends BlockStateContainer
             {
                 throw new IllegalArgumentException("Cannot set unlisted property " + property + " to " + value + " on block " + Block.REGISTRY.getNameForObject(getBlock()) + ", it is not an allowed value");
             }
+            boolean clean = true;
             ImmutableMap.Builder<IUnlistedProperty<?>, Optional<?>> builder = ImmutableMap.builder();
             for (Map.Entry<IUnlistedProperty<?>, Optional<?>> entry : unlistedProperties.entrySet())
             {
-                builder.put(entry.getKey(), entry.getKey().equals(property) ? Optional.ofNullable(value) : entry.getValue());
+                IUnlistedProperty<?> key = entry.getKey();
+                Optional<?> newValue = key.equals(property) ? Optional.ofNullable(value) : entry.getValue();
+                if (newValue.isPresent()) clean = false;
+                builder.put(key, newValue);
             }
             ImmutableMap<IUnlistedProperty<?>, Optional<?>> newMap = builder.build();
-            if (!Iterables.any(newMap.values(), Optional::isPresent))
+            if (clean)
             { // no dynamic properties, lookup normal state
-                return (IExtendedBlockState)cleanState;
+                return (IExtendedBlockState) cleanState;
             }
             return new ExtendedStateImplementation(getBlock(), getProperties(), newMap, propertyValueTable, this.cleanState);
         }
