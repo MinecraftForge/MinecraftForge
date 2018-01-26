@@ -22,7 +22,6 @@ package net.minecraftforge.common.property;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import com.google.common.collect.ImmutableMap;
@@ -131,7 +130,7 @@ public class ExtendedBlockState extends BlockStateContainer
         @Override
         public Collection<IUnlistedProperty<?>> getUnlistedNames()
         {
-            return Collections.unmodifiableCollection(unlistedProperties.keySet());
+            return unlistedProperties.keySet();
         }
 
         @Override
