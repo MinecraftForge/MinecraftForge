@@ -23,10 +23,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
@@ -95,7 +93,7 @@ public class ExtendedBlockState extends BlockStateContainer
                 return this;
             }
 
-            if (unlistedProperties.values().stream().noneMatch(Optional::isPresent))
+            if (!Iterables.any(unlistedProperties.values(), Optional::isPresent))
             { // no dynamic properties present, looking up in the normal table
                 return clean;
             }
@@ -114,13 +112,17 @@ public class ExtendedBlockState extends BlockStateContainer
             {
                 throw new IllegalArgumentException("Cannot set unlisted property " + property + " to " + value + " on block " + Block.REGISTRY.getNameForObject(getBlock()) + ", it is not an allowed value");
             }
-            Map<IUnlistedProperty<?>, Optional<?>> newMap = new HashMap<IUnlistedProperty<?>, Optional<?>>(unlistedProperties);
-            newMap.put(property, Optional.ofNullable(value));
-            if(Iterables.all(newMap.values(), Predicates.<Optional<?>>equalTo(Optional.empty())))
+            ImmutableMap.Builder<IUnlistedProperty<?>, Optional<?>> builder = ImmutableMap.builder();
+            for (Map.Entry<IUnlistedProperty<?>, Optional<?>> entry : unlistedProperties.entrySet())
+            {
+                builder.put(entry.getKey(), entry.getKey().equals(property) ? Optional.ofNullable(value) : entry.getValue());
+            }
+            ImmutableMap<IUnlistedProperty<?>, Optional<?>> newMap = builder.build();
+            if (!Iterables.any(newMap.values(), Optional::isPresent))
             { // no dynamic properties, lookup normal state
                 return (IExtendedBlockState)cleanState;
             }
-            return new ExtendedStateImplementation(getBlock(), getProperties(), ImmutableMap.copyOf(newMap), propertyValueTable, this.cleanState);
+            return new ExtendedStateImplementation(getBlock(), getProperties(), newMap, propertyValueTable, this.cleanState);
         }
 
         @Override
@@ -130,13 +132,15 @@ public class ExtendedBlockState extends BlockStateContainer
         }
 
         @Override
-        public <V>V getValue(IUnlistedProperty<V> property)
+        @Nullable
+        public <V> V getValue(IUnlistedProperty<V> property)
         {
-            if(!this.unlistedProperties.containsKey(property))
+            Optional<?> value = unlistedProperties.get(property);
+            if (value == null)
             {
                 throw new IllegalArgumentException("Cannot get unlisted property " + property + " as it does not exist in " + getBlock().getBlockState());
             }
-            return property.getType().cast(this.unlistedProperties.get(property).orElse(null));
+            return property.getType().cast(value.orElse(null));
         }
 
         public ImmutableMap<IUnlistedProperty<?>, Optional<?>> getUnlistedProperties()
