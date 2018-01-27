@@ -9,6 +9,15 @@
          this.func_175041_b();
          this.field_184395_f = p_i46552_3_;
      }
+@@ -137,7 +137,7 @@
+             {
+                 GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+                 GlStateManager.func_179091_B();
+-                TileEntityItemStackRenderer.field_147719_a.func_179022_a(p_180454_1_);
++                TileEntityItemStackRenderer.ITEM_TO_RENDERER.getOrDefault(p_180454_1_.func_77973_b(), TileEntityItemStackRenderer.field_147719_a).func_179022_a(p_180454_1_);
+             }
+             else
+             {
 @@ -218,7 +218,7 @@
                  k = k | -16777216;
              }
