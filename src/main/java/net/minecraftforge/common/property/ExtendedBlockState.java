@@ -119,12 +119,11 @@ public class ExtendedBlockState extends BlockStateContainer
                 if (newValue.isPresent()) clean = false;
                 builder.put(key, newValue);
             }
-            ImmutableMap<IUnlistedProperty<?>, Optional<?>> newMap = builder.build();
             if (clean)
             { // no dynamic properties, lookup normal state
                 return (IExtendedBlockState) cleanState;
             }
-            return new ExtendedStateImplementation(getBlock(), getProperties(), newMap, propertyValueTable, this.cleanState);
+            return new ExtendedStateImplementation(getBlock(), getProperties(), builder.build(), propertyValueTable, this.cleanState);
         }
 
         @Override
