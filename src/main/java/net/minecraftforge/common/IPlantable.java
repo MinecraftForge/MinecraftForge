@@ -25,6 +25,6 @@ import net.minecraft.world.IBlockAccess;
 
 public interface IPlantable
 {
-    public EnumPlantType getPlantType(IBlockAccess world, BlockPos pos);
-    public IBlockState getPlant(IBlockAccess world, BlockPos pos);
+    EnumPlantType getPlantType(IBlockAccess world, BlockPos pos);
+    IBlockState getPlant(IBlockAccess world, BlockPos pos);
 }

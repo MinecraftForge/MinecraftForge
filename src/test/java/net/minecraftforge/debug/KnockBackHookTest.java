@@ -6,7 +6,7 @@ import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = "kbhtest", name = "Knock Back Hook Test", version = "1.0")
+@Mod(modid = "kbhtest", name = "Knock Back Hook Test", version = "1.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
 public class KnockBackHookTest
 {
