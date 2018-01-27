@@ -20,7 +20,7 @@
      }
  
      public boolean func_76220_a()
-@@ -148,4 +148,259 @@
+@@ -148,4 +148,261 @@
      {
          return this.field_76234_F;
      }
@@ -119,8 +119,10 @@
 +    
 +    /**
 +     * Intended to be used for custom fluids. This will cause the material to 
-+     * allow swimming. Path navigation will treat blocks with this material the
-+     * same as water.
++     * indicate suitability for swim AI. Path navigation will treat blocks with this 
++     * material the same as water. Note though that the ability to actually swim (like
++     * if a player or entity falls into the fluid) is not controlled by this -- rather
++     * ALL custom fluids allow swimming movement. This is just for path navigation.
 +     * 
 +     * @return the material to allow method chaining
 +     */    
