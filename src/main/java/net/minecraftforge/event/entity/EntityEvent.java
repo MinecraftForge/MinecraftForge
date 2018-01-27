@@ -98,7 +98,7 @@ public class EntityEvent extends Event
             this.canUpdate = canUpdate;
         }
     }
-    
+
     /**
      * EnteringChunk is fired when an Entity enters a chunk. <br>
      * This event is fired whenever vanilla Minecraft determines that an entity <br>
@@ -134,5 +134,15 @@ public class EntityEvent extends Event
         public void setOldChunkX(int oldChunkX) { this.oldChunkX = oldChunkX; }
         public int getOldChunkZ() { return oldChunkZ; }
         public void setOldChunkZ(int oldChunkZ) { this.oldChunkZ = oldChunkZ; }
+    }
+
+    @Cancelable
+    public static class SplashEffectEvent extends EntityEvent
+    {
+
+        public SplashEffectEvent(Entity entity)
+        {
+            super(entity);
+        }
     }
 }
