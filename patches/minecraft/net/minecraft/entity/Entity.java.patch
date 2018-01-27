@@ -55,7 +55,23 @@
  
          if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
          {
-@@ -1259,6 +1271,7 @@
+@@ -1216,6 +1228,7 @@
+ 
+     protected void func_71061_d_()
+     {
++     if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.SplashEffectEvent(this))) {
+         Entity entity = this.func_184207_aI() && this.func_184179_bs() != null ? this.func_184179_bs() : this;
+         float f = entity == this ? 0.2F : 0.9F;
+         float f1 = MathHelper.func_76133_a(entity.field_70159_w * entity.field_70159_w * 0.20000000298023224D + entity.field_70181_x * entity.field_70181_x + entity.field_70179_y * entity.field_70179_y * 0.20000000298023224D) * f;
+@@ -1241,6 +1254,7 @@
+             float f6 = (this.field_70146_Z.nextFloat() * 2.0F - 1.0F) * this.field_70130_N;
+             this.field_70170_p.func_175688_a(EnumParticleTypes.WATER_SPLASH, this.field_70165_t + (double)f5, (double)(f2 + 1.0F), this.field_70161_v + (double)f6, this.field_70159_w, this.field_70181_x, this.field_70179_y);
+         }
++     }
+     }
+ 
+     public void func_174830_Y()
+@@ -1259,6 +1273,7 @@
          BlockPos blockpos = new BlockPos(i, j, k);
          IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -63,7 +79,7 @@
          if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE)
          {
              this.field_70170_p.func_175688_a(EnumParticleTypes.BLOCK_CRACK, this.field_70165_t + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_70130_N, this.func_174813_aQ().field_72338_b + 0.1D, this.field_70161_v + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_70130_N, -this.field_70159_w * 4.0D, 1.5D, -this.field_70179_y * 4.0D, Block.func_176210_f(iblockstate));
-@@ -1277,12 +1290,12 @@
+@@ -1277,12 +1292,12 @@
              BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -80,7 +96,7 @@
              }
              else
              {
-@@ -1707,6 +1720,7 @@
+@@ -1707,6 +1722,7 @@
              {
                  p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
              }
@@ -88,7 +104,7 @@
  
              if (!this.field_184236_aF.isEmpty())
              {
-@@ -1720,6 +1734,9 @@
+@@ -1720,6 +1736,9 @@
                  p_189511_1_.func_74782_a("Tags", nbttaglist);
              }
  
@@ -98,7 +114,7 @@
              this.func_70014_b(p_189511_1_);
  
              if (this.func_184207_aI())
-@@ -1826,7 +1843,11 @@
+@@ -1826,7 +1845,11 @@
              this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
              this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
              this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
@@ -110,7 +126,7 @@
              if (p_70020_1_.func_150297_b("Tags", 9))
              {
                  this.field_184236_aF.clear();
-@@ -1918,7 +1939,10 @@
+@@ -1918,7 +1941,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -122,7 +138,7 @@
              return entityitem;
          }
      }
-@@ -1985,6 +2009,7 @@
+@@ -1985,6 +2011,7 @@
              this.field_70159_w = 0.0D;
              this.field_70181_x = 0.0D;
              this.field_70179_y = 0.0D;
@@ -130,7 +146,7 @@
              this.func_70071_h_();
  
              if (this.func_184218_aH())
-@@ -2032,6 +2057,7 @@
+@@ -2032,6 +2059,7 @@
              }
          }
  
@@ -138,7 +154,7 @@
          if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this))
          {
              if (this.func_184218_aH())
-@@ -2067,6 +2093,7 @@
+@@ -2067,6 +2095,7 @@
          if (this.field_184239_as != null)
          {
              Entity entity = this.field_184239_as;
@@ -146,7 +162,7 @@
              this.field_184239_as = null;
              entity.func_184225_p(this);
          }
-@@ -2511,6 +2538,7 @@
+@@ -2511,6 +2540,7 @@
      {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
          {
@@ -154,7 +170,7 @@
              this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
              MinecraftServer minecraftserver = this.func_184102_h();
              int i = this.field_71093_bK;
-@@ -2535,16 +2563,17 @@
+@@ -2535,16 +2565,17 @@
              }
              else
              {
@@ -176,7 +192,7 @@
                  {
                      d0 = MathHelper.func_151237_a(d0 * 8.0D, worldserver1.func_175723_af().func_177726_b() + 16.0D, worldserver1.func_175723_af().func_177728_d() - 16.0D);
                      d1 = MathHelper.func_151237_a(d1 * 8.0D, worldserver1.func_175723_af().func_177736_c() + 16.0D, worldserver1.func_175723_af().func_177733_e() - 16.0D);
-@@ -2604,7 +2633,7 @@
+@@ -2604,7 +2635,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -185,7 +201,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2901,6 +2929,183 @@
+@@ -2901,6 +2932,183 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
