@@ -4,7 +4,7 @@
      private final TileEntityBed field_193843_g = new TileEntityBed();
      private final TileEntitySkull field_179023_f = new TileEntitySkull();
      private final ModelShield field_187318_g = new ModelShield();
-+    public static final java.util.Map<net.minecraftforge.registries.IRegistryDelegate<Item>, TileEntityItemStackRenderer> ITEM_TO_RENDERER = new java.util.HashMap<>();
++    public static final java.util.Map<net.minecraftforge.registries.IRegistryDelegate<Item>, TileEntityItemStackRenderer> ITEM_TO_RENDERER = new java.util.IdentityHashMap<>();
  
      public void func_179022_a(ItemStack p_179022_1_)
      {
