@@ -24,6 +24,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.SortedMap;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -53,17 +55,31 @@ public class SkyRenderHandler
     }};
 
     /**
-     * Registers sky renderer for certain pass and id.
-     * Registering a renderer with pre-existing id will replace the previous renderer.
-     * Renderer with higher priority is called earlier.
+     * <p>Registers sky renderer for certain pass and id.</p>
+     * <p>Registering a renderer with pre-existing pass & id pair will replace the previous renderer.</p>
+     * <p>You can unregister a renderer by giving <code>null</code> for the renderer parameter.
+     * Unregistering a renderer with its vanilla-counterpart will re-enable a vanilla renderer.</p>
+     * <p>Renderer with higher priority is called earlier.</p>
      * @param pass the sky render pass
      * @param id the id for the renderer
      * @param renderer the renderer
      * @param priority the priority for the renderer
      * */
-    public void registerSkyRenderer(SkyRenderPass pass, ResourceLocation id, IRenderHandler renderer, double priority)
+    public void registerSkyRenderer(SkyRenderPass pass, ResourceLocation id, @Nullable IRenderHandler renderer, double priority)
     {
         renderers.get(pass).registerSkyRenderer(id, renderer, priority);
+    }
+
+    /**
+     * Unregisters vanilla sky renderer for certain pass and id.
+     * This will only remove the renderer if it's the vanilla one.
+     * @param pass the sky render pass
+     * @param id the id to unregister
+     * @return the vanilla render handler, or <code>null</code> if there wasn't a vanilla renderer for specified pass-id pair
+     * */
+    public @Nullable IRenderHandler unregisterVanillaRenderer(SkyRenderPass pass, ResourceLocation id)
+    {
+        return renderers.get(pass).unregisterVanillaRenderer(id);
     }
 
     public boolean render(float partialTicks, WorldClient world, Minecraft mc)
@@ -78,6 +94,7 @@ public class SkyRenderHandler
         renderers.get(SkyRenderPass.SKY_BACK).render(partialTicks, world, mc);
         renderers.get(SkyRenderPass.SUN_MOON_STARS).render(partialTicks, world, mc);
         renderers.get(SkyRenderPass.SKY_FRONT).render(partialTicks, world, mc);
+
         return true;
     }
 
@@ -96,6 +113,13 @@ public class SkyRenderHandler
             else if(defHandlers.containsKey(id))
                 handlers.put(id, defHandlers.get(id));
             else handlers.remove(id);
+        }
+
+        IRenderHandler unregisterVanillaRenderer(ResourceLocation id)
+        {
+            if(handlers.containsKey(id) && defHandlers.get(id) == handlers.get(id))
+                return handlers.remove(id).handler;
+            else return null;
         }
 
         boolean enabled() {
