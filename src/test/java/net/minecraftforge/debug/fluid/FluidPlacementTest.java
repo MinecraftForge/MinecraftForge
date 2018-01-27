@@ -41,7 +41,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.debug.client.model.ModelFluidDebug;
+import net.minecraftforge.debug.client.model.ModelFluidTest;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
@@ -75,7 +75,7 @@ public class FluidPlacementTest
         @SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
-            if (!ENABLE || !ModelFluidDebug.ENABLE)
+            if (!ENABLE || !ModelFluidTest.ENABLE)
                 return;
             event.getRegistry().registerAll(
                 FiniteFluidBlock.instance
@@ -85,7 +85,7 @@ public class FluidPlacementTest
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event)
         {
-            if (!ENABLE || !ModelFluidDebug.ENABLE)
+            if (!ENABLE || !ModelFluidTest.ENABLE)
                 return;
             FluidRegistry.registerFluid(FiniteFluid.instance);
             FluidRegistry.addBucketForFluid(FiniteFluid.instance);
@@ -104,7 +104,7 @@ public class FluidPlacementTest
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
-            if (!ENABLE || !ModelFluidDebug.ENABLE)
+            if (!ENABLE || !ModelFluidTest.ENABLE)
                 return;
             ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + FiniteFluidBlock.name, "normal");
 
@@ -265,7 +265,7 @@ public class FluidPlacementTest
         {
             if (!this.isInCreativeTab(tab))
                 return;
-            Fluid[] fluids = new Fluid[]{FluidRegistry.WATER, FluidRegistry.LAVA, FiniteFluid.instance, ModelFluidDebug.FLUID};
+            Fluid[] fluids = new Fluid[]{FluidRegistry.WATER, FluidRegistry.LAVA, FiniteFluid.instance, ModelFluidTest.FLUID};
             // add 16 variable fillings
             for (Fluid fluid : fluids)
             {

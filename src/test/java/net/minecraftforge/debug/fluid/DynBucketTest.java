@@ -53,9 +53,9 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.debug.client.model.ModelFluidDebug;
-import net.minecraftforge.debug.client.model.ModelFluidDebug.TestFluid;
-import net.minecraftforge.debug.client.model.ModelFluidDebug.TestGas;
+import net.minecraftforge.debug.client.model.ModelFluidTest;
+import net.minecraftforge.debug.client.model.ModelFluidTest.TestFluid;
+import net.minecraftforge.debug.client.model.ModelFluidTest.TestGas;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -85,7 +85,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID, acceptableRemoteVersions = "*")
+@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidTest.MODID, acceptableRemoteVersions = "*")
 public class DynBucketTest
 {
     public static final String MODID = "dynbuckettest";
@@ -106,7 +106,7 @@ public class DynBucketTest
 
     static
     {
-        if (ENABLE && ModelFluidDebug.ENABLE)
+        if (ENABLE && ModelFluidTest.ENABLE)
         {
             FluidRegistry.enableUniversalBucket();
         }
@@ -135,7 +135,7 @@ public class DynBucketTest
     @SubscribeEvent
     public void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
-        ItemStack filledBucket = FluidUtil.getFilledBucket(new FluidStack(ModelFluidDebug.FLUID, Fluid.BUCKET_VOLUME));
+        ItemStack filledBucket = FluidUtil.getFilledBucket(new FluidStack(ModelFluidTest.FLUID, Fluid.BUCKET_VOLUME));
         GameRegistry.addShapelessRecipe(new ResourceLocation(MODID, "diamond_to_fluid"), null, filledBucket, Ingredient.fromItem(Items.DIAMOND));
     }
 
@@ -145,7 +145,7 @@ public class DynBucketTest
     {
         logger = event.getModLog();
 
-        if (ENABLE && ModelFluidDebug.ENABLE)
+        if (ENABLE && ModelFluidTest.ENABLE)
         {
             MinecraftForge.EVENT_BUS.register(this);
         }
@@ -185,7 +185,7 @@ public class DynBucketTest
         @SubscribeEvent
         public static void setupModels(ModelRegistryEvent event)
         {
-            if (!ENABLE || !ModelFluidDebug.ENABLE) return;
+            if (!ENABLE || !ModelFluidTest.ENABLE) return;
 
             ModelLoader.setBucketModelDefinition(DYN_BOTTLE);
 
