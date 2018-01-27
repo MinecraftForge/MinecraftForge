@@ -174,11 +174,18 @@ public class LoadController
         }
     }
 
+    @Deprecated // TODO remove in 1.13
     public void checkErrorsAfterAvailable()
+    {
+        checkErrors();
+    }
+
+    public void checkErrors()
     {
         if (errors.size() > 0)
         {
-            FMLLog.log.fatal("Fatal errors were detected during {}. Loading cannot continue", LoaderState.AVAILABLE);
+            FMLLog.log.fatal("Fatal errors were detected during {}. Loading cannot continue.", state);
+            state = state.transition(true);
             throw throwStoredErrors();
         }
     }

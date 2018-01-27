@@ -21,11 +21,15 @@ package net.minecraftforge.debug.mods;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
+import net.minecraft.item.Item;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = "clientexceptiontest", version = "1.0", name = "Client Exception Test", clientSideOnly = true)
 public class ClientExceptionTestMod
@@ -41,8 +45,15 @@ public class ClientExceptionTestMod
     {
         if (ENABLE_PREINIT)
         {
+            MinecraftForge.EVENT_BUS.register(this);
             throwException("Thrown in Pre-Init");
         }
+    }
+
+    @SubscribeEvent
+    public void registerItems(RegistryEvent<Item> itemRegistryEvent)
+    {
+        throw new RuntimeException("This should not be called because the mod threw an exception earlier in Pre-Init and is in a broken state.");
     }
 
     @Mod.EventHandler

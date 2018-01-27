@@ -600,6 +600,7 @@ public class Loader
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
+        modController.checkErrors();
         GameData.fireRegistryEvents(rl -> !rl.equals(GameData.RECIPES));
         FMLCommonHandler.instance().fireSidedRegistryEvents();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
@@ -725,7 +726,7 @@ public class Loader
         progressBar.step("Finishing up");
         modController.transition(LoaderState.AVAILABLE, false);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
-        modController.checkErrorsAfterAvailable();
+        modController.checkErrors();
         GameData.freezeData();
         FMLLog.log.info("Forge Mod Loader has successfully loaded {} mod{}", mods.size(), mods.size() == 1 ? "" : "s");
         progressBar.step("Completing Minecraft initialization");
