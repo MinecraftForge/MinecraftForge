@@ -137,17 +137,22 @@ public class EntityEvent extends Event
     }
 
     /**
-     * SplashEffectEvent is fired when an Entity enters a fluid. <br>
+     * EnterFluidEvent is fired when an Entity enters a fluid. <br>
      * This event is fired whenever vanilla Minecraft determines that an entity <br>
-     * is entering/jumping into a fluid <br>
+     * is entering/jumping into a fluid.<br>
+     * <br>
+     * This event is {@link Cancelable}.<br>
+     * <br>
+     * When the event is being cancelled, there will be no special effects/particles,
+     * and no splash sound<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
     @Cancelable
-    public static class SplashEffectEvent extends EntityEvent
+    public static class EnterFluidEvent extends EntityEvent
     {
 
-        public SplashEffectEvent(Entity entity)
+        public EnterFluidEvent(Entity entity)
         {
             super(entity);
         }
