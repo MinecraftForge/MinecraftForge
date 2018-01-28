@@ -51,7 +51,6 @@ import net.minecraftforge.common.Dimension;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
 
@@ -66,14 +65,24 @@ public class DimensionManager
     /**
      * Returns a list of dimensions associated with this DimensionType.
      */
-    public static Set<ResourceLocation> getDimensions(DimensionType type)	//Could return Dimension[] since this contains name info
+    public static Set<ResourceLocation> getDimensions(DimensionType type)
     {
     	Set<ResourceLocation> ret = new HashSet<ResourceLocation>();
-    	Collection<Dimension> dims =  ForgeRegistries.DIMENSIONS.getValuesCollection();
-    	for(Dimension dimension : dims)
+    	for(Dimension dimension : ForgeRegistries.DIMENSIONS.getValuesCollection())
     	{
     		if(dimension.getType()==type)
     			ret.add(dimension.getID());	
+    	}
+    	return ret;
+    }
+    
+    /*Shouldn't need to call this outside of this class*/
+    private static Set<Integer> getIntIDs(Collection<ResourceLocation> ids)
+    {
+    	Set<Integer> ret = new HashSet<Integer>();
+    	for(ResourceLocation id : ids)
+    	{
+    		ret.add(Dimension.getDimIntID(id));
     	}
     	return ret;
     }
@@ -107,7 +116,7 @@ public class DimensionManager
     
     public static boolean isDimensionActive(int dimIntID)
     {
-        return activeDimensions.contains(Dimension.getID(dimIntID));
+        return isDimensionActive(Dimension.getID(dimIntID));
     }
     
     public static DimensionType getProviderType(int dimIntID)
@@ -158,45 +167,13 @@ public class DimensionManager
     
     public static Set<Integer> getIntIDs(boolean check)
     {
-        if (check)
-        {
-            List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
-            allWorlds.removeAll(worlds.values());
-            for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
-            {
-                World w = li.next();
-                leakedWorlds.add(System.identityHashCode(w));
-            }
-            for (World w : allWorlds)
-            {
-                int leakCount = leakedWorlds.count(System.identityHashCode(w));
-                if (leakCount == 5)
-                {
-                    FMLLog.log.debug("The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());
-                }
-                else if (leakCount % 5 == 0)
-                {
-                    FMLLog.log.debug("The world {} ({}) may have leaked: seen {} times.\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName(), leakCount);
-                }
-            }
-        }
-        return getIntIDs();
+        Set<ResourceLocation> ids = getIDs(check);
+        return getIntIDs(ids);
     }
     
     public static Set<ResourceLocation> getIDs()
     {
         return worlds.keySet(); //Only loaded dims, since usually used to cycle through loaded worlds
-    }
-    
-    public static Set<Integer> getIntIDs()
-    {
-    	IForgeRegistry<Dimension> registry = ForgeRegistries.DIMENSIONS;
-    	Set<Integer> ret = new HashSet<Integer>();
-    	for(ResourceLocation id : getIDs())
-    	{
-    		ret.add(registry.getValue(id).getDimIntID());
-    	}
-    	return ret;
     }
     
     public static void setWorld(ResourceLocation dimID, @Nullable WorldServer world, MinecraftServer server)
@@ -243,7 +220,7 @@ public class DimensionManager
         {
             worlds.put(dimID, world);
             weakWorldMap.put(world, world);
-            server.worldTickTimes.put(dimID, new long[100]);	//Have to patch or find a way around
+            server.worldTickTimes.put(dimID, new long[100]);
             FMLLog.log.info("Loading dimension {} ({}) ({})", dimID.toString(), world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
@@ -327,17 +304,11 @@ public class DimensionManager
 
     /**
      * Not public API: used internally to get dimensions that should load at
-     * server startup
+     * server startup. Mods must register a dimension active to have this work.
      */
     public static Set<Integer> getStaticDimensionIDs()
     {
-    	IForgeRegistry<Dimension> registry = ForgeRegistries.DIMENSIONS;
-    	Set<Integer> ret= new HashSet<Integer>();
-    	for(ResourceLocation dimID: ForgeRegistries.DIMENSIONS.getKeys())
-    	{
-    		ret.add(registry.getValue(dimID).getDimIntID());
-    	}
-    	return ret;
+    	return getIntIDs(activeDimensions);
     }
     
     public static WorldProvider createProviderFor(ResourceLocation dimID)
@@ -365,26 +336,7 @@ public class DimensionManager
     
     public static WorldProvider createProviderFor(int dimIntID)
     {
-    	ResourceLocation dimID = Dimension.getID(dimIntID);
-    	try
-        {
-            if (ForgeRegistries.DIMENSIONS.containsKey(dimID))
-            {
-                WorldProvider ret = getProviderType(dimID).createDimension();
-                ret.setDimension(dimID);
-                return ret;
-            }
-            else
-            {
-                throw new RuntimeException("No WorldProvider bound for dimension "+ dimID.toString()); //It's going to crash anyway at this point.  Might as well be informative
-            }
-        }
-        catch (Exception e)
-        {
-            FMLLog.log.error("An error occurred trying to create an instance of WorldProvider {} ({})",
-                    dimID.toString(), getProviderType(dimID), e);
-            throw new RuntimeException(e);
-        }
+    	return createProviderFor(Dimension.getID(dimIntID));
     }
     
     /**

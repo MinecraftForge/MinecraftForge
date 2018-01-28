@@ -126,12 +126,18 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     	return dimIntID;
     }
     
+    public static int getDimIntID(ResourceLocation id)
+    {
+    	return ForgeRegistries.DIMENSIONS.getValue(id).dimIntID;
+    }
+    
+
+    
     private Dimension setDimIntID(int dimIntID)
     {
     	this.dimIntID=dimIntID;
     	dimensionTypeMap.put(dimIntID, type);
     	dimensionIntIDMap.put(dimIntID,dimID);
-    	return this;
-    	
+    	return this;    	
     }
 }
