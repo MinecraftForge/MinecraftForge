@@ -27,7 +27,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "enchantmentlevelsettest", name = "EnchantmentLevelSetTest", version = "1.0", acceptableRemoteVersions = "*")
-public class EnchantmentLevelSetTest
+public class EnchantmentLevelSetEventTest
 {
     public static final boolean ENABLE = false;
     private static Logger logger;
@@ -39,7 +39,7 @@ public class EnchantmentLevelSetTest
         {
             logger = event.getModLog();
             logger.info("Wiring up enchantment level set test");
-            MinecraftForge.EVENT_BUS.register(EnchantmentLevelSetTest.class);
+            MinecraftForge.EVENT_BUS.register(EnchantmentLevelSetEventTest.class);
         }
     }
 
