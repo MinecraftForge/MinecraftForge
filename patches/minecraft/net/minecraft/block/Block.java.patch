@@ -221,7 +221,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -934,6 +952,1344 @@
+@@ -934,6 +952,1347 @@
      {
      }
  
@@ -1392,7 +1392,9 @@
 +
 +    /**
 +     * Queries if this block should render in a given layer.
++     * @deprecated use {@link #getRenderLayers(IBlockState, IBlockAccess, BlockPos)}
 +     */
++    @Deprecated // TODO: remove (1.13)
 +    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
 +    {
 +        return func_180664_k() == layer;
@@ -1403,6 +1405,7 @@
 +     */
 +    public Set<BlockRenderLayer> getRenderLayers(IBlockState state, IBlockAccess access, BlockPos pos)
 +    {
++        // TODO: clean up when canRenderInLayer is removed
 +        Set<BlockRenderLayer> layers = java.util.EnumSet.noneOf(BlockRenderLayer.class);
 +        for (BlockRenderLayer layer : BlockRenderLayer.values())
 +        {
@@ -1566,7 +1569,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1230,31 +2586,6 @@
+@@ -1230,31 +2589,6 @@
                  block15.field_149783_u = flag;
              }
          }
