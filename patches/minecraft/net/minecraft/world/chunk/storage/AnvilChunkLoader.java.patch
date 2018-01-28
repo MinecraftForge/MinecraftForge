@@ -97,15 +97,23 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -296,6 +347,7 @@
+@@ -296,6 +347,15 @@
  
          p_75820_3_.func_74782_a("Sections", nbttaglist);
          p_75820_3_.func_74773_a("Biomes", p_75820_1_.func_76605_m());
-+        int localBiomeCount = p_75820_1_.getLocalBiomes().size(); Short[] localBiomeIds = p_75820_1_.getLocalBiomeIds(); byte[] localBiomeArray = new byte[localBiomeCount * 2]; for (int i = 0; i < localBiomeCount; i++) { localBiomeArray[i] = (byte)(localBiomeIds[i] / 256); localBiomeArray[i] = (byte)(localBiomeIds[i] & 255); } p_75820_3_.func_74773_a("LocalBiomes", localBiomeArray);
++        int localBiomeCount = p_75820_1_.getLocalBiomes().size();
++        Short[] localBiomeIds = p_75820_1_.getLocalBiomeIds();
++        byte[] localBiomeArray = new byte[localBiomeCount * 2];
++        for (int i = 0; i < localBiomeCount; i++)
++        {
++            localBiomeArray[i] = (byte)(localBiomeIds[i] / 256);
++            localBiomeArray[i] = (byte)(localBiomeIds[i] & 255);
++        }
++        p_75820_3_.func_74773_a("LocalBiomes", localBiomeArray);
          p_75820_1_.func_177409_g(false);
          NBTTagList nbttaglist1 = new NBTTagList();
  
-@@ -305,11 +357,19 @@
+@@ -305,11 +365,19 @@
              {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
@@ -125,7 +133,7 @@
              }
          }
  
-@@ -318,8 +378,16 @@
+@@ -318,8 +386,16 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -142,7 +150,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -345,6 +413,18 @@
+@@ -345,6 +421,18 @@
  
              p_75820_3_.func_74782_a("TileTicks", nbttaglist3);
          }
@@ -161,11 +169,21 @@
      }
  
      private Chunk func_75823_a(World p_75823_1_, NBTTagCompound p_75823_2_)
-@@ -388,6 +468,17 @@
+@@ -388,6 +476,27 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
-+        if (p_75823_2_.func_150297_b("LocalBiomes", 7)) { List<net.minecraft.world.biome.Biome> localBiomes = chunk.getLocalBiomes(); localBiomes.clear(); Short[] localBiomeIds = chunk.getLocalBiomeIds(); byte[] localBiomeArray = p_75823_2_.func_74770_j("LocalBiomes"); for (int i1 = 0; i1 < localBiomeArray.length / 2; i1++) { localBiomes.add(net.minecraft.world.biome.Biome.func_180276_a((localBiomeIds[i1] = (short)(localBiomeArray[i1] * 256 + localBiomeArray[i1])) & 65535, net.minecraft.init.Biomes.field_76771_b)); } }
++        if (p_75823_2_.func_150297_b("LocalBiomes", 7))
++        {
++            List<net.minecraft.world.biome.Biome> localBiomes = chunk.getLocalBiomes();
++            localBiomes.clear();
++            Short[] localBiomeIds = chunk.getLocalBiomeIds();
++            byte[] localBiomeArray = p_75823_2_.func_74770_j("LocalBiomes");
++            for (int i1 = 0; i1 < localBiomeArray.length / 2; i1++)
++            {
++                localBiomes.add(net.minecraft.world.biome.Biome.func_180276_a((localBiomeIds[i1] = (short)(localBiomeArray[i1] * 256 + localBiomeArray[i1])) & 65535, net.minecraft.init.Biomes.field_76771_b));
++            }
++        }
 +        if (chunk.getCapabilities() != null && p_75823_2_.func_74764_b("ForgeCaps")) {
 +            chunk.getCapabilities().deserializeNBT(p_75823_2_.func_74775_l("ForgeCaps"));
 +        }
@@ -179,7 +197,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
-@@ -431,8 +522,6 @@
+@@ -431,8 +540,6 @@
                  p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
              }
          }
