@@ -21,7 +21,7 @@ package net.minecraftforge.common;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -51,6 +51,7 @@ import net.minecraftforge.common.Dimension;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
 
@@ -65,10 +66,16 @@ public class DimensionManager
     /**
      * Returns a list of dimensions associated with this DimensionType.
      */
-    public static ResourceLocation[] getDimensions(DimensionType type)	//Could return Dimension[] since this contains name info
+    public static Set<ResourceLocation> getDimensions(DimensionType type)	//Could return Dimension[] since this contains name info
     {
-    	Set<ResourceLocation> dimIDs =  ForgeRegistries.DIMENSIONS.getKeys();
-    	return dimIDs.toArray(new ResourceLocation[dimIDs.size()]);
+    	Set<ResourceLocation> ret = new HashSet<ResourceLocation>();
+    	Collection<Dimension> dims =  ForgeRegistries.DIMENSIONS.getValuesCollection();
+    	for(Dimension dimension : dims)
+    	{
+    		if(dimension.getType()==type)
+    			ret.add(dimension.getID());	
+    	}
+    	return ret;
     }
     
     /*Dimension must be registered first*/
@@ -122,7 +129,7 @@ public class DimensionManager
         return getWorld(dimID).provider;
     }
 
-    public static ResourceLocation[] getIDs(boolean check)
+    public static Set<ResourceLocation> getIDs(boolean check)
     {
         if (check)
         {
@@ -149,7 +156,7 @@ public class DimensionManager
         return getIDs();
     }
     
-    public static Integer[] getIntIDs(boolean check)
+    public static Set<Integer> getIntIDs(boolean check)
     {
         if (check)
         {
@@ -176,21 +183,20 @@ public class DimensionManager
         return getIntIDs();
     }
     
-    public static ResourceLocation[] getIDs()
+    public static Set<ResourceLocation> getIDs()
     {
-        return worlds.keySet().toArray(new ResourceLocation[worlds.keySet().size()]); //Only loaded dims, since usually used to cycle through loaded worlds
+        return worlds.keySet(); //Only loaded dims, since usually used to cycle through loaded worlds
     }
     
-    public static Integer[] getIntIDs()
+    public static Set<Integer> getIntIDs()
     {
-    	ResourceLocation[] ids = getIDs();
-    	Integer[] ret = new Integer[ids.length];
-    	int x = 0;
-    	for(ResourceLocation id : ids)
+    	IForgeRegistry<Dimension> registry = ForgeRegistries.DIMENSIONS;
+    	Set<Integer> ret = new HashSet<Integer>();
+    	for(ResourceLocation id : getIDs())
     	{
-    		ret[x++] = ForgeRegistries.DIMENSIONS.getValue(id).getDimIntID();
+    		ret.add(registry.getValue(id).getDimIntID());
     	}
-    	return Arrays.copyOf(ret, x);
+    	return ret;
     }
     
     public static void setWorld(ResourceLocation dimID, @Nullable WorldServer world, MinecraftServer server)
@@ -267,8 +273,7 @@ public class DimensionManager
 
         server.worlds = tmp.toArray(new WorldServer[tmp.size()]);
     }
-    
-    
+      
     public static void initDimension(int dimIntID)
     {
     	initDimension(Dimension.getID(dimIntID));
@@ -315,29 +320,24 @@ public class DimensionManager
         return getWorld(Dimension.getID(dimIntID));
     }
 
-    public static WorldServer[] getWorlds()
+    public static Collection<WorldServer> getWorlds()
     {
-        return worlds.values().toArray(new WorldServer[worlds.size()]);
-    }
-
-    static
-    {
-    	//Is there anything to do anymore?
+        return worlds.values();
     }
 
     /**
      * Not public API: used internally to get dimensions that should load at
      * server startup
      */
-    public static Integer[] getStaticDimensionIDs()
+    public static Set<Integer> getStaticDimensionIDs()
     {
-    	Integer[] ret= new Integer[ForgeRegistries.DIMENSIONS.getKeys().size()];
-    	int x = 0;
+    	IForgeRegistry<Dimension> registry = ForgeRegistries.DIMENSIONS;
+    	Set<Integer> ret= new HashSet<Integer>();
     	for(ResourceLocation dimID: ForgeRegistries.DIMENSIONS.getKeys())
     	{
-    		ret[x++] = ForgeRegistries.DIMENSIONS.getValue(dimID).getDimIntID();
+    		ret.add(registry.getValue(dimID).getDimIntID());
     	}
-    	return Arrays.copyOf(ret, x);
+    	return ret;
     }
     
     public static WorldProvider createProviderFor(ResourceLocation dimID)
@@ -467,18 +467,17 @@ public class DimensionManager
         }
     }
     /* returns the dimensions registered to a mod based on its modid */
-    public static ResourceLocation[] getDimensionForMod(String modid)
+    public static Set<ResourceLocation> getDimensionsForMod(String modid)
     {
-    	ResourceLocation[] ret = new ResourceLocation[ForgeRegistries.DIMENSIONS.getKeys().size()];
-    	int x = 0;
+    	Set<ResourceLocation> ret = new HashSet<ResourceLocation>();
     	for(ResourceLocation id : ForgeRegistries.DIMENSIONS.getKeys())
     	{
     		if(id.getResourceDomain().equals(modid))
     		{
-    			ret[x++] = id;
+    			ret.add(id);
     		}
     	}
-    	return Arrays.copyOf(ret, x);
+    	return ret;
     }
 
     /*returns true if the dimension if from a mod given the modid*/

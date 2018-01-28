@@ -185,7 +185,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2901,6 +2929,183 @@
+@@ -2901,6 +2930,183 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  

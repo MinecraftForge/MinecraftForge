@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,336 @@
+@@ -241,6 +216,340 @@
          return new WorldBorder();
      }
  
