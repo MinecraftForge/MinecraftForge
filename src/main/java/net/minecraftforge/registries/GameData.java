@@ -99,7 +99,7 @@ public class GameData
     private static final int MIN_ITEM_ID = MAX_BLOCK_ID + 1;
     private static final int MAX_ITEM_ID = 31999;
     private static final int MAX_POTION_ID = 255; // SPacketEntityEffect sends bytes, we can only use 255
-    private static final int MAX_BIOME_ID = 255; // Maximum number in a byte in the chunk
+    private static final int MAX_BIOME_ID = Short.MAX_VALUE - Short.MIN_VALUE; // Maximum number in a byte in the chunk
     private static final int MAX_SOUND_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSoundEffect)
     private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE >> 5; // Int (SPacketEffect)
     private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.

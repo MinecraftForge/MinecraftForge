@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorDebug.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorDebug.java
+@@ -52,10 +52,12 @@
+         chunk.func_76603_b();
+         Biome[] abiome = this.field_177463_c.func_72959_q().func_76933_b((Biome[])null, p_185932_1_ * 16, p_185932_2_ * 16, 16, 16);
+         byte[] abyte = chunk.func_76605_m();
++        List<Biome> localBiomes = chunk.getLocalBiomes(); localBiomes.clear(); Short[] localBiomeIds = chunk.getLocalBiomeIds();
+ 
+         for (int i1 = 0; i1 < abyte.length; ++i1)
+         {
+-            abyte[i1] = (byte)Biome.func_185362_a(abiome[i1]);
++        	localBiomeIds[i1] = null; int localBiomeIndex = localBiomes.indexOf(abiome[i1]); if(localBiomeIndex < 0) { localBiomeIds[localBiomeIndex = localBiomes.size()] = (short)Biome.func_185362_a(abiome[i1]); localBiomes.add(abiome[i1]); }
++            abyte[i1] = (byte)localBiomeIndex;
+         }
+ 
+         chunk.func_76603_b();
