@@ -1,20 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorFlat.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorFlat.java
-@@ -150,10 +150,12 @@
+@@ -150,18 +150,32 @@
          Chunk chunk = new Chunk(this.field_73163_a, chunkprimer, p_185932_1_, p_185932_2_);
          Biome[] abiome = this.field_73163_a.func_72959_q().func_76933_b((Biome[])null, p_185932_1_ * 16, p_185932_2_ * 16, 16, 16);
          byte[] abyte = chunk.func_76605_m();
-+        List<Biome> localBiomes = chunk.getLocalBiomes(); localBiomes.clear(); Short[] localBiomeIds = chunk.getLocalBiomeIds();
++        byte[] localizedBiomeArray = new byte[256]; int maxBiomeId = 0; List<Biome> localBiomes = chunk.getLocalBiomes(); localBiomes.clear(); Short[] localBiomeIds = chunk.getLocalBiomeIds();
  
          for (int l = 0; l < abyte.length; ++l)
          {
--            abyte[l] = (byte)Biome.func_185362_a(abiome[l]);
-+        	localBiomeIds[l] = null; int localBiomeIndex = localBiomes.indexOf(abiome[l]); if(localBiomeIndex < 0) { localBiomeIds[localBiomeIndex = localBiomes.size()] = (short)Biome.func_185362_a(abiome[l]); localBiomes.add(abiome[l]); }
-+            abyte[l] = (byte)localBiomeIndex;
++            int localBiomeIndex = localBiomes.indexOf(abiome[l]);
++            if(localBiomeIndex < 0)
++            {
++                int biomeId = Biome.func_185362_a(abiome[l]);
++                maxBiomeId = Math.max(maxBiomeId, biomeId);
++                localBiomeIds[localBiomeIndex = localBiomes.size()] = (short)(biomeId & 65535);
++                localBiomes.add(abiome[l]);
++            }
++            localizedBiomeArray[l] = (byte)localBiomeIndex;
+             abyte[l] = (byte)Biome.func_185362_a(abiome[l]);
          }
  
++        if (maxBiomeId > 255) chunk.func_76616_a(localizedBiomeArray);
++        else localBiomes.clear();
++
          chunk.func_76603_b();
-@@ -162,6 +164,7 @@
+         return chunk;
+     }
  
      public void func_185931_b(int p_185931_1_, int p_185931_2_)
      {
@@ -22,7 +33,7 @@
          int i = p_185931_1_ * 16;
          int j = p_185931_2_ * 16;
          BlockPos blockpos = new BlockPos(i, 0, j);
-@@ -173,6 +176,8 @@
+@@ -173,6 +187,8 @@
          this.field_73161_b.setSeed((long)p_185931_1_ * k + (long)p_185931_2_ * l ^ this.field_73163_a.func_72905_C());
          ChunkPos chunkpos = new ChunkPos(p_185931_1_, p_185931_2_);
  
@@ -31,7 +42,7 @@
          for (MapGenStructure mapgenstructure : this.field_82696_f.values())
          {
              boolean flag1 = mapgenstructure.func_175794_a(this.field_73163_a, this.field_73161_b, chunkpos);
-@@ -210,6 +215,9 @@
+@@ -210,6 +226,9 @@
          {
              biome.func_180624_a(this.field_73163_a, this.field_73161_b, blockpos);
          }

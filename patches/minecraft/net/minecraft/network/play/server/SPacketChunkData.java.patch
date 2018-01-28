@@ -9,7 +9,7 @@
 +            Short[] localBiomeIds = p_189555_2_.getLocalBiomeIds();
 +            for (int k = 0; k < localBiomeCount; k++)
 +            {
-+                p_189555_1_.writeShort(localBiomeIds[i]);
++                p_189555_1_.writeShort(localBiomeIds[k]);
 +            }
          }
  

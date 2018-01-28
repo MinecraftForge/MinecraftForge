@@ -258,15 +258,14 @@
          boolean flag = this.field_76637_e.field_73011_w.func_191066_m();
  
          for (int i = 0; i < this.field_76652_q.length; ++i)
-@@ -1162,6 +1176,18 @@
+@@ -1162,6 +1176,17 @@
          if (p_186033_3_)
          {
              p_186033_1_.readBytes(this.field_76651_r);
-+            this.localBiomeIds = new Short[256];
 +            this.localBiomes.clear();
 +            if (p_186033_1_.readableBytes() > 0)
 +            {
-+                int localBiomeCount = p_186033_1_.readByte() + 128;
++                int localBiomeCount = p_186033_1_.readByte() & 255;
 +                for (int j = 0; j < localBiomeCount; j++)
 +                {
 +                    short localBiomeId = p_186033_1_.readShort(); 
@@ -277,7 +276,7 @@
          }
  
          for (int j = 0; j < this.field_76652_q.length; ++j)
-@@ -1176,10 +1202,16 @@
+@@ -1176,10 +1201,16 @@
          this.field_76646_k = true;
          this.func_76590_a();
  
@@ -294,27 +293,26 @@
      }
  
      public Biome func_177411_a(BlockPos p_177411_1_, BiomeProvider p_177411_2_)
-@@ -1192,10 +1224,18 @@
+@@ -1192,10 +1223,17 @@
          {
              Biome biome = p_177411_2_.func_180300_a(p_177411_1_, Biomes.field_76772_c);
              k = Biome.func_185362_a(biome);
 +            int localBiomeIndex = this.localBiomes.indexOf(biome);
 +            if (localBiomeIndex < 0)
 +            {
-+                localBiomeIndex = this.localBiomes.size();
++                this.localBiomeIds[localBiomeIndex = this.localBiomes.size()] = (short)(k & 65535);
 +                this.localBiomes.add(biome);
-+                this.localBiomeIds[localBiomeIndex] = (short)(localBiomeIndex);
 +            }
 +            k = localBiomeIndex;
              this.field_76651_r[j << 4 | i] = (byte)(k & 255);
          }
  
 -        Biome biome1 = Biome.func_150568_d(k);
-+        Biome biome1 = Biome.func_150568_d(this.localBiomes.size() > 0 ? this.localBiomeIds[k] : k);
++        Biome biome1 = Biome.func_150568_d(this.localBiomes.size() > k ? this.localBiomeIds[k] : k);
          return biome1 == null ? Biomes.field_76772_c : biome1;
      }
  
-@@ -1244,13 +1284,13 @@
+@@ -1244,13 +1282,13 @@
                      BlockPos blockpos1 = blockpos.func_177982_a(k, (j << 4) + i1, l);
                      boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
@@ -330,7 +328,7 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1381,7 +1421,7 @@
+@@ -1381,7 +1419,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -339,7 +337,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1420,6 +1460,7 @@
+@@ -1420,6 +1458,7 @@
          else
          {
              System.arraycopy(p_177420_1_, 0, this.field_76634_f, 0, this.field_76634_f.length);
@@ -347,7 +345,7 @@
          }
      }
  
-@@ -1489,4 +1530,65 @@
+@@ -1489,4 +1528,65 @@
          QUEUED,
          CHECK;
      }

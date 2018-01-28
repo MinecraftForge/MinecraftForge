@@ -106,8 +106,8 @@
 +        byte[] localBiomeArray = new byte[localBiomeCount * 2];
 +        for (int i = 0; i < localBiomeCount; i++)
 +        {
-+            localBiomeArray[i] = (byte)(localBiomeIds[i] / 256);
-+            localBiomeArray[i] = (byte)(localBiomeIds[i] & 255);
++            localBiomeArray[i * 2] = (byte)(localBiomeIds[i] >> 8);
++            localBiomeArray[i * 2 + 1] = (byte)(localBiomeIds[i] & 255);
 +        }
 +        p_75820_3_.func_74773_a("LocalBiomes", localBiomeArray);
          p_75820_1_.func_177409_g(false);
@@ -181,7 +181,7 @@
 +            byte[] localBiomeArray = p_75823_2_.func_74770_j("LocalBiomes");
 +            for (int i1 = 0; i1 < localBiomeArray.length / 2; i1++)
 +            {
-+                localBiomes.add(net.minecraft.world.biome.Biome.func_180276_a((localBiomeIds[i1] = (short)(localBiomeArray[i1] * 256 + localBiomeArray[i1])) & 65535, net.minecraft.init.Biomes.field_76771_b));
++                localBiomes.add(net.minecraft.world.biome.Biome.func_180276_a((localBiomeIds[i1] = (short)(localBiomeArray[i1 * 2] << 8 + localBiomeArray[i1 * 2 + 1] & 255)) & 65535, net.minecraft.init.Biomes.field_76771_b));
 +            }
 +        }
 +        if (chunk.getCapabilities() != null && p_75823_2_.func_74764_b("ForgeCaps")) {
