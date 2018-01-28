@@ -171,6 +171,12 @@ public class DimensionManager
         return getIntIDs(ids);
     }
     
+    public static Set<Integer> getIntIDs()
+    {
+        Set<ResourceLocation> ids = getIDs();
+        return getIntIDs(ids);
+    }
+    
     public static Set<ResourceLocation> getIDs()
     {
         return worlds.keySet(); //Only loaded dims, since usually used to cycle through loaded worlds
