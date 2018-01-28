@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketChunkData.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketChunkData.java
+@@ -140,6 +140,13 @@
+         if (this.func_149274_i())
+         {
+             p_189555_1_.writeBytes(p_189555_2_.func_76605_m());
++            int localBiomeCount = p_189555_2_.getLocalBiomes().size();
++            p_189555_1_.writeByte((byte)(localBiomeCount & 255));
++            Short[] localBiomeIds = p_189555_2_.getLocalBiomeIds();
++            for (int k = 0; k < localBiomeCount; k++)
++            {
++                p_189555_1_.writeShort(localBiomeIds[k]);
++            }
+         }
+ 
+         return i;
+@@ -170,6 +177,7 @@
+         if (this.func_149274_i())
+         {
+             i += p_189556_1_.func_76605_m().length;
++            i += p_189556_1_.getLocalBiomes().size() * 2 + 1;
+         }
+ 
+         return i;

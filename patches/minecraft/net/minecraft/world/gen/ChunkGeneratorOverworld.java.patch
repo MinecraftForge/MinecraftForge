@@ -43,7 +43,33 @@
          double d0 = 0.03125D;
          this.field_186002_u = this.field_185994_m.func_151599_a(this.field_186002_u, (double)(p_185977_1_ * 16), (double)(p_185977_2_ * 16), 16, 16, 0.0625D, 0.0625D, 1.0D);
  
-@@ -370,6 +392,8 @@
+@@ -229,12 +251,25 @@
+ 
+         Chunk chunk = new Chunk(this.field_185995_n, chunkprimer, p_185932_1_, p_185932_2_);
+         byte[] abyte = chunk.func_76605_m();
++        byte[] localizedBiomeArray = new byte[256]; int maxBiomeId = 0; List<Biome> localBiomes = chunk.getLocalBiomes(); localBiomes.clear(); Short[] localBiomeIds = chunk.getLocalBiomeIds();
+ 
+         for (int i = 0; i < abyte.length; ++i)
+         {
++            int localBiomeIndex = localBiomes.indexOf(this.field_185981_C[i]);
++            if(localBiomeIndex < 0)
++            {
++                int biomeId = Biome.func_185362_a(this.field_185981_C[i]);
++                maxBiomeId = Math.max(maxBiomeId, biomeId);
++                localBiomeIds[localBiomeIndex = localBiomes.size()] = (short)(biomeId & 65535);
++                localBiomes.add(this.field_185981_C[i]);
++            }
++            localizedBiomeArray[i] = (byte)localBiomeIndex;
+             abyte[i] = (byte)Biome.func_185362_a(this.field_185981_C[i]);
+         }
+ 
++        if (maxBiomeId > 255) chunk.func_76616_a(localizedBiomeArray);
++        else localBiomes.clear();
++
+         chunk.func_76603_b();
+         return chunk;
+     }
+@@ -370,6 +405,8 @@
          boolean flag = false;
          ChunkPos chunkpos = new ChunkPos(p_185931_1_, p_185931_2_);
  
@@ -52,7 +78,7 @@
          if (this.field_185996_o)
          {
              if (this.field_186000_s.field_177829_w)
-@@ -404,6 +428,7 @@
+@@ -404,6 +441,7 @@
          }
  
          if (biome != Biomes.field_76769_d && biome != Biomes.field_76786_s && this.field_186000_s.field_177781_A && !flag && this.field_185990_i.nextInt(this.field_186000_s.field_177782_B) == 0)
@@ -60,7 +86,7 @@
          {
              int i1 = this.field_185990_i.nextInt(16) + 8;
              int j1 = this.field_185990_i.nextInt(256);
-@@ -412,6 +437,7 @@
+@@ -412,6 +450,7 @@
          }
  
          if (!flag && this.field_185990_i.nextInt(this.field_186000_s.field_177777_D / 10) == 0 && this.field_186000_s.field_177783_C)
@@ -68,7 +94,7 @@
          {
              int i2 = this.field_185990_i.nextInt(16) + 8;
              int l2 = this.field_185990_i.nextInt(this.field_185990_i.nextInt(248) + 8);
-@@ -424,6 +450,7 @@
+@@ -424,6 +463,7 @@
          }
  
          if (this.field_186000_s.field_177837_s)
@@ -76,7 +102,7 @@
          {
              for (int j2 = 0; j2 < this.field_186000_s.field_177835_t; ++j2)
              {
-@@ -435,9 +462,12 @@
+@@ -435,9 +475,12 @@
          }
  
          biome.func_180624_a(this.field_185995_n, this.field_185990_i, new BlockPos(i, 0, j));
@@ -89,7 +115,7 @@
          for (int k2 = 0; k2 < 16; ++k2)
          {
              for (int j3 = 0; j3 < 16; ++j3)
-@@ -456,7 +486,10 @@
+@@ -456,7 +499,10 @@
                  }
              }
          }
