@@ -69,7 +69,7 @@ public class MultiLayerModelDebug
                     }
 
                     @Override
-                    public Set<BlockRenderLayer> getRenderLayers(IBlockState state, IBlockAccess access, BlockPos pos)
+                    public Set<BlockRenderLayer> getRenderLayers(IBlockState state)
                     {
                         return EnumSet.of(BlockRenderLayer.SOLID, BlockRenderLayer.TRANSLUCENT);
                     }
