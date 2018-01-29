@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -102,11 +103,16 @@ public class ExtendedBlockState extends BlockStateContainer
         @Override
         public <V> IExtendedBlockState withProperty(IUnlistedProperty<V> property, V value)
         {
-            if(!this.unlistedProperties.containsKey(property))
+            Optional<?> oldValue = unlistedProperties.get(property);
+            if (oldValue == null)
             {
                 throw new IllegalArgumentException("Cannot set unlisted property " + property + " as it does not exist in " + getBlock().getBlockState());
             }
-            if(!property.isValid(value))
+            if (Objects.equals(oldValue.orElse(null), value))
+            {
+                return this;
+            }
+            if (!property.isValid(value))
             {
                 throw new IllegalArgumentException("Cannot set unlisted property " + property + " to " + value + " on block " + Block.REGISTRY.getNameForObject(getBlock()) + ", it is not an allowed value");
             }
