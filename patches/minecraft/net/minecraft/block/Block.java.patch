@@ -221,7 +221,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -934,6 +952,1347 @@
+@@ -934,6 +952,1357 @@
      {
      }
  
@@ -1392,7 +1392,7 @@
 +
 +    /**
 +     * Queries if this block should render in a given layer.
-+     * @deprecated use {@link #getRenderLayers(IBlockState, IBlockAccess, BlockPos)}
++     * @deprecated use {@link #getRenderLayers(IBlockState)}
 +     */
 +    @Deprecated // TODO: remove (1.13)
 +    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
@@ -1402,8 +1402,9 @@
 +
 +    /**
 +     * Returns the render layers this block uses.
++     * Prefer calling {@link #getRenderLayers(IBlockState, IBlockAccess, BlockPos)} where possible.
 +     */
-+    public Set<BlockRenderLayer> getRenderLayers(IBlockState state, IBlockAccess access, BlockPos pos)
++    public Set<BlockRenderLayer> getRenderLayers(IBlockState state)
 +    {
 +        // TODO: clean up when canRenderInLayer is removed
 +        Set<BlockRenderLayer> layers = java.util.EnumSet.noneOf(BlockRenderLayer.class);
@@ -1412,6 +1413,15 @@
 +            if (canRenderInLayer(state, layer)) layers.add(layer);
 +        }
 +        return layers;
++    }
++
++    /**
++     * Returns the render layers this block uses.
++     * Prefer overriding {@link #getRenderLayers(IBlockState)} where possible.
++     */
++    public Set<BlockRenderLayer> getRenderLayers(IBlockState state, IBlockAccess access, BlockPos pos)
++    {
++        return getRenderLayers(state);
 +    }
 +
 +    // For Internal use only to capture droped items inside getDrops
@@ -1569,7 +1579,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1230,31 +2589,6 @@
+@@ -1230,31 +2599,6 @@
                  block15.field_149783_u = flag;
              }
          }
