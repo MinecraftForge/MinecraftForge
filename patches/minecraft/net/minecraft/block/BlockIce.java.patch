@@ -11,7 +11,7 @@
 +            java.util.List<ItemStack> items = new java.util.ArrayList<ItemStack>();
 +            items.add(this.func_180643_i(p_180657_4_));
 +
-+            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_3_, p_180657_4_, 0, 1.0f, true, p_180657_2_);
++            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_5_, p_180657_3_, p_180657_4_, 0, 1.0f, true, p_180657_2_);
 +            for (ItemStack is : items)
 +                func_180635_a(p_180657_1_, p_180657_3_, is);
          }

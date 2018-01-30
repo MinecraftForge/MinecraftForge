@@ -27,6 +27,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -39,6 +40,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockEvent extends Event
 {
@@ -87,15 +89,26 @@ public class BlockEvent extends Event
         private final boolean isSilkTouching;
         private float dropChance; // Change to e.g. 1.0f, if you manipulate the list and want to guarantee it always drops
         private final EntityPlayer harvester; // May be null for non-player harvesting such as explosions or machines
+        private final TileEntity tileEntity; // The TileEntity. Even if world.getTileEntity(pos) is null, this hasn't to be null too.
 
-        public HarvestDropsEvent(World world, BlockPos pos, IBlockState state, int fortuneLevel, float dropChance, List<ItemStack> drops, EntityPlayer harvester, boolean isSilkTouching)
+        public HarvestDropsEvent(World world, @Nullable TileEntity tileEntity, BlockPos pos, IBlockState state, int fortuneLevel, float dropChance, List<ItemStack> drops, EntityPlayer harvester, boolean isSilkTouching)
         {
             super(world, pos, state);
+            this.tileEntity = tileEntity;
             this.fortuneLevel = fortuneLevel;
             this.setDropChance(dropChance);
             this.drops = drops;
             this.isSilkTouching = isSilkTouching;
             this.harvester = harvester;
+        }
+
+        /**
+         * @deprecated Remove in 1.13. Remove {@link net.minecraftforge.event.ForgeEventFactory#fireBlockHarvesting(List, World, BlockPos, IBlockState, int, float, boolean, EntityPlayer)} too
+         */
+        @Deprecated
+        public HarvestDropsEvent(World world, BlockPos pos, IBlockState state, int fortuneLevel, float dropChance, List<ItemStack> drops, EntityPlayer harvester, boolean isSilkTouching)
+        {
+            this(world, null, pos, state, fortuneLevel, dropChance, drops, harvester, isSilkTouching);
         }
 
         public int getFortuneLevel() { return fortuneLevel; }
@@ -104,6 +117,7 @@ public class BlockEvent extends Event
         public float getDropChance() { return dropChance; }
         public void setDropChance(float dropChance) { this.dropChance = dropChance; }
         public EntityPlayer getHarvester() { return harvester; }
+        @Nullable public TileEntity getTileEntity() { return tileEntity; }
     }
 
     /**
