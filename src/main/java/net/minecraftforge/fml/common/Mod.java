@@ -49,15 +49,15 @@ import net.minecraftforge.fml.relauncher.Side;
  * at pre-defined times during the loading of the game, based on where you have applied the {@link EventHandler}
  * annotation.
  *
- * <p>This is a simple example of a Mod. It has the modId of "MyModId", the name of "My example mod", it is
+ * <p>This is a simple example of a Mod. It has the modId of "mymodid", the name of "My example mod", it is
  * version 1.0, and depends on FML being loaded.
  * <pre>{@code
  * package mymod;
- * // Declare that this is a mod with modId "MyModId", name "My example mod", version "1.0" and dependency on FML.
- * {@literal @}Mod(modId="MyModId",name="My example mod",version="1.0",dependencies="required-after:FML")
+ * // Declare that this is a mod with modId "mymodid", name "My example mod", version "1.0" and dependency on FML.
+ * {@literal @}Mod(modId="mymodid",name="My example mod",version="1.0",dependencies="required-after:FML")
  * public class MyMod {
  *      // Populate this field with the instance of the mod created by FML
- *      {@literal @}Instance("MyModId")
+ *      {@literal @}Instance("mymodid")
  *      public MyMod instance;
  *
  *      // Mark this method for receiving an {@link FMLEvent} (in this case, it's the {@link FMLPreInitializationEvent})
@@ -95,6 +95,8 @@ public @interface Mod
      *
      * The version string here should be just numbers separated by dots,
      * to make specifying {@link #dependencies()} simple for other mods.
+     *
+     * See also: <a href="https://cwiki.apache.org/confluence/display/MAVENOLD/Versioning">"Versioning" on Maven Wiki</a>
      */
     String version() default "";
 
@@ -253,7 +255,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({})
-    public @interface CustomProperty
+    @interface CustomProperty
     {
         /**
          * A key. Should be unique.
@@ -307,7 +309,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface EventHandler{}
+    @interface EventHandler{}
 
     /**
      * Populate the annotated field with the mod instance based on the specified ModId. This can be used
@@ -317,7 +319,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public @interface Instance {
+    @interface Instance {
         /**
          * The mod object to inject into this field
          */
@@ -336,7 +338,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public @interface Metadata {
+    @interface Metadata {
         /**
          * The mod id specifying the metadata to load here
          */
@@ -356,7 +358,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface InstanceFactory {
+    @interface InstanceFactory {
     }
 
     /**
@@ -364,7 +366,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    public @interface EventBusSubscriber {
+    @interface EventBusSubscriber {
         Side[] value() default { Side.CLIENT, Side.SERVER };
 
         /**

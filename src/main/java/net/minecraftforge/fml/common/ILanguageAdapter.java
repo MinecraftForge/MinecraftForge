@@ -34,16 +34,16 @@ import org.apache.logging.log4j.Level;
 
 public interface ILanguageAdapter
 {
-    public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception;
-    public boolean supportsStatics();
-    public void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
-    public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
+    Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception;
+    boolean supportsStatics();
+    void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
+    void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
 
     /**
      * Wraps an event handler method in an {@code EventHandler} instance
      * @param method the eventhandler method of a mod
      */
-    public default BiFunction<Object, FMLEvent, CompletableFuture<Void>> createEventHandler(Method method)
+    default BiFunction<Object, FMLEvent, CompletableFuture<Void>> createEventHandler(Method method)
     {
         return (Object mod, FMLEvent event) ->
         {

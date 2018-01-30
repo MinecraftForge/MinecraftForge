@@ -34,13 +34,13 @@ public interface IModGuiFactory {
      *
      * @param minecraftInstance the instance
      */
-    public void initialize(Minecraft minecraftInstance);
+    void initialize(Minecraft minecraftInstance);
     
     /**
      * If this method returns false, the config button in the mod list will be disabled
      * @return true if this object provides a config gui screen, false otherwise
      */
-    public boolean hasConfigGui();
+    boolean hasConfigGui();
     
     /**
      * Return an initialized {@link GuiScreen}. This screen will be displayed
@@ -62,7 +62,7 @@ public interface IModGuiFactory {
      * @return A class that will be instantiated on clicks on the config button
      *  or null if no GUI is desired.
      */
-    public GuiScreen createConfigGui(GuiScreen parentScreen);
+    GuiScreen createConfigGui(GuiScreen parentScreen);
 
     /**
      * Return a list of the "runtime" categories this mod wishes to populate with
@@ -84,7 +84,7 @@ public interface IModGuiFactory {
      *
      * @return the set of options this mod wishes to have available, or empty if none
      */
-    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories();
+    Set<RuntimeOptionCategoryElement> runtimeGuiCategories();
 
     /**
      * Represents an option category and entry in the runtime gui options list.

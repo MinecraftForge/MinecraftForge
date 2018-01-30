@@ -21,11 +21,16 @@ package net.minecraftforge.client.model.animation;
 
 import net.minecraft.world.World;
 
+import java.lang.ref.WeakReference;
+
 public enum Animation
 {
     INSTANCE;
 
     private float clientPartialTickTime;
+
+    private static long epochTime;
+    private static WeakReference<World> worldRef;
 
     /**
      * Get the global world time for the current tick, in seconds.
@@ -40,7 +45,12 @@ public enum Animation
      */
     public static float getWorldTime(World world, float tickProgress)
     {
-        return (world.getTotalWorldTime() + tickProgress) / 20;
+        if (worldRef == null || worldRef.get() != world)
+        {
+            epochTime = world.getTotalWorldTime();
+            worldRef = new WeakReference<>(world);
+        }
+        return (world.getTotalWorldTime() - epochTime + tickProgress) / 20;
     }
 
     /**
