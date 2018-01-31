@@ -81,7 +81,7 @@
      }
  
      public int func_149745_a(Random p_149745_1_)
-@@ -549,48 +556,28 @@
+@@ -549,16 +556,7 @@
      @Deprecated
      public float func_180647_a(IBlockState p_180647_1_, EntityPlayer p_180647_2_, World p_180647_3_, BlockPos p_180647_4_)
      {
@@ -99,32 +99,35 @@
      }
  
      public final void func_176226_b(World p_176226_1_, BlockPos p_176226_2_, IBlockState p_176226_3_, int p_176226_4_)
-     {
--        this.func_180653_a(p_176226_1_, p_176226_2_, p_176226_3_, 1.0F, p_176226_4_);
-+        this.dropBlockAsItem(p_176226_1_, null, p_176226_2_, p_176226_3_, p_176226_4_);
-     }
+@@ -568,20 +566,18 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
 -        if (!p_180653_1_.field_72995_K)
--        {
++        if (!p_180653_1_.field_72995_K && !p_180653_1_.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
+         {
 -            int i = this.func_149679_a(p_180653_5_, p_180653_1_.field_73012_v);
--
++            NonNullList<ItemStack> drops = NonNullList.func_191196_a();
++            getDrops(drops, p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_, harvestTileEntity.get(), harvesters.get()); // use the old method until it gets removed, for backward compatibility
+ 
 -            for (int j = 0; j < i; ++j)
--            {
--                if (p_180653_1_.field_73012_v.nextFloat() <= p_180653_4_)
--                {
++            p_180653_4_ = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_, p_180653_4_, false, harvesters.get(), harvestTileEntity.get());
++
++            for (ItemStack drop : drops)
+             {
+                 if (p_180653_1_.field_73012_v.nextFloat() <= p_180653_4_)
+                 {
 -                    Item item = this.func_180660_a(p_180653_3_, p_180653_1_.field_73012_v, p_180653_5_);
 -
 -                    if (item != Items.field_190931_a)
 -                    {
 -                        func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(item, 1, this.func_180651_a(p_180653_3_)));
 -                    }
--                }
--            }
--        }
-+        this.dropBlockAsItemWithChance(p_180653_1_, null, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
-     }
++                    func_180635_a(p_180653_1_, p_180653_2_, drop);
+                 }
+             }
+         }
+@@ -589,8 +585,13 @@
  
      public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_)
      {
@@ -139,7 +142,7 @@
              float f = 0.5F;
              double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -619,6 +606,7 @@
+@@ -619,6 +620,7 @@
          return 0;
      }
  
@@ -147,7 +150,7 @@
      public float func_149638_a(Entity p_149638_1_)
      {
          return this.field_149781_w / 5.0F;
-@@ -657,7 +645,7 @@
+@@ -657,7 +659,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -156,7 +159,7 @@
      }
  
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)
-@@ -669,6 +657,8 @@
+@@ -669,6 +671,8 @@
      {
      }
  
@@ -165,7 +168,7 @@
      public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
      {
          return this.func_176203_a(p_180642_7_);
-@@ -710,21 +700,35 @@
+@@ -710,21 +714,37 @@
          p_180657_2_.func_71029_a(StatList.func_188055_a(this));
          p_180657_2_.func_71020_j(0.005F);
  
@@ -181,7 +184,7 @@
 +                items.add(itemstack);
 +            }
 +
-+            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_5_, p_180657_3_, p_180657_4_, 0, 1.0f, true, p_180657_2_);
++            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_3_, p_180657_4_, 0, 1.0f, true, p_180657_2_, p_180657_5_);
 +            for (ItemStack item : items)
 +            {
 +                func_180635_a(p_180657_1_, p_180657_3_, item);
@@ -190,10 +193,11 @@
          else
          {
 +            harvesters.set(p_180657_2_);
++            harvestTileEntity.set(p_180657_5_);
              int i = EnchantmentHelper.func_77506_a(Enchantments.field_185308_t, p_180657_6_);
--            this.func_176226_b(p_180657_1_, p_180657_3_, p_180657_4_, i);
-+            this.dropBlockAsItem(p_180657_1_, p_180657_5_, p_180657_3_, p_180657_4_, i);
+             this.func_176226_b(p_180657_1_, p_180657_3_, p_180657_4_, i);
 +            harvesters.set(null);
++            harvestTileEntity.set(null);
          }
      }
  
@@ -205,7 +209,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -810,6 +814,7 @@
+@@ -810,6 +830,7 @@
          p_176216_2_.field_70181_x = 0.0D;
      }
  
@@ -213,7 +217,7 @@
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
          return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
-@@ -919,6 +924,7 @@
+@@ -919,6 +940,7 @@
          }
      }
  
@@ -221,13 +225,14 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -934,6 +940,1382 @@
+@@ -934,6 +956,1343 @@
      {
      }
  
 +    /* ======================================== FORGE START =====================================*/
 +    //For ForgeInternal use Only!
 +    protected ThreadLocal<EntityPlayer> harvesters = new ThreadLocal();
++    protected ThreadLocal<TileEntity> harvestTileEntity = new ThreadLocal<>();
 +    private ThreadLocal<IBlockState> silk_check_state = new ThreadLocal();
 +    protected static java.util.Random RANDOM = new java.util.Random(); // Useful for random things without a seed.
 +
@@ -550,47 +555,6 @@
 +    }
 +
 +    /**
-+     * TileEntity sensitive version of {@link #dropBlockAsItem(World, BlockPos, IBlockState, int)}
-+     *
-+     * @param world The current World
-+     * @param tileEntity The TileEntity, may be null
-+     * @param pos Block position in the world
-+     * @param state The current state
-+     * @param fortune Current item fortune level
-+     */
-+    public void dropBlockAsItem(World world, @Nullable TileEntity tileEntity, BlockPos pos, IBlockState state, int fortune)
-+    {
-+        this.dropBlockAsItemWithChance(world, tileEntity, pos, state, 1.0F, fortune);
-+    }
-+
-+    /**
-+     * TileEntity sensitive version of {@link #dropBlockAsItemWithChance(World, BlockPos, IBlockState, float, int)}
-+     * @param world The current World
-+     * @param tileEntity The TileEntity, may be null
-+     * @param pos Block position in the world
-+     * @param state The current state
-+     * @param chance The chance of dropping the block. 100% is equal to 1.0F
-+     * @param fortune Current item fortune level
-+     */
-+    public void dropBlockAsItemWithChance(World world, @Nullable TileEntity tileEntity, BlockPos pos, IBlockState state, float chance, int fortune)
-+    {
-+        if (!world.field_72995_K && !world.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
-+        {
-+            NonNullList<ItemStack> drops = NonNullList.func_191196_a();
-+            this.getDrops(drops, world, tileEntity, pos, state, fortune);
-+            chance = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, world, tileEntity, pos, state, fortune, chance, false, harvesters.get());
-+
-+            for (ItemStack drop : drops)
-+            {
-+                if (world.field_73012_v.nextFloat() <= chance)
-+                {
-+                    func_180635_a(world, pos, drop);
-+                }
-+            }
-+        }
-+    }
-+
-+    /**
 +     * State and fortune sensitive version, this replaces the old (int meta, Random rand)
 +     * version in 1.1.
 +     *
@@ -605,7 +569,7 @@
 +    }
 +
 +    /**
-+     * @deprecated use {@link #getDrops(NonNullList, IBlockAccess, BlockPos, IBlockState, int)}
++     * @deprecated use {@link #getDrops(NonNullList, IBlockAccess, BlockPos, IBlockState, int, TileEntity, EntityPlayer)}
 +     */
 +    @Deprecated
 +    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
@@ -616,7 +580,7 @@
 +    }
 +
 +    /**
-+     * @deprecated use {@link #getDrops(NonNullList, IBlockAccess, TileEntity, BlockPos, IBlockState, int)}
++     * @deprecated use {@link #getDrops(NonNullList, IBlockAccess, BlockPos, IBlockState, int, TileEntity, EntityPlayer)}
 +     */
 +    @Deprecated
 +    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
@@ -639,12 +603,13 @@
 +     *
 +     * @param drops add all items this block drops to this drops list
 +     * @param world The current world
-+     * @param tileEntity The TileEntity. Even if world.getTileEntity(pos) is null, this hasn't to be null too.
 +     * @param pos Block position in world
 +     * @param state Current state
 +     * @param fortune Breakers fortune level
++     * @param tileEntity The TileEntity. Even if world.getTileEntity(pos) is null, this hasn't to be null too.
++     * @param player The Harvester
 +     */
-+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, @Nullable TileEntity tileEntity, BlockPos pos, IBlockState state, int fortune)
++    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune, @Nullable TileEntity tileEntity, EntityPlayer player)
 +    {
 +        drops.addAll(this.getDrops(world, pos, state, fortune));  // use the old method until it gets removed, for backward compatibility
 +    }
@@ -1604,7 +1569,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1230,31 +2612,6 @@
+@@ -1230,31 +2589,6 @@
                  block15.field_149783_u = flag;
              }
          }

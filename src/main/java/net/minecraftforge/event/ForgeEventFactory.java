@@ -313,10 +313,10 @@ public class ForgeEventFactory
     @Deprecated // Remove in 1.13
     public static float fireBlockHarvesting(List<ItemStack> drops, World world, BlockPos pos, IBlockState state, int fortune, float dropChance, boolean silkTouch, EntityPlayer player)
     {
-        return fireBlockHarvesting(drops, world, null, pos, state, fortune, dropChance, silkTouch, player);
+        return fireBlockHarvesting(drops, world, pos, state, fortune, dropChance, silkTouch, player, null);
     }
 
-    public static float fireBlockHarvesting(List<ItemStack> drops, World world, @Nullable TileEntity tileEntity, BlockPos pos, IBlockState state, int fortune, float dropChance, boolean silkTouch, EntityPlayer player)
+    public static float fireBlockHarvesting(List<ItemStack> drops, World world, BlockPos pos, IBlockState state, int fortune, float dropChance, boolean silkTouch, EntityPlayer player, @Nullable TileEntity tileEntity)
     {
         BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, tileEntity, pos, state, fortune, dropChance, drops, player, silkTouch);
         MinecraftForge.EVENT_BUS.post(event);
