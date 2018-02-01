@@ -155,14 +155,20 @@ public class BlockInfo
                     int     bx = b[x1][1][1], by = b[1][y1][1], bz = b[1][1][z1];
                     boolean tx = t[x1][1][1], ty = t[1][y1][1], tz = t[1][1][z1];
 
-                    skyLight  [0][x][y][z] = combine(sx, sxz, sxy, txz || txy ? sxyz : sx, tx, txz, txy, txz || txy ? txyz : tx);
-                    blockLight[0][x][y][z] = combine(bx, bxz, bxy, txz || txy ? bxyz : bx, tx, txz, txy, txz || txy ? txyz : tx);
+                    skyLight  [0][x][y][z] = combine(sx, sxz, sxy, txz || txy ? sxyz : sx,
+                                                     tx, txz, txy, txz || txy ? txyz : tx);
+                    blockLight[0][x][y][z] = combine(bx, bxz, bxy, txz || txy ? bxyz : bx,
+                                                     tx, txz, txy, txz || txy ? txyz : tx);
 
-                    skyLight  [1][x][y][z] = combine(sy, sxy, syz, txy || tyz ? sxyz : sy, ty, txy, tyz, txy || tyz ? txyz : ty);
-                    blockLight[1][x][y][z] = combine(by, bxy, byz, txy || tyz ? bxyz : by, ty, txy, tyz, txy || tyz ? txyz : ty);
+                    skyLight  [1][x][y][z] = combine(sy, sxy, syz, txy || tyz ? sxyz : sy,
+                                                     ty, txy, tyz, txy || tyz ? txyz : ty);
+                    blockLight[1][x][y][z] = combine(by, bxy, byz, txy || tyz ? bxyz : by,
+                                                     ty, txy, tyz, txy || tyz ? txyz : ty);
 
-                    skyLight  [2][x][y][z] = combine(sz, syz, sxz, tyz || txz ? sxyz : sz, tz, tyz, txz, tyz || txz ? txyz : tz);
-                    blockLight[2][x][y][z] = combine(bz, byz, bxz, tyz || txz ? bxyz : bz, tz, tyz, txz, tyz || txz ? txyz : tz);
+                    skyLight  [2][x][y][z] = combine(sz, syz, sxz, tyz || txz ? sxyz : sz,
+                                                     tz, tyz, txz, tyz || txz ? txyz : tz);
+                    blockLight[2][x][y][z] = combine(bz, byz, bxz, tyz || txz ? bxyz : bz,
+                                                     tz, tyz, txz, tyz || txz ? txyz : tz);
                 }
             }
         }
