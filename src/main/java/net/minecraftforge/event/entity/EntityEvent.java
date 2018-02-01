@@ -98,7 +98,7 @@ public class EntityEvent extends Event
             this.canUpdate = canUpdate;
         }
     }
-    
+
     /**
      * EnteringChunk is fired when an Entity enters a chunk. <br>
      * This event is fired whenever vanilla Minecraft determines that an entity <br>
@@ -134,5 +134,27 @@ public class EntityEvent extends Event
         public void setOldChunkX(int oldChunkX) { this.oldChunkX = oldChunkX; }
         public int getOldChunkZ() { return oldChunkZ; }
         public void setOldChunkZ(int oldChunkZ) { this.oldChunkZ = oldChunkZ; }
+    }
+
+    /**
+     * EnterFluidEvent is fired when an Entity enters a fluid. <br>
+     * This event is fired whenever vanilla Minecraft determines that an entity <br>
+     * is entering/jumping into a fluid.<br>
+     * <br>
+     * This event is {@link Cancelable}.<br>
+     * <br>
+     * When the event is being cancelled, there will be no special effects/particles,
+     * and no splash sound<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     **/
+    @Cancelable
+    public static class EnterFluidEvent extends EntityEvent
+    {
+
+        public EnterFluidEvent(Entity entity)
+        {
+            super(entity);
+        }
     }
 }
