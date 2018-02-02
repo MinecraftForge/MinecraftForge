@@ -9,27 +9,27 @@ public interface IFieldWrapper
     /**
      * @return The type adapter to serialize the values returned by getValue. Null if non-primitive.
      */
-    public ITypeAdapter getTypeAdapter();
+    ITypeAdapter getTypeAdapter();
     
     /**
      * @param field the field about which to retrieve information
      * @param instance The instance whose field shall be queried.
      * @return a list of keys handled by this field
      */
-    public String[] getKeys();
+    String[] getKeys();
     
-    public Object getValue(String key);
+    Object getValue(String key);
     
-    public void setValue(String key, Object value);
+    void setValue(String key, Object value);
     
-    public boolean hasKey(String name);
+    boolean hasKey(String name);
     
-    public boolean handlesKey(String name);
+    boolean handlesKey(String name);
     
-    public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart);
+    void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart);
     
     /**
      * @return the category name in which the entries should be saved.
      */
-    public String getCategory();
+    String getCategory();
 }

@@ -4,7 +4,7 @@
      {
          ItemStack itemstack = p_184230_1_.func_184586_b(p_184230_2_);
  
-+        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_184230_1_, p_184230_2_))) return true;
++        if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
 +
          if (itemstack.func_77973_b() == Items.field_151044_h && this.field_94110_c + 3600 <= 32000)
          {

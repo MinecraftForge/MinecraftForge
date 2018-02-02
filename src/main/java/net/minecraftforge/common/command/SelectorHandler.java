@@ -37,16 +37,16 @@ public interface SelectorHandler
      * 
      * @param sender The {@link ICommandSender} that initiated the query
      */
-    public <T extends Entity> List<T> matchEntities(ICommandSender sender, String token, Class<? extends T> targetClass) throws CommandException;
+    <T extends Entity> List<T> matchEntities(ICommandSender sender, String token, Class<? extends T> targetClass) throws CommandException;
 
     /**
      * Returns whether the selector string potentially matches multiple entities
      */
-    public boolean matchesMultiplePlayers(String selectorStr) throws CommandException;
+    boolean matchesMultiplePlayers(String selectorStr) throws CommandException;
 
     /**
      * Returns whether the string matches the overall syntax of the selector<br>
      * <b>Note:</b> If this returns {@code false}, {@link #matchEntities} should return an empty list
      */
-    public boolean isSelector(String selectorStr);
+    boolean isSelector(String selectorStr);
 }
