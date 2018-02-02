@@ -11,19 +11,21 @@
 +            java.util.List<ItemStack> items = new java.util.ArrayList<ItemStack>();
 +            items.add(this.func_180643_i(p_180657_4_));
 +
-+            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_3_, p_180657_4_, 0, 1.0f, true, p_180657_2_);
++            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_3_, p_180657_4_, 0, 1.0f, true, p_180657_2_, p_180657_5_);
 +            for (ItemStack is : items)
 +                func_180635_a(p_180657_1_, p_180657_3_, is);
          }
          else
          {
-@@ -54,7 +59,9 @@
+@@ -54,7 +59,11 @@
              }
  
              int i = EnchantmentHelper.func_77506_a(Enchantments.field_185308_t, p_180657_6_);
 +            harvesters.set(p_180657_2_);
++            harvestTileEntity.set(p_180657_5_);
              this.func_176226_b(p_180657_1_, p_180657_3_, p_180657_4_, i);
 +            harvesters.set(null);
++            harvestTileEntity.set(null);
              Material material = p_180657_1_.func_180495_p(p_180657_3_.func_177977_b()).func_185904_a();
  
              if (material.func_76230_c() || material.func_76224_d())
