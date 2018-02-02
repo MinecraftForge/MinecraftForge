@@ -25,5 +25,5 @@ import net.minecraft.entity.Entity;
 
 public interface IRenderFactory<T extends Entity>
 {
-    public Render<? super T> createRenderFor(RenderManager manager);
+    Render<? super T> createRenderFor(RenderManager manager);
 }

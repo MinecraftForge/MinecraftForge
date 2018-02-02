@@ -22,5 +22,5 @@ import net.minecraft.util.datafix.IDataFixer;
 
 public interface IDataFixerData extends IDataFixer
 {
-    public int getVersion(String mod);
+    int getVersion(String mod);
 }

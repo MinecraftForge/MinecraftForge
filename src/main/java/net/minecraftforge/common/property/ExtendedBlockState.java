@@ -19,25 +19,22 @@
 
 package net.minecraftforge.common.property;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-
 import java.util.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
 
 public class ExtendedBlockState extends BlockStateContainer
 {
@@ -98,7 +95,7 @@ public class ExtendedBlockState extends BlockStateContainer
                 return this;
             }
 
-            if (Iterables.all(unlistedProperties.values(), Predicates.<Optional<?>>equalTo(Optional.empty())))
+            if (unlistedProperties.values().stream().noneMatch(Optional::isPresent))
             { // no dynamic properties present, looking up in the normal table
                 return clean;
             }
