@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,323 @@
+@@ -241,6 +216,336 @@
          return new WorldBorder();
      }
  
@@ -227,6 +227,19 @@
 +    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities() {
 +        return null;
 +    }
++
++    /**
++     * Called on the client to get the music type to play when in this world type.
++     * At the time of calling, the client player and world are guaranteed to be non-null
++     * @return null to use vanilla logic, otherwise a MusicType to play in this world
++     */
++    @Nullable
++    @SideOnly(Side.CLIENT)
++    public net.minecraft.client.audio.MusicTicker.MusicType getMusicType()
++    {
++        return null;
++    }
++
 +    /*======================================= Start Moved From World =========================================*/
 +
 +    public Biome getBiomeForCoords(BlockPos pos)
