@@ -33,11 +33,11 @@ public interface IMessage {
      *
      * @param buf
      */
-    public void fromBytes(ByteBuf buf);
+    void fromBytes(ByteBuf buf);
 
     /**
      * Deconstruct your message into the supplied byte buffer
      * @param buf
      */
-    public void toBytes(ByteBuf buf);
+    void toBytes(ByteBuf buf);
 }

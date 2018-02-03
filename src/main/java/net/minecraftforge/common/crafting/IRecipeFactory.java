@@ -23,5 +23,5 @@ import com.google.gson.JsonObject;
 import net.minecraft.item.crafting.IRecipe;
 
 public interface IRecipeFactory {
-    public IRecipe parse(JsonContext context, JsonObject json);
+    IRecipe parse(JsonContext context, JsonObject json);
 }
