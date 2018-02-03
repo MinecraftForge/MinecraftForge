@@ -29,7 +29,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.WorldWorkerManager.IWorker;
 
 public class ChunkGenWorker implements IWorker
@@ -42,7 +41,7 @@ public class ChunkGenWorker implements IWorker
     private final int notificationFrequency;
     private int lastNotification = 0;
     private int genned = 0;
-    private int oldUnloadDelay = -1;
+    private Boolean loadSpawn;
 
     public ChunkGenWorker(ICommandSender listener, BlockPos start, int total, int dim, int interval)
     {
@@ -116,11 +115,11 @@ public class ChunkGenWorker implements IWorker
                     return;
                 }
             }
-            //While we work we don't want to cause world load spam so pause unloading worlds.
-            if (oldUnloadDelay == -1)
+            // While we work we don't want to cause world load spam so pause unloading the world.
+            if (loadSpawn == null)
             {
-                oldUnloadDelay = ForgeModContainer.dimensionUnloadQueueDelay;
-                ForgeModContainer.dimensionUnloadQueueDelay = Integer.MAX_VALUE;
+                loadSpawn = world.provider.getDimensionType().shouldLoadSpawn();
+                world.provider.getDimensionType().setLoadSpawn(true);
             }
 
             if (++lastNotification >= notificationFrequency)
@@ -160,7 +159,7 @@ public class ChunkGenWorker implements IWorker
         if (queue.size() == 0)
         {
             listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.complete", genned, total, dim));
-            ForgeModContainer.dimensionUnloadQueueDelay = oldUnloadDelay;
+            DimensionManager.getProviderType(dim).setLoadSpawn(loadSpawn);
         }
     }
 }
