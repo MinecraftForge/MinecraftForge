@@ -34,7 +34,8 @@ public class EnumHelperClient extends EnumHelper
     {
         {GameType.class, int.class, String.class, String.class},
         {Options.class, String.class, boolean.class, boolean.class},
-        {EnumOS.class}
+        {EnumOS.class},
+        {MusicTicker.MusicType.class, SoundEvent.class, int.class, int.class}
     };
 
     @Nullable
