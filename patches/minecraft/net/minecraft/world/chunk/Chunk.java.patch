@@ -219,8 +219,8 @@
  
      protected void func_186034_a(IChunkGenerator p_186034_1_)
      {
-+        if (populating && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
-+        populating = true;
++        if (populating != null && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
++        populating = this.func_76632_l();
          if (this.func_177419_t())
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
@@ -231,7 +231,7 @@
 +            net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.field_76635_g, this.field_76647_h, this.field_76637_e, p_186034_1_, this.field_76637_e.func_72863_F());
              this.func_76630_e();
          }
-+        populating = false;
++        populating = null;
      }
  
      public BlockPos func_177440_h(BlockPos p_177440_1_)
@@ -330,17 +330,17 @@
 +        }
 +    }
 +
-+    private static boolean populating = false; // keep track of cascading chunk generation during chunk population
++    private static ChunkPos populating = null; // keep track of cascading chunk generation during chunk population
 +
 +    private void logCascadingWorldGeneration()
 +    {
 +        net.minecraftforge.fml.common.ModContainer activeModContainer = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
-+        String format = "{} loaded a new chunk ({}, {}  Dimension: {}) during chunk population, causing cascading worldgen lag. Please report this to the mod's issue tracker. This log can be disabled in the Forge config.";
++        String format = "{} loaded a new chunk ({}, {}) in dimension {} ({}) while populating chunk ({}, {}), causing cascading worldgen lag. Please report this to the mod's issue tracker. This log can be disabled in the Forge config.";
 +
 +        if (activeModContainer == null) // vanilla minecraft has problems too (MC-114332), log it at a quieter level.
-+            net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
++            net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension(), this.field_76637_e.field_73011_w.func_186058_p().func_186065_b(), populating.field_77276_a, populating.field_77275_b);
 +        else
-+            net.minecraftforge.fml.common.FMLLog.log.warn(format, activeModContainer.getName(), this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
++            net.minecraftforge.fml.common.FMLLog.log.warn(format, activeModContainer.getName(), this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension(), this.field_76637_e.field_73011_w.func_186058_p().func_186065_b(), populating.field_77276_a, populating.field_77275_b);
 +    }
 +
 +    private final net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
