@@ -132,6 +132,15 @@
                      }
                      else
                      {
+@@ -1262,7 +1274,7 @@
+         GlStateManager.func_179086_m(16640);
+         this.field_78531_r.field_71424_I.func_76318_c("camera");
+         this.func_78479_a(p_175068_2_, p_175068_1_);
+-        ActiveRenderInfo.func_74583_a(this.field_78531_r.field_71439_g, this.field_78531_r.field_71474_y.field_74320_O == 2);
++        ActiveRenderInfo.updateRenderInfo(this.field_78531_r.func_175606_aa(), this.field_78531_r.field_71474_y.field_74320_O == 2);
+         this.field_78531_r.field_71424_I.func_76318_c("frustum");
+         ClippingHelperImpl.func_78558_a();
+         this.field_78531_r.field_71424_I.func_76318_c("culling");
 @@ -1329,7 +1341,9 @@
              GlStateManager.func_179094_E();
              RenderHelper.func_74519_b();
