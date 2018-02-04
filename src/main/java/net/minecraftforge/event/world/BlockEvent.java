@@ -27,6 +27,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -39,6 +40,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockEvent extends Event
 {
@@ -87,8 +89,14 @@ public class BlockEvent extends Event
         private final boolean isSilkTouching;
         private float dropChance; // Change to e.g. 1.0f, if you manipulate the list and want to guarantee it always drops
         private final EntityPlayer harvester; // May be null for non-player harvesting such as explosions or machines
+        private final TileEntity tileEntity;
 
         public HarvestDropsEvent(World world, BlockPos pos, IBlockState state, int fortuneLevel, float dropChance, List<ItemStack> drops, EntityPlayer harvester, boolean isSilkTouching)
+        {
+            this(world, pos, state, fortuneLevel, dropChance, drops, harvester, isSilkTouching, null);
+        }
+
+        public HarvestDropsEvent(World world, BlockPos pos, IBlockState state, int fortuneLevel, float dropChance, List<ItemStack> drops, EntityPlayer harvester, boolean isSilkTouching, @Nullable TileEntity tileEntity)
         {
             super(world, pos, state);
             this.fortuneLevel = fortuneLevel;
@@ -96,6 +104,7 @@ public class BlockEvent extends Event
             this.drops = drops;
             this.isSilkTouching = isSilkTouching;
             this.harvester = harvester;
+            this.tileEntity = tileEntity;
         }
 
         public int getFortuneLevel() { return fortuneLevel; }
@@ -104,6 +113,7 @@ public class BlockEvent extends Event
         public float getDropChance() { return dropChance; }
         public void setDropChance(float dropChance) { this.dropChance = dropChance; }
         public EntityPlayer getHarvester() { return harvester; }
+        @Nullable public TileEntity getTileEntity() { return tileEntity; }
     }
 
     /**
