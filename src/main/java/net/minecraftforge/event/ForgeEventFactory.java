@@ -83,6 +83,7 @@ import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.EntityPushedByWaterEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -755,5 +756,14 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new GetCollisionBoxesEvent(world, entity, aabb, outList));
         return outList.isEmpty();
+    }
+
+    public static boolean onPushedByWater(Entity entity)
+    {
+        EntityPushedByWaterEvent event = new EntityPushedByWaterEvent(entity);
+        MinecraftForge.EVENT_BUS.post(event);
+
+        Result result = event.getResult();
+        return result == Result.DEFAULT ? entity.isPushedByWater() : result == Result.ALLOW;
     }
 }

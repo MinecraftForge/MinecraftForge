@@ -602,6 +602,15 @@
                          if (iblockstate1.func_185904_a() == p_72918_2_)
                          {
                              double d0 = (double)((float)(i4 + 1) - BlockLiquid.func_149801_b(((Integer)iblockstate1.func_177229_b(BlockLiquid.field_176367_b)).intValue()));
+@@ -2066,7 +2243,7 @@
+ 
+             blockpos$pooledmutableblockpos.func_185344_t();
+ 
+-            if (vec3d.func_72433_c() > 0.0D && p_72918_3_.func_96092_aw())
++            if (vec3d.func_72433_c() > 0.0D && net.minecraftforge.event.ForgeEventFactory.onPushedByWater(p_72918_3_))
+             {
+                 vec3d = vec3d.func_72432_b();
+                 double d1 = 0.014D;
 @@ -2095,7 +2272,14 @@
              {
                  for (int j4 = j3; j4 < k3; ++j4)
