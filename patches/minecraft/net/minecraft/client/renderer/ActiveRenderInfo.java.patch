@@ -4,7 +4,7 @@
  
      public static void func_74583_a(EntityPlayer p_74583_0_, boolean p_74583_1_)
      {
-+        func_74583_a(p_74583_0_, p_74583_1_);
++        updateRenderInfo((Entity) p_74583_0_, p_74583_1_);
 +    }
 +
 +    public static void updateRenderInfo(Entity p_74583_0_, boolean p_74583_1_)
