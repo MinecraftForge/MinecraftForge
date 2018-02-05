@@ -101,7 +101,7 @@ public class ExtendedBlockState extends BlockStateContainer
         }
 
         @Override
-        public <V> IExtendedBlockState withProperty(IUnlistedProperty<V> property, V value)
+        public <V> IExtendedBlockState withProperty(IUnlistedProperty<V> property, @Nullable V value)
         {
             Optional<?> oldValue = unlistedProperties.get(property);
             if (oldValue == null)
