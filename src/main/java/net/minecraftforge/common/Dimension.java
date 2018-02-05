@@ -26,7 +26,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 
@@ -121,7 +121,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     {
     	if(dimIntID==-2)
     	{
-    		setDimIntID(GameData.getWrapper(Dimension.class).getIDForObject(this));
+    		setDimIntID(((ForgeRegistry<Dimension>) ForgeRegistries.DIMENSIONS).getID(dimID));
     	}
     	return dimIntID;
     }
