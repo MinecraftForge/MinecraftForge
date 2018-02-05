@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,340 @@
+@@ -241,6 +216,352 @@
          return new WorldBorder();
      }
  
@@ -120,6 +120,22 @@
 +            return 8.0;
 +        }
 +        return 1.0;
++    }
++
++    /**
++     * If this method returns true, then chunks received by the client will
++     * have {@link net.minecraft.world.chunk.Chunk#resetRelightChecks} called
++     * on them, queuing lighting checks for all air blocks in the chunk (and
++     * any adjacent light-emitting blocks).
++     *
++     * Returning true here is recommended if the chunk generator used also
++     * does this for newly generated chunks.
++     *
++     * @return true if lighting checks should be performed
++     */
++    public boolean shouldClientCheckLighting()
++    {
++        return !(this instanceof WorldProviderSurface);
 +    }
 +
 +    @Nullable
