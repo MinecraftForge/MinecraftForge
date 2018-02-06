@@ -1144,19 +1144,27 @@ public class FMLClientHandler implements IFMLSidedHandler
         return getCloudRenderer().render(cloudTicks, partialTicks);
     }
 
-    public void renderSky(float partialTicks)
+    public int renderSky(float partialTicks)
     {
         SkyRenderHandler skyRenderer = this.client.world.provider.getSkyRenderHandler();
+
+        if(skyRenderer.getVanillaRenderPass() != 0)
+        {
+            return skyRenderer.getVanillaRenderPass();
+        }
+
         if(skyRenderer.render(partialTicks, this.client.world, this.client))
         {
-            return;
+            return -1;
         }
 
         IRenderHandler renderer = this.client.world.provider.getSkyRenderer();
         if(renderer != null)
         {
             renderer.render(partialTicks, this.client.world, this.client);
-            return;
+            return -1;
         }
+
+        return 0;
     }
 }
