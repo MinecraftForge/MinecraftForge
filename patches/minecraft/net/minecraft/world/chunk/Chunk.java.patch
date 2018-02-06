@@ -336,13 +336,13 @@
 +    private void logCascadingWorldGeneration()
 +    {
 +        net.minecraftforge.fml.common.ModContainer activeModContainer = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
-+        String format = "{} loaded a new chunk ({}, {}) in dimension {} ({}) while populating chunk ({}, {}), causing cascading worldgen lag.";
++        String format = "{} loaded a new chunk {} in dimension {} ({}) while populating chunk {}, causing cascading worldgen lag.";
 +
 +        if (activeModContainer == null) { // vanilla minecraft has problems too (MC-114332), log it at a quieter level.
-+            net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension(), this.field_76637_e.field_73011_w.func_186058_p().func_186065_b(), populating.field_77276_a, populating.field_77275_b);
++            net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.func_76632_l(), this.field_76637_e.field_73011_w.getDimension(), this.field_76637_e.field_73011_w.func_186058_p().func_186065_b(), populating);
 +            net.minecraftforge.fml.common.FMLLog.log.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");
 +        } else {
-+            net.minecraftforge.fml.common.FMLLog.log.warn(format, activeModContainer.getName(), this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension(), this.field_76637_e.field_73011_w.func_186058_p().func_186065_b(), populating.field_77276_a, populating.field_77275_b);
++            net.minecraftforge.fml.common.FMLLog.log.warn(format, activeModContainer.getName(), this.func_76632_l(), this.field_76637_e.field_73011_w.getDimension(), this.field_76637_e.field_73011_w.func_186058_p().func_186065_b(), populating);
 +            net.minecraftforge.fml.common.FMLLog.log.warn("Please report this to the mod's issue tracker. This log can be disabled in the Forge config.");
 +        }
 +    }
