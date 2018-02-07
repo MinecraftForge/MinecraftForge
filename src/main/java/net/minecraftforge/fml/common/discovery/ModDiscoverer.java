@@ -107,6 +107,7 @@ public class ModDiscoverer
             }
             else if (modFile.isDirectory())
             {
+                //TODO Remove in 1.13+ Mods should never be directory based anymore.
                 FMLLog.log.debug("Found a candidate mod directory {}", modFile.getName());
                 addCandidate(new ModCandidate(modFile, modFile, ContainerType.DIR));
             }
