@@ -47,3 +47,28 @@
                              }
  
                              field_148621_b.debug(field_148623_a, "Playing sound {} for event {} as channel {}", sound.func_188719_a(), resourcelocation, s);
+@@ -507,13 +515,18 @@
+ 
+     public void func_148615_a(EntityPlayer p_148615_1_, float p_148615_2_)
+     {
+-        if (this.field_148617_f && p_148615_1_ != null)
++        setListener((net.minecraft.entity.Entity) p_148615_1_, p_148615_2_);
++    }
++
++    public void setListener(net.minecraft.entity.Entity entity, float p_148615_2_)
++    {
++        if (this.field_148617_f && entity != null)
+         {
+-            float f = p_148615_1_.field_70127_C + (p_148615_1_.field_70125_A - p_148615_1_.field_70127_C) * p_148615_2_;
+-            float f1 = p_148615_1_.field_70126_B + (p_148615_1_.field_70177_z - p_148615_1_.field_70126_B) * p_148615_2_;
+-            double d0 = p_148615_1_.field_70169_q + (p_148615_1_.field_70165_t - p_148615_1_.field_70169_q) * (double)p_148615_2_;
+-            double d1 = p_148615_1_.field_70167_r + (p_148615_1_.field_70163_u - p_148615_1_.field_70167_r) * (double)p_148615_2_ + (double)p_148615_1_.func_70047_e();
+-            double d2 = p_148615_1_.field_70166_s + (p_148615_1_.field_70161_v - p_148615_1_.field_70166_s) * (double)p_148615_2_;
++            float f = entity.field_70127_C + (entity.field_70125_A - entity.field_70127_C) * p_148615_2_;
++            float f1 = entity.field_70126_B + (entity.field_70177_z - entity.field_70126_B) * p_148615_2_;
++            double d0 = entity.field_70169_q + (entity.field_70165_t - entity.field_70169_q) * (double)p_148615_2_;
++            double d1 = entity.field_70167_r + (entity.field_70163_u - entity.field_70167_r) * (double)p_148615_2_ + (double)entity.func_70047_e();
++            double d2 = entity.field_70166_s + (entity.field_70161_v - entity.field_70166_s) * (double)p_148615_2_;
+             float f2 = MathHelper.func_76134_b((f1 + 90.0F) * 0.017453292F);
+             float f3 = MathHelper.func_76126_a((f1 + 90.0F) * 0.017453292F);
+             float f4 = MathHelper.func_76134_b(-f * 0.017453292F);
