@@ -1,14 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
-@@ -94,7 +94,7 @@
-     private Entity field_78528_u;
-     private final MouseFilter field_78527_v = new MouseFilter();
-     private final MouseFilter field_78526_w = new MouseFilter();
--    private final float field_78490_B = 4.0F;
-+    public float field_78490_B = 4.0F;
-     private float field_78491_C = 4.0F;
-     private float field_78496_H;
-     private float field_78497_I;
 @@ -211,6 +211,7 @@
              {
                  this.func_175069_a(new ResourceLocation("shaders/post/invert.json"));
