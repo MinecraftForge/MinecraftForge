@@ -39,7 +39,7 @@
          {
              boolean flag = this.field_147369_b.func_70685_l(entity);
 -            double d0 = 36.0D;
-+            float d0 = net.minecraftforge.common.ForgeHooks.getPlayerReachDistance(this.field_147369_b);
++            float d0 = net.minecraftforge.common.ForgeHooks.getPlayerReachDistance(this.field_147369_b) + this.field_147369_b.func_70047_e() + (float)Math.max(entity.func_174813_aQ().field_72336_d - entity.func_174813_aQ().field_72340_a, Math.max(entity.func_174813_aQ().field_72337_e - entity.func_174813_aQ().field_72338_b, entity.func_174813_aQ().field_72334_f - entity.func_174813_aQ().field_72339_c));
  
              if (!flag)
              {
@@ -48,7 +48,7 @@
              }
  
 -            if (this.field_147369_b.func_70068_e(entity) < d0)
-+            if (this.field_147369_b.func_70032_d(entity) - entity.func_174813_aQ().func_72320_b() < d0)
++            if (this.field_147369_b.func_70032_d(entity) < d0)
              {
                  if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT)
                  {
