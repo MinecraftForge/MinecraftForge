@@ -1,8 +1,7 @@
 package net.minecraftforge.debug;
 
-import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.event.CameraDistanceUpdateEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -23,15 +22,11 @@ public class ThirdPersonDistanceTest
     }
 
     @SubscribeEvent
-    public static void onMount(EntityMountEvent event)
+    public static void updateCameraDistance(CameraDistanceUpdateEvent event)
     {
-        if (event.isMounting())
+        if (event.getEntity().isRiding())
         {
-            Minecraft.getMinecraft().entityRenderer.thirdPersonDistance = 8.0f;
-        }
-        else
-        {
-            Minecraft.getMinecraft().entityRenderer.thirdPersonDistance = 4.0f;
+            event.multiplyDistance(2f);
         }
     }
 }
