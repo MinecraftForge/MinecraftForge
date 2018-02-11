@@ -34,6 +34,24 @@
                  this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
              }
  
+@@ -1049,14 +1056,14 @@
+         if (entity != null)
+         {
+             boolean flag = this.field_147369_b.func_70685_l(entity);
+-            double d0 = 36.0D;
++            float d0 = net.minecraftforge.common.ForgeHooks.getPlayerReachDistance(this.field_147369_b);
+ 
+             if (!flag)
+             {
+-                d0 = 9.0D;
++                d0 = 3.0F;
+             }
+ 
+-            if (this.field_147369_b.func_70068_e(entity) < d0)
++            if (this.field_147369_b.func_70032_d(entity) - entity.func_174813_aQ().func_72320_b() < d0)
+             {
+                 if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT)
+                 {
 @@ -1066,6 +1073,7 @@
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT_AT)
                  {
