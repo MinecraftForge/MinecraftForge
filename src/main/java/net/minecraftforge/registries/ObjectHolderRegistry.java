@@ -129,7 +129,7 @@ public enum ObjectHolderRegistry
             try
             {
                 Field f = clazz.getDeclaredField(annotationTarget);
-                addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value), extractFromValue));
+                addHolderReference(new DefaultObjectHolderRef(f, new ResourceLocation(value), extractFromValue));
             }
             catch (NoSuchFieldException ex)
             {
@@ -150,11 +150,11 @@ public enum ObjectHolderRegistry
             {
                 continue;
             }
-            addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value, f.getName()), extractFromExistingValues));
+            addHolderReference(new DefaultObjectHolderRef(f, new ResourceLocation(value, f.getName()), extractFromExistingValues));
         }
     }
 
-    private void addHolderReference(ObjectHolderRef ref)
+    public void addHolderReference(ObjectHolderRef ref)
     {
         if (ref.isValid())
         {
