@@ -109,7 +109,6 @@ import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.event.CameraDistanceUpdateEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
@@ -257,13 +256,6 @@ public class ForgeHooksClient
         EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, entity, state, renderPartialTicks, fov);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getFOV();
-    }
-
-    public static float getCameraDistance(EntityPlayer entity, float distance)
-    {
-        CameraDistanceUpdateEvent event = new CameraDistanceUpdateEvent(entity, distance);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getDistance();
     }
 
     private static int skyX, skyZ;
