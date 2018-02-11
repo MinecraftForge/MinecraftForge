@@ -108,6 +108,7 @@ public class SkyRenderHandler
 
         PartSkyRenderer(Map<ResourceLocation, RenderHandler> defaultHandlers) {
             this.defHandlers = defaultHandlers;
+            handlers.putAll(defaultHandlers);
         }
 
         void registerSkyRenderer(ResourceLocation id, IRenderHandler renderer, double priority)

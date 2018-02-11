@@ -149,30 +149,43 @@
              this.field_72770_i.func_110577_a(field_110928_i);
              bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_181707_g);
              bufferbuilder.func_181662_b((double)(-f17), 100.0D, (double)(-f17)).func_187315_a(0.0D, 0.0D).func_181675_d();
-@@ -1357,7 +1385,10 @@
+@@ -1357,7 +1385,17 @@
              bufferbuilder.func_181662_b((double)f17, 100.0D, (double)f17).func_187315_a(1.0D, 1.0D).func_181675_d();
              bufferbuilder.func_181662_b((double)(-f17), 100.0D, (double)f17).func_187315_a(0.0D, 1.0D).func_181675_d();
              tessellator.func_78381_a();
++            GlStateManager.func_179121_F();
 +            }
              f17 = 20.0F;
 +            if(renderPass == 0 || renderPass == 3)
 +            {
++            GlStateManager.func_179098_w();
++            GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
++            GlStateManager.func_179094_E();
++            GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, f16);
++            GlStateManager.func_179114_b(-90.0F, 0.0F, 1.0F, 0.0F);
++            GlStateManager.func_179114_b(this.field_72769_h.func_72826_c(p_174976_1_) * 360.0F, 1.0F, 0.0F, 0.0F);
              this.field_72770_i.func_110577_a(field_110927_h);
              int k1 = this.field_72769_h.func_72853_d();
              int i2 = k1 % 4;
-@@ -1372,6 +1403,8 @@
+@@ -1372,6 +1410,13 @@
              bufferbuilder.func_181662_b((double)f17, -100.0D, (double)(-f17)).func_187315_a((double)f22, (double)f23).func_181675_d();
              bufferbuilder.func_181662_b((double)(-f17), -100.0D, (double)(-f17)).func_187315_a((double)f24, (double)f23).func_181675_d();
              tessellator.func_78381_a();
++            GlStateManager.func_179121_F();
 +            }
 +            if(renderPass == 0 || renderPass == 4) {
++            GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
++            GlStateManager.func_179094_E();
++            GlStateManager.func_179114_b(-90.0F, 0.0F, 1.0F, 0.0F);
++            GlStateManager.func_179114_b(this.field_72769_h.func_72826_c(p_174976_1_) * 360.0F, 1.0F, 0.0F, 0.0F);
              GlStateManager.func_179090_x();
              float f15 = this.field_72769_h.func_72880_h(p_174976_1_) * f16;
  
-@@ -1393,7 +1426,10 @@
+@@ -1393,12 +1438,15 @@
                      GlStateManager.func_179148_o(this.field_72772_v);
                  }
              }
++            GlStateManager.func_179121_F();
 +            }
  
 +            if(renderPass == 0 || renderPass == 5)
@@ -180,7 +193,12 @@
              GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
              GlStateManager.func_179084_k();
              GlStateManager.func_179141_d();
-@@ -1465,11 +1501,13 @@
+             GlStateManager.func_179127_m();
+-            GlStateManager.func_179121_F();
+             GlStateManager.func_179090_x();
+             GlStateManager.func_179124_c(0.0F, 0.0F, 0.0F);
+             double d3 = this.field_72777_q.field_71439_g.func_174824_e(p_174976_1_).field_72448_b - this.field_72769_h.func_72919_O();
+@@ -1465,11 +1513,13 @@
              GlStateManager.func_179121_F();
              GlStateManager.func_179098_w();
              GlStateManager.func_179132_a(true);
@@ -194,7 +212,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1892,8 +1930,11 @@
+@@ -1892,8 +1942,11 @@
                  double d7 = (double)blockpos.func_177956_o() - d4;
                  double d8 = (double)blockpos.func_177952_p() - d5;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -207,7 +225,7 @@
                  {
                      if (d6 * d6 + d7 * d7 + d8 * d8 > 1024.0D)
                      {
-@@ -2388,7 +2429,7 @@
+@@ -2388,7 +2441,7 @@
  
                  if (block.func_176223_P().func_185904_a() != Material.field_151579_a)
                  {
