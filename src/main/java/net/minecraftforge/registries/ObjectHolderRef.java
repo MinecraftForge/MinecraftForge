@@ -29,7 +29,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 /**
  * Used in tracking {@link ObjectHolder} references.
  */
-@SuppressWarnings("rawtypes")
 interface ObjectHolderRef
 {
     /**
