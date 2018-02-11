@@ -27,20 +27,22 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 
 /**
- * Internal default implementation for {@link IObjectHolderRef}.
+ * Default, field-based implementation for {@link IObjectHolderRef}.
  */
-class ObjectHolderRef implements IObjectHolderRef
+public class FieldObjectHolderRef implements IObjectHolderRef
 {
+    private Object instance;
     private Field field;
     private ResourceLocation injectedObject;
     private boolean isValid;
     private ForgeRegistry<?> registry;
 
     @SuppressWarnings("unchecked")
-    ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
+    FieldObjectHolderRef(@Nullable Object instance, Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
     {
         registry = IObjectHolderRef.getRegistryForType(field.getType());
 
+        this.instance = instance;
         this.field = field;
         this.isValid = registry != null;
         if (extractFromExistingValues)
@@ -104,7 +106,7 @@ class ObjectHolderRef implements IObjectHolderRef
         }
         try
         {
-            FinalFieldHelper.setField(field, null, thing);
+            FinalFieldHelper.setField(field, instance, thing);
         } catch (IllegalArgumentException | ReflectiveOperationException e)
         {
             FMLLog.log.warn("Unable to set {} with value {} ({})", this.field, thing, this.injectedObject, e);
