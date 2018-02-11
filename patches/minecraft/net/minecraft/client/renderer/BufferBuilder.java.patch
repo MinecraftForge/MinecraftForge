@@ -40,7 +40,7 @@
          }
  
          this.func_181667_k();
-@@ -605,4 +607,19 @@
+@@ -605,4 +607,27 @@
              return this.field_179018_e;
          }
      }
@@ -58,5 +58,13 @@
 +    public boolean isColorDisabled()
 +    {
 +        return this.field_78939_q;
++    }
++
++    public void addVertexData(ByteBuffer buffer)
++    {
++        func_181670_b(buffer.limit());
++        this.field_179001_a.position (this.field_178997_d * this.field_179011_q.func_177338_f());
++        this.field_179001_a.put(buffer);
++        this.field_178997_d += buffer.limit() / this.field_179011_q.func_177338_f();
 +    }
  }
