@@ -57,15 +57,18 @@ public class FieldObjectHolderRef implements IObjectHolderRef
                     this.field = null;
                     this.isValid = false;
                     return;
-                } else
+                }
+                else
                 {
                     this.injectedObject = ((IForgeRegistryEntry) existing).getRegistryName();
                 }
-            } catch (IllegalAccessException e)
+            }
+            catch (IllegalAccessException e)
             {
                 throw new RuntimeException(e);
             }
-        } else
+        }
+        else
         {
             this.injectedObject = injectedObject;
         }
@@ -77,7 +80,8 @@ public class FieldObjectHolderRef implements IObjectHolderRef
         try
         {
             FinalFieldHelper.makeWritable(field);
-        } catch (ReflectiveOperationException e)
+        }
+        catch (ReflectiveOperationException e)
         {
             throw new RuntimeException(e);
         }
@@ -94,7 +98,8 @@ public class FieldObjectHolderRef implements IObjectHolderRef
         if (isValid && registry.containsKey(injectedObject) && !registry.isDummied(injectedObject))
         {
             thing = registry.getValue(injectedObject);
-        } else
+        }
+        else
         {
             thing = null;
         }
@@ -107,7 +112,8 @@ public class FieldObjectHolderRef implements IObjectHolderRef
         try
         {
             FinalFieldHelper.setField(field, instance, thing);
-        } catch (IllegalArgumentException | ReflectiveOperationException e)
+        }
+        catch (IllegalArgumentException | ReflectiveOperationException e)
         {
             FMLLog.log.warn("Unable to set {} with value {} ({})", this.field, thing, this.injectedObject, e);
         }
