@@ -338,4 +338,19 @@ public class BlockEvent extends Event
             }
         }
     }
+
+    /**
+     * Fired when an attempt is made to spawn a nether portal from
+     * {@link net.minecraft.block.BlockPortal#trySpawnPortal(World, BlockPos)}.
+     *
+     * If cancelled, the portal will not be spawned.
+     */
+    @Cancelable
+    public static class PortalSpawnEvent extends BlockEvent
+    {
+        public PortalSpawnEvent(World world, BlockPos pos, IBlockState state)
+        {
+            super(world, pos, state);
+        }
+    }
 }
