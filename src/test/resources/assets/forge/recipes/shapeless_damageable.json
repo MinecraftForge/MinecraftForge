@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:bow",
+      "data": 32767
+    }
+  ],
+  "result": {
+    "item": "minecraft:wool",
+    "data": 9
+  }
+}

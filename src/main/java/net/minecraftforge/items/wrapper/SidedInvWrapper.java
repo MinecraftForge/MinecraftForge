@@ -98,10 +98,13 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         int m;
         if (!stackInSlot.isEmpty())
         {
+            if (stackInSlot.getCount() >= Math.min(stackInSlot.getMaxStackSize(), getSlotLimit(slot)))
+                return stack;
+
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
                 return stack;
 
-            if (!inv.isItemValidForSlot(slot1, stack) || !inv.canInsertItem(slot1, stack, side))
+            if (!inv.canInsertItem(slot1, stack, side) || !inv.isItemValidForSlot(slot1, stack))
                 return stack;
 
             m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot)) - stackInSlot.getCount();
@@ -137,7 +140,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         }
         else
         {
-            if (!inv.isItemValidForSlot(slot1, stack) || !inv.canInsertItem(slot1, stack, side))
+            if (!inv.canInsertItem(slot1, stack, side) || !inv.isItemValidForSlot(slot1, stack))
                 return stack;
 
             m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot));

@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/util/ServerRecipeBookHelper.java
 +++ ../src-work/minecraft/net/minecraft/util/ServerRecipeBookHelper.java
-@@ -199,11 +199,11 @@
+@@ -55,6 +55,11 @@
+                 this.field_194335_f = ((ContainerPlayer)container).field_75179_f;
+                 this.field_194336_g = ((ContainerPlayer)container).field_75181_e;
+             }
++            else if (container instanceof net.minecraftforge.common.crafting.IRecipeContainer)
++            {
++                this.field_194335_f = ((net.minecraftforge.common.crafting.IRecipeContainer)container).getCraftResult();
++                this.field_194336_g = ((net.minecraftforge.common.crafting.IRecipeContainer)container).getCraftMatrix();
++            }
+ 
+             if (this.field_194335_f != null && this.field_194336_g != null)
+             {
+@@ -199,11 +204,11 @@
          int i = this.field_194336_g.func_174922_i();
          int j = this.field_194336_g.func_174923_h();
  

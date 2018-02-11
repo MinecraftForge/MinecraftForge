@@ -104,7 +104,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.function.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -176,14 +180,23 @@ public final class ModelLoader extends ModelBakery
 
         for(IModel model : models.keySet())
         {
-            bakeBar.step("[" + Joiner.on(", ").join(models.get(model)) + "]");
+            String modelLocations = "[" + Joiner.on(", ").join(models.get(model)) + "]";
+            bakeBar.step(modelLocations);
             if(model == getMissingModel())
             {
                 bakedModels.put(model, missingBaked);
             }
             else
             {
-                bakedModels.put(model, model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.INSTANCE));
+                try
+                {
+                    bakedModels.put(model, model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.INSTANCE));
+                }
+                catch (Exception e)
+                {
+                    FMLLog.log.error("Exception baking model for location(s) {}:", modelLocations, e);
+                    bakedModels.put(model, missingBaked);
+                }
             }
         }
 
@@ -207,8 +220,10 @@ public final class ModelLoader extends ModelBakery
     @Override
     protected void loadBlocks()
     {
-        List<Block> blocks = Lists.newArrayList(Iterables.filter(Block.REGISTRY, block -> block.getRegistryName() != null));
-        blocks.sort(Comparator.comparing(b -> b.getRegistryName().toString()));
+        List<Block> blocks = StreamSupport.stream(Block.REGISTRY.spliterator(), false)
+                .filter(block -> block.getRegistryName() != null)
+                .sorted(Comparator.comparing(b -> b.getRegistryName().toString()))
+                .collect(Collectors.toList());
         ProgressBar blockBar = ProgressManager.push("ModelLoader: blocks", blocks.size());
 
         BlockStateMapper mapper = this.blockModelShapes.getBlockStateMapper();
@@ -279,8 +294,10 @@ public final class ModelLoader extends ModelBakery
 
         registerVariantNames();
 
-        List<Item> items = Lists.newArrayList(Iterables.filter(Item.REGISTRY, item -> item.getRegistryName() != null));
-        Collections.sort(items, (i1, i2) -> i1.getRegistryName().toString().compareTo(i2.getRegistryName().toString()));
+        List<Item> items = StreamSupport.stream(Item.REGISTRY.spliterator(), false)
+                .filter(item -> item.getRegistryName() != null)
+                .sorted(Comparator.comparing(i -> i.getRegistryName().toString()))
+                .collect(Collectors.toList());
 
         ProgressBar itemBar = ProgressManager.push("ModelLoader: items", items.size());
         for(Item item : items)
@@ -318,79 +335,6 @@ public final class ModelLoader extends ModelBakery
             }
         }
         ProgressManager.pop(itemBar);
-
-        // replace vanilla bucket models if desired. done afterwards for performance reasons
-        if(ForgeModContainer.replaceVanillaBucketModel)
-        {
-            // ensure the bucket model is loaded
-            if(!stateModels.containsKey(ModelDynBucket.LOCATION))
-            {
-                // load forges blockstate json for it
-                try
-                {
-                    registerVariant(getModelBlockDefinition(ModelDynBucket.LOCATION), ModelDynBucket.LOCATION);
-                }
-                catch (Exception exception)
-                {
-                    FMLLog.log.error("Could not load the forge bucket model from the blockstate", exception);
-                    return;
-                }
-            }
-
-            // empty bucket
-            for(String s : getVariantNames(Items.BUCKET))
-            {
-                ModelResourceLocation memory = getInventoryVariant(s);
-                IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(ForgeVersion.MOD_ID, "item/bucket"));
-                // only on successful load, otherwise continue using the old model
-                if(model != getMissingModel())
-                {
-                    stateModels.put(memory, model);
-                }
-            }
-
-            setBucketModel(Items.WATER_BUCKET);
-            setBucketModel(Items.LAVA_BUCKET);
-            // milk bucket only replaced if some mod adds milk
-            if(FluidRegistry.isFluidRegistered("milk"))
-            {
-                // can the milk be put into a bucket?
-                Fluid milk = FluidRegistry.getFluid("milk");
-                FluidStack milkStack = new FluidStack(milk, Fluid.BUCKET_VOLUME);
-                IFluidHandler bucketHandler = FluidUtil.getFluidHandler(new ItemStack(Items.BUCKET));
-                if (bucketHandler != null && bucketHandler.fill(milkStack, false) == Fluid.BUCKET_VOLUME)
-                {
-                    setBucketModel(Items.MILK_BUCKET);
-                }
-            }
-            else
-            {
-                // milk bucket if no milk fluid is present
-                for(String s : getVariantNames(Items.MILK_BUCKET))
-                {
-                    ModelResourceLocation memory = getInventoryVariant(s);
-                    IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(ForgeVersion.MOD_ID, "item/bucket_milk"));
-                    // only on successful load, otherwise continue using the old model
-                    if(model != getMissingModel())
-                    {
-                        stateModels.put(memory, model);
-                    }
-                }
-            }
-        }
-    }
-
-    private void setBucketModel(Item item)
-    {
-        for(String s : getVariantNames(item))
-        {
-            ModelResourceLocation memory = getInventoryVariant(s);
-            IModel model = stateModels.get(ModelDynBucket.LOCATION);
-            if(model != null)
-            {
-                stateModels.put(memory, model);
-            }
-        }
     }
 
     /**
@@ -743,7 +687,10 @@ public final class ModelLoader extends ModelBakery
                 textures.addAll(model.getTextures()); // Kick this, just in case.
 
                 models.add(model);
-                builder.add(Pair.of(model, v.getState()));
+
+                IModelState modelDefaultState = model.getDefaultState();
+                Preconditions.checkNotNull(modelDefaultState, "Model %s returned null as default state", loc);
+                builder.add(Pair.of(model, new ModelStateComposition(v.getState(), modelDefaultState)));
             }
 
             if (models.size() == 0) //If all variants are missing, add one with the missing model and default rotation.

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.MapItemRenderer;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -63,6 +64,7 @@ public class MapDataTest
     {
         ModelLoader.setCustomModelResourceLocation(EMPTY_CUSTOM_MAP, 0, new ModelResourceLocation("map", "inventory"));
         ModelLoader.setCustomMeshDefinition(CUSTOM_MAP, s -> new ModelResourceLocation("filled_map", "inventory"));
+        ModelBakery.registerItemVariants(CUSTOM_MAP, new ModelResourceLocation("filled_map", "inventory"));
     }
 
     @SubscribeEvent

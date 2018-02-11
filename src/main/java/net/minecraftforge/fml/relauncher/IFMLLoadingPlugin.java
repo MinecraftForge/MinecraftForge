@@ -93,9 +93,9 @@ public interface IFMLLoadingPlugin
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    public @interface TransformerExclusions
+    @interface TransformerExclusions
     {
-        public String[] value() default "";
+        String[] value() default "";
     }
 
     /**
@@ -107,9 +107,9 @@ public interface IFMLLoadingPlugin
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    public @interface MCVersion
+    @interface MCVersion
     {
-        public String value() default "";
+        String value() default "";
     }
 
     /**
@@ -119,16 +119,16 @@ public interface IFMLLoadingPlugin
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    public @interface Name
+    @interface Name
     {
-        public String value() default "";
+        String value() default "";
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    public @interface DependsOn
+    @interface DependsOn
     {
-        public String[] value() default {};
+        String[] value() default {};
     }
 
     /**
@@ -138,9 +138,9 @@ public interface IFMLLoadingPlugin
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    public @interface SortingIndex
+    @interface SortingIndex
     {
-        public int value() default 0;
+        int value() default 0;
     }
 
 }

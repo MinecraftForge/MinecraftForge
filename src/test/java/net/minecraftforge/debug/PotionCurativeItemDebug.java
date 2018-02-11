@@ -1,5 +1,6 @@
 package net.minecraftforge.debug;
 
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
@@ -8,10 +9,12 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +32,7 @@ public class PotionCurativeItemDebug
 {
     public static final boolean ENABLED = false;
     public static final String MODID = "potion_curative_item_debug";
+
     @ObjectHolder("medicine")
     public static final Item MEDICINE = null;
     private static Potion INCURABLE_POTION;
@@ -42,6 +46,7 @@ public class PotionCurativeItemDebug
             if (!ENABLED) return;
             event.getRegistry().register(new Medicine().setRegistryName(MODID, "medicine"));
         }
+
         @SubscribeEvent
         public static void registerPotions(RegistryEvent.Register<Potion> event)
         {
@@ -49,6 +54,7 @@ public class PotionCurativeItemDebug
             INCURABLE_POTION = new IncurablePotion().setRegistryName(MODID, "incurable_potion");
             event.getRegistry().register(INCURABLE_POTION);
         }
+
         @SubscribeEvent
         public static void registerPotionTypes(RegistryEvent.Register<PotionType> event)
         {
@@ -60,6 +66,17 @@ public class PotionCurativeItemDebug
 
             // Register PotionType that can't be cured
             event.getRegistry().register(new PotionType(new PotionEffect(INCURABLE_POTION, 1200)).setRegistryName(MODID, "incurable_potion_type"));
+        }
+    }
+
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class ClientEventHandler
+    {
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
+        {
+            if (!ENABLED) return;
+            ModelBakery.registerItemVariants(MEDICINE);
         }
     }
 

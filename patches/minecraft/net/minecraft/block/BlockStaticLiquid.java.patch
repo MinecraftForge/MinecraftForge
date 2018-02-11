@@ -1,11 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStaticLiquid.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStaticLiquid.java
-@@ -52,7 +52,7 @@
+@@ -52,14 +52,14 @@
                      {
                          blockpos = blockpos.func_177982_a(p_180650_4_.nextInt(3) - 1, 1, p_180650_4_.nextInt(3) - 1);
  
 -                        if (blockpos.func_177956_o() >= 0 && blockpos.func_177956_o() < 256 && !p_180650_1_.func_175667_e(blockpos))
 +                        if (blockpos.func_177956_o() >= 0 && blockpos.func_177956_o() < p_180650_1_.func_72800_K() && !p_180650_1_.func_175667_e(blockpos))
+                         {
+                             return;
+                         }
+ 
+-                        Block block = p_180650_1_.func_180495_p(blockpos).func_177230_c();
++                        IBlockState block = p_180650_1_.func_180495_p(blockpos);
+ 
+-                        if (block.field_149764_J == Material.field_151579_a)
++                        if (block.func_177230_c().isAir(block, p_180650_1_, blockpos))
+                         {
+                             if (this.func_176369_e(p_180650_1_, blockpos))
+                             {
+@@ -67,7 +67,7 @@
+                                 return;
+                             }
+                         }
+-                        else if (block.field_149764_J.func_76230_c())
++                        else if (block.func_185904_a().func_76230_c())
                          {
                              return;
                          }

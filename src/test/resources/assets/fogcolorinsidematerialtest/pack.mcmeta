@@ -1,0 +1,7 @@
+{
+    "pack": {
+        "description": "mod resources",
+        "pack_format": 3,
+        "_comment": "A pack_format of 3 should be used starting with Minecraft 1.11. All resources, including language files, should be lowercase (eg: en_us.lang). A pack_format of 2 will load your mod resources with LegacyV2Adapter, which requires language files to have uppercase letters (eg: en_US.lang)."
+    }
+}

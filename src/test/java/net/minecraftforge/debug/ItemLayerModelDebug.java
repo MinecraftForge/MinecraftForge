@@ -93,7 +93,7 @@ public class ItemLayerModelDebug
         }
 
         @Override
-        public float getStrVsBlock(ItemStack stack, IBlockState state)
+        public float getDestroySpeed(ItemStack stack, IBlockState state)
         {
             return 10f;
         }

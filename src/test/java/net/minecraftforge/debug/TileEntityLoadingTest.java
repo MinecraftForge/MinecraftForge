@@ -3,22 +3,27 @@ package net.minecraftforge.debug;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 
 @Mod(modid = TileEntityLoadingTest.MODID, name = "TileEntity#onLoad() test mod", version = "1.0", acceptableRemoteVersions = "*")
 public class TileEntityLoadingTest
@@ -41,11 +46,24 @@ public class TileEntityLoadingTest
             event.getRegistry().register(new TestBlock());
             GameRegistry.registerTileEntity(TestTE.class, (new ResourceLocation(MODID, TestBlock.NAME)).toString());
         }
+
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event)
         {
             if (!ENABLED) return;
             event.getRegistry().register(new ItemBlock(TEST_BLOCK).setRegistryName(TEST_BLOCK.getRegistryName()));
+        }
+    }
+
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class ClientEventHandler
+    {
+        @SubscribeEvent
+        public static void registerModels(ModelRegistryEvent event)
+        {
+            if (!ENABLED) return;
+            ModelLoader.setCustomStateMapper(TEST_BLOCK, block -> Collections.emptyMap());
+            ModelBakery.registerItemVariants(Item.getItemFromBlock(TEST_BLOCK));
         }
     }
 

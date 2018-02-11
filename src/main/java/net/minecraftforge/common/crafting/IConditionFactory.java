@@ -23,5 +23,5 @@ import java.util.function.BooleanSupplier;
 import com.google.gson.JsonObject;
 
 public interface IConditionFactory {
-    public BooleanSupplier parse(JsonContext context, JsonObject json);
+    BooleanSupplier parse(JsonContext context, JsonObject json);
 }

@@ -1,0 +1,22 @@
+{
+	"display": 
+	{
+        "icon": {
+            "item": "minecraft:stone"
+        },
+		"description": "From LootContextTweaksTest",
+		"title": "Test",
+		"background": "minecraft:textures/blocks/stone.png"
+	},
+	"criteria": 
+	{
+           "no": 
+           {
+               "trigger": "minecraft:impossible"
+           }
+     },
+	"rewards": 
+	{
+		"loot": ["minecraft:chests/simple_dungeon"]
+	}
+}

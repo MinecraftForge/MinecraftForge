@@ -356,6 +356,21 @@ public abstract class FluidRegistry
         return name;
     }
 
+    @Nullable
+    public static String getModId(@Nullable FluidStack fluidStack)
+    {
+        if (fluidStack != null)
+        {
+            String defaultFluidName = getDefaultFluidName(fluidStack.getFluid());
+            if (defaultFluidName != null)
+            {
+                ResourceLocation fluidResourceName = new ResourceLocation(defaultFluidName);
+                return fluidResourceName.getResourceDomain();
+            }
+        }
+        return null;
+    }
+
     public static void loadFluidDefaults(NBTTagCompound tag)
     {
         Set<String> defaults = Sets.newHashSet();

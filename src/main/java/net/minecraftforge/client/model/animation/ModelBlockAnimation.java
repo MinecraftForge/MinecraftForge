@@ -329,6 +329,7 @@ public class ModelBlockAnimation
                 time -= Math.floor(time);
                 Vector3f translation = new Vector3f(0, 0, 0);
                 Vector3f scale = new Vector3f(1, 1, 1);
+                Vector3f origin = new Vector3f(0, 0, 0);
                 AxisAngle4f rotation = new AxisAngle4f(0, 0, 0, 0);
                 for(MBVariableClip var : variables)
                 {
@@ -393,11 +394,24 @@ public class ModelBlockAnimation
                         case ZS:
                             scale.z = value;
                             break;
+                        case XORIGIN:
+                            origin.x = value - 0.5F;
+                            break;
+                        case YORIGIN:
+                            origin.y = value - 0.5F;
+                            break;
+                        case ZORIGIN:
+                            origin.z = value - 0.5F;
+                            break;
                     }
                 }
                 Quat4f rot = new Quat4f();
                 rot.set(rotation);
-                return TRSRTransformation.blockCenterToCorner(new TRSRTransformation(translation, rot, scale, null));
+                TRSRTransformation base = new TRSRTransformation(translation, rot, scale, null);
+                Vector3f negOrigin = new Vector3f(origin);
+                negOrigin.negate();
+                base = new TRSRTransformation(origin, null, null, null).compose(base).compose(new TRSRTransformation(negOrigin, null, null, null));
+                return TRSRTransformation.blockCenterToCorner(base);
             }
         }
     }
@@ -405,43 +419,16 @@ public class ModelBlockAnimation
     protected static class MBJoint implements IJoint
     {
         private final String name;
-        private final TRSRTransformation invBindPose;
 
-        public MBJoint(String name, BlockPart part)
+        public MBJoint(String name)
         {
             this.name = name;
-            if(part.partRotation != null)
-            {
-                float x = 0, y = 0, z = 0;
-                switch(part.partRotation.axis)
-                {
-                    case X:
-                        x = 1;
-                    case Y:
-                        y = 1;
-                    case Z:
-                        z = 1;
-                }
-                Quat4f rotation = new Quat4f();
-                rotation.set(new AxisAngle4f(x, y, z, 0));
-                Matrix4f m = new TRSRTransformation(
-                    TRSRTransformation.toVecmath(part.partRotation.origin),
-                    rotation,
-                    null,
-                    null).getMatrix();
-                m.invert();
-                invBindPose = new TRSRTransformation(m);
-            }
-            else
-            {
-                invBindPose = TRSRTransformation.identity();
-            }
         }
 
         @Override
         public TRSRTransformation getInvBindPose()
         {
-            return invBindPose;
+            return TRSRTransformation.identity();
         }
 
         @Override
@@ -503,7 +490,13 @@ public class ModelBlockAnimation
             @SerializedName("scale_y")
             YS,
             @SerializedName("scale_z")
-            ZS;
+            ZS,
+            @SerializedName("origin_x")
+            XORIGIN,
+            @SerializedName("origin_y")
+            YORIGIN,
+            @SerializedName("origin_z")
+            ZORIGIN;
         }
 
         public static enum Type
@@ -533,7 +526,7 @@ public class ModelBlockAnimation
             {
                 if(info.getWeights().containsKey(i))
                 {
-                    ModelBlockAnimation.MBJoint joint = new ModelBlockAnimation.MBJoint(info.getName(), part);
+                    ModelBlockAnimation.MBJoint joint = new ModelBlockAnimation.MBJoint(info.getName());
                     Optional<TRSRTransformation> trOp = state.apply(Optional.of(joint));
                     if(trOp.isPresent() && trOp.get() != TRSRTransformation.identity())
                     {

@@ -235,6 +235,7 @@ public final class ModelFluid implements IModel
                     builder = new UnpackedBakedQuad.Builder(format);
                     builder.setQuadOrientation(side);
                     builder.setTexture(topSprite);
+                    builder.setQuadTint(0);
                     for (int i = gas ? 3 : 0; i != (gas ? -1 : 4); i += (gas ? -1 : 1))
                     {
                         int l = (k * 3) + (1 - 2 * k) * i;
@@ -254,6 +255,7 @@ public final class ModelFluid implements IModel
                 builder = new UnpackedBakedQuad.Builder(format);
                 builder.setQuadOrientation(side);
                 builder.setTexture(still);
+                builder.setQuadTint(0);
                 for(int i = gas ? 3 : 0; i != (gas ? -1 : 4); i+= (gas ? -1 : 1))
                 {
                     putVertex(
@@ -276,6 +278,7 @@ public final class ModelFluid implements IModel
                         builder = new UnpackedBakedQuad.Builder(format);
                         builder.setQuadOrientation(side);
                         builder.setTexture(flowing);
+                        builder.setQuadTint(0);
                         for(int j = 0; j < 4; j++)
                         {
                             int l = (k * 3) + (1 - 2 * k) * j;
@@ -298,6 +301,7 @@ public final class ModelFluid implements IModel
                 UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
                 builder.setQuadOrientation(EnumFacing.UP);
                 builder.setTexture(still);
+                builder.setQuadTint(0); //I dont know if we also need this in inventory, but now it should be possible to color it here as well
                 for(int i = 0; i < 4; i++)
                 {
                     putVertex(

@@ -35,8 +35,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
-import org.apache.logging.log4j.Level;
-
 @Sharable
 public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessageCodec<FMLProxyPacket, A> {
     private TByteObjectHashMap<Class<? extends A>> discriminators = new TByteObjectHashMap<Class<? extends A>>();
@@ -52,7 +50,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception
     {
         super.handlerAdded(ctx);
-        ctx.attr(INBOUNDPACKETTRACKER).set(new ThreadLocal<WeakReference<FMLProxyPacket>>());
+        ctx.channel().attr(INBOUNDPACKETTRACKER).set(new ThreadLocal<WeakReference<FMLProxyPacket>>());
     }
 
     public FMLIndexedMessageToMessageCodec<A> addDiscriminator(int discriminator, Class<? extends A> type)
@@ -72,7 +70,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
         FMLProxyPacket proxy = new FMLProxyPacket(buffer/*.copy()*/, ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
-        WeakReference<FMLProxyPacket> ref = ctx.attr(INBOUNDPACKETTRACKER).get().get();
+        WeakReference<FMLProxyPacket> ref = ctx.channel().attr(INBOUNDPACKETTRACKER).get().get();
         FMLProxyPacket old = ref == null ? null : ref.get();
         if (old != null)
         {
@@ -99,9 +97,10 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
             throw new NullPointerException("Undefined message for discriminator " + discriminator + " in channel " + msg.channel());
         }
         A newMsg = clazz.newInstance();
-        ctx.attr(INBOUNDPACKETTRACKER).get().set(new WeakReference<FMLProxyPacket>(msg));
+        ctx.channel().attr(INBOUNDPACKETTRACKER).get().set(new WeakReference<FMLProxyPacket>(msg));
         decodeInto(ctx, payload.slice(), newMsg);
         out.add(newMsg);
+        payload.release();
     }
 
     /**

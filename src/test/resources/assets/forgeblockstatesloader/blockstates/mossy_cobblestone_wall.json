@@ -27,7 +27,7 @@
 		"east=false,north=true,south=true,up=false,west=false": {"model": null},
 		"east=true,north=false,south=false,up=false,west=true": {"model": null},
 		"inventory": [{  // inventory variant can be specified here too, and it will inherit properties from "defaults"
-		    submodel: {
+		    "submodel": {
 		        "north": { "model": "forgeblockstatesloader:wall_connect" },
 		        "south": { "model": "forgeblockstatesloader:wall_connect", "y": 180 }
 		    }

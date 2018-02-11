@@ -9,6 +9,15 @@
  {
      public static final PropertyBool field_176277_a = PropertyBool.func_177716_a("up");
      public static final PropertyBool field_176273_b = PropertyBool.func_177716_a("north");
+@@ -244,7 +244,7 @@
+                         IBlockState iblockstate3 = p_180650_1_.func_180495_p(blockpos4);
+                         Block block1 = iblockstate3.func_177230_c();
+ 
+-                        if (block1.field_149764_J == Material.field_151579_a)
++                        if (block1.isAir(iblockstate3, p_180650_1_, blockpos4))
+                         {
+                             EnumFacing enumfacing3 = enumfacing1.func_176746_e();
+                             EnumFacing enumfacing4 = enumfacing1.func_176735_f();
 @@ -459,7 +459,17 @@
  
          return i;

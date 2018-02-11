@@ -206,10 +206,9 @@ public final class ItemTextureQuadConverter
         return quads;
     }
 
-    // true if alpha != 0
     private static boolean isVisible(int color)
     {
-        return (color >> 24 & 255) > 0;
+        return (color >> 24 & 255) / 255f > 0.1f;
     }
 
     /**
@@ -239,13 +238,12 @@ public final class ItemTextureQuadConverter
                                              float x1, float y1, float x2, float y2, float z,
                                              float u1, float v1, float u2, float v2)
     {
-        side = side.getOpposite();
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
         builder.setQuadTint(-1);
         builder.setQuadOrientation(side);
         builder.setTexture(sprite);
 
-        if (side == EnumFacing.NORTH)
+        if (side == EnumFacing.SOUTH)
         {
             putVertex(builder, format, transform, side, x1, y1, z, u1, v2, color);
             putVertex(builder, format, transform, side, x2, y1, z, u2, v2, color);

@@ -5,7 +5,7 @@
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
 -                if (d3 > 36.0D)
-+                double dist = field_147369_b.field_71134_c.getBlockReachDistance() + 1;
++                double dist = field_147369_b.func_110148_a(EntityPlayer.REACH_DISTANCE).func_111126_e() + 1;
 +                dist *= dist;
 +
 +                if (d3 > dist)
@@ -17,7 +17,7 @@
          if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || enumfacing != EnumFacing.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z())
          {
 -            if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < 64.0D && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
-+            double dist = field_147369_b.field_71134_c.getBlockReachDistance() + 3;
++            double dist = field_147369_b.func_110148_a(EntityPlayer.REACH_DISTANCE).func_111126_e() + 3;
 +            dist *= dist;
 +            if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < dist && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
              {

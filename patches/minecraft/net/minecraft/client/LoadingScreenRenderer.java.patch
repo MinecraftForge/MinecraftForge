@@ -19,7 +19,7 @@
 +                }
 +                catch (java.io.IOException e)
 +                {
-+                    com.google.common.base.Throwables.propagate(e);
++                    throw new RuntimeException(e);
 +                } //FML End
                  this.field_146588_g.func_147609_e();
  

@@ -10,23 +10,19 @@ import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemMultiTexture;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
 @Mod(modid = ForgeBlockStatesLoaderDebug.MODID, name = "ForgeBlockStatesLoader", version = "1.0", acceptableRemoteVersions = "*")
+@Mod.EventBusSubscriber
 public class ForgeBlockStatesLoaderDebug
 {
     public static final String MODID = "forgeblockstatesloader";
@@ -45,43 +41,33 @@ public class ForgeBlockStatesLoaderDebug
     }
 
     @SubscribeEvent
-    public void registerBlocks(RegistryEvent.Register<Block> event)
+    public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().registerAll(
-            new BlockWall(Blocks.COBBLESTONE).setUnlocalizedName(MODID + ".customWall").setRegistryName(MODID, "custom_wall")
+                new BlockWall(Blocks.COBBLESTONE)
+                        .setUnlocalizedName(MODID + ".customWall")
+                        .setRegistryName(MODID, "custom_wall")
         );
     }
 
     @SubscribeEvent
-    public void registerItems(RegistryEvent.Register<Item> event)
+    public static void registerItems(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().registerAll(
-            new ItemMultiTexture(BLOCKS.custom_wall, BLOCKS.custom_wall, new ItemMultiTexture.Mapper()
-            {
-                @Override
-                public String apply(ItemStack stack)
-                {
-                    return BlockWall.EnumType.byMetadata(stack.getMetadata()).getUnlocalizedName();
-                }
-            }).setRegistryName(BLOCKS.custom_wall.getRegistryName())
+                new ItemMultiTexture(
+                        BLOCKS.custom_wall, BLOCKS.custom_wall,
+                        stack -> BlockWall.EnumType.byMetadata(stack.getMetadata()).getUnlocalizedName()
+                ).setRegistryName(BLOCKS.custom_wall.getRegistryName())
         );
     }
 
     //public static final Block blockCustom = new CustomMappedBlock();
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        //blockCustom.setUnlocalizedName(MODID + ".customBlock").setRegistryName("customBlock");
-        //GameRegistry.registerBlock(blockCustom);
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
     @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
         @SubscribeEvent
-        public void registerModels(ModelRegistryEvent event)
+        public static void registerModels(ModelRegistryEvent event)
         {
             //ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
 

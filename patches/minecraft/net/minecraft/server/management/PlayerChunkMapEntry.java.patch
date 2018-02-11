@@ -70,7 +70,14 @@
          if (this.field_187286_f != null)
          {
              return true;
-@@ -131,6 +159,8 @@
+@@ -125,12 +153,15 @@
+             this.field_187287_g = 0;
+             this.field_187288_h = 0;
+             this.field_187290_j = true;
++            if (this.field_187283_c.isEmpty()) return true; // Forge: fix MC-120780
+             Packet<?> packet = new SPacketChunkData(this.field_187286_f, 65535);
+ 
+             for (EntityPlayerMP entityplayermp : this.field_187283_c)
              {
                  entityplayermp.field_71135_a.func_147359_a(packet);
                  this.field_187282_b.func_72688_a().func_73039_n().func_85172_a(entityplayermp, this.field_187286_f);
@@ -79,7 +86,7 @@
              }
  
              return true;
-@@ -169,7 +199,7 @@
+@@ -169,7 +200,7 @@
  
              this.field_187288_h |= 1 << (p_187265_2_ >> 4);
  
@@ -88,7 +95,7 @@
              {
                  short short1 = (short)(p_187265_1_ << 12 | p_187265_3_ << 8 | p_187265_2_);
  
-@@ -180,7 +210,8 @@
+@@ -180,7 +211,8 @@
                          return;
                      }
                  }
@@ -98,7 +105,7 @@
                  this.field_187285_e[this.field_187287_g++] = short1;
              }
          }
-@@ -197,6 +228,7 @@
+@@ -197,6 +229,7 @@
          }
      }
  
@@ -106,7 +113,7 @@
      public void func_187280_d()
      {
          if (this.field_187290_j && this.field_187286_f != null)
-@@ -210,28 +242,32 @@
+@@ -210,28 +243,32 @@
                      int k = (this.field_187285_e[0] >> 8 & 15) + this.field_187284_d.field_77275_b * 16;
                      BlockPos blockpos = new BlockPos(i, j, k);
                      this.func_187267_a(new SPacketBlockChange(this.field_187282_b.func_72688_a(), blockpos));
