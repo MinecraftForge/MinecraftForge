@@ -91,7 +91,7 @@ public class BufferBuilderExpansionTest
 
         ByteBuffer buffer = ByteBuffer.allocate(3 * 4 * 4); //3 floats per the 4 verticles (32bit float as 4 8bit bytes)
         for(int i=0;i<4;i++)
-            buffer.putFloat(1.233F)); //Just a random value.
+            buffer.putFloat(1.233F); //Just a random value.
         
         buffer.begin(0x07, format);
         for (int i = 0; i < num_quads + 2; i++)
@@ -111,7 +111,7 @@ public class BufferBuilderExpansionTest
 
         ByteBuffer buffer = ByteBuffer.allocate(3 * 4 * 4);
         for(int i=0;i<4;i++)
-            buffer.putFloat(1.233F));
+            buffer.putFloat(1.233F);
 
         buffer.begin(0x07, format);
         for (int i = 0; i < num_quads; i++)
