@@ -663,7 +663,7 @@ public class FMLCommonHandler
      */
     public void exitJava(int exitCode, boolean hardExit)
     {
-        FMLLog.log.info("Java has been asked to exit (code {}) by {}.", exitCode, Thread.currentThread().getStackTrace()[1]);
+        FMLLog.log.info("Java has been asked to exit (code {}) by {}.", exitCode, Thread.currentThread().getStackTrace()[2]);
         if (hardExit)
         {
             FMLLog.log.info("This is an abortive exit and could cause world corruption or other things");
