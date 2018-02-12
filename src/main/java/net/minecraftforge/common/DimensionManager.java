@@ -312,17 +312,24 @@ public class DimensionManager
         return keep ? keepLoaded.add(dim) : keepLoaded.remove(dim);
     }
 
+    private static boolean canUnloadWorld(WorldServer world)
+    {
+        return ForgeChunkManager.getPersistentChunksFor(world).isEmpty()
+                && world.playerEntities.isEmpty()
+                && !world.provider.getDimensionType().shouldLoadSpawn()
+                && !keepLoaded.contains(world.provider.getDimension());
+    }
+
     /**
-     * Queues a dimension to unload.
-     * If the dimension is already queued, it will reset the delay to unload
+     * Queues a dimension to unload, if it can be unloaded.
+     * If the dimension is already queued, it will reset the delay to unload.
      * @param id The id of the dimension
      */
     public static void unloadWorld(int id)
     {
-        if (keepLoaded.contains(id))
-        {
-            return;
-        }
+        WorldServer world = worlds.get(id);
+        if (world == null || !canUnloadWorld(world)) return;
+
         if (!unloadQueue.contains(id))
         {
             FMLLog.log.debug("Queueing dimension {} to unload", id);
@@ -356,7 +363,7 @@ public class DimensionManager
             queueIterator.remove();
             dimension.ticksWaited = 0;
             // Don't unload the world if the status changed
-            if (w == null || !ForgeChunkManager.getPersistentChunksFor(w).isEmpty() || !w.playerEntities.isEmpty() || dimension.type.shouldLoadSpawn() || keepLoaded.contains(id))
+            if (w == null || !canUnloadWorld(w))
             {
                 FMLLog.log.debug("Aborting unload for dimension {} as status changed", id);
                 continue;
