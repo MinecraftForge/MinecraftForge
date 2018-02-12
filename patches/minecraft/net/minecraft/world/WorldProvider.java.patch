@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,352 @@
+@@ -241,6 +216,363 @@
          return new WorldBorder();
      }
  
@@ -228,6 +228,17 @@
 +    public int getRespawnDimension(net.minecraft.entity.player.EntityPlayerMP player)
 +    {
 +        return player.getSpawnDimension();
++    }
++
++    /**
++     * Determines if the player can sleep in this world (or if the bed should explode for example).
++     *
++     * @param player The player that is attempting to sleep
++     * @return true if the player can sleep in a bed without it exploding
++     */
++    public boolean canSleepHere(net.minecraft.entity.player.EntityPlayer player, BlockPos pos)
++    {
++        return this.func_76567_e() && this.field_76579_a.func_180494_b(pos) != net.minecraft.init.Biomes.field_76778_j;
 +    }
 +
 +    /**
