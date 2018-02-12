@@ -793,7 +793,7 @@
 +    public void onHorseArmorTick(World world, net.minecraft.entity.EntityLiving horse, ItemStack armor) {}
 +    
 +    /**
-+     * @return This Item's TEISR, this method should NOT return a new instance.  Must not be null.
++     * @return This Item's renderer.  The return value of this method should be constant for the lifetime of the client.  Nonnull.
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer getTileEntityItemStackRenderer()
