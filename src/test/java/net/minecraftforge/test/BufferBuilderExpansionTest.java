@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import org.junit.Test;
 
 import java.util.Arrays;
-improt java.nio.ByteBuffer;
+import java.nio.ByteBuffer;
 
 import static org.junit.Assert.assertTrue;
 
