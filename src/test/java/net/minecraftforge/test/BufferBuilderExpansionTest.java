@@ -89,14 +89,14 @@ public class BufferBuilderExpansionTest
         BufferBuilder buffer = new BufferBuilder(BUFFER_SIZE / 4);
         int prevCap = buffer.getByteBuffer().capacity();
 
-        ByteBuffer buffer = ByteBuffer.allocate(3 * 4 * 4); //3 floats per the 4 verticles (32bit float as 4 8bit bytes)
+        ByteBuffer buf = ByteBuffer.allocate(3 * 4 * 4); //3 floats per the 4 verticles (32bit float as 4 8bit bytes)
         for(int i=0;i<4;i++)
-            buffer.putFloat(1.233F); //Just a random value.
+            buf.putFloat(1.233F); //Just a random value.
         
         buffer.begin(0x07, format);
         for (int i = 0; i < num_quads + 2; i++)
         {
-            buffer.putBulkData(buffer);
+            buffer.putBulkData(buf);
         }
         buffer.finishDrawing();
 
@@ -109,14 +109,14 @@ public class BufferBuilderExpansionTest
         BufferBuilder buffer = new BufferBuilder(BUFFER_SIZE / 4);
         int prevCap = buffer.getByteBuffer().capacity();
 
-        ByteBuffer buffer = ByteBuffer.allocate(3 * 4 * 4);
+        ByteBuffer buf = ByteBuffer.allocate(3 * 4 * 4);
         for(int i=0;i<4;i++)
-            buffer.putFloat(1.233F);
+            buf.putFloat(1.233F);
 
         buffer.begin(0x07, format);
         for (int i = 0; i < num_quads; i++)
         {
-            buffer.putBulkData(buffer);
+            buffer.putBulkData(buf);
         }
 
         for (int i = 0; i < num_quads + 2; i++)
