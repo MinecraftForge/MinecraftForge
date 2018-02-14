@@ -42,9 +42,9 @@
          this.field_147694_f.func_148615_a(p_147691_1_, p_147691_2_);
      }
  
-+    public void setListener(net.minecraft.entity.Entity entity, float p_147691_2_)
++    public void setListener(net.minecraft.entity.Entity entity, float partialTicks)
 +    {
-+        this.field_147694_f.setListener(entity, p_147691_2_);
++        this.field_147694_f.setListener(entity, partialTicks);
 +    }
 +
      public void func_147689_b()
