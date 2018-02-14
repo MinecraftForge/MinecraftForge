@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIHarvestFarmland.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIHarvestFarmland.java
+@@ -74,6 +74,7 @@
+ 
+                     if (!itemstack.func_190926_b())
+                     {
++                        net.minecraft.item.Item item = itemstack.func_77973_b();
+                         if (itemstack.func_77973_b() == Items.field_151014_N)
+                         {
+                             world.func_180501_a(blockpos, Blocks.field_150464_aj.func_176223_P(), 3);
+@@ -94,6 +95,7 @@
+                             world.func_180501_a(blockpos, Blocks.field_185773_cZ.func_176223_P(), 3);
+                             flag = true;
+                         }
++                        else if (item instanceof net.minecraftforge.common.IPlantable && ((net.minecraftforge.common.IPlantable)item).getPlantType(world, blockpos)==net.minecraftforge.common.EnumPlantType.Crop) { world.func_180501_a(blockpos, ((net.minecraftforge.common.IPlantable)item).getPlant(world, blockpos), 3); flag=true;}
+                     }
+ 
+                     if (flag)
