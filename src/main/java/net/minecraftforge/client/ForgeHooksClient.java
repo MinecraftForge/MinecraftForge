@@ -630,7 +630,7 @@ public class ForgeHooksClient
     public static Optional<TRSRTransformation> applyTransform(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform, Optional<? extends IModelPart> part)
     {
         if(part.isPresent()) return Optional.empty();
-        return Optional.of(TRSRTransformation.blockCenterToCorner(new TRSRTransformation(transform)));
+        return Optional.of(TRSRTransformation.blockCenterToCorner(TRSRTransformation.from(transform)));
     }
 
     public static Optional<TRSRTransformation> applyTransform(Matrix4f matrix, Optional<? extends IModelPart> part)
@@ -746,9 +746,9 @@ public class ForgeHooksClient
     @SuppressWarnings("deprecation")
     public static Pair<? extends IBakedModel,Matrix4f> handlePerspective(IBakedModel model, ItemCameraTransforms.TransformType type)
     {
-        TRSRTransformation tr = new TRSRTransformation(model.getItemCameraTransforms().getTransform(type));
+        TRSRTransformation tr = TRSRTransformation.from(model.getItemCameraTransforms().getTransform(type));
         Matrix4f mat = null;
-        if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
+        if (!tr.isIdentity()) mat = tr.getMatrix();
         return Pair.of(model, mat);
     }
 

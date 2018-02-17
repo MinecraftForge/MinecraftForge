@@ -20,6 +20,9 @@
 package net.minecraftforge.common.model;
 
 import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.vecmath.AxisAngle4f;
@@ -32,6 +35,7 @@ import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
+import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3i;
@@ -42,7 +46,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.base.MoreObjects;
-import java.util.Optional;
 import com.google.common.collect.Maps;
 
 /*
@@ -67,7 +70,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     private Vector3f scale;
     private Quat4f rightRot;
 
-    public TRSRTransformation(Matrix4f matrix)
+    public TRSRTransformation(@Nullable Matrix4f matrix)
     {
         if(matrix == null)
         {
@@ -89,23 +92,47 @@ public final class TRSRTransformation implements IModelState, ITransformation
         full = true;
     }
 
-    @Deprecated
+    /** @deprecated use {@link #from(ItemTransformVec3f)} */
+    @Deprecated // TODO: remove / make private
     @SideOnly(Side.CLIENT)
-    public TRSRTransformation(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform)
+    public TRSRTransformation(ItemTransformVec3f transform)
     {
         this(toVecmath(transform.translation), quatFromXYZDegrees(toVecmath(transform.rotation)), toVecmath(transform.scale), null);
     }
 
+    /** @deprecated use {@link #from(ModelRotation)} */
+    @Deprecated // TODO: remove
     @SideOnly(Side.CLIENT)
     public TRSRTransformation(ModelRotation rotation)
     {
         this(rotation.getMatrix());
     }
 
+    /** @deprecated use {@link #from(EnumFacing)} */
+    @Deprecated // TODO: remove
     @SideOnly(Side.CLIENT)
     public TRSRTransformation(EnumFacing facing)
     {
         this(getMatrix(facing));
+    }
+
+    @Deprecated
+    @SideOnly(Side.CLIENT)
+    public static TRSRTransformation from(ItemTransformVec3f transform)
+    {
+        return transform.equals(ItemTransformVec3f.DEFAULT) ? identity : new TRSRTransformation(transform);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static TRSRTransformation from(ModelRotation rotation)
+    {
+        return rotations.computeIfAbsent(rotation, r -> new TRSRTransformation(r.getMatrix()));
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static TRSRTransformation from(EnumFacing facing)
+    {
+        return facings.computeIfAbsent(facing, f -> new TRSRTransformation(getMatrix(f)));
     }
 
     @SideOnly(Side.CLIENT)
@@ -133,6 +160,12 @@ public final class TRSRTransformation implements IModelState, ITransformation
         identity.getLeftRot();
     }
 
+    @SideOnly(Side.CLIENT)
+    private static final Map<ModelRotation, TRSRTransformation> rotations = new EnumMap<>(ModelRotation.class);
+
+    @SideOnly(Side.CLIENT)
+    private static final Map<EnumFacing, TRSRTransformation> facings = new EnumMap<>(EnumFacing.class);
+
     public static TRSRTransformation identity()
     {
         return identity;
@@ -140,6 +173,8 @@ public final class TRSRTransformation implements IModelState, ITransformation
 
     public TRSRTransformation compose(TRSRTransformation b)
     {
+        if (this.isIdentity()) return b;
+        if (b.isIdentity()) return this;
         Matrix4f m = getMatrix();
         m.mul(b.getMatrix());
         return new TRSRTransformation(m);
@@ -147,7 +182,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
 
     public TRSRTransformation inverse()
     {
-        if(this == identity) return this;
+        if (this.isIdentity()) return this;
         Matrix4f m = getMatrix();
         m.invert();
         return new TRSRTransformation(m);
@@ -523,9 +558,14 @@ public final class TRSRTransformation implements IModelState, ITransformation
      */
     @Deprecated
     @SideOnly(Side.CLIENT)
-    public net.minecraft.client.renderer.block.model.ItemTransformVec3f toItemTransform()
+    public ItemTransformVec3f toItemTransform()
     {
-        return new net.minecraft.client.renderer.block.model.ItemTransformVec3f(toLwjgl(toXYZDegrees(getLeftRot())), toLwjgl(getTranslation()), toLwjgl(getScale()));
+        return new ItemTransformVec3f(toLwjgl(toXYZDegrees(getLeftRot())), toLwjgl(getTranslation()), toLwjgl(getScale()));
+    }
+
+    public boolean isIdentity()
+    {
+        return this.equals(identity);
     }
 
     @Override
@@ -625,6 +665,8 @@ public final class TRSRTransformation implements IModelState, ITransformation
      */
     public static TRSRTransformation blockCenterToCorner(TRSRTransformation transform)
     {
+        if (transform.isIdentity()) return transform;
+
         Matrix4f ret = new Matrix4f(transform.getMatrix()), tmp = new Matrix4f();
         tmp.setIdentity();
         tmp.m03 = tmp.m13 = tmp.m23 = .5f;
@@ -639,6 +681,8 @@ public final class TRSRTransformation implements IModelState, ITransformation
      */
     public static TRSRTransformation blockCornerToCenter(TRSRTransformation transform)
     {
+        if (transform.isIdentity()) return transform;
+
         Matrix4f ret = new Matrix4f(transform.getMatrix()), tmp = new Matrix4f();
         tmp.setIdentity();
         tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
@@ -653,7 +697,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((matrix == null) ? 0 : matrix.hashCode());
+        result = prime * result + Objects.hashCode(matrix);
         return result;
     }
 
@@ -664,12 +708,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         TRSRTransformation other = (TRSRTransformation) obj;
-        if (matrix == null)
-        {
-            if (other.matrix != null) return false;
-        }
-        else if (!matrix.equals(other.matrix)) return false;
-        return true;
+        return Objects.equals(matrix, other.matrix);
     }
 
     @SideOnly(Side.CLIENT)

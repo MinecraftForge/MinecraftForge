@@ -528,7 +528,7 @@ public class ModelBlockAnimation
                 {
                     ModelBlockAnimation.MBJoint joint = new ModelBlockAnimation.MBJoint(info.getName());
                     Optional<TRSRTransformation> trOp = state.apply(Optional.of(joint));
-                    if(trOp.isPresent() && trOp.get() != TRSRTransformation.identity())
+                    if(trOp.isPresent() && !trOp.get().isIdentity())
                     {
                         float w = info.getWeights().get(i)[0];
                         tmp = trOp.get().getMatrix();

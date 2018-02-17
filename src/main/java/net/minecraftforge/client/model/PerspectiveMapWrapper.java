@@ -53,23 +53,28 @@ public class PerspectiveMapWrapper implements IBakedModel
         ImmutableMap.Builder<ItemCameraTransforms.TransformType, TRSRTransformation> builder = ImmutableMap.builder();
         for(ItemCameraTransforms.TransformType type : ItemCameraTransforms.TransformType.values())
         {
-            builder.put(type, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(transforms.getTransform(type))));
+            if (transforms.hasCustomTransform(type))
+            {
+                builder.put(type, TRSRTransformation.blockCenterToCorner(TRSRTransformation.from(transforms.getTransform(type))));
+            }
         }
         return builder.build();
     }
 
     public static Pair<? extends IBakedModel, Matrix4f> handlePerspective(IBakedModel model, ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms, ItemCameraTransforms.TransformType cameraTransformType)
     {
-        TRSRTransformation tr = transforms.get(cameraTransformType);
-        Matrix4f mat = null;
-        if(tr != null && !tr.equals(TRSRTransformation.identity())) mat = TRSRTransformation.blockCornerToCenter(tr).getMatrix();
-        return Pair.of(model, mat);
+        TRSRTransformation tr = transforms.getOrDefault(cameraTransformType, TRSRTransformation.identity());
+        if (!tr.isIdentity())
+        {
+            return Pair.of(model, TRSRTransformation.blockCornerToCenter(tr).getMatrix());
+        }
+        return Pair.of(model, null);
     }
 
     public static Pair<? extends IBakedModel, Matrix4f> handlePerspective(IBakedModel model, IModelState state, ItemCameraTransforms.TransformType cameraTransformType)
     {
         TRSRTransformation tr = state.apply(Optional.of(cameraTransformType)).orElse(TRSRTransformation.identity());
-        if(tr != TRSRTransformation.identity())
+        if (!tr.isIdentity())
         {
             return Pair.of(model, TRSRTransformation.blockCornerToCenter(tr).getMatrix());
         }
