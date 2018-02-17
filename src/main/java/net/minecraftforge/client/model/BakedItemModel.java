@@ -49,7 +49,13 @@ public class BakedItemModel implements IBakedModel
         this.particle = particle;
         this.transforms = transforms;
         this.overrides = overrides;
-        this.guiModel = new BakedGuiItemModel<>(this);
+        this.guiModel = hasGuiIdentity(transforms) ? new BakedGuiItemModel<>(this) : null;
+    }
+
+    private static boolean hasGuiIdentity(ImmutableMap<TransformType, TRSRTransformation> transforms)
+    {
+        TRSRTransformation guiTransform = transforms.get(TransformType.GUI);
+        return guiTransform == null || guiTransform.equals(TRSRTransformation.identity());
     }
 
     @Override public boolean isAmbientOcclusion() { return true; }
@@ -71,7 +77,7 @@ public class BakedItemModel implements IBakedModel
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
     {
-        if (type == TransformType.GUI)
+        if (type == TransformType.GUI && this.guiModel != null)
         {
             return this.guiModel.handlePerspective(type);
         }
