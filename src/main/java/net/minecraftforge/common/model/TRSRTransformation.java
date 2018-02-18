@@ -132,22 +132,28 @@ public final class TRSRTransformation implements IModelState, ITransformation
     @SideOnly(Side.CLIENT)
     public static TRSRTransformation from(EnumFacing facing)
     {
-        return Cache.get(facing);
+        return Cache.get(getRotation(facing));
     }
 
     @SideOnly(Side.CLIENT)
     public static Matrix4f getMatrix(EnumFacing facing)
     {
-        switch(facing)
+        return getRotation(facing).getMatrix();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static ModelRotation getRotation(EnumFacing facing)
+    {
+        switch (facing)
         {
-        case DOWN: return ModelRotation.X90_Y0.getMatrix();
-        case UP: return ModelRotation.X270_Y0.getMatrix();
-        case NORTH: return TRSRTransformation.identity.matrix;
-        case SOUTH: return ModelRotation.X0_Y180.getMatrix();
-        case WEST: return ModelRotation.X0_Y270.getMatrix();
-        case EAST: return ModelRotation.X0_Y90.getMatrix();
-        default: return new Matrix4f();
+        case DOWN:  return ModelRotation.X90_Y0;
+        case UP:    return ModelRotation.X270_Y0;
+        case NORTH: return ModelRotation.X0_Y0;
+        case SOUTH: return ModelRotation.X0_Y180;
+        case WEST:  return ModelRotation.X0_Y270;
+        case EAST:  return ModelRotation.X0_Y90;
         }
+        throw new IllegalArgumentException(String.valueOf(facing));
     }
 
     private static final TRSRTransformation identity;
@@ -844,16 +850,15 @@ public final class TRSRTransformation implements IModelState, ITransformation
     private static final class Cache
     {
         private static final Map<ModelRotation, TRSRTransformation> rotations = new EnumMap<>(ModelRotation.class);
-        private static final Map<EnumFacing, TRSRTransformation> facings = new EnumMap<>(EnumFacing.class);
+
+        static
+        {
+            rotations.put(ModelRotation.X0_Y0, identity());
+        }
 
         static TRSRTransformation get(ModelRotation rotation)
         {
             return rotations.computeIfAbsent(rotation, r -> new TRSRTransformation(r.getMatrix()));
-        }
-
-        static TRSRTransformation get(EnumFacing facing)
-        {
-            return facings.computeIfAbsent(facing, f -> new TRSRTransformation(getMatrix(f)));
         }
     }
 }
