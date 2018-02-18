@@ -62,12 +62,6 @@ import com.google.common.collect.Maps;
  */
 public final class TRSRTransformation implements IModelState, ITransformation
 {
-    @SideOnly(Side.CLIENT)
-    private static final Map<ModelRotation, TRSRTransformation> rotations = new EnumMap<>(ModelRotation.class);
-
-    @SideOnly(Side.CLIENT)
-    private static final Map<EnumFacing, TRSRTransformation> facings = new EnumMap<>(EnumFacing.class);
-
     private final Matrix4f matrix;
 
     private boolean full;
@@ -132,13 +126,13 @@ public final class TRSRTransformation implements IModelState, ITransformation
     @SideOnly(Side.CLIENT)
     public static TRSRTransformation from(ModelRotation rotation)
     {
-        return rotations.computeIfAbsent(rotation, r -> new TRSRTransformation(r.getMatrix()));
+        return Cache.get(rotation);
     }
 
     @SideOnly(Side.CLIENT)
     public static TRSRTransformation from(EnumFacing facing)
     {
-        return facings.computeIfAbsent(facing, f -> new TRSRTransformation(getMatrix(f)));
+        return Cache.get(facing);
     }
 
     @SideOnly(Side.CLIENT)
@@ -843,6 +837,23 @@ public final class TRSRTransformation implements IModelState, ITransformation
         catch(SingularMatrixException e)
         {
             return new TRSRTransformation(null, null, new Vector3f(0, 0, 0), null);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static final class Cache
+    {
+        private static final Map<ModelRotation, TRSRTransformation> rotations = new EnumMap<>(ModelRotation.class);
+        private static final Map<EnumFacing, TRSRTransformation> facings = new EnumMap<>(EnumFacing.class);
+
+        static TRSRTransformation get(ModelRotation rotation)
+        {
+            return rotations.computeIfAbsent(rotation, r -> new TRSRTransformation(r.getMatrix()));
+        }
+
+        static TRSRTransformation get(EnumFacing facing)
+        {
+            return facings.computeIfAbsent(facing, f -> new TRSRTransformation(getMatrix(f)));
         }
     }
 }
