@@ -62,6 +62,12 @@ import com.google.common.collect.Maps;
  */
 public final class TRSRTransformation implements IModelState, ITransformation
 {
+    @SideOnly(Side.CLIENT)
+    private static final Map<ModelRotation, TRSRTransformation> rotations = new EnumMap<>(ModelRotation.class);
+
+    @SideOnly(Side.CLIENT)
+    private static final Map<EnumFacing, TRSRTransformation> facings = new EnumMap<>(EnumFacing.class);
+
     private final Matrix4f matrix;
 
     private boolean full;
@@ -159,12 +165,6 @@ public final class TRSRTransformation implements IModelState, ITransformation
         identity = new TRSRTransformation(m);
         identity.getLeftRot();
     }
-
-    @SideOnly(Side.CLIENT)
-    private static final Map<ModelRotation, TRSRTransformation> rotations = new EnumMap<>(ModelRotation.class);
-
-    @SideOnly(Side.CLIENT)
-    private static final Map<EnumFacing, TRSRTransformation> facings = new EnumMap<>(EnumFacing.class);
 
     public static TRSRTransformation identity()
     {
