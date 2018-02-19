@@ -417,6 +417,41 @@
 +        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 +    }
 +
+     /**
+     * Called each tick. Updates state for the elytra.
+     */
+    private void updateElytra()
+    {
+        boolean flag = this.getFlag(7);
+
+        if (flag && !this.onGround && !this.isRiding())
+        {
+            ItemStack itemstack = this.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+
+            if (itemstack.getItem() instanceof ItemElytra && ItemElytra.isUsable(itemstack))
+            {
+                flag = true;
+
+                if (!this.world.isRemote && (this.ticksElytraFlying + 1) % 20 == 0)
+                {
+                    itemstack.damageItem(1, this);
+                }
+            }
+            else
+            {
+                flag = false;
+            }
+        }
+        else
+        {
+            flag = false;
+        }
+
+        if (!this.world.isRemote)
+        {
+            this.setFlag(7, flag);
+        }
+    }
      public boolean func_190631_cK()
      {
          return true;
