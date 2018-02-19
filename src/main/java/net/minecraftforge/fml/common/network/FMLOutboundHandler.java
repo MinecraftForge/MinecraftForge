@@ -33,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.management.PlayerChunkMap;
+import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -264,15 +265,17 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                     return ImmutableList.of();
                 }
 
-                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
-                PlayerChunkMap chunkMap = world.getPlayerChunkMap();
-                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers())
+                PlayerChunkMapEntry entry = world.getPlayerChunkMap().getEntry(MathHelper.floor(tp.x) >> 4, MathHelper.floor(tp.z) >> 4);
+                if (entry == null)
                 {
-                    if (player.dimension == tp.dimension && chunkMap.isPlayerWatchingChunk(player, MathHelper.floor(tp.x) >> 4, MathHelper.floor(tp.z) >> 4))
-                    {
-                        NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                        if (dispatcher != null) builder.add(dispatcher);
-                    }
+                    return ImmutableList.of();
+                }
+
+                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
+                for (EntityPlayerMP player : entry.getWatchingPlayers())
+                {
+                    NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                    if (dispatcher != null) builder.add(dispatcher);
                 }
                 return builder.build();
             }

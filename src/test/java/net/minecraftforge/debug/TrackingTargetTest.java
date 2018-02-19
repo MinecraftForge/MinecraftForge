@@ -37,8 +37,8 @@ public class TrackingTargetTest
         NET.registerMessage(TestEntityMessageHandler.class, TestEntityMessage.class, 1, Side.CLIENT);
     }
 
-    // Every 3 seconds, send a message to all players tracking overworld (0, 0).
-    // If you move sufficiently far away (i.e greater than the server render distance) from (0, 0), you should stop receiving the messages.
+    // Every 3 seconds, send a message to all players tracking overworld (500, 500).
+    // If you move sufficiently far away (i.e greater than the server render distance) from (500, 500), you should stop receiving the messages.
     @SubscribeEvent
     public static void tick(TickEvent.WorldTickEvent evt)
     {
@@ -46,7 +46,7 @@ public class TrackingTargetTest
         {
             if (evt.world.getWorldTime() % 60 == 0)
             {
-                NetworkRegistry.TargetPoint pt = new NetworkRegistry.TargetPoint(0, 0, 0, 0, -1);
+                NetworkRegistry.TargetPoint pt = new NetworkRegistry.TargetPoint(0, 500, 0, 500, -1);
                 NET.sendToAllTracking(new TestMessage(), pt);
             }
         }

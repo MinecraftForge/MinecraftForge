@@ -150,3 +150,13 @@
                          {
                              this.func_187273_a(this.field_187282_b.func_72688_a().func_175625_s(blockpos1));
                          }
+@@ -311,4 +348,9 @@
+ 
+         return d0;
+     }
++
++    public List<EntityPlayerMP> getWatchingPlayers()
++    {
++        return func_187274_e() ? java.util.Collections.unmodifiableList(field_187283_c) : java.util.Collections.emptyList();
++    }
+ }
