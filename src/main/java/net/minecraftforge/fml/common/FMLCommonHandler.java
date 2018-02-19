@@ -671,9 +671,9 @@ public class FMLCommonHandler
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         FMLLog.log.warn("Exit trace:");
         //The first 2 elements are Thread#getStackTrace and FMLCommonHandler#exitJava and aren't relevant
-        for (int i = 2;i<stack.length;i++)
+        for (int i = 2; i < stack.length; i++)
         {
-            FMLLog.log.warn("\t"+stack[i]);
+            FMLLog.log.warn("\t{}", stack[i]);
         }
         if (hardExit)
         {
