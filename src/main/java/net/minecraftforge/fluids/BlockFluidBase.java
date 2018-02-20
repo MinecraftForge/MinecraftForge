@@ -30,7 +30,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -46,9 +46,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.common.property.PropertyFloat;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -109,19 +109,31 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
     protected Map<Block, Boolean> displacements = Maps.newHashMap();
 
+    private static final class UnlistedPropertyBool extends Properties.PropertyAdapter<Boolean>
+    {
+        public UnlistedPropertyBool(String name)
+        {
+            super(PropertyBool.create(name));
+        }
+    }
+
     public static final PropertyInteger LEVEL = PropertyInteger.create("level", 0, 15);
     public static final PropertyFloat[] LEVEL_CORNERS = new PropertyFloat[4];
     public static final PropertyFloat FLOW_DIRECTION = new PropertyFloat("flow_direction");
-    public static final ImmutableList<IUnlistedProperty<Float>> FLUID_RENDER_PROPS;
+    public static final UnlistedPropertyBool[] SIDE_OVERLAYS = new UnlistedPropertyBool[4];
+    public static final ImmutableList<IUnlistedProperty<?>> FLUID_RENDER_PROPS;
 
     static
     {
-        ImmutableList.Builder<IUnlistedProperty<Float>> builder = ImmutableList.builder();
+        ImmutableList.Builder<IUnlistedProperty<?>> builder = ImmutableList.builder();
         builder.add(FLOW_DIRECTION);
         for(int i = 0; i < 4; i++)
         {
             LEVEL_CORNERS[i] = new PropertyFloat("level_corner_" + i);
             builder.add(LEVEL_CORNERS[i]);
+
+            SIDE_OVERLAYS[i] = new UnlistedPropertyBool("side_overlay_" + i);
+            builder.add(SIDE_OVERLAYS[i]);
         }
         FLUID_RENDER_PROPS = builder.build();
     }
@@ -168,7 +180,10 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Nonnull
     protected BlockStateContainer createBlockState()
     {
-        return new ExtendedBlockState(this, new IProperty[] { LEVEL }, FLUID_RENDER_PROPS.toArray(new IUnlistedProperty<?>[0]));
+        return new BlockStateContainer.Builder(this)
+                .add(LEVEL)
+                .add(FLUID_RENDER_PROPS.toArray(new IUnlistedProperty<?>[0]))
+                .build();
     }
 
     @Override
@@ -532,6 +547,19 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             {
                 corner[1][1] = 1;
             }
+        }
+
+        boolean[] overlaySides = new boolean[4];
+        for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
+        {
+            if (shouldSideBeRendered(oldState, worldIn, pos, side) && isBlockSolid(worldIn, pos.offset(side), side.getOpposite()))
+            {
+                overlaySides[side.getHorizontalIndex()] = true;
+            }
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            state = state.withProperty(SIDE_OVERLAYS[i], overlaySides[i]);
         }
 
         state = state.withProperty(LEVEL_CORNERS[0], corner[0][0]);

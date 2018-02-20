@@ -46,7 +46,7 @@ public class FogColorInsideMaterialTest
         }
     }
 
-    public static final Fluid SLIME = new Fluid("slime", new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow")) {
+    public static final Fluid SLIME = new Fluid("slime", new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow"), new ResourceLocation(MODID, "slime_overlay")) {
         @Override
         public int getColor()
         {
@@ -80,7 +80,7 @@ public class FogColorInsideMaterialTest
         if (ENABLED)
         {
             event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
-            Fluid fluid = new Fluid("fog_test", Blocks.WATER.getRegistryName(), Blocks.FLOWING_WATER.getRegistryName());
+            Fluid fluid = new Fluid("fog_test", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"), new ResourceLocation("blocks/water_overlay"));
             FluidRegistry.registerFluid(fluid);
             Block fluidBlock = new BlockFluidClassic(fluid, Material.WATER)
             {

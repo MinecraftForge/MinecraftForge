@@ -76,14 +76,26 @@ public final class ModelFluid implements IModel
 
     public Collection<ResourceLocation> getTextures()
     {
-        return ImmutableSet.of(fluid.getStill(), fluid.getFlowing());
+        return fluid.getOverlay() != null
+                ? ImmutableSet.of(fluid.getStill(), fluid.getFlowing(), fluid.getOverlay())
+                : ImmutableSet.of(fluid.getStill(), fluid.getFlowing());
     }
 
     @Override
     public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableMap<TransformType, TRSRTransformation> map = PerspectiveMapWrapper.getTransforms(state);
-        return new BakedFluid(state.apply(Optional.empty()), map, format, fluid.getColor(), bakedTextureGetter.apply(fluid.getStill()), bakedTextureGetter.apply(fluid.getFlowing()), fluid.isGaseous(), Optional.empty());
+        return new BakedFluid(
+                state.apply(Optional.empty()),
+                map,
+                format,
+                fluid.getColor(),
+                bakedTextureGetter.apply(fluid.getStill()),
+                bakedTextureGetter.apply(fluid.getFlowing()),
+                Optional.ofNullable(fluid.getOverlay()).map(bakedTextureGetter),
+                fluid.isGaseous(),
+                Optional.empty()
+        );
     }
 
     @Override
@@ -135,7 +147,14 @@ public final class ModelFluid implements IModel
                     key >>>= 10;
                 }
                 int flowRound = (int)(key & 0x7FF) - 1024;
-                return new BakedFluid(transformation, transforms, format, color, still, flowing, gas, statePresent, cornerRound, flowRound);
+                key >>>= 11;
+                boolean[] overlaySides = new boolean[4];
+                for (int i = 0; i < 4; i++)
+                {
+                    overlaySides[i] = (key & 1) != 0;
+                    key >>>= 1;
+                }
+                return new BakedFluid(transformation, transforms, format, color, still, flowing, overlay, gas, statePresent, cornerRound, flowRound, overlaySides);
             }
         });
 
@@ -144,12 +163,13 @@ public final class ModelFluid implements IModel
         private final VertexFormat format;
         private final int color;
         private final TextureAtlasSprite still, flowing;
+        private final Optional<TextureAtlasSprite> overlay;
         private final boolean gas;
         private final EnumMap<EnumFacing, List<BakedQuad>> faceQuads;
 
-        public BakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas, Optional<IExtendedBlockState> stateOption)
+        public BakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, Optional<TextureAtlasSprite> overlay, boolean gas, Optional<IExtendedBlockState> stateOption)
         {
-            this(transformation, transforms, format, color, still, flowing, gas, stateOption.isPresent(), getCorners(stateOption), getFlow(stateOption));
+            this(transformation, transforms, format, color, still, flowing, overlay, gas, stateOption.isPresent(), getCorners(stateOption), getFlow(stateOption), getOverlay(stateOption));
         }
 
         private static int[] getCorners(Optional<IExtendedBlockState> stateOption)
@@ -180,7 +200,22 @@ public final class ModelFluid implements IModel
             return flowRound;
         }
 
-        public BakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas, boolean statePresent, int[] cornerRound, int flowRound)
+        private static boolean[] getOverlay(Optional<IExtendedBlockState> stateOption)
+        {
+            boolean[] overlaySides = new boolean[4];
+            if (stateOption.isPresent())
+            {
+                IExtendedBlockState state = stateOption.get();
+                for (int i = 0; i < 4; i++)
+                {
+                    Boolean overlay = state.getValue(BlockFluidBase.SIDE_OVERLAYS[i]);
+                    if (overlay != null) overlaySides[i] = overlay;
+                }
+            }
+            return overlaySides;
+        }
+
+        public BakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, Optional<TextureAtlasSprite> overlay, boolean gas, boolean statePresent, int[] cornerRound, int flowRound, boolean[] sideOverlays)
         {
             this.transformation = transformation;
             this.transforms = transforms;
@@ -188,6 +223,7 @@ public final class ModelFluid implements IModel
             this.color = color;
             this.still = still;
             this.flowing = flowing;
+            this.overlay = overlay;
             this.gas = gas;
 
             faceQuads = Maps.newEnumMap(EnumFacing.class);
@@ -272,12 +308,14 @@ public final class ModelFluid implements IModel
                 {
                     side = EnumFacing.getHorizontal((5 - i) % 4);
                     BakedQuad q[] = new BakedQuad[2];
+                    boolean so = overlay.isPresent() && sideOverlays[side.getHorizontalIndex()];
+                    TextureAtlasSprite texture = so ? overlay.get() : flowing;
 
-                    for(int k = 0; k < 2; k++)
+                    for (int k = (so ? 1 : 0); k < 2; k++)
                     {
                         builder = new UnpackedBakedQuad.Builder(format);
                         builder.setQuadOrientation(side);
-                        builder.setTexture(flowing);
+                        builder.setTexture(texture);
                         builder.setQuadTint(0);
                         for(int j = 0; j < 4; j++)
                         {
@@ -287,12 +325,13 @@ public final class ModelFluid implements IModel
                             putVertex(
                                 builder, side,
                                 x[(i + x[l]) % 4], yl, z[(i + x[l]) % 4],
-                                flowing.getInterpolatedU(x[l] * 8),
-                                flowing.getInterpolatedV((gas ? yl : 1 - yl) * 8));
+                                texture.getInterpolatedU(x[l] * 8),
+                                texture.getInterpolatedV((gas ? yl : 1 - yl) * 8)
+                            );
                         }
                         q[k] = builder.build();
                     }
-                    faceQuads.put(side, ImmutableList.of(q[0], q[1]));
+                    faceQuads.put(side, so ? ImmutableList.of(q[1]) : ImmutableList.of(q[0], q[1]));
                 }
             }
             else
@@ -385,7 +424,15 @@ public final class ModelFluid implements IModel
                 IExtendedBlockState exState = (IExtendedBlockState)state;
                 int[] cornerRound = getCorners(Optional.of(exState));
                 int flowRound = getFlow(Optional.of(exState));
-                long key = flowRound + 1024;
+                boolean[] overlaySides = getOverlay(Optional.of(exState));
+                long key = 0L;
+                for (int i = 3; i >= 0; i--)
+                {
+                    key <<= 1;
+                    key |= overlaySides[i] ? 1 : 0;
+                }
+                key <<= 11;
+                key |= flowRound + 1024;
                 for(int i = 3; i >= 0; i--)
                 {
                     key <<= 10;

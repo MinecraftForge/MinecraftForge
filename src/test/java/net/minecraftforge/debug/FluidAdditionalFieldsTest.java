@@ -33,7 +33,7 @@ public class FluidAdditionalFieldsTest
             FluidRegistry.enableUniversalBucket();
         }
     }
-    public static final Fluid SLIME = new Fluid("slime", new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow")).setColor(COLOR);
+    public static final Fluid SLIME = new Fluid("slime", new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow"), new ResourceLocation(MODID, "slime_overlay")).setColor(COLOR);
     @ObjectHolder("slime")
     public static final BlockFluidBase SLIME_BLOCK = null;
 

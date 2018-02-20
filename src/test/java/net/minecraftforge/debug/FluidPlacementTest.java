@@ -116,7 +116,7 @@ public class FluidPlacementTest
 
         private FiniteFluid()
         {
-            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"), new ResourceLocation("blocks/water_overlay"));
         }
 
         @Override

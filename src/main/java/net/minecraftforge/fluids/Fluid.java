@@ -67,6 +67,9 @@ public class Fluid
     protected final ResourceLocation still;
     protected final ResourceLocation flowing;
 
+    @Nullable
+    protected final ResourceLocation overlay;
+
     private SoundEvent fillSound;
     private SoundEvent emptySound;
 
@@ -140,22 +143,38 @@ public class Fluid
 
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, Color color)
     {
-        this(fluidName, still, flowing);
+        this(fluidName, still, flowing, null, color);
+    }
+
+    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay, Color color)
+    {
+        this(fluidName, still, flowing, overlay);
         this.setColor(color);
     }
 
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, int color)
     {
-        this(fluidName, still, flowing);
+        this(fluidName, still, flowing, null, color);
+    }
+
+    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay, int color)
+    {
+        this(fluidName, still, flowing, overlay);
         this.setColor(color);
     }
-    
+
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing)
+    {
+        this(fluidName, still, flowing, (ResourceLocation) null);
+    }
+    
+    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay)
     {
         this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
         this.unlocalizedName = fluidName;
         this.still = still;
         this.flowing = flowing;
+        this.overlay = overlay;
     }
 
     public Fluid setUnlocalizedName(String unlocalizedName)
@@ -358,6 +377,12 @@ public class Fluid
     public ResourceLocation getFlowing()
     {
         return flowing;
+    }
+
+    @Nullable
+    public ResourceLocation getOverlay()
+    {
+        return overlay;
     }
 
     public SoundEvent getFillSound()
