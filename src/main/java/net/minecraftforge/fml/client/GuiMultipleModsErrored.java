@@ -30,6 +30,7 @@ import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -51,12 +52,12 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     public void initGui()
     {
         super.initGui();
-        int additionalSize = missingModsExceptions.isEmpty()||wrongMinecraftExceptions.isEmpty() ? 20 : 55;
-        for(MissingModsException exception : missingModsExceptions)
+        int additionalSize = missingModsExceptions.isEmpty() || wrongMinecraftExceptions.isEmpty() ? 20 : 55;
+        for (MissingModsException exception : missingModsExceptions)
         {
-            additionalSize+=exception.missingMods.size()*10;
+            additionalSize += exception.getMissingModsVersions().size() * 10;
         }
-        list = new GuiList(wrongMinecraftExceptions.size()*10+missingModsExceptions.size()*15+additionalSize);
+        list = new GuiList(wrongMinecraftExceptions.size() * 10 + missingModsExceptions.size() * 15 + additionalSize);
     }
 
     @Override
@@ -139,26 +140,31 @@ public class GuiMultipleModsErrored extends GuiErrorBase
             }
             if (!missingModsExceptions.isEmpty())
             {
-                renderer.drawString(TextFormatting.UNDERLINE + I18n.format("fml.messages.mod.missing.dependencies.multiple"), this.left, offset, 0xFFFFFF);
+                renderer.drawString(I18n.format("fml.messages.mod.missing.dependencies.multiple"), this.left, offset, 0xFFFFFF);
                 offset+=15;
                 for (MissingModsException exception : missingModsExceptions)
                 {
-                    renderer.drawString(I18n.format("fml.messages.mod.missing.dependencies.fix", TextFormatting.BOLD + exception.getModName() + TextFormatting.RESET), this.left, offset, 0xFFFFFF);
-                    for (ArtifactVersion v : exception.missingMods)
+                    renderer.drawString(exception.getModName() + ":", this.left, offset, 0xFFFFFF);
+                    for (Pair<ArtifactVersion, ArtifactVersion> versionInfo : exception.getMissingModsVersions())
                     {
-                        offset+=10;
-                        if (v instanceof DefaultArtifactVersion)
+                        ArtifactVersion neededVersion = versionInfo.getKey();
+                        String neededMod = neededVersion.getLabel();
+                        ArtifactVersion haveVersion = versionInfo.getValue();
+                        String missingReason = haveVersion == null ? "missing" : "you have " + haveVersion.getVersionString();
+                        String neededModVersionString = neededVersion.getRangeString();
+                        if (neededVersion instanceof DefaultArtifactVersion)
                         {
-                            DefaultArtifactVersion dav =  (DefaultArtifactVersion)v;
+                            DefaultArtifactVersion dav = (DefaultArtifactVersion)neededVersion;
                             if (dav.getRange() != null)
                             {
-                                String message = String.format(TextFormatting.BOLD +  "%s " + TextFormatting.RESET + "%s", v.getLabel(), dav.getRange().toStringFriendly());
-                                renderer.drawString(message, this.left, offset, 0xEEEEEE);
-                                continue;
+                                neededModVersionString = dav.getRange().toStringFriendly();
                             }
                         }
-                        renderer.drawString(String.format(TextFormatting.BOLD + "%s" + TextFormatting.RESET + " : %s", v.getLabel(), v.getRangeString()), this.left, offset, 0xEEEEEE);
+                        String message = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", neededMod, neededModVersionString, missingReason);
+                        offset += 10;
+                        renderer.drawString(message, this.left, offset, 0xEEEEEE);
                     }
+
                     offset += 15;
                 }
             }

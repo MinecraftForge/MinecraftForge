@@ -19,11 +19,14 @@
 
 package net.minecraftforge.fml.client;
 
+import java.util.List;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class GuiModsMissing extends GuiErrorBase
 {
@@ -38,27 +41,32 @@ public class GuiModsMissing extends GuiErrorBase
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
+        List<Pair<ArtifactVersion, ArtifactVersion>> missingModsVersions = modsMissing.getMissingModsVersions();
+        int offset = Math.max(85 - missingModsVersions.size() * 10, 10);
         String modMissingDependenciesText = I18n.format("fml.messages.mod.missing.dependencies", TextFormatting.BOLD + modsMissing.getModName() + TextFormatting.RESET);
         this.drawCenteredString(this.fontRenderer, modMissingDependenciesText, this.width / 2, offset, 0xFFFFFF);
         offset+=10;
         String fixMissingDependenciesText = I18n.format("fml.messages.mod.missing.dependencies.fix", modsMissing.getModName());
         this.drawCenteredString(this.fontRenderer, fixMissingDependenciesText, this.width / 2, offset, 0xFFFFFF);
         offset+=5;
-        for (ArtifactVersion v : modsMissing.missingMods)
+        for (Pair<ArtifactVersion, ArtifactVersion> versionInfo : missingModsVersions)
         {
-            offset+=10;
-            if (v instanceof DefaultArtifactVersion)
+            ArtifactVersion neededVersion = versionInfo.getKey();
+            String neededMod = neededVersion.getLabel();
+            ArtifactVersion haveVersion = versionInfo.getValue();
+            String missingReason = haveVersion == null ? "missing" : "you have " + haveVersion.getVersionString();
+            String neededModVersionString = neededVersion.getRangeString();
+            if (neededVersion instanceof DefaultArtifactVersion)
             {
-                DefaultArtifactVersion dav =  (DefaultArtifactVersion)v;
+                DefaultArtifactVersion dav = (DefaultArtifactVersion)neededVersion;
                 if (dav.getRange() != null)
                 {
-                    String message = String.format(TextFormatting.BOLD +  "%s " + TextFormatting.RESET + "%s", v.getLabel(), dav.getRange().toStringFriendly());
-                    this.drawCenteredString(this.fontRenderer, message, this.width / 2, offset, 0xEEEEEE);
-                    continue;
+                    neededModVersionString = dav.getRange().toStringFriendly();
                 }
             }
-            this.drawCenteredString(this.fontRenderer, String.format(TextFormatting.BOLD + "%s" + TextFormatting.RESET + " : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
+            String message = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", neededMod, neededModVersionString, missingReason);
+            offset += 10;
+            this.drawCenteredString(this.fontRenderer, message, this.width / 2, offset, 0xEEEEEE);
         }
         offset+=20;
         String seeLogText = I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.clientLog.getName());

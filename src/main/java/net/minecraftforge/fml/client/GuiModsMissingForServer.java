@@ -19,11 +19,14 @@
 
 package net.minecraftforge.fml.client;
 
+import java.util.List;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class GuiModsMissingForServer extends GuiScreen
 {
@@ -52,15 +55,17 @@ public class GuiModsMissingForServer extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
+        List<Pair<ArtifactVersion, ArtifactVersion>> missingModsVersions = modsMissing.getMissingModsVersions();
+        int offset = Math.max(85 - missingModsVersions.size() * 10, 10);
         this.drawCenteredString(this.fontRenderer, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
         this.drawCenteredString(this.fontRenderer, "The mods and versions listed below could not be found", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
         this.drawCenteredString(this.fontRenderer, "They are required to play on this server", this.width / 2, offset, 0xFFFFFF);
         offset += 5;
-        for (ArtifactVersion v : modsMissing.missingMods)
+        for (Pair<ArtifactVersion, ArtifactVersion> entry : missingModsVersions)
         {
+            ArtifactVersion v = entry.getKey();
             offset += 10;
             this.drawCenteredString(this.fontRenderer, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }

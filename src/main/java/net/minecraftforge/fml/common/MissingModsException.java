@@ -19,20 +19,47 @@
 
 package net.minecraftforge.fml.common;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class MissingModsException extends EnhancedRuntimeException
 {
     private static final long serialVersionUID = 1L;
+    @Deprecated
     public final Set<ArtifactVersion> missingMods;
+    private final List<Pair<ArtifactVersion, ArtifactVersion>> missingModsVersions; // needed version, have version (nullable)
     private final String modName;
 
+    /**
+     * @deprecated use {@link #MissingModsException(List, String, String)}
+     */
+    @Deprecated // TODO remove in 1.13
     public MissingModsException(Set<ArtifactVersion> missingMods, String id, String name)
     {
         super(String.format("Mod %s (%s) requires %s", id, name, missingMods));
         this.missingMods = missingMods;
+        this.missingModsVersions = new ArrayList<>();
+        for (ArtifactVersion artifactVersion : missingMods)
+        {
+            missingModsVersions.add(Pair.of(artifactVersion, null));
+        }
+        this.modName = name;
+    }
+
+    public MissingModsException(List<Pair<ArtifactVersion, ArtifactVersion>> missingModsVersions, String id, String name)
+    {
+        super(String.format("Mod %s (%s) requires %s", id, name, missingModsVersions));
+        this.missingMods = new HashSet<>();
+        for (Pair<ArtifactVersion, ArtifactVersion> missingModsVersion : missingModsVersions)
+        {
+            this.missingMods.add(missingModsVersion.getKey());
+        }
+        this.missingModsVersions = missingModsVersions;
         this.modName = name;
     }
 
@@ -41,13 +68,21 @@ public class MissingModsException extends EnhancedRuntimeException
         return modName;
     }
 
+    public List<Pair<ArtifactVersion, ArtifactVersion>> getMissingModsVersions()
+    {
+        return missingModsVersions;
+    }
+
     @Override
     protected void printStackTrace(WrappedPrintStream stream)
     {
         stream.println("Missing Mods:");
-        for (ArtifactVersion v : missingMods)
+        for (Pair<ArtifactVersion, ArtifactVersion> entry : missingModsVersions)
         {
-            stream.println(String.format("\t%s : %s", v.getLabel(), v.getRangeString()));
+            ArtifactVersion needVersion = entry.getKey();
+            ArtifactVersion haveVersion = entry.getValue();
+            String haveString = haveVersion != null ? haveVersion.getVersionString() : "null";
+            stream.println(String.format("\t%s : need %s: have %s", needVersion.getLabel(), needVersion.getRangeString(), haveString));
         }
         stream.println("");
     }
