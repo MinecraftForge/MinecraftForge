@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemElytra.java
++++ ../src-work/minecraft/net/minecraft/item/ItemElytra.java
+@@ -16,7 +16,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class ItemElytra extends Item
++public class ItemElytra extends Item implements net.minecraftforge.items.IElytra
+ {
+     public ItemElytra()
+     {
