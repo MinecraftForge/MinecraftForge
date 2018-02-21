@@ -179,7 +179,8 @@ public abstract class FieldWrapper implements IFieldWrapper
          * @param key the key to be edited
          * @return the keys suffix
          */
-        private String getSuffix(String key) {
+        private String getSuffix(String key)
+        {
             return StringUtils.replaceOnce(key, this.baseName, "");
         }
 
