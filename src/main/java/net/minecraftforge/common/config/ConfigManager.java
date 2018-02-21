@@ -218,19 +218,25 @@ public class ConfigManager
     {
         for (Field f : cls.getDeclaredFields())
         {
-            if (!Modifier.isPublic(f.getModifiers()))
+            if (!Modifier.isPublic(f.getModifiers())) //Allow modders to have private field for internal data
                 continue;
+
+            //Only the root class may have static fields. Otherwise category tree nodes of the same type would share the
+            //contained value messing up the sync
             if (Modifier.isStatic(f.getModifiers()) != (instance == null))
                 continue;
+
+            //Allow fields to be annotated with @Config.Ignore to be ignored, i.e. to allow access to preprocessed data
             if (f.isAnnotationPresent(Config.Ignore.class))
                 continue;
 
+            //Check for properties all properties can have (comment and language key, requiresMcRestart and requiresWorldRestart)
             String comment = null;
             Comment ca = f.getAnnotation(Comment.class);
             if (ca != null)
                 comment = NEW_LINE.join(ca.value());
 
-            String langKey = modid + "." + (category.isEmpty() ? "" : category + ".") + f.getName().toLowerCase(Locale.ENGLISH);
+            String langKey = modid + "." + (category.isEmpty() ? "" : category + Configuration.CATEGORY_SPLITTER) + f.getName().toLowerCase(Locale.ENGLISH);
             LangKey la = f.getAnnotation(LangKey.class);
             if (la != null)
                 langKey = la.value();
@@ -238,19 +244,21 @@ public class ConfigManager
             boolean requiresMcRestart = f.isAnnotationPresent(Config.RequiresMcRestart.class);
             boolean requiresWorldRestart = f.isAnnotationPresent(Config.RequiresWorldRestart.class);
 
-            if (FieldWrapper.hasWrapperFor(f)) //Access the field
+            if (FieldWrapper.hasWrapperFor(f)) //Access the field if we have a wrapper for it (i.e. primitives, enums, maps or arrays)
             {
                 if (Strings.isNullOrEmpty(category))
                     throw new RuntimeException("An empty category may not contain anything but objects representing categories!");
                 try
                 {
+                    //Get the wrapper for the field type, the type adapter for serialization and the property type for the property setup
                     IFieldWrapper wrapper = FieldWrapper.get(instance, f, category);
                     ITypeAdapter adapt = wrapper.getTypeAdapter();
                     Property.Type propType = adapt.getType();
 
-                    for (String key : wrapper.getKeys())
+                    for (String key : wrapper.getKeys()) //Iterate the fully qualified property names the field provides
                     {
-                        String suffix = StringUtils.replaceOnce(key, wrapper.getCategory() + ".", "");
+                        //We need the last part of the key to interface with the property code
+                        String suffix = StringUtils.replaceOnce(key, wrapper.getCategory() + Configuration.CATEGORY_SPLITTER, "");
 
                         boolean existed = exists(cfg, wrapper.getCategory(), suffix);
                         if (!existed || loading) //Creates keys in category specified by the wrapper if new ones are programaticaly added
@@ -263,7 +271,7 @@ public class ConfigManager
                             else
                                 wrapper.setValue(key, adapt.getValue(property));
                         }
-                        else //If the key is not new, sync according to shoudlReadFromVar()
+                        else //If the key is not new, sync according to shouldReadFromVar()
                         {
                             Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
                             Object propVal = adapt.getValue(property);
@@ -278,15 +286,17 @@ public class ConfigManager
 
                     ConfigCategory confCat = cfg.getCategory(wrapper.getCategory());
 
-                    for (Property property : confCat.getOrderedValues())//Are new keys in the Configuration object?
+                    for (Property property : confCat.getOrderedValues()) //Iterate the properties to check for new data from the config side
                     {
-                        if (!wrapper.handlesKey(property.getName()))
+                        //We need the fully qualified name
+                        String key = confCat.getQualifiedName() + Configuration.CATEGORY_SPLITTER + property.getName();
+                        if (!wrapper.handlesKey(key)) //Ignore this property if we can't handle it
                             continue;
 
-                        if (loading || !wrapper.hasKey(property.getName()))
+                        if (loading || !wrapper.hasKey(key)) //Add new entries to the field, i.e Maps
                         {
                             Object value = wrapper.getTypeAdapter().getValue(property);
-                            wrapper.setValue(confCat.getName() + "." + property.getName(), value);
+                            wrapper.setValue(key, value);
                         }
                     }
 
@@ -301,8 +311,8 @@ public class ConfigManager
                     throw new RuntimeException(error, e);
                 }
             }
-            else if (f.getType().getSuperclass() != null && f.getType().getSuperclass().equals(Object.class)) //Descend the object tree
-            {
+            else if (f.getType().getSuperclass() != null && f.getType().getSuperclass().equals(Object.class))
+            { //If the field extends Object directly, descend the object tree and access the objects members
                 Object newInstance = null;
                 try
                 {
@@ -314,17 +324,18 @@ public class ConfigManager
                     throw new RuntimeException(e);
                 }
 
-                String sub = (category.isEmpty() ? "" : category + ".") + getName(f).toLowerCase(Locale.ENGLISH);
+                //Setup the sub category with its respective name, comment, language key, etc.
+                String sub = (category.isEmpty() ? "" : category + Configuration.CATEGORY_SPLITTER) + getName(f).toLowerCase(Locale.ENGLISH);
                 ConfigCategory confCat = cfg.getCategory(sub);
                 confCat.setComment(comment);
                 confCat.setLanguageKey(langKey);
                 confCat.setRequiresMcRestart(requiresMcRestart);
                 confCat.setRequiresWorldRestart(requiresWorldRestart);
 
-                sync(cfg, f.getType(), modid, sub, loading, newInstance);
+                sync(cfg, f.getType(), modid, sub, loading, newInstance); //Sync the object
             }
             else
-            {
+            { //This means we do not support this field type, or something went wrong
                 String format = "Can't handle field '%s' of class '%s': Unknown type.";
                 String error = String.format(format, f.getName(), cls.getCanonicalName());
                 throw new RuntimeException(error);
