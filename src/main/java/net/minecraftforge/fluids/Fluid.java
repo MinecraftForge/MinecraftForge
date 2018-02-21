@@ -167,7 +167,7 @@ public class Fluid
     {
         this(fluidName, still, flowing, (ResourceLocation) null);
     }
-    
+
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay)
     {
         this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
