@@ -143,14 +143,15 @@ public class CraftingHelper {
         if (json.isJsonArray())
         {
             List<Ingredient> ingredients = Lists.newArrayList();
-            List<ItemStack> vanilla = Lists.newArrayList();
-            json.getAsJsonArray().forEach((ele) -> {
+            List<Ingredient> vanilla = Lists.newArrayList();
+            json.getAsJsonArray().forEach((ele) ->
+            {
                 Ingredient ing = CraftingHelper.getIngredient(ele, context);
 
-                if (ing.getClass() == Ingredient.class) {
+                if (ing.getClass() == Ingredient.class)
+                {
                     //Vanilla, Due to how we read it splits each itemstack, so we pull out to re-merge later
-                    for (ItemStack stack : ing.getMatchingStacks())
-                        vanilla.add(stack);
+                    vanilla.add(ing);
                 }
                 else
                 {
@@ -160,8 +161,7 @@ public class CraftingHelper {
 
             if (!vanilla.isEmpty())
             {
-                ItemStack[] items = vanilla.toArray(new ItemStack[vanilla.size()]);
-                ingredients.add(Ingredient.fromStacks(items));
+                ingredients.add(Ingredient.merge(vanilla));
             }
 
             if (ingredients.size() == 0)
@@ -407,7 +407,6 @@ public class CraftingHelper {
 
         return factory.parse(context, json);
     }
-
 
 
     //=======================================================

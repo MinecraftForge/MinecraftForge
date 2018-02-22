@@ -10,3 +10,12 @@
          boolean flag = false;
          AdvancementProgress advancementprogress = this.func_192747_a(p_192750_1_);
          boolean flag1 = advancementprogress.func_192105_a();
+@@ -214,6 +217,8 @@
+                 {
+                     this.field_192756_d.func_184103_al().func_148539_a(new TextComponentTranslation("chat.type.advancement." + p_192750_1_.func_192068_c().func_192291_d().func_192307_a(), new Object[] {this.field_192762_j.func_145748_c_(), p_192750_1_.func_193123_j()}));
+                 }
++
++                net.minecraftforge.common.ForgeHooks.onAdvancement(this.field_192762_j, p_192750_1_);
+             }
+         }
+ 

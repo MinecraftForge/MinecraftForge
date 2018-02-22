@@ -31,7 +31,7 @@
          return this.func_185514_i(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()));
      }
  
-@@ -94,6 +100,35 @@
+@@ -94,6 +100,36 @@
          return false;
      }
  
@@ -41,6 +41,7 @@
 +        if (this == Blocks.field_150464_aj)          return net.minecraftforge.common.EnumPlantType.Crop;
 +        if (this == Blocks.field_150459_bM)        return net.minecraftforge.common.EnumPlantType.Crop;
 +        if (this == Blocks.field_150469_bN)       return net.minecraftforge.common.EnumPlantType.Crop;
++        if (this == Blocks.field_185773_cZ)      return net.minecraftforge.common.EnumPlantType.Crop;
 +        if (this == Blocks.field_150394_bc)     return net.minecraftforge.common.EnumPlantType.Crop;
 +        if (this == Blocks.field_150393_bb)   return net.minecraftforge.common.EnumPlantType.Crop;
 +        if (this == Blocks.field_150330_I)       return net.minecraftforge.common.EnumPlantType.Desert;

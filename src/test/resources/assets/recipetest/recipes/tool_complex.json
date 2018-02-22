@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "tool",
+      "data": 32767
+    },
+    {
+      "item": "minecraft:stone",
+      "data": 32767
+    },
+    {
+      "item": "minecraft:stone",
+      "data": 0
+    }
+  ],
+  "result": {
+    "item": "minecraft:wool",
+    "data": 0
+  }
+}

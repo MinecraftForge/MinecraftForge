@@ -27,5 +27,5 @@ package net.minecraftforge.common.animation;
  */
 public interface ITimeValue
 {
-    public float apply(float input);
+    float apply(float input);
 }

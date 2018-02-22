@@ -19,6 +19,8 @@
 
 package net.minecraftforge.client;
 
+import net.minecraft.client.audio.MusicTicker;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.Util.EnumOS;
 import net.minecraft.world.GameType;
 import net.minecraft.client.settings.GameSettings.Options;
@@ -32,7 +34,8 @@ public class EnumHelperClient extends EnumHelper
     {
         {GameType.class, int.class, String.class, String.class},
         {Options.class, String.class, boolean.class, boolean.class},
-        {EnumOS.class}
+        {EnumOS.class},
+        {MusicTicker.MusicType.class, SoundEvent.class, int.class, int.class}
     };
 
     @Nullable
@@ -59,6 +62,12 @@ public class EnumHelperClient extends EnumHelper
     public static EnumOS addOS2(String name)
     {
         return addEnum(EnumOS.class, name);
+    }
+
+    @Nullable
+    public static MusicTicker.MusicType addMusicType(String name, SoundEvent sound, int minDelay, int maxDelay)
+    {
+        return addEnum(MusicTicker.MusicType.class, name, sound, minDelay, maxDelay);
     }
 
     @Nullable

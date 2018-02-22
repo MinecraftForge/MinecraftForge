@@ -396,6 +396,8 @@ public class ConfigElement implements IConfigElement
                 if (catName.isEmpty())
                     continue;
                 ConfigCategory category = config.getCategory(catName);
+                if (category.isChild())
+                    continue;
                 DummyCategoryElement element = new DummyCategoryElement(category.getName(), category.getLanguagekey(), new ConfigElement(category).getChildElements());
                 element.setRequiresMcRestart(category.requiresMcRestart());
                 element.setRequiresWorldRestart(category.requiresWorldRestart());

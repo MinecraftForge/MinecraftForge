@@ -9,6 +9,15 @@
      }
  
      public BufferBuilder.State func_181672_a()
+@@ -415,7 +417,7 @@
+ 
+     public void func_178981_a(int[] p_178981_1_)
+     {
+-        this.func_181670_b(p_178981_1_.length * 4);
++        this.func_181670_b(p_178981_1_.length * 4 + this.field_179011_q.func_177338_f());//Forge, fix MC-122110
+         this.field_178999_b.position(this.func_181664_j());
+         this.field_178999_b.put(p_178981_1_);
+         this.field_178997_d += p_178981_1_.length / this.field_179011_q.func_181719_f();
 @@ -506,15 +508,15 @@
                  break;
              case USHORT:
@@ -31,7 +40,7 @@
          }
  
          this.func_181667_k();
-@@ -605,4 +607,19 @@
+@@ -605,4 +607,27 @@
              return this.field_179018_e;
          }
      }
@@ -49,5 +58,13 @@
 +    public boolean isColorDisabled()
 +    {
 +        return this.field_78939_q;
++    }
++
++    public void putBulkData(ByteBuffer buffer)
++    {
++        func_181670_b(buffer.limit() + this.field_179011_q.func_177338_f());
++        this.field_179001_a.position(this.field_178997_d * this.field_179011_q.func_177338_f());
++        this.field_179001_a.put(buffer);
++        this.field_178997_d += buffer.limit() / this.field_179011_q.func_177338_f();
 +    }
  }

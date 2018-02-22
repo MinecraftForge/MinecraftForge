@@ -10,7 +10,13 @@
  
      public static ItemColors func_186729_a(final BlockColors p_186729_0_)
      {
-@@ -142,7 +143,7 @@
+@@ -137,12 +138,13 @@
+                 return p_186726_2_ == 0 ? -1 : ItemMap.func_190907_h(p_186726_1_);
+             }
+         }, Items.field_151098_aY);
++        net.minecraftforge.client.ForgeHooksClient.onItemColorsInit(itemcolors, p_186729_0_);
+         return itemcolors;
+     }
  
      public int func_186728_a(ItemStack p_186728_1_, int p_186728_2_)
      {
@@ -19,7 +25,7 @@
          return iitemcolor == null ? -1 : iitemcolor.func_186726_a(p_186728_1_, p_186728_2_);
      }
  
-@@ -150,7 +151,9 @@
+@@ -150,7 +152,9 @@
      {
          for (Block block : p_186731_2_)
          {
@@ -30,7 +36,7 @@
          }
      }
  
-@@ -158,7 +161,9 @@
+@@ -158,7 +162,9 @@
      {
          for (Item item : p_186730_2_)
          {

@@ -47,6 +47,7 @@ public class ChannelRegistrationHandler extends SimpleChannelInboundHandler<FMLP
             String[] split = channels.split("\0");
             Set<String> channelSet = ImmutableSet.copyOf(split);
             FMLCommonHandler.instance().fireNetRegistrationEvent(manager, channelSet, msg.channel(), side);
+            msg.payload().release();
         }
         else
         {

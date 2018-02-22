@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "variant=blue_slime_block": { "model": "forgedebugcustomslimeblock:blue_slime_block" },
+        "variant=obsidian_slime_block": { "model": "forgedebugcustomslimeblock:obsidian_slime_block" }
+    }
+}

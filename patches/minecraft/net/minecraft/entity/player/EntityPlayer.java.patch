@@ -322,28 +322,38 @@
              this.func_184602_cy();
              this.field_70170_p.func_72960_a(this, (byte)30);
          }
-@@ -1442,6 +1529,8 @@
+@@ -1442,7 +1529,11 @@
  
      public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
      {
+-        EnumFacing enumfacing = (EnumFacing)this.field_70170_p.func_180495_p(p_180469_1_).func_177229_b(BlockHorizontal.field_185512_D);
 +        EntityPlayer.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, p_180469_1_);
 +        if (ret != null) return ret;
-         EnumFacing enumfacing = (EnumFacing)this.field_70170_p.func_180495_p(p_180469_1_).func_177229_b(BlockHorizontal.field_185512_D);
++        final IBlockState state = this.field_70170_p.func_175667_e(p_180469_1_) ? this.field_70170_p.func_180495_p(p_180469_1_) : null;
++        final boolean isBed = state != null && state.func_177230_c().isBed(state, this.field_70170_p, p_180469_1_, this);
++        final EnumFacing enumfacing = isBed && state.func_177230_c() instanceof BlockHorizontal ? (EnumFacing)state.func_177229_b(BlockHorizontal.field_185512_D) : null;
  
          if (!this.field_70170_p.field_72995_K)
-@@ -1484,8 +1573,9 @@
+         {
+@@ -1484,8 +1575,7 @@
          this.func_192030_dh();
          this.func_70105_a(0.2F, 0.2F);
  
 -        if (this.field_70170_p.func_175667_e(p_180469_1_))
 -        {
-+        IBlockState state = null;
-+        if (this.field_70170_p.func_175667_e(p_180469_1_)) state = this.field_70170_p.func_180495_p(p_180469_1_);
-+        if (state != null && state.func_177230_c().isBed(state, this.field_70170_p, p_180469_1_, this)) {
++        if (enumfacing != null) {
              float f1 = 0.5F + (float)enumfacing.func_82601_c() * 0.4F;
              float f = 0.5F + (float)enumfacing.func_82599_e() * 0.4F;
              this.func_175139_a(enumfacing);
-@@ -1532,13 +1622,14 @@
+@@ -1517,6 +1607,7 @@
+         {
+             return true;
+         }
++        else if (p_190774_2_ == null) return false;
+         else
+         {
+             BlockPos blockpos = p_190774_1_.func_177972_a(p_190774_2_.func_176734_d());
+@@ -1532,13 +1623,14 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
@@ -361,7 +371,7 @@
  
              if (blockpos == null)
              {
-@@ -1547,6 +1638,10 @@
+@@ -1547,6 +1639,10 @@
  
              this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
          }
@@ -372,7 +382,7 @@
  
          this.field_71083_bS = false;
  
-@@ -1565,15 +1660,16 @@
+@@ -1565,15 +1661,16 @@
  
      private boolean func_175143_p()
      {
@@ -392,7 +402,7 @@
          {
              if (!p_180467_2_)
              {
-@@ -1588,16 +1684,17 @@
+@@ -1588,16 +1685,17 @@
          }
          else
          {
@@ -413,7 +423,7 @@
  
              switch (enumfacing)
              {
-@@ -1637,16 +1734,24 @@
+@@ -1637,16 +1735,24 @@
  
      public BlockPos func_180470_cg()
      {
@@ -440,7 +450,7 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
-@@ -1839,6 +1944,10 @@
+@@ -1839,6 +1945,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -451,7 +461,7 @@
      }
  
      protected void func_71061_d_()
-@@ -2176,7 +2285,10 @@
+@@ -2176,7 +2286,10 @@
  
      public ITextComponent func_145748_c_()
      {
@@ -463,7 +473,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2185,7 +2297,7 @@
+@@ -2185,7 +2298,7 @@
  
      public float func_70047_e()
      {
@@ -472,7 +482,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2421,6 +2533,168 @@
+@@ -2421,6 +2534,168 @@
          return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }
  

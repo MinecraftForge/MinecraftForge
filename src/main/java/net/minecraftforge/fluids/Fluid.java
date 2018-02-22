@@ -20,6 +20,8 @@
 package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
+
+import java.awt.Color;
 import java.util.Locale;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -123,7 +125,29 @@ public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
      * The default value of null should remain for any Fluid without a Block implementation.
      */
     protected Block block = null;
+    
+    /**
+     * Color used by universal bucket and the ModelFluid baked model.
+     * Note that this int includes the alpha so converting this to RGB with alpha would be
+     *   float r = ((color >> 16) & 0xFF) / 255f; // red
+     *   float g = ((color >> 8) & 0xFF) / 255f; // green
+     *   float b = ((color >> 0) & 0xFF) / 255f; // blue
+     *   float a = ((color >> 24) & 0xFF) / 255f; // alpha
+     */
+    protected int color = 0xFFFFFFFF;
 
+    public Fluid(ResourceLocation still, ResourceLocation flowing, Color color)
+    {
+        this(still, flowing);
+        this.setColor(color);
+    }
+
+    public Fluid(ResourceLocation still, ResourceLocation flowing, int color)
+    {
+        this(fluidName, still, flowing);
+        this.setColor(color);
+    }
+    
     public Fluid(ResourceLocation still, ResourceLocation flowing)
     {
         this.still = still;
@@ -195,6 +219,18 @@ public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
     public Fluid setEmptySound(SoundEvent emptySound)
     {
         this.emptySound = emptySound;
+        return this;
+    }
+    
+    public Fluid setColor(Color color)
+    {
+        this.color = color.getRGB();
+        return this;
+    }
+    
+    public Fluid setColor(int color)
+    {
+        this.color = color;
         return this;
     }
 
@@ -302,7 +338,7 @@ public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
 
     public int getColor()
     {
-        return 0xFFFFFFFF;
+        return color;
     }
 
     public ResourceLocation getStill()

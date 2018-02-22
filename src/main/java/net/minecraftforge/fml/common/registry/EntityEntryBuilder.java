@@ -22,7 +22,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.stats.StatBase;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.FMLLog;
@@ -64,6 +66,9 @@ public final class EntityEntryBuilder<E extends Entity>
     private boolean eggProvided;
     private int primaryEggColor;
     private int secondaryEggColor;
+    private boolean statisticsRegistered;
+    @Nullable private StatBase killEntityStatistic;
+    @Nullable private StatBase entityKilledByStatistic;
     @Nullable private Collection<Spawn> spawns;
 
     /**
@@ -262,7 +267,12 @@ public final class EntityEntryBuilder<E extends Entity>
             }
         };
         entry.setRegistryName(this.id);
-        if (this.eggProvided) entry.setEgg(new EntityList.EntityEggInfo(this.id, this.primaryEggColor, this.secondaryEggColor));
+        if (this.eggProvided)
+        {
+            this.killEntityStatistic = new StatBase("stat.killEntity." + this.name, new TextComponentTranslation("stat.entityKill", new TextComponentTranslation("entity." + this.name + ".name")));
+            this.entityKilledByStatistic = new StatBase("stat.entityKilledBy." + this.name, new TextComponentTranslation("stat.entityKilledBy", new TextComponentTranslation("entity." + this.name + ".name")));
+            entry.setEgg(new EntityList.EntityEggInfo(this.id, this.primaryEggColor, this.secondaryEggColor, this.killEntityStatistic, this.entityKilledByStatistic));
+        }
         return entry;
     }
 
@@ -273,6 +283,16 @@ public final class EntityEntryBuilder<E extends Entity>
             this.mod, this.id, this.entity, this.name, this.network,
             this.trackingRange, this.trackingUpdateFrequency, this.trackingVelocityUpdates
         );
+    }
+
+    private void registerStatistics()
+    {
+        if (!this.statisticsRegistered && (this.killEntityStatistic != null && this.entityKilledByStatistic != null))
+        {
+            this.killEntityStatistic.registerStat();
+            this.entityKilledByStatistic.registerStat();
+            this.statisticsRegistered = true;
+        }
     }
 
     static abstract class ConstructorFactory<E extends Entity> implements Function<World, E>
@@ -315,11 +335,11 @@ public final class EntityEntryBuilder<E extends Entity>
             // NOOP - we handle this in build
         }
 
-        @SuppressWarnings("ConstantConditions")
         public final void addedToRegistry()
         {
             if (this.added) return;
             this.added = true;
+            EntityEntryBuilder.this.registerStatistics();
             EntityRegistry.instance().insert(EntityEntryBuilder.this.entity, EntityEntryBuilder.this.createRegistration());
             if (EntityEntryBuilder.this.spawns != null)
             {

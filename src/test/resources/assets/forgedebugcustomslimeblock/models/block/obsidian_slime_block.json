@@ -1,0 +1,7 @@
+{
+    "parent": "block/slime",
+    "textures": {
+        "particle": "forgedebugcustomslimeblock:blocks/obsidian_slime_block",
+        "texture": "forgedebugcustomslimeblock:blocks/obsidian_slime_block"
+    }
+}
