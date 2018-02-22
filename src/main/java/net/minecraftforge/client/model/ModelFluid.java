@@ -274,12 +274,16 @@ public final class ModelFluid implements IModel
                     builder.setQuadTint(0);
                     for (int i = gas ? 3 : 0; i != (gas ? -1 : 4); i += (gas ? -1 : 1))
                     {
-                        int l = (k * 3) + (1 - 2 * k) * i;
+                        int l = (k * 3) + (1 - 2 * k) * i; // [i, 3-i]
+                        int m = (l + 1) % 4;
+                        float du = c * (x[l] * 2 - 1) + s * (z[l] * 2 - 1);
+                        float dv = c * (x[m] * 2 - 1) + s * (z[m] * 2 - 1);
                         putVertex(
                             builder, side,
                             x[l], y[l], z[l],
-                            topSprite.getInterpolatedU(8 + c * (x[l] * 2 - 1) + s * (z[l] * 2 - 1)),
-                            topSprite.getInterpolatedV(8 + c * (x[(l + 1) % 4] * 2 - 1) + s * (z[(l + 1) % 4] * 2 - 1)));
+                            topSprite.getInterpolatedU(8 + du),
+                            topSprite.getInterpolatedV(8 + dv)
+                        );
                     }
                     topFaceBuilder.add(builder.build());
                 }
@@ -292,13 +296,15 @@ public final class ModelFluid implements IModel
                 builder.setQuadOrientation(side);
                 builder.setTexture(still);
                 builder.setQuadTint(0);
-                for(int i = gas ? 3 : 0; i != (gas ? -1 : 4); i+= (gas ? -1 : 1))
+                for (int i = 0; i < 4; i++)
                 {
+                    if (gas) i = 3 - i; // reverse
                     putVertex(
                         builder, side,
                         z[i], gas ? 1 : 0, x[i],
                         still.getInterpolatedU(z[i] * 16),
-                        still.getInterpolatedV(x[i] * 16));
+                        still.getInterpolatedV(x[i] * 16)
+                    );
                 }
                 faceQuads.put(side, ImmutableList.of(builder.build()));
 
@@ -306,12 +312,12 @@ public final class ModelFluid implements IModel
 
                 for(int i = 0; i < 4; i++)
                 {
-                    side = EnumFacing.getHorizontal((5 - i) % 4);
+                    side = EnumFacing.getHorizontal((5 - i) % 4); // [W, S, E, N]
                     BakedQuad q[] = new BakedQuad[2];
                     boolean so = overlay.isPresent() && sideOverlays[side.getHorizontalIndex()];
                     TextureAtlasSprite texture = so ? overlay.get() : flowing;
 
-                    for (int k = (so ? 1 : 0); k < 2; k++)
+                    for (int k = (so ? 1 : 0); k < 2; k++) // only one quad for overlay
                     {
                         builder = new UnpackedBakedQuad.Builder(format);
                         builder.setQuadOrientation(side);
@@ -319,7 +325,7 @@ public final class ModelFluid implements IModel
                         builder.setQuadTint(0);
                         for(int j = 0; j < 4; j++)
                         {
-                            int l = (k * 3) + (1 - 2 * k) * j;
+                            int l = (k * 3) + (1 - 2 * k) * j; // [j, 3-j]
                             float yl = z[l] * y[(i + x[l]) % 4];
                             if(gas && z[l] == 0) yl = 1;
                             putVertex(
@@ -347,7 +353,8 @@ public final class ModelFluid implements IModel
                         builder, EnumFacing.UP,
                         z[i], x[i], 0,
                         still.getInterpolatedU(z[i] * 16),
-                        still.getInterpolatedV(x[i] * 16));
+                        still.getInterpolatedV(x[i] * 16)
+                    );
                 }
                 faceQuads.put(EnumFacing.SOUTH, ImmutableList.of(builder.build()));
             }
