@@ -144,7 +144,7 @@ public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
 
     public Fluid(ResourceLocation still, ResourceLocation flowing, int color)
     {
-        this(fluidName, still, flowing);
+        this(still, flowing);
         this.setColor(color);
     }
     
