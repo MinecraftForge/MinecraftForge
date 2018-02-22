@@ -32,7 +32,7 @@
 +        this.field_185983_b = ctx.getScale();
 +        this.field_185984_c = ctx.getDepth();
 +        this.field_185985_d = ctx.getForest();
-+        this.structureManager = net.minecraftforge.event.terraingen.TerrainGen.getAddedStructures(ChunkGeneratorOverworld.class);
++        this.structureManager = net.minecraftforge.event.terraingen.TerrainGen.getAddedStructures(ChunkGeneratorOverworld.class,this);
      }
  
      public void func_185976_a(int p_185976_1_, int p_185976_2_, ChunkPrimer p_185976_3_)

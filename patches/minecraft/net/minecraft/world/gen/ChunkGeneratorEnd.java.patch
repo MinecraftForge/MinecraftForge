@@ -25,7 +25,7 @@
 +        this.field_73212_b = ctx.getScale();
 +        this.field_185973_o = ctx.getIsland();
 +        this.field_185972_n = (MapGenEndCity) net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(this.field_185972_n, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.END_CITY);
-+        this.structureManager = net.minecraftforge.event.terraingen.TerrainGen.getAddedStructures(ChunkGeneratorEnd.class);
++        this.structureManager = net.minecraftforge.event.terraingen.TerrainGen.getAddedStructures(ChunkGeneratorEnd.class,this);
      }
  
      public void func_180518_a(int p_180518_1_, int p_180518_2_, ChunkPrimer p_180518_3_)

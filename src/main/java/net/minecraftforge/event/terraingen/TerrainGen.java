@@ -77,9 +77,9 @@ public abstract class TerrainGen
         return event.getResult() != Result.DENY;
     }
 
-    public static <T extends IChunkGenerator> MapGenStructureManager getAddedStructures(Class<T> generatorClazz)
+    public static <T extends IChunkGenerator> MapGenStructureManager getAddedStructures(Class<T> generatorClazz, T generatorInstance)
     {
-        InitStructureGensEvent<T> event = new InitStructureGensEvent<>(generatorClazz);
+        InitStructureGensEvent<T> event = new InitStructureGensEvent<>(generatorClazz, generatorInstance);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return new MapGenStructureManager(event.getStructuresImmutable());
     }

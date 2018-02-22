@@ -17,7 +17,7 @@
 +        this.field_185947_h = ctx.getDepth();
 +        this.field_73172_c = (MapGenNetherBridge)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73172_c, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_BRIDGE);
 +        this.field_185939_I = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_185939_I, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_CAVE);
-+        this.structureManager = net.minecraftforge.event.terraingen.TerrainGen.getAddedStructures(ChunkGeneratorHell.class);
++        this.structureManager = net.minecraftforge.event.terraingen.TerrainGen.getAddedStructures(ChunkGeneratorHell.class,this);
      }
  
      public void func_185936_a(int p_185936_1_, int p_185936_2_, ChunkPrimer p_185936_3_)

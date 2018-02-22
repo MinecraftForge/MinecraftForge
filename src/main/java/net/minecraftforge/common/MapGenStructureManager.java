@@ -36,13 +36,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Manage MapGenStructure for the ChunkGenerators.
  */
 public class MapGenStructureManager
 {
-    private static final List<String> allStructureNames = Lists.newArrayList();
+    private static final Set<String> allStructureNames = new TreeSet<>();
     private final Map<String, MapGenStructure> structureMap;
 
     public MapGenStructureManager(List<MapGenStructure> structures)
@@ -55,7 +57,6 @@ public class MapGenStructureManager
             addStructureName(name);
         }
         structureMap = builder.build();
-        Collections.sort(allStructureNames);
     }
 
     /**
@@ -67,10 +68,7 @@ public class MapGenStructureManager
      */
     protected static void addStructureName(String structure)
     {
-        if (!allStructureNames.contains(structure))
-        {
             allStructureNames.add(structure);
-        }
     }
 
     /**

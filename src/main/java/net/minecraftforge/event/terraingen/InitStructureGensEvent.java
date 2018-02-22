@@ -40,10 +40,12 @@ import java.util.List;
 public class InitStructureGensEvent<T extends IChunkGenerator> extends GenericEvent<T>
 {
     private final List<MapGenStructure> structureList = Lists.newArrayList();
+    private final T generator;
 
-    public InitStructureGensEvent(Class<T> generatorClass)
+    public InitStructureGensEvent(Class<T> generatorClass, T generatorInstance)
     {
         super(generatorClass);
+        this.generator=generatorInstance;
     }
 
     public void addStructure(MapGenStructure struct)
@@ -54,5 +56,10 @@ public class InitStructureGensEvent<T extends IChunkGenerator> extends GenericEv
     public List<MapGenStructure> getStructuresImmutable()
     {
         return Collections.unmodifiableList(structureList);
+    }
+
+    public T getGenerator()
+    {
+        return generator;
     }
 }
