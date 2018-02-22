@@ -58,6 +58,14 @@ public class DecorateBiomeEvent extends Event
         this.pos = pos;
         this.chunkPos = chunkPos;
     }
+    
+    public DecorateBiomeEvent(World world, Random rand, BlockPos pos)
+    {
+        this.world = world;
+        this.rand = rand;
+        this.pos = pos;
+        chunkPos = new BlockPos((pos.getX()/16)*16, (pos.getY()/16)*16, (pos.getZ()/16)*16);
+    }
 
     public World getWorld()
     {
@@ -88,6 +96,11 @@ public class DecorateBiomeEvent extends Event
         {
             super(world, rand, pos, chunkPos);
         }
+        
+        public Pre(World world, Random rand, BlockPos pos)
+        {
+            super(world, rand, pos);
+        }
     }
 
     /**
@@ -98,6 +111,11 @@ public class DecorateBiomeEvent extends Event
         public Post(World world, Random rand, BlockPos pos, BlockPos chunkPos)
         {
             super(world, rand, pos, chunkPos);
+        }
+        
+        public Post(World world, Random rand, BlockPos pos)
+        {
+            super(world, rand, pos);
         }
     }
 
@@ -123,6 +141,12 @@ public class DecorateBiomeEvent extends Event
         public Decorate(World world, Random rand, BlockPos pos, EventType type, BlockPos chunkPos)
         {
             super(world, rand, pos, chunkPos);
+            this.type = type;
+        }
+        
+        public Decorate(World world, Random rand, BlockPos pos, EventType type)
+        {
+            super(world, rand, pos);
             this.type = type;
         }
     }
