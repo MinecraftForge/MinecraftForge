@@ -55,9 +55,9 @@ public abstract class TerrainGen
         return event.getResult() != Result.DENY;
     }
 
-    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type)
+    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type, BlockPos chunkPos)
     {
-        Decorate event = new Decorate(world, rand, pos, type);
+        Decorate event = new Decorate(world, rand, pos, type, chunkPos);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }

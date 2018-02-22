@@ -49,12 +49,14 @@ public class DecorateBiomeEvent extends Event
     private final World world;
     private final Random rand;
     private final BlockPos pos;
+    private final BlockPos chunkPos;
 
-    public DecorateBiomeEvent(World world, Random rand, BlockPos pos)
+    public DecorateBiomeEvent(World world, Random rand, BlockPos pos, BlockPos chunkPos)
     {
         this.world = world;
         this.rand = rand;
         this.pos = pos;
+        this.chunkPos = chunkPos;
     }
 
     public World getWorld()
@@ -71,15 +73,20 @@ public class DecorateBiomeEvent extends Event
     {
         return pos;
     }
+    
+    public BlockPos getChunkPos()
+    {
+    	return chunkPos;
+    }
 
     /**
      * This event is fired before a chunk is decorated with a biome feature.
      */
     public static class Pre extends DecorateBiomeEvent
     {
-        public Pre(World world, Random rand, BlockPos pos)
+        public Pre(World world, Random rand, BlockPos pos, BlockPos chunkPos)
         {
-            super(world, rand, pos);
+            super(world, rand, pos, chunkPos);
         }
     }
 
@@ -88,9 +95,9 @@ public class DecorateBiomeEvent extends Event
      */
     public static class Post extends DecorateBiomeEvent
     {
-        public Post(World world, Random rand, BlockPos pos)
+        public Post(World world, Random rand, BlockPos pos, BlockPos chunkPos)
         {
-            super(world, rand, pos);
+            super(world, rand, pos, chunkPos);
         }
     }
 
@@ -113,9 +120,9 @@ public class DecorateBiomeEvent extends Event
 
         private final EventType type;
 
-        public Decorate(World world, Random rand, BlockPos pos, EventType type)
+        public Decorate(World world, Random rand, BlockPos pos, EventType type, BlockPos chunkPos)
         {
-            super(world, rand, pos);
+            super(world, rand, pos, chunkPos);
             this.type = type;
         }
     }
