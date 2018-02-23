@@ -19,9 +19,11 @@
 
 package net.minecraftforge.client.model;
 
+import java.util.function.Function;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
@@ -51,8 +53,6 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.function.Function;
-import java.util.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -84,10 +84,9 @@ public final class ModelFluid implements IModel
     @Override
     public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
-        ImmutableMap<TransformType, TRSRTransformation> map = PerspectiveMapWrapper.getTransforms(state);
         return new BakedFluid(
                 state.apply(Optional.empty()),
-                map,
+                PerspectiveMapWrapper.getTransforms(state),
                 format,
                 fluid.getColor(),
                 bakedTextureGetter.apply(fluid.getStill()),
@@ -104,7 +103,7 @@ public final class ModelFluid implements IModel
         return ModelRotation.X0_Y0;
     }
 
-    public static enum FluidLoader implements ICustomModelLoader
+    public enum FluidLoader implements ICustomModelLoader
     {
         INSTANCE;
 
@@ -227,137 +226,121 @@ public final class ModelFluid implements IModel
             this.gas = gas;
 
             faceQuads = Maps.newEnumMap(EnumFacing.class);
-            for(EnumFacing side : EnumFacing.values())
+            for (EnumFacing side : EnumFacing.values())
             {
                 faceQuads.put(side, ImmutableList.of());
             }
 
-            if(statePresent)
+            if (statePresent)
             {
+                // y levels
                 float[] y = new float[4];
-                for(int i = 0; i < 4; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    if(gas)
-                    {
-                        y[i] = 1 - cornerRound[i] / 768f;
-                    }
-                    else
-                    {
-                        y[i] = cornerRound[i] / 768f;
-                    }
+                    float value = cornerRound[i] / 768f;
+                    y[i] = gas ? 1f - value : value;
                 }
 
-                float flow = (float)Math.toRadians(flowRound);
+                // flow direction
+                boolean isFlowing = flowRound < 999;
 
-                // top
-
-                TextureAtlasSprite topSprite = flowing;
-                float scale = 4;
-                if(flow < -17F)
-                {
-                    flow = 0;
-                    scale = 8;
-                    topSprite = still;
-                }
+                float flow = isFlowing ? (float) Math.toRadians(flowRound) : 0f;
+                TextureAtlasSprite topSprite = isFlowing ? flowing : still;
+                float scale = isFlowing ? 4f : 8f;
 
                 float c = MathHelper.cos(flow) * scale;
                 float s = MathHelper.sin(flow) * scale;
 
-                EnumFacing side = gas ? EnumFacing.DOWN : EnumFacing.UP;
-                UnpackedBakedQuad.Builder builder;
-                ImmutableList.Builder<BakedQuad> topFaceBuilder = ImmutableList.builder();
-                for(int k = 0; k < 2; k++)
-                {
-                    builder = new UnpackedBakedQuad.Builder(format);
-                    builder.setQuadOrientation(side);
-                    builder.setTexture(topSprite);
-                    builder.setQuadTint(0);
-                    for (int i = gas ? 3 : 0; i != (gas ? -1 : 4); i += (gas ? -1 : 1))
-                    {
-                        int l = (k * 3) + (1 - 2 * k) * i; // [i, 3-i]
-                        int m = (l + 1) % 4;
-                        float du = c * (x[l] * 2 - 1) + s * (z[l] * 2 - 1);
-                        float dv = c * (x[m] * 2 - 1) + s * (z[m] * 2 - 1);
-                        putVertex(
-                            builder, side,
-                            x[l], y[l], z[l],
-                            topSprite.getInterpolatedU(8 + du),
-                            topSprite.getInterpolatedV(8 + dv)
-                        );
-                    }
-                    topFaceBuilder.add(builder.build());
-                }
-                faceQuads.put(side, topFaceBuilder.build());
+                // top
+                EnumFacing top = gas ? EnumFacing.DOWN : EnumFacing.UP;
+
+                // base uv offset for flow direction
+                VertexParameter uv = i -> c * (x[i] * 2 - 1) + s * (z[i] * 2 - 1);
+
+                VertexParameter topX =  i -> x[i];
+                VertexParameter topY =  i -> y[i];
+                VertexParameter topZ =  i -> z[i];
+                VertexParameter topU =  i -> 8 + uv.get(i);
+                VertexParameter topV =  i -> 8 + uv.get((i + 1) % 4);
+
+                faceQuads.put(top, ImmutableList.of(
+                        buildQuad(top, topSprite,  gas, topX, topY, topZ, topU, topV),
+                        buildQuad(top, topSprite, !gas, topX, topY, topZ, topU, topV))
+                );
 
                 // bottom
-
-                side = side.getOpposite();
-                builder = new UnpackedBakedQuad.Builder(format);
-                builder.setQuadOrientation(side);
-                builder.setTexture(still);
-                builder.setQuadTint(0);
-                for (int i = 0; i < 4; i++)
-                {
-                    if (gas) i = 3 - i; // reverse
-                    putVertex(
-                        builder, side,
-                        z[i], gas ? 1 : 0, x[i],
-                        still.getInterpolatedU(z[i] * 16),
-                        still.getInterpolatedV(x[i] * 16)
-                    );
-                }
-                faceQuads.put(side, ImmutableList.of(builder.build()));
+                EnumFacing bottom = top.getOpposite();
+                faceQuads.put(bottom, ImmutableList.of(
+                        buildQuad(bottom, still, gas,
+                                i -> z[i],
+                                i -> gas ? 1 : 0,
+                                i -> x[i],
+                                i -> z[i] * 16,
+                                i -> x[i] * 16
+                        )
+                ));
 
                 // sides
-
-                for(int i = 0; i < 4; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    side = EnumFacing.getHorizontal((5 - i) % 4); // [W, S, E, N]
-                    BakedQuad q[] = new BakedQuad[2];
-                    boolean so = overlay.isPresent() && sideOverlays[side.getHorizontalIndex()];
-                    TextureAtlasSprite texture = so ? overlay.get() : flowing;
+                    EnumFacing side = EnumFacing.getHorizontal((5 - i) % 4); // [W, S, E, N]
+                    boolean useOverlay = overlay.isPresent() && sideOverlays[side.getHorizontalIndex()];
+                    int si = i; // local var for lambda capture
 
-                    for (int k = (so ? 1 : 0); k < 2; k++) // only one quad for overlay
-                    {
-                        builder = new UnpackedBakedQuad.Builder(format);
-                        builder.setQuadOrientation(side);
-                        builder.setTexture(texture);
-                        builder.setQuadTint(0);
-                        for(int j = 0; j < 4; j++)
-                        {
-                            int l = (k * 3) + (1 - 2 * k) * j; // [j, 3-j]
-                            float yl = z[l] * y[(i + x[l]) % 4];
-                            if(gas && z[l] == 0) yl = 1;
-                            putVertex(
-                                builder, side,
-                                x[(i + x[l]) % 4], yl, z[(i + x[l]) % 4],
-                                texture.getInterpolatedU(x[l] * 8),
-                                texture.getInterpolatedV((gas ? yl : 1 - yl) * 8)
-                            );
-                        }
-                        q[k] = builder.build();
-                    }
-                    faceQuads.put(side, so ? ImmutableList.of(q[1]) : ImmutableList.of(q[0], q[1]));
+                    VertexParameter sideX = j -> x[(si + x[j]) % 4];
+                    VertexParameter sideY = j -> (gas && z[j] == 0) ? 1 : z[j] * y[(si + x[j]) % 4];
+                    VertexParameter sideZ = j -> z[(si + x[j]) % 4];
+                    VertexParameter sideU = j -> x[j] * 8;
+                    VertexParameter sideV = j -> (gas ? sideY.get(j) : 1 - sideY.get(j)) * 8;
+
+                    ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
+
+                    if (!useOverlay) builder.add(buildQuad(side, flowing, false, sideX, sideY, sideZ, sideU, sideV));
+                    builder.add(buildQuad(side, useOverlay ? overlay.get() : flowing, true, sideX, sideY, sideZ, sideU, sideV));
+
+                    faceQuads.put(side, builder.build());
                 }
             }
             else
             {
-                // 1 quad for inventory
-                UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
-                builder.setQuadOrientation(EnumFacing.UP);
-                builder.setTexture(still);
-                builder.setQuadTint(0); //I dont know if we also need this in inventory, but now it should be possible to color it here as well
-                for(int i = 0; i < 4; i++)
-                {
-                    putVertex(
-                        builder, EnumFacing.UP,
-                        z[i], x[i], 0,
-                        still.getInterpolatedU(z[i] * 16),
-                        still.getInterpolatedV(x[i] * 16)
-                    );
-                }
-                faceQuads.put(EnumFacing.SOUTH, ImmutableList.of(builder.build()));
+                // inventory
+                faceQuads.put(EnumFacing.SOUTH, ImmutableList.of(
+                        buildQuad(EnumFacing.UP, still, false,
+                                i -> z[i],
+                                i -> x[i],
+                                i -> 0,
+                                i -> z[i] * 16,
+                                i -> x[i] * 16
+                        )
+                ));
             }
+        }
+
+        // maps vertex index to parameter value
+        private interface VertexParameter
+        {
+            float get(int index);
+        }
+
+        private BakedQuad buildQuad(EnumFacing side, TextureAtlasSprite texture, boolean flip, VertexParameter x, VertexParameter y, VertexParameter z, VertexParameter u, VertexParameter v)
+        {
+            UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+            builder.setQuadOrientation(side);
+            builder.setTexture(texture);
+            builder.setQuadTint(0);
+
+            for (int i = 0; i < 4; i++)
+            {
+                int vertex = flip ? 3 - i : i;
+                putVertex(
+                    builder, side,
+                    x.get(vertex), y.get(vertex), z.get(vertex),
+                    texture.getInterpolatedU(u.get(vertex)),
+                    texture.getInterpolatedV(v.get(vertex))
+                );
+            }
+
+            return builder.build();
         }
 
         private void putVertex(UnpackedBakedQuad.Builder builder, EnumFacing side, float x, float y, float z, float u, float v)
