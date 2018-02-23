@@ -288,7 +288,7 @@ public final class ModelFluid implements IModel
                     int si = i; // local var for lambda capture
 
                     VertexParameter sideX = j -> x[(si + x[j]) % 4];
-                    VertexParameter sideY = j -> (gas && z[j] == 0) ? 1 : z[j] * y[(si + x[j]) % 4];
+                    VertexParameter sideY = j -> z[j] == 0 ? (gas ? 1 : 0) : y[(si + x[j]) % 4];
                     VertexParameter sideZ = j -> z[(si + x[j]) % 4];
                     VertexParameter sideU = j -> x[j] * 8;
                     VertexParameter sideV = j -> (gas ? sideY.get(j) : 1 - sideY.get(j)) * 8;
