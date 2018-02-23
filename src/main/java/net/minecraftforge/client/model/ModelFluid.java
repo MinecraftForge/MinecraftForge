@@ -241,8 +241,8 @@ public final class ModelFluid implements IModel
                     y[i] = gas ? 1f - value : value;
                 }
 
-                // flow direction
-                boolean isFlowing = flowRound < 999;
+                // flow
+                boolean isFlowing = flowRound > -1000;
 
                 float flow = isFlowing ? (float) Math.toRadians(flowRound) : 0f;
                 TextureAtlasSprite topSprite = isFlowing ? flowing : still;
