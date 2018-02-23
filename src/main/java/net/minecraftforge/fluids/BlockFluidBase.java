@@ -43,6 +43,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -598,7 +599,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return -1000.0;
         }
         Vec3d vec = ((BlockFluidBase)state.getBlock()).getFlowVector(world, pos);
-        return vec.x == 0.0D && vec.z == 0.0D ? -1000.0D : Math.atan2(vec.z, vec.x) - Math.PI / 2D;
+        return vec.x == 0.0D && vec.z == 0.0D ? -1000.0D : MathHelper.atan2(vec.z, vec.x) - Math.PI / 2D;
     }
 
     public final int getQuantaValueBelow(IBlockAccess world, BlockPos pos, int belowThis)
