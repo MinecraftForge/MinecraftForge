@@ -257,11 +257,11 @@ public final class ModelFluid implements IModel
                 // base uv offset for flow direction
                 VertexParameter uv = i -> c * (x[i] * 2 - 1) + s * (z[i] * 2 - 1);
 
-                VertexParameter topX =  i -> x[i];
-                VertexParameter topY =  i -> y[i];
-                VertexParameter topZ =  i -> z[i];
-                VertexParameter topU =  i -> 8 + uv.get(i);
-                VertexParameter topV =  i -> 8 + uv.get((i + 1) % 4);
+                VertexParameter topX = i -> x[i];
+                VertexParameter topY = i -> y[i];
+                VertexParameter topZ = i -> z[i];
+                VertexParameter topU = i -> 8 + uv.get(i);
+                VertexParameter topV = i -> 8 + uv.get((i + 1) % 4);
 
                 faceQuads.put(top, ImmutableList.of(
                         buildQuad(top, topSprite,  gas, topX, topY, topZ, topU, topV),
