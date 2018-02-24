@@ -58,7 +58,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -244,7 +243,7 @@ public final class ModelFluid implements IModel
         protected final TextureAtlasSprite still, flowing;
         protected final Optional<TextureAtlasSprite> overlay;
         protected final boolean gas;
-        protected final EnumMap<EnumFacing, List<BakedQuad>> faceQuads;
+        protected final ImmutableMap<EnumFacing, ImmutableList<BakedQuad>> faceQuads;
 
         public BakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, Optional<TextureAtlasSprite> overlay, boolean gas, boolean statePresent, int[] cornerRound, int flowRound, boolean[] sideOverlays)
         {
@@ -256,8 +255,12 @@ public final class ModelFluid implements IModel
             this.flowing = flowing;
             this.overlay = overlay;
             this.gas = gas;
+            this.faceQuads = buildQuads(statePresent, cornerRound, flowRound, sideOverlays);
+        }
 
-            faceQuads = Maps.newEnumMap(EnumFacing.class);
+        private ImmutableMap<EnumFacing, ImmutableList<BakedQuad>> buildQuads(boolean statePresent, int[] cornerRound, int flowRound, boolean[] sideOverlays)
+        {
+            EnumMap<EnumFacing, ImmutableList<BakedQuad>> faceQuads = new EnumMap<>(EnumFacing.class);
             for (EnumFacing side : EnumFacing.values())
             {
                 faceQuads.put(side, ImmutableList.of());
@@ -346,6 +349,8 @@ public final class ModelFluid implements IModel
                         )
                 ));
             }
+
+            return ImmutableMap.copyOf(faceQuads);
         }
 
         // maps vertex index to parameter value
