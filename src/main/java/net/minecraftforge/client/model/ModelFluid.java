@@ -67,6 +67,7 @@ public final class ModelFluid implements IModel
 {
     public static final ModelFluid WATER = new ModelFluid(FluidRegistry.WATER);
     public static final ModelFluid LAVA = new ModelFluid(FluidRegistry.LAVA);
+
     private final Fluid fluid;
 
     public ModelFluid(Fluid fluid)
@@ -84,7 +85,7 @@ public final class ModelFluid implements IModel
     @Override
     public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
-        return new BakedFluid(
+        return new CachingBakedFluid(
                 state.apply(Optional.empty()),
                 PerspectiveMapWrapper.getTransforms(state),
                 format,
@@ -126,26 +127,22 @@ public final class ModelFluid implements IModel
         }
     }
 
-    private static final class BakedFluid implements IBakedModel
+    private static final class CachingBakedFluid extends BakedFluid
     {
-        private static final int x[] = { 0, 0, 1, 1 };
-        private static final int z[] = { 0, 1, 1, 0 };
-        private static final float eps = 1e-3f;
-
         private final LoadingCache<Long, BakedFluid> modelCache = CacheBuilder.newBuilder().maximumSize(200).build(new CacheLoader<Long, BakedFluid>()
         {
             @Override
-            public BakedFluid load(Long key) throws Exception
+            public BakedFluid load(Long key)
             {
                 boolean statePresent = (key & 1) != 0;
                 key >>>= 1;
                 int[] cornerRound = new int[4];
-                for(int i = 0; i < 4; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    cornerRound[i] = (int)(key & 0x3FF);
+                    cornerRound[i] = (int) (key & 0x3FF);
                     key >>>= 10;
                 }
-                int flowRound = (int)(key & 0x7FF) - 1024;
+                int flowRound = (int) (key & 0x7FF) - 1024;
                 key >>>= 11;
                 boolean[] overlaySides = new boolean[4];
                 for (int i = 0; i < 4; i++)
@@ -157,27 +154,18 @@ public final class ModelFluid implements IModel
             }
         });
 
-        private final Optional<TRSRTransformation> transformation;
-        private final ImmutableMap<TransformType, TRSRTransformation> transforms;
-        private final VertexFormat format;
-        private final int color;
-        private final TextureAtlasSprite still, flowing;
-        private final Optional<TextureAtlasSprite> overlay;
-        private final boolean gas;
-        private final EnumMap<EnumFacing, List<BakedQuad>> faceQuads;
-
-        public BakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, Optional<TextureAtlasSprite> overlay, boolean gas, Optional<IExtendedBlockState> stateOption)
+        public CachingBakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, Optional<TextureAtlasSprite> overlay, boolean gas, Optional<IExtendedBlockState> stateOption)
         {
-            this(transformation, transforms, format, color, still, flowing, overlay, gas, stateOption.isPresent(), getCorners(stateOption), getFlow(stateOption), getOverlay(stateOption));
+            super(transformation, transforms, format, color, still, flowing, overlay, gas, stateOption.isPresent(), getCorners(stateOption), getFlow(stateOption), getOverlay(stateOption));
         }
 
         private static int[] getCorners(Optional<IExtendedBlockState> stateOption)
         {
-            int[] cornerRound = new int[]{0, 0, 0, 0};
-            if(stateOption.isPresent())
+            int[] cornerRound = {0, 0, 0, 0};
+            if (stateOption.isPresent())
             {
                 IExtendedBlockState state = stateOption.get();
-                for(int i = 0; i < 4; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     Float level = state.getValue(BlockFluidBase.LEVEL_CORNERS[i]);
                     cornerRound[i] = Math.round((level == null ? 7f / 8 : level) * 768);
@@ -189,12 +177,12 @@ public final class ModelFluid implements IModel
         private static int getFlow(Optional<IExtendedBlockState> stateOption)
         {
             Float flow = -1000f;
-            if(stateOption.isPresent())
+            if (stateOption.isPresent())
             {
                 flow = stateOption.get().getValue(BlockFluidBase.FLOW_DIRECTION);
-                if(flow == null) flow = -1000f;
+                if (flow == null) flow = -1000f;
             }
-            int flowRound = (int)Math.round(Math.toDegrees(flow));
+            int flowRound = (int) Math.round(Math.toDegrees(flow));
             flowRound = MathHelper.clamp(flowRound, -1000, 1000);
             return flowRound;
         }
@@ -213,6 +201,57 @@ public final class ModelFluid implements IModel
             }
             return overlaySides;
         }
+
+        @Override
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+        {
+            if (side == null) return ImmutableList.of();
+
+            if (state instanceof IExtendedBlockState)
+            {
+                Optional<IExtendedBlockState> exState = Optional.of((IExtendedBlockState)state);
+
+                int[] cornerRound = getCorners(exState);
+                int flowRound = getFlow(exState);
+                boolean[] overlaySides = getOverlay(exState);
+
+                long key = 0L;
+                for (int i = 3; i >= 0; i--)
+                {
+                    key <<= 1;
+                    key |= overlaySides[i] ? 1 : 0;
+                }
+                key <<= 11;
+                key |= flowRound + 1024;
+                for (int i = 3; i >= 0; i--)
+                {
+                    key <<= 10;
+                    key |= cornerRound[i];
+                }
+                key <<= 1;
+                key |= 1;
+
+                return modelCache.getUnchecked(key).getQuads(state, side, rand);
+            }
+
+            return faceQuads.get(side);
+        }
+    }
+
+    private static class BakedFluid implements IBakedModel
+    {
+        private static final int x[] = { 0, 0, 1, 1 };
+        private static final int z[] = { 0, 1, 1, 0 };
+        private static final float eps = 1e-3f;
+
+        protected final Optional<TRSRTransformation> transformation;
+        protected final ImmutableMap<TransformType, TRSRTransformation> transforms;
+        protected final VertexFormat format;
+        protected final int color;
+        protected final TextureAtlasSprite still, flowing;
+        protected final Optional<TextureAtlasSprite> overlay;
+        protected final boolean gas;
+        protected final EnumMap<EnumFacing, List<BakedQuad>> faceQuads;
 
         public BakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, Optional<TextureAtlasSprite> overlay, boolean gas, boolean statePresent, int[] cornerRound, int flowRound, boolean[] sideOverlays)
         {
@@ -408,32 +447,7 @@ public final class ModelFluid implements IModel
         @Override
         public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
-            BakedFluid model = this;
-            if(state instanceof IExtendedBlockState)
-            {
-                IExtendedBlockState exState = (IExtendedBlockState)state;
-                int[] cornerRound = getCorners(Optional.of(exState));
-                int flowRound = getFlow(Optional.of(exState));
-                boolean[] overlaySides = getOverlay(Optional.of(exState));
-                long key = 0L;
-                for (int i = 3; i >= 0; i--)
-                {
-                    key <<= 1;
-                    key |= overlaySides[i] ? 1 : 0;
-                }
-                key <<= 11;
-                key |= flowRound + 1024;
-                for(int i = 3; i >= 0; i--)
-                {
-                    key <<= 10;
-                    key |= cornerRound[i];
-                }
-                key <<= 1;
-                key |= 1;
-                model = modelCache.getUnchecked(key);
-            }
-            if(side == null) return ImmutableList.of();
-            return model.faceQuads.get(side);
+            return side == null ? ImmutableList.of() : faceQuads.get(side);
         }
 
         @Override
