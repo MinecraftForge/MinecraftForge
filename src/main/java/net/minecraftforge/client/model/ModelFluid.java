@@ -34,7 +34,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
@@ -96,12 +95,6 @@ public final class ModelFluid implements IModel
                 fluid.isGaseous(),
                 Optional.empty()
         );
-    }
-
-    @Override
-    public IModelState getDefaultState()
-    {
-        return ModelRotation.X0_Y0;
     }
 
     public enum FluidLoader implements ICustomModelLoader
