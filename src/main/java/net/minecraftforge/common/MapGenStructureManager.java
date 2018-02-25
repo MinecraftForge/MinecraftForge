@@ -20,7 +20,6 @@
 package net.minecraftforge.common;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -69,7 +68,7 @@ public class MapGenStructureManager
      */
     protected static void addStructureName(String structure)
     {
-            allStructureNames.add(structure);
+        allStructureNames.add(structure);
     }
 
     /**
@@ -87,9 +86,10 @@ public class MapGenStructureManager
     @Nullable
     public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean findUnexplored)
     {
-        if (structureMap.containsKey(structureName))
+        MapGenStructure structure = structureMap.get(structureName);
+        if (structure != null)
         {
-            return structureMap.get(structureName).getNearestStructurePos(worldIn, position, findUnexplored);
+            return structure.getNearestStructurePos(worldIn, position, findUnexplored);
         }
         return null;
     }
@@ -100,11 +100,8 @@ public class MapGenStructureManager
      */
     public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos)
     {
-        if (structureMap.containsKey(structureName))
-        {
-            return structureMap.get(structureName).isInsideStructure(pos);
-        }
-        return false;
+        MapGenStructure structure = structureMap.get(structureName);
+        return structure != null && structureMap.get(structureName).isInsideStructure(pos);
     }
 
     /**
@@ -133,11 +130,14 @@ public class MapGenStructureManager
         }
     }
 
-    public boolean retroGenerateStructures(World world, Random rand, ChunkPos chunkPos, Chunk chunk){
-        boolean flag=false;
-        for(MapGenStructure structure : structureMap.values()){
-            if(structure instanceof IRetroGenStructure){
-                flag = flag | ((IRetroGenStructure) structure).retroGenerateStructure(world,rand,chunkPos,chunk);
+    public boolean retroGenerateStructures(World world, Random rand, ChunkPos chunkPos, Chunk chunk)
+    {
+        boolean flag = false;
+        for (MapGenStructure structure : structureMap.values())
+        {
+            if (structure instanceof IRetroGenStructure)
+            {
+                flag = flag | ((IRetroGenStructure) structure).retroGenerateStructure(world, rand, chunkPos, chunk);
             }
         }
         return flag;
