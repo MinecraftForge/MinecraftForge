@@ -161,7 +161,7 @@ public final class ModelFluid implements IModel
                 for (int i = 0; i < 4; i++)
                 {
                     Float level = state.getValue(BlockFluidBase.LEVEL_CORNERS[i]);
-                    cornerRound[i] = Math.round((level == null ? 7f / 8 : level) * 768);
+                    cornerRound[i] = Math.round((level == null ? 8f / 9f : level) * 864);
                 }
             }
             return cornerRound;
@@ -274,7 +274,7 @@ public final class ModelFluid implements IModel
                 boolean fullVolume = true;
                 for (int i = 0; i < 4; i++)
                 {
-                    float value = cornerRound[i] / 768f;
+                    float value = cornerRound[i] / 864f;
                     if (value < 1f) fullVolume = false;
                     y[i] = gas ? 1f - value : value;
                 }

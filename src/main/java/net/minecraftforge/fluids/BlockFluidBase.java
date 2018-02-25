@@ -141,6 +141,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     protected int quantaPerBlock = 8;
     protected float quantaPerBlockFloat = 8F;
+    protected float quantaFraction = 8f / 9f;
     protected int density = 1;
     protected int densityDir = -1;
     protected int temperature = 295;
@@ -205,6 +206,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (quantaPerBlock > 16 || quantaPerBlock < 1) quantaPerBlock = 8;
         this.quantaPerBlock = quantaPerBlock;
         this.quantaPerBlockFloat = quantaPerBlock;
+        this.quantaFraction = quantaPerBlock / (quantaPerBlock + 1f);
         return this;
     }
 
@@ -632,7 +634,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
         for (int i = 0; i < flow.length; i++)
         {
-            if (flow[i] >= 14f / 16)
+            if (flow[i] >= quantaFraction)
             {
                 total += flow[i] * 10;
                 count += 10;
@@ -663,14 +665,14 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
             if (getMetaFromState(here) == getMaxRenderHeightMeta())
             {
-                return 0.875F;
+                return quantaFraction;
             }
         }
         if (here.getBlock() instanceof BlockLiquid)
         {
-            return Math.min(1 - BlockLiquid.getLiquidHeightPercent(here.getValue(BlockLiquid.LEVEL)), 14f / 16);
+            return Math.min(1 - BlockLiquid.getLiquidHeightPercent(here.getValue(BlockLiquid.LEVEL)), quantaFraction);
         }
-        return !here.getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * 0.875F;
+        return !here.getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * quantaFraction;
     }
 
     public Vec3d getFlowVector(IBlockAccess world, BlockPos pos)
