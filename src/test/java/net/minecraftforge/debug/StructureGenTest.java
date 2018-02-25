@@ -44,7 +44,7 @@ import java.util.Random;
 public class StructureGenTest
 {
     public final static String MODID = "structure_gen_test";
-    private final static boolean ENABLED = true;
+    private final static boolean ENABLED = false;
     private static Logger logger;
 
     @Mod.EventHandler
