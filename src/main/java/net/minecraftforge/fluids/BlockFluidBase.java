@@ -550,17 +550,12 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             }
         }
 
-        boolean[] overlaySides = new boolean[4];
-        for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
-        {
-            if (shouldSideBeRendered(oldState, worldIn, pos, side) && isBlockSolid(worldIn, pos.offset(side), side.getOpposite()))
-            {
-                overlaySides[side.getHorizontalIndex()] = true;
-            }
-        }
         for (int i = 0; i < 4; i++)
         {
-            state = state.withProperty(SIDE_OVERLAYS[i], overlaySides[i]);
+            EnumFacing side = EnumFacing.getHorizontal(i);
+            boolean useOverlay = shouldSideBeRendered(oldState, worldIn, pos, side)
+                    && isBlockSolid(worldIn, pos.offset(side), side.getOpposite());
+            state = state.withProperty(SIDE_OVERLAYS[i], useOverlay);
         }
 
         state = state.withProperty(LEVEL_CORNERS[0], corner[0][0]);
