@@ -271,9 +271,11 @@ public final class ModelFluid implements IModel
             {
                 // y levels
                 float[] y = new float[4];
+                boolean fullVolume = true;
                 for (int i = 0; i < 4; i++)
                 {
                     float value = cornerRound[i] / 768f;
+                    if (value < 1f) fullVolume = false;
                     y[i] = gas ? 1f - value : value;
                 }
 
@@ -299,10 +301,14 @@ public final class ModelFluid implements IModel
                 VertexParameter topU = i -> 8 + uv.get(i);
                 VertexParameter topV = i -> 8 + uv.get((i + 1) % 4);
 
-                faceQuads.put(top, ImmutableList.of(
-                        buildQuad(top, topSprite,  gas, topX, topY, topZ, topU, topV),
-                        buildQuad(top, topSprite, !gas, topX, topY, topZ, topU, topV))
-                );
+                {
+                    ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
+
+                    builder.add(buildQuad(top, topSprite, gas, topX, topY, topZ, topU, topV));
+                    if (!fullVolume) builder.add(buildQuad(top, topSprite, !gas, topX, topY, topZ, topU, topV));
+
+                    faceQuads.put(top, builder.build());
+                }
 
                 // bottom
                 EnumFacing bottom = top.getOpposite();
