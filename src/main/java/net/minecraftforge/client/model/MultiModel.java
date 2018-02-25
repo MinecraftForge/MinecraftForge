@@ -134,7 +134,11 @@ public final class MultiModel implements IModel
                 {
                     Pair<? extends IBakedModel, Matrix4f> p = base.handlePerspective(type);
                     IBakedModel newBase = p.getLeft();
-                    map.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(p.getRight())));
+                    Matrix4f matrix = p.getRight();
+                    if (newBase != base || matrix != null)
+                    {
+                        map.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(matrix)));
+                    }
                 }
                 transforms = ImmutableMap.copyOf(map);
             }
@@ -212,8 +216,8 @@ public final class MultiModel implements IModel
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            if(transforms.isEmpty()) return Pair.of(this, null);
             Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
+            if (p == null) return Pair.of(this, null);
             return Pair.of(p.getLeft(), p.getRight().getMatrix());
         }
 
