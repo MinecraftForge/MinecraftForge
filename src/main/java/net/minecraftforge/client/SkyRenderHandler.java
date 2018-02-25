@@ -102,11 +102,13 @@ public class SkyRenderHandler
         return true;
     }
 
-    private static class PartSkyRenderer {
+    private static class PartSkyRenderer
+    {
         Map<ResourceLocation, RenderHandler> defHandlers;
         SortedMap<ResourceLocation, RenderHandler> handlers = Maps.newTreeMap();
 
-        PartSkyRenderer(Map<ResourceLocation, RenderHandler> defaultHandlers) {
+        PartSkyRenderer(Map<ResourceLocation, RenderHandler> defaultHandlers)
+        {
             this.defHandlers = defaultHandlers;
             handlers.putAll(defaultHandlers);
         }
@@ -127,7 +129,8 @@ public class SkyRenderHandler
             else return null;
         }
 
-        boolean enabled() {
+        boolean enabled()
+        {
             return !handlers.equals(this.defHandlers);
         }
 
@@ -140,7 +143,8 @@ public class SkyRenderHandler
         }
     }
 
-    private static class RenderHandler implements Comparable<RenderHandler> {
+    private static class RenderHandler implements Comparable<RenderHandler>
+    {
         IRenderHandler handler;
         double priority;
 
@@ -158,7 +162,8 @@ public class SkyRenderHandler
         }
     }
 
-    private static RenderHandler handler(int vanillaRenderPass, double priority) {
+    private static RenderHandler handler(int vanillaRenderPass, double priority)
+    {
         return new RenderHandler(new VanillaSkyRenderer(vanillaRenderPass), priority);
     }
 
@@ -186,11 +191,13 @@ public class SkyRenderHandler
     }
 
     // Internal method
-    public int getVanillaRenderPass() {
+    public int getVanillaRenderPass()
+    {
         return this.vanillaRenderPass;
     }
 
-    private static class VanillaSkyRenderer extends IRenderHandler {
+    private static class VanillaSkyRenderer extends IRenderHandler
+    {
         private int vanillaRenderPass;
 
         VanillaSkyRenderer(int vanillaRenderPass)
