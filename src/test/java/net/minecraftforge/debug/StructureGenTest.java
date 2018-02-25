@@ -36,16 +36,15 @@ import java.util.Random;
  * 3) Tp to 64 * 64
  * 4) run "/locate forge-test-structure"
  * 5) Check the console for result
- * 6) When reloading the chunk/world a log about retroactively generating should appear
- * 7) Repeat in Hell and End
+ * 6) Repeat in Hell and End
  *
- * You should also notice that Blaze are spawning (at least during the night and on suitable terrain)
+ * You should also notice that Blaze are spawning (at least during the night and on suitable terrain, e.g. desert, might take some time)
  */
 @Mod(modid = StructureGenTest.MODID, name = StructureGenTest.MODID, version = "1.0")
 public class StructureGenTest
 {
     public final static String MODID = "structure_gen_test";
-    private final static boolean ENABLED = false;
+    private final static boolean ENABLED = true;
     private static Logger logger;
 
     @Mod.EventHandler
@@ -202,10 +201,22 @@ public class StructureGenTest
                 logger.info("Getting spawns {}", generator);
                 spawn = false;
             }
-            if(creatureType==EnumCreatureType.MONSTER){
+            if(creatureType == EnumCreatureType.MONSTER){
                 return spawnList;
             }
             return defaults;
+        }
+
+
+        /**
+         * Need to trick the generator here for spawning checks.
+         * We are using a dummy structure without any content so the bounding box is too small for the real check.
+         * Don't do this in a real mod.
+         */
+        @Override
+        public boolean isPositionInStructure(World worldIn, BlockPos pos)
+        {
+            return this.isInsideStructure(pos);
         }
 
         private boolean isComplete()

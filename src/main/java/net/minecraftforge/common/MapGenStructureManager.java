@@ -117,7 +117,7 @@ public class MapGenStructureManager
     {
         for (MapGenStructure structure : structureMap.values())
         {
-            if (structure instanceof ISpawningStructure && structure.isInsideStructure(pos))
+            if (structure instanceof ISpawningStructure && structure.isPositionInStructure(world,pos))
             {
                 return ((ISpawningStructure) structure).getSpawns(Collections.unmodifiableList(defaults), world, creatureType, pos);//Ensure mods don't accidentally modify the biomes spawn list itself
             }

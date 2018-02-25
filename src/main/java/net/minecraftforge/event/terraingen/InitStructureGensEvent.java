@@ -58,6 +58,10 @@ public class InitStructureGensEvent<T extends IChunkGenerator> extends GenericEv
         return Collections.unmodifiableList(structureList);
     }
 
+    /**
+     * Careful, the generator object is not fully initialized yet because the event is posted from within its constructor
+     * @return The generator collecting the MapGenStructures.
+     */
     public T getGenerator()
     {
         return generator;
