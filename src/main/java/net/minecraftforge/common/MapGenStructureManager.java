@@ -26,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.structure.MapGenStructure;
 import org.apache.commons.lang3.ArrayUtils;
@@ -132,6 +133,16 @@ public class MapGenStructureManager
         }
     }
 
+    public boolean retroGenerateStructures(World world, Random rand, ChunkPos chunkPos, Chunk chunk){
+        boolean flag=false;
+        for(MapGenStructure structure : structureMap.values()){
+            if(structure instanceof IRetroGenStructure){
+                flag = flag | ((IRetroGenStructure) structure).retroGenerateStructure(world,rand,chunkPos,chunk);
+            }
+        }
+        return flag;
+    }
+
     public void generate(World worldIn, int x, int z, ChunkPrimer primer)
     {
         for (MapGenStructure structure : structureMap.values())
@@ -154,6 +165,20 @@ public class MapGenStructureManager
          * @return The spawn entries that should be used for spawning
          */
         List<Biome.SpawnListEntry> getSpawns(List<Biome.SpawnListEntry> defaults, World world, EnumCreatureType creatureType, BlockPos pos);
+    }
+
+    /**
+     * Should be implemented by any {@link MapGenStructure} that would like to retroactively generate structures after the terrain has already been populated like the ocean monument does
+     * Used in {@link net.minecraft.world.gen.IChunkGenerator#generateStructures(Chunk, int, int)}
+     */
+    public interface IRetroGenStructure
+    {
+        /**
+         * Retroactively generate structures after the terrain has already been populated
+         * @param chunk The chunk being processed
+         * @return If something in the world has been changed
+         */
+        boolean retroGenerateStructure(World worldIn, Random randomIn, ChunkPos chunkCoord, Chunk chunk);
     }
 
 }

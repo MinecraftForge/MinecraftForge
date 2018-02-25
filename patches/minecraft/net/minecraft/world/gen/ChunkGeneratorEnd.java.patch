@@ -78,7 +78,7 @@
          }
  
          this.field_73230_p.func_180494_b(blockpos.func_177982_a(16, 0, 16)).func_180624_a(this.field_73230_p, this.field_73230_p.field_73012_v, blockpos);
-@@ -394,6 +418,7 @@
+@@ -394,31 +418,38 @@
              }
          }
  
@@ -86,7 +86,11 @@
          BlockFalling.field_149832_M = false;
      }
  
-@@ -404,21 +429,27 @@
+     public boolean func_185933_a(Chunk p_185933_1_, int p_185933_2_, int p_185933_3_)
+     {
+-        return false;
++        return this.structureManager.retroGenerateStructures(this.field_73230_p, this.field_73220_k, new ChunkPos(p_185933_2_, p_185933_3_), p_185933_1_);
+     }
  
      public List<Biome.SpawnListEntry> func_177458_a(EnumCreatureType p_177458_1_, BlockPos p_177458_2_)
      {

@@ -113,7 +113,15 @@
          BlockFalling.field_149832_M = false;
      }
  
-@@ -489,7 +525,7 @@
+@@ -469,6 +505,7 @@
+             flag |= this.field_185980_B.func_175794_a(this.field_185995_n, this.field_185990_i, new ChunkPos(p_185933_2_, p_185933_3_));
+         }
+ 
++        flag |= this.structureManager.retroGenerateStructures(this.field_185995_n, this.field_185990_i, new ChunkPos(p_185933_2_, p_185933_3_), p_185933_1_);
+         return flag;
+     }
+ 
+@@ -489,7 +526,7 @@
              }
          }
  
@@ -122,7 +130,7 @@
      }
  
      public boolean func_193414_a(World p_193414_1_, String p_193414_2_, BlockPos p_193414_3_)
-@@ -520,7 +556,7 @@
+@@ -520,7 +557,7 @@
          }
          else
          {
@@ -131,7 +139,7 @@
          }
      }
  
-@@ -553,7 +589,7 @@
+@@ -553,7 +590,7 @@
          }
          else
          {
@@ -140,7 +148,7 @@
          }
      }
  
-@@ -590,6 +626,12 @@
+@@ -590,6 +627,12 @@
              {
                  this.field_191060_C.func_186125_a(this.field_185995_n, p_180514_2_, p_180514_3_, (ChunkPrimer)null);
              }

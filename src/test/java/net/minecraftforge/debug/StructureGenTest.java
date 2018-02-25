@@ -7,6 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.ChunkGeneratorEnd;
 import net.minecraft.world.gen.ChunkGeneratorHell;
@@ -35,7 +36,8 @@ import java.util.Random;
  * 3) Tp to 64 * 64
  * 4) run "/locate forge-test-structure"
  * 5) Check the console for result
- * 6) Repeat in Hell and End
+ * 6) When reloading the chunk/world a log about retroactively generating should appear
+ * 7) Repeat in Hell and End
  *
  * You should also notice that Blaze are spawning (at least during the night and on suitable terrain)
  */
@@ -106,13 +108,14 @@ public class StructureGenTest
         }
     }
 
-    private class TestStructure extends MapGenStructure implements MapGenStructureManager.ISpawningStructure
+    private class TestStructure extends MapGenStructure implements MapGenStructureManager.ISpawningStructure, MapGenStructureManager.IRetroGenStructure
     {
 
         private final String generator;
         private boolean spawn = true;
         private boolean isAt = true;
         private boolean generate = true;
+        private boolean retroGenerate = true;
         private boolean generateStructure = true;
         private final List<Biome.SpawnListEntry> spawnList = Lists.newArrayList();
 
@@ -210,5 +213,14 @@ public class StructureGenTest
             return !spawn && !generate && !generateStructure && !isAt;
         }
 
+        @Override
+        public boolean retroGenerateStructure(World worldIn, Random randomIn, ChunkPos chunkCoord, Chunk chunk)
+        {
+            if(retroGenerate){
+                logger.info("Retroactively generating structure in {}", generator);
+                retroGenerate=false;
+            }
+            return false;
+        }
     }
 }
