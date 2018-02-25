@@ -73,6 +73,7 @@ public final class ModelFluid implements IModel
         this.fluid = fluid;
     }
 
+    @Override
     public Collection<ResourceLocation> getTextures()
     {
         return fluid.getOverlay() != null
