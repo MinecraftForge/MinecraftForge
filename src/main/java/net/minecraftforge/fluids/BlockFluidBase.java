@@ -175,7 +175,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
         this.definedFluid = fluid;
         displacements.putAll(defaultDisplacements);
-        this.setDefaultState(blockState.getBaseState().withProperty(LEVEL, 0));
+        this.setDefaultState(blockState.getBaseState().withProperty(LEVEL, getMaxRenderHeightMeta()));
     }
 
     @Override

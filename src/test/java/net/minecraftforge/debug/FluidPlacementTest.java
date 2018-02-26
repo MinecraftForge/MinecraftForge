@@ -3,7 +3,6 @@ package net.minecraftforge.debug;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
@@ -24,6 +23,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -32,9 +32,6 @@ import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -76,7 +73,7 @@ public class FluidPlacementTest
             event.getRegistry().registerAll(
                 EmptyFluidContainer.instance,
                 FluidContainer.instance,
-                new ItemBlock(FiniteFluidBlock.instance).setRegistryName(FiniteFluidBlock.instance.getRegistryName())
+                new FluidItemBlock(FiniteFluidBlock.instance).setRegistryName(FiniteFluidBlock.instance.getRegistryName())
             );
             MinecraftForge.EVENT_BUS.register(FluidContainer.instance);
         }
@@ -143,6 +140,26 @@ public class FluidPlacementTest
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(MODID, name);
+        }
+    }
+
+    public static final class FluidItemBlock extends ItemBlock
+    {
+        FluidItemBlock(BlockFluidBase block)
+        {
+            super(block);
+        }
+
+        @Override
+        public BlockFluidBase getBlock()
+        {
+            return (BlockFluidBase) super.getBlock();
+        }
+
+        @Override
+        public int getMetadata(int damage)
+        {
+            return getBlock().getMaxRenderHeightMeta();
         }
     }
 
