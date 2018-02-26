@@ -36,7 +36,7 @@ public class MissingModsException extends EnhancedRuntimeException
     private final String id;
     private final String name;
     /** @deprecated use {@link #getMissingModInfos()} */
-    @Deprecated
+    @Deprecated // TODO remove in 1.13
     public final Set<ArtifactVersion> missingMods;
     private final List<MissingModInfo> missingModsInfos;
     private final String modName;
