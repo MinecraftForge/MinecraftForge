@@ -123,11 +123,13 @@ public class BlockFluidClassic extends BlockFluidBase
         // check adjacent block levels if non-source
         if (quantaRemaining < quantaPerBlock)
         {
-            if (world.getBlockState(pos.add( 0, -densityDir,  0)).getBlock() == this ||
-                world.getBlockState(pos.add(-1, -densityDir,  0)).getBlock() == this ||
-                world.getBlockState(pos.add( 1, -densityDir,  0)).getBlock() == this ||
-                world.getBlockState(pos.add( 0, -densityDir, -1)).getBlock() == this ||
-                world.getBlockState(pos.add( 0, -densityDir,  1)).getBlock() == this)
+            // unobstructed flow from 'above'
+            if (world.getBlockState(pos.add( 0, -densityDir,  0)).getBlock() == this  ||
+               (world.getBlockState(pos.add(-1, -densityDir,  0)).getBlock() == this  ||
+                world.getBlockState(pos.add( 1, -densityDir,  0)).getBlock() == this  ||
+                world.getBlockState(pos.add( 0, -densityDir, -1)).getBlock() == this  ||
+                world.getBlockState(pos.add( 0, -densityDir,  1)).getBlock() == this) &&
+                canFlowInto(world,  pos.add( 0, -densityDir,  0)))
             {
                 expQuanta = quantaPerBlock - 1;
             }
