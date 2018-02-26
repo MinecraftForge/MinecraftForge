@@ -21,6 +21,8 @@ package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -49,6 +51,7 @@ public class DecorateBiomeEvent extends Event
     private final World world;
     private final Random rand;
     private final BlockPos pos;
+    @Nullable
     private final BlockPos chunkPos;
 
     public DecorateBiomeEvent(World world, Random rand, BlockPos pos, BlockPos chunkPos)
@@ -59,12 +62,14 @@ public class DecorateBiomeEvent extends Event
         this.chunkPos = chunkPos;
     }
     
+    //TODO: remove in 1.13
+    @Deprecated
     public DecorateBiomeEvent(World world, Random rand, BlockPos pos)
     {
         this.world = world;
         this.rand = rand;
         this.pos = pos;
-        chunkPos = new BlockPos((pos.getX()/16)*16, (pos.getY()/16)*16, (pos.getZ()/16)*16);
+        chunkPos = null;
     }
 
     public World getWorld()
@@ -82,6 +87,7 @@ public class DecorateBiomeEvent extends Event
         return pos;
     }
     
+    @Nullable
     public BlockPos getChunkPos()
     {
     	return chunkPos;
@@ -97,6 +103,8 @@ public class DecorateBiomeEvent extends Event
             super(world, rand, pos, chunkPos);
         }
         
+      //TODO: remove in 1.13
+        @Deprecated
         public Pre(World world, Random rand, BlockPos pos)
         {
             super(world, rand, pos);
@@ -113,6 +121,8 @@ public class DecorateBiomeEvent extends Event
             super(world, rand, pos, chunkPos);
         }
         
+      //TODO: remove in 1.13
+        @Deprecated
         public Post(World world, Random rand, BlockPos pos)
         {
             super(world, rand, pos);
@@ -144,6 +154,8 @@ public class DecorateBiomeEvent extends Event
             this.type = type;
         }
         
+      //TODO: remove in 1.13
+        @Deprecated
         public Decorate(World world, Random rand, BlockPos pos, EventType type)
         {
             super(world, rand, pos);
