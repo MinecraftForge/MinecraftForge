@@ -72,32 +72,39 @@ public class SoundEngineFixTransformer implements IClassTransformer
             if (method == null)
                 throw new RuntimeException("Error processing " + transformedName + " - no removeSource method found");
 
+            AbstractInsnNode referenceNode = null;
+            
             for (Iterator<AbstractInsnNode> iterator = method.instructions.iterator(); iterator.hasNext();)
             {
                 AbstractInsnNode insn = iterator.next();
                 if (insn instanceof MethodInsnNode && ((MethodInsnNode) insn).owner.equals("paulscode/sound/Source") // searching for mySource.cleanup() node (line 1086)
                         && ((MethodInsnNode) insn).name.equals("cleanup"))
                 {
-                    LabelNode after = (LabelNode) insn.getNext();
-
-                    AbstractInsnNode beginning = insn.getPrevious();
-
-                    int varIndex = ((VarInsnNode) beginning).var;
-
-                    method.instructions.insertBefore(beginning, new VarInsnNode(Opcodes.ALOAD, varIndex)); // adding extra if (mySource.toStream)
-                    method.instructions.insertBefore(beginning, new FieldInsnNode(Opcodes.GETFIELD, "paulscode/sound/Source", "toStream", "Z"));
-                    LabelNode elseNode = new LabelNode();
-                    method.instructions.insertBefore(beginning, new JumpInsnNode(Opcodes.IFEQ, elseNode)); // if fails (else) -> go to mySource.cleanup();
-
-                    method.instructions.insertBefore(beginning, new VarInsnNode(Opcodes.ALOAD, varIndex)); // if (mySource.toStream) { mySource.removed = true; }
-                    method.instructions.insertBefore(beginning, new InsnNode(Opcodes.ICONST_1));
-                    method.instructions.insertBefore(beginning, new FieldInsnNode(Opcodes.PUTFIELD, "paulscode/sound/Source", "removed", "Z"));
-
-                    method.instructions.insertBefore(beginning, new JumpInsnNode(Opcodes.GOTO, after)); // still inside if -> jump to sourceMap.remove( sourcename );
-
-                    method.instructions.insertBefore(beginning, elseNode);
+                    referenceNode = insn;
                     break;
                 }
+            }
+            
+            if(referenceNode != null)
+            {
+                LabelNode after = (LabelNode) referenceNode.getNext();
+
+                AbstractInsnNode beginning = referenceNode.getPrevious();
+
+                int varIndex = ((VarInsnNode) beginning).var;
+
+                method.instructions.insertBefore(beginning, new VarInsnNode(Opcodes.ALOAD, varIndex)); // adding extra if (mySource.toStream)
+                method.instructions.insertBefore(beginning, new FieldInsnNode(Opcodes.GETFIELD, "paulscode/sound/Source", "toStream", "Z"));
+                LabelNode elseNode = new LabelNode();
+                method.instructions.insertBefore(beginning, new JumpInsnNode(Opcodes.IFEQ, elseNode)); // if fails (else) -> go to mySource.cleanup();
+
+                method.instructions.insertBefore(beginning, new VarInsnNode(Opcodes.ALOAD, varIndex)); // if (mySource.toStream) { mySource.removed = true; }
+                method.instructions.insertBefore(beginning, new InsnNode(Opcodes.ICONST_1));
+                method.instructions.insertBefore(beginning, new FieldInsnNode(Opcodes.PUTFIELD, "paulscode/sound/Source", "removed", "Z"));
+
+                method.instructions.insertBefore(beginning, new JumpInsnNode(Opcodes.GOTO, after)); // still inside if -> jump to sourceMap.remove( sourcename );
+
+                method.instructions.insertBefore(beginning, elseNode);
             }
 
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -121,29 +128,34 @@ public class SoundEngineFixTransformer implements IClassTransformer
             }
             if (method == null)
                 throw new RuntimeException("Error processing " + transformedName + " - no run method found");
-
+            
+            AbstractInsnNode referenceNode = null;
+            
             for (Iterator<AbstractInsnNode> iterator = method.instructions.iterator(); iterator.hasNext();)
             {
                 AbstractInsnNode insn = iterator.next();
                 if (insn instanceof MethodInsnNode && ((MethodInsnNode) insn).owner.equals("java/util/ListIterator") // searching for 'src = iter.next();' node (line 110)
                         && ((MethodInsnNode) insn).name.equals("next"))
                 {
-                    insn = insn.getNext().getNext();
-
-                    int varIndex = ((VarInsnNode) insn).var;
-
-                    LabelNode after = (LabelNode) insn.getNext();
-                    method.instructions.insertBefore(after, new VarInsnNode(Opcodes.ALOAD, varIndex)); // add if(removed)
-                    method.instructions.insertBefore(after, new FieldInsnNode(Opcodes.GETFIELD, "paulscode/sound/Source", "removed", "Z"));
-                    method.instructions.insertBefore(after, new JumpInsnNode(Opcodes.IFEQ, after));
-
-                    // if the source has been marked as removed, clean it up and set the variable to null so it will be removed from the list
-                    method.instructions.insertBefore(after, new VarInsnNode(Opcodes.ALOAD, varIndex)); // src.cleanup();
-                    method.instructions.insertBefore(after, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "paulscode/sound/Source", "cleanup", "()V", false));
-                    method.instructions.insertBefore(after, new InsnNode(Opcodes.ACONST_NULL)); // src = null;
-                    method.instructions.insertBefore(after, new VarInsnNode(Opcodes.ASTORE, varIndex));
+                    referenceNode = insn.getNext().getNext();
                     break;
                 }
+            }
+            
+            if(referenceNode != null)
+            {
+                int varIndex = ((VarInsnNode) referenceNode).var;
+
+                LabelNode after = (LabelNode) referenceNode.getNext();
+                method.instructions.insertBefore(after, new VarInsnNode(Opcodes.ALOAD, varIndex)); // add if(removed)
+                method.instructions.insertBefore(after, new FieldInsnNode(Opcodes.GETFIELD, "paulscode/sound/Source", "removed", "Z"));
+                method.instructions.insertBefore(after, new JumpInsnNode(Opcodes.IFEQ, after));
+
+                // if the source has been marked as removed, clean it up and set the variable to null so it will be removed from the list
+                method.instructions.insertBefore(after, new VarInsnNode(Opcodes.ALOAD, varIndex)); // src.cleanup();
+                method.instructions.insertBefore(after, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "paulscode/sound/Source", "cleanup", "()V", false));
+                method.instructions.insertBefore(after, new InsnNode(Opcodes.ACONST_NULL)); // src = null;
+                method.instructions.insertBefore(after, new VarInsnNode(Opcodes.ASTORE, varIndex));
             }
 
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
