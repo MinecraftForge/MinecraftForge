@@ -486,15 +486,15 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     @Override
     @Nonnull
-    public IBlockState getExtendedState(@Nonnull IBlockState oldState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos)
+    public IBlockState getExtendedState(@Nonnull IBlockState oldState, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
     {
         IExtendedBlockState state = (IExtendedBlockState)oldState;
-        state = state.withProperty(FLOW_DIRECTION, (float)getFlowDirection(worldIn, pos));
+        state = state.withProperty(FLOW_DIRECTION, (float)getFlowDirection(world, pos));
         IBlockState[][] upBlockState = new IBlockState[3][3];
         float[][] height = new float[3][3];
         float[][] corner = new float[2][2];
-        upBlockState[1][1] = worldIn.getBlockState(pos.down(densityDir));
-        height[1][1] = getFluidHeightForRender(worldIn, pos, upBlockState[1][1]);
+        upBlockState[1][1] = world.getBlockState(pos.down(densityDir));
+        height[1][1] = getFluidHeightForRender(world, pos, upBlockState[1][1]);
         if (height[1][1] == 1)
         {
             for (int i = 0; i < 2; i++)
@@ -513,8 +513,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                 {
                     if (i != 1 || j != 1)
                     {
-                        upBlockState[i][j] = worldIn.getBlockState(pos.add(i - 1, 0, j - 1).down(densityDir));
-                        height[i][j] = getFluidHeightForRender(worldIn, pos.add(i - 1, 0, j - 1), upBlockState[i][j]);
+                        upBlockState[i][j] = world.getBlockState(pos.add(i - 1, 0, j - 1).down(densityDir));
+                        height[i][j] = getFluidHeightForRender(world, pos.add(i - 1, 0, j - 1), upBlockState[i][j]);
                     }
                 }
             }
@@ -555,8 +555,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         for (int i = 0; i < 4; i++)
         {
             EnumFacing side = EnumFacing.getHorizontal(i);
-            boolean useOverlay = shouldSideBeRendered(oldState, worldIn, pos, side)
-                    && isBlockSolid(worldIn, pos.offset(side), side.getOpposite());
+            BlockPos offset = pos.offset(side);
+            boolean useOverlay = world.getBlockState(offset).getBlockFaceShape(world, offset, side.getOpposite()) == BlockFaceShape.SOLID;
             state = state.withProperty(SIDE_OVERLAYS[i], useOverlay);
         }
 
@@ -706,14 +706,14 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (world.getBlockState(pos.up()).getBlock() == this)
         {
             boolean flag =
-                isBlockSolid(world, pos.add( 0,  0, -1), EnumFacing.NORTH) ||
-                isBlockSolid(world, pos.add( 0,  0,  1), EnumFacing.SOUTH) ||
-                isBlockSolid(world, pos.add(-1,  0,  0), EnumFacing.WEST) ||
-                isBlockSolid(world, pos.add( 1,  0,  0), EnumFacing.EAST) ||
-                isBlockSolid(world, pos.add( 0,  1, -1), EnumFacing.NORTH) ||
-                isBlockSolid(world, pos.add( 0,  1,  1), EnumFacing.SOUTH) ||
-                isBlockSolid(world, pos.add(-1,  1,  0), EnumFacing.WEST) ||
-                isBlockSolid(world, pos.add( 1,  1,  0), EnumFacing.EAST);
+                causesDownwardCurrent(world, pos.add( 0,  0, -1), EnumFacing.NORTH) ||
+                causesDownwardCurrent(world, pos.add( 0,  0,  1), EnumFacing.SOUTH) ||
+                causesDownwardCurrent(world, pos.add(-1,  0,  0), EnumFacing.WEST) ||
+                causesDownwardCurrent(world, pos.add( 1,  0,  0), EnumFacing.EAST) ||
+                causesDownwardCurrent(world, pos.add( 0,  1, -1), EnumFacing.NORTH) ||
+                causesDownwardCurrent(world, pos.add( 0,  1,  1), EnumFacing.SOUTH) ||
+                causesDownwardCurrent(world, pos.add(-1,  1,  0), EnumFacing.WEST) ||
+                causesDownwardCurrent(world, pos.add( 1,  1,  0), EnumFacing.EAST);
 
             if (flag)
             {
@@ -724,7 +724,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return vec;
     }
 
-    private boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing face)
+    private boolean causesDownwardCurrent(IBlockAccess world, BlockPos pos, EnumFacing face)
     {
         return world.getBlockState(pos).getBlockFaceShape(world, pos, face) == BlockFaceShape.SOLID;
     }
