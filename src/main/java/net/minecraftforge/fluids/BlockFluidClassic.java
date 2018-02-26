@@ -24,6 +24,7 @@ import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -124,12 +125,11 @@ public class BlockFluidClassic extends BlockFluidBase
         if (quantaRemaining < quantaPerBlock)
         {
             // unobstructed flow from 'above'
-            if (world.getBlockState(pos.add( 0, -densityDir,  0)).getBlock() == this  ||
-               (world.getBlockState(pos.add(-1, -densityDir,  0)).getBlock() == this  ||
-                world.getBlockState(pos.add( 1, -densityDir,  0)).getBlock() == this  ||
-                world.getBlockState(pos.add( 0, -densityDir, -1)).getBlock() == this  ||
-                world.getBlockState(pos.add( 0, -densityDir,  1)).getBlock() == this) &&
-                canFlowInto(world,  pos.add( 0, -densityDir,  0)))
+            if (world.getBlockState(pos.down(densityDir)).getBlock() == this
+                    || hasDownhillFlow(world, pos, EnumFacing.EAST)
+                    || hasDownhillFlow(world, pos, EnumFacing.WEST)
+                    || hasDownhillFlow(world, pos, EnumFacing.NORTH)
+                    || hasDownhillFlow(world, pos, EnumFacing.SOUTH))
             {
                 expQuanta = quantaPerBlock - 1;
             }
@@ -194,6 +194,13 @@ public class BlockFluidClassic extends BlockFluidBase
             if (flowTo[2]) flowIntoBlock(world, pos.add( 0, 0, -1), flowMeta);
             if (flowTo[3]) flowIntoBlock(world, pos.add( 0, 0,  1), flowMeta);
         }
+    }
+
+    protected final boolean hasDownhillFlow(IBlockAccess world, BlockPos pos, EnumFacing direction)
+    {
+        return world.getBlockState(pos.offset(direction).down(densityDir)).getBlock() == this
+                && (canFlowInto(world, pos.offset(direction))
+                ||  canFlowInto(world, pos.down(densityDir)));
     }
 
     public boolean isFlowingVertically(IBlockAccess world, BlockPos pos)
