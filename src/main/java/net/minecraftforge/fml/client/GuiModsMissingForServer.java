@@ -26,7 +26,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class GuiModsMissingForServer extends GuiScreen
 {
@@ -65,7 +64,7 @@ public class GuiModsMissingForServer extends GuiScreen
         offset += 5;
         for (MissingModsException.MissingModInfo info : missingModsVersions)
         {
-            ArtifactVersion v = info.getNeededVersion();
+            ArtifactVersion v = info.getAcceptedVersion();
             offset += 10;
             this.drawCenteredString(this.fontRenderer, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }

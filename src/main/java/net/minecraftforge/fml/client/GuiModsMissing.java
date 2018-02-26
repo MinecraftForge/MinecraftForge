@@ -49,30 +49,30 @@ public class GuiModsMissing extends GuiErrorBase
         offset+=5;
         for (MissingModsException.MissingModInfo versionInfo : missingModsVersions)
         {
-            ArtifactVersion neededVersion = versionInfo.getNeededVersion();
-            String neededModId = neededVersion.getLabel();
-            ArtifactVersion haveVersion = versionInfo.getHaveVersion();
+            ArtifactVersion acceptedVersion = versionInfo.getAcceptedVersion();
+            String acceptedModId = acceptedVersion.getLabel();
+            ArtifactVersion currentVersion = versionInfo.getCurrentVersion();
             String missingReason;
-            if (haveVersion == null)
+            if (currentVersion == null)
             {
                 missingReason = I18n.format("fml.messages.mod.missing.dependencies.missing");
             }
             else
             {
-                missingReason = I18n.format("fml.messages.mod.missing.dependencies.you.have", haveVersion.getVersionString());
+                missingReason = I18n.format("fml.messages.mod.missing.dependencies.you.have", currentVersion.getVersionString());
             }
-            String neededModVersionString = neededVersion.getRangeString();
-            if (neededVersion instanceof DefaultArtifactVersion)
+            String acceptedModVersionString = acceptedVersion.getRangeString();
+            if (acceptedVersion instanceof DefaultArtifactVersion)
             {
-                DefaultArtifactVersion dav = (DefaultArtifactVersion)neededVersion;
+                DefaultArtifactVersion dav = (DefaultArtifactVersion)acceptedVersion;
                 if (dav.getRange() != null)
                 {
-                    neededModVersionString = dav.getRange().toStringFriendly();
+                    acceptedModVersionString = dav.getRange().toStringFriendly();
                 }
             }
-            ModContainer neededMod = Loader.instance().getIndexedModList().get(neededModId);
-            String modName = neededMod != null ? neededMod.getName() : neededModId;
-            String versionInfoText = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", modName, neededModVersionString, missingReason);
+            ModContainer acceptedMod = Loader.instance().getIndexedModList().get(acceptedModId);
+            String acceptedModName = acceptedMod != null ? acceptedMod.getName() : acceptedModId;
+            String versionInfoText = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", acceptedModName, acceptedModVersionString, missingReason);
             String message;
             if (versionInfo.isRequired())
             {

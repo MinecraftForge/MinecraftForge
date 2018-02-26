@@ -66,15 +66,15 @@ public class MissingModsException extends EnhancedRuntimeException
     @Override
     public String getMessage()
     {
-        Set<ArtifactVersion> missingMods = missingModsInfos.stream().map(MissingModInfo::getNeededVersion).collect(Collectors.toSet());
+        Set<ArtifactVersion> missingMods = missingModsInfos.stream().map(MissingModInfo::getAcceptedVersion).collect(Collectors.toSet());
         return String.format("Mod %s (%s) requires %s", id, name, missingMods);
     }
 
-    public void addMissingMod(ArtifactVersion needVersion, @Nullable ArtifactVersion haveVersion, boolean required)
+    public void addMissingMod(ArtifactVersion acceptedVersion, @Nullable ArtifactVersion currentVersion, boolean required)
     {
-        MissingModInfo missingModInfo = new MissingModInfo(needVersion, haveVersion, required);
+        MissingModInfo missingModInfo = new MissingModInfo(acceptedVersion, currentVersion, required);
         this.missingModsInfos.add(missingModInfo);
-        this.missingMods.add(needVersion);
+        this.missingMods.add(acceptedVersion);
     }
 
     public String getModName()
@@ -93,38 +93,38 @@ public class MissingModsException extends EnhancedRuntimeException
         stream.println("Missing Mods:");
         for (MissingModInfo info : this.missingModsInfos)
         {
-            ArtifactVersion needVersion = info.getNeededVersion();
-            ArtifactVersion haveVersion = info.getHaveVersion();
-            String haveString = haveVersion != null ? haveVersion.getVersionString() : "null";
-            stream.println(String.format("\t%s : need %s: have %s", needVersion.getVersionString(), needVersion.getRangeString(), haveString));
+            ArtifactVersion acceptedVersion = info.getAcceptedVersion();
+            ArtifactVersion currentVersion = info.getCurrentVersion();
+            String currentString = currentVersion != null ? currentVersion.getVersionString() : "missing";
+            stream.println(String.format("\t%s : need %s: have %s", acceptedVersion.getVersionString(), acceptedVersion.getRangeString(), currentString));
         }
         stream.println("");
     }
 
     public static class MissingModInfo
     {
-        private final ArtifactVersion neededVersion;
+        private final ArtifactVersion acceptedVersion;
         @Nullable
-        private final ArtifactVersion haveVersion;
+        private final ArtifactVersion currentVersion;
         private final boolean required;
 
-        private MissingModInfo(ArtifactVersion neededVersion, @Nullable ArtifactVersion haveVersion, boolean required)
+        private MissingModInfo(ArtifactVersion acceptedVersion, @Nullable ArtifactVersion currentVersion, boolean required)
         {
-            Preconditions.checkNotNull(neededVersion, "neededVersion");
-            this.neededVersion = neededVersion;
-            this.haveVersion = haveVersion;
+            Preconditions.checkNotNull(acceptedVersion, "acceptedVersion");
+            this.acceptedVersion = acceptedVersion;
+            this.currentVersion = currentVersion;
             this.required = required;
         }
 
         @Nullable
-        public ArtifactVersion getHaveVersion()
+        public ArtifactVersion getCurrentVersion()
         {
-            return haveVersion;
+            return currentVersion;
         }
 
-        public ArtifactVersion getNeededVersion()
+        public ArtifactVersion getAcceptedVersion()
         {
-            return neededVersion;
+            return acceptedVersion;
         }
 
         public boolean isRequired()

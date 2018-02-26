@@ -255,10 +255,10 @@ public class Loader
                     FMLLog.log.fatal("The mod {} ({}) requires mods {} to be available", mod.getModId(), mod.getName(), missingMods);
                     for (String modid : missingMods)
                     {
-                        ArtifactVersion needVersion = names.get(modid);
-                        ArtifactVersion haveVersion = modVersions.get(modid);
-                        boolean required = mod.getRequirements().contains(needVersion);
-                        missingModsException.addMissingMod(needVersion, haveVersion, required);
+                        ArtifactVersion acceptedVersion = names.get(modid);
+                        ArtifactVersion currentVersion = modVersions.get(modid);
+                        boolean required = mod.getRequirements().contains(acceptedVersion);
+                        missingModsException.addMissingMod(acceptedVersion, currentVersion, required);
                     }
                     FMLLog.log.fatal(missingModsException.getMessage());
                     missingModsExceptions.add(missingModsException);
@@ -267,15 +267,15 @@ public class Loader
                 reqList.putAll(mod.getModId(), names.keySet());
                 ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
                 MissingModsException missingModsException = new MissingModsException(mod.getModId(), mod.getName());
-                for (ArtifactVersion needVersion : allDeps)
+                for (ArtifactVersion acceptedVersion : allDeps)
                 {
-                    if (modVersions.containsKey(needVersion.getLabel()))
+                    if (modVersions.containsKey(acceptedVersion.getLabel()))
                     {
-                        ArtifactVersion haveVersion = modVersions.get(needVersion.getLabel());
-                        if (!needVersion.containsVersion(haveVersion))
+                        ArtifactVersion currentVersion = modVersions.get(acceptedVersion.getLabel());
+                        if (!acceptedVersion.containsVersion(currentVersion))
                         {
-                            boolean required = mod.getRequirements().contains(needVersion);
-                            missingModsException.addMissingMod(needVersion, haveVersion, required);
+                            boolean required = mod.getRequirements().contains(acceptedVersion);
+                            missingModsException.addMissingMod(acceptedVersion, currentVersion, required);
                         }
                     }
                 }
