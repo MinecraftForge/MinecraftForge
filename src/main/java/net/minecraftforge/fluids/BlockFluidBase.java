@@ -120,7 +120,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     public static final PropertyInteger LEVEL = PropertyInteger.create("level", 0, 15);
     public static final PropertyFloat[] LEVEL_CORNERS = new PropertyFloat[4];
-    public static final PropertyFloat FLOW_DIRECTION = new PropertyFloat("flow_direction");
+    public static final PropertyFloat FLOW_DIRECTION = new PropertyFloat("flow_direction", -1000f, 1000f);
     public static final UnlistedPropertyBool[] SIDE_OVERLAYS = new UnlistedPropertyBool[4];
     public static final ImmutableList<IUnlistedProperty<?>> FLUID_RENDER_PROPS;
 
@@ -130,7 +130,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         builder.add(FLOW_DIRECTION);
         for(int i = 0; i < 4; i++)
         {
-            LEVEL_CORNERS[i] = new PropertyFloat("level_corner_" + i);
+            LEVEL_CORNERS[i] = new PropertyFloat("level_corner_" + i, 0f, 1f);
             builder.add(LEVEL_CORNERS[i]);
 
             SIDE_OVERLAYS[i] = new UnlistedPropertyBool("side_overlay_" + i);
