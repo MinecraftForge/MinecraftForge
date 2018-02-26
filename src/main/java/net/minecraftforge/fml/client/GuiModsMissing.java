@@ -54,7 +54,15 @@ public class GuiModsMissing extends GuiErrorBase
             ArtifactVersion neededVersion = versionInfo.getKey();
             String neededMod = neededVersion.getLabel();
             ArtifactVersion haveVersion = versionInfo.getValue();
-            String missingReason = haveVersion == null ? "missing" : "you have " + haveVersion.getVersionString();
+            String missingReason;
+            if (haveVersion == null)
+            {
+                missingReason = I18n.format("fml.messages.mod.missing.dependencies.missing");
+            }
+            else
+            {
+                missingReason = I18n.format("fml.messages.mod.missing.dependencies.you.have", neededVersion.getVersionString());
+            }
             String neededModVersionString = neededVersion.getRangeString();
             if (neededVersion instanceof DefaultArtifactVersion)
             {
