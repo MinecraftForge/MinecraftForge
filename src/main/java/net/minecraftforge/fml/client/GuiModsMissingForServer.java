@@ -55,7 +55,7 @@ public class GuiModsMissingForServer extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        List<Pair<ArtifactVersion, ArtifactVersion>> missingModsVersions = modsMissing.getMissingModsVersions();
+        List<MissingModsException.MissingModInfo> missingModsVersions = modsMissing.getMissingModInfos();
         int offset = Math.max(85 - missingModsVersions.size() * 10, 10);
         this.drawCenteredString(this.fontRenderer, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
@@ -63,9 +63,9 @@ public class GuiModsMissingForServer extends GuiScreen
         offset += 10;
         this.drawCenteredString(this.fontRenderer, "They are required to play on this server", this.width / 2, offset, 0xFFFFFF);
         offset += 5;
-        for (Pair<ArtifactVersion, ArtifactVersion> entry : missingModsVersions)
+        for (MissingModsException.MissingModInfo info : missingModsVersions)
         {
-            ArtifactVersion v = entry.getKey();
+            ArtifactVersion v = info.getNeededVersion();
             offset += 10;
             this.drawCenteredString(this.fontRenderer, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }

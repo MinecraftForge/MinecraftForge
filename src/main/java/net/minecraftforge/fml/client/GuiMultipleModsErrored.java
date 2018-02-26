@@ -26,11 +26,11 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.MissingModsException;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
         int additionalSize = missingModsExceptions.isEmpty() || wrongMinecraftExceptions.isEmpty() ? 20 : 55;
         for (MissingModsException exception : missingModsExceptions)
         {
-            additionalSize += exception.getMissingModsVersions().size() * 10;
+            additionalSize += exception.getMissingModInfos().size() * 10;
         }
         list = new GuiList(wrongMinecraftExceptions.size() * 10 + missingModsExceptions.size() * 15 + additionalSize);
     }
@@ -140,16 +140,16 @@ public class GuiMultipleModsErrored extends GuiErrorBase
             }
             if (!missingModsExceptions.isEmpty())
             {
-                renderer.drawString(I18n.format("fml.messages.mod.missing.dependencies.multiple"), this.left, offset, 0xFFFFFF);
+                renderer.drawString(I18n.format("fml.messages.mod.missing.dependencies.multiple.issues"), this.left, offset, 0xFFFFFF);
                 offset+=15;
                 for (MissingModsException exception : missingModsExceptions)
                 {
                     renderer.drawString(exception.getModName() + ":", this.left, offset, 0xFFFFFF);
-                    for (Pair<ArtifactVersion, ArtifactVersion> versionInfo : exception.getMissingModsVersions())
+                    for (MissingModsException.MissingModInfo versionInfo : exception.getMissingModInfos())
                     {
-                        ArtifactVersion neededVersion = versionInfo.getKey();
-                        String neededMod = neededVersion.getLabel();
-                        ArtifactVersion haveVersion = versionInfo.getValue();
+                        ArtifactVersion neededVersion = versionInfo.getNeededVersion();
+                        String neededModId = neededVersion.getLabel();
+                        ArtifactVersion haveVersion = versionInfo.getHaveVersion();
                         String missingReason;
                         if (haveVersion == null)
                         {
@@ -157,7 +157,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
                         }
                         else
                         {
-                            missingReason = I18n.format("fml.messages.mod.missing.dependencies.you.have", neededVersion.getVersionString());
+                            missingReason = I18n.format("fml.messages.mod.missing.dependencies.you.have", haveVersion.getVersionString());
                         }
                         String neededModVersionString = neededVersion.getRangeString();
                         if (neededVersion instanceof DefaultArtifactVersion)
@@ -168,7 +168,18 @@ public class GuiMultipleModsErrored extends GuiErrorBase
                                 neededModVersionString = dav.getRange().toStringFriendly();
                             }
                         }
-                        String message = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", neededMod, neededModVersionString, missingReason);
+                        ModContainer neededMod = Loader.instance().getIndexedModList().get(neededModId);
+                        String modName = neededMod != null ? neededMod.getName() : neededModId;
+                        String versionInfoText = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", modName, neededModVersionString, missingReason);
+                        String message;
+                        if (versionInfo.isRequired())
+                        {
+                            message = I18n.format("fml.messages.mod.missing.dependencies.requires", versionInfoText);
+                        }
+                        else
+                        {
+                            message = I18n.format("fml.messages.mod.missing.dependencies.compatible.with", versionInfoText);
+                        }
                         offset += 10;
                         renderer.drawString(message, this.left, offset, 0xEEEEEE);
                     }

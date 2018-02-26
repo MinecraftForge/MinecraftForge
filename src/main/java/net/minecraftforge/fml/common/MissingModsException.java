@@ -19,48 +19,62 @@
 
 package net.minecraftforge.fml.common;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.google.common.base.Preconditions;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class MissingModsException extends EnhancedRuntimeException
 {
     private static final long serialVersionUID = 1L;
+    private final String id;
+    private final String name;
+    /** @deprecated use {@link #getMissingModInfos()} */
     @Deprecated
     public final Set<ArtifactVersion> missingMods;
-    private final List<Pair<ArtifactVersion, ArtifactVersion>> missingModsVersions; // needed version, have version (nullable)
+    private final List<MissingModInfo> missingModsInfos;
     private final String modName;
 
+    public MissingModsException(String id, String name)
+    {
+        this(new HashSet<>(), id, name);
+    }
+
     /**
-     * @deprecated use {@link #MissingModsException(List, String, String)}
+     * @deprecated use {@link #MissingModsException(String, String)}
      */
     @Deprecated // TODO remove in 1.13
     public MissingModsException(Set<ArtifactVersion> missingMods, String id, String name)
     {
-        super(String.format("Mod %s (%s) requires %s", id, name, missingMods));
+        this.id = id;
+        this.name = name;
         this.missingMods = missingMods;
-        this.missingModsVersions = new ArrayList<>();
+        this.missingModsInfos = new ArrayList<>();
         for (ArtifactVersion artifactVersion : missingMods)
         {
-            missingModsVersions.add(Pair.of(artifactVersion, null));
+            missingModsInfos.add(new MissingModInfo(artifactVersion, null, true));
         }
         this.modName = name;
     }
 
-    public MissingModsException(List<Pair<ArtifactVersion, ArtifactVersion>> missingModsVersions, String id, String name)
+    @Override
+    public String getMessage()
     {
-        super(String.format("Mod %s (%s) requires %s", id, name, missingModsVersions));
-        this.missingMods = new HashSet<>();
-        for (Pair<ArtifactVersion, ArtifactVersion> missingModsVersion : missingModsVersions)
-        {
-            this.missingMods.add(missingModsVersion.getKey());
-        }
-        this.missingModsVersions = missingModsVersions;
-        this.modName = name;
+        Set<ArtifactVersion> missingMods = missingModsInfos.stream().map(MissingModInfo::getNeededVersion).collect(Collectors.toSet());
+        return String.format("Mod %s (%s) requires %s", id, name, missingMods);
+    }
+
+    public void addMissingMod(ArtifactVersion needVersion, @Nullable ArtifactVersion haveVersion, boolean required)
+    {
+        MissingModInfo missingModInfo = new MissingModInfo(needVersion, haveVersion, required);
+        this.missingModsInfos.add(missingModInfo);
+        this.missingMods.add(needVersion);
     }
 
     public String getModName()
@@ -68,22 +82,54 @@ public class MissingModsException extends EnhancedRuntimeException
         return modName;
     }
 
-    public List<Pair<ArtifactVersion, ArtifactVersion>> getMissingModsVersions()
+    public List<MissingModInfo> getMissingModInfos()
     {
-        return missingModsVersions;
+        return Collections.unmodifiableList(this.missingModsInfos);
     }
 
     @Override
     protected void printStackTrace(WrappedPrintStream stream)
     {
         stream.println("Missing Mods:");
-        for (Pair<ArtifactVersion, ArtifactVersion> entry : missingModsVersions)
+        for (MissingModInfo info : this.missingModsInfos)
         {
-            ArtifactVersion needVersion = entry.getKey();
-            ArtifactVersion haveVersion = entry.getValue();
+            ArtifactVersion needVersion = info.getNeededVersion();
+            ArtifactVersion haveVersion = info.getHaveVersion();
             String haveString = haveVersion != null ? haveVersion.getVersionString() : "null";
-            stream.println(String.format("\t%s : need %s: have %s", needVersion.getLabel(), needVersion.getRangeString(), haveString));
+            stream.println(String.format("\t%s : need %s: have %s", needVersion.getVersionString(), needVersion.getRangeString(), haveString));
         }
         stream.println("");
+    }
+
+    public static class MissingModInfo
+    {
+        private final ArtifactVersion neededVersion;
+        @Nullable
+        private final ArtifactVersion haveVersion;
+        private final boolean required;
+
+        private MissingModInfo(ArtifactVersion neededVersion, @Nullable ArtifactVersion haveVersion, boolean required)
+        {
+            Preconditions.checkNotNull(neededVersion, "neededVersion");
+            this.neededVersion = neededVersion;
+            this.haveVersion = haveVersion;
+            this.required = required;
+        }
+
+        @Nullable
+        public ArtifactVersion getHaveVersion()
+        {
+            return haveVersion;
+        }
+
+        public ArtifactVersion getNeededVersion()
+        {
+            return neededVersion;
+        }
+
+        public boolean isRequired()
+        {
+            return required;
+        }
     }
 }

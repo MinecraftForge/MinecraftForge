@@ -23,10 +23,11 @@ import java.util.List;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.MissingModsException;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class GuiModsMissing extends GuiErrorBase
 {
@@ -41,19 +42,16 @@ public class GuiModsMissing extends GuiErrorBase
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        List<Pair<ArtifactVersion, ArtifactVersion>> missingModsVersions = modsMissing.getMissingModsVersions();
+        List<MissingModsException.MissingModInfo> missingModsVersions = modsMissing.getMissingModInfos();
         int offset = Math.max(85 - missingModsVersions.size() * 10, 10);
-        String modMissingDependenciesText = I18n.format("fml.messages.mod.missing.dependencies", TextFormatting.BOLD + modsMissing.getModName() + TextFormatting.RESET);
+        String modMissingDependenciesText = I18n.format("fml.messages.mod.missing.dependencies.compatibility", TextFormatting.BOLD + modsMissing.getModName() + TextFormatting.RESET);
         this.drawCenteredString(this.fontRenderer, modMissingDependenciesText, this.width / 2, offset, 0xFFFFFF);
-        offset+=10;
-        String fixMissingDependenciesText = I18n.format("fml.messages.mod.missing.dependencies.fix", modsMissing.getModName());
-        this.drawCenteredString(this.fontRenderer, fixMissingDependenciesText, this.width / 2, offset, 0xFFFFFF);
         offset+=5;
-        for (Pair<ArtifactVersion, ArtifactVersion> versionInfo : missingModsVersions)
+        for (MissingModsException.MissingModInfo versionInfo : missingModsVersions)
         {
-            ArtifactVersion neededVersion = versionInfo.getKey();
-            String neededMod = neededVersion.getLabel();
-            ArtifactVersion haveVersion = versionInfo.getValue();
+            ArtifactVersion neededVersion = versionInfo.getNeededVersion();
+            String neededModId = neededVersion.getLabel();
+            ArtifactVersion haveVersion = versionInfo.getHaveVersion();
             String missingReason;
             if (haveVersion == null)
             {
@@ -61,7 +59,7 @@ public class GuiModsMissing extends GuiErrorBase
             }
             else
             {
-                missingReason = I18n.format("fml.messages.mod.missing.dependencies.you.have", neededVersion.getVersionString());
+                missingReason = I18n.format("fml.messages.mod.missing.dependencies.you.have", haveVersion.getVersionString());
             }
             String neededModVersionString = neededVersion.getRangeString();
             if (neededVersion instanceof DefaultArtifactVersion)
@@ -72,13 +70,21 @@ public class GuiModsMissing extends GuiErrorBase
                     neededModVersionString = dav.getRange().toStringFriendly();
                 }
             }
-            String message = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", neededMod, neededModVersionString, missingReason);
+            ModContainer neededMod = Loader.instance().getIndexedModList().get(neededModId);
+            String modName = neededMod != null ? neededMod.getName() : neededModId;
+            String versionInfoText = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", modName, neededModVersionString, missingReason);
+            String message;
+            if (versionInfo.isRequired())
+            {
+                message = I18n.format("fml.messages.mod.missing.dependencies.requires", versionInfoText);
+            }
+            else
+            {
+                message = I18n.format("fml.messages.mod.missing.dependencies.compatible.with", versionInfoText);
+            }
             offset += 10;
             this.drawCenteredString(this.fontRenderer, message, this.width / 2, offset, 0xEEEEEE);
         }
-        offset+=20;
-        String seeLogText = I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.clientLog.getName());
-        this.drawCenteredString(this.fontRenderer, seeLogText, this.width / 2, offset, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }
