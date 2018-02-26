@@ -680,20 +680,9 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         Vec3d vec = new Vec3d(0.0D, 0.0D, 0.0D);
         int decay = quantaPerBlock - getQuantaValue(world, pos);
 
-        for (int side = 0; side < 4; ++side)
+        for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
         {
-            int x2 = pos.getX();
-            int z2 = pos.getZ();
-
-            switch (side)
-            {
-                case 0: --x2; break;
-                case 1: --z2; break;
-                case 2: ++x2; break;
-                case 3: ++z2; break;
-            }
-
-            BlockPos pos2 = new BlockPos(x2, pos.getY(), z2);
+            BlockPos pos2 = pos.offset(side);
             int otherDecay = quantaPerBlock - getQuantaValue(world, pos2);
             if (otherDecay >= quantaPerBlock)
             {
@@ -703,14 +692,14 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                     if (otherDecay >= 0)
                     {
                         int power = otherDecay - (decay - quantaPerBlock);
-                        vec = vec.addVector((pos2.getX() - pos.getX()) * power, 0, (pos2.getZ() - pos.getZ()) * power);
+                        vec = vec.addVector(side.getFrontOffsetX() * power, 0, side.getFrontOffsetZ() * power);
                     }
                 }
             }
             else if (otherDecay >= 0)
             {
                 int power = otherDecay - decay;
-                vec = vec.addVector((pos2.getX() - pos.getX()) * power, 0, (pos2.getZ() - pos.getZ()) * power);
+                vec = vec.addVector(side.getFrontOffsetX() * power, 0, side.getFrontOffsetZ() * power);
             }
         }
 
