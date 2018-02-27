@@ -678,17 +678,17 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public Vec3d getFlowVector(IBlockAccess world, BlockPos pos)
     {
         Vec3d vec = new Vec3d(0.0D, 0.0D, 0.0D);
-        int decay = quantaPerBlock - getQuantaValue(world, pos);
+        int decay = getFlowDecay(world, pos);
 
         for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
         {
-            BlockPos pos2 = pos.offset(side);
-            int otherDecay = quantaPerBlock - getQuantaValue(world, pos2);
+            BlockPos offset = pos.offset(side);
+            int otherDecay = getFlowDecay(world, offset);
             if (otherDecay >= quantaPerBlock)
             {
-                if (!world.getBlockState(pos2).getMaterial().blocksMovement())
+                if (!world.getBlockState(offset).getMaterial().blocksMovement())
                 {
-                    otherDecay = quantaPerBlock - getQuantaValue(world, pos2.down());
+                    otherDecay = getFlowDecay(world, offset.up(densityDir));
                     if (otherDecay >= 0)
                     {
                         int power = otherDecay - (decay - quantaPerBlock);
@@ -703,25 +703,31 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             }
         }
 
-        if (world.getBlockState(pos.up()).getBlock() == this)
+        if (hasVerticalFlow(world, pos))
         {
-            boolean flag =
-                causesDownwardCurrent(world, pos.add( 0,  0, -1), EnumFacing.NORTH) ||
-                causesDownwardCurrent(world, pos.add( 0,  0,  1), EnumFacing.SOUTH) ||
-                causesDownwardCurrent(world, pos.add(-1,  0,  0), EnumFacing.WEST) ||
-                causesDownwardCurrent(world, pos.add( 1,  0,  0), EnumFacing.EAST) ||
-                causesDownwardCurrent(world, pos.add( 0,  1, -1), EnumFacing.NORTH) ||
-                causesDownwardCurrent(world, pos.add( 0,  1,  1), EnumFacing.SOUTH) ||
-                causesDownwardCurrent(world, pos.add(-1,  1,  0), EnumFacing.WEST) ||
-                causesDownwardCurrent(world, pos.add( 1,  1,  0), EnumFacing.EAST);
-
-            if (flag)
+            for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
             {
-                vec = vec.normalize().addVector(0.0D, -6.0D, 0.0D);
+                BlockPos offset = pos.offset(side);
+                if (causesDownwardCurrent(world, offset, side) || causesDownwardCurrent(world, offset.down(densityDir), side))
+                {
+                    vec = vec.normalize().addVector(0.0, 6.0 * densityDir, 0.0);
+                    break;
+                }
             }
         }
-        vec = vec.normalize();
-        return vec;
+
+        return vec.normalize();
+    }
+
+    private int getFlowDecay(IBlockAccess world, BlockPos pos)
+    {
+        int quantaValue = getQuantaValue(world, pos);
+        return quantaValue > 0 && hasVerticalFlow(world, pos) ? 0 : quantaPerBlock - quantaValue;
+    }
+
+    private boolean hasVerticalFlow(IBlockAccess world, BlockPos pos)
+    {
+        return world.getBlockState(pos.down(densityDir)).getBlock() == this;
     }
 
     private boolean causesDownwardCurrent(IBlockAccess world, BlockPos pos, EnumFacing face)
