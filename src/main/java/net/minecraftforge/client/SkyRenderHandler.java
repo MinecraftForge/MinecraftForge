@@ -19,27 +19,21 @@
 
 package net.minecraftforge.client;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 
 /**
  * Class which handles sky rendering. Sky renderer can be registered here,
@@ -75,6 +69,18 @@ public class SkyRenderHandler
     }
 
     /**
+     * Sets renderer priority for certain pass and id if it exists.
+     * This is to only change the priority of a renderer, usually for vanilla.
+     * @param pass the sky render pass
+     * @param id the id to unregister
+     * @param priority the priority for the renderer
+     * */
+    public void setRendererPriority(SkyRenderPass pass, ResourceLocation id, double priority)
+    {
+        renderers.get(pass).setRendererPriority(id, priority);
+    }
+
+    /**
      * Unregisters vanilla sky renderer for certain pass and id.
      * This will only remove the renderer if it's the vanilla one.
      * @param pass the sky render pass
@@ -105,7 +111,7 @@ public class SkyRenderHandler
     private static class PartSkyRenderer
     {
         Map<ResourceLocation, RenderHandler> defHandlers;
-        SortedMap<ResourceLocation, RenderHandler> handlers = Maps.newTreeMap();
+        Map<ResourceLocation, RenderHandler> handlers = Maps.newHashMap();
 
         PartSkyRenderer(Map<ResourceLocation, RenderHandler> defaultHandlers)
         {
@@ -122,6 +128,13 @@ public class SkyRenderHandler
             else handlers.remove(id);
         }
 
+        void setRendererPriority(ResourceLocation id, double priority)
+        {
+            RenderHandler current = handlers.get(id);
+            if(current != null)
+                handlers.put(id, new RenderHandler(current.handler, priority));
+        }
+
         IRenderHandler unregisterVanillaRenderer(ResourceLocation id)
         {
             if(handlers.containsKey(id) && defHandlers.get(id) == handlers.get(id))
@@ -136,7 +149,9 @@ public class SkyRenderHandler
 
         void render(float partialTicks, WorldClient world, Minecraft mc)
         {
-            for(RenderHandler handler : handlers.values())
+            List<RenderHandler> sorted = Lists.newArrayList(handlers.values());
+            Collections.sort(sorted);
+            for(RenderHandler handler : sorted)
             {
                 handler.handler.render(partialTicks, world, mc);
             }
@@ -158,7 +173,7 @@ public class SkyRenderHandler
         public int compareTo(RenderHandler o)
         {
             // Higher priority comes first
-            return -Comparator.<RenderHandler>comparingDouble(k -> k.priority).compare(this, o);
+            return Comparator.<RenderHandler>comparingDouble(k -> k.priority).reversed().compare(this, o);
         }
     }
 
