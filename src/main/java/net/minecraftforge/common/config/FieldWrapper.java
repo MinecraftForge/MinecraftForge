@@ -4,12 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
-import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -76,7 +73,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         {
             super(category, field, instance);
 
-            this.baseName = this.category + "." + this.name + ".";
+            this.baseName = (this.category == null) ? "" : (this.category + ".") + this.name.toLowerCase(Locale.ENGLISH) + ".";
 
             try
             {
@@ -126,7 +123,7 @@ public abstract class FieldWrapper implements IFieldWrapper
             Iterator<String> it = keys.iterator();
             for (int i = 0; i < keyArray.length; i++)
             {
-                keyArray[i] = category + "." + name + "." + it.next();
+                keyArray[i] = this.baseName + it.next();
             }
 
             return keyArray;
@@ -153,7 +150,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public boolean handlesKey(String key)
         {
-            if (name == null)
+            if (key == null)
                 return false;
             return key.startsWith(this.baseName);
         }
@@ -171,7 +168,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public String getCategory()
         {
-            return category + "." + name;
+            return (this.category == null) ? "" : (this.category + ".") + this.name.toLowerCase(Locale.ENGLISH);
         }
 
         /**
