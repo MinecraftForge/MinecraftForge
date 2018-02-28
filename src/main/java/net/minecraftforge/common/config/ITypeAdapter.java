@@ -46,13 +46,7 @@ interface ITypeAdapter
      */
 	Object getValue(Property prop);
 
-    /**
-     * @return the properties type, see {@link net.minecraftforge.common.config.Property.Type}
-     */
     Type getType();
 
-    /**
-     * @return true, if the type adapter adapts an array
-     */
     boolean isArrayAdapter();
 }

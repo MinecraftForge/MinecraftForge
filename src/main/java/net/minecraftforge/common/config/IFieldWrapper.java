@@ -2,6 +2,8 @@ package net.minecraftforge.common.config;
 
 /**
  * The objects are expected to get their wrapped field, the owning class, instance and category string on initialization.
+ * In general: The key is the fully qualified property name, where each subcategory is appended with a dot.
+ * i.e: general.map.isPresent
  */
 public interface IFieldWrapper
 {
@@ -50,7 +52,8 @@ public interface IFieldWrapper
     void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart);
     
     /**
-     * @return the category name in which the entries should be saved.
+     * i.e. general.map in the example above
+     * @return the category name in which the entries should be saved. This includes the parent categories
      */
     String getCategory();
 }

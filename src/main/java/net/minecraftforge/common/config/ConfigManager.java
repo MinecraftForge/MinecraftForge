@@ -218,7 +218,7 @@ public class ConfigManager
     {
         for (Field f : cls.getDeclaredFields())
         {
-            if (!Modifier.isPublic(f.getModifiers())) //Allow modders to have private field for internal data
+            if (!Modifier.isPublic(f.getModifiers()))
                 continue;
 
             //Only the root class may have static fields. Otherwise category tree nodes of the same type would share the
@@ -226,11 +226,9 @@ public class ConfigManager
             if (Modifier.isStatic(f.getModifiers()) != (instance == null))
                 continue;
 
-            //Allow fields to be annotated with @Config.Ignore to be ignored, i.e. to allow access to preprocessed data
             if (f.isAnnotationPresent(Config.Ignore.class))
                 continue;
 
-            //Check for properties all properties can have (comment and language key, requiresMcRestart and requiresWorldRestart)
             String comment = null;
             Comment ca = f.getAnnotation(Comment.class);
             if (ca != null)
@@ -244,20 +242,18 @@ public class ConfigManager
             boolean requiresMcRestart = f.isAnnotationPresent(Config.RequiresMcRestart.class);
             boolean requiresWorldRestart = f.isAnnotationPresent(Config.RequiresWorldRestart.class);
 
-            if (FieldWrapper.hasWrapperFor(f)) //Access the field if we have a wrapper for it (i.e. primitives, enums, maps or arrays)
+            if (FieldWrapper.hasWrapperFor(f)) //Wrappers exist for primitives, enums, maps and arrays
             {
                 if (Strings.isNullOrEmpty(category))
                     throw new RuntimeException("An empty category may not contain anything but objects representing categories!");
                 try
                 {
-                    //Get the wrapper for the field type, the type adapter for serialization and the property type for the property setup
                     IFieldWrapper wrapper = FieldWrapper.get(instance, f, category);
                     ITypeAdapter adapt = wrapper.getTypeAdapter();
                     Property.Type propType = adapt.getType();
 
                     for (String key : wrapper.getKeys()) //Iterate the fully qualified property names the field provides
                     {
-                        //We need the last part of the key to interface with the property code
                         String suffix = StringUtils.replaceOnce(key, wrapper.getCategory() + Configuration.CATEGORY_SPLITTER, "");
 
                         boolean existed = exists(cfg, wrapper.getCategory(), suffix);
@@ -288,23 +284,22 @@ public class ConfigManager
 
                     for (Property property : confCat.getOrderedValues()) //Iterate the properties to check for new data from the config side
                     {
-                        //We need the fully qualified name
                         String key = confCat.getQualifiedName() + Configuration.CATEGORY_SPLITTER + property.getName();
-                        if (!wrapper.handlesKey(key)) //Ignore this property if we can't handle it
+                        if (!wrapper.handlesKey(key))
                             continue;
 
-                        if (loading || !wrapper.hasKey(key)) //Add new entries to the field, i.e Maps
+                        if (loading || !wrapper.hasKey(key))
                         {
                             Object value = wrapper.getTypeAdapter().getValue(property);
                             wrapper.setValue(key, value);
                         }
                     }
 
-                    if (loading) //Doing this after the loops. The wrapper should set cosmetic stuff.
+                    if (loading)
                         wrapper.setupConfiguration(cfg, comment, langKey, requiresMcRestart, requiresWorldRestart);
 
                 }
-                catch (Exception e) //If anything goes wrong, add the errored field and class.
+                catch (Exception e)
                 {
                     String format = "Error syncing field '%s' of class '%s'!";
                     String error = String.format(format, f.getName(), cls.getName());
@@ -320,7 +315,6 @@ public class ConfigManager
                 }
                 catch (IllegalAccessException e)
                 {
-                    //This should never happen. Previous checks should eliminate this.
                     throw new RuntimeException(e);
                 }
 
@@ -332,10 +326,10 @@ public class ConfigManager
                 confCat.setRequiresMcRestart(requiresMcRestart);
                 confCat.setRequiresWorldRestart(requiresWorldRestart);
 
-                sync(cfg, f.getType(), modid, sub, loading, newInstance); //Sync the object
+                sync(cfg, f.getType(), modid, sub, loading, newInstance);
             }
             else
-            { //This means we do not support this field type, or something went wrong
+            {
                 String format = "Can't handle field '%s' of class '%s': Unknown type.";
                 String error = String.format(format, f.getName(), cls.getCanonicalName());
                 throw new RuntimeException(error);
