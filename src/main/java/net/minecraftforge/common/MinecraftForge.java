@@ -88,8 +88,6 @@ public class MinecraftForge
        OreDictionary.getOreName(0);
 
        UsernameCache.load();
-       // Load before all the mods, so MC owns the MC fluids
-       FluidRegistry.validateFluidRegistry();
        ForgeHooks.initTools();
 
        //For all the normal CrashReport classes to be defined. We're in MC's classloader so this should all be fine

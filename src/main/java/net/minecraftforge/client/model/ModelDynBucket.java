@@ -50,6 +50,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -174,8 +175,8 @@ public final class ModelDynBucket implements IModel
     @Override
     public ModelDynBucket process(ImmutableMap<String, String> customData)
     {
-        String fluidName = customData.get("fluid");
-        Fluid fluid = FluidRegistry.getFluid(fluidName);
+        ResourceLocation fluidName = new ResourceLocation(customData.get("fluid"));
+        Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
 
         if (fluid == null) fluid = this.fluid;
 
@@ -395,7 +396,7 @@ public final class ModelDynBucket implements IModel
             BakedDynBucket model = (BakedDynBucket)originalModel;
 
             Fluid fluid = fluidStack.getFluid();
-            String name = fluid.getName();
+            String name = fluid.getRegistryName().toString();
 
             if (!model.cache.containsKey(name))
             {

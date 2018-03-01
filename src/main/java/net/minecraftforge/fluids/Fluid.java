@@ -37,6 +37,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.item.EnumRarity;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -54,12 +55,9 @@ import net.minecraft.item.EnumRarity;
  * water.
  *
  */
-public class Fluid
+public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
 {
     public static final int BUCKET_VOLUME = 1000;
-
-    /** The unique identification name for this fluid. */
-    protected final String fluidName;
 
     /** The unlocalized name of this fluid. */
     protected String unlocalizedName;
@@ -138,22 +136,20 @@ public class Fluid
      */
     protected int color = 0xFFFFFFFF;
 
-    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, Color color)
+    public Fluid(ResourceLocation still, ResourceLocation flowing, Color color)
     {
-        this(fluidName, still, flowing);
+        this(still, flowing);
         this.setColor(color);
     }
 
-    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, int color)
+    public Fluid(ResourceLocation still, ResourceLocation flowing, int color)
     {
-        this(fluidName, still, flowing);
+        this(still, flowing);
         this.setColor(color);
     }
     
-    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing)
+    public Fluid(ResourceLocation still, ResourceLocation flowing)
     {
-        this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
-        this.unlocalizedName = fluidName;
         this.still = still;
         this.flowing = flowing;
     }
@@ -173,7 +169,7 @@ public class Fluid
         else
         {
             FMLLog.log.warn("A mod has attempted to assign Block {} to the Fluid '{}' but this Fluid has already been linked to the Block {}. "
-                    + "You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.", block, fluidName, this.block);
+                    + "You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.", block, this.getRegistryName(), this.block);
         }
         return this;
     }
@@ -236,11 +232,6 @@ public class Fluid
     {
         this.color = color;
         return this;
-    }
-
-    public final String getName()
-    {
-        return this.fluidName;
     }
 
     public final Block getBlock()

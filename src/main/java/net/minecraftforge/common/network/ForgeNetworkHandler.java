@@ -52,6 +52,5 @@ public class ForgeNetworkHandler
         FMLEmbeddedChannel clientChannel = channelPair.get(Side.CLIENT);
         String handlerName = clientChannel.findChannelHandlerNameForType(ForgeRuntimeCodec.class);
         clientChannel.pipeline().addAfter(handlerName, "DimensionHandler", new DimensionMessageHandler());
-        clientChannel.pipeline().addAfter(handlerName, "FluidIdRegistryHandler", new FluidIdRegistryMessageHandler());
     }
 }

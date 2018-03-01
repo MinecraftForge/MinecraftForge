@@ -29,7 +29,6 @@ public class ServerToClientConnectionEstablishedHandler extends ChannelInboundHa
     {
         if (evt instanceof NetworkHandshakeEstablished)
         {
-            ctx.writeAndFlush(new ForgeMessage.FluidIdMapMessage());
             return;
         }
         // pass it forward
