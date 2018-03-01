@@ -66,7 +66,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -297,6 +305,204 @@
+@@ -297,6 +305,218 @@
      {
      }
  
@@ -229,9 +229,23 @@
 +    }
 +
 +    /**
++     * If the TileEntitySpecialRenderer associated with this TileEntity can be batched in with another renderers in this pass, and won't access the GL state.
++     * If TileEntity returns true, then TESR should have the same functionality as (and probably extend) the FastTESR class.
++     *
++     * @param pass either 0 or 1, for opaque and translucent rendering pass respectively
++     */
++    public boolean hasFastRenderer(int pass)
++    {
++        return hasFastRenderer();
++    }
++
++    /**
 +     * If the TileEntitySpecialRenderer associated with this TileEntity can be batched in with another renderers, and won't access the GL state.
 +     * If TileEntity returns true, then TESR should have the same functionality as (and probably extend) the FastTESR class.
++     *
++     * @deprecated Use {@link TileEntity#hasFastRenderer(int)} instead. To be removed in 1.13.
 +     */
++    @Deprecated
 +    public boolean hasFastRenderer()
 +    {
 +        return false;

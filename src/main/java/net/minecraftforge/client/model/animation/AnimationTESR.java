@@ -55,7 +55,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
         if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
         IBlockAccess world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
-        IBlockState state = world.getBlockState(pos);
+        IBlockState state = world.getBlockState(pos).getActualState(world, pos);
         if(state.getPropertyKeys().contains(Properties.StaticProperty))
         {
             state = state.withProperty(Properties.StaticProperty, false);
