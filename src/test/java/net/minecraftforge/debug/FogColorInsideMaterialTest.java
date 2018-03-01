@@ -20,6 +20,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidDictionary;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -46,13 +47,10 @@ public class FogColorInsideMaterialTest
         }
     }
 
-    public static final Fluid SLIME = new Fluid("slime", new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow")) {
-        @Override
-        public int getColor()
-        {
-            return color;
-        }
-    };
+    @ObjectHolder("slime")
+    public static final Fluid SLIME = null;
+    @ObjectHolder("test_fluid")
+    public static final Fluid FLUID = null;
 
     @ObjectHolder("slime")
     public static final BlockFluidBase SLIME_BLOCK = null;
@@ -69,9 +67,21 @@ public class FogColorInsideMaterialTest
     {
         if (ENABLED)
         {
-            FluidRegistry.registerFluid(SLIME);
+            FluidDictionary.registerFluid(SLIME, "slime");
             FluidRegistry.addBucketForFluid(SLIME);
         }
+    }
+
+    @SubscribeEvent
+    public static void registerFluids(RegistryEvent.Register<Fluid> event)
+    {
+        event.getRegistry().registerAll(new Fluid(new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow")) {
+            @Override
+            public int getColor()
+            {
+                return color;
+            }
+        }.setUnlocalizedName("slime").setRegistryName(RES_LOC), new Fluid(Blocks.WATER.getRegistryName(), Blocks.FLOWING_WATER.getRegistryName()).setUnlocalizedName("fog_test").setRegistryName(testFluidRegistryName));
     }
 
     @SubscribeEvent
@@ -80,9 +90,7 @@ public class FogColorInsideMaterialTest
         if (ENABLED)
         {
             event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
-            Fluid fluid = new Fluid("fog_test", Blocks.WATER.getRegistryName(), Blocks.FLOWING_WATER.getRegistryName());
-            FluidRegistry.registerFluid(fluid);
-            Block fluidBlock = new BlockFluidClassic(fluid, Material.WATER)
+            Block fluidBlock = new BlockFluidClassic(FLUID, Material.WATER)
             {
                 @Override
                 public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)

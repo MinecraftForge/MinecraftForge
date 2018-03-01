@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
 +++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
-@@ -264,6 +264,10 @@
+@@ -264,6 +264,9 @@
          };
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151129_at, ibehaviordispenseitem);
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
@@ -18,7 +18,7 @@
              func_179868_d();
              SoundEvent.func_187504_b();
              Block.func_149671_p();
-@@ -524,6 +528,8 @@
+@@ -524,6 +528,9 @@
                      field_179871_c.error("Errors with built-in loot tables");
                  }
              }

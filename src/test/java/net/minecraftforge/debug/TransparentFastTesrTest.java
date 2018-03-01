@@ -38,6 +38,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -143,7 +144,7 @@ public class TransparentFastTesrTest
 
     private static Optional<Fluid> getNthFluid(int meta)
     {
-        return FluidRegistry.getRegisteredFluids().values().stream().skip(meta).findFirst();
+        return ForgeRegistries.FLUIDS.getValues().stream().skip(meta).findFirst();
     }
 
     private static final Block testBlock = new BlockContainer(Material.CORAL)
@@ -190,7 +191,7 @@ public class TransparentFastTesrTest
         @Override
         public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items)
         {
-            final int fluidCount = Math.min(FluidRegistry.getRegisteredFluids().size(), 15);
+            final int fluidCount = Math.min(ForgeRegistries.FLUIDS.getValues().size(), 15);
             for (int i = 0; i < fluidCount; i++)
                 items.add(new ItemStack(this, 1, i));
         }
@@ -219,7 +220,7 @@ public class TransparentFastTesrTest
                     final Optional<Fluid> nthFluid = getNthFluid(stack.getMetadata());
                     if (nthFluid.isPresent())
                     {
-                        tooltip.add("Fluid: " + nthFluid.get().getName());
+                        tooltip.add("Fluid: " + nthFluid.get().getUnlocalizedName());
                     }
                 }
             }

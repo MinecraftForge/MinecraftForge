@@ -56,11 +56,11 @@ public class FluidDictionary
     
     public static boolean hasName(Fluid fluid, String name)
     {
-    	if (FLUID_TO_NAMES.containsKey(fluid))
-    	{
-    		return FLUID_TO_NAMES.get(fluid).contains(name.toLowerCase(Locale.ENGLISH));
-    	}
-    	return false;
+        if (FLUID_TO_NAMES.containsKey(fluid))
+        {
+            return FLUID_TO_NAMES.get(fluid).contains(name.toLowerCase(Locale.ENGLISH));
+        }
+        return false;
     }
     
     public static NonNullList<String> getNames(Fluid fluid)

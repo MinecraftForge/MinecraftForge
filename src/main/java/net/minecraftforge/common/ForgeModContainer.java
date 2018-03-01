@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
@@ -31,19 +33,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Nullable;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 
 import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.item.Item;
@@ -52,8 +46,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -69,10 +61,15 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.registries.ForgeRegistry.Snapshot;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.server.command.ForgeCommand;
 
 import com.google.common.collect.ImmutableList;
@@ -103,14 +100,8 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.registries.ForgeRegistry.Snapshot;
-import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.RegistryManager;
-import net.minecraftforge.server.command.ForgeCommand;
+
+import javax.annotation.Nullable;
 
 @EventBusSubscriber(modid = "forge")
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
@@ -554,7 +545,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
     {
         DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
-        if (tag.hasKey("DefaultFluidList", 9)) //Load Pre-1.12 Fluids
+        if (tag.hasKey("DefaultFluidList", 9)) //Load Pre-1.13 Fluids
         {
             Map<ResourceLocation, Snapshot> snapshots = RegistryManager.ACTIVE.takeSnapshot(false);
             Snapshot snapshot = snapshots.get(GameData.FLUIDS);
@@ -562,7 +553,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             for (NBTBase nbt : tag.getTagList("DefaultFluidList", 8))
             {
                 ResourceLocation name = new ResourceLocation(((NBTTagString)nbt).getString());
-                if(snapshot.ids.containsKey(name))
+                if (snapshot.ids.containsKey(name))
                     fluidList.add(name);
             }
             for (Entry<ResourceLocation, Integer> entry : snapshot.ids.entrySet())

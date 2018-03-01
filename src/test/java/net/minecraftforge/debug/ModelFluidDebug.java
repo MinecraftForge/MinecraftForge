@@ -31,7 +31,7 @@ public class ModelFluidDebug
     public static final String MODID = "forgedebugmodelfluid";
     public static final String VERSION = "1.0";
 
-    public static final boolean ENABLE = false;
+    public static final boolean ENABLE = true;
     private static ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID + ":" + TestFluidBlock.name, "fluid");
     private static ModelResourceLocation gasLocation = new ModelResourceLocation(MODID + ":" + TestFluidBlock.name, "gas");
     private static ModelResourceLocation milkLocation = new ModelResourceLocation(MODID + ":" + TestFluidBlock.name, "milk");
@@ -48,37 +48,31 @@ public class ModelFluidDebug
     @ObjectHolder(MilkFluidBlock.name)
     public static final Item MILK_ITEM = null;
 
-    @ObjectHolder(FluidMilk.name)
-    public static final Fluid MILK = null;
-    @ObjectHolder(TestFluid.name)
-    public static final Fluid FLUID = null;
-    @ObjectHolder(TestGas.name)
-    public static final Fluid GAS = null;
+    //Used in DynBucketTest/FluidPlacementTest, TODO: Make this a full registry with @ObjectHolder?
+    public static final Fluid MILK = new Fluid(new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow")).setUnlocalizedName("milk").setRegistryName("milk");
+    public static final Fluid FLUID = new TestFluid();
+    public static final Fluid GAS = new TestGas();
 
 
     @Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
-        @SuppressWarnings("static-access")
         @SubscribeEvent
         public static void registerFluids(RegistryEvent.Register<Fluid> event)
         {
-            if (!ENABLE)
-                return;
-            FluidMilk milk = new FluidMilk();
-            TestFluid fluid = new TestFluid();
-            TestGas gas = new TestGas();
-            event.getRegistry().registerAll(milk, fluid, gas);
-            FluidDictionary.registerFluid(milk, "milk");
-            FluidDictionary.registerFluid(fluid, fluid.name);
-            FluidDictionary.registerFluid(gas, gas.name);
+            event.getRegistry().registerAll(FLUID, GAS, MILK);
+            FluidDictionary.registerFluid(MILK, "milk");
         }
-        
+
         @SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
             if (!ENABLE)
                 return;
+
+            //TODO: Make FluidRegistry a full registry?
+            //Make a delegate system for FluidBlocks/Fluid Stacks?
+            //Fluids must be registered before a FluidStack can be made. Which is done in the block constructor
             event.getRegistry().registerAll(
                 new TestFluidBlock(),
                 new TestGasBlock(),
@@ -138,19 +132,6 @@ public class ModelFluidDebug
         }
     }
 
-    public static final class FluidMilk extends Fluid
-    {
-        public static final String name = "milk";
-        
-        private FluidMilk()
-        {
-            super(new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_still"), new ResourceLocation(ForgeVersion.MOD_ID, "blocks/milk_flow"));
-            
-            setUnlocalizedName(name);
-            setRegistryName(name);
-        }
-    }
-    
     public static final class TestFluid extends Fluid
     {
         public static final String name = "testfluid";
@@ -158,9 +139,9 @@ public class ModelFluidDebug
         private TestFluid()
         {
             super(new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
-            
-            setUnlocalizedName(name);
-            setRegistryName(name);
+        
+            this.setUnlocalizedName(name);
+            this.setRegistryName(name);
         }
 
         @Override
@@ -179,9 +160,9 @@ public class ModelFluidDebug
             super(new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow"));
             density = -1000;
             isGaseous = true;
-            
-            setUnlocalizedName(name);
-            setRegistryName(name);
+        
+            this.setUnlocalizedName(name);
+            this.setRegistryName(name);
         }
 
         @Override

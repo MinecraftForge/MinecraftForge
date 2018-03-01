@@ -94,33 +94,27 @@ public class FluidStack
         {
             ResourceLocation name = new ResourceLocation(nbt.getString("Fluid"));
             if(!ForgeRegistries.FLUIDS.containsKey(name))
-            {
                 return null;
-            }
             
             stack = new FluidStack(ForgeRegistries.FLUIDS.getValue(name), nbt.getInteger("Amount"));
         }
-        //TODO Drop legacy support for 'FluidName' in 1.14 or 1.15, as it will be outdated
-        else if(nbt.hasKey("FluidName", Constants.NBT.TAG_STRING))
+        //TODO Drop legacy support for FluidName in 1.14 or 1.15
+        else if (nbt.hasKey("FluidName", Constants.NBT.TAG_STRING))
         {
             String fluidName = nbt.getString("FluidName").toLowerCase(Locale.ENGLISH);
             Fluid fluid = null;
-            for(Fluid f : ForgeRegistries.FLUIDS.getValues())
+            for (Fluid f : ForgeRegistries.FLUIDS.getValues())
             {
-                if(f.getRegistryName().getResourcePath().equals(fluidName))
+                if (f.getRegistryName().getResourcePath().equals(fluidName))
                 {
                     fluid = f;
                     break;
                 }
             }
-            if(fluid == null)
-            {
+            if (fluid == null)
                 return null;
-            }
             else
-            {
                 stack = new FluidStack(fluid, nbt.getInteger("Amount"));
-            }
         }
         else
         {
@@ -135,7 +129,7 @@ public class FluidStack
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
-        nbt.setString("Fluid", getFluid().getRegistryName().toString());
+        nbt.setString("Fluid", this.getFluid().getRegistryName().toString());
         nbt.setInteger("Amount", amount);
 
         if (tag != null)

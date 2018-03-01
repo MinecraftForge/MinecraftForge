@@ -9,6 +9,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidDictionary;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -33,7 +34,8 @@ public class FluidAdditionalFieldsTest
             FluidRegistry.enableUniversalBucket();
         }
     }
-    public static final Fluid SLIME = new Fluid("slime", new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow")).setColor(COLOR);
+    @ObjectHolder("slime")
+    public static final Fluid SLIME = null;
     @ObjectHolder("slime")
     public static final BlockFluidBase SLIME_BLOCK = null;
 
@@ -42,8 +44,17 @@ public class FluidAdditionalFieldsTest
     {
         if (ENABLED)
         {
-            FluidRegistry.registerFluid(SLIME);
+            FluidDictionary.registerFluid(SLIME, "slime");
             FluidRegistry.addBucketForFluid(SLIME);
+        }
+    }
+
+    @SubscribeEvent
+    public static void eventFluidRegistry(final RegistryEvent.Register<Fluid> event)
+    {
+        if (ENABLED)
+        {
+            event.getRegistry().register(new Fluid(new ResourceLocation(MODID, "slime_still"), new ResourceLocation(MODID, "slime_flow")).setRegistryName(RES_LOC).setColor(COLOR).setUnlocalizedName("slime"));
         }
     }
 

@@ -62,9 +62,10 @@ public class FluidPlacementTest
         {
             if (!ENABLE || !ModelFluidDebug.ENABLE)
                 return;
-            event.getRegistry().register(FiniteFluid.instance);
+            event.getRegistry().registerAll(FiniteFluid.instance);
             FluidDictionary.registerFluid(FiniteFluid.instance, FiniteFluid.name);
         }
+
         @SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
@@ -125,7 +126,7 @@ public class FluidPlacementTest
         private FiniteFluid()
         {
             super(new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
-            
+
             setUnlocalizedName(name);
             setRegistryName(name);
         }

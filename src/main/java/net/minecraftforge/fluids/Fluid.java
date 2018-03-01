@@ -22,7 +22,6 @@ package net.minecraftforge.fluids;
 import javax.annotation.Nullable;
 
 import java.awt.Color;
-import java.util.Locale;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -244,7 +243,7 @@ public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
         return block != null;
     }
 
-	/**
+    /**
      * Determines if this fluid should vaporize in dimensions where water vaporizes when placed.
      * To preserve the intentions of vanilla, fluids that can turn lava into obsidian should vaporize.
      * This prevents players from making the nether safe with a single bucket.
@@ -260,7 +259,7 @@ public class Fluid extends IForgeRegistryEntry.Impl<Fluid>
         return block.getDefaultState().getMaterial() == Material.WATER;
     }
 
-	/**
+    /**
      * Called instead of placing the fluid block if {@link WorldProvider#doesWaterVaporize()} and {@link #doesVaporize(FluidStack)} are true.
      * Override this to make your explosive liquid blow up instead of the default smoke, etc.
      * Based on {@link net.minecraft.item.ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}

@@ -19,22 +19,27 @@
 
 package net.minecraftforge.fluids;
 
+import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import net.minecraftforge.fml.common.LoaderState;
 
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.util.text.translation.I18n;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
 
 /**
  * Handles Fluid registrations. Fluids MUST be registered in order to function.
@@ -95,10 +100,9 @@ public abstract class FluidRegistry
     public static boolean addBucketForFluid(Fluid fluid)
     {
         Preconditions.checkNotNull(fluid, "Fluid cannot be null");
-        Preconditions.checkArgument(ForgeRegistries.FLUIDS.containsValue(fluid), "Cannot register bucket for unregistered Fluid %s", fluid); 
-        if(fluid == null || !ForgeRegistries.FLUIDS.containsValue(fluid)) {
+        Preconditions.checkArgument(ForgeRegistries.FLUIDS.containsValue(fluid), "Cannot register bucket for unregistered Fluid %s", fluid);
+        if (fluid == null || !ForgeRegistries.FLUIDS.containsValue(fluid))
             return false;
-        }
         return bucketFluids.add(fluid);
     }
 
@@ -110,14 +114,12 @@ public abstract class FluidRegistry
     {
         return ImmutableSet.copyOf(bucketFluids);
     }
-
+    
     public static void registerFluids()
     {
         if(!init)
         {
             ForgeRegistries.FLUIDS.registerAll(WATER, LAVA);
-            //registry.putObject(WATER.getRegistryName(), WATER);
-            //registry.putObject(LAVA.getRegistryName(), LAVA);
             FluidDictionary.registerFluid(WATER, "water");
             FluidDictionary.registerFluid(LAVA, "lava");
             init = true;

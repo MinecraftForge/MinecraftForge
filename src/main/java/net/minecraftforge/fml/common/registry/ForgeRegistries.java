@@ -65,10 +65,9 @@ public class ForgeRegistries
         VillagerRegistry.instance();
         Bootstrap.register();
     }
-    
+
     public static void initForgeRegistries()
     {
         FluidRegistry.registerFluids();
     }
-
 }
