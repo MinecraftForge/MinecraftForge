@@ -19,7 +19,12 @@
 
 package net.minecraftforge.fluids;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+
+import com.google.common.primitives.Ints;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -41,6 +46,9 @@ import javax.annotation.Nullable;
  */
 public class BlockFluidClassic extends BlockFluidBase
 {
+    protected static final List<EnumFacing> SIDES = Collections.unmodifiableList(Arrays.asList(
+            EnumFacing.WEST, EnumFacing.EAST, EnumFacing.NORTH, EnumFacing.SOUTH));
+
     protected boolean[] isOptimalFlowDirection = new boolean[4];
     protected int[] flowCost = new int[4];
 
@@ -77,8 +85,7 @@ public class BlockFluidClassic extends BlockFluidBase
             return -1;
         }
 
-        int quantaRemaining = quantaPerBlock - state.getValue(LEVEL);
-        return quantaRemaining;
+        return quantaPerBlock - state.getValue(LEVEL);
     }
 
     @Override
@@ -109,11 +116,11 @@ public class BlockFluidClassic extends BlockFluidBase
     {
         if (!isSourceBlock(world, pos) && ForgeEventFactory.canCreateFluidSource(world, pos, state, false))
         {
-            int adjacentSourceBlocks =
-                    (isSourceBlock(world, pos.north()) ? 1 : 0) +
-                    (isSourceBlock(world, pos.south()) ? 1 : 0) +
-                    (isSourceBlock(world, pos.east()) ? 1 : 0) +
-                    (isSourceBlock(world, pos.west()) ? 1 : 0);
+            int adjacentSourceBlocks = 0;
+            for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
+            {
+                if (isSourceBlock(world, pos.offset(side))) adjacentSourceBlocks++;
+            }
             if (adjacentSourceBlocks >= 2 && (world.getBlockState(pos.up(densityDir)).getMaterial().isSolid() || isSourceBlock(world, pos.up(densityDir))))
                 world.setBlockState(pos, state.withProperty(LEVEL, 0));
         }
@@ -136,11 +143,10 @@ public class BlockFluidClassic extends BlockFluidBase
             else
             {
                 int maxQuanta = -100;
-                maxQuanta = getLargerQuanta(world, pos.add(-1, 0,  0), maxQuanta);
-                maxQuanta = getLargerQuanta(world, pos.add( 1, 0,  0), maxQuanta);
-                maxQuanta = getLargerQuanta(world, pos.add( 0, 0, -1), maxQuanta);
-                maxQuanta = getLargerQuanta(world, pos.add( 0, 0,  1), maxQuanta);
-
+                for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
+                {
+                    maxQuanta = getLargerQuanta(world, pos.offset(side), maxQuanta);
+                }
                 expQuanta = maxQuanta - 1;
             }
 
@@ -188,11 +194,10 @@ public class BlockFluidClassic extends BlockFluidBase
                 flowMeta = 1;
             }
             boolean flowTo[] = getOptimalFlowDirections(world, pos);
-
-            if (flowTo[0]) flowIntoBlock(world, pos.add(-1, 0,  0), flowMeta);
-            if (flowTo[1]) flowIntoBlock(world, pos.add( 1, 0,  0), flowMeta);
-            if (flowTo[2]) flowIntoBlock(world, pos.add( 0, 0, -1), flowMeta);
-            if (flowTo[3]) flowIntoBlock(world, pos.add( 0, 0,  1), flowMeta);
+            for (int i = 0; i < 4; i++)
+            {
+                if (flowTo[i]) flowIntoBlock(world, pos.offset(SIDES.get(i)), flowMeta);
+            }
         }
     }
 
@@ -221,22 +226,14 @@ public class BlockFluidClassic extends BlockFluidBase
         {
             flowCost[side] = 1000;
 
-            BlockPos pos2 = pos;
-
-            switch (side)
-            {
-                case 0: pos2 = pos2.add(-1, 0,  0); break;
-                case 1: pos2 = pos2.add( 1, 0,  0); break;
-                case 2: pos2 = pos2.add( 0, 0, -1); break;
-                case 3: pos2 = pos2.add( 0, 0,  1); break;
-            }
+            BlockPos pos2 = pos.offset(SIDES.get(side));
 
             if (!canFlowInto(world, pos2) || isSourceBlock(world, pos2))
             {
                 continue;
             }
 
-            if (canFlowInto(world, pos2.add(0, densityDir, 0)))
+            if (canFlowInto(world, pos2.up(densityDir)))
             {
                 flowCost[side] = 0;
             }
@@ -246,14 +243,7 @@ public class BlockFluidClassic extends BlockFluidBase
             }
         }
 
-        int min = flowCost[0];
-        for (int side = 1; side < 4; side++)
-        {
-            if (flowCost[side] < min)
-            {
-                min = flowCost[side];
-            }
-        }
+        int min = Ints.min(flowCost);
         for (int side = 0; side < 4; side++)
         {
             isOptimalFlowDirection[side] = flowCost[side] == min;
@@ -266,30 +256,19 @@ public class BlockFluidClassic extends BlockFluidBase
         int cost = 1000;
         for (int adjSide = 0; adjSide < 4; adjSide++)
         {
-            if ((adjSide == 0 && side == 1) ||
-                (adjSide == 1 && side == 0) ||
-                (adjSide == 2 && side == 3) ||
-                (adjSide == 3 && side == 2))
+            if (SIDES.get(adjSide) == SIDES.get(side).getOpposite())
             {
                 continue;
             }
 
-            BlockPos pos2 = pos;
-
-            switch (adjSide)
-            {
-                case 0: pos2 = pos2.add(-1, 0,  0); break;
-                case 1: pos2 = pos2.add( 1, 0,  0); break;
-                case 2: pos2 = pos2.add( 0, 0, -1); break;
-                case 3: pos2 = pos2.add( 0, 0,  1); break;
-            }
+            BlockPos pos2 = pos.offset(SIDES.get(adjSide));
 
             if (!canFlowInto(world, pos2) || isSourceBlock(world, pos2))
             {
                 continue;
             }
 
-            if (canFlowInto(world, pos2.add(0, densityDir, 0)))
+            if (canFlowInto(world, pos2.up(densityDir)))
             {
                 return recurseDepth;
             }
@@ -299,11 +278,7 @@ public class BlockFluidClassic extends BlockFluidBase
                 continue;
             }
 
-            int min = calculateFlowCost(world, pos2, recurseDepth + 1, adjSide);
-            if (min < cost)
-            {
-                cost = min;
-            }
+            cost = Math.min(cost, calculateFlowCost(world, pos2, recurseDepth + 1, adjSide));
         }
         return cost;
     }
@@ -342,19 +317,7 @@ public class BlockFluidClassic extends BlockFluidBase
         }
 
         int density = getDensity(world, pos);
-        if (density == Integer.MAX_VALUE)
-        {
-             return true;
-        }
-
-        if (this.density > density)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return density == Integer.MAX_VALUE || this.density > density;
     }
 
     protected int getLargerQuanta(IBlockAccess world, BlockPos pos, int compare)
