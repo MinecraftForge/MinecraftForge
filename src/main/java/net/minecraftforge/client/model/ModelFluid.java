@@ -92,7 +92,7 @@ public final class ModelFluid implements IModel
                 bakedTextureGetter.apply(fluid.getStill()),
                 bakedTextureGetter.apply(fluid.getFlowing()),
                 Optional.ofNullable(fluid.getOverlay()).map(bakedTextureGetter),
-                fluid.isGaseous(),
+                fluid.isLighterThanAir(),
                 Optional.empty()
         );
     }

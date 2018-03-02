@@ -243,6 +243,16 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return this;
     }
 
+    public final int getDensity()
+    {
+        return density;
+    }
+
+    public final int getTemperature()
+    {
+        return temperature;
+    }
+
     /**
      * Returns true if the block at (pos) is displaceable. Does not displace the block.
      */

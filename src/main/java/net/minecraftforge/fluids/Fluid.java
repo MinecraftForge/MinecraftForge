@@ -111,8 +111,6 @@ public class Fluid
     /**
      * This indicates if the fluid is gaseous.
      *
-     * Useful for rendering the fluid in containers and the world.
-     *
      * Generally this is associated with negative density fluids.
      */
     protected boolean isGaseous;
@@ -270,6 +268,16 @@ public class Fluid
     public final boolean canBePlacedInWorld()
     {
         return block != null;
+    }
+
+    public final boolean isLighterThanAir()
+    {
+        int density = this.density;
+        if (block instanceof BlockFluidBase)
+        {
+            density = ((BlockFluidBase) block).getDensity();
+        }
+        return density <= 0;
     }
 
 	/**
