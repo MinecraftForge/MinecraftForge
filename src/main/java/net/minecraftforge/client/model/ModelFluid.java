@@ -304,8 +304,8 @@ public final class ModelFluid implements IModel
                 {
                     ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
-                    builder.add(buildQuad(top, topSprite, gas, topX, topY, topZ, topU, topV));
-                    if (!fullVolume) builder.add(buildQuad(top, topSprite, !gas, topX, topY, topZ, topU, topV));
+                    builder.add(buildQuad(top, topSprite, gas, false, topX, topY, topZ, topU, topV));
+                    if (!fullVolume) builder.add(buildQuad(top, topSprite, !gas, true, topX, topY, topZ, topU, topV));
 
                     faceQuads.put(top, builder.build());
                 }
@@ -313,7 +313,7 @@ public final class ModelFluid implements IModel
                 // bottom
                 EnumFacing bottom = top.getOpposite();
                 faceQuads.put(bottom, ImmutableList.of(
-                        buildQuad(bottom, still, gas,
+                        buildQuad(bottom, still, gas, false,
                                 i -> z[i],
                                 i -> gas ? 1 : 0,
                                 i -> x[i],
@@ -337,8 +337,8 @@ public final class ModelFluid implements IModel
 
                     ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
-                    if (!useOverlay) builder.add(buildQuad(side, flowing, false, sideX, sideY, sideZ, sideU, sideV));
-                    builder.add(buildQuad(side, useOverlay ? overlay.get() : flowing, true, sideX, sideY, sideZ, sideU, sideV));
+                    if (!useOverlay) builder.add(buildQuad(side, flowing, gas, true, sideX, sideY, sideZ, sideU, sideV));
+                    builder.add(buildQuad(side, useOverlay ? overlay.get() : flowing, !gas, false, sideX, sideY, sideZ, sideU, sideV));
 
                     faceQuads.put(side, builder.build());
                 }
@@ -347,7 +347,7 @@ public final class ModelFluid implements IModel
             {
                 // inventory
                 faceQuads.put(EnumFacing.SOUTH, ImmutableList.of(
-                        buildQuad(EnumFacing.UP, still, false,
+                        buildQuad(EnumFacing.UP, still, false, false,
                                 i -> z[i],
                                 i -> x[i],
                                 i -> 0,
@@ -366,7 +366,7 @@ public final class ModelFluid implements IModel
             float get(int index);
         }
 
-        private BakedQuad buildQuad(EnumFacing side, TextureAtlasSprite texture, boolean flip, VertexParameter x, VertexParameter y, VertexParameter z, VertexParameter u, VertexParameter v)
+        private BakedQuad buildQuad(EnumFacing side, TextureAtlasSprite texture, boolean flip, boolean offset, VertexParameter x, VertexParameter y, VertexParameter z, VertexParameter u, VertexParameter v)
         {
             UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
             builder.setQuadOrientation(side);
@@ -377,7 +377,7 @@ public final class ModelFluid implements IModel
             {
                 int vertex = flip ? 3 - i : i;
                 putVertex(
-                    builder, side,
+                    builder, side, offset,
                     x.get(vertex), y.get(vertex), z.get(vertex),
                     texture.getInterpolatedU(u.get(vertex)),
                     texture.getInterpolatedV(v.get(vertex))
@@ -387,14 +387,17 @@ public final class ModelFluid implements IModel
             return builder.build();
         }
 
-        private void putVertex(UnpackedBakedQuad.Builder builder, EnumFacing side, float x, float y, float z, float u, float v)
+        private void putVertex(UnpackedBakedQuad.Builder builder, EnumFacing side, boolean offset, float x, float y, float z, float u, float v)
         {
             for(int e = 0; e < format.getElementCount(); e++)
             {
                 switch(format.getElement(e).getUsage())
                 {
                 case POSITION:
-                    float[] data = new float[]{ x - side.getDirectionVec().getX() * eps, y, z - side.getDirectionVec().getZ() * eps, 1 };
+                    float dx = offset ? side.getDirectionVec().getX() * eps : 0f;
+                    float dy = offset ? side.getDirectionVec().getY() * eps : 0f;
+                    float dz = offset ? side.getDirectionVec().getZ() * eps : 0f;
+                    float[] data = { x - dx, y - dy, z - dz, 1f };
                     if(transformation.isPresent() && transformation.get() != TRSRTransformation.identity())
                     {
                         Vector4f vec = new Vector4f(data);
