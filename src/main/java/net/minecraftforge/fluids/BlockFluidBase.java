@@ -284,14 +284,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return true;
         }
 
-        if (this.density > density)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return this.density > density;
     }
 
     /**
@@ -335,14 +328,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return true;
         }
 
-        if (this.density > density)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return this.density > density;
     }
 
     public abstract int getQuantaValue(IBlockAccess world, BlockPos pos);
@@ -639,8 +625,6 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         float total = 0;
         int count = 0;
 
-        float end = 0;
-
         for (int i = 0; i < flow.length; i++)
         {
             if (flow[i] >= quantaFraction)
@@ -656,10 +640,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             }
         }
 
-        if (end == 0)
-            end = total / count;
-
-        return end;
+        return total / count;
     }
 
     public float getFluidHeightForRender(IBlockAccess world, BlockPos pos, @Nonnull IBlockState up)
