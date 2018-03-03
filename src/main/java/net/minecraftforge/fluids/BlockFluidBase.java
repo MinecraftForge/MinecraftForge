@@ -416,8 +416,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             return super.getLightValue(state, world, pos);
         }
-        int data = state.getValue(LEVEL);
-        return (int) (data / quantaPerBlockFloat * maxScaledLight);
+        return (int) (getQuantaPercentage(world, pos) * maxScaledLight);
     }
 
     @Override

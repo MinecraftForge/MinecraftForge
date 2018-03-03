@@ -101,17 +101,6 @@ public class BlockFluidClassic extends BlockFluidBase
     }
 
     @Override
-    public int getLightValue(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
-    {
-        if (maxScaledLight == 0)
-        {
-            return super.getLightValue(state, world, pos);
-        }
-        int data = quantaPerBlock - state.getValue(LEVEL) - 1;
-        return (int) (data / quantaPerBlockFloat * maxScaledLight);
-    }
-
-    @Override
     public void updateTick(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand)
     {
         if (!isSourceBlock(world, pos) && ForgeEventFactory.canCreateFluidSource(world, pos, state, false))
