@@ -159,52 +159,77 @@ public class LoadController
 
         LoaderState oldState = state;
         state = state.transition(!errors.isEmpty());
-        if (state != desiredState && !forceState)
+        if (state != desiredState)
         {
-            Entry<String, Throwable> toThrow = null;
-            FMLLog.log.fatal("Fatal errors were detected during the transition from {} to {}. Loading cannot continue", oldState, desiredState);
-            StringBuilder sb = new StringBuilder();
-            printModStates(sb);
-            FMLLog.log.fatal(sb.toString());
-            if (errors.size()>0)
+            if (!forceState)
             {
-                FMLLog.log.fatal("The following problems were captured during this phase");
-                for (Entry<String, Throwable> error : errors.entries())
-                {
-                    String modId = error.getKey();
-                    String modName = modNames.get(modId);
-                    FMLLog.log.error("Caught exception from {} ({})", modId, error.getValue());
-                    if (error.getValue() instanceof IFMLHandledException)
-                    {
-                        toThrow = error;
-                    }
-                    else if (toThrow == null)
-                    {
-                        toThrow = error;
-                    }
-                }
+                FMLLog.log.fatal("Fatal errors were detected during the transition from {} to {}. Loading cannot continue", oldState, desiredState);
+                throw throwStoredErrors();
             }
             else
             {
-                FMLLog.log.fatal("The ForgeModLoader state engine has become corrupted. Probably, a state was missed by and invalid modification to a base class" +
-                        "ForgeModLoader depends on. This is a critical error and not recoverable. Investigate any modifications to base classes outside of" +
-                        "ForgeModLoader, especially Optifine, to see if there are fixes available.");
-                throw new RuntimeException("The ForgeModLoader state engine is invalid");
-            }
-            if (toThrow != null)
-            {
-                String modId = toThrow.getKey();
-                String modName = modNames.get(modId);
-                String errMsg = String.format("Caught exception from %s (%s)", modName, modId);
-                throw new LoaderExceptionModCrash(errMsg, toThrow.getValue());
+                FMLLog.log.info("The state engine was in incorrect state {} and forced into state {}. Errors may have been discarded.", state, desiredState);
+                forceState(desiredState);
             }
         }
-        else if (state != desiredState && forceState)
+    }
+
+    @Deprecated // TODO remove in 1.13
+    public void checkErrorsAfterAvailable()
+    {
+        checkErrors();
+    }
+
+    public void checkErrors()
+    {
+        if (errors.size() > 0)
         {
-            FMLLog.log.info("The state engine was in incorrect state {} and forced into state {}. Errors may have been discarded.", state, desiredState);
-            forceState(desiredState);
+            FMLLog.log.fatal("Fatal errors were detected during {}. Loading cannot continue.", state);
+            state = state.transition(true);
+            throw throwStoredErrors();
+        }
+    }
+
+    private RuntimeException throwStoredErrors()
+    {
+        Entry<String, Throwable> toThrow = null;
+        StringBuilder sb = new StringBuilder();
+        printModStates(sb);
+        FMLLog.log.fatal(sb.toString());
+        if (errors.size() > 0)
+        {
+            FMLLog.log.fatal("The following problems were captured during this phase");
+            for (Entry<String, Throwable> entry : errors.entries())
+            {
+                String modId = entry.getKey();
+                String modName = modNames.get(modId);
+                Throwable error = entry.getValue();
+                FMLLog.log.error("Caught exception from {} ({})", modId, modName, error);
+                if (error instanceof IFMLHandledException)
+                {
+                    toThrow = entry;
+                }
+                else if (toThrow == null)
+                {
+                    toThrow = entry;
+                }
+            }
         }
 
+        if (toThrow == null)
+        {
+            FMLLog.log.fatal("The ForgeModLoader state engine has become corrupted. Probably, a state was missed by and invalid modification to a base class" +
+                    "ForgeModLoader depends on. This is a critical error and not recoverable. Investigate any modifications to base classes outside of" +
+                    "ForgeModLoader, especially Optifine, to see if there are fixes available.");
+            throw new RuntimeException("The ForgeModLoader state engine is invalid");
+        }
+        else
+        {
+            String modId = toThrow.getKey();
+            String modName = modNames.get(modId);
+            String errMsg = String.format("Caught exception from %s (%s)", modName, modId);
+            throw new LoaderExceptionModCrash(errMsg, toThrow.getValue());
+        }
     }
 
     @Nullable
