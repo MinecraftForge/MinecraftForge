@@ -796,7 +796,7 @@
 +    private net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer teisr = null;
 +    
 +    /**
-+     * @return This Item's renderer.  Nonnull.
++     * @return This Item's renderer, or the default instance if it does not have one.
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public final net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer getTileEntityItemStackRenderer()
