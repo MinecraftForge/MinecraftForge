@@ -297,12 +297,12 @@
 +    /**
 +     * The bitwise mask indicating the minecart is boosting, as if on a powered golden rail.
 +     */
-+    public static final int BOOSTING_MASK = 0x1;
++    public static final int BOOSTING_MASK = 0b01;
 +
 +    /**
 +     * The bitwise mask indicating the minecart is slowing, as if on a un-powered golden rail.
 +     */
-+    public static final int SLOWING_MASK = 0x2;
++    public static final int SLOWING_MASK = 0b10;
 +
 +    private BlockPos getCurrentRailPosition()
 +    {
