@@ -509,10 +509,13 @@ public class ForgeBlockStateV1 extends Marker
                 // item/handheld
                 {
                     EnumMap<TransformType, TRSRTransformation> map = new EnumMap<>(TransformType.class);
+                    map.put(TransformType.GROUND,                  get(0, 2, 0, 0, 0, 0, 0.5f));
+                    map.put(TransformType.HEAD,                    get(0, 13, 7, 0, 180, 0, 1));
                     map.put(TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 4, 0.5f,         0, -90, 55, 0.85f));
                     map.put(TransformType.THIRD_PERSON_LEFT_HAND,  get(0, 4, 0.5f,         0, 90, -55, 0.85f));
                     map.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f));
                     map.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f));
+                    map.put(TransformType.FIXED,                   get(0, 0, 0, 0, 180, 0, 1));
                     builder.put("forge:default-tool", new SimpleModelState(ImmutableMap.copyOf(map)));
                 }
 
