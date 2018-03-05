@@ -82,7 +82,7 @@ public class BlockStateLoader
             {
                 case 1: // Version 1
                     ForgeBlockStateV1 v1 = GSON.fromJson(reader, ForgeBlockStateV1.class);
-                    Map<String, VariantList> variants = Maps.newHashMap();
+                    Map<String, VariantList> variants = Maps.newLinkedHashMap();
 
                     for (Entry<String, Collection<ForgeBlockStateV1.Variant>> entry : v1.variants.asMap().entrySet())
                     {   // Convert Version1 variants into vanilla variants for the ModelBlockDefinition.
@@ -200,10 +200,6 @@ public class BlockStateLoader
                     return base;
             }
 
-            // Apply rotation of base model to sub-models.
-            // If baseRot is non-null, then that rotation will be applied instead of the base model's rotation.
-            // This is used to allow replacing base model with a sub-model when there is no base model for a variant.
-            IModelState baseTr = getState();
             ImmutableMap.Builder<String, Pair<IModel, IModelState>> models = ImmutableMap.builder();
             for (Entry<String, SubModel> entry : parts.entrySet())
             {
@@ -224,7 +220,7 @@ public class BlockStateLoader
                 models.put(entry.getKey(), Pair.of(runModelHooks(model, part.smooth, part.gui3d, part.uvLock, part.getTextures(), part.getCustomData()), part.getState()));
             }
 
-            return new MultiModel(getModelLocation(), hasBase ? base : null, baseTr, models.build());
+            return new MultiModel(getModelLocation(), hasBase ? base : null, models.build());
         }
 
         @Override

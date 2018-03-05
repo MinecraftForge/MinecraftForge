@@ -29,5 +29,5 @@ public interface ITypeDiscoverer
     // main class part, followed by an optional $ and an "inner class" part. $ cannot be last, otherwise scala breaks
     public static Pattern classFile = Pattern.compile("[^\\s\\$]+(\\$[^\\s]+)?\\.class$");
 
-    public List<ModContainer> discover(ModCandidate candidate, ASMDataTable table);
+    List<ModContainer> discover(ModCandidate candidate, ASMDataTable table);
 }

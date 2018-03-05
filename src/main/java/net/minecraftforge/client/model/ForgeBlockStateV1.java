@@ -24,8 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,8 +47,9 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import java.util.Objects;
 import java.util.Optional;
-import com.google.common.collect.HashMultimap;
+
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -63,7 +63,7 @@ import com.google.gson.JsonParseException;
 public class ForgeBlockStateV1 extends Marker
 {
     ForgeBlockStateV1.Variant defaults;
-    Multimap<String, ForgeBlockStateV1.Variant> variants = HashMultimap.create();
+    Multimap<String, ForgeBlockStateV1.Variant> variants = LinkedHashMultimap.create();
 
     public static class Deserializer implements JsonDeserializer<ForgeBlockStateV1>
     {
@@ -83,8 +83,8 @@ public class ForgeBlockStateV1 extends Marker
                     throw new RuntimeException("\"defaults\" variant cannot contain a simple \"submodel\" definition.");
             }
 
-            Map<String, Map<String, ForgeBlockStateV1.Variant>> condensed = Maps.newHashMap();    // map(property name -> map(property value -> variant))
-            Multimap<String, ForgeBlockStateV1.Variant> specified = HashMultimap.create();    // Multimap containing all the states specified with "property=value".
+            Map<String, Map<String, ForgeBlockStateV1.Variant>> condensed = Maps.newLinkedHashMap();    // map(property name -> map(property value -> variant))
+            Multimap<String, ForgeBlockStateV1.Variant> specified = LinkedHashMultimap.create();    // Multimap containing all the states specified with "property=value".
 
             for (Entry<String, JsonElement> e : JsonUtils.getJsonObject(json, "variants").entrySet())
             {
@@ -103,7 +103,7 @@ public class ForgeBlockStateV1 extends Marker
                     if(obj.entrySet().iterator().next().getValue().isJsonObject())
                     {
                         // first value is a json object, so we know it's not a fully-defined variant
-                        Map<String, ForgeBlockStateV1.Variant> subs = Maps.newHashMap();
+                        Map<String, ForgeBlockStateV1.Variant> subs = Maps.newLinkedHashMap();
                         condensed.put(e.getKey(), subs);
                         for (Entry<String, JsonElement> se : e.getValue().getAsJsonObject().entrySet())
                         {
@@ -236,7 +236,7 @@ public class ForgeBlockStateV1 extends Marker
         {
             List<String> sorted = Lists.newArrayList(base.keySet());
             Collections.sort(sorted);   // Sort to get consistent results.
-            return getPermutations(sorted, base, 0, "", HashMultimap.create(), null);
+            return getPermutations(sorted, base, 0, "", LinkedHashMultimap.create(), null);
         }
 
         private List<ForgeBlockStateV1.Variant> getSubmodelPermutations(ForgeBlockStateV1.Variant baseVar, List<String> sorted, Map<String, List<ForgeBlockStateV1.Variant>> map, int depth, Map<String, ForgeBlockStateV1.Variant> parts, List<ForgeBlockStateV1.Variant> ret)
@@ -277,7 +277,7 @@ public class ForgeBlockStateV1 extends Marker
         {
             List<String> sorted = Lists.newArrayList(variants.keySet());
             Collections.sort(sorted);   // Sort to get consistent results.
-            return getSubmodelPermutations(baseVar, sorted, variants, 0, new HashMap<>(), new ArrayList<>());
+            return getSubmodelPermutations(baseVar, sorted, variants, 0, new LinkedHashMap<>(), new ArrayList<>());
         }
     }
 

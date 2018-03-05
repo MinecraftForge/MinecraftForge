@@ -122,9 +122,18 @@ def extraTxts = [
 if (project.hasProperty('forgeJenkinsPass'))
     extraTxts += changelog
 
+task extractAnnotationsVanilla(type: net.minecraftforge.gradle.tasks.TaskExtractAnnotationsText, dependsOn: deobfuscateJar) {
+    jar = deobfuscateJar.outJar
+    output = 'build/vanilla_annotations.json'
+}
+
 outputJar {
     classifier = 'universal'
     from extraTxts
+    from(extractAnnotationsVanilla){
+        into 'META-INF'
+    }
+    dependsOn extractAnnotationsVanilla
 
     // add crowdin locales
     from { crowdin.getDidWork() ? zipTree(crowdin.output) : null}
@@ -392,7 +401,7 @@ task resetBuildNumber << {
     ciWriteBuildNumber.execute()
 }
 // re-add old tasks for jenkins compat
-// should be remvoed, and the jenkisn fixed when no longer building with FG 1.2
+// should be removed, and the jenkins fixed when no longer building with FG 1.2
 task setupForge { dependsOn 'setup', 'ciWriteBuildNumber' }
 task buildPackages { dependsOn 'build' }
 

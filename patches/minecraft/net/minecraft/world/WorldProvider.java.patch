@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,323 @@
+@@ -241,6 +216,352 @@
          return new WorldBorder();
      }
  
@@ -116,6 +116,22 @@
 +            return 8.0;
 +        }
 +        return 1.0;
++    }
++
++    /**
++     * If this method returns true, then chunks received by the client will
++     * have {@link net.minecraft.world.chunk.Chunk#resetRelightChecks} called
++     * on them, queuing lighting checks for all air blocks in the chunk (and
++     * any adjacent light-emitting blocks).
++     *
++     * Returning true here is recommended if the chunk generator used also
++     * does this for newly generated chunks.
++     *
++     * @return true if lighting checks should be performed
++     */
++    public boolean shouldClientCheckLighting()
++    {
++        return !(this instanceof WorldProviderSurface);
 +    }
 +
 +    @Nullable
@@ -227,6 +243,19 @@
 +    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities() {
 +        return null;
 +    }
++
++    /**
++     * Called on the client to get the music type to play when in this world type.
++     * At the time of calling, the client player and world are guaranteed to be non-null
++     * @return null to use vanilla logic, otherwise a MusicType to play in this world
++     */
++    @Nullable
++    @SideOnly(Side.CLIENT)
++    public net.minecraft.client.audio.MusicTicker.MusicType getMusicType()
++    {
++        return null;
++    }
++
 +    /*======================================= Start Moved From World =========================================*/
 +
 +    public Biome getBiomeForCoords(BlockPos pos)
