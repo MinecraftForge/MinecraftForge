@@ -29,6 +29,7 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
@@ -387,12 +388,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Nonnull
     public Vec3d modifyAcceleration(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull Entity entity, @Nonnull Vec3d vec)
     {
-        if (densityDir > 0) return vec;
-        Vec3d vec_flow = this.getFlowVector(world, pos);
-        return vec.addVector(
-                vec_flow.x * (quantaPerBlock * 4),
-                vec_flow.y * (quantaPerBlock * 4),
-                vec_flow.z * (quantaPerBlock * 4));
+        return densityDir > 0 ? vec : vec.add(getFlowVector(world, pos));
     }
 
     @Override
@@ -416,16 +412,6 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     {
         return false;
     }
-
-    /* Never used...?
-    @Override
-    public float getBlockBrightness(World world, BlockPos pos)
-    {
-        float lightThis = world.getLightBrightness(pos);
-        float lightUp = world.getLightBrightness(x, y + 1, z);
-        return lightThis > lightUp ? lightThis : lightUp;
-    }
-    */
 
     @Override
     public int getPackedLightmapCoords(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
@@ -720,9 +706,17 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return world.getBlockState(pos.down(densityDir)).getBlock() == this;
     }
 
-    private boolean causesDownwardCurrent(IBlockAccess world, BlockPos pos, EnumFacing face)
+    protected boolean causesDownwardCurrent(IBlockAccess world, BlockPos pos, EnumFacing face)
     {
-        return world.getBlockState(pos).getBlockFaceShape(world, pos, face) == BlockFaceShape.SOLID;
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+
+        if (block == this) return false;
+        if (face == EnumFacing.UP) return true;
+        if (state.getMaterial() == Material.ICE) return false;
+
+        boolean flag = isExceptBlockForAttachWithPiston(block) || block instanceof BlockStairs;
+        return !flag && state.getBlockFaceShape(world, pos, face) == BlockFaceShape.SOLID;
     }
 
     /* IFluidBlock */
