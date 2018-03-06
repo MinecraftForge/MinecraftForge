@@ -449,11 +449,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             return false;
         }
-        if(densityDir == -1 && side == EnumFacing.UP)
-        {
-            return true;
-        }
-        if(densityDir == 1 && side == EnumFacing.DOWN)
+        if (side == (densityDir < 0 ? EnumFacing.UP : EnumFacing.DOWN))
         {
             return true;
         }
@@ -712,7 +708,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         Block block = state.getBlock();
 
         if (block == this) return false;
-        if (face == EnumFacing.UP) return true;
+        if (face == (densityDir < 0 ? EnumFacing.UP : EnumFacing.DOWN)) return true;
         if (state.getMaterial() == Material.ICE) return false;
 
         boolean flag = isExceptBlockForAttachWithPiston(block) || block instanceof BlockStairs;
