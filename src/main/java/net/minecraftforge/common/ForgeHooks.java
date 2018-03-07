@@ -79,7 +79,6 @@ import net.minecraft.network.play.server.SPacketRecipeBook.State;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
-import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -1386,22 +1385,5 @@ public class ForgeHooks
     public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
-    }
-    
-    // FORGE - Fix for MC-92916
-    public static void updatePlayersOnChunkUnload(World world, ClassInheritanceMultiMap<Entity>[] entityLists)
-    {
-        final List<EntityPlayer> players = new ArrayList<EntityPlayer>();
-        for (final ClassInheritanceMultiMap<Entity> multimap : entityLists)
-        {
-            for(final EntityPlayer player : multimap.getByClass(EntityPlayer.class))
-            {
-                players.add(player);
-            }
-        }
-        for (final EntityPlayer player : players)
-        {
-            world.updateEntityWithOptionalForce(player, false);
-        }
     }
 }
