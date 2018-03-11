@@ -119,7 +119,7 @@
  
      public int func_177413_a(EnumSkyBlock p_177413_1_, BlockPos p_177413_2_)
      {
-+        return this.field_76637_e.field_73011_w.getLight(this, p_177413_1_, p_177413_2_);
++        return this.field_76637_e.field_73011_w.useLightingHooks() ? this.field_76637_e.field_73011_w.getLight(this, p_177413_1_, p_177413_2_) : this.getLightForBody(p_177413_1_, p_177413_2_);
 +    }
 +
 +    public int getLightForBody(EnumSkyBlock p_177413_1_, BlockPos p_177413_2_)
@@ -131,7 +131,7 @@
  
      public int func_177443_a(BlockPos p_177443_1_, int p_177443_2_)
      {
-+        return this.field_76637_e.field_73011_w.getEffectiveLight(this, p_177443_1_, p_177443_2_);
++        return this.field_76637_e.field_73011_w.useLightingHooks() ? this.field_76637_e.field_73011_w.getEffectiveLight(this, p_177443_1_, p_177443_2_) : this.getLightSubtractedBody(p_177443_1_, p_177443_2_);
 +    }
 +
 +    public int getLightSubtractedBody(BlockPos p_177443_1_, int p_177443_2_)

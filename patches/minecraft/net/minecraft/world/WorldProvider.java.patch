@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,365 @@
+@@ -241,6 +216,373 @@
          return new WorldBorder();
      }
  
@@ -397,6 +397,14 @@
 +    public boolean canDoRainSnowIce(net.minecraft.world.chunk.Chunk chunk)
 +    {
 +        return true;
++    }
++
++    /** Should be set to true by implementations that override {@code getLight} or {@code getEffectiveLight}. */
++    protected boolean useLightingHooks = false;
++
++    public final boolean useLightingHooks()
++    {
++        return useLightingHooks;
 +    }
 +
 +    /**
