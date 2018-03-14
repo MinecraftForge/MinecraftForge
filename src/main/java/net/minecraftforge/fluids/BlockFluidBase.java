@@ -746,10 +746,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @SideOnly (Side.CLIENT)
     public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
     {
-        Vec3d viewport = ActiveRenderInfo.projectViewFromEntity(entity, partialTicks);
-        float filled = getFilledPercentage(world, pos);
-
-        if (filled < 0 ? viewport.y < pos.getY() + (filled + 1) : viewport.y > pos.getY() + filled)
+        if (!isWithinFluid(world, pos, ActiveRenderInfo.projectViewFromEntity(entity, partialTicks)))
         {
             BlockPos otherPos = pos.down(densityDir);
             IBlockState otherState = world.getBlockState(otherPos);
@@ -771,13 +768,18 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Override
     public IBlockState getStateAtViewpoint(IBlockState state, IBlockAccess world, BlockPos pos, Vec3d viewpoint)
     {
-        float filled = getFilledPercentage(world, pos);
-
-        if (filled < 0 ? viewpoint.y < pos.getY() + (filled + 1) : viewpoint.y > pos.getY() + filled)
+        if (!isWithinFluid(world, pos, viewpoint))
         {
             return world.getBlockState(pos.down(densityDir));
         }
 
         return super.getStateAtViewpoint(state, world, pos, viewpoint);
+    }
+
+    private boolean isWithinFluid(IBlockAccess world, BlockPos pos, Vec3d vec)
+    {
+        float filled = getFilledPercentage(world, pos);
+        return filled < 0 ? vec.y > pos.getY() + filled + 1
+                          : vec.y < pos.getY() + filled;
     }
 }
