@@ -36,6 +36,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.apache.logging.log4j.core.util.Booleans;
 import org.apache.logging.log4j.util.PropertiesUtil;
 import org.fusesource.jansi.AnsiConsole;
 
@@ -67,7 +68,7 @@ public class TerminalConsoleAppender extends AbstractAppender
 
     public static void setFormatter(Function<String, String> format)
     {
-        formatter = format != null ? format : Functions.<String> identity();
+        formatter = format != null ? format : Functions.identity();
     }
 
     protected TerminalConsoleAppender(String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions)
@@ -78,7 +79,7 @@ public class TerminalConsoleAppender extends AbstractAppender
     @PluginFactory
     @Nullable
     public static TerminalConsoleAppender createAppender(@PluginAttribute("name") String name, @PluginElement("Filters") Filter filter,
-            @PluginElement("Layout") Layout<? extends Serializable> layout, @PluginAttribute("ignoreExceptions") String ignore)
+            @PluginElement("Layout") Layout<? extends Serializable> layout, @PluginAttribute(value = "ignoreExceptions", defaultBoolean = true) String ignore)
     {
 
         if (name == null)
@@ -91,7 +92,7 @@ public class TerminalConsoleAppender extends AbstractAppender
             layout = PatternLayout.newBuilder().build();
         }
 
-        boolean ignoreExceptions = Boolean.parseBoolean(ignore);
+        boolean ignoreExceptions = Booleans.parseBoolean(ignore, true);
 
         // This is handled by jline
         System.setProperty("log4j.skipJansi", "true");

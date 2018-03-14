@@ -992,7 +992,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             return;
         }
-        Logger logger = LogManager.getLogger("TEXTURE ERRORS");
+        Logger logger = LogManager.getLogger("FML.TEXTURE_ERRORS");
         logger.error(Strings.repeat("+=", 25));
         logger.error("The following texture errors were found.");
         Map<String,FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "domainResourceManagers", "field_110548"+"_a");

@@ -37,7 +37,7 @@ public class FMLServerTweaker extends FMLTweaker {
 
         if (System.getProperty("log4j.configurationFile") == null)
         {
-            System.setProperty("log4j.configurationFile", "log4j2_server.xml");
+            System.setProperty("log4j.configurationFile", "log4j2.xml");
             ((LoggerContext) LogManager.getContext(false)).reconfigure();
         }
     }

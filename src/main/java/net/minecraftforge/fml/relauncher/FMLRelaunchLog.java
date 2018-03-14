@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Legacy FML logging class. Mods use {@link FMLPreInitializationEvent#getModLog()} instead, for Forge internal use use FMLLog.
+ * TODO 1.13 remove this class
  */
 @Deprecated
 public class FMLRelaunchLog {
