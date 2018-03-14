@@ -552,10 +552,9 @@ public class ForgeBlockStateV1 extends Marker
                 {   // Load rotation values.
                     int x = JsonUtils.getInt(json, "x", 0);
                     int y = JsonUtils.getInt(json, "y", 0);
-                    ModelRotation rotation = ModelRotation.getModelRotation(x, y);
-                    if (rotation == null)
+                    ret.state = Optional.ofNullable(ModelRotation.getModelRotation(x, y));
+                    if (!ret.state.isPresent())
                         throw new JsonParseException("Invalid BlockModelRotation x: " + x + " y: " + y);
-                    ret.state = Optional.of(TRSRTransformation.from(rotation));
                 }
 
                 if (json.has("transform"))
