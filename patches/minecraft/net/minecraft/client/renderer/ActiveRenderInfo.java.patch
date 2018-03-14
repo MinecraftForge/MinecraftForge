@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ActiveRenderInfo.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ActiveRenderInfo.java
+@@ -81,7 +81,7 @@
+             }
+         }
+ 
+-        return iblockstate;
++        return iblockstate.func_177230_c().getStateAtViewpoint(iblockstate, p_186703_0_, blockpos, vec3d);
+     }
+ 
+     public static float func_178808_b()
 @@ -108,4 +108,14 @@
      {
          return field_74596_h;

@@ -36,6 +36,7 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -456,7 +457,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return super.shouldSideBeRendered(state, world, pos, side);
     }
 
-    private boolean isFluid(@Nonnull IBlockState blockstate)
+    private static boolean isFluid(@Nonnull IBlockState blockstate)
     {
         return blockstate.getMaterial().isLiquid() || blockstate.getBlock() instanceof IFluidBlock;
     }
@@ -630,7 +631,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         IBlockState here = world.getBlockState(pos);
         if (here.getBlock() == this)
         {
-            if (up.getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock)
+            if (isFluid(up))
             {
                 return 1;
             }
@@ -725,9 +726,13 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Override
     public float getFilledPercentage(World world, BlockPos pos)
     {
-        int quantaRemaining = getQuantaValue(world, pos) + 1;
-        float remaining = quantaRemaining / quantaPerBlockFloat;
-        if (remaining > 1) remaining = 1.0f;
+        return getFilledPercentage((IBlockAccess) world, pos);
+    }
+
+    public float getFilledPercentage(IBlockAccess world, BlockPos pos)
+    {
+        int quantaRemaining = getQuantaValue(world, pos);
+        float remaining = (quantaRemaining + 1f) / (quantaPerBlockFloat + 1f);
         return remaining * (density > 0 ? 1 : -1);
     }
 
@@ -741,6 +746,16 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @SideOnly (Side.CLIENT)
     public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
     {
+        Vec3d viewport = ActiveRenderInfo.projectViewFromEntity(entity, partialTicks);
+        float filled = getFilledPercentage(world, pos);
+
+        if (filled < 0 ? viewport.y < pos.getY() + (filled + 1) : viewport.y > pos.getY() + filled)
+        {
+            BlockPos otherPos = pos.down(densityDir);
+            IBlockState otherState = world.getBlockState(otherPos);
+            return otherState.getBlock().getFogColor(world, otherPos, otherState, entity, originalColor, partialTicks);
+        }
+
         if (getFluid() != null)
         {
             int color = getFluid().getColor();
@@ -749,9 +764,20 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             float blue = (color & 0xFF) / 255.0F;
             return new Vec3d(red, green, blue);
         }
-        else
+
+        return super.getFogColor(world, pos, state, entity, originalColor, partialTicks);
+    }
+
+    @Override
+    public IBlockState getStateAtViewpoint(IBlockState state, IBlockAccess world, BlockPos pos, Vec3d viewpoint)
+    {
+        float filled = getFilledPercentage(world, pos);
+
+        if (filled < 0 ? viewpoint.y < pos.getY() + (filled + 1) : viewpoint.y > pos.getY() + filled)
         {
-            return super.getFogColor(world, pos, state, entity, originalColor, partialTicks);
+            return world.getBlockState(pos.down(densityDir));
         }
+
+        return super.getStateAtViewpoint(state, world, pos, viewpoint);
     }
 }
