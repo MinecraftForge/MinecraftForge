@@ -39,6 +39,7 @@ import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3i;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -858,7 +859,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
 
         static TRSRTransformation get(ModelRotation rotation)
         {
-            return rotations.computeIfAbsent(rotation, r -> new TRSRTransformation(r.getMatrix()));
+            return rotations.computeIfAbsent(rotation, r -> new TRSRTransformation(ForgeHooksClient.getMatrix(r)));
         }
     }
 }
