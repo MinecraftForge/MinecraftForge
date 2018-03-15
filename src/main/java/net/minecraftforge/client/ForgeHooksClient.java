@@ -383,8 +383,11 @@ public class ForgeHooksClient
 
     public static void onModelBake(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
     {
-        MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
-        modelLoader.onPostBakeEvent(modelRegistry);
+        if (modelLoader.isLoading())
+        {
+            MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
+            modelLoader.onPostBakeEvent(modelRegistry);
+        }
     }
 
     @SuppressWarnings("deprecation")
