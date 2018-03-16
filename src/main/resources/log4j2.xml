@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="com.mojang.util,net.minecraftforge.server.console">
+<Configuration status="warn" packages="com.mojang.util,net.minecraftforge.server.console.log4j">
     <Appenders>
         <TerminalConsole name="Console">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
