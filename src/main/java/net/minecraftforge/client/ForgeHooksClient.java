@@ -192,13 +192,11 @@ public class ForgeHooksClient
 
     public static void onBlockColorsInit(BlockColors blockColors)
     {
-        if (FMLClientHandler.instance().hasError()) return;
         MinecraftForge.EVENT_BUS.post(new ColorHandlerEvent.Block(blockColors));
     }
 
     public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors)
     {
-        if (FMLClientHandler.instance().hasError()) return;
         MinecraftForge.EVENT_BUS.post(new ColorHandlerEvent.Item(itemColors, blockColors));
     }
 
@@ -385,11 +383,8 @@ public class ForgeHooksClient
 
     public static void onModelBake(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
     {
-        if (modelLoader.isLoading())
-        {
-            MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
-            modelLoader.onPostBakeEvent(modelRegistry);
-        }
+        MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
+        modelLoader.onPostBakeEvent(modelRegistry);
     }
 
     @SuppressWarnings("deprecation")
