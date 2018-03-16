@@ -63,22 +63,8 @@
          this.func_180454_a(p_191962_1_, p_191962_4_);
          GlStateManager.func_179118_c();
          GlStateManager.func_179101_C();
-@@ -402,20 +387,21 @@
- 
-     public void func_180453_a(FontRenderer p_180453_1_, ItemStack p_180453_2_, int p_180453_3_, int p_180453_4_, @Nullable String p_180453_5_)
-     {
--        if (!p_180453_2_.func_190926_b())
--        {
--            if (p_180453_2_.func_190916_E() != 1 || p_180453_5_ != null)
--            {
-+        if (!p_180453_2_.func_190926_b()) {
-+            if (p_180453_2_.func_190916_E() != 1 || p_180453_5_ != null) {
-                 String s = p_180453_5_ == null ? String.valueOf(p_180453_2_.func_190916_E()) : p_180453_5_;
-                 GlStateManager.func_179140_f();
-                 GlStateManager.func_179097_i();
-                 GlStateManager.func_179084_k();
--                p_180453_1_.func_175063_a(s, (float)(p_180453_3_ + 19 - 2 - p_180453_1_.func_78256_a(s)), (float)(p_180453_4_ + 6 + 3), 16777215);
-+                p_180453_1_.func_175063_a(s, (float) (p_180453_3_ + 19 - 2 - p_180453_1_.func_78256_a(s)), (float) (p_180453_4_ + 6 + 3), 16777215);
+@@ -413,9 +398,12 @@
+                 p_180453_1_.func_175063_a(s, (float)(p_180453_3_ + 19 - 2 - p_180453_1_.func_78256_a(s)), (float)(p_180453_4_ + 6 + 3), 16777215);
                  GlStateManager.func_179145_e();
                  GlStateManager.func_179126_j();
 +                // Fixes opaque cooldown overlay a bit lower
@@ -91,7 +77,7 @@
              {
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
-@@ -424,11 +410,10 @@
+@@ -424,11 +412,10 @@
                  GlStateManager.func_179084_k();
                  Tessellator tessellator = Tessellator.func_178181_a();
                  BufferBuilder bufferbuilder = tessellator.func_178180_c();
@@ -107,7 +93,7 @@
                  this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
                  this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
                  GlStateManager.func_179147_l();
-@@ -438,6 +423,11 @@
+@@ -438,6 +425,11 @@
                  GlStateManager.func_179126_j();
              }
  
@@ -119,7 +105,7 @@
              EntityPlayerSP entityplayersp = Minecraft.func_71410_x().field_71439_g;
              float f3 = entityplayersp == null ? 0.0F : entityplayersp.func_184811_cZ().func_185143_a(p_180453_2_.func_77973_b(), Minecraft.func_71410_x().func_184121_ak());
  
-@@ -1099,6 +1089,7 @@
+@@ -1099,6 +1091,7 @@
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.LOAD.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.CORNER.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.DATA.func_185110_a(), "structure_block");
