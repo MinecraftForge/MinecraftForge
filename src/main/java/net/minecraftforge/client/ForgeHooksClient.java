@@ -192,11 +192,13 @@ public class ForgeHooksClient
 
     public static void onBlockColorsInit(BlockColors blockColors)
     {
+        if (FMLClientHandler.instance().hasError()) return;
         MinecraftForge.EVENT_BUS.post(new ColorHandlerEvent.Block(blockColors));
     }
 
     public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors)
     {
+        if (FMLClientHandler.instance().hasError()) return;
         MinecraftForge.EVENT_BUS.post(new ColorHandlerEvent.Item(itemColors, blockColors));
     }
 
