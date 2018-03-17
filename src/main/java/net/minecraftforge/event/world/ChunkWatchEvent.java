@@ -25,14 +25,19 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
 
 /**
  * ChunkWatchEvent is fired when an event involving a chunk being watched occurs.<br>
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * {@link #chunk} contains the ChunkCoordIntPair of the Chunk this event is affecting.<br>
+ * {@link #chunk} contains the ChunkPos of the Chunk this event is affecting.<br>
  * {@link #player} contains the EntityPlayer that is involved with this chunk being watched. <br>
+ * {@link #world} contains the World of the Chunk. <br>
+ * <br>
+ * The {@link #player}'s world may not be the same as the world of the chunk
+ * when the player is teleporting to another dimension.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
@@ -40,11 +45,13 @@ public class ChunkWatchEvent extends Event
 {
     private final ChunkPos chunk;
     private final EntityPlayerMP player;
+    private final World world;
 
-    public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player)
+    public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player, World world)
     {
         this.chunk = chunk;
         this.player = player;
+        this.world = world;
     }
 
     public ChunkPos getChunk()
@@ -55,6 +62,15 @@ public class ChunkWatchEvent extends Event
     public EntityPlayerMP getPlayer()
     {
         return player;
+    }
+
+    /**
+     * The world of the chunk.
+     * @return
+     */
+    public World getWorld()
+    {
+        return world;
     }
 
     /**
@@ -70,7 +86,7 @@ public class ChunkWatchEvent extends Event
      **/
     public static class Watch extends ChunkWatchEvent
     {
-        public Watch(ChunkPos chunk, EntityPlayerMP player) { super(chunk, player); }
+        public Watch(ChunkPos chunk, EntityPlayerMP player, World world) { super(chunk, player, world); }
     }
 
     /**
@@ -86,6 +102,6 @@ public class ChunkWatchEvent extends Event
      **/
     public static class UnWatch extends ChunkWatchEvent
     {
-        public UnWatch(ChunkPos chunkLocation, EntityPlayerMP player) { super(chunkLocation, player); }
+        public UnWatch(ChunkPos chunkLocation, EntityPlayerMP player, World world) { super(chunkLocation, player, world); }
     }
 }
