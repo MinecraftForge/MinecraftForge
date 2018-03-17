@@ -163,7 +163,7 @@ public class BlockFluidClassic extends BlockFluidBase
         }
 
         // Flow vertically if possible
-        if (canDisplace(world, pos.up(densityDir)))
+        if (canFlowInto(world, pos.up(densityDir)))
         {
             flowIntoBlock(world, pos.up(densityDir), 1);
             return;
