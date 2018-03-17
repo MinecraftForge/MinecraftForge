@@ -47,6 +47,12 @@ public class ChunkWatchEvent extends Event
     private final EntityPlayerMP player;
     private final World world;
 
+    @Deprecated //TODO: Remove in 1.13
+    public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player)
+    {
+        this(chunk, player, player.getEntityWorld());
+    }
+
     public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player, World world)
     {
         this.chunk = chunk;
@@ -86,6 +92,9 @@ public class ChunkWatchEvent extends Event
      **/
     public static class Watch extends ChunkWatchEvent
     {
+        @Deprecated //TODO: Remove in 1.13
+    	public Watch(ChunkPos chunk, EntityPlayerMP player) { super(chunk, player); }
+
         public Watch(ChunkPos chunk, EntityPlayerMP player, World world) { super(chunk, player, world); }
     }
 
@@ -102,6 +111,9 @@ public class ChunkWatchEvent extends Event
      **/
     public static class UnWatch extends ChunkWatchEvent
     {
+        @Deprecated //TODO: Remove in 1.13
+    	public UnWatch(ChunkPos chunkLocation, EntityPlayerMP player) { super(chunkLocation, player); }
+
         public UnWatch(ChunkPos chunkLocation, EntityPlayerMP player, World world) { super(chunkLocation, player, world); }
     }
 }
