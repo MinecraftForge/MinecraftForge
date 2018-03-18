@@ -122,7 +122,7 @@ public class BlockFluidClassic extends BlockFluidBase
             }
 
             // new source block
-            if (adjacentSourceBlocks >= 2 && world.getBlockState(pos.up(densityDir)).getMaterial().isSolid() || isSourceBlock(world, pos.up(densityDir)))
+            if (adjacentSourceBlocks >= 2 && (world.getBlockState(pos.up(densityDir)).getMaterial().isSolid() || isSourceBlock(world, pos.up(densityDir))))
             {
                 expQuanta = quantaPerBlock;
             }
