@@ -52,7 +52,10 @@ public class BlockFluidClassic extends BlockFluidBase
     protected boolean[] isOptimalFlowDirection = new boolean[4];
     protected int[] flowCost = new int[4];
 
+    protected boolean canCreateSources = false;
+
     protected FluidStack stack;
+
     public BlockFluidClassic(Fluid fluid, Material material)
     {
         super(fluid, material);
@@ -103,7 +106,7 @@ public class BlockFluidClassic extends BlockFluidBase
     @Override
     public void updateTick(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand)
     {
-        if (!isSourceBlock(world, pos) && ForgeEventFactory.canCreateFluidSource(world, pos, state, false))
+        if (!isSourceBlock(world, pos) && ForgeEventFactory.canCreateFluidSource(world, pos, state, canCreateSources))
         {
             int adjacentSourceBlocks = 0;
             for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
