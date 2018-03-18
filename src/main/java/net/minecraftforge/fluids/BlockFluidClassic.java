@@ -106,25 +106,29 @@ public class BlockFluidClassic extends BlockFluidBase
     @Override
     public void updateTick(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand)
     {
-        if (!isSourceBlock(world, pos) && ForgeEventFactory.canCreateFluidSource(world, pos, state, canCreateSources))
-        {
-            int adjacentSourceBlocks = 0;
-            for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
-            {
-                if (isSourceBlock(world, pos.offset(side))) adjacentSourceBlocks++;
-            }
-            if (adjacentSourceBlocks >= 2 && (world.getBlockState(pos.up(densityDir)).getMaterial().isSolid() || isSourceBlock(world, pos.up(densityDir))))
-                world.setBlockState(pos, state.withProperty(LEVEL, 0));
-        }
-
         int quantaRemaining = quantaPerBlock - state.getValue(LEVEL);
         int expQuanta = -101;
 
         // check adjacent block levels if non-source
         if (quantaRemaining < quantaPerBlock)
         {
+            int adjacentSourceBlocks = 0;
+
+            if (ForgeEventFactory.canCreateFluidSource(world, pos, state, canCreateSources))
+            {
+                for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
+                {
+                    if (isSourceBlock(world, pos.offset(side))) adjacentSourceBlocks++;
+                }
+            }
+
+            // new source block
+            if (adjacentSourceBlocks >= 2 && world.getBlockState(pos.up(densityDir)).getMaterial().isSolid() || isSourceBlock(world, pos.up(densityDir)))
+            {
+                expQuanta = quantaPerBlock;
+            }
             // unobstructed flow from 'above'
-            if (world.getBlockState(pos.down(densityDir)).getBlock() == this
+            else if (world.getBlockState(pos.down(densityDir)).getBlock() == this
                     || hasDownhillFlow(world, pos, EnumFacing.EAST)
                     || hasDownhillFlow(world, pos, EnumFacing.WEST)
                     || hasDownhillFlow(world, pos, EnumFacing.NORTH)
