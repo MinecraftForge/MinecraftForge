@@ -50,6 +50,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -116,6 +117,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingEnchantmentLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -1385,5 +1387,12 @@ public class ForgeHooks
     public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+
+    public static int getEnchantmentLevel(EntityLivingBase entityLiving, Enchantment enchantment, ItemStack heldItem, int level)
+    {
+        LivingEnchantmentLevelEvent e = new LivingEnchantmentLevelEvent(entityLiving, enchantment, heldItem, level);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.getLevel();
     }
 }

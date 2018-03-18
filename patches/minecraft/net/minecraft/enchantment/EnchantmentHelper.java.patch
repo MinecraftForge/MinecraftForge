@@ -1,6 +1,122 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -302,7 +302,7 @@
+@@ -30,6 +30,7 @@
+     private static final EnchantmentHelper.HurtIterator field_151388_d = new EnchantmentHelper.HurtIterator();
+     private static final EnchantmentHelper.DamageIterator field_151389_e = new EnchantmentHelper.DamageIterator();
+ 
++    @Deprecated // Use ForgeEnchantmentHelper#getEnchantmentLevel
+     public static int func_77506_a(Enchantment p_77506_0_, ItemStack p_77506_1_)
+     {
+         if (p_77506_1_.func_190926_b())
+@@ -108,6 +109,7 @@
+         }
+     }
+ 
++    @Deprecated // Use ForgeEnchantmentHelper#applyEnchantmentModifier
+     private static void func_77518_a(EnchantmentHelper.IModifier p_77518_0_, ItemStack p_77518_1_)
+     {
+         if (!p_77518_1_.func_190926_b())
+@@ -127,6 +129,7 @@
+         }
+     }
+ 
++    @Deprecated // Use ForgeEnchantmentHelper#applyEnchantmentModifierArray
+     private static void func_77516_a(EnchantmentHelper.IModifier p_77516_0_, Iterable<ItemStack> p_77516_1_)
+     {
+         for (ItemStack itemstack : p_77516_1_)
+@@ -135,6 +138,7 @@
+         }
+     }
+ 
++    @Deprecated // Use ForgeEnchantmentHelper#getEnchantmentModifierDamage
+     public static int func_77508_a(Iterable<ItemStack> p_77508_0_, DamageSource p_77508_1_)
+     {
+         field_77520_b.field_77497_a = 0;
+@@ -143,6 +147,7 @@
+         return field_77520_b.field_77497_a;
+     }
+ 
++    @Deprecated // Use ForgeEnchantmentHelper#getModifierForCreature
+     public static float func_152377_a(ItemStack p_152377_0_, EnumCreatureAttribute p_152377_1_)
+     {
+         field_77521_c.field_77495_a = 0.0F;
+@@ -164,12 +169,12 @@
+ 
+         if (p_151384_0_ != null)
+         {
+-            func_77516_a(field_151388_d, p_151384_0_.func_184209_aF());
++            net.minecraftforge.common.ForgeEnchantmentHelper.applyEnchantmentModifierArray(field_151388_d, p_151384_0_.func_184209_aF(), p_151384_0_);
+         }
+ 
+         if (p_151384_1_ instanceof EntityPlayer)
+         {
+-            func_77518_a(field_151388_d, p_151384_0_.func_184614_ca());
++            net.minecraftforge.common.ForgeEnchantmentHelper.applyEnchantmentModifier(field_151388_d, p_151384_0_.func_184614_ca(), p_151384_0_);
+         }
+     }
+ 
+@@ -180,12 +185,12 @@
+ 
+         if (p_151385_0_ != null)
+         {
+-            func_77516_a(field_151389_e, p_151385_0_.func_184209_aF());
++            net.minecraftforge.common.ForgeEnchantmentHelper.applyEnchantmentModifierArray(field_151389_e, p_151385_0_.func_184209_aF(), p_151385_0_);
+         }
+ 
+         if (p_151385_0_ instanceof EntityPlayer)
+         {
+-            func_77518_a(field_151389_e, p_151385_0_.func_184614_ca());
++            net.minecraftforge.common.ForgeEnchantmentHelper.applyEnchantmentModifier(field_151389_e, p_151385_0_.func_184614_ca(), p_151385_0_);
+         }
+     }
+ 
+@@ -203,7 +208,7 @@
+ 
+             for (ItemStack itemstack : iterable)
+             {
+-                int j = func_77506_a(p_185284_0_, itemstack);
++                int j = net.minecraftforge.common.ForgeEnchantmentHelper.getEnchantmentLevel(p_185284_0_, itemstack, p_185284_1_);
+ 
+                 if (j > i)
+                 {
+@@ -240,11 +245,13 @@
+         return func_185284_a(Enchantments.field_185305_q, p_185293_0_);
+     }
+ 
++    @Deprecated // Use ForgeEnchantmentHelper#getFishingLuckBonus
+     public static int func_191529_b(ItemStack p_191529_0_)
+     {
+         return func_77506_a(Enchantments.field_151370_z, p_191529_0_);
+     }
+ 
++    @Deprecated // Use ForgeEnchantmentHelper#getFishingSpeedBonus
+     public static int func_191528_c(ItemStack p_191528_0_)
+     {
+         return func_77506_a(Enchantments.field_151369_A, p_191528_0_);
+@@ -265,11 +272,13 @@
+         return func_185284_a(Enchantments.field_185301_j, p_189869_0_) > 0;
+     }
+ 
++    @Deprecated // Use ForgeEnchantmentHelper#hasBindingCurse
+     public static boolean func_190938_b(ItemStack p_190938_0_)
+     {
+         return func_77506_a(Enchantments.field_190941_k, p_190938_0_) > 0;
+     }
+ 
++    @Deprecated // Use ForgeEnchantmentHelper#hasVanishingCurse
+     public static boolean func_190939_c(ItemStack p_190939_0_)
+     {
+         return func_77506_a(Enchantments.field_190940_C, p_190939_0_) > 0;
+@@ -289,7 +298,7 @@
+ 
+             for (ItemStack itemstack : list)
+             {
+-                if (!itemstack.func_190926_b() && func_77506_a(p_92099_0_, itemstack) > 0)
++                if (!itemstack.func_190926_b() && net.minecraftforge.common.ForgeEnchantmentHelper.getEnchantmentLevel(p_92099_0_, itemstack, p_92099_1_) > 0)
+                 {
+                     list1.add(itemstack);
+                 }
+@@ -302,7 +311,7 @@
      public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
      {
          Item item = p_77514_3_.func_77973_b();
@@ -9,7 +125,7 @@
  
          if (i <= 0)
          {
-@@ -357,7 +357,7 @@
+@@ -357,7 +366,7 @@
      {
          List<EnchantmentData> list = Lists.<EnchantmentData>newArrayList();
          Item item = p_77513_1_.func_77973_b();
@@ -18,7 +134,7 @@
  
          if (i <= 0)
          {
-@@ -413,7 +413,7 @@
+@@ -413,7 +422,7 @@
  
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {

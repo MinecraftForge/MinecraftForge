@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFishingRod.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFishingRod.java
+@@ -79,14 +79,14 @@
+             if (!p_77659_1_.field_72995_K)
+             {
+                 EntityFishHook entityfishhook = new EntityFishHook(p_77659_1_, p_77659_2_);
+-                int j = EnchantmentHelper.func_191528_c(itemstack);
++                int j = net.minecraftforge.common.ForgeEnchantmentHelper.getFishingSpeedBonus(itemstack, p_77659_2_);
+ 
+                 if (j > 0)
+                 {
+                     entityfishhook.func_191516_a(j);
+                 }
+ 
+-                int k = EnchantmentHelper.func_191529_b(itemstack);
++                int k = net.minecraftforge.common.ForgeEnchantmentHelper.getFishingLuckBonus(itemstack, p_77659_2_);
+ 
+                 if (k > 0)
+                 {

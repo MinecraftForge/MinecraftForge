@@ -77,6 +77,15 @@
          if (p_70645_1_ != null)
          {
              this.field_70159_w = (double)(-MathHelper.func_76134_b((this.field_70739_aP + this.field_70177_z) * 0.017453292F) * 0.1F);
+@@ -648,7 +664,7 @@
+         {
+             ItemStack itemstack = this.field_71071_by.func_70301_a(i);
+ 
+-            if (!itemstack.func_190926_b() && EnchantmentHelper.func_190939_c(itemstack))
++            if (!itemstack.func_190926_b() && net.minecraftforge.common.ForgeEnchantmentHelper.hasVanishingCurse(itemstack, this))
+             {
+                 this.field_71071_by.func_70304_b(i);
+             }
 @@ -675,13 +691,24 @@
      @Nullable
      public EntityItem func_71040_bB(boolean p_71040_1_)
@@ -287,6 +296,20 @@
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
+@@ -1174,11 +1257,11 @@
+ 
+                 if (p_71059_1_ instanceof EntityLivingBase)
+                 {
+-                    f1 = EnchantmentHelper.func_152377_a(this.func_184614_ca(), ((EntityLivingBase)p_71059_1_).func_70668_bt());
++                    f1 = net.minecraftforge.common.ForgeEnchantmentHelper.getModifierForCreature(this.func_184614_ca(), ((EntityLivingBase)p_71059_1_).func_70668_bt(), this);
+                 }
+                 else
+                 {
+-                    f1 = EnchantmentHelper.func_152377_a(this.func_184614_ca(), EnumCreatureAttribute.UNDEFINED);
++                    f1 = net.minecraftforge.common.ForgeEnchantmentHelper.getModifierForCreature(this.func_184614_ca(), EnumCreatureAttribute.UNDEFINED, this);
+                 }
+ 
+                 float f2 = this.func_184825_o(0.5F);
 @@ -1203,9 +1286,11 @@
                      boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(MobEffects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof EntityLivingBase;
                      flag2 = flag2 && !this.func_70051_ag();
