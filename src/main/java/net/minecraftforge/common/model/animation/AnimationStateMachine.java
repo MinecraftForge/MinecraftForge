@@ -51,6 +51,7 @@ import net.minecraftforge.common.util.JsonUtils;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -215,13 +216,14 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     @SideOnly(Side.CLIENT)
     public static IAnimationStateMachine load(IResourceManager manager, ResourceLocation location, ImmutableMap<String, ITimeValue> customParameters)
     {
+        IResource resource = null;
         try
         {
             ClipResolver clipResolver = new ClipResolver();
             ParameterResolver parameterResolver = new ParameterResolver(customParameters);
             Clips.CommonClipTypeAdapterFactory.INSTANCE.setClipResolver(clipResolver);
             TimeValues.CommonTimeValueTypeAdapterFactory.INSTANCE.setValueResolver(parameterResolver);
-            IResource resource = manager.getResource(location);
+            resource = manager.getResource(location);
             AnimationStateMachine asm = asmGson.fromJson(new InputStreamReader(resource.getInputStream(), "UTF-8"), AnimationStateMachine.class);
             clipResolver.asm = asm;
             parameterResolver.asm = asm;
@@ -239,6 +241,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         {
             Clips.CommonClipTypeAdapterFactory.INSTANCE.setClipResolver(null);
             TimeValues.CommonTimeValueTypeAdapterFactory.INSTANCE.setValueResolver(null);
+            IOUtils.closeQuietly(resource);
         }
     }
 

@@ -61,6 +61,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import org.apache.commons.io.IOUtils;
 
 public final class ModelDynBucket implements IModel
 {
@@ -346,24 +347,33 @@ public final class ModelDynBucket implements IModel
             final int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
             pixels[0] = new int[width * height];
 
-            IResource empty = getResource(new ResourceLocation("textures/items/bucket_empty.png"));
-            IResource mask = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/vanilla_bucket_cover_mask.png"));
-
-            // use the alpha mask if it fits, otherwise leave the cover texture blank
-            if (empty != null && mask != null && Objects.equals(empty.getResourcePackName(), mask.getResourcePackName()) &&
-                    alphaMask.getIconWidth() == width && alphaMask.getIconHeight() == height)
+            IResource empty = null;
+            IResource mask = null;
+            try
             {
-                final int[][] oldPixels = sprite.getFrameTextureData(0);
-                final int[][] alphaPixels = alphaMask.getFrameTextureData(0);
-
-                for (int p = 0; p < width * height; p++)
+                empty = getResource(new ResourceLocation("textures/items/bucket_empty.png"));
+                mask = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/vanilla_bucket_cover_mask.png"));
+                // use the alpha mask if it fits, otherwise leave the cover texture blank
+                if (empty != null && mask != null && Objects.equals(empty.getResourcePackName(), mask.getResourcePackName()) &&
+                        alphaMask.getIconWidth() == width && alphaMask.getIconHeight() == height)
                 {
-                    final int alphaMultiplier = alphaPixels[0][p] >>> 24;
-                    final int oldPixel = oldPixels[0][p];
-                    final int oldPixelAlpha = oldPixel >>> 24;
-                    final int newAlpha = oldPixelAlpha * alphaMultiplier / 0xFF;
-                    pixels[0][p] = (oldPixel & 0xFFFFFF) + (newAlpha << 24);
+                    final int[][] oldPixels = sprite.getFrameTextureData(0);
+                    final int[][] alphaPixels = alphaMask.getFrameTextureData(0);
+
+                    for (int p = 0; p < width * height; p++)
+                    {
+                        final int alphaMultiplier = alphaPixels[0][p] >>> 24;
+                        final int oldPixel = oldPixels[0][p];
+                        final int oldPixelAlpha = oldPixel >>> 24;
+                        final int newAlpha = oldPixelAlpha * alphaMultiplier / 0xFF;
+                        pixels[0][p] = (oldPixel & 0xFFFFFF) + (newAlpha << 24);
+                    }
                 }
+            }
+            finally
+            {
+                IOUtils.closeQuietly(empty);
+                IOUtils.closeQuietly(mask);
             }
 
             this.clearFramesTextureData();
