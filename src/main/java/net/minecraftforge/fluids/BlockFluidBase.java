@@ -275,7 +275,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
 
         Material material = state.getMaterial();
-        if (material.blocksMovement() || material == Material.PORTAL)
+        if (material.blocksMovement() || material == Material.PORTAL || material == Material.STRUCTURE_VOID)
         {
             return false;
         }
@@ -318,7 +318,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
 
         Material material = state.getMaterial();
-        if (material.blocksMovement() || material == Material.PORTAL)
+        if (material.blocksMovement() || material == Material.PORTAL || material == Material.STRUCTURE_VOID)
         {
             return false;
         }
