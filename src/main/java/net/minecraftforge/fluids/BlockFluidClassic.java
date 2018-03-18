@@ -163,11 +163,6 @@ public class BlockFluidClassic extends BlockFluidBase
                 }
             }
         }
-        // This is a "source" block, set meta to zero, and send a server only update
-        else if (quantaRemaining >= quantaPerBlock)
-        {
-            world.setBlockState(pos, this.getDefaultState(), 2);
-        }
 
         // Flow vertically if possible
         if (canFlowInto(world, pos.up(densityDir)))
