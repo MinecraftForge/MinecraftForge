@@ -28,7 +28,6 @@ import com.google.common.primitives.Ints;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -78,7 +77,7 @@ public class BlockFluidClassic extends BlockFluidBase
     public int getQuantaValue(IBlockAccess world, BlockPos pos)
     {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() == Blocks.AIR)
+        if (state.getBlock().isAir(state, world, pos))
         {
             return 0;
         }
@@ -279,7 +278,7 @@ public class BlockFluidClassic extends BlockFluidBase
         if (meta < 0) return;
         if (displaceIfPossible(world, pos))
         {
-            world.setBlockState(pos, this.getBlockState().getBaseState().withProperty(LEVEL, meta), 3);
+            world.setBlockState(pos, this.getDefaultState().withProperty(LEVEL, meta), 3);
         }
     }
 
