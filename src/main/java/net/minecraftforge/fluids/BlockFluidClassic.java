@@ -264,7 +264,7 @@ public class BlockFluidClassic extends BlockFluidBase
                 return recurseDepth;
             }
 
-            if (recurseDepth >= 4)
+            if (recurseDepth >= quantaPerBlock / 2)
             {
                 continue;
             }
