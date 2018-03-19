@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -260,18 +261,22 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
      */
     public boolean canDisplace(IBlockAccess world, BlockPos pos)
     {
-        if (world.isAirBlock(pos)) return true;
-
         IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
 
-        if (state.getBlock() == this)
+        if (block.isAir(state, world, pos))
+        {
+            return true;
+        }
+
+        if (block == this)
         {
             return false;
         }
 
-        if (displacements.containsKey(state.getBlock()))
+        if (displacements.containsKey(block))
         {
-            return displacements.get(state.getBlock());
+            return displacements.get(block);
         }
 
         Material material = state.getMaterial();
@@ -294,43 +299,19 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
      */
     public boolean displaceIfPossible(World world, BlockPos pos)
     {
-        if (world.isAirBlock(pos))
+        boolean canDisplace = canDisplace(world, pos);
+        if (canDisplace)
         {
-            return true;
-        }
+            IBlockState state = world.getBlockState(pos);
+            Block block = state.getBlock();
 
-        IBlockState state = world.getBlockState(pos);
-        Block block = state.getBlock();
-        if (block == this)
-        {
-            return false;
-        }
-
-        if (displacements.containsKey(block))
-        {
-            if (displacements.get(block))
+            if (!block.isAir(state, world, pos) && !isFluid(state))
             {
-                if (state.getBlock() != Blocks.SNOW_LAYER) //Forge: Vanilla has a 'bug' where snowballs don't drop like every other block. So special case because ewww...
-                    block.dropBlockAsItem(world, pos, state, 0);
-                return true;
+                // Forge: Vanilla has a 'bug' where snowballs don't drop like every other block. So special case because ewww...
+                if (block != Blocks.SNOW_LAYER) block.dropBlockAsItem(world, pos, state, 0);
             }
-            return false;
         }
-
-        Material material = state.getMaterial();
-        if (material.blocksMovement() || material == Material.PORTAL || material == Material.STRUCTURE_VOID)
-        {
-            return false;
-        }
-
-        int density = getDensity(world, pos);
-        if (density == Integer.MAX_VALUE)
-        {
-            block.dropBlockAsItem(world, pos, state, 0);
-            return true;
-        }
-
-        return this.density > density;
+        return canDisplace;
     }
 
     public abstract int getQuantaValue(IBlockAccess world, BlockPos pos);
@@ -546,24 +527,63 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     /* FLUID FUNCTIONS */
-    public static final int getDensity(IBlockAccess world, BlockPos pos)
+    public static int getDensity(IBlockAccess world, BlockPos pos)
     {
-        Block block = world.getBlockState(pos).getBlock();
-        if (!(block instanceof BlockFluidBase))
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+
+        if (block instanceof BlockFluidBase)
         {
-            return Integer.MAX_VALUE;
+            return ((BlockFluidBase)block).getDensity();
         }
-        return ((BlockFluidBase)block).density;
+
+        Fluid fluid = getFluid(state);
+        if (fluid != null)
+        {
+            return fluid.getDensity();
+        }
+        return Integer.MAX_VALUE;
     }
 
-    public static final int getTemperature(IBlockAccess world, BlockPos pos)
+    public static int getTemperature(IBlockAccess world, BlockPos pos)
     {
-        Block block = world.getBlockState(pos).getBlock();
-        if (!(block instanceof BlockFluidBase))
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+
+        if (block instanceof BlockFluidBase)
         {
-            return Integer.MAX_VALUE;
+            return ((BlockFluidBase)block).getTemperature();
         }
-        return ((BlockFluidBase)block).temperature;
+
+        Fluid fluid = getFluid(state);
+        if (fluid != null)
+        {
+            return fluid.getTemperature();
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    @Nullable
+    private static Fluid getFluid(IBlockState state)
+    {
+        Block block = state.getBlock();
+
+        if (block instanceof IFluidBlock)
+        {
+            return ((IFluidBlock)block).getFluid();
+        }
+        if (block instanceof BlockLiquid)
+        {
+            if (state.getMaterial() == Material.WATER)
+            {
+                return FluidRegistry.WATER;
+            }
+            if (state.getMaterial() == Material.LAVA)
+            {
+                return FluidRegistry.LAVA;
+            }
+        }
+        return null;
     }
 
     public static double getFlowDirection(IBlockAccess world, BlockPos pos)

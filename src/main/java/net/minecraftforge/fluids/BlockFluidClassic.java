@@ -164,7 +164,7 @@ public class BlockFluidClassic extends BlockFluidBase
         }
 
         // Flow vertically if possible
-        if (canFlowInto(world, pos.up(densityDir)))
+        if (canDisplace(world, pos.up(densityDir)))
         {
             flowIntoBlock(world, pos.up(densityDir), 1);
             return;
@@ -284,31 +284,7 @@ public class BlockFluidClassic extends BlockFluidBase
 
     protected boolean canFlowInto(IBlockAccess world, BlockPos pos)
     {
-        if (world.isAirBlock(pos)) return true;
-
-        IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() == this)
-        {
-            return true;
-        }
-
-        if (displacements.containsKey(state.getBlock()))
-        {
-            return displacements.get(state.getBlock());
-        }
-
-        Material material = state.getMaterial();
-        if (material.blocksMovement()   ||
-            material == Material.WATER  ||
-            material == Material.LAVA   ||
-            material == Material.PORTAL ||
-            material == Material.STRUCTURE_VOID)
-        {
-            return false;
-        }
-
-        int density = getDensity(world, pos);
-        return density == Integer.MAX_VALUE || this.density > density;
+        return world.getBlockState(pos).getBlock() == this || canDisplace(world, pos);
     }
 
     protected int getLargerQuanta(IBlockAccess world, BlockPos pos, int compare)
