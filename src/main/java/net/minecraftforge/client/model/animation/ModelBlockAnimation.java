@@ -555,10 +555,8 @@ public class ModelBlockAnimation
     {
         try
         {
-            IResource resource = null;
-            try
+            try (IResource resource = manager.getResource(armatureLocation))
             {
-                resource = manager.getResource(armatureLocation);
                 ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), "UTF-8"), ModelBlockAnimation.class);
                 //String json = mbaGson.toJson(mba);
                 return mba;
@@ -567,10 +565,6 @@ public class ModelBlockAnimation
             {
                 // this is normal. FIXME: error reporting?
                 return defaultModelBlockAnimation;
-            }
-            finally
-            {
-                IOUtils.closeQuietly(resource);
             }
         }
         catch(IOException | JsonParseException e)

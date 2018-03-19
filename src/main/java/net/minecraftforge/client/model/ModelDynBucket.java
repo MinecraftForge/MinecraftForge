@@ -61,6 +61,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.io.IOUtils;
 
 public final class ModelDynBucket implements IModel
@@ -347,12 +348,10 @@ public final class ModelDynBucket implements IModel
             final int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
             pixels[0] = new int[width * height];
 
-            IResource empty = null;
-            IResource mask = null;
-            try
-            {
-                empty = getResource(new ResourceLocation("textures/items/bucket_empty.png"));
-                mask = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/vanilla_bucket_cover_mask.png"));
+            try (
+                 IResource empty = getResource(new ResourceLocation("textures/items/bucket_empty.png"));
+                 IResource mask = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/vanilla_bucket_cover_mask.png"))
+            ) {
                 // use the alpha mask if it fits, otherwise leave the cover texture blank
                 if (empty != null && mask != null && Objects.equals(empty.getResourcePackName(), mask.getResourcePackName()) &&
                         alphaMask.getIconWidth() == width && alphaMask.getIconHeight() == height)
@@ -370,10 +369,9 @@ public final class ModelDynBucket implements IModel
                     }
                 }
             }
-            finally
+            catch (IOException e)
             {
-                IOUtils.closeQuietly(empty);
-                IOUtils.closeQuietly(mask);
+                FMLLog.log.error("Failed to close resource", e);
             }
 
             this.clearFramesTextureData();
