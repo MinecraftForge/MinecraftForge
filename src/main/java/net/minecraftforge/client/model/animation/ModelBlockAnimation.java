@@ -35,6 +35,7 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.client.renderer.block.model.BlockPart;
@@ -554,19 +555,17 @@ public class ModelBlockAnimation
     {
         try
         {
-            IResource resource = null;
-            try
+            try (IResource resource = manager.getResource(armatureLocation))
             {
-                resource = manager.getResource(armatureLocation);
+                ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), "UTF-8"), ModelBlockAnimation.class);
+                //String json = mbaGson.toJson(mba);
+                return mba;
             }
             catch(FileNotFoundException e)
             {
                 // this is normal. FIXME: error reporting?
                 return defaultModelBlockAnimation;
             }
-            ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), "UTF-8"), ModelBlockAnimation.class);
-            //String json = mbaGson.toJson(mba);
-            return mba;
         }
         catch(IOException | JsonParseException e)
         {
