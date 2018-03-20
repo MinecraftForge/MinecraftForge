@@ -23,6 +23,7 @@ import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -50,7 +51,7 @@ public class ChunkWatchEvent extends Event
     @Deprecated //TODO: Remove in 1.13
     public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player)
     {
-        this(chunk, player, player.getEntityWorld());
+        this(chunk, player, null);
     }
 
     public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player, World world)
@@ -74,6 +75,7 @@ public class ChunkWatchEvent extends Event
      * The world of the chunk.
      * @return
      */
+    @Nullable //TODO: Remove @Nullable when deprecated constructor is removed
     public World getWorld()
     {
         return world;
