@@ -182,6 +182,12 @@ public final class MultiLayerModel implements IModel
         }
 
         @Override
+        public boolean isAmbientOcclusion(IBlockState state)
+        {
+            return base.isAmbientOcclusion(state);
+        }
+
+        @Override
         public boolean isGui3d()
         {
             return base.isGui3d();
