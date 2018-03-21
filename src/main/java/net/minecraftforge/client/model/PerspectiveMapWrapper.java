@@ -76,14 +76,15 @@ public class PerspectiveMapWrapper implements IBakedModel
         return Pair.of(model, null);
     }
 
-    public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
-    public boolean isGui3d() { return parent.isGui3d(); }
-    public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
-    public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
+    @Override public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
+    @Override public boolean isAmbientOcclusion(IBlockState state) { return parent.isAmbientOcclusion(state); }
+    @Override public boolean isGui3d() { return parent.isGui3d(); }
+    @Override public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
+    @Override public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
     @SuppressWarnings("deprecation")
-    public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) { return parent.getQuads(state, side, rand); }
-    public ItemOverrideList getOverrides() { return parent.getOverrides(); }
+    @Override public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
+    @Override public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) { return parent.getQuads(state, side, rand); }
+    @Override public ItemOverrideList getOverrides() { return parent.getOverrides(); }
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)
