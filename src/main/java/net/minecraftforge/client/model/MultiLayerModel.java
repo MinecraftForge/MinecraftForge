@@ -153,11 +153,8 @@ public final class MultiLayerModel implements IModel
                 }
                 return builder.build();
             }
-            else
-            {
-                // assumes that child model will handle this state properly. FIXME?
-                return models.getOrDefault(Optional.of(layer), missing).getQuads(state, side, rand);
-            }
+            // assumes that child model will handle this state properly. FIXME?
+            return models.getOrDefault(Optional.of(layer), missing).getQuads(state, side, rand);
         }
 
         @Override
