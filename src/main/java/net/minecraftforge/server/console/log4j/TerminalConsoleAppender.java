@@ -17,16 +17,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.server.console;
+package net.minecraftforge.server.console.log4j;
 
-import static jline.TerminalFactory.OFF;
-import static jline.console.ConsoleReader.RESET_LINE;
-
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.io.Writer;
+import java.util.function.Function;
 
+import static jline.TerminalFactory.OFF;
+import static jline.console.ConsoleReader.RESET_LINE;
+
+import com.google.common.base.Functions;
+import jline.TerminalFactory;
+import jline.console.ConsoleReader;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -40,21 +45,6 @@ import org.apache.logging.log4j.core.util.Booleans;
 import org.apache.logging.log4j.util.PropertiesUtil;
 import org.fusesource.jansi.AnsiConsole;
 
-import java.util.function.Function;
-import com.google.common.base.Functions;
-
-import jline.TerminalFactory;
-import jline.console.ConsoleReader;
-
-import javax.annotation.Nullable;
-
-/**
- * TODO 1.13 remove this class
- * @deprecated use the version in the log4j sub-package: {@link net.minecraftforge.server.console.log4j.TerminalConsoleAppender}
- * This is being moved into its own package so that the log configuration doesn't load this whole package,
- * which has references to Minecraft in it that can load lots of extra classes.
- */
-@Deprecated
 @Plugin(name = "TerminalConsole", category = "Core", elementType = "appender", printObject = true)
 public class TerminalConsoleAppender extends AbstractAppender
 {

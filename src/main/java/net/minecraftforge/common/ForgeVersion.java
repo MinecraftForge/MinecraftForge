@@ -68,7 +68,7 @@ public class ForgeVersion
     @SuppressWarnings("unused")
     private static String target = null;
 
-    private static final Logger log = LogManager.getLogger("ForgeVersionCheck");
+    private static final Logger log = LogManager.getLogger(MOD_ID + ".VersionCheck");
 
     public static int getMajorVersion()
     {

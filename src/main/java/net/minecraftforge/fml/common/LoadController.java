@@ -131,7 +131,7 @@ public class LoadController
             }
             else
             {
-                LogManager.getLogger(mod.getModId()).warn("Mod {} has been disabled through configuration", mod.getModId());
+                FMLLog.log.warn("Mod {} has been disabled through configuration", mod.getModId());
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 modStates.put(mod.getModId(), ModState.DISABLED);
             }
@@ -266,7 +266,7 @@ public class LoadController
         {
             if (av.getLabel()!= null && requirements.contains(av.getLabel()) && modStates.containsEntry(av.getLabel(),ModState.ERRORED))
             {
-                LogManager.getLogger(modId).error("Skipping event {} and marking errored mod {} since required dependency {} has errored", stateEvent.getEventType(), modId, av.getLabel());
+                FMLLog.log.error("Skipping event {} and marking errored mod {} since required dependency {} has errored", stateEvent.getEventType(), modId, av.getLabel());
                 modStates.put(modId, ModState.ERRORED);
                 return;
             }
@@ -274,9 +274,9 @@ public class LoadController
         activeContainer = mc;
         stateEvent.applyModContainer(mc);
         ThreadContext.put("mod", modId);
-        LogManager.getLogger(modId).trace("Sending event {} to mod {}", stateEvent.getEventType(), modId);
+        FMLLog.log.trace("Sending event {} to mod {}", stateEvent.getEventType(), modId);
         eventChannels.get(modId).post(stateEvent);
-        LogManager.getLogger(modId).trace("Sent event {} to mod {}", stateEvent.getEventType(), modId);
+        FMLLog.log.trace("Sent event {} to mod {}", stateEvent.getEventType(), modId);
         ThreadContext.remove("mod");
         activeContainer = null;
         if (stateEvent instanceof FMLStateEvent)
