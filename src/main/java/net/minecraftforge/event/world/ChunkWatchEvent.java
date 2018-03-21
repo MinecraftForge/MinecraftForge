@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 /**
  * ChunkWatchEvent is fired when an event involving a chunk being watched occurs.<br>
@@ -35,32 +36,36 @@ import net.minecraft.world.World;
  * <br>
  * {@link #chunk} contains the ChunkPos of the Chunk this event is affecting.<br>
  * {@link #player} contains the EntityPlayer that is involved with this chunk being watched. <br>
- * {@link #world} contains the World of the Chunk. <br>
+ * {@link #chunkInstance} contains the instance of the Chunk. <br>
  * <br>
  * The {@link #player}'s world may not be the same as the world of the chunk
  * when the player is teleporting to another dimension.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class ChunkWatchEvent extends Event
+public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
 {
+    @Deprecated //TODO: Remove in 1.13
     private final ChunkPos chunk;
     private final EntityPlayerMP player;
-    private final World world;
+    private final Chunk chunkInstance;
 
     @Deprecated //TODO: Remove in 1.13
     public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player)
     {
-        this(chunk, player, null);
-    }
-
-    public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player, World world)
-    {
         this.chunk = chunk;
         this.player = player;
-        this.world = world;
+        this.chunkInstance = null;
     }
 
+    public ChunkWatchEvent(Chunk chunk, EntityPlayerMP player)
+    {
+        this.chunk = chunk.getPos();
+        this.player = player;
+        this.chunkInstance = chunk;
+    }
+
+    @Deprecated //TODO: Remove in 1.13
     public ChunkPos getChunk()
     {
         return chunk;
@@ -72,13 +77,13 @@ public class ChunkWatchEvent extends Event
     }
 
     /**
-     * The world of the chunk.
-     * @return
+     * The affected chunk.
+     * @return The affected chunk.
      */
-    @Nullable //TODO: Remove @Nullable when deprecated constructor is removed
-    public World getWorld()
+    @Nullable
+    public Chunk getChunkInstance()
     {
-        return world;
+        return chunkInstance;
     }
 
     /**
@@ -97,7 +102,7 @@ public class ChunkWatchEvent extends Event
         @Deprecated //TODO: Remove in 1.13
         public Watch(ChunkPos chunk, EntityPlayerMP player) { super(chunk, player); }
 
-        public Watch(ChunkPos chunk, EntityPlayerMP player, World world) { super(chunk, player, world); }
+        public Watch(Chunk chunk, EntityPlayerMP player) { super(chunk, player); }
     }
 
     /**
@@ -116,6 +121,6 @@ public class ChunkWatchEvent extends Event
         @Deprecated //TODO: Remove in 1.13
         public UnWatch(ChunkPos chunkLocation, EntityPlayerMP player) { super(chunkLocation, player); }
 
-        public UnWatch(ChunkPos chunkLocation, EntityPlayerMP player, World world) { super(chunkLocation, player, world); }
+        public UnWatch(Chunk chunk, EntityPlayerMP player) { super(chunk, player); }
     }
 }

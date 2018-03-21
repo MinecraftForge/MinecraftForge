@@ -28,7 +28,7 @@
              {
                  this.func_187278_c(p_187276_1_);
 +                // chunk watch event - the chunk is ready
-+                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(this.field_187284_d, p_187276_1_, this.field_187282_b.func_72688_a()));
++                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(this.field_187286_f, p_187276_1_));
              }
          }
      }
@@ -57,7 +57,7 @@
  
              this.field_187283_c.remove(p_187277_1_);
  
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.UnWatch(this.field_187284_d, p_187277_1_, this.field_187282_b.func_72688_a()));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.UnWatch(this.field_187286_f, p_187277_1_));
 +
              if (this.field_187283_c.isEmpty())
              {
@@ -82,7 +82,7 @@
                  entityplayermp.field_71135_a.func_147359_a(packet);
                  this.field_187282_b.func_72688_a().func_73039_n().func_85172_a(entityplayermp, this.field_187286_f);
 +                // chunk watch event - delayed to here as the chunk wasn't ready in addPlayer
-+                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(this.field_187284_d, entityplayermp, this.field_187282_b.func_72688_a()));
++                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(this.field_187286_f, entityplayermp));
              }
  
              return true;

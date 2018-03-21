@@ -30,12 +30,12 @@ public class ChunkWatchWorldTest
     @SubscribeEvent
     public static void onUnwatch(ChunkWatchEvent.UnWatch event)
     {
-        logger.info("Unwatching chunk {} in dimension {}. Player's dimension: {} ", event.getChunk(), event.getWorld().provider.getDimension(), event.getPlayer().getEntityWorld().provider.getDimension());
+        logger.info("Unwatching chunk {} in dimension {}. Player's dimension: {} ", event.getChunk(), event.getChunkInstance().getWorld().provider.getDimension(), event.getPlayer().getEntityWorld().provider.getDimension());
     }
 
     @SubscribeEvent
     public static void onWatch(ChunkWatchEvent.Watch event)
     {
-        logger.info("Watching chunk {} in dimension {}. Player's dimension: {} ", event.getChunk(), event.getWorld().provider.getDimension(), event.getPlayer().getEntityWorld().provider.getDimension());
+        logger.info("Watching chunk {} in dimension {}. Player's dimension: {} ", event.getChunk(), event.getChunkInstance().getWorld().provider.getDimension(), event.getPlayer().getEntityWorld().provider.getDimension());
     }
 }
