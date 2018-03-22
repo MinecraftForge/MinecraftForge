@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemEnchantedBook.java
++++ ../src-work/minecraft/net/minecraft/item/ItemEnchantedBook.java
+@@ -127,4 +127,25 @@
+             }
+         }
+     }
++
++    @Nullable
++    @Override
++    public String getCreatorModId(ItemStack itemStack)
++    {
++        NBTTagList enchantmentsNbt = func_92110_g(itemStack);
++        if (enchantmentsNbt.func_74745_c() == 1)
++        {
++            NBTTagCompound nbttagcompound = enchantmentsNbt.func_150305_b(0);
++            Enchantment enchantment = Enchantment.func_185262_c(nbttagcompound.func_74765_d("id"));
++            if (enchantment != null)
++            {
++                net.minecraft.util.ResourceLocation resourceLocation = net.minecraftforge.fml.common.registry.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
++                if (resourceLocation != null)
++                {
++                    return resourceLocation.func_110624_b();
++                }
++            }
++        }
++        return super.getCreatorModId(itemStack);
++    }
+ }
