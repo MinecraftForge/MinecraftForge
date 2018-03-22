@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/advancements/FunctionManager.java
++++ ../src-work/minecraft/net/minecraft/advancements/FunctionManager.java
+@@ -160,6 +160,7 @@
+ 
+     private void func_193061_h()
+     {
++        net.minecraftforge.common.ForgeHooks.loadFunctions(this.field_193070_d);
+         if (this.field_193068_b != null)
+         {
+             this.field_193068_b.mkdirs();

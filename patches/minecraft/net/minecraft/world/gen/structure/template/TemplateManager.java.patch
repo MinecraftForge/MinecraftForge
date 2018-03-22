@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/template/TemplateManager.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/template/TemplateManager.java
+@@ -110,7 +110,7 @@
+         {
+             inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + s + "/structures/" + s1 + ".nbt");
+             this.func_186239_a(s1, inputstream);
+-            return true;
++            flag = true;
+         }
+         catch (Throwable var10)
+         {
+@@ -121,7 +121,7 @@
+             IOUtils.closeQuietly(inputstream);
+         }
+ 
+-        return flag;
++        return net.minecraftforge.common.ForgeHooks.loadStructure(p_186236_1_, this.field_186240_a, flag);
+     }
+ 
+     private void func_186239_a(String p_186239_1_, InputStream p_186239_2_) throws IOException

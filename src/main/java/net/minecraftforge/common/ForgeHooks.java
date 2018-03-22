@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.command.FunctionObject;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -98,6 +100,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
 import net.minecraft.world.storage.loot.LootEntry;
@@ -106,10 +109,13 @@ import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.AdvancementLoadEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.FunctionLoadEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.StructureLoadEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -1291,6 +1297,19 @@ public class ForgeHooks
     public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
     {
         boolean errored = false;
+
+        Map<ResourceLocation, Advancement.Builder> extraAdvancements = new HashMap<>();
+        MinecraftForge.EVENT_BUS.post(new AdvancementLoadEvent(extraAdvancements));
+        extraAdvancements.forEach(
+            (name, builder) -> 
+            {
+                if (!map.containsKey(name)) 
+                {
+                    map.put(name, builder);
+                }
+            }
+        );
+
         setActiveModContainer(null);
         //Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
         for (ModContainer mod : Loader.instance().getActiveModList())
@@ -1385,5 +1404,32 @@ public class ForgeHooks
     public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+    
+    public static void loadFunctions(Map<ResourceLocation, FunctionObject> functions)
+    {
+        Map<ResourceLocation, FunctionObject> extraFunctions = new HashMap<>();
+        MinecraftForge.EVENT_BUS.post(new FunctionLoadEvent(extraFunctions));
+        functions.putAll(extraFunctions);
+    }
+    
+    public static boolean loadStructure(ResourceLocation id, Map<String, Template> templates, boolean flag)
+    {
+        String path = id.getResourcePath();
+        Template structure = templates.get(path);
+        StructureLoadEvent event = new StructureLoadEvent(id, structure);
+
+        if (MinecraftForge.EVENT_BUS.post(event) || event.getStructure() == null)
+        {
+            templates.remove(path);
+            flag = false;
+        }
+        else
+        {
+            templates.put(path, event.getStructure());
+            flag = true;
+        }
+
+        return flag;
     }
 }
