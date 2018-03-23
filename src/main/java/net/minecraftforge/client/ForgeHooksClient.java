@@ -126,7 +126,6 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.input.Mouse;
 
 import java.util.Optional;
 import com.google.common.collect.Maps;
@@ -365,10 +364,6 @@ public class ForgeHooksClient
 
     public static void drawScreen(GuiScreen screen, int mouseX, int mouseY, float partialTicks)
     {
-        Minecraft mc = Minecraft.getMinecraft();
-        mouseX = Mouse.getX() * screen.width / mc.displayWidth;
-        mouseY = screen.height - Mouse.getY() * screen.height / mc.displayHeight - 1;
-
         if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mouseX, mouseY, partialTicks)))
             screen.drawScreen(mouseX, mouseY, partialTicks);
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mouseX, mouseY, partialTicks));
