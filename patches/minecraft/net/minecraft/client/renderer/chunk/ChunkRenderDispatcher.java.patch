@@ -17,15 +17,16 @@
  
          if (j > 1)
          {
-@@ -85,6 +91,7 @@
+@@ -83,7 +89,7 @@
+         {
+             boolean flag1 = false;
  
-             if (this.field_188250_d.isEmpty())
+-            if (this.field_188250_d.isEmpty())
++            if (this.field_188250_d.isEmpty() && p_178516_1_ > System.nanoTime())
              {
-+                if (p_178516_1_ < System.nanoTime()) continue;
                  ChunkCompileTaskGenerator chunkcompiletaskgenerator = this.field_178519_d.poll();
  
-                 if (chunkcompiletaskgenerator != null)
-@@ -111,7 +118,7 @@
+@@ -111,7 +117,7 @@
                  }
              }
  
