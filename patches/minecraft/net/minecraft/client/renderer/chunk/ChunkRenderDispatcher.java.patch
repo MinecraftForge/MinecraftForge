@@ -17,3 +17,20 @@
  
          if (j > 1)
          {
+@@ -85,6 +91,7 @@
+ 
+             if (this.field_188250_d.isEmpty())
+             {
++                if (p_178516_1_ < System.nanoTime()) continue;
+                 ChunkCompileTaskGenerator chunkcompiletaskgenerator = this.field_178519_d.poll();
+ 
+                 if (chunkcompiletaskgenerator != null)
+@@ -111,7 +118,7 @@
+                 }
+             }
+ 
+-            if (p_178516_1_ == 0L || !flag1 || p_178516_1_ < System.nanoTime())
++            if (p_178516_1_ == 0L || !flag1 || false && p_178516_1_ < System.nanoTime())
+             {
+                 break;
+             }
