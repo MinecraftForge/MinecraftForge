@@ -115,7 +115,30 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1892,8 +1915,11 @@
+@@ -1702,9 +1725,11 @@
+             {
+                 RenderChunk renderchunk1 = iterator.next();
+                 boolean flag1;
++                long k1 = p_174967_1_ - System.nanoTime();
+ 
+                 if (renderchunk1.func_188281_o())
+                 {
++                    if (k1 < 0L) continue;
+                     flag1 = this.field_174995_M.func_178505_b(renderchunk1);
+                 }
+                 else
+@@ -1719,9 +1744,8 @@
+ 
+                 renderchunk1.func_188282_m();
+                 iterator.remove();
+-                long k1 = p_174967_1_ - System.nanoTime();
+ 
+-                if (k1 < 0L)
++                if (false && k1 < 0L)
+                 {
+                     break;
+                 }
+@@ -1892,8 +1916,11 @@
                  double d7 = (double)blockpos.func_177956_o() - d4;
                  double d8 = (double)blockpos.func_177952_p() - d5;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -128,7 +151,7 @@
                  {
                      if (d6 * d6 + d7 * d7 + d8 * d8 > 1024.0D)
                      {
-@@ -2388,7 +2414,7 @@
+@@ -2388,7 +2415,7 @@
  
                  if (block.func_176223_P().func_185904_a() != Material.field_151579_a)
                  {
