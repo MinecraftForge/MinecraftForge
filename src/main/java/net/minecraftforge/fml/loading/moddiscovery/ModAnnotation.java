@@ -17,12 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.discovery.asm;
+package net.minecraftforge.fml.loading.moddiscovery;
 
+import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Map;
-
-import net.minecraftforge.fml.common.discovery.asm.ASMModParser.AnnotationType;
 
 import org.objectweb.asm.Type;
 
@@ -53,20 +52,21 @@ public class ModAnnotation
             return value;
         }
     }
-    AnnotationType type;
+    ElementType type;
     Type asmType;
     String member;
     Map<String,Object> values = Maps.newHashMap();
+
     private ArrayList<Object> arrayList;
     private String arrayName;
-    public ModAnnotation(AnnotationType type, Type asmType, String member)
+    public ModAnnotation(ElementType type, Type asmType, String member)
     {
         this.type = type;
         this.asmType = asmType;
         this.member = member;
     }
 
-    public ModAnnotation(AnnotationType type, Type asmType, ModAnnotation parent)
+    public ModAnnotation(ElementType type, Type asmType, ModAnnotation parent)
     {
         this.type = type;
         this.asmType = asmType;
@@ -81,7 +81,8 @@ public class ModAnnotation
                 .add("values", values)
                 .toString();
     }
-    public AnnotationType getType()
+
+    public ElementType getType()
     {
         return type;
     }
@@ -126,7 +127,7 @@ public class ModAnnotation
     }
     public ModAnnotation addChildAnnotation(String name, String desc)
     {
-        ModAnnotation child = new ModAnnotation(AnnotationType.SUBTYPE, Type.getType(desc), this);
+        ModAnnotation child = new ModAnnotation(ElementType.PARAMETER, Type.getType(desc), this);
         addProperty(name, child.getValues());
         return child;
     }

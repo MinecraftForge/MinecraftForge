@@ -41,7 +41,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
-import net.minecraftforge.fml.common.discovery.asm.ModAnnotation.EnumHolder;
+import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation.EnumHolder;
 
 import org.apache.commons.lang3.StringUtils;
 

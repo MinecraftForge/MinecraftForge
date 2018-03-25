@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,29 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.discovery.asm;
+package net.minecraftforge.fml.loading;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Opcodes;
+import cpw.mods.modlauncher.api.ILaunchHandlerService;
 
-public class ModFieldVisitor extends FieldVisitor
+import java.nio.file.Path;
+import java.util.concurrent.Callable;
+
+public class FMLLaunchProvider implements ILaunchHandlerService
 {
-
-    private String fieldName;
-    private ASMModParser discoverer;
-
-    public ModFieldVisitor(String name, ASMModParser discoverer)
-    {
-        super(Opcodes.ASM5);
-        this.fieldName = name;
-        this.discoverer = discoverer;
-    }
-    
     @Override
-    public AnnotationVisitor visitAnnotation(String annotationName, boolean runtimeVisible)
+    public String name()
     {
-        discoverer.startFieldAnnotation(fieldName, annotationName);
-        return new ModAnnotationVisitor(discoverer);
+        return "fml";
+    }
+
+    @Override
+    public Path[] identifyTransformationTargets()
+    {
+        return new Path[0];
+    }
+
+    @Override
+    public Callable<Void> launchService(String[] arguments, ClassLoader launchClassLoader)
+    {
+        return () -> { return null; };
     }
 }

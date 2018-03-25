@@ -22,11 +22,10 @@ package net.minecraftforge.fml.common;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
-import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
+import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 
 import org.objectweb.asm.Type;
 

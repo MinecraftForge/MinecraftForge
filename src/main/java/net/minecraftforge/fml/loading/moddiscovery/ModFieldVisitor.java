@@ -17,48 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.discovery.asm;
+package net.minecraftforge.fml.loading.moddiscovery;
 
 import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
-public class ModClassVisitor extends ClassVisitor
+import java.lang.annotation.ElementType;
+import java.util.LinkedList;
+
+public class ModFieldVisitor extends FieldVisitor
 {
-    private ASMModParser discoverer;
+    private final LinkedList<ModAnnotation> annotations;
+    private final String fieldName;
 
-    public ModClassVisitor(ASMModParser discoverer)
+    public ModFieldVisitor(String name, final LinkedList<ModAnnotation> annotations)
     {
         super(Opcodes.ASM5);
-        this.discoverer = discoverer;
+        this.fieldName = name;
+        this.annotations = annotations;
     }
-
-
-    @Override
-    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
-    {
-        discoverer.beginNewTypeName(name, version, superName, interfaces);
-    }
-
+    
     @Override
     public AnnotationVisitor visitAnnotation(String annotationName, boolean runtimeVisible)
     {
-        discoverer.startClassAnnotation(annotationName);
-        return new ModAnnotationVisitor(discoverer);
-    }
-
-
-    @Override
-    public FieldVisitor visitField(int access, String name, String desc, String signature, Object value)
-    {
-        return new ModFieldVisitor(name, discoverer);
-    }
-
-    @Override
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)
-    {
-        return new ModMethodVisitor(name, desc, discoverer);
+        ModAnnotation ann = new ModAnnotation(ElementType.FIELD, Type.getType(annotationName), fieldName);
+        annotations.addFirst(ann);
+        return new ModAnnotationVisitor(annotations, ann);
     }
 }

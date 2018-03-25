@@ -29,6 +29,8 @@ import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 
+import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
+import net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 

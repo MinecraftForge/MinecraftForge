@@ -17,72 +17,79 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.discovery.asm;
+package net.minecraftforge.fml.loading.moddiscovery;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.LinkedList;
+
 public class ModAnnotationVisitor extends AnnotationVisitor
 {
-    private ASMModParser discoverer;
+    private final ModAnnotation annotation;
+    private LinkedList<ModAnnotation> annotations;
     private boolean array;
     private String name;
     private boolean isSubAnnotation;
 
-    public ModAnnotationVisitor(ASMModParser discoverer)
+    public ModAnnotationVisitor(LinkedList<ModAnnotation> annotations, ModAnnotation annotation)
     {
         super(Opcodes.ASM5);
-        this.discoverer = discoverer;
+        this.annotations = annotations;
+        this.annotation = annotation;
     }
 
-    public ModAnnotationVisitor(ASMModParser discoverer, String name)
+    public ModAnnotationVisitor(LinkedList<ModAnnotation> annotations, ModAnnotation annotation, String name)
     {
-        this(discoverer);
+        this(annotations, annotation);
         this.array = true;
         this.name = name;
-        discoverer.addAnnotationArray(name);
+        annotation.addArray(name);
     }
 
-    public ModAnnotationVisitor(ASMModParser discoverer, boolean isSubAnnotation)
+    public ModAnnotationVisitor(LinkedList<ModAnnotation> annotations, ModAnnotation annotation, boolean isSubAnnotation)
     {
-        this(discoverer);
+        this(annotations, annotation);
         this.isSubAnnotation = true;
     }
 
     @Override
     public void visit(String key, Object value)
     {
-        discoverer.addAnnotationProperty(key, value);
+        annotation.addProperty(key, value);
     }
 
     @Override
     public void visitEnum(String name, String desc, String value)
     {
-        discoverer.addAnnotationEnumProperty(name, desc, value);
+        annotation.addEnumProperty(name, desc, value);
     }
 
     @Override
     public AnnotationVisitor visitArray(String name)
     {
-        return new ModAnnotationVisitor(discoverer, name);
+        return new ModAnnotationVisitor(annotations, annotation, name);
     }
     @Override
     public AnnotationVisitor visitAnnotation(String name, String desc)
     {
-        discoverer.addSubAnnotation(name, desc);
-        return new ModAnnotationVisitor(discoverer, true);
+        ModAnnotation ma = annotations.getFirst();
+        final ModAnnotation childAnnotation = ma.addChildAnnotation(name, desc);
+        annotations.addFirst(childAnnotation);
+        return new ModAnnotationVisitor(annotations, childAnnotation,true);
     }
     @Override
     public void visitEnd()
     {
         if (array)
         {
-            discoverer.endArray();
+            annotation.endArray();
         }
 
         if (isSubAnnotation)
         {
-            discoverer.endSubAnnotation();
+            ModAnnotation child = annotations.removeFirst();
+            annotations.addLast(child);
         }
     }
 }

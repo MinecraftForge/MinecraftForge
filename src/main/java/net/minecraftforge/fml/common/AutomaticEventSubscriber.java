@@ -25,9 +25,8 @@ import com.google.common.collect.SetMultimap;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
-import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
+import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import net.minecraftforge.fml.relauncher.Side;
-import org.apache.logging.log4j.Level;
 
 import java.util.EnumSet;
 import java.util.List;
