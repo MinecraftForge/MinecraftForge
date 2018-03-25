@@ -66,6 +66,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
@@ -1385,5 +1386,22 @@ public class ForgeHooks
     public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+
+    /**
+     * Return if the passed player currently has the ability to use elytra flight
+     * Return true if the stack is vanilla elytra for non player EntityLivingBase to emulate exact vanilla behaviour 
+     * @param entity
+     * @return
+     */
+    public static boolean hasElytraFlightAbility(EntityLivingBase player, ItemStack itemstack)
+    {
+    	boolean vanillaElytra = itemstack.getItem() == Items.ELYTRA && ItemElytra.isUsable(itemstack);
+    	if (!(player instanceof EntityPlayer))
+    	{
+    		return vanillaElytra;
+    	}
+    	double attributeValue = player.getEntityAttribute(EntityPlayer.ELYTRA_FLIGHT).getAttributeValue();
+    	return attributeValue > 1.0D || (vanillaElytra && attributeValue >= 1.0D);
     }
 }
