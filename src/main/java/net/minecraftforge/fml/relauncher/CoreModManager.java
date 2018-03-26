@@ -67,6 +67,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 
 public class CoreModManager {
     private static final Attributes.Name COREMODCONTAINSFMLMOD = new Attributes.Name("FMLCorePluginContainsFMLMod");
@@ -215,6 +217,16 @@ public class CoreModManager {
         if (!deobfuscatedEnvironment)
         {
             FMLLog.log.debug("Enabling runtime deobfuscation");
+        }
+        else
+        {
+            if (System.getProperty("log4j.configurationFile") == null)
+            {
+                FMLLog.log.info("Detected deobfuscated environment, loading log configs for colored console logs.");
+                // use server logging configs in deobfuscated environment so developers get nicely colored console logs
+                System.setProperty("log4j.configurationFile", "log4j2_server.xml");
+                ((LoggerContext) LogManager.getContext(false)).reconfigure();
+            }
         }
 
         tweaker.injectCascadingTweak("net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker");
