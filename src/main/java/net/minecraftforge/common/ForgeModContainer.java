@@ -32,7 +32,6 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -120,6 +119,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean forgeCloudsEnabled = true;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
     public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
+    public static boolean limitAsyncRenderTasks = false; // If set to false, only synchronous chunk render tasks will be rate-limited.
     public static int dimensionUnloadQueueDelay = 0;
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
@@ -343,6 +343,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "without a significant number of cores available.");
         alwaysSetupTerrainOffThread = prop.getBoolean(false);
         prop.setLanguageKey("forge.configgui.alwaysSetupTerrainOffThread");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "limitAsyncRenderTasks", true,
+                "If set to false, only synchronous chunk render tasks will be rate-limited. " +
+                "Can cause more frame-rate variation, but allows more efficient use of worker threads.");
+        limitAsyncRenderTasks = prop.getBoolean(true);
+        prop.setLanguageKey("forge.configgui.limitAsyncRenderTasks");
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_CLIENT, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 });

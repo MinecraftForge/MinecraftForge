@@ -31,7 +31,7 @@
              }
  
 -            if (p_178516_1_ == 0L || !flag1 || p_178516_1_ < System.nanoTime())
-+            if (p_178516_1_ == 0L || !flag1 || false && p_178516_1_ < System.nanoTime())
++            if (p_178516_1_ == 0L || !flag1 || net.minecraftforge.common.ForgeModContainer.limitAsyncRenderTasks && p_178516_1_ < System.nanoTime())
              {
                  break;
              }

@@ -134,7 +134,7 @@
 -                long k1 = p_174967_1_ - System.nanoTime();
  
 -                if (k1 < 0L)
-+                if (false && k1 < 0L)
++                if (net.minecraftforge.common.ForgeModContainer.limitAsyncRenderTasks && k1 < 0L)
                  {
                      break;
                  }
