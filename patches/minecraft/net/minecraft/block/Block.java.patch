@@ -1536,6 +1536,21 @@
 +    }
 +
 +    /**
++     * <p>Gets the {@code PathNodeType} for this block when the block is in the 3*3 grid around the
++     * path node. Called in {@link net.minecraft.pathfinding.WalkNodeProcessor#checkNeighborBlocks(IBlockAccess, int, int, int, net.minecraft.pathfinding.PathNodeType)}
++     *
++     * <p>Returns {@code original} for vanilla behavior.
++     *
++     * <p>Implementations: be aware that the {@code pos} argument may be mutable.
++     *
++     * @return the new path node type, or the default value
++     */
++    public net.minecraft.pathfinding.PathNodeType getAiEnvironmentalPathNodeType(IBlockState state, IBlockAccess world, BlockPos pos, net.minecraft.pathfinding.PathNodeType original)
++    {
++        return isBurning(world, pos) ? net.minecraft.pathfinding.PathNodeType.DANGER_FIRE : original;
++    }
++
++    /**
 +     * @param blockState The state for this block
 +     * @param world The world this block is in
 +     * @param pos The position of this block

@@ -26,6 +26,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
@@ -76,7 +77,8 @@ public class EnumHelper
         {SleepResult.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
         {EnumRarity.class, TextFormatting.class, String.class},
-        {HorseArmorType.class, String.class, int.class}
+        {HorseArmorType.class, String.class, int.class},
+        {PathNodeType.class, float.class}
     };
 
     @Nullable
@@ -156,6 +158,24 @@ public class EnumHelper
     public static HorseArmorType addHorseArmor(String name, String textureLocation, int armorStrength)
     {
         return addEnum(HorseArmorType.class, name, textureLocation, armorStrength);
+    }
+
+    /**
+     * Adds a new path node type for vanilla entity navigators.
+     *
+     * <p>Specifications on the float priority:
+     * <ul><li>A negative number indicates that the navigator should avoid this node.
+     * <li>A non-negative number indicates the actual priority: the smaller priorities go first.
+     * </ul></p>
+     *
+     * @param name the new name for the path node type created
+     * @param priority The float priority of the node, as specified above
+     * @return The newly created path node type if the creation is successful
+     */
+    @Nullable
+    public static PathNodeType addPathNodeType(String name, float priority)
+    {
+        return addEnum(PathNodeType.class, name, priority);
     }
 
     private static void setup()
