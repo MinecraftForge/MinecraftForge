@@ -1401,7 +1401,7 @@ public class ForgeHooks
      * Used as the default implementation of {@link Item#getCreatorModId}. Call that method instead.
      */
     @Nullable
-    public static String getDefaultCreatorModId(ItemStack itemStack)
+    public static String getDefaultCreatorModId(@Nonnull ItemStack itemStack)
     {
         Item item = itemStack.getItem();
         ResourceLocation registryName = item.getRegistryName();
