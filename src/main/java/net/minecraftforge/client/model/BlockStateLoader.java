@@ -82,7 +82,7 @@ public class BlockStateLoader
             {
                 case 1: // Version 1
                     ForgeBlockStateV1 v1 = GSON.fromJson(reader, ForgeBlockStateV1.class);
-                    Map<String, VariantList> variants = Maps.newHashMap();
+                    Map<String, VariantList> variants = Maps.newLinkedHashMap();
 
                     for (Entry<String, Collection<ForgeBlockStateV1.Variant>> entry : v1.variants.asMap().entrySet())
                     {   // Convert Version1 variants into vanilla variants for the ModelBlockDefinition.

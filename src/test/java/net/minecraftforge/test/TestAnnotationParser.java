@@ -18,6 +18,7 @@
  */
 package net.minecraftforge.test;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,20 +29,25 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.junit.Test;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ContainerType;
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 import net.minecraftforge.fml.common.discovery.json.JsonAnnotationLoader;
+import org.junit.jupiter.api.Test;
 
 public class TestAnnotationParser
 {
-    private static String TEST_JAR = "forestry_1.12.2-5.7.0.0.jar";
+    // To test, put any mod jar into src/test/resources and put the jar name below
+    private static String TEST_JAR = "forestry_1.12.2-5.8.0.242.jar";
     public static Pattern classFile = Pattern.compile("[^\\s\\$]+(\\$[^\\s]+)?\\.class$");
     private static final int RUN_COUNT = 100;
+    private static final Logger LOG = LogManager.getLogger("TestAnnotationParser");
 
+    @Nullable
     private File getFile()
     {
         ClassLoader cl = getClass().getClassLoader();
@@ -54,7 +60,10 @@ public class TestAnnotationParser
     {
         File jar = getFile();
         if (jar == null)
+        {
+            LOG.fatal("Could not find test mod jar: {}", TEST_JAR);
             return; //Skip this test if the test jar doesn't exist.
+        }
 
         Timer timer = new Timer();
         for( int x = 0; x < RUN_COUNT; x++)
@@ -63,16 +72,18 @@ public class TestAnnotationParser
             loadAnnotationsASM(jar);
             timer.end(null);
         }
-        System.out.println("LoaderASM: " + timer.finish());
+        LOG.info("LoaderASM: {}", timer.finish());
     }
-
 
     @Test
     public void testAnnotationLoaderJSON() throws IOException
     {
         File jar = getFile();
         if (jar == null)
+        {
+            LOG.fatal("Could not find test mod jar: {}", TEST_JAR);
             return; //Skip this test if the test jar doesn't exist.
+        }
 
         Timer timer = new Timer();
         for( int x = 0; x < RUN_COUNT; x++)
@@ -81,7 +92,7 @@ public class TestAnnotationParser
             loadAnnotationsJSON(jar);
             timer.end(null);
         }
-        System.out.println("LoaderJSON: " + timer.finish());
+        LOG.info("LoaderJSON: {}", timer.finish());
     }
 
     private void loadAnnotationsASM(File jar) throws IOException
@@ -98,14 +109,20 @@ public class TestAnnotationParser
                 Matcher match = classFile.matcher(e.getName());
                 if (match.matches())
                 {
-                    ASMModParser modParser;
+                    ASMModParser modParser = null;
                     try (InputStream inputStream = in.getInputStream(e))
                     {
                         modParser = new ASMModParser(inputStream);
                     }
+                    catch (IOException exception)
+                    {
+                        LOG.error("Failed to create ASMModParser:", exception);
+                    }
                     //candidate.addClassEntry(e.getName());
                     if (modParser != null)
+                    {
                         modParser.sendToTable(dataTable, candidate);
+                    }
                 }
             }
         }
@@ -148,12 +165,15 @@ public class TestAnnotationParser
         {
             this.start = System.currentTimeMillis();
         }
-        public void end(String message)
+
+        public void end(@Nullable String message)
         {
             long now = System.currentTimeMillis();
             long time = now - start;
             if (message != null)
-                System.out.println(String.format(message, time));
+            {
+                LOG.info("{} {}", message, time);
+            }
             min = Long.min(min, time);
             max = Long.max(max, time);
             total += time;
@@ -162,11 +182,11 @@ public class TestAnnotationParser
 
         public String finish()
         {
-            return  "Runs: " + count +
-                   " Min: " + min +
-                   " Max: " + max +
-                   " Total: " + total +
-                   " Average: " + (total/count);
+            return "Runs: " + count +
+                    " Min: " + min + "ms" +
+                    " Max: " + max + "ms" +
+                    " Total: " + total + "ms" +
+                    " Average: " + total / count + "ms";
         }
     }
 }
