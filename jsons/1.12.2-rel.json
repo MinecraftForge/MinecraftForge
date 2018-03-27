@@ -45,6 +45,11 @@
       "clientreq":false
     },
     {
+      "name": "net.java.dev.jna:jna:4.4.0",
+      "serverreq":true,
+      "clientreq":false
+    },
+    {
       "name": "com.typesafe.akka:akka-actor_2.11:2.3.3",
       "url" : "http://files.minecraftforge.net/maven/",
       "checksums" : [ "ed62e9fc709ca0f2ff1a3220daa8b70a2870078e", "25a86ccfdb6f6dfe08971f4825d0a01be83a6f2e" ],
