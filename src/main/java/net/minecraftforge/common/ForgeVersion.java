@@ -21,8 +21,11 @@ package net.minecraftforge.common;
 
 import static net.minecraftforge.common.ForgeVersion.Status.*;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -204,6 +207,46 @@ public class ForgeVersion
                 }
             }
 
+            /**
+             * Opens stream for given URL while following redirects (max. 5)
+             */
+            private InputStream openUrlStream(URL url) throws IOException
+            {
+                URL originalUrl = url;
+                int redirects = 0;
+                do
+                {
+                    URLConnection c = url.openConnection();
+                    boolean redirected = false;
+
+                    if (c instanceof HttpURLConnection)
+                    {
+                        HttpURLConnection huc = (HttpURLConnection) c;
+                        int responseCode = huc.getResponseCode();
+                        if (responseCode >= 301 && responseCode <= 303 || responseCode == 307 || responseCode == 308)
+                        {
+                            String loc = huc.getHeaderField("Location");
+                            url = new URL(loc);
+                            redirected = true;
+                            huc.disconnect();
+                        }
+                    }
+
+                    if (redirected)
+                    {
+                        if (++redirects == 5)
+                        {
+                            throw new IOException("Too many redirects while trying to fetch " + originalUrl);
+                        }
+                    }
+                    else
+                    {
+                        return c.getInputStream();
+                    }
+                }
+                while (true);
+            }
+
             private void process(ModContainer mod, URL url)
             {
                 try
@@ -212,7 +255,7 @@ public class ForgeVersion
                     Status status = PENDING;
                     ComparableVersion target = null;
 
-                    InputStream con = url.openStream();
+                    InputStream con = openUrlStream(url);
                     String data = new String(ByteStreams.toByteArray(con), "UTF-8");
                     con.close();
 
