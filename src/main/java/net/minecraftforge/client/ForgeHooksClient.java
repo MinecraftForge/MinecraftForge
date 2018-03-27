@@ -581,7 +581,7 @@ public class ForgeHooksClient
     }
 
     /**
-     * @deprecated Will be removed as soon as possible, hopefully 1.9.
+     * @deprecated Will be removed as soon as possible.  See {@link Item#getTileEntityItemStackRenderer()}.
      */
     @Deprecated
     public static void registerTESRItemStack(Item item, int metadata, Class<? extends TileEntity> TileClass)
