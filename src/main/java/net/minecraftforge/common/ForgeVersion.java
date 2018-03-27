@@ -228,7 +228,7 @@ public class ForgeVersion
                         if (responseCode >= 301 && responseCode <= 303 || responseCode == 307 || responseCode == 308)
                         {
                             String loc = huc.getHeaderField("Location");
-                            url = new URL(loc);
+                            url = new URL(url, loc);
                             redirected = true;
                             huc.disconnect();
                         }
