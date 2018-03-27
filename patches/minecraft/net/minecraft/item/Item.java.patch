@@ -793,7 +793,7 @@
 +    
 +    @SideOnly(Side.CLIENT)
 +    @Nullable
-+    private net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer teisr = null;
++    private net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer teisr;
 +    
 +    /**
 +     * @return This Item's renderer, or the default instance if it does not have one.
