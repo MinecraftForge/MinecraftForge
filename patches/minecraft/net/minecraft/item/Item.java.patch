@@ -68,7 +68,11 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
+<<<<<<< HEAD
 @@ -435,11 +441,747 @@
+=======
+@@ -435,11 +441,727 @@
+>>>>>>> refs/remotes/MinecraftForge/1.12.x
          return false;
      }
  
@@ -694,8 +698,7 @@
 +    @Nullable
 +    public String getCreatorModId(ItemStack itemStack)
 +    {
-+        ResourceLocation registryName = getRegistryName();
-+        return registryName == null ? null : registryName.func_110624_b();
++        return net.minecraftforge.common.ForgeHooks.getDefaultCreatorModId(itemStack);
 +    }
 +
 +    /**
@@ -816,7 +819,11 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
+<<<<<<< HEAD
 @@ -999,6 +1741,8 @@
+=======
+@@ -999,6 +1721,8 @@
+>>>>>>> refs/remotes/MinecraftForge/1.12.x
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -825,7 +832,11 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
+<<<<<<< HEAD
 @@ -1034,6 +1778,7 @@
+=======
+@@ -1034,6 +1758,7 @@
+>>>>>>> refs/remotes/MinecraftForge/1.12.x
              return this.field_78008_j;
          }
  
@@ -833,7 +844,11 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
+<<<<<<< HEAD
 @@ -1057,5 +1802,21 @@
+=======
+@@ -1057,5 +1782,21 @@
+>>>>>>> refs/remotes/MinecraftForge/1.12.x
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
