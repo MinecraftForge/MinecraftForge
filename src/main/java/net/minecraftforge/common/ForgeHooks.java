@@ -1386,4 +1386,10 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
     }
+
+    public static float getPlayerReachDistance(EntityPlayer player)
+    {
+        float reach = (float) player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+        return player.isCreative() ? reach : reach - 0.5F;
+    }
 }
