@@ -73,6 +73,8 @@ public class ForgeVersion
 
     private static final Logger log = LogManager.getLogger(MOD_ID + ".VersionCheck");
 
+    private static final int MAX_HTTP_REDIRECTS = Integer.getInteger("http.maxRedirects", 20);
+
     public static int getMajorVersion()
     {
         return majorVersion;
@@ -234,7 +236,7 @@ public class ForgeVersion
 
                     if (redirected)
                     {
-                        if (++redirects == 5)
+                        if (++redirects >= MAX_HTTP_REDIRECTS)
                         {
                             throw new IOException("Too many redirects while trying to fetch " + originalUrl);
                         }
