@@ -21,7 +21,17 @@
                          }
                      }
                  }
-@@ -96,9 +96,9 @@
+@@ -83,7 +83,8 @@
+                     this.field_150128_a = new int[32768];
+                 }
+ 
+-                if (p_180650_1_.func_175707_a(new BlockPos(k - 5, l - 5, i1 - 5), new BlockPos(k + 5, l + 5, i1 + 5)))
++                if (!p_180650_1_.func_175697_a(p_180650_2_, 1)) return; // Forge: prevent decaying leaves from updating neighbors and loading unloaded chunks
++                if (p_180650_1_.func_175697_a(p_180650_2_, 6)) // Forge: extend range from 5 to 6 to account for neighbor checks in world.markAndNotifyBlock -> world.updateObservingBlocksAt
+                 {
+                     BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+ 
+@@ -96,9 +97,9 @@
                                  IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2));
                                  Block block = iblockstate.func_177230_c();
  
@@ -33,7 +43,7 @@
                                      {
                                          this.field_150128_a[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = -2;
                                      }
-@@ -205,40 +205,7 @@
+@@ -205,40 +206,7 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -75,7 +85,7 @@
      }
  
      protected void func_176234_a(World p_176234_1_, BlockPos p_176234_2_, IBlockState p_176234_3_, int p_176234_4_)
-@@ -274,6 +241,51 @@
+@@ -274,6 +242,51 @@
  
      public abstract BlockPlanks.EnumType func_176233_b(int p_176233_1_);
  

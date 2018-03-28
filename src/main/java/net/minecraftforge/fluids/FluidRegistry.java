@@ -316,6 +316,14 @@ public abstract class FluidRegistry
             }
             fluidBlocks = tmp;
         }
+        if (block == Blocks.FLOWING_WATER)
+        {
+            block = Blocks.WATER;
+        }
+        else if (block == Blocks.FLOWING_LAVA)
+        {
+            block = Blocks.LAVA;
+        }
         return fluidBlocks.get(block);
     }
 
