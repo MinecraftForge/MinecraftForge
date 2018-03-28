@@ -44,6 +44,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraft.world.storage.ThreadedFileIOBase;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -112,6 +113,8 @@ public class ForgeChunkManager
     private static Configuration config;
     private static int playerTicketLength;
     private static int dormantChunkCacheSize;
+
+    public static boolean asyncChunkLoading;
 
     public static final List<String> MOD_PROP_ORDER = new ArrayList<String>(2);
 
@@ -942,15 +945,19 @@ public class ForgeChunkManager
                 }
             }
         }
-        try
-        {
-            CompressedStreamTools.write(forcedChunkData, chunkLoaderData);
-        }
-        catch (IOException e)
-        {
-            FMLLog.log.warn("Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
-            return;
-        }
+
+        // Write the actual file on the IO thread rather than blocking the server thread
+        ThreadedFileIOBase.getThreadedIOInstance().queueIO(() -> {
+            try
+            {
+                CompressedStreamTools.write(forcedChunkData, chunkLoaderData);
+            }
+            catch (IOException e)
+            {
+                FMLLog.log.warn("Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
+            }
+            return false;
+        });
     }
 
     static void loadEntity(Entity entity)
@@ -1100,6 +1107,13 @@ public class ForgeChunkManager
         dormantChunkCacheSize = temp.getInt(0);
         propOrder.add("dormantChunkCacheSize");
         FMLLog.log.info("Configured a dormant chunk cache size of {}", temp.getInt(0));
+
+        temp = config.get("defaults", "asyncChunkLoading", true);
+        temp.setComment("Load chunks asynchronously for players, reducing load on the server thread.\n" +
+                    "Can be disabled to help troubleshoot chunk loading issues.");
+        temp.setLanguageKey("forge.configgui.asyncChunkLoading");
+        asyncChunkLoading = temp.getBoolean(true);
+        propOrder.add("asyncChunkLoading");
 
         config.setCategoryPropertyOrder("defaults", propOrder);
 
