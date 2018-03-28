@@ -210,43 +210,37 @@ public class ForgeVersion
             }
 
             /**
-             * Opens stream for given URL while following redirects (max. 5)
+             * Opens stream for given URL while following redirects
              */
             private InputStream openUrlStream(URL url) throws IOException
             {
-                URL originalUrl = url;
-                int redirects = 0;
-                do
+                URL currentUrl = url;
+                for (int redirects = 0; redirects < MAX_HTTP_REDIRECTS; redirects++)
                 {
-                    URLConnection c = url.openConnection();
-                    boolean redirected = false;
-
+                    URLConnection c = currentUrl.openConnection();
                     if (c instanceof HttpURLConnection)
                     {
                         HttpURLConnection huc = (HttpURLConnection) c;
+                        huc.setInstanceFollowRedirects(false);
                         int responseCode = huc.getResponseCode();
-                        if (responseCode >= 301 && responseCode <= 303 || responseCode == 307 || responseCode == 308)
+                        if (responseCode >= 300 && responseCode <= 399)
                         {
-                            String loc = huc.getHeaderField("Location");
-                            url = new URL(url, loc);
-                            redirected = true;
-                            huc.disconnect();
+                            try
+                            {
+                                String loc = huc.getHeaderField("Location");
+                                currentUrl = new URL(currentUrl, loc);
+                                continue;
+                            }
+                            finally
+                            {
+                                huc.disconnect();
+                            }
                         }
                     }
 
-                    if (redirected)
-                    {
-                        if (++redirects >= MAX_HTTP_REDIRECTS)
-                        {
-                            throw new IOException("Too many redirects while trying to fetch " + originalUrl);
-                        }
-                    }
-                    else
-                    {
-                        return c.getInputStream();
-                    }
+                    return c.getInputStream();
                 }
-                while (true);
+                throw new IOException("Too many redirects while trying to fetch " + url);
             }
 
             private void process(ModContainer mod, URL url)
