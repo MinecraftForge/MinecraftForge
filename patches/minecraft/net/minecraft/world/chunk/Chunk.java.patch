@@ -291,6 +291,15 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
+@@ -1271,7 +1291,7 @@
+ 
+         if (this.field_76637_e.field_73011_w.func_191066_m())
+         {
+-            if (this.field_76637_e.func_175707_a(blockpos.func_177982_a(-1, 0, -1), blockpos.func_177982_a(16, this.field_76637_e.func_181545_F(), 16)))
++            if (net.minecraftforge.common.ForgeModContainer.loadLargerAreaBeforeLighting ? this.field_76637_e.func_175707_a(blockpos.func_177982_a(-17, 0, -17), blockpos.func_177982_a(32, this.field_76637_e.func_181545_F(), 32)) : this.field_76637_e.func_175707_a(blockpos.func_177982_a(-1, 0, -1), blockpos.func_177982_a(16, this.field_76637_e.func_181545_F(), 16))) // FORGE: require 5x5 loaded chunks (issue #4723)
+             {
+                 label44:
+ 
 @@ -1381,7 +1401,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
