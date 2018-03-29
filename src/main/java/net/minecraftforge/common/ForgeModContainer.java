@@ -111,7 +111,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static float zombieBabyChance = 0.05f;
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
-    public static boolean forgeLightPipelineEnabled = true;
+    public static boolean forgeLightPipelineEnabled = true; // Optimized client lighting
+    public static boolean loadLargerAreaBeforeLighting = false; // Fixes both-sided lighting issues
     @Deprecated // TODO remove in 1.13
     public static boolean replaceVanillaBucketModel = true;
     public static boolean zoomInMissingModelTextInGui = false;
@@ -305,6 +306,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                         "This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.");
         dimensionUnloadQueueDelay = prop.getInt(0);
         prop.setLanguageKey("forge.configgui.dimensionUnloadQueueDelay");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "loadLargerAreaBeforeLighting", false,
+                "Requires 5x5 chunks to be loaded instead of 3x3 before starting skylight initialization.");
+        loadLargerAreaBeforeLighting = prop.getBoolean(false);
+        prop.setLanguageKey("forge.configgui.loadLargerAreaBeforeLighting");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
