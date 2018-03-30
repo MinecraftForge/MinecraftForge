@@ -256,6 +256,16 @@
 +        return null;
 +    }
 +
++    /**
++     * Called from {@link net.minecraft.world.chunk.Chunk#checkLight()}, to get additional blocks in radius for checking.
++     * Confused? See issue MinecraftForge#4723
++     * @return Additional amount of chunks by amount of blocks required before checking light. Should be in increments of 16.
++     */
++    public int additionalBlocksForLightCheck()
++    {
++        return 0;
++    }
++
 +    /*======================================= Start Moved From World =========================================*/
 +
 +    public Biome getBiomeForCoords(BlockPos pos)

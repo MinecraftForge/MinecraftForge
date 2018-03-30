@@ -291,7 +291,17 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1381,7 +1401,7 @@
+@@ -1271,7 +1291,8 @@
+ 
+         if (this.field_76637_e.field_73011_w.func_191066_m())
+         {
+-            if (this.field_76637_e.func_175707_a(blockpos.func_177982_a(-1, 0, -1), blockpos.func_177982_a(16, this.field_76637_e.func_181545_F(), 16)))
++            int chunkRange = this.field_76637_e.field_73011_w.additionalBlocksForLightCheck(); // Leaves the option for resolution of issue #4723 up to World Providers
++            if (this.field_76637_e.func_175707_a(blockpos.func_177982_a(-1 - chunkRange, 0, -1 - chunkRange), blockpos.func_177982_a(16 + chunkRange, this.field_76637_e.func_181545_F(), 16 + chunkRange)))
+             {
+                 label44:
+ 
+@@ -1381,7 +1402,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -300,7 +310,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1420,6 +1440,7 @@
+@@ -1420,6 +1441,7 @@
          else
          {
              System.arraycopy(p_177420_1_, 0, this.field_76634_f, 0, this.field_76634_f.length);
@@ -308,7 +318,7 @@
          }
      }
  
-@@ -1489,4 +1510,52 @@
+@@ -1489,4 +1511,52 @@
          QUEUED,
          CHECK;
      }
