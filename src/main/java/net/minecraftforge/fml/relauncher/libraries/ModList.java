@@ -42,7 +42,7 @@ import net.minecraftforge.fml.common.FMLLog;
 public class ModList
 {
     private static final Gson GSON = new GsonBuilder().setLenient().create();
-    private static Map<String, ModList> cache = new HashMap<>();
+    static final Map<String, ModList> cache = new HashMap<>();
 
     public static ModList create(File json, File mcdir)
     {
@@ -79,6 +79,11 @@ public class ModList
     public static List<ModList> getBasicLists(File mcdir)
     {
         List<ModList> lst = new ArrayList<>();
+
+        ModList memory = cache.get("MEMORY");
+        if (memory != null)
+            lst.add(memory);
+
         for (String list : new String[] {"mods/mod_list.json", "mods/" + ForgeVersion.mcVersion + "/mod_list.json", ((Map<String, String>)Launch.blackboard.get("launchArgs")).get("--modListFile")})
         {
             if (list != null)
@@ -100,6 +105,14 @@ public class ModList
     private final Map<String, Artifact> art_map = new HashMap<>();
 
     private boolean changed = false;
+
+    protected ModList(Repository repo)
+    {
+        this.path = null;
+        this.mod_list = new JsonModList();
+        this.repo = repo;
+        this.parent = null;
+    }
 
     private ModList(File path, File mcdir)
     {
@@ -174,11 +187,6 @@ public class ModList
         return changed;
     }
 
-    public File getPath()
-    {
-        return path;
-    }
-
     public void save() throws IOException
     {
         mod_list.modRef = artifacts.stream().map(a -> a.toString()).collect(Collectors.toList());
@@ -226,5 +234,10 @@ public class ModList
             }
         }
         return lst;
+    }
+
+    public Object getName()
+    {
+        return path.getAbsolutePath();
     }
 }

@@ -330,7 +330,7 @@ public class CoreModManager {
             artifact = Repository.resolveAll(artifact);
             if (artifact != null)
             {
-                File target = artifact.getFile(artifact.getRepository()); //Resolve should always set the repo, so this is kinda redundant.
+                File target = artifact.getFile();
                 if (!file_canidates.contains(target))
                     file_canidates.add(target);
             }

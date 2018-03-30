@@ -137,16 +137,16 @@ public class Artifact implements Comparable<Artifact>
         return getFolder() + File.separatorChar + getFilename();
     }
 
-    public File getFile(Repository _default)
+    public File getFile()
     {
-        return (repo != null ? repo : _default).getFile(getPath());
+        return (repo != null ? repo : LibraryManager.getDefaultRepo()).getFile(getPath());
     }
 
-    public File getSnapshotMeta(Repository _default)
+    public File getSnapshotMeta()
     {
         if (!isSnapshot())
             throw new IllegalStateException("Attempted to call date suffix on non-snapshot");
-        return (repo != null ? repo : _default).getFile(getFolder() + File.separatorChar + SnapshotJson.META_JSON_FILE);
+        return (repo != null ? repo : LibraryManager.getDefaultRepo()).getFile(getFolder() + File.separatorChar + SnapshotJson.META_JSON_FILE);
     }
 
     public boolean isSnapshot()

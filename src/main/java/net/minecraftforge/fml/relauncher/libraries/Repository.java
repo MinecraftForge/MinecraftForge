@@ -21,31 +21,38 @@ package net.minecraftforge.fml.relauncher.libraries;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
+
+import net.minecraftforge.fml.common.FMLLog;
 
 public class Repository
 {
-    private static final Map<String, Repository> repo_list = new LinkedHashMap<>();
+    static final Map<String, Repository> cache = new LinkedHashMap<>();
+
     public static Repository create(File root) throws IOException
     {
         return create(root, root.getCanonicalPath());
     }
     public static Repository create(File root, String name)
     {
-        return repo_list.computeIfAbsent(name, f -> new Repository(root, name));
+        return cache.computeIfAbsent(name, f -> new Repository(root, name));
     }
     public static Repository replace(File root, String name)
     {
-        return repo_list.put(name, new Repository(root, name));
+        return cache.put(name, new Repository(root, name));
     }
     public static Repository get(String name)
     {
-        return repo_list.get(name);
+        return cache.get(name);
     }
     public static Artifact resolveAll(Artifact artifact)
     {
         Artifact ret = null;
-        for (Repository repo : repo_list.values())
+        for (Repository repo : cache.values())
         {
             Artifact tmp = repo.resolve(artifact);
             if (tmp == null)
@@ -61,11 +68,11 @@ public class Repository
     private final String name;
     private final File root;
 
-    private Repository(File root) throws IOException
+    protected Repository(File root) throws IOException
     {
         this(root, root.getCanonicalPath());
     }
-    private Repository(File root, String name)
+    protected Repository(File root, String name)
     {
         this.root = root;
         this.name = name;
@@ -113,4 +120,43 @@ public class Repository
     {
         return new File(root, path);
     }
+
+    public File archive(Artifact artifact, File file, byte[] manifest)
+    {
+        File target = artifact.getFile();
+        try
+        {
+            if (target.exists())
+            {
+                FMLLog.log.debug("Maven file already exists for {}({}) at {}, deleting duplicate.", file.getName(), artifact.toString(), target.getAbsolutePath());
+                file.delete();
+            }
+            else
+            {
+                FMLLog.log.debug("Moving file {}({}) to maven repo at {}.", file.getName(), artifact.toString(), target.getAbsolutePath());
+                Files.move(file, target);
+
+                if (artifact.isSnapshot())
+                {
+                    SnapshotJson json = SnapshotJson.create(artifact.getSnapshotMeta());
+                    json.add(new SnapshotJson.Entry(artifact.getTimestamp(), Files.hash(target, Hashing.md5()).toString()));
+                    json.write(artifact.getSnapshotMeta());
+                }
+
+                if (!LibraryManager.DISABLE_EXTERNAL_MANIFEST)
+                {
+                    File meta_target = new File(target.getAbsolutePath() + ".meta");
+                    Files.write(manifest, meta_target);
+                }
+            }
+            return target;
+        }
+        catch (IOException e)
+        {
+            FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("Error moving file {} to {}", file, target.getAbsolutePath()), e);
+        }
+        return file;
+    }
+
+    public void filterLegacy(List<File> list){}
 }

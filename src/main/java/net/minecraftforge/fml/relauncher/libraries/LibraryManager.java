@@ -47,7 +47,6 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 
-import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import net.minecraft.launchwrapper.Launch;
@@ -58,9 +57,10 @@ import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 public class LibraryManager
 {
     public static final boolean DISABLE_EXTERNAL_MANIFEST = Boolean.parseBoolean(System.getProperty("forge.disable_external_manifest", "false"));
+    public static final boolean ENABLE_AUTO_MOD_MOVEMENT = Boolean.parseBoolean(System.getProperty("forge.enable_auto_mod_movement", "false"));
     private static final String LIBRARY_DIRECTORY_OVERRIDE = System.getProperty("forge.lib_folder", null);
-    private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps","").split(",")); //TODO: Is this used by anyone in the real world?
-    private static final FilenameFilter MOD_FILENAME_FILTER  = (dir, name) -> name.endsWith(".jar") || name.endsWith(".zip"); //TODO: Disable support for zip in 1.13?
+    private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps","").split(",")); //TODO: Is this used by anyone in the real world? TODO: Remove in 1.13.
+    private static final FilenameFilter MOD_FILENAME_FILTER  = (dir, name) -> name.endsWith(".jar") || name.endsWith(".zip"); //TODO: Disable support for zip in 1.13
     private static final Comparator<File> FILE_NAME_SORTER_INSENSITVE = (o1, o2) -> o1.getName().toLowerCase(Locale.ENGLISH).compareTo(o2.getName().toLowerCase(Locale.ENGLISH));
 
     public static final Attributes.Name MODSIDE = new Attributes.Name("ModSide");
@@ -83,8 +83,17 @@ public class LibraryManager
         File mods = new File(minecraftHome, "mods");
         File mods_ver = new File(mods, ForgeVersion.mcVersion);
 
+        ModList memory = null;
+        if (!ENABLE_AUTO_MOD_MOVEMENT)
+        {
+            Repository repo = new LinkRepository(new File(mods, "memory_repo"));
+            memory = new MemoryModList(repo);
+            ModList.cache.put("MEMORY", memory);
+            Repository.cache.put("MEMORY", repo);
+        }
+
         for (File dir : new File[]{mods, mods_ver})
-            cleanDirectory(dir, ModList.create(new File(dir, "mod_list.json"), minecraftHome), mods_ver, mods);
+            cleanDirectory(dir, ENABLE_AUTO_MOD_MOVEMENT ? ModList.create(new File(dir, "mod_list.json"), minecraftHome) : memory, mods_ver, mods);
 
         for (ModList list : ModList.getKnownLists(minecraftHome))
         {
@@ -152,35 +161,10 @@ public class LibraryManager
             if (ret != null)
             {
                 Artifact artifact = ret.getLeft();
-                File target = artifact.getFile(libraries_dir);
-                try
-                {
-                    if (target.exists())
-                    {
-                        FMLLog.log.debug("Maven file already exists for {}({}) at {}, deleting duplicate.", file.getName(), artifact.toString(), target.getAbsolutePath());
-                        file.delete();
-                    }
-                    else
-                    {
-                        FMLLog.log.debug("Moving file {}({}) to maven repo at {}.", file.getName(), artifact.toString(), target.getAbsolutePath());
-                        Files.move(file, target);
-
-                        if (artifact.isSnapshot())
-                            updateSnapshotJson(artifact, artifact.getSnapshotMeta(libraries_dir), Files.hash(target, Hashing.md5()).toString());
-
-                        if (!DISABLE_EXTERNAL_MANIFEST)
-                        {
-                            File meta_target = new File(target.getAbsolutePath() + ".meta");
-                            Files.write(ret.getRight(), meta_target);
-                        }
-                    }
-                    modlist.add(artifact);
-                    processed.add(target);
-                }
-                catch (IOException e)
-                {
-                    FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("Error moving file {} to {}", file, target.getAbsolutePath()), e);
-                }
+                Repository repo = modlist.getRepository() == null ? libraries_dir : modlist.getRepository();
+                File moved = repo.archive(artifact, file, ret.getRight());
+                modlist.add(artifact);
+                processed.add(moved);
             }
         }
 
@@ -191,7 +175,7 @@ public class LibraryManager
         }
         catch (IOException e)
         {
-            FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("Error updating modlist file {}", modlist.getPath().getAbsolutePath()), e);
+            FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("Error updating modlist file {}", modlist.getName()), e);
         }
     }
 
@@ -339,7 +323,7 @@ public class LibraryManager
                             timestamp = SnapshotJson.TIMESTAMP.format(new Date(Integer.parseInt(timestamp)));
 
                         Artifact artifact = new Artifact(modlist.getRepository(), meta.getValue(MAVEN_ARTIFACT), timestamp);
-                        File target = artifact.getFile(libraries_dir);
+                        File target = artifact.getFile();
                         if (target.exists())
                             FMLLog.log.debug("Found existing ContainedDep {}({}) from {} extracted to {}, skipping extraction", dep, artifact.toString(), target.getCanonicalPath(), jar.getName());
                         else
@@ -357,7 +341,11 @@ public class LibraryManager
                             FMLLog.log.debug("Extracted ContainedDep {}({}) from {} to {}", dep, artifact.toString(), jar.getName(), target.getCanonicalPath());
 
                             if (artifact.isSnapshot())
-                                updateSnapshotJson(artifact,artifact.getFile(libraries_dir), meta.getValue(MD5));
+                            {
+                                SnapshotJson json = SnapshotJson.create(artifact.getSnapshotMeta());
+                                json.add(new SnapshotJson.Entry(artifact.getTimestamp(), meta.getValue(MD5)));
+                                json.write(artifact.getSnapshotMeta());
+                            }
 
                             if (!DISABLE_EXTERNAL_MANIFEST)
                             {
@@ -380,13 +368,6 @@ public class LibraryManager
         }
 
         return attrs.containsKey(MAVEN_ARTIFACT) ? Pair.of(new Artifact(modlist.getRepository(), attrs.getValue(MAVEN_ARTIFACT), attrs.getValue(TIMESTAMP)), readAll(jar.getInputStream(manfest_entry))) : null;
-    }
-
-    private static void updateSnapshotJson(Artifact artifact, File target, String md5) throws IOException
-    {
-        SnapshotJson json = SnapshotJson.create(target);
-        json.add(new SnapshotJson.Entry(artifact.getTimestamp(), md5));
-        json.write(target);
     }
 
     private static byte[] readAll(InputStream in) throws IOException
@@ -470,7 +451,16 @@ public class LibraryManager
             }
         }
 
+        ModList memory = ModList.cache.get("MEMORY");
+        if (!ENABLE_AUTO_MOD_MOVEMENT && memory != null && memory.getRepository() != null)
+            memory.getRepository().filterLegacy(list);
+
         list.sort(FILE_NAME_SORTER_INSENSITVE);
         return list;
+    }
+
+    public static Repository getDefaultRepo()
+    {
+        return libraries_dir;
     }
 }
