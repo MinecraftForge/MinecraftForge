@@ -68,7 +68,7 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -435,11 +441,746 @@
+@@ -435,11 +441,759 @@
          return false;
      }
  
@@ -678,6 +678,19 @@
 +    }
 +
 +    /**
++     * Called while an item is in 'active' use to determine if usage should continue.
++     * Allows items to continue being used while sustaining damage, for example.
++     *
++     * @param oldStack the previous 'active' stack
++     * @param newStack the stack currently in the active hand
++     * @return true to set the new stack to active and continue using it
++     */
++    public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack)
++    {
++        return oldStack.equals(newStack);
++    }
++
++    /**
 +     * Called to get the Mod ID of the mod that *created* the ItemStack,
 +     * instead of the real Mod ID that *registered* it.
 +     *
@@ -815,7 +828,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -999,6 +1740,8 @@
+@@ -999,6 +1753,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -824,7 +837,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1034,6 +1777,7 @@
+@@ -1034,6 +1790,7 @@
              return this.field_78008_j;
          }
  
@@ -832,7 +845,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1057,5 +1801,21 @@
+@@ -1057,5 +1814,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
