@@ -22,7 +22,7 @@ Entrypoint : ```FMLServiceProvider.initializer```
 
 Entrypoint : ```FMLLaunchProvider.launch```
 - Launches the patched and deobfuscated game
--- If that wasn't found it'll be generated from the vanilla jar and patch/deobf files (see above)
+- - If that wasn't found it'll be generated from the vanilla jar and patch/deobf files (see above)
 - Possible we'll use an alternative launch for the development environment
 
 (A goal is that we pre-generate this JAR during forge installation or modpack installation)
@@ -30,15 +30,15 @@ Entrypoint : ```FMLLaunchProvider.launch```
 ## Loading
 
 - First we discover all mods
--- IModLocator instances present in system are found and queried to compile a master list of all mod artifacts of the three types
+- - IModLocator instances present in system are found and queried to compile a master list of all mod artifacts of the three types
 - LANGPROVIDERs are added to the supported language system : IModLanguageProvider
 - The MODS from the list have their META-INF/mods.json file queried for mod instances to load
--- MODS are cross-referenced for their language being available
--- MODS are cross-referenced for their libraries being available
--- MODS are cross-referenced for their MOD dependencies being available
--- MODS with META-INF/coremods.json specification are loaded into the COREMOD system
--- MODS with META-INF/accesstransformer.json are loaded into the ACCESSTRANSFORMER system
--- MODS are enqueued to the background loading system
+- - MODS are cross-referenced for their language being available
+- - MODS are cross-referenced for their libraries being available
+- - MODS are cross-referenced for their MOD dependencies being available
+- - MODS with META-INF/coremods.json specification are loaded into the COREMOD system
+- - MODS with META-INF/accesstransformer.json are loaded into the ACCESSTRANSFORMER system
+- - MODS are enqueued to the background loading system
 - FMLLaunchProvider will be triggered from the ModLauncher to start the game
 
 ## Game loading
