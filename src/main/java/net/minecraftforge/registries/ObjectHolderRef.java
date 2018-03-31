@@ -43,7 +43,7 @@ class ObjectHolderRef
     private Field field;
     private ResourceLocation injectedObject;
     private boolean isValid;
-    private ForgeRegistry<?> registry;
+    ForgeRegistry<?> registry;
 
     @SuppressWarnings("unchecked")
     ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
