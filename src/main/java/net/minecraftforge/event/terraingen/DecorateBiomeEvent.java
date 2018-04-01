@@ -39,6 +39,7 @@ import net.minecraft.world.World;
  * {@link #world} contains the world that is being decorated. <br>
  * {@link #rand} contains an instance of Random to be used. <br>
  * {@link #pos} contains the coordinates of the Chunk being decorated. <br>
+ * {@link #originalBlockPos} contains the original coordinates posted for the event. <br>
  * <br>
  * This event is not {@link Cancelable}.
  * <br>
@@ -52,14 +53,14 @@ public class DecorateBiomeEvent extends Event
     private final Random rand;
     private final BlockPos pos;
     @Nullable
-    private final BlockPos chunkPos;
+    private final BlockPos originalBlockPos;
 
-    public DecorateBiomeEvent(World world, Random rand, BlockPos pos, BlockPos chunkPos)
+    public DecorateBiomeEvent(World world, Random rand, BlockPos pos, BlockPos originalBlockPos)
     {
         this.world = world;
         this.rand = rand;
         this.pos = pos;
-        this.chunkPos = chunkPos;
+        this.originalBlockPos = originalBlockPos;
     }
     
     //TODO: remove in 1.13
@@ -69,7 +70,7 @@ public class DecorateBiomeEvent extends Event
         this.world = world;
         this.rand = rand;
         this.pos = pos;
-        chunkPos = null;
+        originalBlockPos = null;
     }
 
     public World getWorld()
@@ -88,9 +89,9 @@ public class DecorateBiomeEvent extends Event
     }
     
     @Nullable
-    public BlockPos getChunkPos()
+    public BlockPos getOriginalBlockPos()
     {
-    	return chunkPos;
+    	return originalBlockPos;
     }
 
     /**
@@ -98,9 +99,9 @@ public class DecorateBiomeEvent extends Event
      */
     public static class Pre extends DecorateBiomeEvent
     {
-        public Pre(World world, Random rand, BlockPos pos, BlockPos chunkPos)
+        public Pre(World world, Random rand, BlockPos pos, BlockPos originalBlockPos)
         {
-            super(world, rand, pos, chunkPos);
+            super(world, rand, pos, originalBlockPos);
         }
         
       //TODO: remove in 1.13
@@ -116,9 +117,9 @@ public class DecorateBiomeEvent extends Event
      */
     public static class Post extends DecorateBiomeEvent
     {
-        public Post(World world, Random rand, BlockPos pos, BlockPos chunkPos)
+        public Post(World world, Random rand, BlockPos pos, BlockPos originalBlockPos)
         {
-            super(world, rand, pos, chunkPos);
+            super(world, rand, pos, originalBlockPos);
         }
         
       //TODO: remove in 1.13
@@ -148,9 +149,9 @@ public class DecorateBiomeEvent extends Event
 
         private final EventType type;
 
-        public Decorate(World world, Random rand, BlockPos pos, EventType type, BlockPos chunkPos)
+        public Decorate(World world, Random rand, BlockPos pos, EventType type, BlockPos originalBlockPos)
         {
-            super(world, rand, pos, chunkPos);
+            super(world, rand, pos, originalBlockPos);
             this.type = type;
         }
         

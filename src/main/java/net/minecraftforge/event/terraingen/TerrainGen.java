@@ -55,9 +55,20 @@ public abstract class TerrainGen
         return event.getResult() != Result.DENY;
     }
 
-    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type, BlockPos chunkPos)
+    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type, BlockPos originalBlockPos)
     {
-        Decorate event = new Decorate(world, rand, pos, type, chunkPos);
+        Decorate event = new Decorate(world, rand, pos, type, originalBlockPos);
+        MinecraftForge.TERRAIN_GEN_BUS.post(event);
+        return event.getResult() != Result.DENY;
+    }
+
+    /*
+     *Use version with originalBlockPos instead
+     */
+    @Deprecated     //TODO - remove in 1.13
+    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type)
+    {
+        Decorate event = new Decorate(world, rand, pos, type);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
