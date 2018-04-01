@@ -451,7 +451,7 @@ public final class ModelLoader extends ModelBakery
             }
 
             ItemCameraTransforms transforms = model.getAllTransforms();
-            Map<TransformType, TRSRTransformation> tMap = Maps.newHashMap();
+            Map<TransformType, TRSRTransformation> tMap = Maps.newEnumMap(TransformType.class);
             tMap.putAll(PerspectiveMapWrapper.getTransforms(transforms));
             tMap.putAll(PerspectiveMapWrapper.getTransforms(state));
             IModelState perState = new SimpleModelState(ImmutableMap.copyOf(tMap));

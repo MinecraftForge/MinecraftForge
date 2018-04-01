@@ -24,11 +24,10 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.function.Function;
-
 import jline.console.ConsoleReader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.server.console.log4j.TerminalConsoleAppender;
 
 public final class TerminalHandler
 {
