@@ -39,7 +39,7 @@ import net.minecraft.world.World;
  * {@link #world} contains the world that is being decorated. <br>
  * {@link #rand} contains an instance of Random to be used. <br>
  * {@link #pos} contains the coordinates of the Chunk being decorated. <br>
- * {@link #originalBlockPos} contains the original coordinates posted for the event. <br>
+ * {@link #originalPos} contains the original coordinates for the decorator. <br>
  * <br>
  * This event is not {@link Cancelable}.
  * <br>
@@ -53,14 +53,14 @@ public class DecorateBiomeEvent extends Event
     private final Random rand;
     private final BlockPos pos;
     @Nullable
-    private final BlockPos originalBlockPos;
+    private final BlockPos originalPos;
 
-    public DecorateBiomeEvent(World world, Random rand, BlockPos pos, BlockPos originalBlockPos)
+    public DecorateBiomeEvent(World world, Random rand, BlockPos pos, BlockPos originalPos)
     {
         this.world = world;
         this.rand = rand;
         this.pos = pos;
-        this.originalBlockPos = originalBlockPos;
+        this.originalPos = originalPos;
     }
     
     //TODO: remove in 1.13
@@ -70,7 +70,7 @@ public class DecorateBiomeEvent extends Event
         this.world = world;
         this.rand = rand;
         this.pos = pos;
-        originalBlockPos = null;
+        originalPos = null;
     }
 
     public World getWorld()
@@ -88,10 +88,10 @@ public class DecorateBiomeEvent extends Event
         return pos;
     }
     
-    @Nullable
-    public BlockPos getOriginalBlockPos()
+    @Nullable //TODO: Remove nullable in 1.13
+    public BlockPos getOriginalPos()
     {
-    	return originalBlockPos;
+    	return originalPos;
     }
 
     /**
@@ -99,12 +99,12 @@ public class DecorateBiomeEvent extends Event
      */
     public static class Pre extends DecorateBiomeEvent
     {
-        public Pre(World world, Random rand, BlockPos pos, BlockPos originalBlockPos)
+        public Pre(World world, Random rand, BlockPos pos, BlockPos originalPos)
         {
-            super(world, rand, pos, originalBlockPos);
+            super(world, rand, pos, originalPos);
         }
         
-      //TODO: remove in 1.13
+        //TODO: remove in 1.13
         @Deprecated
         public Pre(World world, Random rand, BlockPos pos)
         {
@@ -117,12 +117,12 @@ public class DecorateBiomeEvent extends Event
      */
     public static class Post extends DecorateBiomeEvent
     {
-        public Post(World world, Random rand, BlockPos pos, BlockPos originalBlockPos)
+        public Post(World world, Random rand, BlockPos pos, BlockPos originalPos)
         {
-            super(world, rand, pos, originalBlockPos);
+            super(world, rand, pos, originalPos);
         }
         
-      //TODO: remove in 1.13
+        //TODO: remove in 1.13
         @Deprecated
         public Post(World world, Random rand, BlockPos pos)
         {
@@ -149,13 +149,13 @@ public class DecorateBiomeEvent extends Event
 
         private final EventType type;
 
-        public Decorate(World world, Random rand, BlockPos pos, EventType type, BlockPos originalBlockPos)
+        public Decorate(World world, Random rand, BlockPos pos, EventType type, BlockPos originalPos)
         {
-            super(world, rand, pos, originalBlockPos);
+            super(world, rand, pos, originalPos);
             this.type = type;
         }
         
-      //TODO: remove in 1.13
+        //TODO: remove in 1.13
         @Deprecated
         public Decorate(World world, Random rand, BlockPos pos, EventType type)
         {
