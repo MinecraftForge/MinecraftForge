@@ -224,6 +224,8 @@ public class ConfigManager
                 continue;
             if (f.isAnnotationPresent(Config.Ignore.class))
                 continue;
+            if (f.getType().equals(cls))
+                continue;
 
             String comment = null;
             Comment ca = f.getAnnotation(Comment.class);
