@@ -30,3 +30,21 @@
      public boolean func_70823_r()
      {
          return ((Boolean)this.field_70180_af.func_187225_a(field_184719_bw)).booleanValue();
+@@ -486,7 +500,7 @@
+                 {
+                     return false;
+                 }
+-                else if (!this.field_179475_a.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
++                else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_179475_a.field_70170_p, this.field_179475_a))
+                 {
+                     return false;
+                 }
+@@ -551,7 +565,7 @@
+                 {
+                     return false;
+                 }
+-                else if (!this.field_179473_a.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
++                else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_179473_a.field_70170_p, this.field_179473_a))
+                 {
+                     return false;
+                 }

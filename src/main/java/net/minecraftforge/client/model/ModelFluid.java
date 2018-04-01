@@ -398,7 +398,7 @@ public final class ModelFluid implements IModel
                     float dy = offset ? side.getDirectionVec().getY() * eps : 0f;
                     float dz = offset ? side.getDirectionVec().getZ() * eps : 0f;
                     float[] data = { x - dx, y - dy, z - dz, 1f };
-                    if(transformation.isPresent() && transformation.get() != TRSRTransformation.identity())
+                    if(transformation.isPresent() && !transformation.get().isIdentity())
                     {
                         Vector4f vec = new Vector4f(data);
                         transformation.get().getMatrix().transform(vec);

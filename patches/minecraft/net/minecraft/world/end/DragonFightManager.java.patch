@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/world/end/DragonFightManager.java
++++ ../src-work/minecraft/net/minecraft/world/end/DragonFightManager.java
+@@ -72,6 +72,7 @@
+     public DragonFightManager(WorldServer p_i46669_1_, NBTTagCompound p_i46669_2_)
+     {
+         this.field_186110_d = p_i46669_1_;
++        this.field_186120_n = p_i46669_2_.func_82582_d(); // Forge: fix MC-105080
+ 
+         if (p_i46669_2_.func_150297_b("DragonKilled", 99))
+         {
+@@ -582,4 +583,14 @@
+             }
+         }
+     }
++
++    public void addPlayer(EntityPlayerMP player)
++    {
++        this.field_186109_c.func_186760_a(player);
++    }
++
++    public void removePlayer(EntityPlayerMP player)
++    {
++        this.field_186109_c.func_186761_b(player);
++    }
+ }

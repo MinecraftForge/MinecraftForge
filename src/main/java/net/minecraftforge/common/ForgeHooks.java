@@ -568,6 +568,11 @@ public class ForgeHooks
 
     public static boolean onLivingAttack(EntityLivingBase entity, DamageSource src, float amount)
     {
+        return entity instanceof EntityPlayer || !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
+    }
+
+    public static boolean onPlayerAttack(EntityLivingBase entity, DamageSource src, float amount)
+    {
         return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
