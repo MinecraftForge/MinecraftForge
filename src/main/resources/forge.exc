@@ -67,3 +67,5 @@ net/minecraft/command/EntitySelector.matchesMultiplePlayersDefault(Ljava/lang/St
 net/minecraft/command/EntitySelector.isSelectorDefault(Ljava/lang/String;)Z=|p_82378_0_
 
 net/minecraft/client/util/RecipeItemHelper.accountStack(Lnet/minecraft/item/ItemStack;I)V=|p_194112_1_,forceCount
+net/minecraft/client/renderer/ActiveRenderInfo.updateRenderInfo(Lnet/minecraft/entity/Entity;Z)V=|p_74583_0_,p_74583_1_
+net/minecraft/client/audio/SoundManager.setListener(Lnet/minecraft/entity/Entity;F)V=|p_148615_1_,p_148615_2_
