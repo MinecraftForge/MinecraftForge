@@ -32,7 +32,7 @@ import com.google.common.collect.Maps;
 
 public class ModAnnotation
 {
-    public class EnumHolder
+    public static class EnumHolder
     {
         private final String desc;
         private final String value;

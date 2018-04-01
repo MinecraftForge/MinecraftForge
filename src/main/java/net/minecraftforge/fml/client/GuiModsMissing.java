@@ -61,7 +61,7 @@ public class GuiModsMissing extends GuiErrorBase
             this.drawCenteredString(this.fontRenderer, String.format(TextFormatting.BOLD + "%s" + TextFormatting.RESET + " : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }
         offset+=20;
-        String seeLogText = I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.clientLog.getName());
+        String seeLogText = I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.logFile.getName());
         this.drawCenteredString(this.fontRenderer, seeLogText, this.width / 2, offset, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

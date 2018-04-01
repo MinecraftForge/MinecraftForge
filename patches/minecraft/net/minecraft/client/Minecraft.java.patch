@@ -143,6 +143,15 @@
          if (p_147108_1_ instanceof GuiMainMenu || p_147108_1_ instanceof GuiMultiplayer)
          {
              this.field_71474_y.field_74330_P = false;
+@@ -1082,7 +1100,7 @@
+         long i1 = System.nanoTime() - l;
+         this.func_71361_d("Pre render");
+         this.field_71424_I.func_76318_c("sound");
+-        this.field_147127_av.func_147691_a(this.field_71439_g, this.field_71428_T.field_194147_b);
++        this.field_147127_av.setListener(this.func_175606_aa(), this.field_71428_T.field_194147_b); //Forge: MC-46445 Spectator mode particles and sounds computed from where you have been before
+         this.field_71424_I.func_76319_b();
+         this.field_71424_I.func_76320_a("render");
+         GlStateManager.func_179094_E();
 @@ -1094,11 +1112,13 @@
  
          if (!this.field_71454_w)
@@ -256,9 +265,12 @@
          this.func_71403_a((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
-@@ -2346,6 +2381,12 @@
+@@ -2344,8 +2379,14 @@
  
-         while (!this.field_71437_Z.func_71200_ad())
+         this.field_71461_s.func_73720_a(I18n.func_135052_a("menu.loadingLevel"));
+ 
+-        while (!this.field_71437_Z.func_71200_ad())
++        while (!this.field_71437_Z.func_71200_ad() && !this.field_71437_Z.func_71241_aa())
          {
 +            if (!net.minecraftforge.fml.common.StartupQuery.check())
 +            {
