@@ -41,7 +41,7 @@ public class ChunkGenWorker implements IWorker
     private final int notificationFrequency;
     private int lastNotification = 0;
     private int genned = 0;
-    private Boolean loadSpawn;
+    private Boolean keepingLoaded;
 
     public ChunkGenWorker(ICommandSender listener, BlockPos start, int total, int dim, int interval)
     {
@@ -116,10 +116,9 @@ public class ChunkGenWorker implements IWorker
                 }
             }
             // While we work we don't want to cause world load spam so pause unloading the world.
-            if (loadSpawn == null)
+            if (keepingLoaded == null)
             {
-                loadSpawn = world.provider.getDimensionType().shouldLoadSpawn();
-                world.provider.getDimensionType().setLoadSpawn(true);
+                keepingLoaded = DimensionManager.keepDimensionLoaded(dim, true);
             }
 
             if (++lastNotification >= notificationFrequency)
@@ -159,7 +158,10 @@ public class ChunkGenWorker implements IWorker
         if (queue.size() == 0)
         {
             listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.complete", genned, total, dim));
-            DimensionManager.getProviderType(dim).setLoadSpawn(loadSpawn);
+            if (keepingLoaded != null && keepingLoaded)
+            {
+                DimensionManager.keepDimensionLoaded(dim, false);
+            }
         }
     }
 }

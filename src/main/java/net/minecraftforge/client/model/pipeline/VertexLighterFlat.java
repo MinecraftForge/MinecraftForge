@@ -33,7 +33,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
@@ -48,6 +48,8 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     protected int colorIndex = -1;
     protected int lightmapIndex = -1;
 
+    protected VertexFormat baseFormat;
+
     public VertexLighterFlat(BlockColors colors)
     {
         this.blockInfo = new BlockInfo(colors);
@@ -57,9 +59,11 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     public void setParent(IVertexConsumer parent)
     {
         super.setParent(parent);
-        VertexFormat format = getVertexFormat(parent);
-        if(Objects.equal(format, getVertexFormat())) return;
-        setVertexFormat(format);
+        setVertexFormat(parent.getVertexFormat());
+    }
+
+    private void updateIndices()
+    {
         for(int i = 0; i < getVertexFormat().getElementCount(); i++)
         {
             switch(getVertexFormat().getElement(i).getUsage())
@@ -96,13 +100,19 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         }
     }
 
-    private static VertexFormat getVertexFormat(IVertexConsumer parent)
+    @Override
+    public void setVertexFormat(VertexFormat format)
     {
-        VertexFormat format = parent.getVertexFormat();
-        if(format == null || format.hasNormal()) return format;
-        format = new VertexFormat(format);
-        format.addElement(NORMAL_4F);
-        return format;
+        if (Objects.equals(format, baseFormat)) return;
+        baseFormat = format;
+        super.setVertexFormat(withNormal(format));
+        updateIndices();
+    }
+
+    private static VertexFormat withNormal(VertexFormat format)
+    {
+        if (format == null || format.hasNormal()) return format;
+        return new VertexFormat(format).addElement(NORMAL_4F);
     }
 
     @Override
