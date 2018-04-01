@@ -361,7 +361,7 @@
 +    {
 +        return world.field_73012_v.nextFloat() < fallDistance - 0.5F
 +            && this instanceof EntityLivingBase
-+            && (this instanceof EntityPlayer || world.func_82736_K().func_82766_b("mobGriefing"))
++            && (this instanceof EntityPlayer || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(world, this))
 +            && this.field_70130_N * this.field_70130_N * this.field_70131_O > 0.512F;
 +    }
 +    /* ================================== Forge End =====================================*/
