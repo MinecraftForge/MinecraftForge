@@ -22,16 +22,63 @@ package net.minecraftforge.fml.common;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
+import net.minecraftforge.fml.common.event.FMLEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
 
-public interface ILanguageAdapter {
+public interface ILanguageAdapter
+{
     Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception;
     boolean supportsStatics();
     void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
     void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
+
+    /**
+     * Wraps an event handler method in an {@code EventHandler} instance
+     * @param method the eventhandler method of a mod
+     */
+    default BiFunction<Object, FMLEvent, CompletableFuture<Void>> createEventHandler(Method method)
+    {
+        return (Object mod, FMLEvent event) ->
+        {
+            CompletableFuture<Void> future = new CompletableFuture<>();
+            try
+            {
+                if (CompletionStage.class.isAssignableFrom(method.getReturnType()))
+                {
+                    // safely transform the result of the event handler into a CompletableFuture
+                    //noinspection unchecked
+                    ((CompletionStage<Void>) method.invoke(mod, event)).whenComplete((value, throwable) ->
+                    {
+                        if (throwable != null)
+                        {
+                            future.completeExceptionally(throwable);
+                        }
+                        else
+                        {
+                            future.complete(value);
+                        }
+                    });
+                }
+                else
+                {
+                    method.invoke(mod, event);
+                    future.complete(null);
+                }
+            }
+            catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exception)
+            {
+                future.completeExceptionally(exception);
+            }
+            return future;
+        };
+    }
 
     public static class ScalaAdapter implements ILanguageAdapter {
         @Override

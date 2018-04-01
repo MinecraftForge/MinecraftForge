@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
@@ -59,6 +60,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
+import java.util.function.BiFunction;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -98,7 +100,7 @@ public class FMLModContainer implements ModContainer
     private String modLanguage;
     private ILanguageAdapter languageAdapter;
     private Disableable disableability;
-    private ListMultimap<Class<? extends FMLEvent>, Method> eventMethods;
+    private ListMultimap<Class<? extends FMLEvent>, BiFunction<Object,  FMLEvent, CompletableFuture<Void>>> eventHandlers;
     private Map<String, String> customModProperties;
     private ModCandidate candidate;
     private URL updateJSONUrl;
@@ -110,7 +112,7 @@ public class FMLModContainer implements ModContainer
         this.source = container.getModContainer();
         this.candidate = container;
         this.descriptor = modDescriptor;
-        this.eventMethods = ArrayListMultimap.create();
+        this.eventHandlers = ArrayListMultimap.create();
 
         this.modLanguage = (String)modDescriptor.get("modLanguage");
         String languageAdapterType = (String)modDescriptor.get("modLanguageAdapter");
@@ -393,7 +395,7 @@ public class FMLModContainer implements ModContainer
                     if (m.getParameterTypes().length == 1 && FMLEvent.class.isAssignableFrom(m.getParameterTypes()[0]))
                     {
                         m.setAccessible(true);
-                        eventMethods.put((Class<? extends FMLEvent>)m.getParameterTypes()[0], m);
+                        eventHandlers.put((Class<? extends FMLEvent>)m.getParameterTypes()[0], this.getLanguageAdapter().createEventHandler(m));
                     }
                     else
                     {
@@ -589,16 +591,17 @@ public class FMLModContainer implements ModContainer
     @Subscribe
     public void handleModStateEvent(FMLEvent event)
     {
-        if (!eventMethods.containsKey(event.getClass()))
+        if (!eventHandlers.containsKey(event.getClass()))
         {
             return;
         }
         try
         {
-            for (Method m : eventMethods.get(event.getClass()))
-            {
-                m.invoke(modInstance, event);
-            }
+            CompletableFuture[] futures = eventHandlers.get(event.getClass())
+                    .stream()
+                    .map(eventHandler -> eventHandler.apply(this.getMod(), event))
+                    .toArray(CompletableFuture[]::new);
+            CompletableFuture.allOf(futures).join();
         }
         catch (Throwable t)
         {
