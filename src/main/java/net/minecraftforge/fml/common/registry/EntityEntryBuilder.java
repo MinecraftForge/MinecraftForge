@@ -110,7 +110,7 @@ public final class EntityEntryBuilder<E extends Entity>
      *
      * @param factory The entity factory
      * @return This builder
-     * @throws NullPointerException If {@code entity} is {@code null}
+     * @throws NullPointerException If {@code factory} is {@code null}
      */
     @Nonnull
     public final EntityEntryBuilder<E> factory(@Nonnull final Function<World, E> factory)
@@ -260,12 +260,7 @@ public final class EntityEntryBuilder<E extends Entity>
         checkState(this.name != null, "entity name not provided");
         if (this.spawns != null) checkState(EntityLiving.class.isAssignableFrom(EntityEntryBuilder.this.entity), "Cannot add spawns to a non-%s", EntityLiving.class.getSimpleName());
         final BuiltEntityEntry entry = new BuiltEntityEntry(this.entity, this.name);
-        entry.factory = this.factory != null ? this.factory : new ConstructorFactory<E>(this.entity) {
-            @Override
-            protected String describeEntity() {
-                return String.valueOf(EntityEntryBuilder.this.id);
-            }
-        };
+        entry.factory = this.factory;
         entry.setRegistryName(this.id);
         if (this.eggProvided)
         {
@@ -280,7 +275,7 @@ public final class EntityEntryBuilder<E extends Entity>
     private EntityRegistry.EntityRegistration createRegistration()
     {
         return EntityRegistry.instance().new EntityRegistration(
-            this.mod, this.id, this.entity, this.name, this.network,
+            this.mod, this.id, this.entity, this.factory, this.name, this.network,
             this.trackingRange, this.trackingUpdateFrequency, this.trackingVelocityUpdates
         );
     }
@@ -295,17 +290,19 @@ public final class EntityEntryBuilder<E extends Entity>
         }
     }
 
-    static abstract class ConstructorFactory<E extends Entity> implements Function<World, E>
+    public static class ConstructorFactory<E extends Entity> implements Function<World, E>
     {
         private final Constructor<? extends E> constructor;
+        private final String id;
 
-        ConstructorFactory(final Class<? extends E> entity)
+        public ConstructorFactory(final Class<? extends E> entity, final String id)
         {
             this.constructor = ReflectionHelper.findConstructor(entity, World.class);
+            this.id = id;
         }
 
         @Override
-        public E apply(final World world)
+        public final E apply(final World world)
         {
             try
             {
@@ -313,12 +310,10 @@ public final class EntityEntryBuilder<E extends Entity>
             }
             catch (final IllegalAccessException | InstantiationException | InvocationTargetException e)
             {
-                FMLLog.log.error("Encountered an exception while constructing entity '{}'", this.describeEntity(), e);
+                FMLLog.log.error("Encountered an exception while constructing entity '{}'", this.id, e);
                 return null;
             }
         }
-
-        protected abstract String describeEntity();
     }
 
     public final class BuiltEntityEntry extends EntityEntry
@@ -328,11 +323,6 @@ public final class EntityEntryBuilder<E extends Entity>
         BuiltEntityEntry(final Class<? extends Entity> cls, final String name)
         {
             super(cls, name);
-        }
-
-        @Override
-        protected final void init() {
-            // NOOP - we handle this in build
         }
 
         public final void addedToRegistry()
@@ -375,8 +365,10 @@ public final class EntityEntryBuilder<E extends Entity>
             for (final Biome biome : this.biomes) {
                 final List<Biome.SpawnListEntry> entries = biome.getSpawnableList(this.type);
                 boolean found = false;
-                for (final Biome.SpawnListEntry entry : entries) {
-                    if (entry.entityClass == EntityEntryBuilder.this.entity) {
+                for (final Biome.SpawnListEntry entry : entries)
+                {
+                    if (entry.entityClass == EntityEntryBuilder.this.entity)
+                    {
                         entry.itemWeight = this.weight;
                         entry.minGroupCount = this.min;
                         entry.maxGroupCount = this.max;

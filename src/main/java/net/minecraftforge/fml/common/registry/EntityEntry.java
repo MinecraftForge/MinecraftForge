@@ -41,14 +41,12 @@ public class EntityEntry extends Impl<EntityEntry>
     }
 
     //Protected method, to make this optional, in case people subclass this to have a better factory.
+    /**
+     * @deprecated to be removed with 1.13
+     */
+    @Deprecated
     protected void init()
     {
-        this.factory = new EntityEntryBuilder.ConstructorFactory<Entity>(this.cls) {
-            @Override
-            protected String describeEntity() {
-                return String.valueOf(EntityEntry.this.getRegistryName());
-            }
-        };
     }
 
     public Class<? extends Entity> getEntityClass(){ return this.cls; }
@@ -64,6 +62,10 @@ public class EntityEntry extends Impl<EntityEntry>
 
     public Entity newInstance(World world)
     {
+        if (this.factory == null)
+        {
+            this.factory = new EntityEntryBuilder.ConstructorFactory<>(this.cls, String.valueOf(this.getRegistryName()));
+        }
         return this.factory.apply(world);
     }
 }

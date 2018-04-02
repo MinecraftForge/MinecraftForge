@@ -21,6 +21,8 @@ package net.minecraftforge.fml.common.registry;
 
 import java.util.Iterator;
 import java.util.List;
+
+import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.Entity;
@@ -48,6 +50,7 @@ public class EntityRegistry
 {
     public class EntityRegistration
     {
+        private Function<World, ? extends Entity> entityFactory;
         private Class<? extends Entity> entityClass;
         private ModContainer container;
         private ResourceLocation regName;
@@ -60,9 +63,14 @@ public class EntityRegistry
         private boolean usesVanillaSpawning;
         public EntityRegistration(ModContainer mc, ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
         {
+            this(mc, registryName, entityClass, new EntityEntryBuilder.ConstructorFactory<>(entityClass, registryName.toString()), entityName, id, trackingRange, updateFrequency, sendsVelocityUpdates);
+        }
+        public EntityRegistration(ModContainer mc, ResourceLocation registryName, Class<? extends Entity> entityClass, Function<World, ? extends Entity> entityFactory, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
+        {
             this.container = mc;
             this.regName = registryName;
             this.entityClass = entityClass;
+            this.entityFactory = entityFactory;
             this.entityName = entityName;
             this.modId = id;
             this.trackingRange = trackingRange;
@@ -72,6 +80,10 @@ public class EntityRegistry
         public ResourceLocation getRegistryName()
         {
             return regName;
+        }
+        public Function<World, ? extends Entity> getEntityFactory()
+        {
+            return this.entityFactory;
         }
         public Class<? extends Entity> getEntityClass()
         {
@@ -101,19 +113,34 @@ public class EntityRegistry
         {
             return sendsVelocityUpdates;
         }
-
+        /**
+         * @deprecated to be removed with 1.13
+         */
+        @Deprecated
         public boolean usesVanillaSpawning()
         {
             return usesVanillaSpawning;
         }
+        /**
+         * @deprecated to be removed with 1.13
+         */
+        @Deprecated
         public boolean hasCustomSpawning()
         {
             return customSpawnCallback != null;
         }
+        /**
+         * @deprecated to be removed with 1.13
+         */
+        @Deprecated
         public Entity doCustomSpawning(EntitySpawnMessage spawnMsg) throws Exception
         {
             return customSpawnCallback.apply(spawnMsg);
         }
+        /**
+         * @deprecated to be removed with 1.13
+         */
+        @Deprecated
         public void setCustomSpawning(Function<EntitySpawnMessage, Entity> callable, boolean usesVanillaSpawning)
         {
             this.customSpawnCallback = callable;
