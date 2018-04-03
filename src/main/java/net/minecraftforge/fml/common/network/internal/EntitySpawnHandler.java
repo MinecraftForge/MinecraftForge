@@ -41,6 +41,8 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
 
+import java.util.function.Function;
+
 public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.EntityMessage> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, final EntityMessage msg) throws Exception
@@ -76,7 +78,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                     " at ( " + spawnMsg.rawX + "," + spawnMsg.rawY + ", " + spawnMsg.rawZ + ") Please contact mod author or server admin.");
         }
         WorldClient wc = FMLClientHandler.instance().getWorldClient();
-        Class<? extends Entity> cls = er.getEntityClass();
+        Function<World, ? extends Entity> factory = er.getEntityFactory();
         try
         {
             Entity entity;
@@ -85,7 +87,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                 entity = er.doCustomSpawning(spawnMsg);
             } else
             {
-                entity = cls.getConstructor(World.class).newInstance(wc);
+                entity = factory.apply(wc);
 
                 int offset = spawnMsg.entityId - entity.getEntityId();
                 entity.setEntityId(spawnMsg.entityId);
