@@ -1,10 +1,10 @@
 {
     "assetIndex": {
         "id": "1.12",
-        "sha1": "98c430c16a705f18a58a281b27caabf3ef09d40d",
-        "size": 169253,
-        "url": "https://launchermeta.mojang.com/mc/assets/1.12/98c430c16a705f18a58a281b27caabf3ef09d40d/1.12.json",
-        "totalSize": 127453671
+        "sha1": "e75e9535754c6f2158b0b18b35660f45c4495d78",
+        "size": 169257,
+        "url": "https://launchermeta.mojang.com/mc/assets/1.12/e75e9535754c6f2158b0b18b35660f45c4495d78/1.12.json",
+        "totalSize": 127722338
     },
     "assets": "1.12",
     "downloads": {
@@ -719,6 +719,6 @@
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
     "releaseTime": "2017-09-18T08:39:46+00:00",
-    "time": "2018-02-15T16:26:45+00:00",
+    "time": "2018-04-02T07:39:26+00:00",
     "type": "release"
 }
