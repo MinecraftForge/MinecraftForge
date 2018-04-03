@@ -329,7 +329,7 @@ public class BlockEvent extends Event
         }
 
         /**
-         * @return The original state, as opposed to what minecraft would have placed by default ({@link #getState()}).
+         * @return The state of the block to be changed before the event was fired.
          */
         public IBlockState getOriginalState()
         {
