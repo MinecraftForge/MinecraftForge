@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
+@@ -179,7 +179,7 @@
+ 
+             public static boolean func_185004_b_(ItemStack p_185004_0_)
+             {
+-                return p_185004_0_.func_77973_b() == Items.field_151065_br;
++                return net.minecraftforge.event.ForgeEventFactory.getBrewingStandFuel(p_185004_0_) > 0;
+             }
+ 
+             public int func_75219_a()
 @@ -197,7 +197,7 @@
  
              public boolean func_75214_a(ItemStack p_75214_1_)

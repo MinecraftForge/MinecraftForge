@@ -810,6 +810,25 @@
 +    	this.teisr = teisr;
 +    }  
 +
++    /**
++     * Gets the fuel value of an item stack for the brewing stand.
++     *
++     * <p>The fuel value is the number of times a brewing stand can brew, or
++     * complete a recipe, after consuming one fuel.
++     *
++     * <p>Override this method to set the new default fuel value.
++     *
++     * <p>Users: Call {@code ForgeEventFactory.getBrewingStandFuel(stack)} instead.
++     *
++     * @return the fuel value, as defined above
++     */
++    @javax.annotation.Nonnegative
++    public int getBrewingStandFuel(ItemStack stack)
++    {
++        return stack.func_77973_b() == Items.field_151065_br ? 20 : 0;
++    }
++
++
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
