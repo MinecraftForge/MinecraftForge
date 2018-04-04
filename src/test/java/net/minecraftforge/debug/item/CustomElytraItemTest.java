@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IElytra;
 
+@Mod.EventBusSubscriber(modid = CustomElytraItemTest.MODID)
 @Mod(modid = CustomElytraItemTest.MODID, name = "CustomElytraItemTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class CustomElytraItemTest{
     
@@ -64,15 +65,14 @@ public class CustomElytraItemTest{
 	};
 	
 	
-	@Mod.EventBusSubscriber(modid = MODID)
-    public static class Registration
-    {
+	
+    
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event)
         {
                 event.getRegistry().register(TestItem.testItem.setRegistryName("custom_elytra_item").setUnlocalizedName("CustomElytraItem").setMaxStackSize(1));
         }
-    }
+    
 
     @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
