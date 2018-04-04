@@ -40,7 +40,7 @@
              if (mapdata != null)
              {
 -                if (p_190905_0_.field_73011_w.func_186058_p().func_186068_a() == mapdata.field_76200_c)
-+                if (p_190905_0_.field_73011_w.getDimension() == mapdata.field_76200_c)
++                if (net.minecraftforge.common.Dimension.getDimIntID(p_190905_0_.field_73011_w.getDimension()) == mapdata.field_76200_c)
                  {
                      int i = 1 << mapdata.field_76197_d;
                      int j = mapdata.field_76201_a;

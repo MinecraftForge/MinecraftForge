@@ -53,10 +53,6 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
-import it.unimi.dsi.fastutil.ints.IntSets;
-
 public class DimensionManager
 {
     private static Hashtable<ResourceLocation, WorldServer> worlds = new Hashtable<>();

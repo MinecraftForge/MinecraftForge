@@ -25,14 +25,19 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import net.minecraftforge.common.Dimension;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ITeleporter;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class CommandSetDimension extends CommandBase
 {
@@ -83,17 +88,17 @@ public class CommandSetDimension extends CommandBase
         {
             throw new CommandException("commands.forge.setdim.invalid.entity", entity.getName());
         }
-        int dimension = parseInt(args[1]);
-        if (!DimensionManager.isDimensionRegistered(dimension))
+        ResourceLocation dimension = new ResourceLocation(args[1]);
+        if (ForgeRegistries.DIMENSIONS.getValue(dimension) == null)
         {
             throw new CommandException("commands.forge.setdim.invalid.dim", dimension);
         }
-        if (dimension == entity.dimension)
+        if (Dimension.getDimIntID(dimension) == entity.dimension)
         {
             throw new CommandException("commands.forge.setdim.invalid.nochange", entity.getName(), dimension);
         }
         BlockPos pos = args.length == 5 ? parseBlockPos(sender, args, 2, false) : sender.getPosition();
-        entity.changeDimension(dimension, new CommandTeleporter(pos));
+        entity.changeDimension(Dimension.getDimIntID(dimension), new CommandTeleporter(pos));
     }
 
     private static boolean checkEntity(Entity entity)
