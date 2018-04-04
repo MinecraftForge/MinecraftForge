@@ -16,16 +16,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.fml.common;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper.UnableToAccessFieldException;
 import net.minecraftforge.fml.relauncher.ReflectionHelper.UnableToFindFieldException;
+import org.objectweb.asm.Type;
 
-import org.apache.logging.log4j.Level;
+import javax.annotation.Nullable;
 
 /**
  * Some reflection helper code.
@@ -35,6 +39,8 @@ import org.apache.logging.log4j.Level;
  */
 public class ObfuscationReflectionHelper
 {
+    /** @deprecated use {@link ReflectionHelper#getPrivateValue(Class, Object, int)} */
+    @Deprecated // TODO: remove
     public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, int fieldIndex)
     {
         try
@@ -48,6 +54,7 @@ public class ObfuscationReflectionHelper
         }
     }
 
+    @Deprecated // TODO: remove
     public static String[] remapFieldNames(String className, String... fieldNames)
     {
         String internalClassName = FMLDeobfuscatingRemapper.INSTANCE.unmap(className.replace('.', '/'));
@@ -60,6 +67,22 @@ public class ObfuscationReflectionHelper
         return mappedNames;
     }
 
+    public static String remapFieldName(Class<?> clazz, String fieldName)
+    {
+        String internalClassName = FMLDeobfuscatingRemapper.INSTANCE.unmap(Type.getInternalName(clazz));
+        return FMLDeobfuscatingRemapper.INSTANCE.mapFieldName(internalClassName, fieldName, null);
+    }
+
+    public static String remapMethodName(Class<?> clazz, String methodName, Class<?> returnType, Class<?>... parameterTypes)
+    {
+        String internalClassName = FMLDeobfuscatingRemapper.INSTANCE.unmap(Type.getInternalName(clazz));
+        Type[] params = Arrays.stream(parameterTypes).map(Type::getType).toArray(Type[]::new);
+        String desc = Type.getMethodDescriptor(Type.getType(returnType), params);
+        return FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(internalClassName, methodName, desc);
+    }
+
+    /** @deprecated use {@link #getPrivateValue(Class, Object, String)} */
+    @Deprecated // TODO: remove
     public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, String... fieldNames)
     {
         try
@@ -78,6 +101,13 @@ public class ObfuscationReflectionHelper
         }
     }
 
+    public static <T, E> T getPrivateValue(Class<? super E> classToAccess, @Nullable E instance, String srgName)
+    {
+        return ReflectionHelper.getPrivateValue(classToAccess, instance, remapFieldName(classToAccess, srgName), null);
+    }
+
+    /** @deprecated use {@link ReflectionHelper#setPrivateValue(Class, Object, Object, int)} */
+    @Deprecated // TODO: remove
     public static <T, E> void setPrivateValue(Class<? super T> classToAccess, T instance, E value, int fieldIndex)
     {
         try
@@ -91,6 +121,8 @@ public class ObfuscationReflectionHelper
         }
     }
 
+    /** @deprecated use {@link #setPrivateValue(Class, Object, Object, String)} */
+    @Deprecated // TODO: remove
     public static <T, E> void setPrivateValue(Class<? super T> classToAccess, T instance, E value, String... fieldNames)
     {
         try
@@ -107,5 +139,45 @@ public class ObfuscationReflectionHelper
             FMLLog.log.error("Unable to set any field {} on type {}", classToAccess.getName(), e);
             throw e;
         }
+    }
+
+    public static <T, E> void setPrivateValue(Class<? super T> classToAccess, @Nullable T instance, @Nullable E value, String srgName)
+    {
+        ReflectionHelper.setPrivateValue(classToAccess, instance, value, remapFieldName(classToAccess, srgName), null);
+    }
+
+    /**
+     * Finds a field with the specified name in the given class and makes it accessible.
+     * Note: for performance, store the returned value and avoid calling this repeatedly.
+     * <p>
+     * Throws an exception if the field is not found.
+     *
+     * @param clazz   The class to find the field on.
+     * @param srgName The obfuscated name of the field to find.
+     *
+     * @return The field with the specified name in the given class.
+     */
+    public static Field findField(Class<?> clazz, String srgName)
+    {
+        return ReflectionHelper.findField(clazz, remapFieldName(clazz, srgName), null);
+    }
+
+    /**
+     * Finds a method with the specified name and parameters in the given class and makes it accessible.
+     * Note: for performance, store the returned value and avoid calling this repeatedly.
+     * <p>
+     * Throws an exception if the method is not found.
+     *
+     * @param clazz          The class to find the method on.
+     * @param srgName        The obfuscated name of the method to find.
+     * @param returnType     The return type of the method to find.
+     * @param parameterTypes The parameter types of the method to find.
+     *
+     * @return The method with the specified name and type signature in the given class.
+     */
+    public static Method findMethod(Class<?> clazz, String srgName, Class<?> returnType, Class<?>... parameterTypes)
+    {
+        String mappedName = remapMethodName(clazz, srgName, returnType, parameterTypes);
+        return ReflectionHelper.findMethod(clazz, mappedName, null, parameterTypes);
     }
 }
