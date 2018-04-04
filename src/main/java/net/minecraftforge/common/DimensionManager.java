@@ -32,6 +32,15 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
+<<<<<<< HEAD
+=======
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntListIterator;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.ints.IntSets;
+
+>>>>>>> upstream/1.12.x
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
@@ -59,12 +68,35 @@ import it.unimi.dsi.fastutil.ints.IntSets;
 
 public class DimensionManager
 {
+<<<<<<< HEAD
     private static Hashtable<ResourceLocation, WorldServer> worlds = new Hashtable<>();
     private static Set<ResourceLocation> activeDimensions = new HashSet<>();
     private static final Set<ResourceLocation> keepLoaded = new HashSet<>();
     private static List<ResourceLocation> unloadQueue = new ArrayList<>();
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().makeMap();
     private static Multiset<Integer> leakedWorlds = HashMultiset.create();
+=======
+    private static class Dimension
+    {
+        private final DimensionType type;
+        private int ticksWaited;
+        private Dimension(DimensionType type)
+        {
+            this.type = type;
+            this.ticksWaited = 0;
+        }
+    }
+
+    private static boolean hasInit = false;
+
+    private static final Hashtable<Integer, WorldServer> worlds = new Hashtable<>();
+    private static final Hashtable<Integer, Dimension> dimensions = new Hashtable<>();
+    private static final IntSet keepLoaded = IntSets.synchronize(new IntOpenHashSet());
+    private static final IntArrayList unloadQueue = new IntArrayList();
+    private static final BitSet dimensionMap = new BitSet(Long.SIZE << 4);
+    private static final ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().makeMap();
+    private static final Multiset<Integer> leakedWorlds = HashMultiset.create();
+>>>>>>> upstream/1.12.x
 
     /**
      * Returns a list of dimensions associated with this DimensionType.
@@ -369,16 +401,48 @@ public class DimensionManager
     }
 
     /**
+<<<<<<< HEAD
      * Queues a dimension to unload.
      * If the dimension is already queued, it will reset the delay to unload
      * @param dimID The id of the dimension
+=======
+     * Sets if a dimension should stay loaded.
+     * @param dim  the dimension ID
+     * @param keep whether or not the dimension should be kept loaded
+     * @return true iff the dimension's status changed
+     */
+    public static boolean keepDimensionLoaded(int dim, boolean keep)
+    {
+        return keep ? keepLoaded.add(dim) : keepLoaded.remove(dim);
+    }
+
+    private static boolean canUnloadWorld(WorldServer world)
+    {
+        return ForgeChunkManager.getPersistentChunksFor(world).isEmpty()
+                && world.playerEntities.isEmpty()
+                && !world.provider.getDimensionType().shouldLoadSpawn()
+                && !keepLoaded.contains(world.provider.getDimension());
+    }
+
+    /**
+     * Queues a dimension to unload, if it can be unloaded.
+     * If the dimension is already queued, it will reset the delay to unload.
+     * @param id The id of the dimension
+>>>>>>> upstream/1.12.x
      */
     public static void unloadWorld(ResourceLocation dimID)
     {
+<<<<<<< HEAD
         WorldServer world = worlds.get(dimID);
         if(world == null || !canUnload(world)) return;
 
         if(!unloadQueue.contains(dimID))
+=======
+        WorldServer world = worlds.get(id);
+        if (world == null || !canUnloadWorld(world)) return;
+
+        if (!unloadQueue.contains(id))
+>>>>>>> upstream/1.12.x
         {
             FMLLog.log.debug("Queueing dimension {} to unload", dimID.toString());
             unloadQueue.add(dimID);
@@ -405,9 +469,15 @@ public class DimensionManager
             }
             WorldServer w = worlds.get(dimID);
             queueIterator.remove();
+<<<<<<< HEAD
             dimension.setTicksWaited(0);
             //Don't unload the world if the status changed
             if (w == null || !canUnload(w))
+=======
+            dimension.ticksWaited = 0;
+            // Don't unload the world if the status changed
+            if (w == null || !canUnloadWorld(w))
+>>>>>>> upstream/1.12.x
             {
                 FMLLog.log.debug("Aborting unload for dimension {} as status changed", dimID.toString());
                 continue;

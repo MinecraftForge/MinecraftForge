@@ -46,7 +46,7 @@
      {
 -        this.field_151002_e = Item.func_111206_d(p_i47263_1_.func_74779_i("id"));
 +        this.capNBT = p_i47263_1_.func_74764_b("ForgeCaps") ? p_i47263_1_.func_74775_l("ForgeCaps") : null;
-+        this.field_151002_e = p_i47263_1_.func_150297_b("id", 8) ? Item.func_111206_d(p_i47263_1_.func_74779_i("id")) : Item.func_150898_a(Blocks.field_150350_a); //Forge fix tons of NumberFormatExceptions that are caused by deserializing EMPTY ItemStacks.
++        this.field_151002_e = p_i47263_1_.func_150297_b("id", 8) ? Item.func_111206_d(p_i47263_1_.func_74779_i("id")) : Items.field_190931_a; //Forge fix tons of NumberFormatExceptions that are caused by deserializing EMPTY ItemStacks.
          this.field_77994_a = p_i47263_1_.func_74771_c("Count");
          this.field_77991_e = Math.max(0, p_i47263_1_.func_74765_d("Damage"));
  
@@ -63,7 +63,7 @@
              return true;
          }
 -        else if (this.field_151002_e != null && this.field_151002_e != Item.func_150898_a(Blocks.field_150350_a))
-+        else if (this.getItemRaw() != null && this.getItemRaw() != Item.func_150898_a(Blocks.field_150350_a))
++        else if (this.getItemRaw() != null && this.getItemRaw() != Items.field_190931_a)
          {
              if (this.field_77994_a <= 0)
              {
@@ -72,7 +72,7 @@
      public Item func_77973_b()
      {
 -        return this.field_190928_g ? Item.func_150898_a(Blocks.field_150350_a) : this.field_151002_e;
-+        return this.field_190928_g || this.delegate == null ? Item.func_150898_a(Blocks.field_150350_a) : this.delegate.get();
++        return this.field_190928_g || this.delegate == null ? Items.field_190931_a : this.delegate.get();
      }
  
      public EnumActionResult func_179546_a(EntityPlayer p_179546_1_, World p_179546_2_, BlockPos p_179546_3_, EnumHand p_179546_4_, EnumFacing p_179546_5_, float p_179546_6_, float p_179546_7_, float p_179546_8_)
