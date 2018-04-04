@@ -39,7 +39,6 @@ import javax.annotation.Nullable;
  */
 public class ObfuscationReflectionHelper
 {
-    /** @deprecated use {@link ReflectionHelper#getPrivateValue(Class, Object, int)} */
     @Deprecated // TODO: remove
     public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, int fieldIndex)
     {
@@ -106,7 +105,6 @@ public class ObfuscationReflectionHelper
         return ReflectionHelper.getPrivateValue(classToAccess, instance, remapFieldName(classToAccess, srgName), null);
     }
 
-    /** @deprecated use {@link ReflectionHelper#setPrivateValue(Class, Object, Object, int)} */
     @Deprecated // TODO: remove
     public static <T, E> void setPrivateValue(Class<? super T> classToAccess, T instance, E value, int fieldIndex)
     {

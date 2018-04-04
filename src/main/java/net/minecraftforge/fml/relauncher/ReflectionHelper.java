@@ -33,7 +33,12 @@ import java.lang.reflect.Method;
 
 /**
  * Some reflection helper code.
- * Consider using {@link net.minecraftforge.fml.common.ObfuscationReflectionHelper}
+ *
+ * This is in FML's coremod land.
+ * It's split in two because the two classes need to exist in separate classloaders.
+ * Modders shouldn't be using this class anyways.
+ *
+ * Use {@link net.minecraftforge.fml.common.ObfuscationReflectionHelper}
  * when dealing with obfuscated fields or methods.
  *
  * @author cpw
@@ -173,6 +178,7 @@ public class ReflectionHelper
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated // TODO: remove
     public static <T, E> T getPrivateValue(Class <? super E > classToAccess, @Nullable E instance, int fieldIndex)
     {
         try
@@ -215,6 +221,7 @@ public class ReflectionHelper
         }
     }
 
+    @Deprecated // TODO: remove
     public static <T, E> void setPrivateValue(Class <? super T > classToAccess, T instance, E value, int fieldIndex)
     {
         try
