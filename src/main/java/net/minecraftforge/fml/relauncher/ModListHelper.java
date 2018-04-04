@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
 
 public class ModListHelper {
     public static class JsonModList {
+        public int version = 1;
         public String repositoryRoot;
         public List<String> modRef;
         public String parentList;
@@ -45,7 +46,7 @@ public class ModListHelper {
     private static File mcDirectory;
     private static Set<File> visitedFiles = Sets.newHashSet();
     public static final Map<String,File> additionalMods = Maps.newLinkedHashMap();
-    static void parseModList(File minecraftDirectory)
+    public static void parseModList(File minecraftDirectory)
     {
         FMLLog.log.debug("Attempting to load commandline specified mods, relative to {}", minecraftDirectory.getAbsolutePath());
         mcDirectory = minecraftDirectory;
@@ -69,7 +70,8 @@ public class ModListHelper {
         String[] extras = new String[]
         {
             "mods/mod_list.json",
-            "mods/" + FMLInjectionData.mccversion + "/mod_list.json"
+            "mods/" + FMLInjectionData.mccversion + "/mod_list.json",
+            "mods/" + FMLInjectionData.mccversion + "/" + DependencyExtractor.EXTRACTED_MODS_LIST
         };
 
         for (String extra : extras)
@@ -83,10 +85,7 @@ public class ModListHelper {
         File f;
         try
         {
-            if (listFile.startsWith("absolute:"))
-                f = new File(listFile.substring(9)).getCanonicalFile();
-            else
-                f = new File(mcDirectory, listFile).getCanonicalFile();
+            f = parsePath(listFile, mcDirectory);
         } catch (IOException e2)
         {
             FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Unable to canonicalize path {} relative to {}", listFile, mcDirectory.getAbsolutePath()), e2);
@@ -123,7 +122,8 @@ public class ModListHelper {
         {
             parseListFile(modList.parentList);
         }
-        File repoRoot = new File(modList.repositoryRoot);
+        File repoRoot = getRepoRoot(mcDirectory, modList);
+        if (repoRoot == null) return;
         if (!repoRoot.exists())
         {
             FMLLog.log.info("Failed to find the specified repository root {}", modList.repositoryRoot);
@@ -132,25 +132,43 @@ public class ModListHelper {
 
         for (String s : modList.modRef)
         {
-            StringBuilder fileName = new StringBuilder();
-            StringBuilder genericName = new StringBuilder();
             String[] parts = s.split(":");
-            fileName.append(parts[0].replace('.', File.separatorChar));
-            genericName.append(parts[0]);
-            fileName.append(File.separatorChar);
-            fileName.append(parts[1]).append(File.separatorChar);
-            genericName.append(":").append(parts[1]);
-            fileName.append(parts[2]).append(File.separatorChar);
-            fileName.append(parts[1]).append('-').append(parts[2]);
-            if (parts.length == 4)
-            {
-                fileName.append('-').append(parts[3]);
-                genericName.append(":").append(parts[3]);
-            }
-            fileName.append(".jar");
-            tryAddFile(fileName.toString(), repoRoot, genericName.toString());
+            tryAddFile(convertArtifactToFileName(parts), repoRoot, convertArtifactToGenericName(parts));
         }
     }
+
+    public static File getRepoRoot(File mcDirectory, JsonModList modList)
+    {
+        File repoRoot;
+        try
+        {
+            // We need to be able to distinguish absolute from relative files for dependency extraction
+            if (modList.version == 1)
+            {
+                repoRoot = new File(modList.repositoryRoot);
+            }
+            else
+            {
+                repoRoot = parsePath(modList.repositoryRoot, mcDirectory);
+            }
+            repoRoot = repoRoot.getCanonicalFile();
+        }
+        catch (IOException e)
+        {
+            FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Unable to canonicalize path {} relative to {}", modList.repositoryRoot, mcDirectory.getAbsolutePath()), e);
+            return null;
+        }
+        return repoRoot;
+    }
+
+    public static File parsePath(String path, File mcDirectory) throws IOException
+    {
+        if (path.startsWith("absolute:"))
+            return new File(path.substring(9)).getCanonicalFile();
+        else
+            return new File(mcDirectory, path).getCanonicalFile();
+    }
+
     private static void tryAddFile(String modFileName, @Nullable File repoRoot, String descriptor) {
         File modFile = repoRoot != null ? new File(repoRoot,modFileName) : new File(mcDirectory, modFileName);
         if (!modFile.exists())
@@ -162,5 +180,33 @@ public class ModListHelper {
             FMLLog.log.debug("Adding {} ({}) to the mod list", descriptor, modFile.getAbsolutePath());
             additionalMods.put(descriptor, modFile);
         }
+    }
+
+    public static String convertArtifactToFileName(String[] parts)
+    {
+        StringBuilder fileName = new StringBuilder();
+        fileName.append(parts[0].replace('.', File.separatorChar));
+        fileName.append(File.separatorChar);
+        fileName.append(parts[1]).append(File.separatorChar);
+        fileName.append(parts[2]).append(File.separatorChar);
+        fileName.append(parts[1]).append('-').append(parts[2]);
+        if (parts.length == 4)
+        {
+            fileName.append('-').append(parts[3]);
+        }
+        fileName.append(".jar");
+        return fileName.toString();
+    }
+
+    private static String convertArtifactToGenericName(String[] parts)
+    {
+        StringBuilder genericName = new StringBuilder();
+        genericName.append(parts[0]);
+        genericName.append(":").append(parts[1]);
+        if (parts.length == 4)
+        {
+            genericName.append(":").append(parts[3]);
+        }
+        return genericName.toString();
     }
 }
