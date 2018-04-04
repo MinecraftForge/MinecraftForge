@@ -107,7 +107,16 @@ public class ReflectionHelper
         }
     }
 
-    private static final boolean deobfuscatedEnvironment = MoreObjects.firstNonNull((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment"), false);
+    private static Boolean deobfuscatedEnvironment;
+
+    private static boolean inDeobfuscatedEnvironment()
+    {
+        if (deobfuscatedEnvironment == null)
+        {
+            deobfuscatedEnvironment = MoreObjects.firstNonNull((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment"), false);
+        }
+        return deobfuscatedEnvironment;
+    }
 
     /** @deprecated use {@link #findField(Class, String, String)} */
     @Deprecated // TODO: remove
@@ -149,7 +158,7 @@ public class ReflectionHelper
         Preconditions.checkNotNull(clazz);
         Preconditions.checkArgument(StringUtils.isNotEmpty(fieldName), "Field name cannot be empty");
 
-        String nameToFind = deobfuscatedEnvironment ? fieldName : MoreObjects.firstNonNull(fieldObfName, fieldName);
+        String nameToFind = inDeobfuscatedEnvironment() ? fieldName : MoreObjects.firstNonNull(fieldObfName, fieldName);
 
         try
         {
@@ -284,7 +293,7 @@ public class ReflectionHelper
         Preconditions.checkNotNull(clazz);
         Preconditions.checkArgument(StringUtils.isNotEmpty(methodName), "Method name cannot be empty");
 
-        String nameToFind = deobfuscatedEnvironment ? methodName : MoreObjects.firstNonNull(methodObfName, methodName);
+        String nameToFind = inDeobfuscatedEnvironment() ? methodName : MoreObjects.firstNonNull(methodObfName, methodName);
 
         try
         {
