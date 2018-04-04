@@ -47,19 +47,23 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.storage.ISaveHandler;
-import net.minecraftforge.common.Dimension;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.ints.IntSets;
+
 public class DimensionManager
 {
-    private static Hashtable<ResourceLocation, WorldServer> worlds = new Hashtable<ResourceLocation, WorldServer>();
-    private static Set<ResourceLocation> activeDimensions = new HashSet<ResourceLocation>();
-    private static List<ResourceLocation> unloadQueue = new ArrayList<ResourceLocation>();
-    private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
+    private static Hashtable<ResourceLocation, WorldServer> worlds = new Hashtable<>();
+    private static Set<ResourceLocation> activeDimensions = new HashSet<>();
+    private static final Set<ResourceLocation> keepLoaded = new HashSet<>();
+    private static List<ResourceLocation> unloadQueue = new ArrayList<>();
+    private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().makeMap();
     private static Multiset<Integer> leakedWorlds = HashMultiset.create();
 
     /**
@@ -67,7 +71,7 @@ public class DimensionManager
      */
     public static Set<ResourceLocation> getDimensions(DimensionType type)
     {
-    	Set<ResourceLocation> ret = new HashSet<ResourceLocation>();
+    	Set<ResourceLocation> ret = new HashSet<>();
     	for(Dimension dimension : ForgeRegistries.DIMENSIONS.getValuesCollection())
     	{
     		if(dimension.getType()==type)
@@ -79,7 +83,7 @@ public class DimensionManager
     /*Shouldn't need to call this outside of this class*/
     private static Set<Integer> getIntIDs(Collection<ResourceLocation> ids)
     {
-    	Set<Integer> ret = new HashSet<Integer>();
+    	Set<Integer> ret = new HashSet<>();
     	for(ResourceLocation id : ids)
     	{
     		ret.add(Dimension.getDimIntID(id));
@@ -198,7 +202,7 @@ public class DimensionManager
             FMLLog.log.info("Unloading dimension {}", dimID.toString());
         }
 
-        ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
+        ArrayList<WorldServer> tmp = new ArrayList<>();
         if (worlds.get(new ResourceLocation("minecraft:overworld")) != null)
             tmp.add(worlds.get(new ResourceLocation("minecraft:overworld")));
         if (worlds.get(new ResourceLocation("minecraft:nether")) != null)
@@ -236,7 +240,7 @@ public class DimensionManager
             FMLLog.log.info("Unloading dimension {}", dimID.toString());
         }
 
-        ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
+        ArrayList<WorldServer> tmp = new ArrayList<>();
         if (worlds.get(new ResourceLocation("minecraft:overworld")) != null)
             tmp.add(worlds.get(new ResourceLocation("minecraft:overworld")));
         if (worlds.get(new ResourceLocation("minecraft:nether")) != null)
@@ -344,14 +348,36 @@ public class DimensionManager
     {
     	return createProviderFor(Dimension.getID(dimIntID));
     }
-    
+
+    /**
+     * Sets if a dimension should stay loaded
+     * @param dim the dimension ID
+     * @param keep whether or not the dimension should be kept loaded
+     * @return true iff the dimension's status changed
+     */
+    public static boolean keepDimensionLoaded(ResourceLocation dim, boolean keep)
+    {
+        return keep ? keepLoaded.add(dim) : keepLoaded.remove(dim);
+    }
+
+    private static boolean canUnload(WorldServer world)
+    {
+        return ForgeChunkManager.getPersistentChunksFor(world).isEmpty()
+                && world.playerEntities.isEmpty()
+                && !world.provider.getDimensionType().shouldLoadSpawn()
+                && !keepLoaded.contains(world.provider.getDimension());
+    }
+
     /**
      * Queues a dimension to unload.
      * If the dimension is already queued, it will reset the delay to unload
-     * @param id The id of the dimension
+     * @param dimID The id of the dimension
      */
     public static void unloadWorld(ResourceLocation dimID)
     {
+        WorldServer world = worlds.get(dimID);
+        if(world == null || !canUnload(world)) return;
+
         if(!unloadQueue.contains(dimID))
         {
             FMLLog.log.debug("Queueing dimension {} to unload", dimID.toString());
@@ -380,7 +406,8 @@ public class DimensionManager
             WorldServer w = worlds.get(dimID);
             queueIterator.remove();
             dimension.setTicksWaited(0);
-            if (w == null || !ForgeChunkManager.getPersistentChunksFor(w).isEmpty() || !w.playerEntities.isEmpty() || dimension.getType().shouldLoadSpawn()) //Don't unload the world if the status changed
+            //Don't unload the world if the status changed
+            if (w == null || !canUnload(w))
             {
                 FMLLog.log.debug("Aborting unload for dimension {} as status changed", dimID.toString());
                 continue;
@@ -427,7 +454,7 @@ public class DimensionManager
     /* returns the dimensions registered to a mod based on its modid */
     public static Set<ResourceLocation> getDimensionsForMod(String modid)
     {
-    	Set<ResourceLocation> ret = new HashSet<ResourceLocation>();
+    	Set<ResourceLocation> ret = new HashSet<>();
     	for(ResourceLocation id : ForgeRegistries.DIMENSIONS.getKeys())
     	{
     		if(id.getResourceDomain().equals(modid))
