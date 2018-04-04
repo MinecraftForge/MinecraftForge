@@ -384,7 +384,7 @@ public class ForgeEventFactory
     public static void firePlayerLoadingEvent(EntityPlayer player, IPlayerFileData playerFileData, String uuidString)
     {
         SaveHandler sh = (SaveHandler) playerFileData;
-        File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "field_75771_c");
+        File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "field_"+75771+"_c");
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
     }
 
