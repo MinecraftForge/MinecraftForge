@@ -72,7 +72,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -234,10 +267,15 @@
+@@ -234,14 +267,21 @@
                      if (chunk != null && chunk.field_189550_d)
                      {
                          chunk.func_76623_d();
@@ -88,3 +88,9 @@
                      }
                  }
              }
+ 
++            if(this.field_73244_f.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.field_73251_h.field_73011_w.getDimension());
++
+             this.field_73247_e.func_75817_a();
+         }
+ 
