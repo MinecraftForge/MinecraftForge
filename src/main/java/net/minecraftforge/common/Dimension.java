@@ -169,7 +169,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
 	public static int getDimIntID(ResourceLocation id)
     {
     	Dimension dim = REGISTRY.getValue(id);
-    	return dim == null ? -2 : dim.dimIntID;
+    	return dim == null ? -2 : dim.getDimIntID();
     }
 
 	/**
