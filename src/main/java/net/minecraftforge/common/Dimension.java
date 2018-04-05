@@ -24,6 +24,8 @@ import java.util.Map;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.WorldProvider;
+
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -32,7 +34,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class Dimension implements IForgeRegistryEntry<Dimension>
 {
-    private final DimensionType type;
+    private DimensionType type;
     private final ResourceLocation dimID;
     private int ticksWaited;
     private int dimIntID = -2;
@@ -59,6 +61,23 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
         	dimID = new ResourceLocation(dimensionName);
         }
     }
+
+    private Dimension(String dimensionName)
+	{
+		this.ticksWaited = 0;
+		if(dimensionName.indexOf(":")==-1)
+		{
+			dimID = new ResourceLocation(Loader.instance().activeModContainer().getModId().toLowerCase(),dimensionName);
+		}
+		else
+		{
+			dimID = new ResourceLocation(dimensionName);
+		}
+	}
+
+	private void setType(DimensionType type) {
+    	this.type = type;
+	}
     
     /* Only required for implementation, don't use this!*/
     public final Dimension setRegistryName(ResourceLocation dontUse)
@@ -130,7 +149,15 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     {
     	return ForgeRegistries.DIMENSIONS.getValue(id).dimIntID;
     }
-    
+
+    /* Factory method for creating dimension type and a dimension */
+    public static Dimension dimensionWithCustomType(String dimensionName, String typeName, String typeSuffix, Class<? extends WorldProvider> provider, boolean keepLoaded)
+	{
+		Dimension dim = new Dimension(dimensionName);
+		DimensionType type = DimensionType.register(typeName, typeSuffix, getDimIntID(dim.dimID), provider, keepLoaded);
+		dim.setType(type);
+		return dim;
+	}
 
     
     private Dimension setDimIntID(int dimIntID)

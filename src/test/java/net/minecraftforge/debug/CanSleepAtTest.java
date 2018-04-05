@@ -2,10 +2,16 @@ package net.minecraftforge.debug;
 
 import org.apache.logging.log4j.Logger;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
+
+import net.minecraftforge.common.Dimension;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.RegistryEvent;
+
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -15,19 +21,28 @@ public class CanSleepAtTest
 {
     public static final String MODID = "can_sleep_at_test";
     public static final boolean ENABLED = false;
+    public static Dimension dim;
     public static DimensionType dimType = null;
-    public static int dimId;
+    public static ResourceLocation dimId;
     private static Logger logger;
 
+    @EventHandler
+    public void registerDimension(RegistryEvent.Register<Dimension> event)
+    {
+        if(ENABLED)
+        {
+            dim = Dimension.dimensionWithCustomType(MODID+":dimension", "CanSleepAtTest", "_cansleepattest", WorldProviderTest.class, false);
+            dimType = dim.getType();
+            dimId = dim.getID();
+            DimensionManager.registerDimensionActive(dimId);
+        }
+    }
     @EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
     {
         if (ENABLED)
         {
             logger = event.getModLog();
-            dimId = DimensionManager.getNextFreeDimId();
-            dimType = DimensionType.register("CanSleepAtTest", "_cansleepattest", dimId, WorldProviderTest.class, false);
-            DimensionManager.registerDimension(dimId, dimType);
             logger.info("Registered CanSleepAtTest dimension as DIM {}", dimId);
         }
     }
