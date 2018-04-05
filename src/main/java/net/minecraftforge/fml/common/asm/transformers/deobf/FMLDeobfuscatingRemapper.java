@@ -185,6 +185,9 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         String newSrg = parts[2];
         int lastNew = newSrg.lastIndexOf('/');
         String newName = newSrg.substring(lastNew+1);
+
+        if (oldName.equals(newName)) return;
+
         if (!rawFieldMaps.containsKey(cl))
         {
             rawFieldMaps.put(cl, Maps.<String,String>newHashMap());
@@ -254,6 +257,9 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         String newSrg = parts[3];
         int lastNew = newSrg.lastIndexOf('/');
         String newName = newSrg.substring(lastNew+1);
+
+        if (oldName.equals(newName)) return;
+
         if (!rawMethodMaps.containsKey(cl))
         {
             rawMethodMaps.put(cl, Maps.<String,String>newHashMap());
@@ -264,11 +270,15 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     String mapMemberFieldName(String owner, String name, String desc)
     {
         String remappedName = mapFieldName(owner, name, desc, true);
-        storeMemberFieldMapping(owner, name, desc, remappedName);
+        if (!name.equals(remappedName))
+        {
+            storeMemberFieldMapping(owner, name, desc, remappedName);
+        }
         return remappedName;
     }
 
-    private void storeMemberFieldMapping(String owner, String name, String desc, String remappedName) {
+    private void storeMemberFieldMapping(String owner, String name, String desc, String remappedName)
+    {
         Map<String, String> fieldMap = getRawFieldMap(owner);
 
         String key = name + ":" + desc;
