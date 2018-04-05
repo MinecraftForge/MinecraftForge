@@ -61,7 +61,7 @@
                  return ((ItemArmor)p_184640_0_.func_77973_b()).field_77881_a;
              }
 -            else if (p_184640_0_.func_77973_b() == Items.field_185160_cR)
-+            else if (p_184640_0_.func_77973_b() == Items.field_185160_cR || p_184640_0_.func_77973_b() instanceof net.minecraftforge.items.IElytra)
++            else if (p_184640_0_.func_77973_b() instanceof net.minecraftforge.items.IElytra)
              {
                  return EntityEquipmentSlot.CHEST;
              }

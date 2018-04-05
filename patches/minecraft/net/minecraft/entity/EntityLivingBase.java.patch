@@ -52,7 +52,7 @@
                  soundevent = ((ItemArmor)item).func_82812_d().func_185017_b();
              }
 -            else if (item == Items.field_185160_cR)
-+            else if (item == Items.field_185160_cR || item instanceof net.minecraftforge.items.IElytra)
++            else if (item instanceof net.minecraftforge.items.IElytra)
              {
                  soundevent = SoundEvents.field_191258_p;
              }
@@ -280,38 +280,34 @@
                          if (this.field_70181_x > -0.5D)
                          {
 -                            this.field_70143_R = 1.0F;
-+                        	if((itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra && ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).doesSlowOnUpwardsFlight(itemstack, field_70170_p)) || itemstack.func_77973_b() == Items.field_185160_cR){
++                        	if((itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra && ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).doesSlowOnUpwardsFlight(itemstack, this)) || itemstack.func_77973_b() == Items.field_185160_cR){
 +                        		this.field_70143_R = 1.0F;
 +                        	}
                          }
  
                          Vec3d vec3d = this.func_70040_Z();
-@@ -1847,6 +1878,12 @@
+@@ -1847,6 +1878,8 @@
                          this.field_70159_w *= 0.9900000095367432D;
                          this.field_70181_x *= 0.9800000190734863D;
                          this.field_70179_y *= 0.9900000095367432D;
-+                        if(itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra && ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).getAccelerationMultiplier(itemstack, field_70170_p) != 1){
-+                        	field_70159_w *= ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).getAccelerationMultiplier(itemstack, field_70170_p);
-+                        	field_70181_x *= ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).getAccelerationMultiplier(itemstack, field_70170_p);
-+                        	field_70179_y *= ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).getAccelerationMultiplier(itemstack, field_70170_p);
-+                        }
++                        if(itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra){((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).changeAcceleration(itemstack, this, field_70159_w, field_70181_x, field_70179_y);}
 +                        
                          this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
  
                          if (this.field_70123_F && !this.field_70170_p.field_72995_K)
-@@ -1858,7 +1895,10 @@
+@@ -1858,7 +1891,10 @@
                              if (f5 > 0.0F)
                              {
                                  this.func_184185_a(this.func_184588_d((int)f5), 1.0F, 1.0F);
 -                                this.func_70097_a(DamageSource.field_188406_j, f5);
-+                                if((itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra && ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).doesDamageUponHittingWall(itemstack, field_70170_p)) || itemstack.func_77973_b() == Items.field_185160_cR) {
++                                if((itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra && ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).doesDamageUponHittingWall(itemstack, this))) {
 +                                	this.func_70097_a(DamageSource.field_188406_j, f5);
-+                                	if(itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra) ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).onHitWall(itemstack, field_70170_p, new BlockPos(field_70165_t, field_70163_u, field_70161_v));
 +                                }
++                                if(itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra) ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).onHitWall(itemstack, this);
                              }
                          }
  
-@@ -1874,7 +1914,8 @@
+@@ -1874,7 +1910,8 @@
  
                          if (this.field_70122_E)
                          {
@@ -321,7 +317,7 @@
                          }
  
                          float f7 = 0.16277136F / (f6 * f6 * f6);
-@@ -1894,7 +1935,8 @@
+@@ -1894,7 +1931,8 @@
  
                          if (this.field_70122_E)
                          {
@@ -331,7 +327,7 @@
                          }
  
                          if (this.func_70617_f_())
-@@ -2054,6 +2096,7 @@
+@@ -2054,6 +2092,7 @@
  
      public void func_70071_h_()
      {
@@ -339,7 +335,7 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2096,7 +2139,9 @@
+@@ -2096,7 +2135,9 @@
  
                  if (!ItemStack.func_77989_b(itemstack1, itemstack))
                  {
@@ -349,24 +345,24 @@
  
                      if (!itemstack.func_190926_b())
                      {
-@@ -2364,12 +2409,15 @@
+@@ -2364,13 +2405,13 @@
          {
              ItemStack itemstack = this.func_184582_a(EntityEquipmentSlot.CHEST);
  
 -            if (itemstack.func_77973_b() == Items.field_185160_cR && ItemElytra.func_185069_d(itemstack))
-+            if (itemstack.func_77973_b() == Items.field_185160_cR && ItemElytra.func_185069_d(itemstack) || (itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra && ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).checkFlight(itemstack, field_70170_p)))
++            if (itemstack.func_77973_b() == Items.field_185160_cR && ItemElytra.func_185069_d(itemstack) || (itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra && ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).checkFlight(itemstack, this)))
              {
                  flag = true;
  
-                 if (!this.field_70170_p.field_72995_K && (this.field_184629_bo + 1) % 20 == 0)
+-                if (!this.field_70170_p.field_72995_K && (this.field_184629_bo + 1) % 20 == 0)
++                if (!this.field_70170_p.field_72995_K && (this.field_184629_bo + 1) % ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).getDamageRate(itemstack, this) == 0)
                  {
-+                	if((itemstack.func_77973_b() instanceof net.minecraftforge.items.IElytra && ((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).doesDamageWhileFlying(itemstack, field_70170_p)) || itemstack.func_77973_b() == Items.field_185160_cR){
-+                		
-+                	}
-                     itemstack.func_77972_a(1, this);
+-                    itemstack.func_77972_a(1, this);
++                	if((((net.minecraftforge.items.IElytra) itemstack.func_77973_b()).doesDamageWhileFlying(itemstack, this))){itemstack.func_77972_a(1, this);}
                  }
              }
-@@ -2575,6 +2623,40 @@
+             else
+@@ -2575,6 +2616,40 @@
          this.field_70752_e = true;
      }
  
@@ -407,7 +403,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2595,12 +2677,19 @@
+@@ -2595,12 +2670,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -428,7 +424,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2618,8 +2707,10 @@
+@@ -2618,8 +2700,10 @@
  
          if (!itemstack.func_190926_b() && !this.func_184587_cr())
          {
@@ -440,7 +436,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2700,7 +2791,9 @@
+@@ -2700,7 +2784,9 @@
          if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
          {
              this.func_184584_a(this.field_184627_bm, 16);
@@ -451,7 +447,7 @@
              this.func_184602_cy();
          }
      }
-@@ -2724,7 +2817,8 @@
+@@ -2724,7 +2810,8 @@
      {
          if (!this.field_184627_bm.func_190926_b())
          {
@@ -461,7 +457,7 @@
          }
  
          this.func_184602_cy();
-@@ -2852,6 +2946,31 @@
+@@ -2852,6 +2939,31 @@
          return true;
      }
  

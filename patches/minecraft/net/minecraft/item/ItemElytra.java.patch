@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemElytra.java
++++ ../src-work/minecraft/net/minecraft/item/ItemElytra.java
+@@ -16,7 +16,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class ItemElytra extends Item
++public class ItemElytra extends Item implements net.minecraftforge.items.IElytra
+ {
+     public ItemElytra()
+     {
+@@ -61,4 +61,12 @@
+             return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemstack);
+         }
+     }
++    // FORGE START
++    public boolean doesSlowOnUpwardsFlight(ItemStack stack, EntityLivingBase entity){return true;}
++    public boolean doesDamageWhileFlying(ItemStack stack, EntityLivingBase entity){return true;}
++    public boolean doesDamageUponHittingWall(ItemStack stack, EntityLivingBase entity){return true;}
++    public boolean checkFlight(ItemStack stack, EntityLivingBase entity){return true;}
++    public int getDamageRate(ItemStack stack, EntityLivingBase entity){return 20;}
++    public void changeAcceleration(ItemStack stack, EntityLivingBase entity, double motionX, double motionY, double motionZ){}
++    public void onHitWall(ItemStack stack, EntityLivingBase entity){}
+ }
