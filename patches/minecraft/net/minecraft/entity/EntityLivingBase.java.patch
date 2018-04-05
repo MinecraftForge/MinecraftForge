@@ -4,7 +4,6 @@
  import net.minecraft.world.WorldServer;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
-+
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
