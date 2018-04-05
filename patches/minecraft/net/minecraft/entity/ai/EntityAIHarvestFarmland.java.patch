@@ -13,3 +13,12 @@
                      }
  
                      if (flag)
+@@ -29,7 +29,7 @@
+     {
+         if (this.field_179496_a <= 0)
+         {
+-            if (!this.field_179504_c.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
++            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_179504_c.field_70170_p, this.field_179504_c))
+             {
+                 return false;
+             }
