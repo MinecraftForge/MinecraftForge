@@ -58,7 +58,7 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     }
 
 	/**
-	 * Create a dimension using a dimension type alreadyd provided.
+	 * Create a dimension using a dimension type already provided.
 	 * If you need to create a dimension type as well use {@link #dimensionWithCustomType(String, String, String, Class, boolean)}
 	 * @param type the dimension type
 	 * @param dimensionName the name of the dimension - Should be supplied in {@link ResourceLocation} form. If not in this form then modid of current mod used instead
