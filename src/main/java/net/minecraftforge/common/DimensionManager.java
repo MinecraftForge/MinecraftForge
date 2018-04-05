@@ -62,9 +62,15 @@ public class DimensionManager
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().makeMap();
     private static Multiset<Integer> leakedWorlds = HashMultiset.create();
 
+    public static final ResourceLocation OVERWORLD_ID = new ResourceLocation("minecraft:overworld");
+    public static final ResourceLocation NETHER_ID = new ResourceLocation("minecraft:nether");
+    public static final ResourceLocation END_ID = new ResourceLocation("minecraft:the_end");
+
 
     /**
      * Returns a list of dimensions associated with this DimensionType.
+     * @param type the dimension type in question
+     * @return a set of the dimension ids using that dimension type
      */
     public static Set<ResourceLocation> getDimensions(DimensionType type)
     {
@@ -87,8 +93,7 @@ public class DimensionManager
     	}
     	return ret;
     }
-    
-    /*Dimension must be registered first*/
+
     public static void registerDimensionActive(ResourceLocation dimID)
     {
     	if(!ForgeRegistries.DIMENSIONS.containsKey(dimID))
@@ -99,7 +104,7 @@ public class DimensionManager
     }    
     
     /**
-     * For unregistering a dimension when the save is changed (disconnected from a server or loaded a new save
+     * For unregistering a dimension when the save is changed (disconnected from a server or loaded a new save)
      */
     public static void unregisterDimensionActive(ResourceLocation dimID)
     {
@@ -139,6 +144,10 @@ public class DimensionManager
         return getWorld(dimID).provider;
     }
 
+    /**
+     * @param check check for leaking worlds
+     * @return all ids in use
+     */
     public static Set<ResourceLocation> getIDs(boolean check)
     {
         if (check)
@@ -200,17 +209,17 @@ public class DimensionManager
         }
 
         ArrayList<WorldServer> tmp = new ArrayList<>();
-        if (worlds.get(new ResourceLocation("minecraft:overworld")) != null)
-            tmp.add(worlds.get(new ResourceLocation("minecraft:overworld")));
-        if (worlds.get(new ResourceLocation("minecraft:nether")) != null)
-            tmp.add(worlds.get(new ResourceLocation("minecraft:nether")));
-        if (worlds.get(new ResourceLocation("minecraft:the_end")) != null)
-            tmp.add(worlds.get(new ResourceLocation("minecraft:the_end")));
+        if (worlds.get(OVERWORLD_ID) != null)
+            tmp.add(worlds.get(OVERWORLD_ID));
+        if (worlds.get(NETHER_ID) != null)
+            tmp.add(worlds.get(NETHER_ID));
+        if (worlds.get(END_ID) != null)
+            tmp.add(worlds.get(END_ID));
 
         for (Entry<ResourceLocation, WorldServer> entry : worlds.entrySet())
         {
-            String dim = entry.getKey().toString();
-            if (dim.equals("minecraft:overworld") || dim.equals("minecraft:nether") || dim.equals("minecraft:the_end"))
+            ResourceLocation dim = entry.getKey();
+            if (dim.equals(OVERWORLD_ID) || dim.equals(NETHER_ID) || dim.equals(END_ID))
             {
                 continue;
             }
@@ -222,40 +231,7 @@ public class DimensionManager
     
     public static void setWorld(int dimIntID, @Nullable WorldServer world, MinecraftServer server)
     {
-    	ResourceLocation dimID = Dimension.getID(dimIntID);
-        if (world != null)
-        {
-            worlds.put(dimID, world);
-            weakWorldMap.put(world, world);
-            server.worldTickTimes.put(dimID, new long[100]);
-            FMLLog.log.info("Loading dimension {} ({}) ({})", dimID.toString(), world.getWorldInfo().getWorldName(), world.getMinecraftServer());
-        }
-        else
-        {
-            worlds.remove(dimID);
-            server.worldTickTimes.remove(dimID);
-            FMLLog.log.info("Unloading dimension {}", dimID.toString());
-        }
-
-        ArrayList<WorldServer> tmp = new ArrayList<>();
-        if (worlds.get(new ResourceLocation("minecraft:overworld")) != null)
-            tmp.add(worlds.get(new ResourceLocation("minecraft:overworld")));
-        if (worlds.get(new ResourceLocation("minecraft:nether")) != null)
-            tmp.add(worlds.get(new ResourceLocation("minecraft:nether")));
-        if (worlds.get(new ResourceLocation("minecraft:the_end")) != null)
-            tmp.add(worlds.get(new ResourceLocation("minecraft:the_end")));
-
-        for (Entry<ResourceLocation, WorldServer> entry : worlds.entrySet())
-        {
-            String dim = entry.getKey().toString();
-            if (dim.equals("minecraft:overworld") || dim.equals("minecraft:nether") || dim.equals("minecraft:the_end"))
-            {
-                continue;
-            }
-            tmp.add(entry.getValue());
-        }
-
-        server.worlds = tmp.toArray(new WorldServer[tmp.size()]);
+    	setWorld(Dimension.getID(dimIntID), world, server);
     }
       
     public static void initDimension(int dimIntID)
@@ -265,7 +241,7 @@ public class DimensionManager
     
     public static void initDimension(ResourceLocation dimID)
     {
-        WorldServer overworld = getWorld(new ResourceLocation("minecraft:overworld"));
+        WorldServer overworld = getWorld(OVERWORLD_ID);
         if (overworld == null)
         {
             throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
@@ -283,7 +259,7 @@ public class DimensionManager
         ISaveHandler savehandler = overworld.getSaveHandler();
         //WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        WorldServer world = (dimID.toString().equals("minecraft:overworld") ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, ForgeRegistries.DIMENSIONS.getValue(dimID).getDimIntID(), overworld, mcServer.profiler).init()));	//requires patch
+        WorldServer world = (dimID.equals(OVERWORLD_ID) ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, ForgeRegistries.DIMENSIONS.getValue(dimID).getDimIntID(), overworld, mcServer.profiler).init()));	//requires patch
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
@@ -448,7 +424,11 @@ public class DimensionManager
             return null;
         }
     }
-    /* returns the dimensions registered to a mod based on its modid */
+    /**
+     * gets all dimensions registered by a mod
+     * @param modid the modid of the mod
+     * @return the ids of those dimensions
+     */
     public static Set<ResourceLocation> getDimensionsForMod(String modid)
     {
     	Set<ResourceLocation> ret = new HashSet<>();

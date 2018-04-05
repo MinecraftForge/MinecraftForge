@@ -29,26 +29,41 @@ import net.minecraft.world.WorldProvider;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-
+/**
+ * Should be created and registered at {@link net.minecraftforge.event.RegistryEvent.Register<Dimension>}
+ * If the number of dimensions you need it variable it's probably best to register them at the start of the game and initialize them later
+ * @author temp1011 (needed?)
+ */
 public class Dimension implements IForgeRegistryEntry<Dimension>
 {
     private DimensionType type;
     private final ResourceLocation dimID;
     private int ticksWaited;
-    private int dimIntID = -2;
-    public static Map<Integer,ResourceLocation> dimensionIntIDMap = new Int2ObjectOpenHashMap<ResourceLocation>();
-    public static Map<Integer,DimensionType> dimensionTypeMap = new Int2ObjectOpenHashMap<DimensionType>();
-    
+	/**
+	 * default is -2, no dimension will be registered for this
+	 */
+	private int dimIntID = -2;
+    public static final Map<Integer,ResourceLocation> dimensionIntIDMap = new Int2ObjectOpenHashMap<>();
+    public static final Map<Integer,DimensionType> dimensionTypeMap = new Int2ObjectOpenHashMap<>();
+    public static final IForgeRegistry<Dimension> REGISTRY = ForgeRegistries.DIMENSIONS;
+
     static void init()
     {
-    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.OVERWORLD, "minecraft:overworld").setDimIntID(0));
-    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.NETHER, "minecraft:nether").setDimIntID(-1));
-    	ForgeRegistries.DIMENSIONS.register(new Dimension(DimensionType.THE_END, "minecraft:the_end").setDimIntID(1));
+    	REGISTRY.register(new Dimension(DimensionType.OVERWORLD, "minecraft:overworld").setDimIntID(0));
+    	REGISTRY.register(new Dimension(DimensionType.NETHER, "minecraft:nether").setDimIntID(-1));
+    	REGISTRY.register(new Dimension(DimensionType.THE_END, "minecraft:the_end").setDimIntID(1));
     }
-    
-    public Dimension(DimensionType type, String dimensionName)
+
+	/**
+	 * Create a dimension using a dimension type alreadyd provided.
+	 * If you need to create a dimension type as well use {@link #dimensionWithCustomType(String, String, String, Class, boolean)}
+	 * @param type the dimension type
+	 * @param dimensionName the name of the dimension - Should be supplied in {@link ResourceLocation} form. If not in this form then modid of current mod used instead
+	 */
+	public Dimension(DimensionType type, String dimensionName)
     {
         this.type = type;
         this.ticksWaited = 0;
@@ -109,17 +124,17 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     {
     	return dimensionIntIDMap.get(dimIntID);
     }
-    
+
     public int getTicksWaited()
     {
     	return ticksWaited;
     }
-    
+
     public void setTicksWaited(int ticksWaited)
     {
     	this.ticksWaited = ticksWaited;
     }
-    
+
     public void addTicksWaited(int ticks)
     {
     	ticksWaited += ticks;
@@ -135,22 +150,37 @@ public class Dimension implements IForgeRegistryEntry<Dimension>
     	return dimID;
     }
     
-    /*Internal use only*/
+    /*Should be internal use only*/
     public int getDimIntID()
     {
     	if(dimIntID==-2)
     	{
-    		setDimIntID(((ForgeRegistry<Dimension>) ForgeRegistries.DIMENSIONS).getID(dimID));
+    		setDimIntID(((ForgeRegistry<Dimension>) REGISTRY).getID(dimID));
     	}
     	return dimIntID;
     }
-    
-    public static int getDimIntID(ResourceLocation id)
+
+	/**
+	 * get the int id for a dimension from it's resourcelocation id
+	 * may be necessary for some internal fields eg {@link net.minecraft.entity.Entity#dimension}
+	 * @param id the {@link ResourceLocation} id
+	 * @return the int id (-2 if dimension not found)
+	 */
+	public static int getDimIntID(ResourceLocation id)
     {
-    	return ForgeRegistries.DIMENSIONS.getValue(id).dimIntID;
+    	Dimension dim = REGISTRY.getValue(id);
+    	return dim == null ? -2 : dim.dimIntID;
     }
 
-    /* Factory method for creating dimension type and a dimension */
+	/**
+	 * Factory method for creating a custom dimension type and a dimension
+	 * @param dimensionName the name of the dimension
+	 * @param typeName the name of the dimension type
+	 * @param typeSuffix suffix for the dimension type
+	 * @param provider world provider used
+	 * @param keepLoaded whether the dimension type should stay loaded
+	 * @return the {@link Dimension} (for chaining)
+	 */
     public static Dimension dimensionWithCustomType(String dimensionName, String typeName, String typeSuffix, Class<? extends WorldProvider> provider, boolean keepLoaded)
 	{
 		Dimension dim = new Dimension(dimensionName);

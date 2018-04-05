@@ -80,7 +80,7 @@
 +     * Added to allow default providers to be registered for multiple dimensions.
 +     * This is to denote the exact dimension ID opposed to the 'type' in WorldType
 +     *
-+     * @param dim Dimension ID
++     * @param dimID Dimension ID
 +     */
 +    public void setDimension(net.minecraft.util.ResourceLocation dimID)
 +    {

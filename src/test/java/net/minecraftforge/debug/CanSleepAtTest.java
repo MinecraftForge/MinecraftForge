@@ -15,8 +15,10 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = CanSleepAtTest.MODID, name = "CanSleepAtTest", version = "0.0.0", acceptableRemoteVersions = "*")
+@Mod.EventBusSubscriber
 public class CanSleepAtTest
 {
     public static final String MODID = "can_sleep_at_test";
@@ -26,7 +28,7 @@ public class CanSleepAtTest
     public static ResourceLocation dimId;
     private static Logger logger;
 
-    @EventHandler
+    @SubscribeEvent
     public void registerDimension(RegistryEvent.Register<Dimension> event)
     {
         if(ENABLED)
@@ -34,10 +36,12 @@ public class CanSleepAtTest
             dim = Dimension.dimensionWithCustomType(MODID+":dimension", "CanSleepAtTest", "_cansleepattest", WorldProviderTest.class, false);
             dimType = dim.getType();
             dimId = dim.getID();
+            event.getRegistry().register(dim);
             DimensionManager.registerDimensionActive(dimId);
         }
     }
-    @EventHandler
+
+    @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
     {
         if (ENABLED)
