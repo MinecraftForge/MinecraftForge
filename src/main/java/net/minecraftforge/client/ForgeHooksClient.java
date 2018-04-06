@@ -27,6 +27,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -55,6 +60,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -71,6 +78,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
@@ -123,6 +131,7 @@ import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.resource.IResourceType;
 import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.client.resource.VanillaResourceType;
+import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
@@ -141,6 +150,7 @@ import org.lwjgl.opengl.GL20;
 
 import java.util.function.Predicate;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
@@ -577,6 +587,93 @@ public class ForgeHooksClient
     public static void registerTESRItemStack(Item item, int metadata, Class<? extends TileEntity> TileClass)
     {
         tileItemMap.put(Pair.of(item, metadata), TileClass);
+    }
+    
+    public static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack) 
+    {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        
+        List<BakedQuad> allquads = new ArrayList<>();
+
+        for (EnumFacing enumfacing : EnumFacing.values())
+        {
+            allquads.addAll(model.getQuads((IBlockState)null, enumfacing, 0L));
+        }
+
+        allquads.addAll(model.getQuads((IBlockState)null, (EnumFacing)null, 0L));
+        
+        Deque<Pair<List<BakedQuad>, int[]>> segmentedQuads = new ArrayDeque<>();
+        
+        for (BakedQuad q : allquads) {
+            Pair<List<BakedQuad>, int[]> tail = segmentedQuads.peekLast();
+            int[] light = { 0, 0 };
+            if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().getElements().contains(DefaultVertexFormats.TEX_2S)) {
+                int lmapIndex = q.getFormat().getElements().indexOf(DefaultVertexFormats.TEX_2S);
+                
+                QuadGatheringTransformer qgt = new QuadGatheringTransformer() {
+                    
+                    @Override
+                    public void setTexture(TextureAtlasSprite texture){}
+                    
+                    @Override
+                    public void setQuadTint(int tint){}
+                    
+                    @Override
+                    public void setQuadOrientation(EnumFacing orientation){}
+                    
+                    @Override
+                    public void setApplyDiffuseLighting(boolean diffuse){}
+                    
+                    @Override
+                    protected void processQuad()
+                    {
+                        int[] totalLight = new int[2];
+                        for (int i = 0; i < 4; i++) {
+                            float blight = (quadData[lmapIndex][i][0] * 0xFFFF) / 0x20;
+                            float slight = (quadData[lmapIndex][i][1] * 0xFFFF) / 0x20;
+                            totalLight[0] += (int) blight;
+                            totalLight[1] += (int) slight;
+                        }
+                        light[0] = totalLight[0] / 4;
+                        light[1] = totalLight[1] / 4;
+                    }
+                };
+                qgt.setVertexFormat(q.getFormat());
+                q.pipe(qgt);
+            }
+            
+            if (tail == null || !Arrays.equals(light, tail.getValue())) {
+                segmentedQuads.add(Pair.of(Lists.newArrayList(q), light));
+            } else {
+                tail.getLeft().add(q);
+            }
+        }
+        
+        for (Pair<List<BakedQuad>, int[]> segment : segmentedQuads) {
+            bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+            
+            float emissive = segment.getRight()[1] / 15f;
+
+            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive, emissive, emissive, 1));
+
+            float bl = segment.getRight()[0] * 16, sl = segment.getRight()[1] * 16;
+            float lastBl = OpenGlHelper.lastBrightnessX, lastSl = OpenGlHelper.lastBrightnessY;
+            if (bl > lastBl && sl > lastSl) {
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, bl, sl);
+            } else if (bl > lastBl) {
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, bl, lastSl);
+            } else if (sl > lastSl) {
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, sl);
+            }
+
+            ri.renderQuads(bufferbuilder, segment.getLeft(), color, stack);
+            tessellator.draw();
+            
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, lastSl);
+
+            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+        }
     }
 
     /**
