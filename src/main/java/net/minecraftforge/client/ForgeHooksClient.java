@@ -598,10 +598,10 @@ public class ForgeHooksClient
 
         for (EnumFacing enumfacing : EnumFacing.values())
         {
-            allquads.addAll(model.getQuads((IBlockState)null, enumfacing, 0L));
+            allquads.addAll(model.getQuads(null, enumfacing, 0));
         }
 
-        allquads.addAll(model.getQuads((IBlockState)null, (EnumFacing)null, 0L));
+        allquads.addAll(model.getQuads(null, null, 0));
         
         Deque<Pair<List<BakedQuad>, int[]>> segmentedQuads = new ArrayDeque<>();
         
@@ -652,13 +652,14 @@ public class ForgeHooksClient
         
         for (Pair<List<BakedQuad>, int[]> segment : segmentedQuads) {
             bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+            final int[] light = segment.getRight();
             
-            float emissive = segment.getRight()[1] / 15f;
+            final float emissive = light[1] / 15f;
 
             GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive, emissive, emissive, 1));
 
-            float bl = segment.getRight()[0] * 16, sl = segment.getRight()[1] * 16;
-            float lastBl = OpenGlHelper.lastBrightnessX, lastSl = OpenGlHelper.lastBrightnessY;
+            final float bl = light[0] * 16, sl = light[1] * 16;
+            final float lastBl = OpenGlHelper.lastBrightnessX, lastSl = OpenGlHelper.lastBrightnessY;
             if (bl > lastBl && sl > lastSl) {
                 OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, bl, sl);
             } else if (bl > lastBl) {
