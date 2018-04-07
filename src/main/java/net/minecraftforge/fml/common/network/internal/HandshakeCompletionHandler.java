@@ -32,7 +32,7 @@ public class HandshakeCompletionHandler extends SimpleChannelInboundHandler<FMLM
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CompleteHandshake msg) throws Exception
     {
-        NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).getAndRemove();
+        NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).getAndSet(null);
         dispatcher.completeHandshake(msg.target);
     }
 

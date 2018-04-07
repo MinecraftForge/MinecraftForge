@@ -18,3 +18,12 @@
                  {
                      ;
                  }
+@@ -95,7 +95,7 @@
+             {
+                 BlockPos blockpos = p_180684_2_.func_177982_a(p_180684_1_.field_73012_v.nextInt(16) - p_180684_1_.field_73012_v.nextInt(16), p_180684_1_.field_73012_v.nextInt(8) - p_180684_1_.field_73012_v.nextInt(8), p_180684_1_.field_73012_v.nextInt(16) - p_180684_1_.field_73012_v.nextInt(16));
+ 
+-                if (p_180684_1_.func_180495_p(blockpos).func_177230_c().field_149764_J == Material.field_151579_a)
++                if (p_180684_1_.func_175623_d(blockpos))
+                 {
+                     if (p_180684_1_.field_72995_K)
+                     {

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/advancements/critereon/ItemPredicate.java
 +++ ../src-work/minecraft/net/minecraft/advancements/critereon/ItemPredicate.java
-@@ -104,6 +104,7 @@
+@@ -104,6 +104,13 @@
          if (p_192492_0_ != null && !p_192492_0_.isJsonNull())
          {
              JsonObject jsonobject = JsonUtils.func_151210_l(p_192492_0_, "item");

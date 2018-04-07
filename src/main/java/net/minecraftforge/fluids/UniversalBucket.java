@@ -37,13 +37,12 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
@@ -161,6 +160,9 @@ public class UniversalBucket extends Item
 
         // clicked on a block?
         RayTraceResult mop = this.rayTrace(world, player, false);
+
+        ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, itemstack, mop);
+        if (ret != null) return ret;
 
         if(mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK)
         {
@@ -282,6 +284,15 @@ public class UniversalBucket extends Item
     public boolean isNbtSensitive()
     {
         return nbtSensitive;
+    }
+
+    @Nullable
+    @Override
+    public String getCreatorModId(@Nonnull ItemStack itemStack)
+    {
+        FluidStack fluidStack = getFluid(itemStack);
+        String modId = FluidRegistry.getModId(fluidStack);
+        return modId != null ? modId : super.getCreatorModId(itemStack);
     }
 
     @Override

@@ -80,6 +80,8 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
+import net.minecraftforge.client.CloudRenderer;
+import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigManager;
@@ -198,6 +200,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private WeakReference<NetHandlerPlayClient> currentPlayClient;
 
+    private CloudRenderer cloudRenderer;
+
     /**
      * Called to start the whole game off
      *
@@ -265,16 +269,21 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             Loader.instance().preinitializeMods();
         }
-        catch (CustomModLoadingErrorDisplayException custom)
-        {
-            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
-            customError = custom;
-        }
         catch (LoaderException le)
         {
-            haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
-            return;
+            if (le.getCause() instanceof CustomModLoadingErrorDisplayException)
+            {
+                CustomModLoadingErrorDisplayException custom = (CustomModLoadingErrorDisplayException) le.getCause();
+                FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
+                customError = custom;
+            }
+            else
+            {
+                haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
+                return;
+            }
         }
+
         Map<String,Map<String,String>> sharedModList = (Map<String, Map<String, String>>) Launch.blackboard.get("modList");
         if (sharedModList == null)
         {
@@ -342,17 +351,19 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             Loader.instance().initializeMods();
         }
-        catch (CustomModLoadingErrorDisplayException custom)
-        {
-            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
-            customError = custom;
-            SplashProgress.finish();
-            return;
-        }
         catch (LoaderException le)
         {
-            haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
-            return;
+            if (le.getCause() instanceof CustomModLoadingErrorDisplayException)
+            {
+                CustomModLoadingErrorDisplayException custom = (CustomModLoadingErrorDisplayException) le.getCause();
+                FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
+                customError = custom;
+            }
+            else
+            {
+                haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
+                return;
+            }
         }
 
         // This call is being phased out for performance reasons in 1.12,
@@ -390,7 +401,8 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         loading = false;
         client.gameSettings.loadOptions(); //Reload options to load any mod added keybindings.
-        Loader.instance().loadingComplete();
+        if (customError == null)
+            Loader.instance().loadingComplete();
         SplashProgress.finish();
     }
 
@@ -663,7 +675,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             catch (NoSuchMethodException e)
             {
-                FMLLog.log.error("The container {} (type {}) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
+                FMLLog.log.error("The container {} (type {}) returned an invalid class for its resource pack.", container.getName(), container.getClass().getName());
             }
             catch (Exception e)
             {
@@ -803,7 +815,8 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
 
             Map<String,String> modListMap = modListBldr.build();
-            serverDataTag.put(data, new ExtendedServerListData(type, FMLNetworkHandler.checkModList(modListMap, Side.SERVER) == null, modListMap, !moddedClientAllowed));
+            String modRejections = FMLNetworkHandler.checkModList(modListMap, Side.SERVER);
+            serverDataTag.put(data, new ExtendedServerListData(type, modRejections == null, modListMap, !moddedClientAllowed));
         }
         else
         {
@@ -813,7 +826,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             {
                 moddedClientAllowed = !serverDescription.endsWith(":NOFML§r");
             }
-            serverDataTag.put(data, new ExtendedServerListData("VANILLA", false, ImmutableMap.<String,String>of(), !moddedClientAllowed));
+            serverDataTag.put(data, new ExtendedServerListData("VANILLA", false, ImmutableMap.of(), !moddedClientAllowed));
         }
         startupConnectionData.countDown();
     }
@@ -979,7 +992,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             return;
         }
-        Logger logger = LogManager.getLogger("TEXTURE ERRORS");
+        Logger logger = LogManager.getLogger("FML.TEXTURE_ERRORS");
         logger.error(Strings.repeat("+=", 25));
         logger.error("The following texture errors were found.");
         Map<String,FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "domainResourceManagers", "field_110548"+"_a");
@@ -1106,5 +1119,28 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         this.client.populateSearchTreeManager();
         this.client.getSearchTreeManager().onResourceManagerReload(this.client.getResourceManager());
+    }
+
+    private CloudRenderer getCloudRenderer()
+    {
+        if (cloudRenderer == null)
+            cloudRenderer = new CloudRenderer();
+        return cloudRenderer;
+    }
+
+    public void updateCloudSettings()
+    {
+        getCloudRenderer().checkSettings();
+    }
+
+    public boolean renderClouds(int cloudTicks, float partialTicks)
+    {
+        IRenderHandler renderer = this.client.world.provider.getCloudRenderer();
+        if (renderer != null)
+        {
+            renderer.render(partialTicks, this.client.world, this.client);
+            return true;
+        }
+        return getCloudRenderer().render(cloudTicks, partialTicks);
     }
 }

@@ -28,10 +28,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
 
 public interface ILanguageAdapter {
-    public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception;
-    public boolean supportsStatics();
-    public void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
-    public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
+    Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception;
+    boolean supportsStatics();
+    void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
+    void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
 
     public static class ScalaAdapter implements ILanguageAdapter {
         @Override

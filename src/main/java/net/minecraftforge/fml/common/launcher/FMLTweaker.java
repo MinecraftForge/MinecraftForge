@@ -46,7 +46,10 @@ public class FMLTweaker implements ITweaker {
 
     public FMLTweaker()
     {
-        System.setProperty("java.net.preferIPv4Stack", "true"); //Lets do this as early as possible. Vanilla does it in Main.main
+        if (System.getProperty("java.net.preferIPv4Stack") == null)
+        {
+            System.setProperty("java.net.preferIPv4Stack", "true");
+        }
         try
         {
             System.setSecurityManager(new FMLSecurityManager());
@@ -126,7 +129,7 @@ public class FMLTweaker implements ITweaker {
         }
         catch (URISyntaxException e)
         {
-            LogManager.getLogger("FMLTWEAK").log(Level.ERROR, "Missing URI information for FML tweak");
+            LogManager.getLogger("FML.TWEAK").error("Missing URI information for FML tweak");
             throw new RuntimeException(e);
         }
     }

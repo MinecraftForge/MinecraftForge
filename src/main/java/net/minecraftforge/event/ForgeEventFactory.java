@@ -36,9 +36,13 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
@@ -49,6 +53,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ChatType;
@@ -59,6 +64,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
@@ -76,9 +82,12 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.ThrowableImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
@@ -113,6 +122,7 @@ import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -168,23 +178,52 @@ public class ForgeEventFactory
     }
 
     /**
-     * @deprecated use {@link #canEntitySpawn(EntityLiving, World, float, float, float, boolean)} instead
+     * @deprecated use {@link #canEntitySpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)} instead
      */
-    @Deprecated
+    @Deprecated // TODO remove in 1.13
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
     {
         return canEntitySpawn(entity, world, x, y, z, true);
     }
-
+    /**
+     * @deprecated use {@link #canEntitySpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)} instead
+     */
+    @Deprecated // Still used in base game for non-spawner spawns, which is safe
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner)
     {
         if (entity == null)
             return Result.DEFAULT;
-        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z, isSpawner);
+        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z, isSpawner); // TODO: replace isSpawner with null in 1.13
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
     }
 
+    public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z, MobSpawnerBaseLogic spawner)
+    {
+        if (entity == null)
+            return Result.DEFAULT;
+        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z, spawner);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
+    }
+
+    public static boolean canEntitySpawnSpawner(EntityLiving entity, World world, float x, float y, float z, MobSpawnerBaseLogic spawner)
+    {
+        Result result = canEntitySpawn(entity, world, x, y, z, spawner);
+        if (result == Result.DEFAULT)
+        {
+            return entity.getCanSpawnHere() && entity.isNotColliding(); // vanilla logic
+        }
+        else
+        {
+            return result == Result.ALLOW;
+        }
+    }
+
+    /**
+     * @deprecated Use {@link #canEntitySpawnSpawner(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
+     */
+    @Deprecated // TODO remove in 1.13
     public static boolean canEntitySpawnSpawner(EntityLiving entity, World world, float x, float y, float z)
     {
         Result result = canEntitySpawn(entity, world, x, y, z, true);
@@ -198,9 +237,18 @@ public class ForgeEventFactory
         }
     }
 
+    /**
+     * @deprecated Use {@link #canEntitySpawnSpawner(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
+     */
+    @Deprecated // Still used in base game for non-spawner spawns, which is safe
     public static boolean doSpecialSpawn(EntityLiving entity, World world, float x, float y, float z)
     {
-        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z));
+        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, null));
+    }
+
+    public static boolean doSpecialSpawn(EntityLiving entity, World world, float x, float y, float z, MobSpawnerBaseLogic spawner)
+    {
+        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner));
     }
 
     public static Result canEntityDespawn(EntityLiving entity)
@@ -270,7 +318,7 @@ public class ForgeEventFactory
         return event.getDropChance();
     }
 
-    public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, ITooltipFlag flags)
+    public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, @Nullable EntityPlayer entityPlayer, List<String> toolTip, ITooltipFlag flags)
     {
         ItemTooltipEvent event = new ItemTooltipEvent(itemStack, entityPlayer, toolTip, flags);
         MinecraftForge.EVENT_BUS.post(event);
@@ -598,6 +646,12 @@ public class ForgeEventFactory
     }
 
     @Nullable
+    public static CapabilityDispatcher gatherCapabilities(Chunk chunk)
+    {
+        return gatherCapabilities(new AttachCapabilitiesEvent<Chunk>(Chunk.class, chunk), null);
+    }
+
+    @Nullable
     private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent<?> event, @Nullable ICapabilityProvider parent)
     {
         MinecraftForge.EVENT_BUS.post(event);
@@ -633,6 +687,28 @@ public class ForgeEventFactory
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
         return event.getCharge();
+    }
+
+    public static boolean onProjectileImpact(Entity entity, RayTraceResult ray)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent(entity, ray));
+    }
+
+    public static boolean onProjectileImpact(EntityArrow arrow, RayTraceResult ray)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Arrow(arrow, ray));
+    }
+
+    public static boolean onProjectileImpact(EntityFireball fireball, RayTraceResult ray)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Fireball(fireball, ray));
+    }
+
+    public static boolean onProjectileImpact(EntityThrowable throwable, RayTraceResult ray)
+    {
+        boolean oldEvent = MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, ray));
+        boolean newEvent = MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
+        return oldEvent || newEvent; // TODO: clean up when old event is removed
     }
 
     public static boolean onReplaceBiomeBlocks(IChunkGenerator gen, int x, int z, ChunkPrimer primer, World world)
@@ -674,5 +750,20 @@ public class ForgeEventFactory
     public static boolean onEntityDestroyBlock(EntityLivingBase entity, BlockPos pos, IBlockState state)
     {
         return !MinecraftForge.EVENT_BUS.post(new LivingDestroyBlockEvent(entity, pos, state));
+    }
+
+    public static boolean gatherCollisionBoxes(World world, Entity entity, AxisAlignedBB aabb, List<AxisAlignedBB> outList)
+    {
+        MinecraftForge.EVENT_BUS.post(new GetCollisionBoxesEvent(world, entity, aabb, outList));
+        return outList.isEmpty();
+    }
+
+    public static boolean getMobGriefingEvent(World world, Entity entity)
+    {
+        EntityMobGriefingEvent event = new EntityMobGriefingEvent(entity);
+        MinecraftForge.EVENT_BUS.post(event);
+
+        Result result = event.getResult();
+        return result == Result.DEFAULT ? world.getGameRules().getBoolean("mobGriefing") : result == Result.ALLOW;
     }
 }

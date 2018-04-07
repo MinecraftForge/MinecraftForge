@@ -8,6 +8,15 @@
      }
  
      public boolean func_70686_a(Class <? extends EntityLivingBase > p_70686_1_)
+@@ -576,7 +577,7 @@
+         super.func_70636_d();
+         this.field_70170_p.field_72984_F.func_76320_a("looting");
+ 
+-        if (!this.field_70170_p.field_72995_K && this.func_98052_bS() && !this.field_70729_aU && this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
++        if (!this.field_70170_p.field_72995_K && this.func_98052_bS() && !this.field_70729_aU && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this))
+         {
+             for (EntityItem entityitem : this.field_70170_p.func_72872_a(EntityItem.class, this.func_174813_aQ().func_72314_b(1.0D, 0.0D, 1.0D)))
+             {
 @@ -702,10 +703,22 @@
  
      protected void func_70623_bb()
@@ -39,7 +48,16 @@
      public float func_70603_bj()
      {
          return 1.0F;
-@@ -1003,7 +1015,7 @@
+@@ -991,6 +1003,8 @@
+ 
+     public static EntityEquipmentSlot func_184640_d(ItemStack p_184640_0_)
+     {
++        final EntityEquipmentSlot slot = p_184640_0_.func_77973_b().getEquipmentSlot(p_184640_0_);
++        if (slot != null) return slot; // FORGE: Allow modders to set a non-default equipment slot for a stack; e.g. a non-armor chestplate-slot item
+         if (p_184640_0_.func_77973_b() != Item.func_150898_a(Blocks.field_150423_aK) && p_184640_0_.func_77973_b() != Items.field_151144_bL)
+         {
+             if (p_184640_0_.func_77973_b() instanceof ItemArmor)
+@@ -1003,7 +1017,7 @@
              }
              else
              {

@@ -57,10 +57,13 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.SimpleBakedModel;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -73,6 +76,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -81,6 +85,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -90,10 +95,12 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -103,6 +110,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeModContainer;
@@ -174,11 +182,22 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
         ModelLoader.White.INSTANCE.register(map);
+        ModelDynBucket.LoaderDynBucket.INSTANCE.register(map);
     }
 
     public static void onTextureStitchedPost(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
+    }
+
+    public static void onBlockColorsInit(BlockColors blockColors)
+    {
+        MinecraftForge.EVENT_BUS.post(new ColorHandlerEvent.Block(blockColors));
+    }
+
+    public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors)
+    {
+        MinecraftForge.EVENT_BUS.post(new ColorHandlerEvent.Item(itemColors, blockColors));
     }
 
     static int renderPass = -1;
@@ -271,7 +290,7 @@ public class ForgeHooksClient
             {
                 BlockPos pos = center.add(x, 0, z);
                 Biome biome = world.getBiome(pos);
-                int colour = biome.getSkyColorByTemp(biome.getFloatTemperature(pos));
+                int colour = biome.getSkyColorByTemp(biome.getTemperature(pos));
                 r += (colour & 0xFF0000) >> 16;
                 g += (colour & 0x00FF00) >> 8;
                 b += colour & 0x0000FF;
@@ -369,7 +388,7 @@ public class ForgeHooksClient
     }
 
     @SuppressWarnings("deprecation")
-    public static Matrix4f getMatrix(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform)
+    public static Matrix4f getMatrix(ItemTransformVec3f transform)
     {
         javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
         m.setIdentity();
@@ -562,7 +581,7 @@ public class ForgeHooksClient
     }
 
     /**
-     * @deprecated Will be removed as soon as possible, hopefully 1.9.
+     * @deprecated Will be removed as soon as possible.  See {@link Item#getTileEntityItemStackRenderer()}.
      */
     @Deprecated
     public static void registerTESRItemStack(Item item, int metadata, Class<? extends TileEntity> TileClass)
@@ -575,29 +594,49 @@ public class ForgeHooksClient
      */
     public static void fillNormal(int[] faceData, EnumFacing facing)
     {
-        Vector3f v1 = new Vector3f(faceData[3 * 7 + 0], faceData[3 * 7 + 1], faceData[3 * 7 + 2]);
-        Vector3f t = new Vector3f(faceData[1 * 7 + 0], faceData[1 * 7 + 1], faceData[1 * 7 + 2]);
-        Vector3f v2 = new Vector3f(faceData[2 * 7 + 0], faceData[2 * 7 + 1], faceData[2 * 7 + 2]);
+        Vector3f v1 = getVertexPos(faceData, 3);
+        Vector3f t  = getVertexPos(faceData, 1);
+        Vector3f v2 = getVertexPos(faceData, 2);
         v1.sub(t);
-        t.set(faceData[0 * 7 + 0], faceData[0 * 7 + 1], faceData[0 * 7 + 2]);
+        t.set(getVertexPos(faceData, 0));
         v2.sub(t);
         v1.cross(v2, v1);
         v1.normalize();
 
-        int x = ((byte)(v1.x * 127)) & 0xFF;
-        int y = ((byte)(v1.y * 127)) & 0xFF;
-        int z = ((byte)(v1.z * 127)) & 0xFF;
+        int x = ((byte) Math.round(v1.x * 127)) & 0xFF;
+        int y = ((byte) Math.round(v1.y * 127)) & 0xFF;
+        int z = ((byte) Math.round(v1.z * 127)) & 0xFF;
+
+        int normal = x | (y << 0x08) | (z << 0x10);
+
         for(int i = 0; i < 4; i++)
         {
-            faceData[i * 7 + 6] = x | (y << 0x08) | (z << 0x10);
+            faceData[i * 7 + 6] = normal;
         }
     }
 
+    private static Vector3f getVertexPos(int[] data, int vertex)
+    {
+        int idx = vertex * 7;
+
+        float x = Float.intBitsToFloat(data[idx]);
+        float y = Float.intBitsToFloat(data[idx + 1]);
+        float z = Float.intBitsToFloat(data[idx + 2]);
+
+        return new Vector3f(x, y, z);
+    }
+
     @SuppressWarnings("deprecation")
-    public static Optional<TRSRTransformation> applyTransform(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform, Optional<? extends IModelPart> part)
+    public static Optional<TRSRTransformation> applyTransform(ItemTransformVec3f transform, Optional<? extends IModelPart> part)
     {
         if(part.isPresent()) return Optional.empty();
-        return Optional.of(TRSRTransformation.blockCenterToCorner(new TRSRTransformation(transform)));
+        return Optional.of(TRSRTransformation.blockCenterToCorner(TRSRTransformation.from(transform)));
+    }
+
+    public static Optional<TRSRTransformation> applyTransform(ModelRotation rotation, Optional<? extends IModelPart> part)
+    {
+        if(part.isPresent()) return Optional.empty();
+        return Optional.of(TRSRTransformation.from(rotation));
     }
 
     public static Optional<TRSRTransformation> applyTransform(Matrix4f matrix, Optional<? extends IModelPart> part)
@@ -653,25 +692,29 @@ public class ForgeHooksClient
         TRSRTransformation global = new TRSRTransformation(rotation.getMatrix());
         Matrix4f uv = global.getUVLockTransform(originalSide).getMatrix();
         Vector4f vec = new Vector4f(0, 0, 0, 1);
-        vec.x = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0)) / 16;
-        vec.y = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0)) / 16;
+        float u0 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0));
+        float v0 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0));
+        vec.x = u0 / 16;
+        vec.y = v0 / 16;
         uv.transform(vec);
         float uMin = 16 * vec.x; // / vec.w;
         float vMin = 16 * vec.y; // / vec.w;
-        vec.x = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(2)) / 16;
-        vec.y = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(2)) / 16;
+        float u1 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(2));
+        float v1 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(2));
+        vec.x = u1 / 16;
+        vec.y = v1 / 16;
         vec.z = 0;
         vec.w = 1;
         uv.transform(vec);
         float uMax = 16 * vec.x; // / vec.w;
         float vMax = 16 * vec.y; // / vec.w;
-        if(uMin > uMax)
+        if (uMin > uMax && u0 < u1 || uMin < uMax && u0 > u1)
         {
             float t = uMin;
             uMin = uMax;
             uMax = t;
         }
-        if(vMin > vMax)
+        if (vMin > vMax && v0 < v1 || vMin < vMax && v0 > v1)
         {
             float t = vMin;
             vMin = vMax;
@@ -709,9 +752,21 @@ public class ForgeHooksClient
     @SuppressWarnings("deprecation")
     public static Pair<? extends IBakedModel,Matrix4f> handlePerspective(IBakedModel model, ItemCameraTransforms.TransformType type)
     {
-        TRSRTransformation tr = new TRSRTransformation(model.getItemCameraTransforms().getTransform(type));
+        TRSRTransformation tr = TRSRTransformation.from(model.getItemCameraTransforms().getTransform(type));
         Matrix4f mat = null;
-        if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
+        if (!tr.isIdentity()) mat = tr.getMatrix();
         return Pair.of(model, mat);
+    }
+
+    public static void onInputUpdate(EntityPlayer player, MovementInput movementInput)
+    {
+        MinecraftForge.EVENT_BUS.post(new InputUpdateEvent(player, movementInput));
+    }
+    
+    public static String getHorseArmorTexture(EntityHorse horse, ItemStack armorStack)
+    {
+        String texture = armorStack.getItem().getHorseArmorTexture(horse, armorStack);
+        if(texture == null) texture = horse.getHorseArmorType().getTextureName();
+        return texture;
     }
 }

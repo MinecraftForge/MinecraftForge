@@ -1047,7 +1047,7 @@ public class Configuration
         }
         catch (IOException e)
         {
-            FMLLog.log.error("Error while loading config.", e);
+            FMLLog.log.error("Error while loading config {}.", fileName, e);
         }
         finally
         {
@@ -1108,7 +1108,7 @@ public class Configuration
         }
         catch (IOException e)
         {
-            FMLLog.log.error("Error while saving config.", e);
+            FMLLog.log.error("Error while saving config {}.", fileName, e);
         }
     }
 
@@ -1412,10 +1412,12 @@ public class Configuration
     {
         if (hasCategory(category))
         {
-            if (getCategory(category).containsKey(oldPropName) && !oldPropName.equalsIgnoreCase(newPropName))
+            ConfigCategory cat = getCategory(category);
+            if (cat.containsKey(oldPropName) && !oldPropName.equalsIgnoreCase(newPropName))
             {
-                get(category, newPropName, getCategory(category).get(oldPropName).getString(), "");
-                getCategory(category).remove(oldPropName);
+                Property prop = cat.remove(oldPropName);
+                prop.setName(newPropName);
+                cat.put(newPropName, prop);
                 return true;
             }
         }

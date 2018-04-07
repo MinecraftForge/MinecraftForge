@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.common.util.TextTable;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.event.FMLEvent;
@@ -130,7 +131,7 @@ public class LoadController
             }
             else
             {
-                LogManager.getLogger(mod.getModId()).warn("Mod {} has been disabled through configuration", mod.getModId());
+                FMLLog.log.warn("Mod {} has been disabled through configuration", mod.getModId());
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 modStates.put(mod.getModId(), ModState.DISABLED);
             }
@@ -158,52 +159,77 @@ public class LoadController
 
         LoaderState oldState = state;
         state = state.transition(!errors.isEmpty());
-        if (state != desiredState && !forceState)
+        if (state != desiredState)
         {
-            Entry<String, Throwable> toThrow = null;
-            FMLLog.log.fatal("Fatal errors were detected during the transition from {} to {}. Loading cannot continue", oldState, desiredState);
-            StringBuilder sb = new StringBuilder();
-            printModStates(sb);
-            FMLLog.log.fatal(sb.toString());
-            if (errors.size()>0)
+            if (!forceState)
             {
-                FMLLog.log.fatal("The following problems were captured during this phase");
-                for (Entry<String, Throwable> error : errors.entries())
-                {
-                    String modId = error.getKey();
-                    String modName = modNames.get(modId);
-                    FMLLog.log.error("Caught exception from {} ({})", modId, error.getValue());
-                    if (error.getValue() instanceof IFMLHandledException)
-                    {
-                        toThrow = error;
-                    }
-                    else if (toThrow == null)
-                    {
-                        toThrow = error;
-                    }
-                }
+                FMLLog.log.fatal("Fatal errors were detected during the transition from {} to {}. Loading cannot continue", oldState, desiredState);
+                throw throwStoredErrors();
             }
             else
             {
-                FMLLog.log.fatal("The ForgeModLoader state engine has become corrupted. Probably, a state was missed by and invalid modification to a base class" +
-                        "ForgeModLoader depends on. This is a critical error and not recoverable. Investigate any modifications to base classes outside of" +
-                        "ForgeModLoader, especially Optifine, to see if there are fixes available.");
-                throw new RuntimeException("The ForgeModLoader state engine is invalid");
-            }
-            if (toThrow != null)
-            {
-                String modId = toThrow.getKey();
-                String modName = modNames.get(modId);
-                String errMsg = String.format("Caught exception from %s (%s)", modName, modId);
-                throw new LoaderExceptionModCrash(errMsg, toThrow.getValue());
+                FMLLog.log.info("The state engine was in incorrect state {} and forced into state {}. Errors may have been discarded.", state, desiredState);
+                forceState(desiredState);
             }
         }
-        else if (state != desiredState && forceState)
+    }
+
+    @Deprecated // TODO remove in 1.13
+    public void checkErrorsAfterAvailable()
+    {
+        checkErrors();
+    }
+
+    public void checkErrors()
+    {
+        if (errors.size() > 0)
         {
-            FMLLog.log.info("The state engine was in incorrect state {} and forced into state {}. Errors may have been discarded.", state, desiredState);
-            forceState(desiredState);
+            FMLLog.log.fatal("Fatal errors were detected during {}. Loading cannot continue.", state);
+            state = state.transition(true);
+            throw throwStoredErrors();
+        }
+    }
+
+    private RuntimeException throwStoredErrors()
+    {
+        Entry<String, Throwable> toThrow = null;
+        StringBuilder sb = new StringBuilder();
+        printModStates(sb);
+        FMLLog.log.fatal(sb.toString());
+        if (errors.size() > 0)
+        {
+            FMLLog.log.fatal("The following problems were captured during this phase");
+            for (Entry<String, Throwable> entry : errors.entries())
+            {
+                String modId = entry.getKey();
+                String modName = modNames.get(modId);
+                Throwable error = entry.getValue();
+                FMLLog.log.error("Caught exception from {} ({})", modId, modName, error);
+                if (error instanceof IFMLHandledException)
+                {
+                    toThrow = entry;
+                }
+                else if (toThrow == null)
+                {
+                    toThrow = entry;
+                }
+            }
         }
 
+        if (toThrow == null)
+        {
+            FMLLog.log.fatal("The ForgeModLoader state engine has become corrupted. Probably, a state was missed by and invalid modification to a base class" +
+                    "ForgeModLoader depends on. This is a critical error and not recoverable. Investigate any modifications to base classes outside of" +
+                    "ForgeModLoader, especially Optifine, to see if there are fixes available.");
+            throw new RuntimeException("The ForgeModLoader state engine is invalid");
+        }
+        else
+        {
+            String modId = toThrow.getKey();
+            String modName = modNames.get(modId);
+            String errMsg = String.format("Caught exception from %s (%s)", modName, modId);
+            throw new LoaderExceptionModCrash(errMsg, toThrow.getValue());
+        }
     }
 
     @Nullable
@@ -240,7 +266,7 @@ public class LoadController
         {
             if (av.getLabel()!= null && requirements.contains(av.getLabel()) && modStates.containsEntry(av.getLabel(),ModState.ERRORED))
             {
-                LogManager.getLogger(modId).error("Skipping event {} and marking errored mod {} since required dependency {} has errored", stateEvent.getEventType(), modId, av.getLabel());
+                FMLLog.log.error("Skipping event {} and marking errored mod {} since required dependency {} has errored", stateEvent.getEventType(), modId, av.getLabel());
                 modStates.put(modId, ModState.ERRORED);
                 return;
             }
@@ -248,9 +274,9 @@ public class LoadController
         activeContainer = mc;
         stateEvent.applyModContainer(mc);
         ThreadContext.put("mod", modId);
-        LogManager.getLogger(modId).trace("Sending event {} to mod {}", stateEvent.getEventType(), modId);
+        FMLLog.log.trace("Sending event {} to mod {}", stateEvent.getEventType(), modId);
         eventChannels.get(modId).post(stateEvent);
-        LogManager.getLogger(modId).trace("Sent event {} to mod {}", stateEvent.getEventType(), modId);
+        FMLLog.log.trace("Sent event {} to mod {}", stateEvent.getEventType(), modId);
         ThreadContext.remove("mod");
         activeContainer = null;
         if (stateEvent instanceof FMLStateEvent)
@@ -310,14 +336,28 @@ public class LoadController
         for (ModState state : ModState.values())
             ret.append(" '").append(state.getMarker()).append("' = ").append(state.toString());
 
+        TextTable table = new TextTable(Lists.newArrayList(
+            TextTable.column("State"),
+            TextTable.column("ID"),
+            TextTable.column("Version"),
+            TextTable.column("Source"),
+            TextTable.column("Signature"))
+        );
         for (ModContainer mc : loader.getModList())
         {
-            ret.append("\n\t");
-            for (ModState state : modStates.get(mc.getModId()))
-                ret.append(state.getMarker());
-
-            ret.append("\t").append(mc.getModId()).append("{").append(mc.getVersion()).append("} [").append(mc.getName()).append("] (").append(mc.getSource().getName()).append(") ");
+            table.add(
+                modStates.get(mc.getModId()).stream().map(ModState::getMarker).reduce("", (a, b) -> a + b),
+                mc.getModId(),
+                mc.getVersion(),
+                mc.getSource().getName(),
+                mc.getSigningCertificate() != null ? CertificateHelper.getFingerprint(mc.getSigningCertificate()) : "None"
+            );
         }
+
+        ret.append("\n");
+        ret.append("\n\t");
+        table.append(ret, "\n\t");
+        ret.append("\n");
     }
 
     public List<ModContainer> getActiveModList()

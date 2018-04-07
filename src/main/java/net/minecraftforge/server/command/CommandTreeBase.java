@@ -25,9 +25,7 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,16 +42,32 @@ import java.util.Map;
  */
 public abstract class CommandTreeBase extends CommandBase
 {
-    private final Map<String, ICommand> commandMap = new HashMap<String, ICommand>();
+    private final Map<String, ICommand> commandMap = new HashMap<>();
+    private final Map<String, ICommand> commandAliasMap = new HashMap<>();
 
-    public void addSubcommand(ICommand c)
+    public void addSubcommand(ICommand command)
     {
-        commandMap.put(c.getName(), c);
+        commandMap.put(command.getName(), command);
+        for (String alias : command.getAliases())
+        {
+            commandAliasMap.put(alias, command);
+        }
     }
 
     public Collection<ICommand> getSubCommands()
     {
-        return getCommandMap().values();
+        return commandMap.values();
+    }
+
+    @Nullable
+    public ICommand getSubCommand(String command)
+    {
+        ICommand cmd = commandMap.get(command);
+        if (cmd != null)
+        {
+            return cmd;
+        }
+        return commandAliasMap.get(command);
     }
 
     public Map<String, ICommand> getCommandMap()
@@ -63,12 +77,12 @@ public abstract class CommandTreeBase extends CommandBase
 
     public List<ICommand> getSortedCommandList()
     {
-        List<ICommand> list = new ArrayList<ICommand>(getSubCommands());
+        List<ICommand> list = new ArrayList<>(getSubCommands());
         Collections.sort(list);
         return list;
     }
 
-    private static String[] shiftArgs(String[] s)
+    private static String[] shiftArgs(@Nullable String[] s)
     {
         if(s == null || s.length == 0)
         {
@@ -81,14 +95,13 @@ public abstract class CommandTreeBase extends CommandBase
     }
 
     @Override
-    @Nonnull
-    public List<String> getTabCompletions(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if(args.length == 1)
         {
-            List<String> keys = new ArrayList<String>();
+            List<String> keys = new ArrayList<>();
 
-            for(ICommand c : getCommandMap().values())
+            for (ICommand c : getSubCommands())
             {
                 if(c.checkPermission(server, sender))
                 {
@@ -96,11 +109,11 @@ public abstract class CommandTreeBase extends CommandBase
                 }
             }
 
-            Collections.sort(keys, null);
+            keys.sort(null);
             return getListOfStringsMatchingLastWord(args, keys);
         }
 
-        ICommand cmd = getCommandMap().get(args[0]);
+        ICommand cmd = getSubCommand(args[0]);
 
         if(cmd != null)
         {
@@ -111,12 +124,12 @@ public abstract class CommandTreeBase extends CommandBase
     }
 
     @Override
-    public boolean isUsernameIndex(@Nonnull String[] args, int index)
+    public boolean isUsernameIndex(String[] args, int index)
     {
-        if(index > 0 && args.length > 1)
+        if (index > 0 && args.length > 1)
         {
-            ICommand cmd = getCommandMap().get(args[0]);
-            if(cmd != null)
+            ICommand cmd = getSubCommand(args[0]);
+            if (cmd != null)
             {
                 return cmd.isUsernameIndex(shiftArgs(args), index - 1);
             }
@@ -126,19 +139,21 @@ public abstract class CommandTreeBase extends CommandBase
     }
 
     @Override
-    public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) throws CommandException
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
-        if(args.length < 1)
+        if (args.length < 1)
         {
-            sender.sendMessage(new TextComponentString(CommandBase.joinNiceStringFromCollection(commandMap.keySet())));
+            String subCommandsString = getAvailableSubCommandsString(server, sender);
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.tree_base.available_subcommands", subCommandsString));
         }
         else
         {
-            ICommand cmd = getCommandMap().get(args[0]);
+            ICommand cmd = getSubCommand(args[0]);
 
             if(cmd == null)
             {
-                throw new CommandException("commands.tree_base.invalid_cmd", args[0]);
+                String subCommandsString = getAvailableSubCommandsString(server, sender);
+                throw new CommandException("commands.tree_base.invalid_cmd.list_subcommands", args[0], subCommandsString);
             }
             else if(!cmd.checkPermission(server, sender))
             {
@@ -149,5 +164,18 @@ public abstract class CommandTreeBase extends CommandBase
                 cmd.execute(server, sender, shiftArgs(args));
             }
         }
+    }
+
+    private String getAvailableSubCommandsString(MinecraftServer server, ICommandSender sender)
+    {
+        Collection<String> availableCommands = new ArrayList<>();
+        for (ICommand command : getSubCommands())
+        {
+            if (command.checkPermission(server, sender))
+            {
+                availableCommands.add(command.getName());
+            }
+        }
+        return CommandBase.joinNiceStringFromCollection(availableCommands);
     }
 }

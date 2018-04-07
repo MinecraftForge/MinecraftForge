@@ -24,13 +24,13 @@ repositories {
 }
 
 apply plugin: "maven"
-apply plugin: "net.minecraftforge.gradle.patcher"
+def patcher_plugin = plugins.apply('net.minecraftforge.gradle.patcher')
 apply plugin: "net.minecraftforge.gradle.launch4j"
 
-minecraft.version = "1.12.1"
+minecraft.version = "1.12.2"
 
 minecraft {
-    mappings = 'snapshot_nodoc_20170624'
+    mappings = 'snapshot_nodoc_20171003'
     workspaceDir = "projects"
     versionJson = "jsons/${minecraft.version}-dev.json"
     buildUserdev = true
@@ -66,8 +66,10 @@ version = getVersionFromJava(file("src/main/java/net/minecraftforge/common/Forge
 extractForgeSources { exclude "**/SideOnly.java", "**/Side.java" }
 extractForgeResources { exclude "**/log4j2.xml" }
 
-genGradleProjects { 
-    addTestCompileDep "junit:junit:4.12"
+genGradleProjects {
+    addTestCompileDep "junit:junit:4.12" // TODO update unit tests to junit 5 and remove this
+    addTestCompileDep "org.junit.jupiter:junit-jupiter-api:5.0.0"
+    addTestCompileDep "org.opentest4j:opentest4j:1.0.0" // needed for junit 5
     addTestCompileDep "org.hamcrest:hamcrest-core:1.3"
     filter { dep -> !dep.contains("scala") }
 }
@@ -120,9 +122,65 @@ def extraTxts = [
 if (project.hasProperty('forgeJenkinsPass'))
     extraTxts += changelog
 
+import groovy.json.JsonSlurper;
+import groovy.json.JsonBuilder;
+
+task extractAnnotationsVanilla(type: net.minecraftforge.gradle.tasks.TaskExtractAnnotationsText, dependsOn: deobfuscateJar) {
+    jar = deobfuscateJar.outJar
+    output = 'build/vanilla_annotations_raw.json'
+    doLast { //Re-dump it so it's in groovy's sorted order. Because I like being able to do diffs against things.
+        def json = new JsonSlurper().parseText(file(output).text)
+        file(output).write(new JsonBuilder(json).toPrettyString())
+    }
+}
+
+task reobfToSRG(type: net.minecraftforge.gradle.patcher.TaskReobfuscate, dependsOn: reobfuscate) {
+    srg = patcher_plugin.delayedFile('{CACHE_DIR}/de/oceanlabs/mcp/mcp_{MAPPING_CHANNEL}/{MAPPING_VERSION}/{MC_VERSION}/srgs/mcp-srg.srg')
+    exc = reobfuscate.exc
+    preFFJar = reobfuscate.preFFJar
+    methodsCsv = reobfuscate.methodsCsv
+    fieldsCsv = reobfuscate.fieldsCsv
+    addLibs reobfuscate.libs
+    inJar = patcher_plugin.delayedFile('{BUILD_DIR}/localCache/Forge/recompiled.jar')
+    outJar = 'build/forge_srg.jar'
+}
+
+task extractAnnotationsForgeSRG(type: net.minecraftforge.gradle.tasks.TaskExtractAnnotationsText, dependsOn: reobfToSRG) {
+    jar = reobfToSRG.outJar
+    output = 'build/forge_annotations.json'
+    doLast { //Re-dump it so it's in groovy's sorted order. Because I like being able to do diffs against things.
+        def json = new JsonSlurper().parseText(file(output).text)
+        json.entrySet().removeIf{e -> (!e.key.startsWith('net/minecraft/') && !e.key.startsWith('net/minecraftforge/')) || e.key.endsWith('/package-info')}
+        file(output).write(new JsonBuilder(json).toPrettyString())
+    }
+}
+
+task fixAnnotationsJson(dependsOn: [extractAnnotationsVanilla, extractAnnotationsForgeSRG, genPatches]) {
+    inputs.file(extractAnnotationsVanilla.output)
+    inputs.file(extractAnnotationsForgeSRG.output)
+    outputs.file('build/vanilla_annotations.json')
+    doLast {
+        def json_vanilla = new JsonSlurper().parseText(file(extractAnnotationsVanilla.output).text) as TreeMap
+        def json_forge = new JsonSlurper().parseText(file(extractAnnotationsForgeSRG.output).text) as TreeMap
+        def start = minecraft.projects.forge.patchDir.absolutePath.length()
+        file(minecraft.projects.forge.patchDir).traverse(type: groovy.io.FileType.FILES, nameFilter: {nf -> nf.endsWith('.java.patch')}) { f ->
+            def cls = f.absolutePath.substring(start+1).replace('\\', '/').replace('.java.patch', '')
+            json_vanilla.entrySet().removeIf{e -> e.key == cls || e.key.startsWith(cls + '$')}
+            json_forge.entrySet().stream().filter{e -> e.key == cls || e.key.startsWith(cls + '$')}.forEach{e -> json_vanilla.put(e.key, e.value)} 
+        }
+        json_forge.entrySet().stream().filter{e -> e.key.startsWith('net/minecraftforge/')}.forEach{e -> json_vanilla.put(e.key, e.value)} 
+        outputs.files.singleFile.write(new JsonBuilder(json_vanilla).toPrettyString())
+    }
+}
+
+
 outputJar {
     classifier = 'universal'
     from extraTxts
+    from(fixAnnotationsJson){
+        into 'META-INF'
+    }
+    dependsOn fixAnnotationsJson
 
     // add crowdin locales
     from { crowdin.getDidWork() ? zipTree(crowdin.output) : null}
@@ -309,7 +367,6 @@ uploadArchives {
 
 // HELPER METHODS
 
-import groovy.json.JsonSlurper;
 
 String getServerClasspath(File file)
 {
@@ -390,7 +447,7 @@ task resetBuildNumber << {
     ciWriteBuildNumber.execute()
 }
 // re-add old tasks for jenkins compat
-// should be remvoed, and the jenkisn fixed when no longer building with FG 1.2
+// should be removed, and the jenkins fixed when no longer building with FG 1.2
 task setupForge { dependsOn 'setup', 'ciWriteBuildNumber' }
 task buildPackages { dependsOn 'build' }
 

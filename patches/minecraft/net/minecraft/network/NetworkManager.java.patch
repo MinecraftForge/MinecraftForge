@@ -39,7 +39,15 @@
                      {
                          NetworkManager.this.func_150723_a(enumconnectionstate);
                      }
-@@ -454,6 +459,11 @@
+@@ -308,6 +313,7 @@
+     @SideOnly(Side.CLIENT)
+     public static NetworkManager func_181124_a(InetAddress p_181124_0_, int p_181124_1_, boolean p_181124_2_)
+     {
++        if (p_181124_0_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
+         final NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
+         Class <? extends SocketChannel > oclass;
+         LazyLoadBase <? extends EventLoopGroup > lazyloadbase;
+@@ -454,6 +460,11 @@
          }
      }
  

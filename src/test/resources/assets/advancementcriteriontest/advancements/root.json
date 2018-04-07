@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:diamond"
+    },
+    "title": {
+      "text": "advancementcriteriontest"
+    },
+    "description": {
+      "text": "advancementcriteriontest"
+    },
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "pos": {
+      "trigger": "advancementcriteriontest:position",
+      "conditions": {
+        "position": {
+          "x": {
+            "min": 0,
+            "max": 1
+          },
+          "z": {
+            "min": 0,
+            "max": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
+@@ -40,7 +40,7 @@
+ 
+     public boolean func_187493_a(IBlockAccess p_187493_1_, IBakedModel p_187493_2_, IBlockState p_187493_3_, BlockPos p_187493_4_, BufferBuilder p_187493_5_, boolean p_187493_6_, long p_187493_7_)
+     {
+-        boolean flag = Minecraft.func_71379_u() && p_187493_3_.func_185906_d() == 0 && p_187493_2_.func_177555_b();
++        boolean flag = Minecraft.func_71379_u() && p_187493_3_.getLightValue(p_187493_1_, p_187493_4_) == 0 && p_187493_2_.func_177555_b();
+ 
+         try
+         {
 @@ -128,7 +128,14 @@
              p_187492_8_.func_187491_a(p_187492_1_, p_187492_2_, p_187492_3_, bakedquad.func_178210_d(), p_187492_6_, p_187492_7_);
              p_187492_4_.func_178981_a(bakedquad.func_178209_a());

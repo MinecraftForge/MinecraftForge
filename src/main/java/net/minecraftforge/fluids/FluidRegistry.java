@@ -316,6 +316,14 @@ public abstract class FluidRegistry
             }
             fluidBlocks = tmp;
         }
+        if (block == Blocks.FLOWING_WATER)
+        {
+            block = Blocks.WATER;
+        }
+        else if (block == Blocks.FLOWING_LAVA)
+        {
+            block = Blocks.LAVA;
+        }
         return fluidBlocks.get(block);
     }
 
@@ -354,6 +362,21 @@ public abstract class FluidRegistry
             throw new IllegalStateException("The fluid registry is corrupted");
         }
         return name;
+    }
+
+    @Nullable
+    public static String getModId(@Nullable FluidStack fluidStack)
+    {
+        if (fluidStack != null)
+        {
+            String defaultFluidName = getDefaultFluidName(fluidStack.getFluid());
+            if (defaultFluidName != null)
+            {
+                ResourceLocation fluidResourceName = new ResourceLocation(defaultFluidName);
+                return fluidResourceName.getResourceDomain();
+            }
+        }
+        return null;
     }
 
     public static void loadFluidDefaults(NBTTagCompound tag)

@@ -27,9 +27,14 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 
 public class ForgeInternalHandler
 {
@@ -68,7 +73,7 @@ public class ForgeInternalHandler
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionSave(WorldEvent.Save event)
     {
-    	ForgeChunkManager.saveWorld(event.getWorld());
+        ForgeChunkManager.saveWorld(event.getWorld());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -78,4 +83,18 @@ public class ForgeInternalHandler
         if (event.getWorld() instanceof WorldServer)
             FakePlayerFactory.unloadWorld((WorldServer) event.getWorld());
     }
+
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent event)
+    {
+        WorldWorkerManager.tick(event.phase == TickEvent.Phase.START);
+    }
+
+    @SubscribeEvent
+    public void checkSettings(ClientTickEvent event)
+    {
+        if (event.phase == Phase.END)
+            FMLClientHandler.instance().updateCloudSettings();
+    }
 }
+

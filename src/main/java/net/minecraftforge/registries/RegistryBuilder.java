@@ -42,6 +42,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private DummyFactory<T> dummyFactory;
+    private MissingFactory<T> missingFactory;
 
     public RegistryBuilder<T> setName(ResourceLocation name)
     {
@@ -84,6 +85,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             this.add((CreateCallback<T>)inst);
         if (inst instanceof DummyFactory)
             this.set((DummyFactory<T>)inst);
+        if (inst instanceof MissingFactory)
+            this.set((MissingFactory<T>)inst);
         return this;
     }
 
@@ -111,6 +114,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> set(MissingFactory<T> missing)
+    {
+        this.missingFactory = missing;
+        return this;
+    }
+
     public RegistryBuilder<T> disableSaving()
     {
         this.saveToDisc = false;
@@ -132,7 +141,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public IForgeRegistry<T> create()
     {
         return RegistryManager.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                getAdd(), getClear(), getCreate(), saveToDisc, allowOverrides, allowModifications, dummyFactory);
+                getAdd(), getClear(), getCreate(), saveToDisc, allowOverrides, allowModifications, dummyFactory, missingFactory);
     }
 
     @Nullable

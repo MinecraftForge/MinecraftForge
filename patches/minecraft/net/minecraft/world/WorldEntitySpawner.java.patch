@@ -70,3 +70,11 @@
                              }
                              catch (Exception exception)
                              {
+@@ -281,6 +286,7 @@
+                                 continue;
+                             }
+ 
++                            if (net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(entityliving, p_77191_0_, j + 0.5f, (float) blockpos.func_177956_o(), k +0.5f, false) == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) continue;
+                             entityliving.func_70012_b((double)((float)j + 0.5F), (double)blockpos.func_177956_o(), (double)((float)k + 0.5F), p_77191_6_.nextFloat() * 360.0F, 0.0F);
+                             p_77191_0_.func_72838_d(entityliving);
+                             ientitylivingdata = entityliving.func_180482_a(p_77191_0_.func_175649_E(new BlockPos(entityliving)), ientitylivingdata);

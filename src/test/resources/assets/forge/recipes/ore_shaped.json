@@ -1,0 +1,21 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "X",
+    "X",
+    "#"
+  ],
+  "key": {
+      "#": {
+        "type": "forge:ore_dict",
+        "ore": "stickWood"
+      },
+      "X": {
+        "item": "minecraft:beetroot"
+      }
+    },
+  "result": {
+    "item": "minecraft:dirt",
+    "data": 0
+  }
+}

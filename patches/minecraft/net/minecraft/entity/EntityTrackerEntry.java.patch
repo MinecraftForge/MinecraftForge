@@ -1,5 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
+@@ -158,13 +158,13 @@
+ 
+             if (itemstack.func_77973_b() instanceof ItemMap)
+             {
+-                MapData mapdata = Items.field_151098_aY.func_77873_a(itemstack, this.field_73132_a.field_70170_p);
++                MapData mapdata = ((ItemMap) itemstack.func_77973_b()).func_77873_a(itemstack, this.field_73132_a.field_70170_p);
+ 
+                 for (EntityPlayer entityplayer : p_73122_1_)
+                 {
+                     EntityPlayerMP entityplayermp = (EntityPlayerMP)entityplayer;
+                     mapdata.func_76191_a(entityplayermp, itemstack);
+-                    Packet<?> packet = Items.field_151098_aY.func_150911_c(itemstack, this.field_73132_a.field_70170_p, entityplayermp);
++                    Packet<?> packet = ((ItemMap) itemstack.func_77973_b()).func_150911_c(itemstack, this.field_73132_a.field_70170_p, entityplayermp);
+ 
+                     if (packet != null)
+                     {
 @@ -457,6 +457,7 @@
  
                      this.field_73132_a.func_184178_b(p_73117_1_);

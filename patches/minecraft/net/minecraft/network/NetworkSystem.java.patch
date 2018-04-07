@@ -25,7 +25,15 @@
          }
      };
      private final MinecraftServer field_151273_d;
-@@ -110,7 +110,7 @@
+@@ -79,6 +79,7 @@
+ 
+     public void func_151265_a(InetAddress p_151265_1_, int p_151265_2_) throws IOException
+     {
++        if (p_151265_1_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
+         synchronized (this.field_151274_e)
+         {
+             Class <? extends ServerSocketChannel > oclass;
+@@ -110,7 +111,7 @@
                          ;
                      }
  
