@@ -20,6 +20,8 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.LanguageLoadingProvider;
 
 import java.util.Collection;
 import java.util.List;
@@ -54,12 +56,12 @@ public class ModDiscoverer {
                 .peek(mf -> fmlLog.debug(SCAN,"Found mod file {} of type {} with locator {}", mf.getFileName(), mf.getType(), mf.getLocator()))
                 .collect(Collectors.groupingBy(ModFile::getType));
 
-        //ModLanguageProvider.loadAdditionalLanguages(modFiles.get(ModFile.Type.LANGPROVIDER));
+        FMLLoader.getLanguageLoadingProvider().addAdditionalLanguages(modFiles.get(ModFile.Type.LANGPROVIDER));
         BackgroundScanHandler backgroundScanHandler = new BackgroundScanHandler();
         final List<ModFile> mods = modFiles.get(ModFile.Type.MOD);
         mods.forEach(ModFile::identifyMods);
         fmlLog.debug(SCAN,"Found {} mod files with {} mods", mods::size, ()->mods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
-        //mods.stream().map(ModFile::getCoreMods).flatMap(List::stream).forEach(ServiceProviders.getCoreModProvider()::addCoreMod);
+        mods.stream().map(ModFile::getCoreMods).flatMap(List::stream).forEach(FMLLoader.getCoreModProvider()::addCoreMod);
         mods.forEach(backgroundScanHandler::submitForScanning);
         return backgroundScanHandler;
     }

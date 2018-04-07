@@ -19,14 +19,21 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.loading.IModLanguageProvider;
+
+import javax.swing.text.html.Option;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.SCAN;
@@ -40,6 +47,11 @@ public class ModFile
         DEFAULTMANIFEST.getMainAttributes().putValue("FMLModType", "MOD");
     }
 
+    public void claimLanguage(String modId, IModLanguageProvider.IModLanguageLoader loader)
+    {
+        this.modInfoMap.get(modId).setLoader(loader);
+    }
+
     public enum Type {
         MOD, LIBRARY, LANGPROVIDER
     }
@@ -47,6 +59,7 @@ public class ModFile
     private final Type modFileType;
     private final Manifest manifest;
     private List<ModInfo> modInfos;
+    private Map<String, ModInfo> modInfoMap;
     private final IModLocator locator;
     private ScanResult fileScanResult;
     private CompletableFuture<ScanResult> futureScanResult;
@@ -60,7 +73,8 @@ public class ModFile
         manifest = locator.findManifest(file).orElse(DEFAULTMANIFEST);
         if (manifest != DEFAULTMANIFEST) fmlLog.debug(SCAN,"Mod file {} has a manifest", file);
         else fmlLog.debug(SCAN,"Mod file {} is missing a manifest", file);
-        modFileType = Type.valueOf(manifest.getMainAttributes().getValue(TYPE));
+        final Optional<String> value = Optional.ofNullable(manifest.getMainAttributes().getValue(TYPE));
+        modFileType = Type.valueOf(value.orElse("MOD"));
     }
 
     public Type getType() {
@@ -78,6 +92,7 @@ public class ModFile
     public void identifyMods() {
         this.modInfos = ModFileParser.readModList(this);
         this.modInfos.forEach(mi-> fmlLog.debug(LOADING,"Found mod {} for language {}", mi.getModId(), mi.getModLoader()));
+        this.modInfoMap = this.modInfos.stream().collect(Collectors.toMap(ModInfo::getModId, Function.identity()));
         this.coreMods = ModFileParser.getCoreMods(this);
         this.coreMods.forEach(mi-> fmlLog.debug(LOADING,"Found coremod {}", mi.getPath()));
     }

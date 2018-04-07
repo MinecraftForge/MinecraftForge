@@ -22,27 +22,33 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import org.objectweb.asm.Type;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class ScanResult {
     private final ModFile file;
-    private final java.util.List<net.minecraftforge.fml.loading.moddiscovery.ScanResult.AnnotationData> annotations = new java.util.ArrayList<>();
-    private final java.util.List<net.minecraftforge.fml.loading.moddiscovery.ScanResult.ClassData> classes = new java.util.ArrayList<>();
+    private final List<ScanResult.AnnotationData> annotations = new ArrayList<>();
+    private final List<ScanResult.ClassData> classes = new ArrayList<>();
 
     public ScanResult(final ModFile file) {
         this.file = file;
+    }
+
+    public ModFile getFile() {
+        return file;
     }
 
     public static boolean interestingAnnotations(final ModAnnotation annotation) {
         return true;
     }
 
-    public java.util.List<net.minecraftforge.fml.loading.moddiscovery.ScanResult.ClassData> getClasses() {
+    public List<ScanResult.ClassData> getClasses() {
         return classes;
     }
 
-    public java.util.List<net.minecraftforge.fml.loading.moddiscovery.ScanResult.AnnotationData> getAnnotations() {
+    public List<ScanResult.AnnotationData> getAnnotations() {
         return annotations;
     }
 

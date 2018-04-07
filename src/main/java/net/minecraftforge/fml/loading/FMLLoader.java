@@ -28,25 +28,20 @@ import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.forgespi.ICoreModProvider;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.CORE;
-import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.SCAN;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class FMLLoader
 {
-
     private static ILaunchPluginService accessTransformer;
     private static ModDiscoverer modDiscoverer;
-    private static ICoreModProvider coreMod;
+    private static ICoreModProvider coreModProvider;
+    private static LanguageLoadingProvider languageLoadingProvider;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
@@ -79,9 +74,11 @@ public class FMLLoader
             throw new IncompatibleEnvironmentException("Multiple coremod libraries found");
         }
 
-        coreMod = coreModProviders.get(0);
-        final Package coremodPackage = coreMod.getClass().getPackage();
+        coreModProvider = coreModProviders.get(0);
+        final Package coremodPackage = coreModProvider.getClass().getPackage();
         fmlLog.debug(CORE,"FML found CoreMod version : {}", coremodPackage.getImplementationVersion());
+
+        languageLoadingProvider = new LanguageLoadingProvider();
     }
 
     public static void load()
@@ -89,5 +86,14 @@ public class FMLLoader
         fmlLog.debug(SCAN,"Scanning for Mod Locators");
         modDiscoverer = new ModDiscoverer();
         modDiscoverer.discoverMods();
+    }
+
+    public static ICoreModProvider getCoreModProvider() {
+        return coreModProvider;
+    }
+
+    public static LanguageLoadingProvider getLanguageLoadingProvider()
+    {
+        return languageLoadingProvider;
     }
 }

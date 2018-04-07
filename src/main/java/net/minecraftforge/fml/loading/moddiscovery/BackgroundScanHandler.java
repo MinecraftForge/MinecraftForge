@@ -19,11 +19,14 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.google.common.util.concurrent.MoreExecutors;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import static net.minecraftforge.fml.Logging.SCAN;
@@ -37,7 +40,11 @@ public class BackgroundScanHandler
     private final List<ModFile> allFiles;
 
     public BackgroundScanHandler() {
-        modContentScanner = Executors.newCachedThreadPool();
+        modContentScanner = Executors.newSingleThreadExecutor(r -> {
+            final Thread thread = Executors.defaultThreadFactory().newThread(r);
+            thread.setDaemon(true);
+            return thread;
+        });
         scannedFiles = new ArrayList<>();
         pendingFiles = new ArrayList<>();
         allFiles = new ArrayList<>();

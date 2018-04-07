@@ -25,9 +25,10 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 public class LaunchTesting
 {
-    public static void main(String... args)
+    public static void main(String... args) throws InterruptedException
     {
         Configurator.setRootLevel(Level.DEBUG);
         Launcher.main("--launchTarget", "fml","--gameDir", "projects/run");
+        Thread.sleep(10000);
     }
 }

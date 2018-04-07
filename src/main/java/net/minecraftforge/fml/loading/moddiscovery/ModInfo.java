@@ -20,6 +20,10 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.loading.IModLanguageProvider;
+
+import java.net.URL;
+import java.util.List;
 
 public class ModInfo {
     private final ModFile owningFile;
@@ -27,11 +31,12 @@ public class ModInfo {
     private final ArtifactVersion version;
     private final String displayName;
     private final String description;
-    private final java.net.URL updateJSONURL;
+    private final URL updateJSONURL;
     private final String modLoader;
-    private final java.util.List<net.minecraftforge.fml.loading.moddiscovery.ModInfo.ModVersion> dependencies;
+    private final List<ModInfo.ModVersion> dependencies;
+    private IModLanguageProvider.IModLanguageLoader loader;
 
-    public ModInfo(final ModFile owningFile, final String modLoader, final String modId, final String displayName, final ArtifactVersion version, final String description, final java.net.URL updateJSONURL, final java.util.List<net.minecraftforge.fml.loading.moddiscovery.ModInfo.ModVersion> dependencies) {
+    public ModInfo(final ModFile owningFile, final String modLoader, final String modId, final String displayName, final ArtifactVersion version, final String description, final URL updateJSONURL, final List<ModInfo.ModVersion> dependencies) {
         this.owningFile = owningFile;
         this.modLoader = modLoader;
         this.modId = modId;
@@ -56,6 +61,11 @@ public class ModInfo {
 
     public ArtifactVersion getVersion() {
         return version;
+    }
+
+    public void setLoader(IModLanguageProvider.IModLanguageLoader loader)
+    {
+        this.loader = loader;
     }
 
     public enum Ordering {
