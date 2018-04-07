@@ -19,16 +19,44 @@
 
 package net.minecraftforge.fml;
 
+import com.google.common.base.Strings;
 import cpw.mods.modlauncher.Launcher;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
+
+import java.io.File;
+import java.lang.reflect.Field;
 
 public class LaunchTesting
 {
     public static void main(String... args) throws InterruptedException
     {
         Configurator.setRootLevel(Level.DEBUG);
-        Launcher.main("--launchTarget", "fml","--gameDir", "projects/run");
+        hackNatives();
+        Launcher.main("--launchTarget", "devfml","--gameDir", "projects/run", "--accessToken", "blah", "--version", "FMLDev");
         Thread.sleep(10000);
     }
+
+    private static void hackNatives()
+    {
+        String paths = System.getProperty("java.library.path");
+        String nativesDir = "/home/cpw/.gradle/caches/minecraft/net/minecraft/natives/1.12.2";
+
+        if (Strings.isNullOrEmpty(paths))
+            paths = nativesDir;
+        else
+            paths += File.pathSeparator + nativesDir;
+
+        System.setProperty("java.library.path", paths);
+
+        // hack the classloader now.
+        try
+        {
+            final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
+            sysPathsField.setAccessible(true);
+            sysPathsField.set(null, null);
+        }
+        catch(Throwable t) {}
+    }
+
 }

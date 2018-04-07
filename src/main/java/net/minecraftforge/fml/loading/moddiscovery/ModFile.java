@@ -22,6 +22,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import net.minecraftforge.fml.loading.IModLanguageProvider;
 
 import javax.swing.text.html.Option;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class ModFile
         DEFAULTMANIFEST.getMainAttributes().putValue("FMLModType", "MOD");
     }
 
+
     public void claimLanguage(String modId, IModLanguageProvider.IModLanguageLoader loader)
     {
         this.modInfoMap.get(modId).setLoader(loader);
@@ -64,6 +66,7 @@ public class ModFile
     private ScanResult fileScanResult;
     private CompletableFuture<ScanResult> futureScanResult;
     private List<CoreModFile> coreMods;
+    private Path accessTransformer;
 
     private static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
 
@@ -89,12 +92,16 @@ public class ModFile
         return modInfos;
     }
 
+    public Optional<Path> getAccessTransformer() {
+        return Optional.ofNullable(Files.exists(accessTransformer) ? accessTransformer : null);
+    }
     public void identifyMods() {
         this.modInfos = ModFileParser.readModList(this);
         this.modInfos.forEach(mi-> fmlLog.debug(LOADING,"Found mod {} for language {}", mi.getModId(), mi.getModLoader()));
         this.modInfoMap = this.modInfos.stream().collect(Collectors.toMap(ModInfo::getModId, Function.identity()));
         this.coreMods = ModFileParser.getCoreMods(this);
         this.coreMods.forEach(mi-> fmlLog.debug(LOADING,"Found coremod {}", mi.getPath()));
+        this.accessTransformer = locator.findPath(this, "META-INF", "accesstransformer.cfg");
     }
 
 
@@ -112,7 +119,6 @@ public class ModFile
     public void scanFile(Consumer<Path> pathConsumer) {
         locator.scanFile(this, pathConsumer);
     }
-
     public void setFutureScanResult(CompletableFuture<ScanResult> future)
     {
         this.futureScanResult = future;

@@ -25,17 +25,14 @@ import cpw.mods.modlauncher.api.ITransformer;
 import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionSpecBuilder;
-import net.minecraftforge.coremod.CoreModEngine;
 import net.minecraftforge.fml.FMLConfig;
 import net.minecraftforge.fml.common.FMLPaths;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.Logging.fmlLog;
@@ -62,7 +59,9 @@ public class FMLServiceProvider implements ITransformationService
         fmlLog.debug(CORE,"Loading configuration");
         FMLConfig.load();
         fmlLog.debug(CORE,"Initiating mod scan");
-        FMLLoader.load();
+        FMLLoader.beginModScan();
+        fmlLog.debug(CORE, "Loading access transformers");
+        FMLLoader.loadAccessTransformer();
     }
 
     @Override

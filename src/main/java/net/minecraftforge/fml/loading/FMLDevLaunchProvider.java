@@ -22,27 +22,39 @@ package net.minecraftforge.fml.loading;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import net.minecraft.client.main.Main;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 
-public class FMLLaunchProvider implements ILaunchHandlerService
+public class FMLDevLaunchProvider implements ILaunchHandlerService
 {
     @Override
     public String name()
     {
-        return "fml";
+        return "devfml";
     }
 
     @Override
     public Path[] identifyTransformationTargets()
     {
-        return new Path[0];
+        try
+        {
+            return new Path[] {
+                    Paths.get(getClass().getProtectionDomain().getCodeSource().getLocation().toURI())
+            };
+        }
+        catch (URISyntaxException e)
+        {
+            throw new RuntimeException("I can't find myself!");
+        }
     }
 
     @Override
     public Callable<Void> launchService(String[] arguments, ClassLoader launchClassLoader)
     {
         return () -> {
+            Main.main(arguments);
             return null;
         };
     }

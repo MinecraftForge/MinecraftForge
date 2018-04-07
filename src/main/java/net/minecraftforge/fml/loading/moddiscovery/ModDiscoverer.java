@@ -23,9 +23,11 @@ import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LanguageLoadingProvider;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
@@ -62,6 +64,7 @@ public class ModDiscoverer {
         mods.forEach(ModFile::identifyMods);
         fmlLog.debug(SCAN,"Found {} mod files with {} mods", mods::size, ()->mods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
         mods.stream().map(ModFile::getCoreMods).flatMap(List::stream).forEach(FMLLoader.getCoreModProvider()::addCoreMod);
+        mods.forEach(mod -> mod.getAccessTransformer().ifPresent(path -> FMLLoader.addAccessTransformer(path, mod)));
         mods.forEach(backgroundScanHandler::submitForScanning);
         return backgroundScanHandler;
     }

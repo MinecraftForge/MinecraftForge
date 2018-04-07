@@ -24,10 +24,18 @@ import cpw.mods.modlauncher.api.ITransformationService;
 import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.fml.common.FMLPaths;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.forgespi.ICoreModProvider;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,7 +89,7 @@ public class FMLLoader
         languageLoadingProvider = new LanguageLoadingProvider();
     }
 
-    public static void load()
+    public static void beginModScan()
     {
         fmlLog.debug(SCAN,"Scanning for Mod Locators");
         modDiscoverer = new ModDiscoverer();
@@ -95,5 +103,29 @@ public class FMLLoader
     public static LanguageLoadingProvider getLanguageLoadingProvider()
     {
         return languageLoadingProvider;
+    }
+
+    public static void loadAccessTransformer()
+    {
+        final URL resource = FMLLoader.class.getClassLoader().getResource("forge_at.cfg");
+        if (resource == null) {
+            throw new RuntimeException("Missing forge_at.cfg file");
+        }
+        try
+        {
+            fmlLog.debug(CORE, "Loading forge_at.cfg into access transformer");
+            accessTransformer.addResource(Paths.get(resource.toURI()), "forge_at.cfg");
+        }
+        catch (URISyntaxException e)
+        {
+            fmlLog.error("Error loading forge_at.cfg file", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void addAccessTransformer(Path atPath, ModFile modName)
+    {
+        fmlLog.debug(SCAN, "Adding Access Transformer in {}", modName.getFilePath());
+        accessTransformer.addResource(atPath, modName.getFileName());
     }
 }
