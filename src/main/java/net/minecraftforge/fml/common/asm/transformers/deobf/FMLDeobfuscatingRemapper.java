@@ -269,7 +269,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
     String mapMemberFieldName(String owner, String name, String desc)
     {
-        String remappedName = mapFieldName(owner, name, desc, true);
+        String remappedName = mapFieldName(owner, name, desc);
         if (!name.equals(remappedName))
         {
             storeMemberFieldMapping(owner, name, desc, remappedName);
@@ -284,7 +284,8 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         String key = name + ":" + desc;
         String altKey = name + ":null";
 
-        if (!fieldMap.containsKey(key)) {
+        if (!fieldMap.containsKey(key))
+        {
             fieldMap.put(key, remappedName);
             fieldMap.put(altKey, remappedName);
 
