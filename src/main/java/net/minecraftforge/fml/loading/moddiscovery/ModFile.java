@@ -28,6 +28,8 @@ import java.util.function.Consumer;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import static net.minecraftforge.fml.Logging.LOADING;
+import static net.minecraftforge.fml.Logging.SCAN;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class ModFile
@@ -56,8 +58,8 @@ public class ModFile
         this.locator = locator;
         this.filePath = file;
         manifest = locator.findManifest(file).orElse(DEFAULTMANIFEST);
-        if (manifest != DEFAULTMANIFEST) fmlLog.debug("Mod file {} has a manifest", file);
-        else fmlLog.debug("Mod file {} is missing a manifest", file);
+        if (manifest != DEFAULTMANIFEST) fmlLog.debug(SCAN,"Mod file {} has a manifest", file);
+        else fmlLog.debug(SCAN,"Mod file {} is missing a manifest", file);
         modFileType = Type.valueOf(manifest.getMainAttributes().getValue(TYPE));
     }
 
@@ -75,9 +77,9 @@ public class ModFile
 
     public void identifyMods() {
         this.modInfos = ModFileParser.readModList(this);
-        this.modInfos.forEach(mi-> fmlLog.debug("Found mod {} for language {}", mi.getModId(), mi.getModLoader()));
+        this.modInfos.forEach(mi-> fmlLog.debug(LOADING,"Found mod {} for language {}", mi.getModId(), mi.getModLoader()));
         this.coreMods = ModFileParser.getCoreMods(this);
-        this.coreMods.forEach(mi-> fmlLog.debug("Found coremod {}", mi.getPath()));
+        this.coreMods.forEach(mi-> fmlLog.debug(LOADING,"Found coremod {}", mi.getPath()));
     }
 
 

@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static net.minecraftforge.fml.Logging.SCAN;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class BackgroundScanHandler
@@ -56,7 +57,7 @@ public class BackgroundScanHandler
 
     private void addCompletedFile(final ModFile file, final ScanResult scanResult, final Throwable throwable) {
         if (throwable != null) {
-            fmlLog.error("An error occurred scanning file {}", file, throwable);
+            fmlLog.error(SCAN,"An error occurred scanning file {}", file, throwable);
         }
         pendingFiles.remove(file);
         scannedFiles.add(file);

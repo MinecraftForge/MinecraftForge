@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class FMLConfig
@@ -78,7 +79,7 @@ public class FMLConfig
         }
         catch (IOException ioe)
         {
-            fmlLog.error("Unable to read FML config at {}", configFile, ioe);
+            fmlLog.error(CORE,"Unable to read FML config at {}", configFile, ioe);
             throw new RuntimeException("Unable to read FML config", ioe);
         }
     }

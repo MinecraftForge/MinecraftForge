@@ -21,6 +21,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import org.objectweb.asm.ClassReader;
 
+import static net.minecraftforge.fml.Logging.SCAN;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class Scanner {
@@ -38,7 +39,7 @@ public class Scanner {
 
     private void fileVisitor(final java.nio.file.Path path, final ScanResult result) {
         try {
-            fmlLog.debug("Scanning {} path {}", fileToScan, path);
+            fmlLog.debug(SCAN,"Scanning {} path {}", fileToScan, path);
             ModClassVisitor mcv = new ModClassVisitor();
             org.objectweb.asm.ClassReader cr = new ClassReader(java.nio.file.Files.newInputStream(path));
             cr.accept(mcv, 0);

@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.StringUtils;
 import net.minecraftforge.fml.common.FMLPaths;
 
 import java.io.IOException;
@@ -31,12 +32,16 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipError;
 
 import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.uncheck;
+import static net.minecraftforge.fml.Logging.SCAN;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 /**
@@ -57,6 +62,7 @@ public class ModsFolderLocator implements IModLocator {
 
     @Override
     public List<ModFile> scanMods() {
+        fmlLog.debug(SCAN,"Scanning mods dir {} for mods", this.modFolder);
         return uncheck(()-> Files.list(this.modFolder)).
                 sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString()))).
                 filter(p->StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX)).
@@ -74,7 +80,7 @@ public class ModsFolderLocator implements IModLocator {
         try {
             return FileSystems.newFileSystem(modFile.getFilePath(), modFile.getClass().getClassLoader());
         } catch (ZipError | IOException e) {
-            fmlLog.debug("Ignoring invalid JAR file {}", modFile.getFilePath());
+            fmlLog.debug(SCAN,"Ignoring invalid JAR file {}", modFile.getFilePath());
             return null;
         }
     }
@@ -89,7 +95,7 @@ public class ModsFolderLocator implements IModLocator {
 
     @Override
     public void scanFile(final ModFile file, final Consumer<Path> pathConsumer) {
-        fmlLog.debug("Scan started: {}", file);
+        fmlLog.debug(SCAN,"Scan started: {}", file);
         FileSystem fs = modJars.get(file);
         fs.getRootDirectories().forEach(path -> {
             try (Stream<Path> files = Files.find(path, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
@@ -98,11 +104,24 @@ public class ModsFolderLocator implements IModLocator {
                 e.printStackTrace();
             }
         });
-        fmlLog.debug("Scan finished: {}", file);
+        fmlLog.debug(SCAN,"Scan finished: {}", file);
     }
 
     @Override
     public String toString() {
-        return "{FolderJar locator at "+this.modFolder+"}";
+        return "{ModJarsFolder locator at "+this.modFolder+"}";
+    }
+
+    @Override
+    public Optional<Manifest> findManifest(final Path file)
+    {
+        try (JarFile jf = new JarFile(file.toFile()))
+        {
+            return Optional.ofNullable(jf.getManifest());
+        }
+        catch (IOException e)
+        {
+            return Optional.empty();
+        }
     }
 }

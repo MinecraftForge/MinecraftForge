@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
+import static net.minecraftforge.fml.Logging.SCAN;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class ModDiscoverer {
@@ -36,7 +37,7 @@ public class ModDiscoverer {
     public ModDiscoverer() {
         locators = ServiceLoader.load(IModLocator.class);
         locatorList = ServiceLoaderStreamUtils.toList(this.locators);
-        fmlLog.debug("Found Mod Locators : {}", ()->locatorList.stream().map(IModLocator::name).collect(Collectors.joining(",")));
+        fmlLog.debug(SCAN,"Found Mod Locators : {}", ()->locatorList.stream().map(iModLocator -> "("+iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion()+")").collect(Collectors.joining(",")));
     }
 
     ModDiscoverer(List<IModLocator> locatorList) {
@@ -45,22 +46,21 @@ public class ModDiscoverer {
     }
 
     public BackgroundScanHandler discoverMods() {
-        fmlLog.debug("Scanning for mods and other resources to load. We know {} ways to find mods", locatorList.size());
+        fmlLog.debug(SCAN,"Scanning for mods and other resources to load. We know {} ways to find mods", locatorList.size());
         final Map<ModFile.Type, List<ModFile>> modFiles = locatorList.stream()
-                .peek(loc -> fmlLog.debug("Trying locator {}", loc))
+                .peek(loc -> fmlLog.debug(SCAN,"Trying locator {}", loc))
                 .map(IModLocator::scanMods)
                 .flatMap(Collection::stream)
-                .peek(mf -> fmlLog.debug("Found mod file {} of type {} with locator {}", mf.getFileName(), mf.getType(), mf.getLocator()))
+                .peek(mf -> fmlLog.debug(SCAN,"Found mod file {} of type {} with locator {}", mf.getFileName(), mf.getType(), mf.getLocator()))
                 .collect(Collectors.groupingBy(ModFile::getType));
 
-        ModLanguageProvider.loadAdditionalLanguages(modFiles.get(ModFile.Type.LANGPROVIDER));
+        //ModLanguageProvider.loadAdditionalLanguages(modFiles.get(ModFile.Type.LANGPROVIDER));
         BackgroundScanHandler backgroundScanHandler = new BackgroundScanHandler();
         final List<ModFile> mods = modFiles.get(ModFile.Type.MOD);
         mods.forEach(ModFile::identifyMods);
-        fmlLog.debug("Found {} mod files with {} mods", mods::size, ()->mods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
-        mods.stream().map(ModFile::getCoreMods).flatMap(List::stream).forEach(ServiceProviders.getCoreModProvider()::addCoreMod);
+        fmlLog.debug(SCAN,"Found {} mod files with {} mods", mods::size, ()->mods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
+        //mods.stream().map(ModFile::getCoreMods).flatMap(List::stream).forEach(ServiceProviders.getCoreModProvider()::addCoreMod);
         mods.forEach(backgroundScanHandler::submitForScanning);
         return backgroundScanHandler;
     }
-
 }

@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public enum FMLPaths
@@ -70,7 +71,7 @@ public enum FMLPaths
         for (FMLPaths path : FMLPaths.values())
         {
             path.absolutePath = rootPath.resolve(path.relativePath).toAbsolutePath();
-            fmlLog.debug("Path {} is {}", ()-> path, ()-> path.absolutePath);
+            fmlLog.debug(CORE,"Path {} is {}", ()-> path, ()-> path.absolutePath);
             if (path.isDirectory)
             {
                 FileUtils.getOrCreateDirectory(path.absolutePath, path.name());

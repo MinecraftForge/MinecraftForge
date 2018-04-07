@@ -2,7 +2,7 @@
 <Configuration status="WARN" packages="com.mojang.util">
     <Appenders>
         <Console name="FmlSysOut" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%marker]: %msg%n" />
         </Console>
         <Console name="SysOut" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />

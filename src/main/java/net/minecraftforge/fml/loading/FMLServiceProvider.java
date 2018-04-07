@@ -29,12 +29,12 @@ import net.minecraftforge.fml.FMLConfig;
 import net.minecraftforge.fml.common.FMLPaths;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class FMLServiceProvider implements ITransformationService
@@ -54,16 +54,18 @@ public class FMLServiceProvider implements ITransformationService
     @Override
     public void initialize(IEnvironment environment)
     {
-        fmlLog.debug("Setting up basic FML game directories");
+        fmlLog.debug(CORE,"Setting up basic FML game directories");
         FMLPaths.setup(environment);
-        fmlLog.debug("Loading configuration");
+        fmlLog.debug(CORE,"Loading configuration");
         FMLConfig.load();
+        fmlLog.debug(CORE,"Initiating mod scan");
+        FMLLoader.load();
     }
 
     @Override
     public void onLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
-        FMLLoader.initialize(environment, otherServices);
+        FMLLoader.onInitialLoad(environment, otherServices);
     }
 
     @Override

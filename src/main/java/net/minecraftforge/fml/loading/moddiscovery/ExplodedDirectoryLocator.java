@@ -26,17 +26,33 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.jar.Manifest;
 import java.util.stream.Stream;
 
+import static net.minecraftforge.fml.Logging.LOADING;
+import static net.minecraftforge.fml.Logging.SCAN;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class ExplodedDirectoryLocator implements IModLocator {
     private static final String DIR = System.getProperty("fml.explodedDir", "modclasses");
     private final Path rootDir;
 
-    ExplodedDirectoryLocator() {
+    public ExplodedDirectoryLocator() {
         this.rootDir = FileSystems.getDefault().getPath(DIR);
+        if (!Files.exists(this.rootDir)) {
+            fmlLog.debug(LOADING,"Creating directory {}" + this.rootDir);
+            try
+            {
+                Files.createDirectory(this.rootDir);
+            }
+            catch (IOException e)
+            {
+                fmlLog.error(LOADING,"Error creating {}", this.rootDir, e);
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override
@@ -59,12 +75,24 @@ public class ExplodedDirectoryLocator implements IModLocator {
 
     @Override
     public void scanFile(final ModFile modFile, final Consumer<Path> pathConsumer) {
-        fmlLog.debug("Scanning directory {}", rootDir);
+        fmlLog.debug(SCAN,"Scanning directory {}", rootDir);
         try (Stream<Path> files = Files.find(rootDir, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        fmlLog.debug("Directory scan complete {}", rootDir);
+        fmlLog.debug(SCAN,"Directory scan complete {}", rootDir);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "{ExplodedDir locator at "+this.rootDir+"}";
+    }
+
+    @Override
+    public Optional<Manifest> findManifest(Path file)
+    {
+        return Optional.empty();
     }
 }
