@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/IBakedModel.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/IBakedModel.java
-@@ -21,7 +21,16 @@
+@@ -21,7 +21,20 @@
  
      TextureAtlasSprite func_177554_e();
  
@@ -16,5 +16,9 @@
 +     */
 +    default org.apache.commons.lang3.tuple.Pair<? extends IBakedModel, javax.vecmath.Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
 +        return net.minecraftforge.client.ForgeHooksClient.handlePerspective(this, cameraTransformType);
++    }
++    
++    default List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand, @Nullable net.minecraft.world.IBlockAccess world, @Nullable net.minecraft.util.math.BlockPos pos) {
++        return this.func_188616_a(state, side, rand);
 +    }
  }
