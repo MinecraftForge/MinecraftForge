@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.loading;
 
 import cpw.mods.modlauncher.api.IEnvironment;
+import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformationService;
 import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
@@ -89,6 +90,24 @@ public class FMLLoader
         languageLoadingProvider = new LanguageLoadingProvider();
     }
 
+    static void setupLaunchHandler(final IEnvironment environment) throws IncompatibleEnvironmentException
+    {
+        final String launchTarget = environment.getProperty(IEnvironment.Keys.LAUNCHTARGET.get()).orElse("MISSING");
+        final Optional<ILaunchHandlerService> launchHandler = environment.findLaunchHandler(launchTarget);
+        fmlLog.debug(CORE, "Using {} as launch service", launchTarget);
+        if (!launchHandler.isPresent()) {
+            fmlLog.error(CORE,"Missing LaunchHandler {}, cannot continue", launchTarget);
+            throw new IncompatibleEnvironmentException("Missing launch handler");
+        }
+
+        if (!(launchHandler.get() instanceof FMLCommonLaunchHandler)) {
+            fmlLog.error(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
+            throw new IncompatibleEnvironmentException("Incompatible launch handler found");
+        }
+
+        FMLCommonLaunchHandler commonLaunchHandler = (FMLCommonLaunchHandler)launchHandler.get();
+        commonLaunchHandler.setup(environment);
+    }
     public static void beginModScan()
     {
         fmlLog.debug(SCAN,"Scanning for Mod Locators");

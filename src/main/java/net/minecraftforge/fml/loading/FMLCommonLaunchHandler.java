@@ -19,31 +19,12 @@
 
 package net.minecraftforge.fml.loading;
 
-import cpw.mods.modlauncher.api.ILaunchHandlerService;
-import net.minecraft.client.main.Main;
+import cpw.mods.modlauncher.api.IEnvironment;
 
-import java.nio.file.Path;
-import java.util.concurrent.Callable;
-
-public class FMLLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
+public abstract class FMLCommonLaunchHandler
 {
-    @Override
-    public String name()
+    public void setup(final IEnvironment environment)
     {
-        return "fml";
-    }
-
-    @Override
-    public Path[] identifyTransformationTargets()
-    {
-        return new Path[0];
-    }
-
-    @Override
-    public Callable<Void> launchService(String[] arguments, ClassLoader launchClassLoader)
-    {
-        return () -> {
-            return null;
-        };
+        // We need to check for deobf and patched jar here and if not, build one.
     }
 }

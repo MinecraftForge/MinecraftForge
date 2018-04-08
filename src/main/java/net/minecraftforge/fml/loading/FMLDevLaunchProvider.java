@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import net.minecraft.client.main.Main;
 
@@ -27,7 +28,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 
-public class FMLDevLaunchProvider implements ILaunchHandlerService
+import static net.minecraftforge.fml.Logging.CORE;
+import static net.minecraftforge.fml.Logging.fmlLog;
+
+public class FMLDevLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
     @Override
     public String name()
@@ -57,5 +61,11 @@ public class FMLDevLaunchProvider implements ILaunchHandlerService
             Main.main(arguments);
             return null;
         };
+    }
+
+    @Override
+    public void setup(IEnvironment environment)
+    {
+        fmlLog.debug(CORE, "No jar creation necessary. Launch is dev environment");
     }
 }
