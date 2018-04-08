@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.Maps;
 
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
@@ -54,7 +55,32 @@ public class ChunkIOExecutor
                 return thread;
             }
         }
-    );
+    ){
+        
+        @Override
+        protected void afterExecute(Runnable r, Throwable t)
+        {
+            if (t != null)
+            {
+                try
+                {
+                    FMLLog.log.error("Unhandled exception loading chunk:", t);
+                    QueuedChunk queuedChunk = ((ChunkIOProvider) r).getChunkInfo();
+                    FMLLog.log.error(queuedChunk);
+                    FMLLog.log.error(CrashReportCategory.getCoordinateInfo(queuedChunk.x << 4, 64, queuedChunk.z << 4));
+                }
+                catch (Throwable t2)
+                {
+                    FMLLog.log.error(t2);
+                }
+                finally
+                {
+                    // Make absolutely sure that we do not leave any deadlock case
+                    r.notifyAll();
+                }
+            }
+        }
+    };
 
     //Load the chunk completely in this thread. Dequeue as needed...
     public static Chunk syncChunkLoad(World world, AnvilChunkLoader loader, ChunkProviderServer provider, int x, int z)

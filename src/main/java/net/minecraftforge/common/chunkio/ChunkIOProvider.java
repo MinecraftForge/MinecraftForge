@@ -63,24 +63,29 @@ class ChunkIOProvider implements Runnable
     {
         synchronized(this)
         {
-            Object[] data = null;
             try
             {
-                data = this.loader.loadChunk__Async(chunkInfo.world, chunkInfo.x, chunkInfo.z);
+                Object[] data = null;
+                try
+                {
+                    data = this.loader.loadChunk__Async(chunkInfo.world, chunkInfo.x, chunkInfo.z);
+                }
+                catch (IOException e)
+                {
+                    FMLLog.log.error("Failed to load chunk async.", e);
+                }
+    
+                if (data != null)
+                {
+                    this.nbt   = (NBTTagCompound)data[1];
+                    this.chunk = (Chunk)data[0];
+                }
             }
-            catch (IOException e)
+            finally 
             {
-                FMLLog.log.error("Failed to load chunk async.", e);
+                this.ran = true;
+                this.notifyAll();
             }
-
-            if (data != null)
-            {
-                this.nbt   = (NBTTagCompound)data[1];
-                this.chunk = (Chunk)data[0];
-            }
-
-            this.ran = true;
-            this.notifyAll();
         }
     }
 
@@ -131,5 +136,10 @@ class ChunkIOProvider implements Runnable
         }
 
         this.callbacks.clear();
+    }
+
+    public QueuedChunk getChunkInfo() 
+    {
+    	return chunkInfo;
     }
 }
