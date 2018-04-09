@@ -66,13 +66,13 @@ public class ObfuscationReflectionHelper
         return mappedNames;
     }
 
-    public static String remapFieldName(Class<?> clazz, String fieldName)
+    private static String remapFieldName(Class<?> clazz, String fieldName)
     {
         String internalClassName = FMLDeobfuscatingRemapper.INSTANCE.unmap(Type.getInternalName(clazz));
         return FMLDeobfuscatingRemapper.INSTANCE.mapFieldName(internalClassName, fieldName, null);
     }
 
-    public static String remapMethodName(Class<?> clazz, String methodName, Class<?> returnType, Class<?>... parameterTypes)
+    private static String remapMethodName(Class<?> clazz, String methodName, Class<?> returnType, Class<?>... parameterTypes)
     {
         String internalClassName = FMLDeobfuscatingRemapper.INSTANCE.unmap(Type.getInternalName(clazz));
         Type[] params = Arrays.stream(parameterTypes).map(Type::getType).toArray(Type[]::new);
