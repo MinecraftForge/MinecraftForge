@@ -31,7 +31,7 @@ import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
-import net.minecraftforge.common.Dimension;
+import net.minecraftforge.common.DimensionProvider;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.WorldWorkerManager.IWorker;
@@ -138,7 +138,7 @@ public class ChunkGenWorker implements IWorker
             // While we work we don't want to cause world load spam so pause unloading the world.
             if (keepingLoaded == null)
             {
-                keepingLoaded = DimensionManager.keepDimensionLoaded(Dimension.getID(dim), true);
+                keepingLoaded = DimensionManager.keepDimensionLoaded(DimensionProvider.getID(dim), true);
             }
 
             if (++lastNotification >= notificationFrequency || lastNotifcationTime < System.currentTimeMillis() - 60*1000)
@@ -189,7 +189,7 @@ public class ChunkGenWorker implements IWorker
             listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.complete", genned, total, dim));
             if (keepingLoaded != null && keepingLoaded)
             {
-                DimensionManager.keepDimensionLoaded(Dimension.getID(dim), false);
+                DimensionManager.keepDimensionLoaded(DimensionProvider.getID(dim), false);
             }
             return false;
         }

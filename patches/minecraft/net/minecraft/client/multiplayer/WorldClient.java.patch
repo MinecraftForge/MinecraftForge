@@ -1,11 +1,27 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
+@@ -32,7 +32,6 @@
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.text.TextComponentString;
+-import net.minecraft.world.DimensionType;
+ import net.minecraft.world.EnumDifficulty;
+ import net.minecraft.world.EnumSkyBlock;
+ import net.minecraft.world.GameType;
+@@ -43,6 +42,7 @@
+ import net.minecraft.world.storage.SaveDataMemoryStorage;
+ import net.minecraft.world.storage.SaveHandlerMP;
+ import net.minecraft.world.storage.WorldInfo;
++import net.minecraftforge.common.DimensionProvider;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
 @@ -60,17 +60,19 @@
  
      public WorldClient(NetHandlerPlayClient p_i45063_1_, WorldSettings p_i45063_2_, int p_i45063_3_, EnumDifficulty p_i45063_4_, Profiler p_i45063_5_)
      {
 -        super(new SaveHandlerMP(), new WorldInfo(p_i45063_2_, "MpServer"), DimensionType.func_186069_a(p_i45063_3_).func_186070_d(), p_i45063_5_, true);
-+        super(new SaveHandlerMP(), new WorldInfo(p_i45063_2_, "MpServer"), net.minecraftforge.common.DimensionManager.createProviderFor(net.minecraftforge.common.Dimension.getID(p_i45063_3_)), p_i45063_5_, true);
++        super(new SaveHandlerMP(), new WorldInfo(p_i45063_2_, "MpServer"), net.minecraftforge.common.DimensionManager.createProviderFor(DimensionProvider.getID(p_i45063_3_)), p_i45063_5_, true);
          this.field_184158_M = this.field_73012_v.nextInt(12000);
          this.field_184157_a = Sets.<ChunkPos>newHashSet();
          this.field_73035_a = p_i45063_1_;

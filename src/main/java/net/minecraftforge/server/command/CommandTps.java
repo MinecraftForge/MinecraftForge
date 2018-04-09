@@ -25,7 +25,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
-import net.minecraftforge.common.Dimension;
+import net.minecraftforge.common.DimensionProvider;
 import net.minecraftforge.common.DimensionManager;
 
 class CommandTps extends CommandBase
@@ -71,7 +71,7 @@ class CommandTps extends CommandBase
         {
             for (Integer dimId : DimensionManager.getIntIDs())
             {
-                double worldTickTime = mean(server.worldTickTimes.get(Dimension.getID(dimId))) * 1.0E-6D;
+                double worldTickTime = mean(server.worldTickTimes.get(DimensionProvider.getID(dimId))) * 1.0E-6D;
                 double worldTPS = Math.min(1000.0/worldTickTime, 20);
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tps.summary", getDimensionPrefix(dimId), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)));
             }
@@ -81,7 +81,7 @@ class CommandTps extends CommandBase
         }
         else
         {
-            double worldTickTime = mean(server.worldTickTimes.get(Dimension.getID(dim))) * 1.0E-6D;
+            double worldTickTime = mean(server.worldTickTimes.get(DimensionProvider.getID(dim))) * 1.0E-6D;
             double worldTPS = Math.min(1000.0/worldTickTime, 20);
             sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tps.summary", dim, TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)));
         }
@@ -92,11 +92,11 @@ class CommandTps extends CommandBase
         DimensionType providerType = DimensionManager.getProviderType(dimId);
         if (providerType == null)
         {
-            return String.format("Dim %s (%d)", Dimension.getID(dimId).toString(), dimId);
+            return String.format("Dim %s (%d)", DimensionProvider.getID(dimId).toString(), dimId);
         }
         else
         {
-            return String.format("Dim %s (%d) (%s)", Dimension.getID(dimId).toString(), dimId, providerType.getName());
+            return String.format("Dim %s (%d) (%s)", DimensionProvider.getID(dimId).toString(), dimId, providerType.getName());
         }
     }
 

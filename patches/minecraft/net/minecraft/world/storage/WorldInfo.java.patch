@@ -11,6 +11,15 @@
  
      protected WorldInfo()
      {
+@@ -182,7 +183,7 @@
+         if (p_i2157_1_.func_150297_b("Player", 10))
+         {
+             this.field_76108_i = p_i2157_1_.func_74775_l("Player");
+-            this.field_76105_j = this.field_76108_i.func_74762_e("Dimension");
++            this.field_76105_j = this.field_76108_i.func_74762_e("DimensionProvider");
+         }
+ 
+         if (p_i2157_1_.func_150297_b("GameRules", 10))
 @@ -251,7 +252,7 @@
  
              for (String s : nbttagcompound1.func_150296_c())
@@ -92,7 +101,7 @@
 +        this.setDimensionData(p_186345_1_.func_186068_a(), p_186345_2_);
      }
  
-+    //Dimension numerical ID version of setter, as two dimensions could in theory have the same DimensionType. ID should be grabbed from the world NOT the Type
++    //DimensionProvider numerical ID version of setter, as two dimensions could in theory have the same DimensionType. ID should be grabbed from the world NOT the Type
 +    public void setDimensionData(int dimensionID, NBTTagCompound compound)
 +    {
 +        this.field_186348_N.put(dimensionID, compound);

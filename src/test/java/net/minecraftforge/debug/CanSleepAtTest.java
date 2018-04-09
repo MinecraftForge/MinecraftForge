@@ -7,13 +7,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 
-import net.minecraftforge.common.Dimension;
+import net.minecraftforge.common.DimensionProvider;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.RegistryEvent;
 
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -23,17 +21,17 @@ public class CanSleepAtTest
 {
     public static final String MODID = "can_sleep_at_test";
     public static final boolean ENABLED = false;
-    public static Dimension dim;
+    public static DimensionProvider dim;
     public static DimensionType dimType = null;
     public static ResourceLocation dimId;
     private static Logger logger;
 
     @SubscribeEvent
-    public void registerDimension(RegistryEvent.Register<Dimension> event)
+    public void registerDimension(RegistryEvent.Register<DimensionProvider> event)
     {
         if(ENABLED)
         {
-            dim = Dimension.dimensionWithCustomType(MODID+":dimension", "CanSleepAtTest", "_cansleepattest", WorldProviderTest.class, false);
+            dim = DimensionProvider.dimensionWithCustomType(MODID+":dimension", "CanSleepAtTest", "_cansleepattest", WorldProviderTest.class, false);
             dimType = dim.getType();
             dimId = dim.getID();
             event.getRegistry().register(dim);

@@ -84,7 +84,7 @@ class CommandGenerate extends CommandBase
             return getTabCompletionCoordinate(args, 0, targetPos);
         }
         // Chunk Count? No completion
-        // Dimension, Add support for names? Get list of ids? Meh
+        // DimensionProvider, Add support for names? Get list of ids? Meh
         return Collections.emptyList();
     }
 }

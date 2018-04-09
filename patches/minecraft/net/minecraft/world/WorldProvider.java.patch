@@ -1,6 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -55,37 +55,12 @@
+@@ -2,20 +2,15 @@
+ 
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.player.EntityPlayerMP;
+-import net.minecraft.init.Biomes;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.biome.BiomeProvider;
+-import net.minecraft.world.biome.BiomeProviderSingle;
+ import net.minecraft.world.border.WorldBorder;
+-import net.minecraft.world.gen.ChunkGeneratorDebug;
+-import net.minecraft.world.gen.ChunkGeneratorFlat;
+-import net.minecraft.world.gen.ChunkGeneratorOverworld;
+-import net.minecraft.world.gen.FlatGeneratorInfo;
+ import net.minecraft.world.gen.IChunkGenerator;
++import net.minecraftforge.common.DimensionProvider;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -55,37 +50,12 @@
      protected void func_76572_b()
      {
          this.field_191067_f = true;
@@ -40,7 +62,7 @@
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
-@@ -179,7 +154,7 @@
+@@ -179,7 +149,7 @@
      @SideOnly(Side.CLIENT)
      public float func_76571_f()
      {
@@ -49,7 +71,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -196,13 +171,13 @@
+@@ -196,13 +166,13 @@
  
      public int func_76557_i()
      {
@@ -65,7 +87,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,375 @@
+@@ -241,6 +211,375 @@
          return new WorldBorder();
      }
  
@@ -73,26 +95,26 @@
 +    private net.minecraftforge.client.IRenderHandler skyRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
-+    private net.minecraftforge.common.Dimension dimension;
++    private DimensionProvider dimensionProvider;
 +
 +    /**
-+     * Sets the providers current dimension ID, used in default getSaveFolder()
++     * Sets the providers current dimensionProvider ID, used in default getSaveFolder()
 +     * Added to allow default providers to be registered for multiple dimensions.
-+     * This is to denote the exact dimension ID opposed to the 'type' in WorldType
++     * This is to denote the exact dimensionProvider ID opposed to the 'type' in WorldType
 +     *
-+     * @param dimID Dimension ID
++     * @param dimID DimensionProvider ID
 +     */
-+    public void setDimension(net.minecraft.util.ResourceLocation dimID)
++    public void setDimensionProvider(net.minecraft.util.ResourceLocation dimID)
 +    {
-+        this.dimension=net.minecraftforge.fml.common.registry.ForgeRegistries.DIMENSIONS.getValue(dimID);
++        this.dimensionProvider =net.minecraftforge.fml.common.registry.ForgeRegistries.DIMENSIONS.getValue(dimID);
 +    }
-+    public net.minecraft.util.ResourceLocation getDimension()
++    public net.minecraft.util.ResourceLocation getDimensionProvider()
 +    {
-+        return dimension.getID();
++        return dimensionProvider.getID();
 +    }
 +    public int  getDimensionInt()
 +    {
-+    	return dimension.getDimIntID();
++    	return dimensionProvider.getDimIntID();
 +    }
 +
 +    /**
@@ -103,12 +125,12 @@
 +    @Nullable
 +    public String getSaveFolder()
 +    {
-+        return (dimension.getID().toString().equals("minecraft:overworld") ? null : "DIM" + dimension.getDimIntID());
++        return (dimensionProvider.getID().toString().equals("minecraft:overworld") ? null : "DIM" + dimensionProvider.getDimIntID());
 +    }
 +
 +    /**
-+     * The dimension's movement factor.
-+     * Whenever a player or entity changes dimension from world A to world B, their coordinates are multiplied by
++     * The dimensionProvider's movement factor.
++     * Whenever a player or entity changes dimensionProvider from world A to world B, their coordinates are multiplied by
 +     * worldA.provider.getMovementFactor() / worldB.provider.getMovementFactor()
 +     * Example: Overworld factor is 1, nether factor is 8. Traveling from overworld to nether multiplies coordinates by 1/8.
 +     * @return The movement factor
@@ -218,16 +240,16 @@
 +     * @param rotation the regular rotation of the marker
 +     * @return True to 'spin' the cursor
 +     */
-+    public boolean shouldMapSpin(String entity, double x, double z, double rotation)	//This might break, but I don't think negative dimension IDs were happening
++    public boolean shouldMapSpin(String entity, double x, double z, double rotation)	//This might break, but I don't think negative dimensionProvider IDs were happening
 +    {
-+        return dimension.getID().toString().contains("nether");	//need some kind of String for this 
++        return dimensionProvider.getID().toString().contains("nether");	//need some kind of String for this
 +    }
 +
 +    /**
-+     * Determines the dimension the player will be respawned in, typically this brings them back to the overworld.
++     * Determines the dimensionProvider the player will be respawned in, typically this brings them back to the overworld.
 +     *
 +     * @param player The player that is respawning
-+     * @return The dimension to respawn the player in
++     * @return The dimensionProvider to respawn the player in
 +     */
 +    public int getRespawnDimension(net.minecraft.entity.player.EntityPlayerMP player)
 +    {
@@ -292,7 +314,7 @@
 +    }
 +
 +    /**
-+     * The current sun brightness factor for this dimension.
++     * The current sun brightness factor for this dimensionProvider.
 +     * 0.0f means no light at all, and 1.0f means maximum sunlight.
 +     * This will be used for the "calculateSkylightSubtracted"
 +     * which is for Sky light value calculation.

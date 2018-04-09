@@ -48,7 +48,7 @@ public class EntityTravelToDimensionEventTest
     {
         if (ENABLE)
         {
-            logger.info("Travelling to Dimension {} Entity: {}", event.getDimension(), event.getEntity());
+            logger.info("Travelling to DimensionProvider {} Entity: {}", event.getDimension(), event.getEntity());
             event.setCanceled(true);
         }
     }

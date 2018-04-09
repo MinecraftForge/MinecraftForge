@@ -30,8 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.logging.log4j.Level;
-
 import com.google.common.collect.Lists;
 
 import net.minecraft.crash.CrashReport;
@@ -91,7 +89,7 @@ public class MinecraftForge
        // Load before all the mods, so MC owns the MC fluids
        FluidRegistry.validateFluidRegistry();
        ForgeHooks.initTools();
-       Dimension.init();
+       DimensionProvider.init();
 
        //For all the normal CrashReport classes to be defined. We're in MC's classloader so this should all be fine
        new CrashReport("ThisIsFake", new Exception("Not real"));

@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.Dimension;
+import net.minecraftforge.common.DimensionProvider;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -63,7 +63,7 @@ public abstract class ForgeMessage {
         @Override
         void fromBytes(ByteBuf bytes)
         {
-            dimensionId = Dimension.getID(bytes.readInt());
+            dimensionId = DimensionProvider.getID(bytes.readInt());
             byte[] data = new byte[bytes.readShort()];
             bytes.readBytes(data);
             providerId = new String(data, StandardCharsets.UTF_8);

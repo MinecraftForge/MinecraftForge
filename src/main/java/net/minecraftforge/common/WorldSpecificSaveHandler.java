@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 
 import net.minecraft.world.gen.structure.template.TemplateManager;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.io.Files;
 
@@ -72,7 +71,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
         File file = new File(dataDir, name + ".dat");
         if (!file.exists())
         {
-            switch (ForgeRegistries.DIMENSIONS.getValue(world.provider.getDimension()).getDimIntID())
+            switch (ForgeRegistries.DIMENSIONS.getValue(world.provider.getDimensionProvider()).getDimIntID())
             {
                 case -1:
                     if (name.equalsIgnoreCase("FORTRESS")) copyFile(name, file);

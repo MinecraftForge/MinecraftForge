@@ -29,8 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.Dimension;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.DimensionProvider;
 import net.minecraftforge.common.util.ITeleporter;
 
 import javax.annotation.Nullable;
@@ -93,12 +92,12 @@ public class CommandSetDimension extends CommandBase
         {
             throw new CommandException("commands.forge.setdim.invalid.dim", dimension);
         }
-        if (Dimension.getDimIntID(dimension) == entity.dimension)
+        if (DimensionProvider.getDimIntID(dimension) == entity.dimension)
         {
             throw new CommandException("commands.forge.setdim.invalid.nochange", entity.getName(), dimension);
         }
         BlockPos pos = args.length == 5 ? parseBlockPos(sender, args, 2, false) : sender.getPosition();
-        entity.changeDimension(Dimension.getDimIntID(dimension), new CommandTeleporter(pos));
+        entity.changeDimension(DimensionProvider.getDimIntID(dimension), new CommandTeleporter(pos));
     }
 
     private static boolean checkEntity(Entity entity)

@@ -74,10 +74,10 @@ public class DimensionManager
     public static Set<ResourceLocation> getDimensions(DimensionType type)
     {
         Set<ResourceLocation> ret = new HashSet<>();
-        for (Dimension dimension : ForgeRegistries.DIMENSIONS.getValuesCollection())
+        for (DimensionProvider dimensionProvider : ForgeRegistries.DIMENSIONS.getValuesCollection())
         {
-            if (dimension.getType() == type)
-                ret.add(dimension.getID());
+            if (dimensionProvider.getType() == type)
+                ret.add(dimensionProvider.getID());
         }
         return ret;
     }
@@ -88,7 +88,7 @@ public class DimensionManager
         Set<Integer> ret = new HashSet<>();
         for (ResourceLocation id : ids)
         {
-            ret.add(Dimension.getDimIntID(id));
+            ret.add(DimensionProvider.getDimIntID(id));
         }
         return ret;
     }
@@ -121,12 +121,12 @@ public class DimensionManager
 
     public static boolean isDimensionActive(int dimIntID)
     {
-        return isDimensionActive(Dimension.getID(dimIntID));
+        return isDimensionActive(DimensionProvider.getID(dimIntID));
     }
 
     public static DimensionType getProviderType(int dimIntID)
     {
-        return getProviderType(Dimension.getID(dimIntID));
+        return getProviderType(DimensionProvider.getID(dimIntID));
     }
 
     public static DimensionType getProviderType(ResourceLocation dimID)
@@ -231,12 +231,12 @@ public class DimensionManager
 
     public static void setWorld(int dimIntID, @Nullable WorldServer world, MinecraftServer server)
     {
-        setWorld(Dimension.getID(dimIntID), world, server);
+        setWorld(DimensionProvider.getID(dimIntID), world, server);
     }
 
     public static void initDimension(int dimIntID)
     {
-        initDimension(Dimension.getID(dimIntID));
+        initDimension(DimensionProvider.getID(dimIntID));
     }
 
     public static void initDimension(ResourceLocation dimID)
@@ -280,7 +280,7 @@ public class DimensionManager
 
     public static WorldServer getWorld(int dimIntID)
     {
-        return getWorld(Dimension.getID(dimIntID));
+        return getWorld(DimensionProvider.getID(dimIntID));
     }
 
     public static Collection<WorldServer> getWorlds()
@@ -304,7 +304,7 @@ public class DimensionManager
             if (ForgeRegistries.DIMENSIONS.containsKey(dimID))
             {
                 WorldProvider ret = getProviderType(dimID).createDimension();
-                ret.setDimension(dimID);
+                ret.setDimensionProvider(dimID);
                 return ret;
             }
             else
@@ -323,7 +323,7 @@ public class DimensionManager
 
     public static WorldProvider createProviderFor(int dimIntID)
     {
-        return createProviderFor(Dimension.getID(dimIntID));
+        return createProviderFor(DimensionProvider.getID(dimIntID));
     }
 
     /**
@@ -343,7 +343,7 @@ public class DimensionManager
         return ForgeChunkManager.getPersistentChunksFor(world).isEmpty()
                 && world.playerEntities.isEmpty()
                 && !world.provider.getDimensionType().shouldLoadSpawn()
-                && !keepLoaded.contains(world.provider.getDimension());
+                && !keepLoaded.contains(world.provider.getDimensionProvider());
     }
 
     /**
@@ -378,20 +378,20 @@ public class DimensionManager
         while (queueIterator.hasNext())
         {
             ResourceLocation dimID = queueIterator.next();
-            Dimension dimension = ForgeRegistries.DIMENSIONS.getValue(dimID);
-            if (dimension.getTicksWaited() < ForgeModContainer.dimensionUnloadQueueDelay)
+            DimensionProvider dimensionProvider = ForgeRegistries.DIMENSIONS.getValue(dimID);
+            if (dimensionProvider.getTicksWaited() < ForgeModContainer.dimensionUnloadQueueDelay)
             {
 
-                dimension.addTicksWaited(1);
+                dimensionProvider.addTicksWaited(1);
                 continue;
             }
             WorldServer w = worlds.get(dimID);
             queueIterator.remove();
-            dimension.setTicksWaited(0);
+            dimensionProvider.setTicksWaited(0);
             // Don't unload the world if the status changed
             if (w == null || !canUnloadWorld(w))
             {
-                FMLLog.log.debug("Aborting unload for dimension {} as status changed", dimID.toString());
+                FMLLog.log.debug("Aborting unload for dimensionProvider {} as status changed", dimID.toString());
                 continue;
             }
             try
@@ -457,7 +457,7 @@ public class DimensionManager
     /*returns true if the dimension if from a mod given the modid*/
     public static boolean isFromMod(World worldIn, String modid)    // needs patch really
     {
-        ResourceLocation dimID = worldIn.provider.getDimension();
+        ResourceLocation dimID = worldIn.provider.getDimensionProvider();
         return dimID.getResourceDomain().equals(modid);
     }
 }

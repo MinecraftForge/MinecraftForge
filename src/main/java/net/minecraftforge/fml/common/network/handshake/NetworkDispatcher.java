@@ -220,7 +220,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         NBTTagCompound playerNBT = scm.getPlayerNBT(player);
         if (playerNBT!=null)
         {
-            int dimension = playerNBT.getInteger("Dimension");
+            int dimension = playerNBT.getInteger("DimensionProvider");
             if (DimensionManager.isDimensionActive(dimension))
             {
                 return dimension;
