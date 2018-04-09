@@ -67,21 +67,26 @@ public @interface Config
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
-    public @interface LangKey
+    @interface LangKey
     {
         String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public @interface Comment
+    @interface Comment
     {
         String[] value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public @interface RangeInt
+    @interface Ignore
+    {}
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    @interface RangeInt
     {
         int min() default Integer.MIN_VALUE;
         int max() default Integer.MAX_VALUE;
@@ -89,7 +94,7 @@ public @interface Config
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public @interface RangeDouble
+    @interface RangeDouble
     {
         double min() default Double.MIN_VALUE;
         double max() default Double.MAX_VALUE;
@@ -97,18 +102,18 @@ public @interface Config
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public @interface Name
+    @interface Name
     {
         String value();
     }
     
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
-    public @interface RequiresMcRestart
+    @interface RequiresMcRestart
     {}
     
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
-    public @interface RequiresWorldRestart
+    @interface RequiresWorldRestart
     {}
 }
