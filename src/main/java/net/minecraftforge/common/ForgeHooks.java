@@ -104,6 +104,8 @@ import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraftforge.common.brewing.BrewingFuel;
+import net.minecraftforge.common.brewing.BrewingFuelCapabilities;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -143,6 +145,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -1385,5 +1388,19 @@ public class ForgeHooks
     public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+
+    @Nonnegative
+    public static int getBrewingStandFuel(ItemStack stack)
+    {
+        if (stack.hasCapability(BrewingFuelCapabilities.getBrewingFuelCapability(), null))
+        {
+            BrewingFuel definition = stack.getCapability(BrewingFuelCapabilities.getBrewingFuelCapability(), null);
+            if (definition != null)
+            {
+                return definition.getFuelValue();
+            }
+        }
+        return stack.getItem() == Items.BLAZE_POWDER ? 20 : 0;
     }
 }

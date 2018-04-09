@@ -5,7 +5,7 @@
          ItemStack itemstack = this.field_145945_j.get(4);
  
 -        if (this.field_184278_m <= 0 && itemstack.func_77973_b() == Items.field_151065_br)
-+        int fuel = net.minecraftforge.event.ForgeEventFactory.getBrewingStandFuel(itemstack);
++        int fuel = net.minecraftforge.common.ForgeHooks.getBrewingStandFuel(itemstack);
 +        if ((this.field_184278_m <= 0 || this.field_184278_m + fuel <= 20) && fuel > 0)
          {
 -            this.field_184278_m = 20;
@@ -67,7 +67,7 @@
              if (p_94041_1_ == 4)
              {
 -                return item == Items.field_151065_br;
-+                return net.minecraftforge.event.ForgeEventFactory.getBrewingStandFuel(p_94041_2_) > 0;
++                return net.minecraftforge.common.ForgeHooks.getBrewingStandFuel(p_94041_2_) > 0;
              }
              else
              {

@@ -78,7 +78,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.brewing.BrewingStandFuelEvent;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -236,23 +235,6 @@ public class ForgeEventFactory
             }
         }
         return event.getBurnTime();
-    }
-
-    /**
-     * Gets the fuel value of an item stack in a {@link net.minecraft.tileentity.TileEntityBrewingStand
-     * brewing stand}.
-     * <p>
-     * <p>The fuel value is defined in {@link Item#getBrewingStandFuel(ItemStack)}.
-     *
-     * @param itemStack the stack to check
-     * @return the fuel value, 0 means not a fuel
-     */
-    @Nonnegative
-    public static int getBrewingStandFuel(@Nonnull ItemStack itemStack)
-    {
-        BrewingStandFuelEvent event = new BrewingStandFuelEvent(itemStack);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getValue();
     }
 
     public static int getExperienceDrop(EntityLivingBase entity, EntityPlayer attackingPlayer, int originalExperience)
