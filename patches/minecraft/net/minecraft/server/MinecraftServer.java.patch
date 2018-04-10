@@ -1,14 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -33,7 +33,7 @@
- import java.util.concurrent.Callable;
- import java.util.concurrent.Executors;
- import java.util.concurrent.FutureTask;
--import java.util.function.Supplier;
-+
- import javax.annotation.Nullable;
- import javax.imageio.ImageIO;
- import net.minecraft.advancements.AdvancementManager;
 @@ -105,7 +105,7 @@
      @SideOnly(Side.SERVER)
      private String field_71320_r;
