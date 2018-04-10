@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPane.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
-@@ -197,6 +197,24 @@
+@@ -112,7 +112,10 @@
+ 
+     public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
+     {
+-        return p_176221_1_.func_177226_a(field_176241_b, Boolean.valueOf(this.func_193393_b(p_176221_2_, p_176221_2_.func_180495_p(p_176221_3_.func_177978_c()), p_176221_3_.func_177978_c(), EnumFacing.SOUTH))).func_177226_a(field_176243_N, Boolean.valueOf(this.func_193393_b(p_176221_2_, p_176221_2_.func_180495_p(p_176221_3_.func_177968_d()), p_176221_3_.func_177968_d(), EnumFacing.NORTH))).func_177226_a(field_176244_O, Boolean.valueOf(this.func_193393_b(p_176221_2_, p_176221_2_.func_180495_p(p_176221_3_.func_177976_e()), p_176221_3_.func_177976_e(), EnumFacing.EAST))).func_177226_a(field_176242_M, Boolean.valueOf(this.func_193393_b(p_176221_2_, p_176221_2_.func_180495_p(p_176221_3_.func_177974_f()), p_176221_3_.func_177974_f(), EnumFacing.WEST)));
++        return p_176221_1_.func_177226_a(field_176241_b, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.NORTH))
++                    .func_177226_a(field_176243_N, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.SOUTH))
++                    .func_177226_a(field_176244_O,  canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.WEST))
++                    .func_177226_a(field_176242_M,  canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST));
+     }
+ 
+     public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
+@@ -197,6 +200,24 @@
          return new BlockStateContainer(this, new IProperty[] {field_176241_b, field_176242_M, field_176244_O, field_176243_N});
      }
  
@@ -9,8 +21,8 @@
 +    @Override
 +    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
-+        Block connector = world.func_180495_p(pos.func_177972_a(facing)).func_177230_c();
-+        return connector instanceof BlockPane;
++        BlockPos offset = pos.func_177972_a(facing);
++        return func_193393_b(world, world.func_180495_p(offset), offset, facing.func_176734_d());
 +    }
 +
 +    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)

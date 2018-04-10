@@ -7,7 +7,8 @@
 -                    if (iblockstate.func_185904_a() != Material.field_151579_a && iblockstate.func_185904_a() != Material.field_151581_o)
 +                    if (!block.isAir(iblockstate, this.field_70170_p, blockpos) && iblockstate.func_185904_a() != Material.field_151581_o)
                      {
-                         if (!this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
+-                        if (!this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
++                        if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this))
                          {
                              flag = true;
                          }
