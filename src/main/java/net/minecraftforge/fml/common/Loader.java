@@ -392,8 +392,8 @@ public class Loader
         }
         ModDiscoverer discoverer = new ModDiscoverer();
 
-        if (!FMLForgePlugin.RUNTIME_DEOBF) //Only descover mods in the classpath if we're in the dev env.
-        {                                  //TODO: Move this to GradleStart?
+        //if (!FMLForgePlugin.RUNTIME_DEOBF) //Only descover mods in the classpath if we're in the dev env.
+        {                                  //TODO: Move this to GradleStart? And add a specific mod canidate for Forge itself.
             FMLLog.log.debug("Attempting to load mods contained in the minecraft jar file and associated classes");
             discoverer.findClasspathMods(modClassLoader);
             FMLLog.log.debug("Minecraft jar mods loaded successfully");
