@@ -320,7 +320,7 @@ public class LibraryManager
                     {
                         String timestamp = meta.getValue(TIMESTAMP);
                         if (timestamp != null)
-                            timestamp = SnapshotJson.TIMESTAMP.format(new Date(Integer.parseInt(timestamp)));
+                            timestamp = SnapshotJson.TIMESTAMP.format(new Date(Long.parseLong(timestamp)));
 
                         Artifact artifact = new Artifact(modlist.getRepository(), meta.getValue(MAVEN_ARTIFACT), timestamp);
                         File target = artifact.getFile();
