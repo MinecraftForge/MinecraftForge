@@ -220,7 +220,7 @@ public class LibraryManager
         attrs = jar.getManifest().getMainAttributes();
 
         String modSide = attrs.getValue(LibraryManager.MODSIDE);
-        if (!"BOTH".equals(modSide) || FMLLaunchHandler.side().name().equals(modSide))
+        if (modSide != null && !"BOTH".equals(modSide) && !FMLLaunchHandler.side().name().equals(modSide))
             return null;
 
         if (attrs.containsKey(MODCONTAINSDEPS))

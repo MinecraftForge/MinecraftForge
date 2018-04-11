@@ -364,7 +364,7 @@ public class CoreModManager {
                     continue;
 
                 String modSide = mfAttributes.getValue(LibraryManager.MODSIDE);
-                if (!"BOTH".equals(modSide) || FMLLaunchHandler.side().name().equals(modSide))
+                if (modSide != null && !"BOTH".equals(modSide) && !FMLLaunchHandler.side().name().equals(modSide))
                 {
                     FMLLog.log.debug("Mod {} has ModSide meta-inf value {}, and we're {} It will be ignored", coreMod.getName(), modSide, FMLLaunchHandler.side.name());
                     ignoredModFiles.add(coreMod.getName());
