@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.StringJoiner;
 
 /**
  * Some reflection helper code.
@@ -331,27 +332,25 @@ public class ReflectionHelper
         Preconditions.checkNotNull(klass, "class");
         Preconditions.checkNotNull(parameterTypes, "parameter types");
 
-        final Constructor<T> constructor;
         try
         {
-            constructor = klass.getDeclaredConstructor(parameterTypes);
+            Constructor<T> constructor = klass.getDeclaredConstructor(parameterTypes);
             constructor.setAccessible(true);
+            return constructor;
         }
         catch (final NoSuchMethodException e)
         {
             final StringBuilder desc = new StringBuilder();
-            desc.append(klass.getSimpleName()).append('(');
-            for (int i = 0, length = parameterTypes.length; i < length; i++)
+            desc.append(klass.getSimpleName());
+
+            StringJoiner joiner = new StringJoiner(", ", "(", ")");
+            for (Class<?> type : parameterTypes)
             {
-                desc.append(parameterTypes[i].getName());
-                if (i < length - 1)
-                {
-                    desc.append(',').append(' ');
-                }
+                joiner.add(type.getSimpleName());
             }
-            desc.append(')');
+            desc.append(joiner);
+
             throw new UnknownConstructorException("Could not find constructor '" + desc.toString() + "' in " + klass);
         }
-        return constructor;
     }
 }
