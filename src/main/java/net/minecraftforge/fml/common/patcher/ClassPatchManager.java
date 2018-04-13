@@ -33,9 +33,9 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 import java.util.regex.Pattern;
 
-import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.repackage.com.nothome.delta.GDiffPatcher;
 import LZMA.LzmaInputStream;
@@ -172,7 +172,7 @@ public class ClassPatchManager {
             InputStream binpatchesCompressed = getClass().getResourceAsStream("/binpatches.pack.lzma");
             if (binpatchesCompressed==null)
             {
-                if (!((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")))
+                if (!FMLLaunchHandler.isDeobfuscatedEnvironment())
                 {
                     FMLLog.log.fatal("The binary patch set is missing, things are not going to work!");
                 }

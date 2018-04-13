@@ -21,7 +21,6 @@ package net.minecraftforge.fml.relauncher;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
-import net.minecraft.launchwrapper.Launch;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -113,17 +112,6 @@ public class ReflectionHelper
         }
     }
 
-    private static Boolean deobfuscatedEnvironment;
-
-    private static boolean inDeobfuscatedEnvironment()
-    {
-        if (deobfuscatedEnvironment == null)
-        {
-            deobfuscatedEnvironment = MoreObjects.firstNonNull((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment"), false);
-        }
-        return deobfuscatedEnvironment;
-    }
-
     /** @deprecated use {@link #findField(Class, String, String)} */
     @Deprecated // TODO: remove
     public static Field findField(Class<?> clazz, String... fieldNames)
@@ -164,7 +152,7 @@ public class ReflectionHelper
         Preconditions.checkNotNull(clazz);
         Preconditions.checkArgument(StringUtils.isNotEmpty(fieldName), "Field name cannot be empty");
 
-        String nameToFind = inDeobfuscatedEnvironment() ? fieldName : MoreObjects.firstNonNull(fieldObfName, fieldName);
+        String nameToFind = FMLLaunchHandler.isDeobfuscatedEnvironment() ? fieldName : MoreObjects.firstNonNull(fieldObfName, fieldName);
 
         try
         {
@@ -301,7 +289,7 @@ public class ReflectionHelper
         Preconditions.checkNotNull(clazz);
         Preconditions.checkArgument(StringUtils.isNotEmpty(methodName), "Method name cannot be empty");
 
-        String nameToFind = inDeobfuscatedEnvironment() ? methodName : MoreObjects.firstNonNull(methodObfName, methodName);
+        String nameToFind = FMLLaunchHandler.isDeobfuscatedEnvironment() ? methodName : MoreObjects.firstNonNull(methodObfName, methodName);
 
         try
         {

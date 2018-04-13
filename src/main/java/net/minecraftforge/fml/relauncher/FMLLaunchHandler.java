@@ -129,4 +129,9 @@ public class FMLLaunchHandler
     {
         INSTANCE.injectPostfixTransformers();
     }
+
+    public static boolean isDeobfuscatedEnvironment()
+    {
+        return CoreModManager.deobfuscatedEnvironment;
+    }
 }
