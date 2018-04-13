@@ -8,7 +8,15 @@
  
          if (p_i46669_2_.func_150297_b("DragonKilled", 99))
          {
-@@ -582,4 +583,14 @@
+@@ -120,6 +121,7 @@
+     public NBTTagCompound func_186088_a()
+     {
+         NBTTagCompound nbttagcompound = new NBTTagCompound();
++        if (this.field_186120_n) return nbttagcompound; // Forge: fix MC-105080
+ 
+         if (this.field_186119_m != null)
+         {
+@@ -582,4 +584,14 @@
              }
          }
      }
