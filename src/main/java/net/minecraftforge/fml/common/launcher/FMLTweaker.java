@@ -32,7 +32,6 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.FMLSecurityManager;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 import com.google.common.collect.Lists;

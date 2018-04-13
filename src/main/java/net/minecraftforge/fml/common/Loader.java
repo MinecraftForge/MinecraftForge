@@ -32,8 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.ConfigManager;
@@ -42,6 +44,8 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import net.minecraftforge.fml.common.discovery.ContainerType;
+import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
@@ -54,8 +58,11 @@ import net.minecraftforge.fml.common.toposort.ModSortingException.SortingExcepti
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DependencyParser;
 import net.minecraftforge.fml.common.versioning.VersionParser;
-import net.minecraftforge.fml.relauncher.ModListHelper;
+import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.libraries.Artifact;
+import net.minecraftforge.fml.relauncher.libraries.LibraryManager;
+import net.minecraftforge.fml.relauncher.libraries.Repository;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.ObjectHolderRegistry;
 
@@ -384,18 +391,42 @@ public class Loader
             mods.add(new InjectedModContainer(mc,mc.getSource()));
         }
         ModDiscoverer discoverer = new ModDiscoverer();
-        FMLLog.log.debug("Attempting to load mods contained in the minecraft jar file and associated classes");
-        discoverer.findClasspathMods(modClassLoader);
-        FMLLog.log.debug("Minecraft jar mods loaded successfully");
 
-        FMLLog.log.info("Found {} mods from the command line. Injecting into mod discoverer", ModListHelper.additionalMods.size());
-        FMLLog.log.info("Searching {} for mods", canonicalModsDir.getAbsolutePath());
-        discoverer.findModDirMods(canonicalModsDir, ModListHelper.additionalMods.values().toArray(new File[0]));
-        File versionSpecificModsDir = new File(canonicalModsDir,mccversion);
-        if (versionSpecificModsDir.isDirectory())
+        //if (!FMLForgePlugin.RUNTIME_DEOBF) //Only descover mods in the classpath if we're in the dev env.
+        {                                  //TODO: Move this to GradleStart? And add a specific mod canidate for Forge itself.
+            FMLLog.log.debug("Attempting to load mods contained in the minecraft jar file and associated classes");
+            discoverer.findClasspathMods(modClassLoader);
+            FMLLog.log.debug("Minecraft jar mods loaded successfully");
+        }
+
+        List<Artifact> maven_canidates = LibraryManager.flattenLists(minecraftDir);
+        List<File> file_canidates = LibraryManager.gatherLegacyCanidates(minecraftDir);
+
+        for (Artifact artifact : maven_canidates)
         {
-            FMLLog.log.info("Also searching {} for mods", versionSpecificModsDir);
-            discoverer.findModDirMods(versionSpecificModsDir);
+            artifact = Repository.resolveAll(artifact);
+            if (artifact != null)
+            {
+                File target = artifact.getFile();
+                if (!file_canidates.contains(target))
+                    file_canidates.add(target);
+            }
+        }
+        //Do we want to sort the full list after resolving artifacts?
+        //TODO: Add dependency gathering?
+
+        for (File mod : file_canidates)
+        {
+            // skip loaded coremods
+            if (CoreModManager.getIgnoredMods().contains(mod.getName()))
+            {
+                FMLLog.log.trace("Skipping already parsed coremod or tweaker {}", mod.getName());
+            }
+            else
+            {
+                FMLLog.log.debug("Found a candidate zip or jar file {}", mod.getName());
+                discoverer.addCandidate(new ModCandidate(mod, mod, ContainerType.JAR));
+            }
         }
 
         mods.addAll(discoverer.identifyMods());

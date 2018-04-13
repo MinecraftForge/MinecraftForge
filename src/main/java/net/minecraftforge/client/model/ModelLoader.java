@@ -939,6 +939,8 @@ public final class ModelLoader extends ModelBakery
      */
     public void onPostBakeEvent(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry)
     {
+        if (!isLoading) return;
+
         IBakedModel missingModel = modelRegistry.getObject(MODEL_MISSING);
         Map<String, Integer> modelErrors = Maps.newHashMap();
         Set<ResourceLocation> printedBlockStateErrors = Sets.newHashSet();
