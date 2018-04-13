@@ -21,9 +21,14 @@ package net.minecraftforge.fml.common;
 
 import java.util.Set;
 
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.client.GuiModsMissing;
+import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MissingModsException extends EnhancedRuntimeException
+public class MissingModsException extends EnhancedRuntimeException implements IDisplayableError
 {
     private static final long serialVersionUID = 1L;
     public final Set<ArtifactVersion> missingMods;
@@ -50,5 +55,12 @@ public class MissingModsException extends EnhancedRuntimeException
             stream.println(String.format("\t%s : %s", v.getLabel(), v.getRangeString()));
         }
         stream.println("");
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiScreen createGui()
+    {
+        return new GuiModsMissing(this);
     }
 }

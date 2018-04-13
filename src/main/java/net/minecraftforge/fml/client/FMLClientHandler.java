@@ -112,6 +112,7 @@ import net.minecraftforge.registries.GameData;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.FormattedMessage;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -171,19 +172,10 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DummyModContainer optifineContainer;
 
-    private MissingModsException modsMissing;
-
-    private ModSortingException modSorting;
-
     private boolean loading = true;
 
-    private WrongMinecraftVersionException wrongMC;
-
-    private CustomModLoadingErrorDisplayException customError;
-
-    private DuplicateModsFoundException dupesFound;
-
-    private MultipleModsErrored multipleModsErrored;
+    @Nullable
+    private IDisplayableError errorToDisplay;
 
     private boolean serverShouldBeKilledQuietly;
 
@@ -209,7 +201,6 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param resourcePackList The resource pack list we will populate with mods
      * @param resourceManager The resource manager
      */
-    @SuppressWarnings("unchecked")
     public void beginMinecraftLoading(Minecraft minecraft, List<IResourcePack> resourcePackList, IReloadableResourceManager resourceManager, MetadataSerializer metaSerializer)
     {
         detectOptifine();
@@ -230,30 +221,11 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             Loader.instance().loadMods(injectedModContainers);
         }
-        catch (WrongMinecraftVersionException wrong)
+        catch (WrongMinecraftVersionException | DuplicateModsFoundException | MissingModsException | ModSortingException | CustomModLoadingErrorDisplayException | MultipleModsErrored e)
         {
-            wrongMC = wrong;
-        }
-        catch (DuplicateModsFoundException dupes)
-        {
-            dupesFound = dupes;
-        }
-        catch (MissingModsException missing)
-        {
-            modsMissing = missing;
-        }
-        catch (ModSortingException sorting)
-        {
-            modSorting = sorting;
-        }
-        catch (CustomModLoadingErrorDisplayException custom)
-        {
-            FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
-            customError = custom;
-        }
-        catch (MultipleModsErrored multiple)
-        {
-            multipleModsErrored = multiple;
+            FMLLog.log.error("An exception was thrown, the game will display an error screen and halt.", e);
+            errorToDisplay = e;
+            MinecraftForge.EVENT_BUS.shutdown();
         }
         catch (LoaderException le)
         {
@@ -274,8 +246,9 @@ public class FMLClientHandler implements IFMLSidedHandler
             if (le.getCause() instanceof CustomModLoadingErrorDisplayException)
             {
                 CustomModLoadingErrorDisplayException custom = (CustomModLoadingErrorDisplayException) le.getCause();
-                FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
-                customError = custom;
+                FMLLog.log.error("A custom exception was thrown by a mod, the game will display an error screen and halt.", custom);
+                errorToDisplay = custom;
+                MinecraftForge.EVENT_BUS.shutdown();
             }
             else
             {
@@ -284,6 +257,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
         }
 
+        @SuppressWarnings("unchecked")
         Map<String,Map<String,String>> sharedModList = (Map<String, Map<String, String>>) Launch.blackboard.get("modList");
         if (sharedModList == null)
         {
@@ -332,7 +306,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public boolean hasError()
     {
-        return modsMissing != null || wrongMC != null || customError != null || dupesFound != null || modSorting != null || multipleModsErrored != null;
+        return errorToDisplay != null;
     }
 
     /**
@@ -356,8 +330,9 @@ public class FMLClientHandler implements IFMLSidedHandler
             if (le.getCause() instanceof CustomModLoadingErrorDisplayException)
             {
                 CustomModLoadingErrorDisplayException custom = (CustomModLoadingErrorDisplayException) le.getCause();
-                FMLLog.log.error("A custom exception was thrown by a mod, the game will now halt", custom);
-                customError = custom;
+                FMLLog.log.error("A custom exception was thrown by a mod, the game will display an error screen and halt.", custom);
+                errorToDisplay = custom;
+                MinecraftForge.EVENT_BUS.shutdown();
             }
             else
             {
@@ -369,6 +344,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         // This call is being phased out for performance reasons in 1.12,
         // but we are keeping an option here in case something needs it for a little longer.
         // See https://github.com/MinecraftForge/MinecraftForge/pull/4032
+        // TODO remove in 1.13
         if (Boolean.parseBoolean(System.getProperty("fml.reloadResourcesOnStart", "false")))
         {
             client.refreshResources();
@@ -401,7 +377,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         loading = false;
         client.gameSettings.loadOptions(); //Reload options to load any mod added keybindings.
-        if (customError == null)
+        if (!hasError())
             Loader.instance().loadingComplete();
         SplashProgress.finish();
     }
@@ -439,29 +415,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         // re-sync TEXTURE_2D, splash screen disables it with a direct GL call
         GlStateManager.disableTexture2D();
         GlStateManager.enableTexture2D();
-        if (wrongMC != null)
+        if (errorToDisplay != null)
         {
-            showGuiScreen(new GuiWrongMinecraft(wrongMC));
-        }
-        else if (modsMissing != null)
-        {
-            showGuiScreen(new GuiModsMissing(modsMissing));
-        }
-        else if (dupesFound != null)
-        {
-            showGuiScreen(new GuiDupesFound(dupesFound));
-        }
-        else if (modSorting != null)
-        {
-            showGuiScreen(new GuiSortingProblem(modSorting));
-        }
-        else if (customError != null)
-        {
-            showGuiScreen(new GuiCustomModLoadingErrorScreen(customError));
-        }
-        else if (multipleModsErrored != null)
-        {
-            showGuiScreen(new GuiMultipleModsErrored(multipleModsErrored));
+            GuiScreen errorScreen = errorToDisplay.createGui();
+            showGuiScreen(errorScreen);
         }
         else
         {
@@ -616,6 +573,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         return client.getIntegratedServer();
     }
 
+    /**
+     * TODO remove in 1.13
+     */
+    @Deprecated
     public void displayMissingMods(Object modMissingPacket)
     {
 //        showGuiScreen(new GuiModsMissingForServer(modMissingPacket));
@@ -679,7 +640,8 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             catch (Exception e)
             {
-                throw new RuntimeException("An unexpected exception occurred constructing the custom resource pack for " + container.getName(), e);
+                FormattedMessage message = new FormattedMessage("An unexpected exception occurred constructing the custom resource pack for {} ({})", container.getName(), container.getModId());
+                throw new RuntimeException(message.getFormattedMessage(), e);
             }
         }
     }
@@ -698,13 +660,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void serverStopped()
     {
-        // If the server crashes during startup, it might hang the client - reset the client so it can abend properly.
-        MinecraftServer server = getServer();
-
-        if (server != null && !server.serverIsInRunLoop())
-        {
-//            ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, true, "field_71296"+"_Q","serverIs"+"Running");
-        }
+        // NOOP
     }
 
     @Override

@@ -554,9 +554,10 @@ public class Loader
         ObjectHolderRegistry.INSTANCE.findObjectHolders(new ASMDataTable());
         modController.forceActiveContainer(containers[0]);
     }
+
     /**
      * Called from the hook to start mod loading. We trigger the
-     * {@link #identifyMods()} and Constructing, Preinitalization, and Initalization phases here. Finally,
+     * {@link #identifyMods(List)} and Constructing, Preinitalization, and Initalization phases here. Finally,
      * the mod list is frozen completely and is consider immutable from then on.
      * @param injectedModContainers containers to inject
      */
@@ -631,7 +632,6 @@ public class Loader
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
-        modController.checkErrors();
         GameData.fireRegistryEvents(rl -> !rl.equals(GameData.RECIPES));
         FMLCommonHandler.instance().fireSidedRegistryEvents();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
@@ -757,7 +757,6 @@ public class Loader
         progressBar.step("Finishing up");
         modController.transition(LoaderState.AVAILABLE, false);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
-        modController.checkErrors();
         GameData.freezeData();
         FMLLog.log.info("Forge Mod Loader has successfully loaded {} mod{}", mods.size(), mods.size() == 1 ? "" : "s");
         progressBar.step("Completing Minecraft initialization");
