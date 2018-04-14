@@ -20,11 +20,14 @@
 package net.minecraftforge.fml.common;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -32,10 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.ConfigManager;
@@ -657,7 +658,7 @@ public class Loader
             FMLLog.log.trace("Found a mod state file {}", forcedModFile.getName());
             try
             {
-                forcedModListProperties.load(new FileReader(forcedModFile));
+                forcedModListProperties.load(new InputStreamReader(new FileInputStream(forcedModFile), StandardCharsets.UTF_8));
                 FMLLog.log.trace("Loaded states for {} mods from file", forcedModListProperties.size());
             }
             catch (Exception e)
@@ -960,9 +961,9 @@ public class Loader
         try
         {
             Properties props = new Properties();
-            props.load(new FileReader(forcedModFile));
+            props.load(new InputStreamReader(new FileInputStream(forcedModFile), StandardCharsets.UTF_8));
             props.put(modId, "false");
-            props.store(new FileWriter(forcedModFile), null);
+            props.store(new OutputStreamWriter(new FileOutputStream(forcedModFile), StandardCharsets.UTF_8), null);
         }
         catch (Exception e)
         {
@@ -991,7 +992,7 @@ public class Loader
         JsonElement injectedDeps;
         try
         {
-            injectedDeps = parser.parse(new FileReader(injectedDepFile));
+            injectedDeps = parser.parse(new InputStreamReader(new FileInputStream(injectedDepFile), StandardCharsets.UTF_8));
             for (JsonElement el : injectedDeps.getAsJsonArray())
             {
                 JsonObject jo = el.getAsJsonObject();
