@@ -54,7 +54,7 @@ public class SnapshotJson implements Comparable<SnapshotJson>
     public static final DateFormat TIMESTAMP = new SimpleDateFormat("yyyymmdd.hhmmss");
     public static final String META_JSON_FILE = "maven-metadata.json";
     private static final Gson GSON = new GsonBuilder().create();
-    private static final Comparator<Entry> SORTER = (o1, o2) -> o2.timestamp.compareTo(o2.timestamp);
+    private static final Comparator<Entry> SORTER = (o1, o2) -> o2.timestamp.compareTo(o1.timestamp);
 
     public static SnapshotJson create(File target)
     {
