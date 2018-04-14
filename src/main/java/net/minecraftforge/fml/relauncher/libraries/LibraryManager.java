@@ -318,11 +318,7 @@ public class LibraryManager
                 {
                     try
                     {
-                        String timestamp = meta.getValue(TIMESTAMP);
-                        if (timestamp != null)
-                            timestamp = SnapshotJson.TIMESTAMP.format(new Date(Long.parseLong(timestamp)));
-
-                        Artifact artifact = new Artifact(modlist.getRepository(), meta.getValue(MAVEN_ARTIFACT), timestamp);
+                        Artifact artifact = createMetaArtifact(modlist.getRepository(), meta);
                         File target = artifact.getFile();
                         if (target.exists())
                             FMLLog.log.debug("Found existing ContainedDep {}({}) from {} extracted to {}, skipping extraction", dep, artifact.toString(), target.getCanonicalPath(), jar.getName());
@@ -355,11 +351,7 @@ public class LibraryManager
                             extractPacked(target, modlist, modDirs);
                         }
                     }
-                    catch (NumberFormatException nfe)
-                    {
-                        FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("An error occurred extracting dependency. Invalid Timestamp: {}", meta.getValue(TIMESTAMP)), nfe);
-                    }
-                    catch (IOException e)
+                    catch (IOException | IllegalArgumentException e)
                     {
                         FMLLog.log.error("An error occurred extracting dependency", e);
                     }
@@ -367,7 +359,24 @@ public class LibraryManager
             }
         }
 
-        return attrs.containsKey(MAVEN_ARTIFACT) ? Pair.of(new Artifact(modlist.getRepository(), attrs.getValue(MAVEN_ARTIFACT), attrs.getValue(TIMESTAMP)), readAll(jar.getInputStream(manfest_entry))) : null;
+        return attrs.containsKey(MAVEN_ARTIFACT) ? Pair.of(createMetaArtifact(modlist.getRepository(), attrs), readAll(jar.getInputStream(manfest_entry))) : null;
+    }
+
+    private static Artifact createMetaArtifact(Repository repository, Attributes attributes) throws IllegalArgumentException
+    {
+        return new Artifact(repository, attributes.getValue(MAVEN_ARTIFACT), formatManifestTimestamp(attributes.getValue(TIMESTAMP)));
+    }
+
+    private static String formatManifestTimestamp(String timestamp) throws IllegalArgumentException
+    {
+    	try
+        {
+            return timestamp != null ? SnapshotJson.TIMESTAMP.format(new Date(Long.parseLong(timestamp))) : null;
+        }
+        catch (NumberFormatException nfe)
+        {
+        	throw new IllegalArgumentException("Invalid timestamp: " + timestamp, nfe);
+        }
     }
 
     private static byte[] readAll(InputStream in) throws IOException
