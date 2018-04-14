@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * Event bus that allows exceptions thrown by the exception handler to propagate.
+ * TODO remove this in 1.13 and stop using the guava event bus
  */
 public class FMLThrowingEventBus extends EventBus
 {
