@@ -174,6 +174,7 @@ public class ModList
         }
         else
             artifacts.add(artifact);
+        art_map.put(artifact.toString(), artifact);
         changed = true;
     }
 
