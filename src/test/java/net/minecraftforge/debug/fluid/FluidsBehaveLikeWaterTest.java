@@ -1,4 +1,4 @@
-package net.minecraftforge.debug;
+package net.minecraftforge.debug.fluid;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
