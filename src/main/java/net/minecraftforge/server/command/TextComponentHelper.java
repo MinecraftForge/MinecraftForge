@@ -21,6 +21,8 @@ package net.minecraftforge.server.command;
 import io.netty.channel.Channel;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -49,8 +51,13 @@ public class TextComponentHelper
         if (sender instanceof EntityPlayerMP)
         {
             EntityPlayerMP playerMP = (EntityPlayerMP) sender;
-            Channel channel = playerMP.connection.netManager.channel();
-            return !channel.attr(NetworkRegistry.FML_MARKER).get();
+            NetHandlerPlayServer connection = playerMP.connection;
+            if (connection != null)
+            {
+                NetworkManager netManager = connection.netManager;
+                Channel channel = netManager.channel();
+                return !channel.attr(NetworkRegistry.FML_MARKER).get();
+            }
         }
         return false;
     }

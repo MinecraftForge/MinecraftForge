@@ -68,7 +68,7 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -435,11 +441,728 @@
+@@ -435,11 +441,746 @@
          return false;
      }
  
@@ -694,8 +694,7 @@
 +    @Nullable
 +    public String getCreatorModId(ItemStack itemStack)
 +    {
-+        ResourceLocation registryName = getRegistryName();
-+        return registryName == null ? null : registryName.func_110624_b();
++        return net.minecraftforge.common.ForgeHooks.getDefaultCreatorModId(itemStack);
 +    }
 +
 +    /**
@@ -791,13 +790,32 @@
 +     * @param armor the armor itemstack
 +     */
 +    public void onHorseArmorTick(World world, net.minecraft.entity.EntityLiving horse, ItemStack armor) {}
++    
++    @SideOnly(Side.CLIENT)
++    @Nullable
++    private net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer teisr;
++    
++    /**
++     * @return This Item's renderer, or the default instance if it does not have one.
++     */
++    @SideOnly(Side.CLIENT)
++    public final net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer getTileEntityItemStackRenderer()
++    {
++    	return teisr != null ? teisr : net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer.field_147719_a;
++    }
++    
++    @SideOnly(Side.CLIENT)
++    public void setTileEntityItemStackRenderer(@Nullable net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer teisr)
++    {
++    	this.teisr = teisr;
++    }  
 +
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -999,6 +1722,8 @@
+@@ -999,6 +1740,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -806,7 +824,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1034,6 +1759,7 @@
+@@ -1034,6 +1777,7 @@
              return this.field_78008_j;
          }
  
@@ -814,7 +832,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1057,5 +1783,21 @@
+@@ -1057,5 +1801,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }

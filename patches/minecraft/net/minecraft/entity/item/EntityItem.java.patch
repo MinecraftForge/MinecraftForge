@@ -117,6 +117,18 @@
                      this.func_70106_y();
                      itemstack.func_190920_e(i);
                  }
+@@ -394,9 +425,9 @@
+     }
+ 
+     @Nullable
+-    public Entity func_184204_a(int p_184204_1_)
++    public Entity changeDimension(int p_184204_1_, net.minecraftforge.common.util.ITeleporter teleporter)
+     {
+-        Entity entity = super.func_184204_a(p_184204_1_);
++        Entity entity = super.changeDimension(p_184204_1_, teleporter);
+ 
+         if (!this.field_70170_p.field_72995_K && entity instanceof EntityItem)
+         {
 @@ -476,6 +507,6 @@
      public void func_174870_v()
      {
