@@ -27,10 +27,10 @@ import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MultipleModsErrored extends RuntimeException implements IDisplayableError
+public class MultipleModsErrored extends EnhancedRuntimeException implements IDisplayableError
 {
     public final List<WrongMinecraftVersionException> wrongMinecraftExceptions;
-    public final List<MissingModsException>missingModsExceptions;
+    public final List<MissingModsException> missingModsExceptions;
     public MultipleModsErrored(List<WrongMinecraftVersionException> wrongMinecraftExceptions, List<MissingModsException> missingModsExceptions)
     {
         this.wrongMinecraftExceptions = wrongMinecraftExceptions;
@@ -42,5 +42,18 @@ public class MultipleModsErrored extends RuntimeException implements IDisplayabl
     public GuiScreen createGui()
     {
         return new GuiMultipleModsErrored(this);
+    }
+
+    @Override
+    protected void printStackTrace(WrappedPrintStream stream)
+    {
+        for (WrongMinecraftVersionException wrongMinecraftVersionException : this.wrongMinecraftExceptions)
+        {
+            wrongMinecraftVersionException.printStackTrace(stream);
+        }
+        for (MissingModsException missingModsException : this.missingModsExceptions)
+        {
+            missingModsException.printStackTrace(stream);
+        }
     }
 }
