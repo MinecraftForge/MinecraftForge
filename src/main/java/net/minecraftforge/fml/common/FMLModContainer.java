@@ -545,11 +545,7 @@ public class FMLModContainer implements ModContainer
         {
             if (!sourceFingerprints.contains(expectedFingerprint))
             {
-                Level warnLevel = Level.ERROR;
-                if (source.isDirectory())
-                {
-                    warnLevel = Level.TRACE;
-                }
+                Level warnLevel = source.isDirectory() ? Level.TRACE : Level.ERROR;
                 FMLLog.log.log(warnLevel, "The mod {} is expecting signature {} for source {}, however there is no signature matching that description", getModId(), expectedFingerprint, source.getName());
             }
             else
@@ -560,13 +556,13 @@ public class FMLModContainer implements ModContainer
         }
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> props = (List<Map<String, Object>>)descriptor.get("customProperties");
+        List<Map<String, String>> props = (List<Map<String, String>>)descriptor.get("customProperties");
         if (props != null)
         {
             ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-            for (Map<String, Object> p : props)
+            for (Map<String, String> p : props)
             {
-                builder.put((String)p.get("k"), (String)p.get("v"));
+                builder.put(p.get("k"), p.get("v"));
             }
             customModProperties = builder.build();
         }
