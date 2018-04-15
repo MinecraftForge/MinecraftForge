@@ -97,6 +97,6 @@ public class LinkRepository extends Repository
     @Override
     public File getFile(String path)
     {
-        return filesystem.containsKey(path) ? super.getFile(path) : filesystem.get(path);
+        return filesystem.containsKey(path) ? filesystem.get(path) : super.getFile(path);
     }
 }
