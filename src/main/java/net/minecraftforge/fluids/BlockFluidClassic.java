@@ -325,7 +325,8 @@ public class BlockFluidClassic extends BlockFluidBase
 
         Material material = state.getMaterial();
         if (material.blocksMovement()  ||
-            material.isLiquid()  ||
+            material == Material.WATER ||
+            material == Material.LAVA  ||
             material == Material.PORTAL)
         {
             return false;

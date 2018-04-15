@@ -26,13 +26,7 @@
                              {
                                  if (d2 == 0.0D)
                                  {
-@@ -500,12 +501,12 @@
- 
-             IBlockState iblockstate = ActiveRenderInfo.func_186703_a(this.field_78531_r.field_71441_e, entity, p_78481_1_);
- 
--            if (iblockstate.func_185904_a() == Material.field_151586_h)
-+            if (iblockstate.func_185904_a().changesFOV())
-             {
+@@ -505,7 +506,7 @@
                  f = f * 60.0F / 70.0F;
              }
  
@@ -138,6 +132,15 @@
                      }
                      else
                      {
+@@ -1262,7 +1274,7 @@
+         GlStateManager.func_179086_m(16640);
+         this.field_78531_r.field_71424_I.func_76318_c("camera");
+         this.func_78479_a(p_175068_2_, p_175068_1_);
+-        ActiveRenderInfo.func_74583_a(this.field_78531_r.field_71439_g, this.field_78531_r.field_71474_y.field_74320_O == 2);
++        ActiveRenderInfo.updateRenderInfo(this.field_78531_r.func_175606_aa(), this.field_78531_r.field_71474_y.field_74320_O == 2); //Forge: MC-46445 Spectator mode particles and sounds computed from where you have been before
+         this.field_78531_r.field_71424_I.func_76318_c("frustum");
+         ClippingHelperImpl.func_78558_a();
+         this.field_78531_r.field_71424_I.func_76318_c("culling");
 @@ -1329,7 +1341,9 @@
              GlStateManager.func_179094_E();
              RenderHelper.func_74519_b();
@@ -148,13 +151,7 @@
              RenderHelper.func_74518_a();
              this.func_175072_h();
          }
-@@ -1337,11 +1351,12 @@
-         GlStateManager.func_179128_n(5888);
-         GlStateManager.func_179121_F();
- 
--        if (flag && this.field_78531_r.field_71476_x != null && !entity.func_70055_a(Material.field_151586_h))
-+        if (flag && this.field_78531_r.field_71476_x != null && !net.minecraftforge.common.ForgeHooks.isEntityHeadInsideMaterial(entity, Material::isLiquidOtherThanLava))
-         {
+@@ -1342,6 +1356,7 @@
              EntityPlayer entityplayer = (EntityPlayer)entity;
              GlStateManager.func_179118_c();
              this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -279,24 +276,6 @@
          if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q))
          {
              float f1 = 5.0F;
-@@ -1889,7 +1924,7 @@
-             GlStateManager.func_187430_a(GlStateManager.FogMode.EXP);
-             GlStateManager.func_179095_a(0.1F);
-         }
--        else if (iblockstate.func_185904_a() == Material.field_151586_h)
-+        else if (net.minecraftforge.common.ForgeHooks.isEntityHeadInsideMaterial(entity, Material::isLiquidOtherThanLava))
-         {
-             GlStateManager.func_187430_a(GlStateManager.FogMode.EXP);
- 
-@@ -1914,7 +1949,7 @@
-             GlStateManager.func_187430_a(GlStateManager.FogMode.EXP);
-             GlStateManager.func_179095_a(2.0F);
-         }
--        else
-+        else 
-         {
-             float f = this.field_78530_s;
-             GlStateManager.func_187430_a(GlStateManager.FogMode.LINEAR);
 @@ -1940,6 +1975,7 @@
                  GlStateManager.func_179102_b(f * 0.05F);
                  GlStateManager.func_179153_c(Math.min(f, 192.0F) * 0.5F);

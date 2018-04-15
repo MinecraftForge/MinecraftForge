@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -51,10 +50,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -66,18 +65,26 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemEnchantedBook;
+import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemPickaxe;
+import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTippedArrow;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.network.play.server.SPacketRecipeBook;
 import net.minecraft.network.play.server.SPacketRecipeBook.State;
+import net.minecraft.potion.PotionType;
+import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
@@ -141,6 +148,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher.ConnectionType;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
@@ -559,6 +567,11 @@ public class ForgeHooks
     }
 
     public static boolean onLivingAttack(EntityLivingBase entity, DamageSource src, float amount)
+    {
+        return entity instanceof EntityPlayer || !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
+    }
+
+    public static boolean onPlayerAttack(EntityLivingBase entity, DamageSource src, float amount)
     {
         return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
@@ -1007,13 +1020,6 @@ public class ForgeHooks
         return ItemStack.EMPTY;
     }
 
-    /**
-     * It is recommended to call the predicate version instead
-     * to test a material property (e.g. isLiquid)
-     * rather than an exact material match to support mod compatibility.
-     * 
-     * Note this checks for the head position of the enity.
-     */
     public static boolean isInsideOfMaterial(Material material, Entity entity, BlockPos pos)
     {
         IBlockState state = entity.world.getBlockState(pos);
@@ -1033,6 +1039,7 @@ public class ForgeHooks
         if (filled < 0)
         {
             filled *= -1;
+            //filled -= 0.11111111F; //Why this is needed.. not sure...
             return eyes > pos.getY() + 1 + (1 - filled);
         }
         else
@@ -1040,89 +1047,6 @@ public class ForgeHooks
             return eyes < pos.getY() + 1 + filled;
         }
     }
-    
-    /**
-     * Intended for use with liquids and fluids. Checks if the entity's head
-     * is inside a block that meets the conditions of the predicate. Typically
-     * used for things like air supply.
-     */
-    public static boolean isEntityHeadInsideMaterial(Entity entity, Predicate<Material> predicate)
-    {
-        if (entity.getRidingEntity() instanceof EntityBoat)
-        {
-            return false;
-        }
-        else
-        {
-            double eyePosY = entity.posY + entity.getEyeHeight();
-            BlockPos pos = new BlockPos(entity.posX, eyePosY, entity.posZ);
-            IBlockState iBlockState = entity.world.getBlockState(pos);
-            Material material = iBlockState.getMaterial();
-
-            Boolean result = iBlockState.getBlock().isEntityInsideMaterial(entity.world, pos, iBlockState, entity, eyePosY, material, true);
-            if (result != null) return result;
-
-            if (predicate.test(material))
-            {
-                return isInsideOfMaterial(material, entity, pos);
-            }
-            else
-            {
-                return false;
-            }
-        }    
-    }
-
-    /**
-     * Intended for use with liquids and fluids. Checks if the entity's bounding
-     * box is inside a block that meets the conditions of the predicate. Typically
-     * used for things such as pushing an entity that may be standing in flowing fluid.
-     */
-    public static boolean isEntityBBInsideMaterial(Entity entity, Predicate<Material> predicate)
-    {
-        AxisAlignedBB bb = entity.getEntityBoundingBox().grow(0.0D, -0.4D, 0.0D).shrink(0.001D);
-        int minX = MathHelper.floor(bb.minX);
-        int maxX = MathHelper.ceil(bb.maxX);
-        int minY = MathHelper.floor(bb.minY);
-        int maxY = MathHelper.ceil(bb.maxY);
-        int minZ = MathHelper.floor(bb.minZ);
-        int maxZ = MathHelper.ceil(bb.maxZ);
-     
-        if (!entity.world.isAreaLoaded(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ), true))
-        {
-            return false;
-        }
-        else
-        {
-            boolean isInLiquid = false;
-            BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
-
-            for (int x = minX; x < maxX; ++x)
-            {
-                for (int y = minY; y < maxY; ++y)
-                {
-                    for (int z = minZ; z < maxZ; ++z)
-                    {
-                        blockpos$pooledmutableblockpos.setPos(x, y, z);
-                        IBlockState iblockstate1 = entity.world.getBlockState(blockpos$pooledmutableblockpos);
-
-                        if (predicate.test(iblockstate1.getMaterial()))
-                        {
-                            double d0 = y + 1 - BlockLiquid.getLiquidHeightPercent(iblockstate1.getValue(BlockLiquid.LEVEL).intValue());
-
-                            if (maxY >= d0)
-                            {
-                                isInLiquid = true;
-                            }
-                        }
-                    }
-                }
-            }
-            blockpos$pooledmutableblockpos.release();
-            return isInLiquid;
-        }
-    }
-    
 
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
     {
@@ -1476,5 +1400,54 @@ public class ForgeHooks
     public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+
+    /**
+     * Used as the default implementation of {@link Item#getCreatorModId}. Call that method instead.
+     */
+    @Nullable
+    public static String getDefaultCreatorModId(@Nonnull ItemStack itemStack)
+    {
+        Item item = itemStack.getItem();
+        ResourceLocation registryName = item.getRegistryName();
+        String modId = registryName == null ? null : registryName.getResourceDomain();
+        if ("minecraft".equals(modId))
+        {
+            if (item instanceof ItemEnchantedBook)
+            {
+                NBTTagList enchantmentsNbt = ItemEnchantedBook.getEnchantments(itemStack);
+                if (enchantmentsNbt.tagCount() == 1)
+                {
+                    NBTTagCompound nbttagcompound = enchantmentsNbt.getCompoundTagAt(0);
+                    Enchantment enchantment = Enchantment.getEnchantmentByID(nbttagcompound.getShort("id"));
+                    if (enchantment != null)
+                    {
+                        ResourceLocation resourceLocation = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+                        if (resourceLocation != null)
+                        {
+                            return resourceLocation.getResourceDomain();
+                        }
+                    }
+                }
+            }
+            else if (item instanceof ItemPotion || item instanceof ItemTippedArrow)
+            {
+                PotionType potionType = PotionUtils.getPotionFromItem(itemStack);
+                ResourceLocation resourceLocation = ForgeRegistries.POTION_TYPES.getKey(potionType);
+                if (resourceLocation != null)
+                {
+                    return resourceLocation.getResourceDomain();
+                }
+            }
+            else if (item instanceof ItemMonsterPlacer)
+            {
+                ResourceLocation resourceLocation = ItemMonsterPlacer.getNamedIdFrom(itemStack);
+                if (resourceLocation != null)
+                {
+                    return resourceLocation.getResourceDomain();
+                }
+            }
+        }
+        return modId;
     }
 }

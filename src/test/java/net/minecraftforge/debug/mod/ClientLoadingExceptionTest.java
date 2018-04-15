@@ -22,6 +22,7 @@ package net.minecraftforge.debug.mod;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.item.Item;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
@@ -29,6 +30,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = "clientexceptiontest", version = "1.0", name = "Client Exception Test", clientSideOnly = true)
@@ -39,6 +41,7 @@ public class ClientLoadingExceptionTest
     public static boolean ENABLE_PREINIT = false;
     public static boolean ENABLE_INIT = false;
     public static boolean ENABLE_LOAD_COMPLETE = false;
+    public static boolean ENABLE_SERVER_STARTED = false;
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent e)
@@ -52,6 +55,12 @@ public class ClientLoadingExceptionTest
 
     @SubscribeEvent
     public void registerItems(RegistryEvent<Item> itemRegistryEvent)
+    {
+        throw new RuntimeException("This should not be called because the mod threw an exception earlier in Pre-Init and is in a broken state.");
+    }
+
+    @SubscribeEvent
+    public void onModelBake(ModelBakeEvent e)
     {
         throw new RuntimeException("This should not be called because the mod threw an exception earlier in Pre-Init and is in a broken state.");
     }
@@ -71,6 +80,15 @@ public class ClientLoadingExceptionTest
         if (ENABLE_LOAD_COMPLETE)
         {
             throwException("Thrown in load complete");
+        }
+    }
+
+    @Mod.EventHandler
+    public void onServerStarted(FMLServerStartedEvent e)
+    {
+        if (ENABLE_SERVER_STARTED)
+        {
+            throw new RuntimeException("Server thread exception - should stop client");
         }
     }
 

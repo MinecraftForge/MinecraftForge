@@ -19,6 +19,7 @@
 
 package net.minecraftforge.debug.client;
 
+import net.minecraft.block.material.Material;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -46,7 +47,7 @@ public class FOVModifierEventTest
     @SubscribeEvent
     public void getFOVModifier(EntityViewRenderEvent.FOVModifier event)
     {
-        if (event.getState().getMaterial().isLiquidOtherThanLava())
+        if (event.getState().getMaterial() == Material.WATER)
         {
             event.setFOV(event.getFOV() / 60.0f * 50.0f);
         }
