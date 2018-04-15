@@ -1,5 +1,36 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
+@@ -138,7 +138,7 @@
+     public static int func_77508_a(Iterable<ItemStack> p_77508_0_, DamageSource p_77508_1_)
+     {
+         field_77520_b.field_77497_a = 0;
+-        field_77520_b.field_77496_b = p_77508_1_;
++        field_77520_b.field_77496_b = new java.lang.ref.WeakReference<>(p_77508_1_);
+         func_77516_a(field_77520_b, p_77508_0_);
+         return field_77520_b.field_77497_a;
+     }
+@@ -159,8 +159,8 @@
+ 
+     public static void func_151384_a(EntityLivingBase p_151384_0_, Entity p_151384_1_)
+     {
+-        field_151388_d.field_151363_b = p_151384_1_;
+-        field_151388_d.field_151364_a = p_151384_0_;
++        field_151388_d.field_151363_b = new java.lang.ref.WeakReference<>(p_151384_1_);
++        field_151388_d.field_151364_a = new java.lang.ref.WeakReference<>(p_151384_0_);
+ 
+         if (p_151384_0_ != null)
+         {
+@@ -175,8 +175,8 @@
+ 
+     public static void func_151385_b(EntityLivingBase p_151385_0_, Entity p_151385_1_)
+     {
+-        field_151389_e.field_151366_a = p_151385_0_;
+-        field_151389_e.field_151365_b = p_151385_1_;
++        field_151389_e.field_151366_a = new java.lang.ref.WeakReference<>(p_151385_0_);
++        field_151389_e.field_151365_b = new java.lang.ref.WeakReference<>(p_151385_1_);
+ 
+         if (p_151385_0_ != null)
+         {
 @@ -302,7 +302,7 @@
      public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
      {
@@ -27,3 +58,59 @@
              {
                  for (int i = enchantment.func_77325_b(); i > enchantment.func_77319_d() - 1; --i)
                  {
+@@ -431,8 +431,8 @@
+ 
+     static final class DamageIterator implements EnchantmentHelper.IModifier
+         {
+-            public EntityLivingBase field_151366_a;
+-            public Entity field_151365_b;
++            public java.lang.ref.WeakReference<EntityLivingBase> field_151366_a;
++            public java.lang.ref.WeakReference<Entity> field_151365_b;
+ 
+             private DamageIterator()
+             {
+@@ -440,14 +440,14 @@
+ 
+             public void func_77493_a(Enchantment p_77493_1_, int p_77493_2_)
+             {
+-                p_77493_1_.func_151368_a(this.field_151366_a, this.field_151365_b, p_77493_2_);
++                p_77493_1_.func_151368_a(this.field_151366_a.get(), this.field_151365_b.get(), p_77493_2_);
+             }
+         }
+ 
+     static final class HurtIterator implements EnchantmentHelper.IModifier
+         {
+-            public EntityLivingBase field_151364_a;
+-            public Entity field_151363_b;
++            public java.lang.ref.WeakReference<EntityLivingBase> field_151364_a;
++            public java.lang.ref.WeakReference<Entity> field_151363_b;
+ 
+             private HurtIterator()
+             {
+@@ -455,7 +455,7 @@
+ 
+             public void func_77493_a(Enchantment p_77493_1_, int p_77493_2_)
+             {
+-                p_77493_1_.func_151367_b(this.field_151364_a, this.field_151363_b, p_77493_2_);
++                p_77493_1_.func_151367_b(this.field_151364_a.get(), this.field_151363_b.get(), p_77493_2_);
+             }
+         }
+ 
+@@ -467,7 +467,7 @@
+     static final class ModifierDamage implements EnchantmentHelper.IModifier
+         {
+             public int field_77497_a;
+-            public DamageSource field_77496_b;
++            public java.lang.ref.WeakReference<DamageSource> field_77496_b;
+ 
+             private ModifierDamage()
+             {
+@@ -475,7 +475,7 @@
+ 
+             public void func_77493_a(Enchantment p_77493_1_, int p_77493_2_)
+             {
+-                this.field_77497_a += p_77493_1_.func_77318_a(p_77493_2_, this.field_77496_b);
++                this.field_77497_a += p_77493_1_.func_77318_a(p_77493_2_, this.field_77496_b.get());
+             }
+         }
+ 
