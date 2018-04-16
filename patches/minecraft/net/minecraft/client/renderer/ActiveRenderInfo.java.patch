@@ -12,7 +12,18 @@
          GlStateManager.func_179111_a(2982, field_178812_b);
          GlStateManager.func_179111_a(2983, field_178813_c);
          GlStateManager.func_187445_a(2978, field_178814_a);
-@@ -108,4 +113,14 @@
+@@ -72,6 +77,10 @@
+             {
+                 f = BlockLiquid.func_149801_b(((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue()) - 0.11111111F;
+             }
++            if (iblockstate.func_177230_c() instanceof net.minecraftforge.fluids.IFluidBlock)
++            {
++                f = (float) (((net.minecraftforge.fluids.IFluidBlock)iblockstate.func_177230_c()).getFilledPercentage(p_186703_0_, blockpos)-0.1);
++            }
+ 
+             float f1 = (float)(blockpos.func_177956_o() + 1) - f;
+ 
+@@ -108,4 +117,14 @@
      {
          return field_74596_h;
      }

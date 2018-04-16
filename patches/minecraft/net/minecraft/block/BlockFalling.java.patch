@@ -30,3 +30,12 @@
                  }
              }
          }
+@@ -91,7 +92,7 @@
+     {
+         Block block = p_185759_0_.func_177230_c();
+         Material material = p_185759_0_.func_185904_a();
+-        return block == Blocks.field_150480_ab || material == Material.field_151579_a || material == Material.field_151586_h || material == Material.field_151587_i;
++        return block == Blocks.field_150480_ab || material == Material.field_151579_a || material.func_76224_d();
+     }
+ 
+     public void func_176502_a_(World p_176502_1_, BlockPos p_176502_2_, IBlockState p_176502_3_, IBlockState p_176502_4_)

@@ -128,6 +128,15 @@
          if (f > 1.0F)
          {
              int i = EnchantmentHelper.func_185293_e(this);
+@@ -788,7 +823,7 @@
+             f *= f1;
+         }
+ 
+-        if (this.func_70055_a(Material.field_151586_h) && !EnchantmentHelper.func_185287_i(this))
++        if (net.minecraftforge.common.ForgeHooks.isEntityHeadInsideMaterial(this, Material::func_76224_d) && !EnchantmentHelper.func_185287_i(this))
+         {
+             f /= 5.0F;
+         }
 @@ -798,12 +833,13 @@
              f /= 5.0F;
          }
@@ -450,6 +459,15 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
+@@ -1733,7 +1839,7 @@
+     {
+         if (!this.func_184218_aH())
+         {
+-            if (this.func_70055_a(Material.field_151586_h))
++            if (net.minecraftforge.common.ForgeHooks.isEntityHeadInsideMaterial(this, Material::isSwimmable))
+             {
+                 int i = Math.round(MathHelper.func_76133_a(p_71000_1_ * p_71000_1_ + p_71000_3_ * p_71000_3_ + p_71000_5_ * p_71000_5_) * 100.0F);
+ 
 @@ -1839,6 +1945,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);

@@ -1,5 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
+@@ -164,7 +164,7 @@
+             BlockPos blockpos = new BlockPos(this);
+             IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
+ 
+-            if (iblockstate.func_185904_a() == Material.field_151586_h)
++            if (iblockstate.func_185904_a().canSpawnWaterCreatures())
+             {
+                 f = BlockLiquid.func_190973_f(iblockstate, this.field_70170_p, blockpos);
+             }
+@@ -250,7 +250,7 @@
+                 }
+             }
+ 
+-            if (iblockstate.func_185904_a() != Material.field_151586_h)
++            if (!iblockstate.func_185904_a().isLiquidOtherThanLava())
+             {
+                 this.field_70181_x -= 0.03D;
+             }
 @@ -269,8 +269,8 @@
      {
          ItemStack itemstack = this.field_146042_b.func_184614_ca();
@@ -19,7 +37,7 @@
 +                IBlockState state = worldserver.func_180495_p(new BlockPos(d0, d1 - 1.0D, d2));
  
 -                if (block == Blocks.field_150355_j || block == Blocks.field_150358_i)
-+                if (state.func_185904_a() == Material.field_151586_h)
++                if (state.func_185904_a().canSpawnWaterCreatures())
                  {
                      if (this.field_70146_Z.nextFloat() < 0.15F)
                      {
@@ -31,7 +49,7 @@
 +                IBlockState state = worldserver.func_180495_p(new BlockPos((int) d4, (int) d5 - 1, (int) d6));
  
 -                if (block1 == Blocks.field_150355_j || block1 == Blocks.field_150358_i)
-+                if (state.func_185904_a() == Material.field_151586_h)
++                if (state.func_185904_a().canSpawnWaterCreatures())
                  {
                      worldserver.func_175739_a(EnumParticleTypes.WATER_SPLASH, d4, d5, d6, 2 + this.field_70146_Z.nextInt(2), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
                  }

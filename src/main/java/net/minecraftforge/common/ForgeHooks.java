@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -54,6 +55,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -1020,6 +1022,13 @@ public class ForgeHooks
         return ItemStack.EMPTY;
     }
 
+    /**
+     * It is recommended to call the predicate version instead
+     * to test a material property (e.g. isLiquid)
+     * rather than an exact material match to support mod compatibility.
+     * 
+     * Note this checks for the head position of the enity.
+     */
     public static boolean isInsideOfMaterial(Material material, Entity entity, BlockPos pos)
     {
         IBlockState state = entity.world.getBlockState(pos);
@@ -1039,7 +1048,6 @@ public class ForgeHooks
         if (filled < 0)
         {
             filled *= -1;
-            //filled -= 0.11111111F; //Why this is needed.. not sure...
             return eyes > pos.getY() + 1 + (1 - filled);
         }
         else
@@ -1047,6 +1055,89 @@ public class ForgeHooks
             return eyes < pos.getY() + 1 + filled;
         }
     }
+    
+    /**
+     * Intended for use with liquids and fluids. Checks if the entity's head
+     * is inside a block that meets the conditions of the predicate. Typically
+     * used for things like air supply.
+     */
+    public static boolean isEntityHeadInsideMaterial(Entity entity, Predicate<Material> predicate)
+    {
+        if (entity.getRidingEntity() instanceof EntityBoat)
+        {
+            return false;
+        }
+        else
+        {
+            double eyePosY = entity.posY + entity.getEyeHeight();
+            BlockPos pos = new BlockPos(entity.posX, eyePosY, entity.posZ);
+            IBlockState iBlockState = entity.world.getBlockState(pos);
+            Material material = iBlockState.getMaterial();
+
+            Boolean result = iBlockState.getBlock().isEntityInsideMaterial(entity.world, pos, iBlockState, entity, eyePosY, material, true);
+            if (result != null) return result;
+
+            if (predicate.test(material))
+            {
+                return isInsideOfMaterial(material, entity, pos);
+            }
+            else
+            {
+                return false;
+            }
+        }    
+    }
+
+    /**
+     * Intended for use with liquids and fluids. Checks if the entity's bounding
+     * box is inside a block that meets the conditions of the predicate. Typically
+     * used for things such as pushing an entity that may be standing in flowing fluid.
+     */
+    public static boolean isEntityBBInsideMaterial(Entity entity, Predicate<Material> predicate)
+    {
+        AxisAlignedBB bb = entity.getEntityBoundingBox().grow(0.0D, -0.4D, 0.0D).shrink(0.001D);
+        int minX = MathHelper.floor(bb.minX);
+        int maxX = MathHelper.ceil(bb.maxX);
+        int minY = MathHelper.floor(bb.minY);
+        int maxY = MathHelper.ceil(bb.maxY);
+        int minZ = MathHelper.floor(bb.minZ);
+        int maxZ = MathHelper.ceil(bb.maxZ);
+     
+        if (!entity.world.isAreaLoaded(new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ), true))
+        {
+            return false;
+        }
+        else
+        {
+            boolean isInLiquid = false;
+            BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
+
+            for (int x = minX; x < maxX; ++x)
+            {
+                for (int y = minY; y < maxY; ++y)
+                {
+                    for (int z = minZ; z < maxZ; ++z)
+                    {
+                        blockpos$pooledmutableblockpos.setPos(x, y, z);
+                        IBlockState iblockstate1 = entity.world.getBlockState(blockpos$pooledmutableblockpos);
+
+                        if (predicate.test(iblockstate1.getMaterial()))
+                        {
+                            double d0 = y + 1 - BlockLiquid.getLiquidHeightPercent(iblockstate1.getValue(BlockLiquid.LEVEL).intValue());
+
+                            if (maxY >= d0)
+                            {
+                                isInLiquid = true;
+                            }
+                        }
+                    }
+                }
+            }
+            blockpos$pooledmutableblockpos.release();
+            return isInLiquid;
+        }
+    }
+    
 
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
     {

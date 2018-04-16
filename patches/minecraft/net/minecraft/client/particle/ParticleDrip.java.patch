@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/particle/ParticleDrip.java
++++ ../src-work/minecraft/net/minecraft/client/particle/ParticleDrip.java
+@@ -97,7 +97,7 @@
+ 
+         if (this.field_187132_l)
+         {
+-            if (this.field_70563_a == Material.field_151586_h)
++            if (this.field_70563_a.hasLiquidParticles())
+             {
+                 this.func_187112_i();
+                 this.field_187122_b.func_175688_a(EnumParticleTypes.WATER_SPLASH, this.field_187126_f, this.field_187127_g, this.field_187128_h, 0.0D, 0.0D, 0.0D);

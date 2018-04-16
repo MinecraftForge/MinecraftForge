@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenSand.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenSand.java
+@@ -20,7 +20,7 @@
+ 
+     public boolean func_180709_b(World p_180709_1_, Random p_180709_2_, BlockPos p_180709_3_)
+     {
+-        if (p_180709_1_.func_180495_p(p_180709_3_).func_185904_a() != Material.field_151586_h)
++        if (!p_180709_1_.func_180495_p(p_180709_3_).func_185904_a().isLiquidOtherThanLava())
+         {
+             return false;
+         }

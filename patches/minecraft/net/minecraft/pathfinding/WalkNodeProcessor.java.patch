@@ -18,3 +18,12 @@
          if (material == Material.field_151579_a)
          {
              return PathNodeType.OPEN;
+@@ -475,7 +479,7 @@
+             }
+             else if (!(block instanceof BlockFence) && !(block instanceof BlockWall) && (!(block instanceof BlockFenceGate) || ((Boolean)iblockstate.func_177229_b(BlockFenceGate.field_176466_a)).booleanValue()))
+             {
+-                if (material == Material.field_151586_h)
++                if (material.isSwimmable())
+                 {
+                     return PathNodeType.WATER;
+                 }

@@ -1,5 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLiquid.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLiquid.java
+@@ -271,7 +271,7 @@
+ 
+             for (EnumFacing enumfacing : EnumFacing.values())
+             {
+-                if (enumfacing != EnumFacing.DOWN && p_176365_1_.func_180495_p(p_176365_2_.func_177972_a(enumfacing)).func_185904_a() == Material.field_151586_h)
++                if (enumfacing != EnumFacing.DOWN && p_176365_1_.func_180495_p(p_176365_2_.func_177972_a(enumfacing)).func_185904_a().canMixWithLava())
+                 {
+                     flag = true;
+                     break;
+@@ -358,7 +358,7 @@
+                 double d5 = d1 - 1.05D;
+                 double d7 = d2 + (double)p_180655_4_.nextFloat();
+ 
+-                if (this.field_149764_J == Material.field_151586_h)
++                if (this.field_149764_J.hasLiquidParticles())
+                 {
+                     p_180655_2_.func_175688_a(EnumParticleTypes.DRIP_WATER, d3, d5, d7, 0.0D, 0.0D, 0.0D);
+                 }
 @@ -452,4 +452,29 @@
      {
          return BlockFaceShape.UNDEFINED;

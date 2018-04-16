@@ -42,6 +42,15 @@
                                          }
                                      }
                                  }
+@@ -258,7 +240,7 @@
+         }
+         else
+         {
+-            return (p_175793_1_.func_177230_c() == Blocks.field_150354_m || p_175793_1_.func_177230_c() == Blocks.field_150351_n) && p_175793_2_.func_185904_a() != Material.field_151586_h;
++            return (p_175793_1_.func_177230_c() == Blocks.field_150354_m || p_175793_1_.func_177230_c() == Blocks.field_150351_n) && !p_175793_2_.func_185904_a().isLiquidOtherThanLava();
+         }
+     }
+ 
 @@ -299,4 +281,66 @@
              }
          }
