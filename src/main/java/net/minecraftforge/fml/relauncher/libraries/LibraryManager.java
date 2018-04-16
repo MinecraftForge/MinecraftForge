@@ -317,14 +317,18 @@ public class LibraryManager
                 {
                     try
                     {
-                    	Artifact artifact = readArtifact(modlist.getRepository(), meta);
+                        Artifact artifact = readArtifact(modlist.getRepository(), meta);
                         File target = artifact.getFile();
                         if (target.exists())
                         {
                             FMLLog.log.debug("Found existing ContainedDep {}({}) from {} extracted to {}, skipping extraction", dep, artifact.toString(), target.getCanonicalPath(), jar.getName());
                             if (!ENABLE_AUTO_MOD_MOVEMENT)
                             {
-                                extractPacked(target, modlist, modDirs); //If we're not building a real list we have to re-build the dep list every run. So search down.
+                                Pair<?, ?> child = extractPacked(target, modlist, modDirs); //If we're not building a real list we have to re-build the dep list every run. So search down.
+                                if (child == null && metaEntry != null) //External meta with no internal name... If there is a internal name, we trust that that name is the correct one.
+                                {
+                                    modlist.add(artifact);
+                                }
                             }
                         }
                         else
@@ -353,7 +357,11 @@ public class LibraryManager
                                 File meta_target = new File(target.getAbsolutePath() + ".meta");
                                 Files.write(manifest_data, meta_target);
                             }
-                            extractPacked(target, modlist, modDirs);
+                            Pair<?, ?> child = extractPacked(target, modlist, modDirs);
+                            if (child == null && metaEntry != null) //External meta with no internal name... If there is a internal name, we trust that that name is the correct one.
+                            {
+                                modlist.add(artifact);
+                            }
                         }
                     }
                     catch (NumberFormatException nfe)
@@ -368,15 +376,15 @@ public class LibraryManager
             }
         }
 
-        if (attrs.containsKey(MAVEN_ARTIFACT)) 
+        if (attrs.containsKey(MAVEN_ARTIFACT))
         {
-        	Artifact artifact = readArtifact(modlist.getRepository(), attrs);
-        	modlist.add(artifact);
-        	return Pair.of(artifact, readAll(jar.getInputStream(manifest_entry)));
+            Artifact artifact = readArtifact(modlist.getRepository(), attrs);
+            modlist.add(artifact);
+            return Pair.of(artifact, readAll(jar.getInputStream(manifest_entry)));
         }
         return null;
     }
-    
+
     private static Artifact readArtifact(Repository repo, Attributes meta)
     {
         String timestamp = meta.getValue(TIMESTAMP);
