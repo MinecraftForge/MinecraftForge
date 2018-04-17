@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/advancements/Advancement.java
++++ ../src-work/minecraft/net/minecraft/advancements/Advancement.java
+@@ -162,7 +162,7 @@
+             private final Map<String, Criterion> field_192065_e;
+             private final String[][] field_192066_f;
+ 
+-            Builder(@Nullable ResourceLocation p_i47414_1_, @Nullable DisplayInfo p_i47414_2_, AdvancementRewards p_i47414_3_, Map<String, Criterion> p_i47414_4_, String[][] p_i47414_5_)
++            public Builder(@Nullable ResourceLocation p_i47414_1_, @Nullable DisplayInfo p_i47414_2_, AdvancementRewards p_i47414_3_, Map<String, Criterion> p_i47414_4_, String[][] p_i47414_5_)
+             {
+                 this.field_192061_a = p_i47414_1_;
+                 this.field_192063_c = p_i47414_2_;
