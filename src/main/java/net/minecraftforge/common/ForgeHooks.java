@@ -119,6 +119,7 @@ import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.advancements.AdvancementLoadEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -1305,6 +1306,7 @@ public class ForgeHooks
 
     public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
     {
+        MinecraftForge.EVENT_BUS.post(new AdvancementLoadEvent.Pre(map));
         boolean errored = false;
         setActiveModContainer(null);
         //Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
@@ -1313,6 +1315,7 @@ public class ForgeHooks
             errored |= !loadAdvancements(map, mod);
         }
         setActiveModContainer(null);
+        MinecraftForge.EVENT_BUS.post(new AdvancementLoadEvent.Post(map));
         return errored;
     }
 
