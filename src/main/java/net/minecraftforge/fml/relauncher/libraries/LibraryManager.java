@@ -133,13 +133,13 @@ public class LibraryManager
                 apache = apache.getParentFile(); //Get to a directory, this *should* always be the case...
             apache = apache.getParentFile(); //Skip the version folder. In case we ever update the version, I don't want to edit this code again.
 
-            if (!apache.getAbsolutePath().toLowerCase(Locale.ENGLISH).replace(File.separatorChar, '/').endsWith("/org/apache/maven/maven/"))
+            if (!apache.getAbsolutePath().toLowerCase(Locale.ENGLISH).replace(File.separatorChar, '/').endsWith("/org/apache/maven/maven-artifact/"))
             {
                 FMLLog.log.error("Apache Maven library folder was not in the format expected: {}. Using default libraries directory.", new File(source.getLocation().toURI()));
                 return new File(minecraftHome, "libraries");
             }
-            //     maven  /maven          /apache         /org           /libraries
-            return apache.getParentFile().getParentFile().getParentFile().getParentFile();
+            //     maven-artifact  /maven          /apache         /org            /libraries
+            return apache          .getParentFile().getParentFile().getParentFile().getParentFile();
         }
         catch (URISyntaxException e)
         {
