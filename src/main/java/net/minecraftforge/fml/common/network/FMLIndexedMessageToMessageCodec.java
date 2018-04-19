@@ -65,11 +65,17 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     @Override
     protected final void encode(ChannelHandlerContext ctx, A msg, List<Object> out) throws Exception
     {
+        String channel = ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get();
+        Class<?> clazz = msg.getClass();
+        if (!types.containsKey(clazz))
+        {
+            throw new RuntimeException("Undefined discriminator for message type " + clazz.getSimpleName() + " in channel " + channel);
+        }
+        byte discriminator = types.get(clazz);
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        byte discriminator = types.get(msg.getClass());
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
-        FMLProxyPacket proxy = new FMLProxyPacket(buffer/*.copy()*/, ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
+        FMLProxyPacket proxy = new FMLProxyPacket(buffer/*.copy()*/, channel);
         WeakReference<FMLProxyPacket> ref = ctx.channel().attr(INBOUNDPACKETTRACKER).get().get();
         FMLProxyPacket old = ref == null ? null : ref.get();
         if (old != null)
