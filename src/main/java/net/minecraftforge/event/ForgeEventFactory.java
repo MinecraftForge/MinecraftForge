@@ -766,4 +766,13 @@ public class ForgeEventFactory
         Result result = event.getResult();
         return result == Result.DEFAULT ? world.getGameRules().getBoolean("mobGriefing") : result == Result.ALLOW;
     }
+
+    public static boolean onFarmlandWaterCheck(World world, BlockPos pos, IBlockState state, boolean waterBlock)
+    {
+        BlockEvent.FarmlandWaterCheckEvent event = new BlockEvent.FarmlandWaterCheckEvent(world, pos, state, waterBlock);
+        MinecraftForge.EVENT_BUS.post(event);
+
+        Result result = event.getResult();
+        return result == Result.DEFAULT ? !waterBlock && !event.hasRain() : result == Result.DENY;
+    }
 }

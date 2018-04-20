@@ -338,4 +338,44 @@ public class BlockEvent extends Event
             }
         }
     }
+
+    /**
+     * Called when a farmland block checks for valid water sources during random tick
+     * <br>
+     * {@link Result#ALLOW} will treat the block as watered<br>
+     * {@link Result#DENY} will treat the block as <b>not</b> watered<br>
+     * {@link Result#DEFAULT} will check if there is a nearby water source or if it is raining on the block
+     */
+    @HasResult
+    public static class FarmlandWaterCheckEvent extends BlockEvent
+    {
+        private final boolean waterSource;
+        private Boolean raining;
+
+        public FarmlandWaterCheckEvent(World world, BlockPos pos, IBlockState state, boolean waterBlock)
+        {
+            super(world, pos, state);
+            this.waterSource = waterBlock;
+        }
+
+        /**
+         * @return true if it is raining at the block
+         */
+        public boolean hasRain()
+        {
+            if (raining == null)
+            {
+                raining = getWorld().isRainingAt(getPos().up());
+            }
+            return raining;
+        }
+
+        /**
+         * @return true if the block has a water source block in a 4 block radius on the same height
+         */
+        public boolean hasNearbyWaterBlock()
+        {
+            return waterSource;
+        }
+    }
 }

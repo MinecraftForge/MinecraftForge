@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
+@@ -53,7 +53,7 @@
+     {
+         int i = ((Integer)p_180650_3_.func_177229_b(field_176531_a)).intValue();
+ 
+-        if (!this.func_176530_e(p_180650_1_, p_180650_2_) && !p_180650_1_.func_175727_C(p_180650_2_.func_177984_a()))
++        if (net.minecraftforge.event.ForgeEventFactory.onFarmlandWaterCheck(p_180650_1_, p_180650_2_, p_180650_3_, func_176530_e(p_180650_1_, p_180650_2_)))
+         {
+             if (i > 0)
+             {
 @@ -72,7 +72,7 @@
  
      public void func_180658_a(World p_180658_1_, BlockPos p_180658_2_, Entity p_180658_3_, float p_180658_4_)
