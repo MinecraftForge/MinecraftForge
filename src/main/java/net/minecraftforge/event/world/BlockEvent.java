@@ -22,6 +22,7 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.block.BlockPortal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -348,9 +349,17 @@ public class BlockEvent extends Event
     @Cancelable
     public static class PortalSpawnEvent extends BlockEvent
     {
-        public PortalSpawnEvent(World world, BlockPos pos, IBlockState state)
+        private final BlockPortal.Size size;
+
+        public PortalSpawnEvent(World world, BlockPos pos, IBlockState state, BlockPortal.Size size)
         {
             super(world, pos, state);
+            this.size = size;
+        }
+
+        public BlockPortal.Size getPortalSize()
+        {
+            return size;
         }
     }
 }
