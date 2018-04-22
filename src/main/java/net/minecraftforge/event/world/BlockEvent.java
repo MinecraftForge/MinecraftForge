@@ -342,14 +342,23 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when farmland gets trampled.  See subevents.
+     * Fired when when farmland attempts to trampled.<br>
+     * <br>
+     * {@link Result#DEFAULT} will pass on to the vanilla farmland trample mechanics.<br>
+     * {@link Result#ALLOW} will force the farmland to be trampled.<br>
+     * {@link Result#DENY} will stop the farmland from form being trampled.<br>
+     * <br>
+     * This event is not {@link Cancelable}.<br>
      *
+     * This event has a result. {@link HasResult}<br>
+     * <br>
      */
+    @HasResult
     public static class FarmlandTrampleEvent extends BlockEvent
     {
 
         private final Entity entity;
-        private float fallDistance;
+        private final float fallDistance;
 
         public FarmlandTrampleEvent(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
         {
@@ -366,45 +375,5 @@ public class BlockEvent extends Event
             return fallDistance;
         }
 
-        public void setFallDistance(float fallDistance) {
-            this.fallDistance = fallDistance;
-        }
-
-        /**
-         * Fired when when farmland attempts to trampled.<br>
-         * <br>
-         * {@link Result#DEFAULT} will pass on to the vanilla farmland trample mechanics.<br>
-         * {@link Result#ALLOW} will force the farmland to be trampled.<br>
-         * {@link Result#DENY} will stop the farmland from form being trampled.<br>
-         * <br>
-         * This event is not {@link Cancelable}.<br>
-         *
-         * This event has a result. {@link HasResult}<br>
-         * <br>
-         */
-        @HasResult
-        public static class Pre extends FarmlandTrampleEvent
-        {
-            public Pre(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
-            {
-                super(world, pos, state, fallDistance, entity);
-            }
-        }
-
-        /**
-         * Fired when farmland has been trampled.<br>
-         * <br>
-         * This event is not {@link Cancelable}.<br>
-         * <br>
-         * This event does not have a result. {@link HasResult}<br>
-         */
-        public static class Post extends FarmlandTrampleEvent
-        {
-            public Post(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
-            {
-                super(world, pos, state, fallDistance, entity);
-            }
-
-        }
     }
 }
