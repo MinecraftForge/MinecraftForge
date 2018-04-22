@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
+@@ -92,7 +92,7 @@
+     @Nullable
+     public <T extends TileEntity> TileEntitySpecialRenderer<T> func_147547_b(@Nullable TileEntity p_147547_1_)
+     {
+-        return p_147547_1_ == null ? null : this.func_147546_a(p_147547_1_.getClass());
++        return p_147547_1_ == null || p_147547_1_.func_145837_r() ? null : this.func_147546_a(p_147547_1_.getClass()); // Forge: fix MC-123363
+     }
+ 
+     public void func_190056_a(World p_190056_1_, TextureManager p_190056_2_, FontRenderer p_190056_3_, Entity p_190056_4_, RayTraceResult p_190056_5_, float p_190056_6_)
 @@ -117,12 +117,15 @@
      {
          if (p_180546_1_.func_145835_a(this.field_147560_j, this.field_147561_k, this.field_147558_l) < p_180546_1_.func_145833_n())
