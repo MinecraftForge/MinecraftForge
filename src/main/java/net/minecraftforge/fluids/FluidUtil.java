@@ -531,7 +531,7 @@ public class FluidUtil
                 return tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
             }
         }
-        else if (block instanceof IFluidBlock)
+        if (block instanceof IFluidBlock)
         {
             return new FluidBlockWrapper((IFluidBlock) block, world, blockPos);
         }

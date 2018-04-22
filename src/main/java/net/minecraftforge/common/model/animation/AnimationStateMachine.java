@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -215,14 +216,13 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     @SideOnly(Side.CLIENT)
     public static IAnimationStateMachine load(IResourceManager manager, ResourceLocation location, ImmutableMap<String, ITimeValue> customParameters)
     {
-        try
+        try (IResource resource = manager.getResource(location))
         {
             ClipResolver clipResolver = new ClipResolver();
             ParameterResolver parameterResolver = new ParameterResolver(customParameters);
             Clips.CommonClipTypeAdapterFactory.INSTANCE.setClipResolver(clipResolver);
             TimeValues.CommonTimeValueTypeAdapterFactory.INSTANCE.setValueResolver(parameterResolver);
-            IResource resource = manager.getResource(location);
-            AnimationStateMachine asm = asmGson.fromJson(new InputStreamReader(resource.getInputStream(), "UTF-8"), AnimationStateMachine.class);
+            AnimationStateMachine asm = asmGson.fromJson(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8), AnimationStateMachine.class);
             clipResolver.asm = asm;
             parameterResolver.asm = asm;
             asm.initialize();

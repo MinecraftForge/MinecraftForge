@@ -51,6 +51,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
@@ -60,6 +61,8 @@ import javax.annotation.Nullable;
  */
 public final class FMLContainer extends DummyModContainer implements WorldAccessContainer
 {
+    private static final Logger modTrackerLogger =  LogManager.getLogger("FML.ModTracker");
+
     public FMLContainer()
     {
         super(new ModMetadata());
@@ -153,7 +156,7 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
                 NBTTagCompound tag = new NBTTagCompound();
                 tag.setString("K", entry.getKey().toString());
                 tag.setString("V", entry.getValue().toString());
-                aliases.appendTag(tag);
+                overrides.appendTag(tag);
             }
             data.setTag("overrides", overrides);
 
@@ -190,12 +193,12 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
                 ModContainer container = Loader.instance().getIndexedModList().get(modId);
                 if (container == null)
                 {
-                    LogManager.getLogger("fml.ModTracker").error("This world was saved with mod {} which appears to be missing, things may not work well", modId);
+                    modTrackerLogger.error("This world was saved with mod {} which appears to be missing, things may not work well", modId);
                     continue;
                 }
                 if (!modVersion.equals(container.getVersion()))
                 {
-                    LogManager.getLogger("fml.ModTracker").info("This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, container.getVersion());
+                    modTrackerLogger.info("This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, container.getVersion());
                 }
             }
         }
@@ -228,7 +231,22 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
                 for (int x = 0; x < list.tagCount(); x++)
                 {
                     NBTTagCompound e = list.getCompoundTagAt(x);
-                    entry.aliases.put(new ResourceLocation(e.getString("K")), new ResourceLocation(e.getString("V")));
+                    String v = e.getString("V");
+                    if (v.indexOf(':') == -1) //Forge Bug: https://github.com/MinecraftForge/MinecraftForge/issues/4894 TODO: Remove in 1.13
+                    {
+                        entry.overrides.put(new ResourceLocation(e.getString("K")), v);
+                    }
+                    else
+                    {
+                        entry.aliases.put(new ResourceLocation(e.getString("K")), new ResourceLocation(v));
+                    }
+                }
+
+                list = ent.getTagList("overrides", 10);
+                for (int x = 0; x < list.tagCount(); x++)
+                {
+                    NBTTagCompound e = list.getCompoundTagAt(x);
+                    entry.overrides.put(new ResourceLocation(e.getString("K")), e.getString("V"));
                 }
 
                 int[] blocked = regs.getCompoundTag(key).getIntArray("blocked");
