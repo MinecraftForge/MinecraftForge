@@ -14,7 +14,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.settings.GameSettings;
@@ -36,7 +35,6 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
     public SimpleModelFontRenderer(GameSettings settings, ResourceLocation font, TextureManager manager, boolean isUnicode, Matrix4f matrix, VertexFormat format)
     {
         super(settings, font, manager, isUnicode);
-        manager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         this.matrix = new Matrix4f(matrix);
         Matrix3f nm = new Matrix3f();
         this.matrix.getRotationScale(nm);
@@ -170,6 +168,11 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
     }
 
     @Override public void enableAlpha()
+    {
+    }
+
+    @Override
+    protected void bindTexture(ResourceLocation location)
     {
     }
 

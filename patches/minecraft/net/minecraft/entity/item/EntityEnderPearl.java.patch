@@ -23,3 +23,19 @@
                  }
              }
              else if (entitylivingbase != null)
+@@ -141,13 +145,13 @@
+     }
+ 
+     @Nullable
+-    public Entity func_184204_a(int p_184204_1_)
++    public Entity changeDimension(int p_184204_1_, net.minecraftforge.common.util.ITeleporter teleporter)
+     {
+         if (this.field_70192_c.field_71093_bK != p_184204_1_)
+         {
+             this.field_70192_c = null;
+         }
+ 
+-        return super.func_184204_a(p_184204_1_);
++        return super.changeDimension(p_184204_1_, teleporter);
+     }
+ }
