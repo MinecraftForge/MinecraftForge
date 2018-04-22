@@ -22,6 +22,7 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -359,12 +360,14 @@ public class BlockEvent extends Event
 
         private final Entity entity;
         private final float fallDistance;
+        private final boolean trampleResult;
 
-        public FarmlandTrampleEvent(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
+        public FarmlandTrampleEvent(World world, BlockPos pos, IBlockState state, float fallDistance, boolean trampleResult, Entity entity)
         {
             super(world, pos, state);
             this.entity = entity;
             this.fallDistance = fallDistance;
+            this.trampleResult = trampleResult;
         }
 
         public Entity getEntity() {
@@ -373,6 +376,10 @@ public class BlockEvent extends Event
 
         public float getFallDistance() {
             return fallDistance;
+        }
+
+        public boolean getTrampleResult() {
+            return trampleResult;
         }
 
     }
