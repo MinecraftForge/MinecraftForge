@@ -342,7 +342,7 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when a farm gets trampled.  See subevents.
+     * Fired when farmland gets trampled.  See subevents.
      *
      */
     public static class FarmlandTrampleEvent extends BlockEvent
