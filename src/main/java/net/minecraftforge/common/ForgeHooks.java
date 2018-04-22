@@ -1450,4 +1450,16 @@ public class ForgeHooks
         }
         return modId;
     }
+
+    public static boolean onFarmlandTramplePre(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
+    {
+        BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent.Pre(world, pos, state, fallDistance, entity);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() == Event.Result.ALLOW || (event.getResult() == Event.Result.DEFAULT && entity.canTrample(world, state.getBlock(), pos, fallDistance));
+    }
+
+    public static void onFarmlandTramplePost(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
+    {
+        MinecraftForge.EVENT_BUS.post(new BlockEvent.FarmlandTrampleEvent.Post(world, pos, state, fallDistance, entity));
+    }
 }
