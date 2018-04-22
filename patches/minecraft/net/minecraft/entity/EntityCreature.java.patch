@@ -4,7 +4,7 @@
      private BlockPos field_70775_bC = BlockPos.field_177992_a;
      private float field_70772_bD = -1.0F;
      private final float field_184661_bw = PathNodeType.WATER.func_186289_a();
-+    /** Forge: make maxLeashDistance a field instead of hard-coded */
++    /** Forge: make the distance between entities at which a leash breaks a field instead of hard-coded */
 +    protected float maxLeashDistance = 10.0F;
  
      public EntityCreature(World p_i1602_1_)
@@ -31,8 +31,8 @@
      protected void func_142017_o(float p_142017_1_)
      {
      }
-+    /** Returns the maximum leash distance for this entity */
++    /** Returns the maximum length of a leash before it breaks for this entity */
 +    public float getMaxLeashDistance() { return maxLeashDistance; }
-+    /** Sets the maximum leash distance for this entity */
++    /** Sets the maximum length of a leash before it breakss for this entity */
 +    public void setMaxLeashDistance(float distance) { maxLeashDistance = distance; }
  }
