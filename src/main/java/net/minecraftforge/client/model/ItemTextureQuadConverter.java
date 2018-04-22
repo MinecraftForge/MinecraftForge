@@ -268,7 +268,7 @@ public final class ItemTextureQuadConverter
             switch (format.getElement(e).getUsage())
             {
                 case POSITION:
-                    if (transform.isIdentity())
+                    if (transform == TRSRTransformation.identity())
                     {
                         builder.put(e, x, y, z, 1);
                     }

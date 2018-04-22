@@ -1047,7 +1047,7 @@ public class Configuration
         }
         catch (IOException e)
         {
-            FMLLog.log.error("Error while loading config {}.", fileName, e);
+            FMLLog.log.error("Error while loading config.", e);
         }
         finally
         {
@@ -1108,7 +1108,7 @@ public class Configuration
         }
         catch (IOException e)
         {
-            FMLLog.log.error("Error while saving config {}.", fileName, e);
+            FMLLog.log.error("Error while saving config.", e);
         }
     }
 

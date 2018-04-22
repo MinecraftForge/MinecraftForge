@@ -129,14 +129,6 @@ public class JarDiscoverer implements ITypeDiscoverer
         ZipEntry json = jar.getEntry(JsonAnnotationLoader.ANNOTATION_JSON);
         Multimap<String, ASMData> annos = JsonAnnotationLoader.loadJson(jar.getInputStream(json), candidate, table);
 
-        for (ZipEntry e : Collections.list(jar.entries()))
-        {
-            if (!e.getName().startsWith("__MACOSX") && !e.getName().startsWith("META-INF/") && e.getName().endsWith(".class"))
-            {
-                candidate.addClassEntry(e.getName());
-            }
-        }
-
         for (Entry<Type, Constructor<? extends ModContainer>> entry : ModContainerFactory.modTypes.entrySet())
         {
             Type type = entry.getKey();

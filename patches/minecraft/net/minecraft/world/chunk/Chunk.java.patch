@@ -174,7 +174,7 @@
          {
              if (this.field_150816_i.containsKey(p_177426_1_))
              {
-@@ -854,12 +855,14 @@
+@@ -854,8 +855,9 @@
  
          for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.field_76645_j)
          {
@@ -185,12 +185,7 @@
      }
  
      public void func_76623_d()
-     {
-+        java.util.Arrays.stream(field_76645_j).forEach(multimap -> com.google.common.collect.Lists.newArrayList(multimap.func_180215_b(net.minecraft.entity.player.EntityPlayer.class)).forEach(player -> field_76637_e.func_72866_a(player, false))); // FORGE - Fix for MC-92916
-         this.field_76636_d = false;
- 
-         for (TileEntity tileentity : this.field_150816_i.values())
-@@ -871,6 +874,7 @@
+@@ -871,6 +873,7 @@
          {
              this.field_76637_e.func_175681_c(classinheritancemultimap);
          }
@@ -198,7 +193,7 @@
      }
  
      public void func_76630_e()
-@@ -880,8 +884,8 @@
+@@ -880,8 +883,8 @@
  
      public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, Predicate <? super Entity > p_177414_4_)
      {
@@ -209,7 +204,7 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -918,8 +922,8 @@
+@@ -918,8 +921,8 @@
  
      public <T extends Entity> void func_177430_a(Class <? extends T > p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, Predicate <? super T > p_177430_4_)
      {
@@ -220,28 +215,27 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -997,6 +1001,9 @@
+@@ -997,6 +1000,8 @@
  
      protected void func_186034_a(IChunkGenerator p_186034_1_)
      {
-+        if (populating != null && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
-+        ChunkPos prev = populating;
-+        populating = this.func_76632_l();
++        if (populating && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
++        populating = true;
          if (this.func_177419_t())
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
-@@ -1008,8 +1015,10 @@
+@@ -1008,8 +1013,10 @@
          {
              this.func_150809_p();
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
 +            net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.field_76635_g, this.field_76647_h, this.field_76637_e, p_186034_1_, this.field_76637_e.func_72863_F());
              this.func_76630_e();
          }
-+        populating = prev;
++        populating = false;
      }
  
      public BlockPos func_177440_h(BlockPos p_177440_1_)
-@@ -1064,7 +1073,7 @@
+@@ -1064,7 +1071,7 @@
          {
              BlockPos blockpos = this.field_177447_w.poll();
  
@@ -250,7 +244,7 @@
              {
                  TileEntity tileentity = this.func_177422_i(blockpos);
                  this.field_76637_e.func_175690_a(blockpos, tileentity);
-@@ -1128,6 +1137,13 @@
+@@ -1128,6 +1135,13 @@
      @SideOnly(Side.CLIENT)
      public void func_186033_a(PacketBuffer p_186033_1_, int p_186033_2_, boolean p_186033_3_)
      {
@@ -264,7 +258,7 @@
          boolean flag = this.field_76637_e.field_73011_w.func_191066_m();
  
          for (int i = 0; i < this.field_76652_q.length; ++i)
-@@ -1176,10 +1192,16 @@
+@@ -1176,10 +1190,16 @@
          this.field_76646_k = true;
          this.func_76590_a();
  
@@ -281,7 +275,7 @@
      }
  
      public Biome func_177411_a(BlockPos p_177411_1_, BiomeProvider p_177411_2_)
-@@ -1244,13 +1266,13 @@
+@@ -1244,13 +1264,13 @@
                      BlockPos blockpos1 = blockpos.func_177982_a(k, (j << 4) + i1, l);
                      boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
@@ -297,7 +291,7 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1381,7 +1403,7 @@
+@@ -1381,7 +1401,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -306,7 +300,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1420,6 +1442,7 @@
+@@ -1420,6 +1440,7 @@
          else
          {
              System.arraycopy(p_177420_1_, 0, this.field_76634_f, 0, this.field_76634_f.length);
@@ -314,7 +308,7 @@
          }
      }
  
-@@ -1489,4 +1512,55 @@
+@@ -1489,4 +1510,52 @@
          QUEUED,
          CHECK;
      }
@@ -336,20 +330,17 @@
 +        }
 +    }
 +
-+    private static ChunkPos populating = null; // keep track of cascading chunk generation during chunk population
++    private static boolean populating = false; // keep track of cascading chunk generation during chunk population
 +
 +    private void logCascadingWorldGeneration()
 +    {
 +        net.minecraftforge.fml.common.ModContainer activeModContainer = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
-+        String format = "{} loaded a new chunk {} in dimension {} ({}) while populating chunk {}, causing cascading worldgen lag.";
++        String format = "{} loaded a new chunk ({}, {}  Dimension: {}) during chunk population, causing cascading worldgen lag. Please report this to the mod's issue tracker. This log can be disabled in the Forge config.";
 +
-+        if (activeModContainer == null) { // vanilla minecraft has problems too (MC-114332), log it at a quieter level.
-+            net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.func_76632_l(), this.field_76637_e.field_73011_w.getDimension(), this.field_76637_e.field_73011_w.func_186058_p().func_186065_b(), populating);
-+            net.minecraftforge.fml.common.FMLLog.log.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");
-+        } else {
-+            net.minecraftforge.fml.common.FMLLog.log.warn(format, activeModContainer.getName(), this.func_76632_l(), this.field_76637_e.field_73011_w.getDimension(), this.field_76637_e.field_73011_w.func_186058_p().func_186065_b(), populating);
-+            net.minecraftforge.fml.common.FMLLog.log.warn("Please report this to the mod's issue tracker. This log can be disabled in the Forge config.");
-+        }
++        if (activeModContainer == null) // vanilla minecraft has problems too (MC-114332), log it at a quieter level.
++            net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
++        else
++            net.minecraftforge.fml.common.FMLLog.log.warn(format, activeModContainer.getName(), this.field_76635_g, this.field_76647_h, this.field_76637_e.field_73011_w.getDimension());
 +    }
 +
 +    private final net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;

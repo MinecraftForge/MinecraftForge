@@ -84,15 +84,6 @@
  
              this.func_180443_s();
  
-@@ -895,7 +910,7 @@
-                     {
-                         RenderChunk renderchunk1 = this.field_175008_n.func_178161_a(new BlockPos((j << 4) + 8, i, (k << 4) + 8));
- 
--                        if (renderchunk1 != null && p_174970_4_.func_78546_a(renderchunk1.field_178591_c))
-+                        if (renderchunk1 != null && p_174970_4_.func_78546_a(renderchunk1.field_178591_c.func_72321_a(0.0, blockpos1.func_177956_o() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY, 0.0))) // Forge: fix MC-73139
-                         {
-                             renderchunk1.func_178577_a(p_174970_5_);
-                             queue.add(new RenderGlobal.ContainerLocalRenderInformation(renderchunk1, (EnumFacing)null, 0));
 @@ -951,7 +966,7 @@
                  BlockPos blockpos2 = renderchunk4.func_178568_j().func_177982_a(8, 8, 8);
                  boolean flag3 = blockpos2.func_177951_i(blockpos1) < 768.0D;

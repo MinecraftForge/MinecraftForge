@@ -25,7 +25,6 @@ public class WorldWorkerManager
 {
     private static List<IWorker> workers = new ArrayList<IWorker>();
     private static long startTime = -1;
-    private static int index = 0;
 
     public static void tick(boolean start)
     {
@@ -35,7 +34,6 @@ public class WorldWorkerManager
             return;
         }
 
-        index = 0;
         IWorker task = getNext();
         if (task == null)
             return;
@@ -45,18 +43,14 @@ public class WorldWorkerManager
             time = 10; //If ticks are lagging, give us at least 10ms to do something.
         time += System.currentTimeMillis();
 
-        while (System.currentTimeMillis() < time && task != null)
+        while (System.currentTimeMillis() < time)
         {
-            boolean again = task.doWork();
+            task.work();
 
             if (!task.hasWork())
             {
+                time = 0; //Break loop
                 remove(task);
-                task = getNext();
-            }
-            else if (!again)
-            {
-                task = getNext();
             }
         }
     }
@@ -68,13 +62,12 @@ public class WorldWorkerManager
 
     private static synchronized IWorker getNext()
     {
-        return workers.size() > index ? workers.get(index++) : null;
+        return workers.size() > 0 ? workers.get(0) : null;
     }
 
     private static synchronized void remove(IWorker worker)
     {
         workers.remove(worker);
-        index--;
     }
 
     //Internal only, used to clear everything when the server shuts down.
@@ -86,17 +79,6 @@ public class WorldWorkerManager
     public static interface IWorker
     {
         boolean hasWork();
-
-        default void work() {}; //TODO: Remove in 1.13.
-
-        /**
-         * Perform a task, returning true from this will have the manager call this function again this tick if there is time left.
-         * Returning false will skip calling this worker until next tick.
-         */
-        default boolean doWork()
-        {
-            work();
-            return true;
-        }
+        void work();
     }
 }

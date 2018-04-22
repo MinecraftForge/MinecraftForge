@@ -21,7 +21,6 @@ package net.minecraftforge.fml.common.discovery.json;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -44,7 +43,7 @@ public class JsonAnnotationLoader
 
     public static Multimap<String, ASMData> loadJson(InputStream data, ModCandidate candidate, ASMDataTable table)
     {
-        Map<String, ASMInfo> map = GSON.fromJson(new InputStreamReader(data, StandardCharsets.UTF_8), INFO_TABLE);
+        Map<String, ASMInfo> map = GSON.fromJson(new InputStreamReader(data), INFO_TABLE);
         Multimap<String, ASMData> ret = HashMultimap.create();
 
         for (Entry<String, ASMInfo> entry : map.entrySet())

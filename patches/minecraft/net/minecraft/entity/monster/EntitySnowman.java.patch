@@ -9,15 +9,6 @@
  {
      private static final DataParameter<Byte> field_184749_a = EntityDataManager.<Byte>func_187226_a(EntitySnowman.class, DataSerializers.field_187191_a);
  
-@@ -104,7 +104,7 @@
-                 this.func_70097_a(DamageSource.field_76370_b, 1.0F);
-             }
- 
--            if (!this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
-+            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this))
-             {
-                 return;
-             }
 @@ -152,7 +152,7 @@
      {
          ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);

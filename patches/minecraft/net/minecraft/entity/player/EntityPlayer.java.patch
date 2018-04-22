@@ -202,7 +202,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
-+        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttack(this, p_70097_1_, p_70097_2_)) return false;
++        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, p_70097_1_, p_70097_2_)) return false;
          if (this.func_180431_b(p_70097_1_))
          {
              return false;

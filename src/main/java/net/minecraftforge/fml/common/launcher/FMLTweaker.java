@@ -32,6 +32,7 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.FMLSecurityManager;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 import com.google.common.collect.Lists;
@@ -128,7 +129,7 @@ public class FMLTweaker implements ITweaker {
         }
         catch (URISyntaxException e)
         {
-            LogManager.getLogger("FML.TWEAK").error("Missing URI information for FML tweak");
+            LogManager.getLogger("FMLTWEAK").log(Level.ERROR, "Missing URI information for FML tweak");
             throw new RuntimeException(e);
         }
     }

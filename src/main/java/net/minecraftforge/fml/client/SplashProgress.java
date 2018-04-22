@@ -24,17 +24,12 @@ import static org.lwjgl.opengl.GL12.*;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.IntBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.concurrent.Semaphore;
@@ -154,7 +149,7 @@ public class SplashProgress
             parent.mkdirs();
 
         config = new Properties();
-        try (Reader r = new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8))
+        try (FileReader r = new FileReader(configFile))
         {
             config.load(r);
         }
@@ -189,7 +184,7 @@ public class SplashProgress
 
         File miscPackFile = new File(Minecraft.getMinecraft().mcDataDir, getString("resourcePackPath", "resources"));
 
-        try (Writer w = new OutputStreamWriter(new FileOutputStream(configFile), StandardCharsets.UTF_8))
+        try (FileWriter w = new FileWriter(configFile))
         {
             config.store(w, "Splash screen properties");
         }
@@ -712,7 +707,7 @@ public class SplashProgress
         enabled = false;
         config.setProperty("enabled", "false");
 
-        try (Writer w = new OutputStreamWriter(new FileOutputStream(configFile), StandardCharsets.UTF_8))
+        try (FileWriter w = new FileWriter(configFile))
         {
             config.store(w, "Splash screen properties");
         }

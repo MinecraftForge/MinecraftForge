@@ -18,26 +18,3 @@
      }
  
      public void func_186059_r()
-@@ -129,4 +129,22 @@
-     {
-         return this.field_186064_g;
-     }
-+
-+    @Override
-+    public void func_186061_a(net.minecraft.entity.player.EntityPlayerMP player)
-+    {
-+        if (this.field_186064_g != null)
-+        {
-+            this.field_186064_g.addPlayer(player);
-+        }
-+    }
-+
-+    @Override
-+    public void func_186062_b(net.minecraft.entity.player.EntityPlayerMP player)
-+    {
-+        if (this.field_186064_g != null)
-+        {
-+            this.field_186064_g.removePlayer(player);
-+        }
-+    }
- }

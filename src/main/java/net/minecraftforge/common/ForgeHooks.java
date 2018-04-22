@@ -50,7 +50,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -65,26 +64,18 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemEnchantedBook;
-import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemPickaxe;
-import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTippedArrow;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.network.play.server.SPacketRecipeBook;
 import net.minecraft.network.play.server.SPacketRecipeBook.State;
-import net.minecraft.potion.PotionType;
-import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
@@ -148,7 +139,6 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher.ConnectionType;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
@@ -567,11 +557,6 @@ public class ForgeHooks
     }
 
     public static boolean onLivingAttack(EntityLivingBase entity, DamageSource src, float amount)
-    {
-        return entity instanceof EntityPlayer || !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
-    }
-
-    public static boolean onPlayerAttack(EntityLivingBase entity, DamageSource src, float amount)
     {
         return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
@@ -1400,54 +1385,5 @@ public class ForgeHooks
     public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
-    }
-
-    /**
-     * Used as the default implementation of {@link Item#getCreatorModId}. Call that method instead.
-     */
-    @Nullable
-    public static String getDefaultCreatorModId(@Nonnull ItemStack itemStack)
-    {
-        Item item = itemStack.getItem();
-        ResourceLocation registryName = item.getRegistryName();
-        String modId = registryName == null ? null : registryName.getResourceDomain();
-        if ("minecraft".equals(modId))
-        {
-            if (item instanceof ItemEnchantedBook)
-            {
-                NBTTagList enchantmentsNbt = ItemEnchantedBook.getEnchantments(itemStack);
-                if (enchantmentsNbt.tagCount() == 1)
-                {
-                    NBTTagCompound nbttagcompound = enchantmentsNbt.getCompoundTagAt(0);
-                    Enchantment enchantment = Enchantment.getEnchantmentByID(nbttagcompound.getShort("id"));
-                    if (enchantment != null)
-                    {
-                        ResourceLocation resourceLocation = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
-                        if (resourceLocation != null)
-                        {
-                            return resourceLocation.getResourceDomain();
-                        }
-                    }
-                }
-            }
-            else if (item instanceof ItemPotion || item instanceof ItemTippedArrow)
-            {
-                PotionType potionType = PotionUtils.getPotionFromItem(itemStack);
-                ResourceLocation resourceLocation = ForgeRegistries.POTION_TYPES.getKey(potionType);
-                if (resourceLocation != null)
-                {
-                    return resourceLocation.getResourceDomain();
-                }
-            }
-            else if (item instanceof ItemMonsterPlacer)
-            {
-                ResourceLocation resourceLocation = ItemMonsterPlacer.getNamedIdFrom(itemStack);
-                if (resourceLocation != null)
-                {
-                    return resourceLocation.getResourceDomain();
-                }
-            }
-        }
-        return modId;
     }
 }

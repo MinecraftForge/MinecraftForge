@@ -22,12 +22,15 @@ package net.minecraftforge.common.property;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Iterables;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -92,7 +95,7 @@ public class ExtendedBlockState extends BlockStateContainer
                 return this;
             }
 
-            if (this == this.cleanState)
+            if (unlistedProperties.values().stream().noneMatch(Optional::isPresent))
             { // no dynamic properties present, looking up in the normal table
                 return clean;
             }
@@ -101,53 +104,39 @@ public class ExtendedBlockState extends BlockStateContainer
         }
 
         @Override
-        public <V> IExtendedBlockState withProperty(IUnlistedProperty<V> property, @Nullable V value)
+        public <V> IExtendedBlockState withProperty(IUnlistedProperty<V> property, V value)
         {
-            Optional<?> oldValue = unlistedProperties.get(property);
-            if (oldValue == null)
+            if(!this.unlistedProperties.containsKey(property))
             {
                 throw new IllegalArgumentException("Cannot set unlisted property " + property + " as it does not exist in " + getBlock().getBlockState());
             }
-            if (Objects.equals(oldValue.orElse(null), value))
-            {
-                return this;
-            }
-            if (!property.isValid(value))
+            if(!property.isValid(value))
             {
                 throw new IllegalArgumentException("Cannot set unlisted property " + property + " to " + value + " on block " + Block.REGISTRY.getNameForObject(getBlock()) + ", it is not an allowed value");
             }
-            boolean clean = true;
-            ImmutableMap.Builder<IUnlistedProperty<?>, Optional<?>> builder = ImmutableMap.builder();
-            for (Map.Entry<IUnlistedProperty<?>, Optional<?>> entry : unlistedProperties.entrySet())
-            {
-                IUnlistedProperty<?> key = entry.getKey();
-                Optional<?> newValue = key.equals(property) ? Optional.ofNullable(value) : entry.getValue();
-                if (newValue.isPresent()) clean = false;
-                builder.put(key, newValue);
-            }
-            if (clean)
+            Map<IUnlistedProperty<?>, Optional<?>> newMap = new HashMap<IUnlistedProperty<?>, Optional<?>>(unlistedProperties);
+            newMap.put(property, Optional.ofNullable(value));
+            if(Iterables.all(newMap.values(), Predicates.<Optional<?>>equalTo(Optional.empty())))
             { // no dynamic properties, lookup normal state
-                return (IExtendedBlockState) cleanState;
+                return (IExtendedBlockState)cleanState;
             }
-            return new ExtendedStateImplementation(getBlock(), getProperties(), builder.build(), propertyValueTable, this.cleanState);
+            return new ExtendedStateImplementation(getBlock(), getProperties(), ImmutableMap.copyOf(newMap), propertyValueTable, this.cleanState);
         }
 
         @Override
         public Collection<IUnlistedProperty<?>> getUnlistedNames()
         {
-            return unlistedProperties.keySet();
+            return Collections.unmodifiableCollection(unlistedProperties.keySet());
         }
 
         @Override
-        @Nullable
-        public <V> V getValue(IUnlistedProperty<V> property)
+        public <V>V getValue(IUnlistedProperty<V> property)
         {
-            Optional<?> value = unlistedProperties.get(property);
-            if (value == null)
+            if(!this.unlistedProperties.containsKey(property))
             {
                 throw new IllegalArgumentException("Cannot get unlisted property " + property + " as it does not exist in " + getBlock().getBlockState());
             }
-            return property.getType().cast(value.orElse(null));
+            return property.getType().cast(this.unlistedProperties.get(property).orElse(null));
         }
 
         public ImmutableMap<IUnlistedProperty<?>, Optional<?>> getUnlistedProperties()

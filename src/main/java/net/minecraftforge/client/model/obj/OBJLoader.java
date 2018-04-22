@@ -33,7 +33,6 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.FMLLog;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 /*
@@ -75,39 +74,32 @@ public enum OBJLoader implements ICustomModelLoader {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if (!cache.containsKey(file))
         {
-            IResource resource = null;
+            IResource resource;
             try
             {
-                try
-                {
-                    resource = manager.getResource(file);
-                }
-                catch (FileNotFoundException e)
-                {
-                    if (modelLocation.getResourcePath().startsWith("models/block/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
-                    else if (modelLocation.getResourcePath().startsWith("models/item/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/block/" + file.getResourcePath().substring("models/item/".length())));
-                    else throw e;
-                }
-                OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
-                OBJModel model = null;
-                try
-                {
-                    model = parser.parse();
-                }
-                catch (Exception e)
-                {
-                    errors.put(modelLocation, e);
-                }
-                finally
-                {
-                    cache.put(modelLocation, model);
-                }
+                resource = manager.getResource(file);
+            }
+            catch (FileNotFoundException e)
+            {
+                if (modelLocation.getResourcePath().startsWith("models/block/"))
+                    resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
+                else if (modelLocation.getResourcePath().startsWith("models/item/"))
+                    resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/block/" + file.getResourcePath().substring("models/item/".length())));
+                else throw e;
+            }
+            OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
+            OBJModel model = null;
+            try
+            {
+                model = parser.parse();
+            }
+            catch (Exception e)
+            {
+                errors.put(modelLocation, e);
             }
             finally
             {
-                IOUtils.closeQuietly(resource);
+                cache.put(modelLocation, model);
             }
         }
         OBJModel model = cache.get(file);

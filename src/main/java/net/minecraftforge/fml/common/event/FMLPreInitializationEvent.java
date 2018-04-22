@@ -151,8 +151,10 @@ public class FMLPreInitializationEvent extends FMLStateEvent
      */
     public Logger getModLog()
     {
-        return LogManager.getLogger(modContainer.getModId());
+        Logger log = LogManager.getLogger(modContainer.getModId());
+        return log;
     }
+
 
     /**
      * Retrieve the FML signing certificates, if any. Validate these against the

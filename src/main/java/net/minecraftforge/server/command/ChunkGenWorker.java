@@ -18,7 +18,6 @@
  */
 package net.minecraftforge.server.command;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -27,10 +26,8 @@ import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.WorldWorkerManager.IWorker;
 
@@ -43,9 +40,8 @@ public class ChunkGenWorker implements IWorker
     private final Queue<BlockPos> queue;
     private final int notificationFrequency;
     private int lastNotification = 0;
-    private long lastNotifcationTime = 0;
     private int genned = 0;
-    private Boolean keepingLoaded;
+    private Boolean loadSpawn;
 
     public ChunkGenWorker(ICommandSender listener, BlockPos start, int total, int dim, int interval)
     {
@@ -55,7 +51,6 @@ public class ChunkGenWorker implements IWorker
         this.dim  = dim;
         this.queue = buildQueue();
         this.notificationFrequency = interval != -1 ? interval : Math.max(total / 20, 100); //Every 5% or every 100, whichever is more.
-        this.lastNotifcationTime = System.currentTimeMillis(); //We also notify at least once every 60 seconds, to show we haven't froze.
     }
 
     protected Queue<BlockPos> buildQueue()
@@ -102,48 +97,35 @@ public class ChunkGenWorker implements IWorker
     }
 
     @Override
-    public boolean doWork()
+    public void work()
     {
-        WorldServer world = DimensionManager.getWorld(dim);
-        if (world == null)
-        {
-            DimensionManager.initDimension(dim);
-            world = DimensionManager.getWorld(dim);
-            if (world == null)
-            {
-                listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.dim_fail", dim));
-                queue.clear();
-                return false;
-            }
-        }
-
-        AnvilChunkLoader loader = world.getChunkProvider().chunkLoader instanceof AnvilChunkLoader ? (AnvilChunkLoader)world.getChunkProvider().chunkLoader : null;
-        if (loader != null && loader.getPendingSaveCount() > 100)
-        {
-
-            if (lastNotifcationTime < System.currentTimeMillis() - 10*1000)
-            {
-                listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.progress", total - queue.size(), total));
-                lastNotifcationTime = System.currentTimeMillis();
-            }
-            return false;
-        }
-
         BlockPos next = queue.poll();
 
         if (next != null)
         {
-            // While we work we don't want to cause world load spam so pause unloading the world.
-            if (keepingLoaded == null)
+            WorldServer world = DimensionManager.getWorld(dim);
+            if (world == null)
             {
-                keepingLoaded = DimensionManager.keepDimensionLoaded(dim, true);
+                DimensionManager.initDimension(dim);
+                world = DimensionManager.getWorld(dim);
+                if (world == null)
+                {
+                    listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.dim_fail", dim));
+                    queue.clear();
+                    return;
+                }
+            }
+            // While we work we don't want to cause world load spam so pause unloading the world.
+            if (loadSpawn == null)
+            {
+                loadSpawn = world.provider.getDimensionType().shouldLoadSpawn();
+                world.provider.getDimensionType().setLoadSpawn(true);
             }
 
-            if (++lastNotification >= notificationFrequency || lastNotifcationTime < System.currentTimeMillis() - 60*1000)
+            if (++lastNotification >= notificationFrequency)
             {
                 listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.progress", total - queue.size(), total));
                 lastNotification = 0;
-                lastNotifcationTime = System.currentTimeMillis();
             }
 
             int x = next.getX();
@@ -163,14 +145,6 @@ public class ChunkGenWorker implements IWorker
                     world.getChunkFromChunkCoords(x + 1, z + 1),
                     world.getChunkFromChunkCoords(x,     z + 1),
                 };
-                try
-                {
-                    world.getChunkProvider().chunkLoader.saveChunk(world, target);
-                }
-                catch (IOException | MinecraftException e)
-                {
-                    listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.saveerror", e.getMessage()));
-                }
                 genned++;
             }
 
@@ -185,12 +159,7 @@ public class ChunkGenWorker implements IWorker
         if (queue.size() == 0)
         {
             listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.complete", genned, total, dim));
-            if (keepingLoaded != null && keepingLoaded)
-            {
-                DimensionManager.keepDimensionLoaded(dim, false);
-            }
-            return false;
+            DimensionManager.getProviderType(dim).setLoadSpawn(loadSpawn);
         }
-        return true;
     }
 }

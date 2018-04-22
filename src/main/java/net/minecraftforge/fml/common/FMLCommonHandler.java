@@ -663,17 +663,18 @@ public class FMLCommonHandler
      */
     public void exitJava(int exitCode, boolean hardExit)
     {
-        FMLLog.log.warn("Java has been asked to exit (code {})", exitCode);
+        FMLLog.log.info("Java has been asked to exit (code {}) by {}.", exitCode, Thread.currentThread().getStackTrace()[1]);
         if (hardExit)
         {
-            FMLLog.log.warn("This is an abortive exit and could cause world corruption or other things");
+            FMLLog.log.info("This is an abortive exit and could cause world corruption or other things");
         }
-        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        FMLLog.log.warn("Exit trace:");
-        //The first 2 elements are Thread#getStackTrace and FMLCommonHandler#exitJava and aren't relevant
-        for (int i = 2; i < stack.length; i++)
+        if (Boolean.parseBoolean(System.getProperty("fml.debugExit", "false")))
         {
-            FMLLog.log.warn("\t{}", stack[i]);
+            FMLLog.log.info("Exit trace", new Throwable());
+        }
+        else
+        {
+            FMLLog.log.info("If this was an unexpected exit, use -Dfml.debugExit=true as a JVM argument to find out where it was called");
         }
         if (hardExit)
         {

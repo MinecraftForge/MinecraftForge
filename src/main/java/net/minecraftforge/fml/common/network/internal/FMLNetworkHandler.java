@@ -23,11 +23,10 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.embedded.EmbeddedChannel;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Map.Entry;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,9 +54,9 @@ import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 
@@ -141,34 +140,26 @@ public class FMLNetworkHandler
         return checkModList(modList, side);
     }
 
-    /**
-     * @param listData map of modId string to version string, represents the mods available on the given side
-     * @param side the side that listData is coming from, either client or server
-     * @return null if everything is fine, returns a string error message if there are mod rejections
-     */
     @Nullable
     public static String checkModList(Map<String,String> listData, Side side)
     {
-        List<Pair<ModContainer, String>> rejects = NetworkRegistry.INSTANCE.registry().entrySet().stream()
-                .map(entry -> Pair.of(entry.getKey(), entry.getValue().checkCompatible(listData, side)))
-                .filter(pair -> pair.getValue() != null)
-                .sorted(Comparator.comparing(o -> o.getKey().getName()))
-                .collect(Collectors.toList());
+        List<ModContainer> rejects = Lists.newArrayList();
+        for (Entry<ModContainer, NetworkModHolder> networkMod : NetworkRegistry.INSTANCE.registry().entrySet())
+        {
+            boolean result = networkMod.getValue().check(listData, side);
+            if (!result)
+            {
+                rejects.add(networkMod.getKey());
+            }
+        }
         if (rejects.isEmpty())
         {
             return null;
         }
         else
         {
-            List<String> rejectStrings = new ArrayList<>();
-            for (Pair<ModContainer, String> reject : rejects)
-            {
-                ModContainer modContainer = reject.getKey();
-                rejectStrings.add(modContainer.getName() + ": " + reject.getValue());
-            }
-            String rejectString = String.join("\n", rejectStrings);
-            FMLLog.log.info("Rejecting connection {}: {}", side, rejectString);
-            return String.format("Server Mod rejections:\n%s", rejectString);
+            FMLLog.log.info("Rejecting connection {}: {}", side, rejects);
+            return String.format("Mod rejections %s",rejects);
         }
     }
 

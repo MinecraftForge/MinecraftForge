@@ -1,11 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
-@@ -66,18 +66,19 @@
-     {
-         super.func_180650_b(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_);
- 
-+        if (!p_180650_1_.func_175697_a(p_180650_2_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-         if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) >= 9)
+@@ -70,14 +70,14 @@
          {
              float f = BlockCrops.func_180672_a(this, p_180650_1_, p_180650_2_);
  
@@ -23,7 +18,7 @@
                  }
                  else
                  {
-@@ -90,13 +91,15 @@
+@@ -90,13 +90,15 @@
                      }
  
                      p_180650_2_ = p_180650_2_.func_177972_a(EnumFacing.Plane.HORIZONTAL.func_179518_a(p_180650_4_));
@@ -41,7 +36,7 @@
              }
          }
      }
-@@ -110,20 +113,23 @@
+@@ -110,20 +112,23 @@
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
          super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);

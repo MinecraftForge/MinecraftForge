@@ -24,21 +24,20 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+
 import net.minecraftforge.fml.common.FMLLog;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
-public class ModAccessTransformer extends AccessTransformer
-{
-    public static final Attributes.Name FMLAT = new Attributes.Name("FMLAT");
+public class ModAccessTransformer extends AccessTransformer {
     private static Map<String, String> embedded = Maps.newHashMap(); //Needs to be primitive so that both classloaders get the same class.
     @SuppressWarnings("unchecked")
-    public ModAccessTransformer() throws Exception
+	public ModAccessTransformer() throws Exception
     {
         super(ModAccessTransformer.class);
         //We are in the new ClassLoader here, so we need to get the static field from the other ClassLoader.
@@ -60,8 +59,11 @@ public class ModAccessTransformer extends AccessTransformer
         }
     }
 
-    public static void addJar(JarFile jar, String atList) throws IOException
+    public static void addJar(JarFile jar) throws IOException
     {
+        Manifest manifest = jar.getManifest();
+        String atList = manifest.getMainAttributes().getValue("FMLAT");
+        if (atList == null) return;
         for (String at : atList.split(" "))
         {
             JarEntry jarEntry = jar.getJarEntry("META-INF/"+at);

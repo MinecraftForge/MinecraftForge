@@ -815,8 +815,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
 
             Map<String,String> modListMap = modListBldr.build();
-            String modRejections = FMLNetworkHandler.checkModList(modListMap, Side.SERVER);
-            serverDataTag.put(data, new ExtendedServerListData(type, modRejections == null, modListMap, !moddedClientAllowed));
+            serverDataTag.put(data, new ExtendedServerListData(type, FMLNetworkHandler.checkModList(modListMap, Side.SERVER) == null, modListMap, !moddedClientAllowed));
         }
         else
         {
@@ -826,7 +825,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             {
                 moddedClientAllowed = !serverDescription.endsWith(":NOFML§r");
             }
-            serverDataTag.put(data, new ExtendedServerListData("VANILLA", false, ImmutableMap.of(), !moddedClientAllowed));
+            serverDataTag.put(data, new ExtendedServerListData("VANILLA", false, ImmutableMap.<String,String>of(), !moddedClientAllowed));
         }
         startupConnectionData.countDown();
     }
@@ -992,7 +991,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             return;
         }
-        Logger logger = LogManager.getLogger("FML.TEXTURE_ERRORS");
+        Logger logger = LogManager.getLogger("TEXTURE ERRORS");
         logger.error(Strings.repeat("+=", 25));
         logger.error("The following texture errors were found.");
         Map<String,FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "domainResourceManagers", "field_110548"+"_a");

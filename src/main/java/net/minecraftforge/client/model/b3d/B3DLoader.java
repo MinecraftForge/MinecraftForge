@@ -70,7 +70,6 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.common.FMLLog;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -127,9 +126,9 @@ public enum B3DLoader implements ICustomModelLoader
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if(!cache.containsKey(file))
         {
-            IResource resource = null;
             try
             {
+                IResource resource;
                 try
                 {
                     resource = manager.getResource(file);
@@ -150,10 +149,6 @@ public enum B3DLoader implements ICustomModelLoader
             {
                 cache.put(file, null);
                 throw e;
-            }
-            finally
-            {
-                IOUtils.closeQuietly(resource);
             }
         }
         B3DModel model = cache.get(file);

@@ -44,7 +44,6 @@ import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
-import net.minecraftforge.common.ForgeVersion;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -64,7 +63,7 @@ import com.google.common.collect.Table;
 
 public class B3DModel
 {
-    static final Logger logger = LogManager.getLogger(ForgeVersion.MOD_ID + ".B3DModel");
+    static final Logger logger = LogManager.getLogger(B3DModel.class);
     private static final boolean printLoadedModels = "true".equals(System.getProperty("b3dloader.printLoadedModels"));
     private final List<Texture> textures;
     private final List<Brush> brushes;

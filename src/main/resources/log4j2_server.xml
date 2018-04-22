@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="com.mojang.util,net.minecraftforge.server.console">
+    <Appenders>
+        <TerminalConsole name="FmlConsole">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
+        </TerminalConsole>
+        <TerminalConsole name="Console">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+        </TerminalConsole>
+        <!-- Keep a console appender open so log4j2 doesn't close our main out stream if we redirect System.out to the logger -->
+        <Console name="SysOut" target="SYSTEM_OUT"/>
+        <Queue name="ServerGuiConsole" ignoreExceptions="true">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
+        </Queue>
+        <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <OnStartupTriggeringPolicy />
+            </Policies>
+        </RollingRandomAccessFile>
+        <Routing name="FmlFile">
+            <Routes pattern="$${ctx:side}">
+                <Route>
+                    <RollingRandomAccessFile name="FmlFile" fileName="logs/fml-${ctx:side}-latest.log" filePattern="logs/fml-${ctx:side}-%i.log">
+                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%X{mod}]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
+                        <DefaultRolloverStrategy max="3" fileIndex="max" />
+                        <Policies>
+                            <OnStartupTriggeringPolicy />
+                        </Policies>
+                    </RollingRandomAccessFile>
+                </Route>
+                <Route key="$${ctx:side}">
+                    <RandomAccessFile name="FmlFile" fileName="logs/fml-junk-earlystartup.log" >
+                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
+                    </RandomAccessFile>
+                </Route>
+            </Routes>
+        </Routing>
+    </Appenders>
+    <Loggers>
+        <Logger level="info" name="com.mojang" additivity="false">
+            <AppenderRef ref="Console" level="INFO" />
+            <AppenderRef ref="File" />
+            <AppenderRef ref="ServerGuiConsole" level="INFO" />
+        </Logger>
+        <Logger level="info" name="net.minecraft" additivity="false">
+            <filters>
+                <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
+            </filters>
+            <AppenderRef ref="Console" level="INFO" />
+            <AppenderRef ref="File" />
+            <AppenderRef ref="ServerGuiConsole" level="INFO" />
+        </Logger>
+        <Root level="all">
+            <AppenderRef ref="FmlConsole" level="INFO" />
+            <AppenderRef ref="ServerGuiConsole" level="INFO" />
+            <AppenderRef ref="FmlFile"/>
+        </Root>
+    </Loggers>
+</Configuration>

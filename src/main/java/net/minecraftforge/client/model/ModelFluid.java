@@ -323,7 +323,7 @@ public final class ModelFluid implements IModel
                 {
                 case POSITION:
                     float[] data = new float[]{ x - side.getDirectionVec().getX() * eps, y, z - side.getDirectionVec().getZ() * eps, 1 };
-                    if(transformation.isPresent() && !transformation.get().isIdentity())
+                    if(transformation.isPresent() && transformation.get() != TRSRTransformation.identity())
                     {
                         Vector4f vec = new Vector4f(data);
                         transformation.get().getMatrix().transform(vec);

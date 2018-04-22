@@ -105,12 +105,12 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         @Override
         public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
-            String modRejections = FMLNetworkHandler.checkModList((FMLHandshakeMessage.ModList) msg, Side.SERVER);
-            if (modRejections != null)
+            String result = FMLNetworkHandler.checkModList((FMLHandshakeMessage.ModList) msg, Side.SERVER);
+            if (result != null)
             {
                 cons.accept(ERROR);
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                dispatcher.rejectHandshake(modRejections);
+                dispatcher.rejectHandshake(result);
                 return;
             }
             if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())

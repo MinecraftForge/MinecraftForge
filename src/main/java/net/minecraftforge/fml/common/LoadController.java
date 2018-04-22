@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.TextTable;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
@@ -132,7 +131,7 @@ public class LoadController
             }
             else
             {
-                FMLLog.log.warn("Mod {} has been disabled through configuration", mod.getModId());
+                LogManager.getLogger(mod.getModId()).warn("Mod {} has been disabled through configuration", mod.getModId());
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 modStates.put(mod.getModId(), ModState.DISABLED);
             }
@@ -186,7 +185,6 @@ public class LoadController
         if (errors.size() > 0)
         {
             FMLLog.log.fatal("Fatal errors were detected during {}. Loading cannot continue.", state);
-            MinecraftForge.EVENT_BUS.shutdown();
             state = state.transition(true);
             throw throwStoredErrors();
         }
@@ -268,7 +266,7 @@ public class LoadController
         {
             if (av.getLabel()!= null && requirements.contains(av.getLabel()) && modStates.containsEntry(av.getLabel(),ModState.ERRORED))
             {
-                FMLLog.log.error("Skipping event {} and marking errored mod {} since required dependency {} has errored", stateEvent.getEventType(), modId, av.getLabel());
+                LogManager.getLogger(modId).error("Skipping event {} and marking errored mod {} since required dependency {} has errored", stateEvent.getEventType(), modId, av.getLabel());
                 modStates.put(modId, ModState.ERRORED);
                 return;
             }
@@ -276,9 +274,9 @@ public class LoadController
         activeContainer = mc;
         stateEvent.applyModContainer(mc);
         ThreadContext.put("mod", modId);
-        FMLLog.log.trace("Sending event {} to mod {}", stateEvent.getEventType(), modId);
+        LogManager.getLogger(modId).trace("Sending event {} to mod {}", stateEvent.getEventType(), modId);
         eventChannels.get(modId).post(stateEvent);
-        FMLLog.log.trace("Sent event {} to mod {}", stateEvent.getEventType(), modId);
+        LogManager.getLogger(modId).trace("Sent event {} to mod {}", stateEvent.getEventType(), modId);
         ThreadContext.remove("mod");
         activeContainer = null;
         if (stateEvent instanceof FMLStateEvent)

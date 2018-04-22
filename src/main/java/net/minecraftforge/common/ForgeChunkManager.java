@@ -44,7 +44,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
-import net.minecraft.world.storage.ThreadedFileIOBase;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -945,19 +944,15 @@ public class ForgeChunkManager
                 }
             }
         }
-
-        // Write the actual file on the IO thread rather than blocking the server thread
-        ThreadedFileIOBase.getThreadedIOInstance().queueIO(() -> {
-            try
-            {
-                CompressedStreamTools.write(forcedChunkData, chunkLoaderData);
-            }
-            catch (IOException e)
-            {
-                FMLLog.log.warn("Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
-            }
-            return false;
-        });
+        try
+        {
+            CompressedStreamTools.write(forcedChunkData, chunkLoaderData);
+        }
+        catch (IOException e)
+        {
+            FMLLog.log.warn("Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
+            return;
+        }
     }
 
     static void loadEntity(Entity entity)
