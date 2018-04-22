@@ -75,7 +75,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
-        FMLProxyPacket proxy = new FMLProxyPacket(buffer/*.copy()*/, channel);
+        FMLProxyPacket proxy = new FMLProxyPacket(buffer, channel);
         WeakReference<FMLProxyPacket> ref = ctx.channel().attr(INBOUNDPACKETTRACKER).get().get();
         FMLProxyPacket old = ref == null ? null : ref.get();
         if (old != null)
