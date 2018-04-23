@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.TextTable;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
@@ -185,6 +186,7 @@ public class LoadController
         if (errors.size() > 0)
         {
             FMLLog.log.fatal("Fatal errors were detected during {}. Loading cannot continue.", state);
+            MinecraftForge.EVENT_BUS.shutdown();
             state = state.transition(true);
             throw throwStoredErrors();
         }

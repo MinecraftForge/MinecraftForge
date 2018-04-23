@@ -125,6 +125,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
                 }
             }
         }
+        lighter.resetBlockInfo();
         return !empty;
     }
 }
