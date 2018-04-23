@@ -80,15 +80,6 @@
              }
              else
              {
-@@ -1676,7 +1689,7 @@
-             p_189511_1_.func_74777_a("Fire", (short)this.field_190534_ay);
-             p_189511_1_.func_74777_a("Air", (short)this.func_70086_ai());
-             p_189511_1_.func_74757_a("OnGround", this.field_70122_E);
--            p_189511_1_.func_74768_a("Dimension", this.field_71093_bK);
-+            p_189511_1_.func_74768_a("DimensionProvider", this.field_71093_bK);
-             p_189511_1_.func_74757_a("Invulnerable", this.field_83001_bt);
-             p_189511_1_.func_74768_a("PortalCooldown", this.field_71088_bW);
-             p_189511_1_.func_186854_a("UUID", this.func_110124_au());
 @@ -1707,6 +1720,7 @@
              {
                  p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
@@ -107,18 +98,6 @@
              this.func_70014_b(p_189511_1_);
  
              if (this.func_184207_aI())
-@@ -1799,9 +1816,9 @@
-             this.func_70050_g(p_70020_1_.func_74765_d("Air"));
-             this.field_70122_E = p_70020_1_.func_74767_n("OnGround");
- 
--            if (p_70020_1_.func_74764_b("Dimension"))
-+            if (p_70020_1_.func_74764_b("DimensionProvider"))
-             {
--                this.field_71093_bK = p_70020_1_.func_74762_e("Dimension");
-+                this.field_71093_bK = p_70020_1_.func_74762_e("DimensionProvider");
-             }
- 
-             this.field_83001_bt = p_70020_1_.func_74767_n("Invulnerable");
 @@ -1826,7 +1843,11 @@
              this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
              this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
@@ -167,15 +146,6 @@
              this.field_184239_as = null;
              entity.func_184225_p(this);
          }
-@@ -2498,7 +2525,7 @@
-     private void func_180432_n(Entity p_180432_1_)
-     {
-         NBTTagCompound nbttagcompound = p_180432_1_.func_189511_e(new NBTTagCompound());
--        nbttagcompound.func_82580_o("Dimension");
-+        nbttagcompound.func_82580_o("DimensionProvider");
-         this.func_70020_e(nbttagcompound);
-         this.field_71088_bW = p_180432_1_.field_71088_bW;
-         this.field_181016_an = p_180432_1_.field_181016_an;
 @@ -2509,8 +2536,16 @@
      @Nullable
      public Entity func_184204_a(int p_184204_1_)
