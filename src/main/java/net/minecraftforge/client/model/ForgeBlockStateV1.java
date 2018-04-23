@@ -467,6 +467,61 @@ public class ForgeBlockStateV1 extends Marker
                 return TRSRTransformation.blockCenterToCorner(flipX.compose(TRSRTransformation.blockCornerToCenter(transform)).compose(flipX));
             }
 
+            // Note: these strings might change to a full-blown resource locations in the future, and move from here to some json somewhere
+            // TODO: vanilla now includes from parent, deprecate?
+            private static final ImmutableMap<String, IModelState> transforms;
+
+            static
+            {
+                ImmutableMap.Builder<String, IModelState> builder = ImmutableMap.builder();
+
+                builder.put("identity", TRSRTransformation.identity());
+
+                // block/block
+                {
+                    EnumMap<TransformType, TRSRTransformation> map = new EnumMap<>(TransformType.class);
+                    TRSRTransformation thirdperson = get(0, 2.5f, 0, 75, 45, 0, 0.375f);
+                    map.put(TransformType.GUI,                     get(0, 0, 0, 30, 225, 0, 0.625f));
+                    map.put(TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
+                    map.put(TransformType.FIXED,                   get(0, 0, 0, 0, 0, 0, 0.5f));
+                    map.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
+                    map.put(TransformType.THIRD_PERSON_LEFT_HAND,  leftify(thirdperson));
+                    map.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
+                    map.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 225, 0, 0.4f));
+                    builder.put("forge:default-block", new SimpleModelState(ImmutableMap.copyOf(map)));
+                }
+
+                // item/generated
+                {
+                    EnumMap<TransformType, TRSRTransformation> map = new EnumMap<>(TransformType.class);
+                    TRSRTransformation thirdperson = get(0, 3, 1, 0, 0, 0, 0.55f);
+                    TRSRTransformation firstperson = get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f);
+                    map.put(TransformType.GROUND,                  get(0, 2, 0, 0, 0, 0, 0.5f));
+                    map.put(TransformType.HEAD,                    get(0, 13, 7, 0, 180, 0, 1));
+                    map.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
+                    map.put(TransformType.THIRD_PERSON_LEFT_HAND,  leftify(thirdperson));
+                    map.put(TransformType.FIRST_PERSON_RIGHT_HAND, firstperson);
+                    map.put(TransformType.FIRST_PERSON_LEFT_HAND,  leftify(firstperson));
+                    map.put(TransformType.FIXED,                   get(0, 0, 0, 0, 180, 0, 1));
+                    builder.put("forge:default-item", new SimpleModelState(ImmutableMap.copyOf(map)));
+                }
+
+                // item/handheld
+                {
+                    EnumMap<TransformType, TRSRTransformation> map = new EnumMap<>(TransformType.class);
+                    map.put(TransformType.GROUND,                  get(0, 2, 0, 0, 0, 0, 0.5f));
+                    map.put(TransformType.HEAD,                    get(0, 13, 7, 0, 180, 0, 1));
+                    map.put(TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 4, 0.5f,         0, -90, 55, 0.85f));
+                    map.put(TransformType.THIRD_PERSON_LEFT_HAND,  get(0, 4, 0.5f,         0, 90, -55, 0.85f));
+                    map.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f));
+                    map.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f));
+                    map.put(TransformType.FIXED,                   get(0, 0, 0, 0, 180, 0, 1));
+                    builder.put("forge:default-tool", new SimpleModelState(ImmutableMap.copyOf(map)));
+                }
+
+                transforms = builder.build();
+            }
+
             @Override
             public ForgeBlockStateV1.Variant deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
             {
@@ -497,7 +552,7 @@ public class ForgeBlockStateV1 extends Marker
                 {   // Load rotation values.
                     int x = JsonUtils.getInt(json, "x", 0);
                     int y = JsonUtils.getInt(json, "y", 0);
-                    ret.state = Optional.of(new TRSRTransformation(ModelRotation.getModelRotation(x, y)));
+                    ret.state = Optional.ofNullable(ModelRotation.getModelRotation(x, y));
                     if (!ret.state.isPresent())
                         throw new JsonParseException("Invalid BlockModelRotation x: " + x + " y: " + y);
                 }
@@ -507,51 +562,8 @@ public class ForgeBlockStateV1 extends Marker
                     if (json.get("transform").isJsonPrimitive() && json.get("transform").getAsJsonPrimitive().isString())
                     {
                         String transform = json.get("transform").getAsString();
-                        // Note: these strings might change to a full-blown resource locations in the future, and move from here to some json somewhere
-                        // TODO: vanilla now includes from parent, deprecate?
-                        if (transform.equals("identity"))
-                        {
-                            ret.state = Optional.of(TRSRTransformation.identity());
-                        }
-                        // block/block
-                        else if (transform.equals("forge:default-block"))
-                        {
-                            TRSRTransformation thirdperson = get(0, 2.5f, 0, 75, 45, 0, 0.375f);
-                            ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
-                            builder.put(TransformType.GUI,                     get(0, 0, 0, 30, 225, 0, 0.625f));
-                            builder.put(TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
-                            builder.put(TransformType.FIXED,                   get(0, 0, 0, 0, 0, 0, 0.5f));
-                            builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
-                            builder.put(TransformType.THIRD_PERSON_LEFT_HAND,  leftify(thirdperson));
-                            builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
-                            builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 225, 0, 0.4f));
-                            ret.state = Optional.of(new SimpleModelState(builder.build()));
-                        }
-                        // item/generated
-                        else if (transform.equals("forge:default-item"))
-                        {
-                            TRSRTransformation thirdperson = get(0, 3, 1, 0, 0, 0, 0.55f);
-                            TRSRTransformation firstperson = get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f);
-                            ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
-                            builder.put(TransformType.GROUND,                  get(0, 2, 0, 0, 0, 0, 0.5f));
-                            builder.put(TransformType.HEAD,                    get(0, 13, 7, 0, 180, 0, 1));
-                            builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
-                            builder.put(TransformType.THIRD_PERSON_LEFT_HAND, leftify(thirdperson));
-                            builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, firstperson);
-                            builder.put(TransformType.FIRST_PERSON_LEFT_HAND, leftify(firstperson));
-                            builder.put(TransformType.FIXED, get(0, 0, 0, 0, 180, 0, 1));
-                            ret.state = Optional.of(new SimpleModelState(builder.build()));
-                        }
-                        // item/handheld
-                        else if (transform.equals("forge:default-tool"))
-                        {
-                            ret.state = Optional.of(new SimpleModelState(ImmutableMap.of(
-                                TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 4, 0.5f,         0, -90, 55, 0.85f),
-                                TransformType.THIRD_PERSON_LEFT_HAND,  get(0, 4, 0.5f,         0, 90, -55, 0.85f),
-                                TransformType.FIRST_PERSON_RIGHT_HAND, get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f),
-                                TransformType.FIRST_PERSON_LEFT_HAND,  get(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f))));
-                        }
-                        else
+                        ret.state = Optional.ofNullable(transforms.get(transform));
+                        if (!ret.state.isPresent())
                         {
                             throw new JsonParseException("transform: unknown default string: " + transform);
                         }

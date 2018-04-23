@@ -22,6 +22,7 @@ package net.minecraftforge.debug.mod;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.item.Item;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
@@ -54,6 +55,12 @@ public class ClientLoadingExceptionTest
 
     @SubscribeEvent
     public void registerItems(RegistryEvent<Item> itemRegistryEvent)
+    {
+        throw new RuntimeException("This should not be called because the mod threw an exception earlier in Pre-Init and is in a broken state.");
+    }
+
+    @SubscribeEvent
+    public void onModelBake(ModelBakeEvent e)
     {
         throw new RuntimeException("This should not be called because the mod threw an exception earlier in Pre-Init and is in a broken state.");
     }

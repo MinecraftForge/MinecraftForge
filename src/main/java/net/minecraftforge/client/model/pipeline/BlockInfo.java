@@ -94,6 +94,16 @@ public class BlockInfo
         shx = shy = shz = 0;
     }
 
+    public void reset()
+    {
+        this.world = null;
+        this.state = null;
+        this.blockPos = null;
+        cachedTint = -1;
+        cachedMultiplier = -1;
+        shx = shy = shz = 0;
+    }
+
     private float combine(int c, int s1, int s2, int s3, boolean t0, boolean t1, boolean t2, boolean t3)
     {
         if (c  == 0 && !t0) c  = Math.max(0, Math.max(s1, s2) - 1);
