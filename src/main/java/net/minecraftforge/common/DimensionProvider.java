@@ -35,8 +35,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 /**
  * Should be created and registered at {@link net.minecraftforge.event.RegistryEvent.Register< DimensionProvider >}
  * If the number of dimensions you need it variable it's probably best to register them at the start of the game and initialize them later
- *
- * @author temp1011 (needed?)
  */
 public class DimensionProvider implements IForgeRegistryEntry<DimensionProvider>
 {
