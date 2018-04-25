@@ -1175,32 +1175,22 @@ public final class ModelLoader extends ModelBakery
             ModelResourceLocation variant = (ModelResourceLocation) modelLocation;
             ModelBlockDefinition definition = loader.getModelBlockDefinition(variant);
 
-            if (definition.equals(loader.multipartDefinitions.get(variant)))
-            {
-                IModel model = loader.multipartModels.get(definition);
-                if (model == null)
-                {
-                    model = makeModel(variant, definition);
-                    loader.multipartModels.put(definition, model);
-                }
-                return model;
-            }
-
-            return makeModel(variant, definition);
-        }
-
-        private IModel makeModel(ModelResourceLocation variant, ModelBlockDefinition definition) throws Exception
-        {
             try
             {
                 VariantList variants = definition.getVariant(variant.getVariant());
                 return new WeightedRandomModel(variant, variants);
             }
-            catch(MissingVariantException e)
+            catch (MissingVariantException e)
             {
-                if(definition.hasMultipartData())
+                if (definition.equals(loader.multipartDefinitions.get(variant)))
                 {
-                    return new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
+                    IModel model = loader.multipartModels.get(definition);
+                    if (model == null)
+                    {
+                        model = new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
+                        loader.multipartModels.put(definition, model);
+                    }
+                    return model;
                 }
                 throw e;
             }
