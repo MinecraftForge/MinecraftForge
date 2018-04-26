@@ -40,7 +40,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.DimensionProviderManager;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -104,9 +104,9 @@ class CommandEntity extends CommandTreeBase
             if (names.isEmpty())
                 throw new WrongUsageException("commands.forge.entity.list.invalid");
 
-            int dim = args.length > 1 ? parseInt(args[1]) : sender.getEntityWorld().provider.getDimensionInt();
+            int dim = args.length > 1 ? parseInt(args[1]) : sender.getEntityWorld().provider.getDimensionProviderInt();
 
-            WorldServer world = DimensionManager.getWorld(dim);
+            WorldServer world = DimensionProviderManager.getWorld(dim);
             if (world == null)
                 throw new WrongUsageException("commands.forge.entity.list.invalidworld", dim);
 

@@ -132,7 +132,7 @@ public class MapDataTest
             worldIn.setData(s, mapdata);
             mapdata.scale = scale;
             mapdata.calculateMapCenter(worldX, worldZ, mapdata.scale);
-            mapdata.dimension = worldIn.provider.getDimensionInt();
+            mapdata.dimension = worldIn.provider.getDimensionProviderInt();
             mapdata.trackingPosition = trackingPosition;
             mapdata.unlimitedTracking = unlimitedTracking;
             mapdata.markDirty();
@@ -163,7 +163,7 @@ public class MapDataTest
                 mapdata = new CustomMapData(s);
                 mapdata.scale = 3;
                 mapdata.calculateMapCenter((double) worldIn.getWorldInfo().getSpawnX(), (double) worldIn.getWorldInfo().getSpawnZ(), mapdata.scale);
-                mapdata.dimension = worldIn.provider.getDimensionInt();
+                mapdata.dimension = worldIn.provider.getDimensionProviderInt();
                 mapdata.markDirty();
                 worldIn.setData(s, mapdata);
             }

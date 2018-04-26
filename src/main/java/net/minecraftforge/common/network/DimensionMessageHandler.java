@@ -21,19 +21,19 @@ package net.minecraftforge.common.network;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import net.minecraft.world.DimensionType;
-import net.minecraftforge.common.DimensionManager;
+
+import net.minecraftforge.common.DimensionProviderManager;
 import net.minecraftforge.common.network.ForgeMessage.DimensionRegisterMessage;
-import org.apache.logging.log4j.Level;
+
 import net.minecraftforge.fml.common.FMLLog;
 
 public class DimensionMessageHandler extends SimpleChannelInboundHandler<ForgeMessage.DimensionRegisterMessage>{
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DimensionRegisterMessage msg) throws Exception
     {
-        if (!DimensionManager.isDimensionActive(msg.dimensionId))
+        if (!DimensionProviderManager.isDimensionActive(msg.dimensionId))
         {
-            DimensionManager.registerDimensionActive(msg.dimensionId);
+            DimensionProviderManager.registerDimensionActive(msg.dimensionId);
         }
     }
     @Override

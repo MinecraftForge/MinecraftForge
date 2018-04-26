@@ -90,7 +90,7 @@
 +    {
 +        return dimensionProvider.getID();
 +    }
-+    public int  getDimensionInt()
++    public int getDimensionProviderInt()
 +    {
 +    	return dimensionProvider.getDimIntID();
 +    }

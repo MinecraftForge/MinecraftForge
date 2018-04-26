@@ -8,7 +8,7 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 
 import net.minecraftforge.common.DimensionProvider;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.DimensionProviderManager;
 import net.minecraftforge.event.RegistryEvent;
 
 import net.minecraftforge.fml.common.Mod;
@@ -35,7 +35,7 @@ public class CanSleepAtTest
             dimType = dim.getType();
             dimId = dim.getID();
             event.getRegistry().register(dim);
-            DimensionManager.registerDimensionActive(dimId);
+            DimensionProviderManager.registerDimensionActive(dimId);
         }
     }
 

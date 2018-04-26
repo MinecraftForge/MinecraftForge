@@ -53,7 +53,7 @@ import net.minecraft.network.play.server.SPacketDisconnect;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.DimensionProviderManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -221,7 +221,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         if (playerNBT!=null)
         {
             int dimension = playerNBT.getInteger("DimensionProvider");
-            if (DimensionManager.isDimensionActive(dimension))
+            if (DimensionProviderManager.isDimensionActive(dimension))
             {
                 return dimension;
             }

@@ -26,7 +26,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionProvider;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.DimensionProviderManager;
 
 class CommandTps extends CommandBase
 {
@@ -69,7 +69,7 @@ class CommandTps extends CommandBase
 
         if (summary)
         {
-            for (Integer dimId : DimensionManager.getIntIDs())
+            for (Integer dimId : DimensionProviderManager.getIntIDs())
             {
                 double worldTickTime = mean(server.worldTickTimes.get(DimensionProvider.getID(dimId))) * 1.0E-6D;
                 double worldTPS = Math.min(1000.0/worldTickTime, 20);
@@ -89,7 +89,7 @@ class CommandTps extends CommandBase
 
     private static String getDimensionPrefix(int dimId)
     {
-        DimensionType providerType = DimensionManager.getProviderType(dimId);
+        DimensionType providerType = DimensionProviderManager.getProviderType(dimId);
         if (providerType == null)
         {
             return String.format("Dim %s (%d)", DimensionProvider.getID(dimId).toString(), dimId);

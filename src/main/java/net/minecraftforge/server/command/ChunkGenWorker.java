@@ -33,7 +33,7 @@ import net.minecraft.world.chunk.Chunk;
 
 import net.minecraftforge.common.DimensionProvider;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.DimensionProviderManager;
 import net.minecraftforge.common.WorldWorkerManager.IWorker;
 
 public class ChunkGenWorker implements IWorker
@@ -106,11 +106,11 @@ public class ChunkGenWorker implements IWorker
     @Override
     public boolean doWork()
     {
-        WorldServer world = DimensionManager.getWorld(dim);
+        WorldServer world = DimensionProviderManager.getWorld(dim);
         if (world == null)
         {
-            DimensionManager.initDimension(dim);
-            world = DimensionManager.getWorld(dim);
+            DimensionProviderManager.initDimension(dim);
+            world = DimensionProviderManager.getWorld(dim);
             if (world == null)
             {
                 listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.dim_fail", dim));
@@ -138,7 +138,7 @@ public class ChunkGenWorker implements IWorker
             // While we work we don't want to cause world load spam so pause unloading the world.
             if (keepingLoaded == null)
             {
-                keepingLoaded = DimensionManager.keepDimensionLoaded(DimensionProvider.getID(dim), true);
+                keepingLoaded = DimensionProviderManager.keepDimensionLoaded(DimensionProvider.getID(dim), true);
             }
 
             if (++lastNotification >= notificationFrequency || lastNotifcationTime < System.currentTimeMillis() - 60*1000)
@@ -189,7 +189,7 @@ public class ChunkGenWorker implements IWorker
             listener.sendMessage(TextComponentHelper.createComponentTranslation(listener, "commands.forge.gen.complete", genned, total, dim));
             if (keepingLoaded != null && keepingLoaded)
             {
-                DimensionManager.keepDimensionLoaded(DimensionProvider.getID(dim), false);
+                DimensionProviderManager.keepDimensionLoaded(DimensionProvider.getID(dim), false);
             }
             return false;
         }

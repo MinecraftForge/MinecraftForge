@@ -37,7 +37,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DimensionType;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.DimensionProviderManager;
 import net.minecraftforge.server.timings.ForgeTimings;
 import net.minecraftforge.server.timings.TimeTracker;
 
@@ -256,7 +256,7 @@ class CommandTrack extends CommandTreeBase
          */
         protected String getWorldName(int dimId)
         {
-            DimensionType type = DimensionManager.getProviderType(dimId);
+            DimensionType type = DimensionProviderManager.getProviderType(dimId);
             if (type == null)
             {
                 return "Dim " + dimId;
@@ -295,7 +295,7 @@ class CommandTrack extends CommandTreeBase
                 return TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.invalid");
 
             BlockPos currentPos = entity.getPosition();
-            String world = getWorldName(entity.world.provider.getDimensionInt());
+            String world = getWorldName(entity.world.provider.getDimensionProviderInt());
             double averageTimings = data.getAverageTimings();
             String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + getTimeSuffix(
                     averageTimings);
@@ -340,7 +340,7 @@ class CommandTrack extends CommandTreeBase
                     averageTimings);
             return TextComponentHelper
                     .createComponentTranslation(sender, "commands.forge.tracking.timingEntry", name,
-                            getWorldName(te.getWorld().provider.getDimensionInt()),
+                            getWorldName(te.getWorld().provider.getDimensionProviderInt()),
                             pos.getX(), pos.getY(), pos.getZ(), tickTime);
         }
 

@@ -52,7 +52,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multiset;
 
-public class DimensionManager
+public class DimensionProviderManager
 {
     private static Hashtable<ResourceLocation, WorldServer> worlds = new Hashtable<>();
     private static Set<ResourceLocation> activeDimensions = new HashSet<>();
@@ -248,7 +248,7 @@ public class DimensionManager
         }
         try
         {
-            DimensionManager.getProviderType(dimID);
+            DimensionProviderManager.getProviderType(dimID);
         }
         catch (Exception e)
         {
@@ -419,9 +419,9 @@ public class DimensionManager
     @Nullable
     public static File getCurrentSaveRootDirectory()
     {
-        if (DimensionManager.getWorld(new ResourceLocation("minecraft:overworld")) != null)
+        if (DimensionProviderManager.getWorld(new ResourceLocation("minecraft:overworld")) != null)
         {
-            return DimensionManager.getWorld(new ResourceLocation("minecraft:overworld")).getSaveHandler().getWorldDirectory();
+            return DimensionProviderManager.getWorld(new ResourceLocation("minecraft:overworld")).getSaveHandler().getWorldDirectory();
         }/*
         else if (MinecraftServer.getServer() != null)
         {

@@ -45,7 +45,7 @@
 -        this.field_71318_t.func_72364_a(this.field_71305_c);
 +        WorldServer overWorld = (WorldServer)(func_71242_L() ? new WorldServerDemo(this, isavehandler, worldinfo, 0, field_71304_b).func_175643_b() : new WorldServer(this, isavehandler, worldinfo, 0, field_71304_b).func_175643_b());
 +        overWorld.func_72963_a(worldsettings);
-+        for (int dim : net.minecraftforge.common.DimensionManager.getStaticDimensionIDs())
++        for (int dim : net.minecraftforge.common.DimensionProviderManager.getStaticDimensionIDs())
 +        {
 +            WorldServer world = (dim == 0 ? overWorld : (WorldServer)new WorldServerMulti(this, isavehandler, dim, overWorld, field_71304_b).func_175643_b());
 +            world.func_72954_a(new ServerWorldEventHandler(this, world));
@@ -66,7 +66,7 @@
          int j1 = 0;
          field_147145_h.info("Preparing start region for level 0");
 -        WorldServer worldserver = this.field_71305_c[0];
-+        WorldServer worldserver = net.minecraftforge.common.DimensionManager.getWorld(j1);
++        WorldServer worldserver = net.minecraftforge.common.DimensionProviderManager.getWorld(j1);
          BlockPos blockpos = worldserver.func_175694_M();
          long k1 = func_130071_aq();
  
@@ -82,7 +82,7 @@
 +            WorldServer[] tmp = field_71305_c;
 +            for (WorldServer world : tmp)
 +            {
-+                net.minecraftforge.common.DimensionManager.setWorld(world.field_73011_w.getDimensionProvider(), null, this);
++                net.minecraftforge.common.DimensionProviderManager.setWorld(world.field_73011_w.getDimensionProvider(), null, this);
 +            }
          }
  
@@ -179,7 +179,7 @@
 +        net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
  
 -        for (int j = 0; j < this.field_71305_c.length; ++j)
-+        java.util.Set<net.minecraft.util.ResourceLocation> ids = net.minecraftforge.common.DimensionManager.getIDs(this.field_71315_w % 200 == 0);
++        java.util.Set<net.minecraft.util.ResourceLocation> ids = net.minecraftforge.common.DimensionProviderManager.getIDs(this.field_71315_w % 200 == 0);
 +        for (net.minecraft.util.ResourceLocation id : ids)
          {
              long i = System.nanoTime();
@@ -188,7 +188,7 @@
 +            if (id.toString().equals("minecraft:overworld") || this.func_71255_r())
              {
 -                WorldServer worldserver = this.field_71305_c[j];
-+                WorldServer worldserver = net.minecraftforge.common.DimensionManager.getWorld(id);
++                WorldServer worldserver = net.minecraftforge.common.DimensionProviderManager.getWorld(id);
                  this.field_71304_b.func_194340_a(() ->
                  {
                      return worldserver.func_72912_H().func_76065_j();
@@ -197,7 +197,7 @@
                  {
                      this.field_71304_b.func_76320_a("timeSync");
 -                    this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.func_186058_p().func_186068_a());
-+                    this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.getDimensionInt());
++                    this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.getDimensionProviderInt());
                      this.field_71304_b.func_76319_b();
                  }
  
@@ -223,7 +223,7 @@
          }
  
 +        this.field_71304_b.func_76318_c("dim_unloading");
-+        net.minecraftforge.common.DimensionManager.unloadWorlds(worldTickTimes);
++        net.minecraftforge.common.DimensionProviderManager.unloadWorlds(worldTickTimes);
          this.field_71304_b.func_76318_c("connection");
          this.func_147137_ag().func_151269_c();
          this.field_71304_b.func_76318_c("players");
@@ -242,12 +242,12 @@
      public WorldServer func_71218_a(int p_71218_1_)
      {
 -        if (p_71218_1_ == -1)
-+        WorldServer ret = net.minecraftforge.common.DimensionManager.getWorld(p_71218_1_);
++        WorldServer ret = net.minecraftforge.common.DimensionProviderManager.getWorld(p_71218_1_);
 +        if (ret == null)
          {
 -            return this.field_71305_c[1];
-+            net.minecraftforge.common.DimensionManager.initDimension(p_71218_1_);
-+            ret = net.minecraftforge.common.DimensionManager.getWorld(p_71218_1_);
++            net.minecraftforge.common.DimensionProviderManager.initDimension(p_71218_1_);
++            ret = net.minecraftforge.common.DimensionProviderManager.getWorld(p_71218_1_);
          }
 -        else
 -        {

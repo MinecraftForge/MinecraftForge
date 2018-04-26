@@ -67,7 +67,7 @@ class CommandGenerate extends CommandBase
 
         BlockPos blockpos = parseBlockPos(sender, args, 0, false);
         int count = parseInt(args[3], 10);
-        int dim = args.length >= 5 ? parseInt(args[4]) : sender.getEntityWorld().provider.getDimensionInt();
+        int dim = args.length >= 5 ? parseInt(args[4]) : sender.getEntityWorld().provider.getDimensionProviderInt();
         int interval = args.length >= 6 ? parseInt(args[5]) : -1;
         BlockPos chunkpos = new BlockPos(blockpos.getX() >> 4, 0, blockpos.getZ() >> 4);
 

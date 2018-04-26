@@ -5,7 +5,7 @@
      {
          this.field_76578_c = new BiomeProviderSingle(Biomes.field_76779_k);
 -        NBTTagCompound nbttagcompound = this.field_76579_a.func_72912_H().func_186347_a(DimensionType.THE_END);
-+        NBTTagCompound nbttagcompound = this.field_76579_a.func_72912_H().getDimensionData(this.field_76579_a.field_73011_w.getDimensionInt());
++        NBTTagCompound nbttagcompound = this.field_76579_a.func_72912_H().getDimensionData(this.field_76579_a.field_73011_w.getDimensionProviderInt());
          this.field_186064_g = this.field_76579_a instanceof WorldServer ? new DragonFightManager((WorldServer)this.field_76579_a, nbttagcompound.func_74775_l("DragonFight")) : null;
      }
  
@@ -14,7 +14,7 @@
          }
  
 -        this.field_76579_a.func_72912_H().func_186345_a(DimensionType.THE_END, nbttagcompound);
-+        this.field_76579_a.func_72912_H().setDimensionData(this.field_76579_a.field_73011_w.getDimensionInt(), nbttagcompound);
++        this.field_76579_a.func_72912_H().setDimensionData(this.field_76579_a.field_73011_w.getDimensionProviderInt(), nbttagcompound);
      }
  
      public void func_186059_r()

@@ -11,7 +11,7 @@
      public WorldServer(MinecraftServer p_i45921_1_, ISaveHandler p_i45921_2_, WorldInfo p_i45921_3_, int p_i45921_4_, Profiler p_i45921_5_)
      {
 -        super(p_i45921_2_, p_i45921_3_, DimensionType.func_186069_a(p_i45921_4_).func_186070_d(), p_i45921_5_, false);
-+        super(p_i45921_2_, p_i45921_3_, net.minecraftforge.common.DimensionManager.createProviderFor(p_i45921_4_), p_i45921_5_, false);
++        super(p_i45921_2_, p_i45921_3_, net.minecraftforge.common.DimensionProviderManager.createProviderFor(p_i45921_4_), p_i45921_5_, false);
          this.field_73061_a = p_i45921_1_;
          this.field_73062_L = new EntityTracker(this);
          this.field_73063_M = new PlayerChunkMap(this);
@@ -25,7 +25,7 @@
          this.func_72966_v();
          this.func_72947_a();
          this.func_175723_af().func_177725_a(p_i45921_1_.func_175580_aG());
-+        net.minecraftforge.common.DimensionManager.setWorld(p_i45921_4_, this, field_73061_a);
++        net.minecraftforge.common.DimensionProviderManager.setWorld(p_i45921_4_, this, field_73061_a);
      }
  
      public World func_175643_b()
@@ -231,7 +231,7 @@
          if (super.func_72942_c(p_72942_1_))
          {
 -            this.field_73061_a.func_184103_al().func_148543_a((EntityPlayer)null, p_72942_1_.field_70165_t, p_72942_1_.field_70163_u, p_72942_1_.field_70161_v, 512.0D, this.field_73011_w.func_186058_p().func_186068_a(), new SPacketSpawnGlobalEntity(p_72942_1_));
-+            this.field_73061_a.func_184103_al().func_148543_a((EntityPlayer)null, p_72942_1_.field_70165_t, p_72942_1_.field_70163_u, p_72942_1_.field_70161_v, 512.0D, this.field_73011_w.getDimensionInt(), new SPacketSpawnGlobalEntity(p_72942_1_));
++            this.field_73061_a.func_184103_al().func_148543_a((EntityPlayer)null, p_72942_1_.field_70165_t, p_72942_1_.field_70163_u, p_72942_1_.field_70161_v, 512.0D, this.field_73011_w.getDimensionProviderInt(), new SPacketSpawnGlobalEntity(p_72942_1_));
              return true;
          }
          else
@@ -248,7 +248,7 @@
                  if (this.func_147485_a(blockeventdata))
                  {
 -                    this.field_73061_a.func_184103_al().func_148543_a((EntityPlayer)null, (double)blockeventdata.func_180328_a().func_177958_n(), (double)blockeventdata.func_180328_a().func_177956_o(), (double)blockeventdata.func_180328_a().func_177952_p(), 64.0D, this.field_73011_w.func_186058_p().func_186068_a(), new SPacketBlockAction(blockeventdata.func_180328_a(), blockeventdata.func_151337_f(), blockeventdata.func_151339_d(), blockeventdata.func_151338_e()));
-+                    this.field_73061_a.func_184103_al().func_148543_a((EntityPlayer)null, (double)blockeventdata.func_180328_a().func_177958_n(), (double)blockeventdata.func_180328_a().func_177956_o(), (double)blockeventdata.func_180328_a().func_177952_p(), 64.0D, this.field_73011_w.getDimensionInt(), new SPacketBlockAction(blockeventdata.func_180328_a(), blockeventdata.func_151337_f(), blockeventdata.func_151339_d(), blockeventdata.func_151338_e()));
++                    this.field_73061_a.func_184103_al().func_148543_a((EntityPlayer)null, (double)blockeventdata.func_180328_a().func_177958_n(), (double)blockeventdata.func_180328_a().func_177956_o(), (double)blockeventdata.func_180328_a().func_177952_p(), 64.0D, this.field_73011_w.getDimensionProviderInt(), new SPacketBlockAction(blockeventdata.func_180328_a(), blockeventdata.func_151337_f(), blockeventdata.func_151339_d(), blockeventdata.func_151338_e()));
                  }
              }
  
@@ -257,13 +257,13 @@
          if (this.field_73003_n != this.field_73004_o)
          {
 -            this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(7, this.field_73004_o), this.field_73011_w.func_186058_p().func_186068_a());
-+            this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(7, this.field_73004_o), this.field_73011_w.getDimensionInt());
++            this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(7, this.field_73004_o), this.field_73011_w.getDimensionProviderInt());
          }
  
          if (this.field_73018_p != this.field_73017_q)
          {
 -            this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.func_186058_p().func_186068_a());
-+            this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.getDimensionInt());
++            this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.getDimensionProviderInt());
          }
  
 +        /* The function in use here has been replaced in order to only send the weather info to players in the correct dimension,
@@ -275,18 +275,18 @@
              if (flag)
              {
 -                this.field_73061_a.func_184103_al().func_148540_a(new SPacketChangeGameState(2, 0.0F));
-+                this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(2, 0.0F), this.field_73011_w.getDimensionInt());
++                this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(2, 0.0F), this.field_73011_w.getDimensionProviderInt());
              }
              else
              {
 -                this.field_73061_a.func_184103_al().func_148540_a(new SPacketChangeGameState(1, 0.0F));
-+                this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(1, 0.0F), this.field_73011_w.getDimensionInt());
++                this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(1, 0.0F), this.field_73011_w.getDimensionProviderInt());
              }
  
 -            this.field_73061_a.func_184103_al().func_148540_a(new SPacketChangeGameState(7, this.field_73004_o));
 -            this.field_73061_a.func_184103_al().func_148540_a(new SPacketChangeGameState(8, this.field_73017_q));
-+            this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(7, this.field_73004_o), this.field_73011_w.getDimensionInt());
-+            this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.getDimensionInt());
++            this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(7, this.field_73004_o), this.field_73011_w.getDimensionProviderInt());
++            this.field_73061_a.func_184103_al().func_148537_a(new SPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.getDimensionProviderInt());
          }
      }
  
