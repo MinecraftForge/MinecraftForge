@@ -21,13 +21,26 @@ package net.minecraftforge.fml.common;
 
 import java.util.List;
 
-public class MultipleModsErrored extends RuntimeException
+public class MultipleModsErrored extends EnhancedRuntimeException
 {
     public final List<WrongMinecraftVersionException> wrongMinecraftExceptions;
-    public final List<MissingModsException>missingModsExceptions;
+    public final List<MissingModsException> missingModsExceptions;
     public MultipleModsErrored(List<WrongMinecraftVersionException> wrongMinecraftExceptions, List<MissingModsException> missingModsExceptions)
     {
         this.wrongMinecraftExceptions = wrongMinecraftExceptions;
         this.missingModsExceptions = missingModsExceptions;
+    }
+
+    @Override
+    protected void printStackTrace(WrappedPrintStream stream)
+    {
+        for (WrongMinecraftVersionException wrongMinecraftVersionException : this.wrongMinecraftExceptions)
+        {
+            wrongMinecraftVersionException.printStackTrace(stream);
+        }
+        for (MissingModsException missingModsException : this.missingModsExceptions)
+        {
+            missingModsException.printStackTrace(stream);
+        }
     }
 }

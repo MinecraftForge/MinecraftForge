@@ -87,6 +87,11 @@
     },
     {
       "name": "net.sf.trove4j:trove4j:3.0.3"
+    },
+    {
+      "name": "org.apache.maven:maven-artifact:3.5.3",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
     }
   ]
 }

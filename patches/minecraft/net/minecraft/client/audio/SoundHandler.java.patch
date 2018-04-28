@@ -38,3 +38,15 @@
          for (ResourceLocation resourcelocation : this.field_147697_e.func_148742_b())
          {
              SoundEventAccessor soundeventaccessor = (SoundEventAccessor)this.field_147697_e.func_82594_a(resourcelocation);
+@@ -253,6 +268,11 @@
+         this.field_147694_f.func_148615_a(p_147691_1_, p_147691_2_);
+     }
+ 
++    public void setListener(net.minecraft.entity.Entity entity, float partialTicks)
++    {
++        this.field_147694_f.setListener(entity, partialTicks);
++    }
++
+     public void func_147689_b()
+     {
+         this.field_147694_f.func_148610_e();

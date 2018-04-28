@@ -20,6 +20,7 @@
 package net.minecraftforge.client.model;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,6 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
 
 import java.util.function.Function;
 import java.util.Optional;
@@ -129,14 +129,18 @@ public final class MultiModel implements IModel
             // Only changes the base model based on perspective, may recurse for parts in the future.
             if(base != null && perspective)
             {
-                ImmutableMap.Builder<TransformType, Pair<Baked, TRSRTransformation>> builder = ImmutableMap.builder();
+                EnumMap<TransformType, Pair<Baked, TRSRTransformation>> map = new EnumMap<>(TransformType.class);
                 for(TransformType type : TransformType.values())
                 {
                     Pair<? extends IBakedModel, Matrix4f> p = base.handlePerspective(type);
                     IBakedModel newBase = p.getLeft();
-                    builder.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(p.getRight())));
+                    Matrix4f matrix = p.getRight();
+                    if (newBase != base || matrix != null)
+                    {
+                        map.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(matrix)));
+                    }
                 }
-                transforms = builder.build();
+                transforms = ImmutableMap.copyOf(map);
             }
             else
             {
@@ -212,8 +216,8 @@ public final class MultiModel implements IModel
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            if(transforms.isEmpty()) return Pair.of(this, null);
             Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
+            if (p == null) return Pair.of(this, null);
             return Pair.of(p.getLeft(), p.getRight().getMatrix());
         }
 
