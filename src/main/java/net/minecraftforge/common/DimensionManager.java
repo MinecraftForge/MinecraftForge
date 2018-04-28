@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Hashtable;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -34,8 +36,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.ints.IntSets;
+import it.unimi.dsi.fastutil.ints.IntSortedSet;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
@@ -96,6 +100,16 @@ public class DimensionManager
         }
 
         return Arrays.copyOf(ret, x);
+    }
+
+    public static Map<DimensionType, IntSortedSet> getRegisteredDimensions()
+    {
+        Map<DimensionType, IntSortedSet> map = new IdentityHashMap<>();
+        for (Int2ObjectMap.Entry<Dimension> entry : dimensions.int2ObjectEntrySet())
+        {
+            map.computeIfAbsent(entry.getValue().type, k -> new IntRBTreeSet()).add(entry.getIntKey());
+        }
+        return map;
     }
 
     public static void init()
