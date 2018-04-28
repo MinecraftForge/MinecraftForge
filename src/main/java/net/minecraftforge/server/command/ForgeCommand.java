@@ -34,6 +34,7 @@ public class ForgeCommand extends CommandTreeBase
         super.addSubcommand(new CommandEntity());
         super.addSubcommand(new CommandSetDimension());
         super.addSubcommand(new CommandTreeHelp(this));
+        super.addSubcommand(new CommandLoadWorld());
     }
 
     @Override

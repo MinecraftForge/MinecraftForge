@@ -19,6 +19,11 @@ commands.forge.setdim.usage=Use /forge setdim <entity> <dimension> [<x> <y> <z>]
 commands.forge.setdim.invalid.entity=The entity selected (%s) is not valid.
 commands.forge.setdim.invalid.dim=The dimension ID specified (%d) is not valid.
 commands.forge.setdim.invalid.nochange=The entity selected (%s) is already in the dimension specified (%d).
+commands.forge.loadworld.usage=Use /loadworld <worldFolderName> [delay]
+commands.forge.loadworld.no_sp=Can't use command on Singleplayer. 'Save and Quit' and open desired map.
+commands.forge.loadworld.kick_msg=The server is switching worlds. Try reconnecting in a couple of seconds.
+commands.forge.loadworld.delay=The server is going to switch worlds in %d seconds.
+commands.forge.loadworld.switch_now=The server is going to switch worlds now!
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 commands.forge.tracking.entity.enabled=Entity tracking enabled for %d seconds.
