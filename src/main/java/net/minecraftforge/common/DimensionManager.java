@@ -378,7 +378,7 @@ public class DimensionManager
             }
             finally
             {
-                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
+                ForgeHooks.onWorldUnload(w, true);
                 w.flush();
                 setWorld(id, null, w.getMinecraftServer());
             }
