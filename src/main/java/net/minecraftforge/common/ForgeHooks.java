@@ -1451,25 +1451,4 @@ public class ForgeHooks
         }
         return modId;
     }
-
-    /**
-     * Posts the world unload event.
-     * Optionally catches and suppresses any exceptions to allow the game to safely finish unloading the world.
-     */
-    public static boolean onWorldUnload(World world, boolean suppressExceptions)
-    {
-        if (!suppressExceptions)
-        {
-            return MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(world));
-        }
-        try
-        {
-            return MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(world));
-        }
-        catch (Throwable e)
-        {
-            FMLLog.log.error("A WorldEvent.Unload event handler has crashed. Please report this to the mod author, it is a very serious error. This may result in data loss because other unload event handlers could be skipped.", e);
-            return false;
-        }
-    }
 }

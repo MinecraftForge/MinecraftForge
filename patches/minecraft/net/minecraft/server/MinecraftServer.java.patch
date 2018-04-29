@@ -74,7 +74,7 @@
              {
                  if (worldserver1 != null)
                  {
-+                    net.minecraftforge.common.ForgeHooks.onWorldUnload(worldserver1, true);
++                    net.minecraftforge.event.ForgeEventFactory.onWorldUnload(worldserver1, true);
                      worldserver1.func_73041_k();
                  }
              }

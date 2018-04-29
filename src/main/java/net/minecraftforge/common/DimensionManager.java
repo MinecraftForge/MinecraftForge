@@ -51,6 +51,7 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.storage.ISaveHandler;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
 
@@ -378,7 +379,7 @@ public class DimensionManager
             }
             finally
             {
-                ForgeHooks.onWorldUnload(w, true);
+                ForgeEventFactory.onWorldUnload(w, true);
                 w.flush();
                 setWorld(id, null, w.getMinecraftServer());
             }

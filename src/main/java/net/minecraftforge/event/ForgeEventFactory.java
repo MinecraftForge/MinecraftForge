@@ -128,12 +128,15 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ForgeEventFactory
 {
+    private static Logger LOGGER = LogManager.getLogger("forge.EventFactory");
 
     public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction, EnumHand hand)
     {
@@ -765,5 +768,27 @@ public class ForgeEventFactory
 
         Result result = event.getResult();
         return result == Result.DEFAULT ? world.getGameRules().getBoolean("mobGriefing") : result == Result.ALLOW;
+    }
+
+    /**
+     * Posts the world unload event.
+     * Optionally catches and suppresses any exceptions to allow the game to safely finish unloading the world.
+     */
+    public static boolean onWorldUnload(World world, boolean suppressExceptions)
+    {
+        WorldEvent.Unload event = new WorldEvent.Unload(world);
+        try
+        {
+            return MinecraftForge.EVENT_BUS.post(event);
+        }
+        catch (Throwable e)
+        {
+            LOGGER.error("A WorldEvent.Unload event handler has crashed. Please report this to the mod author, it is a very serious error. This may result in data loss because other unload event handlers could be skipped.", e);
+            if (suppressExceptions)
+            {
+                return false;
+            }
+            throw e;
+        }
     }
 }
