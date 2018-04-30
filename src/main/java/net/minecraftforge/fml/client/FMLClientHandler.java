@@ -705,6 +705,8 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
 //            ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, true, "field_71296"+"_Q","serverIs"+"Running");
         }
+
+        GameData.revertToFrozen();
     }
 
     @Override
