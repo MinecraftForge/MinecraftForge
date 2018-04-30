@@ -302,7 +302,7 @@
  
      public void func_71353_a(@Nullable WorldClient p_71353_1_, String p_71353_2_)
      {
-+        if (field_71441_e != null) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(field_71441_e));
++        if (field_71441_e != null) net.minecraftforge.event.ForgeEventFactory.onWorldUnload(field_71441_e, false);
 +
          if (p_71353_1_ == null)
          {
