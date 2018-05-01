@@ -856,7 +856,16 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 }
                 else
                 {
-                    ret.aliases.put(new ResourceLocation(comp.getString("K")), new ResourceLocation(v));
+                    ResourceLocation aliask = new ResourceLocation(comp.getString("K"));
+                    ResourceLocation aliasv = new ResourceLocation(v);
+                    if (aliasv.equals(aliask))
+                    {
+                        FMLLog.log.warn("Found unrecoverable 4894 bugged alias/override: {} -> {}, skipping.", aliask, aliasv);
+                    }
+                    else
+                    {
+                        ret.aliases.put(aliask, aliasv);
+                    }
                 }
             });
 
