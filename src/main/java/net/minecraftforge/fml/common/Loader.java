@@ -20,11 +20,14 @@
 package net.minecraftforge.fml.common;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -32,10 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.ConfigManager;
@@ -230,8 +231,8 @@ public class Loader
     private void sortModList()
     {
         FMLLog.log.trace("Verifying mod requirements are satisfied");
-        List<WrongMinecraftVersionException> wrongMinecraftExceptions = new ArrayList<WrongMinecraftVersionException>();
-        List<MissingModsException> missingModsExceptions = new ArrayList<MissingModsException>();
+        List<WrongMinecraftVersionException> wrongMinecraftExceptions = new ArrayList<>();
+        List<MissingModsException> missingModsExceptions = new ArrayList<>();
         try
         {
             BiMap<String, ArtifactVersion> modVersions = HashBiMap.create();
@@ -252,39 +253,42 @@ public class Loader
                     continue;
                 }
                 Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), ArtifactVersion::getLabel);
-                Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
 
                 Set<String> missingMods = Sets.difference(names.keySet(), modVersions.keySet());
                 if (!missingMods.isEmpty())
                 {
+                    MissingModsException missingModsException = new MissingModsException(mod.getModId(), mod.getName());
                     FMLLog.log.fatal("The mod {} ({}) requires mods {} to be available", mod.getModId(), mod.getName(), missingMods);
                     for (String modid : missingMods)
                     {
-                        versionMissingMods.add(names.get(modid));
+                        ArtifactVersion acceptedVersion = names.get(modid);
+                        ArtifactVersion currentVersion = modVersions.get(modid);
+                        boolean required = mod.getRequirements().contains(acceptedVersion);
+                        missingModsException.addMissingMod(acceptedVersion, currentVersion, required);
                     }
-                    MissingModsException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
-                    FMLLog.log.fatal(ret.getMessage());
-                    missingModsExceptions.add(ret);
+                    FMLLog.log.fatal(missingModsException.getMessage());
+                    missingModsExceptions.add(missingModsException);
                     continue;
                 }
                 reqList.putAll(mod.getModId(), names.keySet());
                 ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
-                for (ArtifactVersion v : allDeps)
+                MissingModsException missingModsException = new MissingModsException(mod.getModId(), mod.getName());
+                for (ArtifactVersion acceptedVersion : allDeps)
                 {
-                    if (modVersions.containsKey(v.getLabel()))
+                    if (modVersions.containsKey(acceptedVersion.getLabel()))
                     {
-                        if (!v.containsVersion(modVersions.get(v.getLabel())))
+                        ArtifactVersion currentVersion = modVersions.get(acceptedVersion.getLabel());
+                        if (!acceptedVersion.containsVersion(currentVersion))
                         {
-                            versionMissingMods.add(v);
+                            boolean required = mod.getRequirements().contains(acceptedVersion);
+                            missingModsException.addMissingMod(acceptedVersion, currentVersion, required);
                         }
                     }
                 }
-                if (!versionMissingMods.isEmpty())
+                if (!missingModsException.getMissingModInfos().isEmpty())
                 {
-                    FMLLog.log.fatal("The mod {} ({}) requires mod versions {} to be available", mod.getModId(), mod.getName(), versionMissingMods);
-                    MissingModsException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
-                    FMLLog.log.fatal(ret.toString());
-                    missingModsExceptions.add(ret);
+                    FMLLog.log.fatal(missingModsException.toString());
+                    missingModsExceptions.add(missingModsException);
                 }
             }
 
@@ -305,7 +309,7 @@ public class Loader
                 throw new MultipleModsErrored(wrongMinecraftExceptions, missingModsExceptions);
             }
 
-            reverseDependencies = Multimaps.invertFrom(reqList, ArrayListMultimap.<String,String>create());
+            reverseDependencies = Multimaps.invertFrom(reqList, ArrayListMultimap.create());
             ModSorter sorter = new ModSorter(getActiveModList(), namedMods);
 
             try
@@ -657,7 +661,7 @@ public class Loader
             FMLLog.log.trace("Found a mod state file {}", forcedModFile.getName());
             try
             {
-                forcedModListProperties.load(new FileReader(forcedModFile));
+                forcedModListProperties.load(new InputStreamReader(new FileInputStream(forcedModFile), StandardCharsets.UTF_8));
                 FMLLog.log.trace("Loaded states for {} mods from file", forcedModListProperties.size());
             }
             catch (Exception e)
@@ -860,7 +864,6 @@ public class Loader
 
     public void serverStopped()
     {
-        GameData.revertToFrozen();
         modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
         modController.transition(LoaderState.SERVER_STOPPED, true);
         modController.transition(LoaderState.AVAILABLE, true);
@@ -960,9 +963,9 @@ public class Loader
         try
         {
             Properties props = new Properties();
-            props.load(new FileReader(forcedModFile));
+            props.load(new InputStreamReader(new FileInputStream(forcedModFile), StandardCharsets.UTF_8));
             props.put(modId, "false");
-            props.store(new FileWriter(forcedModFile), null);
+            props.store(new OutputStreamWriter(new FileOutputStream(forcedModFile), StandardCharsets.UTF_8), null);
         }
         catch (Exception e)
         {
@@ -991,7 +994,7 @@ public class Loader
         JsonElement injectedDeps;
         try
         {
-            injectedDeps = parser.parse(new FileReader(injectedDepFile));
+            injectedDeps = parser.parse(new InputStreamReader(new FileInputStream(injectedDepFile), StandardCharsets.UTF_8));
             for (JsonElement el : injectedDeps.getAsJsonArray())
             {
                 JsonObject jo = el.getAsJsonObject();

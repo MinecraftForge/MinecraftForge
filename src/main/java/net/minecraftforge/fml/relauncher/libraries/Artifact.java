@@ -123,7 +123,7 @@ public class Artifact implements Comparable<Artifact>
         if (folder == null)
         {
             StringBuilder sb = new StringBuilder();
-            for (String part : group.split("."))
+            for (String part : group.split("\\."))
                 sb.append(part).append(File.separatorChar);
             sb.append(artifact).append(File.separatorChar);
             sb.append(version);

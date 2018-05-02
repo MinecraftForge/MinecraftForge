@@ -121,7 +121,7 @@
      public void func_110436_a()
      {
          List<IResourcePack> list = Lists.newArrayList(this.field_110449_ao);
-@@ -955,11 +969,6 @@
+@@ -955,11 +968,6 @@
  
      public void func_147108_a(@Nullable GuiScreen p_147108_1_)
      {
@@ -342,7 +342,15 @@
          }
  
          this.field_147127_av.func_147690_c();
-@@ -2535,159 +2598,8 @@
+@@ -2434,6 +2497,7 @@
+         }
+ 
+         TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_71353_1_);
++        net.minecraftforge.client.MinecraftForgeClient.clearRenderCache();
+ 
+         if (p_71353_1_ != null)
+         {
+@@ -2535,159 +2599,8 @@
      {
          if (this.field_71476_x != null && this.field_71476_x.field_72313_a != RayTraceResult.Type.MISS)
          {
@@ -504,7 +512,7 @@
          }
      }
  
-@@ -2834,6 +2758,7 @@
+@@ -2834,6 +2747,7 @@
          return field_71432_P;
      }
  
@@ -512,7 +520,7 @@
      public ListenableFuture<Object> func_175603_A()
      {
          return this.func_152344_a(new Runnable()
-@@ -3009,18 +2922,8 @@
+@@ -3009,18 +2923,8 @@
  
      public static int func_71369_N()
      {
@@ -533,7 +541,7 @@
      }
  
      public boolean func_70002_Q()
-@@ -3152,6 +3055,9 @@
+@@ -3152,6 +3056,9 @@
          }
          else if (this.field_71439_g != null)
          {
@@ -543,7 +551,7 @@
              if (this.field_71439_g.field_70170_p.field_73011_w instanceof WorldProviderHell)
              {
                  return MusicTicker.MusicType.NETHER;
-@@ -3181,11 +3087,11 @@
+@@ -3181,11 +3088,11 @@
              {
                  if (Keyboard.getEventKeyState())
                  {
@@ -557,7 +565,7 @@
                      {
                          this.field_71456_v.func_146158_b().func_146227_a(ScreenShotHelper.func_148260_a(this.field_71412_D, this.field_71443_c, this.field_71440_d, this.field_147124_at));
                      }
-@@ -3199,6 +3105,7 @@
+@@ -3199,6 +3106,7 @@
                          }
                      }
                  }
@@ -565,7 +573,7 @@
              }
          }
      }
-@@ -3328,6 +3235,12 @@
+@@ -3328,6 +3236,12 @@
          return this.field_184127_aH;
      }
  
@@ -578,7 +586,7 @@
      public boolean func_189648_am()
      {
          return this.field_71439_g != null && this.field_71439_g.func_175140_cp() || this.field_71474_y.field_178879_v;
-@@ -3342,4 +3255,9 @@
+@@ -3342,4 +3256,9 @@
      {
          return this.field_193035_aW;
      }

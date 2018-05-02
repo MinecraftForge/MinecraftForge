@@ -478,7 +478,7 @@ public class VersionRange
     {
         if ( recommendedVersion != null )
         {
-            return recommendedVersion.toString();
+            return recommendedVersion.getVersionString();
         }
         else
         {
