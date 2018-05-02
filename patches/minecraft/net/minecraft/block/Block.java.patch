@@ -1598,7 +1598,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public boolean useNeighborBrightness(final IBlockState state, final EnumFacing dir, final IBlockAccess world, final BlockPos pos)
 +    {
-+        return true;
++        return dir == EnumFacing.UP;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
