@@ -1621,7 +1621,13 @@
          func_176219_a(158, "dropper", (new BlockDropper()).func_149711_c(3.5F).func_149672_a(SoundType.field_185851_d).func_149663_c("dropper"));
          func_176219_a(159, "stained_hardened_clay", (new BlockStainedHardenedClay()).func_149711_c(1.25F).func_149752_b(7.0F).func_149672_a(SoundType.field_185851_d).func_149663_c("clayHardenedStained"));
          func_176219_a(160, "stained_glass_pane", (new BlockStainedGlassPane()).func_149711_c(0.3F).func_149672_a(SoundType.field_185853_f).func_149663_c("thinStainedGlass"));
-@@ -1230,31 +2632,6 @@
+@@ -1226,35 +2628,12 @@
+                 {
+                     flag = true;
+                 }
++                flag |= block15 instanceof net.minecraftforge.fluids.BlockFluidBase;
++                flag |= block15 instanceof BlockLiquid;
+ 
                  block15.field_149783_u = flag;
              }
          }
