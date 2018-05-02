@@ -40,7 +40,7 @@
                  return this.field_72817_c[i][j].func_177413_a(p_175629_1_, p_175629_2_);
              }
          }
-@@ -160,16 +164,25 @@
+@@ -160,16 +164,23 @@
  
      public boolean func_175623_d(BlockPos p_175623_1_)
      {
@@ -49,14 +49,13 @@
 +        return state.func_177230_c().isAir(state, this, p_175623_1_);
      }
  
+-    @SideOnly(Side.CLIENT)
 +    @Override
-     @SideOnly(Side.CLIENT)
 +    public int getLight(EnumSkyBlock type, BlockPos pos)
 +    {
 +        return this.func_175628_b(type, pos);
 +    }
 +
-+    @SideOnly(Side.CLIENT)
      public int func_175628_b(EnumSkyBlock p_175628_1_, BlockPos p_175628_2_)
      {
          if (p_175628_2_.func_177956_o() >= 0 && p_175628_2_.func_177956_o() < 256)
@@ -67,7 +66,7 @@
              return this.field_72817_c[i][j].func_177413_a(p_175628_1_, p_175628_2_);
          }
          else
-@@ -188,4 +201,21 @@
+@@ -188,4 +199,21 @@
      {
          return this.field_72815_e.func_175624_G();
      }

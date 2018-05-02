@@ -223,7 +223,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -934,6 +954,1388 @@
+@@ -934,6 +954,1385 @@
      {
      }
  
@@ -1564,7 +1564,6 @@
 +        return state.func_177230_c() == Blocks.field_180399_cE;
 +    }
 +
-+    @SideOnly(Side.CLIENT)
 +    public int getLightFor(final IBlockState state, final IBlockAccess world, final net.minecraft.world.EnumSkyBlock type, final BlockPos pos)
 +    {
 +        int light = world.getLight(type, pos);
@@ -1595,13 +1594,11 @@
 +        return light;
 +    }
 +
-+    @SideOnly(Side.CLIENT)
 +    public boolean useNeighborBrightness(final IBlockState state, final EnumFacing dir, final IBlockAccess world, final BlockPos pos)
 +    {
 +        return dir == EnumFacing.UP;
 +    }
 +
-+    @SideOnly(Side.CLIENT)
 +    public int getLightOpacity(final IBlockState state, final EnumFacing dir, final IBlockAccess world, final BlockPos pos)
 +    {
 +        return 0;
@@ -1612,7 +1609,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1105,7 +2507,7 @@
+@@ -1105,7 +2504,7 @@
          Block block11 = (new BlockQuartz()).func_149672_a(SoundType.field_185851_d).func_149711_c(0.8F).func_149663_c("quartzBlock");
          func_176219_a(155, "quartz_block", block11);
          func_176219_a(156, "quartz_stairs", (new BlockStairs(block11.func_176223_P().func_177226_a(BlockQuartz.field_176335_a, BlockQuartz.EnumType.DEFAULT))).func_149663_c("stairsQuartz"));
@@ -1621,7 +1618,7 @@
          func_176219_a(158, "dropper", (new BlockDropper()).func_149711_c(3.5F).func_149672_a(SoundType.field_185851_d).func_149663_c("dropper"));
          func_176219_a(159, "stained_hardened_clay", (new BlockStainedHardenedClay()).func_149711_c(1.25F).func_149752_b(7.0F).func_149672_a(SoundType.field_185851_d).func_149663_c("clayHardenedStained"));
          func_176219_a(160, "stained_glass_pane", (new BlockStainedGlassPane()).func_149711_c(0.3F).func_149672_a(SoundType.field_185853_f).func_149663_c("thinStainedGlass"));
-@@ -1226,35 +2628,12 @@
+@@ -1226,35 +2625,12 @@
                  {
                      flag = true;
                  }

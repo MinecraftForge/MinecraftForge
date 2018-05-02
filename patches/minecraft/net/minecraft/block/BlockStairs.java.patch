@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStairs.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStairs.java
-@@ -483,6 +483,39 @@
+@@ -483,6 +483,38 @@
          return new BlockStateContainer(this, new IProperty[] {field_176309_a, field_176308_b, field_176310_M});
      }
  
@@ -28,7 +28,6 @@
 +    }
 +
 +    @Override
-+    @SideOnly(Side.CLIENT)
 +    public boolean useNeighborBrightness(final IBlockState state, final EnumFacing dir, final IBlockAccess world, final BlockPos pos)
 +    {
 +        if (dir.func_176740_k() != EnumFacing.Axis.Y)

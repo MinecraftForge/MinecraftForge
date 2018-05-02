@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/IBlockAccess.java
 +++ ../src-work/minecraft/net/minecraft/world/IBlockAccess.java
-@@ -28,4 +28,19 @@
+@@ -28,4 +28,18 @@
  
      @SideOnly(Side.CLIENT)
      WorldType func_175624_G();
@@ -17,6 +17,5 @@
 +
 +    /* ======================================== FORGE START =====================================*/
 +
-+    @SideOnly(Side.CLIENT)
 +    int getLight(EnumSkyBlock type, BlockPos pos);
  }
