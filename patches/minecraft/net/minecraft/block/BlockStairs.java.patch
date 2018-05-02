@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStairs.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStairs.java
-@@ -483,6 +483,29 @@
+@@ -483,6 +483,39 @@
          return new BlockStateContainer(this, new IProperty[] {field_176309_a, field_176308_b, field_176310_M});
      }
  
@@ -25,6 +25,16 @@
 +        if (shape == EnumShape.INNER_LEFT && face.func_176746_e() == side) return true;
 +        if (shape == EnumShape.INNER_RIGHT && face.func_176735_f() == side) return true;
 +        return false;
++    }
++
++    @Override
++    @SideOnly(Side.CLIENT)
++    public boolean useNeighborBrightness(final IBlockState state, final EnumFacing dir, final IBlockAccess world, final BlockPos pos)
++    {
++        if (dir.func_176740_k() != EnumFacing.Axis.Y)
++            return false;
++
++        return dir == (state.func_177229_b(field_176308_b) == EnumHalf.TOP ? EnumFacing.DOWN : EnumFacing.UP);
 +    }
 +
      public static enum EnumHalf implements IStringSerializable

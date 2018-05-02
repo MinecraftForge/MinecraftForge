@@ -14,7 +14,7 @@
  
      @SideOnly(Side.CLIENT)
      boolean func_185895_e();
-@@ -95,8 +99,14 @@
+@@ -95,11 +99,28 @@
  
      RayTraceResult func_185910_a(World p_185910_1_, BlockPos p_185910_2_, Vec3d p_185910_3_, Vec3d p_185910_4_);
  
@@ -29,3 +29,17 @@
      Vec3d func_191059_e(IBlockAccess p_191059_1_, BlockPos p_191059_2_);
  
      boolean func_191058_s();
+ 
+     BlockFaceShape func_193401_d(IBlockAccess p_193401_1_, BlockPos p_193401_2_, EnumFacing p_193401_3_);
++
++    /* ======================================== FORGE START =====================================*/
++
++    @SideOnly(Side.CLIENT)
++    int getLightFor(IBlockAccess world, net.minecraft.world.EnumSkyBlock type, BlockPos pos);
++
++    @SideOnly(Side.CLIENT)
++    boolean useNeighborBrightness(EnumFacing dir, IBlockAccess world, BlockPos pos);
++
++    @SideOnly(Side.CLIENT)
++    int getLightOpacity(EnumFacing dir, IBlockAccess world, BlockPos pos);
+ }
