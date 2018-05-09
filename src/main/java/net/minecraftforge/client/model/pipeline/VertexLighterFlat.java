@@ -121,14 +121,11 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         float[][] lightmap = quadData[lightmapIndex];
         float[][] color = quadData[colorIndex];
 
-        // If all three normal values are either -1 or 0, normals must be generated
-        if(quadData[normalIndex][0][0] != quadData[normalIndex][0][1] ||
-            quadData[normalIndex][0][1] != quadData[normalIndex][0][2] ||
-           (quadData[normalIndex][0][0] != -1 && quadData[normalIndex][0][0] != 0))
+        if (dataLength[normalIndex] >= 3)
         {
             normal = quadData[normalIndex];
         }
-        else
+        else // normals must be generated
         {
             normal = new float[4][4];
             Vector3f v1 = new Vector3f(position[3]);
