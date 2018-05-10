@@ -744,7 +744,7 @@ public class Loader
 
     public Map<String,ModContainer> getIndexedModList()
     {
-        return ImmutableMap.copyOf(namedMods);
+        return namedMods != null ? ImmutableMap.copyOf(namedMods) : ImmutableMap.of();
     }
 
     public void initializeMods()
