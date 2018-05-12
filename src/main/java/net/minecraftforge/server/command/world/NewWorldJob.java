@@ -21,7 +21,11 @@ package net.minecraftforge.server.command.world;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class NewWorldJob extends AbstractWorldJob
 {
@@ -41,6 +45,51 @@ class NewWorldJob extends AbstractWorldJob
     @Override
     public void executeWorldJob()
     {
-        server.switchWorld(folderName, folderName, seed, type, generatorOptions);
+        switchWorld(folderName, folderName, seed, type, generatorOptions);
+    }
+
+    protected void switchWorld(String saveName, String worldNameIn, long seed, WorldType type, String generatorOptions)
+    {
+        Logger logger = LogManager.getLogger();
+
+        PlayerList playerList = server.getPlayerList();
+        if (playerList != null)
+        {
+            logger.info("Saving players");
+            playerList.saveAllPlayerData();
+            playerList.removeAllPlayers();
+        }
+
+        if (server.worlds != null)
+        {
+            logger.info("Saving worlds");
+
+            for (WorldServer worldserver : server.worlds)
+            {
+                if (worldserver != null)
+                {
+                    worldserver.disableLevelSaving = false;
+                }
+            }
+
+            server.saveAllWorlds(false);
+
+            for (WorldServer worldserver1 : server.worlds)
+            {
+                if (worldserver1 != null)
+                {
+                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver1));
+                    worldserver1.flush();
+                }
+            }
+
+            WorldServer[] tmp = server.worlds;
+            for (WorldServer world : tmp)
+            {
+                net.minecraftforge.common.DimensionManager.setWorld(world.provider.getDimension(), null, server);
+            }
+        }
+
+        server.loadAllWorlds(saveName, worldNameIn, seed, type, generatorOptions);
     }
 }

@@ -23,7 +23,6 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldType;
 
@@ -31,6 +30,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 class CommandWorldNew extends AbstractWorldCommand
@@ -90,7 +90,36 @@ class CommandWorldNew extends AbstractWorldCommand
             throw new CommandException("commands.forge.loadworld.new.exists", folderName);
         }
 
-        base.setJob(new NewWorldJob(server, sender, folderName, delayS, DedicatedServer.getSeedForString(seedString), type, generatorOptions));
+        base.setJob(new NewWorldJob(server, sender, folderName, delayS, getSeedForString(seedString), type, generatorOptions));
+    }
+
+    /**
+     * get a seed for given string
+     * parses string as long if possible else gets strings hash code
+     * in case of empty string returns a random seed
+     * @param s the string to acquire the seed from
+     * @return seed
+     */
+    public long getSeedForString(@Nullable String s) {
+        long k = (new Random()).nextLong();
+
+        if (s != null && !s.isEmpty())
+        {
+            try
+            {
+                long l = Long.parseLong(s);
+
+                if (l != 0L)
+                {
+                    k = l;
+                }
+            }
+            catch (NumberFormatException var16)
+            {
+                k = (long)s.hashCode();
+            }
+        }
+        return k;
     }
 
     /* -----------------------------------------------------------------------------------------------------------------

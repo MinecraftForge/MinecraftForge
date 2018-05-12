@@ -23,17 +23,11 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldType;
 
-class LoadWorldJob extends AbstractWorldJob
+class LoadWorldJob extends NewWorldJob
 {
 
     LoadWorldJob(MinecraftServer server, ICommandSender sender, String folderName, int delayS)
     {
-        super(server, sender, folderName, delayS);
-    }
-
-    @Override
-    public void executeWorldJob()
-    {
-        server.switchWorld(folderName, folderName, 0, WorldType.DEFAULT, "");
+        super(server, sender, folderName, delayS, 0, WorldType.DEFAULT, "");
     }
 }
