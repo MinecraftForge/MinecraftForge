@@ -172,6 +172,9 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DummyModContainer optifineContainer;
 
+    @Deprecated // TODO remove in 1.13. mods are referencing this to get around client-only dependencies in old Forge versions
+    private MissingModsException modsMissing;
+
     private boolean loading = true;
 
     @Nullable
@@ -660,7 +663,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void serverStopped()
     {
-        // NOOP
+        GameData.revertToFrozen();
     }
 
     @Override

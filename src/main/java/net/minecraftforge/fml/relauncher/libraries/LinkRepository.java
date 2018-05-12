@@ -90,13 +90,13 @@ public class LinkRepository extends Repository
         String key = artifact.toString();
         File file = artifact_to_file.get(key);
         if (file == null || !file.exists())
-            return null;
+            return super.resolve(artifact);
         return new Artifact(artifact, this, artifact.isSnapshot() ? artifact.getTimestamp() : null);
     }
 
     @Override
     public File getFile(String path)
     {
-        return filesystem.containsKey(path) ? super.getFile(path) : filesystem.get(path);
+        return filesystem.containsKey(path) ? filesystem.get(path) : super.getFile(path);
     }
 }

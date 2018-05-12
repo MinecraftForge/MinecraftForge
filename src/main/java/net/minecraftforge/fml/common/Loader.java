@@ -252,35 +252,24 @@ public class Loader
                     wrongMinecraftExceptions.add(ret);
                     continue;
                 }
-                Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), ArtifactVersion::getLabel);
 
-                Set<String> missingMods = Sets.difference(names.keySet(), modVersions.keySet());
-                if (!missingMods.isEmpty())
-                {
-                    MissingModsException missingModsException = new MissingModsException(mod.getModId(), mod.getName());
-                    FMLLog.log.fatal("The mod {} ({}) requires mods {} to be available", mod.getModId(), mod.getName(), missingMods);
-                    for (String modid : missingMods)
-                    {
-                        ArtifactVersion acceptedVersion = names.get(modid);
-                        ArtifactVersion currentVersion = modVersions.get(modid);
-                        boolean required = mod.getRequirements().contains(acceptedVersion);
-                        missingModsException.addMissingMod(acceptedVersion, currentVersion, required);
-                    }
-                    FMLLog.log.fatal(missingModsException.getMessage());
-                    missingModsExceptions.add(missingModsException);
-                    continue;
-                }
-                reqList.putAll(mod.getModId(), names.keySet());
-                ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
+                reqList.putAll(mod.getModId(), Iterables.transform(mod.getRequirements(), ArtifactVersion::getLabel));
+
+                Set<ArtifactVersion> allDeps = Sets.newHashSet();
+
+                allDeps.addAll(mod.getDependants());
+                allDeps.addAll(mod.getDependencies());
+                allDeps.addAll(mod.getRequirements());
+
                 MissingModsException missingModsException = new MissingModsException(mod.getModId(), mod.getName());
                 for (ArtifactVersion acceptedVersion : allDeps)
                 {
-                    if (modVersions.containsKey(acceptedVersion.getLabel()))
+                    boolean required = mod.getRequirements().contains(acceptedVersion);
+                    if (required || modVersions.containsKey(acceptedVersion.getLabel()))
                     {
                         ArtifactVersion currentVersion = modVersions.get(acceptedVersion.getLabel());
-                        if (!acceptedVersion.containsVersion(currentVersion))
+                        if (currentVersion == null || !acceptedVersion.containsVersion(currentVersion))
                         {
-                            boolean required = mod.getRequirements().contains(acceptedVersion);
                             missingModsException.addMissingMod(acceptedVersion, currentVersion, required);
                         }
                     }
@@ -744,7 +733,7 @@ public class Loader
 
     public Map<String,ModContainer> getIndexedModList()
     {
-        return ImmutableMap.copyOf(namedMods);
+        return namedMods != null ? ImmutableMap.copyOf(namedMods) : ImmutableMap.of();
     }
 
     public void initializeMods()
@@ -863,7 +852,6 @@ public class Loader
 
     public void serverStopped()
     {
-        GameData.revertToFrozen();
         modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
         modController.transition(LoaderState.SERVER_STOPPED, true);
         modController.transition(LoaderState.AVAILABLE, true);
