@@ -271,7 +271,11 @@ public class Loader
                     continue;
                 }
                 reqList.putAll(mod.getModId(), names.keySet());
-                ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
+                ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder()
+                        .addAll(mod.getDependants())
+                        .addAll(mod.getDependencies())
+                        .addAll(mod.getRequirements())
+                        .build();
                 MissingModsException missingModsException = new MissingModsException(mod.getModId(), mod.getName());
                 for (ArtifactVersion acceptedVersion : allDeps)
                 {
