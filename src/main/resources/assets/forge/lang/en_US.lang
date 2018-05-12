@@ -19,11 +19,20 @@ commands.forge.setdim.usage=Use /forge setdim <entity> <dimension> [<x> <y> <z>]
 commands.forge.setdim.invalid.entity=The entity selected (%s) is not valid.
 commands.forge.setdim.invalid.dim=The dimension ID specified (%d) is not valid.
 commands.forge.setdim.invalid.nochange=The entity selected (%s) is already in the dimension specified (%d).
-commands.forge.loadworld.usage=Use /loadworld <worldFolderName> [delay]
-commands.forge.loadworld.no_sp=Can't use command on Singleplayer. 'Save and Quit' and open desired map.
-commands.forge.loadworld.kick_msg=The server is switching worlds. Try reconnecting in a couple of seconds.
-commands.forge.loadworld.delay=The server is going to switch worlds in %d seconds.
-commands.forge.loadworld.switch_now=The server is going to switch worlds now!
+
+commands.forge.loadworld.base.usage=Use /forge loadworld <subcommand>
+commands.forge.loadworld.base.no_sp=Can't use command on Singleplayer. 'Save and Quit' and open/create desired map.
+commands.forge.loadworld.load.usage=Use /forge loadworld load <worldFolderName> [delay]
+commands.forge.loadworld.load.kick_msg=The server is switching worlds. Try reconnecting in a couple of seconds.
+commands.forge.loadworld.load.delay=The server is going to switch worlds in %d seconds.
+commands.forge.loadworld.load.switch_now=The server is going to switch worlds now!
+commands.forge.loadworld.load.not_found=Could not find world: %s! Use new command to generate new world.
+commands.forge.loadworld.new.usage=Use /forge loadworld new <worldName> [delay] [seed] [worldType] [generatorSettings]
+commands.forge.loadworld.new.wrong_world_type=Unknown world type: %s
+commands.forge.loadworld.new.exists=World %s already exists! Use load command instead or change folder name.
+commands.forge.loadworld.cancel.usage=Use /forge loadworld cancel
+commands.forge.loadworld.cancel.confirm=Scheduled world load canceled successfully!
+commands.forge.loadworld.cancel.no_job=There is currently no world load scheduled!
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 commands.forge.tracking.entity.enabled=Entity tracking enabled for %d seconds.
