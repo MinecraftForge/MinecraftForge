@@ -181,7 +181,7 @@ public class ItemHandlerHelper
         // play sound if something got picked up
         if (remainder.isEmpty() || remainder.getCount() != stack.getCount())
         {
-            world.playSound(player, player.posX, player.posY, player.posZ,
+            world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
                     SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
 

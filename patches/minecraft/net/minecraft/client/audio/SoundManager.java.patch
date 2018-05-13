@@ -47,3 +47,15 @@
                              }
  
                              field_148621_b.debug(field_148623_a, "Playing sound {} for event {} as channel {}", sound.func_188719_a(), resourcelocation, s);
+@@ -507,6 +515,11 @@
+ 
+     public void func_148615_a(EntityPlayer p_148615_1_, float p_148615_2_)
+     {
++        setListener((net.minecraft.entity.Entity) p_148615_1_, p_148615_2_);
++    }
++
++    public void setListener(net.minecraft.entity.Entity p_148615_1_, float p_148615_2_)
++    {
+         if (this.field_148617_f && p_148615_1_ != null)
+         {
+             float f = p_148615_1_.field_70127_C + (p_148615_1_.field_70125_A - p_148615_1_.field_70127_C) * p_148615_2_;

@@ -1,11 +1,11 @@
 {
   "ingredients": {
-    "nbt": "net.minecraftforge.debug.CraftingSystemTest$IngredientFactory"
+    "nbt": "net.minecraftforge.debug.gameplay.CraftingSystemTest$IngredientFactory"
   },
   "recipes": {
-    "free": "net.minecraftforge.debug.CraftingSystemTest$RecipeFactory"
+    "free": "net.minecraftforge.debug.gameplay.CraftingSystemTest$RecipeFactory"
   },
   "conditions": {
-    "true": "net.minecraftforge.debug.CraftingSystemTest$ConditionFactory"
+    "true": "net.minecraftforge.debug.gameplay.CraftingSystemTest$ConditionFactory"
   }
 }
