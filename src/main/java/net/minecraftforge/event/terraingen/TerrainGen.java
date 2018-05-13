@@ -37,7 +37,7 @@ public abstract class TerrainGen
 {
     public static <T extends InitNoiseGensEvent.Context> T getModdedNoiseGenerators(World world, Random rand, T original)
     {
-        InitNoiseGensEvent<T> event = new InitNoiseGensEvent<T>(world, rand, original);
+        InitNoiseGensEvent<T> event = new InitNoiseGensEvent<>(world, rand, original);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getNewValues();
     }
@@ -56,20 +56,35 @@ public abstract class TerrainGen
         return event.getResult() != Result.DENY;
     }
 
-    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type, ChunkPos chunkPos)
+    /**
+     * Use this method when there is a specific BlockPos location given for decoration.
+     * If only the chunk position is available, use {@link #decorate(World, Random, BlockPos, Decorate.EventType)} instead.
+     *
+     * @param world the world being generated in
+     * @param rand the random generator used for decoration
+     * @param chunkPos the original chunk position used for generation, passed to the decorator
+     * @param blockPos the specific position used for generating a feature, somewhere in the 2x2 chunks used for decoration
+     * @param type the type of decoration
+     */
+    public static boolean decorate(World world, Random rand, BlockPos chunkPos, BlockPos blockPos, Decorate.EventType type)
     {
-        Decorate event = new Decorate(world, rand, pos, type, chunkPos);
+        Decorate event = new Decorate(world, rand, new ChunkPos(chunkPos), blockPos, type);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
 
     /**
-     * @deprecated Use version with originalBlockPos instead
+     * Use this method when generation doesn't have a specific BlockPos location for generation in the chunk.
+     * If a specific BlockPos for generation is available, use {@link #decorate(World, Random, BlockPos, BlockPos, Decorate.EventType)} instead.
+     *
+     * @param world the world being generated in
+     * @param rand the random generator used for decoration
+     * @param pos the original chunk position used for generation, passed to the decorator
+     * @param type the type of decoration
      */
-    @Deprecated //TODO - remove in 1.13
     public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type)
     {
-        Decorate event = new Decorate(world, rand, pos, type);
+        Decorate event = new Decorate(world, rand, new ChunkPos(pos), pos, type);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
@@ -86,5 +101,31 @@ public abstract class TerrainGen
         SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
+    }
+
+    /**
+     * Fired before biome decoration.
+     *
+     * @param world the world being decorated
+     * @param random the random instance used for decoration
+     * @param pos the original chunk position used for generation, passed to the decorator
+     */
+    public static void decorateBiomePre(World world, Random random, BlockPos pos)
+    {
+        DecorateBiomeEvent.Pre event = new DecorateBiomeEvent.Pre(world, random, new ChunkPos(pos));
+        MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    /**
+     * Fired after biome decoration.
+     *
+     * @param world the world being decorated
+     * @param random the random instance used for decoration
+     * @param pos the original chunk position used for generation, passed to the decorator
+     */
+    public static void decorateBiomePost(World world, Random random, BlockPos pos)
+    {
+        DecorateBiomeEvent.Post event = new DecorateBiomeEvent.Post(world, random, new ChunkPos(pos));
+        MinecraftForge.EVENT_BUS.post(event);
     }
 }

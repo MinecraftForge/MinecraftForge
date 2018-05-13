@@ -52,26 +52,29 @@ public class DecorateBiomeEvent extends Event
 {
     private final World world;
     private final Random rand;
+    /**
+     * @deprecated use {@link #chunkPos}
+     */
+    @Deprecated
     private final BlockPos pos;
-    @Nullable
+    @Nullable // TODO: remove nullable in 1.13
     private final ChunkPos chunkPos;
 
-    public DecorateBiomeEvent(World world, Random rand, BlockPos pos, ChunkPos chunkPos)
+    public DecorateBiomeEvent(World world, Random rand, ChunkPos chunkPos)
     {
         this.world = world;
         this.rand = rand;
-        this.pos = pos;
+        this.pos = chunkPos.getBlock(0, 0, 0);
         this.chunkPos = chunkPos;
     }
 
-    //TODO: remove in 1.13
-    @Deprecated
+    @Deprecated // TODO: remove in 1.13
     public DecorateBiomeEvent(World world, Random rand, BlockPos pos)
     {
         this.world = world;
         this.rand = rand;
         this.pos = pos;
-        chunkPos = null;
+        this.chunkPos = null;
     }
 
     public World getWorld()
@@ -84,12 +87,18 @@ public class DecorateBiomeEvent extends Event
         return rand;
     }
 
+    /**
+     * Get the position used for original decoration generation.
+     * This may be anywhere randomly inside the 2x2 chunk area for generation.
+     * To get the original chunk position of the generation before a random location was chosen, use {@link #getChunkPos()}.
+     */
+    @Deprecated
     public BlockPos getPos()
     {
         return pos;
     }
 
-    @Nullable //TODO: Remove nullable in 1.13
+    @Nullable // TODO: remove nullable in 1.13
     public ChunkPos getChunkPos()
     {
         return chunkPos;
@@ -100,13 +109,12 @@ public class DecorateBiomeEvent extends Event
      */
     public static class Pre extends DecorateBiomeEvent
     {
-        public Pre(World world, Random rand, BlockPos pos, ChunkPos chunkPos)
+        public Pre(World world, Random rand, ChunkPos chunkPos)
         {
-            super(world, rand, pos, chunkPos);
+            super(world, rand, chunkPos);
         }
 
-        //TODO: remove in 1.13
-        @Deprecated
+        @Deprecated // TODO: remove in 1.13
         public Pre(World world, Random rand, BlockPos pos)
         {
             super(world, rand, pos);
@@ -118,13 +126,12 @@ public class DecorateBiomeEvent extends Event
      */
     public static class Post extends DecorateBiomeEvent
     {
-        public Post(World world, Random rand, BlockPos pos, ChunkPos chunkPos)
+        public Post(World world, Random rand, ChunkPos chunkPos)
         {
-            super(world, rand, pos, chunkPos);
+            super(world, rand, chunkPos);
         }
 
-        //TODO: remove in 1.13
-        @Deprecated
+        @Deprecated //TODO: remove in 1.13
         public Post(World world, Random rand, BlockPos pos)
         {
             super(world, rand, pos);
@@ -139,33 +146,46 @@ public class DecorateBiomeEvent extends Event
     @HasResult
     public static class Decorate extends DecorateBiomeEvent
     {
+        /**
+         * Use {@link EventType#CUSTOM} to filter custom event types
+         */
+        public enum EventType
+        {
+            BIG_SHROOM, CACTUS, CLAY, DEAD_BUSH, DESERT_WELL, LILYPAD, FLOWERS, FOSSIL, GRASS, ICE, LAKE_WATER, LAKE_LAVA, PUMPKIN, REED, ROCK, SAND, SAND_PASS2, SHROOM, TREE, CUSTOM
+        }
+
+        private final EventType type;
+        private final BlockPos pos;
+
+        public Decorate(World world, Random rand, ChunkPos chunkPos, BlockPos pos, EventType type)
+        {
+            super(world, rand, chunkPos);
+            this.type = type;
+            this.pos = pos;
+        }
+
+        @Deprecated // TODO: remove in 1.13
+        public Decorate(World world, Random rand, BlockPos pos, EventType type)
+        {
+            super(world, rand, pos);
+            this.type = type;
+            this.pos = pos;
+        }
+
         public EventType getType()
         {
             return type;
         }
 
         /**
-         * Use CUSTOM to filter custom event types
+         * Get the position used for original decoration generation.
+         * This may be the original chunk position, or anywhere inside the 2x2 chunk area for generation.
+         * To get the original chunk position of the generation before a random location was chosen, use {@link #getChunkPos()}.
          */
-        public static enum EventType
+        @Override // TODO 1.13: this should not be an override any more, it's specific to this event
+        public BlockPos getPos()
         {
-            BIG_SHROOM, CACTUS, CLAY, DEAD_BUSH, DESERT_WELL, LILYPAD, FLOWERS, FOSSIL, GRASS, ICE, LAKE_WATER, LAKE_LAVA, PUMPKIN, REED, ROCK, SAND, SAND_PASS2, SHROOM, TREE, CUSTOM
-        }
-
-        private final EventType type;
-
-        public Decorate(World world, Random rand, BlockPos pos, EventType type, ChunkPos chunkPos)
-        {
-            super(world, rand, pos, chunkPos);
-            this.type = type;
-        }
-
-        //TODO: remove in 1.13
-        @Deprecated
-        public Decorate(World world, Random rand, BlockPos pos, EventType type)
-        {
-            super(world, rand, pos);
-            this.type = type;
+            return this.pos;
         }
     }
 }
