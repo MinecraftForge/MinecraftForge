@@ -62,10 +62,10 @@ public abstract class TerrainGen
         return event.getResult() != Result.DENY;
     }
 
-    /*
-     *Use version with originalBlockPos instead
+    /**
+     * @deprecated Use version with originalBlockPos instead
      */
-    @Deprecated     //TODO - remove in 1.13
+    @Deprecated //TODO - remove in 1.13
     public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type)
     {
         Decorate event = new Decorate(world, rand, pos, type);
