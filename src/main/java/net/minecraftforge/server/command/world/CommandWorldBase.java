@@ -59,16 +59,6 @@ public class CommandWorldBase extends CommandTreeBase
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
-        if (server.isSinglePlayer())
-        {
-            return false;
-        }
-        return super.checkPermission(server, sender);
-    }
-
-    @Override
     public void addSubcommand(ICommand command)
     {
         throw new UnsupportedOperationException("Don't add sub-commands to /forge loadworld, create your own command.");

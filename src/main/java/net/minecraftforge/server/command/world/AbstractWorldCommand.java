@@ -20,7 +20,6 @@
 package net.minecraftforge.server.command.world;
 
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.SaveFormatOld;
@@ -42,16 +41,6 @@ abstract class AbstractWorldCommand extends CommandBase
     public int getRequiredPermissionLevel()
     {
         return 4;
-    }
-
-    @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
-        if (server.isSinglePlayer())
-        {
-            return false;
-        }
-        return super.checkPermission(server, sender);
     }
 
     boolean doesWorldExist(MinecraftServer server, String folderName)
