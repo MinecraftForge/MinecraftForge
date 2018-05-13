@@ -593,7 +593,7 @@
 +     */
 +    public void refreshDisplayName()
 +    {
-+        this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_70005_c_());
++        this.displayname = null;
 +    }
 +
 +    private final java.util.Collection<ITextComponent> prefixes = new java.util.LinkedList<ITextComponent>();
