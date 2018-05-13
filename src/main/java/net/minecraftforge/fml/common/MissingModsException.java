@@ -28,15 +28,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
-
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.GuiModsMissing;
-import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MissingModsException extends EnhancedRuntimeException implements IDisplayableError
+public class MissingModsException extends EnhancedRuntimeException
 {
     private static final long serialVersionUID = 1L;
     private final String id;
@@ -107,13 +101,6 @@ public class MissingModsException extends EnhancedRuntimeException implements ID
         stream.println("");
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public GuiScreen createGui()
-    {
-        return new GuiModsMissing(this);
-    }
-
     public static class MissingModInfo
     {
         private final ArtifactVersion acceptedVersion;
@@ -145,5 +132,4 @@ public class MissingModsException extends EnhancedRuntimeException implements ID
             return required;
         }
     }
-
 }

@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import com.google.common.base.Throwables;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -74,7 +73,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import org.apache.logging.log4j.message.FormattedMessage;
 
 import javax.annotation.Nullable;
 
@@ -382,7 +380,8 @@ public class FMLModContainer implements ModContainer
     }
 
     @Nullable
-    private Method gatherAnnotations(Class<?> clazz)
+    @SuppressWarnings("unchecked")
+    private Method gatherAnnotations(Class<?> clazz) throws Exception
     {
         Method factoryMethod = null;
         for (Method m : clazz.getDeclaredMethods())
@@ -394,9 +393,7 @@ public class FMLModContainer implements ModContainer
                     if (m.getParameterTypes().length == 1 && FMLEvent.class.isAssignableFrom(m.getParameterTypes()[0]))
                     {
                         m.setAccessible(true);
-                        @SuppressWarnings("unchecked")
-                        Class<? extends FMLEvent> parameterType = (Class<? extends FMLEvent>) m.getParameterTypes()[0];
-                        eventMethods.put(parameterType, m);
+                        eventMethods.put((Class<? extends FMLEvent>)m.getParameterTypes()[0], m);
                     }
                     else
                     {
@@ -424,7 +421,7 @@ public class FMLModContainer implements ModContainer
         return factoryMethod;
     }
 
-    private void processFieldAnnotations(ASMDataTable asmDataTable) throws IllegalAccessException
+    private void processFieldAnnotations(ASMDataTable asmDataTable) throws Exception
     {
         SetMultimap<String, ASMData> annotations = asmDataTable.getAnnotationsFor(this);
 
@@ -506,110 +503,86 @@ public class FMLModContainer implements ModContainer
     @Subscribe
     public void constructMod(FMLConstructionEvent event)
     {
-        BlamingTransformer.addClasses(getModId(), candidate.getClassList());
-        ModClassLoader modClassLoader = event.getModClassLoader();
         try
         {
+            BlamingTransformer.addClasses(getModId(), candidate.getClassList());
+            ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(source);
-        }
-        catch (MalformedURLException e)
-        {
-            FormattedMessage message = new FormattedMessage("{} Failed to add file to classloader: {}", getModId(), source);
-            throw new LoaderException(message.getFormattedMessage(), e);
-        }
-        modClassLoader.clearNegativeCacheFor(candidate.getClassList());
+            modClassLoader.clearNegativeCacheFor(candidate.getClassList());
 
-        //Only place I could think to add this...
-        MinecraftForge.preloadCrashClasses(event.getASMHarvestedData(), getModId(), candidate.getClassList());
+            //Only place I could think to add this...
+            MinecraftForge.preloadCrashClasses(event.getASMHarvestedData(), getModId(), candidate.getClassList());
 
-        Class<?> clazz;
-        try
-        {
-            clazz = Class.forName(className, true, modClassLoader);
-        }
-        catch (ClassNotFoundException e)
-        {
-            FormattedMessage message = new FormattedMessage("{} Failed load class: {}", getModId(), className);
-            throw new LoaderException(message.getFormattedMessage(), e);
-        }
+            Class<?> clazz = Class.forName(className, true, modClassLoader);
 
-        Certificate[] certificates = clazz.getProtectionDomain().getCodeSource().getCertificates();
-        ImmutableList<String> certList = CertificateHelper.getFingerprints(certificates);
-        sourceFingerprints = ImmutableSet.copyOf(certList);
+            Certificate[] certificates = clazz.getProtectionDomain().getCodeSource().getCertificates();
+            ImmutableList<String> certList = CertificateHelper.getFingerprints(certificates);
+            sourceFingerprints = ImmutableSet.copyOf(certList);
 
-        String expectedFingerprint = (String)descriptor.get("certificateFingerprint");
+            String expectedFingerprint = (String)descriptor.get("certificateFingerprint");
 
-        fingerprintNotPresent = true;
+            fingerprintNotPresent = true;
 
-        if (expectedFingerprint != null && !expectedFingerprint.isEmpty())
-        {
-            if (!sourceFingerprints.contains(expectedFingerprint))
+            if (expectedFingerprint != null && !expectedFingerprint.isEmpty())
             {
-                Level warnLevel = source.isDirectory() ? Level.TRACE : Level.ERROR;
-                FMLLog.log.log(warnLevel, "The mod {} is expecting signature {} for source {}, however there is no signature matching that description", getModId(), expectedFingerprint, source.getName());
+                if (!sourceFingerprints.contains(expectedFingerprint))
+                {
+                    Level warnLevel = Level.ERROR;
+                    if (source.isDirectory())
+                    {
+                        warnLevel = Level.TRACE;
+                    }
+                    FMLLog.log.log(warnLevel, "The mod {} is expecting signature {} for source {}, however there is no signature matching that description", getModId(), expectedFingerprint, source.getName());
+                }
+                else
+                {
+                    certificate = certificates[certList.indexOf(expectedFingerprint)];
+                    fingerprintNotPresent = false;
+                }
+            }
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> props = (List<Map<String, Object>>)descriptor.get("customProperties");
+            if (props != null)
+            {
+                com.google.common.collect.ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+                for (Map<String, Object> p : props)
+                {
+                    builder.put((String)p.get("k"), (String)p.get("v"));
+                }
+                customModProperties = builder.build();
             }
             else
             {
-                certificate = certificates[certList.indexOf(expectedFingerprint)];
-                fingerprintNotPresent = false;
+                customModProperties = EMPTY_PROPERTIES;
             }
-        }
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, String>> props = (List<Map<String, String>>)descriptor.get("customProperties");
-        if (props != null)
-        {
-            ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-            for (Map<String, String> p : props)
+            Boolean hasDisableableFlag = (Boolean)descriptor.get("canBeDeactivated");
+            boolean hasReverseDepends = !event.getReverseDependencies().get(getModId()).isEmpty();
+            if (hasDisableableFlag != null && hasDisableableFlag)
             {
-                builder.put(p.get("k"), p.get("v"));
+                disableability = hasReverseDepends ? Disableable.DEPENDENCIES : Disableable.YES;
             }
-            customModProperties = builder.build();
-        }
-        else
-        {
-            customModProperties = EMPTY_PROPERTIES;
-        }
+            else
+            {
+                disableability = hasReverseDepends ? Disableable.DEPENDENCIES : Disableable.RESTART;
+            }
+            Method factoryMethod = gatherAnnotations(clazz);
+            modInstance = getLanguageAdapter().getNewInstance(this, clazz, modClassLoader, factoryMethod);
+            NetworkRegistry.INSTANCE.register(this, clazz, (String)(descriptor.getOrDefault("acceptableRemoteVersions", null)), event.getASMHarvestedData());
+            if (fingerprintNotPresent)
+            {
+                eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints), expectedFingerprint));
+            }
+            ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide(), getLanguageAdapter());
+            AutomaticEventSubscriber.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
+            ConfigManager.sync(this.getModId(), Config.Type.INSTANCE);
 
-        Boolean hasDisableableFlag = (Boolean)descriptor.get("canBeDeactivated");
-        boolean hasReverseDepends = !event.getReverseDependencies().get(getModId()).isEmpty();
-        if (hasDisableableFlag != null && hasDisableableFlag)
-        {
-            disableability = hasReverseDepends ? Disableable.DEPENDENCIES : Disableable.YES;
-        }
-        else
-        {
-            disableability = hasReverseDepends ? Disableable.DEPENDENCIES : Disableable.RESTART;
-        }
-        Method factoryMethod = gatherAnnotations(clazz);
-        ILanguageAdapter languageAdapter = getLanguageAdapter();
-        try
-        {
-            modInstance = languageAdapter.getNewInstance(this, clazz, modClassLoader, factoryMethod);
-        }
-        catch (Exception e)
-        {
-            Throwables.throwIfUnchecked(e);
-            FormattedMessage message = new FormattedMessage("{} Failed to load new mod instance.", getModId());
-            throw new LoaderException(message.getFormattedMessage(), e);
-        }
-        NetworkRegistry.INSTANCE.register(this, clazz, (String)(descriptor.getOrDefault("acceptableRemoteVersions", null)), event.getASMHarvestedData());
-        if (fingerprintNotPresent)
-        {
-            eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints), expectedFingerprint));
-        }
-        ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide(), languageAdapter);
-        AutomaticEventSubscriber.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
-        ConfigManager.sync(this.getModId(), Config.Type.INSTANCE);
-
-        try
-        {
             processFieldAnnotations(event.getASMHarvestedData());
         }
-        catch (IllegalAccessException e)
+        catch (Throwable e)
         {
-            FormattedMessage message = new FormattedMessage("{} Failed to process field annotations.", getModId());
-            throw new LoaderException(message.getFormattedMessage(), e);
+            controller.errorOccurred(this, e);
         }
     }
 
