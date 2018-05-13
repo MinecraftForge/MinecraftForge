@@ -36,6 +36,7 @@ import net.minecraftforge.fml.common.event.FMLLoadEvent;
 import net.minecraftforge.fml.common.event.FMLModDisabledEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLStateEvent;
+import net.minecraftforge.fml.common.eventhandler.FMLThrowingEventBus;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
 import org.apache.logging.log4j.ThreadContext;
@@ -53,7 +54,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.FMLThrowingEventBus;
 import com.google.common.eventbus.Subscribe;
 
 import javax.annotation.Nullable;
