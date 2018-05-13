@@ -22,6 +22,7 @@ package net.minecraftforge.event.terraingen;
 import java.util.Random;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.MapGenBase;
@@ -55,9 +56,9 @@ public abstract class TerrainGen
         return event.getResult() != Result.DENY;
     }
 
-    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type, BlockPos originalBlockPos)
+    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type, ChunkPos chunkPos)
     {
-        Decorate event = new Decorate(world, rand, pos, type, originalBlockPos);
+        Decorate event = new Decorate(world, rand, pos, type, chunkPos);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
