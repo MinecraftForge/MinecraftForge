@@ -48,7 +48,7 @@
      public float func_70603_bj()
      {
          return 1.0F;
-@@ -991,6 +1003,8 @@
+@@ -991,19 +1003,21 @@
  
      public static EntityEquipmentSlot func_184640_d(ItemStack p_184640_0_)
      {
@@ -57,7 +57,13 @@
          if (p_184640_0_.func_77973_b() != Item.func_150898_a(Blocks.field_150423_aK) && p_184640_0_.func_77973_b() != Items.field_151144_bL)
          {
              if (p_184640_0_.func_77973_b() instanceof ItemArmor)
-@@ -1003,7 +1017,7 @@
+             {
+                 return ((ItemArmor)p_184640_0_.func_77973_b()).field_77881_a;
+             }
+-            else if (p_184640_0_.func_77973_b() == Items.field_185160_cR)
++            else if (p_184640_0_.func_77973_b() instanceof net.minecraftforge.items.IElytra)
+             {
+                 return EntityEquipmentSlot.CHEST;
              }
              else
              {

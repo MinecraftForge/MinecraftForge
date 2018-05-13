@@ -482,6 +482,15 @@
  
          if (this.func_70608_bn())
          {
+@@ -2322,7 +2435,7 @@
+             {
+                 if (!p_174820_2_.func_190926_b())
+                 {
+-                    if (!(p_174820_2_.func_77973_b() instanceof ItemArmor) && !(p_174820_2_.func_77973_b() instanceof ItemElytra))
++                    if (!(p_174820_2_.func_77973_b() instanceof ItemArmor) && !(p_174820_2_.func_77973_b() instanceof ItemElytra) && !(p_174820_2_.func_77973_b() instanceof net.minecraftforge.items.IElytra))
+                     {
+                         if (entityequipmentslot != EntityEquipmentSlot.HEAD)
+                         {
 @@ -2421,6 +2534,168 @@
          return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }
