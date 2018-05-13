@@ -21,10 +21,15 @@ package net.minecraftforge.fml.common.toposort;
 
 import java.util.Set;
 
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.client.GuiSortingProblem;
+import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ModSortingException extends EnhancedRuntimeException
+public class ModSortingException extends EnhancedRuntimeException implements IDisplayableError
 {
     private static final long serialVersionUID = 1L;
 
@@ -76,4 +81,11 @@ public class ModSortingException extends EnhancedRuntimeException
         }
     }
 
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiScreen createGui()
+    {
+        return new GuiSortingProblem(this);
+    }
 }
