@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandBase.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandBase.java
-@@ -393,7 +393,7 @@
+@@ -96,6 +96,15 @@
+         return Collections.<String>emptyList();
+     }
+ 
++    private ICommand parentCommand = null;
++
++    @Override
++    @Nullable
++    public ICommand getParent() { return parentCommand; }
++
++    @Override
++    public void setParent(ICommand parent) { parentCommand = parent; }
++
+     public static int func_175755_a(String p_175755_0_) throws NumberInvalidException
+     {
+         try
+@@ -393,7 +402,7 @@
                  itextcomponent.func_150258_a(" ");
              }
  

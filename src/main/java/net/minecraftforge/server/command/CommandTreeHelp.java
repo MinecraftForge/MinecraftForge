@@ -56,7 +56,7 @@ public class CommandTreeHelp extends CommandTreeBase
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "commands.forge.usage.help";
+        return parent.getUsage(sender) + ".help";
     }
 
     @Override

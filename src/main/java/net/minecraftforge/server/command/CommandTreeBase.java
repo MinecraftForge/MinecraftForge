@@ -52,6 +52,8 @@ public abstract class CommandTreeBase extends CommandBase
         {
             commandAliasMap.put(alias, command);
         }
+
+		command.setParent(this);
     }
 
     public Collection<ICommand> getSubCommands()
@@ -92,6 +94,36 @@ public abstract class CommandTreeBase extends CommandBase
         String[] s1 = new String[s.length - 1];
         System.arraycopy(s, 1, s1, 0, s1.length);
         return s1;
+    }
+
+    @Override
+    public int getRequiredPermissionLevel()
+    {
+        int level = 0;
+
+        for (ICommand command : getSubCommands())
+        {
+            if (command instanceof CommandBase)
+            {
+                level = Math.max(level, ((CommandBase) command).getRequiredPermissionLevel());
+            }
+        }
+
+        return level;
+    }
+
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
+    {
+        for (ICommand command : getSubCommands())
+        {
+            if (command.checkPermission(server, sender))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
