@@ -53,12 +53,28 @@ public abstract class CommandTreeBase extends CommandBase
             commandAliasMap.put(alias, command);
         }
 
-		command.setParent(this);
+        command.setParent(this);
     }
 
     public Collection<ICommand> getSubCommands()
     {
         return commandMap.values();
+    }
+
+    public Collection<ICommand> getAvailableSubCommands(MinecraftServer server, ICommandSender sender)
+    {
+        List<ICommand> list = new ArrayList<>();
+
+        for(ICommand command : getSubCommands())
+        {
+            if(command.checkPermission(server, sender))
+            {
+                list.add(command);
+            }
+        }
+
+        Collections.sort(list);
+        return list;
     }
 
     @Nullable
@@ -80,6 +96,22 @@ public abstract class CommandTreeBase extends CommandBase
     public List<ICommand> getSortedCommandList()
     {
         List<ICommand> list = new ArrayList<>(getSubCommands());
+        Collections.sort(list);
+        return list;
+    }
+
+    public List<ICommand> getSortedAvailableCommandList(MinecraftServer server, ICommandSender sender)
+    {
+        List<ICommand> list = new ArrayList<>();
+        
+        for(ICommand command : getSubCommands())
+        {
+            if(command.checkPermission(server, sender))
+            {
+                list.add(command);
+            }
+        }
+        
         Collections.sort(list);
         return list;
     }
@@ -201,12 +233,9 @@ public abstract class CommandTreeBase extends CommandBase
     private String getAvailableSubCommandsString(MinecraftServer server, ICommandSender sender)
     {
         Collection<String> availableCommands = new ArrayList<>();
-        for (ICommand command : getSubCommands())
+        for (ICommand command : getSortedAvailableCommandList(server, sender))
         {
-            if (command.checkPermission(server, sender))
-            {
-                availableCommands.add(command.getName());
-            }
+            availableCommands.add(command.getName());
         }
         return CommandBase.joinNiceStringFromCollection(availableCommands);
     }
