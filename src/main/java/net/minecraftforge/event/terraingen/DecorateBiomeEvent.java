@@ -39,7 +39,6 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * {@link #world} contains the world that is being decorated. <br>
  * {@link #rand} contains an instance of Random to be used. <br>
- * {@link #pos} contains the coordinates of the block in a Chunk being decorated. <br>
  * {@link #chunkPos} contains the original chunk for the decorator. <br>
  * <br>
  * This event is not {@link Cancelable}.
