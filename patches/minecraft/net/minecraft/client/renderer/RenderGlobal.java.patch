@@ -124,6 +124,15 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
+@@ -1852,7 +1875,7 @@
+         GlStateManager.func_187428_a(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+         GlStateManager.func_179147_l();
+         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 0.5F);
+-        GlStateManager.func_179136_a(-3.0F, -3.0F);
++        GlStateManager.func_179136_a(-1.0F, -10.0F);
+         GlStateManager.func_179088_q();
+         GlStateManager.func_179092_a(516, 0.1F);
+         GlStateManager.func_179141_d();
 @@ -1892,8 +1915,11 @@
                  double d7 = (double)blockpos.func_177956_o() - d4;
                  double d8 = (double)blockpos.func_177952_p() - d5;
