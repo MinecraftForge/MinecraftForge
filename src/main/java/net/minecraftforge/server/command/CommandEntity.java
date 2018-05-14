@@ -53,12 +53,6 @@ class CommandEntity extends CommandTreeBase
     }
 
     @Override
-    public String getUsage(ICommandSender sender)
-    {
-        return "commands.forge.entity.usage";
-    }
-
-    @Override
     public int getRequiredPermissionLevel()
     {
         return 2;
@@ -82,12 +76,6 @@ class CommandEntity extends CommandTreeBase
         public int getRequiredPermissionLevel()
         {
             return 2;
-        }
-
-        @Override
-        public String getUsage(ICommandSender sender)
-        {
-            return "commands.forge.entity.list.usage";
         }
 
         @Override

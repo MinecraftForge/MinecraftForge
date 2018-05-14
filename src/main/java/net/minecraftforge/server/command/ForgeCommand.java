@@ -47,22 +47,4 @@ public class ForgeCommand extends CommandTreeBase
     {
         throw new UnsupportedOperationException("Don't add sub-commands to /forge, create your own command.");
     }
-
-    @Override
-    public int getRequiredPermissionLevel()
-    {
-        return 0;
-    }
-
-    @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
-        return true;
-    }
-
-    @Override
-    public String getUsage(ICommandSender icommandsender)
-    {
-        return "commands.forge.usage";
-    }
 }

@@ -56,24 +56,12 @@ public class CommandTreeBaseTest
             return "treecommand_test";
         }
 
-        @Override
-        public String getUsage(ICommandSender sender)
-        {
-            return "commands.treecommand_test.usage";
-        }
-
         public static class CommandPing extends CommandBase
         {
             @Override
             public String getName()
             {
                 return "ping";
-            }
-
-            @Override
-            public String getUsage(ICommandSender sender)
-            {
-                return "commands.treecommand_test.ping.usage";
             }
 
             @Override
@@ -99,24 +87,12 @@ public class CommandTreeBaseTest
                 return "value";
             }
 
-            @Override
-            public String getUsage(ICommandSender sender)
-            {
-                return "commands.treecommand_test.value.usage";
-            }
-
             public static class CommandSet extends CommandBase
             {
                 @Override
                 public String getName()
                 {
                     return "set";
-                }
-
-                @Override
-                public String getUsage(ICommandSender sender)
-                {
-                    return "commands.treecommand_test.value.set.usage";
                 }
 
                 @Override
@@ -133,12 +109,6 @@ public class CommandTreeBaseTest
                 public String getName()
                 {
                     return "get";
-                }
-
-                @Override
-                public String getUsage(ICommandSender sender)
-                {
-                    return "commands.treecommand_test.value.get.usage";
                 }
 
                 @Override
