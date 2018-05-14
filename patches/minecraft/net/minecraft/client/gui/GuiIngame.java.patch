@@ -33,3 +33,12 @@
                  }
              }
          }
+@@ -1260,7 +1267,7 @@
+ 
+     public void func_175188_a(ITextComponent p_175188_1_, boolean p_175188_2_)
+     {
+-        this.func_110326_a(p_175188_1_.func_150260_c(), p_175188_2_);
++        this.func_110326_a(p_175188_1_.func_150254_d(), p_175188_2_);
+     }
+ 
+     public void func_191742_a(ChatType p_191742_1_, ITextComponent p_191742_2_)
